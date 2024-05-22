@@ -48,6 +48,7 @@ use cfg\component\position_type;
 use cfg\component\position_type_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
@@ -68,6 +69,7 @@ class type_list
 
     // database and export JSON object field names
     const FLD_NAME = 'sys_log_function_name';
+    const FLD_NAME_SQLTYP = sql_field_type::NAME;
 
     // error return codes
     const CODE_ID_NOT_FOUND = -1;
@@ -394,6 +396,21 @@ class type_list
             }
         }
         return $result;
+    }
+
+    /**
+     * return user specific type name based on the database row id
+     *
+     * @param int|null $id
+     * @return string|null
+     */
+    function name_or_null(?int $id): ?string
+    {
+        if ($id == null) {
+            return null;
+        } else {
+            return $this->name($id);
+        }
     }
 
     /**

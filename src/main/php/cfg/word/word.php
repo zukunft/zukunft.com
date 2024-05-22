@@ -364,7 +364,7 @@ class word extends sandbox_typed
     }
 
     /**
-     * @return int the id of the default view for this word or null if no view is preferred
+     * @return int the id of the default view for this word or zero if no view is preferred
      */
     function view_id(): int
     {
@@ -403,6 +403,16 @@ class word extends sandbox_typed
     {
         global $phrase_types;
         return $phrase_types->name($this->type_id);
+    }
+
+    /**
+     * get the name of the word type or null if no type is set
+     * @return string|null the name of the word type
+     */
+    function type_name_or_null(): ?string
+    {
+        global $phrase_types;
+        return $phrase_types->name_or_null($this->type_id);
     }
 
     /**
@@ -1783,21 +1793,21 @@ class word extends sandbox_typed
     /**
      * save all updated word fields with one sql function
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param word|sandbox $db_rec the database record before the saving
-     * @param word|sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param word|sandbox $db_obj the database record before the saving
+     * @param word|sandbox $norm_obj the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
-    function save_fields_func(sql_db $db_con, word|sandbox $db_rec, word|sandbox $std_rec): string
+    function save_fields_func(sql_db $db_con, word|sandbox $db_obj, word|sandbox $norm_obj): string
     {
         $sc = $db_con->sql_creator();
         $sc_par_lst = new sql_type_list([sql_type::LOG]);
         $all_fields = $this->db_fields_all();
         // check the diff against standard
-        $usr_fvt_lst = $this->db_fields_changed($std_rec, $sc_par_lst);
+        $usr_fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst);
         $usr_msg = new user_message();
         if (!$usr_fvt_lst->is_empty_except_user_action()) {
             // if the user is owner of the standard ...
-            if ($this->user_id() == $std_rec->user_id()) {
+            if ($this->user_id() == $norm_obj->user_id()) {
                 // ... update the standard
                 $sc_par_lst->add(sql_type::UPDATE);
                 $qp = parent::sql_update_named($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
@@ -1807,8 +1817,11 @@ class word extends sandbox_typed
                 if (!$this->has_usr_cfg()) {
                     $sc_par_lst->add(sql_type::INSERT);
                     $sc_par_lst->add(sql_type::USER);
-                    $qp = parent::sql_insert_switch($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
-                    $usr_msg = $db_con->insert($qp, 'add user word');
+                    $sc_par_lst->add(sql_type::NO_ID_RETURN);
+                    // recreate the field list to include the id for the user table
+                    $fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst);
+                    $qp = parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
+                    $usr_msg = $db_con->insert($qp, 'add user word', true);
                 } else {
                     $sc_par_lst->add(sql_type::UPDATE);
                     $sc_par_lst->add(sql_type::USER);
@@ -1817,7 +1830,7 @@ class word extends sandbox_typed
                 }
             }
         } else {
-            $fvt_lst = $this->db_fields_changed($db_rec, $sc_par_lst);
+            $fvt_lst = $this->db_fields_changed($db_obj, $sc_par_lst);
             if (!$fvt_lst->is_empty_except_user_action()) {
                 $sc_par_lst->add(sql_type::UPDATE);
                 $qp = parent::sql_update_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
@@ -1977,11 +1990,13 @@ class word extends sandbox_typed
                     change::FLD_FIELD_ID_SQLTYP
                 );
             }
-            $lst->add_field(
+            global $phrase_types;
+            $lst->add_type_field(
                 phrase::FLD_TYPE,
+                phrase::FLD_TYPE_NAME,
                 $this->type_id(),
-                phrase::FLD_TYPE_SQLTYP,
-                $sbx->type_id()
+                $sbx->type_id(),
+                $phrase_types
             );
         }
         if ($sbx->view_id() <> $this->view_id()) {
@@ -1992,11 +2007,11 @@ class word extends sandbox_typed
                     change::FLD_FIELD_ID_SQLTYP
                 );
             }
-            $lst->add_field(
+            $lst->add_link_field(
                 self::FLD_VIEW,
-                $this->view_id(),
-                self::FLD_VIEW_SQLTYP,
-                $sbx->view_id()
+                view::FLD_NAME,
+                $this->view,
+                $sbx->view
             );
         }
         // TODO move to language forms

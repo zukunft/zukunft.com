@@ -8,6 +8,7 @@ CREATE PROCEDURE component_insert_log_011110000000000
      _field_id_description       smallint,
      _description                text,
      _field_id_component_type_id smallint,
+     _type_name                  text,
      _component_type_id          smallint)
 BEGIN
 
@@ -25,8 +26,8 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
          SELECT          _user_id,_change_action_id,_field_id_description,_description,@new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,         row_id)
-         SELECT          _user_id,_change_action_id,_field_id_component_type_id,_component_type_id,@new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value, new_id,           row_id)
+         SELECT          _user_id,_change_action_id,_field_id_component_type_id,_type_name,_component_type_id,@new_component_id ;
 
     UPDATE components
        SET user_id           = _user_id,
@@ -37,7 +38,7 @@ BEGIN
 END;
 
 PREPARE component_insert_log_011110000000000_call FROM
-    'SELECT component_insert_log_011110000000000 (?,?, ?, ?, ?, ?, ?, ?, ?)';
+    'SELECT component_insert_log_011110000000000 (?,?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT component_insert_log_011110000000000 (
                'Word',
@@ -48,4 +49,5 @@ SELECT component_insert_log_011110000000000 (
                52,
                'simply show the word name',
                53,
+               'phrase_name',
                8);

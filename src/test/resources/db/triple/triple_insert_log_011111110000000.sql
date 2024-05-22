@@ -14,6 +14,7 @@ CREATE OR REPLACE FUNCTION triple_insert_log_011111110000000
      _field_id_description    smallint,
      _description             text,
      _field_id_phrase_type_id smallint,
+     _phrase_type_name        text,
      _phrase_type_id          smallint) RETURNS bigint AS
 $$
 DECLARE new_triple_id bigint;
@@ -35,8 +36,8 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,  row_id)
          SELECT          _user_id,_change_action_id,_field_id_description,_description,new_triple_id ;
 
-    INSERT INTO changes (user_id, change_action_id, change_field_id,         new_value,     row_id)
-         SELECT         _user_id,_change_action_id,_field_id_phrase_type_id,_phrase_type_id,new_triple_id ;
+    INSERT INTO changes (user_id, change_action_id, change_field_id,         new_value,        new_id,     row_id)
+         SELECT         _user_id,_change_action_id,_field_id_phrase_type_id,_phrase_type_name,_phrase_type_id,new_triple_id ;
 
     UPDATE triples
        SET user_id        = _user_id,
@@ -51,9 +52,9 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE triple_insert_log_011111110000000_call
-        (bigint, smallint, bigint, bigint, smallint, smallint, text, text, text, smallint, text, smallint, smallint, text, smallint, smallint) AS
+        (bigint, smallint, bigint, bigint, smallint, smallint, text, text, text, smallint, text, smallint, smallint, text, smallint, text, smallint) AS
 SELECT triple_insert_log_011111110000000
-        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16);
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);
 
 SELECT triple_insert_log_011111110000000
         (2::bigint,
@@ -63,7 +64,7 @@ SELECT triple_insert_log_011111110000000
          1::smallint,
          7::smallint,
          'constant'::text,
-         'constant'::text,
+         'contains'::text,
          'Mathematics'::text,
          18::smallint,
          'Mathematical constant'::text,
@@ -71,4 +72,5 @@ SELECT triple_insert_log_011111110000000
          68::smallint,
          'A mathematical constant that never changes e.g. Pi'::text,
          69::smallint,
+         'constant'::text,
          17::smallint);

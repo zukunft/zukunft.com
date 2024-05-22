@@ -7,6 +7,7 @@ CREATE OR REPLACE FUNCTION component_insert_log_011111111111111
      _field_id_description       smallint,
      _description                text,
      _field_id_component_type_id smallint,
+     _type_name                  text,
      _component_type_id          smallint,
      _field_id_code_id           smallint,
      _code_id                    text,
@@ -36,47 +37,47 @@ BEGIN
          SELECT        _component_name
       RETURNING         component_id INTO new_component_id;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT          _user_id,_change_action_id,_field_id_component_name,  _component_name,    new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                             row_id)
+         SELECT          _user_id,_change_action_id,_field_id_component_name,  _component_name,               new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT          _user_id,_change_action_id,_field_id_user_id,          _user_id,          new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                             row_id)
+         SELECT          _user_id,_change_action_id,_field_id_user_id,          _user_id,                     new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT          _user_id,_change_action_id,_field_id_description,      _description,      new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                             row_id)
+         SELECT          _user_id,_change_action_id,_field_id_description,      _description,                 new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT          _user_id,_change_action_id,_field_id_component_type_id,_component_type_id,new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,  new_id,                  row_id)
+         SELECT          _user_id,_change_action_id,_field_id_component_type_id,_type_name,_component_type_id,new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT          _user_id,_change_action_id,_field_id_code_id,          _code_id,          new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                             row_id)
+         SELECT          _user_id,_change_action_id,_field_id_code_id,          _code_id,                     new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT          _user_id,_change_action_id,_field_id_ui_msg_code_id,   _ui_msg_code_id,   new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                             row_id)
+         SELECT          _user_id,_change_action_id,_field_id_ui_msg_code_id,   _ui_msg_code_id,              new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT          _user_id,_change_action_id,_field_id_word_id_row,      _word_id_row,      new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                             row_id)
+         SELECT          _user_id,_change_action_id,_field_id_word_id_row,      _word_id_row,                 new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT          _user_id,_change_action_id,_field_id_word_id_col,      _word_id_col,      new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                             row_id)
+         SELECT          _user_id,_change_action_id,_field_id_word_id_col,      _word_id_col,                 new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT          _user_id,_change_action_id,_field_id_word_id_col2,     _word_id_col2,     new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                             row_id)
+         SELECT          _user_id,_change_action_id,_field_id_word_id_col2,     _word_id_col2,                new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT          _user_id,_change_action_id,_field_id_formula_id,       _formula_id,       new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                             row_id)
+         SELECT          _user_id,_change_action_id,_field_id_formula_id,       _formula_id,                  new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT          _user_id,_change_action_id,_field_id_link_type_id,     _link_type_id,     new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                             row_id)
+         SELECT          _user_id,_change_action_id,_field_id_link_type_id,     _link_type_id,                new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT          _user_id,_change_action_id,_field_id_excluded,         _excluded,         new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                             row_id)
+         SELECT          _user_id,_change_action_id,_field_id_excluded,         _excluded,                    new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT          _user_id,_change_action_id,_field_id_share_type_id,    _share_type_id,    new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                             row_id)
+         SELECT          _user_id,_change_action_id,_field_id_share_type_id,    _share_type_id,               new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT          _user_id,_change_action_id,_field_id_protect_id,       _protect_id,       new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,                             row_id)
+         SELECT          _user_id,_change_action_id,_field_id_protect_id,       _protect_id,                  new_component_id ;
 
     UPDATE components
        SET user_id           = _user_id,
@@ -100,9 +101,9 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE component_insert_log_011111111111111_call
-    (text, bigint, smallint, smallint, smallint, smallint, text, smallint, smallint, smallint, text, smallint, text, smallint, bigint, smallint, bigint, smallint, bigint, smallint, bigint, smallint, smallint, smallint, smallint, smallint, smallint, smallint, smallint) AS
+    (text, bigint, smallint, smallint, smallint, smallint, text, smallint, text, smallint, smallint, text, smallint, text, smallint, bigint, smallint, bigint, smallint, bigint, smallint, bigint, smallint, smallint, smallint, smallint, smallint, smallint, smallint, smallint) AS
 SELECT component_insert_log_011111111111111
-    ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29);
+    ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29, $30);
 
 SELECT component_insert_log_011111111111111 (
                'Word'::text,
@@ -113,6 +114,7 @@ SELECT component_insert_log_011111111111111 (
                52::smallint,
                'simply show the word name'::text,
                53::smallint,
+               'text'::text,
                2::smallint,
                63::smallint,
                'form_title'::text,

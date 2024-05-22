@@ -925,7 +925,7 @@ class sandbox_named extends sandbox
         } else {
             // add the child object specific fields and values
             $qp->sql = $sc->create_sql_insert($fvt_lst);
-            $qp->par = $fvt_lst->values();
+            $qp->par = $fvt_lst->db_values();
         }
 
         return $qp;

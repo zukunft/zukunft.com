@@ -382,11 +382,19 @@ class triple extends sandbox_link_typed implements JsonSerializable
     }
 
     /**
-     * @return int the id of the default view for this triple or null if no view is preferred
+     * @return int the id of ..
      */
     function verb_id(): int
     {
         return $this->verb->id();
+    }
+
+    /**
+     * @return string the name of the
+     */
+    function verb_name(): string
+    {
+        return $this->verb->name();
     }
 
     /**
@@ -628,6 +636,11 @@ class triple extends sandbox_link_typed implements JsonSerializable
     function type_field(): string
     {
         return verb::FLD_ID;
+    }
+
+    function type_name_field(): string
+    {
+        return verb::FLD_NAME;
     }
 
     function to_field(): string
@@ -1821,7 +1834,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         // the generic name of $this is saved to the database for faster uniqueness check (TODO to be checked if this is really faster)
         $this->set_names();
 
-        if ($db_rec->name() <> $this->name()) {
+        if ($db_rec->name() <> $this->name() and !$this->is_excluded()) {
             $result = $this->is_name_used_msg($this->name());
             if ($result == '') {
                 $log = $this->log_upd_field();
@@ -2289,6 +2302,11 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $trp_empty = $this->clone_reset();
         // for a new word the owner should be set, so remove the user id to force writing the user
         $trp_empty->set_user($this->user()->clone_reset());
+        if ($sc_par_lst->is_usr_tbl()) {
+            $trp_empty->fob = $this->fob;
+            $trp_empty->verb = $this->verb;
+            $trp_empty->tob = $this->tob;
+        }
         $sc_par_lst->add(sql_type::INSERT);
         $fvt_lst = $this->db_fields_changed($trp_empty, $sc_par_lst);
         $all_fields = $this->db_fields_all($sc_par_lst);
@@ -2372,11 +2390,48 @@ class triple extends sandbox_link_typed implements JsonSerializable
                         change::FLD_FIELD_ID_SQLTYP
                     );
                 }
-                $lst->add_field(
+                global $verbs;
+                $lst->add_type_field(
                     verb::FLD_ID,
+                    verb::FLD_NAME,
                     $this->verb_id(),
-                    type_object::FLD_ID_SQLTYP,
-                    $sbx->verb_id()
+                    $sbx->verb_id(),
+                    $verbs
+                );
+            }
+        } else {
+            // TODO check how to handle if the standard
+            if ($this->is_excluded() and !$sbx->is_excluded()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
+                        $change_field_list->id($table_id . verb::FLD_ID),
+                        change::FLD_FIELD_ID_SQLTYP
+                    );
+                }
+                global $verbs;
+                $lst->add_type_field(
+                    verb::FLD_ID,
+                    verb::FLD_NAME,
+                    null,
+                    $sbx->verb_id(),
+                    $verbs
+                );
+            } elseif (!$this->is_excluded() and $sbx->is_excluded()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
+                        $change_field_list->id($table_id . verb::FLD_ID),
+                        change::FLD_FIELD_ID_SQLTYP
+                    );
+                }
+                global $verbs;
+                $lst->add_type_field(
+                    verb::FLD_ID,
+                    verb::FLD_NAME,
+                    $this->verb_id(),
+                    null,
+                    $verbs
                 );
             }
         }
@@ -2444,11 +2499,11 @@ class triple extends sandbox_link_typed implements JsonSerializable
                     change::FLD_FIELD_ID_SQLTYP
                 );
             }
-            $lst->add_field(
+            $lst->add_link_field(
                 self::FLD_VIEW,
-                $this->view_id(),
-                self::FLD_VIEW_SQLTYP,
-                $sbx->view_id()
+                view::FLD_NAME,
+                $this->view,
+                $sbx->view
             );
         }
         // TODO add ref list

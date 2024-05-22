@@ -32,11 +32,14 @@
 
 namespace cfg\db;
 
+use cfg\combine_named;
 use cfg\db_object_seq_id;
 use cfg\log\change;
 use cfg\sandbox;
 use cfg\sandbox_link_named;
 use cfg\sandbox_named;
+use cfg\type_list;
+use cfg\type_object;
 use cfg\user;
 use DateTime;
 use DateTimeInterface;
@@ -83,6 +86,31 @@ class sql_par_field_list
         }
     }
 
+    /**
+     * create a name and an id field in the list base on a field with
+     * @param sql_par_field $fld with id and name set
+     * @return void
+     */
+    function add_with_split(sql_par_field $fld): void
+    {
+        if ($fld->value != null or $fld->old != null) {
+            $this->add_field(
+                $fld->par_name,
+                $fld->value,
+                $fld->type,
+                $fld->old
+            );
+        }
+        if ($fld->id != null or $fld->old_id != null) {
+            $this->add_field(
+                $fld->name,
+                $fld->id,
+                $fld->type_id,
+                $fld->old_id
+            );
+        }
+    }
+
     function add_list(sql_par_field_list $fld_lst): void
     {
         foreach ($fld_lst->lst as $fld) {
@@ -93,19 +121,25 @@ class sql_par_field_list
     /**
      * add a field based on the single parameters to the list
      *
-     * @param string $name
-     * @param string|int|float|DateTime|null $value
-     * @param sql_par_type|sql_field_type $type
-     * @param string|int|float|DateTime|null $old
+     * @param string $name the field name in the change table, so view_id not view or view_name
+     * @param string|int|float|DateTime|null $value the value that has been changed from the user point of view, so the view name not the view id
+     * @param sql_par_type|sql_field_type $type the type of the user value e.g. name for the view name
+     * @param string|int|float|DateTime|null $old the value before the user change from the user point of view, so the view name not the view id
      * @param string $par_name
+     * @param string|int|null $id
+     * @param string|int|null $old_id
+     * @param sql_par_type|sql_field_type|null $type_id
      * @return void
      */
     function add_field(
-        string                         $name,
-        string|int|float|DateTime|null $value,
-        sql_par_type|sql_field_type    $type,
-        string|int|float|DateTime|null $old = null,
-        string                         $par_name = ''
+        string                           $name,
+        string|int|float|DateTime|null   $value,
+        sql_par_type|sql_field_type      $type,
+        string|int|float|DateTime|null   $old = null,
+        string                           $par_name = '',
+        string|int|null                  $id = null,
+        string|int|null                  $old_id = null,
+        sql_par_type|sql_field_type|null $type_id = null
     ): void
     {
         $fld = new sql_par_field();
@@ -120,7 +154,74 @@ class sql_par_field_list
         if ($par_name != '') {
             $fld->par_name = $par_name;
         }
+        $fld->id = $id;
+        $fld->old_id = $old_id;
+        if ($type_id != null) {
+            if ($type_id::class === sql_field_type::class) {
+                $fld->type_id = $type_id->par_type();
+            } else {
+                $fld->type_id = $type_id;
+            }
+        } else {
+            $fld->type_id = null;
+        }
         $this->add($fld);
+    }
+
+    /**
+     * add a link field e.g. the link to the view or the phrase type
+     *
+     * @param string $db_fld the field name to be updated in the database e.g. view_id
+     * @param string $usr_fld the field name from the user point of view e.g. view_name
+     * @param sandbox|combine_named|null $db_sbx the object as it is in the database before the change
+     * @param sandbox|combine_named|null $chg_sbx the object with the user changes that should be saved in the database
+     * @return void
+     */
+    function add_link_field(
+        string                     $db_fld,
+        string                     $usr_fld,
+        sandbox|combine_named|null $chg_sbx,
+        sandbox|combine_named|null $db_sbx
+    ): void
+    {
+        $this->add_field(
+            $db_fld,
+            $chg_sbx?->name(),
+            sandbox_named::FLD_NAME_SQLTYP,
+            $db_sbx?->name(),
+            $usr_fld,
+            $chg_sbx?->id(),
+            $db_sbx?->id(),
+            db_object_seq_id::FLD_ID_SQLTYP);
+    }
+
+    /**
+     * add a type field e.g. the phrase type
+     *
+     * @param string $db_fld the field name to be updated in the database e.g. view_id
+     * @param string $usr_fld the field name from the user point of view e.g. view_name
+     * @param int|null $chg_id the type id changed by the user that should be saved in the database
+     * @param int|null $db_id the type id as it is in the database before the change
+     * @param type_list $typ_lst the preloaded list of type
+     * @return void
+     */
+    function add_type_field(
+        string    $db_fld,
+        string    $usr_fld,
+        ?int      $chg_id,
+        ?int      $db_id,
+        type_list $typ_lst
+    ): void
+    {
+        $this->add_field(
+            $db_fld,
+            $typ_lst->name_or_null($chg_id),
+            type_list::FLD_NAME_SQLTYP,
+            $typ_lst->name_or_null($db_id),
+            $usr_fld,
+            $chg_id,
+            $db_id,
+            type_object::FLD_ID_SQLTYP);
     }
 
     /**
@@ -183,17 +284,17 @@ class sql_par_field_list
     /**
      * add the name and description field to this list
      *
-     * @param sandbox_named|sandbox_link_named $sbx_upd the updated fields of the user sandbox object should be saved
-     * @param sandbox_named|sandbox_link_named $sbx_db the same user sandbox object as $sbx_upd but with the values in the db before the update
+     * @param sandbox|sandbox_named|sandbox_link_named $sbx_upd the updated fields of the user sandbox object should be saved
+     * @param sandbox|sandbox_named|sandbox_link_named $sbx_db the same user sandbox object as $sbx_upd but with the values in the db before the update
      * @param bool $do_log true if the field for logging the change should be included
      * @param int $table_id the id of the table for logging
      * @return void
      */
     function add_name_and_description(
-        sandbox_named|sandbox_link_named $sbx_upd,
-        sandbox_named|sandbox_link_named $sbx_db,
-        bool $do_log,
-        int $table_id
+        sandbox|sandbox_named|sandbox_link_named $sbx_upd,
+        sandbox|sandbox_named|sandbox_link_named $sbx_db,
+        bool                                     $do_log,
+        int                                      $table_id
     ): void
     {
         global $change_field_list;
@@ -309,6 +410,19 @@ class sql_par_field_list
         return $result;
     }
 
+    function db_values(): array
+    {
+        $result = [];
+        foreach ($this->lst as $fld) {
+            if ($fld->id != null) {
+                $result[] = $fld->id;
+            } else {
+                $result[] = $fld->value;
+            }
+        }
+        return $result;
+    }
+
     function types(): array
     {
         $result = [];
@@ -375,6 +489,21 @@ class sql_par_field_list
     }
 
     /**
+     * get the id for the given field name
+     * @param string $name the name of the field to select
+     * @return string|int|null the value related to the given field name
+     */
+    function get_id(string $name): string|int|null
+    {
+        $key = array_search($name, $this->names());
+        if ($key === false) {
+            return null;
+        } else {
+            return $this->lst[$key]->id;
+        }
+    }
+
+    /**
      * get the old value for the given field name
      * @param string $name the name of the field to select
      * @return string|int|float|null the value related to the given field name
@@ -385,11 +514,39 @@ class sql_par_field_list
         return $this->lst[$key]->old;
     }
 
+    /**
+     * get the old id for the given field name
+     * @param string $name the name of the field to select
+     * @return string|int|null the value related to the given field name
+     */
+    function get_old_id(string $name): string|int|null
+    {
+        $key = array_search($name, $this->names());
+        return $this->lst[$key]->old_id;
+    }
+
 
     function get_type(string $name): sql_par_type|sql_field_type
     {
         $key = array_search($name, $this->names());
         return $this->lst[$key]->type;
+    }
+
+    function get_type_id(string $name): sql_par_type|sql_field_type
+    {
+        $key = array_search($name, $this->names());
+        return $this->lst[$key]->type_id;
+    }
+
+    function get_par_name(string $name): string|null
+    {
+        $key = array_search($name, $this->names());
+        return $this->lst[$key]->par_name;
+    }
+
+    function has_name(string $name): bool
+    {
+        return in_array($name, $this->names());
     }
 
     function merge(sql_par_field_list $lst_to_add): sql_par_field_list

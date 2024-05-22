@@ -8,6 +8,7 @@ CREATE PROCEDURE word_insert_log_01111000000
      _field_id_description    smallint,
      _description             text,
      _field_id_phrase_type_id smallint,
+     _phrase_type_name        text,
      _phrase_type_id          smallint)
 BEGIN
 
@@ -25,8 +26,8 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
          SELECT          _user_id,_change_action_id,_field_id_description,_description,@new_word_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,      row_id)
-         SELECT          _user_id,_change_action_id,_field_id_phrase_type_id,_phrase_type_id,@new_word_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,         new_value,        new_id,         row_id)
+         SELECT          _user_id,_change_action_id,_field_id_phrase_type_id,_phrase_type_name,_phrase_type_id,@new_word_id ;
 
     UPDATE words
        SET user_id        = _user_id,
@@ -37,7 +38,7 @@ BEGIN
 END;
 
 PREPARE word_insert_log_01111000000_call FROM
-    'SELECT word_insert_log_01111000000 (?,?, ?, ?, ?, ?, ?, ?, ?)';
+    'SELECT word_insert_log_01111000000 (?,?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT word_insert_log_01111000000
     ('Mathematics',
@@ -48,4 +49,5 @@ SELECT word_insert_log_01111000000
      11,
      'Mathematics is an area of knowledge that includes the topics of numbers and formulas',
      12,
+     'default',
      1);

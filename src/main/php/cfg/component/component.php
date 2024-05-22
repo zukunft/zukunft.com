@@ -74,9 +74,11 @@ use cfg\phrase;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\sandbox_typed;
+use cfg\type_list;
 use cfg\type_object;
 use cfg\user;
 use cfg\user_message;
+use cfg\view;
 use cfg\word;
 
 class component extends sandbox_typed
@@ -468,12 +470,22 @@ class component extends sandbox_typed
      */
 
     /**
-     * @return string the name of the view type
+     * @return string the name of the component type
      */
     function type_name(): string
     {
         global $component_types;
         return $component_types->name($this->type_id);
+    }
+
+    /**
+     * get the name of the component type or null if no type is set
+     * @return string|null the name of the component type
+     */
+    function type_name_or_null(): ?string
+    {
+        global $component_types;
+        return $component_types->name_or_null($this->type_id);
     }
 
     /**
@@ -1284,11 +1296,13 @@ class component extends sandbox_typed
                     change::FLD_FIELD_ID_SQLTYP
                 );
             }
-            $lst->add_field(
+            global $component_types;
+            $lst->add_type_field(
                 self::FLD_TYPE,
+                type_object::FLD_NAME,
                 $this->type_id(),
-                self::FLD_TYPE_SQLTYP,
-                $sbx->type_id()
+                $sbx->type_id(),
+                $component_types
             );
         }
         if ($sbx->code_id <> $this->code_id) {

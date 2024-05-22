@@ -1065,11 +1065,13 @@ class view extends sandbox_typed
                     change::FLD_FIELD_ID_SQLTYP
                 );
             }
-            $lst->add_field(
+            global $view_types;
+            $lst->add_type_field(
                 view::FLD_TYPE,
+                type_object::FLD_NAME,
                 $this->type_id(),
-                view::FLD_TYPE_SQLTYP,
-                $sbx->type_id()
+                $sbx->type_id(),
+                $view_types
             );
         }
         if ($sbx->code_id <> $this->code_id) {

@@ -15,6 +15,7 @@ CREATE PROCEDURE triple_insert_log_011111110000000
      _field_id_description    smallint,
      _description             text,
      _field_id_phrase_type_id smallint,
+     _phrase_type_name        text,
      _phrase_type_id          smallint)
 BEGIN
 
@@ -35,8 +36,8 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
          SELECT          _user_id,_change_action_id,_field_id_description,_description,@new_triple_id ;
 
-    INSERT INTO changes (user_id, change_action_id, change_field_id,         new_value,      row_id)
-         SELECT         _user_id,_change_action_id,_field_id_phrase_type_id,_phrase_type_id,@new_triple_id ;
+    INSERT INTO changes (user_id, change_action_id, change_field_id,         new_value,        new_id,         row_id)
+         SELECT         _user_id,_change_action_id,_field_id_phrase_type_id,_phrase_type_name,_phrase_type_id,@new_triple_id ;
 
     UPDATE triples
        SET user_id        = _user_id,
@@ -48,7 +49,7 @@ BEGIN
 END;
 
 PREPARE triple_insert_log_011111110000000_call FROM
-'SELECT triple_insert_log_011111110000000 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+'SELECT triple_insert_log_011111110000000 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT triple_insert_log_011111110000000
         (2,
@@ -58,7 +59,7 @@ SELECT triple_insert_log_011111110000000
          1,
          7,
          'constant',
-         'constant',
+         'contains',
          'Mathematics',
          18,
          'Mathematical constant',
@@ -66,4 +67,5 @@ SELECT triple_insert_log_011111110000000
          68,
          'A mathematical constant that never changes e.g. Pi',
          69,
+         'constant',
          17);

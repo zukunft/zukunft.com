@@ -88,6 +88,7 @@ class phrase extends combine_named
     const FLD_ID_SQLTYP = sql_field_type::INT;
     const FLD_NAME = 'phrase_name';
     const FLD_TYPE = 'phrase_type_id';
+    const FLD_TYPE_NAME = 'phrase_type_name'; // used for the log parameter only
     const FLD_TYPE_SQLTYP = sql_field_type::INT_SMALL;
     const FLD_VALUES = 'values';
 

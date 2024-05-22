@@ -185,8 +185,7 @@ class component_tests
         $log->set_field(sandbox_named::FLD_DESCRIPTION);
         $log->row_id = $cmp_reloaded->id();
         $result = $log->dsp_last(true);
-        //$target = 'zukunft.com system test added Just added for testing the user sandbox';
-        $target = 'zukunft.com system test changed Just added for testing to Just added for testing the user sandbox';
+        $target = 'zukunft.com system test added Just added for testing the user sandbox';
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '" logged', $target, $result);
         $log->set_field(change_field_list::FLD_COMPONENT_TYPE);
         $result = $log->dsp_last(true);

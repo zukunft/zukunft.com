@@ -67,6 +67,9 @@ class triple_tests
         $trp_excl = $t->triple();
         $trp_excl->set_excluded(true);
         $t->assert_sql_insert($sc, $trp_excl);
+        $trp_excl->description = '';
+        $trp_excl->set_type('');
+        $t->assert_sql_insert($sc, $trp_excl, [sql_type::LOG, sql_type::USER]);
         // update
         // TODO activate db write
         $trp_renamed = $trp->cloned(word_api::TN_RENAMED);

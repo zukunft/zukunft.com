@@ -8,6 +8,7 @@ CREATE PROCEDURE component_insert_log_011111000000000
      _field_id_description       smallint,
      _description                text,
      _field_id_component_type_id smallint,
+     _type_name                  text,
      _component_type_id          smallint,
      _field_id_code_id           smallint,
      _code_id                    text)
@@ -27,8 +28,8 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
          SELECT          _user_id,_change_action_id,_field_id_description,_description,@new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,         row_id)
-         SELECT          _user_id,_change_action_id,_field_id_component_type_id,_component_type_id,@new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value, new_id,         row_id)
+         SELECT          _user_id,_change_action_id,_field_id_component_type_id,_type_name,_component_type_id,@new_component_id ;
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,  new_value, row_id)
          SELECT          _user_id,_change_action_id,_field_id_code_id,_code_id,  @new_component_id ;
@@ -43,7 +44,7 @@ BEGIN
 END;
 
 PREPARE component_insert_log_011111000000000_call FROM
-    'SELECT component_insert_log_011111000000000 (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    'SELECT component_insert_log_011111000000000 (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT component_insert_log_011111000000000 (
                'form title',
@@ -54,6 +55,7 @@ SELECT component_insert_log_011111000000000 (
                52,
                'show the language specific title of a add,change or delete form',
                53,
+               'system_form_title',
                17,
                63,
                'form_title');

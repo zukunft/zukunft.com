@@ -2744,15 +2744,11 @@ class formula extends sandbox_typed
                     change::FLD_FIELD_ID_SQLTYP
                 );
             }
-            $old_val = $sbx->view_id();
-            if ($sbx->view == null) {
-                $old_val = null;
-            }
-            $lst->add_field(
+            $lst->add_link_field(
                 self::FLD_VIEW,
-                $this->view_id(),
-                self::FLD_VIEW_SQLTYP,
-                $old_val
+                view::FLD_NAME,
+                $this->view,
+                $sbx->view
             );
         }
         if ($sbx->usage() <> $this->usage()) {

@@ -134,6 +134,7 @@ class sql
 
     // for sql functions that do the change log and the actual change with on function
     const FLD_LOG_FIELD_PREFIX = 'field_id_'; // added to the field name to include the preloaded log field id
+    const FLD_LOG_ID_PREFIX = 'id_'; // added to the field name to include the actual id changed in the log e.g. for type changes
     const PAR_PREFIX = '_'; // to seperate the parameter names e.g. _word_id instead of word_id for the given parameter
     const PAR_PREFIX_MYSQL = '@'; // for the new sequence id using MySQL
     const PAR_NEW_ID_PREFIX = 'new_'; // added to the field id name to remember the sequence id
@@ -1061,7 +1062,8 @@ class sql
         string             $val_tbl = '',
         string             $chg_add_fld = '',
         string             $chg_row_fld = '',
-        string             $new_id_fld = ''
+        string             $new_id_fld = '',
+        string             $par_name = ''
     ): string
     {
         $lib = new library();
@@ -1096,8 +1098,14 @@ class sql
         $use_named_par = $sc_par_lst->use_named_par();
         foreach ($fvt_lst->lst as $fvt) {
             $fld = $fvt->name;
-            $val = $fvt->value;
-            $typ = $fvt->type;
+            // for field not yet split use the id by default
+            if ($fvt->id != null and $fvt->type_id != null) {
+                $val = $fvt->id;
+                $typ = $fvt->type_id;
+            } else {
+                $val = $fvt->value;
+                $typ = $fvt->type;
+            }
             $par = $fvt->par_name;
             $this->par_values[] = $val;
             if ($fvt->value != sql::NOW) {
@@ -1113,13 +1121,24 @@ class sql
                         $fld_name = sql::FLD_LOG_FIELD_PREFIX . $chg_add_fld;
                     }
                     if ($fld_name == change::FLD_OLD_VALUE) {
-                        $fld_name = $chg_add_fld;
+                        if ($par_name != '') {
+                            $fld_name = $par_name;
+                        } else {
+                            $fld_name = $chg_add_fld;
+                        }
                         if (!$delete_part) {
                             $fld_name = $fld_name . change::FLD_OLD_EXT;
                         }
                     }
                     if ($fld_name == change::FLD_NEW_VALUE) {
-                        $fld_name = $chg_add_fld;
+                        if ($par_name != '') {
+                            $fld_name = $par_name;
+                        } else {
+                            $fld_name = $chg_add_fld;
+                        }
+                    }
+                    if ($fld_name == change::FLD_OLD_ID) {
+                        $fld_name = $chg_add_fld . change::FLD_OLD_EXT;
                     }
                     if ($fld_name == change::FLD_ROW_ID
                         and $val_tbl != ''
@@ -1144,10 +1163,14 @@ class sql
                                 }
                             }
                         } else {
-                            if ($par != '') {
+                            if ($par != '' and !$usr_tbl) {
                                 $fld_name = $par;
                             } else {
-                                $fld_name = sql::PAR_PREFIX . $fld_name;
+                                if (($fld_name == change::FLD_OLD_ID or $fld_name == change::FLD_NEW_ID) and $par_name != '') {
+                                    $fld_name = sql::PAR_PREFIX . $chg_add_fld;
+                                } else {
+                                    $fld_name = sql::PAR_PREFIX . $fld_name;
+                                }
                             }
                         }
                     }
@@ -1170,7 +1193,7 @@ class sql
         }
         $sql = $this->prepare_this_sql($sql_type);
         if ($sc_par_lst->and_log()) {
-            $sql = $this->prepare_this_sql(self::FUNCTION);
+            $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst);
             return $this->end_sql($sql, $sql_type);
         } else {
             $sql = $this->prepare_this_sql(self::INSERT);
@@ -1238,7 +1261,11 @@ class sql
         foreach ($fvt_lst->lst as $fvt) {
             $fld = $fvt->name;
             $val = $fvt->value;
-            $typ = $fvt->type;
+            if ($fvt->type_id != null) {
+                $typ = $fvt->type_id;
+            } else {
+                $typ = $fvt->type;
+            }
             if ($val != sql::NOW) {
                 if ($typ != '') {
                     $this->par_types[] = $typ;
@@ -1411,11 +1438,17 @@ class sql
             $log->set_table_by_class($class);
             $log->set_field($fld);
             $log->new_value = $fvt_lst->get_value($fld);
+            if ($fvt_lst->get_id($fld) != null) {
+                $log->new_id = $fvt_lst->get_id($fld);
+            }
             $log->old_value = $fvt_lst->get_old($fld);
+            if ($fvt_lst->get_old_id($fld) != null) {
+                $log->old_id = $fvt_lst->get_old_id($fld);
+            }
 
             // create the sql for the log entry
             $qp_log = $log->sql_insert(
-                $sc_log, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_fld_new);
+                $sc_log, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_fld_new, $fvt_lst->get_par_name($fld));
 
             // add the fields used to the list
             // maybe later get the fields used in the change log sql from the sql
@@ -1432,15 +1465,37 @@ class sql
                 sql::FLD_LOG_FIELD_PREFIX . $fld,
                 $fvt_lst->get_value(sql::FLD_LOG_FIELD_PREFIX . $fld),
                 sql_par_type::INT_SMALL);
-            $par_lst_out->add_field(
-                $fld,
-                $fvt_lst->get_value($fld),
-                $fvt_lst->get_type($fld));
-            if ($usr_tbl) {
+            if ($fvt_lst->get_old($fld) != null) {
+                if ($fvt_lst->get_old_id($fld) != null) {
+                    $par_lst_out->add_field(
+                        $fvt_lst->get_par_name($fld) . change::FLD_OLD_EXT,
+                        $fvt_lst->get_old($fld),
+                        $fvt_lst->get_type($fld));
+                    $par_lst_out->add_field(
+                        $fld . change::FLD_OLD_EXT,
+                        $fvt_lst->get_old_id($fld),
+                        $fvt_lst->get_type_id($fld));
+                } else {
+                    $par_lst_out->add_field(
+                        $fld . change::FLD_OLD_EXT,
+                        $fvt_lst->get_old($fld),
+                        $fvt_lst->get_type($fld));
+                }
+            }
+            if ($fvt_lst->get_id($fld) != null) {
                 $par_lst_out->add_field(
-                    $id_field,
-                    $fvt_lst->get_value($id_field),
-                    $fvt_lst->get_type($id_field));
+                    $fvt_lst->get_par_name($fld),
+                    $fvt_lst->get_value($fld),
+                    $fvt_lst->get_type($fld));
+                $par_lst_out->add_field(
+                    $fld,
+                    $fvt_lst->get_id($fld),
+                    $fvt_lst->get_type_id($fld));
+            } else {
+                $par_lst_out->add($fvt_lst->get($fld));
+            }
+            if ($usr_tbl) {
+                $par_lst_out->add($fvt_lst->get($id_field));
             }
         }
 
@@ -1455,6 +1510,7 @@ class sql
      * @param sandbox|sandbox_link|sandbox_link_typed $sbx the name of the calling class use for the query names
      * @param user $usr
      * @param sql_par_field_list $fvt_lst
+     * @param sql_type_list $sc_par_lst
      * @return sql_par
      */
     function sql_func_log_link(
@@ -1474,6 +1530,72 @@ class sql
         }
         $log->new_to_id = $sbx->to_id();
         $log->new_text_to = $sbx->to_name();
+
+        // set the parameters for the log sql statement creation
+        $sc_log = clone $this;
+        $sc_par_lst->add(sql_type::VALUE_SELECT);
+        $sc_par_lst->add(sql_type::SELECT_FOR_INSERT);
+        $sc_par_lst->add(sql_type::INSERT_PART);
+
+        // create the sql for the log entry
+        $qp = $log->sql_insert(
+            $sc_log, $sc_par_lst, $sbx);
+
+        $par_lst_out = new sql_par_field_list();
+        $par_lst_out->add_field(
+            user::FLD_ID,
+            $fvt_lst->get_value(user::FLD_ID),
+            sql_par_type::INT);
+        $par_lst_out->add_field(
+            change_action::FLD_ID,
+            $fvt_lst->get_value(change_action::FLD_ID),
+            sql_par_type::INT_SMALL);
+        $par_lst_out->add_field(
+            change_table::FLD_ID,
+            $fvt_lst->get_value(change_table::FLD_ID),
+            sql_par_type::INT_SMALL);
+        $qp->par_fld_lst = $par_lst_out;
+
+        return $qp;
+    }
+
+    /**
+     * create the sql function part to log adding a link
+     * @param sandbox|sandbox_link|sandbox_link_typed $sbx the name of the calling class use for the query names
+     * @param user $usr
+     * @param sql_par_field_list $fvt_lst
+     * @param sql_type_list $sc_par_lst
+     * @return sql_par
+     */
+    function sql_func_log_user_link(
+        sandbox|sandbox_link|sandbox_link_typed $sbx,
+        user                                    $usr,
+        sql_par_field_list                      $fvt_lst,
+        sql_type_list                           $sc_par_lst
+    ): sql_par
+    {
+        $log = new change_link($usr);
+        $log->set_table_by_class($sbx::class);
+        $log->old_from_id = $sbx->from_id();
+        $log->new_from_id = 0;
+        $log->old_text_from = $sbx->from_name();
+        $log->new_text_from = '';
+        if ($sbx::class == sandbox_link_typed::class) {
+            $log->old_link_id = $sbx->type_id();
+            $log->new_link_id = 0;
+            $log->old_text_link = $sbx->type_name();
+            $log->new_text_link = '';
+        }
+        if ($sbx::class == triple::class) {
+            $log->old_link_id = $sbx->verb_id();
+            $log->new_link_id = 0;
+            $log->old_text_link = $sbx->verb_name();
+            $log->new_text_link = '';
+        }
+        $log->old_to_id = $sbx->to_id();
+        $log->new_to_id = 0;
+        $log->old_text_to = $sbx->to_name();
+        $log->new_text_to = '';
 
         // set the parameters for the log sql statement creation
         $sc_log = clone $this;

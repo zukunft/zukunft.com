@@ -7,6 +7,7 @@ CREATE OR REPLACE FUNCTION component_insert_log_011110000000000
      _field_id_description       smallint,
      _description                text,
      _field_id_component_type_id smallint,
+     _type_name                  text,
      _component_type_id          smallint) RETURNS bigint AS
 $$
 DECLARE new_component_id bigint;
@@ -25,8 +26,8 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,  row_id)
          SELECT          _user_id,_change_action_id,_field_id_description,_description,new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,        row_id)
-         SELECT          _user_id,_change_action_id,_field_id_component_type_id,_component_type_id,new_component_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value,  new_id,           row_id)
+         SELECT          _user_id,_change_action_id,_field_id_component_type_id,_type_name, _component_type_id,new_component_id ;
 
     UPDATE components
        SET user_id           = _user_id,
@@ -40,9 +41,9 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE component_insert_log_011110000000000_call
-    (text, bigint, smallint, smallint, smallint, smallint, text, smallint, smallint) AS
+    (text, bigint, smallint, smallint, smallint, smallint, text, smallint, text, smallint) AS
 SELECT component_insert_log_011110000000000
-    ($1,$2, $3, $4, $5, $6, $7, $8, $9);
+    ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10);
 
 SELECT component_insert_log_011110000000000 (
                'Word'::text,
@@ -53,4 +54,5 @@ SELECT component_insert_log_011110000000000 (
                52::smallint,
                'simply show the word name'::text,
                53::smallint,
+               'phrase_name'::text,
                8::smallint);

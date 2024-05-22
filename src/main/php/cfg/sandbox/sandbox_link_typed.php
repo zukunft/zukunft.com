@@ -192,11 +192,13 @@ class sandbox_link_typed extends sandbox_link_named
                     change::FLD_FIELD_ID_SQLTYP
                 );
             }
-            $lst->add_field(
+            global $phrase_types;
+            $lst->add_type_field(
                 phrase::FLD_TYPE,
+                phrase::FLD_TYPE_NAME,
                 $this->type_id(),
-                phrase::FLD_TYPE_SQLTYP,
-                $sbx->type_id()
+                $sbx->type_id(),
+                $phrase_types
             );
         }
         return $lst;

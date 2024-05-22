@@ -474,6 +474,16 @@ class sandbox extends db_object_seq_id_user
         return '';
     }
 
+    /**
+     * dummy function for the link objects
+     * that should always be overwritten by the child object
+     * @return string e.g. verb_name for triples
+     */
+    function type_name_field(): string
+    {
+        return verb::FLD_NAME;
+    }
+
 
     /*
      * cast
@@ -1543,54 +1553,73 @@ class sandbox extends db_object_seq_id_user
     /**
      * save all updated fields with one sql function
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param sandbox $db_rec the database record before the saving
-     * @param sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param sandbox $db_obj the database record before the saving
+     * @param sandbox $norm_obj the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
-    function save_fields_func(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
+    function save_fields_func(sql_db $db_con, sandbox $db_obj, sandbox $norm_obj): string
     {
-        $lib = new library();
-        $obj_name = $lib->class_to_name($this::class);
+        // always return a user message and if everything is fine, it is just empty
+        $usr_msg = new user_message();
+        // the sql creator is used more than once, so create it upfront
         $sc = $db_con->sql_creator();
         $sc_par_lst = new sql_type_list([sql_type::LOG]);
         $all_fields = $this->db_fields_all();
-        // check the diff against standard
-        $usr_fvt_lst = $this->db_fields_changed($std_rec, $sc_par_lst);
-        $usr_msg = new user_message();
-        if (!$usr_fvt_lst->is_empty_except_user_action()) {
-            // if the user is owner of the standard ...
-            if ($this->user_id() == $std_rec->user_id()) {
-                // ... update the standard
-                $sc_par_lst->add(sql_type::UPDATE);
-                $qp = $this->sql_update_named($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
-                $usr_msg = $db_con->update($qp, 'update user ' . $obj_name);
-                // TODO maybe check of other user have used the object and if yes keep or inform
+        // get the object name for the log messages
+        $lib = new library();
+        $obj_name = $lib->class_to_name($this::class);
+
+        // if the user is allowed to change the norm row e.g. because no other user has used it, change the norm row directly
+        if ($this->can_change()) {
+            // if there is no difference between the user row and the norm row remove all fields from the user row
+            if ($this->no_diff($norm_obj)) {
+                if ($this->has_usr_cfg()) {
+                    $qp = $this->sql_delete($sc, new sql_type_list([sql_type::USER]));
+                    $usr_msg->add($db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id()));
+                }
             } else {
-                if (!$this->has_usr_cfg()) {
-                    $sc_par_lst->add(sql_type::INSERT);
-                    $sc_par_lst->add(sql_type::USER);
-                    $qp = $this->sql_insert_switch($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
-                    $usr_msg = $db_con->insert($qp, 'add user ' . $obj_name);
-                } else {
+                // apply the changes directly to the norm db record
+                // TODO maybe check of other user have used the object and if yes keep or inform
+                $fvt_lst = $this->db_fields_changed($db_obj, $sc_par_lst);
+                if (!$fvt_lst->is_empty_except_user_action()) {
                     $sc_par_lst->add(sql_type::UPDATE);
-                    $sc_par_lst->add(sql_type::USER);
-                    $qp = $this->sql_update_named($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
-                    $usr_msg = $db_con->update($qp, 'update user ' . $obj_name);
+                    $qp = $this->sql_update_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
+                    $usr_msg->add($db_con->update($qp, 'update ' . $obj_name . $this->dsp_id()));
+                    if ($this->has_usr_cfg()) {
+                        $sc_par_lst->add(sql_type::USER);
+                        $qp = $this->sql_delete($sc, $sc_par_lst);
+                        $usr_msg->add($db_con->delete($qp, 'del user ' . $obj_name));
+                    }
                 }
             }
+            if ($usr_msg->is_ok()) {
+                // check if some user overwrites can be removed
+                $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
+            }
         } else {
-            $fvt_lst = $this->db_fields_changed($db_rec, $sc_par_lst);
-            if (!$fvt_lst->is_empty_except_user_action()) {
-                $sc_par_lst->add(sql_type::UPDATE);
-                $qp = $this->sql_update_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
-                $usr_msg = $db_con->update($qp, 'update ' . $obj_name);
-                if ($this->has_usr_cfg()) {
-                    $sc_par_lst->add(sql_type::USER);
-                    $qp = $this->sql_delete($sc, $sc_par_lst);
-                    $usr_msg = $db_con->delete($qp, 'del user ' . $obj_name);
+            $sc_par_lst->add(sql_type::USER);
+            if ($this->has_usr_cfg()) {
+                if ($this->no_diff($norm_obj)) {
+                    $qp = $this->sql_delete($sc, new sql_type_list([sql_type::USER]));
+                    $usr_msg->add($db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id()));
+                } else {
+                    $sc_par_lst->add(sql_type::UPDATE);
+                    $fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst);
+                    $qp = $this->sql_update_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
+                    $usr_msg->add($db_con->update($qp, 'update user ' . $obj_name));
+                }
+            } else {
+                if (!$this->no_diff($norm_obj)) {
+                    $sc_par_lst->add(sql_type::INSERT);
+                    $sc_par_lst->add(sql_type::NO_ID_RETURN);
+                    // recreate the field list to include the id for the user table
+                    $fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst);
+                    $qp = $this->sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
+                    $usr_msg->add($db_con->insert($qp, 'add user ' . $obj_name, true));
                 }
             }
         }
+
         $result = $usr_msg->get_last_message();
         log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
@@ -1715,7 +1744,14 @@ class sandbox extends db_object_seq_id_user
      */
     function no_diff(sandbox|sandbox_named|sandbox_link $db_obj): bool
     {
-        return $this->db_fields_changed($db_obj)->is_empty();
+        // for the check it is not relevant if only the user differs
+        $chk_obj = clone $this;
+        $chk_obj->set_user($db_obj->user());
+        // if this object does not yet have a db key ignore this
+        if ($chk_obj->id() == 0) {
+            $chk_obj->set_id($db_obj->id());
+        }
+        return $chk_obj->db_fields_changed($db_obj)->is_empty();
     }
 
     /**
@@ -2281,8 +2317,8 @@ class sandbox extends db_object_seq_id_user
                         // TODO activate when the prepared SQL is ready to use
                         //if (!$this->sql_write_prepared()) {
                         if ($use_func) {
-                            //$result .= $this->save_fields_func($db_con, $db_rec, $std_rec);
-                            $result .= $this->save_fields($db_con, $db_rec, $std_rec);
+                            $result .= $this->save_fields_func($db_con, $db_rec, $std_rec);
+                            //$result .= $this->save_fields($db_con, $db_rec, $std_rec);
                         } else {
                             $result .= $this->save_fields($db_con, $db_rec, $std_rec);
                         }
@@ -2435,7 +2471,7 @@ class sandbox extends db_object_seq_id_user
      * TODO check if all have deleted the object
      *      does not remove the user excluding if no one else is using it
      */
-    function del(): user_message
+    function del(?bool $use_func = null): user_message
     {
         log_debug($this->dsp_id());
         $lib = new library();
@@ -2444,6 +2480,11 @@ class sandbox extends db_object_seq_id_user
         global $db_con;
         $result = new user_message();
         $msg = '';
+
+        // decide which db write method should be used
+        if ($use_func === null) {
+            $use_func = $this->sql_default_script_usage();
+        }
 
         // refresh the object with the database to include all updates utils now (TODO start of lock for commit here)
         // TODO it seems that the owner is not updated
@@ -2533,7 +2574,11 @@ class sandbox extends db_object_seq_id_user
                         }
                         if ($msg == '') {
                             log_debug('loaded standard ' . $std_rec->dsp_id());
-                            $msg .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+                            if ($use_func) {
+                                $msg .= $this->save_fields_func($db_con, $db_rec, $std_rec);
+                            } else {
+                                $msg .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+                            }
                         }
                     }
                 }
@@ -2879,7 +2924,7 @@ class sandbox extends db_object_seq_id_user
         $qp_func->par = $fvt_lst_out->values();
 
         // merge all together and create the function
-        $qp->sql = $qp_func->sql . $sql . ';';
+        $qp->sql = $qp_func->sql . ' ' . $sql . ';';
 
         // create the function call
         $qp->call_sql = ' ' . sql::SELECT . ' ' . $qp_func->name . ' (';
@@ -3091,9 +3136,17 @@ class sandbox extends db_object_seq_id_user
             $sc_par_lst->add(sql_type::NAMED_PAR);
             $qp = $this->sql_insert_with_log($sc, $qp, $fvt_lst, $fld_lst_all, $sc_par_lst);
         } else {
+            // TODO remove this exception e.g. by adding the $sc_par_lst to the call
+            if ($this::class == triple::class) {
+                if ($sc_par_lst->is_usr_tbl()) {
+                    $fvt_lst->del($this->from_field());
+                    $fvt_lst->del(verb::FLD_ID);
+                    $fvt_lst->del($this->to_field());
+                }
+            }
             // add the child object specific fields and values
             $qp->sql = $sc->create_sql_insert($fvt_lst);
-            $qp->par = $fvt_lst->values();
+            $qp->par = $fvt_lst->db_values();
         }
 
         return $qp;
@@ -3131,6 +3184,7 @@ class sandbox extends db_object_seq_id_user
             type_object::FLD_ID_SQLTYP
         );
         if ($this->is_link_obj()) {
+            // TODO add the linked objects with names to the log entry
             global $change_table_list;
             $lib = new library();
             $fvt_lst->add_field(
@@ -3180,17 +3234,29 @@ class sandbox extends db_object_seq_id_user
             $fld_lst_ex_log_and_key = array_merge([$qp_id->par_fld->name], $fld_lst_ex_log);
         }
 
-        if ($this->is_link_obj() and !$usr_tbl) {
-
-            // create the log entry for the link
-            $qp_log_lnk = $sc->sql_func_log_link($this, $this->user(), $fvt_lst, $sc_par_lst_log);
+        // create the log entry for the link
+        if ($this->is_link_obj() and (!$usr_tbl or $fvt_lst->has_name(sandbox::FLD_EXCLUDED))) {
+            if ($usr_tbl) {
+                $qp_log_lnk = $sc->sql_func_log_user_link($this, $this->user(), $fvt_lst, $sc_par_lst_log);
+            } else {
+                $qp_log_lnk = $sc->sql_func_log_link($this, $this->user(), $fvt_lst, $sc_par_lst_log);
+            }
             $sql .= ' ' . $qp_log_lnk->sql . ';';
             $par_lst_out->add_list($qp_log_lnk->par_fld_lst);
 
-            $par_lst_out->add_list($this->sql_key_fields_text());
-
+            if ($usr_tbl) {
+                $par_lst_out->add_list($this->sql_key_fields_text_old($fvt_lst));
+            }
+            $par_lst_out->add_list($this->sql_key_fields_text($fvt_lst));
+            if ($usr_tbl) {
+                $par_lst_out->add_list($this->sql_key_fields_id_old($fvt_lst));
+                $par_lst_out->add_list($this->sql_key_fields_id($fvt_lst));
+                $fld_lst_ex_log = array_diff($fld_lst_ex_log, [$this->type_field()]);
+                $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->type_field()]);
+            } else {
             // remove the link fields from the field list for the log entries, because the log is done with the log_link already
-            $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, $qp_id->par_fld_lst->names());
+                $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, $qp_id->par_fld_lst->names());
+            }
         }
 
         // create the query parameters for the log entries for the single fields
@@ -3202,6 +3268,10 @@ class sandbox extends db_object_seq_id_user
         if ($usr_tbl) {
             // insert a new row in the user table
             $fld_lst_ex_log_and_key = array_merge([$this->id_field(), user::FLD_ID], $fld_lst_ex_log);
+            // TODO remove this exception e.g. by adding the $sc_par_lst to the call
+            if ($this::class == triple::class) {
+                $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), verb::FLD_ID, $this->to_field()]);
+            }
             $fvt_lst_ex_log_and_key = $fvt_lst->get_intersect($fld_lst_ex_log_and_key);
             $sc_insert = clone $sc;
             $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub);
@@ -3211,18 +3281,9 @@ class sandbox extends db_object_seq_id_user
             $sql .= ' ' . $qp_insert->sql . ';';
         } else {
             // update the fields excluding the unique id
-            $update_fields = array_values($fld_lst_ex_log);
-            $update_values = [];
+            $update_fvt_lst = new sql_par_field_list();
             foreach ($fld_lst_ex_log as $fld) {
-                $update_values[] = $fvt_lst->get_value($fld);
-            }
-            $update_types = [];
-            foreach ($update_values as $val) {
-                $update_types[] = $sc->get_sql_par_type($val);
-            }
-            $update_fld_val_typ_lst = [];
-            foreach ($update_fields as $key => $field) {
-                $update_fld_val_typ_lst[] = [$field, $update_values[$key], $update_types[$key]];
+                $update_fvt_lst->add($fvt_lst->get($fld));
             }
             $sc_update = clone $sc;
             $sc_par_lst_upd = $sc_par_lst;
@@ -3230,8 +3291,6 @@ class sandbox extends db_object_seq_id_user
             $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
             $sc_par_lst_upd_ex_log->add(sql_type::SUB);
             $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);;
-            $update_fvt_lst = new sql_par_field_list();
-            $update_fvt_lst->set($update_fld_val_typ_lst);
             if ($this->is_link_obj()) {
                 $update_fvt_lst->del($this->from_field());
                 $update_fvt_lst->del($this->type_field());
@@ -3433,7 +3492,13 @@ class sandbox extends db_object_seq_id_user
             $log->set_table_by_class($this::class);
             $log->set_field($fld->name);
             $log->old_value = $fvt_lst->get_old($fld->name);
+            if ($fvt_lst->get_old_id($fld->name) != null or $fvt_lst->get_id($fld->name) != null) {
+                $log->old_id = $fvt_lst->get_old_id($fld->name);
+            }
             $log->new_value = $fld->value;
+            if ($fvt_lst->get_old_id($fld->name) != null or $fvt_lst->get_id($fld->name) != null) {
+                $log->new_id = $fvt_lst->get_id($fld->name);
+            }
             // make sure that also overwrites are added to the log
             if ($log->old_value != null or $log->new_value != null) {
                 if ($log->old_value == null) {
@@ -3452,7 +3517,7 @@ class sandbox extends db_object_seq_id_user
             $sc_par_lst_log->add(sql_type::SELECT_FOR_INSERT);
             // TODO replace dummy value table with an enum value
             $qp_log = $log->sql_insert(
-                $sc_log, $sc_par_lst_log, $ext . '_' . $fld->name, '', $fld->name, $id_val);
+                $sc_log, $sc_par_lst_log, $ext . '_' . $fld->name, '', $fld->name, $id_val, $fvt_lst->get_par_name($fld->name));
 
             // TODO get the fields used in the change log sql from the sql
             $func_body_change .= ' ' . $qp_log->sql . ';';
@@ -3480,16 +3545,38 @@ class sandbox extends db_object_seq_id_user
                 sql_par_type::INT_SMALL);
 
             // add the db field value of the field actually changed if needed
-            $par_lst_out->add_field(
-                $fld->name . change::FLD_OLD_EXT,
-                $fvt_lst->get_old($fld->name),
-                $fvt_lst->get_type($fld->name));
+            if ($fvt_lst->get_old_id($fld->name) != null or $fvt_lst->get_id($fld->name) != null) {
+                $par_lst_out->add_field(
+                    $fvt_lst->get_par_name($fld->name) . change::FLD_OLD_EXT,
+                    $fvt_lst->get_old($fld->name),
+                    $fvt_lst->get_type($fld->name));
+                $par_lst_out->add_field(
+                    $fld->name . change::FLD_OLD_EXT,
+                    $fvt_lst->get_old_id($fld->name),
+                    $fvt_lst->get_type_id($fld->name));
+            } else {
+                $par_lst_out->add_field(
+                    $fld->name . change::FLD_OLD_EXT,
+                    $fvt_lst->get_old($fld->name),
+                    $fvt_lst->get_type($fld->name));
+            }
 
             // add the field value of the field actually changed if needed
-            $par_lst_out->add_field(
-                $fld->name,
-                $fvt_lst->get_value($fld->name),
-                $fvt_lst->get_type($fld->name));
+            if ($fvt_lst->get_old_id($fld->name) != null or $fvt_lst->get_id($fld->name) != null) {
+                $par_lst_out->add_field(
+                    $fvt_lst->get_par_name($fld->name),
+                    $fvt_lst->get_value($fld->name),
+                    $fvt_lst->get_type($fld->name));
+                $par_lst_out->add_field(
+                    $fld->name,
+                    $fvt_lst->get_id($fld->name),
+                    $fvt_lst->get_type_id($fld->name));
+            } else {
+                $par_lst_out->add_field(
+                    $fld->name,
+                    $fvt_lst->get_value($fld->name),
+                    $fvt_lst->get_type($fld->name));
+            }
 
             // add the row id of the standard table for user overwrites
             $log_id = $fvt_lst->get_value($id_fld);
@@ -3504,16 +3591,9 @@ class sandbox extends db_object_seq_id_user
         $sql .= ' ' . $func_body_change;
 
         // update the fields excluding the unique id
-        $update_fields = array_values($fld_lst_chg);
-        $update_values = [];
-        $update_types = [];
+        $update_fvt_lst = new sql_par_field_list();
         foreach ($fld_lst_chg as $fld) {
-            $update_values[] = $fvt_lst->get_value($fld);
-            $update_types[] = $fvt_lst->get_type($fld);
-        }
-        $update_fld_val_typ_lst = [];
-        foreach ($update_fields as $key => $field) {
-            $update_fld_val_typ_lst[] = [$field, $update_values[$key], $update_types[$key]];
+            $update_fvt_lst->add($fvt_lst->get($fld));
         }
         $sc_update = clone $sc;
         $sc_par_lst_upd = new sql_type_list([sql_type::NAMED_PAR, sql_type::UPDATE, sql_type::UPDATE_PART]);
@@ -3522,8 +3602,6 @@ class sandbox extends db_object_seq_id_user
             $sc_par_lst_upd_ex_log->add(sql_type::USER);
         }
         $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);;
-        $update_fvt_lst = new sql_par_field_list();
-        $update_fvt_lst->set($update_fld_val_typ_lst);
         if ($usr_tbl) {
             $sc_par_lst_upd->add(sql_type::USER);
         }
@@ -3576,7 +3654,24 @@ class sandbox extends db_object_seq_id_user
      * dummy function which is overwritten by the sandbox link class
      * @return sql_par_field_list with the text values of the linked items for the log
      */
-    function sql_key_fields_text(): sql_par_field_list
+    function sql_key_fields_text(sql_par_field_list $fvt_lst): sql_par_field_list
+    {
+        return new sql_par_field_list();
+    }
+    function sql_key_fields_text_old(sql_par_field_list $fvt_lst): sql_par_field_list
+    {
+        return new sql_par_field_list();
+    }
+
+    /**
+     * dummy function which is overwritten by the sandbox link class
+     * @return sql_par_field_list with the text values of the linked items for the log
+     */
+    function sql_key_fields_id(sql_par_field_list $fvt_lst): sql_par_field_list
+    {
+        return new sql_par_field_list();
+    }
+    function sql_key_fields_id_old(sql_par_field_list $fvt_lst): sql_par_field_list
     {
         return new sql_par_field_list();
     }

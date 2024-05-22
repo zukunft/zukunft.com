@@ -276,6 +276,7 @@ class change extends change_log
         if ($field_id != null) {
             $sc->add_where(change::FLD_ROW_ID, $row_id);
         }
+        // TODO check!
         //$fields[] = user::FLD_ID;
         $sc->set_page();
         $qp->sql = $sc->sql();
@@ -479,6 +480,7 @@ class change extends change_log
      * @param string $val_tbl name of the table to select the values to insert
      * @param string $add_fld name of the database key field
      * @param string $row_fld name of the database id field
+     * @param string $par_name name of the database name parameter field
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert(
@@ -487,7 +489,8 @@ class change extends change_log
         string        $ext = '',
         string        $val_tbl = '',
         string        $add_fld = '',
-        string        $row_fld = ''
+        string        $row_fld = '',
+        string        $par_name = ''
     ): sql_par
     {
         $sc_par_lst->add(sql_type::INSERT);
@@ -501,7 +504,7 @@ class change extends change_log
         }
         $sc->set_name($qp->name);
         $qp->sql = $sc->create_sql_insert(
-            $this->db_field_values_types($sc), $sc_par_lst, true, $val_tbl, $add_fld, $row_fld);
+            $this->db_field_values_types($sc, $sc_par_lst), $sc_par_lst, true, $val_tbl, $add_fld, $row_fld, '', $par_name);
         $qp->par = $this->db_values();
 
         return $qp;
@@ -518,24 +521,24 @@ class change extends change_log
      *
      * @return sql_par_field_list list of the database field names
      */
-    function db_field_values_types(sql $sc): sql_par_field_list
+    function db_field_values_types(sql $sc, sql_type_list $sc_par_lst): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
         $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQLTYP);
         $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQLTYP);
         $fvt_lst->add_field(change_field::FLD_ID, $this->field_id, type_object::FLD_ID_SQLTYP);
 
-        if ($this->old_value !== null) {
+        if ($this->old_value !== null or ($sc_par_lst->is_update_part() and $this->new_value !== null)) {
             $fvt_lst->add_field(self::FLD_OLD_VALUE, $this->old_value, $sc->get_sql_par_type($this->old_value));
         }
-        if ($this->new_value !== null) {
+        if ($this->new_value !== null or ($sc_par_lst->is_update_part() and $this->old_value !== null)) {
             $fvt_lst->add_field(self::FLD_NEW_VALUE, $this->new_value, $sc->get_sql_par_type($this->new_value));
         }
 
-        if ($this->old_id > 0) {
+        if ($this->old_id > 0 or ($sc_par_lst->is_update_part() and $this->new_id > 0)) {
             $fvt_lst->add_field(self::FLD_OLD_ID, $this->old_id, sql_par_type::INT);
         }
-        if ($this->new_id > 0) {
+        if ($this->new_id > 0 or ($sc_par_lst->is_update_part() and $this->old_id > 0)) {
             $fvt_lst->add_field(self::FLD_NEW_ID, $this->new_id, sql_par_type::INT);
         }
 

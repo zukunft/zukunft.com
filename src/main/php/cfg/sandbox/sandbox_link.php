@@ -134,6 +134,15 @@ class sandbox_link extends sandbox
     }
 
     /**
+     * dummy to be overwriten by the child object
+     * @return int|null the id of the linked object
+     */
+    function type_id(): ?int
+    {
+        return 0;
+    }
+
+    /**
      * @return string the name of the linked object
      */
     function from_name(): string
@@ -695,15 +704,15 @@ class sandbox_link extends sandbox
 
         // list of parameters actually used in order of the function usage
         $sql = '';
-        $fvt_insert_from = $fvt_lst->get($this->from_field());
-        $fvt_insert_type = $fvt_lst->get($this->type_field());
-        $fvt_insert_to = $fvt_lst->get($this->to_field());
+        $fvt_from = $fvt_lst->get($this->from_field());
+        $fvt_type = $fvt_lst->get($this->type_field());
+        $fvt_to = $fvt_lst->get($this->to_field());
 
         // create the sql to insert the row
         $fvt_insert_list = new sql_par_field_list();
-        $fvt_insert_list->add($fvt_insert_from);
-        $fvt_insert_list->add($fvt_insert_type);
-        $fvt_insert_list->add($fvt_insert_to);
+        $fvt_insert_list->add_field($fvt_from->name, $fvt_from->id, $fvt_from->type_id, $fvt_from->old);
+        $fvt_insert_list->add_field($fvt_type->name, $fvt_type->id, $fvt_type->type_id, $fvt_type->old);
+        $fvt_insert_list->add_field($fvt_to->name, $fvt_to->id, $fvt_to->type_id, $fvt_to->old);
         $sc_insert = clone $sc;
         $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);;
         $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
@@ -712,7 +721,7 @@ class sandbox_link extends sandbox
         }
         $qp_insert->sql = $sc_insert->create_sql_insert(
             $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
-        $qp_insert->par = [$fvt_insert_from->value, $fvt_insert_type->value, $fvt_insert_to->value];
+        $qp_insert->par = [$fvt_from->value, $fvt_type->value, $fvt_to->value];
 
         // add the insert row to the function body
         $sql .= ' ' . $qp_insert->sql . '; ';
@@ -721,6 +730,11 @@ class sandbox_link extends sandbox
         if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
             $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
         }
+
+        //$fvt_split_list = new sql_par_field_list();
+        //$fvt_split_list->add_with_split($fvt_from);
+        //$fvt_split_list->add_with_split($fvt_type);
+        //$fvt_split_list->add_with_split($fvt_to);
 
         $qp->sql = $sql;
         $qp->par_fld_lst = $fvt_insert_list;
@@ -731,25 +745,119 @@ class sandbox_link extends sandbox
     /**
      * @return sql_par_field_list with the text values of the linked items for the log
      */
-    function sql_key_fields_text(): sql_par_field_list
+    function sql_key_fields_text(sql_par_field_list $fvt_lst): sql_par_field_list
     {
-        $fvt_lst = new sql_par_field_list();
-        $fvt_lst->add_field(
+        $fvt_lst_out = new sql_par_field_list();
+        $from_name = $fvt_lst->get_value($this->from_field());
+        $type_name = $fvt_lst->get_value($this->type_field());
+        $to_name = $fvt_lst->get_value($this->to_field());
+        if ($this->is_excluded()) {
+            $from_name = null;
+            $type_name = null;
+            $to_name = null;
+        }
+        $fvt_lst_out->add_field(
             change_link::FLD_NEW_FROM_TEXT,
-            $this->from_name(),
+            $from_name,
             sql_field_type::NAME
         );
-        $fvt_lst->add_field(
+        $fvt_lst_out->add_field(
             change_link::FLD_NEW_LINK_TEXT,
-            $this->type_name(),
+            $type_name,
             sql_field_type::NAME
         );
-        $fvt_lst->add_field(
+        $fvt_lst_out->add_field(
             change_link::FLD_NEW_TO_TEXT,
-            $this->to_name(),
+            $to_name,
             sql_field_type::NAME
         );
-        return $fvt_lst;
+        return $fvt_lst_out;
+    }
+
+    /**
+     * @return sql_par_field_list with the text values of the linked items for the log
+     */
+    function sql_key_fields_text_old(sql_par_field_list $fvt_lst): sql_par_field_list
+    {
+        $fvt_lst_out = new sql_par_field_list();
+        $from_name = $fvt_lst->get_old($this->from_field());
+        $type_name = $fvt_lst->get_old($this->type_field());
+        $to_name = $fvt_lst->get_old($this->to_field());
+        $fvt_lst_out->add_field(
+            change_link::FLD_OLD_FROM_TEXT,
+            $from_name,
+            sql_field_type::NAME
+        );
+        $fvt_lst_out->add_field(
+            change_link::FLD_OLD_LINK_TEXT,
+            $type_name,
+            sql_field_type::NAME
+        );
+        $fvt_lst_out->add_field(
+            change_link::FLD_OLD_TO_TEXT,
+            $to_name,
+            sql_field_type::NAME
+        );
+        return $fvt_lst_out;
+    }
+
+    /**
+     * @return sql_par_field_list with the text values of the linked items for the log
+     */
+    function sql_key_fields_id(sql_par_field_list $fvt_lst): sql_par_field_list
+    {
+        $fvt_lst_out = new sql_par_field_list();
+        $from_id = $fvt_lst->get_id($this->from_field());
+        $type_id = $fvt_lst->get_id($this->type_field());
+        $to_id = $fvt_lst->get_id($this->to_field());
+        if ($this->is_excluded()) {
+            $from_id = null;
+            $type_id = null;
+            $to_id = null;
+        }
+        $fvt_lst_out->add_field(
+            change_link::FLD_NEW_FROM_ID,
+            $from_id,
+            sql_field_type::INT
+        );
+        $fvt_lst_out->add_field(
+            change_link::FLD_NEW_LINK_ID,
+            $type_id,
+            sql_field_type::INT_SMALL
+        );
+        $fvt_lst_out->add_field(
+            change_link::FLD_NEW_TO_ID,
+            $to_id,
+            sql_field_type::INT
+        );
+        return $fvt_lst_out;
+    }
+
+    /**
+     * @return sql_par_field_list with the text values of the linked items for the log
+     */
+    function sql_key_fields_id_old(sql_par_field_list $fvt_lst): sql_par_field_list
+    {
+        $fvt_lst_out = new sql_par_field_list();
+        $from_id = $fvt_lst->get_old_id($this->from_field());
+        $type_id = $fvt_lst->get_old_id($this->type_field());
+        $to_id = $fvt_lst->get_old_id($this->to_field());
+        $fvt_lst_out->add_field(
+            change_link::FLD_OLD_FROM_ID,
+            $from_id,
+            sql_field_type::INT
+        );
+        $fvt_lst_out->add_field(
+            change_link::FLD_OLD_LINK_ID,
+            $type_id,
+            sql_field_type::INT_SMALL
+        );
+        $fvt_lst_out->add_field(
+            change_link::FLD_OLD_TO_ID,
+            $to_id,
+            sql_field_type::INT
+        );
+        return $fvt_lst_out;
     }
 
 
@@ -791,7 +899,7 @@ class sandbox_link extends sandbox
      */
     function db_fields_changed(
         sandbox|sandbox_link $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list        $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
         global $change_field_list;
@@ -819,11 +927,12 @@ class sandbox_link extends sandbox
                         change::FLD_FIELD_ID_SQLTYP
                     );
                 }
-                $lst->add_field(
+                // TODO Prio 2: move "from_" to a const and or function
+                $lst->add_link_field(
                     $this->from_field(),
-                    $this->from_id(),
-                    sql_field_type::INT,
-                    $sbx->from_id()
+                    'from_' . $this->fob?->name_field(),
+                    $this->fob,
+                    $sbx->fob
                 );
             }
             if ($sbx->to_id() <> $this->to_id()) {
@@ -834,11 +943,73 @@ class sandbox_link extends sandbox
                         change::FLD_FIELD_ID_SQLTYP
                     );
                 }
-                $lst->add_field(
+                // TODO Prio 2: move "to_" to a const and or function
+                $lst->add_link_field(
                     $this->to_field(),
-                    $this->to_id(),
-                    sql_field_type::INT,
-                    $sbx->to_id()
+                    'to_' . $this->tob?->name_field(),
+                    $this->tob,
+                    $sbx->tob
+                );
+            }
+        } else {
+            // TODO check how to handle if the standard
+            if ($this->is_excluded() and !$sbx->is_excluded()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
+                        $change_field_list->id($table_id . $this->from_field()),
+                        change::FLD_FIELD_ID_SQLTYP
+                    );
+                }
+                // TODO Prio 2: move "from_" to a const and or function
+                $lst->add_link_field(
+                    $this->from_field(),
+                    'from_' . $this->fob?->name_field(),
+                    null,
+                    $sbx->fob
+                );
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
+                        $change_field_list->id($table_id . $this->to_field()),
+                        change::FLD_FIELD_ID_SQLTYP
+                    );
+                }
+                // TODO Prio 2: move "to_" to a const and or function
+                $lst->add_link_field(
+                    $this->to_field(),
+                    'to_' . $this->tob?->name_field(),
+                    null,
+                    $sbx->tob
+                );
+            } elseif (!$this->is_excluded() and $sbx->is_excluded()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
+                        $change_field_list->id($table_id . $this->from_field()),
+                        change::FLD_FIELD_ID_SQLTYP
+                    );
+                }
+                // TODO Prio 2: move "from_" to a const and or function
+                $lst->add_link_field(
+                    $this->from_field(),
+                    'from_' . $this->fob?->name_field(),
+                    $this->fob,
+                    null
+                );
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
+                        $change_field_list->id($table_id . $this->to_field()),
+                        change::FLD_FIELD_ID_SQLTYP
+                    );
+                }
+                // TODO Prio 2: move "to_" to a const and or function
+                $lst->add_link_field(
+                    $this->to_field(),
+                    'to_' . $this->tob?->name_field(),
+                    $this->tob,
+                    null
                 );
             }
         }

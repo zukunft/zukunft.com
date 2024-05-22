@@ -1935,7 +1935,7 @@ class sql_db
     {
         $result = '';
         try {
-            $sql_result = $this->exe($sql, $sql_name, $sql_array, '', $log_level);
+            $sql_result = $this->exe($sql, $sql_name, $sql_array, '', '', $log_level);
             if (!$sql_result) {
                 $result .= $msg . log::MSG_ERR;
             }
@@ -1981,7 +1981,7 @@ class sql_db
         string $sql_call = '',
         string $sql_call_name = '',
         int    $log_level = sys_log_level::ERROR
-    ): \PgSql\Result|mysqli_result
+    ): \PgSql\Result|mysqli_result|null
     {
         global $debug;
         $lib = new library();
@@ -2042,11 +2042,12 @@ class sql_db
         string $sql_call = '',
         string $sql_call_name = '',
         int    $log_level = sys_log_level::ERROR
-    ): \PgSql\Result
+    ): \PgSql\Result|null
     {
         global $debug;
 
         $result = null;
+        $trace_link = '';
 
         // check database connection
         if ($this->postgres_link == null) {
@@ -2065,16 +2066,29 @@ class sql_db
             // remove query formatting
             $sql = str_replace("\n", " ", $sql);
             if ($sql_name == '') {
-                // simply execute old queries (to be deprecated)
-                $result = pg_query($this->postgres_link, $sql);
+                // simply execute old queries
+                // TODO to be deprecated
+                try {
+                    $result = pg_query($this->postgres_link, $sql);
+                } catch (Exception $e) {
+                    $trace_link = $this->log_db_exception('execute query', $e, $sql, $log_level);
+                }
             } else {
                 // prepare the query if needed
                 if (!$this->has_query($sql_name)) {
                     if (str_starts_with($sql, sql::PREPARE)
                         or str_starts_with($sql, sql::CREATE)) {
-                        $result = pg_query($this->postgres_link, $sql);
+                        try {
+                            $result = pg_query($this->postgres_link, $sql);
+                        } catch (Exception $e) {
+                            $trace_link = $this->log_db_exception('create prepared query', $e, $sql, $log_level);
+                        }
                     } else {
-                        $result = pg_prepare($this->postgres_link, $sql_name, $sql);
+                        try {
+                            $result = pg_prepare($this->postgres_link, $sql_name, $sql);
+                        } catch (Exception $e) {
+                            $trace_link = $this->log_db_exception('prepare query', $e, $sql, $log_level);
+                        }
                     }
                     if ($result === false) {
                         throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when preparing ' . $sql);
@@ -2082,27 +2096,43 @@ class sql_db
                         $this->prepared_sql_names[] = $sql_name;
                     }
                 }
-                // execute the query
-                /*
-                $pg_array = array();
-                $pg_array[] = '{';
-                foreach ($sql_array as $item) {
-                    $pg_array[] = $item;
-                }
-                $pg_array[] = '}';
-                */
-                if ($sql_call != '') {
-                    if (!$this->has_query($sql_call)) {
-                        $result = pg_query($this->postgres_link, $sql_call);
+                // prepare the call query if needed
+                if ($sql_call_name != '') {
+                    if (!$this->has_query($sql_call_name)) {
+                        try {
+                            $result = pg_query($this->postgres_link, $sql_call);
+                        } catch (Exception $e) {
+                            $trace_link = $this->log_db_exception('create prepared call query', $e, $sql_call, $log_level);
+                        }
                         if ($result === false) {
                             throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when preparing ' . $sql);
                         } else {
-                            $this->prepared_sql_names[] = $sql_call;
+                            $this->prepared_sql_names[] = $sql_call_name;
                         }
                     }
-                    $result = pg_execute($this->postgres_link, $sql_call_name, $sql_array);
+                    // execute the query
+                    try {
+                        $result = pg_execute($this->postgres_link, $sql_call_name, $sql_array);
+                    } catch (Exception $e) {
+                        $trace_link = $this->log_db_exception('execute call name', $e, $sql_call_name, $log_level);
+                    }
                 } else {
-                    $result = pg_execute($this->postgres_link, $sql_name, $sql_array);
+                    if ($sql_call != '') {
+                        // execute a query with the given parameter
+                        // TODO to be deprecated by
+                        try {
+                            $result = pg_query($this->postgres_link, $sql_call);
+                        } catch (Exception $e) {
+                            $trace_link = $this->log_db_exception('execute query', $e, $sql_call, $log_level);
+                        }
+
+                    } else {
+                        try {
+                            $result = pg_execute($this->postgres_link, $sql_name, $sql_array);
+                        } catch (Exception $e) {
+                            $trace_link = $this->log_db_exception('execute call', $e, $sql_name, $log_level);
+                        }
+                    }
                 }
             }
             if ($result === false) {
@@ -2111,6 +2141,20 @@ class sql_db
         }
 
         return $result;
+    }
+
+    private
+    function log_db_exception(string $msg, Exception $e, string $sql = '', int $log_level = sys_log_level::ERROR): string
+    {
+        $msg .= ' ' . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage();
+        if ($log_level == sys_log_level::FATAL) {
+            log_fatal($msg, 'exe_postgres');
+            return '';
+        } else {
+            $trace_link = log_err($msg);
+            return $msg . log::MSG_ERR_INTERNAL . $trace_link;
+        }
+
     }
 
     /**
@@ -2130,7 +2174,8 @@ class sql_db
      * TODO includes the user to be able to ask the user for details how the error has been created
      * TODO with php 8 switch to the union return type resource|false
      */
-    private function exe_mysql(
+    private
+    function exe_mysql(
         string $sql,
         string $sql_name = '',
         array  $sql_array = array(),
@@ -2208,6 +2253,7 @@ class sql_db
         if (in_array($sql_name, $this->prepared_sql_names)) {
             return true;
         } else {
+            // TODO check if actually exists
             return false;
         }
     }
@@ -2216,7 +2262,8 @@ class sql_db
       technical function to finally get data from the MySQL database
     */
 
-    private function mysql_array_to_types(array $sql_array): string
+    private
+    function mysql_array_to_types(array $sql_array): string
     {
         $result = '';
         foreach ($sql_array as $value) {
@@ -2240,7 +2287,8 @@ class sql_db
      * @param bool $fetch_all true all database rows are returned at once
      * @return array with one or all database records
      */
-    private function fetch(string $sql, string $sql_name = '', array $sql_array = array(), bool $fetch_all = false): ?array
+    private
+    function fetch(string $sql, string $sql_name = '', array $sql_array = array(), bool $fetch_all = false): ?array
     {
         $result = array();
 
@@ -2303,7 +2351,8 @@ class sql_db
     /**
      * fetch the first row from an SQL database (either Postgres or MySQL at the moment)
      */
-    private function fetch_first(string $sql, string $sql_name = '', array $sql_array = array()): ?array
+    private
+    function fetch_first(string $sql, string $sql_name = '', array $sql_array = array()): ?array
     {
         return $this->fetch($sql, $sql_name, $sql_array);
     }
@@ -2311,12 +2360,14 @@ class sql_db
     /**
      * fetch the all value from an SQL database (either Postgres or MySQL at the moment)
      */
-    private function fetch_all($sql, string $sql_name = '', array $sql_array = array()): array
+    private
+    function fetch_all($sql, string $sql_name = '', array $sql_array = array()): array
     {
         return $this->fetch($sql, $sql_name, $sql_array, true);
     }
 
-    private function debug_msg($sql, $type): void
+    private
+    function debug_msg($sql, $type): void
     {
         global $debug;
         if ($debug > 20) {
@@ -2856,7 +2907,8 @@ class sql_db
      * @param array $id_fields the name of the primary id field that should be used or the list of link fields
      * @return void
      */
-    private function set_where(array $id_fields): void
+    private
+    function set_where(array $id_fields): void
     {
         $open_or_flf_lst = false;
         // if nothing is defined assume to load the row by the main if
@@ -3050,7 +3102,8 @@ class sql_db
     /**
      * create the "JOIN" SQL statement based on the joined user fields
      */
-    private function set_user_join(): void
+    private
+    function set_user_join(): void
     {
         if ($this->usr_query) {
             if (!$this->join_usr_added) {
@@ -3088,7 +3141,8 @@ class sql_db
     /**
      * create the "FROM" SQL statement based on the type
      */
-    private function set_from(): void
+    private
+    function set_from(): void
     {
         if ($this->join_type <> '') {
             $join_table_name = $this->name_sql_esc($this->get_table_name($this->join_type));
@@ -3512,7 +3566,8 @@ class sql_db
      *
      * @return array with the postgres parameter types
      */
-    private function par_types_to_postgres(): array
+    private
+    function par_types_to_postgres(): array
     {
         $in_types = $this->par_types;
         $result = array();
@@ -3552,7 +3607,8 @@ class sql_db
      * TODO deprecate and replace by sql creator function
      * @return string with the SQL prepare statement for the current query
      */
-    private function prepare_sql(): string
+    private
+    function prepare_sql(): string
     {
         $sql = '';
         if (count($this->par_types) > 0) {
@@ -3694,9 +3750,10 @@ class sql_db
      *
      * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
      * @param string $description for the user to identify the statement
+     * @param bool $usr_tbl true if a row in the user table is added which implies that no new id is returned
      * @return user_message
      */
-    function insert(sql_par $qp, string $description): user_message
+    function insert(sql_par $qp, string $description, bool $usr_tbl = false): user_message
     {
         $result = new user_message();
         $err_msg = 'Insert of ' . $description . ' failed.';
@@ -3707,17 +3764,24 @@ class sql_db
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
                     log_err($sql_error . ' while executing ' . $qp->sql);
+                    $result->add_message($err_msg);
                 } else {
-                    $db_id = pg_fetch_array($sql_result)[0];
+                    if (!$usr_tbl) {
+                        $db_id = pg_fetch_array($sql_result)[0];
+                    }
                 }
             } else {
-                $db_id = mysqli_fetch_array($sql_result, MYSQLI_BOTH);
+                if (!$usr_tbl) {
+                    $db_id = mysqli_fetch_array($sql_result, MYSQLI_BOTH);
+                }
             }
-            if ($db_id == 0 or $db_id == '') {
-                log_err($err_msg);
-                $result->add_message($err_msg);
-            } else {
-                $result->set_db_row_id($db_id);
+            if (!$usr_tbl) {
+                if ($db_id == 0 or $db_id == '') {
+                    log_err($err_msg);
+                    $result->add_message($err_msg);
+                } else {
+                    $result->set_db_row_id($db_id);
+                }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
@@ -3776,7 +3840,7 @@ class sql_db
         $result = new user_message();
         $err_msg = 'Delete of ' . $description . ' failed';
         try {
-            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par);
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql);
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {

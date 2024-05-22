@@ -950,8 +950,10 @@ class ref extends sandbox_link_with_type
 
     /**
      * delete a reference of return false if it fails
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
+     * @return user_message in case of an issue with the message to the user and a suggested solution
      */
-    function del(): user_message
+    function del(?bool $use_func = null): user_message
     {
         global $db_con;
         $result = new user_message();

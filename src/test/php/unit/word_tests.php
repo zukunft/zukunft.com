@@ -55,6 +55,8 @@ class word_tests
     {
 
         global $usr;
+        global $usr_sys;
+        global $phrase_types;
 
         // init
         $db_con = new sql_db();
@@ -101,6 +103,15 @@ class word_tests
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::USER]);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG]);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG, sql_type::USER]);
+        // failed update cases e.g. description update
+        $wrd = $t->word();
+        $wrd->description = word_api::TD_READ;
+        $wrd_updated = $t->word();
+        $wrd_updated->set_user($usr_sys);
+        $wrd_updated->plural = word_api::TN_RENAMED;
+        $wrd_updated->description = word_api::TN_RENAMED;
+        $wrd_updated->type_id = $phrase_types->id(phrase_type::TIME);
+        $t->assert_sql_update($sc, $wrd_updated, $wrd, [sql_type::LOG, sql_type::USER]);
         // update of all fields changed
         $wrd_filled = $t->word_filled();
         $wrd_renamed->set_id($wrd->id());

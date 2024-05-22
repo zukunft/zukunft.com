@@ -188,9 +188,7 @@ class view_tests
         $log->set_field(sandbox_named::FLD_DESCRIPTION);
         $log->row_id = $dsp_reloaded->id();
         $result = $log->dsp_last(true);
-        // TODO to check
         $target = 'zukunft.com system test added Just added for testing the user sandbox';
-        $target = 'zukunft.com system test changed Just added for testing to Just added for testing the user sandbox';
         $t->display('view->load comment for "' . view_api::TN_RENAMED . '" logged', $target, $result);
         $log->set_field(view::FLD_TYPE);
         $result = $log->dsp_last(true);
