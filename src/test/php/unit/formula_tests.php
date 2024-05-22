@@ -107,7 +107,6 @@ class formula_tests
         $t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
         $frm = $t->formula_filled();
         $t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
-        // TODO activate db write
         $frm = $t->formula_name_only();
         $frm_renamed = $frm->cloned(formula_api::TN_RENAMED);
         $t->assert_sql_update($sc, $frm_renamed, $frm);

@@ -108,7 +108,6 @@ class component_tests
         // update
         $cmp = $t->component();
         $cmp_renamed = $cmp->cloned(component_api::TN_RENAMED);
-        // TODO activate db write
         $t->assert_sql_update($sc, $cmp_renamed, $cmp);
         $t->assert_sql_update($sc, $cmp_renamed, $cmp, [sql_type::LOG, sql_type::USER]);
         // delete
