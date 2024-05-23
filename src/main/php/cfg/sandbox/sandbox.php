@@ -1583,7 +1583,7 @@ class sandbox extends db_object_seq_id_user
                 $fvt_lst = $this->db_fields_changed($db_obj, $sc_par_lst);
                 if (!$fvt_lst->is_empty_except_user_action()) {
                     $sc_par_lst->add(sql_type::UPDATE);
-                    $qp = $this->sql_update_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
+                    $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
                     $usr_msg->add($db_con->update($qp, 'update ' . $obj_name . $this->dsp_id()));
                     if ($this->has_usr_cfg()) {
                         $sc_par_lst->add(sql_type::USER);
@@ -1605,7 +1605,7 @@ class sandbox extends db_object_seq_id_user
                 } else {
                     $sc_par_lst->add(sql_type::UPDATE);
                     $fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst);
-                    $qp = $this->sql_update_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
+                    $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
                     $usr_msg->add($db_con->update($qp, 'update user ' . $obj_name));
                 }
             } else {
@@ -3122,7 +3122,7 @@ class sandbox extends db_object_seq_id_user
 
         // create the main query parameter object and set the name
         $and_log = $sc_par_lst->and_log();
-        $fld_chg_ext = $lib->sql_field_ext($fvt_lst->names(), $fld_lst_all);
+        $fld_chg_ext = $lib->sql_field_ext($fvt_lst, $fld_lst_all);
         $ext = sql::file_sep . sql::file_insert;
         if ($and_log) {
             $ext .= sql_type::LOG->extension();
@@ -3381,7 +3381,8 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * create the sql statement to change or exclude a named sandbox object e.g. word to the database
+     * create the sql statement to change or exclude a sandbox object e.g. word to the database
+     * either via a prepared SQL statement or via a function that includes the logging
      *
      * @param sql $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
@@ -3389,7 +3390,7 @@ class sandbox extends db_object_seq_id_user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
      */
-    function sql_update_named(
+    function sql_update_switch(
         sql                $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
@@ -3401,8 +3402,7 @@ class sandbox extends db_object_seq_id_user
         $lib = new library();
         $and_log = $sc_par_lst->and_log();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $fld_lst = $fvt_lst->names();
-        $fld_chg_ext = $lib->sql_field_ext($fld_lst, $fld_lst_all);
+        $fld_chg_ext = $lib->sql_field_ext($fvt_lst, $fld_lst_all);
         $ext = sql::file_sep . sql::file_update;
         if ($and_log) {
             $ext .= sql_type::LOG->extension();

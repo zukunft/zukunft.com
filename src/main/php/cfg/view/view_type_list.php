@@ -52,6 +52,8 @@ class view_type_list extends type_list
         parent::load_dummy();
         $type = new type_object(view_type_shared::DEFAULT, view_type_shared::DEFAULT, '', 2);
         $this->add($type);
+        $type = new type_object(view_type_shared::DETAIL, view_type_shared::DETAIL, '', 6);
+        $this->add($type);
         $type = new type_object(view_type_shared::SYSTEM, view_type_shared::SYSTEM, '', 7);
         $this->add($type);
     }

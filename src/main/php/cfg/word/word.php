@@ -1810,7 +1810,7 @@ class word extends sandbox_typed
             if ($this->user_id() == $norm_obj->user_id()) {
                 // ... update the standard
                 $sc_par_lst->add(sql_type::UPDATE);
-                $qp = parent::sql_update_named($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
+                $qp = parent::sql_update_switch($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
                 $usr_msg = $db_con->update($qp, 'update user word');
                 // TODO maybe check of other user have used the object and if yes keep or inform
             } else {
@@ -1825,7 +1825,7 @@ class word extends sandbox_typed
                 } else {
                     $sc_par_lst->add(sql_type::UPDATE);
                     $sc_par_lst->add(sql_type::USER);
-                    $qp = parent::sql_update_named($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
+                    $qp = parent::sql_update_switch($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
                     $usr_msg = $db_con->update($qp, 'update user word');
                 }
             }
@@ -1833,7 +1833,7 @@ class word extends sandbox_typed
             $fvt_lst = $this->db_fields_changed($db_obj, $sc_par_lst);
             if (!$fvt_lst->is_empty_except_user_action()) {
                 $sc_par_lst->add(sql_type::UPDATE);
-                $qp = parent::sql_update_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
+                $qp = parent::sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
                 $usr_msg = $db_con->update($qp, 'update word');
                 if ($this->has_usr_cfg()) {
                     $sc_par_lst->add(sql_type::USER);
@@ -1935,7 +1935,7 @@ class word extends sandbox_typed
         $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst);
         $all_fields = $this->db_fields_all();
         // unlike the db_* function the sql_update_* parent function is called directly
-        return parent::sql_update_named($sc, $fld_lst, $all_fields, $sc_par_lst);
+        return parent::sql_update_switch($sc, $fld_lst, $all_fields, $sc_par_lst);
     }
 
 

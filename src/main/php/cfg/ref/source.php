@@ -663,7 +663,7 @@ class source extends sandbox_typed
         $fvt_lst = $this->db_fields_changed($db_row, $sc_par_lst);
         $all_fields = $this->db_fields_all();
         // unlike the db_* function the sql_update_* parent function is called directly
-        return parent::sql_update_named($sc, $fvt_lst, $all_fields, $sc_par_lst);
+        return parent::sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
     }
 
 

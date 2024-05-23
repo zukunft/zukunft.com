@@ -2330,7 +2330,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst);
         $all_fields = $this->db_fields_all($sc_par_lst);
         // unlike the db_* function the sql_update_* parent function is called directly
-        return parent::sql_update_named($sc, $fld_lst, $all_fields, $sc_par_lst);
+        return parent::sql_update_switch($sc, $fld_lst, $all_fields, $sc_par_lst);
     }
 
 

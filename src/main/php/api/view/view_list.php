@@ -68,6 +68,7 @@ class view_list extends list_api implements JsonSerializable
      */
     function dsp_obj(): view_list_dsp
     {
+        // TODO rename all vars of a view from $dsp to $msk
         $dsp_obj = new view_list_dsp();
 
         // cast the single list objects

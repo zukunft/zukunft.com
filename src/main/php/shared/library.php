@@ -41,6 +41,7 @@ use cfg\component\component_type;
 use cfg\component\position_type;
 use cfg\config;
 use cfg\db\sql_db;
+use cfg\db\sql_par_field_list;
 use cfg\element;
 use cfg\element_type;
 use cfg\formula;
@@ -1771,16 +1772,45 @@ class library
      * create a short string that indicates, which fields of all fields have been changed
      * TODO combine with the sql_name_shorten function
      *
-     * @param array $fld_lst_chg list of fields names that have been changed
+     * @param sql_par_field_list $fvt_lst list of fields that have been changed
      * @param array $fld_lst_all list of all fields of the given object
      * @return string the query name extension to make the query name
      */
-    function sql_field_ext(array $fld_lst_chg, array $fld_lst_all): string
+    function sql_field_ext(sql_par_field_list $fvt_lst, array $fld_lst_all): string
     {
         $result = '';
         foreach ($fld_lst_all as $fld) {
-            if (in_array($fld, $fld_lst_chg)) {
-                $result .= '1';
+            if (in_array($fld, $fvt_lst->names())) {
+                $fvt = $fvt_lst->get($fld);
+                if ($fvt->id == null) {
+                    if ($fvt->old_id == null) {
+                        if ($fvt->old == null) {
+                            $result .= '1';
+                        } else {
+                            $result .= '2';
+                        }
+                    } else {
+                        if ($fvt->old == null) {
+                            $result .= '3';
+                        } else {
+                            $result .= '4';
+                        }
+                    }
+                } else {
+                    if ($fvt->old_id == null) {
+                        if ($fvt->old == null) {
+                            $result .= '5';
+                        } else {
+                            $result .= '6';
+                        }
+                    } else {
+                        if ($fvt->old == null) {
+                            $result .= '7';
+                        } else {
+                            $result .= '8';
+                        }
+                    }
+                }
             } else {
                 $result .= '0';
             }

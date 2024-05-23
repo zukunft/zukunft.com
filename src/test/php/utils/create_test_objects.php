@@ -156,6 +156,7 @@ use html\word\word as word_dsp;
 use shared\library;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
+use shared\types\view_type;
 use unit_write\component_link_tests;
 use unit_write\component_tests;
 use unit_write\formula_link_tests;
@@ -1772,6 +1773,24 @@ class create_test_objects extends test_base
         $msk = new view($this->usr1);
         $msk->set(1, view_api::TN_READ);
         $msk->description = view_api::TD_READ;
+        return $msk;
+    }
+
+    /**
+     * @return view with all fields e.g. to check if all fields are covered by the sql insert statement creation
+     */
+    function view_filled(): view
+    {
+        global $share_types;
+        global $protection_types;
+        $msk = new view($this->usr1);
+        $msk->set(1, view_api::TN_READ);
+        $msk->description = view_api::TD_READ;
+        $msk->code_id = view_api::TC_READ;
+        $msk->set_type(view_type::DETAIL);
+        $msk->excluded = true;
+        $msk->share_id = $share_types->id(share_type_shared::GROUP);
+        $msk->protection_id = $protection_types->id(protect_type_shared::USER);
         return $msk;
     }
 

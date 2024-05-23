@@ -910,7 +910,7 @@ class sandbox_named extends sandbox
 
         // create the main query parameter object and set the name
         $and_log = $sc_par_lst->and_log();
-        $fld_chg_ext = $lib->sql_field_ext($fvt_lst->names(), $fld_lst_all);
+        $fld_chg_ext = $lib->sql_field_ext($fvt_lst, $fld_lst_all);
         $ext = sql::file_sep . sql::file_insert;
         if ($and_log) {
             $ext .= sql_type::LOG->extension();

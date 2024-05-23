@@ -1038,7 +1038,7 @@ class test_base
     }
 
     /**
-     * check the SQL statement to add a database row
+     * check the SQL statement creation to add a database row
      * for all allowed SQL database dialects
      *
      * @param sql $sc a sql creator object that can be empty
@@ -1064,7 +1064,7 @@ class test_base
     }
 
     /**
-     * check the SQL statement to update a database row
+     * check the SQL statement creation to update a database row
      * for all allowed SQL database dialects
      *
      * @param sql $sc a sql creator object that can be empty
@@ -1727,7 +1727,7 @@ class test_base
     {
         $expected_sql = $this->assert_sql_expected($qp->name, $dialect);
         $result = $this->assert_sql(
-            $this->name . 'sql creation of ' . $qp->name . '_' . $dialect . ' to ' . $test_name,
+            $this->name . 'sql creation of ' . $qp->name . ' (' . $dialect . ') to ' . $test_name,
             $qp->sql . $qp->call_sql . ' ' . $qp->call,
             $expected_sql
         );
