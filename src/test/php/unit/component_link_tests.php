@@ -42,6 +42,7 @@ use cfg\component\component_link_type;
 use cfg\component\position_type;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_type;
 use test\test_cleanup;
 
 class component_link_tests
@@ -93,8 +94,9 @@ class component_link_tests
 
         $t->subheader('component link sql write');
         // TODO activate db write
-        //$t->assert_sql_insert($sc, $lnk);
-        //$t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
+        $lnk = $t->component_link();
+        $t->assert_sql_insert($sc, $lnk);
+        $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_update($sc, $lnk);
         //$t->assert_sql_update($sc, $lnk, [sql_type::USER]);

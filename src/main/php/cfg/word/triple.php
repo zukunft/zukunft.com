@@ -21,6 +21,8 @@
     - information:       functions to make code easier to read
     - internal:          e.g. to generate the name based on the link
     - save:              manage to update the database
+    - sql write:         sql statement creation to write to the database
+    - sql write fields:  field list for writing to the database
     - debug:             internal support functions for debugging
     - display:           to be moved to the frontend object
 

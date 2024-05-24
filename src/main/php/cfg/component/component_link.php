@@ -2,12 +2,27 @@
 
 /*
 
-    model/view/component_link.php - link a single display component/element to a view
-    -----------------------------
+    model/component/component_link.php - link a single display component/element to a view
+    ----------------------------------
+
+    The main sections of this object are
+    - db const:          const for the database link
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - preloaded:         select e.g. types from cache
+    - cast:              create an api object and set the vars from an api json
+    - load:              database access object (DAO) functions
+    - modify:            change the order
+    - save:              manage to update the database
+    - sql write:         sql statement creation to write to the database
+    - sql write fields:  field list for writing to the database
+    - debug:             internal support functions for debugging
 
     TODO  if a link is owned by someone, who has deleted it, it can be changed by anyone else
           or another way to formulate this: if the owner deletes a link, the ownership should be move to the remaining users
           force to remove all user settings to be able to delete a link as an admin
+
 
     This file is part of zukunft.com - calc with words
 
@@ -44,10 +59,12 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
+use cfg\log\change;
 use cfg\sandbox;
 use cfg\sandbox_link_with_type;
 use cfg\type_object;
@@ -59,15 +76,17 @@ class component_link extends sandbox_link_with_type
 {
 
     /*
-     * database link
+     * db const
      */
 
     // the database and JSON object field names used only for formula links
     const TBL_COMMENT = 'to link components to views with an n:m relation';
     const FLD_ID = 'component_link_id';
     const FLD_ORDER_NBR = 'order_nbr';
+    const FLD_ORDER_NBR_SQLTYP = sql_field_type::INT;
     const FLD_POS_COM = 'the position of the component e.g. right or below';
     const FLD_POS_TYPE = 'position_type_id';
+    const FLD_POS_TYPE_NAME = 'position'; // for log only
 
     // all database field names excluding the user specific fields and the id
     const FLD_NAMES = array(
@@ -102,24 +121,16 @@ class component_link extends sandbox_link_with_type
     );
     // list of MANDATORY fields that CAN be CHANGEd by the user
     const FLD_LST_MUST_BUT_STD_ONLY = array(
-        [self::FLD_ORDER_NBR, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', ''],
+        [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQLTYP, sql_field_default::NOT_NULL, '', '', ''],
         [component_link_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::ONE, sql::INDEX, component_link_type::class, ''],
         [position_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::TWO, sql::INDEX, position_type::class, self::FLD_POS_COM],
     );
     // list of fields that CAN be CHANGEd by the user
     const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [self::FLD_ORDER_NBR, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQLTYP, sql_field_default::NULL, '', '', ''],
         [component_link_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, component_link_type::class, ''],
         [position_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, position_type::class, self::FLD_POS_COM],
     );
-
-
-    /*
-     * code links
-     */
-
-    const POS_BELOW = 1;  // the view component is placed below the previous component
-    const POS_SIDE = 2;   // the view component is placed on the right (or left for right to left writing) side of the previous component
 
 
     /*
@@ -127,9 +138,9 @@ class component_link extends sandbox_link_with_type
      */
 
     public ?int $order_nbr = null;          // to sort the display item
+    public ?int $pos_type_id = null;        // defines the position of the view component relative to the previous item (1 = below, 2= side, )
 
     // to deprecate
-    public ?int $pos_type_id = null;        // defines the position of the view component relative to the previous item (1 = below, 2= side, )
     public ?string $pos_code = null;        // side or below or ....
 
 
@@ -276,6 +287,20 @@ class component_link extends sandbox_link_with_type
 
 
     /*
+     * preloaded
+     */
+
+    /**
+     * @return string the name of the preloaded view component position type
+     */
+    private function pos_type_name(): string
+    {
+        global $position_types;
+        return $position_types->name($this->type_id);
+    }
+
+
+    /*
      * cast
      */
 
@@ -313,8 +338,81 @@ class component_link extends sandbox_link_with_type
 
 
     /*
-     * loading
+     * load
      */
+
+    /**
+     * load a named user sandbox object by name
+     * @param view $dsp the view to which the component should be added
+     * @param component $cmp the phrase that is linked to the formula
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_link(view $dsp, component $cmp, string $class = self::class): int
+    {
+        $id = parent::load_by_link_id($dsp->id(), 0, $cmp->id(), $class);
+        // no need to reload the linked objects, just assign it
+        if ($id != 0) {
+            $this->set_view($dsp);
+            $this->set_component($cmp);
+        }
+        return $id;
+    }
+
+    /**
+     * load the component link by the unique link ids including the pos
+     * @param int $msk_id the id of the view
+     * @param int $cmp_id the id of the lin type
+     * @param int $pos the position of the component
+     * @return int the id of the component link found and zero if nothing is found
+     */
+    function load_by_link_and_pos(int $msk_id, int $cmp_id, int $pos): int
+    {
+        global $db_con;
+
+        log_debug();
+        $qp = $this->load_sql_by_link_and_pos($db_con->sql_creator(), $msk_id, $cmp_id, $pos);
+        return $this->load($qp);
+    }
+
+    /**
+     * load the component_link by the link id
+     *
+     * @param int $from_id the subject object id
+     * @param int $type_id the predicate object id
+     * @param int $to_id the object (grammar) object id
+     * @return bool true if at least one link has been loaded
+     */
+    function load_by_link_and_type(int $from_id, int $type_id, int $to_id): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_link_and_type($db_con->sql_creator(), $from_id, $type_id, $to_id, self::class);
+        return $this->load($qp);
+    }
+
+    /**
+     * load the view component link parameters for all users
+     * @param sql_par|null $qp placeholder to align the function parameters with the parent
+     * @param string $class the name of this class to be delivered to the parent function
+     * @return bool true if the standard view component link has been loaded
+     */
+    function load_standard(?sql_par $qp = null, string $class = self::class): bool
+    {
+
+        global $db_con;
+        $result = false;
+
+        $qp = $this->load_standard_sql($db_con->sql_creator(), $class);
+
+        if ($qp->has_par()) {
+            $db_dsl = $db_con->get1($qp);
+            $result = $this->row_mapper_sandbox($db_dsl, true);
+            if ($result) {
+                $result = $this->load_owner();
+            }
+        }
+        return $result;
+    }
 
     /**
      * create an SQL statement to retrieve the parameters of the standard view component link from the database
@@ -356,30 +454,6 @@ class component_link extends sandbox_link_with_type
         $qp->par = $sc->get_par();
 
         return $qp;
-    }
-
-    /**
-     * load the view component link parameters for all users
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @param string $class the name of this class to be delivered to the parent function
-     * @return bool true if the standard view component link has been loaded
-     */
-    function load_standard(?sql_par $qp = null, string $class = self::class): bool
-    {
-
-        global $db_con;
-        $result = false;
-
-        $qp = $this->load_standard_sql($db_con->sql_creator(), $class);
-
-        if ($qp->has_par()) {
-            $db_dsl = $db_con->get1($qp);
-            $result = $this->row_mapper_sandbox($db_dsl, true);
-            if ($result) {
-                $result = $this->load_owner();
-            }
-        }
-        return $result;
     }
 
     /**
@@ -489,56 +563,6 @@ class component_link extends sandbox_link_with_type
     }
 
     /**
-     * load the component_link by the link id
-     *
-     * @param int $from_id the subject object id
-     * @param int $type_id the predicate object id
-     * @param int $to_id the object (grammar) object id
-     * @return bool true if at least one link has been loaded
-     */
-    function load_by_link_and_type(int $from_id, int $type_id, int $to_id): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_by_link_and_type($db_con->sql_creator(), $from_id, $type_id, $to_id, self::class);
-        return $this->load($qp);
-    }
-
-
-    /**
-     * load a named user sandbox object by name
-     * @param view $dsp the view to which the component should be added
-     * @param component $cmp the phrase that is linked to the formula
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_link(view $dsp, component $cmp, string $class = self::class): int
-    {
-        $id = parent::load_by_link_id($dsp->id(), 0, $cmp->id(), $class);
-        // no need to reload the linked objects, just assign it
-        if ($id != 0) {
-            $this->set_view($dsp);
-            $this->set_component($cmp);
-        }
-        return $id;
-    }
-
-    /**
-     * load the component link by the unique link ids including the pos
-     * @param int $msk_id the id of the view
-     * @param int $cmp_id the id of the lin type
-     * @param int $pos the position of the component
-     * @return int the id of the component link found and zero if nothing is found
-     */
-    function load_by_link_and_pos(int $msk_id, int $cmp_id, int $pos): int
-    {
-        global $db_con;
-
-        log_debug();
-        $qp = $this->load_sql_by_link_and_pos($db_con->sql_creator(), $msk_id, $cmp_id, $pos);
-        return $this->load($qp);
-    }
-
-    /**
      * to load the related objects if the link object is loaded by an external query like in user_display to show the sandbox
      * @returns bool true if a link has been loaded
      */
@@ -590,25 +614,26 @@ class component_link extends sandbox_link_with_type
 
 
     /*
-     * display functions
+     * im- and export
      */
 
     /**
-     * @return string the name of the preloaded view component position type
+     * fill the component export object to create a json
+     * which does not include the internal database id
      */
-    private function pos_type_name(): string
+    function export_obj(bool $do_load = true): sandbox_exp
     {
-        global $position_types;
-        return $position_types->name($this->type_id);
+        $result = $this->tob->export_obj($do_load);
+        if ($this->order_nbr >= 0) {
+            $result->position = $this->order_nbr;
+        }
+        return $result;
     }
 
-    // remember the move of a display component
-    // up only the component that has been move by the user
-    // and not all other component changed, because this would be more confusing
-    private function log_move($direction)
-    {
 
-    }
+    /*
+     * modify
+     */
 
     // move one view component
     // TODO load to list once, resort and write all positions with one SQL statement
@@ -751,6 +776,11 @@ class component_link extends sandbox_link_with_type
         return $this->move('down');
     }
 
+
+    /*
+     * save
+     */
+
     // create a database record to save user specific settings for this component_link
     protected function add_usr_cfg(string $class = self::class): bool
     {
@@ -792,23 +822,6 @@ class component_link extends sandbox_link_with_type
         return $result;
     }
 
-
-    /*
-     * im- and export
-     */
-
-    /**
-     * fill the component export object to create a json
-     * which does not include the internal database id
-     */
-    function export_obj(bool $do_load = true): sandbox_exp
-    {
-        $result = $this->tob->export_obj($do_load);
-        if ($this->order_nbr >= 0) {
-            $result->position = $this->order_nbr;
-        }
-        return $result;
-    }
 
 
     // check if the database record for the user specific settings can be removed
@@ -901,6 +914,139 @@ class component_link extends sandbox_link_with_type
 
 
     /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a new view to component link to the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(
+        sql           $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
+    {
+        // fields and values that the word has additional to the standard named user sandbox object
+        $lnk_empty = $this->clone_reset();
+        $lnk_empty->set_user($this->user()->clone_reset());
+        if ($sc_par_lst->is_usr_tbl()) {
+            $lnk_empty->fob = $this->fob;
+            $lnk_empty->set_type_id($this->type_id());
+            $lnk_empty->tob = $this->tob;
+        }
+        $sc_par_lst->add(sql_type::INSERT);
+        $fvt_lst = $this->db_fields_changed($lnk_empty, $sc_par_lst);
+        $all_fields = $this->db_fields_all($sc_par_lst);
+        return parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
+    }
+
+    /**
+     * create the sql statement to update a triple in the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param sandbox|component_link $db_row the word with the database values before the update
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update(
+        sql           $sc, sandbox|component_link $db_row,
+        sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
+    {
+        // get the field names, values and parameter types that have been changed
+        // and that needs to be updated in the database
+        // the db_* child function call the corresponding parent function
+        // including the sql parameters for logging
+        $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst);
+        $all_fields = $this->db_fields_all($sc_par_lst);
+        // unlike the db_* function the sql_update_* parent function is called directly
+        return parent::sql_update_switch($sc, $fld_lst, $all_fields, $sc_par_lst);
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    {
+        return array_merge(
+            parent::db_fields_all($sc_par_lst),
+            [
+                self::FLD_ORDER_NBR,
+                self::FLD_POS_TYPE
+            ],
+            parent::db_fields_all_sandbox()
+        );
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param sandbox|component_link $sbx the compare value to detect the changed fields
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(
+        sandbox|component_link $sbx,
+        sql_type_list          $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
+    {
+        global $change_field_list;
+
+        $sc = new sql();
+        $do_log = $sc_par_lst->and_log();
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        if ($sbx->pos() <> $this->pos()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER_NBR,
+                    $change_field_list->id($table_id . self::FLD_ORDER_NBR),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_ORDER_NBR,
+                $this->pos(),
+                self::FLD_ORDER_NBR_SQLTYP,
+                $sbx->pos()
+            );
+        }
+        if ($sbx->pos() <> $this->pos()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_POS_TYPE,
+                    $change_field_list->id($table_id . self::FLD_POS_TYPE),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            global $position_types;
+            $lst->add_type_field(
+                self::FLD_POS_TYPE,
+                self::FLD_POS_TYPE_NAME,
+                $this->pos_type_id,
+                $sbx->pos_type_id,
+                $position_types
+            );
+        }
+        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+    }
+
+
+    /*
      * debug
      */
 
@@ -918,6 +1064,14 @@ class component_link extends sandbox_link_with_type
             $result .= ' without pos';
         }
         return $result;
+    }
+
+    // remember the move of a display component
+    // up only the component that has been move by the user
+    // and not all other component changed, because this would be more confusing
+    private function log_move($direction)
+    {
+
     }
 
 }

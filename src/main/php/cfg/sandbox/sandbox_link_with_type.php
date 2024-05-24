@@ -2,8 +2,11 @@
 
 /*
 
-    model/sandbox/sandbox_link_with_type.php - adding the type field to the user sandbox link named superclass
+    model/sandbox/sandbox_link_with_type.php - adding the type field to the user sandbox link superclass
     ----------------------------------------
+
+    similar to sandbox_link_typed, but for links without name
+
 
     This file is part of zukunft.com - calc with words
 
@@ -30,6 +33,11 @@
 */
 
 namespace cfg;
+
+use cfg\db\sql;
+use cfg\db\sql_par_field_list;
+use cfg\db\sql_type_list;
+use cfg\log\change;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 
@@ -100,4 +108,61 @@ class sandbox_link_with_type extends sandbox_link
         $dsp_obj->set_type_id($this->type_id());
     }
 
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * add the type fields to the list of all database fields that might be changed
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    {
+        return array_merge(
+            parent::db_all_fields_link($sc_par_lst),
+            [phrase::FLD_TYPE]
+        );
+    }
+
+    /**
+     * add tze type field to the list of changed database fields with name, value and type
+     *
+     * @param sandbox|word $sbx the compare value to detect the changed fields
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(
+        sandbox|word $sbx,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
+    {
+        global $change_field_list;
+
+        $sc = new sql();
+        $do_log = $sc_par_lst->and_log();
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        if ($sbx->type_id() <> $this->type_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
+                    $change_field_list->id($table_id . phrase::FLD_TYPE),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            global $phrase_types;
+            $lst->add_type_field(
+                phrase::FLD_TYPE,
+                phrase::FLD_TYPE_NAME,
+                $this->type_id(),
+                $sbx->type_id(),
+                $phrase_types
+            );
+        }
+        return $lst;
+    }
 }

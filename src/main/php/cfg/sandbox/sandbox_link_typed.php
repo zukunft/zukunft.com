@@ -3,7 +3,10 @@
 /*
 
     model/sandbox/sandbox_link_typed.php - adding the type field to the user sandbox link named superclass
-    ----------------------------------------------
+    ------------------------------------
+
+    similar to sandbox_link_with_type, but for links with name
+
 
     This file is part of zukunft.com - calc with words
 

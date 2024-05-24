@@ -14,7 +14,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
-    TODO Substeps: create insert, update and delete sql create tests for the main objects
+    TODO Substeps: create insert, update and delete sql create tests for the main objects (TODO activate db write)
                    include the log in the prepared sql write statement
     TODO combine db_row and std_row for with-log use of update word
     TODO use with-log for insert links e.g. triple
@@ -29,6 +29,18 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO remove backend classes from frontend
     TODO Step 22: deprecate the get_old in value_list
     TODO remove frontend classes from backend
+    TODO Step 21: deprecate the get_old in ???
+    TODO review the main unit tests
+    TODO Step 20: deprecate the get_old in ???
+    TODO review the remaining unit tests
+    TODO Step 19: deprecate the get_old in ???
+    TODO review the main db read tests
+    TODO Step 18: deprecate the get_old in ???
+    TODO review the remaining db read tests
+    TODO Step 17: deprecate the get_old in ???
+    TODO review the main db write tests
+    TODO Step 16: deprecate the get_old in ???
+    TODO review the remaining db write tests
     TODO activate the tests and create a unit and read test if possible
     TODO for user_values allow a source 0=not set or exclude the source_id from the prime index?
     TODO test if a table with 1, 2, 4, 8, 16, 32 or 64 smallint key is faster and more efficient than a table with one bigger index
