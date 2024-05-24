@@ -117,8 +117,6 @@ class view_tests
         $t->assert_sql_insert($sc, $msk, [sql_type::LOG, sql_type::USER]);
         $msk = $t->view(); // a view with a code_id as it might be imported
         $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
-        // TODO add a test that the old view type fields are always included in the parameter list even if they are empty
-        //      to avoid that the number of parameters changes but the query have the same name
         $msk = $t->view_filled();
         $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
         // update

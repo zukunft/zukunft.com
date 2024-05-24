@@ -2302,8 +2302,13 @@ class formula extends sandbox_typed
     /**
      * check if the id parameters are supposed to be changed
      * and check if the name is already used
+     * @param sql_db $db_con the active database connection
+     * @param sandbox $db_rec the database record before the saving
+     * @param sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
+     * @returns string an empty string if everything is fine or a messages for the user what should be changed
      */
-    function save_id_if_updated(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
+    function save_id_if_updated(sql_db $db_con, sandbox $db_rec, sandbox $std_rec, bool $use_func): string
     {
         log_debug('->save_id_if_updated has name changed from "' . $db_rec->name() . '" to ' . $this->dsp_id());
         $result = '';
@@ -2520,7 +2525,7 @@ class formula extends sandbox_typed
                 if ($result == '') {
 
                     // check if the id parameters are supposed to be changed
-                    $result .= $this->save_id_if_updated($db_con, $db_rec, $std_rec);
+                    $result .= $this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func);
 
                     // if a problem has appeared up to here, don't try to save the values
                     // the problem is shown to the user by the calling interactive script

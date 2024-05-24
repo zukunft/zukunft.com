@@ -1886,9 +1886,10 @@ class sandbox extends db_object_seq_id_user
      * @param sql_db $db_con the active database connection
      * @param sandbox $db_rec the database record before the saving
      * @param sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @returns string an empty string if everything is fine or a messages for the user what should be changed
      */
-    function save_id_if_updated(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
+    function save_id_if_updated(sql_db $db_con, sandbox $db_rec, sandbox $std_rec, bool $use_func): string
     {
         log_debug($this->dsp_id());
         $result = '';
@@ -1907,7 +1908,7 @@ class sandbox extends db_object_seq_id_user
                     if ($this->rename_can_switch) {
                         // ... if yes request to delete or exclude the record with the id parameters before the change
                         $to_del = clone $db_rec;
-                        $msg = $to_del->del();
+                        $msg = $to_del->del($use_func);
                         if (!$msg->is_ok()) {
                             $result .= 'Failed to delete the unused ' . $class_name;
                         }
@@ -1920,7 +1921,11 @@ class sandbox extends db_object_seq_id_user
                             // force the include again
                             $this->include();
                             $db_rec->exclude();
-                            $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+                            if ($use_func) {
+                                $result .= $this->save_fields_func($db_con, $db_rec, $std_rec);
+                            } else {
+                                $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+                            }
                             if ($result == '') {
                                 log_debug('found a ' . $class_name . ' target ' . $db_chk->dsp_id() . ', so del ' . $db_rec->dsp_id() . ' and add ' . $this->dsp_id());
                             } else {
@@ -1950,7 +1955,7 @@ class sandbox extends db_object_seq_id_user
                         // if the target link has not yet been created
                         // ... request to delete the old
                         $to_del = clone $db_rec;
-                        $msg = $to_del->del();
+                        $msg = $to_del->del($use_func);
                         if (!$msg->is_ok()) {
                             $result .= 'Failed to delete the unused ' . $this::class;
                         }
@@ -2307,24 +2312,17 @@ class sandbox extends db_object_seq_id_user
 
                     // check if the id parameters are supposed to be changed
                     if ($result == '') {
-                        // TODO for the prepared update just revered the name if not allowed
-                        $result .= $this->save_id_if_updated($db_con, $db_rec, $std_rec);
+                        $result .= $this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func);
                     }
 
                     // if a problem has appeared up to here, don't try to save the values
                     // the problem is shown to the user by the calling interactive script
                     if ($result == '') {
-                        // TODO activate when the prepared SQL is ready to use
-                        //if (!$this->sql_write_prepared()) {
                         if ($use_func) {
                             $result .= $this->save_fields_func($db_con, $db_rec, $std_rec);
-                            //$result .= $this->save_fields($db_con, $db_rec, $std_rec);
                         } else {
                             $result .= $this->save_fields($db_con, $db_rec, $std_rec);
                         }
-                        //} else {
-                        //    $result .= $this->save_all_fields($db_con, $db_rec, $std_rec)->get_last_message();
-                        //}
                     }
                 }
             }
@@ -2345,7 +2343,7 @@ class sandbox extends db_object_seq_id_user
      * delete the complete object (the calling function del must have checked that no one uses this object)
      * @returns string the message that should be shown to the user if something went wrong or an empty string if everything is fine
      */
-    private function del_exe(): string
+    private function del_exe(?bool $use_func = null): string
     {
         log_debug($this->dsp_id());
         $lib = new library();
@@ -2404,7 +2402,7 @@ class sandbox extends db_object_seq_id_user
                     $wrd = new word($this->user());
                     $wrd->load_by_name($this->name());
                     $wrd->type_id = $phrase_types->id(phrase_type::FORMULA_LINK);
-                    $msg = $wrd->del();
+                    $msg = $wrd->del($use_func);
                     $result->add($msg);
                 }
 
@@ -2510,7 +2508,7 @@ class sandbox extends db_object_seq_id_user
                 }
                 // check if the object simply can be deleted, because it has never been used
                 if (!$this->used_by_someone_else()) {
-                    $msg .= $this->del_exe();
+                    $msg .= $this->del_exe($use_func);
                 } else {
                     // if the owner deletes the object find a new owner or delete the object completely
                     if ($this->owner_id == $this->user()->id()) {
@@ -2545,7 +2543,7 @@ class sandbox extends db_object_seq_id_user
                     // TODO check if "if ($this->can_change() AND $this->not_used()) {" would be correct
                     if (!$this->used_by_someone_else()) {
                         log_debug('can delete ' . $this->dsp_id() . ' after owner change');
-                        $msg .= $this->del_exe();
+                        $msg .= $this->del_exe($use_func);
                     } else {
                         log_debug('exclude ' . $this->dsp_id());
                         $this->exclude();

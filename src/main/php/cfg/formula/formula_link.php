@@ -693,7 +693,7 @@ class formula_link extends sandbox_link_with_type
             // check if the id parameters are supposed to be changed
             $this->load_objects();
             if ($result == '') {
-                $result = $this->save_id_if_updated($db_con, $db_rec, $std_rec);
+                $result = $this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func);
             }
 
             // if a problem has appeared up to here, don't try to save the values

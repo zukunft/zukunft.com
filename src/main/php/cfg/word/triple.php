@@ -1981,11 +1981,20 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
     /**
      * check if the id parameters are supposed to be changed
+     * TODO try to move to sandbox or sandbox link object
+     *
+     * @param sql_db $db_con the active database connection
+     * @param triple|sandbox $db_rec the database record before the saving
+     * @param triple|sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
+     * @returns string an empty string if everything is fine or a messages for the user what should be changed
      */
     function save_id_if_updated(
         sql_db         $db_con,
         triple|sandbox $db_rec,
-        triple|sandbox $std_rec): string
+        triple|sandbox $std_rec,
+        bool           $use_func
+    ): string
     {
         $result = '';
 
@@ -2226,7 +2235,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
                 // check if the id parameters are supposed to be changed
                 if ($result == '') {
-                    $result .= $this->save_id_if_updated($db_con, $db_rec, $std_rec);
+                    $result .= $this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func);
                     if ($result != '') {
                         log_err($result);
                     }
@@ -2368,7 +2377,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
      */
     function db_fields_changed(
         sandbox|triple $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list  $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
         global $change_field_list;
