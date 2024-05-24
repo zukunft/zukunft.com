@@ -91,6 +91,7 @@ class all_unit_read_tests extends all_unit_tests
         (new formula_tests)->run($this);
         (new formula_list_tests)->run($this);
         (new expression_tests)->run($this);
+        (new element_list_tests)->run($this);
         (new view_tests)->run($this);
         (new view_list_tests)->run($this);
         (new component_tests)->run($this);

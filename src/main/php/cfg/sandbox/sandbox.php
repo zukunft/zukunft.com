@@ -2364,61 +2364,8 @@ class sandbox extends db_object_seq_id_user
         if ($log->id() > 0) {
             $db_con->usr_id = $this->user()->id();
 
-            // for words first delete all links
-            if ($this::class == word::class) {
-                $msg = $this->del_links();
-                $result->add($msg);
-            }
-
-            // for triples first delete all links
-            if ($this::class == triple::class) {
-                $msg = $this->del_links();
-                $result->add($msg);
-            }
-
-            // for formulas first delete all links
-            if ($this::class == formula::class) {
-                $msg = $this->del_links();
-                $result->add($msg);
-
-                // and the corresponding formula elements
-                if ($result->is_ok()) {
-                    $db_con->set_class(element::class);
-                    $db_con->set_usr($this->user()->id());
-                    $msg = $db_con->delete_old($this->id_field(), $this->id);
-                    $result->add_message($msg);
-                }
-
-                // and the corresponding results
-                if ($result->is_ok()) {
-                    $db_con->set_class(result::class);
-                    $db_con->set_usr($this->user()->id());
-                    $msg = $db_con->delete_old($this->id_field(), $this->id);
-                    $result->add_message($msg);
-                }
-
-                // and the corresponding word if possible
-                if ($result->is_ok()) {
-                    $wrd = new word($this->user());
-                    $wrd->load_by_name($this->name());
-                    $wrd->type_id = $phrase_types->id(phrase_type::FORMULA_LINK);
-                    $msg = $wrd->del($use_func);
-                    $result->add($msg);
-                }
-
-            }
-
-            // for view components first delete all links
-            if ($this::class == component::class) {
-                $msg = $this->del_links();
-                $result->add($msg);
-            }
-
-            // for views first delete all links
-            if ($this::class == view::class) {
-                $msg = $this->del_links();
-                $result->add($msg);
-            }
+            // if this object has related objects delete the related object before deleting this
+            $result = $this->del_links();
 
             // delete first all user configuration that have also been excluded
             if ($result->is_ok()) {
@@ -2602,7 +2549,10 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * dummy function to remove depending on objects, which needs to be overwritten by the child classes
+     * remove depending on objects
+     * needs to be overwritten by the child class if needed
+     *
+     * @return user_message the message for the user why the action has failed and a suggested solution
      */
     function del_links(): user_message
     {
@@ -3252,7 +3202,7 @@ class sandbox extends db_object_seq_id_user
                 $fld_lst_ex_log = array_diff($fld_lst_ex_log, [$this->type_field()]);
                 $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->type_field()]);
             } else {
-            // remove the link fields from the field list for the log entries, because the log is done with the log_link already
+                // remove the link fields from the field list for the log entries, because the log is done with the log_link already
                 $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, $qp_id->par_fld_lst->names());
             }
         }
@@ -3656,6 +3606,7 @@ class sandbox extends db_object_seq_id_user
     {
         return new sql_par_field_list();
     }
+
     function sql_key_fields_text_old(sql_par_field_list $fvt_lst): sql_par_field_list
     {
         return new sql_par_field_list();
@@ -3669,6 +3620,7 @@ class sandbox extends db_object_seq_id_user
     {
         return new sql_par_field_list();
     }
+
     function sql_key_fields_id_old(sql_par_field_list $fvt_lst): sql_par_field_list
     {
         return new sql_par_field_list();

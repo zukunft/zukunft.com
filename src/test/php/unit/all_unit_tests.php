@@ -282,6 +282,7 @@ class all_unit_tests extends test_cleanup
         (new formula_list_tests)->run($this);
         (new formula_link_tests)->run($this); // TODO add assert_api_to_dsp
         (new element_tests)->run($this);
+        (new element_list_tests)->run($this);
         (new expression_tests)->run($this);
         (new result_tests)->run($this);
         (new result_list_tests)->run($this);

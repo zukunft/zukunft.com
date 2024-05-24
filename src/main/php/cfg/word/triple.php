@@ -2262,6 +2262,8 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
     /**
      * delete the phrase groups which where this triple is used
+     *
+     * @return user_message the message for the user why the action has failed and a suggested solution
      */
     function del_links(): user_message
     {

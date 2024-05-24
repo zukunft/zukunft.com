@@ -70,6 +70,8 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_type_list;
 use cfg\db_object_seq_id;
+use cfg\db_object_seq_id_user;
+use cfg\element_list;
 use cfg\fig_ids;
 use cfg\formula;
 use cfg\formula_list;
@@ -83,6 +85,7 @@ use cfg\result\result;
 use cfg\result\result_list;
 use cfg\sandbox;
 use cfg\sandbox_link_named;
+use cfg\sandbox_list;
 use cfg\sandbox_named;
 use cfg\sandbox_value;
 use cfg\source;
@@ -168,6 +171,7 @@ include_once TEST_UNIT_PATH . 'formula_link_tests.php';
 include_once TEST_UNIT_PATH . 'result_tests.php';
 include_once TEST_UNIT_PATH . 'result_list_tests.php';
 include_once TEST_UNIT_PATH . 'element_tests.php';
+include_once TEST_UNIT_PATH . 'element_list_tests.php';
 include_once TEST_UNIT_PATH . 'figure_tests.php';
 include_once TEST_UNIT_PATH . 'figure_list_tests.php';
 include_once TEST_UNIT_PATH . 'expression_tests.php';
@@ -246,6 +250,7 @@ include_once TEST_UNIT_READ_PATH . 'value_list_tests.php';
 include_once TEST_UNIT_READ_PATH . 'formula_tests.php';
 include_once TEST_UNIT_READ_PATH . 'formula_list_tests.php';
 include_once TEST_UNIT_READ_PATH . 'expression_tests.php';
+include_once TEST_UNIT_READ_PATH . 'element_list_tests.php';
 include_once TEST_UNIT_READ_PATH . 'view_tests.php';
 include_once TEST_UNIT_READ_PATH . 'view_list_tests.php';
 include_once TEST_UNIT_READ_PATH . 'component_tests.php';
@@ -1138,6 +1143,30 @@ class test_base
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
+    }
+
+    /**
+     * similar to assert_sql_by_id, but for the parent/formula id type
+     *
+     * @param sql $sc the test database connection
+     * @param element_list $lst the empty word list object
+     * @param int $frm_id the formula id that should be used for selecting the elements
+     * @param string $test_name the test name only for the test log
+     * @return void
+     */
+    function assert_sql_by_frm_id(sql $sc, element_list $lst, int $frm_id, string $test_name = ''): void
+    {
+        // check the Postgres query syntax
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_by_frm_id($sc, $frm_id);
+        $result = $this->assert_qp($qp, $sc->db_type, $test_name);
+
+        // check the MySQL query syntax
+        if ($result) {
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $lst->load_sql_by_frm_id($sc, $frm_id, $test_name);
+            $this->assert_qp($qp, $sc->db_type);
+        }
     }
 
     /**

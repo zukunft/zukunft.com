@@ -56,6 +56,7 @@ use cfg\sandbox;
 use cfg\sandbox_link;
 use cfg\sandbox_link_typed;
 use cfg\sys_log;
+use cfg\sys_log_level;
 use cfg\triple;
 use cfg\user;
 use cfg\user\user_profile;
@@ -119,6 +120,7 @@ class sql
     const END = 'END';
     const END_MYSQL = ')';
     const UNION = 'UNION';
+    const IN = 'IN';
     const WITH = 'WITH';
     const LAST_ID_MYSQL = 'SELECT LAST_INSERT_ID() AS ';
     const TRUE = '1'; // representing true in the where part for a smallint field
@@ -4320,6 +4322,31 @@ class sql
 
         return $qp;
     }
+
+
+    /**
+     * create a sql statment to delete all rows that have one of the given ids
+     *
+     * @param string $class the class name e.g. element not element_list
+     * @param string $id_field the name of the id fields of the class
+     * @param array $id_lst the list of id that should be deleted
+     * @return sql_par the sql statement to delete the row selected by the id list
+     */
+    function del_sql_list_without_log(string $class, string $id_field, array $id_lst): sql_par
+    {
+        $lib = new library();
+
+        $qp = new sql_par($class, new sql_type_list([sql_type::DELETE]));
+        $this->add_where($id_field, $id_lst, sql_par_type::INT_LIST);
+        $sql = sql::DELETE . ' ' . $this->name_sql_esc($this->table) . ' ';
+        $sql .= sql::WHERE . ' ' . $id_field . ' ';
+        $sql .= sql::IN . ' (' . $this->par_name() . ')';
+        $qp->name .= '_by_ids';
+        $qp->sql = $this->prepare_sql($sql, $qp->name, [sql_par_type::INT_LIST]);
+        $qp->par = [implode(',',$id_lst)];
+        return $qp;
+    }
+
 
 
     /*

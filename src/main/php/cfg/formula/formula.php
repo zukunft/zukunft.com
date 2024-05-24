@@ -2558,16 +2558,55 @@ class formula extends sandbox_typed
      * del
      */
 
-    // TODO user specific???
+    /**
+     * remove depending on objects
+     * needs to be overwritten by the child class if needed
+     * TODO make sure that onle user specific data is deleted
+     *
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
     function del_links(): user_message
     {
-        $result = new user_message();
+        global $db_con;
+        global $phrase_types;
+        $usr_msg = new user_message();
+
         $frm_lnk_lst = new formula_link_list($this->user());
         if ($frm_lnk_lst->load_by_frm_id($this->id)) {
             $msg = $frm_lnk_lst->del_without_log();
-            $result->add_message($msg);
+            $usr_msg->add_message($msg);
         }
-        return $result;
+
+        // and the corresponding formula elements
+        if ($usr_msg->is_ok()) {
+            $elm_lst = new element_list($this->user());
+            $elm_lst->load_by_frm($this->id);
+            // TODO add del function with test
+            //$usr_msg->add($elm_lst->del_without_log());
+
+            $db_con->set_class(element::class);
+            $db_con->set_usr($this->user()->id());
+            $msg = $db_con->delete_old($this->id_field(), $this->id);
+            $usr_msg->add_message($msg);
+        }
+
+        // and the corresponding results
+        if ($usr_msg->is_ok()) {
+            $db_con->set_class(result::class);
+            $db_con->set_usr($this->user()->id());
+            $msg = $db_con->delete_old($this->id_field(), $this->id);
+            $usr_msg->add_message($msg);
+        }
+
+        // and the corresponding word if possible
+        if ($usr_msg->is_ok()) {
+            $wrd = new word($this->user());
+            $wrd->load_by_name($this->name());
+            $wrd->type_id = $phrase_types->id(phrase_type::FORMULA_LINK);
+            $msg = $wrd->del();
+            $usr_msg->add($msg);
+        }
+        return $usr_msg;
     }
 
     /*

@@ -1966,8 +1966,9 @@ class sql_db
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
      * @param string $sql_call the query with the fields set e.g. to execute a function
+     * @param string $sql_call_name
      * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
-     * @return \PgSql\Result|mysqli_result the result of the sql statement
+     * @return \PgSql\Result|mysqli_result|null the result of the sql statement
      * @throws Exception the message that should be shown to the system admin for debugging
      *
      * TODO add the writing of potential sql errors to the sys log table to the sql execution

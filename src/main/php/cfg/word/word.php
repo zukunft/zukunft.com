@@ -1853,7 +1853,9 @@ class word extends sandbox_typed
      */
 
     /**
-     * delete the references to this word which includes the phrase groups, the triples and values
+     * delete the references to this word
+     * which includes the phrase groups, the triples and values
+     *
      * @return user_message of the link removal and if needed the error messages that should be shown to the user
      */
     function del_links(): user_message

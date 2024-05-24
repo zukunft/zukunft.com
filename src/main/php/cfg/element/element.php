@@ -126,7 +126,7 @@ class element extends db_object_seq_id_user
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if the triple is loaded and valid
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper_sandbox(?array $db_row, string $id_fld = ''): bool
     {
         $this->id = 0;
         $result = parent::row_mapper($db_row, self::FLD_ID);

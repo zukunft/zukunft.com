@@ -44,6 +44,12 @@ class word_list_tests
     function run(test_cleanup $t): void
     {
 
+        // TODO change in all other tests and later here (like in element_list_tests):
+        // TODO move the main object to init for all unit an read db tests
+        // TODO start the test always with the test name
+        // TODO create const whereever possible
+        // TODO use the test user instead of the global user
+
         global $usr;
 
         // init
