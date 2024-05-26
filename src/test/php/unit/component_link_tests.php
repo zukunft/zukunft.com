@@ -97,6 +97,8 @@ class component_link_tests
         $lnk = $t->component_link();
         $t->assert_sql_insert($sc, $lnk);
         $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
+        //$t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
+        //$t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_update($sc, $lnk);
         //$t->assert_sql_update($sc, $lnk, [sql_type::USER]);

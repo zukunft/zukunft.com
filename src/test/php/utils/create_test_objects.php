@@ -55,6 +55,7 @@ include_once MODEL_VALUE_PATH . 'value_ts_data.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 
 use cfg\component\component_link_type;
+use cfg\component\position_type;
 use cfg\db\sql_db;
 use cfg\log\change_field;
 use cfg\log\change_table;
@@ -1998,6 +1999,20 @@ class create_test_objects extends test_base
         return $lnk;
     }
 
+    function component_link_filled(): component_link
+    {
+        global $share_types;
+        global $protection_types;
+        $lnk = new component_link($this->usr1);
+        $lnk->set(1, $this->view(), $this->component(), 1);
+        $lnk->set_type(component_link_type::EXPRESSION);
+        $lnk->set_pos_type(position_type::SIDE);
+        $lnk->excluded = true;
+        $lnk->share_id = $share_types->id(share_type_shared::GROUP);
+        $lnk->protection_id = $protection_types->id(protect_type_shared::USER);
+        return $lnk;
+    }
+
     function component_link_list(): component_link_list
     {
         $lst = new component_link_list($this->usr1);
@@ -3079,6 +3094,7 @@ class create_test_objects extends test_base
         $dsp = $this->load_view($dsp_name);
         $cmp = $this->load_component($cmp_name);
         $lnk = new component_link($this->usr1);
+        $lnk->reset();
         $lnk->fob = $dsp;
         $lnk->tob = $cmp;
         $lnk->order_nbr = $pos;

@@ -922,6 +922,7 @@ class component extends sandbox_typed
         log_debug($this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
 
         $dsp_lnk = new component_link($this->user());
+        $dsp_lnk->reset();
         $dsp_lnk->fob = $dsp;
         $dsp_lnk->tob = $this;
         $dsp_lnk->order_nbr = $order_nbr;

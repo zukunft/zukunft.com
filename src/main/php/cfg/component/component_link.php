@@ -119,9 +119,9 @@ class component_link extends sandbox_link_with_type
         [view::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
         [component::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, component::class, ''],
     );
-    // list of MANDATORY fields that CAN be CHANGEd by the user
+    // list of MANDATORY fields that CAN be CHANGED by the user
     const FLD_LST_MUST_BUT_STD_ONLY = array(
-        [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQLTYP, sql_field_default::NOT_NULL, '', '', ''],
+        [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQLTYP, sql_field_default::ONE, '', '', ''],
         [component_link_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::ONE, sql::INDEX, component_link_type::class, ''],
         [position_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::TWO, sql::INDEX, position_type::class, self::FLD_POS_COM],
     );
@@ -140,9 +140,6 @@ class component_link extends sandbox_link_with_type
     public ?int $order_nbr = null;          // to sort the display item
     public ?int $pos_type_id = null;        // defines the position of the view component relative to the previous item (1 = below, 2= side, )
 
-    // to deprecate
-    public ?string $pos_code = null;        // side or below or ....
-
 
     /*
      * construct and map
@@ -151,6 +148,8 @@ class component_link extends sandbox_link_with_type
     function __construct(user $usr)
     {
         parent::__construct($usr);
+
+        // TODO deprecate and use the object name instead
         $lib = new library();
         $this->from_name = $lib->class_to_name(view::class);
         $this->to_name = $lib->class_to_name(component::class);
@@ -166,9 +165,10 @@ class component_link extends sandbox_link_with_type
 
         $this->reset_objects($this->user());
 
+        $this->set_type(component_link_type::ALWAYS);
+        $this->set_pos_type(position_type::BELOW);
+
         $this->order_nbr = null;
-        $this->pos_type_id = null;
-        $this->pos_code = null;
     }
 
     /**
@@ -225,10 +225,23 @@ class component_link extends sandbox_link_with_type
      */
     function set(int $id, view $msk, component $cmp, int $pos): void
     {
+        $this->reset();
         parent::set_id($id);
         $this->set_view($msk);
         $this->set_component($cmp);
         $this->set_pos($pos);
+    }
+
+    /**
+     * set the link type for this component to the linked view
+     *
+     * @param string $type_code_id the code id that should be added to this view component link
+     * @return void
+     */
+    function set_type(string $type_code_id): void
+    {
+        global $component_link_types;
+        $this->type_id = $component_link_types->id($type_code_id);
     }
 
     /**
@@ -256,6 +269,18 @@ class component_link extends sandbox_link_with_type
     function set_pos(int $pos): void
     {
         $this->order_nbr = $pos;
+    }
+
+    /**
+     * set the position type for the component in the linked view
+     *
+     * @param string $type_code_id the code id that should be added to this view component link
+     * @return void
+     */
+    function set_pos_type(string $type_code_id): void
+    {
+        global $position_types;
+        $this->pos_type_id = $position_types->id($type_code_id);
     }
 
     /**
@@ -291,12 +316,21 @@ class component_link extends sandbox_link_with_type
      */
 
     /**
+     * @return string the name of the preloaded view component link type
+     */
+    function type_name(): string
+    {
+        global $component_link_types;
+        return $component_link_types->name($this->type_id);
+    }
+
+    /**
      * @return string the name of the preloaded view component position type
      */
     private function pos_type_name(): string
     {
         global $position_types;
-        return $position_types->name($this->type_id);
+        return $position_types->name($this->pos_type_id);
     }
 
 
@@ -981,8 +1015,9 @@ class component_link extends sandbox_link_with_type
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
     {
         return array_merge(
-            parent::db_fields_all($sc_par_lst),
+            parent::db_all_fields_link($sc_par_lst),
             [
+                component_link_type::FLD_ID,
                 self::FLD_ORDER_NBR,
                 self::FLD_POS_TYPE
             ],
@@ -1010,6 +1045,23 @@ class component_link extends sandbox_link_with_type
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        if ($sbx->type_id() <> $this->type_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . component_link_type::FLD_ID,
+                    $change_field_list->id($table_id . component_link_type::FLD_ID),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            global $component_link_types;
+            $lst->add_type_field(
+                component_link_type::FLD_ID,
+                type_object::FLD_NAME,
+                $this->type_id(),
+                $sbx->type_id(),
+                $component_link_types
+            );
+        }
         if ($sbx->pos() <> $this->pos()) {
             if ($do_log) {
                 $lst->add_field(
@@ -1025,7 +1077,7 @@ class component_link extends sandbox_link_with_type
                 $sbx->pos()
             );
         }
-        if ($sbx->pos() <> $this->pos()) {
+        if ($sbx->pos_type_id <> $this->pos_type_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_POS_TYPE,

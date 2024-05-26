@@ -35,6 +35,7 @@
     - sql write fields:  field list for writing to the database
     - sql create:        to create the database table, index and foreign keys
     - internal check:    for testing during development
+    - settings:          internal information aboud this or the child objects e.g. is_named_obj()
 
 
     This file is part of zukunft.com - calc with words
@@ -78,6 +79,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
+use cfg\component\component_link_type;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
 use cfg\log\change_table;
@@ -2601,12 +2603,15 @@ class sandbox extends db_object_seq_id_user
             $log->std_id = $std_rec->type_id;
             $log->row_id = $this->id;
             // special case just to shorten the field name
+            // TODO use a function overwritten by the child objects
             if ($this::class == formula_link::class) {
                 $log->set_field(formula_link::FLD_TYPE);
             } elseif ($this::class == word::class) {
                 $log->set_field(phrase::FLD_TYPE);
             } elseif ($this::class == triple::class) {
                 $log->set_field(phrase::FLD_TYPE);
+            } elseif ($this::class == component_link::class) {
+                $log->set_field(component_link_type::FLD_ID);
             } else {
                 $lib = new library();
                 $log->set_field($lib->class_to_name($this::class) . sql_db::FLD_EXT_TYPE_ID);
@@ -3160,8 +3165,7 @@ class sandbox extends db_object_seq_id_user
             $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $sc_par_lst_sub);
             if ($this->is_link_obj()) {
                 $par_lst_out->add_list($qp_id->par_fld_lst);
-            }
-            if ($this->is_named_obj()) {
+            } elseif ($this->is_named_obj()) {
                 $par_lst_out->add($qp_id->par_fld);
             }
             $sql .= $qp_id->sql;
@@ -3169,7 +3173,6 @@ class sandbox extends db_object_seq_id_user
 
         // get the data fields and move the unique db key field to the first entry
         $fld_lst_ex_log = array_intersect($fvt_lst->names(), $fld_lst_all);
-
         if ($usr_tbl) {
             $key_fld_pos = array_search($this->id_field(), $fld_lst_ex_log);
             unset($fld_lst_ex_log[$key_fld_pos]);
@@ -3177,9 +3180,13 @@ class sandbox extends db_object_seq_id_user
             unset($fld_lst_ex_log[$key_fld_pos]);
             $fld_lst_ex_log_and_key = $fld_lst_ex_log;
         } else {
-            $key_fld_pos = array_search($this->name_field(), $fld_lst_ex_log);
-            unset($fld_lst_ex_log[$key_fld_pos]);
-            $fld_lst_ex_log_and_key = array_merge([$qp_id->par_fld->name], $fld_lst_ex_log);
+            if ($this->is_named_obj()) {
+                $key_fld_pos = array_search($this->name_field(), $fld_lst_ex_log);
+                unset($fld_lst_ex_log[$key_fld_pos]);
+                $fld_lst_ex_log_and_key = array_merge([$qp_id->par_fld->name], $fld_lst_ex_log);
+            } else {
+                $fld_lst_ex_log_and_key = $fld_lst_ex_log;
+            }
         }
 
         // create the log entry for the link
@@ -3643,7 +3650,6 @@ class sandbox extends db_object_seq_id_user
     }
 
 
-
     /*
      * internal check
      */
@@ -3671,6 +3677,11 @@ class sandbox extends db_object_seq_id_user
         $lib = new library();
         return $lib->class_to_name($class) . sql_db::FLD_EXT_NAME;
     }
+
+
+    /*
+     * settings
+     */
 
     /**
      * @return bool true if this sandbox object has a name as unique key

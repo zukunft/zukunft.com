@@ -202,6 +202,7 @@ class sandbox_link_named extends sandbox_link
     }
 
 
+
     /*
      * save function
      */
@@ -338,6 +339,20 @@ class sandbox_link_named extends sandbox_link
         // for insert statements of user sandbox rows user id fields always needs to be included
         $lst->add_name_and_description($this, $sbx, $do_log, $table_id);
         return $lst;
+    }
+
+
+    /*
+     * settings
+     */
+
+    /**
+     * @return bool true if this sandbox object has a name as unique key
+     * final function overwritten by the child object
+     */
+        function is_named_obj(): bool
+    {
+        return true;
     }
 
 }

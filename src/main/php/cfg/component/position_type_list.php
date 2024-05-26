@@ -34,6 +34,7 @@ namespace cfg\component;
 use cfg\db\sql_db;
 use cfg\type_list;
 use cfg\type_object;
+use test\create_test_objects;
 
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_COMPONENT_PATH . 'position_type.php';
@@ -47,9 +48,10 @@ class position_type_list extends type_list
      * adding the view component position types used for unit tests to the dummy list
      */
     function load_dummy(): void {
-        parent::load_dummy();
-        $type = new type_object(position_type::SIDE, position_type::SIDE, '', 2);
-        $this->add($type);
+        $this->reset();
+        // read the corresponding names and description from the internal config csv files
+        $t = new create_test_objects();
+        $t->read_from_config_csv($this);
     }
 
     /**
