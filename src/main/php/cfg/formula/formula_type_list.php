@@ -32,6 +32,7 @@
 namespace cfg;
 
 use cfg\db\sql_db;
+use test\create_test_objects;
 
 include_once DB_PATH . 'sql_db.php';
 
@@ -45,10 +46,10 @@ class formula_type_list extends type_list
      */
     function load_dummy(): void
     {
-        $type = new type_object(formula_type::CALC, formula_type::CALC, '', 1);
-        $this->add($type);
-        $type = new type_object(formula_type::REV, formula_type::REV, '', 2);
-        $this->add($type);
+        $this->reset();
+        // read the corresponding names and description from the internal config csv files
+        $t = new create_test_objects();
+        $t->read_from_config_csv($this);
     }
 
     /**

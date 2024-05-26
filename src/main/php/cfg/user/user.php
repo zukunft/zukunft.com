@@ -985,8 +985,10 @@ class user extends db_object_seq_id
         log_debug();
         $result = false;
 
-        if ($this->profile_id == $user_profiles->id(user_profile::ADMIN)) {
-            $result = true;
+        if ($this->is_profile_valid()) {
+            if ($this->profile_id == $user_profiles->id(user_profile::ADMIN)) {
+                $result = true;
+            }
         }
         return $result;
     }
@@ -1000,11 +1002,25 @@ class user extends db_object_seq_id
         log_debug();
         $result = false;
 
-        if ($this->profile_id == $user_profiles->id(user_profile::TEST)
-            or $this->profile_id == $user_profiles->id(user_profile::SYSTEM)) {
-            $result = true;
+        if ($this->is_profile_valid()) {
+            if ($this->profile_id == $user_profiles->id(user_profile::TEST)
+                or $this->profile_id == $user_profiles->id(user_profile::SYSTEM)) {
+                $result = true;
+            }
         }
         return $result;
+    }
+
+    /**
+     * @return bool false if the profile is not set or is not found
+     */
+    private function is_profile_valid(): bool
+    {
+        if ($this->profile_id > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // true if the user has the right to import data

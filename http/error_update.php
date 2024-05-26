@@ -33,7 +33,7 @@
 use cfg\sys_log;
 use cfg\sys_log_list;
 use cfg\user;
-use cfg\user_profile;
+use cfg\user\user_profile;
 use cfg\view;
 use controller\controller;
 use html\html_base;

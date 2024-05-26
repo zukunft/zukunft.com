@@ -74,6 +74,18 @@ class phrase_types extends type_list
         phrase_type::IGNORE
     );
 
+    /*
+     * construct and map
+     */
+
+    /**
+     * @param bool $usr_can_add true by default to allow seariching by name for new added phrase types
+     */
+    function __construct(bool $usr_can_add = true)
+    {
+        parent::__construct($usr_can_add);
+    }
+
     /**
      * adding the word types used for unit tests to the dummy list
      */

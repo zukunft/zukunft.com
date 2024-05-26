@@ -59,6 +59,7 @@ class verb_list extends type_list
     public ?word $wrd = null;  // to load a list related to this word
     public ?array $ids = array(); // list of the verb ids to load a list from the database
 
+
     /*
      * construct and map
      */
@@ -66,9 +67,11 @@ class verb_list extends type_list
     /**
      * define the settings for this verb list object
      * @param user|null $usr the user who requested to see the verb list
+     * @param bool $usr_can_add true by default to allow seariching by name for new added verbs
      */
-    function __construct(?user $usr = null)
+    function __construct(?user $usr = null, bool $usr_can_add = true)
     {
+        parent::__construct($usr_can_add);
         $this->set_user($usr);
     }
 

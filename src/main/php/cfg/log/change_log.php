@@ -297,17 +297,21 @@ class change_log extends db_object_seq_id_user
         if ($this->table_id > 0) {
             $this->field_id = $change_field_list->id($this->table_id . $field_name);
             if ($this->field_id <= 0) {
-                $this->add_field($used_db_con, $field_name);
-                if ($this->field_id <= 0) {
-                    log_err("Cannot add field name " . $field_name);
+                if ($used_db_con->count()) {
+                    $this->add_field($used_db_con, $field_name);
+                    if ($this->field_id <= 0) {
+                        log_err("Cannot add field name " . $field_name);
+                    } else {
+                        $tbl = new type_object(
+                            $this->table_id . $field_name,
+                            $this->table_id . $field_name,
+                            '',
+                            $this->field_id);
+                        $change_field_list->add($tbl);
+                        $db_changed = true;
+                    }
                 } else {
-                    $tbl = new type_object(
-                        $this->table_id . $field_name,
-                        $this->table_id . $field_name,
-                        '',
-                        $this->field_id);
-                    $change_field_list->add($tbl);
-                    $db_changed = true;
+                    log_err("Cannot add field name " . $field_name . ' for table id ' . $this->table_id);
                 }
             }
         } else {

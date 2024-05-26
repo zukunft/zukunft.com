@@ -85,11 +85,21 @@ class type_list
 
     private array $lst = [];  // a list of type objects
     private array $hash = []; // hash list with the code id for fast selection
+    private array $name_hash = []; // if the user can add new type the hash list of the names for fast selection
+    private bool $usr_can_add = false; // true if the user can add new types that does not yet have a code id
 
 
     /*
      * construct and map
      */
+
+    /**
+     * @param bool $usr_can_add true if some types might not yet have a code id
+     */
+    function __construct(bool $usr_can_add = false)
+    {
+        $this->usr_can_add = $usr_can_add;
+    }
 
     function reset(): void
     {
@@ -137,6 +147,9 @@ class type_list
     {
         $this->lst = $lst;
         $this->get_hash($lst);
+        if ($this->usr_can_add) {
+            $this->get_name_hash($lst);
+        }
         return true;
     }
 
@@ -163,8 +176,17 @@ class type_list
 
     function add(type_object|ref|view $item): void
     {
-        $this->lst[$item->id()] = $item;
-        $this->hash[$item->code_id] = $item->id();
+        if ($item->id() <= 0) {
+            log_err('Type id ' . $item->id() . ' not expected');
+        } elseif ($item->code_id == '' and !$this->usr_can_add) {
+            log_err('Type code id for ' . $item->id() . ' cannot be empty');
+        } else {
+            $this->lst[$item->id()] = $item;
+            $this->hash[$item->code_id] = $item->id();
+        }
+        if ($this->usr_can_add) {
+            $this->name_hash[$item->name] = $item->id();
+        }
     }
 
     /*
@@ -251,9 +273,9 @@ class type_list
      * @param string $class a list class name
      * @return string the corresponding type class name
      */
-    private function list_class_to_type(string $class) :string
+    private function list_class_to_type(string $class): string
     {
-        return match($class) {
+        return match ($class) {
             sys_log_function_list::class => sys_log_function::class,
             sys_log_status_list::class => sys_log_status::class,
             user_profile_list::class => user_profile::class,
@@ -334,6 +356,24 @@ class type_list
     }
 
     /**
+     * recreate the hash table of the names to get the database id for a name
+     * @param array $type_list the list of the code_id indexed by the database id
+     * @return array with the database ids indexed by the code_id
+     */
+    function get_name_hash(array $type_list): array
+    {
+        $this->name_hash = [];
+        if ($type_list != null) {
+            if ($this->usr_can_add) {
+                foreach ($type_list as $key => $type) {
+                    $this->name_hash[$type->name] = $key;
+                }
+            }
+        }
+        return $this->name_hash;
+    }
+
+    /**
      * reload a type list from the database e.g. because a translation has changed and fill the hash table
      * @param string $class the child object class for the database table type name to select either word, formula, view, ...
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
@@ -349,6 +389,9 @@ class type_list
         }
         $this->lst = $this->load_list($db_con, $class);
         $this->hash = $this->get_hash($this->lst);
+        if ($this->usr_can_add) {
+            $this->name_hash = $this->get_name_hash($this->lst);
+        }
         if (count($this->hash) > 0) {
             $result = true;
         }
@@ -357,8 +400,9 @@ class type_list
 
     /**
      * return the database row id based on the code_id
+     * and if code id is not foun, use the name
      *
-     * @param string $code_id
+     * @param string $code_id or the name
      * @return int the database id for the given code_id
      */
     function id(string $code_id): int
@@ -369,12 +413,23 @@ class type_list
             if (array_key_exists($code_id, $this->hash)) {
                 $result = $this->hash[$code_id];
             } else {
-                $result = self::CODE_ID_NOT_FOUND;
-                log_debug('Type id not found for "' . $code_id . '" in ' . $lib->dsp_array_keys($this->hash));
+                if ($this->usr_can_add) {
+                    if (array_key_exists($code_id, $this->name_hash)) {
+                        $result = $this->name_hash[$code_id];
+
+                    } else {
+                        $result = self::CODE_ID_NOT_FOUND;
+                        log_debug('Type id not found for name "' . $code_id . '" in ' . $lib->dsp_array_keys($this->name_hash));
+                    }
+                } else {
+                    $result = self::CODE_ID_NOT_FOUND;
+                    log_debug('Type id not found for "' . $code_id . '" in ' . $lib->dsp_array_keys($this->hash));
+                }
             }
         } else {
             log_debug('Type code id not not set');
         }
+
         return $result;
     }
 
@@ -482,6 +537,7 @@ class type_list
     {
         $this->lst = array();
         $this->hash = array();
+        $this->name_hash = array();
         $type = new type_object(type_list::TEST_TYPE, type_list::TEST_NAME, '', 1);
         $this->add($type);
     }

@@ -379,6 +379,9 @@ class create_test_objects extends test_base
                         }
                         $typ_obj->set_id($data[$id_col]);
                         $typ_obj->set_name($data[$name_col]);
+                        if ($code_id_col > 0) {
+                            $typ_obj->set_code_id($data[$code_id_col]);
+                        }
                         $typ_obj->set_description($data[$desc_col]);
                         $list->add($typ_obj);
                     }
