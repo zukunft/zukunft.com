@@ -38,6 +38,7 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 
 use shared\types\view_type as view_type_shared;
 use cfg\db\sql_db;
+use test\create_test_objects;
 
 global $view_types;
 
@@ -49,13 +50,10 @@ class view_type_list extends type_list
      */
     function load_dummy(): void
     {
-        parent::load_dummy();
-        $type = new type_object(view_type_shared::DEFAULT, view_type_shared::DEFAULT, '', 2);
-        $this->add($type);
-        $type = new type_object(view_type_shared::DETAIL, view_type_shared::DETAIL, '', 6);
-        $this->add($type);
-        $type = new type_object(view_type_shared::SYSTEM, view_type_shared::SYSTEM, '', 7);
-        $this->add($type);
+        $this->reset();
+        // read the corresponding names and description from the internal config csv files
+        $t = new create_test_objects();
+        $t->read_from_config_csv($this);
     }
 
     /**

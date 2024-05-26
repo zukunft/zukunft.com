@@ -57,6 +57,7 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 use cfg\component\component_link_type;
 use cfg\component\position_type;
 use cfg\db\sql_db;
+use cfg\language_form;
 use cfg\log\change_field;
 use cfg\log\change_table;
 use html\system\messages;
@@ -363,6 +364,8 @@ class create_test_objects extends test_base
                             $name_col = array_search(change_table::FLD_NAME, $col_names);
                         } elseif (in_array(change_field::FLD_NAME, $col_names)) {
                             $name_col = array_search(change_field::FLD_NAME, $col_names);
+                        } elseif (in_array(language_form::FLD_NAME, $col_names)) {
+                            $name_col = array_search(language_form::FLD_NAME, $col_names);
                         }
 
                         if (in_array(change_field::FLD_TABLE, $col_names)) {

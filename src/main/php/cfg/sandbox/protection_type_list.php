@@ -37,6 +37,7 @@ include_once DB_PATH . 'sql_db.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 
 use shared\types\protection_type as protect_type_shared;
+use test\create_test_objects;
 
 global $protection_types;
 
@@ -49,14 +50,9 @@ class protection_type_list extends type_list
     function load_dummy(): void
     {
         $this->reset();
-        $type = new type_object(protect_type_shared::NO_PROTECT, protect_type_shared::NO_PROTECT, '', 1);
-        $this->add($type);
-        $type = new type_object(protect_type_shared::USER, protect_type_shared::USER, '', 2);
-        $this->add($type);
-        $type = new type_object(protect_type_shared::ADMIN, protect_type_shared::ADMIN, '', 3);
-        $this->add($type);
-        $type = new type_object(protect_type_shared::NO_CHANGE, protect_type_shared::NO_CHANGE, '', 4);
-        $this->add($type);
+        // read the corresponding names and description from the internal config csv files
+        $t = new create_test_objects();
+        $t->read_from_config_csv($this);
     }
 
     /**

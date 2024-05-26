@@ -78,7 +78,7 @@ SELECT view_insert_log_011151111 (
                43::smallint,
                'the default view for words'::text,
                45::smallint,
-               'detail_view'::text,
+               'details'::text,
                6::smallint,
                44::smallint,
                'word'::text,

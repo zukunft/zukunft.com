@@ -32,6 +32,7 @@
 namespace cfg;
 
 use cfg\db\sql_db;
+use test\create_test_objects;
 
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
@@ -47,11 +48,10 @@ class sys_log_function_list extends type_list
      */
     function load_dummy(): void
     {
-        parent::load_dummy();
-        $type = new type_object(sys_log_function::DB_READ, sys_log_function::DB_READ, '', 2);
-        $this->add($type);
-        $type = new type_object(sys_log_function::DB_WRITE, sys_log_function::DB_WRITE, '', 3);
-        $this->add($type);
+        $this->reset();
+        // read the corresponding names and description from the internal config csv files
+        $t = new create_test_objects();
+        $t->read_from_config_csv($this);
     }
 
     /**

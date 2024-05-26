@@ -73,7 +73,7 @@ SELECT view_insert_log_011151111 (
                43,
                'the default view for words',
                45,
-               'detail_view',
+               'details',
                6,
                44,
                'word',

@@ -33,6 +33,7 @@
 namespace cfg;
 
 use cfg\db\sql_db;
+use test\create_test_objects;
 
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_LANGUAGE_PATH . 'language_form.php';
@@ -48,9 +49,9 @@ class language_form_list extends type_list
     function load_dummy(): void
     {
         $this->reset();
-        $type = new type_object(language_form::PLURAL, language_form::PLURAL, '', 2);
-        $this->add($type);
-
+        // read the corresponding names and description from the internal config csv files
+        $t = new create_test_objects();
+        $t->read_from_config_csv($this);
     }
 
     /**

@@ -38,6 +38,7 @@ include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
 use shared\types\share_type as share_type_shared;
 use cfg\db\sql_db;
+use test\create_test_objects;
 
 global $share_types;
 
@@ -50,14 +51,9 @@ class share_type_list extends type_list
     function load_dummy(): void
     {
         $this->reset();
-        $type = new type_object(share_type_shared::PUBLIC, share_type_shared::PUBLIC, '', 1);
-        $this->add($type);
-        $type = new type_object(share_type_shared::PERSONAL, share_type_shared::PERSONAL, '', 2);
-        $this->add($type);
-        $type = new type_object(share_type_shared::GROUP, share_type_shared::GROUP, '', 3);
-        $this->add($type);
-        $type = new type_object(share_type_shared::PRIVATE, share_type_shared::PRIVATE, '', 4);
-        $this->add($type);
+        // read the corresponding names and description from the internal config csv files
+        $t = new create_test_objects();
+        $t->read_from_config_csv($this);
     }
 
     /**

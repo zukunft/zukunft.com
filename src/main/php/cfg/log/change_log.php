@@ -297,7 +297,7 @@ class change_log extends db_object_seq_id_user
         if ($this->table_id > 0) {
             $this->field_id = $change_field_list->id($this->table_id . $field_name);
             if ($this->field_id <= 0) {
-                if ($used_db_con->count()) {
+                if ($used_db_con->connected()) {
                     $this->add_field($used_db_con, $field_name);
                     if ($this->field_id <= 0) {
                         log_err("Cannot add field name " . $field_name);
