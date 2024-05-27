@@ -2802,14 +2802,21 @@ class sandbox extends db_object_seq_id_user
         // create the insert log statement for the field of the loop
         $log = new change($this->user());
         $log->set_table_by_class($this::class);
-        $log->set_field($name_fld);
-        $log->old_value = $this->name();
-        $log->new_value = null;
+        if ($this->is_named_obj()) {
+            $log->set_field($name_fld);
+            $log->old_value = $this->name();
+            $log->new_value = null;
+        }
 
         $sc_log = clone $sc;
         // TODO replace dummy value table with an enum value
-        $qp_log = $log->sql_insert(
-            $sc_log, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
+        if ($this->is_named_obj()) {
+            $qp_log = $log->sql_insert(
+                $sc_log, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
+        } else {
+            $qp_log = $log->sql_insert(
+                $sc_log, $sc_par_lst_log, $ext, '', '', $id_val);
+        }
 
         // TODO get the fields used in the change log sql from the sql
         $func_body_change .= ' ' . $qp_log->sql . ';';
@@ -2826,17 +2833,19 @@ class sandbox extends db_object_seq_id_user
             $change_action_list->id(change_action::DELETE),
             sql_par_type::INT_SMALL);
 
-        // add the field_id of the field actually changed if needed
-        $fvt_lst_out->add_field(
-            sql::FLD_LOG_FIELD_PREFIX . $name_fld,
-            $change_field_list->id($table_id . $name_fld),
-            sql_par_type::INT_SMALL);
+        if ($this->is_named_obj()) {
+            // add the field_id of the field actually changed if needed
+            $fvt_lst_out->add_field(
+                sql::FLD_LOG_FIELD_PREFIX . $name_fld,
+                $change_field_list->id($table_id . $name_fld),
+                sql_par_type::INT_SMALL);
 
-        // add the db field value of the field actually changed if needed
-        $fvt_lst_out->add_field(
-            $name_fld,
-            $this->name(),
-            sql_par_type::TEXT);
+            // add the db field value of the field actually changed if needed
+            $fvt_lst_out->add_field(
+                $name_fld,
+                $this->name(),
+                sql_par_type::TEXT);
+        }
 
         // add the row id of the standard table for user overwrites
         $fvt_lst_out->add_field(
@@ -2864,6 +2873,7 @@ class sandbox extends db_object_seq_id_user
         $sc_par_lst_func = clone $sc_par_lst;
         $sc_par_lst_func->add(sql_type::FUNCTION);
         $sc_par_lst_func->add(sql_type::DELETE);
+        $sc_par_lst_func->add(sql_type::NO_ID_RETURN);
         $ext = sql::file_sep . sql::file_delete;
         if ($sc_par_lst->and_log()) {
             $ext .= sql_type::LOG->extension();
@@ -3090,7 +3100,7 @@ class sandbox extends db_object_seq_id_user
             $qp = $this->sql_insert_with_log($sc, $qp, $fvt_lst, $fld_lst_all, $sc_par_lst);
         } else {
             // TODO remove this exception e.g. by adding the $sc_par_lst to the call
-            if ($this::class == triple::class) {
+            if ($this->is_link_obj()) {
                 if ($sc_par_lst->is_usr_tbl()) {
                     $fvt_lst->del($this->from_field());
                     $fvt_lst->del(verb::FLD_ID);
@@ -3208,6 +3218,12 @@ class sandbox extends db_object_seq_id_user
                 $par_lst_out->add_list($this->sql_key_fields_id($fvt_lst));
                 $fld_lst_ex_log = array_diff($fld_lst_ex_log, [$this->type_field()]);
                 $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->type_field()]);
+                // TODO remove this exception e.g. by adding the $sc_par_lst to the call
+                if ($this::class == triple::class) {
+                    $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), verb::FLD_ID, $this->to_field()]);
+                } elseif ($this->is_link_obj()) {
+                    $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), $this->to_field()]);
+                }
             } else {
                 // remove the link fields from the field list for the log entries, because the log is done with the log_link already
                 $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, $qp_id->par_fld_lst->names());
@@ -3226,6 +3242,8 @@ class sandbox extends db_object_seq_id_user
             // TODO remove this exception e.g. by adding the $sc_par_lst to the call
             if ($this::class == triple::class) {
                 $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), verb::FLD_ID, $this->to_field()]);
+            } elseif ($this->is_link_obj()) {
+                $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), $this->to_field()]);
             }
             $fvt_lst_ex_log_and_key = $fvt_lst->get_intersect($fld_lst_ex_log_and_key);
             $sc_insert = clone $sc;

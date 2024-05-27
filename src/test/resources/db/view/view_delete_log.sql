@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION view_delete_log
      _change_action_id   smallint,
      _field_id_view_name smallint,
      _view_name          text,
-     _view_id            bigint) RETURNS bigint AS
+     _view_id            bigint) RETURNS void AS
 $$
 BEGIN
 

@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION word_delete_log_user
      _change_action_id   smallint,
      _field_id_word_name smallint,
      _word_name          text,
-     _word_id            bigint) RETURNS bigint AS
+     _word_id            bigint) RETURNS void AS
 $$
 BEGIN
 

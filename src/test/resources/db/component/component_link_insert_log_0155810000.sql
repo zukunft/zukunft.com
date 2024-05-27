@@ -22,10 +22,10 @@ BEGIN
     INSERT INTO change_links (user_id, change_action_id, change_table_id, new_text_from, new_text_link, new_text_to, new_from_id, new_link_id,             new_to_id,   row_id)
          SELECT              _user_id,_change_action_id,_change_table_id,_new_text_from,_new_text_link,_new_text_to,_view_id,    _component_link_type_id, _component_id,new_component_link_id ;
 
-    INSERT INTO changes (user_id,change_action_id,change_field_id,new_value,row_id)
-         SELECT         _user_id,_change_action_id,_field_id_user_id,_user_id,new_component_link_id ;
+    INSERT INTO changes (user_id, change_action_id, change_field_id,  new_value,row_id)
+         SELECT         _user_id,_change_action_id,_field_id_user_id,_user_id,  new_component_link_id ;
 
-    INSERT INTO changes (user_id,change_action_id,change_field_id,new_value,row_id)
+    INSERT INTO changes (user_id, change_action_id, change_field_id,    new_value,row_id)
          SELECT         _user_id,_change_action_id,_field_id_order_nbr,_order_nbr,new_component_link_id ;
 
     UPDATE component_links

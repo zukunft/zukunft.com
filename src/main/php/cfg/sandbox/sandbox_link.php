@@ -952,6 +952,13 @@ class sandbox_link extends sandbox
                 );
             }
         } else {
+            // add from and to if the objects are the same
+            $from_fld = $this->fob?->name_field();
+            $to_fld = $this->tob?->name_field();
+            if ($from_fld == $to_fld) {
+                $from_fld = sql::FROM_FLD_PREFIX . $from_fld;
+                $to_fld = sql::TO_FLD_PREFIX . $to_fld;
+            }
             // TODO check how to handle if the standard
             if ($this->is_excluded() and !$sbx->is_excluded()) {
                 if ($do_log) {
@@ -961,10 +968,9 @@ class sandbox_link extends sandbox
                         change::FLD_FIELD_ID_SQLTYP
                     );
                 }
-                // TODO Prio 2: move "from_" to a const and or function
                 $lst->add_link_field(
                     $this->from_field(),
-                    'from_' . $this->fob?->name_field(),
+                    $from_fld,
                     null,
                     $sbx->fob
                 );
@@ -975,10 +981,9 @@ class sandbox_link extends sandbox
                         change::FLD_FIELD_ID_SQLTYP
                     );
                 }
-                // TODO Prio 2: move "to_" to a const and or function
                 $lst->add_link_field(
                     $this->to_field(),
-                    'to_' . $this->tob?->name_field(),
+                    $to_fld,
                     null,
                     $sbx->tob
                 );
@@ -990,10 +995,9 @@ class sandbox_link extends sandbox
                         change::FLD_FIELD_ID_SQLTYP
                     );
                 }
-                // TODO Prio 2: move "from_" to a const and or function
                 $lst->add_link_field(
                     $this->from_field(),
-                    'from_' . $this->fob?->name_field(),
+                    $from_fld,
                     $this->fob,
                     null
                 );
@@ -1004,10 +1008,9 @@ class sandbox_link extends sandbox
                         change::FLD_FIELD_ID_SQLTYP
                     );
                 }
-                // TODO Prio 2: move "to_" to a const and or function
                 $lst->add_link_field(
                     $this->to_field(),
-                    'to_' . $this->tob?->name_field(),
+                    $to_fld,
                     $this->tob,
                     null
                 );

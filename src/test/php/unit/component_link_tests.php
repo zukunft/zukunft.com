@@ -99,12 +99,19 @@ class component_link_tests
         $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
+        $lnk = $t->component_link();
+        $lnk->exclude();
+        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
+        $lnk_filled = $t->component_link_filled();
+        $t->assert_sql_insert($sc, $lnk_filled, [sql_type::LOG]);
         // TODO activate db write
-        //$t->assert_sql_update($sc, $lnk);
-        //$t->assert_sql_update($sc, $lnk, [sql_type::USER]);
+        $lnk_reordered = clone $lnk;
+        $lnk_reordered->order_nbr = 2;
+        $t->assert_sql_update($sc, $lnk_reordered, $lnk);
+        $t->assert_sql_update($sc, $lnk_reordered, $lnk, [sql_type::LOG, sql_type::USER]);
         // TODO activate db write
-        //$t->assert_sql_delete($sc, $lnk);
-        //$t->assert_sql_delete($sc, $lnk, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $lnk);
+        $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
 
     }
 

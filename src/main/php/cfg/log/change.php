@@ -526,7 +526,9 @@ class change extends change_log
         $fvt_lst = new sql_par_field_list();
         $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQLTYP);
         $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQLTYP);
-        $fvt_lst->add_field(change_field::FLD_ID, $this->field_id, type_object::FLD_ID_SQLTYP);
+        if ($this->field_id != null) {
+            $fvt_lst->add_field(change_field::FLD_ID, $this->field_id, type_object::FLD_ID_SQLTYP);
+        }
 
         if ($this->old_value !== null or ($sc_par_lst->is_update_part() and $this->new_value !== null)) {
             $fvt_lst->add_field(self::FLD_OLD_VALUE, $this->old_value, $sc->get_sql_par_type($this->old_value));

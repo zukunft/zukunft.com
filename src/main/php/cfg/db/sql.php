@@ -122,6 +122,8 @@ class sql
     const UNION = 'UNION';
     const IN = 'IN';
     const WITH = 'WITH';
+    const FROM_FLD_PREFIX = 'from_';
+    const TO_FLD_PREFIX = 'to_';
     const LAST_ID_MYSQL = 'SELECT LAST_INSERT_ID() AS ';
     const TRUE = '1'; // representing true in the where part for a smallint field
     const FALSE = '0'; // representing true in the where part for a smallint field

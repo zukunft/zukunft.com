@@ -845,10 +845,10 @@ class change_link extends change_log
 
         $par_name = '';
         if ($sbx != null) {
-            if ($sbx->is_excluded()) {
-                $par_name = '_' . $sbx->id_field();
-            } else {
+            if ($sc_par_lst->is_insert() and !$sc_par_lst->is_usr_tbl()) {
                 $par_name = sql::PAR_NEW_ID_PREFIX . $sbx->id_field();
+            } else {
+                $par_name = '_' . $sbx->id_field();
             }
         }
         $fvt_lst->add_field(self::FLD_ROW_ID, $this->row_id, sql_par_type::INT, null, $par_name);

@@ -919,6 +919,8 @@ class component extends sandbox_typed
     // link a view component to a view
     function link($dsp, $order_nbr): string
     {
+        global $position_types;
+
         log_debug($this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
 
         $dsp_lnk = new component_link($this->user());
@@ -926,7 +928,7 @@ class component extends sandbox_typed
         $dsp_lnk->fob = $dsp;
         $dsp_lnk->tob = $this;
         $dsp_lnk->order_nbr = $order_nbr;
-        $dsp_lnk->pos_type_id = 1; // to be reviewed
+        $dsp_lnk->pos_type_id = $position_types->id(position_type::BELOW);
         return $dsp_lnk->save();
     }
 

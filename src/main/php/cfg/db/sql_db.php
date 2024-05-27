@@ -263,7 +263,8 @@ class sql_db
         source::class,
         formula::class,
         view::class,
-        component::class
+        component::class,
+        component_link::class
     ];
 
     // classes that use the prepared sql write statement
@@ -273,7 +274,8 @@ class sql_db
         source::class,
         formula::class,
         view::class,
-        component::class
+        component::class,
+        component_link::class
     ];
 
     // tables that do not have a name

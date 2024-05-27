@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION component_delete_log
      _change_action_id   smallint,
      _field_id_component_name smallint,
      _component_name          text,
-     _component_id            bigint) RETURNS bigint AS
+     _component_id            bigint) RETURNS void AS
 $$
 BEGIN
 

@@ -1046,7 +1046,7 @@ class component_link extends sandbox_link_with_type
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);
         // for the standard table the type field should always be included because it is part of the prime indey
-        if ($sbx->type_id() <> $this->type_id() or !$usr_tbl) {
+        if ($sbx->type_id() <> $this->type_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_link_type::FLD_ID,

@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION source_delete_log_excluded
      _change_action_id     smallint,
      _field_id_source_name smallint,
      _source_name          text,
-     _source_id            bigint) RETURNS bigint AS
+     _source_id            bigint) RETURNS void AS
 $$
 BEGIN
 

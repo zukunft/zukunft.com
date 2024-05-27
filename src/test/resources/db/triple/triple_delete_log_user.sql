@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION triple_delete_log_user
      _change_action_id   smallint,
      _field_id_triple_name smallint,
      _triple_name          text,
-     _triple_id            bigint) RETURNS bigint AS
+     _triple_id            bigint) RETURNS void AS
 $$
 BEGIN
 

@@ -53,6 +53,7 @@ use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_list;
+use cfg\component\position_type;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
@@ -645,6 +646,8 @@ class view extends sandbox_typed
      */
     function add_cmp(component $cmp, ?int $pos = null, object $test_obj = null): string
     {
+        global $position_types;
+
         $result = '';
 
         // if no position is requested add the component at the end
@@ -662,7 +665,7 @@ class view extends sandbox_typed
                 $cmp_lnk->view()->set_id($this->id());
                 $cmp_lnk->component()->set_id($cmp->id());
                 $cmp_lnk->order_nbr = $pos;
-                $cmp_lnk->pos_type_id = 0;
+                $cmp_lnk->pos_type_id = $position_types->id(position_type::BELOW);
                 $cmp_lnk->save();
                 $this->cmp_lnk_lst->add($cmp_lnk->id(), $this, $cmp, $pos);
             } else {
