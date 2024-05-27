@@ -89,6 +89,19 @@ class sandbox_link_typed extends sandbox_link_named
 
 
     /*
+     * settings
+     */
+
+    /**
+     * @return bool true because all child objects use the link type
+     */
+    function is_link_type_obj(): bool
+    {
+        return true;
+    }
+
+
+    /*
      * get preloaded information
      */
 
@@ -170,6 +183,7 @@ class sandbox_link_typed extends sandbox_link_named
 
     /**
      * add tze type field to the list of changed database fields with name, value and type
+     * TODO move to triple
      *
      * @param sandbox|word $sbx the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation

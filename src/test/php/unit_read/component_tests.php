@@ -68,7 +68,7 @@ class component_tests
         $cmp = new component($t->usr1);
         $cmp->load_by_name(component_api::TN_READ);
         $cmp_lnk = new component_link($t->usr1);
-        $cmp_lnk->load_by_link_and_type(1, 2, 1);
+        $cmp_lnk->load_by_link_and_type(1, 1, 1);
         $test_name .= ' view id';
         $t->assert($test_name, $cmp_lnk->fob->id(), $dsp->id());
         $test_name .= ' component id';

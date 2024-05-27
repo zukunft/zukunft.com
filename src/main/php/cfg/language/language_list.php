@@ -44,6 +44,7 @@ class language_list extends type_list
 
     /**
      * create dummy type list for the unit tests without database connection
+     * TODO Prio 3: load from csv
      */
     function load_dummy(): void
     {

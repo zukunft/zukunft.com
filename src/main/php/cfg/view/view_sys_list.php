@@ -159,7 +159,8 @@ class view_sys_list extends type_list
     /**
      * adding the system views used for unit tests to the dummy list
      */
-    function load_dummy(): void {
+    function load_dummy(): void
+    {
         parent::load_dummy();
         $dsp = new view($this->usr);
         $dsp->set_id(2);

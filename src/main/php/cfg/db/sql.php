@@ -1526,7 +1526,7 @@ class sql
         $log->set_table_by_class($sbx::class);
         $log->new_from_id = $sbx->from_id();
         $log->new_text_from = $sbx->from_name();
-        if ($sbx::class == sandbox_link_typed::class or $sbx::class == triple::class) {
+        if ($sbx->is_link_type_obj()) {
             $log->new_link_id = $sbx->type_id();
             $log->new_text_link = $sbx->type_name();
         }
@@ -1582,16 +1582,15 @@ class sql
         $log->new_from_id = 0;
         $log->old_text_from = $sbx->from_name();
         $log->new_text_from = '';
-        if ($sbx::class == sandbox_link_typed::class) {
-            $log->old_link_id = $sbx->type_id();
-            $log->new_link_id = 0;
-            $log->old_text_link = $sbx->type_name();
-            $log->new_text_link = '';
-        }
         if ($sbx::class == triple::class) {
             $log->old_link_id = $sbx->verb_id();
             $log->new_link_id = 0;
             $log->old_text_link = $sbx->verb_name();
+            $log->new_text_link = '';
+        } elseif ($sbx->is_link_type_obj()) {
+            $log->old_link_id = $sbx->type_id();
+            $log->new_link_id = 0;
+            $log->old_text_link = $sbx->type_name();
             $log->new_text_link = '';
         }
         $log->old_to_id = $sbx->to_id();

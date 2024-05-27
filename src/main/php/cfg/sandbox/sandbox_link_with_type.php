@@ -85,6 +85,19 @@ class sandbox_link_with_type extends sandbox_link
 
 
     /*
+     * settings
+     */
+
+    /**
+     * @return bool true because all child objects use the link type
+     */
+    function is_link_type_obj(): bool
+    {
+        return true;
+    }
+
+
+    /*
      * cast
      */
 

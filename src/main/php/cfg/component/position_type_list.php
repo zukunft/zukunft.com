@@ -47,7 +47,8 @@ class position_type_list extends type_list
     /**
      * adding the view component position types used for unit tests to the dummy list
      */
-    function load_dummy(): void {
+    function load_dummy(): void
+    {
         $this->reset();
         // read the corresponding names and description from the internal config csv files
         $t = new create_test_objects();

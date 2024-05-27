@@ -12,5 +12,5 @@ PREPARE component_link_by_link_type_ids FROM
            FROM component_links s
       LEFT JOIN user_component_links u ON s.component_link_id = u.component_link_id AND u.user_id = ?
           WHERE s.view_id = ?
-            AND s.position_type_id = ?
+            AND s.component_link_type_id = ?
             AND s.component_id = ?';

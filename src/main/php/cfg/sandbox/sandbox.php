@@ -3250,7 +3250,9 @@ class sandbox extends db_object_seq_id_user
                 $update_fvt_lst->del($this->from_field());
                 $update_fvt_lst->del($this->type_field());
                 $update_fvt_lst->del($this->to_field());
-                $update_fvt_lst->add($fvt_lst->get($this->name_field()));
+                if ($this->is_named_obj()) {
+                    $update_fvt_lst->add($fvt_lst->get($this->name_field()));
+                }
             }
             $qp_update->sql = $sc_update->create_sql_update(
                 $id_field, $var_name_row_id, $update_fvt_lst, [], $sc_par_lst_upd_ex_log);
@@ -3697,6 +3699,15 @@ class sandbox extends db_object_seq_id_user
      * final function overwritten by the child object
      */
     function is_link_obj(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @return bool true if this sandbox object links two objects using a link type
+     * final function overwritten by the child object
+     */
+    function is_link_type_obj(): bool
     {
         return false;
     }

@@ -55,6 +55,7 @@ class job_type_list extends type_list
 
     /**
      * adding the job type used for unit tests to a dummy list
+     *  TODO Prio 3: load from csv
      */
     function load_dummy(): void
     {

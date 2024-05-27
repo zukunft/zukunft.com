@@ -88,12 +88,12 @@ class phrase_types extends type_list
 
     /**
      * adding the word types used for unit tests to the dummy list
+     *  TODO Prio 3: load from csv
      */
     function load_dummy(): void
     {
         $i = 1;
-        foreach (self::TYPES as $type_name)
-        {
+        foreach (self::TYPES as $type_name) {
             $type = new type_object($type_name, $type_name, '', $i);
             $this->add($type);
             $i++;

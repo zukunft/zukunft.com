@@ -77,6 +77,7 @@ class type_list extends list_api implements JsonSerializable
             foreach ($lst as $key => $obj) {
                 $id = $key;
                 if (property_exists($obj, "id")) {
+                    // TODO Prio 2 review and always use id()
                     if ($obj::class == verb::class or $obj::class == view::class) {
                         $id = $obj->id();
                     } else {

@@ -42,6 +42,7 @@ class change_action_list extends type_list
 
     /**
      * adding the system log stati used for unit tests to the dummy list
+     *  TODO Prio 3: load from csv
      */
     function load_dummy(): void
     {
@@ -50,7 +51,7 @@ class change_action_list extends type_list
         $this->add($type);
         $type = new type_object(change_action::UPDATE, change_action::UPDATE, '', 2);
         $this->add($type);
-        $type = new type_object(change_action::DELETE, change_action::DELETE, '',3);
+        $type = new type_object(change_action::DELETE, change_action::DELETE, '', 3);
         $this->add($type);
     }
 

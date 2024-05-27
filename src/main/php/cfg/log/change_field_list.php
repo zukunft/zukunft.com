@@ -92,7 +92,7 @@ class change_field_list extends type_list
         // read the corresponding names and description from the internal config csv files
         $t = new create_test_objects();
         $t->read_from_config_csv($this);
-        // TODO load from csv
+        // TODO Prio 3 load from csv
         $table_id = $change_table_list->id(change_table_list::WORD);
         $table_field_name = $table_id . change_field_list::FLD_WORD_NAME;
         $type = new type_object(

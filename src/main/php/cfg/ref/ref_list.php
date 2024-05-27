@@ -128,6 +128,7 @@ class ref_list extends type_list
 
     /**
      * adding the refs used for unit tests to the dummy list
+     * TODO Prio 3: load from csv
      */
     function load_dummy(): void
     {
@@ -152,8 +153,8 @@ class ref_list extends type_list
         $result = array();
         if ($this->lst() != null) {
             foreach ($this->lst() as $ref) {
-                if ($ref->id()  > 0) {
-                    $result[] = $ref->id() ;
+                if ($ref->id() > 0) {
+                    $result[] = $ref->id();
                 }
             }
         }

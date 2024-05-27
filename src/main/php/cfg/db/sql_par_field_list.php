@@ -470,7 +470,12 @@ class sql_par_field_list
     function get(string $name): sql_par_field
     {
         $key = array_search($name, $this->names());
-        return $this->lst[$key];
+        if ($key === false) {
+            log_err('field "' . $name . '" missing in "' . implode(',', $this->names())) . '"';
+            return new sql_par_field();
+        } else {
+            return $this->lst[$key];
+        }
     }
 
     /**

@@ -638,7 +638,7 @@ class component_link extends sandbox_link_with_type
 
     function type_field(): string
     {
-        return component_link::FLD_POS_TYPE;
+        return component_link_type::FLD_ID;
     }
 
     function all_sandbox_fields(): array
@@ -1045,7 +1045,8 @@ class component_link extends sandbox_link_with_type
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);
-        if ($sbx->type_id() <> $this->type_id()) {
+        // for the standard table the type field should always be included because it is part of the prime indey
+        if ($sbx->type_id() <> $this->type_id() or !$usr_tbl) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_link_type::FLD_ID,

@@ -82,6 +82,7 @@ class ref_type_list extends type_list
 
     /**
      * adding the ref types used for unit tests to the dummy list
+     * TODO Prio 3: load from csv
      */
     function load_dummy(): void
     {
