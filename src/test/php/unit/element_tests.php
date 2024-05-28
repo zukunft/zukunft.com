@@ -36,6 +36,7 @@ include_once MODEL_ELEMENT_PATH . 'element_list.php';
 
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_type;
 use cfg\element_list;
 use cfg\element_type;
 use test\test_cleanup;
@@ -70,7 +71,7 @@ class element_tests
         $elm = $t->element();
         $t->assert_sql_by_id($sc, $elm);
 
-        $t->subheader('element sql write');
+        $t->subheader('element sql write (no log needed because log is done by the formula)');
         // TODO activate db write
         //$t->assert_sql_insert($sc, $elm);
         //$t->assert_sql_insert($sc, $elm, [sql_type::USER]);

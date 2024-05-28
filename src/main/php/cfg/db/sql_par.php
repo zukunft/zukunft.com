@@ -104,6 +104,10 @@ class sql_par
                 $this->name = $name;
             }
         }
+        // TODO activate
+        //if ($sc_par_lst->is_usr_tbl()) {
+        //    $this->name .= '_user';
+        //}
         $this->par = array();
         $this->ext = $ext;
         $this->typ = $tbl_typ;

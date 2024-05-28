@@ -3614,14 +3614,17 @@ class sandbox extends db_object_seq_id_user
     {
         $lib = new library();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $sc->set_class($this::class, $sc_par_lst);
         $sql_name = $lib->class_to_name($this::class);
         $qp = new sql_par($sql_name);
         $qp->name = $sql_name . $name_ext;
         if ($usr_tbl) {
             $qp->name .= '_user';
         }
+
+        // update the sql creator settings
+        $sc->set_class($this::class, $sc_par_lst);
         $sc->set_name($qp->name);
+
         return $qp;
     }
 

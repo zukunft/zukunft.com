@@ -9,6 +9,10 @@
     The term formula elements are saved in the database for fast detection of dependencies
     formula elements are terms with a link to a formula
 
+    The main sections of this object are
+    - db const:          const for the database link
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -41,6 +45,10 @@ use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
+use cfg\db\sql_type;
+use cfg\db\sql_type_list;
+use cfg\log\change;
 use html\formula\formula as formula_dsp;
 use html\word\word as word_dsp;
 use shared\library;
@@ -49,14 +57,20 @@ class element extends db_object_seq_id_user
 {
 
     // the allowed objects types for a formula element
-    const TYPE_WORD = word::class;        // a word is used for an AND selection of values
-    const TYPE_TRIPLE = triple::class;    // a triple is used for an AND selection of values
-    const TYPE_VERB = verb::class;        // a verb is used for dynamic usage of linked words for an AND selection
-    const TYPE_FORMULA = formula::class;  // a formula is used to include formula results of another formula
+    // a word is used for an AND selection of values
+    // a triple is used for an AND selection of values
+    // a verb is used for dynamic usage of linked words for an AND selection
+    // a formula is used to include formula results of another formula
+    const ELM_CLASSES = [
+        word::class,
+        triple::class,
+        verb::class,
+        formula::class
+    ];
 
 
     /*
-     * database link
+     * db const
      */
 
     // comments used for the database creation
@@ -66,6 +80,7 @@ class element extends db_object_seq_id_user
     const FLD_ID = 'element_id';
     const FLD_FORMULA_COM = 'each element can only be used for one formula';
     const FLD_ORDER = 'order_nbr';
+    const FLD_ORDER_SQLTYP = sql_field_type::INT;
     const FLD_TYPE = 'element_type_id';
     const FLD_REF_ID_COM = 'either a term, verb or formula id';
     const FLD_REF_ID = 'ref_id';
@@ -163,6 +178,14 @@ class element extends db_object_seq_id_user
         return $this->obj?->id();
     }
 
+    /**
+     * @return int the database id of the related object
+     */
+    function trm_id(): int
+    {
+        return $this->obj?->id();
+    }
+
 
     /*
      * load
@@ -195,24 +218,23 @@ class element extends db_object_seq_id_user
     function load_obj_by_id(int $id): int
     {
         if ($id != 0 and $this->user()->is_set()) {
-            if ($this->type == self::TYPE_WORD) {
+            if ($this->type == word::class) {
                 $wrd = new word($this->user());
                 $wrd->load_by_id($id, word::class);
                 $this->symbol = expression::WORD_START . $wrd->id() . expression::WORD_END;
                 $this->obj = $wrd;
-            } elseif ($this->type == self::TYPE_TRIPLE) {
+            } elseif ($this->type == triple::class) {
                 $trp = new triple($this->user());
                 $trp->load_by_id($id);
                 $this->symbol = expression::TRIPLE_START . $trp->id() . expression::TRIPLE_END;
                 $this->obj = $trp;
-            } elseif ($this->type == self::TYPE_VERB) {
+            } elseif ($this->type == verb::class) {
                 $vrb = new verb;
                 $vrb->set_user($this->user());
                 $vrb->load_by_id($id);
                 $this->symbol = expression::TRIPLE_START . $vrb->id . expression::TRIPLE_END;
                 $this->obj = $vrb;
-            }
-            if ($this->type == self::TYPE_FORMULA) {
+            } elseif ($this->type == formula::class) {
                 $frm = new formula($this->user());
                 $frm->load_by_id($id, formula::class);
                 $this->symbol = expression::FORMULA_START . $frm->id() . expression::FORMULA_END;
@@ -227,6 +249,8 @@ class element extends db_object_seq_id_user
                 if ($frm->is_special()) {
                     $this->frm_type = $frm->type_cl;
                 }
+            } else {
+                log_err('id of type ' . $this->type . ' is not expected');
             }
             log_debug("element->load got " . $this->dsp_id() . " (" . $this->symbol . ").");
         }
@@ -305,6 +329,110 @@ class element extends db_object_seq_id_user
         }
 
         return $result;
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add an element to the database
+     * always all fields are included in the query to be able to remove overwrites with a null value
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(
+        sql           $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
+    {
+        // get the fields and values that are filled and should be written to the db
+        $elm_empty = new element($this->user()->clone_reset());
+        $sc_par_lst->add(sql_type::INSERT);
+        $fvt_lst = $this->db_fields_changed($elm_empty, $sc_par_lst);
+
+        // create the sql and get the sql parameters used
+        $qp = new sql_par($this::class, $sc_par_lst);
+        $qp->sql = $sc->create_sql_insert($fvt_lst);
+        $qp->par = $fvt_lst->db_values();
+
+        // update the sql creator settings
+        $sc->set_class($this::class, $sc_par_lst);
+        $sc->set_name($qp->name);
+
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to update a word in the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param element $db_row the word with the database values before the update
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update(sql $sc, element $db_row, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
+    {
+        // get the field names, values and parameter types that have been changed
+        // and that needs to be updated in the database
+        // the db_* child function call the corresponding parent function
+        // including the sql parameters for logging
+        $fvt_lst = $this->db_fields_changed($db_row, $sc_par_lst);
+        $all_fields = $this->db_fields_all();
+        // create the sql and get the sql parameters used
+        $qp = new sql_par($this::class, $sc_par_lst);
+        $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
+        $qp->par = $fvt_lst->db_values();
+
+        // unlike the db_* function the sql_update_* parent function is called directly
+        return $qp;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @return array list of all database field names that might have been updated
+     */
+    function db_fields_all(): array
+    {
+        return [
+            $this::FLD_ID,
+            user::FLD_ID,
+            self::FLD_REF_ID
+        ];
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param element $sbx the compare value to detect the changed fields
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(
+        element  $sbx,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
+    {
+        $lst = new sql_par_field_list();
+        if ($sbx->trm_id() <> $this->trm_id()) {
+            $lst->add_field(
+                term::FLD_ID,
+                $this->trm_id(),
+                term::FLD_ID_SQLTYP,
+                $sbx->trm_id()
+            );
+        }
+        return $lst;
     }
 
 }
