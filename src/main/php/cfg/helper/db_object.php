@@ -214,19 +214,21 @@ class db_object
      * @param string $class the name of the child class from where the call has been triggered
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
+     * @param string $id_ext the query name extension that indicated how many id fields are used e.g. "_p1"
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    public function load_sql_multi(
+    function load_sql_multi(
         sql           $sc,
         string        $query_name,
         string        $class,
         sql_type_list $sc_par_lst,
-        string        $ext = ''
+        string        $ext = '',
+        string        $id_ext = ''
     ): sql_par
     {
         $lib = new library();
         $tbl_name = $lib->class_to_name($class);
-        $qp = new sql_par($tbl_name, $sc_par_lst, $ext);
+        $qp = new sql_par($tbl_name, $sc_par_lst, $ext, $id_ext);
         $qp->name .= $query_name;
         $sc->set_class($class, $sc_par_lst, $sc_par_lst->ext_ex_user());
         $sc->set_name($qp->name);

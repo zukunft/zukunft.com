@@ -286,20 +286,6 @@ class sandbox_multi extends db_object_multi_user
         return $lst;
     }
 
-    /**
-     * create the sql statement to update multi table sandbox object in the database
-     * to be overwritten by the child objects
-     *
-     * @param sql $sc with the target db_type set
-     * @param array $fld_val_typ_lst list of field names, values and sql types additional to the standard id and name fields
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_update_fields(sql $sc, array $fld_val_typ_lst = [], sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
-    {
-        return new sql_par($this::class);
-    }
-
 
     /*
      * internal check
@@ -1227,7 +1213,8 @@ class sandbox_multi extends db_object_multi_user
         log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->dsp_id());
 
         // check again if there ist not yet a record
-        $qp = $this->load_sql_user_changes($db_con->sql_creator());
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_user_changes($sc);
         $db_con->usr_id = $this->user()->id();
         $db_row = $db_con->get1($qp);
         if ($db_row != null) {
@@ -1527,20 +1514,14 @@ class sandbox_multi extends db_object_multi_user
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update_multi(
-        sql   $sc,
-        array $fld_val_typ_lst = [],
+        sql           $sc,
+        array         $fld_val_typ_lst = [],
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
-        $lib = new library();
         $sc->set_class($this::class, $sc_par_lst);
-        $sql_name = $lib->class_to_name($this::class);
-        $qp = new sql_par($sql_name);
-        $qp->name = $sql_name;
-        if ($sc_par_lst->is_usr_tbl()) {
-            $qp->name .= '_user';
-        }
-        $qp->name .= sql::file_sep . sql::file_update;
+        $qp = new sql_par($this::class, $sc_par_lst);
+        $qp->name .= sql::NAME_SEP . sql::FILE_UPDATE;
         $sc->set_name($qp->name);
         $fvt_lst = new sql_par_field_list();
         $fvt_lst->set($fld_val_typ_lst);
@@ -1567,16 +1548,18 @@ class sandbox_multi extends db_object_multi_user
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_delete(
-        sql   $sc,
+        sql           $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
+        // clone the parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::DELETE);
+        // set the target sql table type for this value
         $excluded = $sc_par_lst->exclude_sql();
-        $qp = $this->sql_common($sc, $sc_par_lst, false);
-        $qp->name .= sql::file_sep . sql::file_delete;
-        if ($excluded) {
-            $qp->name .= '_excluded';
-        }
+
+        $qp = $this->sql_common($sc, $sc_par_lst);
         $sc->set_name($qp->name);
         $id_lst = $this->id_or_lst();
         $qp->sql = $sc->create_sql_delete($this->id_field(), $id_lst, $sc_par_lst);

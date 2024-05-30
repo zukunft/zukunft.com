@@ -481,7 +481,7 @@ class test_base
      */
     function assert_true(
         string $msg,
-        bool $result
+        bool   $result
     ): bool
     {
         if ($result === true) {
@@ -672,6 +672,7 @@ class test_base
         }
         return $db_obj;
     }
+
     /**
      * check if the
      *
@@ -2002,12 +2003,12 @@ class test_base
      * @return bool true if the test result is fine
      */
     function display(
-        string       $test_name,
+        string            $test_name,
         string|array|null $target,
         string|array|null $result,
-        float        $exe_max_time = self::TIMEOUT_LIMIT,
-        string       $comment = '',
-        string       $test_type = ''): bool
+        float             $exe_max_time = self::TIMEOUT_LIMIT,
+        string            $comment = '',
+        string            $test_type = ''): bool
     {
 
         // init the test result vars
@@ -2383,23 +2384,31 @@ class test_base
      */
 
     /**
+     * @param string $test_resource_path the path of the file staring from the test resource path
      * @return string the content of the test resource file
      */
     function file(string $test_resource_path): string
     {
-        $result = file_get_contents(TEST_RES_PATH . $test_resource_path);
-        if ($result === false) {
-            $result = 'Cannot get file from ' . TEST_RES_PATH . $test_resource_path;
+        $result = '';
+        $filepath = TEST_RES_PATH . $test_resource_path;
+        if ($this->has_file($test_resource_path)) {
+            $result = file_get_contents($filepath);
+            if ($result === false) {
+                log_err('Cannot get file from ' . $filepath);
+            }
+        } else {
+            log_err('file ' . $filepath . ' does not exist');
         }
         return $result;
     }
 
     /**
+     * @param string $test_resource_path the path of the file staring from the test resource path
      * @return bool true if the test resource file exists
      */
-    function has_file(string $resource_path): bool
+    function has_file(string $test_resource_path): bool
     {
-        return file_exists(TEST_RES_PATH . $resource_path);
+        return file_exists(TEST_RES_PATH . $test_resource_path);
     }
 
 }

@@ -34,6 +34,7 @@ namespace cfg\db;
 
 class sql_type_list
 {
+
     public array $lst = [];  // a list of sql creation types and parameters
 
     /**
@@ -49,9 +50,22 @@ class sql_type_list
         $this->lst = $lst;
     }
 
+
     /*
      * modification
      */
+
+    /**
+     * add a type to the list
+     * @param sql_type $type the sql creation type that should be added
+     * @return void
+     */
+    function add(sql_type $type): void
+    {
+        if (!in_array($type, $this->lst)) {
+            $this->lst[] = $type;
+        }
+    }
 
     /**
      * remove a type from the list if it has been in the list
@@ -67,29 +81,140 @@ class sql_type_list
         return $result;
     }
 
-    /**
-     * add a type to the list
-     * @param sql_type $type the sql creation type that should be added
-     * @return void
+
+    /*
+     * info sql type
      */
-    function add(sql_type $type): void
+
+    /**
+     * @return bool true if an insert sql statement should be created
+     */
+    function is_insert(): bool
     {
-        if (!in_array($type, $this->lst)) {
-            $this->lst[] = $type;
+        return in_array(sql_type::INSERT, $this->lst);
+    }
+
+    /**
+     * @return bool true if the created sql is part of an insert function
+     */
+    public function is_insert_part(): bool
+    {
+        return in_array(sql_type::INSERT_PART, $this->lst);
+    }
+
+    /**
+     * @return bool true if an update sql statement should be created
+     */
+    function is_update(): bool
+    {
+        return in_array(sql_type::UPDATE, $this->lst);
+    }
+
+    /**
+     * @return bool true if the created sql is part of an update function
+     */
+    public function is_update_part(): bool
+    {
+        return in_array(sql_type::UPDATE_PART, $this->lst);
+    }
+
+    /**
+     * @return bool true if a delete sql statement should be created
+     */
+    function is_delete(): bool
+    {
+        return in_array(sql_type::DELETE, $this->lst);
+    }
+
+    /**
+     * @return bool true if the created sql is part of a delete function
+     */
+    public function is_delete_part(): bool
+    {
+        return in_array(sql_type::DELETE_PART, $this->lst);
+    }
+
+    /**
+     * @return bool true if a delete sql statement should be created
+     */
+    function is_select(): bool
+    {
+        if ($this->is_insert()
+            or $this->is_update()
+            or $this->is_delete()) {
+            return false;
+        } else {
+            return true;
         }
     }
 
 
     /*
-     * info
+     * info for value table selection
      */
 
     /**
-     * @return bool true if an sql insert statement should be created
+     * @return bool true to seelct the table for values and results linked to an average number of phrases
      */
-    function is_insert(): bool
+    function is_most(): bool
     {
-        return in_array(sql_type::INSERT, $this->lst);
+        return in_array(sql_type::MOST, $this->lst);
+    }
+
+    /**
+     * @return bool true to seelct the table for values and results linked to only a few fields
+     */
+    function is_prime(): bool
+    {
+        return in_array(sql_type::PRIME, $this->lst);
+    }
+
+    /**
+     * @return bool true to seelct the table for values and results linked to many fields
+     */
+    function is_big(): bool
+    {
+        return in_array(sql_type::BIG, $this->lst);
+    }
+
+    function value_table_type(): sql_type
+    {
+        if ($this->is_prime()) {
+            return sql_type::PRIME;
+        } elseif ($this->is_big()) {
+            return sql_type::BIG;
+        } else {
+            return sql_type::MOST;
+        }
+    }
+
+
+    /*
+     * info for sql functions
+     */
+
+    /**
+     * @return bool true if sql should point to the user sandbox table
+     */
+    function is_usr_tbl(): bool
+    {
+        return in_array(sql_type::USER, $this->lst);
+    }
+
+    /**
+     * @return bool true if sql should return the normal values and not the user specific
+     */
+    function is_norm(): bool
+    {
+        return in_array(sql_type::NORM, $this->lst);
+    }
+
+    /**
+     * @return bool true if sql return all database rows
+     */
+    function get_all(): bool
+    {
+        return in_array(sql_type::COMPLETE, $this->lst);
     }
 
     /**
@@ -101,43 +226,11 @@ class sql_type_list
     }
 
     /**
-     * @return bool true if sql should point to the user sandbox table
-     */
-    function is_usr_tbl(): bool
-    {
-        return in_array(sql_type::USER, $this->lst);
-    }
-
-    /**
      * @return bool true if sql is supposed to be part of another sql statement
      */
     public function is_list_tbl(): bool
     {
         return in_array(sql_type::LIST, $this->lst);
-    }
-
-    /**
-     * @return bool true if sql is part of an update function
-     */
-    public function is_insert_part(): bool
-    {
-        return in_array(sql_type::INSERT_PART, $this->lst);
-    }
-
-    /**
-     * @return bool true if sql is part of an update function
-     */
-    public function is_update_part(): bool
-    {
-        return in_array(sql_type::UPDATE_PART, $this->lst);
-    }
-
-    /**
-     * @return bool true if sql is part of an update function
-     */
-    public function is_delete_part(): bool
-    {
-        return in_array(sql_type::DELETE_PART, $this->lst);
     }
 
     /**
@@ -159,7 +252,7 @@ class sql_type_list
     /**
      * @return bool true if the sql function should be created that also creates the log entries
      */
-    public function and_log(): bool
+    public function incl_log(): bool
     {
         return in_array(sql_type::LOG, $this->lst);
     }
@@ -197,25 +290,11 @@ class sql_type_list
     }
 
     /**
-     * @return bool true if the standard sandbox fields should be added to the sql statement
+     * @return bool true if the sql query or function should not return the created id
      */
     public function no_id_return(): bool
     {
         return in_array(sql_type::NO_ID_RETURN, $this->lst);
-    }
-
-    /**
-     * @return string the table name extension excluding the user sandbox indication
-     */
-    public function ext_ex_user(): string
-    {
-        $ext = '';
-        foreach ($this->lst as $sc_par) {
-            if ($sc_par != sql_type::USER) {
-                $ext .= $sc_par->extension();
-            }
-        }
-        return $ext;
     }
 
     /**
@@ -227,9 +306,7 @@ class sql_type_list
     {
         $result = false;
         foreach ($this->lst as $sc_par) {
-            if ($sc_par == sql_type::INSERT
-                or $sc_par == sql_type::UPDATE
-                or $sc_par == sql_type::DELETE) {
+            if ($sc_par->is_sql_change()) {
                 $result = true;
             }
         }
@@ -254,19 +331,25 @@ class sql_type_list
     }
 
     /**
-     * @return string with the paraneters in a human-readable format
+     * @return string the table name extension excluding the user sandbox indication
      */
-    public function dsp_id(): string
+    public function ext_ex_user(): string
     {
-        return implode(', ', $this->lst);
+        $ext = '';
+        foreach ($this->lst as $sc_par) {
+            if ($sc_par != sql_type::USER) {
+                $ext .= $sc_par->extension();
+            }
+        }
+        return $ext;
     }
 
     /**
-     * the extension of the table name so excluding the insert, update and delete query name extension
+     * the extension of the table name excluding the sql type e.g. insert, update and delete query name extension
      *
      * @return string the table name extension excluding the user sandbox indication
      */
-    public function tbl_ext_ex_user(): string
+    public function ext_select(): string
     {
         $ext = '';
         foreach ($this->lst as $sc_par) {
@@ -274,12 +357,91 @@ class sql_type_list
                 and $sc_par != sql_type::INSERT
                 and $sc_par != sql_type::UPDATE
                 and $sc_par != sql_type::DELETE
+                and $sc_par != sql_type::EXCLUDE
+                and $sc_par != sql_type::LOG
                 and $sc_par != sql_type::SUB
-                and $sc_par != sql_type::LIST) {
+                and $sc_par != sql_type::LIST
+                and $sc_par != sql_type::NORM) {
                 $ext .= $sc_par->extension();
             }
         }
         return $ext;
+    }
+
+    /**
+     * the extension of the table name excluding the sql type e.g. insert, update and delete query name extension
+     *
+     * @return string the table name extension excluding the user sandbox indication
+     */
+    public function ext_norm(): string
+    {
+        $ext = '';
+        foreach ($this->lst as $sc_par) {
+            if ($sc_par == sql_type::NORM) {
+                $ext .= $sc_par->extension();
+            }
+        }
+        return $ext;
+    }
+
+    /**
+     * the extension of the table name for the sql type e.g. insert, update and delete query name extension
+     *
+     * @return string the table name extension excluding the user sandbox indication
+     */
+    public function ext_type(): string
+    {
+        $ext = '';
+        if (!$this->is_select()) {
+            foreach ($this->lst as $sc_par) {
+                if ($sc_par->is_sql_change()) {
+                    $ext .= $sc_par->extension();
+                }
+            }
+        }
+        if ($this->incl_log()) {
+            $ext .= sql_type::LOG->extension();
+        }
+        if ($this->exclude_sql()) {
+            $ext .= sql_type::EXCLUDE->extension();
+        }
+        return $ext;
+    }
+
+    /**
+     * the extension binding for nice names
+     *
+     * @return string with "by" or empty
+     */
+    public function ext_by(): string
+    {
+        $ext = '';
+        if ($this->is_select()) {
+            if ($this->is_norm()) {
+                $ext .= sql::NAME_SEP . sql::NAME_BY . sql::NAME_SEP;
+            } elseif ($this->get_all()) {
+                $ext .= sql::NAME_SEP;
+            } else {
+                $sc = new sql();
+                if (!$this->is_cur_not_l()) {
+                    $ext .= sql::NAME_SEP . sql::NAME_BY . sql::NAME_SEP;
+                }
+            }
+        }
+        return $ext;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string with the paraneters in a human-readable format
+     */
+    public function dsp_id(): string
+    {
+        return implode(', ', $this->lst);
     }
 
 }

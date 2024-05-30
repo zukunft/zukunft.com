@@ -122,8 +122,7 @@ class sql
     const UNION = 'UNION';
     const IN = 'IN';
     const WITH = 'WITH';
-    const FROM_FLD_PREFIX = 'from_';
-    const TO_FLD_PREFIX = 'to_';
+
     const LAST_ID_MYSQL = 'SELECT LAST_INSERT_ID() AS ';
     const TRUE = '1'; // representing true in the where part for a smallint field
     const FALSE = '0'; // representing true in the where part for a smallint field
@@ -136,12 +135,21 @@ class sql
     const FLD_TYPE_NAME = 'type_name'; // field name for the user specific name of a type; types are used to assign code to a db row
     const FLD_CONST = 'const'; // for the view creation to indicate that the field name as a const
 
+    // query name extentions to make the quere name unique
+    const NAME_SEP = '_'; // for snake case query and file names
+    const NAME_BY = 'by'; // to seperate the query selection in the query name e.g. for (load) word_by_name
+    const NAME_EXT_USER = '_user';
+
     // for sql functions that do the change log and the actual change with on function
     const FLD_LOG_FIELD_PREFIX = 'field_id_'; // added to the field name to include the preloaded log field id
     const FLD_LOG_ID_PREFIX = 'id_'; // added to the field name to include the actual id changed in the log e.g. for type changes
     const PAR_PREFIX = '_'; // to seperate the parameter names e.g. _word_id instead of word_id for the given parameter
     const PAR_PREFIX_MYSQL = '@'; // for the new sequence id using MySQL
     const PAR_NEW_ID_PREFIX = 'new_'; // added to the field id name to remember the sequence id
+
+    // query field prefixes to make the field name unique
+    const FROM_FLD_PREFIX = 'from_';
+    const TO_FLD_PREFIX = 'to_';
 
     // enum values used for the table creation
     const fld_type_ = '';
@@ -157,11 +165,10 @@ class sql
     const COMMENT_CLASS_NAME = '-=class=-';
 
     // internal const for unit testing
-    const file_sep = '_'; // for snake case file names
-    const file_insert = 'insert'; // for insert (or create in curl notation) unit test files
-    const file_update = 'update'; // for update unit test files
-    const file_delete = 'delete'; // for delete (or remove in curl notation) unit test files
-    const file_load = 'load'; // for load unit test files
+    const FILE_INSERT = 'insert'; // for insert (or create in curl notation) unit test files
+    const FILE_UPDATE = 'update'; // for update unit test files
+    const FILE_DELETE = 'delete'; // for delete (or remove in curl notation) unit test files
+    const FILE_LOAD = 'load'; // for load unit test files
 
     // classes where the table that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
@@ -541,8 +548,7 @@ class sql
      */
     function sql_par(string $class, sql_type_list $sc_par_lst): sql_par
     {
-        $ext = $sc_par_lst->extension();
-        $this->set_class($class, new sql_type_list([]), $ext);
+        $this->set_class($class, new sql_type_list([]));
         return new sql_par($class, $sc_par_lst);
     }
 
@@ -554,7 +560,7 @@ class sql
      *
      * @param string $class is a string that is used to select the table name, the id field and the name field
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @param string $ext the table name extension e.g. to switch between standard and prime values
+     * @param string $ext the table name extension that is not implied in the $sc_par_lst e.g. to switch between standard and prime values
      * @return bool true if setting the type was successful
      */
     function set_class(string $class, sql_type_list $sc_par_lst = new sql_type_list([]), string $ext = ''): bool
@@ -656,9 +662,9 @@ class sql
 
     /**
      * define a field that is taken from a complex sub query that is not yet created
-     * @param string $fld_name the field names from the sub query that should be included in the main query
      * @param string $sql the sql of the sub query
-     * @param string $link_field the field that should be used to link the queries
+     * @param array $join_field_lst the field names from the sub query that should be included in the main query
+     * @param string $join_field the field that should be used to link the queries
      * @return void
      */
     function set_join_sql(string $sql, array $join_field_lst, string $join_field): void
@@ -1192,11 +1198,11 @@ class sql
         // create a prepare SQL statement if possible
         $sql_type = self::INSERT;
         $sc_par_lst_end = [];
-        if ($sc_par_lst->and_log()) {
+        if ($sc_par_lst->incl_log()) {
             $sql_type = self::FUNCTION;
         }
         $sql = $this->prepare_this_sql($sql_type);
-        if ($sc_par_lst->and_log()) {
+        if ($sc_par_lst->incl_log()) {
             $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst);
             return $this->end_sql($sql, $sql_type);
         } else {
@@ -1326,13 +1332,13 @@ class sql
 
         // create a prepare SQL statement if possible
         $sql_type = self::UPDATE;
-        if ($sc_par_lst->and_log()) {
+        if ($sc_par_lst->incl_log()) {
             $sql_type = self::FUNCTION;
         }
         if ($sc_par_lst->is_sub_tbl()) {
             $this->sub_query = true;
         }
-        if ($sc_par_lst->and_log()) {
+        if ($sc_par_lst->incl_log()) {
             $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst);
         } else {
             if ($sc_par_lst->is_update_part()) {
@@ -1421,7 +1427,7 @@ class sql
         // set some var names to shorten the code lines
         $id_field = $this->id_field_name();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $ext = sql::file_sep . sql::file_insert;
+        $ext = sql::NAME_SEP . sql::FILE_INSERT;
         $id_fld_new = $this->var_name_new_id($sc_par_lst);
 
         // init the result
@@ -1699,7 +1705,7 @@ class sql
             $sql_where = $this->sql_where($id_field, $id);
         }
 
-        if ($sc_par_lst->and_log()) {
+        if ($sc_par_lst->incl_log()) {
             if ($sc_par_lst->create_function()) {
                 $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst, $fvt_lst);
             } else {
@@ -3907,7 +3913,7 @@ class sql
 
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         if ($ext == '') {
-            $ext = $sc_par_lst->tbl_ext_ex_user();
+            $ext = $sc_par_lst->ext_select();
         }
         if ($usr_tbl) {
             $this->table = sql_db::USER_PREFIX;

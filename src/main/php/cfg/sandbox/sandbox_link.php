@@ -188,6 +188,20 @@ class sandbox_link extends sandbox
         }
     }
 
+    /**
+     * copy the link objects from this object to the given link
+     * used to unset any changes in the link to detect only the changes fields that the user is allowed to change
+     *
+     * @param sandbox_link $lnk
+     * @return sandbox_link
+     */
+    function set_link_objects(sandbox_link $lnk): sandbox_link
+    {
+        $lnk->fob = $this->fob;
+        $lnk->tob = $this->tob;
+        return $lnk;
+    }
+
 
     /*
      * sql create
@@ -697,7 +711,7 @@ class sandbox_link extends sandbox
     {
         // set some var names to shorten the code lines
         $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
-        $ext = sql::file_sep . sql::file_insert;
+        $ext = sql::NAME_SEP . sql::FILE_INSERT;
 
         // init the function body
         $id_field = $sc->id_field_name();
@@ -908,7 +922,7 @@ class sandbox_link extends sandbox
         $sc = new sql();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $is_insert = $sc_par_lst->is_insert();
-        $do_log = $sc_par_lst->and_log();
+        $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
         // for insert statements of user sandbox rows user id fields always needs to be included
@@ -1050,6 +1064,73 @@ class sandbox_link extends sandbox
     function is_named_obj(): bool
     {
         return false;
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a new sandbox link object to the database
+     * always all fields are included in the query to be able to remove overwrites with a null value
+     * TODO check first the query name and skip the sql building if not needed
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(
+        sql           $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
+    {
+        // clone the sql parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::INSERT);
+        // fields and values that the word has additional to the standard named user sandbox object
+        $lnk_empty = $this->clone_reset();
+        // for a new component link the owner should be set, so remove the user id to force writing the user
+        $lnk_empty->set_user($this->user()->clone_reset());
+        // for linked user db rows, use the link fields of the standard row, beause the link itself cannot be changed by the user
+        if ($sc_par_lst_used->is_usr_tbl()) {
+            $lnk_empty = $this->set_link_objects($lnk_empty);
+        }
+        // get the list of the changed fields
+        $fvt_lst = $this->db_fields_changed($lnk_empty, $sc_par_lst_used);
+        // get the list of all fields that can be changed by the user
+        $all_fields = $this->db_fields_all($sc_par_lst_used);
+        // create either the prepared sql query or a sql function that includes the logging of the changes
+        return parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst_used);
+    }
+
+    /**
+     * create the sql statement to update a sandbox link object in the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param sandbox $db_row the word with the database values before the update
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update(
+        sql           $sc,
+        sandbox       $db_row,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
+    {
+        // clone the sql parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::UPDATE);
+        // get the field names, values and parameter types that have been changed
+        // and that needs to be updated in the database
+        // the db_* child function call the corresponding parent function
+        // including the sql parameters for logging
+        $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst_used);
+        $all_fields = $this->db_fields_all($sc_par_lst_used);
+        // unlike the db_* function the sql_update_* parent function is called directly
+        return $this::sql_update_switch($sc, $fld_lst, $all_fields, $sc_par_lst_used);
     }
 
 

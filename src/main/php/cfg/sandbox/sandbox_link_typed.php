@@ -197,7 +197,7 @@ class sandbox_link_typed extends sandbox_link_named
         global $change_field_list;
 
         $sc = new sql();
-        $do_log = $sc_par_lst->and_log();
+        $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);

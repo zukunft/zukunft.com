@@ -2650,7 +2650,6 @@ class sandbox extends db_object_seq_id_user
 
         // set the actual class before accessing the database to ...
         log_debug($msg);
-        $sc = $db_con->sql_creator();
         $db_con->set_class($this::class, $sc_par_lst->is_usr_tbl());
         $sc = $db_con->sql_creator();
         $qp = $this->sql_insert($sc, $sc_par_lst);
@@ -2687,31 +2686,62 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * create the sql statement to insert a sandbox object in the database
-     * dummy function to be overwritten by the child object
+     * always all fields are included in the query to be able to remove overwrites with a null value
+     * overwritten by link objects
      *
      * @param sql $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
+    function sql_insert(
+        sql           $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
     {
-        log_err('sql_insert is probably missing for ' . $this::class);
-        return new sql_par('');
+        // clone the sql parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::INSERT);
+        // fields and values that the word has additional to the standard named user sandbox object
+        $sbx_empty = $this->clone_reset();
+        // for a new sandbox object the owner should be set, so remove the user id to force writing the user
+        $sbx_empty->set_user($this->user()->clone_reset());
+        // get the list of the changed fields
+        $fvt_lst = $this->db_fields_changed($sbx_empty, $sc_par_lst_used);
+        // get the list of all fields that can be changed by the user
+        $all_fields = $this->db_fields_all();
+        // create either the prepared sql query or a sql function that includes the logging of the changes
+        return $this::sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst_used);
     }
 
     /**
-     * create the sql statement to update a word in the database
-     * dummy function to be overwritten by the child object
+     * create the sql statement to update a sandbox object in the database
      *
      * @param sql $sc with the target db_type set
      * @param sandbox $db_row the sandbox object with the database values before the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, sandbox $db_row, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
+    function sql_update(
+        sql $sc,
+        sandbox $db_row,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
     {
-        log_err('sql_update is probably missing for ' . $this::class);
-        return new sql_par('');
+        // clone the parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::UPDATE);
+        // get the field names, values and parameter types that have been changed
+        // and that needs to be updated in the database
+        // the db_* child function call the corresponding parent function
+        // including the sql parameters for logging
+        $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst_used);
+        // get the list of all fields that can be changed by the user
+        $all_fields = $this->db_fields_all();
+        // create either the prepared sql query or a sql function that includes the logging of the changes
+        // unlike the db_* function the sql_update_* parent function is called directly
+        return $this::sql_update_switch($sc, $fld_lst, $all_fields, $sc_par_lst_used);
     }
 
     /**
@@ -2726,33 +2756,26 @@ class sandbox extends db_object_seq_id_user
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
-        $sc_par_lst->add(sql_type::DELETE);
-        $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $and_log = $sc_par_lst->and_log();
-        $excluded = $sc_par_lst->exclude_sql();
-        $ext = sql::file_sep . sql::file_delete;
-        if ($and_log) {
-            $ext .= sql_type::LOG->extension();
-        }
-        if ($excluded) {
-            $ext .= '_excluded';
-        }
-        $qp = $this->sql_common($sc, $sc_par_lst, $ext);
+        // clone the sql parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::DELETE);
+        $qp = $this->sql_common($sc, $sc_par_lst_used);
         $par_lst = [$this->id()];
         $sc->set_name($qp->name);
         // delete the user overwrite
         // but if the excluded user overwrites should be deleted the overwrites for all users should be deleted
-        if ($and_log) {
+        if ($sc_par_lst_used->incl_log()) {
             // log functions must always use named parameters
-            $sc_par_lst->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_delete_and_log($sc, $qp, $sc_par_lst);
+            $sc_par_lst_used->add(sql_type::NAMED_PAR);
+            $qp = $this->sql_delete_and_log($sc, $qp, $sc_par_lst_used);
         } else {
-            if ($usr_tbl and !$excluded) {
+            if ($sc_par_lst_used->is_usr_tbl() and !$sc_par_lst_used->exclude_sql()) {
                 $qp->sql = $sc->create_sql_delete(
-                    [$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $sc_par_lst);
+                    [$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $sc_par_lst_used);
                 $par_lst[] = $this->user_id();
             } else {
-                $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $sc_par_lst);
+                $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $sc_par_lst_used);
             }
             $qp->par = $par_lst;
         }
@@ -2777,7 +2800,7 @@ class sandbox extends db_object_seq_id_user
         $table_id = $sc->table_id($this::class);
 
         // set some var names to shorten the code lines
-        $ext = sql::file_sep . sql::file_delete;
+        $ext = sql::NAME_SEP . sql::FILE_DELETE;
         $id_fld = $sc->id_field_name();
         $id_val = '_' . $id_fld;
         $name_fld = $this->name_field();
@@ -2874,14 +2897,10 @@ class sandbox extends db_object_seq_id_user
         $sc_par_lst_func->add(sql_type::FUNCTION);
         $sc_par_lst_func->add(sql_type::DELETE);
         $sc_par_lst_func->add(sql_type::NO_ID_RETURN);
-        $ext = sql::file_sep . sql::file_delete;
-        if ($sc_par_lst->and_log()) {
-            $ext .= sql_type::LOG->extension();
-        }
         if ($sc_par_lst->exclude_sql()) {
-            $ext .= '_excluded';
+            $sc_par_lst_func->add(sql_type::EXCLUDE);
         }
-        $qp_func = $this->sql_common($sc_delete, $sc_par_lst_func, $ext);
+        $qp_func = $this->sql_common($sc_delete, $sc_par_lst_func);
         $qp_func->sql = $sc->create_sql_delete(
             $id_fld, $id_val, $sc_par_lst_func, $fvt_lst_out);
         $qp_func->par = $fvt_lst_out->values();
@@ -2951,7 +2970,7 @@ class sandbox extends db_object_seq_id_user
 
         $lst = new sql_par_field_list();
         $sc = new sql();
-        $do_log = $sc_par_lst->and_log();
+        $do_log = $sc_par_lst->incl_log();
         $lib = new library();
         $table_id = $sc->table_id($this::class);
 
@@ -3080,21 +3099,15 @@ class sandbox extends db_object_seq_id_user
         array              $fld_lst_all = [],
         sql_type_list      $sc_par_lst = new sql_type_list([])): sql_par
     {
-        // check the parameters
+        // make the query name unique based on the changed fields
         $lib = new library();
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all);
 
-        // create the main query parameter object and set the name
-        $and_log = $sc_par_lst->and_log();
-        $fld_chg_ext = $lib->sql_field_ext($fvt_lst, $fld_lst_all);
-        $ext = sql::file_sep . sql::file_insert;
-        if ($and_log) {
-            $ext .= sql_type::LOG->extension();
-        }
-        $ext .= sql::file_sep . $fld_chg_ext;
+        // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
 
         // TODO check if query has already been build and if yes, skip sql creation
-        if ($and_log) {
+        if ($sc_par_lst->incl_log()) {
             // log functions must always use named parameters
             $sc_par_lst->add(sql_type::NAMED_PAR);
             $qp = $this->sql_insert_with_log($sc, $qp, $fvt_lst, $fld_lst_all, $sc_par_lst);
@@ -3135,7 +3148,7 @@ class sandbox extends db_object_seq_id_user
     {
         // set some var names to shorten the code lines
         $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $ext = sql::file_sep . sql::file_insert;
+        $ext = sql::NAME_SEP . sql::FILE_INSERT;
         $id_field = $sc->id_field_name();
         $var_name_row_id = $sc->var_name_row_id($sc_par_lst);
 
@@ -3374,23 +3387,20 @@ class sandbox extends db_object_seq_id_user
         // TODO deprecate
         $val_lst = $fvt_lst->values();
 
+        // make the query name unique based on the changed fields
         $lib = new library();
-        $and_log = $sc_par_lst->and_log();
-        $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $fld_chg_ext = $lib->sql_field_ext($fvt_lst, $fld_lst_all);
-        $ext = sql::file_sep . sql::file_update;
-        if ($and_log) {
-            $ext .= sql_type::LOG->extension();
-        }
-        $ext .= sql::file_sep . $fld_chg_ext;
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all);
+
+        // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
-        if ($and_log) {
+
+        if ($sc_par_lst->incl_log()) {
             // log functions must always use named parameters
             $sc_par_lst->add(sql_type::NAMED_PAR);
             $sc_par_lst->add(sql_type::NO_ID_RETURN);
             $qp = $this->sql_update_named_and_log($sc, $qp, $fvt_lst, $fld_lst_all, $sc_par_lst);
         } else {
-            if ($usr_tbl) {
+            if ($sc_par_lst->is_usr_tbl()) {
                 $qp->sql = $sc->create_sql_update(
                     [$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $fvt_lst);
             } else {
@@ -3421,7 +3431,7 @@ class sandbox extends db_object_seq_id_user
 
         // set some var names to shorten the code lines
         $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $ext = sql::file_sep . sql::file_insert;
+        $ext = sql::NAME_SEP . sql::FILE_INSERT;
         $id_fld = $sc->id_field_name();
         $id_val = '_' . $id_fld;
 
@@ -3607,19 +3617,12 @@ class sandbox extends db_object_seq_id_user
      *
      * @param sql $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @param string $name_ext the query name extension to differ the queries based on the fields changed
+     * @param string $ext the query name extension to differ the queries based on the fields changed
      * @return sql_par prepared sql parameter object with the name set
      */
-    protected function sql_common(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([]), string $name_ext = ''): sql_par
+    protected function sql_common(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([]), string $ext = ''): sql_par
     {
-        $lib = new library();
-        $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $sql_name = $lib->class_to_name($this::class);
-        $qp = new sql_par($sql_name);
-        $qp->name = $sql_name . $name_ext;
-        if ($usr_tbl) {
-            $qp->name .= '_user';
-        }
+        $qp = new sql_par($this::class, $sc_par_lst, $ext);
 
         // update the sql creator settings
         $sc->set_class($this::class, $sc_par_lst);

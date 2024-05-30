@@ -892,6 +892,7 @@ class sandbox_named extends sandbox
     /**
      * create the sql statement to add a new named sandbox object e.g. word to the database
      * TODO add qp merge
+     * TODO check if it can be merged with the sandbox function
      *
      * @param sql $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
@@ -905,20 +906,14 @@ class sandbox_named extends sandbox
         array              $fld_lst_all = [],
         sql_type_list      $sc_par_lst = new sql_type_list([])): sql_par
     {
-        // check the parameters
+        // make the query name unique based on the changed fields
         $lib = new library();
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all);
 
-        // create the main query parameter object and set the name
-        $and_log = $sc_par_lst->and_log();
-        $fld_chg_ext = $lib->sql_field_ext($fvt_lst, $fld_lst_all);
-        $ext = sql::file_sep . sql::file_insert;
-        if ($and_log) {
-            $ext .= sql_type::LOG->extension();
-        }
-        $ext .= sql::file_sep . $fld_chg_ext;
+        // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
 
-        if ($and_log) {
+        if ($sc_par_lst->incl_log()) {
             // log functions must always use named parameters
             $sc_par_lst->add(sql_type::NAMED_PAR);
             $qp = $this->sql_insert_with_log($sc, $qp, $fvt_lst, $fld_lst_all, $sc_par_lst);
@@ -952,7 +947,7 @@ class sandbox_named extends sandbox
     {
         // set some var names to shorten the code lines
         $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
-        $ext = sql::file_sep . sql::file_insert;
+        $ext = sql::NAME_SEP . sql::FILE_INSERT;
 
         // init the function body
         $id_field = $sc->id_field_name();
@@ -1028,7 +1023,7 @@ class sandbox_named extends sandbox
         $sc = new sql();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $is_insert = $sc_par_lst->is_insert();
-        $do_log = $sc_par_lst->and_log();
+        $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
         // for insert statements of user sandbox rows user id fields always needs to be included

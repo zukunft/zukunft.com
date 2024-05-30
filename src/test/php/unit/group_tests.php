@@ -259,38 +259,39 @@ class group_tests
 
         // check the Postgres query syntax for a list of up to four prime phrases
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->phrase_list_prime());
-        $result = $t->assert_qp($qp, $db_con->db_type);
+        $sc = $db_con->sql_creator();
+        $qp = $grp->load_sql_by_phrase_list($sc, $t->phrase_list_prime());
+        $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and for 16 phrase
         if ($result) {
-            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->phrase_list_16());
-            $t->assert_qp($qp, $db_con->db_type);
+            $qp = $grp->load_sql_by_phrase_list($sc, $t->phrase_list_16());
+            $t->assert_qp($qp, $sc->db_type);
         }
 
         // ... and for more than 16 phrase
         if ($result) {
-            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->phrase_list_17_plus());
-            $t->assert_qp($qp, $db_con->db_type);
+            $qp = $grp->load_sql_by_phrase_list($sc, $t->phrase_list_17_plus());
+            $t->assert_qp($qp, $sc->db_type);
         }
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->phrase_list_prime());
-            $t->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $grp->load_sql_by_phrase_list($sc, $t->phrase_list_prime());
+            $t->assert_qp($qp, $sc->db_type);
         }
 
         // ... and for 16 phrase
         if ($result) {
-            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->phrase_list_16());
-            $t->assert_qp($qp, $db_con->db_type);
+            $qp = $grp->load_sql_by_phrase_list($sc, $t->phrase_list_16());
+            $t->assert_qp($qp, $sc->db_type);
         }
 
         // ... and for more than 16 phrase
         if ($result) {
-            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->phrase_list_17_plus());
-            $t->assert_qp($qp, $db_con->db_type);
+            $qp = $grp->load_sql_by_phrase_list($sc, $t->phrase_list_17_plus());
+            $t->assert_qp($qp, $sc->db_type);
         }
     }
 

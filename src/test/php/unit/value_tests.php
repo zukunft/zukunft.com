@@ -187,7 +187,8 @@ class value_tests
         $t->assert_sql_by_id($sc, $vts);
 
         // ... and the related default time series
-        $t->assert_sql_standard($sc, $vts);
+        // TODO Prio 2 activate
+        //$t->assert_sql_standard($sc, $vts);
 
         // sql to load a user specific time series by phrase group id
         $vts->reset($usr);

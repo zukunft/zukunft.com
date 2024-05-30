@@ -37,7 +37,6 @@
     - log:               write the changes to the log
     - save:              manage to update the database
     - del:               manage to remove from the database
-    - sql write:         sql statement creation to write to the database
     - sql write fields:  field list for writing to the database
     - debug:             internal support functions for debugging
 
@@ -1836,8 +1835,9 @@ class word extends sandbox_typed
                 $qp = parent::sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
                 $usr_msg = $db_con->update($qp, 'update word');
                 if ($this->has_usr_cfg()) {
-                    $sc_par_lst->add(sql_type::USER);
-                    $qp = parent::sql_delete($sc, $sc_par_lst);
+                    $sc_par_lst_del_usr_cfg = new sql_type_list([sql_type::LOG]);
+                    $sc_par_lst_del_usr_cfg->add(sql_type::USER);
+                    $qp = parent::sql_delete($sc, $sc_par_lst_del_usr_cfg);
                     $usr_msg = $db_con->delete($qp, 'del user word');
                 }
             }
@@ -1894,54 +1894,6 @@ class word extends sandbox_typed
 
 
     /*
-     * sql write
-     */
-
-    /**
-     * create the sql statement to add a new word to the database
-     * always all fields are included in the query to be able to remove overwrites with a null value
-     *
-     * @param sql $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_insert(
-        sql           $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
-    ): sql_par
-    {
-        // fields and values that the word has additional to the standard named user sandbox object
-        $wrd_empty = $this->clone_reset();
-        // for a new word the owner should be set, so remove the user id to force writing the user
-        $wrd_empty->set_user($this->user()->clone_reset());
-        $sc_par_lst->add(sql_type::INSERT);
-        $fvt_lst = $this->db_fields_changed($wrd_empty, $sc_par_lst);
-        $all_fields = $this->db_fields_all();
-        return parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
-    }
-
-    /**
-     * create the sql statement to update a word in the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param sandbox|word $db_row the word with the database values before the update
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_update(sql $sc, sandbox|word $db_row, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
-    {
-        // get the field names, values and parameter types that have been changed
-        // and that needs to be updated in the database
-        // the db_* child function call the corresponding parent function
-        // including the sql parameters for logging
-        $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst);
-        $all_fields = $this->db_fields_all();
-        // unlike the db_* function the sql_update_* parent function is called directly
-        return parent::sql_update_switch($sc, $fld_lst, $all_fields, $sc_par_lst);
-    }
-
-
-    /*
      * sql write fields
      */
 
@@ -1957,10 +1909,12 @@ class word extends sandbox_typed
     {
         return array_merge(
             parent::db_fields_all(),
-            [phrase::FLD_TYPE,
+            [
+                phrase::FLD_TYPE,
                 self::FLD_VIEW,
                 self::FLD_PLURAL,
-                self::FLD_VALUES],
+                self::FLD_VALUES
+            ],
             parent::db_fields_all_sandbox()
         );
     }
@@ -1980,7 +1934,7 @@ class word extends sandbox_typed
         global $change_field_list;
 
         $sc = new sql();
-        $do_log = $sc_par_lst->and_log();
+        $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);

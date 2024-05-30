@@ -573,6 +573,21 @@ class triple extends sandbox_link_typed implements JsonSerializable
         return $obj_cpy;
     }
 
+    /**
+     * copy the link objects from this object to the given triple
+     * used to unset any changes in the link to detect only the changes fields that the user is allowed to change
+     *
+     * @param sandbox_link|triple $trp
+     * @return triple
+     */
+    function set_link_objects(sandbox_link|triple $trp): triple
+    {
+        $trp->fob = $this->fob;
+        $trp->verb = $this->verb;
+        $trp->tob = $this->tob;
+        return $trp;
+    }
+
 
     /*
      * preloaded
@@ -2294,60 +2309,6 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
 
     /*
-     * sql write
-     */
-
-    /**
-     * create the sql statement to add a new triple to the database
-     * always all fields are included in the query to be able to remove overwrites with a null value
-     * TODO check first the query name and skip the sql building if not needed
-     *
-     * @param sql $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_insert(
-        sql           $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
-    ): sql_par
-    {
-        // fields and values that the word has additional to the standard named user sandbox object
-        $trp_empty = $this->clone_reset();
-        // for a new word the owner should be set, so remove the user id to force writing the user
-        $trp_empty->set_user($this->user()->clone_reset());
-        if ($sc_par_lst->is_usr_tbl()) {
-            $trp_empty->fob = $this->fob;
-            $trp_empty->verb = $this->verb;
-            $trp_empty->tob = $this->tob;
-        }
-        $sc_par_lst->add(sql_type::INSERT);
-        $fvt_lst = $this->db_fields_changed($trp_empty, $sc_par_lst);
-        $all_fields = $this->db_fields_all($sc_par_lst);
-        return parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
-    }
-
-    /**
-     * create the sql statement to update a triple in the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param sandbox|triple $db_row the word with the database values before the update
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_update(sql $sc, sandbox|triple $db_row, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
-    {
-        // get the field names, values and parameter types that have been changed
-        // and that needs to be updated in the database
-        // the db_* child function call the corresponding parent function
-        // including the sql parameters for logging
-        $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst);
-        $all_fields = $this->db_fields_all($sc_par_lst);
-        // unlike the db_* function the sql_update_* parent function is called directly
-        return parent::sql_update_switch($sc, $fld_lst, $all_fields, $sc_par_lst);
-    }
-
-
-    /*
      * sql write fields
      */
 
@@ -2363,11 +2324,13 @@ class triple extends sandbox_link_typed implements JsonSerializable
     {
         return array_merge(
             parent::db_fields_all($sc_par_lst),
-            [verb::FLD_ID,
+            [
+                verb::FLD_ID,
                 self::FLD_NAME_GIVEN,
                 self::FLD_NAME_AUTO,
                 self::FLD_VALUES,
-                self::FLD_VIEW],
+                self::FLD_VIEW
+            ],
             parent::db_fields_all_sandbox()
         );
     }
@@ -2387,7 +2350,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         global $change_field_list;
 
         $sc = new sql();
-        $do_log = $sc_par_lst->and_log();
+        $do_log = $sc_par_lst->incl_log();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 

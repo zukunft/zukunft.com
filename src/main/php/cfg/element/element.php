@@ -349,18 +349,21 @@ class element extends db_object_seq_id_user
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
+        // clone the sql parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::INSERT);
         // get the fields and values that are filled and should be written to the db
         $elm_empty = new element($this->user()->clone_reset());
-        $sc_par_lst->add(sql_type::INSERT);
-        $fvt_lst = $this->db_fields_changed($elm_empty, $sc_par_lst);
+        $fvt_lst = $this->db_fields_changed($elm_empty, $sc_par_lst_used);
 
         // create the sql and get the sql parameters used
-        $qp = new sql_par($this::class, $sc_par_lst);
+        $qp = new sql_par($this::class, $sc_par_lst_used);
         $qp->sql = $sc->create_sql_insert($fvt_lst);
         $qp->par = $fvt_lst->db_values();
 
         // update the sql creator settings
-        $sc->set_class($this::class, $sc_par_lst);
+        $sc->set_class($this::class, $sc_par_lst_used);
         $sc->set_name($qp->name);
 
         return $qp;

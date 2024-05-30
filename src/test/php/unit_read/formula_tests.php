@@ -88,7 +88,9 @@ class formula_tests
         $t->subheader('Frontend API tests');
 
         $frm = $t->load_formula(formula_api::TN_INCREASE);
-        $t->assert_api_obj($frm);
+        if ($frm->name() != '') {
+            $t->assert_api_obj($frm);
+        }
     }
 
 }

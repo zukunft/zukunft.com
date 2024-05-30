@@ -169,7 +169,7 @@ class group_id extends id
     function table_extension(int|string $grp_id, bool $with_phrase_count = true): string
     {
         $tbl_typ = $this->table_type($grp_id);
-        $ext = $tbl_typ->extension();
+        $ext = '';
         // only for prime value and result tables the number of ids is relevant
         if ($tbl_typ == sql_type::PRIME) {
             if ($with_phrase_count) {

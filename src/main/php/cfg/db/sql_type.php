@@ -76,20 +76,21 @@ enum sql_type: string
     public function extension(): string
     {
         return match($this) {
-            self::INSERT => sql::file_sep . 'insert',
-            self::UPDATE => sql::file_sep . 'update',
-            self::DELETE => sql::file_sep . 'delete',
-            self::NORM => sql::file_sep . 'norm',
-            self::PRIME => sql::file_sep . 'prime',
-            self::MAIN => sql::file_sep . 'main',
-            self::BIG => sql::file_sep . 'big',
-            self::INDEX => sql::file_sep . 'index',
-            self::LARGE => sql::file_sep . 'large',
-            self::STANDARD => sql::file_sep . 'standard',
-            self::USER => sql::file_sep . 'user',
-            self::SUB => sql::file_sep . 'sub',
-            self::LIST => sql::file_sep . 'list',
-            self::LOG => sql::file_sep . 'log',
+            self::INSERT => sql::NAME_SEP . 'insert',
+            self::UPDATE => sql::NAME_SEP . 'update',
+            self::DELETE => sql::NAME_SEP . 'delete',
+            self::EXCLUDE => sql::NAME_SEP . 'excluded',
+            self::NORM => sql::NAME_SEP . 'norm',
+            self::PRIME => sql::NAME_SEP . 'prime',
+            self::MAIN => sql::NAME_SEP . 'main',
+            self::BIG => sql::NAME_SEP . 'big',
+            self::INDEX => sql::NAME_SEP . 'index',
+            self::LARGE => sql::NAME_SEP . 'large',
+            self::STANDARD => sql::NAME_SEP . 'standard',
+            self::USER => sql::NAME_SEP . 'user',
+            self::SUB => sql::NAME_SEP . 'sub',
+            self::LIST => sql::NAME_SEP . 'list',
+            self::LOG => sql::NAME_SEP . 'log',
             default => '',
         };
     }
@@ -100,9 +101,21 @@ enum sql_type: string
     function prefix(): string
     {
         return match($this) {
-            self::PRIME => 'prime' . sql::file_sep,
-            self::USER => 'user' . sql::file_sep,
+            self::PRIME => 'prime' . sql::NAME_SEP,
+            self::USER => 'user' . sql::NAME_SEP,
             default => '',
         };
     }
+
+    /**
+     * @return bool true if the sql type changes the database e.g. an update query
+     */
+    function is_sql_change(): bool
+    {
+        return match($this) {
+            self::INSERT, self::UPDATE, self::DELETE => true,
+            default => false,
+        };
+    }
+
 }

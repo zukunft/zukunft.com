@@ -160,14 +160,13 @@ class value_time_series extends sandbox_value
      * create the SQL to load the default time series always by the id
      * @param sql $sc with the target db_type set
      * @param string $class the name of this class
+     * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class, array $fld_lst = []): sql_par
     {
-        $sc->set_class(self::class);
-        $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR));
-
-        return parent::load_standard_sql($sc, $class);
+        $fld_lst = array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR);
+        return parent::load_standard_sql($sc, $class, $fld_lst);
     }
 
     /**
@@ -214,6 +213,7 @@ class value_time_series extends sandbox_value
      * @param string $class the name of the child class from where the call has been triggered
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
+     * @param string $id_ext the query name extension that indicated how many id fields are used e.g. "_p1"
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
@@ -221,10 +221,11 @@ class value_time_series extends sandbox_value
         string   $query_name,
         string   $class = self::class,
         sql_type_list    $sc_par_lst = new sql_type_list([]),
-        string   $ext = ''
+        string   $ext = '',
+        string   $id_ext = ''
     ): sql_par
     {
-        $qp = parent::load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext);
+        $qp = parent::load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext, $id_ext);
 
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field());

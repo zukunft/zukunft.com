@@ -59,58 +59,58 @@ class sql_par
     /**
      * @param string $class the name of the calling class used for the unique query name
      * @param sql_type_list $sc_par_lst list of sql types e.g. insert or load
-     * @param string $ext the query name extension e.g. to separate the queries by the number of parameters
+     * @param string $ext the query name extension that cannot be created based on $sc_par_lst e.g. to separate the queries by the number of parameters
+     * @param string $id_ext the query name extension that indicated how many id fields are used e.g. "_p1"
      */
     function __construct(
         string        $class,
         sql_type_list $sc_par_lst = new sql_type_list([]),
-        string        $ext = '')
+        string        $ext = '',
+        string        $id_ext = '')
     {
-        // convert sql types to single parameter
-        $is_std = false;
-        $all = false;
-        $tbl_typ = sql_type::MOST;
-        foreach ($sc_par_lst->lst as $sql_type) {
-            if ($sql_type == sql_type::NORM) {
-                $is_std = true;
-            }
-            if ($sql_type == sql_type::COMPLETE) {
-                $all = true;
-            }
-        }
-        if ($ext == '') {
-            $ext = '';
-            foreach ($sc_par_lst->lst as $sql_type) {
-                $ext .= $sql_type->extension();
-                if ($sql_type == sql_type::PRIME or $sql_type == sql_type::BIG) {
-                    $tbl_typ = $sql_type;
-                }
-            }
+
+        // prepare the object values
+
+        // get the relevant part from the class name
+        $lib = new library();
+        $name = $lib->class_to_name($class);
+
+        // add "_sub" to queries that are part of other queries
+        if ($sc_par_lst->is_sub_tbl()) {
+            $name .= sql_type::SUB->extension();
         }
 
-        $lib = new library();
-        $this->sql = '';
-        $class_name = $lib->class_to_name($class);
-        $name = $class_name . $ext;
-        if ($is_std) {
-            $this->name = $name . '_by_';
-        } elseif ($all) {
-            $this->name = $name . '_';
-        } else {
-            $sc = new sql();
-            if (!$sc_par_lst->is_cur_not_l()) {
-                $this->name = $name . '_by_';
-            } else {
-                $this->name = $name;
-            }
+        // add the table extension for select queries e.g. "_prime"
+        $name .= $sc_par_lst->ext_select();
+
+        // add the number of id fields used
+        $name .= $id_ext;
+
+        // add the table extension to get the normal value e.g. "_norm"
+        $name .= $sc_par_lst->ext_norm();
+
+        // add "_by" to the query name e.g. "word_by_name" to selects a word by the name
+        if ($sc_par_lst->is_select()) {
+            $name .= $sc_par_lst->ext_by();
         }
-        // TODO activate
-        //if ($sc_par_lst->is_usr_tbl()) {
-        //    $this->name .= '_user';
-        //}
+
+        // add the sql type e.g. "_insert" to query name
+        $name .= $sc_par_lst->ext_type();
+
+        // add extesion that cannot be created by the sql_type_list e.g. "_0012" for the changed fields
+        $name .= $ext;
+
+        // add "_user" to queries the handle user specific values
+        if ($sc_par_lst->is_usr_tbl()) {
+            $name .= sql::NAME_EXT_USER;
+        }
+
+        // set the object values
+        $this->sql = '';
+        $this->name = $name;
         $this->par = array();
         $this->ext = $ext;
-        $this->typ = $tbl_typ;
+        $this->typ = $sc_par_lst->value_table_type();
         $this->call_sql = '';
         $this->call_name = '';
         $this->call = '';

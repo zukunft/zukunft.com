@@ -66,7 +66,9 @@ use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
 use cfg\log\change;
 use cfg\sandbox;
+use cfg\sandbox_link;
 use cfg\sandbox_link_with_type;
+use cfg\triple;
 use cfg\type_object;
 use cfg\user;
 use cfg\view;
@@ -308,6 +310,21 @@ class component_link extends sandbox_link_with_type
     function pos(): ?int
     {
         return $this->order_nbr;
+    }
+
+    /**
+     * copy the link objects from this object to the given component_link
+     * used to unset any changes in the link to detect only the changes fields that the user is allowed to change
+     *
+     * @param sandbox_link|component_link $lnk
+     * @return component_link
+     */
+    function set_link_objects(sandbox_link|component_link $lnk): component_link
+    {
+        $lnk->fob = $this->fob;
+        $lnk->set_type_id($this->type_id());
+        $lnk->tob = $this->tob;
+        return $lnk;
     }
 
 
@@ -948,59 +965,6 @@ class component_link extends sandbox_link_with_type
 
 
     /*
-     * sql write
-     */
-
-    /**
-     * create the sql statement to add a new view to component link to the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_insert(
-        sql           $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
-    ): sql_par
-    {
-        // fields and values that the word has additional to the standard named user sandbox object
-        $lnk_empty = $this->clone_reset();
-        $lnk_empty->set_user($this->user()->clone_reset());
-        if ($sc_par_lst->is_usr_tbl()) {
-            $lnk_empty->fob = $this->fob;
-            $lnk_empty->set_type_id($this->type_id());
-            $lnk_empty->tob = $this->tob;
-        }
-        $sc_par_lst->add(sql_type::INSERT);
-        $fvt_lst = $this->db_fields_changed($lnk_empty, $sc_par_lst);
-        $all_fields = $this->db_fields_all($sc_par_lst);
-        return parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
-    }
-
-    /**
-     * create the sql statement to update a triple in the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param sandbox|component_link $db_row the word with the database values before the update
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_update(
-        sql           $sc, sandbox|component_link $db_row,
-        sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
-    {
-        // get the field names, values and parameter types that have been changed
-        // and that needs to be updated in the database
-        // the db_* child function call the corresponding parent function
-        // including the sql parameters for logging
-        $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst);
-        $all_fields = $this->db_fields_all($sc_par_lst);
-        // unlike the db_* function the sql_update_* parent function is called directly
-        return parent::sql_update_switch($sc, $fld_lst, $all_fields, $sc_par_lst);
-    }
-
-
-    /*
      * sql write fields
      */
 
@@ -1040,7 +1004,7 @@ class component_link extends sandbox_link_with_type
         global $change_field_list;
 
         $sc = new sql();
-        $do_log = $sc_par_lst->and_log();
+        $do_log = $sc_par_lst->incl_log();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 

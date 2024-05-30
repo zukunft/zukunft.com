@@ -555,9 +555,8 @@ class group extends sandbox_multi
     {
         $this->set_id($id);
         // for the group the number of phrases are not relevant for the queries
-        $ext = $this->table_extension(false);
         $sc_par_lst = new sql_type_list([$this->table_type()]);
-        $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $sc_par_lst, $ext);
+        $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $sc_par_lst);
         $sc->add_where($this->id_field(), $id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -1295,10 +1294,14 @@ class group extends sandbox_multi
      */
     function sql_insert(sql $sc, sql_type_list $sc_par_lst): sql_par
     {
-        $qp = $this->sql_common($sc, $sc_par_lst);
+        // clone the sql parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::INSERT);
+        $qp = $this->sql_common($sc, $sc_par_lst_used);
         // overwrite the standard auto increase id field name
         $sc->set_id_field($this->id_field());
-        $qp->name .= sql::file_sep . sql::file_insert;
+        //$qp->name .= sql::file_sep . sql::file_insert;
         $sc->set_name($qp->name);
         $fvt_lst = new sql_par_field_list();
         $fvt_lst->set([
@@ -1323,8 +1326,12 @@ class group extends sandbox_multi
      */
     function sql_update(sql $sc, group $db_grp, sql_type_list $sc_par_lst): sql_par
     {
+        // clone the sql parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::UPDATE);
         $lib = new library();
-        $qp = $this->sql_common($sc, $sc_par_lst);
+        $qp = $this->sql_common($sc, $sc_par_lst_used);
         $fld_val_typ_lst = $this->db_changed($db_grp);
         if (count($fld_val_typ_lst) == 0) {
             $fld_val_typ_lst = [
@@ -1333,8 +1340,8 @@ class group extends sandbox_multi
             ];
         }
         $fields = $sc->get_fields($fld_val_typ_lst);
-        $fld_name = implode('_', $lib->sql_name_shorten($fields));
-        $qp->name .= '_upd_' . $fld_name;
+        $fld_name = implode(sql::NAME_SEP, $lib->sql_name_shorten($fields));
+        $qp->name .= sql::NAME_SEP . $fld_name;
         $sc->set_name($qp->name);
         $fvt_lst = new sql_par_field_list();
         $fvt_lst->set($fld_val_typ_lst);
@@ -1353,18 +1360,9 @@ class group extends sandbox_multi
      */
     protected function sql_common(sql $sc, sql_type_list $sc_par_lst): sql_par
     {
-        $lib = new library();
-        $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $tbl_typ = $this->table_type();
-        $ext = $tbl_typ->extension();
-        $sc->set_class($this::class, $sc_par_lst, $tbl_typ->extension());
-        $sql_name = $lib->class_to_name($this::class);
-        $qp = new sql_par($sql_name);
-        $qp->name = $sql_name . $ext;
-        if ($usr_tbl) {
-            $qp->name .= '_user';
-        }
-        return $qp;
+        $sc_par_lst->add($this->table_type());
+        $sc->set_class($this::class, $sc_par_lst);
+        return new sql_par($this::class, $sc_par_lst);
     }
 
 

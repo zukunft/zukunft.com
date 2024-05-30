@@ -487,20 +487,17 @@ class value extends sandbox_value
      * create the SQL to load the single default value always by the id
      * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
+     * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, string $class = self::class, array $fld_lst = []): sql_par
     {
-        $tbl_typ = $this->grp->table_type();
-        $ext = $this->grp->table_extension();
-        $qp = new sql_par($class,  new sql_type_list([sql_type::NORM]), $ext . sql_type::NORM->extension());
-        $qp->name .= sql_db::FLD_ID;
-        $sc->set_class($class, new sql_type_list([]), $tbl_typ->extension());
-        $sc->set_name($qp->name);
-        $sc->set_id_field($this->id_field());
-        $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(user::FLD_ID)));
-
-        return $this->load_sql_set_where($qp, $sc, $ext);
+        $fld_lst = array_merge(
+            self::FLD_NAMES,
+            self::FLD_NAMES_NUM_USR,
+            array(user::FLD_ID)
+        );
+        return parent::load_standard_sql($sc, $class, $fld_lst);
     }
 
     /**
@@ -524,6 +521,7 @@ class value extends sandbox_value
      * @param string $class the name of the child class from where the call has been triggered
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
+     * @param string $id_ext the query name extension that indicated how many id fields are used e.g. "_p1"
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
@@ -531,10 +529,11 @@ class value extends sandbox_value
         string        $query_name,
         string        $class = self::class,
         sql_type_list $sc_par_lst = new sql_type_list([]),
-        string        $ext = ''
+        string        $ext = '',
+        string        $id_ext = ''
     ): sql_par
     {
-        $qp = parent::load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext);
+        $qp = parent::load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext, $id_ext);
 
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field());
@@ -1571,16 +1570,21 @@ class value extends sandbox_value
      *
      * @param sql $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(
+        sql           $sc,
+        string        $class = self::class,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
     {
-        $sc_par_lst = new sql_type_list([sql_type::USER]);
+        $sc_par_lst->add(sql_type::USER);
         $sc_par_lst->add($this->grp->table_type());
         $sc->set_class($class, $sc_par_lst);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field());
-        return parent::load_sql_user_changes($sc, $class);
+        return parent::load_sql_user_changes($sc, $class, $sc_par_lst);
     }
 
     /**
@@ -2245,14 +2249,21 @@ class value extends sandbox_value
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, sql_type_list $sc_par_lst= new sql_type_list([])): sql_par
+    function sql_insert(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
     {
-        $usr_tbl = $sc_par_lst->is_usr_tbl($sc_par_lst);
-        $qp = $this->sql_common($sc, $sc_par_lst);
+        // clone the parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::INSERT);
+        // set the target sql table type for this value
+        $sc_par_lst_used->add($this->grp->table_type());
+        // get the name indicator how many id fields are user
+        $id_ext = $this->grp->table_extension();
+        $qp = $this->sql_common($sc, $sc_par_lst_used, '', $id_ext);
         // overwrite the standard auto increase id field name
         $sc->set_id_field($this->id_field());
-        $qp->name .= sql::file_sep . sql::file_insert;
         $sc->set_name($qp->name);
+        $usr_tbl = $sc_par_lst_used->is_usr_tbl();
         if ($this->grp->is_prime()) {
             $fields = $this->grp->id_names();
             $fields[] = user::FLD_ID;
@@ -2289,75 +2300,36 @@ class value extends sandbox_value
     }
 
     /**
-     * create the sql statement to update a value in the database
-     * TODO make code review and move part to the parent sandbox value class
+     * create the sql statement to delete a value in the database
+     * TODO check if user specific overwrites can be deleted
      *
      * @param sql $sc with the target db_type set
-     * @param value $db_val the value object with the database values before the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, value $db_val, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
+    function sql_delete(
+        sql           $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
     {
-        // get the fields and values that have been changed and needs to be updated in the database
-        $fld_val_typ_lst = $this->db_changed($db_val);
-        return $this->sql_update_fields($sc, $fld_val_typ_lst, $sc_par_lst);
-    }
+        // clone the parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::DELETE);
+        // set the target sql table type for this value
+        $sc_par_lst_used->add($this->grp->table_type());
+        // get the name indicator how many id fields are user
+        $id_ext = $this->grp->table_extension();
 
-    /**
-     * create the sql statement to update a value in the database
-     * based on the given list of fields and values
-     *
-     * @param sql $sc with the target db_type set
-     * @param array $fld_val_typ_lst list of field names, values and sql types additional to the standard id and name fields
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_update_fields(sql $sc, array $fld_val_typ_lst = [], sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
-    {
-        $lib = new library();
-        $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $qp = $this->sql_common($sc, $sc_par_lst);
-        // get the fields and values that have been changed and needs to be updated in the database
-        $all_fields = $this->db_fields_all();
-        $fields = $sc->get_fields($fld_val_typ_lst);
-        $fld_name = implode('_', $lib->sql_name_shorten($fields));
-        $qp->name .= '_update_' . $fld_name;
+        $qp = $this->sql_common($sc, $sc_par_lst_used, '', $id_ext);
         $sc->set_name($qp->name);
-        if ($this->grp->is_prime()) {
-            $id_fields = $this->grp->id_names(true);
+        $id_lst = $this->id_or_lst();
+        $qp->sql = $sc->create_sql_delete($this->id_field(), $id_lst, $sc_par_lst_used);
+        if (is_array($id_lst)) {
+            $qp->par = $id_lst;
         } else {
-            $id_fields = $this->id_field();
+            $qp->par = [$id_lst];
         }
-        $id = $this->id();
-        $id_lst = [];
-        if (is_array($id_fields)) {
-            if (!is_array($id)) {
-                $grp_id = new group_id();
-                $id_lst = $grp_id->get_array($id, true);
-                foreach ($id_lst as $key => $value) {
-                    if ($value == null) {
-                        $id_lst[$key] = 0;
-                    }
-                }
-            } else {
-                $id_lst = $id;
-            }
-        } else {
-            $id_lst = $id;
-        }
-        if ($usr_tbl) {
-            $id_fields[] = user::FLD_ID;
-            if (!is_array($id_lst)) {
-                $id_lst = [$id_lst];
-            }
-            $id_lst[] = $this->user()->id();
-        }
-        $fvt_lst = new sql_par_field_list();
-        $fvt_lst->set($fld_val_typ_lst);
-        $qp->sql = $sc->create_sql_update($id_fields, $id_lst, $fvt_lst);
-
-        $qp->par = $sc->par_values();
         return $qp;
     }
 

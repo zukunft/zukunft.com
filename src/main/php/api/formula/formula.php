@@ -160,9 +160,13 @@ class formula extends sandbox_typed_api
      * set and get
      */
 
-    function set_usr_text(string $usr_text): void
+    function set_usr_text(?string $usr_text): void
     {
-        $this->user_text = $usr_text;
+        if ($usr_text != null) {
+            $this->user_text = $usr_text;
+        } else {
+            $this->user_text = '';
+        }
     }
 
     function usr_text(): string

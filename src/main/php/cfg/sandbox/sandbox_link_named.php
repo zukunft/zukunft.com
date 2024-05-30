@@ -258,7 +258,7 @@ class sandbox_link_named extends sandbox_link
     {
         // set some var names to shorten the code lines
         $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
-        $ext = sql::file_sep . sql::file_insert;
+        $ext = sql::NAME_SEP . sql::FILE_INSERT;
 
         // list of parameters actually used in order of the function usage
         $sql = '';
@@ -311,7 +311,8 @@ class sandbox_link_named extends sandbox_link
     {
         return array_merge(
             parent::db_all_fields_link($sc_par_lst),
-            [$this->name_field(),
+            [
+                $this->name_field(),
                 sandbox_named::FLD_DESCRIPTION
             ]);
     }
@@ -332,7 +333,7 @@ class sandbox_link_named extends sandbox_link
         global $change_field_list;
 
         $sc = new sql();
-        $do_log = $sc_par_lst->and_log();
+        $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);

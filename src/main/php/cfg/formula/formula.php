@@ -2609,52 +2609,6 @@ class formula extends sandbox_typed
         return $usr_msg;
     }
 
-    /*
-     * sql write
-     */
-
-    /**
-     * create the sql statement to add a new formula to the database
-     * always all fields are included in the query to be able to remove overwrites with a null value
-     *
-     * @param sql $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_insert(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
-    {
-        // fields and values that the word has additional to the standard named user sandbox object
-        $frm_empty = $this->clone_reset();
-        // for a new word the owner should be set, so remove the user id to force writing the user
-        $frm_empty->set_user($this->user()->clone_reset());
-        if (!$sc_par_lst->is_insert()) {
-            $sc_par_lst->add(sql_type::INSERT);
-        }
-        $fvt_lst = $this->db_fields_changed($frm_empty, $sc_par_lst);
-        $all_fields = $this->db_fields_all();
-        return parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
-    }
-
-    /**
-     * create the sql statement to update a formula in the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param sandbox|formula $db_row the formula with the database values before the update
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_update(sql $sc, sandbox|formula $db_row, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
-    {
-        $usr_tbl = $sc_par_lst->is_usr_tbl();
-        // get the fields and values that have been changed
-        // and that needs to be updated in the database
-        // the db_* child function call the corresponding parent function
-        $fvt_lst = $this->db_fields_changed($db_row, $sc_par_lst);
-        $all_fields = $this->db_fields_all();
-        // unlike the db_* function the sql_update_* parent function is called directly
-        return parent::sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
-    }
-
 
     /*
      * sql write fields
@@ -2700,7 +2654,7 @@ class formula extends sandbox_typed
         global $change_field_list;
 
         $sc = new sql();
-        $do_log = $sc_par_lst->and_log();
+        $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);

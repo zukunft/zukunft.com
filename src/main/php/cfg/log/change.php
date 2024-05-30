@@ -493,18 +493,21 @@ class change extends change_log
         string        $par_name = ''
     ): sql_par
     {
-        $sc_par_lst->add(sql_type::INSERT);
+        // clone the sql parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::INSERT);
         // do not use the user extension for the change table name
-        $sc_par_lst_chg = $sc_par_lst->remove(sql_type::USER);
+        $sc_par_lst_chg = $sc_par_lst_used->remove(sql_type::USER);
         $qp = $sc->sql_par($this::class, $sc_par_lst_chg);
         $sc->set_class($this::class, $sc_par_lst_chg);
-        if ($sc_par_lst->is_list_tbl()) {
+        if ($sc_par_lst_used->is_list_tbl()) {
             $lib = new library();
             $qp->name = $lib->class_to_name($this::class) . $ext;
         }
         $sc->set_name($qp->name);
         $qp->sql = $sc->create_sql_insert(
-            $this->db_field_values_types($sc, $sc_par_lst), $sc_par_lst, true, $val_tbl, $add_fld, $row_fld, '', $par_name);
+            $this->db_field_values_types($sc, $sc_par_lst_used), $sc_par_lst_used, true, $val_tbl, $add_fld, $row_fld, '', $par_name);
         $qp->par = $this->db_values();
 
         return $qp;
