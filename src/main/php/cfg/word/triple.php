@@ -1405,7 +1405,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
                             if ($key == self::FLD_REFS) {
                                 foreach ($value as $ref_data) {
                                     $ref_obj = new ref($this->user());
-                                    $ref_obj->phr = $this->phrase();
+                                    $ref_obj->set_phrase($this->phrase());
                                     $result->add($ref_obj->import_obj($ref_data, $test_obj));
                                     $this->ref_lst[] = $ref_obj;
                                 }

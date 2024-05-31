@@ -430,28 +430,32 @@ class controller
 
     /**
      * check if an api message is fine
-     * @param array $api_msg the complete api message including the header and in some cases several body parts
+     * @param array|null $api_msg the complete api message including the header and in some cases several body parts
      * @param string $body_key to select a body part of the api message
      * @return array the message body if everything has been fine or an empty array
      */
-    function check_api_msg(array $api_msg, string $body_key = controller::API_BODY): array
+    function check_api_msg(?array $api_msg, string $body_key = controller::API_BODY): array
     {
         $msg_ok = true;
         $body = array();
-        // TODO check transfer time
-        // TODO check if version matches
-        if ($msg_ok) {
-            if (array_key_exists($body_key, $api_msg)) {
-                $body = $api_msg[$body_key];
-            } else {
-                // TODO activate Prio 3 next line and avoid these cases
-                // $msg_ok = false;
-                $body = $api_msg;
-                log_warning('message header missing in api message');
+        if ($api_msg !== null) {
+            // TODO check transfer time
+            // TODO check if version matches
+            if ($msg_ok) {
+                if (array_key_exists($body_key, $api_msg)) {
+                    $body = $api_msg[$body_key];
+                } else {
+                    // TODO activate Prio 3 next line and avoid these cases
+                    // $msg_ok = false;
+                    $body = $api_msg;
+                    log_warning('message header missing in api message');
+                }
             }
-        }
-        if ($msg_ok) {
-            return $body;
+            if ($msg_ok) {
+                return $body;
+            } else {
+                return array();
+            }
         } else {
             return array();
         }

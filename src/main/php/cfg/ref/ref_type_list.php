@@ -34,6 +34,7 @@ namespace cfg;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use shared\library;
+use test\create_test_objects;
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
@@ -86,10 +87,10 @@ class ref_type_list extends type_list
      */
     function load_dummy(): void
     {
-        parent::load_dummy();
-        $type = new ref_type(ref_type::WIKIPEDIA, ref_type::WIKIPEDIA);
-        $type->set_id(2);
-        $this->add($type);
+        $this->reset();
+        // read the corresponding names and description from the internal config csv files
+        $t = new create_test_objects();
+        $t->read_from_config_csv($this);
     }
 
     /**
@@ -100,51 +101,5 @@ class ref_type_list extends type_list
         return parent::id(ref_type::WIKIPEDIA);
     }
 
-    /**
-     * overwrite the user_type_list get function to be able to return the correct object
-     * @param int $id the database id of the expected type
-     * @return ref_type|null the type object
-     */
-    function get_by_id(int $id): ?ref_type
-    {
-        global $ref_types;
-
-        $lib = new library();
-        $result = null;
-        if ($id > 0) {
-            if (array_key_exists($id, $ref_types->lst())) {
-                $result = $ref_types->get($id);
-            } else {
-                log_err('Ref type with is ' . $id . ' not found in ' . $lib->dsp_array($ref_types->lst()));
-            }
-        } else {
-            log_debug('Ref type id not not set');
-        }
-        return $result;
-    }
-
-    /**
-     * exception to get_type that returns an extended user_type object
-     * @param string $code_id the code id that must be unique within the given type
-     * @return ref_type|null the loaded ref type object
-     */
-    function get_ref_type(string $code_id): ?ref_type
-    {
-        global $ref_types;
-        $id = $ref_types->id($code_id);
-        return $ref_types->get_by_id($id);
-    }
-
-    function get_ref_type_id(string $code_id): int
-    {
-        global $ref_types;
-        return $ref_types->id($code_id);
-    }
-
-    function get_ref_type_by_id(string $id): ref_type
-    {
-        global $ref_types;
-        return $ref_types->get_by_id($id);
-    }
 }
 

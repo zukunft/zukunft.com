@@ -26,13 +26,13 @@ BEGIN
          SELECT              _user_id,_change_action_id,_change_table_id,_old_text_from,_old_text_link,_old_text_to,_new_text_from,_new_text_link,_new_text_to,_old_from_id,_old_link_id,_old_to_id,_new_from_id,_new_link_id,_new_to_id,_component_link_id ;
 
     INSERT INTO changes (user_id, change_action_id, change_field_id,    new_value, row_id)
-    SELECT         _user_id,_change_action_id,_field_id_order_nbr,_order_nbr,_component_link_id ;
+         SELECT         _user_id,_change_action_id,_field_id_order_nbr,_order_nbr,_component_link_id ;
 
     INSERT INTO changes (user_id, change_action_id, change_field_id,   new_value, row_id)
-    SELECT         _user_id,_change_action_id,_field_id_excluded,_excluded, _component_link_id ;
+         SELECT         _user_id,_change_action_id,_field_id_excluded,_excluded, _component_link_id ;
 
     INSERT INTO user_component_links (component_link_id, user_id, order_nbr, excluded)
-    SELECT                      _component_link_id,_user_id,_order_nbr,_excluded ;
+         SELECT                      _component_link_id,_user_id,_order_nbr,_excluded ;
 
 END;
 

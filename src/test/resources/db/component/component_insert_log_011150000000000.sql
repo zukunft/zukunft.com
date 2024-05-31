@@ -14,8 +14,8 @@ DECLARE new_component_id bigint;
 BEGIN
 
     INSERT INTO components ( component_name)
-         SELECT        _component_name
-      RETURNING         component_id INTO new_component_id;
+         SELECT             _component_name
+      RETURNING              component_id INTO new_component_id;
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,    new_value, row_id)
          SELECT          _user_id,_change_action_id,_field_id_component_name,_component_name, new_component_id ;

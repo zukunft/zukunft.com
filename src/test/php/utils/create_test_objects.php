@@ -60,6 +60,7 @@ use cfg\db\sql_db;
 use cfg\language_form;
 use cfg\log\change_field;
 use cfg\log\change_table;
+use cfg\ref_type;
 use html\system\messages;
 use shared\types\component_type as comp_type_shared;
 use api\api;
@@ -1751,18 +1752,42 @@ class create_test_objects extends test_base
         return $src;
     }
 
-    function reference(): ref
+    function reference_pur(): ref
     {
+        global $ref_types;
         $ref = new ref($this->usr1);
         $ref->set(4);
-        $ref->phr = $this->word_pi()->phrase();
-        $ref->source = $this->source1();
+        $ref->set_phrase($this->word_pi()->phrase());
+        $ref->set_type_id($ref_types->id(ref_type::WIKIDATA));
         $ref->external_key = ref_api::TK_READ;
+        $ref->description = ref_api::TD_READ;
+        return $ref;
+    }
+
+    function reference(): ref
+    {
+        global $ref_types;
+        $ref = new ref($this->usr1);
+        $ref->set(4);
+        $ref->set_phrase($this->word_pi()->phrase());
+        $ref->set_type_id($ref_types->id(ref_type::WIKIDATA));
+        $ref->external_key = ref_api::TK_READ;
+        $ref->source = $this->source1();
         $ref->url = ref_api::TU_READ;
         $ref->description = ref_api::TD_READ;
         return $ref;
     }
 
+    function ref_filled(): ref
+    {
+        global $share_types;
+        global $protection_types;
+        $ref = $this->reference();
+        $ref->excluded = true;
+        $ref->share_id = $share_types->id(share_type_shared::GROUP);
+        $ref->protection_id = $protection_types->id(protect_type_shared::USER);
+        return $ref;
+    }
     function view(): view
     {
         $dsp = new view($this->usr1);
@@ -2655,23 +2680,25 @@ class create_test_objects extends test_base
         $wrd = $this->load_word($wrd_name);
         $phr = $wrd->phrase();
 
-        $lst = new ref_type_list();
+        global $ref_types;
         $ref = new ref($this->usr1);
         if ($phr->id() != 0) {
-            $ref->load_by_link_ids($phr->id(), $lst->get_ref_type($type_name)->id());
+            // TODO check if type name is the code id or really the name
+            $ref->load_by_link_ids($phr->id(), $ref_types->id($type_name));
         }
         return $ref;
     }
 
     function test_ref(string $wrd_name, string $external_key, string $type_name): ref
     {
-        $lst = new ref_type_list();
+        global $ref_types;
         $wrd = $this->test_word($wrd_name);
         $phr = $wrd->phrase();
         $ref = $this->load_ref($wrd->name(), $type_name);
         if ($ref->id() == 0) {
-            $ref->phr = $phr;
-            $ref->ref_type = $lst->get_ref_type($type_name);
+            $ref->set_phrase($phr);
+            // TODO check if type name is the code id or really the name
+            $ref->set_type_id($ref_types->id($type_name));
             $ref->external_key = $external_key;
             $ref->save();
         }

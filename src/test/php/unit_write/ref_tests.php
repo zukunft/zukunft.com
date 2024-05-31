@@ -53,12 +53,11 @@ class ref_tests
         $t->test_ref(word_api::TN_ADD, ref::TEST_REF_NAME, ref_type::WIKIDATA);
 
         // load by phrase and type
-        $lst = new ref_type_list();
-        $ref_type = $lst->get_ref_type(ref_type::WIKIDATA);
+        global $ref_types;
         $ref = new ref($usr);
-        $ref->phr = $wrd->phrase();
-        $ref->ref_type = $ref_type;
-        $ref->load_by_link_ids($wrd->phrase()->id(), $ref_type->id());
+        $ref->set_phrase($wrd->phrase());
+        $ref->set_type_id($ref_types->id(ref_type::WIKIDATA));
+        $ref->load_by_link_ids($wrd->phrase()->id(), $ref->type_id());
         $result = $ref->external_key;
         $target = ref::TEST_REF_NAME;
         $t->display('ref->load "' . word_api::TN_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
@@ -67,10 +66,10 @@ class ref_tests
             // load by id and test the loading of the objects
             $ref2 = new ref($usr);
             $ref2->load_by_id($ref->id());
-            $result = $ref2->phr->name();
+            $result = $ref2->phrase()->name();
             $target = word_api::TN_ADD;
             $t->display('ref->load_object word', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
-            $result = $ref2->ref_type->name;
+            $result = $ref2->type_name();
             $target = ref_type::WIKIDATA;
             $t->display('ref->load_object type', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
         }

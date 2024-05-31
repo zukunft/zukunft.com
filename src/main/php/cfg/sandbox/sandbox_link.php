@@ -165,9 +165,10 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * @return int the id of the linked object
+     * @return int|string the id of the linked object
+     * or in case of an external reference the external key as a string
      */
-    function to_id(): int
+    function to_id(): int|string
     {
         if ($this->tob == null) {
             return 0;

@@ -1538,8 +1538,13 @@ class sql
             $log->new_link_id = $sbx->type_id();
             $log->new_text_link = $sbx->type_name();
         }
-        $log->new_to_id = $sbx->to_id();
-        $log->new_text_to = $sbx->to_name();
+        if (is_int($sbx->to_id())) {
+            $log->new_to_id = $sbx->to_id();
+            $log->new_text_to = $sbx->to_name();
+        } else {
+            // for external links the id is a string
+            $log->new_text_to = $sbx->to_id();
+        }
 
         // set the parameters for the log sql statement creation
         $sc_log = clone $this;

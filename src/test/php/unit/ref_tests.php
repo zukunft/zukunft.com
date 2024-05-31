@@ -91,8 +91,13 @@ class ref_tests
 
         $t->subheader('ref sql write');
         // TODO activate db write
-        //$t->assert_sql_insert($sc, $ref);
-        //$t->assert_sql_insert($sc, $ref, [sql_type::USER]);
+        $ref = $t->reference_pur();
+        $t->assert_sql_insert($sc, $ref);
+        $t->assert_sql_insert($sc, $ref, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $ref, [sql_type::LOG]);
+        $t->assert_sql_insert($sc, $ref, [sql_type::LOG, sql_type::USER]);
+        $ref_filled = $t->ref_filled();
+        //$t->assert_sql_insert($sc, $ref_filled, [sql_type::LOG, sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_update($sc, $ref);
         //$t->assert_sql_update($sc, $ref, [sql_type::USER]);
