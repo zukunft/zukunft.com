@@ -91,13 +91,16 @@ class ref_tests
 
         $t->subheader('ref sql write');
         // TODO activate db write
-        $ref = $t->reference_pur();
+        $ref = $t->reference();
         $t->assert_sql_insert($sc, $ref);
-        $t->assert_sql_insert($sc, $ref, [sql_type::USER]);
         $t->assert_sql_insert($sc, $ref, [sql_type::LOG]);
-        $t->assert_sql_insert($sc, $ref, [sql_type::LOG, sql_type::USER]);
+        $ref_usr = $t->reference_user();
+        $t->assert_sql_insert($sc, $ref_usr, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $ref_usr, [sql_type::LOG, sql_type::USER]);
         $ref_filled = $t->ref_filled();
-        //$t->assert_sql_insert($sc, $ref_filled, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_insert($sc, $ref_filled, [sql_type::LOG]);
+        $ref_filled_usr = $t->ref_filled_user();
+        $t->assert_sql_insert($sc, $ref_filled_usr, [sql_type::LOG, sql_type::USER]);
         // TODO activate db write
         //$t->assert_sql_update($sc, $ref);
         //$t->assert_sql_update($sc, $ref, [sql_type::USER]);
@@ -109,7 +112,7 @@ class ref_tests
         $t->assert_json_file(new ref($usr), $json_file);
 
         $t->subheader('API and frontend cast unit tests for references');
-        $ref = $t->reference();
+        $ref = $t->reference_plus();
         $t->assert_api($ref);
         $t->assert_api_to_dsp($ref, new ref_dsp());
 

@@ -1589,6 +1589,7 @@ class sql
         sql_type_list                           $sc_par_lst
     ): sql_par
     {
+        // set the vars of the log link object
         $log = new change_link($usr);
         $log->set_table_by_class($sbx::class);
         $log->old_from_id = $sbx->from_id();
@@ -1596,19 +1597,26 @@ class sql
         $log->old_text_from = $sbx->from_name();
         $log->new_text_from = '';
         if ($sbx::class == triple::class) {
+            // triples have a verb as type
             $log->old_link_id = $sbx->verb_id();
             $log->new_link_id = 0;
             $log->old_text_link = $sbx->verb_name();
             $log->new_text_link = '';
         } elseif ($sbx->is_link_type_obj()) {
+            // other links can have a type
             $log->old_link_id = $sbx->type_id();
             $log->new_link_id = 0;
             $log->old_text_link = $sbx->type_name();
             $log->new_text_link = '';
         }
-        $log->old_to_id = $sbx->to_id();
+        if (is_int($sbx->to_id())) {
+            $log->old_to_id = $sbx->to_id();
+            $log->old_text_to = $sbx->to_name();
+        } else {
+            // for external links the "to_id" is a string
+            $log->old_text_to = $sbx->to_id();
+        }
         $log->new_to_id = 0;
-        $log->old_text_to = $sbx->to_name();
         $log->new_text_to = '';
 
         // set the parameters for the log sql statement creation

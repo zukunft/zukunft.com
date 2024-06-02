@@ -73,7 +73,6 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
 
 use api\ref\ref as ref_api;
-use cfg\component\component;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
@@ -85,7 +84,6 @@ use cfg\export\sandbox_exp;
 use cfg\export\ref_exp;
 use cfg\log\change;
 use cfg\log\change_action;
-use cfg\log\change_action_list;
 use cfg\log\change_link;
 use cfg\log\change_table_list;
 
@@ -97,6 +95,7 @@ class ref extends sandbox_link_with_type
      */
 
     // object specific database and JSON object field names
+    // *_COM: the description of the field
     // *_SQLTYP is the sql data type used for the field
     const TBL_COMMENT = 'to link external data to internal for syncronisation';
     const FLD_ID = 'ref_id';
@@ -112,20 +111,20 @@ class ref extends sandbox_link_with_type
     const FLD_SOURCE = 'source_id';
     const FLD_PHRASE_COM = 'the phrase for which the external data should be syncronised';
 
-    // all database field names excluding the id used to identify if there are some user specific changes
+    // field names that cannot be user specific
     const FLD_NAMES = array(
         phrase::FLD_ID,
-        self::FLD_EX_KEY,
-        self::FLD_TYPE,
-        source::FLD_ID
+        self::FLD_TYPE
     );
-    // list of the user specific database field names
+    // list of user specific text field names
     const FLD_NAMES_USR = array(
+        self::FLD_EX_KEY,
         self::FLD_URL,
         sandbox_named::FLD_DESCRIPTION
     );
-    // list of the user specific numeric database field names
+    // list of user specific numeric field names
     const FLD_NAMES_NUM_USR = array(
+        source::FLD_ID,
         sandbox::FLD_EXCLUDED
     );
     // all database field names excluding the id used to identify if there are some user specific changes
@@ -139,15 +138,15 @@ class ref extends sandbox_link_with_type
     );
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
+        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
         [self::FLD_URL, self::FLD_URL_SQLTYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
+        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
         [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CANNOT be changed by the user
     const FLD_LST_NON_CHANGEABLE = array(
         [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PHRASE_COM],
-        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
         [ref_type::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, ref_type::class, ref_type::TBL_COMMENT],
-        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
     );
 
     // persevered reference names for unit and integration tests
@@ -159,15 +158,17 @@ class ref extends sandbox_link_with_type
      */
 
     // database fields
-    public ?phrase $phr = null;           // the phrase object incl. the database id of the word, verb or formula
+    public ?phrase $phr = null;           // the phrase object incl. the database id of the word, verb or formula TODO to be move to fob
     public ?string $external_key = null;  // the unique key in the external system
     public ?source $source = null;        // if the reference does not allow a full automatic bidirectional update
     //                                       use the source to define an as good as possible import
     //                                       or at least a check if the reference is still valid
     public ?string $url;
-    public ?string $name = null;
     public ?string $code_id = null;
     public ?string $description = null;
+
+    // TODO depricate
+    public ?string $name = null;
 
 
     /*
@@ -621,6 +622,11 @@ class ref extends sandbox_link_with_type
     function to_field(): string
     {
         return self::FLD_EX_KEY;
+    }
+
+    function to_value(): string
+    {
+        return $this->external_key;
     }
 
     function type_field(): string
@@ -1167,11 +1173,15 @@ class ref extends sandbox_link_with_type
                     change::FLD_FIELD_ID_SQLTYP
                 );
             }
+            $old_key = $sbx->external_key;
+            if ($sc_par_lst->is_insert() and $old_key == '') {
+                $old_key = null;
+            }
             $lst->add_field(
                 self::FLD_EX_KEY,
                 $this->external_key,
                 self::FLD_EX_KEY_SQLTYP,
-                $sbx->external_key
+                $old_key
             );
         }
         if ($sbx->url <> $this->url) {

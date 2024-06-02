@@ -1,17 +1,17 @@
 DROP PROCEDURE IF EXISTS ref_insert_log_0151551001000;
 CREATE PROCEDURE  ref_insert_log_0151551001000
-    (_phrase_id bigint,
-     _ref_type_id smallint,
-     _external_key bigint,
-     _user_id bigint,
-     _change_action_id smallint,
-     _change_table_id smallint,
-     _new_text_from text,
-     _new_text_link text,
-     _new_text_to text,
-     _field_id_user_id smallint,
+    (_phrase_id            bigint,
+     _ref_type_id          smallint,
+     _external_key         text,
+     _user_id              bigint,
+     _change_action_id     smallint,
+     _change_table_id      smallint,
+     _new_text_from        text,
+     _new_text_link        text,
+     _new_text_to          text,
+     _field_id_user_id     smallint,
      _field_id_description smallint,
-     _description text)
+     _description          text)
 
 BEGIN
 
@@ -42,13 +42,13 @@ PREPARE ref_insert_log_0151551001000_call FROM
 SELECT ref_insert_log_0151551001000 (
                3,
                2,
-               null,
+               'Q167',
                1,
                1,
                22,
                'Pi',
                'wikidata',
-               null,
+               'Q167',
                246,
                65,
                'ratio of the circumference of a circle to its diameter');

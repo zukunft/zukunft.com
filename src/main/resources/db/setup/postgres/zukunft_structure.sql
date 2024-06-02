@@ -1212,12 +1212,12 @@ CREATE TABLE IF NOT EXISTS refs
 (
     ref_id BIGSERIAL PRIMARY KEY,
     user_id       bigint    DEFAULT NULL,
+    external_key  varchar(255)  NOT NULL,
     url           text      DEFAULT NULL,
+    source_id     bigint    DEFAULT NULL,
     description   text      DEFAULT NULL,
     phrase_id     bigint    DEFAULT NULL,
-    external_key  varchar(255)  NOT NULL,
     ref_type_id   bigint        NOT NULL,
-    source_id     bigint    DEFAULT NULL,
     excluded      smallint  DEFAULT NULL,
     share_type_id smallint  DEFAULT NULL,
     protect_id    smallint  DEFAULT NULL
@@ -1226,11 +1226,11 @@ CREATE TABLE IF NOT EXISTS refs
 COMMENT ON TABLE refs IS 'to link external data to internal for syncronisation';
 COMMENT ON COLUMN refs.ref_id IS 'the internal unique primary index';
 COMMENT ON COLUMN refs.user_id IS 'the owner / creator of the ref';
-COMMENT ON COLUMN refs.url IS 'the concrete url for the entry inluding the item id';
-COMMENT ON COLUMN refs.phrase_id IS 'the phrase for which the external data should be syncronised';
 COMMENT ON COLUMN refs.external_key IS 'the unique external key used in the other system';
-COMMENT ON COLUMN refs.ref_type_id IS 'to link code functionality to a list of references';
+COMMENT ON COLUMN refs.url IS 'the concrete url for the entry inluding the item id';
 COMMENT ON COLUMN refs.source_id IS 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
+COMMENT ON COLUMN refs.phrase_id IS 'the phrase for which the external data should be syncronised';
+COMMENT ON COLUMN refs.ref_type_id IS 'to link code functionality to a list of references';
 COMMENT ON COLUMN refs.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN refs.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN refs.protect_id IS 'to protect against unwanted changes';
@@ -1243,7 +1243,9 @@ CREATE TABLE IF NOT EXISTS user_refs
 (
     ref_id        bigint       NOT NULL,
     user_id       bigint       NOT NULL,
+    external_key  varchar(255) NOT NULL,
     url           text     DEFAULT NULL,
+    source_id     bigint   DEFAULT NULL,
     description   text     DEFAULT NULL,
     excluded      smallint DEFAULT NULL,
     share_type_id smallint DEFAULT NULL,
@@ -1253,7 +1255,9 @@ CREATE TABLE IF NOT EXISTS user_refs
 COMMENT ON TABLE user_refs IS 'to link external data to internal for syncronisation';
 COMMENT ON COLUMN user_refs.ref_id IS 'with the user_id the internal unique primary index';
 COMMENT ON COLUMN user_refs.user_id IS 'the changer of the ref';
+COMMENT ON COLUMN user_refs.external_key IS 'the unique external key used in the other system';
 COMMENT ON COLUMN user_refs.url IS 'the concrete url for the entry inluding the item id';
+COMMENT ON COLUMN user_refs.source_id IS 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
 COMMENT ON COLUMN user_refs.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN user_refs.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_refs.protect_id IS 'to protect against unwanted changes';
@@ -5257,10 +5261,10 @@ CREATE INDEX ref_types_type_name_idx ON ref_types (type_name);
 --
 
 CREATE INDEX refs_user_idx ON refs (user_id);
-CREATE INDEX refs_phrase_idx ON refs (phrase_id);
 CREATE INDEX refs_external_key_idx ON refs (external_key);
-CREATE INDEX refs_ref_type_idx ON refs (ref_type_id);
 CREATE INDEX refs_source_idx ON refs (source_id);
+CREATE INDEX refs_phrase_idx ON refs (phrase_id);
+CREATE INDEX refs_ref_type_idx ON refs (ref_type_id);
 
 --
 -- indexes for table user_refs
@@ -5270,6 +5274,8 @@ ALTER TABLE user_refs
     ADD CONSTRAINT user_refs_pkey PRIMARY KEY (ref_id,user_id);
 CREATE INDEX user_refs_ref_idx ON user_refs (ref_id);
 CREATE INDEX user_refs_user_idx ON user_refs (user_id);
+CREATE INDEX user_refs_external_key_idx ON user_refs (external_key);
+CREATE INDEX user_refs_source_idx ON user_refs (source_id);
 
 -- --------------------------------------------------------
 
@@ -6585,8 +6591,8 @@ ALTER TABLE user_sources
 
 ALTER TABLE refs
     ADD CONSTRAINT refs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT refs_ref_type_fk FOREIGN KEY (ref_type_id) REFERENCES ref_types (ref_type_id),
-    ADD CONSTRAINT refs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+    ADD CONSTRAINT refs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT refs_ref_type_fk FOREIGN KEY (ref_type_id) REFERENCES ref_types (ref_type_id);
 
 --
 -- constraints for table user_refs
@@ -6594,7 +6600,8 @@ ALTER TABLE refs
 
 ALTER TABLE user_refs
     ADD CONSTRAINT user_refs_ref_fk FOREIGN KEY (ref_id) REFERENCES refs (ref_id),
-    ADD CONSTRAINT user_refs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD CONSTRAINT user_refs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_refs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 -- --------------------------------------------------------
 

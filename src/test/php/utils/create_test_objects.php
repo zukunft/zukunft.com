@@ -1752,18 +1752,9 @@ class create_test_objects extends test_base
         return $src;
     }
 
-    function reference_pur(): ref
-    {
-        global $ref_types;
-        $ref = new ref($this->usr1);
-        $ref->set(4);
-        $ref->set_phrase($this->word_pi()->phrase());
-        $ref->set_type_id($ref_types->id(ref_type::WIKIDATA));
-        $ref->external_key = ref_api::TK_READ;
-        $ref->description = ref_api::TD_READ;
-        return $ref;
-    }
-
+    /**
+     * @return ref with the most often used fields set for unit testing
+     */
     function reference(): ref
     {
         global $ref_types;
@@ -1772,22 +1763,66 @@ class create_test_objects extends test_base
         $ref->set_phrase($this->word_pi()->phrase());
         $ref->set_type_id($ref_types->id(ref_type::WIKIDATA));
         $ref->external_key = ref_api::TK_READ;
-        $ref->source = $this->source1();
-        $ref->url = ref_api::TU_READ;
         $ref->description = ref_api::TD_READ;
         return $ref;
     }
 
+    /**
+     * @return ref with the more fields set for unit testing
+     */
+    function reference_plus(): ref
+    {
+        $ref = $this->reference();
+        $ref->source = $this->source1();
+        $ref->url = ref_api::TU_READ;
+        return $ref;
+    }
+
+    /**
+     * @return ref with the most often fields changed by user plus the link to the norm db row
+     */
+    function reference_user(): ref
+    {
+        $ref = new ref($this->usr1);
+        $ref->set(4);
+        $ref->description = ref_api::TD_READ;
+        return $ref;
+    }
+
+    /**
+     * @return ref with all fields set to a non default value
+     */
     function ref_filled(): ref
     {
         global $share_types;
         global $protection_types;
         $ref = $this->reference();
+        $ref->source = $this->source1();
+        $ref->url = ref_api::TU_READ;
+        $ref->excluded = false;
+        $ref->share_id = $share_types->id(share_type_shared::GROUP);
+        $ref->protection_id = $protection_types->id(protect_type_shared::USER);
+        return $ref;
+    }
+
+    /**
+     * @return ref with all field changed to a non default value that can be user specific
+     */
+    function ref_filled_user(): ref
+    {
+        global $share_types;
+        global $protection_types;
+        $ref = $this->reference_user();
+        $ref->external_key = ref_api::TK_READ;
+        $ref->url = ref_api::TU_READ;
+        $ref->source = $this->source1();
+        $ref->description = ref_api::TD_READ;
         $ref->excluded = true;
         $ref->share_id = $share_types->id(share_type_shared::GROUP);
         $ref->protection_id = $protection_types->id(protect_type_shared::USER);
         return $ref;
     }
+
     function view(): view
     {
         $dsp = new view($this->usr1);

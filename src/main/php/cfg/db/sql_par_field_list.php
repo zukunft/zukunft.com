@@ -94,21 +94,31 @@ class sql_par_field_list
     function add_with_split(sql_par_field $fld): void
     {
         if ($fld->value != null or $fld->old != null) {
-            $this->add_field(
-                $fld->par_name,
-                $fld->value,
-                $fld->type,
-                $fld->old
-            );
+            $this->add_name_part($fld);
         }
         if ($fld->id != null or $fld->old_id != null) {
-            $this->add_field(
-                $fld->name,
-                $fld->id,
-                $fld->type_id,
-                $fld->old_id
-            );
+            $this->add_id_part($fld);
         }
+    }
+
+    function add_id_part(sql_par_field $fld): void
+    {
+        $this->add_field(
+            $fld->name,
+            $fld->id,
+            $fld->type_id,
+            $fld->old_id
+        );
+    }
+
+    function add_name_part(sql_par_field $fld): void
+    {
+        $this->add_field(
+            $fld->par_name,
+            $fld->value,
+            $fld->type,
+            $fld->old
+        );
     }
 
     function add_list(sql_par_field_list $fld_lst): void

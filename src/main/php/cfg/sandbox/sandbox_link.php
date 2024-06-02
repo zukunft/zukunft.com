@@ -717,17 +717,24 @@ class sandbox_link extends sandbox
         // init the function body
         $id_field = $sc->id_field_name();
 
-        // list of parameters actually used in order of the function usage
-        $sql = '';
+        // get the parameters used for the table key
         $fvt_from = $fvt_lst->get($this->from_field());
         $fvt_type = $fvt_lst->get($this->type_field());
         $fvt_to = $fvt_lst->get($this->to_field());
 
-        // create the sql to insert the row
+        // create the list of parameters in order of the function usage
         $fvt_insert_list = new sql_par_field_list();
-        $fvt_insert_list->add_field($fvt_from->name, $fvt_from->id, $fvt_from->type_id, $fvt_from->old);
-        $fvt_insert_list->add_field($fvt_type->name, $fvt_type->id, $fvt_type->type_id, $fvt_type->old);
-        $fvt_insert_list->add_field($fvt_to->name, $fvt_to->id, $fvt_to->type_id, $fvt_to->old);
+        $fvt_insert_list->add_id_part($fvt_from);
+        $fvt_insert_list->add_id_part($fvt_type);
+        if ($fvt_to->id == null) {
+            // for the external reference key
+            $fvt_insert_list->add($fvt_to);
+        } else {
+            $fvt_insert_list->add_id_part($fvt_to);
+        }
+
+        // create the sql to insert the row
+        $sql = '';
         $sc_insert = clone $sc;
         $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);;
         $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
@@ -746,10 +753,12 @@ class sandbox_link extends sandbox
             $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
         }
 
-        //$fvt_split_list = new sql_par_field_list();
-        //$fvt_split_list->add_with_split($fvt_from);
-        //$fvt_split_list->add_with_split($fvt_type);
-        //$fvt_split_list->add_with_split($fvt_to);
+        /*
+        $fvt_split_list = new sql_par_field_list();
+        $fvt_split_list->add_with_split($fvt_from);
+        $fvt_split_list->add_with_split($fvt_type);
+        $fvt_split_list->add_with_split($fvt_to);
+        */
 
         $qp->sql = $sql;
         $qp->par_fld_lst = $fvt_insert_list;
@@ -958,18 +967,32 @@ class sandbox_link extends sandbox
                         change::FLD_FIELD_ID_SQLTYP
                     );
                 }
-                // TODO Prio 2: move "to_" to a const and or function
-                $lst->add_link_field(
-                    $this->to_field(),
-                    'to_' . $this->tob?->name_field(),
-                    $this->tob,
-                    $sbx->tob
-                );
+                // e.g. for external references
+                if ($this->tob == null) {
+                    $lst->add_field(
+                        $this->to_field(),
+                        $this->to_value(),
+                        sql_field_type::TEXT,
+                        $sbx->to_value()
+                    );
+                } else {
+                    // TODO Prio 2: move "to_" to a const and or function
+                    $lst->add_link_field(
+                        $this->to_field(),
+                        'to_' . $this->tob?->name_field(),
+                        $this->tob,
+                        $sbx->tob
+                    );
+                }
             }
         } else {
             // add from and to if the objects are the same
             $from_fld = $this->fob?->name_field();
             $to_fld = $this->tob?->name_field();
+            // e.g. for references the external key
+            if ($this->tob == null) {
+                $to_fld = $this->to_field();
+            }
             if ($from_fld == $to_fld) {
                 $from_fld = sql::FROM_FLD_PREFIX . $from_fld;
                 $to_fld = sql::TO_FLD_PREFIX . $to_fld;

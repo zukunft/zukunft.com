@@ -477,6 +477,16 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
+     * dummy function for the link target value
+     * that should always be overwritten by the child object
+     * @return string
+     */
+    function to_value(): string
+    {
+        return '';
+    }
+
+    /**
      * dummy function for the link objects
      * that should always be overwritten by the child object
      * @return string e.g. verb_name for triples

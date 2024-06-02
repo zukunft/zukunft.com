@@ -1,16 +1,16 @@
 CREATE OR REPLACE FUNCTION ref_insert_log_0151551001000
-    (_phrase_id bigint,
-     _ref_type_id smallint,
-     _external_key bigint,
-     _user_id bigint,
-     _change_action_id smallint,
-     _change_table_id smallint,
-     _new_text_from text,
-     _new_text_link text,
-     _new_text_to text,
-     _field_id_user_id smallint,
+    (_phrase_id            bigint,
+     _ref_type_id          smallint,
+     _external_key         text,
+     _user_id              bigint,
+     _change_action_id     smallint,
+     _change_table_id      smallint,
+     _new_text_from        text,
+     _new_text_link        text,
+     _new_text_to          text,
+     _field_id_user_id     smallint,
      _field_id_description smallint,
-     _description text) RETURNS bigint AS
+     _description          text) RETURNS bigint AS
 $$
 DECLARE new_ref_id bigint;
 BEGIN
@@ -39,20 +39,20 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE ref_insert_log_0151551001000_call
-        (bigint,smallint,bigint,bigint,smallint,smallint,text,text,text,smallint,smallint,text) AS
+        (bigint,smallint,text,bigint,smallint,smallint,text,text,text,smallint,smallint,text) AS
 SELECT ref_insert_log_0151551001000
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);
 
 SELECT ref_insert_log_0151551001000 (
                3::bigint,
                2::smallint,
-               null::bigint,
+               'Q167'::text,
                1::bigint,
                1::smallint,
                22::smallint,
                'Pi'::text,
                'wikidata'::text,
-               null::text,
+               'Q167'::text,
                246::smallint,
                65::smallint,
                'ratio of the circumference of a circle to its diameter'::text);
