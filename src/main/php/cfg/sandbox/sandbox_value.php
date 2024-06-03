@@ -94,6 +94,9 @@ class sandbox_value extends sandbox_multi
     // the database field names used for all value tables e.g. also for results
     const FLD_ID_PREFIX = 'phrase_id_';
 
+    // database fields used for user values and results
+    const FLD_VALUE = 'numeric_value';
+    const FLD_LAST_UPDATE = 'last_update';
 
     // field lists for the table creation
     // the group is not a foreign key, because if the name is not changed by the user an entry in the group table is not needed
@@ -305,89 +308,6 @@ class sandbox_value extends sandbox_multi
     {
         return $this->grp()->id_lst();
     }
-
-
-    /*
-     * sql write fields
-     */
-
-    /**
-     * list of all fields that can be changed by the user in this object
-     * the last_update field is excluded here because this is an internal only field
-     *
-     * @return array with the field names of the object and any child object
-     */
-    function db_fields_all_value(): array
-    {
-        return [group::FLD_ID, value::FLD_VALUE];
-    }
-
-    /**
-     * get a list of database field names, values and types that have been updated
-     * the last_update field is excluded here because this is an internal only field
-     *
-     * @param sandbox_value $sbx the same value sandbox as this to compare which fields have been changed
-     * @return array with the field names of the object and any child object
-     */
-    function db_changed_value(sandbox_value $sbx): array
-    {
-        $lst = [];
-        if ($sbx->grp_id() <> $this->grp_id()) {
-            // TODO review the group type
-            $lst[] = [
-                group::FLD_ID,
-                $this->grp_id(),
-                sql_field_type::INT
-            ];
-        }
-        if ($sbx->number() <> $this->number()) {
-            $lst[] = [
-                value::FLD_VALUE,
-                $this->number(),
-                sql_field_type::NUMERIC_FLOAT
-            ];
-        }
-        return $lst;
-    }
-
-    /**
-     * list of fields that have been changed compared to a given object
-     * the last_update field is excluded here because this is an internal only field
-     *
-     * @param sandbox_value $sbx the same value sandbox as this to compare which fields have been changed
-     * @return array with the field names of the object and any child object
-     */
-    function db_fields_changed_value(sandbox_value $sbx): array
-    {
-        $result = [];
-        if ($sbx->grp_id() <> $this->grp_id()) {
-            $result[] = group::FLD_ID;
-        }
-        if ($sbx->number() <> $this->number()) {
-            $result[] = value::FLD_VALUE;
-        }
-        return $result;
-    }
-
-    /**
-     * list of fields that have been changed compared to a given object
-     * the last_update field is excluded here because this is an internal only field
-     *
-     * @param sandbox_value $sbx_val the same value sandbox as this to compare which fields have been changed
-     * @return array with the field names of the object and any child object
-     */
-    function db_values_changed_value(sandbox_value $sbx_val): array
-    {
-        $result = [];
-        if ($sbx_val->grp_id() <> $this->grp_id()) {
-            $result[] = $this->grp_id();
-        }
-        if ($sbx_val->number() <> $this->number()) {
-            $result[] = $this->number();
-        }
-        return $result;
-    }
-
 
 
     /*
@@ -1247,6 +1167,73 @@ class sandbox_value extends sandbox_multi
      */
 
     /**
+     * create the sql statement to add a new value or result to the database
+     * TODO add source group
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(
+        sql           $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
+    {
+        // clone the parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::INSERT);
+        // set the target sql table type for this value
+        $sc_par_lst_used->add($this->grp->table_type());
+        // get the name indicator how many id fields are user
+        $id_ext = $this->grp->table_extension();
+        $qp = $this->sql_common($sc, $sc_par_lst_used, '', $id_ext);
+        // overwrite the standard auto increase id field name
+        $sc->set_id_field($this->id_field());
+        $sc->set_name($qp->name);
+        $usr_tbl = $sc_par_lst_used->is_usr_tbl();
+        $fvt_lst = new sql_par_field_list();
+        if ($this->grp->is_prime()) {
+            $fields = $this->grp->id_names();
+            $fields[] = user::FLD_ID;
+            $values = $this->grp->id_lst();
+            $values[] = $this->user()->id();
+            if (!$usr_tbl) {
+                $fields[] = self::FLD_VALUE;
+                $fields[] = self::FLD_LAST_UPDATE;
+                $values[] = $this->number;
+                $values[] = sql::NOW;
+            }
+        } else {
+            if ($usr_tbl) {
+                $fields = array(group::FLD_ID, user::FLD_ID);
+                $values = array($this->grp->id(), $this->user()->id());
+            } else {
+                $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
+                $values = array($this->grp->id(), $this->user()->id(), $this->number, sql::NOW);
+            }
+
+        }
+        if ($this::class == result::class) {
+            $fields[] = formula::FLD_ID;
+            $values[] = $this->frm->id();
+            $fields[] = result::FLD_SOURCE_GRP;
+            $values[] = $this->src_grp->id();
+        }
+        $fvt_lst->fill_from_arrays($fields, $values);
+        $qp->sql = $sc->create_sql_insert($fvt_lst);
+        $par_values = [];
+        foreach (array_keys($values) as $i) {
+            if ($values[$i] != sql::NOW) {
+                $par_values[$i] = $values[$i];
+            }
+        }
+
+        $qp->par = $par_values;
+        return $qp;
+    }
+
+    /**
      * create the sql statement to update a result in the database
      * TODO make code review and move part to the parent sandbox value class
      *
@@ -1335,6 +1322,89 @@ class sandbox_value extends sandbox_multi
 
         $qp->par = $sc->par_values();
         return $qp;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * list of all fields that can be changed by the user in this object
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @param sql_type_list $sc_par_lst only used for link objects
+     * @return array with the field names of the object and any child object
+     */
+    function db_fields_all_value(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    {
+        return [group::FLD_ID, self::FLD_VALUE];
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @param sandbox_value $sbx the same value sandbox as this to compare which fields have been changed
+     * @return array with the field names of the object and any child object
+     */
+    function db_changed_value(sandbox_value $sbx): array
+    {
+        $lst = [];
+        if ($sbx->grp_id() <> $this->grp_id()) {
+            // TODO review the group type
+            $lst[] = [
+                group::FLD_ID,
+                $this->grp_id(),
+                sql_field_type::INT
+            ];
+        }
+        if ($sbx->number() <> $this->number()) {
+            $lst[] = [
+                self::FLD_VALUE,
+                $this->number(),
+                sql_field_type::NUMERIC_FLOAT
+            ];
+        }
+        return $lst;
+    }
+
+    /**
+     * list of fields that have been changed compared to a given object
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @param sandbox_value $sbx the same value sandbox as this to compare which fields have been changed
+     * @return array with the field names of the object and any child object
+     */
+    function db_fields_changed_value(sandbox_value $sbx): array
+    {
+        $result = [];
+        if ($sbx->grp_id() <> $this->grp_id()) {
+            $result[] = group::FLD_ID;
+        }
+        if ($sbx->number() <> $this->number()) {
+            $result[] = value::FLD_VALUE;
+        }
+        return $result;
+    }
+
+    /**
+     * list of fields that have been changed compared to a given object
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @param sandbox_value $sbx_val the same value sandbox as this to compare which fields have been changed
+     * @return array with the field names of the object and any child object
+     */
+    function db_values_changed_value(sandbox_value $sbx_val): array
+    {
+        $result = [];
+        if ($sbx_val->grp_id() <> $this->grp_id()) {
+            $result[] = $this->grp_id();
+        }
+        if ($sbx_val->number() <> $this->number()) {
+            $result[] = $this->number();
+        }
+        return $result;
     }
 
 

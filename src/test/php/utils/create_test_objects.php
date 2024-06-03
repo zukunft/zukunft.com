@@ -1349,7 +1349,7 @@ class create_test_objects extends test_base
     /**
      * @return group with three prime phrases
      */
-    function phrase_group_prime_3(): group
+    function group_prime_3(): group
     {
         $lst = $this->phrase_list_zh_2019();
         $grp = $lst->get_grp_id(false);
@@ -1360,7 +1360,7 @@ class create_test_objects extends test_base
     /**
      * @return group with the max number of prime phrases
      */
-    function phrase_group_prime_max(): group
+    function group_prime_max(): group
     {
         $lst = $this->phrase_list_zh_mio();
         $grp = $lst->get_grp_id(false);
@@ -1368,7 +1368,7 @@ class create_test_objects extends test_base
         return $grp;
     }
 
-    function phrase_group_16(): group
+    function group_16(): group
     {
         $lst = $this->phrase_list_16();
         $grp = $lst->get_grp_id(false);
@@ -1376,7 +1376,7 @@ class create_test_objects extends test_base
         return $grp;
     }
 
-    function phrase_group_17_plus(): group
+    function group_17_plus(): group
     {
         $lst = $this->phrase_list_17_plus();
         $grp = $lst->get_grp_id(false);
@@ -1384,7 +1384,7 @@ class create_test_objects extends test_base
         return $grp;
     }
 
-    function phrase_group_zh(): group
+    function group_zh(): group
     {
         $lst = $this->phrase_list_zh_2019();
         $grp = $lst->get_grp_id(false);
@@ -1392,7 +1392,7 @@ class create_test_objects extends test_base
         return $grp;
     }
 
-    function phrase_group_list(): group_list
+    function group_list(): group_list
     {
         $lst = new group_list($this->usr1);
         $lst->add($this->group());
@@ -1489,7 +1489,7 @@ class create_test_objects extends test_base
      */
     function value_prime_3(): value
     {
-        $grp = $this->phrase_group_prime_3();
+        $grp = $this->group_prime_3();
         return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
@@ -1498,25 +1498,25 @@ class create_test_objects extends test_base
      */
     function value_prime_max(): value
     {
-        $grp = $this->phrase_group_prime_max();
+        $grp = $this->group_prime_max();
         return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
     function value_16(): value
     {
-        $grp = $this->phrase_group_16();
+        $grp = $this->group_16();
         return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
     function value_17_plus(): value
     {
-        $grp = $this->phrase_group_17_plus();
+        $grp = $this->group_17_plus();
         return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
     function value_zh(): value
     {
-        $grp = $this->phrase_group_zh();
+        $grp = $this->group_zh();
         return new value($this->usr1, value_api::TV_CITY_ZH_INHABITANTS_2019, $grp);
     }
 
@@ -1541,7 +1541,7 @@ class create_test_objects extends test_base
     function value_time_series(): value_time_series
     {
         $vts = new value_time_series($this->usr1);
-        $vts->set_grp($this->phrase_group_16());
+        $vts->set_grp($this->group_16());
         return $vts;
     }
 
@@ -1691,10 +1691,18 @@ class create_test_objects extends test_base
         return $res;
     }
 
+    function result_prime_max(): result
+    {
+        $res = new result($this->usr1);
+        $res->set_grp($this->group_prime_max());
+        $res->set_number(result_api::TV_INT);
+        return $res;
+    }
+
     function result(): result
     {
         $res = new result($this->usr1);
-        $res->set_grp($this->phrase_group_16());
+        $res->set_grp($this->group_16());
         $res->set_number(result_api::TV_INT);
         return $res;
     }
@@ -1702,7 +1710,7 @@ class create_test_objects extends test_base
     function result_big(): result
     {
         $res = new result($this->usr1);
-        $res->set_grp($this->phrase_group_17_plus());
+        $res->set_grp($this->group_17_plus());
         $res->set_number(result_api::TV_INT);
         return $res;
     }

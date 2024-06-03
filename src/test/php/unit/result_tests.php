@@ -92,12 +92,14 @@ class result_tests
         $t->subheader('result sql write');
         // result changes are not logged because potentially they can be reproduced
         $res_prime = $t->result_prime();
+        $res_prime_max = $t->result_prime_max();
         $res = $t->result();
-        $res_big = $t->result_prime();
+        $res_big = $t->result_big();
         // TODO activate db write
-        //$t->assert_sql_insert($sc, $res_prime);
-        //$t->assert_sql_insert($sc, $res);
-        //$t->assert_sql_insert($sc, $res_big);
+        $t->assert_sql_insert($sc, $res_prime);
+        $t->assert_sql_insert($sc, $res_prime_max);
+        $t->assert_sql_insert($sc, $res);
+        $t->assert_sql_insert($sc, $res_big);
         // TODO activate db write
         // $t->assert_sql_insert($sc, $res, [sql_type::USER]);
         // TODO activate db write

@@ -131,14 +131,12 @@ class value extends sandbox_value
     // object specific database and JSON object field names
     const FLD_ID = 'group_id';
     // TODO move the sandbox value object
-    const FLD_VALUE = 'numeric_value';
     const FLD_VALUE_TEXT = 'text_value';
     const FLD_VALUE_TIME = 'time_value';
     const FLD_VALUE_GEO = 'geo_value';
     const FLD_TS_ID_COM = 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
     const FLD_TS_ID_COM_USER = 'the 64 bit integer which is unique for the standard and the user series';
     const FLD_VALUE_TS_ID = 'value_time_series_id';
-    const FLD_LAST_UPDATE = 'last_update';
     const FLD_ALL_TIME_SERIES = array(
         [self::FLD_VALUE_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM],
     );
@@ -2242,62 +2240,6 @@ class value extends sandbox_value
     /*
      * sql write
      */
-
-    /**
-     * create the sql statement to add a new value to the database
-     * @param sql $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_insert(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
-    {
-        // clone the parameter list to avoid changing the given list
-        $sc_par_lst_used = clone $sc_par_lst;
-        // set the sql query type
-        $sc_par_lst_used->add(sql_type::INSERT);
-        // set the target sql table type for this value
-        $sc_par_lst_used->add($this->grp->table_type());
-        // get the name indicator how many id fields are user
-        $id_ext = $this->grp->table_extension();
-        $qp = $this->sql_common($sc, $sc_par_lst_used, '', $id_ext);
-        // overwrite the standard auto increase id field name
-        $sc->set_id_field($this->id_field());
-        $sc->set_name($qp->name);
-        $usr_tbl = $sc_par_lst_used->is_usr_tbl();
-        if ($this->grp->is_prime()) {
-            $fields = $this->grp->id_names();
-            $fields[] = user::FLD_ID;
-            $values = $this->grp->id_lst();
-            $values[] = $this->user()->id();
-            if (!$usr_tbl) {
-                $fields[] = self::FLD_VALUE;
-                $fields[] = self::FLD_LAST_UPDATE;
-                $values[] = $this->number;
-                $values[] = sql::NOW;
-            }
-        } else {
-            if ($usr_tbl) {
-                $fields = array(group::FLD_ID, user::FLD_ID);
-                $values = array($this->grp->id(), $this->user()->id());
-            } else {
-                $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
-                $values = array($this->grp->id(), $this->user()->id(), $this->number, sql::NOW);
-            }
-
-        }
-        $fvt_lst = new sql_par_field_list();
-        $fvt_lst->fill_from_arrays($fields, $values);
-        $qp->sql = $sc->create_sql_insert($fvt_lst);
-        $par_values = [];
-        foreach (array_keys($values) as $i) {
-            if ($values[$i] != sql::NOW) {
-                $par_values[$i] = $values[$i];
-            }
-        }
-
-        $qp->par = $par_values;
-        return $qp;
-    }
 
     /**
      * create the sql statement to delete a value in the database

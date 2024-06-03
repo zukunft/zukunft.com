@@ -184,7 +184,7 @@ class value_tests
 
         // sql to load a user specific time series by id
         $vts = new value_time_series($usr);
-        $vts->set_grp($t->phrase_group_16());
+        $vts->set_grp($t->group_16());
         $t->assert_sql_by_id($sc, $vts);
 
         // ... and the related default time series

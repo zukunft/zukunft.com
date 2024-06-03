@@ -94,8 +94,6 @@ class result extends sandbox_value
     const FLD_SOURCE_GRP = 'source_group_id';
     // TODO replace with group::FLD_ID
     const FLD_GRP = 'group_id';
-    const FLD_VALUE = 'numeric_value';
-    const FLD_LAST_UPDATE = 'last_update';
     const FLD_TS_ID_COM = 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
     const FLD_TS_ID_COM_USER = 'the 64 bit integer which is unique for the standard and the user series';
     const FLD_RESULT_TS_ID = 'result_time_series_id';
@@ -1613,62 +1611,6 @@ class result extends sandbox_value
         log_debug("id (" . $result . ")");
         return $result;
 
-    }
-
-
-    /*
-     * sql write
-     */
-
-    /**
-     * create the sql statement to add a new result to the database
-     * TODO add source group
-     *
-     * @param sql $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_insert(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
-    {
-        $qp = $this->sql_common($sc, $sc_par_lst);
-        $usr_tbl = $sc_par_lst->is_usr_tbl();
-        // overwrite the standard auto increase id field name
-        $sc->set_id_field($this->id_field());
-        $qp->name .= sql::NAME_SEP . sql::FILE_INSERT;
-        $sc->set_name($qp->name);
-        if ($this->grp->is_prime()) {
-            $fields = $this->grp->id_names();
-            $fields[] = user::FLD_ID;
-            $values = $this->grp->id_lst();
-            $values[] = $this->user()->id();
-            if (!$usr_tbl) {
-                $fields[] = self::FLD_VALUE;
-                $fields[] = self::FLD_LAST_UPDATE;
-                $values[] = $this->number;
-                $values[] = sql::NOW;
-            }
-        } else {
-            if ($usr_tbl) {
-                $fields = array(group::FLD_ID, user::FLD_ID);
-                $values = array($this->grp->id(), $this->user()->id());
-            } else {
-                $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
-                $values = array($this->grp->id(), $this->user()->id(), $this->number, sql::NOW);
-            }
-
-        }
-        $fvt_lst = new sql_par_field_list();
-        $fvt_lst->fill_from_arrays($fields, $values);
-        $qp->sql = $sc->create_sql_insert($fvt_lst);
-        $par_values = [];
-        foreach (array_keys($values) as $i) {
-            if ($values[$i] != sql::NOW) {
-                $par_values[$i] = $values[$i];
-            }
-        }
-
-        $qp->par = $par_values;
-        return $qp;
     }
 
 

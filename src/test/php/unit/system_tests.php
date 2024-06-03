@@ -129,7 +129,7 @@ class system_tests
         $target = '"Pi (math)" (group_id 5) as "Pi (math)" for user 1 (zukunft.com system test)';
         $t->assert($test_name, $grp->dsp_id(), $target);
         $test_name = 'debug group_list id';
-        $grp_lst = $t->phrase_group_list();
+        $grp_lst = $t->group_list();
         $target = ' ... total 1';
         $t->assert($test_name, $grp_lst->dsp_id(), $target);
         $test_name = 'debug term id';
