@@ -1,6 +1,6 @@
 PREPARE formula_link_by_usr_cfg (bigint, bigint) AS
     SELECT formula_link_id,
-           link_type_id,
+           formula_link_type_id,
            excluded,
            share_type_id,
            protect_id

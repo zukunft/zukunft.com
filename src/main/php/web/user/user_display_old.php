@@ -386,8 +386,8 @@ class user_dsp_old extends user
                    l.user_id              AS owner_id, 
                    l.formula_id, 
                    l.phrase_id, 
-                   CASE WHEN (u.link_type_id <> '' IS NOT TRUE) THEN l.link_type_id ELSE u.link_type_id END AS usr_type, 
-                   l.link_type_id                                                            AS std_type, 
+                   CASE WHEN (u.formula_link_type_id <> '' IS NOT TRUE) THEN l.formula_link_type_id ELSE u.formula_link_type_id END AS usr_type, 
+                   l.formula_link_type_id                                                            AS std_type, 
                    CASE WHEN (u.excluded     <> '' IS NOT TRUE) THEN l.excluded     ELSE u.excluded     END AS usr_excluded,
                    l.excluded                                                                AS std_excluded
               FROM user_formula_links u,
@@ -399,8 +399,8 @@ class user_dsp_old extends user
                    l.user_id              AS owner_id, 
                    l.formula_id, 
                    l.phrase_id, 
-                   IF(u.link_type_id IS NULL, l.link_type_id, u.link_type_id) AS usr_type, 
-                   l.link_type_id                                             AS std_type, 
+                   IF(u.formula_link_type_id IS NULL, l.formula_link_type_id, u.formula_link_type_id) AS usr_type, 
+                   l.formula_link_type_id                                             AS std_type, 
                    IF(u.excluded     IS NULL, l.excluded,     u.excluded)     AS usr_excluded,
                    l.excluded                                                 AS std_excluded
               FROM user_formula_links u,
@@ -422,7 +422,7 @@ class user_dsp_old extends user
                 $frm_usr->set_id($sbx_row['id']);
                 $frm_usr->fob->id = $sbx_row[formula::FLD_ID];
                 $frm_usr->tob->id = $sbx_row[phrase::FLD_ID];
-                $frm_usr->link_type_id = $sbx_row['usr_type'];
+                $frm_usr->type_id = $sbx_row['usr_type'];
                 $frm_usr->set_excluded($sbx_row['usr_excluded']);
                 $frm_usr->load_objects();
 
@@ -432,11 +432,11 @@ class user_dsp_old extends user
 
                 $frm_std = clone $frm_usr;
                 $frm_std->set_user($usr_std);
-                $frm_std->link_type_id = $sbx_row['std_type'];
+                $frm_std->type_id = $sbx_row['std_type'];
                 $frm_std->set_excluded($sbx_row['std_excluded']);
 
                 // check database consistency and correct it if needed
-                if ($frm_usr->link_type_id == $frm_std->link_type_id
+                if ($frm_usr->type_id == $frm_std->type_id
                     and $frm_usr->is_excluded() == $frm_std->is_excluded()) {
                     $frm_usr->del_usr_cfg();
                 } else {
@@ -465,7 +465,7 @@ class user_dsp_old extends user
                     $sandbox_other = '';
                     $sql_other = "SELECT l.formula_link_id, 
                                u.user_id, 
-                               u.link_type_id, 
+                               u.formula_link_type_id, 
                                u.excluded
                           FROM user_formula_links u,
                                formula_links l
@@ -482,7 +482,7 @@ class user_dsp_old extends user
                         // to review: load all user formula_links with one query
                         $frm_lnk_other = clone $frm_usr;
                         $frm_lnk_other->set_user($usr_other);
-                        $frm_lnk_other->link_type_id = $frm_lnk_other_row['link_type_id'];
+                        $frm_lnk_other->type_id = $frm_lnk_other_row['link_type_id'];
                         $frm_lnk_other->set_excluded($frm_lnk_other_row[sandbox::FLD_EXCLUDED]);
                         $frm_lnk_other->load_objects();
                         if ($sandbox_other <> '') {

@@ -37,6 +37,7 @@ include_once MODEL_FORMULA_PATH . 'formula_link_list.php';
 
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_type;
 use cfg\formula_link;
 use cfg\formula_link_list;
 use cfg\formula_link_type;
@@ -94,15 +95,19 @@ class formula_link_tests
         $t->assert('formula_link->load_user_sql by formula link id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         $t->subheader('formula link sql write');
+        $lnk = $t->formula_link();
+        $t->assert_sql_insert($sc, $lnk);
+        $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
+        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
         // TODO activate db write
-        //$t->assert_sql_insert($sc, $lnk);
-        //$t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
+        $lnk_reordered = clone $lnk;
+        $lnk_reordered->order_nbr = 1;
+        $t->assert_sql_update($sc, $lnk_reordered, $lnk);
+        $t->assert_sql_update($sc, $lnk_reordered, $lnk, [sql_type::LOG, sql_type::USER]);
         // TODO activate db write
-        //$t->assert_sql_update($sc, $lnk);
-        //$t->assert_sql_update($sc, $lnk, [sql_type::USER]);
-        // TODO activate db write
-        //$t->assert_sql_delete($sc, $lnk);
-        //$t->assert_sql_delete($sc, $lnk, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $lnk);
+        $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
 
         /*
         $t->subheader('Im- and Export tests');

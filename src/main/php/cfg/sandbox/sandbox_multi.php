@@ -2559,7 +2559,7 @@ class sandbox_multi extends db_object_multi_user
             $log->row_id = $this->id;
             // special case just to shorten the field name
             if ($this::class == formula_link::class) {
-                $log->set_field(formula_link::FLD_TYPE);
+                $log->set_field(formula_link_type::FLD_ID);
             } elseif ($this::class == word::class) {
                 $log->set_field(phrase::FLD_TYPE);
             } elseif ($this::class == triple::class) {

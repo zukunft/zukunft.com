@@ -5,6 +5,18 @@
     model/formula/formula_link.php - link a formula to a word
     ------------------------------
 
+    The main sections of this object are
+    - db const:          const for the database link
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - preloaded:         select e.g. types from cache
+    - load:              database access object (DAO) functions
+    - save:              manage to update the database
+    - sql write fields:  field list for writing to the database
+    - debug:             internal support functions for debugging
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -36,6 +48,8 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
+use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\log\change;
@@ -48,27 +62,24 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
 class formula_link extends sandbox_link_with_type
 {
 
-    // list of the formula link types that have a coded functionality
-    const DEFAULT = "default";               // a simple link between a formula and a phrase
-    const TIME_PERIOD = "time_period_based"; // for time based links
-
     /*
-     * database link
+     * db const
      */
 
     // object specific database and JSON object field names
     const TBL_COMMENT = 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
     // the database and JSON object field names used only for formula links
     const FLD_ID = 'formula_link_id';
-    const FLD_TYPE = 'link_type_id';
+    const FLD_TYPE = 'formula_link_type_id';
     const FLD_ORDER = 'order_nbr';
+    const FLD_ORDER_SQLTYP = sql_par_type::INT;
 
     // all database field names excluding the id
     const FLD_NAMES = array(
         formula::FLD_ID,
         phrase::FLD_ID,
         user::FLD_ID,
-        self::FLD_TYPE,
+        formula_link_type::FLD_ID,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
@@ -80,21 +91,21 @@ class formula_link extends sandbox_link_with_type
     );
     // all database field names excluding the id
     const FLD_NAMES_NUM_USR = array(
-        self::FLD_TYPE,
+        formula_link_type::FLD_ID,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_SANDBOX_FLD_NAMES = array(
-        self::FLD_TYPE,
+        formula_link_type::FLD_ID,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, formula_link_type::class, '', formula_link_type::FLD_ID],
+        [formula_link_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, formula_link_type::class, '', formula_link_type::FLD_ID],
         [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CANNOT be changed by the user
@@ -108,9 +119,8 @@ class formula_link extends sandbox_link_with_type
      * object vars
      */
 
-    // database fields additional to the user sandbox fields
+    // database fields additional to the user sandbox_link_with_type fields
     public ?int $order_nbr = null;    // to set the priority of the formula links
-    public ?int $link_type_id = null; // define a special behavior for this link (maybe not needed at the moment)
 
 
     /*
@@ -137,7 +147,8 @@ class formula_link extends sandbox_link_with_type
         $this->reset_objects($this->user());
 
         $this->order_nbr = null;
-        $this->link_type_id = null;
+        global $formula_link_types;
+        $this->set_type_id($formula_link_types->id(formula_link_type::DEFAULT));
     }
 
     /**
@@ -169,7 +180,7 @@ class formula_link extends sandbox_link_with_type
         if ($result) {
             $this->fob->set_id($db_row[formula::FLD_ID]);
             $this->tob->set_id($db_row[phrase::FLD_ID]);
-            $this->link_type_id = $db_row[self::FLD_TYPE];
+            $this->type_id = $db_row[formula_link_type::FLD_ID];
         }
         return $result;
     }
@@ -213,27 +224,6 @@ class formula_link extends sandbox_link_with_type
         $this->set_tob($phr);
     }
 
-
-    /*
-     * internal check function
-     */
-
-    /**
-     * @return bool true if the user is valid
-     */
-    private function is_usr_set(): bool
-    {
-        $result = false;
-        if ($this->user()->id() > 0) {
-            $result = true;
-        }
-        return $result;
-    }
-
-    /*
-     * get functions
-     */
-
     /**
      * @return int the formula id and null if the formula is not set
      */
@@ -262,8 +252,18 @@ class formula_link extends sandbox_link_with_type
         return $result;
     }
 
+    /**
+     * expose the order number as pos
+     * @return int|null
+     */
+    function pos(): ?int
+    {
+        return $this->order_nbr;
+    }
+
+
     /*
-     * get preloaded information
+     * preloaded
      */
 
     /**
@@ -444,47 +444,14 @@ class formula_link extends sandbox_link_with_type
         return phrase::FLD_ID;
     }
 
-
-    /*
-     * display functions
-     */
-
-    /**
-     * @return string the html code to display the link name
-     */
-    function name(): string
+    function type_field(): string
     {
-        $result = '';
-
-        if ($this->fob != null) {
-            $result = $this->fob->name();
-        }
-        if ($this->tob != null) {
-            $result = ' to ' . $this->tob->name();
-        }
-
-        return $result;
+        return formula_link_type::FLD_ID;
     }
 
-    /**
-     * @return string return the html code to display the link name
-     */
-    function name_linked(string $back = ''): string
-    {
-        $result = '';
-
-        $this->load_objects();
-        if (isset($this->fob) and isset($this->tob)) {
-            $result = $this->fob->name_linked($back) . ' to ' . $this->tob->display_linked();
-        } else {
-            $result .= log_err("The formula or the linked word cannot be loaded.", "formula_link->name");
-        }
-
-        return $result;
-    }
 
     /*
-     * save functions
+     * save
      */
 
     /**
@@ -636,6 +603,11 @@ class formula_link extends sandbox_link_with_type
             log_err("Either the formula and the word or the id must be set to link a formula to a word.", "formula_link->save");
         }
 
+        // decide which db write method should be used
+        if ($use_func === null) {
+            $use_func = $this->sql_default_script_usage();
+        }
+
         // load the objects if needed
         $this->load_objects();
 
@@ -659,7 +631,7 @@ class formula_link extends sandbox_link_with_type
         if ($this->id <= 0) {
             if ($this->is_valid()) {
                 log_debug('new formula link from "' . $this->fob->name() . '" to "' . $this->tob->name() . '"');
-                $result .= $this->add()->get_last_message();
+                $result .= $this->add($use_func)->get_last_message();
             }
         } else {
             log_debug('update "' . $this->id . '"');
@@ -714,6 +686,125 @@ class formula_link extends sandbox_link_with_type
     protected function all_sandbox_fields(): array
     {
         return self::ALL_SANDBOX_FLD_NAMES;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    {
+        return array_merge(
+            parent::db_all_fields_link($sc_par_lst),
+            [
+                self::FLD_ORDER,
+            ],
+            parent::db_fields_all_sandbox()
+        );
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param sandbox|formula_link $sbx the compare value to detect the changed fields
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(
+        sandbox|formula_link $sbx,
+        sql_type_list        $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
+    {
+        global $change_field_list;
+
+        $sc = new sql();
+        $do_log = $sc_par_lst->incl_log();
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        // for the standard table the type field should always be included because it is part of the prime indey
+        if ($sbx->type_id() <> $this->type_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . formula_link_type::FLD_ID,
+                    $change_field_list->id($table_id . formula_link_type::FLD_ID),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            global $formula_link_types;
+            $lst->add_type_field(
+                formula_link_type::FLD_ID,
+                type_object::FLD_NAME,
+                $this->type_id(),
+                $sbx->type_id(),
+                $formula_link_types
+            );
+        }
+        if ($sbx->pos() <> $this->pos()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER,
+                    $change_field_list->id($table_id . self::FLD_ORDER),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_ORDER,
+                $this->pos(),
+                self::FLD_ORDER_SQLTYP,
+                $sbx->pos()
+            );
+        }
+        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string the html code to display the link name
+     */
+    function name(): string
+    {
+        $result = '';
+
+        if ($this->fob != null) {
+            $result = $this->fob->name();
+        }
+        if ($this->tob != null) {
+            $result = ' to ' . $this->tob->name();
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return string return the html code to display the link name
+     */
+    function name_linked(string $back = ''): string
+    {
+        $result = '';
+
+        $this->load_objects();
+        if (isset($this->fob) and isset($this->tob)) {
+            $result = $this->fob->name_linked($back) . ' to ' . $this->tob->display_linked();
+        } else {
+            $result .= log_err("The formula or the linked word cannot be loaded.", "formula_link->name");
+        }
+
+        return $result;
     }
 
 }

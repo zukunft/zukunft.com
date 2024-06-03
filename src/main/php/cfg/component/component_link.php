@@ -15,7 +15,6 @@
     - load:              database access object (DAO) functions
     - modify:            change the order
     - save:              manage to update the database
-    - sql write:         sql statement creation to write to the database
     - sql write fields:  field list for writing to the database
     - debug:             internal support functions for debugging
 

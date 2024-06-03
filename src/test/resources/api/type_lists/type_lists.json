@@ -6044,6 +6044,18 @@
         "code_id": "1NOW() AS db_now",
         "description": "",
         "id": 771
+      },
+      {
+        "name": "12formula_link_type_id",
+        "code_id": "12formula_link_type_id",
+        "description": "",
+        "id": 772
+      },
+      {
+        "name": "13formula_link_type_id",
+        "code_id": "13formula_link_type_id",
+        "description": "",
+        "id": 773
       }
     ],
     "verbs": [

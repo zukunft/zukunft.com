@@ -58,7 +58,7 @@ class formula_link_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(formula_link::DEFAULT);
+        return parent::id(formula_link_type::DEFAULT);
     }
 
 }

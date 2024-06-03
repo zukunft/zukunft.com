@@ -2615,7 +2615,7 @@ class sandbox extends db_object_seq_id_user
             // special case just to shorten the field name
             // TODO use a function overwritten by the child objects
             if ($this::class == formula_link::class) {
-                $log->set_field(formula_link::FLD_TYPE);
+                $log->set_field(formula_link_type::FLD_ID);
             } elseif ($this::class == word::class) {
                 $log->set_field(phrase::FLD_TYPE);
             } elseif ($this::class == triple::class) {

@@ -57,6 +57,7 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 use cfg\component\component_link_type;
 use cfg\component\position_type;
 use cfg\db\sql_db;
+use cfg\formula_link_type;
 use cfg\language_form;
 use cfg\log\change_field;
 use cfg\log\change_table;
@@ -1619,8 +1620,11 @@ class create_test_objects extends test_base
 
     function formula_link(): formula_link
     {
+        global $formula_link_types;
         $lnk = new formula_link($this->usr1);
         $lnk->set(1, $this->formula(), $this->word()->phrase());
+        $lnk->set_type_id($formula_link_types->id(formula_link_type::TIME_PERIOD));
+        $lnk->order_nbr = 2;
         return $lnk;
     }
 

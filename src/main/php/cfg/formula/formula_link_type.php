@@ -47,7 +47,6 @@ class formula_link_type extends type_object
 
     // the database and JSON object field names used only for formula links
     const FLD_ID = 'formula_link_type_id';
-    const FLD_TYPE = 'link_type_id';
 
 
     /*
@@ -61,7 +60,6 @@ class formula_link_type extends type_object
     const FLD_LST_EXTRA = array(
         [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, '', formula::class, ''],
         [phrase::FLD_TYPE, phrase::FLD_TYPE_SQLTYP, sql_field_default::NOT_NULL, '', phrase_type::class, ''],
-        [formula_link::FLD_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::NOT_NULL, '', '', ''],
     );
 
 }

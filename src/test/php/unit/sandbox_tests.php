@@ -46,6 +46,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\formula;
 use cfg\formula_link;
+use cfg\formula_link_type;
 use cfg\phrase;
 use cfg\sandbox;
 use cfg\sandbox_named;
@@ -88,6 +89,7 @@ class sandbox_tests
         $result = $src1->is_similar($src2);
         $t->assert("... and similar", $result, true);
 
+        // TODO review test (start with test_name="" and move the creation to the test object creation)
         // a source can have the same name as a word
         $wrd1 = new word($usr);
         $wrd1->set_id( 1);
@@ -649,13 +651,13 @@ class sandbox_tests
         // test the formula_link load_standard SQL creation
         $db_con->set_class(formula_link::class);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_fields(array(formula_link::FLD_TYPE, sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array(formula_link_type::FLD_ID, sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT formula_link_id,
                      formula_id,
                      phrase_id,
-                     link_type_id,
+                     formula_link_type_id,
                      excluded
                 FROM formula_links 
                WHERE formula_link_id = $1;";
@@ -664,7 +666,7 @@ class sandbox_tests
         // test the formula_link load SQL creation
         $db_con->set_class(formula_link::class);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_usr_num_fields(array(formula_link::FLD_TYPE, sandbox::FLD_EXCLUDED));
+        $db_con->set_usr_num_fields(array(formula_link_type::FLD_ID, sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT 
@@ -673,7 +675,7 @@ class sandbox_tests
                         s.user_id, 
                         s.formula_id, 
                         s.phrase_id, 
-                        CASE WHEN (u.link_type_id IS NULL) THEN s.link_type_id ELSE u.link_type_id END AS link_type_id, 
+                        CASE WHEN (u.formula_link_type_id IS NULL) THEN s.formula_link_type_id ELSE u.formula_link_type_id END AS formula_link_type_id, 
                         CASE WHEN (u.excluded IS NULL) THEN s.excluded ELSE u.excluded END AS excluded 
                    FROM formula_links s 
               LEFT JOIN user_formula_links u ON s.formula_link_id = u.formula_link_id 
@@ -1015,13 +1017,13 @@ class sandbox_tests
         // test the formula_link load_standard SQL creation
         $db_con->set_class(formula_link::class);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_fields(array(formula_link::FLD_TYPE, sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array(formula_link_type::FLD_ID, sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT formula_link_id,
                      formula_id,
                      phrase_id,
-                     link_type_id,
+                     formula_link_type_id,
                      excluded
                 FROM formula_links 
                WHERE formula_link_id = ?;";
@@ -1030,7 +1032,7 @@ class sandbox_tests
         // test the formula_link load SQL creation
         $db_con->set_class(formula_link::class);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_usr_num_fields(array(formula_link::FLD_TYPE, sandbox::FLD_EXCLUDED));
+        $db_con->set_usr_num_fields(array(formula_link_type::FLD_ID, sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1);
         $created_sql = $db_con->select_by_set_id();
         $sql_avoid_code_check_prefix = "SELECT";
@@ -1040,7 +1042,7 @@ class sandbox_tests
                         s.user_id,  
                         s.formula_id,  
                         s.phrase_id,          
-                        IF(u.link_type_id IS NULL, s.link_type_id, u.link_type_id) AS link_type_id,          
+                        IF(u.formula_link_type_id IS NULL, s.formula_link_type_id, u.formula_link_type_id) AS formula_link_type_id,          
                         IF(u.excluded     IS NULL, s.excluded,     u.excluded)     AS excluded 
                    FROM formula_links s 
               LEFT JOIN user_formula_links u ON s.formula_link_id = u.formula_link_id 

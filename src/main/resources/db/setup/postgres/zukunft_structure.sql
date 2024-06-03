@@ -2464,8 +2464,7 @@ CREATE TABLE IF NOT EXISTS formula_link_types
     code_id              varchar(255) DEFAULT NULL,
     description          text         DEFAULT NULL,
     formula_id           bigint           NOT NULL,
-    phrase_type_id       smallint         NOT NULL,
-    link_type_id         smallint         NOT NULL
+    phrase_type_id       smallint         NOT NULL
 );
 
 COMMENT ON TABLE formula_link_types IS 'to assign predefined behaviour to a formula link';
@@ -2482,15 +2481,15 @@ COMMENT ON COLUMN formula_link_types.description IS 'text to explain the type to
 
 CREATE TABLE IF NOT EXISTS formula_links
 (
-    formula_link_id BIGSERIAL PRIMARY KEY,
-    user_id         bigint   DEFAULT NULL,
-    link_type_id    smallint DEFAULT NULL,
-    order_nbr       bigint   DEFAULT NULL,
-    formula_id      bigint       NOT NULL,
-    phrase_id       bigint       NOT NULL,
-    excluded        smallint DEFAULT NULL,
-    share_type_id   smallint DEFAULT NULL,
-    protect_id      smallint DEFAULT NULL
+    formula_link_id      BIGSERIAL PRIMARY KEY,
+    user_id              bigint   DEFAULT NULL,
+    formula_link_type_id smallint DEFAULT NULL,
+    order_nbr            bigint   DEFAULT NULL,
+    formula_id           bigint       NOT NULL,
+    phrase_id            bigint       NOT NULL,
+    excluded             smallint DEFAULT NULL,
+    share_type_id        smallint DEFAULT NULL,
+    protect_id           smallint DEFAULT NULL
 );
 
 COMMENT ON TABLE formula_links IS 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
@@ -2506,13 +2505,13 @@ COMMENT ON COLUMN formula_links.protect_id IS 'to protect against unwanted chang
 
 CREATE TABLE IF NOT EXISTS user_formula_links
 (
-    formula_link_id bigint       NOT NULL,
-    user_id         bigint       NOT NULL,
-    link_type_id    smallint DEFAULT NULL,
-    order_nbr       bigint   DEFAULT NULL,
-    excluded        smallint DEFAULT NULL,
-    share_type_id   smallint DEFAULT NULL,
-    protect_id      smallint DEFAULT NULL
+    formula_link_id      bigint       NOT NULL,
+    user_id              bigint       NOT NULL,
+    formula_link_type_id smallint DEFAULT NULL,
+    order_nbr            bigint   DEFAULT NULL,
+    excluded             smallint DEFAULT NULL,
+    share_type_id        smallint DEFAULT NULL,
+    protect_id           smallint DEFAULT NULL
 
 );
 
@@ -5660,7 +5659,7 @@ CREATE INDEX formula_link_types_type_name_idx ON formula_link_types (type_name);
 --
 
 CREATE INDEX formula_links_user_idx ON formula_links (user_id);
-CREATE INDEX formula_links_link_type_idx ON formula_links (link_type_id);
+CREATE INDEX formula_links_formula_link_type_idx ON formula_links (formula_link_type_id);
 CREATE INDEX formula_links_formula_idx ON formula_links (formula_id);
 CREATE INDEX formula_links_phrase_idx ON formula_links (phrase_id);
 
@@ -5671,7 +5670,7 @@ CREATE INDEX formula_links_phrase_idx ON formula_links (phrase_id);
 ALTER TABLE user_formula_links ADD CONSTRAINT user_formula_links_pkey PRIMARY KEY (formula_link_id,user_id);
 CREATE INDEX user_formula_links_formula_link_idx ON user_formula_links (formula_link_id);
 CREATE INDEX user_formula_links_user_idx ON user_formula_links (user_id);
-CREATE INDEX user_formula_links_link_type_idx ON user_formula_links (link_type_id);
+CREATE INDEX user_formula_links_formula_link_type_idx ON user_formula_links (formula_link_type_id);
 
 -- --------------------------------------------------------
 
@@ -6908,7 +6907,7 @@ ALTER TABLE user_formulas
 
 ALTER TABLE formula_links
     ADD CONSTRAINT formula_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id),
+    ADD CONSTRAINT formula_links_formula_link_type_fk FOREIGN KEY (formula_link_type_id) REFERENCES formula_link_types (formula_link_type_id),
     ADD CONSTRAINT formula_links_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
@@ -6918,7 +6917,7 @@ ALTER TABLE formula_links
 ALTER TABLE user_formula_links
     ADD CONSTRAINT user_formula_links_formula_link_fk FOREIGN KEY (formula_link_id) REFERENCES formula_links (formula_link_id),
     ADD CONSTRAINT user_formula_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id);
+    ADD CONSTRAINT user_formula_links_formula_link_type_fk FOREIGN KEY (formula_link_type_id) REFERENCES formula_link_types (formula_link_type_id);
 
 -- --------------------------------------------------------
 

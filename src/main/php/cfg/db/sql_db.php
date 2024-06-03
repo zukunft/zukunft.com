@@ -263,6 +263,7 @@ class sql_db
         source::class,
         ref::class,
         formula::class,
+        formula_link::class,
         view::class,
         component::class,
         component_link::class
@@ -275,6 +276,7 @@ class sql_db
         source::class,
         ref::class,
         formula::class,
+        formula_link::class,
         view::class,
         component::class,
         component_link::class

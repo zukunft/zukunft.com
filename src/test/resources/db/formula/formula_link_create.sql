@@ -7,14 +7,14 @@
 CREATE TABLE IF NOT EXISTS formula_links
 (
     formula_link_id BIGSERIAL PRIMARY KEY,
-    user_id         bigint   DEFAULT NULL,
-    link_type_id    smallint DEFAULT NULL,
-    order_nbr       bigint   DEFAULT NULL,
-    formula_id      bigint       NOT NULL,
-    phrase_id       bigint       NOT NULL,
-    excluded        smallint DEFAULT NULL,
-    share_type_id   smallint DEFAULT NULL,
-    protect_id      smallint DEFAULT NULL
+    user_id              bigint   DEFAULT NULL,
+    formula_link_type_id smallint DEFAULT NULL,
+    order_nbr            bigint   DEFAULT NULL,
+    formula_id           bigint       NOT NULL,
+    phrase_id            bigint       NOT NULL,
+    excluded             smallint DEFAULT NULL,
+    share_type_id        smallint DEFAULT NULL,
+    protect_id           smallint DEFAULT NULL
 );
 
 COMMENT ON TABLE formula_links IS 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
@@ -30,13 +30,13 @@ COMMENT ON COLUMN formula_links.protect_id IS 'to protect against unwanted chang
 
 CREATE TABLE IF NOT EXISTS user_formula_links
 (
-    formula_link_id bigint       NOT NULL,
-    user_id         bigint       NOT NULL,
-    link_type_id    smallint DEFAULT NULL,
-    order_nbr       bigint   DEFAULT NULL,
-    excluded        smallint DEFAULT NULL,
-    share_type_id   smallint DEFAULT NULL,
-    protect_id      smallint DEFAULT NULL
+    formula_link_id      bigint       NOT NULL,
+    user_id              bigint       NOT NULL,
+    formula_link_type_id smallint DEFAULT NULL,
+    order_nbr            bigint   DEFAULT NULL,
+    excluded             smallint DEFAULT NULL,
+    share_type_id        smallint DEFAULT NULL,
+    protect_id           smallint DEFAULT NULL
 
 );
 

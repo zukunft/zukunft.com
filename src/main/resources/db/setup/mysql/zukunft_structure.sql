@@ -2069,8 +2069,7 @@ CREATE TABLE IF NOT EXISTS formula_link_types
     code_id        varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description    text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
     formula_id     bigint           NOT NULL,
-    phrase_type_id smallint         NOT NULL,
-    link_type_id   smallint         NOT NULL
+    phrase_type_id smallint         NOT NULL
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -2090,15 +2089,15 @@ ALTER TABLE formula_link_types
 
 CREATE TABLE IF NOT EXISTS formula_links
 (
-    formula_link_id bigint       NOT NULL COMMENT 'the internal unique primary index',
-    user_id         bigint   DEFAULT NULL COMMENT 'the owner / creator of the formula_link',
-    link_type_id    smallint DEFAULT NULL,
-    order_nbr       bigint   DEFAULT NULL,
-    formula_id      bigint       NOT NULL,
-    phrase_id       bigint       NOT NULL,
-    excluded        smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
-    share_type_id   smallint DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id      smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    formula_link_id      bigint       NOT NULL COMMENT 'the internal unique primary index',
+    user_id              bigint   DEFAULT NULL COMMENT 'the owner / creator of the formula_link',
+    formula_link_type_id smallint DEFAULT NULL,
+    order_nbr            bigint   DEFAULT NULL,
+    formula_id           bigint       NOT NULL,
+    phrase_id            bigint       NOT NULL,
+    excluded             smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id        smallint DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id           smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -2116,13 +2115,13 @@ ALTER TABLE formula_links
 
 CREATE TABLE IF NOT EXISTS user_formula_links
 (
-    formula_link_id bigint       NOT NULL COMMENT 'with the user_id the internal unique primary index',
-    user_id         bigint       NOT NULL COMMENT 'the changer of the formula_link',
-    link_type_id    smallint DEFAULT NULL,
-    order_nbr       bigint   DEFAULT NULL,
-    excluded        smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
-    share_type_id   smallint DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id      smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    formula_link_id      bigint       NOT NULL COMMENT 'with the user_id the internal unique primary index',
+    user_id              bigint       NOT NULL COMMENT 'the changer of the formula_link',
+    formula_link_type_id smallint DEFAULT NULL,
+    order_nbr            bigint   DEFAULT NULL,
+    excluded             smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id        smallint DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id           smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -4821,7 +4820,7 @@ ALTER TABLE formula_link_types
 ALTER TABLE formula_links
     ADD PRIMARY KEY (formula_link_id),
     ADD KEY formula_links_user_idx (user_id),
-    ADD KEY formula_links_link_type_idx (link_type_id),
+    ADD KEY formula_links_formula_link_type_idx (formula_link_type_id),
     ADD KEY formula_links_formula_idx (formula_id),
     ADD KEY formula_links_phrase_idx (phrase_id);
 
@@ -4833,7 +4832,7 @@ ALTER TABLE user_formula_links
     ADD PRIMARY KEY (formula_link_id,user_id),
     ADD KEY user_formula_links_formula_link_idx (formula_link_id),
     ADD KEY user_formula_links_user_idx (user_id),
-    ADD KEY user_formula_links_link_type_idx (link_type_id);
+    ADD KEY user_formula_links_formula_link_type_idx (formula_link_type_id);
 
 -- --------------------------------------------------------
 
@@ -6150,7 +6149,7 @@ ALTER TABLE user_formulas
 
 ALTER TABLE formula_links
     ADD CONSTRAINT formula_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id),
+    ADD CONSTRAINT formula_links_formula_link_type_fk FOREIGN KEY (formula_link_type_id) REFERENCES formula_link_types (formula_link_type_id),
     ADD CONSTRAINT formula_links_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
@@ -6160,7 +6159,7 @@ ALTER TABLE formula_links
 ALTER TABLE user_formula_links
     ADD CONSTRAINT user_formula_links_formula_link_fk FOREIGN KEY (formula_link_id) REFERENCES formula_links (formula_link_id),
     ADD CONSTRAINT user_formula_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id);
+    ADD CONSTRAINT user_formula_links_formula_link_type_fk FOREIGN KEY (formula_link_type_id) REFERENCES formula_link_types (formula_link_type_id);
 
 -- --------------------------------------------------------
 
