@@ -79,6 +79,7 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
+use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
 use cfg\export\ref_exp;
@@ -928,35 +929,45 @@ class ref extends sandbox_link_with_type
         global $db_con;
         $result = new user_message();
 
-        // log the insert attempt first
-        $log = $this->log_link_add();
-        if ($log->id() > 0) {
-            // insert the new reference
-            $db_con->set_class(ref::class);
-            $db_con->set_usr($this->user()->id());
+        if ($use_func) {
+            $sc = $db_con->sql_creator();
+            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
+            $usr_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+            if ($usr_msg->is_ok()) {
+                $this->id = $usr_msg->get_row_id();
+            }
+            $result->add($usr_msg);
+        } else {
+            // log the insert attempt first
+            $log = $this->log_link_add();
+            if ($log->id() > 0) {
+                // insert the new reference
+                $db_con->set_class(ref::class);
+                $db_con->set_usr($this->user()->id());
 
-            $this->id = $db_con->insert_old(
-                array(phrase::FLD_ID, self::FLD_EX_KEY, self::FLD_TYPE),
-                array($this->phr->id(), $this->external_key, $this->type_id));
-            if ($this->id > 0) {
-                // update the id in the log for the correct reference
-                if (!$log->add_ref($this->id)) {
-                    $result->add_message('Adding reference ' . $this->dsp_id() . ' in the log failed.');
-                    log_err($result->get_message(), 'ref->add');
+                $this->id = $db_con->insert_old(
+                    array(phrase::FLD_ID, self::FLD_EX_KEY, self::FLD_TYPE),
+                    array($this->phr->id(), $this->external_key, $this->type_id));
+                if ($this->id > 0) {
+                    // update the id in the log for the correct reference
+                    if (!$log->add_ref($this->id)) {
+                        $result->add_message('Adding reference ' . $this->dsp_id() . ' in the log failed.');
+                        log_err($result->get_message(), 'ref->add');
+                    } else {
+                        // create an empty db_rec element to force saving of all set fields
+                        $db_rec = clone $this;
+                        $db_rec->reset();
+                        $db_rec->fob = $this->fob;
+                        $db_rec->tob = $this->tob;
+                        $db_rec->set_user($this->user());
+                        $std_rec = clone $db_rec;
+                        // save the object fields
+                        $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                    }
                 } else {
-                    // create an empty db_rec element to force saving of all set fields
-                    $db_rec = clone $this;
-                    $db_rec->reset();
-                    $db_rec->fob = $this->fob;
-                    $db_rec->tob = $this->tob;
-                    $db_rec->set_user($this->user());
-                    $std_rec = clone $db_rec;
-                    // save the object fields
-                    $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                    $result->add_message('Adding reference ' . $this->dsp_id() . ' failed.');
+                    log_err($result->get_message(), 'ref->add');
                 }
-            } else {
-                $result->add_message('Adding reference ' . $this->dsp_id() . ' failed.');
-                log_err($result->get_message(), 'ref->add');
             }
         }
 
@@ -994,6 +1005,11 @@ class ref extends sandbox_link_with_type
         global $db_con;
         $result = '';
 
+        // decide which db write method should be used
+        if ($use_func === null) {
+            $use_func = $this->sql_default_script_usage();
+        }
+
         // build the database object because the is anyway needed
         if ($this->user() != null) {
             $db_con->set_usr($this->user()->id());
@@ -1015,7 +1031,7 @@ class ref extends sandbox_link_with_type
         // create a new object or update an existing
         if ($this->id <= 0) {
             log_debug('add ' . $this->dsp_id());
-            $result .= $this->add()->get_message();
+            $result .= $this->add($use_func)->get_message();
         } else {
             log_debug('update ' . $this->dsp_id());
 
