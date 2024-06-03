@@ -51,6 +51,7 @@ class result extends sandbox_value_api implements JsonSerializable
 
     CONST TV_INT = 123456;
     CONST TV_FLOAT = 12.3456;
+    CONST TV_PCT = 0.01234;
     CONST TV_INCREASE_LONG = '0.0078718332961637'; // the increase of the swiss inhabitants from 2019 to 2020
 
     /*

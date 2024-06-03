@@ -272,8 +272,7 @@ class result extends sandbox_value
     public ?group $src_grp = null;      // the phrase group used that selected the numbers to calculate this result
     public formula $frm;                // the formula object used to calculate this result
     public group $grp;                  // the phrase group of the result
-    // TODO use the value of the sandbox_value object
-    public ?float $value = null;        // ... and finally the numeric value
+    // TODO use the is_std of the sandbox_value object
     public ?bool $is_std = True;        // true as long as no user specific value, formula or assignment is used for this result
 
     // to deprecate
@@ -304,6 +303,7 @@ class result extends sandbox_value
 
     function reset(): void
     {
+        parent::reset();
         $this->frm = new formula($this->user());
         $this->grp = new group($this->user());
         $this->src_grp = new group($this->user());
@@ -330,7 +330,7 @@ class result extends sandbox_value
             } else {
                 $this->src_grp->set_id($db_row[self::FLD_SOURCE_GRP]);
             }
-            $this->value = $db_row[self::FLD_VALUE];
+            $this->set_number($db_row[self::FLD_VALUE]);
             $this->owner_id = $db_row[user::FLD_ID];
             $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
             $this->last_val_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
@@ -397,11 +397,6 @@ class result extends sandbox_value
         return $this->is_std;
     }
 
-    function number(): ?float
-    {
-        return $this->value;
-    }
-
     function last_update(): DateTime
     {
         return $this->last_update;
@@ -438,7 +433,7 @@ class result extends sandbox_value
     function api_obj(bool $do_save = true): object
     {
         $api_obj = new result_api($this->id);
-        $api_obj->set_number($this->value);
+        $api_obj->set_number($this->number());
         if ($this->grp->phrase_list() != null) {
             $grp = $this->grp->phrase_list()->get_grp_id($do_save);
             $api_obj->set_grp($grp->api_obj());
@@ -985,7 +980,7 @@ class result extends sandbox_value
             */
 
             if ($key == sandbox_exp::FLD_NUMBER) {
-                $this->value = $res;
+                $this->set_number($res);
             }
 
         }
@@ -1039,7 +1034,7 @@ class result extends sandbox_value
         }
 
         // add the value itself
-        $result->number = $this->value;
+        $result->number = $this->number();
 
         log_debug(json_encode($result));
         return $result;
@@ -1101,7 +1096,7 @@ class result extends sandbox_value
     {
         $result = '';
 
-        if (!is_null($this->value)) {
+        if (!is_null($this->number())) {
             log_debug('result->val_formatted');
             if ($this->grp->phrase_list() == null) {
                 $this->load_phrases();
@@ -1109,15 +1104,15 @@ class result extends sandbox_value
             }
             log_debug('result->val_formatted check ' . $this->dsp_id());
             if ($this->grp->phrase_list()->has_percent()) {
-                $result = round($this->value * 100, $this->user()->percent_decimals) . ' %';
-                log_debug('result->val_formatted percent of ' . $this->value);
+                $result = round($this->number() * 100, $this->user()->percent_decimals) . ' %';
+                log_debug('result->val_formatted percent of ' . $this->number());
             } else {
-                if ($this->value >= 1000 or $this->value <= -1000) {
+                if ($this->number() >= 1000 or $this->number() <= -1000) {
                     log_debug('result->val_formatted format');
-                    $result .= number_format($this->value, 0, $this->user()->dec_point, $this->user()->thousand_sep);
+                    $result .= number_format($this->number(), 0, $this->user()->dec_point, $this->user()->thousand_sep);
                 } else {
                     log_debug('result->val_formatted round');
-                    $result = round($this->value, 2);
+                    $result = round($this->number(), 2);
                 }
             }
         }
@@ -1181,7 +1176,7 @@ class result extends sandbox_value
     function display(): string
     {
         $result = '';
-        if (!is_null($this->value)) {
+        if (!is_null($this->number())) {
             $num_text = $this->val_formatted();
             if ($this->owner_id > 0) {
                 $result .= '<span class="user_specific">' . $num_text . '</span>' . "\n";
@@ -1198,7 +1193,7 @@ class result extends sandbox_value
     function display_linked(string $back = ''): string
     {
         $result = '';
-        if (!is_null($this->value)) {
+        if (!is_null($this->number())) {
             $num_text = $this->val_formatted();
             $link_format = '';
             if ($this->owner_id > 0) {
@@ -1323,7 +1318,7 @@ class result extends sandbox_value
     function update_depending(): array
     {
         $lib = new library();
-        log_debug("(f" . $this->frm->id() . ",t" . $lib->dsp_array($this->phr_ids()) . ",v" . $this->value . " and user " . $this->user()->name . ")");
+        log_debug("(f" . $this->frm->id() . ",t" . $lib->dsp_array($this->phr_ids()) . ",v" . $this->number() . " and user " . $this->user()->name . ")");
 
         global $db_con;
         $result = array();
@@ -1380,7 +1375,7 @@ class result extends sandbox_value
             $frm->calc($phr_lst, '');
 
             //$this->save_if_updated ();
-            log_debug('result->update ' . $this->dsp_id() . ' to ' . $this->value . ' done');
+            log_debug('result->update ' . $this->dsp_id() . ' to ' . $this->number() . ' done');
         }
     }
 
@@ -1469,19 +1464,19 @@ class result extends sandbox_value
                 // build the formula result object
                 //$this->frm_id = $this->frm->id();
                 //$this->user()->id() = $frm_result->result_user;
-                log_debug('save "' . $this->value . '" for ' . $this->grp->phrase_list()->dsp_id());
+                log_debug('save "' . $this->number() . '" for ' . $this->grp->phrase_list()->dsp_id());
 
                 // get the default time for the phrases e.g. if the increase for ABB sales is calculated the last reported sales increase is assumed
                 $lst_ex_time = $this->grp->phrase_list();
                 $lst_ex_time->ex_time();
                 $res_default_time = $lst_ex_time->assume_time(); // must be the same function called used in 2num
                 if (isset($res_default_time)) {
-                    log_debug('save "' . $this->value . '" for ' . $this->grp->phrase_list()->dsp_id() . ' and default time ' . $res_default_time->dsp_id());
+                    log_debug('save "' . $this->number() . '" for ' . $this->grp->phrase_list()->dsp_id() . ' and default time ' . $res_default_time->dsp_id());
                 } else {
-                    log_debug('save "' . $this->value . '" for ' . $this->grp->phrase_list()->dsp_id());
+                    log_debug('save "' . $this->number() . '" for ' . $this->grp->phrase_list()->dsp_id());
                 }
 
-                if (!isset($this->value)) {
+                if ($this->number() == null) {
                     log_info('No result calculated for "' . $this->frm->name() . '" based on ' . $this->src_grp->phrase_list()->dsp_id() . ' for user ' . $this->user()->id() . '.', "result->save_if_updated");
                 } else {
                     // save the default value if the result time is the "newest"
@@ -1503,7 +1498,7 @@ class result extends sandbox_value
                     $res_id = $this->id();
 
                     if ($debug > 0) {
-                        $debug_txt = 'result = ' . $this->value . ' saved for ' . $this->grp->phrase_list()->name_linked();
+                        $debug_txt = 'result = ' . $this->number() . ' saved for ' . $this->grp->phrase_list()->name_linked();
                         if ($debug > 3) {
                             $debug_txt .= ' (group id "' . $this->grp->id() . '" as id "' . $res_id . '" based on ' . $this->src_grp->phrase_list()->name_linked() . ' (group id "' . $this->src_grp->dsp_id() . ')';
                         }
@@ -1542,7 +1537,7 @@ class result extends sandbox_value
             log_err("User missing.", "result->save");
         } else {
             if ($debug > 0) {
-                $debug_txt = 'result->save (' . $this->value . ' for formula ' . $this->frm->id() . ' with ' . $this->grp->phrase_list()->dsp_name() . ' based on ' . $this->src_grp->phrase_list()->dsp_name();
+                $debug_txt = 'result->save (' . $this->number() . ' for formula ' . $this->frm->id() . ' with ' . $this->grp->phrase_list()->dsp_name() . ' based on ' . $this->src_grp->phrase_list()->dsp_name();
                 if (!$this->is_std) {
                     $debug_txt .= ' and user ' . $this->user()->id();
                 }
@@ -1564,13 +1559,13 @@ class result extends sandbox_value
             $res_db = new result($this->user());
             $res_db->load_by_id($this->id());
             $row_id = $res_db->id();
-            $db_val = $res_db->value;
+            $db_val = $res_db->number();
 
             // if value exists, check it an update is needed
             // updates of results are not logged because they could be reproduced
             if ($row_id > 0) {
-                if ($db_con->sf($db_val) <> $db_con->sf($this->value)) {
-                    $msg = 'update result ' . result::FLD_VALUE . ' to ' . $this->value
+                if ($db_con->sf($db_val) <> $db_con->sf($this->number())) {
+                    $msg = 'update result ' . result::FLD_VALUE . ' to ' . $this->number()
                         . ' from ' . $db_val . ' for ' . $this->dsp_id();
                     log_debug($msg);
                     $db_con->set_class(result::class);
@@ -1587,13 +1582,13 @@ class result extends sandbox_value
                     $result = $row_id;
                 }
             } else {
-                $msg = 'insert result ' . $this->value . ' for ' . $this->dsp_id();
+                $msg = 'insert result ' . $this->number() . ' for ' . $this->dsp_id();
                 $field_names = array();
                 $field_values = array();
                 $field_names[] = formula::FLD_ID;
                 $field_values[] = $this->frm->id();
                 $field_names[] = result::FLD_VALUE;
-                $field_values[] = $this->value;
+                $field_values[] = $this->number();
                 $field_names[] = result::FLD_GRP;
                 $field_values[] = $this->grp->id();
                 $field_names[] = result::FLD_SOURCE_GRP;

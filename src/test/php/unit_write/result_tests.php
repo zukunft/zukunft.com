@@ -64,7 +64,7 @@ class result_tests
         if ($ch_up_grp->is_id_set()) {
             $ch_increase = new result($usr);
             $ch_increase->load_by_grp($ch_up_grp);
-            $result = $ch_increase->value;
+            $result = $ch_increase->number();
             if ($result == null) {
                 $result = '';
             }
@@ -84,7 +84,7 @@ class result_tests
         if ($ch_up_grp->is_id_set()) {
             $ch_increase = new result($usr);
             $ch_increase->load_by_grp($ch_up_grp, $time_phr->id());
-            $result = $ch_increase->value;
+            $result = $ch_increase->number();
             if ($result == null) {
                 $result = '';
             }
@@ -119,7 +119,7 @@ class result_tests
         $k_val = new result($usr);
         //$result = $mio_val->check();
         $k_val->load_by_grp($ch_k_grp);
-        $result = $k_val->value;
+        $result = $k_val->number();
         if ($result == null) {
             $result = '';
         }

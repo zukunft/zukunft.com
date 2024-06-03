@@ -177,7 +177,7 @@ class system_tests
         $target = '""second" = "minute" * 60" ({w17}={w98}*60)';
         $t->assert($test_name, $exp->dsp_id(), $target);
         $test_name = 'debug result id';
-        $res = $t->result();
+        $res = $t->result_simple();
         $target = '"Mathematics" 123456 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $res->dsp_id(), $target);
         $test_name = 'debug result_list id';

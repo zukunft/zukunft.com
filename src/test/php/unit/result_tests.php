@@ -66,13 +66,13 @@ class result_tests
         $t->header('Unit tests of the result class (src/main/php/model/formula/result.php)');
 
         $t->subheader('SQL creation tests');
-        $res = $t->result();
+        $res = $t->result_simple();
         $t->assert_sql_table_create($res);
         $t->assert_sql_index_create($res);
         $t->assert_sql_foreign_key_create($res);
 
         // check the sql to load a result by the id
-        $res = $t->result_16();
+        $res = $t->result();
         $t->assert_sql_by_id($sc, $res);
         $this->assert_sql_by_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group($t, $db_con, $res);
@@ -90,10 +90,14 @@ class result_tests
         $t->assert_sql_user_changes($sc, $res);
 
         $t->subheader('result sql write');
+        // result changes are not logged because potentially they can be reproduced
         $res_prime = $t->result_prime();
-        $res_prime_max = $t->result_prime();
+        $res = $t->result();
+        $res_big = $t->result_prime();
         // TODO activate db write
-        // $t->assert_sql_insert($sc, $res);
+        //$t->assert_sql_insert($sc, $res_prime);
+        //$t->assert_sql_insert($sc, $res);
+        //$t->assert_sql_insert($sc, $res_big);
         // TODO activate db write
         // $t->assert_sql_insert($sc, $res, [sql_type::USER]);
         // TODO activate db write
@@ -127,11 +131,11 @@ class result_tests
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd_const->phrase());
         $res->grp->set_phrase_list($phr_lst);
-        $res->value = result_api::TV_INT;
+        $res->set_number(result_api::TV_INT);
         $t->assert('result->val_formatted test big numbers', $res->val_formatted(), "123'456");
 
         // ... for small values 12.35 instead of 12.34 due to rounding
-        $res->value = result_api::TV_FLOAT;
+        $res->set_number(result_api::TV_FLOAT);
         $t->assert('result->val_formatted test small numbers', $res->val_formatted(), "12.35");
 
         // ... for percent values
@@ -146,7 +150,7 @@ class result_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $res = $t->result();
+        $res = $t->result_simple();
         $t->assert_api_to_dsp($res, new result_dsp());
 
     }

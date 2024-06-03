@@ -186,14 +186,14 @@ class formula_tests
 
         if ($res_lst->lst() != null) {
             $res->save_if_updated();
-            $result = $res->value;
+            $result = $res->number();
             $target = result_api::TV_INCREASE_LONG;
             $t->display('result->save_if_updated "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
         }
 
         $res_lst = $frm->calc($phr_lst);
         if ($res_lst != null) {
-            $result = $res_lst[0]->value;
+            $result = $res_lst[0]->number();
         } else {
             $result = '';
         }
@@ -206,7 +206,7 @@ class formula_tests
         $frm_scale_mio_to_one = $t->load_formula(formula_api::TN_SCALE_MIO);
         $res_lst = $frm_scale_mio_to_one->calc($phr_lst);
         if ($res_lst != null) {
-            $result = $res_lst[0]->value;
+            $result = $res_lst[0]->number();
         } else {
             $result = '';
         }
@@ -222,7 +222,7 @@ class formula_tests
         // TODO activate Prio 1
         //$res_lst = $frm_scale_one_to_k->calc($phr_lst);
         if ($res_lst != null) {
-            $result = $res_lst[0]->value;
+            $result = $res_lst[0]->number();
         } else {
             $result = '';
         }

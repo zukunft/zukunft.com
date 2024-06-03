@@ -70,6 +70,7 @@ class value_tests
         $t->assert_sql_index_create($val);
         $t->assert_sql_foreign_key_create($val);
 
+        // TODO add tests with log
         // TODO add sql insert and update tests to all db objects
         $t->subheader('SQL statements - for often used (prime) values');
         $val = $t->value();

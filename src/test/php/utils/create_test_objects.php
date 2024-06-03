@@ -1671,7 +1671,7 @@ class create_test_objects extends test_base
         return $exp->element_list($trm_lst);
     }
 
-    function result(): result
+    function result_simple(): result
     {
         $res = new result($this->usr1);
         $wrd = $this->word();
@@ -1679,7 +1679,7 @@ class create_test_objects extends test_base
         $phr_lst->add($wrd->phrase());
         $res->set_id(1);
         $res->grp->set_phrase_list($phr_lst);
-        $res->value = result_api::TV_INT;
+        $res->set_number(result_api::TV_INT);
         return $res;
     }
 
@@ -1687,17 +1687,26 @@ class create_test_objects extends test_base
     {
         $res = new result($this->usr1);
         $res->set_grp($this->group());
-        $res->value = result_api::TV_INT;
+        $res->set_number(result_api::TV_INT);
         return $res;
     }
 
-    function result_16(): result
+    function result(): result
     {
         $res = new result($this->usr1);
         $res->set_grp($this->phrase_group_16());
-        $res->value = result_api::TV_INT;
+        $res->set_number(result_api::TV_INT);
         return $res;
     }
+
+    function result_big(): result
+    {
+        $res = new result($this->usr1);
+        $res->set_grp($this->phrase_group_17_plus());
+        $res->set_number(result_api::TV_INT);
+        return $res;
+    }
+
 
     function result_pct(): result
     {
@@ -1706,14 +1715,14 @@ class create_test_objects extends test_base
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd_pct->phrase());
         $res->grp->set_phrase_list($phr_lst);
-        $res->value = 0.01234;
+        $res->set_number(result_api::TV_PCT);
         return $res;
     }
 
     function result_list(): result_list
     {
         $lst = new result_list($this->usr1);
-        $lst->add($this->result());
+        $lst->add($this->result_simple());
         $lst->add($this->result_pct());
         return $lst;
     }
@@ -1733,7 +1742,7 @@ class create_test_objects extends test_base
      */
     function figure_result(): figure
     {
-        $res = $this->result();
+        $res = $this->result_simple();
         return $res->figure();
     }
 

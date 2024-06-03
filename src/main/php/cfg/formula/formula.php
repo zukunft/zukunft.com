@@ -1168,9 +1168,9 @@ class formula extends sandbox_typed
                         if ($can_calc == true) {
                             log_debug('calculate ' . $res->num_text . ' for ' . $phr_lst->dsp_id());
                             $calc = new math;
-                            $res->value = $calc->parse($res->num_text);
+                            $res->set_number($calc->parse($res->num_text));
                             $res->is_updated = true;
-                            log_debug('the calculated ' . $this->dsp_id() . ' is ' . $res->value . ' for ' . $res->grp()->phrase_list()->dsp_id());
+                            log_debug('the calculated ' . $this->dsp_id() . ' is ' . $res->number() . ' for ' . $res->grp()->phrase_list()->dsp_id());
                         }
                     }
                 }
