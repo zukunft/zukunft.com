@@ -82,7 +82,7 @@ class sandbox_link extends sandbox
      */
 
     public ?object $fob = null; // the From OBject which this linked object is creating the connection
-    public ?object $tob = null; // the To   OBject which this linked object is creating the connection
+    public object|string|null $tob = null; // the To OBject which this linked object is creating the connection (can be a string for external keys)
 
     // database fields only used for objects that link two objects
     // TODO create a more specific object that covers all the objects that could be linked e.g. linkable_object
@@ -154,14 +154,18 @@ class sandbox_link extends sandbox
         }
     }
 
-    function set_tob(object $tob): void
+    function set_tob(object|string $tob): void
     {
         $this->tob = $tob;
     }
 
-    function tob(): object
+    function tob(): object|string
     {
-        return $this->tob;
+        if ($this->tob == null) {
+            return $this->to_value();
+        } else {
+            return $this->tob;
+        }
     }
 
     /**
@@ -201,6 +205,20 @@ class sandbox_link extends sandbox
         $lnk->fob = $this->fob;
         $lnk->tob = $this->tob;
         return $lnk;
+    }
+
+    /**
+     * create a clone but keep the unique db ids
+     *
+     * @return $this a clone with the name changed
+     */
+    function cloned(): sandbox_link
+    {
+        $obj_cpy = $this->clone_reset();
+        $obj_cpy->set_id($this->id());
+        $obj_cpy->set_fob($this->fob());
+        $obj_cpy->set_tob($this->tob());
+        return $obj_cpy;
     }
 
 
@@ -988,10 +1006,16 @@ class sandbox_link extends sandbox
         } else {
             // add from and to if the objects are the same
             $from_fld = $this->fob?->name_field();
-            $to_fld = $this->tob?->name_field();
-            // e.g. for references the external key
             if ($this->tob == null) {
+                // e.g. for references the external key
                 $to_fld = $this->to_field();
+            } else {
+                if (is_string($this->tob)) {
+                    // e.g. for references the external key
+                    $to_fld = $this->to_field();
+                } else {
+                    $to_fld = $this->tob->name_field();
+                }
             }
             if ($from_fld == $to_fld) {
                 $from_fld = sql::FROM_FLD_PREFIX . $from_fld;

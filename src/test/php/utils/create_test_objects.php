@@ -724,6 +724,13 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
+    function word_gwp(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(word_api::TI_GWP, word_api::TN_GWP);
+        return $wrd;
+    }
+
     /**
      * @return word_list with some basic words for unit testing
      */
@@ -1786,6 +1793,21 @@ class create_test_objects extends test_base
         $ref = new ref($this->usr1);
         $ref->set(4);
         $ref->description = ref_api::TD_READ;
+        return $ref;
+    }
+
+    /**
+     * @return ref with the most often used fields set for unit testing
+     */
+    function reference_change(): ref
+    {
+        global $ref_types;
+        $ref = new ref($this->usr1);
+        $ref->set(12);
+        $ref->set_phrase($this->word_gwp()->phrase());
+        $ref->set_type_id($ref_types->id(ref_type::WIKIDATA));
+        $ref->external_key = ref_api::TK_CHANGED;
+        $ref->description = ref_api::TD_CHANGE;
         return $ref;
     }
 

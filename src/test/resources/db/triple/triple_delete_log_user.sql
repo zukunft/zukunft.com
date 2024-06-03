@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION triple_delete_log_user
 $$
 BEGIN
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,    old_value, row_id)
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,   row_id)
          SELECT          _user_id,_change_action_id,_field_id_triple_name,_triple_name,_triple_id ;
 
     DELETE

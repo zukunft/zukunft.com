@@ -35,11 +35,11 @@ namespace unit;
 use api\ref\source as source_api;
 use cfg\db\sql;
 use cfg\db\sql_type;
-use cfg\db\sql_type_list;
 use cfg\ref_type;
 use cfg\ref_type_list;
 use cfg\source_list;
 use cfg\source_type_list;
+use api\ref\ref as ref_api;
 use html\ref\ref as ref_dsp;
 use html\ref\source as source_dsp;
 use cfg\ref;
@@ -102,11 +102,15 @@ class ref_tests
         $ref_filled_usr = $t->ref_filled_user();
         $t->assert_sql_insert($sc, $ref_filled_usr, [sql_type::LOG, sql_type::USER]);
         // TODO activate db write
-        //$t->assert_sql_update($sc, $ref);
-        //$t->assert_sql_update($sc, $ref, [sql_type::USER]);
+        $ref = $t->reference_change();
+        $ref_changed = $ref->cloned_linked(ref_api::TK_CHANGED);
+        $t->assert_sql_update($sc, $ref_changed, $ref);
+        $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::USER]);
+        $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG, sql_type::USER]);
         // TODO activate db write
-        //$t->assert_sql_delete($sc, $ref);
-        //$t->assert_sql_delete($sc, $ref, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $ref);
+        $t->assert_sql_delete($sc, $ref, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('Im- and Export tests');
         $t->assert_json_file(new ref($usr), $json_file);

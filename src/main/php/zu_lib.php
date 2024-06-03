@@ -1167,7 +1167,8 @@ const TEST_IMPORT_FILE_LIST = [
     'wikipedia/country-ISO-3166.json',
     'wikipedia/democratie_index_table.json',
     'wikipedia/currency.json',
-    'companies.json'
+    'companies.json',
+    'wind_investment.json'
 ];
 const TEST_IMPORT_FILE_LIST_ALL = [
     'countries.json',

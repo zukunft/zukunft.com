@@ -55,4 +55,4 @@ SELECT ref_insert_log_0151551001000 (
                'Q167'::text,
                246::smallint,
                65::smallint,
-               'ratio of the circumference of a circle to its diameter'::text);
+               'pi - ratio of the circumference of a circle to its diameter'::text);

@@ -51,4 +51,4 @@ SELECT ref_insert_log_0151551001000 (
                'Q167',
                246,
                65,
-               'ratio of the circumference of a circle to its diameter');
+               'pi - ratio of the circumference of a circle to its diameter');

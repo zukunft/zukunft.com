@@ -26,5 +26,5 @@ SELECT ref_insert_log_11000001000_user (
                1::bigint,
                1::smallint,
                65::smallint,
-               'ratio of the circumference of a circle to its diameter'::text,
+               'pi - ratio of the circumference of a circle to its diameter'::text,
                4::bigint);

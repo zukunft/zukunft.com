@@ -560,15 +560,15 @@ class triple extends sandbox_link_typed implements JsonSerializable
     }
 
     /**
-     * create a clone and keep additional the verbbeuase it is a unique db id for the triple
+     * create a clone and keep additional the verb as it is a unique db id for the triple
      *
      * @param string $name the target name
      * @return $this a clone with the name changed
      */
-    function cloned(string $name): sandbox_link_named
+    function cloned_named(string $name): sandbox_link_named
     {
 
-        $obj_cpy = parent::cloned($name);
+        $obj_cpy = parent::cloned_named($name);
         $obj_cpy->set_verb($this->verb());
         return $obj_cpy;
     }

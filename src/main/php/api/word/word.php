@@ -136,6 +136,8 @@ class word extends sandbox_typed_api
     const TI_CASH_FLOW = 274;
     const TN_TAX = 'Income taxes';
     const TI_TAX = 273;
+    const TN_GWP = 'global warming potential';
+    const TI_GWP = 1070;
 
     // persevered word names for unit and integration tests based on the database
     // TWN_* - is a Test Word Name for words created only for testing (see also TN_*)

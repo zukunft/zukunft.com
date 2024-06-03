@@ -366,6 +366,21 @@ class ref extends sandbox_link_with_type
         return $result;
     }
 
+    /**
+     * create a clone but change the external link
+     *
+     * @param string $external_key the target name
+     * @return $this a clone with the name changed
+     */
+    function cloned_linked(string $external_key): ref
+    {
+
+        $obj_cpy = parent::cloned();
+        $obj_cpy->set_type_id($this->type_id());
+        $obj_cpy->external_key = $external_key;
+        return $obj_cpy;
+    }
+
 
     /*
      * preloaded
@@ -1148,22 +1163,22 @@ class ref extends sandbox_link_with_type
                 );
             }
         }
-        if ($sbx->phr?->id() <> $this->phr?->id()) {
-            if ($do_log) {
-                $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_ID,
-                    $change_field_list->id($table_id . phrase::FLD_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+        if ($sc_par_lst->is_insert()) {
+            if ($sbx->phr?->id() <> $this->phr?->id()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_ID,
+                        $change_field_list->id($table_id . phrase::FLD_ID),
+                        change::FLD_FIELD_ID_SQLTYP
+                    );
+                }
+                $lst->add_link_field(
+                    phrase::FLD_ID,
+                    phrase::FLD_NAME,
+                    $this->phr,
+                    $sbx->phr
                 );
             }
-            global $verbs;
-            $lst->add_type_field(
-                phrase::FLD_ID,
-                phrase::FLD_NAME,
-                $this->phr?->id(),
-                $sbx->phr?->id(),
-                $verbs
-            );
         }
         if ($sbx->external_key <> $this->external_key) {
             if ($do_log) {

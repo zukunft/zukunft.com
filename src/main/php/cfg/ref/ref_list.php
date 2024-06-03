@@ -135,8 +135,8 @@ class ref_list extends type_list
         global $usr;
         $type = new ref($usr);
         $type->set_id(1);
-        $type->set_name(ref_api::TN_READ);
-        $type->code_id = ref_api::TN_READ;
+        $type->set_name(ref_api::TT_READ);
+        $type->code_id = ref_api::TT_READ;
         $this->add($type);
     }
 
