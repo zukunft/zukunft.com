@@ -132,16 +132,18 @@ backend - admin
 - log                      - to save all changes in a user readable format
 
 backend - internal
-- dsl (DSp cmp Link)       - link of a view component to a view
 - sbx (SandBoX)            - the user sandbox tables where the adjustments of the users are saved
-- uso (User Sbx Object)    - an object (word, value, formula, ...) that uses the user sandbox
-(useless?)
+- lst (LiST)               - an array of objects
 - id (IDentifier)          - internal prime key of a database row
 - ids (IDentifierS)        - an simple array of database table IDs (ids_txt is the text / imploded version of the ids array)
-- lst (LiST)               - an array of objects
+- sc (Sql Creator)         - for writing SQL statements
+- std (STanDard)           - a value that have not been changed and is public
+- nrm (NoRMal)             - data that is used by most users
+- dsl (DSp cmp Link)       - link of a view component to a view
+- uso (User Sbx Object)    - an object (word, value, formula, ...) that uses the user sandbox
+(useless?)
 - cl (Code Link)           - a text used to identify one predefined database entry that triggers to use of some program code
 - sf (Sql Format)          - to convert a text for the database
-- sc (Sql Creator)         - for writing SQL statements
 
 object extensions
 - _min (MINimal)           - the minimal object used for the frontend API and only valid for the session user

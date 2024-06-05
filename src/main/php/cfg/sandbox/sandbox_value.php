@@ -289,6 +289,21 @@ class sandbox_value extends sandbox_multi
         return $this->last_update;
     }
 
+    /**
+     * TODO review (add ...)
+     * @return bool true if no user has changed the value and no parameter beside the value is set
+     */
+    function is_standard(): bool
+    {
+        if ($this->usr_cfg_id == null
+            and $this->owner_id == null
+            and !$this->excluded) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     /*
      * forward group get
@@ -785,9 +800,9 @@ class sandbox_value extends sandbox_multi
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_standard_sql(
-        sql $sc,
+        sql    $sc,
         string $class = self::class,
-        array $fld_lst = []
+        array  $fld_lst = []
     ): sql_par
     {
         $sc_par_lst = new sql_type_list([]);
@@ -1042,45 +1057,6 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
-     * dummy function to be overwritten by the child object
-     * get a list of database fields that have been updated
-     * excluding the internal only last_update and is_std fields
-     *
-     * @param sandbox_value $sbv the compare value to detect the changed fields
-     * @return array list of the database field names that have been updated
-     */
-    function db_changed(sandbox_value $sbv): array
-    {
-        return [];
-    }
-
-    /**
-     * dummy function to be overwritten by the child object
-     * get a list of database fields that have been updated
-     * excluding the internal only last_update and is_std fields
-     *
-     * @param sandbox_value $sbv the compare value to detect the changed fields
-     * @return array list of the database field names that have been updated
-     */
-    function db_fields_changed(sandbox_value $sbv): array
-    {
-        return [];
-    }
-
-    /**
-     * dummy function to be overwritten by the child object
-     * get a list of database values that have been updated
-     * excluding the internal only last_update and is_std values
-     *
-     * @param result $sbv the compare value to detect the changed fields
-     * @return array list of the database field names that have been updated
-     */
-    function db_values_changed(sandbox_value $sbv): array
-    {
-        return [];
-    }
-
-    /**
      * actually update a field in the main database record or the user sandbox
      * the usr id is taken into account in sql_db->update (maybe move outside)
      *
@@ -1116,8 +1092,9 @@ class sandbox_value extends sandbox_multi
                         log_debug($msg);
                         $db_con->set_class($this::class, true, $ext);
                         $db_con->set_usr($this->user()->id());
-                        $fld_val_typ_lst = [[$log->field(), null, null]];
-                        $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst);
+                        $fvt_lst = new sql_par_field_list();
+                        $fvt_lst->add_field($log->field(), null, sql_par_type::CONST);
+                        $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst);
                         $usr_msg = $db_con->update($qp, $msg);
                         $result = $usr_msg->get_message();
                     }
@@ -1127,8 +1104,9 @@ class sandbox_value extends sandbox_multi
                     log_debug($msg);
                     $db_con->set_class($this::class, false, $ext);
                     $db_con->set_usr($this->user()->id());
-                    $fld_val_typ_lst = [[$log->field(), $new_value, $sql_fld_typ]];
-                    $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst);
+                    $fvt_lst = new sql_par_field_list();
+                    $fvt_lst->add_field($log->field(), $new_value, $sql_fld_typ);
+                    $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst);
                     $usr_msg = $db_con->update($qp, $msg);
                     $result = $usr_msg->get_message();
                 }
@@ -1142,16 +1120,17 @@ class sandbox_value extends sandbox_multi
                     $db_con->set_class($this::class, true, $ext);
                     $db_con->set_usr($this->user()->id());
                     $sql_fld_typ = $sc->get_sql_par_type($new_value);
+                    $fvt_lst = new sql_par_field_list();
                     if ($new_value == $std_value) {
                         $msg = 'remove user change of ' . $log->field();
                         log_debug($msg);
-                        $fld_val_typ_lst = [[$log->field(), Null, $sql_fld_typ]];
+                        $fvt_lst->add_field($log->field(), Null, $sql_fld_typ);
                     } else {
                         $msg = 'update of ' . $log->field() . ' to ' . $new_value;
                         log_debug($msg);
-                        $fld_val_typ_lst = [[$log->field(), $new_value, $sql_fld_typ]];
+                        $fvt_lst->add_field($log->field(), $new_value, $sql_fld_typ);
                     }
-                    $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst, new sql_type_list([sql_type::USER]));
+                    $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst, new sql_type_list([sql_type::USER]));
                     $usr_msg = $db_con->update($qp, $msg);
                     $result = $usr_msg->get_message();
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
@@ -1234,37 +1213,17 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
-     * create the sql statement to update a result in the database
-     * TODO make code review and move part to the parent sandbox value class
+     * create the sql statement to update a sandbox object in the database
+     * TODO move the code to an object used by sandbox and sandbox_value
      *
      * @param sql $sc with the target db_type set
-     * @param value|result $db_val the result object with the database values before the update
+     * @param sandbox_value $db_row the sandbox object with the database values before the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update(
-        sql           $sc,
-        value|result  $db_val,
-        sql_type_list $sc_par_lst = new sql_type_list([])
-    ): sql_par
-    {
-        // get the fields and values that have been changed and needs to be updated in the database
-        $fld_val_typ_lst = $this->db_changed($db_val);
-        return $this->sql_update_fields($sc, $fld_val_typ_lst, $sc_par_lst);
-    }
-
-    /**
-     * create the sql statement to update a value in the database
-     * based on the given list of fields and values
-     *
-     * @param sql $sc with the target db_type set
-     * @param array $fld_val_typ_lst list of field names, values and sql types additional to the standard id and name fields
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_update_fields(
         sql $sc,
-        array $fld_val_typ_lst = [],
+        sandbox_value $db_row,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -1272,56 +1231,119 @@ class sandbox_value extends sandbox_multi
         $sc_par_lst_used = clone $sc_par_lst;
         // set the sql query type
         $sc_par_lst_used->add(sql_type::UPDATE);
-        // set the target sql table type for this value
-        $sc_par_lst_used->add($this->grp->table_type());
+        // get the field names, values and parameter types that have been changed
+        // and that needs to be updated in the database
+        // the db_* child function call the corresponding parent function
+        // including the sql parameters for logging
+        $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst_used);
+        // get the list of all fields that can be changed by the user
+        $all_fields = $this->db_fields_all();
+        // create either the prepared sql query or a sql function that includes the logging of the changes
+        // unlike the db_* function the sql_update_* parent function is called directly
+        return $this::sql_update_switch($sc, $fld_lst, $all_fields, $sc_par_lst_used);
+    }
+
+    /**
+     * create the sql statement to update a value or result in the database
+     * TODO make code review and move part to the parent sandbox value class
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
+     * @param array $fld_lst_all list of field names of the given object
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update_switch(
+        sql           $sc,
+        sql_par_field_list $fvt_lst,
+        array              $fld_lst_all = [],
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
+    {
+        return $this->sql_update_fields($sc, $fvt_lst, $sc_par_lst);
+    }
+
+    /**
+     * create the sql statement to update a value in the database
+     * based on the given list of fields and values
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update_fields(
+        sql                $sc,
+        sql_par_field_list $fvt_lst,
+        sql_type_list      $sc_par_lst = new sql_type_list([])
+    ): sql_par
+    {
+        // set the target sql table type for this value e.g. add prime
+        $sc_par_lst->add($this->grp->table_type());
         // get the name indicator how many id fields are user
         $id_ext = $this->grp->table_extension();
 
-        // get the fields and values that have been changed and needs to be updated in the database
+        // get the sql name extension to make the name unique based on the fields that should be updated
+        // TODO replace with the number base notation
         $lib = new library();
-        $fields = $sc->get_fields($fld_val_typ_lst);
-        $ext = implode('_', $lib->sql_name_shorten($fields));
+        $ext = implode(sql::NAME_SEP, $lib->sql_name_shorten($fvt_lst->names()));
         if ($ext != '') {
             $ext = sql::NAME_SEP . $ext;
         }
-
-        $qp = $this->sql_common($sc, $sc_par_lst_used, $ext, $id_ext);
-
+        // set the name of the query parameters
+        $qp = $this->sql_common($sc, $sc_par_lst, $ext, $id_ext);
+        // use the query name for the sql creation
         $sc->set_name($qp->name);
-        if ($this->grp->is_prime()) {
-            $id_fields = $this->grp->id_names(true);
-        } else {
-            $id_fields = $this->id_field();
-        }
-        $id = $this->id();
-        if (is_array($id_fields)) {
-            if (!is_array($id)) {
-                $grp_id = new group_id();
-                $id_lst = $grp_id->get_array($id, true);
-                foreach ($id_lst as $key => $value) {
-                    if ($value == null) {
-                        $id_lst[$key] = 0;
-                    }
-                }
-            } else {
-                $id_lst = $id;
-            }
-        } else {
-            $id_lst = $id;
-        }
-        if ($sc_par_lst_used->is_usr_tbl()) {
+        // the value might have more than one unique db key
+        $id_fields = $this->sql_id_fields();
+        // get the db key values related to the db prime key
+        $id_lst = $this->sql_id_val($id_fields);
+        // add the user id if a user specific value should be saved
+        if ($sc_par_lst->is_usr_tbl()) {
             $id_fields[] = user::FLD_ID;
             if (!is_array($id_lst)) {
                 $id_lst = [$id_lst];
             }
             $id_lst[] = $this->user()->id();
         }
-        $fvt_lst = new sql_par_field_list();
-        $fvt_lst->set($fld_val_typ_lst);
+        // finally actually create the sql
         $qp->sql = $sc->create_sql_update($id_fields, $id_lst, $fvt_lst);
-
+        // and remember the paraemeters used
         $qp->par = $sc->par_values();
         return $qp;
+    }
+
+    /**
+     * @return string|array with the id field name or with the array of id fields
+     */
+    private function sql_id_fields(): string|array
+    {
+        if ($this->grp->is_prime()) {
+            return $this->grp->id_names(true);
+        } else {
+            return $this->id_field();
+        }
+    }
+
+    /**
+     * @param string|array $id_fields the id field name or with the array of id fields
+     * @return int|string|array with the unique db key or with the array of keys that in combination are unique
+     */
+    private function sql_id_val(string|array $id_fields): int|string|array
+    {
+        $id = $this->id();
+        if (is_array($id_fields)) {
+            $grp_id = new group_id();
+            $id_lst = $grp_id->get_array($id, true);
+            foreach ($id_lst as $key => $value) {
+                if ($value == null) {
+                    $id_lst[$key] = 0;
+                }
+            }
+        } else {
+            $id_lst = $id;
+        }
+        return $id_lst;
     }
 
 
@@ -1336,37 +1358,87 @@ class sandbox_value extends sandbox_multi
      * @param sql_type_list $sc_par_lst only used for link objects
      * @return array with the field names of the object and any child object
      */
-    function db_fields_all_value(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
     {
-        return [group::FLD_ID, self::FLD_VALUE];
+        if ($this->grp->is_prime()) {
+            $fields = $this->grp->id_names();
+        } else {
+            $fields = [group::FLD_ID];
+        }
+        if (!$this->is_standard()) {
+            $fields[] = user::FLD_ID;
+        }
+        $fields[] = self::FLD_VALUE;
+        if (!$this->is_standard()) {
+            $fields[] = self::FLD_LAST_UPDATE;
+        }
+        return $fields;
     }
 
     /**
      * get a list of database field names, values and types that have been updated
      * the last_update field is excluded here because this is an internal only field
      *
-     * @param sandbox_value $sbx the same value sandbox as this to compare which fields have been changed
-     * @return array with the field names of the object and any child object
+     * @param sandbox|sandbox_value $sbx the same value sandbox as this to compare which fields have been changed
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list with the field names of the object and any child object
      */
-    function db_changed_value(sandbox_value $sbx): array
+    function db_fields_changed(
+        sandbox|sandbox_value $sbx,
+        sql_type_list         $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
     {
-        $lst = [];
-        if ($sbx->grp_id() <> $this->grp_id()) {
-            // TODO review the group type
-            $lst[] = [
-                group::FLD_ID,
-                $this->grp_id(),
-                sql_field_type::INT
-            ];
+        $sc = new sql();
+        $do_log = $sc_par_lst->incl_log();
+        $is_insert = $sc_par_lst->is_insert();
+        $table_id = $sc->table_id($this::class);
+
+        /*
+         * TODO check if sandbox named function match this logic
+         * if insert always add user as long as not standard
+         * on update the user is only used for the where condition
+         */
+
+        $lst = new sql_par_field_list();
+        if ($is_insert) {
+            $lst = $this->grp->id_fvt();
+        }
+        if (!$sc_par_lst->is_standard()) {
+            if ($is_insert) {
+                $lst->add_user($this, $sbx, $do_log, $table_id);
+            }
         }
         if ($sbx->number() <> $this->number()) {
-            $lst[] = [
+            $lst->add_field(
                 self::FLD_VALUE,
                 $this->number(),
                 sql_field_type::NUMERIC_FLOAT
-            ];
+            );
+        }
+        if (!$sc_par_lst->is_standard()) {
+            // if any field has been updated, update the last_update field also
+            if (!$lst->is_empty_except_user_action() or $this->last_update() == null) {
+                $lst->add_field(
+                    self::FLD_LAST_UPDATE,
+                    sql::NOW,
+                    sql_field_type::TIME
+                );
+            }
         }
         return $lst;
+    }
+
+    /**
+     * dummy function to be overwritten by the child object
+     * get a list of database fields that have been updated
+     * excluding the internal only last_update and is_std fields
+     *
+     * @param sandbox_value $sbv the compare value to detect the changed fields
+     * @return array list of the database field names that have been updated
+     */
+    function db_changed(sandbox_value $sbv): array
+    {
+        return [];
     }
 
     /**

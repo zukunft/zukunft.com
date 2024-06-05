@@ -1823,8 +1823,9 @@ class value extends sandbox_value
         $this->set_last_update(new DateTime());
         $ext = $this->grp()->table_extension();
         $db_con->set_class(self::class, false, $ext);
-        $fld_val_typ_lst = [[value::FLD_LAST_UPDATE, sql::NOW, sql_field_type::TIME]];
-        $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst);
+        $fvt_lst = new sql_par_field_list();
+        $fvt_lst->add_field(value::FLD_LAST_UPDATE, sql::NOW, sql_field_type::TIME);
+        $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst);
         try {
             $db_con->exe_par($qp);
         } catch (Exception $e) {
@@ -2281,44 +2282,45 @@ class value extends sandbox_value
      */
 
     /**
-     * get a list of database fields that have been updated
-     * excluding the internal only last_update and is_std fields
+     * get a list of database fields that might be used to create an sql insert or update statement
      *
      * @return array list of the database field names that have been updated
      */
-    function db_fields_all(): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
     {
-        $result = parent::db_fields_all_value();
-        $result[] = source::FLD_ID;
-        return array_merge($result, $this->db_fields_all_sandbox());
+        $fields = parent::db_fields_all();
+        if (!$this->is_standard()) {
+            $fields[] = source::FLD_ID;
+            $fields = array_merge($fields, $this->db_fields_all_sandbox());
+        }
+        return $fields;
     }
 
     /**
      * get a list of database field names, values and types that have been updated
-     * excluding the internal only last_update and is_std fields
+     * the last_update field is excluded here because this is an internal only field
      *
-     * @param sandbox_value|value $val the compare value to detect the changed fields
-     * @return array list of the database field names that have been updated
+     * @param sandbox|sandbox_value|value $sbx the same value sandbox as this to compare which fields have been changed
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list with the field names of the object and any child object
      */
-    function db_changed(sandbox_value|value $val): array
+    function db_fields_changed(
+        sandbox|sandbox_value|value $sbx,
+        sql_type_list         $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
     {
-        $lst = parent::db_changed_value($val);
-        if ($val->src_id() <> $this->src_id()) {
-            $lst[] = [
-                source::FLD_ID,
-                $this->src_id(),
-                sql_field_type::INT
-            ];
+        $lst = parent::db_fields_changed($sbx);
+        if (!$this->is_standard()) {
+            if ($sbx->src_id() <> $this->src_id()) {
+                $lst->add_field(
+                    source::FLD_ID,
+                    $this->src_id(),
+                    sql_field_type::INT
+                );
+            }
+            $lst->add_list($this->db_fields_changed($sbx));
         }
-        // if any field has been updated, update the last_update field also
-        if (count($lst) == 0 or $this->last_update() == null) {
-            $lst[] = [
-                self::FLD_LAST_UPDATE,
-                sql::NOW,
-                sql_field_type::TIME
-            ];
-        }
-        return array_merge($lst, $this->db_fields_changed($val));
+        return $lst;
     }
 
 }

@@ -72,6 +72,7 @@ use cfg\parameter_type;
 use cfg\phrase_list;
 use cfg\sandbox;
 use cfg\sandbox_value;
+use cfg\source;
 use cfg\user;
 use cfg\user_message;
 use cfg\value\value;
@@ -478,12 +479,12 @@ class result extends sandbox_value
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql      $sc,
-        string   $query_name,
-        string   $class = self::class,
-        sql_type_list    $sc_par_lst = new sql_type_list([]),
-        string   $ext = '',
-        string   $id_ext = ''
+        sql           $sc,
+        string        $query_name,
+        string        $class = self::class,
+        sql_type_list $sc_par_lst = new sql_type_list([]),
+        string        $ext = '',
+        string        $id_ext = ''
     ): sql_par
     {
         $qp = parent::load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext, $id_ext);
@@ -603,8 +604,8 @@ class result extends sandbox_value
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_user_changes(
-        sql $sc,
-        string $class = self::class,
+        sql           $sc,
+        string        $class = self::class,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -1622,50 +1623,60 @@ class result extends sandbox_value
      * get a list of database fields that have been updated
      * excluding the internal only last_update and is_std fields
      *
+     * @param sql_type_list $sc_par_lst only used for link objects
      * @return array list of the database field names that have been updated
      */
-    function db_fields_all(): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
     {
-        $result = parent::db_fields_all_value();
-        $result[] = self::FLD_SOURCE . group::FLD_ID;
-        $result[] = formula::FLD_ID;
-        return array_merge($result, $this->db_fields_all_sandbox());
+        $fields = parent::db_fields_all();
+        if (!$this->is_standard()) {
+            $fields[] = self::FLD_SOURCE . group::FLD_ID;
+            $fields[] = formula::FLD_ID;
+            $fields = array_merge($fields, $this->db_fields_all_sandbox());
+        }
+        return $fields;
     }
 
     /**
      * get a list of database field names, values and types that have been updated
-     * excluding the internal only last_update and is_std fields
+     * the last_update field is excluded here because this is an internal only field
      *
-     * @param result|sandbox_value $sbv the compare value to detect the changed fields
-     * @return array list of the database field names that have been updated
+     * @param sandbox|sandbox_value|result $sbx the same value sandbox as this to compare which fields have been changed
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list with the field names of the object and any child object
      */
-    function db_changed(result|sandbox_value $sbv): array
+    function db_fields_changed(
+        sandbox|sandbox_value|result $sbx,
+        sql_type_list                $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
     {
-        $lst = parent::db_changed_value($sbv);
-        if ($sbv->src_grp_id() <> $this->src_grp_id()) {
-            // TODO review type
-            $lst[] = [
-                self::FLD_SOURCE . group::FLD_ID,
-                $this->src_grp_id(),
-                sql_field_type::INT
-            ];
+        $lst = parent::db_fields_changed($sbx);
+        if (!$this->is_standard()) {
+            if ($sbx->src_grp_id() <> $this->src_grp_id()) {
+                $lst->add_field(
+                    self::FLD_SOURCE . group::FLD_ID,
+                    $this->src_grp_id(),
+                    sql_field_type::INT
+                );
+            }
+            if ($sbx->frm_id() <> $this->frm_id()) {
+                $lst->add_field(
+                    formula::FLD_ID,
+                    $this->frm_id(),
+                    formula::FLD_ID_SQLTYP
+                );
+            }
+            // if any field has been updated, update the last_update field also
+            if (!$lst->is_empty_except_user_action() or $this->last_update() == null) {
+                $lst->add_field(
+                    self::FLD_LAST_UPDATE,
+                    sql::NOW,
+                    sql_field_type::TIME
+                );
+            }
+            $lst->add_list($this->db_fields_changed($sbx));
         }
-        if ($sbv->frm_id() <> $this->frm_id()) {
-            $lst[] = [
-                formula::FLD_ID,
-                $this->frm_id(),
-                formula::FLD_ID_SQLTYP
-            ];
-        }
-        // if any field has been updated, update the last_update field also
-        if (count($lst) == 0 or $this->last_update() == null) {
-            $lst[] = [
-                self::FLD_LAST_UPDATE,
-                sql::NOW,
-                sql_field_type::TIME
-            ];
-        }
-        return array_merge($lst, $this->db_fields_changed($sbv));
+        return $lst;
     }
 
 }

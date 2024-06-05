@@ -328,6 +328,30 @@ class group extends sandbox_multi
     }
 
     /**
+     * @return sql_par_field_list with the id field or fields of this group
+     */
+    function id_fvt(): sql_par_field_list
+    {
+        $fvt_lst = new sql_par_field_list();
+        if ($this->is_prime()) {
+            $grp_id = new group_id();
+            $pos = 1;
+            foreach ($grp_id->get_array($this->id()) as $id) {
+                $name = phrase::FLD_ID . '_' . $pos;
+                $fvt_lst->add_field($name, $id, sql_field_type::INT_SMALL);
+                $pos++;
+            }
+        } else {
+            if ($this->is_big()) {
+                $fvt_lst->add_field(group::FLD_ID, $this->id(), sql_field_type::TEXT);
+            } else {
+                $fvt_lst->add_field(group::FLD_ID, $this->id(), sql_field_type::KEY_512);
+            }
+        }
+        return $fvt_lst;
+    }
+
+    /**
      * get the table name extension for value, result and group tables
      * depending on the number of phrases a different table for value and results is used
      * for faster searching

@@ -37,6 +37,7 @@ use cfg\db_object_seq_id;
 use cfg\log\change;
 use cfg\sandbox;
 use cfg\sandbox_link_named;
+use cfg\sandbox_multi;
 use cfg\sandbox_named;
 use cfg\type_list;
 use cfg\type_object;
@@ -237,10 +238,10 @@ class sql_par_field_list
     /**
      * add the id and the user field to this list
      * *
-     * @param sandbox $sbx the sandbox object that has been updated
+     * @param sandbox|sandbox_multi $sbx the sandbox object that has been updated
      * @return void
      */
-    function add_id_and_user(sandbox $sbx): void
+    function add_id_and_user(sandbox|sandbox_multi $sbx): void
     {
         $this->add_field(
             $sbx::FLD_ID,
@@ -258,13 +259,18 @@ class sql_par_field_list
     /**
      * add the user field to this list
      *
-     * @param sandbox $sbx_upd the updated fields of the user sandbox object should be saved
-     * @param sandbox $sbx_db the same user sandbox object as $sbx_upd but with the values in the db before the update
+     * @param sandbox|sandbox_multi $sbx_upd the updated fields of the user sandbox object should be saved
+     * @param sandbox|sandbox_multi $sbx_db the same user sandbox object as $sbx_upd but with the values in the db before the update
      * @param bool $do_log true if the field for logging the change should be included
      * @param int $table_id the id of the table for logging
      * @return void
      */
-    function add_user(sandbox $sbx_upd, sandbox $sbx_db, bool $do_log, int $table_id): void
+    function add_user(
+        sandbox|sandbox_multi $sbx_upd,
+        sandbox|sandbox_multi $sbx_db,
+        bool                  $do_log,
+        int                   $table_id
+    ): void
     {
         global $change_field_list;
 

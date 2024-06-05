@@ -1718,8 +1718,9 @@ class sandbox_multi extends db_object_multi_user
                 if ($result == '') {
                     $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id());
-                    $fld_val_typ_lst = [[$log->field(), $new_value, sql_par_type::INT_SMALL]];
-                    $qp = $this->sql_update_fields($db_con->sql_creator(), $fld_val_typ_lst, new sql_type_list([sql_type::USER]));
+                    $fvt_lst = new sql_par_field_list();
+                    $fvt_lst->add_field($log->field(), $new_value, sql_par_type::INT_SMALL);
+                    $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst, new sql_type_list([sql_type::USER]));
                     $usr_msg = $db_con->update($qp, 'setting of share type');
                     $result = $usr_msg->get_message();
                 }

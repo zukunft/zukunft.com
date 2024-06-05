@@ -3392,7 +3392,8 @@ class sandbox extends db_object_seq_id_user
         sql                $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
-        sql_type_list      $sc_par_lst = new sql_type_list([])): sql_par
+        sql_type_list      $sc_par_lst = new sql_type_list([])
+    ): sql_par
     {
         // TODO deprecate
         $val_lst = $fvt_lst->values();

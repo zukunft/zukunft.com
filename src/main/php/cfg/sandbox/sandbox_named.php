@@ -1027,7 +1027,7 @@ class sandbox_named extends sandbox
         $table_id = $sc->table_id($this::class);
 
         // for insert statements of user sandbox rows user id fields always needs to be included
-        if ($usr_tbl and $is_insert) {
+        if ($is_insert and $usr_tbl) {
             $lst->add_id_and_user($this);
         } else {
             $lst->add_user($this, $sbx, $do_log, $table_id);

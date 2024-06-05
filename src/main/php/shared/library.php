@@ -1840,6 +1840,10 @@ class library
                 source::FLD_ID => 'src',
                 value::FLD_VALUE => 'val',
                 value::FLD_LAST_UPDATE => 'upd',
+                phrase::FLD_ID . '_1' => '',
+                phrase::FLD_ID . '_2' => '',
+                phrase::FLD_ID . '_3' => '',
+                phrase::FLD_ID . '_4' => '',
                 default => $name
             };
         }

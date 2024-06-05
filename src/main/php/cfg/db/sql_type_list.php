@@ -210,6 +210,14 @@ class sql_type_list
     }
 
     /**
+     * @return bool true if only the value without the sandbox parameters like share and protection should be saved
+     */
+    function is_standard(): bool
+    {
+        return in_array(sql_type::STANDARD, $this->lst);
+    }
+
+    /**
      * @return bool true if sql return all database rows
      */
     function get_all(): bool
