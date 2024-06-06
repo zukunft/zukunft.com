@@ -336,9 +336,11 @@ class value_time_series extends sandbox_value
 
     /**
      * temp overwrite of the id_field function of sandbox_value class until this class is revied
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return string|array the field name(s) of the prime database index of the object
      */
-    function id_field(): string|array
+    function id_field(sql_type_list $sc_par_lst = new sql_type_list([])): string|array
     {
         $lib = new library();
         return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;

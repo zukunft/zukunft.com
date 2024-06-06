@@ -5,6 +5,12 @@
     cfg/db/sql_par_field_list.php - a list of sql parameter fields
     -----------------------------
 
+    TODO split this list into
+         1. a list with just the field, value and type that should be used for the sql parameters
+            and in the sql creator as a replacement for the fields, values und types object
+         2. a list with additional the related name field for the user change log
+            and the info if a field is an id or a changed value or both
+
 
     This file is part of zukunft.com - calc with words
 
@@ -433,7 +439,9 @@ class sql_par_field_list
             if ($fld->id != null) {
                 $result[] = $fld->id;
             } else {
-                $result[] = $fld->value;
+                if ($fld->value != sql::NOW) {
+                    $result[] = $fld->value;
+                }
             }
         }
         return $result;

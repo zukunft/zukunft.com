@@ -304,6 +304,57 @@ class sandbox_value extends sandbox_multi
         }
     }
 
+    function is_main(): bool
+    {
+        if ($this::class == value::class) {
+            return false;
+        } else {
+            $grp_id = new group_id();
+            $nbr_of_ids = $grp_id->count($this->grp_id());
+            if ($nbr_of_ids > group_id::PRIME_PHRASES_STD - 1 and $nbr_of_ids <= group_id::MAIN_PHRASES_STD) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    function table_type(): sql_type
+    {
+        if ($this::class == value::class) {
+            return $this->grp->table_type();
+        } else {
+            if ($this->is_main()) {
+                return sql_type::MAIN;
+            } else {
+                return $this->grp->table_type();
+            }
+        }
+    }
+
+    function table_extension(): string
+    {
+        if ($this::class == value::class) {
+            return $this->grp->table_extension();
+        } else {
+            if ($this->is_main()) {
+                $grp_id = new group_id();
+                return group_id::TBL_EXT_PHRASE_ID . $grp_id->count($this->grp_id());
+            } else {
+                return $this->grp->table_extension();
+            }
+        }
+    }
+
+    /**
+     * always returns zero, but overwritten by the result object
+     * @return int the formula id of the result
+     */
+    function formula_id(): int
+    {
+        return 0;
+    }
+
 
     /*
      * forward group get
@@ -717,7 +768,7 @@ class sandbox_value extends sandbox_multi
     {
         $ext = 'changer';
         if ($this->owner_id > 0) {
-            $ext .= '_ex_owner';
+            $ext .= sql::NAME_SEP . sql::NAME_EXT_EX_OWNER;
         }
         $sc_par_lst = [sql_type::COMPLETE, sql_type::USER];
         $sc_par_lst[] = $this->grp->table_type();
@@ -819,6 +870,31 @@ class sandbox_value extends sandbox_multi
         return $this->load_sql_set_where($qp, $sc, $id_ext);
     }
 
+    /**
+     * sql statement to get the user that has created the most often used value
+     * @param sql $sc
+     * @return sql_par sql parameter
+     */
+    function load_sql_median_user(sql $sc): sql_par
+    {
+        $sc_par_lst = new sql_type_list([]);
+        $sc_par_lst->add($this->grp->table_type());
+        $sc_par_lst->add(sql_type::USER);
+        $ext = sql::NAME_EXT_MEDIAN_USER;
+        if ($this->owner_id > 0) {
+            $ext .= sql::NAME_SEP . sql::NAME_EXT_EX_OWNER;
+        }
+        $id_ext = $this->grp->table_extension();
+        $qp = new sql_par($this::class, $sc_par_lst, $ext, $id_ext);
+        $sc->set_class($this::class, $sc_par_lst);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_id_field($this->id_field());
+        $sc->set_fields(array(user::FLD_ID));
+
+        return $this->load_sql_set_where($qp, $sc, $id_ext);
+    }
+
 
     /*
      * information
@@ -837,14 +913,93 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
+     * get the id fields, values and types for this value or result object
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list with the id fields, values and types for this value or result object
+     */
+    function id_fvt_lst(sql_type_list $sc_par_lst = new sql_type_list([])): sql_par_field_list
+    {
+        $lst = new sql_par_field_list();
+        if ($this->is_prime()) {
+            if ($this::class == result::class) {
+                $lst->add_field(
+                    formula::FLD_ID,
+                    $this->formula_id(),
+                    sql_field_type::INT_SMALL
+                );
+            }
+            $fld_lst = $this->id_fields_prime();
+            $id_lst = $this->grp()->id_lst();
+            if (count($fld_lst) < count($id_lst)) {
+                log_err('the number if id fields and id values differ for ' . $this->dsp_id());
+            } else {
+                foreach ($fld_lst as $key => $fld) {
+                    $id = null;
+                    if (array_key_exists($key, $id_lst)) {
+                        $id = $id_lst[$key];
+                        $lst->add_field(
+                            $fld,
+                            $id,
+                            sql_field_type::INT_SMALL
+                        );
+                    }
+                }
+            }
+        } else {
+            if ($this->is_prime()) {
+                $lst->add_field(
+                    $this->id_field_group(),
+                    $this->id(),
+                    sql_field_type::KEY_512
+                );
+            } else {
+                $lst->add_field(
+                    $this->id_field_group(),
+                    $this->id(),
+                    sql_field_type::TEXT
+                );
+            }
+        }
+        // for standard values the user id of the creator is taken from the change log
+        if (!$sc_par_lst->is_standard()) {
+            // TODO add the test case to change the user of a normal value
+            if ($sc_par_lst->is_insert() or $sc_par_lst->is_usr_tbl()) {
+                $lst->add_field(
+                    user::FLD_ID,
+                    $this->user()->id(),
+                    user::FLD_ID_SQLTYP
+                );
+            }
+        }
+        return $lst;
+    }
+
+    /**
      * overwrites the standard db_object function because
      * the main id field of value is not value_id, but group_id
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return string|array the field name(s) of the prime database index of the object
      */
-    function id_field(): string|array
+    function id_field(sql_type_list $sc_par_lst = new sql_type_list([])): string|array
     {
         if ($this->is_prime()) {
-            return $this->id_fields_prime();
+            if ($this::class == result::class and $sc_par_lst->is_standard()) {
+                // TODO merge with result::FLD_KEY_PRIME ?
+                $id_fields = $this->id_fields_prime(1, group_id::PRIME_PHRASES_STD - 1);
+                return array_merge([formula::FLD_ID], $id_fields);
+            } else {
+                return $this->id_fields_prime();
+            }
+        } elseif ($this->is_main()) {
+            if ($this::class == result::class and $sc_par_lst->is_standard()) {
+                // TODO merge with result::FLD_KEY_PRIME ?
+                $id_fields = $this->id_fields_main(1, group_id::MAIN_PHRASES_STD);
+                return array_merge([formula::FLD_ID], $id_fields);
+            } else {
+                return $this->id_fields_main();
+            }
         } else {
             return $this->id_field_group();
         }
@@ -864,6 +1019,20 @@ class sandbox_value extends sandbox_multi
      * @return array with the id fields for a prime value
      */
     function id_fields_prime(int $start = 1, int $end = group_id::PRIME_PHRASES_STD): array
+    {
+        $lib = new library();
+        $id_fields = array();
+        $base_name = $lib->class_to_name(phrase::class) . sql_db::FLD_EXT_ID . sql_db::FLD_SEP;
+        for ($i = $start; $i <= $end; $i++) {
+            $id_fields[] = $base_name . $i;
+        }
+        return $id_fields;
+    }
+
+    /**
+     * @return array with the id fields for a main value
+     */
+    function id_fields_main(int $start = 1, int $end = group_id::MAIN_PHRASES_STD): array
     {
         $lib = new library();
         $id_fields = array();
@@ -1163,52 +1332,33 @@ class sandbox_value extends sandbox_multi
         // set the sql query type
         $sc_par_lst_used->add(sql_type::INSERT);
         // set the target sql table type for this value
-        $sc_par_lst_used->add($this->grp->table_type());
+        $sc_par_lst_used->add($this->table_type());
         // get the name indicator how many id fields are user
-        $id_ext = $this->grp->table_extension();
-        $qp = $this->sql_common($sc, $sc_par_lst_used, '', $id_ext);
+        $id_ext = $this->table_extension();
+        // get the prime db key list for this sandbox object
+        $fvt_lst_id = $this->id_fvt_lst($sc_par_lst_used);
+        // clone to keep the db key list unchanged
+        $fvt_lst = clone $fvt_lst_id;
+        // create an empty sandbox object but of the same type and with the same user to detect the fields that should be written
+        $db_row = $this->cloned(null);
+        // add the list of the changed fields to the id list
+        $fvt_lst->add_list($this->db_fields_changed($db_row, $sc_par_lst_used));
+        // get the list of all fields that can be changed by the user
+        $fld_lst_all = $this->db_fields_all($sc_par_lst);
+        $fld_lst_ex_id = array_diff($fld_lst_all, $fvt_lst_id->names());
+        // make the query name unique based on the changed fields
+        $lib = new library();
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_ex_id);
+        // create the main query parameter object and set the query name
+        $qp = $this->sql_common($sc, $sc_par_lst_used, $ext, $id_ext);
         // overwrite the standard auto increase id field name
-        $sc->set_id_field($this->id_field());
+        $sc->set_id_field($this->id_field($sc_par_lst));
+        // use the query name for the sql creation
         $sc->set_name($qp->name);
-        $usr_tbl = $sc_par_lst_used->is_usr_tbl();
-        $fvt_lst = new sql_par_field_list();
-        if ($this->grp->is_prime()) {
-            $fields = $this->grp->id_names();
-            $fields[] = user::FLD_ID;
-            $values = $this->grp->id_lst();
-            $values[] = $this->user()->id();
-            if (!$usr_tbl) {
-                $fields[] = self::FLD_VALUE;
-                $fields[] = self::FLD_LAST_UPDATE;
-                $values[] = $this->number;
-                $values[] = sql::NOW;
-            }
-        } else {
-            if ($usr_tbl) {
-                $fields = array(group::FLD_ID, user::FLD_ID);
-                $values = array($this->grp->id(), $this->user()->id());
-            } else {
-                $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
-                $values = array($this->grp->id(), $this->user()->id(), $this->number, sql::NOW);
-            }
-
-        }
-        if ($this::class == result::class) {
-            $fields[] = formula::FLD_ID;
-            $values[] = $this->frm->id();
-            $fields[] = result::FLD_SOURCE_GRP;
-            $values[] = $this->src_grp->id();
-        }
-        $fvt_lst->fill_from_arrays($fields, $values);
+        // actually create the sql statement
         $qp->sql = $sc->create_sql_insert($fvt_lst);
-        $par_values = [];
-        foreach (array_keys($values) as $i) {
-            if ($values[$i] != sql::NOW) {
-                $par_values[$i] = $values[$i];
-            }
-        }
-
-        $qp->par = $par_values;
+        // set the parameters for the query execution
+        $qp->par = $fvt_lst->db_values();
         return $qp;
     }
 
@@ -1222,7 +1372,7 @@ class sandbox_value extends sandbox_multi
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update(
-        sql $sc,
+        sql           $sc,
         sandbox_value $db_row,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
@@ -1254,10 +1404,10 @@ class sandbox_value extends sandbox_multi
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update_switch(
-        sql           $sc,
+        sql                $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list      $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
         return $this->sql_update_fields($sc, $fvt_lst, $sc_par_lst);
@@ -1365,11 +1515,11 @@ class sandbox_value extends sandbox_multi
         } else {
             $fields = [group::FLD_ID];
         }
-        if (!$this->is_standard()) {
+        if (!$sc_par_lst->is_standard()) {
             $fields[] = user::FLD_ID;
         }
         $fields[] = self::FLD_VALUE;
-        if (!$this->is_standard()) {
+        if (!$sc_par_lst->is_standard()) {
             $fields[] = self::FLD_LAST_UPDATE;
         }
         return $fields;
@@ -1408,7 +1558,8 @@ class sandbox_value extends sandbox_multi
                 $lst->add_user($this, $sbx, $do_log, $table_id);
             }
         }
-        if ($sbx->number() <> $this->number()) {
+        // TODO check that all numeric fields are checked with !== to force writing the value zero
+        if ($sbx->number() !== $this->number()) {
             $lst->add_field(
                 self::FLD_VALUE,
                 $this->number(),
@@ -1487,12 +1638,13 @@ class sandbox_value extends sandbox_multi
     /**
      * create a clone and update the number (mainly used for unit testing)
      *
-     * @param float $number the target value
+     * @param float|null $number the target value
      * @return $this a clone with the number changed
      */
-    function cloned(float $number): sandbox_value
+    function cloned(?float $number): sandbox_value
     {
         $obj_cpy = clone $this;
+        $obj_cpy->reset();
         $obj_cpy->set_number($number);
         return $obj_cpy;
     }
@@ -1551,8 +1703,8 @@ class sandbox_value extends sandbox_multi
     {
         $result = $this->dsp_id_entry();
         if ($this->id() != 0) {
-            $tbl_typ = $this->grp->table_type();
-            $id_fields = $this->id_field($tbl_typ);
+            $sc_par_lst = new sql_type_list([$this->grp->table_type()]);
+            $id_fields = $this->id_field($sc_par_lst);
             if (is_array($id_fields)) {
                 $fld_dsp = ' (' . implode(', ', $id_fields);
                 $fld_dsp .= ' = ' . $this->grp()->dsp_id_short() . ')';

@@ -1245,6 +1245,31 @@ class test_base
     }
 
     /**
+     * check the SQL statements to get the users that has created the most often used db row
+     * TODO add this test once to each relevant object type (at least once for named sandbox, link and value)
+     *
+     * @param sql $sc a sql creator object that can be empty
+     * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_median_user(sql $sc, sandbox|sandbox_value $usr_obj): bool
+    {
+        // check the Postgres query syntax
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $usr_obj->load_sql_median_user($sc);
+        $result = $this->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $usr_obj->load_sql_median_user($sc);
+            $result = $this->assert_qp($qp, $sc->db_type);
+        }
+
+        return $result;
+    }
+
+    /**
      * check the SQL statements to get the users that have ever done a change
      * e.g. to clean up changes not needed any more
      *

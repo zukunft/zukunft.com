@@ -817,12 +817,12 @@ class sandbox extends db_object_seq_id_user
      * @param sql_db $db_con
      * @return sql_par sql parameter to get the user id of the most often used link (position) beside the standard (position)
      */
-    function median_user_sql(sql_db $db_con): sql_par
+    function load_sql_median_user(sql_db $db_con): sql_par
     {
         $qp = new sql_par($this::class);
-        $qp->name .= 'median_user';
+        $qp->name .= sql::NAME_EXT_MEDIAN_USER;
         if ($this->owner_id > 0) {
-            $qp->name .= '_ex_owner';
+            $qp->name .= sql::NAME_SEP . sql::NAME_EXT_EX_OWNER;
         }
         $db_con->set_class($this::class, true);
         $db_con->set_name($qp->name);
@@ -846,7 +846,7 @@ class sandbox extends db_object_seq_id_user
         global $db_con;
         $result = 0;
 
-        $qp = $this->median_user_sql($db_con);
+        $qp = $this->load_sql_median_user($db_con);
         $db_row = $db_con->get1($qp);
         if ($db_row[user::FLD_ID] > 0) {
             $result = $db_row[user::FLD_ID];
@@ -974,7 +974,7 @@ class sandbox extends db_object_seq_id_user
         $qp = new sql_par($this::class);
         $qp->name .= 'changer';
         if ($this->owner_id > 0) {
-            $qp->name .= '_ex_owner';
+            $qp->name .= sql::NAME_SEP . sql::NAME_EXT_EX_OWNER;
         }
         $db_con->set_class($this::class, true);
         $db_con->set_name($qp->name);
@@ -2975,17 +2975,14 @@ class sandbox extends db_object_seq_id_user
      */
     function db_changed_sandbox_list(sandbox $sbx, sql_type_list $sc_par_lst): sql_par_field_list
     {
-        global $change_table_list;
         global $change_field_list;
 
         $lst = new sql_par_field_list();
         $sc = new sql();
-        $do_log = $sc_par_lst->incl_log();
-        $lib = new library();
         $table_id = $sc->table_id($this::class);
 
         if ($sbx->excluded <> $this->excluded) {
-            if ($do_log) {
+            if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_EXCLUDED,
                     $change_field_list->id($table_id . self::FLD_EXCLUDED),
@@ -3005,7 +3002,7 @@ class sandbox extends db_object_seq_id_user
             );
         }
         if ($sbx->share_id <> $this->share_id) {
-            if ($do_log) {
+            if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_SHARE,
                     $change_field_list->id($table_id . self::FLD_SHARE),
@@ -3020,7 +3017,7 @@ class sandbox extends db_object_seq_id_user
             );
         }
         if ($sbx->protection_id <> $this->protection_id) {
-            if ($do_log) {
+            if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_PROTECT,
                     $change_field_list->id($table_id . self::FLD_PROTECT),

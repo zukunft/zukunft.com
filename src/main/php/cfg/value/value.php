@@ -226,7 +226,7 @@ class value extends sandbox_value
 
         $this->reset();
 
-        if ($num_val != null) {
+        if ($num_val !== null) {
             $this->set_number($num_val);
         }
         if ($phr_grp != null) {
@@ -2289,7 +2289,7 @@ class value extends sandbox_value
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
     {
         $fields = parent::db_fields_all();
-        if (!$this->is_standard()) {
+        if (!$sc_par_lst->is_standard()) {
             $fields[] = source::FLD_ID;
             $fields = array_merge($fields, $this->db_fields_all_sandbox());
         }
@@ -2310,7 +2310,7 @@ class value extends sandbox_value
     ): sql_par_field_list
     {
         $lst = parent::db_fields_changed($sbx);
-        if (!$this->is_standard()) {
+        if (!$sc_par_lst->is_standard()) {
             if ($sbx->src_id() <> $this->src_id()) {
                 $lst->add_field(
                     source::FLD_ID,
@@ -2318,9 +2318,8 @@ class value extends sandbox_value
                     sql_field_type::INT
                 );
             }
-            $lst->add_list($this->db_fields_changed($sbx));
         }
-        return $lst;
+        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
     }
 
 }

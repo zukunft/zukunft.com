@@ -137,7 +137,7 @@ backend - internal
 - id (IDentifier)          - internal prime key of a database row
 - ids (IDentifierS)        - an simple array of database table IDs (ids_txt is the text / imploded version of the ids array)
 - sc (Sql Creator)         - for writing SQL statements
-- std (STanDard)           - a value that have not been changed and is public
+- std (STanDard)           - a value that have not been changed and is public (for results additional "main" is used)
 - nrm (NoRMal)             - data that is used by most users
 - dsl (DSp cmp Link)       - link of a view component to a view
 - uso (User Sbx Object)    - an object (word, value, formula, ...) that uses the user sandbox

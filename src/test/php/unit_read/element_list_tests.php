@@ -32,11 +32,8 @@
 
 namespace unit_read;
 
-use api\formula\formula as formula_api;
 use api\word\word as word_api;
 use cfg\element_list;
-use cfg\formula;
-use cfg\word_list;
 use test\test_cleanup;
 
 class element_list_tests

@@ -51,6 +51,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
+use cfg\group\group;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
@@ -771,23 +772,23 @@ class sandbox_multi extends db_object_multi_user
      */
 
     /**
-     * @param sql_db $db_con
+     * @param sql $sc
      * @return sql_par sql parameter to get the user id of the most often used link (position) beside the standard (position)
      */
-    function median_user_sql(sql_db $db_con): sql_par
+    function load_sql_median_user(sql $sc): sql_par
     {
         $qp = new sql_par($this::class);
-        $qp->name .= 'median_user';
+        $qp->name .= sql::NAME_EXT_MEDIAN_USER;
         if ($this->owner_id > 0) {
-            $qp->name .= '_ex_owner';
+            $qp->name .= sql::NAME_SEP . sql::NAME_EXT_EX_OWNER;
         }
-        $db_con->set_class($this::class, true);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(array(user::FLD_ID));
-        $qp->sql = $db_con->select_by_id_not_owner($this->id);
+        $sc->set_class($this::class, true);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(array(user::FLD_ID));
+        $qp->sql = $sc->select_by_id_not_owner($this->id);
 
-        $qp->par = $db_con->get_par();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -803,7 +804,7 @@ class sandbox_multi extends db_object_multi_user
         global $db_con;
         $result = 0;
 
-        $qp = $this->median_user_sql($db_con);
+        $qp = $this->load_sql_median_user($db_con->sql_creator());
         $db_row = $db_con->get1($qp);
         if ($db_row[user::FLD_ID] > 0) {
             $result = $db_row[user::FLD_ID];
@@ -861,14 +862,25 @@ class sandbox_multi extends db_object_multi_user
             // to recreate the calling object
             $std = clone $this;
             $std->reset();
-            $std->id = $this->id;
+            $std->set_id($this->id());
             $std->set_user($this->user());
             $std->load_standard();
 
             $db_con->set_class($this::class);
             $db_con->set_usr($this->user()->id());
-            if (!$db_con->update_old($this->id, user::FLD_ID, $new_owner_id)) {
-                $result = false;
+
+            // TODO review and create sql creation test
+            if ($this->is_prime()) {
+                $new_owner = new user;
+                if ($new_owner->load_by_id($new_owner_id)) {
+                    $std->set_user($new_owner);
+                }
+                $std->save();
+            } else {
+                if (!$db_con->update_old(
+                    $this->id, user::FLD_ID, $new_owner_id, group::FLD_ID)) {
+                    $result = false;
+                }
             }
 
             $this->owner_id = $new_owner_id;
@@ -929,7 +941,7 @@ class sandbox_multi extends db_object_multi_user
         $qp = new sql_par($this::class);
         $qp->name .= 'changer';
         if ($this->owner_id > 0) {
-            $qp->name .= '_ex_owner';
+            $qp->name .= sql::NAME_SEP . sql::NAME_EXT_EX_OWNER;
         }
         $db_con->set_class($this::class, true);
         $db_con->set_name($qp->name);
@@ -2515,6 +2527,81 @@ class sandbox_multi extends db_object_multi_user
         return new user_message();
     }
 
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of database field names, values and types that have been changed compared to a given object
+     * to add to the list with the list of the child object e.g. word
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @param sandbox_multi $sbx the same sandbox as this to compare which fields have been changed
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list with the field names of the object and any child object
+     */
+    function db_changed_sandbox_list(sandbox_multi $sbx, sql_type_list $sc_par_lst): sql_par_field_list
+    {
+        global $change_field_list;
+
+        $lst = new sql_par_field_list();
+        $sc = new sql();
+        $table_id = $sc->table_id($this::class);
+
+        if ($sbx->excluded <> $this->excluded) {
+            if ($sc_par_lst->incl_log()) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_EXCLUDED,
+                    $change_field_list->id($table_id . self::FLD_EXCLUDED),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            // TODO review and remove exception if possible
+            $old_val = $sbx->excluded;
+            if ($sbx->excluded === false) {
+                $old_val = null;
+            }
+            $lst->add_field(
+                self::FLD_EXCLUDED,
+                $this->excluded,
+                self::FLD_EXCLUDED_SQLTYP,
+                $old_val
+            );
+        }
+        if ($sbx->share_id <> $this->share_id) {
+            if ($sc_par_lst->incl_log()) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_SHARE,
+                    $change_field_list->id($table_id . self::FLD_SHARE),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_SHARE,
+                $this->share_id,
+                self::FLD_SHARE_SQLTYP,
+                $sbx->share_id
+            );
+        }
+        if ($sbx->protection_id <> $this->protection_id) {
+            if ($sc_par_lst->incl_log()) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_PROTECT,
+                    $change_field_list->id($table_id . self::FLD_PROTECT),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                self::FLD_PROTECT,
+                $this->protection_id,
+                self::FLD_PROTECT_SQLTYP,
+                $sbx->protection_id
+            );
+        }
+        return $lst;
+    }
+    
 
     /*
      * type field

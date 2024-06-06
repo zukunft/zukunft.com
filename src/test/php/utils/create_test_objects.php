@@ -1042,6 +1042,13 @@ class create_test_objects extends test_base
         return $lst;
     }
 
+    function phrase_list_const(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->word_const()->phrase());
+        return $lst;
+    }
+
     /**
      * @return phrase_list with some math const e.g. to test loading a list of values by phrase list
      */
@@ -1368,6 +1375,17 @@ class create_test_objects extends test_base
         return $grp;
     }
 
+    /**
+     * @return group with the max number of main phrases
+     */
+    function group_main_max(): group
+    {
+        $lst = $this->phrase_list_increase();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = group_api::TN_READ;
+        return $grp;
+    }
+
     function group_16(): group
     {
         $lst = $this->phrase_list_16();
@@ -1379,6 +1397,17 @@ class create_test_objects extends test_base
     function group_17_plus(): group
     {
         $lst = $this->phrase_list_17_plus();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = group_api::TN_READ;
+        return $grp;
+    }
+
+    /**
+     * @return group with only the word constant
+     */
+    function group_const(): group
+    {
+        $lst = $this->phrase_list_const();
         $grp = $lst->get_grp_id(false);
         $grp->name = group_api::TN_READ;
         return $grp;
@@ -1482,6 +1511,15 @@ class create_test_objects extends test_base
     {
         $grp = $this->group();
         return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
+    }
+
+    /**
+     * @return value test that the number zero is written to the database
+     */
+    function value_zero(): value
+    {
+        $grp = $this->group();
+        return new value($this->usr1, value_api::TV_ZERO, $grp);
     }
 
     /**
@@ -1687,6 +1725,7 @@ class create_test_objects extends test_base
     {
         $res = new result($this->usr1);
         $res->set_grp($this->group());
+        $res->set_src_grp($this->group_const());
         $res->set_number(result_api::TV_INT);
         return $res;
     }
@@ -1694,7 +1733,25 @@ class create_test_objects extends test_base
     function result_prime_max(): result
     {
         $res = new result($this->usr1);
+        $res->set_grp($this->group_prime_3());
+        $res->set_src_grp($this->group_const());
+        $res->set_number(result_api::TV_INT);
+        return $res;
+    }
+
+    function result_main(): result
+    {
+        $res = new result($this->usr1);
         $res->set_grp($this->group_prime_max());
+        $res->set_src_grp($this->group_const());
+        $res->set_number(result_api::TV_INT);
+        return $res;
+    }
+
+    function result_main_max(): result
+    {
+        $res = new result($this->usr1);
+        $res->set_grp($this->group_main_max());
         $res->set_number(result_api::TV_INT);
         return $res;
     }

@@ -71,6 +71,7 @@ class group_id extends id
     const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
     const TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
     const PRIME_PHRASES_STD = 4;
+    const MAIN_PHRASES_STD = 7;
     const STANDARD_PHRASES = 16;
 
     /**
@@ -150,7 +151,7 @@ class group_id extends id
 
     /**
      * TODO use directly the phrase list without converting to a group id and back
-     * @return int tze number of phrases of this group id
+     * @return int the number of phrases of this group id
      */
     function count(int|string $grp_id): int
     {

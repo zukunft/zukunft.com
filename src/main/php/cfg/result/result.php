@@ -360,6 +360,11 @@ class result extends sandbox_value
         return $this->grp()->id();
     }
 
+    function set_src_grp(group $grp): void
+    {
+        $this->src_grp = $grp;
+    }
+
     function src_grp_id(): int|string
     {
         return $this->src_grp->id();
@@ -1629,7 +1634,7 @@ class result extends sandbox_value
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
     {
         $fields = parent::db_fields_all();
-        if (!$this->is_standard()) {
+        if (!$sc_par_lst->is_standard()) {
             $fields[] = self::FLD_SOURCE . group::FLD_ID;
             $fields[] = formula::FLD_ID;
             $fields = array_merge($fields, $this->db_fields_all_sandbox());
@@ -1650,8 +1655,8 @@ class result extends sandbox_value
         sql_type_list                $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        $lst = parent::db_fields_changed($sbx);
-        if (!$this->is_standard()) {
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        if (!$sc_par_lst->is_standard()) {
             if ($sbx->src_grp_id() <> $this->src_grp_id()) {
                 $lst->add_field(
                     self::FLD_SOURCE . group::FLD_ID,
@@ -1674,9 +1679,8 @@ class result extends sandbox_value
                     sql_field_type::TIME
                 );
             }
-            $lst->add_list($this->db_fields_changed($sbx));
         }
-        return $lst;
+        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
     }
 
 }

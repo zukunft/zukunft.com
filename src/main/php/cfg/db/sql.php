@@ -139,6 +139,8 @@ class sql
     const NAME_SEP = '_'; // for snake case query and file names
     const NAME_BY = 'by'; // to seperate the query selection in the query name e.g. for (load) word_by_name
     const NAME_EXT_USER = '_user';
+    const NAME_EXT_MEDIAN_USER = 'median_user'; // to get the user that is owner of the most often used db row
+    const NAME_EXT_EX_OWNER = 'ex_owner'; // excluding the owner of the loaded db row
 
     // for sql functions that do the change log and the actual change with on function
     const FLD_LOG_FIELD_PREFIX = 'field_id_'; // added to the field name to include the preloaded log field id

@@ -74,10 +74,11 @@ class value_tests
         // TODO add sql insert and update tests to all db objects
         $t->subheader('SQL statements - for often used (prime) values');
         $val = $t->value();
+        $val_zero = $t->value_zero();
         $val_prime = $t->value_prime_3();
         $val_prime_max = $t->value_prime_max();
         $t->assert_sql_insert($sc, $val);
-        $t->assert_sql_insert($sc, $val, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $val_zero, [sql_type::USER]);
         $t->assert_sql_insert($sc, $val_prime);
         $t->assert_sql_insert($sc, $val_prime, [sql_type::USER]);
         $t->assert_sql_insert($sc, $val_prime_max);
@@ -126,6 +127,8 @@ class value_tests
         //$t->assert_sql_not_changed($db_con, $val);
         $t->assert_sql_user_changes($sc, $val);
         $t->assert_sql_changer($sc, $val);
+        // TODO review and add tests for some other value table types
+        $t->assert_sql_median_user($sc, $val);
 
         $t->subheader('SQL statements - for values related to more than 16 phrases');
         $val = $t->value_17_plus();

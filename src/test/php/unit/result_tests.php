@@ -37,6 +37,7 @@ include_once API_RESULT_PATH . 'result.php';
 use api\result\result as result_api;
 use api\word\word as word_api;
 use cfg\db\sql;
+use cfg\db\sql_type;
 use cfg\formula;
 use cfg\group\group;
 use cfg\group\group_list;
@@ -91,15 +92,22 @@ class result_tests
 
         $t->subheader('result sql write');
         // result changes are not logged because potentially they can be reproduced
+        // TODO check the move from prime and main if the source group does not fit the prime or main criterias (same for the formula id)
         $res_prime = $t->result_prime();
         $res_prime_max = $t->result_prime_max();
+        $res_main = $t->result_main();
+        $res_main_max = $t->result_main_max();
         $res = $t->result();
         $res_big = $t->result_big();
         // TODO activate db write
+        $t->assert_sql_insert($sc, $res_prime, [sql_type::STANDARD]);
         $t->assert_sql_insert($sc, $res_prime);
+        $t->assert_sql_insert($sc, $res_prime, [sql_type::USER]);
         $t->assert_sql_insert($sc, $res_prime_max);
-        $t->assert_sql_insert($sc, $res);
-        $t->assert_sql_insert($sc, $res_big);
+        $t->assert_sql_insert($sc, $res_main);
+        //$t->assert_sql_insert($sc, $res_main_max);
+        //$t->assert_sql_insert($sc, $res);
+        //$t->assert_sql_insert($sc, $res_big);
         // TODO activate db write
         // $t->assert_sql_insert($sc, $res, [sql_type::USER]);
         // TODO activate db write
