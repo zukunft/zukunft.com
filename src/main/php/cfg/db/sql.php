@@ -1501,10 +1501,10 @@ class sql
                 }
                 if ($val != sql::NOW) {
                     $sql_set .= $this->name_sql_esc($fld) . ' = ' . $this->name_sql_esc($this->par_fields[$i]);
+                    $i++;
                 } else {
                     $sql_set .= $this->name_sql_esc($fld) . ' = ' . $val;
                 }
-                $i++;
             }
             $sql .= $sql_set;
 

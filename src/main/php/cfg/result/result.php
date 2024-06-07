@@ -376,6 +376,11 @@ class result extends sandbox_value
         $this->set_id($grp->id());
     }
 
+    function set_formula(formula $frm): void
+    {
+        $this->frm = $frm;
+    }
+
     function frm_id(): int
     {
         return $this->frm->id();

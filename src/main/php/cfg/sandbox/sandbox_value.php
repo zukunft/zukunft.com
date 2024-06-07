@@ -936,7 +936,11 @@ class sandbox_value extends sandbox_multi
                     sql_field_type::INT_SMALL
                 );
             }
-            $fld_lst = $this->id_fields_prime();
+            if ($this::class == result::class and $sc_par_lst->is_standard()) {
+                $fld_lst = $this->id_fields_prime(1, result_id::PRIME_PHRASES_STD);
+            } else {
+                $fld_lst = $this->id_fields_prime();
+            }
             $id_lst = $this->grp()->id_lst();
             if (count($fld_lst) < count($id_lst)) {
                 log_err('the number if id fields and id values differ for ' . $this->dsp_id());
@@ -957,7 +961,11 @@ class sandbox_value extends sandbox_multi
                 $this->formula_id(),
                 sql_field_type::INT_SMALL
             );
-            $fld_lst = $this->id_fields_main();
+            if ($sc_par_lst->is_standard()) {
+                $fld_lst = $this->id_fields_prime(1, result_id::MAIN_PHRASES_STD);
+            } else {
+                $fld_lst = $this->id_fields_main();
+            }
             $id_lst = $this->grp()->id_lst();
             if (count($fld_lst) < count($id_lst)) {
                 log_err('the number if id fields and id values differ for ' . $this->dsp_id());

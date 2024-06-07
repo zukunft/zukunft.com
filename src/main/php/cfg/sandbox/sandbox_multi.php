@@ -187,6 +187,8 @@ class sandbox_multi extends db_object_multi_user
         $this->id = 0;
         $this->usr_cfg_id = null;
         $this->owner_id = null;
+        $this->share_id = null;
+        $this->protection_id = null;
         $this->excluded = false;
     }
 

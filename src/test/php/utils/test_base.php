@@ -1076,12 +1076,12 @@ class test_base
      * @param sql $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param object $db_obj must be the same object as the $usr_obj but with the values from the database before the update
-     * @param array $sc_par_lst_in the parameters for the sql statement creation
+     * @param array $sql_type_array the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_update(sql $sc, object $usr_obj, object $db_obj, array $sc_par_lst_in = []): bool
+    function assert_sql_update(sql $sc, object $usr_obj, object $db_obj, array $sql_type_array = []): bool
     {
-        $sc_par_lst = new sql_type_list($sc_par_lst_in);
+        $sc_par_lst = new sql_type_list($sql_type_array);
         // check the Postgres query syntax
         $sc->db_type = sql_db::POSTGRES;
         $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);

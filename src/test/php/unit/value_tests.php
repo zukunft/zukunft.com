@@ -86,13 +86,13 @@ class value_tests
         // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
         // TODO for update fill the missing phrase id with zeros because only one row should be updated
         // TODO add test to change owner of the normal (not user specific) value
-        // TODO add test to update the last-update only to trigger recalc
         $db_val = $val->cloned(value_api::TV_FLOAT);
         $t->assert_sql_update($sc, $val, $db_val);
         $t->assert_sql_update($sc, $val, $db_val, [sql_type::USER]);
         $db_val_prime = $val_prime->cloned(value_api::TV_FLOAT);
         $t->assert_sql_update($sc, $val_prime, $db_val_prime);
         $t->assert_sql_update($sc, $val_prime, $db_val_prime, [sql_type::USER]);
+        // update only the last_update date to trigger recalc
         $val_upd = $val->updated();
         $this->assert_sql_update_trigger($t, $db_con, $val_upd, $val);
         $t->assert_sql_delete($sc, $val);

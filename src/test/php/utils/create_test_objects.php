@@ -1751,9 +1751,24 @@ class create_test_objects extends test_base
     function result_main_max(): result
     {
         $res = new result($this->usr1);
+        $res->set_formula($this->formula());
         $res->set_grp($this->group_main_max());
         $res->set_src_grp($this->group_const());
         $res->set_number(result_api::TV_INT);
+        return $res;
+    }
+
+    /**
+     * @return result with all fields set to none standard to test if all fields are updated
+     */
+    function result_main_filled(): result
+    {
+        global $share_types;
+        global $protection_types;
+        $res = $this->result_main_max();
+        $res->excluded = true;
+        $res->share_id = $share_types->id(share_type_shared::GROUP);
+        $res->protection_id = $protection_types->id(protect_type_shared::USER);
         return $res;
     }
 

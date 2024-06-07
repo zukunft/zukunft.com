@@ -97,6 +97,7 @@ class result_tests
         $res_prime_max = $t->result_prime_max();
         $res_main = $t->result_main();
         $res_main_max = $t->result_main_max();
+        $res_filled = $t->result_main_filled();
         $res = $t->result();
         $res_big = $t->result_big();
         // TODO activate db write
@@ -106,23 +107,33 @@ class result_tests
         $t->assert_sql_insert($sc, $res_prime_max);
         $t->assert_sql_insert($sc, $res_main);
         $t->assert_sql_insert($sc, $res_main_max);
+        $t->assert_sql_insert($sc, $res_filled);
+        $t->assert_sql_insert($sc, $res_filled, [sql_type::USER]);
         $t->assert_sql_insert($sc, $res);
         $t->assert_sql_insert($sc, $res, [sql_type::USER]);
         $t->assert_sql_insert($sc, $res_big);
         // TODO activate db write
+        // TODO add tests for text, time and geo values
+        $db_res_prime = $res_prime->cloned(result_api::TV_FLOAT);
+        $db_res_prime_max = $res_prime_max->cloned(result_api::TV_FLOAT);
+        $db_res_main = $res_main->cloned(result_api::TV_FLOAT);
+        $db_res_filled = $res_filled->cloned(result_api::TV_FLOAT);
         $db_res = $res->cloned(result_api::TV_FLOAT);
-        $t->assert_sql_update($sc, $res, $db_res);
+        $db_res_big = $res_big->cloned(result_api::TV_FLOAT);
+        $t->assert_sql_update($sc, $res_prime, $db_res_prime, [sql_type::STANDARD]);
+        $t->assert_sql_update($sc, $res_prime, $db_res_prime);
+        $t->assert_sql_update($sc, $res_prime, $db_res_prime, [sql_type::USER]);
+        $t->assert_sql_update($sc, $res_prime_max, $db_res_prime_max);
         // TODO activate db write
-        // $t->assert_sql_update($sc, $res, [sql_type::USER]);
-        // TODO activate db write
-        // $t->assert_sql_update($sc, $res_prime);
-        // TODO activate db write
-        // $t->assert_sql_update($sc, $res_prime, true);
+        //$t->assert_sql_update($sc, $res_main, $db_res_main);
+        //$t->assert_sql_update($sc, $res_main, $db_res_main, [sql_type::STANDARD]);
+        //$t->assert_sql_update($sc, $db_res_filled, $db_res_filled);
+        //$t->assert_sql_update($sc, $res, $db_res);
+        //$t->assert_sql_update($sc, $res_big, $db_res_big);
+        //$t->assert_sql_update($sc, $res_big, $db_res_big, [sql_type::USER]);
         // TODO activate db write
         // $t->assert_sql_delete($sc, $res);
-        // TODO activate db write
         // $t->assert_sql_delete($sc, $res, [sql_type::USER]);
-        // TODO activate db write
         // $t->assert_sql_delete($sc, $res, [sql_type::USER], true);
 
         $t->subheader('Display tests');
