@@ -105,21 +105,13 @@ class result_tests
         $t->assert_sql_insert($sc, $res_prime, [sql_type::USER]);
         $t->assert_sql_insert($sc, $res_prime_max);
         $t->assert_sql_insert($sc, $res_main);
-        //$t->assert_sql_insert($sc, $res_main_max);
-        //$t->assert_sql_insert($sc, $res);
-        //$t->assert_sql_insert($sc, $res_big);
+        $t->assert_sql_insert($sc, $res_main_max);
+        $t->assert_sql_insert($sc, $res);
+        $t->assert_sql_insert($sc, $res, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $res_big);
         // TODO activate db write
-        // $t->assert_sql_insert($sc, $res, [sql_type::USER]);
-        // TODO activate db write
-        // $t->assert_sql_insert($sc, $res_prime);
-        // TODO activate db write
-        // $t->assert_sql_insert($sc, $res_prime, true);
-        // TODO activate db write
-        // $t->assert_sql_insert($sc, $res_prime_max);
-        // TODO activate db write
-        // $t->assert_sql_insert($sc, $res_prime_max, true);
-        // TODO activate db write
-        // $t->assert_sql_update($sc, $res);
+        $db_res = $res->cloned(result_api::TV_FLOAT);
+         //$t->assert_sql_update($sc, $res, $db_res);
         // TODO activate db write
         // $t->assert_sql_update($sc, $res, [sql_type::USER]);
         // TODO activate db write

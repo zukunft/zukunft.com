@@ -351,6 +351,19 @@ class group extends sandbox_multi
         return $fvt_lst;
     }
 
+    function id_fvt_main(): sql_par_field_list
+    {
+        $fvt_lst = new sql_par_field_list();
+        $grp_id = new group_id();
+        $pos = 1;
+        foreach ($grp_id->get_array($this->id()) as $id) {
+            $name = phrase::FLD_ID . '_' . $pos;
+            $fvt_lst->add_field($name, $id, sql_field_type::INT_SMALL);
+            $pos++;
+        }
+        return $fvt_lst;
+    }
+
     /**
      * get the table name extension for value, result and group tables
      * depending on the number of phrases a different table for value and results is used

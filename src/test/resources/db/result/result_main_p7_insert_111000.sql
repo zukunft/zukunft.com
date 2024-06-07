@@ -1,4 +1,4 @@
-PREPARE result_main_p7_insert (smallint, smallint, smallint, smallint, smallint, bigint, numeric, bigint) AS
+PREPARE result_main_p7_insert_111000 (smallint, smallint, smallint, smallint, smallint, smallint, smallint, smallint, bigint, numeric, bigint) AS
     INSERT INTO results_main
                 (formula_id,
                  phrase_id_1,

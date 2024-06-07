@@ -1752,6 +1752,7 @@ class create_test_objects extends test_base
     {
         $res = new result($this->usr1);
         $res->set_grp($this->group_main_max());
+        $res->set_src_grp($this->group_const());
         $res->set_number(result_api::TV_INT);
         return $res;
     }

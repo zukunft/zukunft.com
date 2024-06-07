@@ -48,6 +48,7 @@ use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\group\group_id;
+use cfg\group\result_id;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_field_list;
@@ -311,7 +312,8 @@ class sandbox_value extends sandbox_multi
         } else {
             $grp_id = new group_id();
             $nbr_of_ids = $grp_id->count($this->grp_id());
-            if ($nbr_of_ids > group_id::PRIME_PHRASES_STD - 1 and $nbr_of_ids <= group_id::MAIN_PHRASES_STD) {
+            if ($nbr_of_ids > result_id::PRIME_PHRASES_STD
+                and $nbr_of_ids <= group_id::MAIN_PHRASES_STD) {
                 return true;
             } else {
                 return false;
@@ -363,6 +365,11 @@ class sandbox_value extends sandbox_multi
     function is_prime(): bool
     {
         return $this->grp()->is_prime();
+    }
+
+    function is_big(): bool
+    {
+        return $this->grp()->is_big();
     }
 
     function id_names(bool $all = false): array
@@ -938,26 +945,41 @@ class sandbox_value extends sandbox_multi
                     $id = null;
                     if (array_key_exists($key, $id_lst)) {
                         $id = $id_lst[$key];
-                        $lst->add_field(
-                            $fld,
-                            $id,
-                            sql_field_type::INT_SMALL
-                        );
+                        $lst->add_field($fld, $id,sql_field_type::INT_SMALL);
+                    }
+                }
+            }
+        } elseif ($this::class == result::class and $this->is_main()) {
+            $lst->add_field(
+                formula::FLD_ID,
+                $this->formula_id(),
+                sql_field_type::INT_SMALL
+            );
+            $fld_lst = $this->id_fields_main();
+            $id_lst = $this->grp()->id_lst();
+            if (count($fld_lst) < count($id_lst)) {
+                log_err('the number if id fields and id values differ for ' . $this->dsp_id());
+            } else {
+                foreach ($fld_lst as $key => $fld) {
+                    $id = null;
+                    if (array_key_exists($key, $id_lst)) {
+                        $id = $id_lst[$key];
+                        $lst->add_field($fld, $id,sql_field_type::INT_SMALL);
                     }
                 }
             }
         } else {
-            if ($this->is_prime()) {
+            if ($this->is_big()) {
                 $lst->add_field(
                     $this->id_field_group(),
                     $this->id(),
-                    sql_field_type::KEY_512
+                    sql_field_type::TEXT
                 );
             } else {
                 $lst->add_field(
                     $this->id_field_group(),
                     $this->id(),
-                    sql_field_type::TEXT
+                    sql_field_type::KEY_512
                 );
             }
         }
@@ -987,7 +1009,7 @@ class sandbox_value extends sandbox_multi
         if ($this->is_prime()) {
             if ($this::class == result::class and $sc_par_lst->is_standard()) {
                 // TODO merge with result::FLD_KEY_PRIME ?
-                $id_fields = $this->id_fields_prime(1, group_id::PRIME_PHRASES_STD - 1);
+                $id_fields = $this->id_fields_prime(1, result_id::PRIME_PHRASES_STD);
                 return array_merge([formula::FLD_ID], $id_fields);
             } else {
                 return $this->id_fields_prime();
@@ -1510,7 +1532,7 @@ class sandbox_value extends sandbox_multi
      */
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
     {
-        if ($this->grp->is_prime()) {
+        if ($this->is_prime() or $this->is_main()) {
             $fields = $this->grp->id_names();
         } else {
             $fields = [group::FLD_ID];
@@ -1551,7 +1573,11 @@ class sandbox_value extends sandbox_multi
 
         $lst = new sql_par_field_list();
         if ($is_insert) {
-            $lst = $this->grp->id_fvt();
+            if ($this::class == result::class and $this->is_main()) {
+                $lst = $this->grp->id_fvt_main();
+            } else {
+                $lst = $this->grp->id_fvt();
+            }
         }
         if (!$sc_par_lst->is_standard()) {
             if ($is_insert) {

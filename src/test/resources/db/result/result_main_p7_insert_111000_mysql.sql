@@ -1,4 +1,4 @@
-PREPARE result_main_p7_insert FROM
+PREPARE result_main_p7_insert_111000 FROM
     'INSERT INTO results_main
                  (formula_id,
                   phrase_id_1,
