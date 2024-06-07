@@ -111,7 +111,7 @@ class result_tests
         $t->assert_sql_insert($sc, $res_big);
         // TODO activate db write
         $db_res = $res->cloned(result_api::TV_FLOAT);
-         //$t->assert_sql_update($sc, $res, $db_res);
+        $t->assert_sql_update($sc, $res, $db_res);
         // TODO activate db write
         // $t->assert_sql_update($sc, $res, [sql_type::USER]);
         // TODO activate db write

@@ -1379,6 +1379,146 @@ class sql
     }
 
     /**
+     * create the sql statement to update a row to the database
+     * using sql_par_field for the id_field
+     *
+     * @param sql_par_field_list $id_fvt_lst name, value and type of the id field (or list of field names)
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param string $val_tbl name of the table to select the values to insert
+     * @return string the prepared sql insert statement
+     */
+    function create_sql_update_fvt(
+        sql_par_field_list $id_fvt_lst,
+        sql_par_field_list $fvt_lst,
+        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        string             $val_tbl = ''): string
+    {
+
+        $id_field = $id_fvt_lst->names();
+        $id = $id_fvt_lst->values();
+
+        $id_field_par = '';
+        $use_named_par = $sc_par_lst->use_named_par();
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+
+        // check if the minimum parameters are set
+        if ($this->query_name == '') {
+            log_err('SQL statement is not yet named');
+        }
+
+        // gat the value parameter types
+        $par_pos = 1;
+        foreach ($fvt_lst->lst as $fvt) {
+            $fld = $fvt->name;
+            $val = $fvt->value;
+            if ($fvt->type_id != null) {
+                $typ = $fvt->type_id;
+            } else {
+                $typ = $fvt->type;
+            }
+            if ($val != sql::NOW) {
+                if ($typ != '') {
+                    $this->par_types[] = $typ;
+                } else {
+                    $this->par_types[] = $this->get_sql_par_type($val);
+                }
+                if ($use_named_par) {
+                    $fld_name = $fld;
+                    $fld_name = '_' . $fld_name;
+                    $this->par_fields[] = $fld_name;
+                } else {
+                    $this->par_fields[] = $this->par_name($par_pos);
+                }
+                $this->par_values[] = $val;
+                $par_pos++;
+            }
+        }
+        $offset = $par_pos - 1;
+
+        // prepare the where class
+        // TODO maybe can be removed because done already in the calling function
+        if (is_array($id_field)) {
+            if (!is_array($id)) {
+                $grp_id = new group_id();
+                $id_lst = $grp_id->get_array($id, true);
+                foreach ($id_lst as $key => $value) {
+                    if ($value == null) {
+                        $id_lst[$key] = 0;
+                    }
+                }
+            } else {
+                $id_lst = $id;
+            }
+            $sql_where = $this->sql_where_fvt($id_fvt_lst, $offset, $id_field_par);
+        } else {
+            $id = $id[0];
+            if ($use_named_par) {
+                if ($sc_par_lst->is_insert()) {
+                    $id_field_used = $this->table . '.' . $id_field;
+                    $sql_where = $this->sql_where($id_field_used, $id, $offset, $id);
+                } else {
+                    if ($usr_tbl) {
+                        $sql_where = $this->sql_where_no_par(
+                            [$id_field, user::FLD_ID],
+                            [$id, '_' . user::FLD_ID], $offset, $id, true);
+
+                    } else {
+                        $sql_where = $this->sql_where($id_field, $id, $offset, $id);
+                    }
+                }
+            } else {
+                $sql_where = $this->sql_where($id_field, $id, $offset, $id_field_par);
+            }
+        }
+
+        // create a prepare SQL statement if possible
+        $sql_type = self::UPDATE;
+        if ($sc_par_lst->incl_log()) {
+            $sql_type = self::FUNCTION;
+        }
+        if ($sc_par_lst->is_sub_tbl()) {
+            $this->sub_query = true;
+        }
+        if ($sc_par_lst->incl_log()) {
+            $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst);
+        } else {
+            if ($sc_par_lst->is_update_part()) {
+                $sql = sql::UPDATE;
+            } else {
+                $sql = $this->prepare_this_sql($sql_type);
+            }
+            $sql .= ' ' . $this->name_sql_esc($this->table);
+            $sql_set = '';
+            $i = 0;
+            foreach ($fvt_lst->lst as $fvt) {
+                $fld = $fvt->name;
+                $val = $fvt->value;
+                if ($sql_set == '') {
+                    $sql_set .= ' SET ';
+                } else {
+                    $sql_set .= ', ';
+                }
+                if ($val != sql::NOW) {
+                    $sql_set .= $this->name_sql_esc($fld) . ' = ' . $this->name_sql_esc($this->par_fields[$i]);
+                } else {
+                    $sql_set .= $this->name_sql_esc($fld) . ' = ' . $val;
+                }
+                $i++;
+            }
+            $sql .= $sql_set;
+
+            if ($val_tbl != '') {
+                $sql .= ' ' . sql::FROM . ' ' . $this->name_sql_esc($val_tbl);
+            }
+
+            $sql .= $sql_where;
+
+        }
+        return $this->end_sql($sql, $sql_type);
+    }
+
+    /**
      * @return string that starts a sql function
      */
     function sql_func_start(string $fld_new_id, sql_type_list $sc_par_lst): string
@@ -1783,6 +1923,31 @@ class sql
 
         // create a prepare SQL statement if possible
         return $this->sql_where_no_par($id_field, $id, $offset, $id_field_par, $is_named);
+    }
+
+    /**
+     * @param sql_par_field_list $fvt_lst the id field or id fields of the table from where the row should be deleted
+     * @param int $offset
+     * @param string $id_field_par
+     * @param bool $is_named = false true if named parameters are used
+     * @return string with the where statement
+     */
+    private function sql_where_fvt(
+        sql_par_field_list $fvt_lst,
+        int                $offset = 0,
+        string             $id_field_par = '',
+        bool               $is_named = false
+    ): string
+    {
+        // gat the value parameter types
+        foreach ($fvt_lst->names() as $fld) {
+            $this->par_types[] = $fvt_lst->get_type($fld);
+            $this->par_values[] = $fvt_lst->get_value($fld);
+            $this->par_fields[] = $this->par_name();
+        }
+
+        // create a prepare SQL statement if possible
+        return $this->sql_where_no_par($fvt_lst->names(), $fvt_lst->values(), $offset, $id_field_par, $is_named);
     }
 
     /**
@@ -4365,7 +4530,7 @@ class sql
         $sql .= sql::IN . ' (' . $this->par_name() . ')';
         $qp->name .= '_by_ids';
         $qp->sql = $this->prepare_sql($sql, $qp->name, [sql_par_type::INT_LIST]);
-        $qp->par = [implode(',',$id_lst)];
+        $qp->par = [implode(',', $id_lst)];
         return $qp;
     }
 

@@ -1,4 +1,4 @@
-PREPARE value_prime_p3_update_val_upd_user (numeric, bigint, bigint, bigint, bigint, bigint) AS
+PREPARE value_prime_p3_update_110000_user (numeric, smallint, smallint, smallint, smallint, bigint) AS
     UPDATE user_values_prime
        SET numeric_value = $1, last_update = Now()
      WHERE phrase_id_1 = $2

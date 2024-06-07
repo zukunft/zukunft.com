@@ -1,4 +1,4 @@
-PREPARE value_prime_p1_update_upd (bigint, bigint, bigint, bigint) AS
+PREPARE value_prime_p1_update_0010000 (smallint, smallint, smallint, smallint) AS
     UPDATE values_prime
        SET last_update = Now()
      WHERE phrase_id_1 = $1

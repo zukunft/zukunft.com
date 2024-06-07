@@ -945,7 +945,9 @@ class sandbox_value extends sandbox_multi
                     $id = null;
                     if (array_key_exists($key, $id_lst)) {
                         $id = $id_lst[$key];
-                        $lst->add_field($fld, $id,sql_field_type::INT_SMALL);
+                        $lst->add_field($fld, $id, sql_field_type::INT_SMALL);
+                    } elseif ($sc_par_lst->is_update()) {
+                        $lst->add_field($fld, $id, sql_field_type::INT_SMALL);
                     }
                 }
             }
@@ -964,7 +966,9 @@ class sandbox_value extends sandbox_multi
                     $id = null;
                     if (array_key_exists($key, $id_lst)) {
                         $id = $id_lst[$key];
-                        $lst->add_field($fld, $id,sql_field_type::INT_SMALL);
+                        $lst->add_field($fld, $id, sql_field_type::INT_SMALL);
+                    } elseif ($sc_par_lst->is_update()) {
+                        $lst->add_field($fld, $id, sql_field_type::INT_SMALL);
                     }
                 }
             }
@@ -1338,7 +1342,6 @@ class sandbox_value extends sandbox_multi
 
     /**
      * create the sql statement to add a new value or result to the database
-     * TODO add source group
      *
      * @param sql $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -1353,39 +1356,13 @@ class sandbox_value extends sandbox_multi
         $sc_par_lst_used = clone $sc_par_lst;
         // set the sql query type
         $sc_par_lst_used->add(sql_type::INSERT);
-        // set the target sql table type for this value
-        $sc_par_lst_used->add($this->table_type());
-        // get the name indicator how many id fields are user
-        $id_ext = $this->table_extension();
-        // get the prime db key list for this sandbox object
-        $fvt_lst_id = $this->id_fvt_lst($sc_par_lst_used);
-        // clone to keep the db key list unchanged
-        $fvt_lst = clone $fvt_lst_id;
         // create an empty sandbox object but of the same type and with the same user to detect the fields that should be written
         $db_row = $this->cloned(null);
-        // add the list of the changed fields to the id list
-        $fvt_lst->add_list($this->db_fields_changed($db_row, $sc_par_lst_used));
-        // get the list of all fields that can be changed by the user
-        $fld_lst_all = $this->db_fields_all($sc_par_lst);
-        $fld_lst_ex_id = array_diff($fld_lst_all, $fvt_lst_id->names());
-        // make the query name unique based on the changed fields
-        $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_ex_id);
-        // create the main query parameter object and set the query name
-        $qp = $this->sql_common($sc, $sc_par_lst_used, $ext, $id_ext);
-        // overwrite the standard auto increase id field name
-        $sc->set_id_field($this->id_field($sc_par_lst));
-        // use the query name for the sql creation
-        $sc->set_name($qp->name);
-        // actually create the sql statement
-        $qp->sql = $sc->create_sql_insert($fvt_lst);
-        // set the parameters for the query execution
-        $qp->par = $fvt_lst->db_values();
-        return $qp;
+        return $this->sql_write($sc, $db_row, $sc_par_lst_used);
     }
 
     /**
-     * create the sql statement to update a sandbox object in the database
+     * create the sql statement to update a value or result in the database
      * TODO move the code to an object used by sandbox and sandbox_value
      *
      * @param sql $sc with the target db_type set
@@ -1403,36 +1380,61 @@ class sandbox_value extends sandbox_multi
         $sc_par_lst_used = clone $sc_par_lst;
         // set the sql query type
         $sc_par_lst_used->add(sql_type::UPDATE);
-        // get the field names, values and parameter types that have been changed
-        // and that needs to be updated in the database
-        // the db_* child function call the corresponding parent function
-        // including the sql parameters for logging
-        $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst_used);
-        // get the list of all fields that can be changed by the user
-        $all_fields = $this->db_fields_all();
-        // create either the prepared sql query or a sql function that includes the logging of the changes
-        // unlike the db_* function the sql_update_* parent function is called directly
-        return $this::sql_update_switch($sc, $fld_lst, $all_fields, $sc_par_lst_used);
+        return $this->sql_write($sc, $db_row, $sc_par_lst_used);
     }
 
     /**
-     * create the sql statement to update a value or result in the database
-     * TODO make code review and move part to the parent sandbox value class
+     * create a sql statement to insert or update a sandbox object in the database
+     * TODO move the code to an object used by sandbox and sandbox_value
      *
      * @param sql $sc with the target db_type set
-     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
-     * @param array $fld_lst_all list of field names of the given object
+     * @param sandbox_value|null $db_row the sandbox object with the database values before the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update_switch(
+    function sql_write(
         sql                $sc,
-        sql_par_field_list $fvt_lst,
-        array              $fld_lst_all = [],
+        sandbox_value|null $db_row,
         sql_type_list      $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
-        return $this->sql_update_fields($sc, $fvt_lst, $sc_par_lst);
+        // set the target sql table type for this value
+        $sc_par_lst->add($this->table_type());
+        // get the name indicator how many id fields are user
+        $id_ext = $this->table_extension();
+        // get the prime db key list for this sandbox object
+        $fvt_lst_id = $this->id_fvt_lst($sc_par_lst);
+        // clone to keep the db key list unchanged
+        $fvt_lst = clone $fvt_lst_id;
+        // add the list of the changed fields to the id list
+        $fvt_lst->add_list($this->db_fields_changed($db_row, $sc_par_lst));
+        // get the list of all fields that can be changed by the user
+        $fld_lst_all = $this->db_fields_all($sc_par_lst);
+        $fld_lst_ex_id = array_diff($fld_lst_all, $fvt_lst_id->names());
+        // select the changes that should be written e.g. exclude th id in case of an update
+        if ($sc_par_lst->is_update()) {
+            $fvt_lst = $fvt_lst->get_intersect($fld_lst_ex_id);
+        }
+        // make the query name unique based on the changed fields
+        $lib = new library();
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_ex_id);
+        // create the main query parameter object and set the query name
+        $qp = $this->sql_common($sc, $sc_par_lst, $ext, $id_ext);
+        // overwrite the standard auto increase id field name
+        $sc->set_id_field($this->id_field($sc_par_lst));
+        // use the query name for the sql creation
+        $sc->set_name($qp->name);
+        // actually create the sql statement
+        if ($sc_par_lst->is_insert()) {
+            $qp->sql = $sc->create_sql_insert($fvt_lst);
+            // set the parameters for the query execution
+            $qp->par = $fvt_lst->db_values();
+        } else {
+            $qp->sql = $sc->create_sql_update_fvt($fvt_lst_id, $fvt_lst, $sc_par_lst);
+            // and remember the paraemeters used
+            $qp->par = $sc->par_values();
+        }
+        return $qp;
     }
 
     /**
@@ -1450,10 +1452,12 @@ class sandbox_value extends sandbox_multi
         sql_type_list      $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
+        // set the sql query type
+        $sc_par_lst->add(sql_type::UPDATE);
         // set the target sql table type for this value e.g. add prime
         $sc_par_lst->add($this->grp->table_type());
         // get the name indicator how many id fields are user
-        $id_ext = $this->grp->table_extension();
+        $id_ext = $this->table_extension();
 
         // get the sql name extension to make the name unique based on the fields that should be updated
         // TODO replace with the number base notation

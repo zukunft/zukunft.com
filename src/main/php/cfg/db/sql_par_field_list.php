@@ -414,6 +414,9 @@ class sql_par_field_list
         }
     }
 
+    /**
+     * @return array with the field names of the list
+     */
     function names(): array
     {
         $result = [];
