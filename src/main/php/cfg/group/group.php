@@ -309,12 +309,12 @@ class group extends sandbox_multi
     /**
      * @return array with the numbered names of this group
      */
-    function id_names(bool $all = false): array
+    function id_names(bool $all = false, int $max = group_id::PRIME_PHRASES_STD): array
     {
         $name_lst = array();
         $grp_id = new group_id();
         if ($all) {
-            for ($pos = 1; $pos <= group_id::PRIME_PHRASES_STD; $pos++) {
+            for ($pos = 1; $pos <= $max; $pos++) {
                 $name_lst[] = phrase::FLD_ID . '_' . $pos;
             }
         } else {

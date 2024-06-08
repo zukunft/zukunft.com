@@ -500,7 +500,7 @@ class result extends sandbox_value
         $qp = parent::load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext, $id_ext);
 
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
-        $sc->set_id_field($this->id_field());
+        $sc->set_id_field($this->id_field($sc_par_lst));
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
@@ -623,7 +623,7 @@ class result extends sandbox_value
         $sc_par_lst->add($this->grp->table_type());
         $sc->set_class($class, $sc_par_lst);
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
-        $sc->set_id_field($this->id_field());
+        $sc->set_id_field($this->id_field($sc_par_lst));
         return parent::load_sql_user_changes($sc, $class, $sc_par_lst);
     }
 

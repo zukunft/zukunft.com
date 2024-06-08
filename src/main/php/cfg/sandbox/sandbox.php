@@ -132,7 +132,7 @@ class sandbox extends db_object_seq_id_user
     const FLD_EXCLUDED_COM = 'true if a user, but not all, have removed it';
     const FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
     const FLD_EXCLUDED_SQLTYP = sql_field_type::BOOL;
-    const FLD_CHANGE_USER = 'change_user_id'; // id of the user how wants something the object to be different from most other users
+    const FLD_CHANGE_USER = 'change_user_id'; // id of the user who wants something the object to be different from most other users
     const FLD_USER_NAME = 'user_name';
     const FLD_SHARE_COM = 'to restrict the access';
     const FLD_SHARE = "share_type_id";  // field name for the share permission

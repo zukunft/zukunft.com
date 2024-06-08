@@ -1128,9 +1128,10 @@ class test_base
      *
      * @param sql $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
+     * @param array $sc_par_lst_in the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_id(sql $sc, object $usr_obj): bool
+    function assert_sql_by_id(sql $sc, object $usr_obj, array $sc_par_lst_in = []): bool
     {
         // check the Postgres query syntax
         $sc->db_type = sql_db::POSTGRES;

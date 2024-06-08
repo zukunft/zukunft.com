@@ -9,4 +9,7 @@ PREPARE result_prime_p1_norm_by_id FROM
            numeric_value,
            last_update
       FROM results_prime
-     WHERE phrase_id_1 = ?';
+     WHERE phrase_id_1 = ?
+        AND phrase_id_2 = ?
+        AND phrase_id_3 = ?
+        AND phrase_id_4 = ?';

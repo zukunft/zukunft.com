@@ -4387,14 +4387,14 @@ class sql
      * to detect if someone else has used the object
      * if the value can be stored in different tables
      *
-     * @param int $id the unique database id if the object to check
+     * @param int|string $id the unique database id if the object to check
      * @param int|null $owner_id the user id of the owner of the object
      * @param string|array $id_field the field name or field list of the prime database key if not standard
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 in the previous set dialect
      */
     function load_sql_not_changed_multi(
-        int          $id,
+        int|string   $id,
         ?int         $owner_id = 0,
         string|array $id_field = '',
         string       $ext = '',

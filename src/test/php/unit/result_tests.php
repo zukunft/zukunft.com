@@ -73,22 +73,26 @@ class result_tests
         $t->assert_sql_foreign_key_create($res);
 
         // check the sql to load a result by the id
+        $res_prime = $t->result_prime();
         $res = $t->result();
+        $res_main = $t->result_main();
+        $res_big = $t->result_big();
+        $t->assert_sql_by_id($sc, $res_prime);
         $t->assert_sql_by_id($sc, $res);
+        $t->assert_sql_by_id($sc, $res_main);
+        $t->assert_sql_by_id($sc, $res_big);
+        $this->assert_sql_by_group($t, $db_con, $res_prime);
         $this->assert_sql_by_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group_list($t, $db_con, $res);
         $this->assert_sql_load_std_by_group_id($t, $db_con, $res);
 
-        $res = $t->result_prime();
-        $t->assert_sql_by_id($sc, $res);
-        $this->assert_sql_by_group($t, $db_con, $res);
 
         $t->subheader('SQL load default statement tests');
 
         // sql to load the standard result by id
-        $t->assert_sql_standard($sc, $res);
-        $t->assert_sql_user_changes($sc, $res);
+        $t->assert_sql_standard($sc, $res_prime);
+        $t->assert_sql_user_changes($sc, $res_prime);
 
         $t->subheader('result sql write');
         // result changes are not logged because potentially they can be reproduced
@@ -120,17 +124,17 @@ class result_tests
         $db_res_filled = $res_filled->cloned(result_api::TV_FLOAT);
         $db_res = $res->cloned(result_api::TV_FLOAT);
         $db_res_big = $res_big->cloned(result_api::TV_FLOAT);
+        // TODO activate db write
         $t->assert_sql_update($sc, $res_prime, $db_res_prime, [sql_type::STANDARD]);
         $t->assert_sql_update($sc, $res_prime, $db_res_prime);
         $t->assert_sql_update($sc, $res_prime, $db_res_prime, [sql_type::USER]);
         $t->assert_sql_update($sc, $res_prime_max, $db_res_prime_max);
-        // TODO activate db write
-        //$t->assert_sql_update($sc, $res_main, $db_res_main);
-        //$t->assert_sql_update($sc, $res_main, $db_res_main, [sql_type::STANDARD]);
-        //$t->assert_sql_update($sc, $db_res_filled, $db_res_filled);
-        //$t->assert_sql_update($sc, $res, $db_res);
-        //$t->assert_sql_update($sc, $res_big, $db_res_big);
-        //$t->assert_sql_update($sc, $res_big, $db_res_big, [sql_type::USER]);
+        $t->assert_sql_update($sc, $res_main, $db_res_main);
+        $t->assert_sql_update($sc, $res_main, $db_res_main, [sql_type::STANDARD]);
+        $t->assert_sql_update($sc, $res_filled, $db_res_filled);
+        $t->assert_sql_update($sc, $res, $db_res);
+        $t->assert_sql_update($sc, $res_big, $db_res_big);
+        $t->assert_sql_update($sc, $res_big, $db_res_big, [sql_type::USER]);
         // TODO activate db write
         // $t->assert_sql_delete($sc, $res);
         // $t->assert_sql_delete($sc, $res, [sql_type::USER]);

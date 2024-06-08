@@ -1,4 +1,4 @@
-PREPARE value_by_grp (bigint, text) AS
+PREPARE value_big_by_grp (bigint, text) AS
     SELECT s.group_id,
            u.group_id AS user_group_id,
            s.user_id,
@@ -9,6 +9,6 @@ PREPARE value_by_grp (bigint, text) AS
            CASE WHEN (u.protect_id    IS NULL) THEN s.protect_id    ELSE u.protect_id    END  AS protect_id,
            u.user_id AS change_user_id,
            u.share_type_id
-      FROM values s
- LEFT JOIN user_values u ON s.group_id = u.group_id AND u.user_id = $1
+      FROM values_big s
+ LEFT JOIN user_values_big u ON s.group_id = u.group_id AND u.user_id = $1
      WHERE s.group_id = $2;

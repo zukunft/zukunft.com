@@ -1,4 +1,4 @@
-PREPARE value_prime_p1_by_usr_cfg FROM
+PREPARE value_prime_p3_by_usr_cfg FROM
    'SELECT phrase_id_1,
            phrase_id_2,
            phrase_id_3,

@@ -1,4 +1,4 @@
-PREPARE value_prime_p1_by_grp (bigint, bigint) AS
+PREPARE value_prime_p3_by_grp (bigint, bigint, bigint, bigint, bigint) AS
     SELECT s.phrase_id_1,
            s.phrase_id_2,
            s.phrase_id_3,
@@ -18,4 +18,7 @@ PREPARE value_prime_p1_by_grp (bigint, bigint) AS
        AND s.phrase_id_3 = u.phrase_id_3
        AND s.phrase_id_4 = u.phrase_id_4
        AND u.user_id = $1
-     WHERE s.phrase_id_1 = $2;
+     WHERE s.phrase_id_1 = $2
+       AND s.phrase_id_2 = $3
+       AND s.phrase_id_3 = $4
+       AND s.phrase_id_4 = $5;

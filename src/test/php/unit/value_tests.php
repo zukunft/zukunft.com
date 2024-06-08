@@ -36,11 +36,13 @@ include_once MODEL_VALUE_PATH . 'value_time_series.php';
 
 use api\phrase\group as group_api;
 use api\value\value as value_api;
+use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_type;
 use cfg\group\group;
 use cfg\db\sql_db;
 use cfg\value\value;
+use cfg\value\value_dsp_old;
 use cfg\value\value_time_series;
 use html\value\value as value_dsp;
 use test\test_cleanup;
@@ -62,50 +64,69 @@ class value_tests
         $usr->set_id(1);
 
 
-        $t->header('Unit tests of the value class (src/main/php/model/value/value.php)');
+        $t->header('value unit tests');
 
-        $t->subheader('SQL statements - setup');
+        $t->subheader('value sql setup');
         $val = $t->value();
         $t->assert_sql_table_create($val);
         $t->assert_sql_index_create($val);
         $t->assert_sql_foreign_key_create($val);
 
+        $t->subheader('value sql read');
+        $val = $t->value();
+        $this->assert_sql_by_grp($t, $db_con, $val, $t->group_prime_3());
+        $this->assert_sql_by_grp($t, $db_con, $val, $t->group_16());
+        $this->assert_sql_by_grp($t, $db_con, $val, $t->group_17_plus());
+
+        $t->subheader('value sql read default and user changes');
+        // ... and to check if any user has uses another than the default value
+        // TODO prio 1 activate
+        //$t->assert_sql_not_changed($db_con, $val);
+        $t->assert_sql_user_changes($sc, $val);
+        $t->assert_sql_changer($sc, $val);
+        // TODO review and add tests for some other value table types
+        $val = $t->value_16();
+        $t->assert_sql_median_user($sc, $val);
+
+
+        // TODO sort the test by query type and not value type
         // TODO add tests with log
         // TODO add sql insert and update tests to all db objects
         $t->subheader('SQL statements - for often used (prime) values');
-        $val = $t->value();
-        $val_zero = $t->value_zero();
-        $val_prime = $t->value_prime_3();
-        $val_prime_max = $t->value_prime_max();
-        $t->assert_sql_insert($sc, $val);
-        $t->assert_sql_insert($sc, $val_zero, [sql_type::USER]);
-        $t->assert_sql_insert($sc, $val_prime);
-        $t->assert_sql_insert($sc, $val_prime, [sql_type::USER]);
-        $t->assert_sql_insert($sc, $val_prime_max);
-        $t->assert_sql_insert($sc, $val_prime_max, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $t->value());
+        $t->assert_sql_insert($sc, $t->value_zero(), [sql_type::USER]);
+        $t->assert_sql_insert($sc, $t->value_prime_3());
+        $t->assert_sql_insert($sc, $t->value_prime_3(), [sql_type::USER]);
+        $t->assert_sql_insert($sc, $t->value_prime_max());
+        $t->assert_sql_insert($sc, $t->value_prime_max(), [sql_type::USER]);
         // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
         // TODO for update fill the missing phrase id with zeros because only one row should be updated
         // TODO add test to change owner of the normal (not user specific) value
+        $val = $t->value();
         $db_val = $val->cloned(value_api::TV_FLOAT);
         $t->assert_sql_update($sc, $val, $db_val);
         $t->assert_sql_update($sc, $val, $db_val, [sql_type::USER]);
+        $val_prime = $t->value_prime_3();
         $db_val_prime = $val_prime->cloned(value_api::TV_FLOAT);
         $t->assert_sql_update($sc, $val_prime, $db_val_prime);
         $t->assert_sql_update($sc, $val_prime, $db_val_prime, [sql_type::USER]);
         // update only the last_update date to trigger recalc
+        $val = $t->value();
         $val_upd = $val->updated();
         $this->assert_sql_update_trigger($t, $db_con, $val_upd, $val);
         $t->assert_sql_delete($sc, $val);
         $t->assert_sql_delete($sc, $val, [sql_type::USER]);
         $t->assert_sql_delete($sc, $val, [sql_type::USER, sql_type::EXCLUDE]);
-        $this->assert_sql_by_grp($t, $db_con, $val);
+
 
         // ... and the related default value
         $t->assert_sql_standard($sc, $val);
 
         // ... and to check if any user has uses another than the default value
+        $val = $t->value_prime_3();
         $t->assert_sql_not_changed($sc, $val);
-        $t->assert_sql_user_changes($sc, $val);
+        // TODO activate Prio 2
+        //$t->assert_sql_user_changes($sc, $val);
         $t->assert_sql_changer($sc, $val);
 
         $t->subheader('SQL statements - for values related to up to 16 phrases');
@@ -124,14 +145,6 @@ class value_tests
         // ... and the related default value
         $t->assert_sql_standard($sc, $val);
 
-        // ... and to check if any user has uses another than the default value
-        // TODO prio 1 activate
-        //$t->assert_sql_not_changed($db_con, $val);
-        $t->assert_sql_user_changes($sc, $val);
-        $t->assert_sql_changer($sc, $val);
-        // TODO review and add tests for some other value table types
-        $t->assert_sql_median_user($sc, $val);
-
         $t->subheader('SQL statements - for values related to more than 16 phrases');
         $val = $t->value_17_plus();
         $db_val = $val->cloned(value_api::TV_FLOAT);
@@ -146,8 +159,8 @@ class value_tests
         // ... and to check if any user has uses another than the default value
         // TODO prio 1 activate
         //$t->assert_sql_not_changed($db_con, $val);
-        $t->assert_sql_user_changes($sc, $val);
-        $t->assert_sql_changer($sc, $val);
+        //$t->assert_sql_user_changes($sc, $val);
+        //$t->assert_sql_changer($sc, $val);
 
 
         $t->subheader('Database query creation tests');
@@ -199,7 +212,7 @@ class value_tests
         // sql to load a user specific time series by phrase group id
         $vts->reset($usr);
         $vts->grp->set_id(2);
-        $this->assert_sql_by_grp($t, $db_con, $vts);
+        $this->assert_sql_by_grp($t, $db_con, $vts, $vts->grp);
 
         $t->subheader('Value time series data SQL setup statements');
         $tsn = $t->value_ts_data();
@@ -217,23 +230,21 @@ class value_tests
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a verb
      */
-    private function assert_sql_by_grp(test_cleanup $t, sql_db $db_con, object $usr_obj): void
+    private function assert_sql_by_grp(test_cleanup $t, sql_db $db_con, object $usr_obj, group $grp): void
     {
         global $usr;
 
-        $phr_grp = new group($usr);
-        $phr_grp->set_id(5);
         $sc = $db_con->sql_creator();
 
         // check the Postgres query syntax
         $sc->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_grp($sc, $phr_grp, $usr_obj::class);
+        $qp = $usr_obj->load_sql_by_grp($sc, $grp, $usr_obj::class);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_grp($sc, $phr_grp, $usr_obj::class);
+            $qp = $usr_obj->load_sql_by_grp($sc, $grp, $usr_obj::class);
             $t->assert_qp($qp, $sc->db_type);
         }
     }

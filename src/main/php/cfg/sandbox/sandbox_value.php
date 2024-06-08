@@ -56,6 +56,7 @@ use cfg\log\change_link;
 use cfg\log\change_value;
 use cfg\result\result;
 use cfg\value\value;
+use cfg\value\value_dsp_old;
 use DateTime;
 use Exception;
 use shared\library;
@@ -305,25 +306,9 @@ class sandbox_value extends sandbox_multi
         }
     }
 
-    function is_main(): bool
-    {
-        if ($this::class == value::class) {
-            return false;
-        } else {
-            $grp_id = new group_id();
-            $nbr_of_ids = $grp_id->count($this->grp_id());
-            if ($nbr_of_ids > result_id::PRIME_PHRASES_STD
-                and $nbr_of_ids <= group_id::MAIN_PHRASES_STD) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
     function table_type(): sql_type
     {
-        if ($this::class == value::class) {
+        if ($this::class == value::class or $this::class == value_dsp_old::class) {
             return $this->grp->table_type();
         } else {
             if ($this->is_main()) {
@@ -336,7 +321,7 @@ class sandbox_value extends sandbox_multi
 
     function table_extension(): string
     {
-        if ($this::class == value::class) {
+        if ($this::class == value::class or $this::class == value_dsp_old::class) {
             return $this->grp->table_extension();
         } else {
             if ($this->is_main()) {
@@ -364,7 +349,33 @@ class sandbox_value extends sandbox_multi
 
     function is_prime(): bool
     {
+        if ($this::class == value::class or $this::class == value_dsp_old::class) {
         return $this->grp()->is_prime();
+        } else {
+            $grp_id = new group_id();
+            $nbr_of_ids = $grp_id->count($this->grp_id());
+            if ($nbr_of_ids <= result_id::PRIME_PHRASES_STD) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    function is_main(): bool
+    {
+        if ($this::class == value::class or $this::class == value_dsp_old::class) {
+            return false;
+        } else {
+            $grp_id = new group_id();
+            $nbr_of_ids = $grp_id->count($this->grp_id());
+            if ($nbr_of_ids > result_id::PRIME_PHRASES_STD
+                and $nbr_of_ids <= group_id::MAIN_PHRASES_STD) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     function is_big(): bool
@@ -372,9 +383,27 @@ class sandbox_value extends sandbox_multi
         return $this->grp()->is_big();
     }
 
+    /**
+     * TODO create a function max_phrases that is overwritten by the result object
+     * @param bool $all
+     * @return array
+     */
     function id_names(bool $all = false): array
     {
-        return $this->grp()->id_names($all);
+        // TODO remove value_dsp_old
+        if ($this::class == value::class or $this::class == value_dsp_old::class) {
+            return $this->grp()->id_names($all);
+        } else {
+            if ($this->is_main()) {
+                if ($this->is_standard()) {
+                    return $this->grp()->id_names($all, group_id::MAIN_PHRASES_STD);
+                } else {
+                    return $this->grp()->id_names($all, result_id::MAIN_PHRASES_ALL);
+                }
+            } else {
+                return $this->grp()->id_names($all);
+            }
+        }
     }
 
     function id_lst(): array
@@ -686,7 +715,7 @@ class sandbox_value extends sandbox_multi
      */
     protected function load_sql_set_where(sql_par $qp, sql $sc, string $ext): sql_par
     {
-        $this->load_sql_where_id($qp, $sc);
+        $this->load_sql_where_id($qp, $sc, true);
 
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -706,7 +735,7 @@ class sandbox_value extends sandbox_multi
      */
     protected function load_sql_where_id(sql_par $qp, sql $sc, bool $all = false): sql_par
     {
-        if ($this->is_prime()) {
+        if ($this->is_prime() or $this->is_main()) {
             $fields = $this->id_names($all);
             $values = $this->id_lst();
             $pos = 0;
@@ -739,7 +768,7 @@ class sandbox_value extends sandbox_multi
     ): sql_par
     {
         // remove user parameter before the query name creation because by_usr_cfg id enough
-        $qp = new sql_par($class, $sc_par_lst->remove(sql_type::USER), '', $this->grp->table_extension());
+        $qp = new sql_par($class, $sc_par_lst->remove(sql_type::USER), '', $this->table_extension());
         $qp->name .= 'usr_cfg';
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
@@ -778,7 +807,7 @@ class sandbox_value extends sandbox_multi
             $ext .= sql::NAME_SEP . sql::NAME_EXT_EX_OWNER;
         }
         $sc_par_lst = [sql_type::COMPLETE, sql_type::USER];
-        $sc_par_lst[] = $this->grp->table_type();
+        $sc_par_lst[] = $this->table_type();
         $qp = new sql_par($this::class, new sql_type_list($sc_par_lst), $ext);
         $sc->set_class($this::class, new sql_type_list($sc_par_lst));
         $sc->set_name($qp->name);
@@ -828,8 +857,8 @@ class sandbox_value extends sandbox_multi
      */
     protected function load_sql_by_grp_id(sql $sc, string $query_name, string $class = self::class): sql_par
     {
-        $sc_par_lst = new sql_type_list([$this->grp()->table_type()]);
-        $id_ext = $this->grp()->table_extension();
+        $sc_par_lst = new sql_type_list([$this->table_type()]);
+        $id_ext = $this->table_extension();
         $qp = $this->load_sql_multi($sc, $query_name, $class, $sc_par_lst, '', $id_ext);
         return $this->load_sql_set_where($qp, $sc, $id_ext);
     }
@@ -864,9 +893,9 @@ class sandbox_value extends sandbox_multi
     ): sql_par
     {
         $sc_par_lst = new sql_type_list([]);
-        $sc_par_lst->add($this->grp->table_type());
+        $sc_par_lst->add($this->table_type());
         $sc_par_lst->add(sql_type::NORM);
-        $id_ext = $this->grp->table_extension();
+        $id_ext = $this->table_extension();
         $qp = new sql_par($class, $sc_par_lst, '', $id_ext);
         $qp->name .= sql_db::FLD_ID;
         $sc->set_class($class, $sc_par_lst);
@@ -885,13 +914,13 @@ class sandbox_value extends sandbox_multi
     function load_sql_median_user(sql $sc): sql_par
     {
         $sc_par_lst = new sql_type_list([]);
-        $sc_par_lst->add($this->grp->table_type());
+        $sc_par_lst->add($this->table_type());
         $sc_par_lst->add(sql_type::USER);
         $ext = sql::NAME_EXT_MEDIAN_USER;
         if ($this->owner_id > 0) {
             $ext .= sql::NAME_SEP . sql::NAME_EXT_EX_OWNER;
         }
-        $id_ext = $this->grp->table_extension();
+        $id_ext = $this->table_extension();
         $qp = new sql_par($this::class, $sc_par_lst, $ext, $id_ext);
         $sc->set_class($this::class, $sc_par_lst);
         $sc->set_name($qp->name);
@@ -962,7 +991,10 @@ class sandbox_value extends sandbox_multi
                 sql_field_type::INT_SMALL
             );
             if ($sc_par_lst->is_standard()) {
-                $fld_lst = $this->id_fields_prime(1, result_id::MAIN_PHRASES_STD);
+                $fld_lst = $this->id_fields_prime(1,
+                    result_id::MAIN_SOURCE_PHRASES
+                    + result_id::MAIN_PHRASES_STD
+                    + result_id::MAIN_RESULT_PHRASES);
             } else {
                 $fld_lst = $this->id_fields_main();
             }
@@ -1285,7 +1317,7 @@ class sandbox_value extends sandbox_multi
             $new_value = $log->new_value;
             $std_value = $log->std_value;
         }
-        $ext = $this->grp()->table_extension();
+        $ext = $this->table_extension();
         if ($log->add()) {
             if ($this->can_change()) {
                 $sql_fld_typ = $sc->get_sql_par_type($new_value);
@@ -1463,7 +1495,7 @@ class sandbox_value extends sandbox_multi
         // set the sql query type
         $sc_par_lst->add(sql_type::UPDATE);
         // set the target sql table type for this value e.g. add prime
-        $sc_par_lst->add($this->grp->table_type());
+        $sc_par_lst->add($this->table_type());
         // get the name indicator how many id fields are user
         $id_ext = $this->table_extension();
 
@@ -1741,7 +1773,7 @@ class sandbox_value extends sandbox_multi
     {
         $result = $this->dsp_id_entry();
         if ($this->id() != 0) {
-            $sc_par_lst = new sql_type_list([$this->grp->table_type()]);
+            $sc_par_lst = new sql_type_list([$this->table_type()]);
             $id_fields = $this->id_field($sc_par_lst);
             if (is_array($id_fields)) {
                 $fld_dsp = ' (' . implode(', ', $id_fields);

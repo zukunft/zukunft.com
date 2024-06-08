@@ -10,4 +10,7 @@ PREPARE value_prime_p1_norm_by_id FROM
             protect_id,
             user_id
        FROM values_prime
-      WHERE phrase_id_1 = ?';
+      WHERE phrase_id_1 = ?
+        AND phrase_id_2 = ?
+        AND phrase_id_3 = ?
+        AND phrase_id_4 = ?';
