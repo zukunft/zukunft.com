@@ -1,4 +1,4 @@
-PREPARE value_prime_p1_delete (bigint, bigint, bigint, bigint) AS
+PREPARE value_prime_p1_delete (smallint, smallint, smallint, smallint) AS
     DELETE FROM values_prime
      WHERE phrase_id_1 = $1
        AND phrase_id_2 = $2

@@ -2221,45 +2221,6 @@ class value extends sandbox_value
 
 
     /*
-     * sql write
-     */
-
-    /**
-     * create the sql statement to delete a value in the database
-     * TODO check if user specific overwrites can be deleted
-     *
-     * @param sql $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_delete(
-        sql           $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
-    ): sql_par
-    {
-        // clone the parameter list to avoid changing the given list
-        $sc_par_lst_used = clone $sc_par_lst;
-        // set the sql query type
-        $sc_par_lst_used->add(sql_type::DELETE);
-        // set the target sql table type for this value
-        $sc_par_lst_used->add($this->table_type());
-        // get the name indicator how many id fields are user
-        $id_ext = $this->grp->table_extension();
-
-        $qp = $this->sql_common($sc, $sc_par_lst_used, '', $id_ext);
-        $sc->set_name($qp->name);
-        $id_lst = $this->id_or_lst();
-        $qp->sql = $sc->create_sql_delete($this->id_field($sc_par_lst), $id_lst, $sc_par_lst_used);
-        if (is_array($id_lst)) {
-            $qp->par = $id_lst;
-        } else {
-            $qp->par = [$id_lst];
-        }
-        return $qp;
-    }
-
-
-    /*
      * sql write fields
      */
 

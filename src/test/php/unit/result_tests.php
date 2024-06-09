@@ -136,9 +136,10 @@ class result_tests
         $t->assert_sql_update($sc, $res_big, $db_res_big);
         $t->assert_sql_update($sc, $res_big, $db_res_big, [sql_type::USER]);
         // TODO activate db write
-        // $t->assert_sql_delete($sc, $res);
-        // $t->assert_sql_delete($sc, $res, [sql_type::USER]);
-        // $t->assert_sql_delete($sc, $res, [sql_type::USER], true);
+        $t->assert_sql_delete($sc, $res_prime);
+        $t->assert_sql_delete($sc, $res_prime, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $res);
+        $t->assert_sql_delete($sc, $res, [sql_type::USER]);
 
         $t->subheader('Display tests');
 

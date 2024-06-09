@@ -350,7 +350,7 @@ class sandbox_value extends sandbox_multi
     function is_prime(): bool
     {
         if ($this::class == value::class or $this::class == value_dsp_old::class) {
-        return $this->grp()->is_prime();
+            return $this->grp()->is_prime();
         } else {
             $grp_id = new group_id();
             $nbr_of_ids = $grp_id->count($this->grp_id());
@@ -1044,29 +1044,29 @@ class sandbox_value extends sandbox_multi
      */
     function id_field(sql_type_list $sc_par_lst = new sql_type_list([])): string|array
     {
+        $result = $this->id_field_group();
         if ($this->is_prime()) {
             if ($this::class == result::class and $sc_par_lst->is_standard()) {
                 // TODO merge with result::FLD_KEY_PRIME ?
                 $id_fields = $this->id_fields_prime(1, result_id::PRIME_PHRASES_STD);
-                return array_merge([formula::FLD_ID], $id_fields);
+                $result = array_merge([formula::FLD_ID], $id_fields);
             } else {
                 if ($this::class == result::class) {
-                    return array_merge([formula::FLD_ID], $this->id_fields_prime());
+                    $result = array_merge([formula::FLD_ID], $this->id_fields_prime());
                 } else {
-                    return $this->id_fields_prime();
+                    $result = $this->id_fields_prime();
                 }
             }
         } elseif ($this->is_main()) {
             if ($this::class == result::class and $sc_par_lst->is_standard()) {
                 // TODO merge with result::FLD_KEY_PRIME ?
                 $id_fields = $this->id_fields_main(1, group_id::MAIN_PHRASES_STD);
-                return array_merge([formula::FLD_ID], $id_fields);
+                $result = array_merge([formula::FLD_ID], $id_fields);
             } else {
-                return array_merge([formula::FLD_ID], $this->id_fields_main());
+                $result = array_merge([formula::FLD_ID], $this->id_fields_main());
             }
-        } else {
-            return $this->id_field_group();
         }
+        return $result;
     }
 
     /**
@@ -1472,6 +1472,39 @@ class sandbox_value extends sandbox_multi
             // and remember the paraemeters used
             $qp->par = $sc->par_values();
         }
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to delete a value in the database
+     * TODO check if user specific overwrites can be deleted
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_delete(
+        sql           $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
+    {
+        // clone the parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::DELETE);
+        // set the target sql table type for this value
+        $sc_par_lst_used->add($this->table_type());
+        // get the name indicator how many id fields are user
+        $id_ext = $this->grp->table_extension();
+        // get the prime db key list for this sandbox object
+        $fvt_lst_id = $this->id_fvt_lst($sc_par_lst);
+
+        $qp = $this->sql_common($sc, $sc_par_lst_used, '', $id_ext);
+        $sc->set_name($qp->name);
+        // TODO add test fpr !$sc_par_lst_used->exclude_sql()
+        $qp->sql = $sc->create_sql_delete_fvt($fvt_lst_id, $sc_par_lst_used);
+        // and remember the paraemeters used
+        $qp->par = $sc->par_values();
         return $qp;
     }
 

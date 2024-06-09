@@ -1853,6 +1853,71 @@ class sql
 
     /**
      * create a sql statement to delete or exclude a database row
+     * @param sql_par_field_list $id_fvt_lst name, value and type of the id field (or list of field names)
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
+     * @return string
+     */
+    function create_sql_delete_fvt(
+        sql_par_field_list $id_fvt_lst,
+        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        sql_par_field_list $fvt_lst = new sql_par_field_list(),
+    ): string
+    {
+        $excluded = $sc_par_lst->exclude_sql();
+
+        $id_fields = $id_fvt_lst->names();
+        $id_field = $id_fields[0];
+
+        // check if the minimum parameters are set
+        if ($this->query_name == '') {
+            log_err('SQL statement is not yet named');
+        }
+
+        if ($sc_par_lst->use_named_par()) {
+            if ($sc_par_lst->is_usr_tbl()) {
+
+                $sql_where = $this->sql_where_no_par(
+                    [$id_field, user::FLD_ID],
+                    ['_' . $id_field, '_' . user::FLD_ID], 0, '_' . $id_field, true);
+            } else {
+                $sql_where = $this->sql_where_no_par($id_field, '_' . $id_field, 0, '_' . $id_field);
+            }
+        } else {
+            $sql_where = $this->sql_where_fvt($id_fvt_lst);
+        }
+
+        if ($sc_par_lst->incl_log()) {
+            if ($sc_par_lst->create_function()) {
+                $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst, $fvt_lst);
+            } else {
+                $sql = sql::DELETE . ' ' . $this->table . ' ';
+                $sql .= $sql_where;
+                if ($excluded) {
+                    $sql .= ' AND ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                }
+            }
+        } else {
+            $sql = $this->prepare_this_sql(self::DELETE);
+            $sql .= ' ' . $this->name_sql_esc($this->table);
+            $sql .= $sql_where;
+
+            if ($excluded) {
+                $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+            }
+        }
+
+        if ($sc_par_lst->create_function()) {
+            return $sql;
+        } else {
+            return $this->end_sql($sql, self::DELETE);
+        }
+    }
+
+    /**
+     * create a sql statement to delete or exclude a database row
+     * TODO deprecate and replace by create_sql_delete_fvt
+     *
      * @param int|string|array $id_field the id field or id fields of the table from where the row should be deleted
      * @param int|string|array $id
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -1900,7 +1965,7 @@ class sql
             $sql .= $sql_where;
 
             if ($excluded) {
-                $sql .= ' AND ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
             }
         }
 

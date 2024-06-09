@@ -1556,6 +1556,7 @@ class sandbox_multi extends db_object_multi_user
     /**
      * create the sql statement to delete a value in the database
      * TODO check if user specific overwrites can be deleted
+     * TODO chekc if can be moved to sandbox_value object
      *
      * @param sql $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation

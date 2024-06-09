@@ -84,6 +84,8 @@ class value_tests
         $t->assert_sql_user_changes($sc, $val);
         $t->assert_sql_changer($sc, $val);
         $t->assert_sql_median_user($sc, $val);
+        $val = $t->value();
+        $t->assert_sql_standard($sc, $val);
         $val = $t->value_16();
         $t->assert_sql_median_user($sc, $val);
         $val = $t->value_17_plus();
@@ -91,16 +93,9 @@ class value_tests
         $t->assert_sql_user_changes($sc, $val);
         $t->assert_sql_changer($sc, $val);
 
-        // ... and to check if any user has uses another than the default value
-
-        // ... and the related default value
-        $val = $t->value();
-        $t->assert_sql_standard($sc, $val);
-
-        // TODO sort the test by query type and not value type
+        $t->subheader('value sql write');
         // TODO add tests with log
         // TODO add sql insert and update tests to all db objects
-        $t->subheader('SQL statements - for often used (prime) values');
         $t->assert_sql_insert($sc, $t->value());
         $t->assert_sql_insert($sc, $t->value_zero(), [sql_type::USER]);
         $t->assert_sql_insert($sc, $t->value_prime_3());
