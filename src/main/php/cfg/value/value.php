@@ -275,6 +275,7 @@ class value extends sandbox_value
         $lib = new library();
         $one_id_fld = true;
         if ($id_fld == self::FLD_ID) {
+            // TODO add $sc_par_lst ?
             $id_fld = $this->id_field();
             if (is_array($id_fld)) {
                 $grp_id = new group_id();
@@ -534,7 +535,7 @@ class value extends sandbox_value
         $qp = parent::load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext, $id_ext);
 
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
-        $sc->set_id_field($this->id_field());
+        $sc->set_id_field($this->id_field($sc_par_lst));
 
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
@@ -1458,9 +1459,10 @@ class value extends sandbox_value
      */
     function not_changed_sql(sql $sc): sql_par
     {
-        $tbl_typ = $this->grp->table_type();
+        $tbl_typ = $this->table_type();
         $ext = $this->grp->table_extension();
         $sc->set_class(self::class, new sql_type_list([$tbl_typ]));
+        // TODO add $sc_par_lst ?
         return $sc->load_sql_not_changed_multi($this->id, $this->owner_id, $this->id_field(), $ext, $tbl_typ);
     }
 
@@ -1561,28 +1563,6 @@ class value extends sandbox_value
             }
         }
         return $result;
-    }
-
-    /**
-     * create an SQL statement to retrieve the user changes of the current value
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_user_changes(
-        sql           $sc,
-        string        $class = self::class,
-        sql_type_list $sc_par_lst = new sql_type_list([])
-    ): sql_par
-    {
-        $sc_par_lst->add(sql_type::USER);
-        $sc_par_lst->add($this->grp->table_type());
-        $sc->set_class($class, $sc_par_lst);
-        // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
-        $sc->set_id_field($this->id_field());
-        return parent::load_sql_user_changes($sc, $class, $sc_par_lst);
     }
 
     /**
@@ -2260,14 +2240,14 @@ class value extends sandbox_value
         // set the sql query type
         $sc_par_lst_used->add(sql_type::DELETE);
         // set the target sql table type for this value
-        $sc_par_lst_used->add($this->grp->table_type());
+        $sc_par_lst_used->add($this->table_type());
         // get the name indicator how many id fields are user
         $id_ext = $this->grp->table_extension();
 
         $qp = $this->sql_common($sc, $sc_par_lst_used, '', $id_ext);
         $sc->set_name($qp->name);
         $id_lst = $this->id_or_lst();
-        $qp->sql = $sc->create_sql_delete($this->id_field(), $id_lst, $sc_par_lst_used);
+        $qp->sql = $sc->create_sql_delete($this->id_field($sc_par_lst), $id_lst, $sc_par_lst_used);
         if (is_array($id_lst)) {
             $qp->par = $id_lst;
         } else {

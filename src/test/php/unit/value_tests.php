@@ -67,7 +67,7 @@ class value_tests
         $t->header('value unit tests');
 
         $t->subheader('value sql setup');
-        $val = $t->value();
+        $val = $t->value(); // one value object creates all tables (e.g. prime, big, time, text and geo)
         $t->assert_sql_table_create($val);
         $t->assert_sql_index_create($val);
         $t->assert_sql_foreign_key_create($val);
@@ -79,7 +79,11 @@ class value_tests
         $this->assert_sql_by_grp($t, $db_con, $val, $t->group_17_plus());
 
         $t->subheader('value sql read default and user changes');
-        // ... and to check if any user has uses another than the default value
+        $val = $t->value_prime_3();
+        $t->assert_sql_not_changed($sc, $val);
+        $t->assert_sql_user_changes($sc, $val);
+        $t->assert_sql_changer($sc, $val);
+        $val = $t->value_17_plus();
         // TODO prio 1 activate
         //$t->assert_sql_not_changed($db_con, $val);
         $t->assert_sql_user_changes($sc, $val);
@@ -88,6 +92,11 @@ class value_tests
         $val = $t->value_16();
         $t->assert_sql_median_user($sc, $val);
 
+        // ... and to check if any user has uses another than the default value
+
+        // ... and the related default value
+        $val = $t->value();
+        $t->assert_sql_standard($sc, $val);
 
         // TODO sort the test by query type and not value type
         // TODO add tests with log
@@ -119,15 +128,7 @@ class value_tests
         $t->assert_sql_delete($sc, $val, [sql_type::USER, sql_type::EXCLUDE]);
 
 
-        // ... and the related default value
-        $t->assert_sql_standard($sc, $val);
 
-        // ... and to check if any user has uses another than the default value
-        $val = $t->value_prime_3();
-        $t->assert_sql_not_changed($sc, $val);
-        // TODO activate Prio 2
-        //$t->assert_sql_user_changes($sc, $val);
-        $t->assert_sql_changer($sc, $val);
 
         $t->subheader('SQL statements - for values related to up to 16 phrases');
         $val = $t->value_16();

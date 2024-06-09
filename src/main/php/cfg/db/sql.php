@@ -141,6 +141,7 @@ class sql
     const NAME_EXT_USER = '_user';
     const NAME_EXT_MEDIAN_USER = 'median_user'; // to get the user that is owner of the most often used db row
     const NAME_EXT_EX_OWNER = 'ex_owner'; // excluding the owner of the loaded db row
+    const NAME_EXT_USER_CONFIG = 'usr_cfg';
 
     // for sql functions that do the change log and the actual change with on function
     const FLD_LOG_FIELD_PREFIX = 'field_id_'; // added to the field name to include the preloaded log field id
@@ -936,76 +937,99 @@ class sql
      */
 
     /**
+     * set the where condition based on a field. value and type list
+     *
+     * @param sql_par_field_list $fvt_lst list with the ids for the where condition
+     * @return void
+     */
+    function add_where_fvt(sql_par_field_list $fvt_lst): void
+    {
+        foreach ($fvt_lst->lst as $fvt) {
+            $this->add_where($fvt->name, $fvt->value, $fvt->type, $fvt->par_name);
+        }
+    }
+
+    /**
      * add a where condition a list of id are one field or another
      * e.g. used to select both sides of a phrase tree
      * TODO move the table prefix to a separate parameter
      *
      * @param string $fld the field name used in the sql where statement
-     * @param int|string|array $fld_val with the database id that should be selected
+     * @param int|string|array|null $fld_val with the database id that should be selected
      * @param sql_par_type|null $spt to force using a non-standard parameter type e.g. OR instead of AND
      * @param string $name the unique name of the parameter to force to use the same parameter more than once
      * @return void
      */
     function add_where(
-        string            $fld,
-        int|string|array  $fld_val,
-        sql_par_type|null $spt = null,
-        string            $name = ''
+        string                $fld,
+        int|string|array|null $fld_val,
+        sql_par_type|null     $spt = null,
+        string                $name = ''
     ): void
     {
         $this->add_field($fld);
 
-        // set the default parameter type for the sql parameter type (spt)
-        if ($spt == null) {
-            $spt = $this->get_sql_par_type($fld_val);
-        }
-
-        // format the values if needed
-        if ($spt == sql_par_type::INT_LIST
-            or $spt == sql_par_type::INT_LIST_OR) {
-            $this->add_par($spt, $this->int_array_to_sql_string($fld_val));
-        } elseif ($spt == sql_par_type::TEXT_LIST) {
-            $this->add_par($spt, $this->str_array_to_sql_string($fld_val));
-        } elseif ($spt == sql_par_type::INT
-            or $spt == sql_par_type::INT_SMALL
-            or $spt == sql_par_type::INT_HIGHER
-            or $spt == sql_par_type::INT_LOWER
-            or $spt == sql_par_type::INT_OR
-            or $spt == sql_par_type::INT_NOT
-            or $spt == sql_par_type::INT_NOT_OR_NULL
-            or $spt == sql_par_type::LIMIT
-            or $spt == sql_par_type::OFFSET) {
-            $this->add_par($spt, $fld_val);
-        } elseif ($spt == sql_par_type::INT_SAME
-            or $spt == sql_par_type::INT_SAME_OR) {
-            $this->add_par($spt, $fld_val, false, false, $name);
-        } elseif ($spt == sql_par_type::TEXT
-            or $spt == sql_par_type::TEXT_USR
-            or $spt == sql_par_type::TEXT_OR
-            or $spt == sql_par_type::INT_SUB
-            or $spt == sql_par_type::INT_SUB_IN) {
-            $this->add_par($spt, $fld_val);
-        } elseif ($spt == sql_par_type::CONST
-            or $spt == sql_par_type::CONST_NOT
-            or $spt == sql_par_type::CONST_NOT_IN) {
-            $this->add_par($spt, $fld_val);
-            log_debug('For SQL parameter type const no parameter is needed');
-        } elseif ($spt == sql_par_type::MIN
-            or $spt == sql_par_type::MAX
-            or $spt == sql_par_type::COUNT) {
-            $this->add_par($spt, '');
-            log_debug('For group SQL parameter type and no parameter and value is needed');
-        } elseif ($spt == sql_par_type::IS_NULL) {
-            $this->add_par($spt, '');
-        } elseif ($spt == sql_par_type::NOT_NULL) {
-            $this->add_par($spt, '');
-        } elseif ($spt == sql_par_type::LIKE_R) {
-            $this->add_par($spt, $fld_val . '%', false, false, $name);
-        } elseif ($spt == sql_par_type::LIKE
-            or $spt == sql_par_type::LIKE_OR) {
-            $this->add_par($spt, '%' . $fld_val . '%', false, false, $name);
+        // add a null parameter e.g. for the value or result group id
+        if ($fld_val === null) {
+            if ($spt === null) {
+                log_err('value and type missing in add_where');
+            } else {
+                $this->add_par($spt, 0);
+            }
         } else {
-            log_err('SQL parameter type ' . $spt->value . ' not expected');
+
+            // set the default parameter type for the sql parameter type (spt)
+            if ($spt == null) {
+                $spt = $this->get_sql_par_type($fld_val);
+            }
+
+            // format the values if needed
+            if ($spt == sql_par_type::INT_LIST
+                or $spt == sql_par_type::INT_LIST_OR) {
+                $this->add_par($spt, $this->int_array_to_sql_string($fld_val));
+            } elseif ($spt == sql_par_type::TEXT_LIST) {
+                $this->add_par($spt, $this->str_array_to_sql_string($fld_val));
+            } elseif ($spt == sql_par_type::INT
+                or $spt == sql_par_type::INT_SMALL
+                or $spt == sql_par_type::INT_HIGHER
+                or $spt == sql_par_type::INT_LOWER
+                or $spt == sql_par_type::INT_OR
+                or $spt == sql_par_type::INT_NOT
+                or $spt == sql_par_type::INT_NOT_OR_NULL
+                or $spt == sql_par_type::LIMIT
+                or $spt == sql_par_type::OFFSET) {
+                $this->add_par($spt, $fld_val);
+            } elseif ($spt == sql_par_type::INT_SAME
+                or $spt == sql_par_type::INT_SAME_OR) {
+                $this->add_par($spt, $fld_val, false, false, $name);
+            } elseif ($spt == sql_par_type::TEXT
+                or $spt == sql_par_type::TEXT_USR
+                or $spt == sql_par_type::TEXT_OR
+                or $spt == sql_par_type::INT_SUB
+                or $spt == sql_par_type::INT_SUB_IN) {
+                $this->add_par($spt, $fld_val);
+            } elseif ($spt == sql_par_type::CONST
+                or $spt == sql_par_type::CONST_NOT
+                or $spt == sql_par_type::CONST_NOT_IN) {
+                $this->add_par($spt, $fld_val);
+                log_debug('For SQL parameter type const no parameter is needed');
+            } elseif ($spt == sql_par_type::MIN
+                or $spt == sql_par_type::MAX
+                or $spt == sql_par_type::COUNT) {
+                $this->add_par($spt, '');
+                log_debug('For group SQL parameter type and no parameter and value is needed');
+            } elseif ($spt == sql_par_type::IS_NULL) {
+                $this->add_par($spt, '');
+            } elseif ($spt == sql_par_type::NOT_NULL) {
+                $this->add_par($spt, '');
+            } elseif ($spt == sql_par_type::LIKE_R) {
+                $this->add_par($spt, $fld_val . '%', false, false, $name);
+            } elseif ($spt == sql_par_type::LIKE
+                or $spt == sql_par_type::LIKE_OR) {
+                $this->add_par($spt, '%' . $fld_val . '%', false, false, $name);
+            } else {
+                log_err('SQL parameter type ' . $spt->value . ' not expected');
+            }
         }
     }
 
@@ -1951,11 +1975,13 @@ class sql
     }
 
     /**
+     * create the where part of a sql statement
+     *
      * @param string|array $id_field the id field or id fields of the table from where the row should be deleted
-     * @param int|string|array $id
-     * @param int $offset
-     * @param string $id_field_par
-     * @param bool $is_named
+     * @param int|string|array $id the id or list of ids to select the row
+     * @param int $offset for the par number e.g. 4 for $4
+     * @param string $id_field_par with the parameter name for a single field e.g. "$4" or "new_word_id"
+     * @param bool $is_named true if named paremeters like "_word_name" should be used
      * @return string with the where statement
      */
     private function sql_where_no_par(
@@ -1966,16 +1992,14 @@ class sql
         bool             $is_named = false
     ): string
     {
-
-        // create a prepare SQL statement if possible
         $sql_where = '';
         if (is_array($id_field)) {
             $pos = $offset;
             foreach ($id_field as $key => $id_fld) {
                 if ($sql_where != '') {
-                    $sql_where .= ' AND ';
+                    $sql_where .= ' ' . sql::AND . ' ';
                 } else {
-                    $sql_where .= ' WHERE ';
+                    $sql_where .= ' ' . sql::WHERE . ' ';
                 }
                 if ($is_named) {
                     $sql_where .= $id_fld . ' = ' . $id[$key];
@@ -1985,7 +2009,7 @@ class sql
                 $pos++;
             }
         } else {
-            $sql_where = ' WHERE ' . $id_field . ' = ' . $id_field_par;
+            $sql_where = ' ' . sql::WHERE . ' ' . $id_field . ' = ' . $id_field_par;
         }
         return $sql_where;
     }

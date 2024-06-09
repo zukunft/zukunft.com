@@ -178,11 +178,11 @@ class system_tests
         $t->assert($test_name, $exp->dsp_id(), $target);
         $test_name = 'debug result id';
         $res = $t->result_simple();
-        $target = '"Mathematics" 123456 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)';
+        $target = '"Mathematics" 123456 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $res->dsp_id(), $target);
         $test_name = 'debug result_list id';
         $res_lst = $t->result_list();
-        $target = '"Mathematics" 123456 / "percent" 0.01234 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / 2,,,) for user 1 (zukunft.com system test)';
+        $target = '"Mathematics" 123456 / "percent" 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / 2,,,) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $res_lst->dsp_id(), $target);
         $test_name = 'debug figure id';
         $fig = $t->figure_value();

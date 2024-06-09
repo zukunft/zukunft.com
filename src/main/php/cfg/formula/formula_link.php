@@ -285,13 +285,16 @@ class formula_link extends sandbox_link_with_type
      * create an SQL statement to retrieve the user specific formula link from the database
      *
      * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
      * @return sql_par the SQL statement base on the parameters set in $this
      */
-    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(
+        sql           $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
     {
-        $sc->set_class($class, new sql_type_list([sql_type::USER]));
-        return parent::load_sql_user_changes($sc, $class);
+        $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
+        return parent::load_sql_user_changes($sc, $sc_par_lst);
     }
 
     /**

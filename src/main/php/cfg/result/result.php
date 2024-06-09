@@ -607,27 +607,6 @@ class result extends sandbox_value
     }
 
     /**
-     * create an SQL statement to retrieve the user changes of the current result
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_user_changes(
-        sql           $sc,
-        string        $class = self::class,
-        sql_type_list $sc_par_lst = new sql_type_list([])
-    ): sql_par
-    {
-        $sc_par_lst->add(sql_type::USER);
-        $sc_par_lst->add($this->grp->table_type());
-        $sc->set_class($class, $sc_par_lst);
-        // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
-        $sc->set_id_field($this->id_field($sc_par_lst));
-        return parent::load_sql_user_changes($sc, $class, $sc_par_lst);
-    }
-
-    /**
      * load (or force reload from database of) a result by the id
      *
      * @param int|string $id the unique database id of the result that should be loaded

@@ -1201,19 +1201,21 @@ class test_base
      *
      * @param sql $sc a sql creator object that can be empty
      * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
+     * @param array $sc_par_lst_in the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_user_changes(sql $sc, sandbox|sandbox_value $usr_obj): bool
+    function assert_sql_user_changes(sql $sc, sandbox|sandbox_value $usr_obj, array $sc_par_lst_in = []): bool
     {
+        $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_user_changes($sc);
+        $qp = $usr_obj->load_sql_user_changes($sc, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_user_changes($sc);
+            $qp = $usr_obj->load_sql_user_changes($sc, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
 
@@ -1950,8 +1952,8 @@ class test_base
     }
 
     /**
-     * check the not changed SQL statements of a user sandbox object
-     * e.g. word, triple, value or formulas
+     * create a sql statement to check if any user has uses another than the default value
+     * e.g. word, triple, value or formulas has been renamed
      *
      * @param sql $sc a sql creator object that can be empty
      * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word

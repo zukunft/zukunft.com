@@ -1265,13 +1265,16 @@ class sandbox extends db_object_seq_id_user
      * create an SQL statement to retrieve the user changes of the current object
      *
      * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(
+        sql           $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
     {
-        $qp = new sql_par($class);
-        $qp->name .= 'usr_cfg';
+        $qp = new sql_par($this::class);
+        $qp->name .= sql::NAME_EXT_USER_CONFIG;
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields($this->all_sandbox_fields());

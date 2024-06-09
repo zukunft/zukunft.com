@@ -754,40 +754,34 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
-     * create an SQL statement to retrieve the user changes of the current object
+     * create an SQL statement to retrieve the user changes of the current value or result
      *
      * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_user_changes(
         sql           $sc,
-        string        $class = self::class,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
+        $sc_par_lst->add(sql_type::USER);
+        $sc_par_lst->add($this->table_type());
+        $sc->set_class($this::class, $sc_par_lst);
+        // overwrite the standard id field name (value_id or result_id) with the main database id field for results "group_id"
+        $sc->set_id_field($this->id_field($sc_par_lst));
+
         // remove user parameter before the query name creation because by_usr_cfg id enough
-        $qp = new sql_par($class, $sc_par_lst->remove(sql_type::USER), '', $this->table_extension());
-        $qp->name .= 'usr_cfg';
+        $qp = new sql_par($this::class, $sc_par_lst->remove(sql_type::USER), '', $this->table_extension());
+        $qp->name .= sql::NAME_EXT_USER_CONFIG;
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields($this->all_sandbox_fields());
 
-        if ($this->grp->is_prime()) {
-            $fields = $this->id_names();
-            $values = $this->id_lst();
-        } else {
-            $fields = array(group::FLD_ID);
-            $values = array($this->grp->id());
-        }
-        $pos = 0;
-        foreach ($fields as $field) {
-            $sc->add_where($field, $values[$pos]);
-            $pos++;
-        }
+        // get and set the prime db key list for this sandbox object
+        $fvt_lst_id = $this->id_fvt_lst($sc_par_lst);
+        $sc->add_where_fvt($fvt_lst_id);
 
-        $sc->add_where(user::FLD_ID, $this->user()->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
@@ -979,7 +973,7 @@ class sandbox_value extends sandbox_multi
                     if (array_key_exists($key, $id_lst)) {
                         $id = $id_lst[$key];
                         $lst->add_field($fld, $id, sql_field_type::INT_SMALL);
-                    } elseif ($sc_par_lst->is_update()) {
+                    } elseif (!$sc_par_lst->is_insert()) {
                         $lst->add_field($fld, $id, sql_field_type::INT_SMALL);
                     }
                 }
@@ -1007,7 +1001,7 @@ class sandbox_value extends sandbox_multi
                     if (array_key_exists($key, $id_lst)) {
                         $id = $id_lst[$key];
                         $lst->add_field($fld, $id, sql_field_type::INT_SMALL);
-                    } elseif ($sc_par_lst->is_update()) {
+                    } elseif (!$sc_par_lst->is_insert()) {
                         $lst->add_field($fld, $id, sql_field_type::INT_SMALL);
                     }
                 }
@@ -1056,7 +1050,11 @@ class sandbox_value extends sandbox_multi
                 $id_fields = $this->id_fields_prime(1, result_id::PRIME_PHRASES_STD);
                 return array_merge([formula::FLD_ID], $id_fields);
             } else {
-                return $this->id_fields_prime();
+                if ($this::class == result::class) {
+                    return array_merge([formula::FLD_ID], $this->id_fields_prime());
+                } else {
+                    return $this->id_fields_prime();
+                }
             }
         } elseif ($this->is_main()) {
             if ($this::class == result::class and $sc_par_lst->is_standard()) {
@@ -1064,7 +1062,7 @@ class sandbox_value extends sandbox_multi
                 $id_fields = $this->id_fields_main(1, group_id::MAIN_PHRASES_STD);
                 return array_merge([formula::FLD_ID], $id_fields);
             } else {
-                return $this->id_fields_main();
+                return array_merge([formula::FLD_ID], $this->id_fields_main());
             }
         } else {
             return $this->id_field_group();
