@@ -83,14 +83,13 @@ class value_tests
         $t->assert_sql_not_changed($sc, $val);
         $t->assert_sql_user_changes($sc, $val);
         $t->assert_sql_changer($sc, $val);
-        $val = $t->value_17_plus();
-        // TODO prio 1 activate
-        //$t->assert_sql_not_changed($db_con, $val);
-        $t->assert_sql_user_changes($sc, $val);
-        $t->assert_sql_changer($sc, $val);
-        // TODO review and add tests for some other value table types
+        $t->assert_sql_median_user($sc, $val);
         $val = $t->value_16();
         $t->assert_sql_median_user($sc, $val);
+        $val = $t->value_17_plus();
+        $t->assert_sql_not_changed($sc, $val);
+        $t->assert_sql_user_changes($sc, $val);
+        $t->assert_sql_changer($sc, $val);
 
         // ... and to check if any user has uses another than the default value
 

@@ -4425,13 +4425,15 @@ class sql
         sql_type     $tbl_typ = sql_type::MOST
     ): sql_par
     {
-        $qp = new sql_par($this->class);
+        $sc_par_lst = new sql_type_list([]);
+        $sc_par_lst->add($tbl_typ);
+        $qp = new sql_par($this->class, $sc_par_lst);
         $qp->name .= 'not_changed';
         if ($owner_id > 0) {
             $qp->name .= '_not_owned';
         }
         $this->set_name($qp->name);
-        $this->set_table(new sql_type_list([$tbl_typ]));
+        $this->set_table($sc_par_lst);
         $this->set_id_field($id_field);
         $this->set_fields(array(user::FLD_ID));
         if ($id == 0) {
@@ -4455,9 +4457,9 @@ class sql
                                 $this->add_par(sql_par_type::INT_SMALL, $id_item);
                             }
                             if ($sql_mid_where == '') {
-                                $sql_mid_where .= " WHERE ";
+                                $sql_mid_where .= ' ' . sql::WHERE . ' ';
                             } else {
-                                $sql_mid_where .= " AND ";
+                                $sql_mid_where .= ' ' . sql::AND . ' ';
                             }
                             $sql_mid_where .= $this->id_field[$pos] . " = " . $this->par_name();
                             $pos++;
@@ -4467,12 +4469,10 @@ class sql
                     log_err('the id fields are expected to be an array');
                 }
             } elseif ($tbl_typ == sql_type::BIG) {
-                $grp_id = new group_id();
-                $id_lst = $grp_id->get_array($id, true);
-                foreach ($id_lst as $id_item) {
-                    $this->add_par(sql_par_type::INT, $id_item);
-                }
+                $sql_mid_where .= ' ' . sql::WHERE . ' ';
+                $this->add_par(sql_par_type::TEXT, $id);
             } else {
+                $sql_mid_where .= ' ' . sql::WHERE . ' ';
                 $this->add_par(sql_par_type::INT, $id);
             }
             $sql_mid = " " . user::FLD_ID;

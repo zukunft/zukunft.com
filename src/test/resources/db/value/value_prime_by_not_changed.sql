@@ -1,4 +1,4 @@
-PREPARE value_by_not_changed (smallint, smallint, smallint, smallint) AS
+PREPARE value_prime_by_not_changed (smallint, smallint, smallint, smallint) AS
      SELECT user_id
        FROM user_values_prime
       WHERE phrase_id_1 = $1

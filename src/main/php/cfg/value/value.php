@@ -1459,9 +1459,11 @@ class value extends sandbox_value
      */
     function not_changed_sql(sql $sc): sql_par
     {
+        $sc_par_lst = new sql_type_list([]);
         $tbl_typ = $this->table_type();
-        $ext = $this->grp->table_extension();
-        $sc->set_class(self::class, new sql_type_list([$tbl_typ]));
+        $ext = $this->table_extension();
+        $sc_par_lst->add($tbl_typ);
+        $sc->set_class(self::class, $sc_par_lst);
         // TODO add $sc_par_lst ?
         return $sc->load_sql_not_changed_multi($this->id, $this->owner_id, $this->id_field(), $ext, $tbl_typ);
     }
@@ -1555,7 +1557,7 @@ class value extends sandbox_value
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $ext = $this->grp->table_extension();
+                $ext = $this->table_extension();
                 $db_con->set_class($class, true, $ext);
                 $qp = $this->sql_insert($db_con->sql_creator(), new sql_type_list([sql_type::USER]));
                 $usr_msg = $db_con->insert($qp, 'add user specific value');
