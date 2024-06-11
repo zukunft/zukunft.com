@@ -1190,7 +1190,11 @@ class sql
                                 if ($par != '') {
                                     $fld_name = sql::PAR_PREFIX_MYSQL . $par;
                                 } else {
-                                    $fld_name = sql::PAR_PREFIX_MYSQL . $chg_row_fld;
+                                    if ($chg_row_fld == sql::NAME_SEP . group::FLD_ID) {
+                                        $fld_name = $chg_row_fld;
+                                    } else {
+                                        $fld_name = sql::PAR_PREFIX_MYSQL . $chg_row_fld;
+                                    }
                                 }
                             } else {
                                 if ($par != '') {
@@ -1595,7 +1599,11 @@ class sql
         $id_field = $this->id_field_name();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $ext = sql::NAME_SEP . sql::FILE_INSERT;
-        $id_fld_new = $this->var_name_new_id($sc_par_lst);
+        if ($class == value::class) {
+            $id_fld_new = sql::NAME_SEP . $this->id_field_name();
+        } else {
+            $id_fld_new = $this->var_name_new_id($sc_par_lst);
+        }
 
         // init the result
         $qp = new sql_par($this::class);
@@ -1629,7 +1637,10 @@ class sql
 
             // add the fields used to the list
             // maybe later get the fields used in the change log sql from the sql
-            $qp->sql .= ' ' . $qp_log->sql . '; ';
+            $qp->sql .= ' ' . $qp_log->sql;
+            if (!str_ends_with($qp->sql, ';')) {
+                $qp->sql .= '; ';
+            }
             $par_lst_out->add_field(
                 user::FLD_ID,
                 $fvt_lst->get_value(user::FLD_ID),

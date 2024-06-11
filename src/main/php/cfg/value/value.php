@@ -74,6 +74,7 @@ include_once SERVICE_EXPORT_PATH . 'json.php';
 
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
+use cfg\log\change;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use api\api;
@@ -853,7 +854,7 @@ class value extends sandbox_value
 
     /**
      * create the source object if needed and set the id
-     * @param int $id the id of the source
+     * @param int|null $id the id of the source
      */
     function set_source_id(?int $id): void
     {
@@ -2252,9 +2253,21 @@ class value extends sandbox_value
         sql_type_list         $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
+        global $change_field_list;
+        $sc = new sql();
+        $table_id = $sc->table_id($this::class);
+
         $lst = parent::db_fields_changed($sbx);
+
         if (!$sc_par_lst->is_standard()) {
             if ($sbx->src_id() <> $this->src_id()) {
+                if ($sc_par_lst->incl_log()) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
+                        $change_field_list->id($table_id . source::FLD_ID),
+                        change::FLD_FIELD_ID_SQLTYP
+                    );
+                }
                 $lst->add_field(
                     source::FLD_ID,
                     $this->src_id(),

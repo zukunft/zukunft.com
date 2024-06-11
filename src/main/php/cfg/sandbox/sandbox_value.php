@@ -1508,7 +1508,7 @@ class sandbox_value extends sandbox_multi
         $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
         $sc_par_lst_sub->add(sql_type::SUB);
         $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
-        $sc_par_lst_log = clone $sc_par_lst_sub;
+        $sc_par_lst_log = $sc_par_lst_sub->remove(sql_type::STANDARD);
 
         // add the change action field to the field list for the log entries
         global $change_action_list;
@@ -1522,6 +1522,11 @@ class sandbox_value extends sandbox_multi
         $fvt_lst_log = clone $fvt_lst;
         $fvt_lst_log->add_field(group::FLD_ID, $this->grp()->id());
 
+        // for standard prime values add the user only for the log
+        if ($sc_par_lst->is_standard() and $sc_par_lst->is_prime()) {
+            $fvt_lst_log->add_field(user::FLD_ID, $this->user_id(), sql_par_type::INT);
+        }
+
         // create the log entry for the value
         $qp_log = $sc->sql_func_log_value($this, $this->user(), $fvt_lst_log, $sc_par_lst_log);
         $sql .= ' ' . $qp_log->sql;
@@ -1529,6 +1534,24 @@ class sandbox_value extends sandbox_multi
         // list of parameters actually used in order of the function usage
         $par_lst_out = new sql_par_field_list();
         $par_lst_out->add_list($qp_log->par_fld_lst);
+
+        // get the data fields and move the unique db key field to the first entry
+        $fld_lst_ex_log = array_intersect($fvt_lst->names(), $fld_lst_all);
+
+        // check if other vars than the value have been changed
+        $fld_lst_ex_id = array_diff($fld_lst_ex_log, $fvt_lst_id->names());
+        $fld_lst_ex_id_and_val =  array_diff($fld_lst_ex_id, [
+            change_action::FLD_ID,
+            sandbox_value::FLD_VALUE,
+            sandbox_value::FLD_LAST_UPDATE
+        ]);
+
+        // ... and log the value parameter changes if needed
+        if (count($fld_lst_ex_id_and_val) > 0) {
+            $qp_log = $sc->sql_func_log($this::class, $this->user(), $fld_lst_ex_id_and_val, $fvt_lst_log, $sc_par_lst_log);
+            $sql .= ' ' . $qp_log->sql;
+            $par_lst_out->add_list($qp_log->par_fld_lst);
+        }
 
         // insert a new row in the user table
         $sc_insert = clone $sc;
@@ -1538,9 +1561,13 @@ class sandbox_value extends sandbox_multi
         foreach ($fvt_lst_id->names() as $fld) {
             $insert_fvt_lst->add($fvt_lst->get($fld));
         }
-        $insert_fvt_lst->add($fvt_lst->get(user::FLD_ID));
+        if (!$sc_par_lst->is_standard()) {
+            $insert_fvt_lst->add($fvt_lst->get(user::FLD_ID));
+        }
         $insert_fvt_lst->add($fvt_lst->get(sandbox_value::FLD_VALUE));
-        $insert_fvt_lst->add($fvt_lst->get(sandbox_value::FLD_LAST_UPDATE));
+        if (!$sc_par_lst->is_standard()) {
+            $insert_fvt_lst->add($fvt_lst->get(sandbox_value::FLD_LAST_UPDATE));
+        }
 
         // create the sql to actually add the value to the database
         $qp_insert->sql = $sc_insert->create_sql_insert($insert_fvt_lst, $sc_par_lst_sub);

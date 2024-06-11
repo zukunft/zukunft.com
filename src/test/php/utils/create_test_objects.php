@@ -1546,6 +1546,19 @@ class create_test_objects extends test_base
         return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
     }
 
+    function value_16_filled(): value
+    {
+        global $share_types;
+        global $protection_types;
+        $grp = $this->group_16();
+        $val = new value($this->usr1, round(value_api::TV_READ, 13), $grp);
+        $val->set_source_id($this->source()->id());
+        $val->excluded = true;
+        $val->share_id = $share_types->id(share_type_shared::GROUP);
+        $val->protection_id = $protection_types->id(protect_type_shared::USER);
+        return $val;
+    }
+
     function value_17_plus(): value
     {
         $grp = $this->group_17_plus();
