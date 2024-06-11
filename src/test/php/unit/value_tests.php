@@ -110,17 +110,21 @@ class value_tests
         $db_val_16 = $val_16->cloned(value_api::TV_FLOAT);
         $val_17 = $t->value_17_plus();
         $db_val_17 = $val_17->cloned(value_api::TV_FLOAT);
-        $t->assert_sql_insert($sc, $val);
         $t->assert_sql_insert($sc, $val_0, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $val);
         $t->assert_sql_insert($sc, $val, [sql_type::LOG]);
-        //$t->assert_sql_insert($sc, $val, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_insert($sc, $val, [sql_type::LOG, sql_type::USER]);
+        //$t->assert_sql_insert($sc, $val, [sql_type::LOG, sql_type::STANDARD]);
         $t->assert_sql_insert($sc, $val_3);
         $t->assert_sql_insert($sc, $val_3, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $val_3, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_insert($sc, $val_4);
         $t->assert_sql_insert($sc, $val_4, [sql_type::USER]);
         $t->assert_sql_insert($sc, $val_16);
+        $t->assert_sql_insert($sc, $val_16, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $val_16, [sql_type::USER]);
         $t->assert_sql_insert($sc, $val_17);
+        $t->assert_sql_insert($sc, $val_17, [sql_type::USER]);
         // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
         // TODO for update fill the missing phrase id with zeros because only one row should be updated
         // TODO add test to change owner of the normal (not user specific) value
