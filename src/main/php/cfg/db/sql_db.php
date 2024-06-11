@@ -65,11 +65,11 @@ use cfg\language_form;
 use cfg\log;
 use cfg\log\change;
 use cfg\log\change_action;
-use cfg\log\change_big_value;
+use cfg\log\change_values_big;
 use cfg\log\change_field;
 use cfg\log\change_link;
-use cfg\log\change_norm_value;
-use cfg\log\change_prime_value;
+use cfg\log\change_values_norm;
+use cfg\log\change_values_prime;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
 use cfg\phrase;
@@ -197,9 +197,9 @@ class sql_db
         change_table::class,
         change_field::class,
         change::class,
-        change_prime_value::class,
-        change_norm_value::class,
-        change_big_value::class,
+        change_values_prime::class,
+        change_values_norm::class,
+        change_values_big::class,
         change_link::class,
         pod_type::class,
         pod_status::class,

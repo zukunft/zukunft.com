@@ -2,8 +2,8 @@
 
 /*
 
-    cfg/log/change_value.php - log object for changes of values with a big group id
-    ------------------------
+    cfg/log/change_values_norm.php - log object for changes of values with a standard group id
+    ------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -33,10 +33,23 @@ namespace cfg\log;
 
 include_once MODEL_LOG_PATH . 'change_value.php';
 
+use api\log\change_log_named as change_log_named_api;
+use api\sandbox\user_config;
+use cfg\component\component;
+use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use cfg\db\sql_par;
+use cfg\formula;
+use cfg\db\sql_db;
+use cfg\user;
+use cfg\value\value;
+use cfg\view;
+use cfg\word;
+use Exception;
+use html\log\change_log_named as change_log_named_dsp;
 
-class change_big_value extends change_value
+class change_values_norm extends change_value
 {
 
     /*
@@ -44,11 +57,11 @@ class change_big_value extends change_value
      */
 
     // user log database and JSON object field names for named user sandbox objects
-    const TBL_COMMENT = 'to log all changes done by any user on values with a big group id';
+    const TBL_COMMENT = 'to log all changes done by any user on values with a standard group id';
 
-    // field list to identify the value with a big group id that has been changed
+    // field list to identify the value with a standard group id that has been changed
     const FLD_LST_ROW_ID = array(
-        [self::FLD_GROUP_ID, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', ''],
+        [self::FLD_GROUP_ID, sql_field_type::REF_512, sql_field_default::NOT_NULL, '', '', ''],
     );
 
 }

@@ -10,7 +10,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     for coding new features the target process is before committing:
     1. create a unit test for the new feature
     2. code the feature and fix the unit tests and code smells
-    3. create and fix the database unit and integration test for the new feature
+    3. create and fix the database read, write and integration test for the new feature
     4. commit
 
     but first this needs to be fixed:
@@ -297,6 +297,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO do not allow any HTML or script code fragments in the text fields
     TODO if options are excluded show them in grey with the mouseover reason, why they have been excluded
     TODO ad sample how the use Reuters RIC where the price is in pence
+    TODO create a function to earn cooperative parts by work
+    TODO because MySQL does not keep the interface stable (e.g. https://dev.mysql.com/doc/refman/8.4/en/charset-unicode-utf8.html) switch to postgres and MariaDB
 
     TODO use cases:
         create a sample how to create a personal pension plan for 1. 2. and 3. pillar independend from banks and pension funds
@@ -989,9 +991,9 @@ const DB_TABLE_LIST = [
     'ip_ranges',
     'sessions',
     'changes',
-    'change_norm_values',
-    'change_prime_values',
-    'change_big_values',
+    'change_values_norm',
+    'change_values_prime',
+    'change_values_big',
     'change_fields',
     'change_links',
     'change_actions',

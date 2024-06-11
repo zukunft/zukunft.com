@@ -731,10 +731,10 @@ class change_link extends change_log
      * @param sandbox_link|null $sbx the sandbox link object used to get the sql parameter names e.g. "_from_phrase_id" instead of "_new_from_id"
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(
+    function sql_insert_link(
         sql           $sc,
         sql_type_list $sc_par_lst,
-        ?sandbox_link  $sbx = null
+        ?sandbox_link $sbx = null
     ): sql_par
     {
         $sc_par_lst->add(sql_type::INSERT);
@@ -747,7 +747,7 @@ class change_link extends change_log
             $qp->name = $lib->class_to_name($this::class);
         }
         $sc->set_name($qp->name);
-        $qp->sql = $sc->create_sql_insert($this->db_field_values_types($sc, $sc_par_lst, $sbx), $sc_par_lst);
+        $qp->sql = $sc->create_sql_insert($this->db_field_values_link_types($sc, $sc_par_lst, $sbx), $sc_par_lst);
         $qp->par = $this->db_values();
 
         return $qp;
@@ -767,8 +767,8 @@ class change_link extends change_log
      * @param sandbox_link|null $sbx the sandbox link object used to get the sql parameter names e.g. "_from_phrase_id" instead of "_new_from_id"
      * @return sql_par_field_list list of the database field names
      */
-    function db_field_values_types(
-        sql $sc,
+    function db_field_values_link_types(
+        sql           $sc,
         sql_type_list $sc_par_lst,
         ?sandbox_link $sbx
     ): sql_par_field_list

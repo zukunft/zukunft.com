@@ -140,7 +140,7 @@ class sql_par_field_list
      *
      * @param string $name the field name in the change table, so view_id not view or view_name
      * @param string|int|float|DateTime|null $value the value that has been changed from the user point of view, so the view name not the view id
-     * @param sql_par_type|sql_field_type $type the type of the user value e.g. name for the view name
+     * @param sql_par_type|sql_field_type|null $type the type of the user value e.g. name for the view name
      * @param string|int|float|DateTime|null $old the value before the user change from the user point of view, so the view name not the view id
      * @param string $par_name
      * @param string|int|null $id
@@ -151,7 +151,7 @@ class sql_par_field_list
     function add_field(
         string                           $name,
         string|int|float|DateTime|null   $value,
-        sql_par_type|sql_field_type      $type,
+        sql_par_type|sql_field_type|null $type = null,
         string|int|float|DateTime|null   $old = null,
         string                           $par_name = '',
         string|int|null                  $id = null,
@@ -162,10 +162,18 @@ class sql_par_field_list
         $fld = new sql_par_field();
         $fld->name = $name;
         $fld->value = $value;
-        if ($type::class === sql_field_type::class) {
-            $fld->type = $type->par_type();
+        if ($type === null) {
+            if (is_string($value)) {
+                $type = sql_par_type::TEXT;
+            } else {
+                $type = sql_par_type::INT;
+            }
         } else {
-            $fld->type = $type;
+            if ($type::class === sql_field_type::class) {
+                $fld->type = $type->par_type();
+            } else {
+                $fld->type = $type;
+            }
         }
         $fld->old = $old;
         if ($par_name != '') {

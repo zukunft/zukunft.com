@@ -81,11 +81,15 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
+use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\db_object_seq_id_user;
 use cfg\formula;
 use cfg\formula_link;
 use cfg\ref;
+use cfg\sandbox_link;
 use cfg\source;
 use cfg\triple;
 use cfg\type_object;
@@ -721,6 +725,128 @@ class change_log extends db_object_seq_id_user
     function add_ref($row_id): bool
     {
         return true;
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a log entry to the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param string $ext the name extension that should be used
+     * @param string $val_tbl name of the table to select the values to insert
+     * @param string $add_fld name of the database key field
+     * @param string $row_fld name of the database id field
+     * @param string $par_name name of the database name parameter field
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(
+        sql           $sc,
+        sql_type_list $sc_par_lst,
+        string        $ext = '',
+        string        $val_tbl = '',
+        string        $add_fld = '',
+        string        $row_fld = '',
+        string        $par_name = ''
+    ): sql_par
+    {
+        if ($this::class == change_link::class) {
+            return $this->sql_insert_link($sc, $sc_par_lst);
+        } else {
+            // clone the sql parameter list to avoid changing the given list
+            $sc_par_lst_used = clone $sc_par_lst;
+            // set the sql query type
+            $sc_par_lst_used->add(sql_type::INSERT);
+            // do not use the user extension for the change table name
+            $sc_par_lst_chg = $sc_par_lst_used->remove(sql_type::USER);
+            $qp = $sc->sql_par($this::class, $sc_par_lst_chg);
+            $sc->set_class($this::class, $sc_par_lst_chg);
+            if ($sc_par_lst_used->is_list_tbl()) {
+                $lib = new library();
+                $qp->name = $lib->class_to_name($this::class) . $ext;
+            }
+            $sc->set_name($qp->name);
+            $qp->sql = $sc->create_sql_insert(
+                $this->db_field_values_types($sc, $sc_par_lst_used), $sc_par_lst_used, true, $val_tbl, $add_fld, $row_fld, '', $par_name);
+            $qp->par = $this->db_values();
+
+            return $qp;
+        }
+    }
+
+    /**
+     * dummy function overwritten by the child object
+     * @param sql $sc
+     * @param sql_type_list $sc_par_lst
+     * @param sandbox_link|null $sbx
+     * @return sql_par
+     */
+    function sql_insert_link(
+        sql           $sc,
+        sql_type_list $sc_par_lst,
+        ?sandbox_link  $sbx = null
+    ): sql_par
+    {
+        return new sql_par($this::class);
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields
+     * list must be corresponding to the db_values fields
+     *
+     * @return sql_par_field_list list of the database field names
+     */
+    function db_field_values_types(sql $sc, sql_type_list $sc_par_lst): sql_par_field_list
+    {
+        $fvt_lst = new sql_par_field_list();
+        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQLTYP);
+        $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQLTYP);
+        if ($this->field_id != null) {
+            $fvt_lst->add_field(change_field::FLD_ID, $this->field_id, type_object::FLD_ID_SQLTYP);
+        }
+
+        return $fvt_lst;
+    }
+
+    /**
+     * get a list of all database fields
+     * list must be corresponding to the db_values fields
+     * TODO deprecate
+     *
+     * @return array list of the database field names
+     */
+    function db_fields(): array
+    {
+        $sql_fields = array();
+        $sql_fields[] = user::FLD_ID;
+        $sql_fields[] = change_action::FLD_ID;
+        $sql_fields[] = change_field::FLD_ID;
+
+        return $sql_fields;
+    }
+
+    /**
+     * get a list of database field values that have been updated
+     *
+     * @return array list of the database field values
+     */
+    function db_values(): array
+    {
+        $sql_values = array();
+        $sql_values[] = $this->user()->id();
+        $sql_values[] = $this->action_id;
+        $sql_values[] = $this->field_id;
+
+        return $sql_values;
     }
 
 

@@ -535,9 +535,9 @@ ALTER TABLE changes
 -- table structure to log all changes done by any user on values with a standard group id
 --
 
-CREATE TABLE IF NOT EXISTS change_norm_values
+CREATE TABLE IF NOT EXISTS change_values_norm
 (
-    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_norm_value',
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_norm',
     change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
     user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
     change_action_id smallint   NOT NULL COMMENT 'the curl action',
@@ -551,9 +551,9 @@ CREATE TABLE IF NOT EXISTS change_norm_values
     COMMENT 'to log all changes done by any user on values with a standard group id';
 
 --
--- AUTO_INCREMENT for table change_norm_values
+-- AUTO_INCREMENT for table change_values_norm
 --
-ALTER TABLE change_norm_values
+ALTER TABLE change_values_norm
     MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
@@ -562,9 +562,9 @@ ALTER TABLE change_norm_values
 -- table structure to log all changes done by any user on values with a prime group id
 --
 
-CREATE TABLE IF NOT EXISTS change_prime_values
+CREATE TABLE IF NOT EXISTS change_values_prime
 (
-    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_prime_value',
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_prime',
     change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
     user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
     change_action_id smallint   NOT NULL COMMENT 'the curl action',
@@ -578,9 +578,9 @@ CREATE TABLE IF NOT EXISTS change_prime_values
     COMMENT 'to log all changes done by any user on values with a prime group id';
 
 --
--- AUTO_INCREMENT for table change_prime_values
+-- AUTO_INCREMENT for table change_values_prime
 --
-ALTER TABLE change_prime_values
+ALTER TABLE change_values_prime
     MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
@@ -589,9 +589,9 @@ ALTER TABLE change_prime_values
 -- table structure to log all changes done by any user on values with a big group id
 --
 
-CREATE TABLE IF NOT EXISTS change_big_values
+CREATE TABLE IF NOT EXISTS change_values_big
 (
-    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_big_value',
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_big',
     change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
     user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
     change_action_id smallint   NOT NULL COMMENT 'the curl action',
@@ -605,9 +605,9 @@ CREATE TABLE IF NOT EXISTS change_big_values
     COMMENT 'to log all changes done by any user on values with a big group id';
 
 --
--- AUTO_INCREMENT for table change_big_values
+-- AUTO_INCREMENT for table change_values_big
 --
-ALTER TABLE change_big_values
+ALTER TABLE change_values_big
     MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
@@ -4042,38 +4042,38 @@ ALTER TABLE changes
 -- --------------------------------------------------------
 
 --
--- indexes for table change_prime_values
+-- indexes for table change_values_prime
 --
 
-ALTER TABLE change_prime_values
+ALTER TABLE change_values_prime
     ADD PRIMARY KEY (change_id),
-    ADD KEY change_prime_values_change_idx (change_id),
-    ADD KEY change_prime_values_change_time_idx (change_time),
-    ADD KEY change_prime_values_user_idx (user_id);
+    ADD KEY change_values_prime_change_idx (change_id),
+    ADD KEY change_values_prime_change_time_idx (change_time),
+    ADD KEY change_values_prime_user_idx (user_id);
 
 -- --------------------------------------------------------
 
 --
--- indexes for table change_norm_values
+-- indexes for table change_values_norm
 --
 
-ALTER TABLE change_norm_values
+ALTER TABLE change_values_norm
     ADD PRIMARY KEY (change_id),
-    ADD KEY change_norm_values_change_idx (change_id),
-    ADD KEY change_norm_values_change_time_idx (change_time),
-    ADD KEY change_norm_values_user_idx (user_id);
+    ADD KEY change_values_norm_change_idx (change_id),
+    ADD KEY change_values_norm_change_time_idx (change_time),
+    ADD KEY change_values_norm_user_idx (user_id);
 
 -- --------------------------------------------------------
 
 --
--- indexes for table change_big_values
+-- indexes for table change_values_big
 --
 
-ALTER TABLE change_big_values
+ALTER TABLE change_values_big
     ADD PRIMARY KEY (change_id),
-    ADD KEY change_big_values_change_idx (change_id),
-    ADD KEY change_big_values_change_time_idx (change_time),
-    ADD KEY change_big_values_user_idx (user_id);
+    ADD KEY change_values_big_change_idx (change_id),
+    ADD KEY change_values_big_change_time_idx (change_time),
+    ADD KEY change_values_big_user_idx (user_id);
 
 -- --------------------------------------------------------
 
@@ -5652,35 +5652,35 @@ ALTER TABLE changes
 -- --------------------------------------------------------
 
 --
--- constraints for table change_norm_values
+-- constraints for table change_values_norm
 --
 
-ALTER TABLE change_norm_values
-    ADD CONSTRAINT change_norm_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT change_norm_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
-    ADD CONSTRAINT change_norm_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+ALTER TABLE change_values_norm
+    ADD CONSTRAINT change_values_norm_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_norm_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_norm_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 -- --------------------------------------------------------
 
 --
--- constraints for table change_prime_values
+-- constraints for table change_values_prime
 --
 
-ALTER TABLE change_prime_values
-    ADD CONSTRAINT change_prime_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT change_prime_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
-    ADD CONSTRAINT change_prime_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+ALTER TABLE change_values_prime
+    ADD CONSTRAINT change_values_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_prime_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_prime_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 -- --------------------------------------------------------
 
 --
--- constraints for table change_big_values
+-- constraints for table change_values_big
 --
 
-ALTER TABLE change_big_values
-    ADD CONSTRAINT change_big_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT change_big_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
-    ADD CONSTRAINT change_big_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+ALTER TABLE change_values_big
+    ADD CONSTRAINT change_values_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_big_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_big_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 -- --------------------------------------------------------
 

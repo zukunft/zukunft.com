@@ -4,9 +4,9 @@
 -- table structure to log all changes done by any user on values with a standard group id
 --
 
-CREATE TABLE IF NOT EXISTS change_norm_values
+CREATE TABLE IF NOT EXISTS change_values_norm
 (
-    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_norm_value',
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_norm',
     change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
     user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
     change_action_id smallint   NOT NULL COMMENT 'the curl action',
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS change_norm_values
     COMMENT 'to log all changes done by any user on values with a standard group id';
 
 --
--- AUTO_INCREMENT for table change_norm_values
+-- AUTO_INCREMENT for table change_values_norm
 --
-ALTER TABLE change_norm_values
+ALTER TABLE change_values_norm
     MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;

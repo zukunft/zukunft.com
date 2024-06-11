@@ -468,53 +468,6 @@ class change extends change_log
 
 
     /*
-     * sql write
-     */
-
-    /**
-     * create the sql statement to add a log entry to the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @param string $ext the name extension that should be used
-     * @param string $val_tbl name of the table to select the values to insert
-     * @param string $add_fld name of the database key field
-     * @param string $row_fld name of the database id field
-     * @param string $par_name name of the database name parameter field
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_insert(
-        sql           $sc,
-        sql_type_list $sc_par_lst,
-        string        $ext = '',
-        string        $val_tbl = '',
-        string        $add_fld = '',
-        string        $row_fld = '',
-        string        $par_name = ''
-    ): sql_par
-    {
-        // clone the sql parameter list to avoid changing the given list
-        $sc_par_lst_used = clone $sc_par_lst;
-        // set the sql query type
-        $sc_par_lst_used->add(sql_type::INSERT);
-        // do not use the user extension for the change table name
-        $sc_par_lst_chg = $sc_par_lst_used->remove(sql_type::USER);
-        $qp = $sc->sql_par($this::class, $sc_par_lst_chg);
-        $sc->set_class($this::class, $sc_par_lst_chg);
-        if ($sc_par_lst_used->is_list_tbl()) {
-            $lib = new library();
-            $qp->name = $lib->class_to_name($this::class) . $ext;
-        }
-        $sc->set_name($qp->name);
-        $qp->sql = $sc->create_sql_insert(
-            $this->db_field_values_types($sc, $sc_par_lst_used), $sc_par_lst_used, true, $val_tbl, $add_fld, $row_fld, '', $par_name);
-        $qp->par = $this->db_values();
-
-        return $qp;
-    }
-
-
-    /*
      * sql write fields
      */
 
@@ -526,12 +479,7 @@ class change extends change_log
      */
     function db_field_values_types(sql $sc, sql_type_list $sc_par_lst): sql_par_field_list
     {
-        $fvt_lst = new sql_par_field_list();
-        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQLTYP);
-        $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQLTYP);
-        if ($this->field_id != null) {
-            $fvt_lst->add_field(change_field::FLD_ID, $this->field_id, type_object::FLD_ID_SQLTYP);
-        }
+        $fvt_lst = parent::db_field_values_types($sc, $sc_par_lst);
 
         if ($this->old_value !== null or ($sc_par_lst->is_update_part() and $this->new_value !== null)) {
             $fvt_lst->add_field(self::FLD_OLD_VALUE, $this->old_value, $sc->get_sql_par_type($this->old_value));
@@ -560,10 +508,7 @@ class change extends change_log
      */
     function db_fields(): array
     {
-        $sql_fields = array();
-        $sql_fields[] = user::FLD_ID;
-        $sql_fields[] = change_action::FLD_ID;
-        $sql_fields[] = change_field::FLD_ID;
+        $sql_fields = parent::db_fields();
 
         if ($this->old_value !== null) {
             $sql_fields[] = self::FLD_OLD_VALUE;
@@ -590,10 +535,7 @@ class change extends change_log
      */
     function db_values(): array
     {
-        $sql_values = array();
-        $sql_values[] = $this->user()->id();
-        $sql_values[] = $this->action_id;
-        $sql_values[] = $this->field_id;
+        $sql_values = parent::db_values();
 
         if ($this->old_value !== null) {
             $sql_values[] = $this->old_value;

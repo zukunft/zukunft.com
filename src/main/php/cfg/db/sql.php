@@ -39,7 +39,6 @@ include_once MODEL_DB_PATH . 'sql_pg.php';
 
 use cfg\component\component_link;
 use cfg\element;
-use cfg\formula;
 use cfg\formula_link;
 use cfg\group\group;
 use cfg\group\group_id;
@@ -48,15 +47,18 @@ use cfg\ip_range_list;
 use cfg\job;
 use cfg\log\change;
 use cfg\log\change_action;
+use cfg\log\change_values_big;
 use cfg\log\change_link;
+use cfg\log\change_values_norm;
+use cfg\log\change_values_prime;
 use cfg\log\change_table;
 use cfg\ref;
 use cfg\result\result;
 use cfg\sandbox;
 use cfg\sandbox_link;
 use cfg\sandbox_link_typed;
+use cfg\sandbox_value;
 use cfg\sys_log;
-use cfg\sys_log_level;
 use cfg\triple;
 use cfg\user;
 use cfg\user\user_profile;
@@ -65,7 +67,6 @@ use cfg\user_official_type;
 use cfg\value\value;
 use cfg\value\value_phrase_link;
 use cfg\value\value_time_series;
-use cfg\view;
 use cfg\view_term_link;
 use DateTime;
 use shared\library;
@@ -1719,7 +1720,7 @@ class sql
         $sc_par_lst->add(sql_type::INSERT_PART);
 
         // create the sql for the log entry
-        $qp = $log->sql_insert(
+        $qp = $log->sql_insert_link(
             $sc_log, $sc_par_lst, $sbx);
 
         $par_lst_out = new sql_par_field_list();
@@ -1792,7 +1793,7 @@ class sql
         $sc_par_lst->add(sql_type::INSERT_PART);
 
         // create the sql for the log entry
-        $qp = $log->sql_insert(
+        $qp = $log->sql_insert_link(
             $sc_log, $sc_par_lst, $sbx);
 
         $par_lst_out = new sql_par_field_list();
@@ -1809,6 +1810,122 @@ class sql
             $fvt_lst->get_value(change_table::FLD_ID),
             sql_par_type::INT_SMALL);
         $qp->par_fld_lst = $par_lst_out;
+
+        return $qp;
+    }
+
+    /**
+     * create the sql function part to log adding a link
+     * @param sandbox_value $sbx the name of the calling class use for the query names
+     * @param user $usr the user who has requested the change
+     * @param sql_par_field_list $fvt_lst list of fields, values and types to fill the log entry
+     * @param sql_type_list $sc_par_lst sql parameters e.g. if the prime table should be used
+     * @return sql_par the sql statement with the paraemeter to add the log entry
+     */
+    function sql_func_log_value(
+        sandbox_value      $sbx,
+        user               $usr,
+        sql_par_field_list $fvt_lst,
+        sql_type_list      $sc_par_lst
+    ): sql_par
+    {
+        // get the change table id
+        global $change_table_list;
+        global $change_field_list;
+        $lib = new library();
+        $table_name = $lib->class_to_table($sbx::class);
+        $table_id = $change_table_list->id($table_name);
+
+        // select which log to use and set the parameters
+        if ($sc_par_lst->is_prime()) {
+            $log = new change_values_prime($usr);
+        } elseif ($sc_par_lst->is_big()) {
+            $log = new change_values_big($usr);
+        } else {
+            $log = new change_values_norm($usr);
+        }
+        $log->set_table_by_class($sbx::class);
+        $log->set_field(sandbox_value::FLD_VALUE);
+
+        $log->group_id = $fvt_lst->get_value(group::FLD_ID);
+        $val_new = $fvt_lst->get_value(sandbox_value::FLD_VALUE);
+        $log->new_value = $val_new;
+
+        // set the parameters for the log sql statement creation
+        $sc_log = clone $this;
+        $sc_par_lst->add(sql_type::VALUE_SELECT);
+        $sc_par_lst->add(sql_type::SELECT_FOR_INSERT);
+        $sc_par_lst->add(sql_type::INSERT_PART);
+
+        // create the sql for the log entry
+        $qp = $log->sql_insert($sc_log, $sc_par_lst, '', '', sandbox_value::FLD_VALUE);
+
+        // fill the parameter list in order of usage in the sql
+        $par_lst_out = new sql_par_field_list();
+        $par_lst_out->add_field(
+            user::FLD_ID,
+            $fvt_lst->get_value(user::FLD_ID),
+            sql_par_type::INT);
+        $par_lst_out->add_field(
+            change_action::FLD_ID,
+            $fvt_lst->get_value(change_action::FLD_ID),
+            sql_par_type::INT_SMALL);
+        $par_lst_out->add_field(
+            sql::FLD_LOG_FIELD_PREFIX . sandbox_value::FLD_VALUE,
+            $change_field_list->id($table_id . sandbox_value::FLD_VALUE),
+            change::FLD_FIELD_ID_SQLTYP
+        );
+        $par_lst_out->add_field(
+            sandbox_value::FLD_VALUE,
+            $val_new,
+            sql_field_type::NUMERIC_FLOAT
+        );
+        if (is_numeric($log->group_id)) {
+            $par_lst_out->add_field(
+                group::FLD_ID,
+                intval($log->group_id),
+                sql_par_type::INT);
+        } else {
+            $par_lst_out->add_field(
+                group::FLD_ID,
+                $log->group_id,
+                sql_par_type::TEXT);
+        }
+        $qp->par_fld_lst = $par_lst_out;
+
+        return $qp;
+    }
+
+    /**
+     * create the call statement for insert and update sql functions
+     *
+     * @param sql_par $qp the query parameter with the name already set
+     * @param string $name the name of the function
+     * @param sql_par_field_list $par_lst_out the list of parameter used for the call
+     * @return sql_par with the call statement set
+     */
+    function sql_call(sql_par $qp, string $name, sql_par_field_list $par_lst_out): sql_par
+    {
+        // create the prepared call sql statement
+        $qp->call_name = $name . '_call';
+        $qp->call_sql = ' ' . sql::PREPARE . ' ' . $qp->call_name;
+        if ($this->db_type == sql_db::POSTGRES) {
+            $qp->call_sql .= ' (' . $par_lst_out->par_types($this) . ') ' . sql::AS . ' ';
+        } else {
+            $qp->call_sql .= ' ' . sql::FROM . " '";
+        }
+        $qp->call_sql .= sql::SELECT . ' ' . $name;
+        $qp->call_sql .= ' (' . $par_lst_out->par_vars($this) . ')';
+        if ($this->db_type == sql_db::POSTGRES) {
+            $qp->call_sql .= ';';
+        } else {
+            $qp->call_sql .= "';";
+        }
+
+        // create a sample call for testing
+        $qp->call = ' ' . sql::SELECT . ' ' . $name . ' (';
+        $call_val_str = $par_lst_out->par_sql($this);
+        $qp->call .= $call_val_str . ');';
 
         return $qp;
     }
@@ -4188,7 +4305,9 @@ class sql
             $this->table = sql_db::USER_PREFIX;
         }
         $this->table .= $this->get_table_name($this->class);
-        $this->table .= $ext;
+        if (!str_ends_with($this->table, $ext)) {
+            $this->table .= $ext;
+        }
         log_debug('to "' . $this->table . '"', $debug - 20);
     }
 
@@ -4222,6 +4341,15 @@ class sql
         // exceptions from the standard table for 'nicer' names
         if ($result == 'configs') {
             $result = 'config';
+        }
+        if ($result == 'change_values_norms') {
+            $result = 'change_values_norm';
+        }
+        if ($result == 'change_values_primes') {
+            $result = 'change_values_prime';
+        }
+        if ($result == 'change_values_bigs') {
+            $result = 'change_values_big';
         }
         if ($result == 'sys_log_statuss') {
             $result = 'sys_log_status';

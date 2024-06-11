@@ -108,12 +108,12 @@ use cfg\language_list;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
-use cfg\log\change_big_value;
+use cfg\log\change_values_big;
 use cfg\log\change_field_list;
 use cfg\log\change_link;
 use cfg\log\change_log_list;
-use cfg\log\change_norm_value;
-use cfg\log\change_prime_value;
+use cfg\log\change_values_norm;
+use cfg\log\change_values_prime;
 use cfg\log\change_table_list;
 use cfg\phrase;
 use cfg\phrase_list;
@@ -2251,13 +2251,13 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return change_norm_value a change log entry of a value with some dummy values and a standard group id
+     * @return change_values_norm a change log entry of a value with some dummy values and a standard group id
      */
-    function change_log_value(): change_norm_value
+    function change_log_value(): change_values_norm
     {
         global $usr_sys;
 
-        $chg = new change_norm_value($usr_sys);
+        $chg = new change_values_norm($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
         $chg->set_action(change_action::ADD);
         $chg->set_table(change_table_list::WORD);
@@ -2268,13 +2268,13 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return change_prime_value a change log entry of a value with some dummy values and a prime group id
+     * @return change_values_prime a change log entry of a value with some dummy values and a prime group id
      */
-    function change_log_value_prime(): change_prime_value
+    function change_log_value_prime(): change_values_prime
     {
         global $usr_sys;
 
-        $chg = new change_prime_value($usr_sys);
+        $chg = new change_values_prime($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
         $chg->set_action(change_action::ADD);
         $chg->set_table(change_table_list::WORD);
@@ -2285,13 +2285,13 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return change_big_value a change log entry of a value with some dummy values and a big group id
+     * @return change_values_big a change log entry of a value with some dummy values and a big group id
      */
-    function change_log_value_big(): change_big_value
+    function change_log_value_big(): change_values_big
     {
         global $usr_sys;
 
-        $chg = new change_big_value($usr_sys);
+        $chg = new change_values_big($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
         $chg->set_action(change_action::ADD);
         $chg->set_table(change_table_list::WORD);

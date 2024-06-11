@@ -74,88 +74,69 @@ class value_tests
 
         $t->subheader('value sql read');
         $val = $t->value();
+        $val_16 = $t->value_16();
         $this->assert_sql_by_grp($t, $db_con, $val, $t->group_prime_3());
         $this->assert_sql_by_grp($t, $db_con, $val, $t->group_16());
         $this->assert_sql_by_grp($t, $db_con, $val, $t->group_17_plus());
+        $t->assert_sql_by_id($sc, $val_16);
 
         $t->subheader('value sql read default and user changes');
-        $val = $t->value_prime_3();
-        $t->assert_sql_not_changed($sc, $val);
-        $t->assert_sql_user_changes($sc, $val);
-        $t->assert_sql_changer($sc, $val);
-        $t->assert_sql_median_user($sc, $val);
         $val = $t->value();
+        $val_3 = $t->value_prime_3();
+        $val_16 = $t->value_16();
+        $val_17 = $t->value_17_plus();
+        $t->assert_sql_not_changed($sc, $val_3);
+        $t->assert_sql_not_changed($sc, $val_17);
+        $t->assert_sql_user_changes($sc, $val_3);
+        $t->assert_sql_user_changes($sc, $val_17);
+        $t->assert_sql_changer($sc, $val_3);
+        $t->assert_sql_changer($sc, $val_17);
+        $t->assert_sql_median_user($sc, $val_3);
+        $t->assert_sql_median_user($sc, $val_16);
         $t->assert_sql_standard($sc, $val);
-        $val = $t->value_16();
-        $t->assert_sql_median_user($sc, $val);
-        $val = $t->value_17_plus();
-        $t->assert_sql_not_changed($sc, $val);
-        $t->assert_sql_user_changes($sc, $val);
-        $t->assert_sql_changer($sc, $val);
+        $t->assert_sql_standard($sc, $val_16);
+        $t->assert_sql_standard($sc, $val_17);
 
-        $t->subheader('value sql write');
         // TODO add tests with log
-        // TODO add sql insert and update tests to all db objects
-        $t->assert_sql_insert($sc, $t->value());
-        $t->assert_sql_insert($sc, $t->value_zero(), [sql_type::USER]);
-        $t->assert_sql_insert($sc, $t->value_prime_3());
-        $t->assert_sql_insert($sc, $t->value_prime_3(), [sql_type::USER]);
-        $t->assert_sql_insert($sc, $t->value_prime_max());
-        $t->assert_sql_insert($sc, $t->value_prime_max(), [sql_type::USER]);
+        $t->subheader('value sql write');
+        $val = $t->value();
+        $db_val = $val->cloned(value_api::TV_FLOAT);
+        $val_upd = $val->updated();
+        $val_0 = $t->value_zero();
+        $val_3 = $t->value_prime_3();
+        $db_val_3 = $val_3->cloned(value_api::TV_FLOAT);
+        $val_4 = $t->value_prime_max();
+        $val_16 = $t->value_16();
+        $db_val_16 = $val_16->cloned(value_api::TV_FLOAT);
+        $val_17 = $t->value_17_plus();
+        $db_val_17 = $val_17->cloned(value_api::TV_FLOAT);
+        $t->assert_sql_insert($sc, $val);
+        $t->assert_sql_insert($sc, $val_0, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $val, [sql_type::LOG]);
+        //$t->assert_sql_insert($sc, $val, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_insert($sc, $val_3);
+        $t->assert_sql_insert($sc, $val_3, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $val_4);
+        $t->assert_sql_insert($sc, $val_4, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $val_16);
+        $t->assert_sql_insert($sc, $val_16, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $val_17);
         // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
         // TODO for update fill the missing phrase id with zeros because only one row should be updated
         // TODO add test to change owner of the normal (not user specific) value
-        $val = $t->value();
-        $db_val = $val->cloned(value_api::TV_FLOAT);
         $t->assert_sql_update($sc, $val, $db_val);
         $t->assert_sql_update($sc, $val, $db_val, [sql_type::USER]);
-        $val_prime = $t->value_prime_3();
-        $db_val_prime = $val_prime->cloned(value_api::TV_FLOAT);
-        $t->assert_sql_update($sc, $val_prime, $db_val_prime);
-        $t->assert_sql_update($sc, $val_prime, $db_val_prime, [sql_type::USER]);
+        $t->assert_sql_update($sc, $val_3, $db_val_3);
+        $t->assert_sql_update($sc, $val_3, $db_val_3, [sql_type::USER]);
+        $t->assert_sql_update($sc, $val_16, $db_val_16);
+        $t->assert_sql_update($sc, $val_17, $db_val_17);
         // update only the last_update date to trigger recalc
-        $val = $t->value();
-        $val_upd = $val->updated();
         $this->assert_sql_update_trigger($t, $db_con, $val_upd, $val);
         $t->assert_sql_delete($sc, $val);
         $t->assert_sql_delete($sc, $val, [sql_type::USER]);
         $t->assert_sql_delete($sc, $val, [sql_type::USER, sql_type::EXCLUDE]);
-
-
-
-
-        $t->subheader('SQL statements - for values related to up to 16 phrases');
-        $val = $t->value_16();
-        // TODO insert value does not need to return the id because this is given by the group id
-        $t->assert_sql_insert($sc, $val);
-        $t->assert_sql_insert($sc, $val, [sql_type::USER]);
-        $db_val = $val->cloned(value_api::TV_FLOAT);
-        $t->assert_sql_update($sc, $val, $db_val);
-        $t->assert_sql_delete($sc, $val);
-        $t->assert_sql_delete($sc, $val, [sql_type::USER]);
-        $t->assert_sql_by_id($sc, $val);
-        // TODO activate Prio 2
-        //$this->assert_sql_by_grp($t, $db_con, $val);
-
-        // ... and the related default value
-        $t->assert_sql_standard($sc, $val);
-
-        $t->subheader('SQL statements - for values related to more than 16 phrases');
-        $val = $t->value_17_plus();
-        $db_val = $val->cloned(value_api::TV_FLOAT);
-        $t->assert_sql_insert($sc, $val);
-        $t->assert_sql_update($sc, $val, $db_val);
-        // TODO activate Prio 2
-        //$this->assert_sql_by_grp($t, $db_con, $val);
-
-        // ... and the related default value
-        $t->assert_sql_standard($sc, $val);
-
-        // ... and to check if any user has uses another than the default value
-        // TODO prio 1 activate
-        //$t->assert_sql_not_changed($db_con, $val);
-        //$t->assert_sql_user_changes($sc, $val);
-        //$t->assert_sql_changer($sc, $val);
+        $t->assert_sql_delete($sc, $val_16);
+        $t->assert_sql_delete($sc, $val_16, [sql_type::USER]);
 
 
         $t->subheader('Database query creation tests');

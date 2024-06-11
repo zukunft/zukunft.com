@@ -3318,42 +3318,7 @@ class sandbox extends db_object_seq_id_user
         $qp->par = $par_lst_out->values();
 
         // create the call sql statement
-        return $this->sql_call($sc, $qp, $qp_chg->name, $par_lst_out);
-    }
-
-    /**
-     * create the call statement for insert and update sql functions
-     *
-     * @param sql $sc the sql creator object with the db type set
-     * @param sql_par $qp the query parameter with the name already set
-     * @param string $name the name of the function
-     * @param sql_par_field_list $par_lst_out the list of parameter used for the call
-     * @return sql_par with the call statement set
-     */
-    function sql_call(sql $sc, sql_par $qp, string $name, sql_par_field_list $par_lst_out): sql_par
-    {
-        // create the prepared call sql statement
-        $qp->call_name = $name . '_call';
-        $qp->call_sql = ' ' . sql::PREPARE . ' ' . $qp->call_name;
-        if ($sc->db_type == sql_db::POSTGRES) {
-            $qp->call_sql .= ' (' . $par_lst_out->par_types($sc) . ') ' . sql::AS . ' ';
-        } else {
-            $qp->call_sql .= ' ' . sql::FROM . " '";
-        }
-        $qp->call_sql .= sql::SELECT . ' ' . $name;
-        $qp->call_sql .= ' (' . $par_lst_out->par_vars($sc) . ')';
-        if ($sc->db_type == sql_db::POSTGRES) {
-            $qp->call_sql .= ';';
-        } else {
-            $qp->call_sql .= "';";
-        }
-
-        // create a sample call for testing
-        $qp->call = ' ' . sql::SELECT . ' ' . $name . ' (';
-        $call_val_str = $par_lst_out->par_sql($sc);
-        $qp->call .= $call_val_str . ');';
-
-        return $qp;
+        return $sc->sql_call($qp, $qp_chg->name, $par_lst_out);
     }
 
     /**
@@ -3619,7 +3584,7 @@ class sandbox extends db_object_seq_id_user
         $qp->par = $par_lst_out->values();
 
         // create the call sql statement
-        return $this->sql_call($sc, $qp, $qp_chg->name, $par_lst_out);
+        return $sc->sql_call($qp, $qp_chg->name, $par_lst_out);
     }
 
     /**

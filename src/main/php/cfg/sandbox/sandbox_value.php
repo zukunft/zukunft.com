@@ -973,7 +973,7 @@ class sandbox_value extends sandbox_multi
                     if (array_key_exists($key, $id_lst)) {
                         $id = $id_lst[$key];
                         $lst->add_field($fld, $id, sql_field_type::INT_SMALL);
-                    } elseif (!$sc_par_lst->is_insert()) {
+                    } elseif (!$sc_par_lst->is_insert() or $sc_par_lst->incl_log()) {
                         $lst->add_field($fld, $id, sql_field_type::INT_SMALL);
                     }
                 }
@@ -1464,15 +1464,105 @@ class sandbox_value extends sandbox_multi
         $sc->set_name($qp->name);
         // actually create the sql statement
         if ($sc_par_lst->is_insert()) {
-            $qp->sql = $sc->create_sql_insert($fvt_lst);
-            // set the parameters for the query execution
-            $qp->par = $fvt_lst->db_values();
+            if ($sc_par_lst->incl_log()) {
+                // log functions must always use named parameters
+                $sc_par_lst->add(sql_type::NAMED_PAR);
+                $qp = $this->sql_insert_with_log($sc, $qp, $fvt_lst_id, $fvt_lst, $fld_lst_all, $sc_par_lst);
+            } else {
+                $qp->sql = $sc->create_sql_insert($fvt_lst);
+                // set the parameters for the query execution
+                $qp->par = $fvt_lst->db_values();
+            }
         } else {
             $qp->sql = $sc->create_sql_update_fvt($fvt_lst_id, $fvt_lst, $sc_par_lst);
             // and remember the paraemeters used
             $qp->par = $sc->par_values();
         }
         return $qp;
+    }
+
+    /**
+     * create the sql statement to add a new value and log the changes
+     *
+     * @param sql $sc sql creator with the target db_type already set
+     * @param sql_par_field_list $fvt_lst_id list of id field names, values and sql types additional to the standard id fields
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id fields
+     * @param array $fld_lst_all list of all potential field names of the given object that can be changed by the user
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert_with_log(
+        sql                $sc,
+        sql_par            $qp,
+        sql_par_field_list $fvt_lst_id,
+        sql_par_field_list $fvt_lst,
+        array              $fld_lst_all = [],
+        sql_type_list      $sc_par_lst = new sql_type_list([])
+    ): sql_par
+    {
+        // init the function body
+        $sql = $sc->sql_func_start('', $sc_par_lst);
+
+        // don't use the log parameter for the sub queries
+        $sc_par_lst->add(sql_type::NO_ID_RETURN);
+        $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
+        $sc_par_lst_sub->add(sql_type::SUB);
+        $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
+        $sc_par_lst_log = clone $sc_par_lst_sub;
+
+        // add the change action field to the field list for the log entries
+        global $change_action_list;
+        $fvt_lst->add_field(
+            change_action::FLD_ID,
+            $change_action_list->id(change_action::ADD),
+            type_object::FLD_ID_SQLTYP
+        );
+
+        // get the fields for the value log entry
+        $fvt_lst_log = clone $fvt_lst;
+        $fvt_lst_log->add_field(group::FLD_ID, $this->grp()->id());
+
+        // create the log entry for the value
+        $qp_log = $sc->sql_func_log_value($this, $this->user(), $fvt_lst_log, $sc_par_lst_log);
+        $sql .= ' ' . $qp_log->sql;
+
+        // list of parameters actually used in order of the function usage
+        $par_lst_out = new sql_par_field_list();
+        $par_lst_out->add_list($qp_log->par_fld_lst);
+
+        // insert a new row in the user table
+        $sc_insert = clone $sc;
+        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub);
+        $sc_insert->set_name($qp_insert->name);
+        $insert_fvt_lst = new sql_par_field_list();
+        foreach ($fvt_lst_id->names() as $fld) {
+            $insert_fvt_lst->add($fvt_lst->get($fld));
+        }
+        $insert_fvt_lst->add($fvt_lst->get(user::FLD_ID));
+        $insert_fvt_lst->add($fvt_lst->get(sandbox_value::FLD_VALUE));
+        $insert_fvt_lst->add($fvt_lst->get(sandbox_value::FLD_LAST_UPDATE));
+
+        // create the sql to actually add the value to the database
+        $qp_insert->sql = $sc_insert->create_sql_insert($insert_fvt_lst, $sc_par_lst_sub);
+        // add the insert row to the function body
+        $sql .= ' ' . $qp_insert->sql . ' ';
+        // add the fields used to the parameter list except the sql Now() function call
+        $insert_fvt_lst->del(sandbox_value::FLD_LAST_UPDATE);
+        $par_lst_out->add_list($insert_fvt_lst);
+
+        // close the sql function statement
+        $sql .= $sc->sql_func_end();
+
+        // create the query parameters for the actual change
+        $qp_chg = clone $qp;
+        $qp_chg->sql = $sc->create_sql_insert($par_lst_out, $sc_par_lst);
+
+        // merge all together and create the function
+        $qp->sql = $qp_chg->sql . $sql . ';';
+        $qp->par = $par_lst_out->values();
+
+        // create the call sql statement
+        return $sc->sql_call($qp, $qp_chg->name, $par_lst_out);
     }
 
     /**

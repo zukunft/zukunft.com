@@ -36,8 +36,13 @@ include_once MODEL_LOG_PATH . 'change_log.php';
 include_once API_LOG_PATH . 'change_log_named.php';
 include_once WEB_LOG_PATH . 'change_log_named.php';
 
+use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use cfg\db\sql_par_field_list;
+use cfg\db\sql_par_type;
+use cfg\db\sql_type_list;
+use cfg\group\group;
 use cfg\type_object;
 use cfg\user;
 
@@ -87,5 +92,73 @@ class change_value extends change_log
     public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
 
     public ?string $group_id = null;  // the reference id of the row in the database table
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields
+     * list must be corresponding to the db_values fields
+     *
+     * @return sql_par_field_list list of the database field names
+     */
+    function db_field_values_types(sql $sc, sql_type_list $sc_par_lst): sql_par_field_list
+    {
+        $fvt_lst = parent::db_field_values_types($sc, $sc_par_lst);
+
+        if ($this->old_value !== null or ($sc_par_lst->is_update_part() and $this->new_value !== null)) {
+            $fvt_lst->add_field(self::FLD_OLD_VALUE, $this->old_value, $sc->get_sql_par_type($this->old_value));
+        }
+        if ($this->new_value !== null or ($sc_par_lst->is_update_part() and $this->old_value !== null)) {
+            $fvt_lst->add_field(self::FLD_NEW_VALUE, $this->new_value, $sc->get_sql_par_type($this->new_value));
+        }
+
+        $fvt_lst->add_field(group::FLD_ID, $this->group_id, sql_par_type::INT);
+        return $fvt_lst;
+    }
+
+    /**
+     * get a list of all database fields
+     * list must be corresponding to the db_values fields
+     * TODO deprecate
+     *
+     * @return array list of the database field names
+     */
+    function db_fields(): array
+    {
+        $sql_fields = parent::db_fields();
+
+        if ($this->old_value !== null) {
+            $sql_fields[] = self::FLD_OLD_VALUE;
+        }
+        if ($this->new_value !== null) {
+            $sql_fields[] = self::FLD_NEW_VALUE;
+        }
+
+        $sql_fields[] = group::FLD_ID;
+        return $sql_fields;
+    }
+
+    /**
+     * get a list of database field values that have been updated
+     *
+     * @return array list of the database field values
+     */
+    function db_values(): array
+    {
+        $sql_values = parent::db_values();
+
+        if ($this->old_value !== null) {
+            $sql_values[] = $this->old_value;
+        }
+        if ($this->new_value !== null) {
+            $sql_values[] = $this->new_value;
+        }
+
+        $sql_values[] = $this->group_id;
+        return $sql_values;
+    }
 
 }

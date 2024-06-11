@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/log/change_value.php - log object for changes of values with a prime group id
+    cfg/log/change_value.php - log object for changes of values with a big group id
     ------------------------
 
     This file is part of zukunft.com - calc with words
@@ -36,7 +36,7 @@ include_once MODEL_LOG_PATH . 'change_value.php';
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 
-class change_prime_value extends change_value
+class change_values_big extends change_value
 {
 
     /*
@@ -44,11 +44,11 @@ class change_prime_value extends change_value
      */
 
     // user log database and JSON object field names for named user sandbox objects
-    const TBL_COMMENT = 'to log all changes done by any user on values with a prime group id';
+    const TBL_COMMENT = 'to log all changes done by any user on values with a big group id';
 
-    // field list to identify the value with a prime group id that has been changed
+    // field list to identify the value with a big group id that has been changed
     const FLD_LST_ROW_ID = array(
-        [self::FLD_GROUP_ID, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', ''],
+        [self::FLD_GROUP_ID, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', ''],
     );
 
 }
