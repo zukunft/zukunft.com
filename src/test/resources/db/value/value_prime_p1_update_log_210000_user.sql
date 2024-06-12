@@ -16,8 +16,7 @@ BEGIN
          SELECT                      _user_id,_change_action_id,_field_id_numeric_value,_numeric_value_old,_numeric_value,_group_id ;
 
     UPDATE user_values_prime
-       SET user_id = _user_id,
-           numeric_value = _numeric_value,
+       SET numeric_value = _numeric_value,
            last_update = Now()
      WHERE phrase_id_1 = _phrase_id_1
        AND phrase_id_2 = _phrase_id_2

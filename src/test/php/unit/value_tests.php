@@ -144,6 +144,8 @@ class value_tests
         $this->assert_sql_update_trigger($t, $db_con, $val_upd, $val);
         $t->assert_sql_delete($sc, $val);
         $t->assert_sql_delete($sc, $val, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $val, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $val, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $val, [sql_type::USER, sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $val_16);
         $t->assert_sql_delete($sc, $val_16, [sql_type::USER]);

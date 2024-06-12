@@ -122,6 +122,7 @@ class sql
     const END_MYSQL = ')';
     const UNION = 'UNION';
     const IN = 'IN';
+    const SEP = ';';
     const WITH = 'WITH';
 
     const LAST_ID_MYSQL = 'SELECT LAST_INSERT_ID() AS ';
@@ -1912,11 +1913,13 @@ class sql
                 sql_field_type::NUMERIC_FLOAT
             );
         }
-        $par_lst_out->add_field(
-            sandbox_value::FLD_VALUE,
-            $val_new,
-            sql_field_type::NUMERIC_FLOAT
-        );
+        if (!$sc_par_lst->is_delete()) {
+            $par_lst_out->add_field(
+                sandbox_value::FLD_VALUE,
+                $val_new,
+                sql_field_type::NUMERIC_FLOAT
+            );
+        }
         if (is_numeric($log->group_id)) {
             $par_lst_out->add_field(
                 group::FLD_ID,
@@ -2009,16 +2012,13 @@ class sql
      * create a sql statement to delete or exclude a database row
      * @param sql_par_field_list $fvt_lst_id name, value and type of the id field (or list of field names)
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @return string
      */
     function create_sql_delete_fvt(
         sql_par_field_list $fvt_lst_id,
-        sql_type_list      $sc_par_lst = new sql_type_list([]),
-        sql_par_field_list $fvt_lst = new sql_par_field_list(),
+        sql_type_list      $sc_par_lst = new sql_type_list([])
     ): string
     {
-        $excluded = $sc_par_lst->exclude_sql();
 
         $id_fields = $fvt_lst_id->names();
         $id_field = $id_fields[0];
@@ -2035,7 +2035,7 @@ class sql
                     [$id_field, user::FLD_ID],
                     ['_' . $id_field, '_' . user::FLD_ID], 0, '_' . $id_field, true);
             } else {
-                $sql_where = $this->sql_where_no_par($id_field, '_' . $id_field, 0, '_' . $id_field);
+                $sql_where = $this->sql_where_fvt($fvt_lst_id);
             }
         } else {
             $sql_where = $this->sql_where_fvt($fvt_lst_id);
@@ -2043,12 +2043,12 @@ class sql
 
         if ($sc_par_lst->incl_log()) {
             if ($sc_par_lst->create_function()) {
-                $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst, $fvt_lst);
+                $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst);
             } else {
                 $sql = sql::DELETE . ' ' . $this->table . ' ';
                 $sql .= $sql_where;
-                if ($excluded) {
-                    $sql .= ' AND ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                if ($sc_par_lst->exclude_sql()) {
+                    $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
                 }
             }
         } else {
@@ -2056,7 +2056,7 @@ class sql
             $sql .= ' ' . $this->name_sql_esc($this->table);
             $sql .= $sql_where;
 
-            if ($excluded) {
+            if ($sc_par_lst->exclude_sql()) {
                 $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
             }
         }
@@ -2066,6 +2066,34 @@ class sql
         } else {
             return $this->end_sql($sql, self::DELETE);
         }
+    }
+
+    /**
+     * create a sql statement to delete or exclude a database row
+     * @param sql_par_field_list $fvt_lst_id name, value and type of the id field (or list of field names)
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param sql_par_field_list $fvt_lst list of all parameters used for the function with name, value and type
+     * @return string
+     */
+    function create_sql_delete_fvt_new(
+        sql_par_field_list $fvt_lst_id,
+        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        sql_par_field_list $fvt_lst = new sql_par_field_list()
+    ): string
+    {
+        if ($sc_par_lst->create_function()) {
+            $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst, $fvt_lst);
+        } else {
+            $sql = $this->prepare_this_sql(self::DELETE, $sc_par_lst);
+            $sql .= ' ' . $this->name_sql_esc($this->table) . ' ';
+            $sql .= $this->sql_where_fvt($fvt_lst_id);
+            if ($sc_par_lst->exclude_sql()) {
+                $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+            }
+            $sql .= sql::SEP;
+        }
+
+        return $sql;
     }
 
     /**
@@ -2087,8 +2115,10 @@ class sql
         $excluded = $sc_par_lst->exclude_sql();
 
         // check if the minimum parameters are set
-        if ($this->query_name == '') {
-            log_err('SQL statement is not yet named');
+        if (!$sc_par_lst->is_sub_tbl()) {
+            if ($this->query_name == '') {
+                log_err('SQL statement is not yet named');
+            }
         }
 
         if ($sc_par_lst->use_named_par()) {
@@ -2097,7 +2127,11 @@ class sql
                     [$id_field, user::FLD_ID],
                     ['_' . $id_field, '_' . user::FLD_ID], 0, '_' . $id_field, true);
             } else {
-                $sql_where = $this->sql_where_no_par($id_field, '_' . $id_field, 0, '_' . $id_field);
+                if (is_array($id_field)) {
+                    $sql_where = $this->sql_where_no_par($id_field, $id);
+                } else {
+                    $sql_where = $this->sql_where_no_par($id_field, '_' . $id_field, 0, '_' . $id_field);
+                }
             }
         } else {
             $sql_where = $this->sql_where($id_field, $id);
@@ -2114,7 +2148,7 @@ class sql
                 }
             }
         } else {
-            $sql = $this->prepare_this_sql(self::DELETE);
+            $sql = $this->prepare_this_sql(self::DELETE, $sc_par_lst);
             $sql .= ' ' . $this->name_sql_esc($this->table);
             $sql .= $sql_where;
 
@@ -2233,6 +2267,38 @@ class sql
             }
         } else {
             $sql_where = ' ' . sql::WHERE . ' ' . $id_field . ' = ' . $id_field_par;
+        }
+        return $sql_where;
+    }
+
+    /**
+     * create the where part of a sql statement
+     *
+     * @param sql_par_field_list $fvt_lst_id list of id fields with the value and type
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param int $offset for the par number e.g. 4 for $4
+     * @return string with the where statement
+     */
+    private function sql_where_fvt_new(
+        sql_par_field_list $fvt_lst_id,
+        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        int                $offset = 0
+    ): string
+    {
+        $sql_where = '';
+        $pos = $offset + 1;
+        foreach ($fvt_lst_id as $fvt) {
+            if ($sql_where != '') {
+                $sql_where .= ' ' . sql::AND . ' ';
+            } else {
+                $sql_where .= ' ' . sql::WHERE . ' ';
+            }
+            if ($sc_par_lst->use_named_par()) {
+                $sql_where .= $fvt->name . ' = ' . $fvt->par_name;
+            } else {
+                $sql_where .= $fvt->name . ' = ' . $this->par_name($pos);
+            }
+            $pos++;
         }
         return $sql_where;
     }
@@ -3379,7 +3445,7 @@ class sql
         $sql = '';
         if (!$fvt_lst->is_empty()) {
             if ($sc_par_lst->create_function()) {
-                $par_string = '(' . $fvt_lst->par_names($this) . ')';
+                $par_string = '(' . $fvt_lst->sql_par_names($this) . ')';
                 if ($this->db_type == sql_db::POSTGRES) {
                     $sql = sql::CREATE . ' ' . sql::FUNCTION . ' ' . $this->query_name . ' '
                         . $par_string . ' ';
@@ -3406,7 +3472,7 @@ class sql
 
             // TODO move this to fvt_lst based
 
-            if ($this->sub_query) {
+            if ($this->sub_query or $sc_par_lst->is_sub_tbl()) {
                 $sql = $sql_statement_type;
             } elseif (count($this->par_types) > 0
                 or $this->join_sub_query

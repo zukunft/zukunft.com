@@ -1553,10 +1553,12 @@ class sandbox_value extends sandbox_multi
             $par_lst_out->add_list($qp_log->par_fld_lst);
         }
 
-        // insert a new row in the user table
+        // insert a new row
         $sc_write = clone $sc;
         $qp_write = $this->sql_common($sc_write, $sc_par_lst_sub);
         $sc_write->set_name($qp_write->name);
+
+        // collect the fields that should be written to the database
         $fvt_lst_write = new sql_par_field_list();
         // add the id to the changes
         // TODO maybe net out with calling function and / or make list correct from beginning
@@ -1570,7 +1572,7 @@ class sandbox_value extends sandbox_multi
             }
         }
         if (!$sc_par_lst->is_standard()) {
-            if ($fvt_lst_all->has_name(user::FLD_ID)) {
+            if ($fvt_lst_all->has_name(user::FLD_ID) and $sc_par_lst->is_insert()) {
                 $fvt_lst_write->add($fvt_lst_all->get(user::FLD_ID));
             }
         }
@@ -1608,39 +1610,6 @@ class sandbox_value extends sandbox_multi
 
         // create the call sql statement
         return $sc->sql_call($qp, $qp_chg->name, $par_lst_out);
-    }
-
-    /**
-     * create the sql statement to delete a value in the database
-     * TODO check if user specific overwrites can be deleted
-     *
-     * @param sql $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_delete(
-        sql           $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
-    ): sql_par
-    {
-        // clone the parameter list to avoid changing the given list
-        $sc_par_lst_used = clone $sc_par_lst;
-        // set the sql query type
-        $sc_par_lst_used->add(sql_type::DELETE);
-        // set the target sql table type for this value
-        $sc_par_lst_used->add($this->table_type());
-        // get the name indicator how many id fields are user
-        $id_ext = $this->grp->table_extension();
-        // get the prime db key list for this sandbox object
-        $fvt_lst_id = $this->id_fvt_lst($sc_par_lst);
-
-        $qp = $this->sql_common($sc, $sc_par_lst_used, '', $id_ext);
-        $sc->set_name($qp->name);
-        // TODO add test fpr !$sc_par_lst_used->exclude_sql()
-        $qp->sql = $sc->create_sql_delete_fvt($fvt_lst_id, $sc_par_lst_used);
-        // and remember the paraemeters used
-        $qp->par = $sc->par_values();
-        return $qp;
     }
 
     /**
@@ -1692,6 +1661,149 @@ class sandbox_value extends sandbox_multi
         $qp->sql = $sc->create_sql_update($id_fields, $id_lst, $fvt_lst);
         // and remember the paraemeters used
         $qp->par = $sc->par_values();
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to delete a value in the database
+     * TODO check if user specific overwrites can be deleted
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_delete(
+        sql           $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
+    {
+        // clone the parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::DELETE);
+        // set the target sql table type for this value e.g. add prime
+        $sc_par_lst_used->add($this->table_type());
+        // get the name indicator how many id fields are user
+        $id_ext = $this->grp->table_extension();
+        // get the prime db key list for this sandbox object
+        $fvt_lst_id = $this->id_fvt_lst($sc_par_lst);
+
+        // create the main query parameter object and set the query name
+        $qp = $this->sql_common($sc, $sc_par_lst_used, '', $id_ext);
+        $sc->set_name($qp->name);
+        if ($sc_par_lst_used->incl_log()) {
+            // log functions must always use named parameters
+            $sc_par_lst_used->add(sql_type::NAMED_PAR);
+            $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst_id, $sc_par_lst_used);
+        } else {
+            // TODO add test fpr !$sc_par_lst_used->exclude_sql()
+            $qp->sql = $sc->create_sql_delete_fvt($fvt_lst_id, $sc_par_lst_used);
+            // and remember the paraemeters used
+            $qp->par = $sc->par_values();
+        }
+        return $qp;
+    }
+
+    /**
+     * create a sql statement to delete or exclude a value
+     *
+     * @param sql $sc the sql creator object with the db type set
+     * @param sql_par $qp the query parameter with the name already set
+     * @param sql_par_field_list $fvt_lst_id name, value and type of the id field (or list of field names)
+     * @param sql_type_list $sc_par_lst
+     * @return sql_par
+     */
+    private function sql_delete_and_log(
+        sql                $sc,
+        sql_par            $qp,
+        sql_par_field_list $fvt_lst_id,
+        sql_type_list      $sc_par_lst = new sql_type_list([])
+    ): sql_par
+    {
+
+        // overwrite the standard auto increase id field name
+        $sc->set_id_field($this->id_field($sc_par_lst));
+        // use the query name for the sql creation
+        $sc->set_name($qp->name);
+
+        // init the function body
+        $sql = $sc->sql_func_start('', $sc_par_lst);
+
+        // don't use the log parameter for the sub queries
+        $sc_par_lst->add(sql_type::NO_ID_RETURN);
+        $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
+        $sc_par_lst_sub->add(sql_type::SUB);
+        $sc_par_lst_sub->add(sql_type::DELETE_PART);
+        $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
+        $sc_par_lst_log = $sc_par_lst_sub->remove(sql_type::STANDARD);
+
+        // list of parameters actually used in order of the function usage
+        $fvt_lst_log = new sql_par_field_list();
+
+        // add the change action field to the field list for the log entries
+        global $change_action_list;
+        $fvt_lst_log->add_field(
+            change_action::FLD_ID,
+            $change_action_list->id(change_action::DELETE),
+            type_object::FLD_ID_SQLTYP
+        );
+
+        // get the fields for the value log entry
+        $fvt_lst_log->add_field(group::FLD_ID, $this->grp()->id());
+
+        // for standard prime values add the user only for the log
+        if ($sc_par_lst->is_standard() and $sc_par_lst->is_prime()) {
+            $fvt_lst_log->add_field(user::FLD_ID, $this->user_id(), sql_par_type::INT);
+        }
+
+        // create the log entry for the value
+        $qp_log = $sc->sql_func_log_value($this, $this->user(), $fvt_lst_log, $sc_par_lst_log);
+        $sql .= ' ' . $qp_log->sql;
+
+        // list of parameters actually used in order of the function usage
+        $par_lst_out = new sql_par_field_list();
+        $par_lst_out->add_list($qp_log->par_fld_lst);
+
+        // set missing par names
+        foreach ($fvt_lst_id->lst as $fvt) {
+            if ($fvt->par_name == '') {
+                $fvt->par_name = '_' . $fvt->name;
+            }
+        }
+
+        // create the actual delete or exclude statement
+        $sc_delete = clone $sc;
+        $qp_delete = $this->sql_common($sc_delete, $sc_par_lst_log);;
+        $qp_delete->sql = $sc_delete->create_sql_delete_fvt_new($fvt_lst_id, $sc_par_lst_sub);
+        // add the insert row to the function body
+        $sql .= ' ' . $qp_delete->sql . ' ';
+
+        $sql .= $sc->sql_func_end();
+
+        // create the query parameters for the call
+        $qp_func = clone $qp;
+        $sc_par_lst_func = clone $sc_par_lst;
+        $sc_par_lst_func->add(sql_type::FUNCTION);
+        $sc_par_lst_func->add(sql_type::DELETE);
+        $sc_par_lst_func->add(sql_type::NO_ID_RETURN);
+        if ($sc_par_lst->exclude_sql()) {
+            $sc_par_lst_func->add(sql_type::EXCLUDE);
+        }
+        $qp_func = $this->sql_common($sc_delete, $sc_par_lst_func);
+
+        $par_lst_out->add_list($fvt_lst_id);
+        $qp_func->sql = $sc->create_sql_delete_fvt_new($fvt_lst_id, $sc_par_lst_func, $par_lst_out);
+
+        // merge all together and create the function
+        $qp->sql = $qp_func->sql . ' ' . $sql . ';';
+
+        // create the function call
+        $qp->call_sql = ' ' . sql::SELECT . ' ' . $qp->name . ' (';
+
+        $call_val_str = $par_lst_out->par_sql($sc);
+
+        $qp->call_sql .= $call_val_str . ');';
+
         return $qp;
     }
 

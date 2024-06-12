@@ -445,6 +445,15 @@ class sql_par_field_list
         return $result;
     }
 
+    function par_names(): array
+    {
+        $result = [];
+        foreach ($this->lst as $fld) {
+            $result[] = $fld->par_name;
+        }
+        return $result;
+    }
+
     function db_values(): array
     {
         $result = [];
@@ -689,7 +698,7 @@ class sql_par_field_list
      * @param sql $sc
      * @return string
      */
-    function par_names(sql $sc): string
+    function sql_par_names(sql $sc): string
     {
         $sql = '';
         foreach ($this->lst as $key => $fld) {

@@ -2773,8 +2773,8 @@ class sandbox extends db_object_seq_id_user
         $sc_par_lst_used = clone $sc_par_lst;
         // set the sql query type
         $sc_par_lst_used->add(sql_type::DELETE);
+        // set the query name
         $qp = $this->sql_common($sc, $sc_par_lst_used);
-        $par_lst = [$this->id()];
         $sc->set_name($qp->name);
         // delete the user overwrite
         // but if the excluded user overwrites should be deleted the overwrites for all users should be deleted
@@ -2783,6 +2783,7 @@ class sandbox extends db_object_seq_id_user
             $sc_par_lst_used->add(sql_type::NAMED_PAR);
             $qp = $this->sql_delete_and_log($sc, $qp, $sc_par_lst_used);
         } else {
+            $par_lst = [$this->id()];
             if ($sc_par_lst_used->is_usr_tbl() and !$sc_par_lst_used->exclude_sql()) {
                 $qp->sql = $sc->create_sql_delete(
                     [$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $sc_par_lst_used);
