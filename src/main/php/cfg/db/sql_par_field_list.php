@@ -86,10 +86,12 @@ class sql_par_field_list
         }
     }
 
-    function add(sql_par_field $fld): void
+    function add(?sql_par_field $fld): void
     {
-        if (!in_array($fld->name, $this->names())) {
-            $this->lst[] = $fld;
+        if ($fld != null) {
+            if (!in_array($fld->name, $this->names())) {
+                $this->lst[] = $fld;
+            }
         }
     }
 
@@ -500,14 +502,14 @@ class sql_par_field_list
     /**
      * get the value for the given field name
      * @param string $name the name of the field to select
-     * @return sql_par_field the name, value and type selected by the name
+     * @return sql_par_field|null the name, value and type selected by the name
      */
-    function get(string $name): sql_par_field
+    function get(string $name): ?sql_par_field
     {
         $key = array_search($name, $this->names());
         if ($key === false) {
             log_err('field "' . $name . '" missing in "' . implode(',', $this->names())) . '"';
-            return new sql_par_field();
+            return null;
         } else {
             return $this->lst[$key];
         }

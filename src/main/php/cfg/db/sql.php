@@ -1411,21 +1411,21 @@ class sql
      * create the sql statement to update a row to the database
      * using sql_par_field for the id_field
      *
-     * @param sql_par_field_list $id_fvt_lst name, value and type of the id field (or list of field names)
+     * @param sql_par_field_list $fvt_lst_id name, value and type of the id field (or list of field names)
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $val_tbl name of the table to select the values to insert
      * @return string the prepared sql insert statement
      */
     function create_sql_update_fvt(
-        sql_par_field_list $id_fvt_lst,
+        sql_par_field_list $fvt_lst_id,
         sql_par_field_list $fvt_lst,
         sql_type_list      $sc_par_lst = new sql_type_list([]),
         string             $val_tbl = ''): string
     {
 
-        $id_field = $id_fvt_lst->names();
-        $id = $id_fvt_lst->values();
+        $id_field = $fvt_lst_id->names();
+        $id = $fvt_lst_id->values();
 
         $id_field_par = '';
         $use_named_par = $sc_par_lst->use_named_par();
@@ -1436,7 +1436,7 @@ class sql
             log_err('SQL statement is not yet named');
         }
 
-        // gat the value parameter types
+        // get the value parameter types
         $par_pos = 1;
         foreach ($fvt_lst->lst as $fvt) {
             $fld = $fvt->name;
@@ -1479,7 +1479,17 @@ class sql
             } else {
                 $id_lst = $id;
             }
-            $sql_where = $this->sql_where_fvt($id_fvt_lst, $offset, $id_field_par);
+
+            // set missing par names
+            if ($use_named_par) {
+                foreach ($fvt_lst_id->lst as $fvt) {
+                    if ($fvt->par_name == '') {
+                        $fvt->par_name = '_' . $fvt->name;
+                    }
+                }
+            }
+
+            $sql_where = $this->sql_where_fvt($fvt_lst_id, $offset, $id_field_par);
         } else {
             $id = $id[0];
             if ($use_named_par) {
@@ -1859,6 +1869,11 @@ class sql
         $log->set_field(sandbox_value::FLD_VALUE);
 
         $log->group_id = $fvt_lst->get_value(group::FLD_ID);
+        $val_old = null;
+        if ($sc_par_lst->is_update()) {
+            $val_old = $fvt_lst->get_old(sandbox_value::FLD_VALUE);
+            $log->old_value = $val_old;
+        }
         $val_new = $fvt_lst->get_value(sandbox_value::FLD_VALUE);
         $log->new_value = $val_new;
 
@@ -1873,9 +1888,13 @@ class sql
 
         // fill the parameter list in order of usage in the sql
         $par_lst_out = new sql_par_field_list();
+        $usr_id = $fvt_lst->get_value(user::FLD_ID);
+        if ($usr_id == null) {
+            $usr_id = $usr->id();
+        }
         $par_lst_out->add_field(
             user::FLD_ID,
-            $fvt_lst->get_value(user::FLD_ID),
+            $usr_id,
             sql_par_type::INT);
         $par_lst_out->add_field(
             change_action::FLD_ID,
@@ -1886,6 +1905,13 @@ class sql
             $change_field_list->id($table_id . sandbox_value::FLD_VALUE),
             change::FLD_FIELD_ID_SQLTYP
         );
+        if ($sc_par_lst->is_update()) {
+            $par_lst_out->add_field(
+                sandbox_value::FLD_VALUE . change::FLD_OLD_EXT,
+                $val_old,
+                sql_field_type::NUMERIC_FLOAT
+            );
+        }
         $par_lst_out->add_field(
             sandbox_value::FLD_VALUE,
             $val_new,
@@ -1981,20 +2007,20 @@ class sql
 
     /**
      * create a sql statement to delete or exclude a database row
-     * @param sql_par_field_list $id_fvt_lst name, value and type of the id field (or list of field names)
+     * @param sql_par_field_list $fvt_lst_id name, value and type of the id field (or list of field names)
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @return string
      */
     function create_sql_delete_fvt(
-        sql_par_field_list $id_fvt_lst,
+        sql_par_field_list $fvt_lst_id,
         sql_type_list      $sc_par_lst = new sql_type_list([]),
         sql_par_field_list $fvt_lst = new sql_par_field_list(),
     ): string
     {
         $excluded = $sc_par_lst->exclude_sql();
 
-        $id_fields = $id_fvt_lst->names();
+        $id_fields = $fvt_lst_id->names();
         $id_field = $id_fields[0];
 
         // check if the minimum parameters are set
@@ -2012,7 +2038,7 @@ class sql
                 $sql_where = $this->sql_where_no_par($id_field, '_' . $id_field, 0, '_' . $id_field);
             }
         } else {
-            $sql_where = $this->sql_where_fvt($id_fvt_lst);
+            $sql_where = $this->sql_where_fvt($fvt_lst_id);
         }
 
         if ($sc_par_lst->incl_log()) {
@@ -2160,7 +2186,11 @@ class sql
         foreach ($fvt_lst->names() as $fld) {
             $this->par_types[] = $fvt_lst->get_type($fld);
             $this->par_values[] = $fvt_lst->get_value($fld);
-            $this->par_fields[] = $this->par_name();
+            if ($fvt_lst->get_par_name($fld) == '') {
+                $this->par_fields[] = $this->par_name();
+            } else {
+                $this->par_fields[] = $fvt_lst->get_par_name($fld);
+            }
         }
 
         // create a prepare SQL statement if possible

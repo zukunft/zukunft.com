@@ -2250,14 +2250,14 @@ class value extends sandbox_value
      */
     function db_fields_changed(
         sandbox|sandbox_value|value $sbx,
-        sql_type_list         $sc_par_lst = new sql_type_list([])
+        sql_type_list               $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
         global $change_field_list;
         $sc = new sql();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
 
         if (!$sc_par_lst->is_standard()) {
             if ($sbx->src_id() <> $this->src_id()) {

@@ -1463,20 +1463,20 @@ class sandbox_value extends sandbox_multi
         // use the query name for the sql creation
         $sc->set_name($qp->name);
         // actually create the sql statement
-        if ($sc_par_lst->is_insert()) {
-            if ($sc_par_lst->incl_log()) {
-                // log functions must always use named parameters
-                $sc_par_lst->add(sql_type::NAMED_PAR);
-                $qp = $this->sql_insert_with_log($sc, $qp, $fvt_lst_id, $fvt_lst, $fld_lst_all, $sc_par_lst);
-            } else {
+        if ($sc_par_lst->incl_log()) {
+            // log functions must always use named parameters
+            $sc_par_lst->add(sql_type::NAMED_PAR);
+            $qp = $this->sql_write_with_log($sc, $qp, $fvt_lst_id, $fvt_lst, $fld_lst_all, $sc_par_lst);
+        } else {
+            if ($sc_par_lst->is_insert()) {
                 $qp->sql = $sc->create_sql_insert($fvt_lst);
                 // set the parameters for the query execution
                 $qp->par = $fvt_lst->db_values();
+            } else {
+                $qp->sql = $sc->create_sql_update_fvt($fvt_lst_id, $fvt_lst, $sc_par_lst);
+                // and remember the paraemeters used
+                $qp->par = $sc->par_values();
             }
-        } else {
-            $qp->sql = $sc->create_sql_update_fvt($fvt_lst_id, $fvt_lst, $sc_par_lst);
-            // and remember the paraemeters used
-            $qp->par = $sc->par_values();
         }
         return $qp;
     }
@@ -1491,7 +1491,7 @@ class sandbox_value extends sandbox_multi
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert_with_log(
+    function sql_write_with_log(
         sql                $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst_id,
@@ -1540,7 +1540,7 @@ class sandbox_value extends sandbox_multi
 
         // check if other vars than the value have been changed
         $fld_lst_ex_id = array_diff($fld_lst_ex_log, $fvt_lst_id->names());
-        $fld_lst_ex_id_and_val =  array_diff($fld_lst_ex_id, [
+        $fld_lst_ex_id_and_val = array_diff($fld_lst_ex_id, [
             change_action::FLD_ID,
             sandbox_value::FLD_VALUE,
             sandbox_value::FLD_LAST_UPDATE
@@ -1554,28 +1554,46 @@ class sandbox_value extends sandbox_multi
         }
 
         // insert a new row in the user table
-        $sc_insert = clone $sc;
-        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub);
-        $sc_insert->set_name($qp_insert->name);
-        $insert_fvt_lst = new sql_par_field_list();
-        foreach ($fvt_lst_id->names() as $fld) {
-            $insert_fvt_lst->add($fvt_lst->get($fld));
+        $sc_write = clone $sc;
+        $qp_write = $this->sql_common($sc_write, $sc_par_lst_sub);
+        $sc_write->set_name($qp_write->name);
+        $fvt_lst_write = new sql_par_field_list();
+        // add the id to the changes
+        // TODO maybe net out with calling function and / or make list correct from beginning
+        $fvt_lst_all = clone $fvt_lst;
+        if ($sc_par_lst->is_update()) {
+            $fvt_lst_all->add_list($fvt_lst_id);
+        }
+        if ($sc_par_lst->is_insert()) {
+            foreach ($fvt_lst_id->names() as $fld) {
+                $fvt_lst_write->add($fvt_lst_all->get($fld));
+            }
         }
         if (!$sc_par_lst->is_standard()) {
-            $insert_fvt_lst->add($fvt_lst->get(user::FLD_ID));
+            if ($fvt_lst_all->has_name(user::FLD_ID)) {
+                $fvt_lst_write->add($fvt_lst_all->get(user::FLD_ID));
+            }
         }
-        $insert_fvt_lst->add($fvt_lst->get(sandbox_value::FLD_VALUE));
+        $fvt_lst_write->add($fvt_lst_all->get(sandbox_value::FLD_VALUE));
         if (!$sc_par_lst->is_standard()) {
-            $insert_fvt_lst->add($fvt_lst->get(sandbox_value::FLD_LAST_UPDATE));
+            $fvt_lst_write->add($fvt_lst_all->get(sandbox_value::FLD_LAST_UPDATE));
         }
 
-        // create the sql to actually add the value to the database
-        $qp_insert->sql = $sc_insert->create_sql_insert($insert_fvt_lst, $sc_par_lst_sub);
+        if ($sc_par_lst->is_insert()) {
+            // create the sql to actually add the value to the database
+            $qp_write->sql = $sc_write->create_sql_insert($fvt_lst_write, $sc_par_lst_sub);
+        } else {
+            // create the sql to actually update the value to the database
+            $qp_write->sql = $sc_write->create_sql_update_fvt($fvt_lst_id, $fvt_lst_write, $sc_par_lst_sub);
+        }
         // add the insert row to the function body
-        $sql .= ' ' . $qp_insert->sql . ' ';
+        $sql .= ' ' . $qp_write->sql . ' ';
         // add the fields used to the parameter list except the sql Now() function call
-        $insert_fvt_lst->del(sandbox_value::FLD_LAST_UPDATE);
-        $par_lst_out->add_list($insert_fvt_lst);
+        $fvt_lst_write->del(sandbox_value::FLD_LAST_UPDATE);
+        $par_lst_out->add_list($fvt_lst_write);
+        if ($sc_par_lst->is_update()) {
+            $par_lst_out->add_list($fvt_lst_id);
+        }
 
         // close the sql function statement
         $sql .= $sc->sql_func_end();
@@ -1755,6 +1773,7 @@ class sandbox_value extends sandbox_multi
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
         $is_insert = $sc_par_lst->is_insert();
+        $is_update = $sc_par_lst->is_update();
         $table_id = $sc->table_id($this::class);
 
         /*
@@ -1778,11 +1797,20 @@ class sandbox_value extends sandbox_multi
         }
         // TODO check that all numeric fields are checked with !== to force writing the value zero
         if ($sbx->number() !== $this->number()) {
-            $lst->add_field(
-                self::FLD_VALUE,
-                $this->number(),
-                sql_field_type::NUMERIC_FLOAT
-            );
+            if ($is_update) {
+                $lst->add_field(
+                    self::FLD_VALUE,
+                    $this->number(),
+                    sql_field_type::NUMERIC_FLOAT,
+                    $sbx->number()
+                );
+            } else {
+                $lst->add_field(
+                    self::FLD_VALUE,
+                    $this->number(),
+                    sql_field_type::NUMERIC_FLOAT
+                );
+            }
         }
         if (!$sc_par_lst->is_standard()) {
             // if any field has been updated, update the last_update field also

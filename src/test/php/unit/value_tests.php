@@ -134,6 +134,8 @@ class value_tests
         // TODO add tests for time, text and geo values
         $t->assert_sql_update($sc, $val, $db_val);
         $t->assert_sql_update($sc, $val, $db_val, [sql_type::USER]);
+        $t->assert_sql_update($sc, $val, $db_val, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $val, $db_val, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_update($sc, $val_3, $db_val_3);
         $t->assert_sql_update($sc, $val_3, $db_val_3, [sql_type::USER]);
         $t->assert_sql_update($sc, $val_16, $db_val_16);
