@@ -250,7 +250,7 @@ class sandbox_tests
         // ... same for MySQL
         $sc->db_type = sql_db::MYSQL;
         $created_sql = $sc->sql();
-        $expected_sql = "PREPARE query_test FROM 'SELECT config_id,  config_name,  `value` FROM config';";
+        $expected_sql = "PREPARE query_test FROM 'SELECT config_id,  config_name,  `value` FROM config WHERE code_id = ?';";
         $t->assert('non id MySQL select', $lib->trim($created_sql), $lib->trim($expected_sql));
         $created_par = implode(',', $sc->get_par());
         $expected_par = "version_database";

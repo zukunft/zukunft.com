@@ -296,7 +296,10 @@ class value_list extends sandbox_value_list
         $par_types = array();
         // loop over the possible tables where the value might be stored in this pod
         foreach (value::TBL_LIST as $tbl_typ) {
+            // reset but keep the parameter list
+            $par_lst = clone $sc->par_list();
             $sc->reset();
+            $sc->set_par_list($par_lst);
             $qp_tbl = $this->load_sql_by_phr_single($sc, $phr, $tbl_typ);
             if ($sc->db_type() != sql_db::MYSQL) {
                 $qp->merge($qp_tbl, true);
@@ -603,14 +606,16 @@ class value_list extends sandbox_value_list
      */
     function load_sql_by_phr_single(sql $sc, phrase $phr, array $sc_par_lst): sql_par
     {
+        $par_pos = $sc->par_count() + 1;
+        $par_name = $sc->par_name($par_pos);
         $qp = $this->load_sql_init($sc, value::class, 'phr', $sc_par_lst);
         if ($this->is_prime($sc_par_lst)) {
             for ($i = 1; $i <= group_id::PRIME_PHRASES_STD; $i++) {
-                $sc->add_where(phrase::FLD_ID . '_' . $i, $phr->id(), sql_par_type::INT_SAME_OR, '$2');
+                $sc->add_where(phrase::FLD_ID . '_' . $i, $phr->id(), sql_par_type::INT_SAME_OR, $par_name);
             }
         } else {
             $grp_id = new group_id();
-            $sc->add_where(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE, '$3');
+            $sc->add_where(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE, $par_name);
         }
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();

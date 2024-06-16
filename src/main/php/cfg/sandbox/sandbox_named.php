@@ -52,6 +52,8 @@ include_once DB_PATH . 'sql_type_list.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_par_field.php';
 include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_field.php';
+include_once DB_PATH . 'sql_field_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once API_FORMULA_PATH . 'formula.php';
 include_once API_PHRASE_PATH . 'phrase.php';

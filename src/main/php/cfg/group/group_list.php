@@ -147,7 +147,7 @@ class group_list extends sandbox_list
     {
         $qp = $this->load_sql_init($sc, group::class, 'phr', $sc_par_lst);
         $grp_id = new group_id();
-        $sc->add_where(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE, '$3');
+        $sc->add_where(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE);
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
 

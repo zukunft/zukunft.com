@@ -212,14 +212,15 @@ class type_list
     function load_sql(
         sql    $sc,
         string $class,
-        string $query_name = 'all',
-        string $order_field = ''): sql_par
+        string $query_name = sql::NAME_ALL,
+        string $order_field = ''
+    ): sql_par
     {
         $lib = new library();
         $db_type = $lib->class_to_name($class);
         $sc->set_class($class);
         $qp = new sql_par($db_type);
-        $qp->name = $db_type . '_' . $query_name;
+        $qp->name = $db_type . sql::NAME_SEP . $query_name;
         $sc->set_name($qp->name);
         if ($class == verb::class) {
             $sc->set_fields(verb::FLD_NAMES);
@@ -260,6 +261,7 @@ class type_list
             $class = $this->list_class_to_type($class);
         }
         $qp = $this->load_sql($sc, $class);
+        // TODO add a warning if the list gets (too) long
         $sc->set_page(sql_db::ROW_MAX, 0);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

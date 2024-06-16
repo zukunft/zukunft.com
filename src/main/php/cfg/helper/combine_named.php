@@ -36,8 +36,10 @@ namespace cfg;
 
 use cfg\db\sql;
 use cfg\db\sql_type;
+use cfg\db\sql_where_type;
 use shared\library;
 
+include_once MODEL_DB_PATH . 'sql_where_type.php';
 include_once MODEL_HELPER_PATH . 'combine_object.php';
 
 class combine_named extends combine_object
@@ -267,7 +269,7 @@ class combine_named extends combine_object
                             if (is_array($tbl_where_fld)) {
                                 foreach ($tbl_where_fld as $tbl_where_cond) {
                                     if ($sql_where_cond != '') {
-                                        $sql_where_cond .= ' ' . sql::OR . ' ';
+                                        $sql_where_cond .= ' ' . sql_where_type::OR . ' ';
                                     } else {
                                         $sql_where_cond .= ' (';
                                     }

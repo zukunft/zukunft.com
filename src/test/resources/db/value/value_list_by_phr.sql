@@ -1,4 +1,4 @@
-PREPARE value_list_by_phr (bigint, bigint, text) AS
+PREPARE value_list_by_phr (bigint, text, bigint) AS
     SELECT '' AS group_id,
            '' AS user_group_id,
            phrase_id_1,
@@ -14,7 +14,7 @@ PREPARE value_list_by_phr (bigint, bigint, text) AS
            0 AS change_user_id,
            0 AS share_type_id
       FROM values_standard_prime
-     WHERE phrase_id_1 = $2 OR phrase_id_2 = $2 OR phrase_id_3 = $2 OR phrase_id_4 = $2
+     WHERE phrase_id_1 = $1 OR phrase_id_2 = $1 OR phrase_id_3 = $1 OR phrase_id_4 = $1
 UNION
     SELECT group_id,
            '' AS user_group_id,
@@ -31,7 +31,7 @@ UNION
            0 AS change_user_id,
            0 AS share_type_id
       FROM values_standard
-     WHERE group_id like $3
+     WHERE group_id like $2
 UNION
     SELECT s.group_id,
            u.group_id AS user_group_id,
@@ -48,8 +48,8 @@ UNION
            u.user_id AS change_user_id,
            u.share_type_id
       FROM values s
- LEFT JOIN user_values u ON s.group_id = u.group_id AND u.user_id = $1
-     WHERE s.group_id like $3
+ LEFT JOIN user_values u ON s.group_id = u.group_id AND u.user_id = $3
+     WHERE s.group_id like $2
 UNION
     SELECT '' AS group_id,
            '' AS user_group_id,
@@ -69,8 +69,8 @@ UNION
  LEFT JOIN user_values_prime u ON s.phrase_id_1 = u.phrase_id_1
                               AND s.phrase_id_2 = u.phrase_id_2
                               AND s.phrase_id_3 = u.phrase_id_3
-                              AND s.phrase_id_4 = u.phrase_id_4 AND u.user_id = $1
-     WHERE s.phrase_id_1 = $2 OR s.phrase_id_2 = $2 OR s.phrase_id_3 = $2 OR s.phrase_id_4 = $2
+                              AND s.phrase_id_4 = u.phrase_id_4 AND u.user_id = $3
+     WHERE s.phrase_id_1 = $1 OR s.phrase_id_2 = $1 OR s.phrase_id_3 = $1 OR s.phrase_id_4 = $1
 UNION
     SELECT s.group_id,
            u.group_id AS user_group_id,
@@ -87,5 +87,5 @@ UNION
            u.user_id AS change_user_id,
            u.share_type_id
       FROM values_big s
- LEFT JOIN user_values_big u ON s.group_id = u.group_id AND u.user_id = $1
-     WHERE s.group_id like $3;
+ LEFT JOIN user_values_big u ON s.group_id = u.group_id AND u.user_id = $3
+     WHERE s.group_id like $2;
