@@ -236,7 +236,7 @@ class formula_list extends sandbox_list
                 formula::FLD_ID,
                 formula::FLD_ID
             );
-            $sc->add_where(sql_db::LNK_TBL . '.' . phrase::FLD_ID, $phr->id());
+            $sc->add_where(phrase::FLD_ID, $phr->id(), null, sql_db::LNK_TBL);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -261,7 +261,7 @@ class formula_list extends sandbox_list
                 formula::FLD_ID,
                 formula::FLD_ID
             );
-            $sc->add_where(sql_db::LNK_TBL . '.' . phrase::FLD_ID, $phr_lst->id_lst());
+            $sc->add_where(phrase::FLD_ID, $phr_lst->id_lst(), null, sql_db::LNK_TBL);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -293,8 +293,8 @@ class formula_list extends sandbox_list
                 formula::FLD_ID,
                 formula::FLD_ID
             );
-            $sc->add_where(sql_db::LNK_TBL . '.' . element::FLD_REF_ID, $ref_id);
-            $sc->add_where(sql_db::LNK_TBL . '.' . element::FLD_TYPE, $par_type_id);
+            $sc->add_where(element::FLD_REF_ID, $ref_id, null, sql_db::LNK_TBL);
+            $sc->add_where(element::FLD_TYPE, $par_type_id, null, sql_db::LNK_TBL);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';

@@ -126,6 +126,7 @@ class sql
     const UNION = 'UNION';
     const IN = 'IN';
     const SEP = ';';
+    const TBL_SEP = '.';
     const WITH = 'WITH';
 
     const LAST_ID_MYSQL = 'SELECT LAST_INSERT_ID() AS ';
@@ -961,7 +962,7 @@ class sql
     function add_where_fvt(sql_par_field_list $fvt_lst): void
     {
         foreach ($fvt_lst->lst as $fvt) {
-            $this->add_where($fvt->name, $fvt->value, $fvt->type, $fvt->par_name);
+            $this->add_where($fvt->name, $fvt->value, $fvt->type, '', $fvt->par_name);
         }
     }
 
@@ -973,6 +974,7 @@ class sql
      * @param string $fld the field name used in the sql where statement
      * @param int|string|array|null $fld_val with the database id that should be selected
      * @param sql_par_type|null $spt to force using a non-standard parameter type e.g. OR instead of AND
+     * @param string|null $tbl the table name or letter if not the standard table
      * @param string $name the unique name of the parameter to force to use the same parameter more than once
      * @return void
      */
@@ -980,6 +982,38 @@ class sql
         string                $fld,
         int|string|array|null $fld_val,
         sql_par_type|null     $spt = null,
+        string|null           $tbl = null,
+        string                $name = ''
+    ): void
+    {
+        // set the default parameter type for the sql parameter type (spt)
+        if ($spt == null) {
+            $spt = $this->get_sql_par_type($fld_val);
+        }
+
+        // add the parameter for the where selection list
+        $this->add_where_par($fld, $fld_val, $spt, $tbl, $name);
+        // add the added parameter to the where list
+        $this->add_where_no_par($tbl, $fld, $spt, $this->get_par_pos());
+    }
+
+    /**
+     * add the parameter for a where condition a list of id are one field or another
+     * e.g. used to select both sides of a phrase tree
+     * TODO move the table prefix to a separate parameter
+     *
+     * @param string $fld the field name used in the sql where statement
+     * @param int|string|array|null $fld_val with the database id that should be selected
+     * @param sql_par_type|null $spt to force using a non-standard parameter type e.g. OR instead of AND
+     * @param string|null $tbl the table name or letter if not the standard table
+     * @param string $name the unique name of the parameter to force to use the same parameter more than once
+     * @return void
+     */
+    function add_where_par(
+        string                $fld,
+        int|string|array|null $fld_val,
+        sql_par_type|null     $spt = null,
+        string|null           $tbl = null,
         string                $name = ''
     ): void
     {
@@ -997,14 +1031,9 @@ class sql
             if ($spt === null) {
                 log_err('value and type missing in add_where');
             } else {
-                $this->add_par($spt, 0, $fld);
+                $this->add_par($spt, 0, $name);
             }
         } else {
-
-            // set the default parameter type for the sql parameter type (spt)
-            if ($spt == null) {
-                $spt = $this->get_sql_par_type($fld_val);
-            }
 
             // format the values if needed
             if ($spt == sql_par_type::INT_LIST
@@ -1025,11 +1054,7 @@ class sql
             } elseif ($spt == sql_par_type::INT_SAME
                 or $spt == sql_par_type::INT_SAME_OR) {
                 $this->add_par($spt, $fld_val, $name);
-            } elseif ($spt == sql_par_type::TEXT
-                or $spt == sql_par_type::TEXT_USR
-                or $spt == sql_par_type::TEXT_OR
-                or $spt == sql_par_type::INT_SUB
-                or $spt == sql_par_type::INT_SUB_IN) {
+            } elseif ($spt->is_text()) {
                 $this->add_par($spt, $fld_val, $name);
             } elseif ($spt == sql_par_type::CONST
                 or $spt == sql_par_type::CONST_NOT
@@ -1054,14 +1079,17 @@ class sql
                 log_err('SQL parameter type ' . $spt->value . ' not expected');
             }
         }
+    }
 
+    function add_where_no_par(?string $tbl, string $fld, sql_par_type $spt, int $pos): void
+    {
         // add the parameter to the where list
         $pwh = new sql_where();
+        $pwh->tbl = $tbl;
         $pwh->fld = $fld;
         $pwh->typ = $spt;
-        $pwh->pos = $this->get_par_pos();
+        $pwh->pos = $pos;
         $this->par_where->add($pwh);
-
     }
 
 
@@ -2385,11 +2413,13 @@ class sql
                         $this->join .= $this->usr_view_id;
                     } else {
                         if ($std_fld) {
+                            $usr_fld = '';
                             if ($usr_par == '') {
-                                $usr_par = sql_db::USR_TBL . '.' . user::FLD_ID;
+                                $usr_par = $this->par_name();
+                                $usr_fld = sql_db::USR_TBL . '.' . user::FLD_ID;
                             }
-                            $this->join_usr_par_name = $this->par_name();
-                            $this->add_par(sql_par_type::INT, $this->usr_id, $usr_par);
+                            $this->join_usr_par_name = $usr_par;
+                            $this->add_par(sql_par_type::INT, $this->usr_id, $usr_fld);
                         } else {
                             // TODO make the field pos of the user field more dynamic to cover more cases
                             $this->join_usr_par_name = $this->par_name(1, false);
@@ -3127,7 +3157,7 @@ class sql
     private function where(int $par_offset = 0): string
     {
         if ($this->par_lst->count() > 0) {
-            return $this->where_new();
+            return $this->where_new($par_offset);
         } else {
             return $this->where_old($par_offset);
         }
@@ -3136,13 +3166,14 @@ class sql
     /**
      * set the where statement based on the parameter set until now
      * in case of a sub query the where condition list is resetted, but the parameter list is continued
+     *
      * @return string the sql where statement
      */
-    private function where_new(): string
+    private function where_new(int $par_offset = 0): string
     {
         $sql_where = '';
 
-        // reset the number of open brakets
+        // reset the number of open brackets
         $open_or_flf_lst = false;
 
         // loop over the where fields
@@ -3159,12 +3190,26 @@ class sql
             }
 
             // start with the where statement
-            $sql_where .= $this->where_start($sql_where, $typ);
+            $sql_where = $this->where_start($sql_where, $typ);
+
+            // set the opening bracket around a or field list if needed
+            if ($typ->is_or()) {
+                if (!$open_or_flf_lst) {
+                    $sql_where .= ' ( ';
+                    $open_or_flf_lst = true;
+                }
+            }
 
             // start with the where statement
             $sql_where .= $this->where_expression($where_fld, $par);
 
         }
+
+        // close any open brackets
+        if ($open_or_flf_lst) {
+            $sql_where .= ' ) ';
+        }
+
         return $sql_where;
     }
 
@@ -3190,6 +3235,11 @@ class sql
         return $sql_where;
     }
 
+    /**
+     * @param sql_where $whp
+     * @param sql_field $par
+     * @return string
+     */
     private function where_expression(sql_where $whp, sql_field $par): string
     {
         $sql_where = '';
@@ -3199,83 +3249,111 @@ class sql
         $fld = $whp->fld;
         $typ = $par->type;
 
-        // add the other fields
-        if ($typ->is_list()) {
-            if ($this->db_type == sql_db::POSTGRES) {
-                $sql_where .= $tbl . $fld
-                    . ' = ANY (' . $par->name . ')';
-            } else {
-                $sql_where .= $tbl . $fld
-                    . ' IN (' . $par->name . ')';
-            }
-        } elseif ($typ == sql_par_type::INT_SUB and $this->sub_query) {
-            $sql_where .= $tbl . $fld
-                . ' = ' . $par->name;
-        } elseif ($typ == sql_par_type::INT_SUB and !$this->sub_query) {
-            //$par_offset--;
-            $sql_where .= ''; // because added with the page statement
-        } elseif ($typ == sql_par_type::INT_SUB_IN) {
-            // $sql_where .= $tbl . $fld . ' IN (' . $this->par_value($i + 1) . ')';
-            $sql_where .= $tbl . $fld . ' IN (' . $par->name . ')';
-        } elseif ($typ == sql_par_type::MIN
-            or $typ == sql_par_type::MAX
-            or $typ == sql_par_type::COUNT
-            or $typ == sql_par_type::LIMIT
-            or $typ == sql_par_type::OFFSET) {
-            // $par_offset--;
-            $sql_where .= ''; // because added with the page statement
-        } elseif ($typ == sql_par_type::LIKE_R
-            or $typ == sql_par_type::LIKE
-            or $typ == sql_par_type::LIKE_OR) {
-            $sql_where .= $tbl . $fld . ' like ' . $par->name;
-        } elseif ($typ == sql_par_type::CONST) {
-            // $par_offset--;
-            $sql_where .= $tbl . $fld . ' = ' . $par->value;
-        } elseif ($typ == sql_par_type::CONST_NOT) {
-            //$par_offset--;
-            $sql_where .= $tbl . $fld . ' <> ' . $par->value;
-        } elseif ($typ == sql_par_type::CONST_NOT_IN) {
-            //$par_offset--;
-            $sql_where .= ' ( ' . $tbl . $fld
-                . ' NOT IN (' . $par->value . ')'
-                . ' OR ' . $tbl . $fld . ' IS NULL )';
-        } elseif ($typ == sql_par_type::IS_NULL) {
-            //$par_offset--;
-            $sql_where .= $tbl . $fld . ' IS NULL ';
-        } elseif ($typ == sql_par_type::NOT_NULL) {
-            //$par_offset--;
-            // TODO review table prefix
-            $sql_where .= sql_db::LNK_TBL . '.' . $fld . ' IS NOT NULL ';
-        } elseif ($typ == sql_par_type::INT_NOT) {
-            $sql_where .= $tbl . $fld . ' <> ' . $par->name;
-        } elseif ($typ == sql_par_type::INT_NOT_OR_NULL) {
-            $sql_where .= '( ' . $tbl . $fld . ' <> ' . $par->name
-                . ' OR ' . $tbl . $fld . ' IS NULL )';
-        } elseif ($typ == sql_par_type::INT_HIGHER) {
-            $sql_where .= $tbl . $fld . ' >= ' . $par->name;
-        } elseif ($typ == sql_par_type::INT_LOWER) {
-            $sql_where .= $tbl . $fld . ' =< ' . $par->name;
-        } elseif ($typ == sql_par_type::INT_SAME
-            or $typ == sql_par_type::INT_SAME_OR) {
-            $sql_where .= $tbl . $fld . ' = ' . $par->name;
-            //$par_offset--;
+        // add the standard table
+        if ($tbl == null) {
+            $tbl = '';
+        }
+        if ($tbl == '' and $this->is_multi_table()) {
+            $tbl = sql_db::STD_TBL . sql::TBL_SEP;
         } else {
-            $sql_where .= $tbl . $fld . ' = ' . $par->name;
+            // add the sql-table-field-separator to the table name
+            if ($tbl != '' and !str_ends_with($tbl, sql::TBL_SEP)) {
+                $tbl = $tbl . sql::TBL_SEP;
+            }
         }
 
-
-        // include rows where code_id is null
-        if ($typ == sql_par_type::TEXT) {
-            if ($fld == sql::FLD_CODE_ID) {
+        // select by the user specific name
+        if ($typ == sql_par_type::TEXT_USR) {
+            $sql_where .= '(' . sql_db::USR_TBL . '.';
+            $sql_where .= $fld . " = " . $par->name;
+            $sql_where .= ' ' . sql::OR . ' (' . sql_db::STD_TBL . '.';
+            /*
+            if (SQL_DB_TYPE != sql_db::POSTGRES) {
+                $this->add_par(sql_par_type::TEXT, $name);
+            }
+            */
+            $sql_where .= $fld . " = " . $par->name;
+            $sql_where .= ' ' . sql::AND . ' ' . sql_db::USR_TBL . '.';
+            $sql_where .= $fld . " IS NULL))";
+        } else {
+            // add the other fields
+            if ($typ->is_list()) {
                 if ($this->db_type == sql_db::POSTGRES) {
-                    $sql_where .= ' AND ';
-                    if ($this->usr_query or $this->join <> '') {
-                        $sql_where .= sql_db::STD_TBL . '.';
+                    $sql_where .= $tbl . $fld
+                        . ' = ANY (' . $par->name . ')';
+                } else {
+                    $sql_where .= $tbl . $fld
+                        . ' IN (' . $par->name . ')';
+                }
+            } elseif ($typ == sql_par_type::INT_SUB and $this->sub_query) {
+                $sql_where .= $tbl . $fld
+                    . ' = ' . $par->name;
+            } elseif ($typ == sql_par_type::INT_SUB and !$this->sub_query) {
+                //$par_offset--;
+                $sql_where .= ''; // because added with the page statement
+            } elseif ($typ == sql_par_type::INT_SUB_IN) {
+                // $sql_where .= $tbl . $fld . ' IN (' . $this->par_value($i + 1) . ')';
+                $sql_where .= $tbl . $fld . ' IN (' . $par->name . ')';
+            } elseif ($typ == sql_par_type::MIN
+                or $typ == sql_par_type::MAX
+                or $typ == sql_par_type::COUNT
+                or $typ == sql_par_type::LIMIT
+                or $typ == sql_par_type::OFFSET) {
+                // $par_offset--;
+                $sql_where .= ''; // because added with the page statement
+            } elseif ($typ == sql_par_type::LIKE_R
+                or $typ == sql_par_type::LIKE
+                or $typ == sql_par_type::LIKE_OR) {
+                $sql_where .= $tbl . $fld . ' like ' . $par->name;
+            } elseif ($typ == sql_par_type::CONST) {
+                // $par_offset--;
+                $sql_where .= $tbl . $fld . ' = ' . $par->value;
+            } elseif ($typ == sql_par_type::CONST_NOT) {
+                //$par_offset--;
+                $sql_where .= $tbl . $fld . ' <> ' . $par->value;
+            } elseif ($typ == sql_par_type::CONST_NOT_IN) {
+                //$par_offset--;
+                $sql_where .= ' ( ' . $tbl . $fld
+                    . ' NOT IN (' . $par->value . ')'
+                    . ' OR ' . $tbl . $fld . ' IS NULL )';
+            } elseif ($typ == sql_par_type::IS_NULL) {
+                //$par_offset--;
+                $sql_where .= $tbl . $fld . ' IS NULL ';
+            } elseif ($typ == sql_par_type::NOT_NULL) {
+                //$par_offset--;
+                // TODO review table prefix
+                $sql_where .= sql_db::LNK_TBL . '.' . $fld . ' IS NOT NULL ';
+            } elseif ($typ == sql_par_type::INT_NOT) {
+                $sql_where .= $tbl . $fld . ' <> ' . $par->name;
+            } elseif ($typ == sql_par_type::INT_NOT_OR_NULL) {
+                $sql_where .= '( ' . $tbl . $fld . ' <> ' . $par->name
+                    . ' OR ' . $tbl . $fld . ' IS NULL )';
+            } elseif ($typ == sql_par_type::INT_HIGHER) {
+                $sql_where .= $tbl . $fld . ' >= ' . $par->name;
+            } elseif ($typ == sql_par_type::INT_LOWER) {
+                $sql_where .= $tbl . $fld . ' =< ' . $par->name;
+            } elseif ($typ == sql_par_type::INT_SAME
+                or $typ == sql_par_type::INT_SAME_OR) {
+                $sql_where .= $tbl . $fld . ' = ' . $par->name;
+                //$par_offset--;
+            } else {
+                $sql_where .= $tbl . $fld . ' = ' . $par->name;
+            }
+
+            // include rows where code_id is null
+            if ($typ == sql_par_type::TEXT) {
+                if ($fld == sql::FLD_CODE_ID) {
+                    if ($this->db_type == sql_db::POSTGRES) {
+                        $sql_where .= ' AND ';
+                        if ($this->usr_query or $this->join <> '') {
+                            $sql_where .= sql_db::STD_TBL . '.';
+                        }
+                        $sql_where .= sql::FLD_CODE_ID . ' IS NOT NULL';
                     }
-                    $sql_where .= sql::FLD_CODE_ID . ' IS NOT NULL';
                 }
             }
         }
+
         return $sql_where;
     }
 
@@ -3467,6 +3545,21 @@ class sql
     function get_order(): string
     {
         return $this->order;
+    }
+
+    /**
+     * @return bool true if the query is based on more than one table
+     */
+    private function is_multi_table(): bool
+    {
+        if ($this->usr_query
+            or $this->join <> ''
+            or $this->join_type <> ''
+            or $this->join2_type <> '') {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -4877,6 +4970,7 @@ class sql
         $this->set_table($sc_par_lst);
         $this->set_id_field($id_field);
         $this->set_fields(array(user::FLD_ID));
+        $pos = $this->par_count();
         if ($id == 0) {
             log_err('The id must be set to detect if the link has been changed');
         } else {
@@ -4902,7 +4996,7 @@ class sql
                             } else {
                                 $sql_mid_where .= ' ' . sql::AND . ' ';
                             }
-                            $sql_mid_where .= $this->id_field[$pos] . " = " . $this->par_name();
+                            $sql_mid_where .= $this->id_field[$pos] . " = " . $this->par_name($pos + 1);
                             $pos++;
                         }
                     }
@@ -4919,12 +5013,14 @@ class sql
             $sql_mid = " " . user::FLD_ID;
             $sql_mid .= " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table);
             if (!is_array($this->id_field)) {
-                $sql_mid_where .= $this->id_field . " = " . $this->par_name();
+                $pos++;
+                $sql_mid_where .= $this->id_field . " = " . $this->par_name($pos);
             }
             $sql_mid .= $sql_mid_where . " AND (excluded <> 1 OR excluded is NULL)";
             if ($owner_id > 0) {
+                $pos++;
                 $this->add_par(sql_par_type::INT, $owner_id);
-                $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name();
+                $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name($pos);
             }
             $sql_mid = sql::SELECT . ' ' . $sql_mid;
             $qp->sql = $this->prepare_sql($sql_mid, $qp->name, $this->get_par_types());
@@ -4957,14 +5053,18 @@ class sql
         if ($id == 0) {
             log_err('The id must be set to detect if the link has been changed');
         } else {
+            // TODO use where function
+            $pos = 1;
             $this->add_par(sql_par_type::INT, $id);
             $sql_mid = " " . user::FLD_ID .
                 " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table) .
-                " WHERE " . $this->id_field . " = " . $this->par_name() . "
+                " WHERE " . $this->id_field . " = " . $this->par_name($pos) . "
                  AND (excluded <> 1 OR excluded is NULL)";
+            $pos++;
             if ($owner_id > 0) {
                 $this->add_par(sql_par_type::INT, $owner_id);
-                $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name();
+                $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name($pos);
+                $pos++;
             }
             $sql_mid = sql::SELECT . ' ' . $sql_mid;
             $qp->sql = $this->prepare_sql($sql_mid, $qp->name, $this->get_par_types());

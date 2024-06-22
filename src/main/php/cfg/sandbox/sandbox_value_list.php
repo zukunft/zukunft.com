@@ -36,6 +36,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_list;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type_list;
@@ -188,14 +189,14 @@ class sandbox_value_list extends sandbox_list
         int         $frm_id = 0
     ): sql_par
     {
-        $qp = $this->load_sql_init($sc, $class, 'phr', $sc_par_lst);
+        $qp = $this->load_sql_init($sc, $class, 'phr', $sc_par_lst, new sql_field_list());
         if ($this->is_prime($sc_par_lst)) {
             $max_phr = group_id::PRIME_PHRASES_STD;
             if (($class == result::class
                     or $class == result_list::class) and $this->is_std($sc_par_lst)) {
                 $max_phr = result_id::PRIME_PHRASES_STD;
                 if ($frm_id != 0) {
-                    $sc->add_where(formula::FLD_ID, $frm_id, sql_par_type::INT_SAME, '$' . $par_pos);
+                    $sc->add_where(formula::FLD_ID, $frm_id, sql_par_type::INT_SAME, '', '$' . $par_pos);
                     $par_pos = $par_pos + 2;
                 }
             }
@@ -209,7 +210,7 @@ class sandbox_value_list extends sandbox_list
                 $max_phr += result_id::MAIN_PHRASES;
             }
             if ($frm_id != 0) {
-                $sc->add_where(formula::FLD_ID, $frm_id, sql_par_type::INT_SAME, '$' . $par_pos);
+                $sc->add_where(formula::FLD_ID, $frm_id, sql_par_type::INT_SAME, '', '$' . $par_pos);
                 $par_pos = $par_pos + 2;
             }
             $par_pos = $this->load_sql_set_phrase_fields($sc, $phr_lst, $or, $par_pos, $max_phr);
@@ -275,10 +276,12 @@ class sandbox_value_list extends sandbox_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_init(
-        sql    $sc,
-        string $class,
-        string $query_name,
-        array  $tbl_types = []
+        sql            $sc,
+        string         $class,
+        string         $query_name,
+        array          $tbl_types,
+        sql_field_list $par_lst,
+        ?int           $usr_pos = null
     ): sql_par
     {
         $is_std = $this->is_std($tbl_types);
@@ -319,6 +322,9 @@ class sandbox_value_list extends sandbox_list
         $qp->name .= $query_name;
 
         $sc->set_class($class, new sql_type_list([]), $tbl_ext);
+        if ($par_lst->count() > 0) {
+            $sc->set_par_list($par_lst);
+        }
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $val = new value($this->user());
         if ($is_prime) {
@@ -375,7 +381,12 @@ class sandbox_value_list extends sandbox_list
             $sc->set_fields_dummy(array_merge($fld_lst_usr_num_ex_std, $fld_lst_usr_only));
         } else {
             $sc->set_fields($fld_lst);
-            $sc->set_usr_num_fields($fld_lst_usr_num, true, '$1');
+            $usr_par_name = '$1';
+            if ($usr_pos != null) {
+                $usr_par = $par_lst->get($usr_pos);
+                $usr_par_name = $usr_par->name;
+            }
+            $sc->set_usr_num_fields($fld_lst_usr_num, true, $usr_par_name);
             $sc->set_usr_only_fields($fld_lst_usr_only);
         }
         return $qp;

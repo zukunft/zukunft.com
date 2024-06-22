@@ -37,7 +37,7 @@ use DateTime;
 class sql_where
 {
 
-    public string $tbl;  // the name or symbol of the table as used for the where condition
+    public string|null $tbl;  // the name or symbol of the table as used for the where condition
     public string $fld;  // the name of the field as used for the where condition
     public sql_par_type $typ;  // the type of the where condition e.g. =, IN, ...
     public sql_where_type $con;  // the type of the where condition e.g. AND, OR, ...
@@ -45,7 +45,7 @@ class sql_where
 
     function __construct()
     {
-        $this->tbl = '';
+        $this->tbl = null;
         $this->fld = '';
         $this->con = sql_where_type::AND;
         $this->pos = 0;

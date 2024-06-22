@@ -14,7 +14,7 @@ PREPARE value_list_by_phr (bigint, text, bigint) AS
            0 AS change_user_id,
            0 AS share_type_id
       FROM values_standard_prime
-     WHERE phrase_id_1 = $1 OR phrase_id_2 = $1 OR phrase_id_3 = $1 OR phrase_id_4 = $1
+     WHERE (phrase_id_1 = $1 OR phrase_id_2 = $1 OR phrase_id_3 = $1 OR phrase_id_4 = $1)
 UNION
     SELECT group_id,
            '' AS user_group_id,
@@ -70,7 +70,7 @@ UNION
                               AND s.phrase_id_2 = u.phrase_id_2
                               AND s.phrase_id_3 = u.phrase_id_3
                               AND s.phrase_id_4 = u.phrase_id_4 AND u.user_id = $3
-     WHERE s.phrase_id_1 = $1 OR s.phrase_id_2 = $1 OR s.phrase_id_3 = $1 OR s.phrase_id_4 = $1
+     WHERE (s.phrase_id_1 = $1 OR s.phrase_id_2 = $1 OR s.phrase_id_3 = $1 OR s.phrase_id_4 = $1)
 UNION
     SELECT s.group_id,
            u.group_id AS user_group_id,

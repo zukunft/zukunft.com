@@ -151,7 +151,7 @@ class user_list
             user_profile::class,
             user::FLD_PROFILE,
             user_profile::FLD_ID);
-        $sc->add_where(sql_db::LNK_TBL . '.' . user_profile::FLD_LEVEL, $profile_id, sql_par_type::INT_HIGHER);
+        $sc->add_where(user_profile::FLD_LEVEL, $profile_id, sql_par_type::INT_HIGHER, sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

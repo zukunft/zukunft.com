@@ -183,7 +183,7 @@ class component_list extends sandbox_list
             component_link::class,
             component::FLD_ID,
             component::FLD_ID);
-        $sc->add_where(sql_db::LNK_TBL . '.' . view::FLD_ID, $id);
+        $sc->add_where(view::FLD_ID, $id, null, sql_db::LNK_TBL);
         $sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

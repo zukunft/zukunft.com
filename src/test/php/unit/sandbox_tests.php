@@ -249,6 +249,10 @@ class sandbox_tests
 
         // ... same for MySQL
         $sc->db_type = sql_db::MYSQL;
+        $sc->set_class(config::class);
+        $sc->set_name('query_test');
+        $sc->set_fields(array('value'));
+        $sc->add_where(sql::FLD_CODE_ID, config::VERSION_DB);
         $created_sql = $sc->sql();
         $expected_sql = "PREPARE query_test FROM 'SELECT config_id,  config_name,  `value` FROM config WHERE code_id = ?';";
         $t->assert('non id MySQL select', $lib->trim($created_sql), $lib->trim($expected_sql));

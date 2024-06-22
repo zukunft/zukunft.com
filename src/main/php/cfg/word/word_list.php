@@ -364,11 +364,11 @@ class word_list extends sandbox_list
         } else {
             if ($direction == foaf_direction::UP) {
                 $qp->name .= 'parents';
-                $sc->add_where(sql_db::LNK_TBL . '.' . triple::FLD_FROM, $this->ids(), sql_par_type::INT_LIST);
+                $sc->add_where(triple::FLD_FROM, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
                 $join_field = triple::FLD_TO;
             } elseif ($direction == foaf_direction::DOWN) {
                 $qp->name .= 'children';
-                $sc->add_where(sql_db::LNK_TBL . '.' . triple::FLD_TO, $this->ids(), sql_par_type::INT_LIST);
+                $sc->add_where(triple::FLD_TO, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
                 $join_field = triple::FLD_FROM;
             } else {
                 log_err('Unknown direction ' . $direction->value);
@@ -381,7 +381,7 @@ class word_list extends sandbox_list
             // verbs can have a negative id for the reverse selection
             if ($vrb != null) {
                 $qp->name .= '_verb_select';
-                $sc->add_where(sql_db::LNK_TBL . '.' . verb::FLD_ID, $vrb->id());
+                $sc->add_where(verb::FLD_ID, $vrb->id(), null, sql_db::LNK_TBL);
             }
             $sc->set_name($qp->name);
             $qp->sql = $sc->sql();

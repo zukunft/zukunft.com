@@ -97,4 +97,15 @@ enum sql_par_type: string
         };
     }
 
+    /**
+     * @return bool true if the selection is based on a list e.g. "IN (1,2,3)"
+     */
+    function is_text(): bool
+    {
+        return match($this) {
+            self::TEXT, self::TEXT_USR, self::TEXT_OR, self::INT_SUB, self::INT_SUB_IN => true,
+            default => false,
+        };
+    }
+
 }

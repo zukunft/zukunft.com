@@ -269,7 +269,7 @@ class combine_named extends combine_object
                             if (is_array($tbl_where_fld)) {
                                 foreach ($tbl_where_fld as $tbl_where_cond) {
                                     if ($sql_where_cond != '') {
-                                        $sql_where_cond .= ' ' . sql_where_type::OR . ' ';
+                                        $sql_where_cond .= ' ' . sql::OR . ' ';
                                     } else {
                                         $sql_where_cond .= ' (';
                                     }

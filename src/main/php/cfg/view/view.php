@@ -442,7 +442,7 @@ class view extends sandbox_typed
             view_term_link::class,
             view::FLD_ID,
             view::FLD_ID);
-        $sc->add_where(sql_db::LNK_TBL . '.' . term::FLD_ID, $trm->id());
+        $sc->add_where(term::FLD_ID, $trm->id(), null, sql_db::LNK_TBL);
         //$sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

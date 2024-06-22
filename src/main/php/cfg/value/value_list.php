@@ -47,7 +47,9 @@ include_once API_VALUE_PATH . 'value_list.php';
 include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
 include_once MODEL_GROUP_PATH . 'group_id_list.php';
 
+use cfg\db\sql_field_list;
 use cfg\db\sql_type_list;
+use cfg\user;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use api\value\value_list as value_list_api;
@@ -294,13 +296,34 @@ class value_list extends sandbox_value_list
         $qp = new sql_par(value::class);
         $qp->name = $lib->class_to_name(value_list::class) . '_by_phr';
         $par_types = array();
+
+        // add the single phrase parameter
+        $par_pos = $sc->par_count();
+        $par_name = $sc->par_name($par_pos + 1);
+        $sc->add_where_par(phrase::FLD_ID, $phr->id(), sql_par_type::INT_SAME_OR, '', $par_name);
+        $pos_phr = $par_pos;
+
+        // add the phrase group parameter
+        $par_pos++;
+        $par_name = $sc->par_name($par_pos + 1);
+        $grp_id = new group_id();
+        $sc->add_where_par(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE, '', $par_name);
+        $pos_grp = $par_pos;
+
+        // add the user parameter
+        $par_pos++;
+        $par_name = $sc->par_name($par_pos + 1);
+        $sc->add_where_par(user::FLD_ID, $this->user()->id(), sql_par_type::INT, '', $par_name);
+        $pos_usr = $par_pos;
+
+        // remember the parameters
+        $par_lst = clone $sc->par_list();
+
         // loop over the possible tables where the value might be stored in this pod
         foreach (value::TBL_LIST as $tbl_typ) {
             // reset but keep the parameter list
-            $par_lst = clone $sc->par_list();
             $sc->reset();
-            $sc->set_par_list($par_lst);
-            $qp_tbl = $this->load_sql_by_phr_single($sc, $phr, $tbl_typ);
+            $qp_tbl = $this->load_sql_by_phr_single($sc, $pos_phr, $pos_grp, $pos_usr, $tbl_typ, $par_lst);
             if ($sc->db_type() != sql_db::MYSQL) {
                 $qp->merge($qp_tbl, true);
             } else {
@@ -333,9 +356,9 @@ class value_list extends sandbox_value_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql    $sc,
-        string $query_name,
-        sql_type_list  $sc_par_lst
+        sql           $sc,
+        string        $query_name,
+        sql_type_list $sc_par_lst
     ): sql_par
     {
         $qp = new sql_par(value::class, new sql_type_list([]), $sc_par_lst->ext_ex_user());
@@ -600,22 +623,29 @@ class value_list extends sandbox_value_list
      * from a single table
      *     *
      * @param sql $sc with the target db_type set
-     * @param phrase $phr if set to get all values for this phrase
+     * @param int $phr_pos the array key of the query parameter for the phrase id
+     * @param int $grp_pos the array key of the query parameter for the phrase id as group id
+     * @param int $grp_pos the array key of the query parameter for the user id
      * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param sql_field_list $par_lst list of parameters use for all table types
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_phr_single(sql $sc, phrase $phr, array $sc_par_lst): sql_par
+    function load_sql_by_phr_single(
+        sql            $sc,
+        int            $phr_pos,
+        int            $grp_pos,
+        int            $usr_pos,
+        array          $sc_par_lst,
+        sql_field_list $par_lst
+    ): sql_par
     {
-        $par_pos = $sc->par_count() + 1;
-        $par_name = $sc->par_name($par_pos);
-        $qp = $this->load_sql_init($sc, value::class, 'phr', $sc_par_lst);
+        $qp = $this->load_sql_init($sc, value::class, 'phr', $sc_par_lst, $par_lst, $usr_pos);
         if ($this->is_prime($sc_par_lst)) {
             for ($i = 1; $i <= group_id::PRIME_PHRASES_STD; $i++) {
-                $sc->add_where(phrase::FLD_ID . '_' . $i, $phr->id(), sql_par_type::INT_SAME_OR, $par_name);
+                $sc->add_where_no_par('', phrase::FLD_ID . '_' . $i, sql_par_type::INT_SAME_OR, $phr_pos);
             }
         } else {
-            $grp_id = new group_id();
-            $sc->add_where(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE, $par_name);
+            $sc->add_where_no_par('', group::FLD_ID, sql_par_type::LIKE, $grp_pos);
         }
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();

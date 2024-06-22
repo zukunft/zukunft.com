@@ -39,6 +39,7 @@ include_once API_RESULT_PATH . 'result_list.php';
 use api\result\result_list as result_list_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_list;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
@@ -322,7 +323,7 @@ class result_list extends sandbox_value_list
      */
     function load_sql_by_frm_single(sql $sc, formula $frm, array $sc_par_lst): sql_par
     {
-        $qp = $this->load_sql_init($sc, result::class, 'frm', $sc_par_lst);
+        $qp = $this->load_sql_init($sc, result::class, 'frm', $sc_par_lst, new sql_field_list());
         $sc->add_where(formula::FLD_ID, $frm->id());
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();

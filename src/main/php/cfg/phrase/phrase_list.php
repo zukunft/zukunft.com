@@ -2269,11 +2269,11 @@ class phrase_list extends sandbox_list_named
         } else {
             if ($direction == foaf_direction::UP) {
                 $qp->name .= 'parents';
-                $sc->add_where(sql_db::LNK_TBL . '.' . triple::FLD_FROM, $this->ids(), sql_par_type::INT_LIST);
+                $sc->add_where(triple::FLD_FROM, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
                 $join_field = triple::FLD_TO;
             } elseif ($direction == foaf_direction::DOWN) {
                 $qp->name .= 'children';
-                $sc->add_where(sql_db::LNK_TBL . '.' . triple::FLD_TO, $this->ids(), sql_par_type::INT_LIST);
+                $sc->add_where(triple::FLD_TO, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
                 //$sql_where = sql_db::LNK_TBL . '.' . triple::FLD_TO . $sql_in . $db_con->par_name() . ')';
                 $join_field = triple::FLD_FROM;
             } else {
@@ -2281,7 +2281,7 @@ class phrase_list extends sandbox_list_named
             }
             // verbs can have a negative id for the reverse selection
             if ($vrb != null) {
-                $sc->add_where(sql_db::LNK_TBL . '.' . verb::FLD_ID, $vrb->id());
+                $sc->add_where(verb::FLD_ID, $vrb->id(), null, sql_db::LNK_TBL);
                 $qp->name .= '_verb_select';
             }
             $sc->set_join_fields(
