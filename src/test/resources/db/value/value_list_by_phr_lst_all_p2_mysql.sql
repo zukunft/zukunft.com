@@ -14,8 +14,8 @@ PREPARE value_list_by_phr_lst_all_p2 FROM
            0 AS change_user_id,
            0 AS share_type_id
       FROM values_standard_prime
-     WHERE phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? OR phrase_id_4 = ?
-        OR phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? OR phrase_id_4 = ?
+     WHERE (phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? OR phrase_id_4 = ?
+        OR  phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? OR phrase_id_4 = ?)
 UNION
     SELECT group_id,
            NULL AS user_group_id,
@@ -32,8 +32,8 @@ UNION
            0 AS change_user_id,
            0 AS share_type_id
       FROM values_standard
-     WHERE group_id like ?
-        OR group_id like ?
+     WHERE (group_id like ?
+        OR  group_id like ?)
 UNION
     SELECT s.group_id,
            u.group_id AS user_group_id,
@@ -51,8 +51,8 @@ UNION
            u.share_type_id
       FROM `values` s
  LEFT JOIN user_values u ON s.group_id = u.group_id AND u.user_id = ?
-     WHERE s.group_id like ?
-        OR s.group_id like ?
+     WHERE (s.group_id like ?
+        OR  s.group_id like ?)
 UNION
     SELECT NULL AS group_id,
            NULL AS user_group_id,
@@ -73,8 +73,8 @@ UNION
        AND s.phrase_id_2 = u.phrase_id_2
        AND s.phrase_id_3 = u.phrase_id_3
        AND s.phrase_id_4 = u.phrase_id_4 AND u.user_id = ?
-     WHERE s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ?
-        OR s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ?
+     WHERE (s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ?
+        OR  s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ?)
 UNION
     SELECT s.group_id,
            u.group_id AS user_group_id,
@@ -92,5 +92,5 @@ UNION
            u.share_type_id
       FROM values_big s
  LEFT JOIN user_values_big u ON s.group_id = u.group_id AND u.user_id = ?
-    WHERE s.group_id like ?
-       OR s.group_id like ?';
+    WHERE (s.group_id like ?
+       OR  s.group_id like ?)';

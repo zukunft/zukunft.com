@@ -172,7 +172,7 @@ class sql_field_list
     /**
      * the value of a parameter from a given position
      * @param int $pos the position in the parameter list starting with zero
-     * @return string the name of the parameter
+     * @return string the value of the parameter
      */
     function value(int $pos): string
     {
@@ -180,11 +180,11 @@ class sql_field_list
     }
 
     /**
-     * the type of a parameter from a given position
+     * the type of parameter from a given position
      * @param int $pos the position in the parameter list starting with zero
-     * @return string the name of the parameter
+     * @return sql_par_type the sql type of the parameter
      */
-    function type(int $pos): string
+    function type(int $pos): sql_par_type
     {
         return $this->lst[$pos]->type;
     }

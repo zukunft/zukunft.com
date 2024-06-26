@@ -242,7 +242,7 @@ class sql
     private ?string $id_from_field; // only for link objects the id field of the source object
     private ?string $id_to_field;   // only for link objects the id field of the destination object
     private ?string $id_link_field; // only for link objects the id field of the link type object
-    private ?sql_field_list $par_lst; // the list of the fields, values and types that shoudl be used to create the sql statement
+    private ?sql_field_list $par_lst; // the list of parameter fields with values and types for the call of the complete sql statement
     private ?sql_where_list $par_where; // list of where parameters for one sql statement part e.g
 
     private ?array $par_use_link;   // array of bool, true if the parameter should be used on the linked table
@@ -983,7 +983,8 @@ class sql
         int|string|array|null $fld_val,
         sql_par_type|null     $spt = null,
         string|null           $tbl = null,
-        string                $name = ''
+        string                $name = '',
+        int                   $offset = 0
     ): void
     {
         // set the default parameter type for the sql parameter type (spt)
@@ -992,7 +993,7 @@ class sql
         }
 
         // add the parameter for the where selection list
-        $this->add_where_par($fld, $fld_val, $spt, $tbl, $name);
+        $this->add_where_par($fld, $fld_val, $spt, $tbl, $name, $offset);
         // add the added parameter to the where list
         $this->add_where_no_par($tbl, $fld, $spt, $this->get_par_pos());
     }
@@ -1014,7 +1015,8 @@ class sql
         int|string|array|null $fld_val,
         sql_par_type|null     $spt = null,
         string|null           $tbl = null,
-        string                $name = ''
+        string                $name = '',
+        int                   $offset = 0
     ): void
     {
 
@@ -1023,7 +1025,8 @@ class sql
             if ($this->par_lst->has($fld)) {
                 $name = $this->par_name($this->par_lst->pos($fld));
             } else {
-                $name = $this->par_name();
+                $pos = $this->par_lst->count() + 1 + $offset;
+                $name = $this->par_name($pos);
             }
         }
         // add a null parameter e.g. for the value or result group id
@@ -2364,7 +2367,7 @@ class sql
         $this->add_par(sql_par_type::INT_SUB, $this->usr_id, sql_db::USR_TBL . '.' . user::FLD_ID);
 
         $this->grp_field_lst[] = $fld_name;
-        $this->add_par($spt, '', $fld_name);
+        //$this->add_par($spt, '', $fld_name);
         $this->set_grp_query();
     }
 
@@ -2419,7 +2422,9 @@ class sql
                                 $usr_fld = sql_db::USR_TBL . '.' . user::FLD_ID;
                             }
                             $this->join_usr_par_name = $usr_par;
-                            $this->add_par(sql_par_type::INT, $this->usr_id, $usr_fld);
+                            if ($usr_par == '' or !$this->has_field($usr_par)) {
+                                $this->add_par(sql_par_type::INT, $this->usr_id, $usr_fld);
+                            }
                         } else {
                             // TODO make the field pos of the user field more dynamic to cover more cases
                             $this->join_usr_par_name = $this->par_name(1, false);
@@ -2927,12 +2932,8 @@ class sql
             $sc_sub->set_usr($this->usr_id);
             $sc_sub->set_usr_num_fields($this->grp_field_lst);
             // move parameter to the sub query if possible
-            $i = $par_offset;
-            while ($i < $this->par_lst->count()) {
-                $sc_sub->add_where($this->par_lst->name($i), $this->par_lst->value($i), $this->par_lst->type($i));
-                $this->move_where_to_sub($i);
-                $i++;
-            }
+            $sc_sub->par_lst = $this->par_lst;
+            $sc_sub->par_where = $this->par_where;
 
             $result = ' FROM ( ' . $sc_sub->sql(0, false) . ' ) AS ' . sql_db::GRP_TBL;
         }
@@ -3177,9 +3178,10 @@ class sql
         $open_or_flf_lst = false;
 
         // loop over the where fields
-        foreach ($this->par_where->lst as $where_fld) {
+        $pos = 0;
+        foreach ($this->par_where->lst as $key => $where_fld) {
             $par = $this->par_lst->get($where_fld->pos);
-            $typ = $par->type;
+            $typ = $where_fld->typ;
 
             // set the closing bracket around a or field list if needed
             if ($open_or_flf_lst) {
@@ -3193,7 +3195,17 @@ class sql
             $sql_where = $this->where_start($sql_where, $typ);
 
             // set the opening bracket around a or field list if needed
-            if ($typ->is_or()) {
+            $is_or = $typ->is_or();
+
+            // check if the next is an or and if yes open the braket now
+            if (!$typ->is_or()) {
+                if (isset($this->par_where->lst[$key + 1])) {
+                    $next_where_fld = $this->par_where->lst[$key + 1];
+                    $is_or = $next_where_fld->typ->is_or();
+                }
+            }
+
+            if ($is_or) {
                 if (!$open_or_flf_lst) {
                     $sql_where .= ' ( ';
                     $open_or_flf_lst = true;
@@ -4829,10 +4841,9 @@ class sql
      * get the SQL parameter placeholder in the used SQL dialect
      *
      * @param int $pos to get the placeholder of another position than the last
-     * @param bool $remove_from_list false if the name should not be removed from the list e.g. because offset is used
      * @return string the SQL var name for the latest added query parameter
      */
-    function par_name(int $pos = 0, bool $remove_from_list = true): string
+    function par_name(int $pos = 0): string
     {
         // if the position is not given use the last parameter added
         if ($pos == 0) {
@@ -5089,10 +5100,11 @@ class sql
         $lib = new library();
 
         $qp = new sql_par($class, new sql_type_list([sql_type::DELETE]));
+        $this->set_class($class, new sql_type_list([]));
         $this->add_where($id_field, $id_lst, sql_par_type::INT_LIST);
         $sql = sql::DELETE . ' ' . $this->name_sql_esc($this->table) . ' ';
         $sql .= sql::WHERE . ' ' . $id_field . ' ';
-        $sql .= sql::IN . ' (' . $this->par_name() . ')';
+        $sql .= sql::IN . ' (' . $this->par_name(1) . ')';
         $qp->name .= '_by_ids';
         $qp->sql = $this->prepare_sql($sql, $qp->name, [sql_par_type::INT_LIST]);
         $qp->par = [implode(',', $id_lst)];

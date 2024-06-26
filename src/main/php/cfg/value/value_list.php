@@ -297,24 +297,27 @@ class value_list extends sandbox_value_list
         $qp->name = $lib->class_to_name(value_list::class) . '_by_phr';
         $par_types = array();
 
-        // add the single phrase parameter
+        // prepare adding the parameters in order of expected usage
         $par_pos = $sc->par_count();
-        $par_name = $sc->par_name($par_pos + 1);
-        $sc->add_where_par(phrase::FLD_ID, $phr->id(), sql_par_type::INT_SAME_OR, '', $par_name);
+
+        // add the single phrase parameter
         $pos_phr = $par_pos;
+        $par_pos++;
+        $par_name = $sc->par_name($par_pos);
+        $sc->add_where_par(phrase::FLD_ID, $phr->id(), sql_par_type::INT_SAME_OR, '', $par_name);
 
         // add the phrase group parameter
+        $pos_grp = $par_pos;
         $par_pos++;
-        $par_name = $sc->par_name($par_pos + 1);
+        $par_name = $sc->par_name($par_pos);
         $grp_id = new group_id();
         $sc->add_where_par(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE, '', $par_name);
-        $pos_grp = $par_pos;
 
         // add the user parameter
-        $par_pos++;
-        $par_name = $sc->par_name($par_pos + 1);
-        $sc->add_where_par(user::FLD_ID, $this->user()->id(), sql_par_type::INT, '', $par_name);
         $pos_usr = $par_pos;
+        $par_pos++;
+        $par_name = $sc->par_name($par_pos);
+        $sc->add_where_par(user::FLD_ID, $this->user()->id(), sql_par_type::INT, '', $par_name);
 
         // remember the parameters
         $par_lst = clone $sc->par_list();
@@ -535,12 +538,12 @@ class value_list extends sandbox_value_list
                     $id_pos = $pos - 1;
                     if (array_key_exists($id_pos, $phr_id_lst)) {
                         if ($phr_id_lst[$id_pos] == '') {
-                            $sc->add_where(phrase::FLD_ID . '_' . $pos, '0', sql_par_type::INT);
+                            $sc->add_where(phrase::FLD_ID . '_' . $pos, '0', sql_par_type::INT, null, '', $par_offset);
                         } else {
-                            $sc->add_where(phrase::FLD_ID . '_' . $pos, $phr_id_lst[$id_pos], sql_par_type::INT);
+                            $sc->add_where(phrase::FLD_ID . '_' . $pos, $phr_id_lst[$id_pos], sql_par_type::INT, null, '', $par_offset);
                         }
                     } else {
-                        $sc->add_where(phrase::FLD_ID . '_' . $pos, '0', sql_par_type::INT);
+                        $sc->add_where(phrase::FLD_ID . '_' . $pos, '0', sql_par_type::INT, null, '', $par_offset);
                     }
                 }
 
@@ -598,9 +601,9 @@ class value_list extends sandbox_value_list
                     // the array of the phrase ids starts with o whereas the phrase id fields start with 1
                     $id_pos = $pos - 1;
                     if (array_key_exists($id_pos, $phr_id_lst)) {
-                        $sc->add_where(phrase::FLD_ID . '_' . $pos, $phr_id_lst[$id_pos]);
+                        $sc->add_where(phrase::FLD_ID . '_' . $pos, $phr_id_lst[$id_pos], sql_par_type::INT, null, '', $par_offset);
                     } else {
-                        $sc->add_where(phrase::FLD_ID . '_' . $pos, '');
+                        $sc->add_where(phrase::FLD_ID . '_' . $pos, '', sql_par_type::INT, null, '', $par_offset);
                     }
                 }
 
@@ -625,7 +628,7 @@ class value_list extends sandbox_value_list
      * @param sql $sc with the target db_type set
      * @param int $phr_pos the array key of the query parameter for the phrase id
      * @param int $grp_pos the array key of the query parameter for the phrase id as group id
-     * @param int $grp_pos the array key of the query parameter for the user id
+     * @param int $usr_pos the array key of the query parameter for the user id
      * @param array $sc_par_lst the parameters for the sql statement creation
      * @param sql_field_list $par_lst list of parameters use for all table types
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
@@ -639,10 +642,13 @@ class value_list extends sandbox_value_list
         sql_field_list $par_lst
     ): sql_par
     {
-        $qp = $this->load_sql_init($sc, value::class, 'phr', $sc_par_lst, $par_lst, $usr_pos);
+        $qp = $this->load_sql_init(
+            $sc, value::class, 'phr',
+            $sc_par_lst, $par_lst, $usr_pos);
         if ($this->is_prime($sc_par_lst)) {
             for ($i = 1; $i <= group_id::PRIME_PHRASES_STD; $i++) {
-                $sc->add_where_no_par('', phrase::FLD_ID . '_' . $i, sql_par_type::INT_SAME_OR, $phr_pos);
+                $sc->add_where_no_par('',
+                    phrase::FLD_ID . '_' . $i, sql_par_type::INT_SAME_OR, $phr_pos);
             }
         } else {
             $sc->add_where_no_par('', group::FLD_ID, sql_par_type::LIKE, $grp_pos);
