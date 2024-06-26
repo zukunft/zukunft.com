@@ -1686,7 +1686,7 @@ class sandbox_value extends sandbox_multi
         // get the name indicator how many id fields are user
         $id_ext = $this->grp->table_extension();
         // get the prime db key list for this sandbox object
-        $fvt_lst_id = $this->id_fvt_lst($sc_par_lst);
+        $fvt_lst_id = $this->id_fvt_lst($sc_par_lst_used);
 
         // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst_used, '', $id_ext);

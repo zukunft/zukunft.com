@@ -144,7 +144,6 @@ class group extends sandbox_multi
 
     // database fields
     private phrase_list $phr_lst; // the phrase list object
-    private user $usr;            // the person for whom the object is loaded, so to say the viewer
     public ?string $name;         // maybe later the user should have the possibility to overwrite the generic name, but this is not user at the moment
     public ?string $description;  // the automatically created generic name for the word group, used for a quick display of values
 
@@ -160,8 +159,6 @@ class group extends sandbox_multi
     function __construct(user $usr, int|string $id = 0, array $prh_names = [])
     {
         parent::__construct($usr);
-
-        $this->set_user($usr);
 
         $this->reset();
 
@@ -389,25 +386,6 @@ class group extends sandbox_multi
     }
 
     /**
-     * set the user of the user sandbox object
-     *
-     * @param user $usr the person who wants to access the object e.g. the word
-     * @return void
-     */
-    function set_user(user $usr): void
-    {
-        $this->usr = $usr;
-    }
-
-    /**
-     * @return user the person who wants to see a word, verb, triple, formula, view or result
-     */
-    function user(): user
-    {
-        return $this->usr;
-    }
-
-    /**
      * set the unique database id of this group
      * @param phrase_list $phr_lst sorted list of phrases for this group
      * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- seperated 6 char alpha_num coded phrase ids
@@ -442,6 +420,15 @@ class group extends sandbox_multi
         $obj_cpy = clone $this;
         $obj_cpy->set_name($name);
         return $obj_cpy;
+    }
+
+    /**
+     * dummy function that should always be overwritten by the child object
+     * @return string
+     */
+    function name_field(): string
+    {
+        return self::FLD_NAME;
     }
 
 
@@ -1398,8 +1385,10 @@ class group extends sandbox_multi
     protected function sql_common(sql $sc, sql_type_list $sc_par_lst): sql_par
     {
         $sc_par_lst->add($this->table_type());
+        $qp = new sql_par($this::class, $sc_par_lst);
         $sc->set_class($this::class, $sc_par_lst);
-        return new sql_par($this::class, $sc_par_lst);
+        $sc->set_name($qp->name);
+        return $qp;
     }
 
 
