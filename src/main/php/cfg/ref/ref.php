@@ -782,7 +782,7 @@ class ref extends sandbox_link_with_type
         $log->action = change_action::UPDATE;
         $log->set_table(change_table_list::REF);
         $log->old_from = $db_rec->phr;
-        $log->old_link = $db_rec->ref_type;
+        $log->old_link = $db_rec->type();
         $log->old_to = $db_rec;
         $log->new_from = $this->phr;
         $log->new_link = $this->type();

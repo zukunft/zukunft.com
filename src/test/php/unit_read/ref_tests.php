@@ -32,6 +32,7 @@
 
 namespace unit_read;
 
+use api\ref\ref as ref_api;
 use api\ref\source as source_api;
 use cfg\phrase_type;
 use cfg\ref;
@@ -73,7 +74,7 @@ class ref_tests
         $t->subheader('API unit db tests');
 
         $ref = new ref($t->usr1);
-        $ref->load_by_id(4);
+        $ref->load_by_id(ref_api::TI_PI);
         $t->assert_api($ref);
 
 

@@ -30,6 +30,18 @@
       ]
     },
     {
+      "name": "one",
+      "comment": "Used to force the scaling to one unit",
+      "type": "scaling_hidden",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "1",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
       "name": "Pi",
       "description": "ratio of the circumference of a circle to its diameter",
       "type": "constant",
@@ -45,6 +57,28 @@
           "type": "wikidata",
           "url": "https:\/\/www.wikidata.org\/wiki\/Special:EntityData\/Q167.json",
           "description": "pi - ratio of the circumference of a circle to its diameter"
+        }
+      ]
+    },
+    {
+      "name": "circumference",
+      "description": "In geometry, the circumference meaning is the perimeter of a circle or ellipse",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Circumference",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "diameter",
+      "description": "In geometry, a diameter of a circle is any straight line segment that passes through the centre of the circle and whose endpoints lie on the circle",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Diameter",
+          "type": "wikipedia"
         }
       ]
     },
@@ -109,6 +143,76 @@
       ]
     },
     {
+      "name": "Universe",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Universe",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Earth",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Earth",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "life",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "life",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "death",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "death",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "human",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Homo",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
       "name": "SI base unit",
       "type": "measure",
       "protection": "admin_protection",
@@ -118,39 +222,6 @@
           "type": "wikipedia"
         }
       ]
-    },
-    {
-      "name": "Year",
-      "type": "time",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Year",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "definition",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Definition",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "1967"
-    },
-    {
-      "name": "1979"
-    },
-    {
-      "name": "1983"
-    },
-    {
-      "name": "2019"
     },
     {
       "name": "second",
@@ -1107,26 +1178,37 @@
       ]
     },
     {
-      "name": "circumference",
-      "description": "In geometry, the circumference meaning is the perimeter of a circle or ellipse",
+      "name": "Year",
+      "type": "time",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Circumference",
+          "name": "Year",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "diameter",
-      "description": "In geometry, a diameter of a circle is any straight line segment that passes through the centre of the circle and whose endpoints lie on the circle",
+      "name": "definition",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Diameter",
+          "name": "Definition",
           "type": "wikipedia"
         }
       ]
+    },
+    {
+      "name": "1967"
+    },
+    {
+      "name": "1979"
+    },
+    {
+      "name": "1983"
+    },
+    {
+      "name": "2019"
     }
   ],
   "triples": [

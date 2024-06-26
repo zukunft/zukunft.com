@@ -38,6 +38,17 @@ class ref extends sandbox_api
 {
 
     /*
+     * const for system testing
+     */
+
+    // references for stand-alone unit tests that are added with the system initial data load
+    // TN_* is the name of the word used for testing created with the initial setup (see also TWN_*)
+    // TI_* is the database id based on the initial load
+    // TD_* is the tooltip/description of the word
+    const TI_PI = 5;
+
+
+    /*
      * const for the api
      */
 

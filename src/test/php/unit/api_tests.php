@@ -52,6 +52,7 @@ include_once API_LANGUAGE_PATH . 'language_form.php';
 
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
+use api\ref\ref as ref_api;
 use api\ref\source as source_api;
 use api\verb\verb as verb_api;
 use api\view\view as view_api;
@@ -128,16 +129,16 @@ class api_tests
         $t->assert_api_get_by_text(component::class, component_api::TN_READ);
         $t->assert_api_get(source::class, 3);
         $t->assert_api_get_by_text(source::class, source_api::TN_READ_API);
-        $t->assert_api_get(ref::class, 4);
+        $t->assert_api_get(ref::class, ref_api::TI_PI);
         $t->assert_api_get(job::class);
         $t->assert_api_get(phrase_type::class);
         $t->assert_api_get(language::class);
         $t->assert_api_get(language_form::class);
 
         $t->assert_api_get_list(type_lists::class);
-        $t->assert_api_get_list(word_list::class, [1, 2, 3]);
+        $t->assert_api_get_list(word_list::class, [1, 2, word_api::TI_PI]);
         $t->assert_api_get_list(word_list::class, word_api::TN_READ, controller::URL_VAR_PATTERN);
-        $t->assert_api_get_list(phrase_list::class, [1, 2, 3, -1, -2]);
+        $t->assert_api_get_list(phrase_list::class, [1, 2, word_api::TI_PI, -1, -2]);
         $t->assert_api_get_list(phrase_list::class, word_api::TN_READ, controller::URL_VAR_PATTERN);
         $t->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $t->assert_api_get_list(formula_list::class, [1]);

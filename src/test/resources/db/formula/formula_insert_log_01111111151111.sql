@@ -98,7 +98,7 @@ SELECT formula_insert_log_01111111151111 (
                31::smallint,
                1::bigint,
                33::smallint,
-               '{w17}={w98}*60'::text,
+               '{w19}={w101}*60'::text,
                32::smallint,
                '"second" = "minute" * 60'::text,
                35::smallint,

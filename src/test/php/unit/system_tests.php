@@ -38,6 +38,7 @@ include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
 include_once API_SYSTEM_PATH . 'sys_log.php';
 
 use api\word\word as word_api;
+use api\ref\ref as ref_api;
 use cfg\config;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -102,7 +103,7 @@ class system_tests
         $t->assert($test_name, $wrd->dsp_id(), $target);
         $test_name = 'debug word list id';
         $lst = $t->word_list();
-        $target = '"Mathematics","constant","Pi","Euler\'s constant" (word_id 1,2,3,4) for user 1 (zukunft.com system test)';
+        $target = '"Mathematics","constant","Pi","Euler\'s constant" (word_id 1,2,4,6) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $lst->dsp_id(), $target);
         $test_name = 'debug verb id';
         $vrb = $t->verb();
@@ -122,7 +123,7 @@ class system_tests
         $t->assert($test_name, $phr->dsp_id(), $target);
         $test_name = 'debug phrase_list id';
         $phr_lst = $t->phrase_list();
-        $target = '"Mathematical constant","Mathematics","Pi","Pi (math)","constant" (phrase_id 1,2,3,-1,-2) for user 1 (zukunft.com system test)';
+        $target = '"Mathematical constant","Mathematics","Pi","Pi (math)","constant" (phrase_id 1,2,4,-1,-2) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $phr_lst->dsp_id(), $target);
         $test_name = 'debug phrase_group id';
         $grp = $t->group();
@@ -166,15 +167,15 @@ class system_tests
         $t->assert($test_name, $frm_lnk->dsp_id(), $target);
         $test_name = 'debug element id';
         $elm = $t->element();
-        $target = 'word "minute" (98) for user 1 (zukunft.com system test)';
+        $target = 'word "minute" (' . word_api::TI_MINUTE . ') for user 1 (zukunft.com system test)';
         $t->assert($test_name, $elm->dsp_id(), $target);
         $test_name = 'debug element_list id';
         $elm = $t->element_list();
-        $target = '"minute" (element_id 98) for user 1 (zukunft.com system test)';
+        $target = '"minute" (element_id ' . word_api::TI_MINUTE . ') for user 1 (zukunft.com system test)';
         $t->assert($test_name, $elm->dsp_id(), $target);
         $test_name = 'debug expression id';
         $exp = $t->expression();
-        $target = '""second" = "minute" * 60" ({w17}={w98}*60)';
+        $target = '""second" = "minute" * 60" ({w' . word_api::TI_SECOND . '}={w' . word_api::TI_MINUTE . '}*60)';
         $t->assert($test_name, $exp->dsp_id(), $target);
         $test_name = 'debug result id';
         $res = $t->result_simple();
@@ -222,7 +223,7 @@ class system_tests
         $t->assert($test_name, $src->dsp_id(), $target);
         $test_name = 'debug ref id';
         $ref = $t->reference();
-        $target = 'ref of "Pi" to "wikidata" (4)';
+        $target = 'ref of "Pi" to "wikidata" (' . ref_api::TI_PI . ')';
         $t->assert($test_name, $ref->dsp_id(), $target);
         $test_name = 'debug language id';
         $lan = $t->language();

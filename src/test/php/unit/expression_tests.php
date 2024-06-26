@@ -89,7 +89,7 @@ class expression_tests
         $phr_lst = $exp->phr_lst($trm_lst);
         $result = $phr_lst->dsp_id();
         $target = '"' . word_api::TN_PI . '","' . word_api::TN_CIRCUMFERENCE
-            . '" (phrase_id 3,' . word_api::TI_CIRCUMFERENCE . ') for user 1 (zukunft.com system test)';
+            . '" (phrase_id ' . word_api::TI_PI . ',' . word_api::TI_CIRCUMFERENCE . ') for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         // test the phrase list of the left side
@@ -199,7 +199,7 @@ class expression_tests
         $trm_names = $exp->get_usr_names();
         $trm_lst_rev = $t->term_list_for_tests($trm_names);
         $result = $exp->ref_text($trm_lst_rev);
-        $target = '={w' . word_api::TI_CIRCUMFERENCE . '}/{w3}';
+        $target = '={w' . word_api::TI_CIRCUMFERENCE . '}/{w' . word_api::TI_PI . '}';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'source phrase list with id from the reference text';

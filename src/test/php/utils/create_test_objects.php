@@ -1297,6 +1297,17 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return phrase_list to get all inhabitant related to the Canton Zurich
+     */
+    function ch_inhabitant_phrase_list(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->word_ch()->phrase());
+        $lst->add($this->word_inhabitant()->phrase());
+        return $lst;
+    }
+
+    /**
      * @return phrase_list the phrases relevant for having a second entry in the phrase group list
      */
     function phrase_list_zh_2019(): phrase_list
@@ -1873,7 +1884,7 @@ class create_test_objects extends test_base
     {
         global $ref_types;
         $ref = new ref($this->usr1);
-        $ref->set(4);
+        $ref->set(ref_api::TI_PI);
         $ref->set_phrase($this->word_pi()->phrase());
         $ref->set_type_id($ref_types->id(ref_type::WIKIDATA));
         $ref->external_key = ref_api::TK_READ;

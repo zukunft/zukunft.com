@@ -65,7 +65,7 @@ PREPARE ref_insert_log_0151551151011_call FROM
     'SELECT ref_insert_log_0151551151011 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT ref_insert_log_0151551151011 (
-               3,
+               4,
                2,
                'Q167',
                1,

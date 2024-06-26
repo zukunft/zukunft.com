@@ -40,7 +40,7 @@ PREPARE ref_insert_log_0151551001000_call FROM
     'SELECT ref_insert_log_0151551001000 (?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT ref_insert_log_0151551001000 (
-               3,
+               4,
                2,
                'Q167',
                1,
