@@ -36,6 +36,8 @@ include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once WEB_LOG_PATH . 'user_log_display.php';
 include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'changes_norm.php';
+include_once MODEL_LOG_PATH . 'changes_big.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
 
 use api\word\triple as triple_api;
@@ -100,6 +102,18 @@ class change_log_tests
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
         // TODO add auto increment test for all mysql tables
+
+        $t->subheader('SQL statement creation tests for logging group names for value related to up to 16 phrases');
+        $log = $t->change_log_norm();
+        $t->assert_sql_table_create($log);
+        $t->assert_sql_index_create($log);
+        $t->assert_sql_foreign_key_create($log);
+
+        $t->subheader('SQL statement creation tests for logging group names for value related to more than 16 phrases');
+        $log = $t->change_log_big();
+        $t->assert_sql_table_create($log);
+        $t->assert_sql_index_create($log);
+        $t->assert_sql_foreign_key_create($log);
 
         $t->subheader('SQL statement creation tests for logging standard value');
         $log_val_std = $t->change_log_value();

@@ -61,6 +61,8 @@ use cfg\formula_link_type;
 use cfg\language_form;
 use cfg\log\change_field;
 use cfg\log\change_table;
+use cfg\log\changes_big;
+use cfg\log\changes_norm;
 use cfg\ref_type;
 use html\system\messages;
 use shared\types\component_type as comp_type_shared;
@@ -2265,6 +2267,40 @@ class create_test_objects extends test_base
         global $usr_sys;
 
         $chg = new change($usr_sys);
+        $chg->set_time_str(self::DUMMY_DATETIME);
+        $chg->set_action(change_action::ADD);
+        $chg->set_table(change_table_list::WORD);
+        $chg->set_field(change_field_list::FLD_WORD_NAME);
+        $chg->new_value = word_api::TN_READ;
+        $chg->row_id = 1;
+        return $chg;
+    }
+
+    /**
+     * @return changes_norm a change log entry of a group where the id is a 512bit field and not an id
+     */
+    function change_log_norm(): changes_norm
+    {
+        global $usr_sys;
+
+        $chg = new changes_norm($usr_sys);
+        $chg->set_time_str(self::DUMMY_DATETIME);
+        $chg->set_action(change_action::ADD);
+        $chg->set_table(change_table_list::WORD);
+        $chg->set_field(change_field_list::FLD_WORD_NAME);
+        $chg->new_value = word_api::TN_READ;
+        $chg->row_id = 1;
+        return $chg;
+    }
+
+    /**
+     * @return changes_big a change log entry of a group where the id is a text field and not an id
+     */
+    function change_log_big(): changes_big
+    {
+        global $usr_sys;
+
+        $chg = new changes_big($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
         $chg->set_action(change_action::ADD);
         $chg->set_table(change_table_list::WORD);

@@ -4700,6 +4700,12 @@ class sql
         if ($result == 'configs') {
             $result = 'config';
         }
+        if ($result == 'changes_norms') {
+            $result = 'changes_norm';
+        }
+        if ($result == 'changes_bigs') {
+            $result = 'changes_big';
+        }
         if ($result == 'change_values_norms') {
             $result = 'change_values_norm';
         }

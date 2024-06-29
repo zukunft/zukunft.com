@@ -36,6 +36,8 @@ namespace cfg;
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'changes_norm.php';
+include_once MODEL_LOG_PATH . 'changes_big.php';
 include_once API_VERB_PATH . 'verb.php';
 include_once SERVICE_EXPORT_PATH . 'verb_exp.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';

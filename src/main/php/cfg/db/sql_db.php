@@ -72,6 +72,8 @@ use cfg\log\change_values_norm;
 use cfg\log\change_values_prime;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
+use cfg\log\changes_big;
+use cfg\log\changes_norm;
 use cfg\phrase;
 use cfg\phrase_table;
 use cfg\phrase_table_status;
@@ -197,6 +199,8 @@ class sql_db
         change_table::class,
         change_field::class,
         change::class,
+        changes_norm::class,
+        changes_big::class,
         change_values_prime::class,
         change_values_norm::class,
         change_values_big::class,

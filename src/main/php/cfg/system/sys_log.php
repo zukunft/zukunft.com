@@ -36,6 +36,8 @@ include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_function_list.php';
 include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'changes_norm.php';
+include_once MODEL_LOG_PATH . 'changes_big.php';
 include_once MODEL_LOG_PATH . 'change_value.php';
 include_once MODEL_LOG_PATH . 'change_values_prime.php';
 include_once MODEL_LOG_PATH . 'change_values_norm.php';

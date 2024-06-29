@@ -89,6 +89,8 @@ class change extends change_log
     const FLD_OLD_ID_COM = 'old value id';
     const FLD_OLD_ID = 'old_id';
     const FLD_OLD_ID_SQLTYP = sql_field_type::INT;
+    const FLD_OLD_ID_NORM_SQLTYP = sql_field_type::REF_512;
+    const FLD_OLD_ID_BIG_SQLTYP = sql_field_type::TEXT;
     const FLD_NEW_VALUE = 'new_value';
     const FLD_NEW_VALUE_SQLTYP = sql_field_type::TEXT;
     const FLD_NEW_ID_COM = 'new value id';

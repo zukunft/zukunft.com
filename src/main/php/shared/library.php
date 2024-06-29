@@ -63,6 +63,8 @@ use cfg\log\change_values_norm;
 use cfg\log\change_values_prime;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
+use cfg\log\changes_big;
+use cfg\log\changes_norm;
 use cfg\phrase;
 use cfg\phrase_table;
 use cfg\phrase_table_status;
@@ -1707,6 +1709,8 @@ class library
             case $this->class_to_name(change_table::class):
             case $this->class_to_name(change_field::class):
             case $this->class_to_name(change::class):
+            case $this->class_to_name(changes_norm::class):
+            case $this->class_to_name(changes_big::class):
             case $this->class_to_name(change_values_prime::class):
             case $this->class_to_name(change_values_norm::class):
             case $this->class_to_name(change_values_big::class):
