@@ -44,14 +44,19 @@ use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_type;
 use cfg\component\component_type;
+use cfg\component\component_type_list;
 use cfg\component\position_type;
+use cfg\component\position_type_list;
 use cfg\config;
 use cfg\element;
 use cfg\element_type;
+use cfg\element_type_list;
 use cfg\formula;
 use cfg\formula_link;
 use cfg\formula_link_type;
+use cfg\formula_link_type_list;
 use cfg\formula_type;
+use cfg\formula_type_list;
 use cfg\group\group;
 use cfg\import\import_file;
 use cfg\ip_range;
@@ -62,9 +67,14 @@ use cfg\job_type;
 use cfg\job_type_list;
 use cfg\language;
 use cfg\language_form;
+use cfg\language_form_list;
+use cfg\language_list;
 use cfg\log;
 use cfg\log\change;
 use cfg\log\change_action;
+use cfg\log\change_action_list;
+use cfg\log\change_field_list;
+use cfg\log\change_table_list;
 use cfg\log\change_values_big;
 use cfg\log\change_field;
 use cfg\log\change_link;
@@ -78,18 +88,23 @@ use cfg\phrase;
 use cfg\phrase_table;
 use cfg\phrase_table_status;
 use cfg\phrase_type;
+use cfg\phrase_types;
 use cfg\pod;
 use cfg\pod_status;
 use cfg\pod_type;
 use cfg\protection_type;
+use cfg\protection_type_list;
 use cfg\ref;
 use cfg\ref_type;
+use cfg\ref_type_list;
 use cfg\result\result;
 use cfg\sandbox;
 use cfg\session;
 use cfg\share_type;
+use cfg\share_type_list;
 use cfg\source;
 use cfg\source_type;
+use cfg\source_type_list;
 use cfg\sys_log;
 use cfg\sys_log_function;
 use cfg\sys_log_level;
@@ -116,6 +131,7 @@ use cfg\view;
 use cfg\view_link_type;
 use cfg\view_term_link;
 use cfg\view_type;
+use cfg\view_type_list;
 use cfg\word;
 use Exception;
 use html\html_base;
@@ -177,7 +193,7 @@ class sql_db
     const SETUP_INDEX_COM = 'remark: no index needed for preloaded tables such as phrase types';
     const SETUP_FOREIGN_KEY = 'foreign key constraints and auto_increment for tables';
 
-    // classes that have a database table
+    // classes that have a database table in order of suggested table creation so that depending tables are created later
     const DB_TABLE_CLASSES = [
         config::class,
         sys_log_type::class,
@@ -242,6 +258,61 @@ class sql_db
         component::class,
         component_link::class
     ];
+
+    // classes that have a database table in order of least depending first to avoid the usage of CASCADE on truncate
+    const DB_TABLE_CLASSES_DESC_DEPENDING = [
+        [value::class, true],
+        value::class,
+        result::class,
+        element::class,
+        element_type::class,
+        [formula_link::class, true],
+        formula_link::class,
+        [formula::class, true],
+        formula::class,
+        formula_type::class,
+        [component_link::class, true],
+        component_link::class,
+        component_link_type::class,
+        [component::class, true],
+        component::class,
+        component_type::class,
+        [view::class, true],
+        view::class,
+        view_type::class,
+        [group::class, true],
+        group::class,
+        verb::class,
+        [triple::class, true],
+        triple::class,
+        [word::class, true],
+        word::class,
+        phrase_type::class,
+        [source::class, true],
+        source::class,
+        source_type::class,
+        ref::class,
+        ref_type::class,
+        change_link::class,
+        change::class,
+        changes_norm::class,
+        changes_big::class,
+        change_action::class,
+        change_field::class,
+        change_table::class,
+        config::class,
+        job::class,
+        job_type::class,
+        //sql_db::TBL_SYS_SCRIPT,
+        sys_log::class,
+        sys_log_status::class,
+        sys_log_function::class,
+        share_type::class,
+        protection_type::class,
+        user::class,
+        user_profile::class
+    ];
+
     // classes that use a database view
     const DB_VIEW_CLASSES = [
         phrase::class,
@@ -304,6 +375,8 @@ class sql_db
         ip_range::class,
         ip_range_list::class,
         change::class,
+        changes_norm::class,
+        changes_big::class,
         change_link::class,
         sys_log::class,
         job::class,
@@ -712,11 +785,17 @@ class sql_db
         $sql = resource_file(DB_RES_SUB_PATH . DB_SETUP_SUB_PATH . $this->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
         try {
             $html->echo('Run db setup sql script');
-            $sql_result = $this->exe_script($sql);
-            // TODO review
-            //if ($sql_result) {
-            //    $usr_msg->add_message($sql_result);
-            // }
+            $sql_msg = $this->exe_script($sql);
+            if (!$sql_msg->is_ok()) {
+                // retry once but try to delete upfront all remaining tables and objects
+                $usr_msg = new user_message();
+                $this->reset_db_core();
+                $sql_msg = $this->exe_script($sql);
+                $usr_msg->add($sql_msg);
+            }
+            if (!$sql_msg->is_ok()) {
+                $usr_msg->add($sql_msg);
+            }
         } catch (Exception $e) {
             $msg = ' creation of the database failed due to ' . $e->getMessage();
             log_fatal($msg, 'setup_db');
@@ -774,6 +853,126 @@ class sql_db
             $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $this);
         }
         return $usr_msg;
+    }
+
+    /**
+     * force to drop any remaining tables of the database
+     * only used for testing to reset the db after a broken db update script
+     * TODO remove or deactivate this before prod deployment
+     *
+     * @return void
+     */
+    function reset_db_core(): void
+    {
+        // run reset the main database tables
+        $tbl_lst = $this->fetch_all(sql::SELECT
+            . " table_name FROM information_schema.tables WHERE table_schema = 'public';");
+        foreach ($tbl_lst as $tbl) {
+            $tbl_name = $tbl[0];
+            $this->drop_table($tbl_name);
+        }
+
+        // load the core db rows to have at least the profile id of the system user
+        $this->db_fill_code_links();
+        $this->db_check_missing_owner();
+    }
+
+    /**
+     * truncate all tables (use only for system testing)
+     */
+    function run_db_truncate(user $sys_usr): void
+    {
+        $lib = new library();
+
+        // the tables in order to avoid the usage of CASCADE
+        $table_names = sql_db::DB_TABLE_CLASSES_DESC_DEPENDING;
+        $html = new html_base();
+        $html->echo("\n");
+        $html->echo('truncate ');
+        $html->echo("\n");
+
+        // truncate tables that have already a build in truncate statement creation
+        $sql = '';
+        $sc = new sql();
+        $grp = new group($sys_usr);
+        $sql .= $grp->sql_truncate($sc);
+
+        global $db_con;
+
+        try {
+            $db_con->exe($sql);
+        } catch (Exception $e) {
+            log_err('Cannot truncate based on sql ' . $sql . '" because: ' . $e->getMessage());
+        }
+
+        // truncate the other tables
+        foreach ($table_names as $entry) {
+            $usr_tbl = false;
+            if (is_array($entry)) {
+                $class = $entry[0];
+                $usr_tbl = $entry[1];
+            } else {
+                $class = $entry;
+            }
+            if ($usr_tbl) {
+                $table_name = sql_db::TBL_USER_PREFIX . $lib->class_to_name($class);
+            } else {
+                $table_name = $lib->class_to_name($class);
+            }
+            $db_con->truncate_table($table_name);
+        }
+
+        // reset the preloaded data
+        $this->run_preloaded_truncate();
+    }
+
+    function run_preloaded_truncate(): void
+    {
+        global $system_users;
+        global $user_profiles;
+        global $phrase_types;
+        global $formula_types;
+        global $formula_link_types;
+        global $element_types;
+        global $view_types;
+        global $component_types;
+        global $component_link_types;
+        global $position_types;
+        global $ref_types;
+        global $source_types;
+        global $share_types;
+        global $protection_types;
+        global $languages;
+        global $language_forms;
+        global $verbs;
+        global $system_views;
+        global $sys_log_stati;
+        global $job_types;
+        global $change_action_list;
+        global $change_table_list;
+        global $change_field_list;
+
+        //$system_users =[];
+        //$user_profiles =[];
+        $phrase_types = new phrase_types();
+        $formula_types = new formula_type_list();
+        $formula_link_types = new formula_link_type_list();
+        $element_types = new element_type_list();
+        $view_types = new view_type_list();
+        $component_types = new component_type_list();
+        // not yet needed?
+        //$component_link_types = new component_link_type_list();
+        $position_types = new position_type_list();
+        $ref_types = new ref_type_list();
+        $source_types = new source_type_list();
+        $share_types = new share_type_list();
+        $protection_types = new protection_type_list();
+        $languages = new language_list();
+        $language_forms = new language_form_list();
+        $job_types = new job_type_list();
+        $change_action_list = new change_action_list();
+        $change_table_list = new change_table_list();
+        $change_field_list = new change_field_list();
     }
 
     /**
@@ -2013,20 +2212,34 @@ class sql_db
     /**
      * execute directly an SQL script without further prepare
      * @param string $sql the sql script that should be executed
-     * @return \PgSql\Result|mysqli_result
-     * @throws Exception
+     * @return \PgSql\Result|mysqli_result|user_message either the result of the sql script or false if something failed
      */
-    function exe_script(string $sql): \PgSql\Result|mysqli_result
+    function exe_script(string $sql): \PgSql\Result|mysqli_result|user_message
     {
+        $msg = new user_message();
+        $result = true;
         // execute on the connected database
         if ($this->db_type == sql_db::POSTGRES) {
-            $result = pg_query($this->postgres_link, $sql);
+            try {
+                $result = pg_query($this->postgres_link, $sql);
+            } catch (Exception $e) {
+                $trace_link = $this->log_db_exception('execute script', $e, $sql, $log_level);
+                $msg->set_url($trace_link);
+            }
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $result = mysqli_query($this->mysql, $sql);
+            try {
+                $result = mysqli_query($this->mysql, $sql);
+            } catch (Exception $e) {
+                $trace_link = $this->log_db_exception('execute script', $e, $sql, $log_level);
+                $msg->set_url($trace_link);
+            }
         } else {
-            throw new Exception('Unknown database type "' . $this->db_type . '"');
+            log_fatal('Unknown database type "' . $this->db_type . '"', 'exe_script');
         }
-        return $result;
+        if ($result === false) {
+            $msg->add_message(pg_last_error($this->postgres_link));
+        }
+        return $msg;
     }
 
     /**
@@ -2038,7 +2251,7 @@ class sql_db
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
      * @param string $sql_call the query with the fields set e.g. to execute a function
      * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
-     * @return \PgSql\Result the message that should be shown to the user if something went wrong or an empty string
+     * @return \PgSql\Result|null the message that should be shown to the user if something went wrong or an empty string
      * @throws Exception the message that should be shown to the system admin for debugging
      *
      * TODO switch return type to bool|resource with PHP 8.0
@@ -2154,13 +2367,46 @@ class sql_db
         return $result;
     }
 
-    private
-    function log_db_exception(string $msg, Exception $e, string $sql = '', int $log_level = sys_log_level::ERROR): string
+    /**
+     * write a database exception to the log table if still possible
+     *
+     * @param string $msg a text from the calling function that adds an indication what might have caused the issue
+     * @param Exception $e the execption created by the db call
+     * @param string $sql the sql statement that have caused the issue from this code point of view
+     * @param int $log_level to prevent further messages in case of fatal errors
+     * @return string the message that should be shown to the user
+     */
+    private function log_db_exception(
+        string $msg,
+        Exception $e,
+        string $sql = '',
+        int $log_level = sys_log_level::ERROR
+    ): string
     {
-        $msg .= ' ' . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage();
+        return $this->log_db_error_message($msg, $e->getMessage(), $sql, $log_level);
+    }
+
+    /**
+     * write a database exception to the log table if possible
+     * otherwise write an error log file
+     *
+     * @param string $msg a text from the calling function that adds an indication what might have caused the issue
+     * @param string $err the text of the error message
+     * @param string $sql the sql statement that have caused the issue from this code point of view
+     * @param int $log_level to prevent further messages in case of fatal errors
+     * @return string the message that should be shown to the user
+     */
+    private function log_db_error_message(
+        string $msg,
+        string $err,
+        string $sql = '',
+        int $log_level = sys_log_level::ERROR
+    ): string
+    {
+        $msg .= ' ' . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $err;
         if ($log_level == sys_log_level::FATAL) {
             log_fatal($msg, 'exe_postgres');
-            return '';
+            return $msg . log::MSG_ERR_INTERNAL;
         } else {
             $trace_link = log_err($msg);
             return $msg . log::MSG_ERR_INTERNAL . $trace_link;

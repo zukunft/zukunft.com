@@ -300,6 +300,10 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO create a function to earn cooperative parts by work
     TODO because MySQL does not keep the interface stable (e.g. https://dev.mysql.com/doc/refman/8.4/en/charset-unicode-utf8.html) switch to postgres and MariaDB
 
+    TODO message handling
+        in dought return a user message to the highest level, so that it can be shown to the user
+        in case of an exception convert it to a user message as soon as all relevant information are availible
+
     TODO use cases:
         create a sample how to create a personal pension plan for 1. 2. and 3. pillar independend from banks and pension funds
         these the optimal tax rates are
@@ -991,6 +995,8 @@ const DB_TABLE_LIST = [
     'ip_ranges',
     'sessions',
     'changes',
+    'changes_norm',
+    'changes_big',
     'change_values_norm',
     'change_values_prime',
     'change_values_big',
@@ -1599,10 +1605,10 @@ function prg_restart(string $code_name): sql_db
 
         // check the system setup
         $db_chk = new db_check();
-        $result = $db_chk->db_check($db_con);
-        if ($result != '') {
+        $usr_msg = $db_chk->db_check($db_con);
+        if (!$usr_msg->is_ok()) {
             echo '\n';
-            echo $result;
+            echo $usr_msg->all_message_text();
             $db_con->close();
             $db_con = null;
         }

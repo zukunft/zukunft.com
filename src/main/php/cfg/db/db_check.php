@@ -58,12 +58,12 @@ class db_check
      * read the version number from the database and compare it with the backend version
      * if the database has a lower version than the backend program start the upgrade process
      * @param sql_db $db_con the database connection object to the database that should be tested
-     * @return string the message that should be shown to the user immediately if not empty
+     * @return user_message the message that should be shown to the user immediately if not empty
      */
-    function db_check(sql_db $db_con): string
+    function db_check(sql_db $db_con): user_message
     {
 
-        $result = ''; // the message that should be shown to the user immediately
+        $usr_msg = new user_message(); // the message that should be shown to the user immediately
         $do_consistency_check = false;
         $lib = new library();
 
@@ -71,11 +71,13 @@ class db_check
         // TODO remove rewrite before moved to PROD
         $main_tbl_name = $lib->class_to_name(config::class);
         if (!$db_con->has_table($main_tbl_name)) {
-            $db_con->setup_db();
-            $db_con->db_fill_code_links();
-            $db_con->db_check_missing_owner();
-            $cfg = new config();
-            $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con);
+            $usr_msg = $db_con->setup_db();
+            if ($usr_msg->is_ok()) {
+                $db_con->db_fill_code_links();
+                $db_con->db_check_missing_owner();
+                $cfg = new config();
+                $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con);
+            }
         }
 
         $cfg = new config();
@@ -90,10 +92,11 @@ class db_check
             if (prg_version_is_newer($db_version)) {
                 log_warning('The zukunft.com backend is older than the database used. This may cause damage on the database. Please upgrade the backend program', 'db_check');
             } else {
-                $result = match ($db_version) {
+                $diff_txt = match ($db_version) {
                     NEXT_VERSION => $this->db_upgrade_0_0_4($db_con),
                     FIRST_VERSION => $this->db_upgrade_0_0_3($db_con),
                 };
+                $usr_msg->add_message($diff_txt);
             }
         } else {
             $last_consistency_check = $cfg->get_db(config::LAST_CONSISTENCY_CHECK, $db_con);
@@ -121,7 +124,7 @@ class db_check
             $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con);
         }
 
-        return $result;
+        return $usr_msg;
 
     }
 

@@ -67,6 +67,8 @@ use cfg\log\change_field_list;
 use cfg\log\change_link;
 use cfg\log\change_table;
 use cfg\log\change_table_list;
+use cfg\log\changes_big;
+use cfg\log\changes_norm;
 use cfg\phrase_type;
 use cfg\phrase_types;
 use cfg\protection_type;
@@ -276,7 +278,7 @@ class all_unit_write_tests extends all_unit_read_tests
         $sys_usr = $usr;
 
         // run reset the main database tables
-        $this->run_db_truncate($sys_usr);
+        $db_con->run_db_truncate($sys_usr);
         $db_con->truncate_table_all();
         $db_con->reset_seq_all();
         $db_con->reset_config();
@@ -345,153 +347,6 @@ class all_unit_write_tests extends all_unit_read_tests
         echo "\n";
         echo $errors . ' internal errors';
 
-    }
-
-    /**
-     * truncate all tables (use only for system testing)
-     */
-    function run_db_truncate(user $sys_usr): void
-    {
-        $lib = new library();
-
-        // the tables in order to avoid the usage of CASCADE
-        $table_names = array(
-            [value::class, true],
-            value::class,
-            result::class,
-            element::class,
-            element_type::class,
-            [formula_link::class, true],
-            formula_link::class,
-            [formula::class, true],
-            formula::class,
-            formula_type::class,
-            [component_link::class, true],
-            component_link::class,
-            component_link_type::class,
-            [component::class, true],
-            component::class,
-            component_type::class,
-            [view::class, true],
-            view::class,
-            view_type::class,
-            [group::class, true],
-            group::class,
-            verb::class,
-            [triple::class, true],
-            triple::class,
-            [word::class, true],
-            word::class,
-            phrase_type::class,
-            [source::class, true],
-            source::class,
-            source_type::class,
-            ref::class,
-            ref_type::class,
-            change_link::class,
-            change::class,
-            change_action::class,
-            change_field::class,
-            change_table::class,
-            config::class,
-            job::class,
-            job_type::class,
-            //sql_db::TBL_SYS_SCRIPT,
-            sys_log::class,
-            sys_log_status::class,
-            sys_log_function::class,
-            share_type::class,
-            protection_type::class,
-            user::class,
-            user_profile::class
-        );
-        $html = new html_base();
-        $html->echo("\n");
-        $html->echo('truncate ');
-        $html->echo("\n");
-
-        // truncate tables that have already a build in truncate statement creation
-        $sql = '';
-        $sc = new sql();
-        $grp = new group($sys_usr);
-        $sql .= $grp->sql_truncate($sc);
-
-        global $db_con;
-
-        try {
-            $db_con->exe($sql);
-        } catch (Exception $e) {
-            log_err('Cannot truncate based on sql ' . $sql . '" because: ' . $e->getMessage());
-        }
-
-        // truncate the other tables
-        foreach ($table_names as $entry) {
-            $usr_tbl = false;
-            if (is_array($entry)) {
-                $class = $entry[0];
-                $usr_tbl = $entry[1];
-            } else {
-                $class = $entry;
-            }
-            if ($usr_tbl) {
-                $table_name = sql_db::TBL_USER_PREFIX . $lib->class_to_name($class);
-            } else {
-                $table_name = $lib->class_to_name($class);
-            }
-            $db_con->truncate_table($table_name);
-        }
-
-        // reset the preloaded data
-        $this->run_preloaded_truncate();
-    }
-
-    function run_preloaded_truncate(): void
-    {
-        global $system_users;
-        global $user_profiles;
-        global $phrase_types;
-        global $formula_types;
-        global $formula_link_types;
-        global $element_types;
-        global $view_types;
-        global $component_types;
-        global $component_link_types;
-        global $position_types;
-        global $ref_types;
-        global $source_types;
-        global $share_types;
-        global $protection_types;
-        global $languages;
-        global $language_forms;
-        global $verbs;
-        global $system_views;
-        global $sys_log_stati;
-        global $job_types;
-        global $change_action_list;
-        global $change_table_list;
-        global $change_field_list;
-
-        //$system_users =[];
-        //$user_profiles =[];
-        $phrase_types = new phrase_types();
-        $formula_types = new formula_type_list();
-        $formula_link_types = new formula_link_type_list();
-        $element_types = new element_type_list();
-        $view_types = new view_type_list();
-        $component_types = new component_type_list();
-        // not yet needed?
-        //$component_link_types = new component_link_type_list();
-        $position_types = new position_type_list();
-        $ref_types = new ref_type_list();
-        $source_types = new source_type_list();
-        $share_types = new share_type_list();
-        $protection_types = new protection_type_list();
-        $languages = new language_list();
-        $language_forms = new language_form_list();
-        $job_types = new job_type_list();
-        $change_action_list = new change_action_list();
-        $change_table_list = new change_table_list();
-        $change_field_list = new change_field_list();
     }
 
 }

@@ -55,6 +55,8 @@ use cfg\log\change_link;
 use cfg\log\change_values_norm;
 use cfg\log\change_values_prime;
 use cfg\log\change_table;
+use cfg\log\changes_big;
+use cfg\log\changes_norm;
 use cfg\ref;
 use cfg\result\result;
 use cfg\sandbox;
@@ -196,6 +198,8 @@ class sql
         ip_range::class,
         ip_range_list::class,
         change::class,
+        changes_norm::class,
+        changes_big::class,
         change_link::class,
         sys_log::class,
         job::class,

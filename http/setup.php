@@ -46,7 +46,10 @@ if ($usr->id() > 0) {
 
         // with the check the tables will be created and the system data will be loaded
         // TODO compare with test_recreate.php
-        $result = $db_chk->db_check($db_con);
+        $usr_msg = $db_chk->db_check($db_con);
+        if (!$usr_msg->is_ok()) {
+            echo $usr_msg->all_message_text();
+        }
 
         log_debug("setup ... done.");
     }}
