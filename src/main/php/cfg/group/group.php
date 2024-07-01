@@ -147,6 +147,11 @@ class group extends sandbox_multi
     public ?string $name;         // maybe later the user should have the possibility to overwrite the generic name, but this is not user at the moment
     public ?string $description;  // the automatically created generic name for the word group, used for a quick display of values
 
+    // true if the object has been saved in the database
+    // needed for groups because neither last_update like for values and results can be used
+    // nor can the database sequence id be used that indicates the status e.g. for named objects
+    private bool $is_saved;
+
 
     /*
      * construct and map
@@ -174,6 +179,7 @@ class group extends sandbox_multi
         $this->name = null;
         $this->description = null;
         $this->phr_lst = new phrase_list($this->user());
+        $this->is_saved = false;
     }
 
     /**
@@ -199,6 +205,7 @@ class group extends sandbox_multi
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
             $this->description = $db_row[self::FLD_DESCRIPTION];
+            $this->is_saved = true;
         }
         return $result;
     }
@@ -433,6 +440,19 @@ class group extends sandbox_multi
 
 
     /*
+     * information
+     */
+
+    /**
+     * @return bool true if the group has been at least once saved to the database
+     */
+    function is_saved(): bool
+    {
+        return $this->is_saved;
+    }
+
+
+    /*
      * cast
      */
 
@@ -568,97 +588,6 @@ class group extends sandbox_multi
      */
 
     /**
-     * create an SQL statement to retrieve a user sandbox object by id from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param int|string $id the id of the phrase group, which can also be a string representing a 512-bit key
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
-    {
-        $this->set_id($id);
-        // for the group the number of phrases are not relevant for the queries
-        $sc_par_lst = new sql_type_list([$this->table_type()]);
-        $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $sc_par_lst);
-        $sc->add_where($this->id_field(), $id);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve a phrase groups from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param phrase_list $phr_lst list of phrases that should all be used to create the group id
-     * @return sql_par the SQL statement base on the parameters set in $this
-     */
-    function load_sql_by_phrase_list(sql $sc, phrase_list $phr_lst): sql_par
-    {
-        $grp_id = new group_id();
-        return $this->load_sql_by_id($sc, $grp_id->get_id($phr_lst));
-    }
-
-    /**
-     * create an SQL statement to retrieve a phrase groups by name from the database
-     * only selects groups where the default name has been overwritten by the user
-     * TODO check that the user does not use a group name that matches the generated name of another group
-     * TODO include the prime and big tables into the search
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $name the name of the phrase group
-     * @return sql_par the SQL statement base on the parameters set in $this
-     */
-    function load_sql_by_name(sql $sc, string $name): sql_par
-    {
-        $qp = $this->load_sql($sc, sql_db::FLD_NAME);
-        $sc->add_where(self::FLD_NAME, $name);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-
-    /*
-     * load functions - the set functions are used to define the loading selection criteria
-     */
-
-    /**
-     * create an SQL statement to retrieve a phrase groups from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the name of this class to overwrite the parent class
-     * @return sql_par the SQL statement base on the parameters set in $this
-     */
-    function load_sql_obj_vars(sql $sc, string $class = self::class): sql_par
-    {
-        $sc->set_class($class);
-        $qp = new sql_par($class);
-        $qp->name .= $this->load_sql_name_ext();
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields(self::FLD_NAMES);
-
-        return $this->load_sql_select_qp($sc, $qp);
-    }
-
-    /**
-     * load one database row e.g. word, triple, value, formula, result, view, component or log entry from the database
-     * @param sql_par $qp the query parameters created by the calling function
-     * @return int|string the id of the object found and zero if nothing is found
-     */
-    protected function load(sql_par $qp): int|string
-    {
-        if (!parent::load_without_id_return($qp)) {
-            $this->set_phrase_list_by_id($this->id());
-        }
-        return $this->id();
-    }
-
-    /**
      * TODO move (and other functions) to db_object and rename the existing db_object to db_id_object
      * just set the class name for the user sandbox function
      * load a word object by database id
@@ -679,38 +608,17 @@ class group extends sandbox_multi
     }
 
     /**
-     * load the object parameters for all users
-     * @return bool true if the phrase group object has been loaded
+     * load a group object from the database selected by the group name
+     * @param string $name the id of the group
+     * @return int|string the id of the object found and zero if nothing is found
      */
-    function load_by_obj_vars(): bool
+    function load_by_name(string $name): int|string
     {
         global $db_con;
-        $result = false;
 
-        $qp = $this->load_sql_obj_vars($db_con->sql_creator());
-
-        if ($qp->sql == '') {
-            log_err('Some ids for a ' . self::class . ' must be set to load a ' . self::class, self::class . '->load');
-        } else {
-            $db_row = $db_con->get1($qp);
-            $result = $this->row_mapper($db_row);
-            if ($result and $this->phrase_list()->empty()) {
-                $this->load_lst();
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * shortcut function to create the phrase list and load the group with one call
-     * @param phr_ids $ids list of phrase ids where triples have a negative id
-     * @return bool
-     */
-    function load_by_ids(phr_ids $ids): bool
-    {
-        $phr_lst = new phrase_list($this->user());
-        $phr_lst->load_names_by_ids($ids);
-        return $this->load_by_phr_lst($phr_lst);
+        log_debug($name);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
+        return $this->load($qp);
     }
 
     /**
@@ -734,7 +642,20 @@ class group extends sandbox_multi
     }
 
     /**
+     * shortcut function to create the phrase list and load the group with one call
+     * @param phr_ids $ids list of phrase ids where triples have a negative id
+     * @return bool
+     */
+    function load_by_ids(phr_ids $ids): bool
+    {
+        $phr_lst = new phrase_list($this->user());
+        $phr_lst->load_names_by_ids($ids);
+        return $this->load_by_phr_lst($phr_lst);
+    }
+
+    /**
      * load the word and triple objects based on the ids load from the database if needed
+     * TODO review
      */
     private function load_lst(?phr_ids $ids = null): void
     {
@@ -744,6 +665,180 @@ class group extends sandbox_multi
             }
             $this->phrase_list()->load_by_ids($ids);
         }
+    }
+
+    /**
+     * load the standard value use by most users for the given phrase group and time
+     * @param sql_par|null $qp placeholder to align the function parameters with the parent
+     * @param string $class the name of this class to be delivered to the parent function
+     * @return bool true if the standard value has been loaded
+     */
+    function load_standard(?sql_par $qp = null, string $class = self::class): bool
+    {
+        global $db_con;
+        $qp = $this->load_standard_sql($db_con->sql_creator());
+        return parent::load_standard($qp, $class);
+    }
+
+    /**
+     * load one database row e.g. word, triple, value, formula, result, view, component or log entry from the database
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int|string the id of the object found and zero if nothing is found
+     */
+    protected function load(sql_par $qp): int|string
+    {
+        if (!parent::load_without_id_return($qp)) {
+            $this->set_phrase_list_by_id($this->id());
+        }
+        return $this->id();
+    }
+
+    /**
+     * create an SQL statement to retrieve a user sandbox object by id from the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param int|string $id the id of the phrase group, which can also be a string representing a 512-bit key
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
+    {
+        $this->set_id($id);
+        // for the group the number of phrases are not relevant for the queries
+        $sc_par_lst = new sql_type_list([$this->table_type()]);
+        $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $sc_par_lst);
+        $sc->add_where($this->id_field(), $id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a phrase groups by name from the database
+     * only selects groups where the default name has been overwritten by the user
+     * TODO check that the user does not use a group name that matches the generated name of another group
+     * TODO include the prime and big tables into the search
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $name the name of the phrase group
+     * @return sql_par the SQL statement base on the parameters set in $this
+     */
+    function load_sql_by_name(sql $sc, string $name): sql_par
+    {
+        $qp = $this->load_sql($sc, sql_db::FLD_NAME);
+        foreach (group::TBL_LIST as $tbl_typ) {
+            $qp_tbl = $this->load_sql_by_name_single($sc, $name, $tbl_typ);
+            if ($sc->db_type() != sql_db::MYSQL) {
+                $qp->merge($qp_tbl, true);
+            } else {
+                $qp->merge($qp_tbl);
+            }
+        }
+        $par_types = array();
+        foreach ($qp->par as $par) {
+            if (is_numeric($par)) {
+                $par_types[] = sql_par_type::INT;
+            } else {
+                $par_types[] = sql_par_type::TEXT;
+            }
+        }
+
+        $qp->sql = $sc->prepare_sql($qp->sql, $qp->name, $par_types);
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a phrase groups by name from the database
+     * from a single table so either from the table with an int, 512bit or text key
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $name the name of the phrase group
+     * @param array $sc_par_arr the parameters for the sql statement creation
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_name_single(sql $sc, string $name, array $sc_par_arr): sql_par
+    {
+        $sc_par_lst = new sql_type_list($sc_par_arr);
+        $qp = $this->load_sql_multi($sc, sql_db::FLD_NAME, $this::class, $sc_par_lst);
+        $sc->add_where(self::FLD_NAME, $name);
+        $qp->sql = $sc->sql(0, true, false);
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a phrase groups from the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param phrase_list $phr_lst list of phrases that should all be used to create the group id
+     * @return sql_par the SQL statement base on the parameters set in $this
+     */
+    function load_sql_by_phrase_list(sql $sc, phrase_list $phr_lst): sql_par
+    {
+        $grp_id = new group_id();
+        return $this->load_sql_by_id($sc, $grp_id->get_id($phr_lst));
+    }
+
+    /**
+     * create the SQL to load the default group always by the id
+     * @param sql $sc with the target db_type set
+     * @param string $class the name of the child class from where the call has been triggered
+     * @param array $fld_lst list of fields either for the value or the result
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql(sql $sc, string $class = self::class, array $fld_lst = []): sql_par
+    {
+        return parent::load_standard_sql($sc, $class, self::FLD_NAMES);
+    }
+
+
+    /*
+     * load (to be deprecated)
+     */
+
+    /**
+     * create an SQL statement to retrieve a phrase groups from the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $class the name of this class to overwrite the parent class
+     * @return sql_par the SQL statement base on the parameters set in $this
+     */
+    function load_sql_obj_vars(sql $sc, string $class = self::class): sql_par
+    {
+        $sc->set_class($class);
+        $qp = new sql_par($class);
+        $qp->name .= $this->load_sql_name_ext();
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(self::FLD_NAMES);
+
+        return $this->load_sql_select_qp($sc, $qp);
+    }
+
+    /**
+     * load the object parameters for all users
+     * @return bool true if the phrase group object has been loaded
+     */
+    function load_by_obj_vars(): bool
+    {
+        global $db_con;
+        $result = false;
+
+        $qp = $this->load_sql_obj_vars($db_con->sql_creator());
+
+        if ($qp->sql == '') {
+            log_err('Some ids for a ' . self::class . ' must be set to load a ' . self::class, self::class . '->load');
+        } else {
+            $db_row = $db_con->get1($qp);
+            $result = $this->row_mapper($db_row);
+            if ($result and $this->phrase_list()->empty()) {
+                $this->load_lst();
+            }
+        }
+        return $result;
     }
 
     /**
@@ -955,6 +1050,30 @@ class group extends sandbox_multi
         return $result;
     }
 
+    /**
+     * check if this object uses any preserved name and if yes, returns a message to the user
+     * TODO return a user message instead of a string
+     *
+     * @return string
+     */
+    protected function check_preserved(): string
+    {
+        global $usr;
+
+        // TODO move to language based messages
+        $msg_res = 'is a reserved';
+        $msg_for = 'name for system testing. Please use another name';
+        $result = '';
+        if (in_array($this->name, group_api::RESERVED_GROUP_NAMES)) {
+            // the admin user needs to add the read test group name during initial load
+            // so for admin do not create a message
+            if (!$usr->is_admin() and !$usr->is_system()) {
+                $result = '"' . $this->name() . '" ' . $msg_res . ' ' . $msg_for;
+            }
+        }
+        return $result;
+    }
+
     /*
     // get the best matching group for a word list
     // at the moment "best matching" is defined as the highest number of results
@@ -1018,7 +1137,7 @@ class group extends sandbox_multi
 
 
     /*
-     * modification functions
+     * modification
      */
 
     /**
@@ -1083,6 +1202,67 @@ class group extends sandbox_multi
         $grp_id = new group_id();
         $id = $grp_id->get_id($this->phr_lst);
         return $grp_id->is_big($id);
+    }
+
+
+    /*
+     * save
+     */
+
+    /**
+     * add a new group to the database
+     *
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
+     * @return user_message with status ok
+     *                      or if something went wrong
+     *                      the message that should be shown to the user
+     *                      including suggested solutions
+     */
+    function add(bool $use_func = false): user_message
+    {
+        log_debug($this->dsp_id());
+
+        global $db_con;
+        $result = new user_message();
+
+        if ($use_func) {
+            $sc = $db_con->sql_creator();
+            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
+            $usr_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+            if ($usr_msg->is_ok()) {
+                $this->id = $usr_msg->get_row_id();
+            }
+            $result->add($usr_msg);
+        } else {
+
+            // log the insert attempt first
+            $log = $this->log_add();
+            if ($log->id() > 0) {
+
+                // insert the new object and save the object key
+                // TODO check that always before a db action is called the db type is set correctly
+                $sc = $db_con->sql_creator();
+                $qp = $this->sql_insert($sc);
+                $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
+                if ($usr_msg->is_ok()) {
+                    $this->id = $usr_msg->get_row_id();
+                }
+
+                // save the object fields if saving the key was successful
+                if ($this->is_saved() > 0) {
+                    log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
+                    // update the id in the log
+                    if (!$log->add_ref($this->id)) {
+                        $result->add_message('Updating the reference in the log failed');
+                    }
+
+                } else {
+                    $result->add_message('Adding ' . $this::class . ' ' . $this->dsp_id() . ' failed due to logging error.');
+                }
+            }
+        }
+
+        return $result;
     }
 
 
@@ -1316,7 +1496,7 @@ class group extends sandbox_multi
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, sql_type_list $sc_par_lst): sql_par
+    function sql_insert(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
         $sc_par_lst_used = clone $sc_par_lst;

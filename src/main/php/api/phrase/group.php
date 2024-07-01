@@ -33,6 +33,7 @@
 namespace api\phrase;
 
 use api\api;
+use api\word\word as word_api;
 use api\phrase\phrase_list as phrase_list_api;
 use api\sandbox\sandbox_named as sandbox_named_api;
 use html\phrase\phrase_group as phrase_group_dsp;
@@ -52,6 +53,24 @@ class group extends sandbox_named_api implements JsonSerializable
 
     const TN_ZH_2019 = 'inhabitant in the city of Zurich (2019)';
     const TN_CH_2019 = 'inhabitant of Switzerland in Mio (2019)';
+
+    // list of predefined group names used for system testing that are expected to be never renamed
+    const RESERVED_GROUP_NAMES = [
+        self::TN_READ,
+        self::TN_ZH_2019,
+        self::TN_CH_2019
+    ];
+
+    // list of group names and the realted phrases that are used for system testing
+    // and that should be created before the system test starts
+    // TODO activate
+    // [self::TN_CH_2019,
+    //      [word_api::TN_INHABITANT, word_api::TN_COUNTRY, word_api::TN_CH, word_api::TN_2019, word_api::TN_MIO]]
+    const TEST_GROUPS_CREATE = [
+        [self::TN_READ,
+            [word_api::TN_PI, word_api::TN_READ]]
+    ];
+
 
     /*
      * object vars

@@ -286,12 +286,13 @@ class value_time_series extends sandbox_value
 
     /**
      * add a new time series
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return user_message with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
      *                      including suggested solutions
      */
-    function add(): user_message
+    function add(?bool $use_func = null): user_message
     {
         log_debug('->add');
 
@@ -353,8 +354,10 @@ class value_time_series extends sandbox_value
 
     /**
      * insert or update a time series in the database or save user specific time series numbers
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
+     * @return string the message that should be shown to the user in case something went wrong
      */
-    function save(): string
+    function save(?bool $use_func = null): string
     {
         log_debug('->save');
 

@@ -1505,9 +1505,10 @@ class result extends sandbox_value
      * save the formula result to the database
      * TODO check if user specific result needs to be added
      * for the word selection the id list is the lead, not the object list and not the group
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return string the message that should be shown to the user in case something went wrong
      */
-    function save(): string
+    function save(?bool $use_func = null): string
     {
 
         global $db_con;

@@ -480,7 +480,7 @@ class value extends sandbox_value
 
 
     /*
-     * database load functions that reads the object from the database
+     * load
      */
 
     /**
@@ -2092,12 +2092,13 @@ class value extends sandbox_value
 
     /**
      * add a new value
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return user_message with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
      *                      including suggested solutions
      */
-    function add(): user_message
+    function add(?bool $use_func = null): user_message
     {
         log_debug();
 
@@ -2155,9 +2156,10 @@ class value extends sandbox_value
 
     /**
      * insert or update a number in the database or save a user specific number
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return string in case of a problem the message that should be shown to the user
      */
-    function save(): string
+    function save(?bool $use_func = null): string
     {
         log_debug();
 
@@ -2178,7 +2180,7 @@ class value extends sandbox_value
 
         if (!$this->is_saved()) {
             log_debug('add ' . $this->dsp_id());
-            $result .= $this->add($db_con)->get_last_message();
+            $result .= $this->add($use_func)->get_last_message();
         } else {
             log_debug('update id ' . $this->id() . ' to save "' . $this->number . '" for user ' . $this->user()->id());
             // update a value

@@ -2,8 +2,8 @@
 
 /*
 
-    test/php/unit_read/phrase_group.php - test of the phrase group methods that only read from the database
-    -----------------------------------
+    test/php/unit_read/group_tests.php - test of the phrase group methods that only read from the database
+    ----------------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -35,6 +35,7 @@ namespace unit_read;
 use api\word\word as word_api;
 use cfg\group\group;
 use cfg\phrase_list;
+use cfg\word_list;
 use test\test_cleanup;
 
 class phrase_group_tests
@@ -42,38 +43,49 @@ class phrase_group_tests
     function run(test_cleanup $t): void
     {
 
+        global $usr;
+
         // init
         $t->name = 'phrase_group->';
 
-        $t->header('Test the phrase group class (src/main/php/model/phrase_group.php)');
+        $t->header('group db read tests');
 
-        // test if the phrase group links are correctly recreated when a group is updated
-        $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS));
-        $grp = $phr_lst->get_grp_id();
-        if ($grp != null) {
-            $grp_check = new group($t->usr1);
-            $grp_check->set_id($grp->id());
-            $result = $grp_check->load_link_ids_for_testing();
-            $target = $grp->phrase_list()->id_lst();
-            $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
-        } else {
-            $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), '', 'group creation failed', $t::TIMEOUT_LIMIT_PAGE);
+        $t->subheader('load');
+
+        $test_name = 'group by word names';
+        $wrd_lst = new word_list($usr);
+        $wrd_lst->load_by_names($t->words_canton_zh_inhabitants());
+        $test_name .= ' for ' . $wrd_lst->dsp_id();
+        $phr_grp = new group($usr);
+        $phr_grp->load_by_phr_lst($wrd_lst->phrase_lst());
+        $result = $phr_grp->id();
+        $target = 0;
+        if ($result > 0) {
+            $target = $result;
         }
+        $t->assert($test_name, $result, $target);
 
-        // second test if the phrase group links are correctly recreated when a group is updated
+        $test_name = 'test if the phrase group links are correctly recreated when a group is updated';
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->load_by_names([word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS]);
+        $test_name .= ' for phrases ' . $phr_lst->dsp_id();
+        $grp = $phr_lst->get_grp_id();
+        $grp_check = new group($t->usr1);
+        $grp_check->set_id($grp->id());
+        $result = $grp_check->load_link_ids_for_testing();
+        $target = $grp->phrase_list()->id_lst();
+        $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_PAGE);
+
+        $test_name = 'second test if the phrase group links are correctly recreated when a group is updated';
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
+        $test_name .= ' for phrases ' . $phr_lst->dsp_id();
         $grp = $phr_lst->get_grp_id();
-        if ($grp != null) {
-            $grp_check = new group($t->usr1);
-            $grp_check->set_id($grp->id());
-            $result = $grp_check->load_link_ids_for_testing();
-            $target = $grp->phrase_list()->id_lst();
-            $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
-        } else {
-            $t->display('phrase_group->load_link_ids for ' . $phr_lst->dsp_id(), '', 'group creation failed', $t::TIMEOUT_LIMIT_PAGE);
-        }
+        $grp_check = new group($t->usr1);
+        $grp_check->set_id($grp->id());
+        $result = $grp_check->load_link_ids_for_testing();
+        $target = $grp->phrase_list()->id_lst();
+        $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_PAGE);
 
     }
 }

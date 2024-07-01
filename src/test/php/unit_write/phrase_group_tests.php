@@ -35,9 +35,11 @@ namespace unit_write;
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
+use api\phrase\group as group_api;
 use cfg\group\group;
 use cfg\phrase_list;
 use cfg\word_list;
+use test\all_tests;
 use test\test_cleanup;
 
 class phrase_group_tests
@@ -50,20 +52,7 @@ class phrase_group_tests
 
         $t->header('Test the phrase group class (src/main/php/model/phrase/phrase_group.php)');
 
-        // test getting the phrase group id based on word names
-        $wrd_lst = new word_list($usr);
-        $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_MIO));
-        $phr_grp = new group($usr);
-        $phr_grp->load_by_phr_lst($wrd_lst->phrase_lst());
-        $result = $phr_grp->id();
-        $target = 0;
-        if ($result > 0) {
-            $target = $result;
-            $id_without_year = $result;
-        }
-        $t->display('phrase_group->load by ids for ' . implode(",", $wrd_lst->names()), $target, $result);
-
-        // ... and if the time word is correctly excluded
+        // test if the time word is correctly excluded
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
         $phr_grp = new group($usr);
@@ -141,6 +130,24 @@ class phrase_group_tests
         // test the user sandbox for the user names
         // test if the search links are correctly created
 
+    }
+
+    /**
+     * create some fixed group names that are used for db read unit testing
+     * these words are not expected to be changed and cannot be changed by the normal users
+     *
+     * @param all_tests $t
+     * @return void
+     */
+    function create_test_groupss(all_tests $t): void
+    {
+        $t->header('Check if all base group names are correct');
+
+        foreach (group_api::TEST_GROUPS_CREATE as $group) {
+            $grp_name = $group[0];
+            $phr_names = $group[1];
+            $t->test_group($phr_names, $grp_name, $t->usr1);
+        }
     }
 
 }

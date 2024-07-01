@@ -167,6 +167,7 @@ use unit_write\component_link_tests;
 use unit_write\component_tests;
 use unit_write\formula_link_tests;
 use unit_write\formula_tests;
+use unit_write\phrase_group_tests;
 use unit_write\source_tests;
 use unit_write\triple_tests;
 use unit_write\value_tests;
@@ -732,6 +733,11 @@ class create_test_objects extends test_base
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_GWP, word_api::TN_GWP);
         return $wrd;
+    }
+
+    function words_canton_zh_inhabitants(): array
+    {
+        return [word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_MIO];
     }
 
     /**
@@ -2818,6 +2824,84 @@ class create_test_objects extends test_base
 
 
     /*
+     * group test creation
+     */
+
+    /**
+     * load a word from the database
+     *
+     * @param string $grp_name the name of the group which should be loaded
+     * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
+     * @return group the group loaded from the database by name
+     */
+    function load_group(string $grp_name, ?user $test_usr = null): group
+    {
+        if ($test_usr == null) {
+            $test_usr = $this->usr1;
+        }
+        $grp = new group($test_usr);
+        $grp->load_by_name($grp_name);
+        return $grp;
+    }
+
+    /**
+     * create group object based on the phrase list without using the database
+     *
+     * @param phrase_list $phr_lst with the phrases to identify the group
+     * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
+     * @return group the word with the name set
+     */
+    function create_group(phrase_list $phr_lst, ?user $test_usr = null): group
+    {
+        if ($test_usr == null) {
+            $test_usr = $this->usr1;
+        }
+        $grp = new group($test_usr);
+        $grp->set_phrase_list($phr_lst);
+        return $grp;
+    }
+
+    /**
+     * save the just created group object in the database
+     *
+     * @param array $phr_names with the phrases to identify the group
+     * @param string $grp_name the group name that should be used
+     * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
+     * @return group the group that is saved in the database by name
+     */
+    function add_group(array $phr_names, string $grp_name, ?user $test_usr = null): group
+    {
+        if ($test_usr == null) {
+            $test_usr = $this->usr1;
+        }
+        $grp = $this->load_group($grp_name);
+        if (!$grp->is_saved()) {
+            $phr_lst = new phrase_list($test_usr);
+            $phr_lst->load_by_names($phr_names);
+            $grp = $this->create_group($phr_lst, $test_usr);
+            $grp->set_name($grp_name);
+            $grp->save();
+        }
+        return $grp;
+    }
+
+    /**
+     * check if a group object could have been added to the database
+     *
+     * @param array $phr_names with the phrases to identify the group
+     * @param string $grp_name the group name that should be used
+     * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
+     * @return group the group that is saved in the database
+     */
+    function test_group(array $phr_names, string $grp_name, ?user $test_usr = null): group
+    {
+        $grp = $this->add_group($phr_names, $grp_name, $test_usr);
+        $this->assert('test_group', $grp->name(), $grp_name);
+        return $grp;
+    }
+
+
+    /*
      * formula test creation
      */
 
@@ -3387,6 +3471,9 @@ class create_test_objects extends test_base
 
     /**
      * create all database entries used for the read db unit tests
+     * the created database rows can be accessed by the users but are not expected to be changed and cannot be changed
+     *
+     * @param all_tests $t the test object to collect the errors and calculate the execution times
      * @return void
      */
     function create_test_db_entries(all_tests $t): void
@@ -3394,6 +3481,7 @@ class create_test_objects extends test_base
         (new word_tests())->create_test_words($t);
         (new triple_tests())->create_test_triples($t);
         (new triple_tests())->create_base_times($t);
+        (new phrase_group_tests())->create_test_groupss($t);
         (new source_tests())->create_test_sources($t);
         (new formula_tests())->create_test_formulas($t);
         (new formula_link_tests())->create_test_formula_links($t);

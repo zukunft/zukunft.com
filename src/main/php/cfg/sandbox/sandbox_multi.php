@@ -3,7 +3,7 @@
 /*
 
     model/sandbox/sandbox_multi.php - the superclass for handling user specific objects including the database saving
-    ------------------------------------
+    -------------------------------
 
     This superclass should be used by the classes words, formula, ... to enable user specific values and links
     similar to sandbox.php but for database objects that have custom prime id
@@ -826,6 +826,15 @@ class sandbox_multi extends db_object_multi_user
     /*
      * save support - ownership and access
      */
+
+    /**
+     * to be overwritten by the child object
+     * @return bool true if the value has been at least once saved to the database
+     */
+    function is_saved(): bool
+    {
+        return true;
+    }
 
     /**
      * if the user is an admin the user can force to be the owner of this object
@@ -2240,12 +2249,14 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * dummy function that is supposed to be overwritten by the child classes for e.g. named or link objects
+     *
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return user_message with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
      *                      including suggested solutions
      */
-    function add(): user_message
+    function add(bool $use_func = false): user_message
     {
         $result = new user_message();
         $msg = 'The dummy parent add function has been called, which should never happen';
@@ -2256,49 +2267,26 @@ class sandbox_multi extends db_object_multi_user
 
     /*
      * save
-     *
-     * a word rename creates a new word and a word deletion request
-     * a word is deleted after all users have confirmed
-     * words with an active deletion request are listed at the end
-     * a word can have a formula linked
-     * values and formulas can be linked to a word, a triple or a word group
-     * verbs needs a confirmation for creation (but the name can be reserved)
-     * all other parameters beside the word/verb name can be user specific
-     *
-     * time words are separated from the word groups to reduce the number of word groups
-     * for daily data or shorter a normal date or time field is used
-     * a time word can also describe a period
-     */
-
-    /*
-     * add or update a user sandbox object (word, value, formula or ...) in the database
-     * returns either the id of the updated or created object or a message with the reason why it has failed that can be shown to the user
-     *
-     * the save used cases are
-     *
-     * 1. a source is supposed to be saved without id and         a name  and no source                with the same name already exists -> add the source
-     * 2. a source is supposed to be saved without id and         a name, but  a source                with the same name already exists -> ask the user to confirm the changes or use another name (at the moment simply update)
-     * 3. a word   is supposed to be saved without id and         a name  and no word, verb or formula with the same name already exists -> add the word
-     * 4. a word   is supposed to be saved without id and         a name, but  a word                  with the same name already exists -> ask the user to confirm the changes or use another name (at the moment simply update)
-     * 5. a word   is supposed to be saved without id and         a name, but  a verb or formula       with the same name already exists -> ask the user to use another name (or rename the formula)
-     * 6. a source is supposed to be saved with    id and a changed name -> the source is supposed to be renamed -> check if the new name is already used -> (6a.) if yes,            ask to merge, change the name or cancel the update -> (6b.) if the new name does not exist, ask the user to confirm the changes
-     * 7. a word   is supposed to be saved with    id and a changed name -> the word   is supposed to be renamed -> check if the new name is already used -> (7a.) if yes for a word, ask to merge, change the name or cancel the update -> (7b.) if the new name does not exist, ask the user to confirm the changes
-     *                                                                                                                                                         -> (7c.) if yes for a verb, ask to        change the name or cancel the update
-     * TODO add wizards to handle the update chains
-     * TODO check also that a word does not match any generated triple name
-     * TODO check also that a word does not match any user name (or find a solution for each user namespace)
+     * TODO review and combine with value and result save functions
      *
      */
 
-    function save(): string
+    function save(?bool $use_func = null): string
     {
         log_debug($this->dsp_id());
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
 
         global $db_con;
 
-        // check the preserved names
+        // init
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+
+        // decide which db write method should be used
+        if ($use_func === null) {
+            $use_func = $this->sql_default_script_usage();
+        }
+
+        // check the preserved names (only used for group names)
         $result = $this->check_preserved();
 
         if ($result == '') {
@@ -2345,9 +2333,9 @@ class sandbox_multi extends db_object_multi_user
 
         // create a new object if nothing similar has been found
         if ($result == '') {
-            if ($this->id == 0) {
+            if (!$this->is_saved()) {
                 log_debug('add');
-                $result = $this->add()->get_last_message();
+                $result = $this->add($use_func)->get_last_message();
             } else {
                 // if the similar object is not the same as $this object, suggest renaming $this object
                 if ($similar != null) {
@@ -2427,6 +2415,7 @@ class sandbox_multi extends db_object_multi_user
 
         return $result;
     }
+
 
     /*
      * delete
@@ -2720,6 +2709,16 @@ class sandbox_multi extends db_object_multi_user
         return new user_message();
     }
 
+    /**
+     * @return bool true if for this database and class
+     *              a prepared script including writing to the log
+     *              for db write should be used by default
+     */
+    function sql_default_script_usage(): bool
+    {
+        return in_array($this::class, sql_db::CLASSES_THAT_USE_SQL_FUNC);
+    }
+
 
     /*
      * sql write fields
@@ -2794,7 +2793,7 @@ class sandbox_multi extends db_object_multi_user
         }
         return $lst;
     }
-    
+
 
     /*
      * type field

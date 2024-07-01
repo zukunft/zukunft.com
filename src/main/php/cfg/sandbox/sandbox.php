@@ -2196,6 +2196,7 @@ class sandbox extends db_object_seq_id_user
      * TODO return a user_message with a suggested solution instead of a string
      *
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
+     * @return string the message that should be shown to the user in case something went wrong
      */
 
     function save(?bool $use_func = null): string

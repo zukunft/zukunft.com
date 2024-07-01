@@ -517,9 +517,15 @@ class word_tests
         */
     }
 
+    /**
+     * create some fixed words that are used for db read unit testing
+     * these words are not expected to be changed and cannot be changed by the normal users
+     *
+     * @param all_tests $t
+     * @return void
+     */
     function create_test_words(all_tests $t): void
     {
-
         $t->header('Check if all base words are correct');
 
         foreach (word_api::TEST_WORDS_CREATE as $word_name) {
@@ -546,6 +552,6 @@ class word_tests
             }
             $prev_word_name = $word_name;
         }
-
     }
+
 }
