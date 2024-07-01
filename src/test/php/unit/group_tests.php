@@ -194,8 +194,8 @@ class group_tests
         // TODO activate db write
         $t->assert_sql_delete($sc, $grp);
         $t->assert_sql_delete($sc, $grp, [sql_type::USER]);
-        //$t->assert_sql_delete($sc, $grp, [sql_type::LOG]);
-        //$t->assert_sql_delete($sc, $grp, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_delete($sc, $grp, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $grp, [sql_type::LOG, sql_type::USER]);
 
 
         $t->header('Unit tests of the phrase group link class (src/main/php/model/group/group_link.php)');

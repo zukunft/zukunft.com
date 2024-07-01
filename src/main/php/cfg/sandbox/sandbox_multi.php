@@ -1689,10 +1689,17 @@ class sandbox_multi extends db_object_multi_user
         }
 
         // add the row id of the standard table for user overwrites
+        if ($sc_par_lst->is_big()) {
+            $id_typ = sql_par_type::TEXT;
+        } elseif ($sc_par_lst->is_prime()) {
+            $id_typ = sql_par_type::INT;
+        } else {
+            $id_typ = sql_par_type::TEXT;
+        }
         $fvt_lst_out->add_field(
             $this->id_field(),
             $this->id(),
-            sql_par_type::INT);
+            $id_typ);
 
         $sql .= ' ' . $func_body_change;
 
