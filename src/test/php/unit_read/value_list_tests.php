@@ -64,11 +64,11 @@ class value_list_tests
 
         // load by ids
         $val_lst = new value_list($t->usr1);
-        $val_lst->load_by_ids([5,8]);
+        $val_lst->load_by_ids([4,7]);
         $pi = new value($t->usr1);
-        $pi->load_by_id(5);
+        $pi->load_by_id(4);
         $e = new value($t->usr1);
-        $e->load_by_id(8);
+        $e->load_by_id(7);
         $target_lst = new value_list($t->usr1);
         $target_lst->add($pi);
         $target_lst->add($e);
@@ -80,7 +80,7 @@ class value_list_tests
             $target = '"" 0.57721566490153 / "" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 4,,, / -2,,,) for user 2 (zukunft.com system test)';
         }
         $t->assert($test_name, $result, $target);
-        $target = '"" 3.1415926535898 / "" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / 4,,,) for user 2 (zukunft.com system test)';
+        $target = '"" 3.1415926535898 / "" 0.57721566490153 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 4,,, / 7,,,) for user 2 (zukunft.com system test)';
         $test_name = 'A value list with pi and e matches the expected result';
         $t->assert($test_name, $val_lst->dsp_id(), $target);
 

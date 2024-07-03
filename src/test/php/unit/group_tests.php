@@ -71,38 +71,43 @@ class group_tests
         $t->subheader('Group id tests');
         $grp_id = new group_id();
         $t->assert('64 bit group_id short word list', $grp_id->get_id($t->word_list_short()->phrase_lst()),
-            131080);
-        $t->assert('phrase ids of 64 bit group_id short', $grp_id->get_array(131080),
+            262145);
+        $t->assert('phrase ids of 64 bit group_id short', $grp_id->get_array(262145),
             $t->word_list_short()->phrase_lst()->ids());
         $t->assert('64 bit group_id word list', $grp_id->get_id($t->word_list()->phrase_lst()),
-            562967133814796);
-        $t->assert('phrase ids of 64 bit group_id', $grp_id->get_array(562967133814796),
+            1688867040264193);
+        $t->assert('phrase ids of 64 bit group_id', $grp_id->get_array(1688867040264193),
             $t->word_list()->phrase_lst()->ids());
 
         //$this->check_64_bit_key($t, [0,0,0,0], 0);
-        $this->check_64_bit_key($t, [1], 2);
-        $this->check_64_bit_key($t, [-1], 3);
-        $this->check_64_bit_key($t, [2], 4);
-        $this->check_64_bit_key($t, [-2], 5);
-        $this->check_64_bit_key($t, [32767], 65534);
+        $this->check_64_bit_key($t, [1], 1);
+        $this->check_64_bit_key($t, [-1], 32769);
+        $this->check_64_bit_key($t, [2], 2);
+        $this->check_64_bit_key($t, [4], 4);
+        $this->check_64_bit_key($t, [7], 7);
+        $this->check_64_bit_key($t, [-2], 32770);
+        $this->check_64_bit_key($t, [32767], 32767);
         $this->check_64_bit_key($t, [-32767], 65535);
-        $this->check_64_bit_key($t, [1,32767], 196606);
-        $this->check_64_bit_key($t, [2,32767], 327678);
-        $this->check_64_bit_key($t, [-2,32767], 393214);
-        $this->check_64_bit_key($t, [-32767,-1], 4294901763);
-        $this->check_64_bit_key($t, [-32767,32767], 4294967294);
-        $this->check_64_bit_key($t, [-32767,1,32767], 281470681939966);
-        $this->check_64_bit_key($t, [-32767,-1,32767], 281470682005502);
-        $this->check_64_bit_key($t, [-1,-32767,32767], 281470682005502);
-        $this->check_64_bit_key($t, [32765,32766,32767], 281453501677566);
-        $this->check_64_bit_key($t, [1,32765,32766,32767], 844403455098878);
-        $this->check_64_bit_key($t, [1234,32765,32766,32767], 694961696023576574);
-        $this->check_64_bit_key($t, [15678,32765,32766,32767], 8826210823241007102);
-        // TODO fix it
-        //$this->check_64_bit_key($t, [-32767,-32766,-15678,32767], -10829824000);
-        // TODO fix it
-        //$this->check_64_bit_key($t, [32767,32766,32765,32764], -281487861940224);
-        //$this->check_64_bit_key($t, [-32767,32767,-32766,32766], 9223231297218904063);
+        $this->check_64_bit_key($t, [1,32767], 2147418113);
+        $this->check_64_bit_key($t, [2,32767], 2147418114);
+        $this->check_64_bit_key($t, [-2,32767], 2147450882);
+        $this->check_64_bit_key($t, [-32767,-1], 2147614719);
+        $this->check_64_bit_key($t, [-32767,32767], 2147483647);
+        $this->check_64_bit_key($t, [-32767,1,32767], 140733193519103);
+        $this->check_64_bit_key($t, [-32767,-1,32767], 140735341002751);
+        $this->check_64_bit_key($t, [-1,-32767,32767], 140735341002751);
+        $this->check_64_bit_key($t, [32765,32766,32767], 140735340773373);
+        $this->check_64_bit_key($t, [1,32765,32766,32767], 9223231292923772929);
+        $this->check_64_bit_key($t, [1234,32765,32766,32767], 9223231292923774162);
+        $this->check_64_bit_key($t, [15678,32765,32766,32767], 9223231292923788606);
+        $this->check_64_bit_key($t, [-15677,32767,-15676,32766], 9223231293951360317);
+        $this->check_64_bit_key($t, [32767,32766,32765,32764], 9223231292923805692);
+        $this->check_64_bit_key($t, [-15678,32767,-32766,32766], 9223231293951508478);
+        $this->check_64_bit_key($t, [-32765,32767,-32766,32766], 9223231295071322110);
+        $this->check_64_bit_key($t, [-32767,-32766,-32765,32767], 9223372028264775679);
+        // these are not "prime" anymore because at least one id must be positiv to avoid exeeding PHP_INT_MAX
+        $this->check_64_bit_key($t, [-1,-2,-3,-4], '.....2-.....1-.....0-...../-......+......+......+......+......+......+......+......+......+......+......+......+');
+        $this->check_64_bit_key($t, [-32767,-32766,-32765,-1], '...5zz-...5zy-...5zx-...../-......+......+......+......+......+......+......+......+......+......+......+......+');
 
         $this->check_int2alpha($t, 0, '......+');
         $this->check_int2alpha($t, 1, '...../+');
@@ -127,8 +132,8 @@ class group_tests
         $this->check_int2alpha($t, -12, '.....A(', true, );
         $this->check_int2alpha($t, -12, '.....A)', false, true);
 
-        $t->assert('group_id triple list', $grp_id->get_id($t->triple_list()->phrase_lst()),5);
-        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(5), $t->triple_list()->phrase_lst()->ids());
+        $t->assert('group_id triple list', $grp_id->get_id($t->triple_list()->phrase_lst()),32770);
+        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(32770), $t->triple_list()->phrase_lst()->ids());
         $phr_lst = new phrase_list($usr);
         $phr_lst->merge($t->word_list()->phrase_lst());
         $phr_lst->merge($t->triple_list()->phrase_lst());
@@ -155,11 +160,11 @@ class group_tests
         $t->assert('64 bit result_id for the formula increase, '
             . 'the phrases Zurich (City) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t->zh_inhabitants_2020(), $t->zh_inhabitants_2020(), $t->increase_formula()),
-            11822279761068450);
+            6051875221405905);
         $t->assert('128 bit result_id for the formula increase, '
             . 'the phrases Zurich (City), Geneva (City) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t->zh_ge_inhabitants_2020(), $t->zh_ge_inhabitants_2020(), $t->increase_formula()),
-            '18039393492527394048');
+            '9234445111013697024');
         $t->assert('512 bit result_id ',
             $res_id->get_id($t->phrase_list_14(), $t->phrase_list_14b(), $t->increase_formula()),
             '.....J=..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+1FajJ2(.4LYK3)1FajJ2)');
@@ -298,7 +303,7 @@ class group_tests
         }
     }
 
-    private function check_64_bit_key(test_cleanup $t, array $ids, int $id): void
+    private function check_64_bit_key(test_cleanup $t, array $ids, int|string $id): void
     {
         $grp_id = new group_id();
         $phr_lst = new phrase_list($t->usr1);

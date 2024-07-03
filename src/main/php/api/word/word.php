@@ -94,6 +94,7 @@ class word extends sandbox_typed_api
     const TI_GE = 202;
     const TN_INHABITANT = 'inhabitant';
     const TI_INHABITANT = 204;
+    // TODO add test to search for words in all language forms e.g. plural
     const TN_INHABITANTS = 'inhabitants';
     const TN_2013 = '2013';
     const TI_2013 = 326;

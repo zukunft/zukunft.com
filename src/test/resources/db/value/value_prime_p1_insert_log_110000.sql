@@ -30,7 +30,7 @@ SELECT value_prime_p1_insert_log_110000
         1::smallint,
         1::smallint,
         3.1415926535898::numeric,
-        5::bigint,
+        32770::bigint,
         -2::smallint,
         null::smallint,
         null::smallint,

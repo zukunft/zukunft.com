@@ -81,12 +81,17 @@ class group_id extends id
      */
     function get_id(phrase_list $phr_lst): int|string
     {
-        $phr_lst = $phr_lst->sort_by_id();
-        if ($phr_lst->count() <= self::PRIME_PHRASES_STD and $phr_lst->prime_only()) {
+        if ($phr_lst->count() <= self::PRIME_PHRASES_STD
+            and $phr_lst->prime_only()
+            and ($phr_lst->one_positiv() or $phr_lst->count() < self::PRIME_PHRASES_STD)
+        ) {
+            $phr_lst = $phr_lst->sort_rev_by_id();
             $db_key = $this->int_group_id($phr_lst);
         } elseif ($phr_lst->count() <= self::STANDARD_PHRASES) {
+            $phr_lst = $phr_lst->sort_by_id();
             $db_key = $this->alpha_num($phr_lst);
         } else {
+            $phr_lst = $phr_lst->sort_by_id();
             $db_key = $this->alpha_num_big($phr_lst);
         }
         return $db_key;
@@ -219,7 +224,9 @@ class group_id extends id
      */
     function is_prime(int|string $grp_id): bool
     {
-        if (is_int($grp_id)) {
+        // TODO check why is_int is not working
+        // if (is_int($grp_id)) {
+        if (is_numeric($grp_id) and $grp_id < PHP_INT_MAX and $grp_id > PHP_INT_MIN) {
             return true;
         } else {
             return false;
@@ -245,8 +252,8 @@ class group_id extends id
         $bin_key = decbin($grp_id);
         $bin_key = str_pad($bin_key, 64, "0", STR_PAD_LEFT);
         while ($bin_key != '') {
-            $id = bindec(substr($bin_key, 0, 15));
-            $sign = substr($bin_key, 15, 1);
+            $sign = substr($bin_key, 0, 1);
+            $id = bindec(substr($bin_key, 1, 15));
             if ($id != 0) {
                 if ($sign == 1) {
                     $result[] = $id * -1;

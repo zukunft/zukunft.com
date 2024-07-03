@@ -127,7 +127,7 @@ class system_tests
         $t->assert($test_name, $phr_lst->dsp_id(), $target);
         $test_name = 'debug phrase_group id';
         $grp = $t->group();
-        $target = '"Pi (math)" (group_id 5) as "Pi (math)" for user 1 (zukunft.com system test)';
+        $target = '"Pi (math)" (group_id 32770) as "Pi (math)" for user 1 (zukunft.com system test)';
         $t->assert($test_name, $grp->dsp_id(), $target);
         $test_name = 'debug group_list id';
         $grp_lst = $t->group_list();
@@ -147,7 +147,7 @@ class system_tests
         $t->assert($test_name, $val->dsp_id(), $target);
         $test_name = 'debug value_list id';
         $val_lst = $t->value_list();
-        $target = '"Pi (math)" 3.1415926535898 / "inhabitant in the city of Zurich (2019)" 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / ' . word_api::TI_2019 . ',' . word_api::TI_ZH . ',' . word_api::TI_INHABITANT . ',) for user 1 (zukunft.com system test)';
+        $target = '"Pi (math)" 3.1415926535898 / "inhabitant in the city of Zurich (2019)" 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / ' . word_api::TI_INHABITANT . ',' . word_api::TI_ZH . ',' . word_api::TI_2019 . ',) for user 1 (zukunft.com system test)';
         $t->assert($test_name, $val_lst->dsp_id(), $target);
         $test_name = 'debug value_phrase_link id';
         $val_lnk = $t->value_phrase_link();
@@ -191,7 +191,7 @@ class system_tests
         $t->assert($test_name, $fig->dsp_id(), $target);
         $test_name = 'debug figure_list id';
         $fig_lst = $t->figure_list();
-        $target = ' 3.1415926535898 Pi (math)  123456 "Mathematics"  (5,-2)';
+        $target = ' 3.1415926535898 Pi (math)  123456 "Mathematics"  (32770,-1)';
         $t->assert($test_name, $fig_lst->dsp_id(), $target);
         $test_name = 'debug view id';
         $msk = $t->view();

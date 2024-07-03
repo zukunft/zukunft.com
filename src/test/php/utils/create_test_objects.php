@@ -711,6 +711,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_INHABITANT, word_api::TN_INHABITANT);
+        $wrd->plural = word_api::TN_INHABITANTS;
         return $wrd;
     }
 

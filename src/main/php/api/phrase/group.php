@@ -63,12 +63,11 @@ class group extends sandbox_named_api implements JsonSerializable
 
     // list of group names and the realted phrases that are used for system testing
     // and that should be created before the system test starts
-    // TODO activate
-    // [self::TN_CH_2019,
-    //      [word_api::TN_INHABITANT, word_api::TN_COUNTRY, word_api::TN_CH, word_api::TN_2019, word_api::TN_MIO]]
     const TEST_GROUPS_CREATE = [
         [self::TN_READ,
-            [word_api::TN_PI, word_api::TN_READ]]
+            [word_api::TN_PI, word_api::TN_READ]],
+        [self::TN_CH_2019,
+            [word_api::TN_INHABITANTS, word_api::TN_COUNTRY, word_api::TN_CH, word_api::TN_2019, word_api::TN_MIO]]
     ];
 
 

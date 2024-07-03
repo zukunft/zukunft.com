@@ -977,6 +977,20 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * @returns bool true if at least one id is positive or not used to avoid exeeding PHP_INT_MAX
+     */
+    function one_positiv(): bool
+    {
+        $result = false;
+        foreach ($this->lst() as $phr) {
+            if ($phr->id() > 0) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * get the phrase ids as an array
      * switch to ids() if possible
      * @return array with the ids of theis phrase list
@@ -1869,13 +1883,30 @@ class phrase_list extends sandbox_list_named
 
     /**
      * sort the phrase object list by id
-     * @return array list with the phrases (not a phrase list object!) sorted by name
+     * @return phrase_list with the phrases (not a phrase list object!) sorted by name
      */
     function sort_by_id(): phrase_list
     {
         $result = clone $this;
         $id_lst = $this->id_lst();
         asort($id_lst);
+        $result->set_lst(array());
+        foreach (array_keys($id_lst) as $sorted_id) {
+            $phr_to_add = $this->get($sorted_id);
+            $result->add($phr_to_add);
+        }
+        return $result;
+    }
+
+    /**
+     * sort the phrase object list by id in reverse order
+     * @return phrase_list with the phrases (not a phrase list object!) sorted by name
+     */
+    function sort_rev_by_id(): phrase_list
+    {
+        $result = clone $this;
+        $id_lst = $this->id_lst();
+        arsort($id_lst);
         $result->set_lst(array());
         foreach (array_keys($id_lst) as $sorted_id) {
             $phr_to_add = $this->get($sorted_id);

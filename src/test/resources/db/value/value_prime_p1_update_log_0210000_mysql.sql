@@ -37,7 +37,7 @@ SELECT value_prime_p1_update_log_0210000
         1,
         123.456,
         3.1415926535898,
-        5,
+        32770,
         -2,
         null,
         null,

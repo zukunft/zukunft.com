@@ -27,7 +27,7 @@ SELECT value_prime_p1_delete_log
        (1,
         3,
         1,
-        5,
+        32770,
         -2,
         null,
         null,
