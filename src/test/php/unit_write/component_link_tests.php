@@ -53,34 +53,32 @@ class component_link_tests
         $dsp = $t->test_view(view_api::TN_RENAMED);
         $cmp = $t->test_component(component_api::TN_ADD);
 
-        // link the test view component to another view
+        $test_name = 'link the test view component "' . $cmp->name() . '" to view  (' . $dsp->name() . ')';
         $order_nbr = $cmp->next_nbr($dsp->id());
         $result = $cmp->link($dsp, $order_nbr);
         $target = '';
-        $t->display('view component_link->link "' . $dsp->name() . '" to "' . $cmp->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        // ... check the correct logging
+        $test_name = 'check log of linking the component "' . $cmp->name() . '" to the view "' . $dsp->name() . '"';
         $log = new change_link($t->usr1);
         $log->set_table(change_table_list::VIEW_LINK);
         $log->new_from_id = $dsp->id();
         $log->new_to_id = $cmp->id();
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test linked System Test View Renamed to System Test View Component';
-        $t->display('view component_link->link_dsp logged for "' . $dsp->name() . '" to "' . $cmp->name() . '"', $target, $result);
+        $t->assert($test_name, $result, $target);
 
-        // ... check if the link is shown correctly
+        $test_name = 'check list of linked views contains the added view for user "' . $t->usr1->dsp_id() . '"';
         $cmp = $t->load_component(component_api::TN_ADD);
-        $dsp_lst = $cmp->assign_dsp_ids();
+        $dsp_lst = $cmp->assigned_msk_ids();
         $result = $dsp->is_in_list($dsp_lst);
-        $target = true;
-        $t->display('view component->assign_dsp_ids contains "' . $dsp->name() . '" for user "' . $t->usr1->name . '"', $target, $result);
+        $t->assert($test_name, $result, true);
 
-        // ... check if the link is shown correctly also for the second user
+        $test_name = 'check if the link is shown correctly also for the second user "' . $t->usr2->dsp_id() . '"';
         $cmp = $t->load_component(component_api::TN_ADD, $t->usr2);
-        $dsp_lst = $cmp->assign_dsp_ids();
+        $dsp_lst = $cmp->assigned_msk_ids();
         $result = $dsp->is_in_list($dsp_lst);
-        $target = true;
-        $t->display('view component->assign_dsp_ids contains "' . $dsp->name() . '" for user "' . $t->usr2->name . '"', $target, $result);
+        $t->assert($test_name, $result, true);
 
         // ... check if the value update has been triggered
 
@@ -106,7 +104,7 @@ class component_link_tests
 
         // ... check if the link is really not used any more for the second user
         $cmp = $t->load_component(component_api::TN_ADD, $t->usr2);
-        $dsp_lst = $cmp->assign_dsp_ids();
+        $dsp_lst = $cmp->assigned_msk_ids();
         $result = $dsp->is_in_list($dsp_lst);
         $target = false;
         $t->display('view component->assign_dsp_ids contains "' . $dsp->name() . '" for user "' . $t->usr2->name . '" not any more', $target, $result);
@@ -116,7 +114,7 @@ class component_link_tests
 
         // ... check if the link is still used for the first user
         $cmp = $t->load_component(component_api::TN_ADD);
-        $dsp_lst = $cmp->assign_dsp_ids();
+        $dsp_lst = $cmp->assigned_msk_ids();
         $result = $dsp->is_in_list($dsp_lst);
         $target = true;
         $t->display('view component->assign_dsp_ids still contains "' . $dsp->name() . '" for user "' . $t->usr1->name . '"', $target, $result);
@@ -139,7 +137,7 @@ class component_link_tests
 
         // check if the view component is not used any more for both users
         $cmp = $t->load_component(component_api::TN_ADD);
-        $dsp_lst = $cmp->assign_dsp_ids();
+        $dsp_lst = $cmp->assigned_msk_ids();
         $result = $dsp->is_in_list($dsp_lst);
         $target = false;
         $t->display('view component->assign_dsp_ids contains "' . $dsp->name() . '" for user "' . $t->usr1->name . '" not any more', $target, $result);

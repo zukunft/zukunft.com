@@ -1417,9 +1417,9 @@ class component extends sandbox_typed
     */
 
     /**
-     * list of all view ids that are directly assigned to this view component
+     * @return array with all view ids that are directly assigned to this view component
      */
-    function assign_dsp_ids(): array
+    function assigned_msk_ids(): array
     {
         $result = array();
 

@@ -103,6 +103,7 @@ use cfg\view_list;
 use cfg\word;
 use cfg\word_list;
 use controller\controller;
+use Exception;
 use html\html_base;
 use html\rest_ctrl;
 use html\sandbox\db_object as db_object_dsp;
@@ -2215,7 +2216,12 @@ class test_base
     {
         $msg_net_off = 'Cannot gat the policy, probably not connected to the internet';
         if ($is_connected) {
-            $result = file_get_contents(self::URL . $url_path);
+            try {
+                $result = file_get_contents(self::URL . $url_path);
+            } catch (Exception $e) {
+                $result = false;
+                $msg_net_off .= ': ' . $e->getMessage();
+            }
             if ($result === false) {
                 $this->dsp_warning($msg_net_off);
                 $is_connected = false;
