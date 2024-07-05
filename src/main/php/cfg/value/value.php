@@ -2246,12 +2246,12 @@ class value extends sandbox_value
      * get a list of database field names, values and types that have been updated
      * the last_update field is excluded here because this is an internal only field
      *
-     * @param sandbox|sandbox_value|value $sbx the same value sandbox as this to compare which fields have been changed
+     * @param sandbox_multi|sandbox_value|value $sbx the same value sandbox as this to compare which fields have been changed
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox|sandbox_value|value $sbx,
+        sandbox_multi|sandbox_value|value $sbx,
         sql_type_list               $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {

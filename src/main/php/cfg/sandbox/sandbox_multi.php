@@ -783,7 +783,7 @@ class sandbox_multi extends db_object_multi_user
         if ($this->owner_id > 0) {
             $qp->name .= sql::NAME_SEP . sql::NAME_EXT_EX_OWNER;
         }
-        $sc->set_class($this::class, true);
+        $sc->set_class($this::class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(array(user::FLD_ID));
@@ -2542,6 +2542,9 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * exclude or delete an object
+     * similar to the sandbox del function but for more than one table
+     *
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return user_message with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
@@ -2551,7 +2554,7 @@ class sandbox_multi extends db_object_multi_user
      * TODO check if all have deleted the object
      *      does not remove the user excluding if no one else is using it
      */
-    function del(): user_message
+    function del(?bool $use_func = null): user_message
     {
         log_debug($this->dsp_id());
         $lib = new library();
@@ -2560,6 +2563,11 @@ class sandbox_multi extends db_object_multi_user
         global $db_con;
         $result = new user_message();
         $msg = '';
+
+        // decide which db write method should be used
+        if ($use_func === null) {
+            $use_func = $this->sql_default_script_usage();
+        }
 
         // refresh the object with the database to include all updates utils now (TODO start of lock for commit here)
         // TODO it seems that the owner is not updated
@@ -2620,7 +2628,7 @@ class sandbox_multi extends db_object_multi_user
                     // TODO check if "if ($this->can_change() AND $this->not_used()) {" would be correct
                     if (!$this->used_by_someone_else()) {
                         log_debug('can delete ' . $this->dsp_id() . ' after owner change');
-                        $msg .= $this->del_exe();
+                        $msg .= $this->del_exe($use_func);
                     } else {
                         log_debug('exclude ' . $this->dsp_id());
                         $this->exclude();
@@ -2632,11 +2640,6 @@ class sandbox_multi extends db_object_multi_user
                         $db_rec->set_user($this->user());
                         if ($db_rec->load_by_id($this->id, $db_rec::class)) {
                             log_debug('reloaded ' . $db_rec->dsp_id() . ' from database');
-                            if ($this->is_link_obj()) {
-                                if (!$db_rec->load_objects()) {
-                                    $msg .= 'Reloading of linked objects ' . $class_name . ' ' . $this->dsp_id() . ' failed.';
-                                }
-                            }
                         }
                         if ($msg == '') {
                             $std_rec = clone $this;
@@ -2649,7 +2652,11 @@ class sandbox_multi extends db_object_multi_user
                         }
                         if ($msg == '') {
                             log_debug('loaded standard ' . $std_rec->dsp_id());
+                            if ($use_func) {
+                                $msg .= $this->save_fields_func($db_con, $db_rec, $std_rec);
+                            } else {
                             $msg .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+                            }
                         }
                     }
                 }
@@ -2660,6 +2667,173 @@ class sandbox_multi extends db_object_multi_user
 
         $result->add_message($msg);
         return $result;
+    }
+
+    /**
+     * save all updated fields with one sql function
+     * similar to the sandbox save_fields_func function but for more than one table
+     * *
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param sandbox_multi $db_obj the database record before the saving
+     * @param sandbox_multi $norm_obj the database record defined as standard because it is used by most users
+     * @return string if not empty the message that should be shown to the user
+     */
+    function save_fields_func(sql_db $db_con, sandbox_multi $db_obj, sandbox_multi $norm_obj): string
+    {
+        // always return a user message and if everything is fine, it is just empty
+        $usr_msg = new user_message();
+        // the sql creator is used more than once, so create it upfront
+        $sc = $db_con->sql_creator();
+        $sc_par_lst = new sql_type_list([sql_type::LOG]);
+        $all_fields = $this->db_fields_all();
+        // get the object name for the log messages
+        $lib = new library();
+        $obj_name = $lib->class_to_name($this::class);
+
+        // if the user is allowed to change the norm row e.g. because no other user has used it, change the norm row directly
+        if ($this->can_change()) {
+            // if there is no difference between the user row and the norm row remove all fields from the user row
+            if ($this->no_diff($norm_obj)) {
+                if ($this->has_usr_cfg()) {
+                    $qp = $this->sql_delete($sc, new sql_type_list([sql_type::USER]));
+                    $usr_msg->add($db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id()));
+                }
+            } else {
+                // apply the changes directly to the norm db record
+                // TODO maybe check of other user have used the object and if yes keep or inform
+                $fvt_lst = $this->db_fields_changed($db_obj, $sc_par_lst);
+                if (!$fvt_lst->is_empty_except_user_action()) {
+                    $sc_par_lst->add(sql_type::UPDATE);
+                    $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
+                    $usr_msg->add($db_con->update($qp, 'update ' . $obj_name . $this->dsp_id()));
+                    if ($this->has_usr_cfg()) {
+                        $sc_par_lst->add(sql_type::USER);
+                        $qp = $this->sql_delete($sc, $sc_par_lst);
+                        $usr_msg->add($db_con->delete($qp, 'del user ' . $obj_name));
+                    }
+                }
+            }
+            if ($usr_msg->is_ok()) {
+                // check if some user overwrites can be removed
+                $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
+            }
+        } else {
+            $sc_par_lst->add(sql_type::USER);
+            if ($this->has_usr_cfg()) {
+                if ($this->no_diff($norm_obj)) {
+                    $qp = $this->sql_delete($sc, new sql_type_list([sql_type::USER]));
+                    $usr_msg->add($db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id()));
+                } else {
+                    $sc_par_lst->add(sql_type::UPDATE);
+                    $fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst);
+                    $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
+                    $usr_msg->add($db_con->update($qp, 'update user ' . $obj_name));
+                }
+            } else {
+                if (!$this->no_diff($norm_obj)) {
+                    $sc_par_lst->add(sql_type::INSERT);
+                    $sc_par_lst->add(sql_type::NO_ID_RETURN);
+                    // recreate the field list to include the id for the user table
+                    $fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst);
+                    $qp = $this->sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
+                    $usr_msg->add($db_con->insert($qp, 'add user ' . $obj_name, true));
+                }
+            }
+        }
+
+        $result = $usr_msg->get_last_message();
+        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
+        return $result;
+    }
+
+    /**
+     * dummy function to save all updated word fields, which is always overwritten by the child class
+     * @param sql_type_list $sc_par_lst only used for link objects
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    {
+        log_err('function db_fields_all missing for class ' . $this::class);
+        return [];
+    }
+
+    /**
+     * detects if this object has be changed compared to the given object
+     *
+     * @param sandbox_multi $db_obj the user database or standard record for compare
+     * @return bool true if any of the fields does not match
+     */
+    function no_diff(sandbox_multi $db_obj): bool
+    {
+        // for the check it is not relevant if only the user differs
+        $chk_obj = clone $this;
+        $chk_obj->set_user($db_obj->user());
+        // if this object does not yet have a db key ignore this
+        if ($chk_obj->id() == 0) {
+            $chk_obj->set_id($db_obj->id());
+        }
+        return $chk_obj->db_fields_changed($db_obj)->is_empty();
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     * dummy function overwritten by the child object
+     *
+     * @param sandbox_multi $sbx the same named sandbox as this to compare which fields have been changed
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list with the field names of the object and any child object
+     */
+    function db_fields_changed(
+        sandbox_multi       $sbx,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
+    {
+        return new sql_par_field_list();
+    }
+
+    /**
+     * create the sql statement to change or exclude a sandbox object e.g. word to the database
+     * either via a prepared SQL statement or via a function that includes the logging
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
+     * @param array $fld_lst_all list of field names of the given object
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update_switch(
+        sql                $sc,
+        sql_par_field_list $fvt_lst,
+        array              $fld_lst_all = [],
+        sql_type_list      $sc_par_lst = new sql_type_list([])
+    ): sql_par
+    {
+        // TODO deprecate
+        $val_lst = $fvt_lst->values();
+
+        // make the query name unique based on the changed fields
+        $lib = new library();
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all);
+
+        // create the main query parameter object and set the query name
+        $qp = $this->sql_common($sc, $sc_par_lst, $ext);
+
+        if ($sc_par_lst->incl_log()) {
+            // log functions must always use named parameters
+            $sc_par_lst->add(sql_type::NAMED_PAR);
+            $sc_par_lst->add(sql_type::NO_ID_RETURN);
+            $qp = $this->sql_update_named_and_log($sc, $qp, $fvt_lst, $fld_lst_all, $sc_par_lst);
+        } else {
+            if ($sc_par_lst->is_usr_tbl()) {
+                $qp->sql = $sc->create_sql_update(
+                    [$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $fvt_lst);
+            } else {
+                $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
+            }
+            $qp->par = $sc->par_values();
+        }
+
+        return $qp;
     }
 
     /**
@@ -2810,8 +2984,8 @@ class sandbox_multi extends db_object_multi_user
      * TODO: log the ref
      * TODO: save the reference also in the log
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param sandbox $db_rec the database record before the saving
-     * @param sandbox $std_rec the database record defined as standard because it is used by most users
+     * @param sandbox_multi $db_rec the database record before the saving
+     * @param sandbox_multi $std_rec the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
     function save_field_type(

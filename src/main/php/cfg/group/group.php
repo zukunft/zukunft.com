@@ -1469,9 +1469,10 @@ class group extends sandbox_multi
      * the removal if the linked values must be done before calling this function
      * the word and triple links related to this phrase group are also removed
      *
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return user_message
      */
-    function del(): user_message
+    function del(?bool $use_func = null): user_message
     {
         global $db_con;
         $result = new user_message();
@@ -1581,7 +1582,7 @@ class group extends sandbox_multi
      *
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
     {
         return array_merge([self::FLD_NAME, self::FLD_DESCRIPTION]);
     }
