@@ -40,6 +40,7 @@ enum sql_type: string
     case DELETE = 'delete';
     case LOAD = 'load';
     case NORM = 'norm'; // the data used be most users should be loaded
+    case NORM_EXT = 'norm_ext'; // force to use the norm extesion for the table name e.g. for the change log
     case COMPLETE = 'complete'; // force to load all rows from the database because the number of rows are expected to be limited and all rows should be e.g. load to the chance at once
 
     // the fixed table types for a value or result
@@ -80,7 +81,7 @@ enum sql_type: string
             self::UPDATE => sql::NAME_SEP . 'update',
             self::DELETE => sql::NAME_SEP . 'delete',
             self::EXCLUDE => sql::NAME_SEP . 'excluded',
-            self::NORM => sql::NAME_SEP . 'norm',
+            self::NORM, self::NORM_EXT => sql::NAME_SEP . 'norm',
             self::PRIME => sql::NAME_SEP . 'prime',
             self::MAIN => sql::NAME_SEP . 'main',
             self::BIG => sql::NAME_SEP . 'big',

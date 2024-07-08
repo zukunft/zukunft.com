@@ -3482,7 +3482,7 @@ class create_test_objects extends test_base
         (new word_tests())->create_test_words($t);
         (new triple_tests())->create_test_triples($t);
         (new triple_tests())->create_base_times($t);
-        (new phrase_group_tests())->create_test_groupss($t);
+        (new phrase_group_tests())->create_test_groups($t);
         (new source_tests())->create_test_sources($t);
         (new formula_tests())->create_test_formulas($t);
         (new formula_link_tests())->create_test_formula_links($t);

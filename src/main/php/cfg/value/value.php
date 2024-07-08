@@ -2106,7 +2106,13 @@ class value extends sandbox_value
         $result = new user_message();
 
         // log the insert attempt first
-        $log = $this->log_add();
+        if ($this->is_prime()) {
+            $log = $this->log_add_prime();
+        } elseif ($this->is_big()) {
+            $log = $this->log_add_big();
+        } else {
+            $log = $this->log_add();
+        }
         if ($log->id() > 0) {
             // insert the value
             $ins_result = $db_con->insert($this->sql_insert($db_con->sql_creator()), 'add value');

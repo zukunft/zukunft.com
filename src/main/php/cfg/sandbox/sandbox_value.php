@@ -1179,7 +1179,7 @@ class sandbox_value extends sandbox_multi
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      */
-    function log_add(): change
+    function log_add_prime(): change
     {
         log_debug($this->dsp_id());
         $lib = new library();

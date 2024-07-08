@@ -1644,6 +1644,8 @@ class library
 
     /**
      * remove the namespace from the class name
+     * TODO avoid these exception
+     *
      * @param string $class including the namespace
      * @return string class name without the namespace
      */

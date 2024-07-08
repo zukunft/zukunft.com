@@ -146,6 +146,7 @@ use unit\html\word as word_html_tests;
 use unit\html\word_list as word_list_html_tests;
 use unit\import_tests as import_tests;
 use unit_ui\local_ui_tests;
+use unit_write\phrase_group_tests;
 
 class all_unit_tests extends test_cleanup
 {
@@ -180,8 +181,8 @@ class all_unit_tests extends test_cleanup
          */
 
         // run the selected unit tests
-        // (new system_tests)->run($this);
-        (new import_tests)->run($this);
+        //(new system_tests)->run($this);
+        //(new import_tests)->run($this);
 
         // restore the global vars
         $db_con = $global_db_con;
@@ -208,10 +209,11 @@ class all_unit_tests extends test_cleanup
              */
 
             // run the selected db write
-            (new word_tests)->run($this);
-            (new triple_tests)->run($this);
-            $import = new import_file();
-            //  $import->import_test_files($usr);
+            (new phrase_group_tests)->run($this);
+            //(new word_tests)->run($this);
+            //(new triple_tests)->run($this);
+            //$import = new import_file();
+            //$import->import_test_files($usr);
         }
 
         /*

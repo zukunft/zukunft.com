@@ -1937,6 +1937,12 @@ class sql_db
         if ($result == 'sys_log_statuss') {
             $result = 'sys_log_status';
         }
+        if ($result == 'changes_norms') {
+            $result = 'changes_norm';
+        }
+        if ($result == 'changes_bigs') {
+            $result = 'changes_big';
+        }
         if ($result == 'configs') {
             $result = 'config';
         }
@@ -2037,6 +2043,12 @@ class sql_db
         }
         if ($this->id_field == 'phrase_types_id') {
             $this->id_field = 'phrase_type_id';
+        }
+        if ($this->id_field == 'changes_norm_id') {
+            $this->id_field = 'change_id';
+        }
+        if ($this->id_field == 'changes_big_id') {
+            $this->id_field = 'change_id';
         }
     }
 
@@ -2544,7 +2556,7 @@ class sql_db
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
      * @param bool $fetch_all true all database rows are returned at once
-     * @return array with one or all database records
+     * @return array|null with one or all database records
      */
     private
     function fetch(string $sql, string $sql_name = '', array $sql_array = array(), bool $fetch_all = false): ?array
@@ -4334,7 +4346,12 @@ class sql_db
         }
 
         // set the where clause user sandbox? ('.substr($this->type,0,4).')');
-        $sql_where = ' WHERE ' . $this->id_field . ' = ' . $this->sf($id);
+        $sql_where = ' WHERE ' . $this->id_field . ' = ';
+        if (is_numeric($id)) {
+            $sql_where .= $this->sf($id);
+        } else {
+            $sql_where .= "'" . $id . "'";
+        }
         if (substr($this->class, 0, 4) == 'user') {
             // ... but not for the user table itself
             if ($this->class <> user::class

@@ -36,8 +36,10 @@ namespace unit_write;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
 use api\phrase\group as group_api;
+use cfg\db\sql_type;
 use cfg\group\group;
 use cfg\phrase_list;
+use cfg\word;
 use cfg\word_list;
 use test\all_tests;
 use test\test_cleanup;
@@ -50,9 +52,51 @@ class phrase_group_tests
 
         global $usr;
 
-        $t->header('Test the phrase group class (src/main/php/model/phrase/phrase_group.php)');
+        // init
+        $grp_add_lst = [
+            [group_api::TN_ADD_PRIME_VIA_FUNC, true, word_api::TN_ADD_GROUP_PRIME_VIA_FUNC, sql_type::PRIME, 'function'],
+            [group_api::TN_ADD_PRIME_VIA_SQL, false, word_api::TN_ADD_GROUP_PRIME_VIA_SQL, sql_type::PRIME, 'insert'],
+            [group_api::TN_ADD_MOST_VIA_FUNC, true, word_api::TN_ADD_GROUP_MOST_VIA_FUNC, sql_type::MOST, 'function'],
+            [group_api::TN_ADD_MOST_VIA_SQL, false, word_api::TN_ADD_GROUP_MOST_VIA_SQL, sql_type::MOST, 'insert'],
+            [group_api::TN_ADD_BIG_VIA_FUNC, true, word_api::TN_ADD_GROUP_BIG_VIA_FUNC, sql_type::BIG, 'function'],
+            [group_api::TN_ADD_BIG_VIA_SQL, false, word_api::TN_ADD_GROUP_BIG_VIA_SQL, sql_type::BIG, 'insert'],
+        ];
+
+
+        $t->header('group db write tests');
+
+        $t->subheader('group add the system test words to avoid dependencies on group testing');
+        $wrd_add_lst = [];
+        foreach ($grp_add_lst as $grp_add) {
+            $wrd_add_lst[] = $t->test_word($grp_add[2]);
+        }
+
+        $t->subheader('group add');
+        $i = 0;
+        foreach ($grp_add_lst as $grp_add) {
+            $grp_name = $grp_add[0];
+            $test_name = 'add prime group name ' . $grp_name . ' via sql ' . $grp_add[4];
+            if ($grp_add[3] == sql_type::PRIME) {
+                $phr_lst = $t->phrase_list_small();
+            } elseif ($grp_add[3] == sql_type::MOST) {
+                $phr_lst = $t->phrase_list();
+            } else {
+                $phr_lst = $t->phrase_list_17_plus();
+            }
+            $this->group_add($wrd_add_lst[$i], $grp_name, $grp_add[1], $phr_lst, $test_name, $t);
+            $i++;
+        }
+
+        $t->subheader('group del');
+        foreach ($grp_add_lst as $grp_add) {
+            $grp_name = $grp_add[0];
+            $test_name = 'del prime group name ' . $grp_name . ' via sql ' . $grp_add[4];
+            $this->group_del($grp_name, $grp_add[1], $test_name, $t);
+        }
+
 
         // test if the time word is correctly excluded
+        // TODO move to phrase list tests
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
         $phr_grp = new group($usr);
@@ -136,17 +180,77 @@ class phrase_group_tests
      * create some fixed group names that are used for db read unit testing
      * these words are not expected to be changed and cannot be changed by the normal users
      *
-     * @param all_tests $t
+     * @param all_tests $t the test object with the test settings
      * @return void
      */
-    function create_test_groupss(all_tests $t): void
+    function create_test_groups(all_tests $t): void
     {
-        $t->header('Check if all base group names are correct');
+        $t->header('group check test group names');
 
         foreach (group_api::TEST_GROUPS_CREATE as $group) {
             $grp_name = $group[0];
             $phr_names = $group[1];
             $t->test_group($phr_names, $grp_name, $t->usr1);
+        }
+    }
+
+    /**
+     * test adding a group name that differs from the generated name
+     *
+     * @param word $wrd the word object that makes the phrase list unique
+     * @param string $grp_name the name of the group
+     * @param bool $use_func true if the sql function with log should be used
+     * @param phrase_list $phr_lst the prase list either for a prime main or big group id
+     * @param string $test_name the unique description of the test for the developer
+     * @param test_cleanup $t the test object with the test settings
+     * @return void
+     */
+    function group_add(
+        word         $wrd,
+        string       $grp_name,
+        bool         $use_func,
+        phrase_list  $phr_lst,
+        string       $test_name,
+        test_cleanup $t
+    ): void
+    {
+        $grp = new group($t->usr1);
+        $grp->load_by_name($grp_name);
+        if (!$grp->is_saved()) {
+            $phr_lst->add($wrd->phrase());
+            $grp->set_phrase_list($phr_lst);
+            $grp->set_name($grp_name);
+            $grp->save($use_func);
+            $grp->reset();
+            $grp->load_by_name($grp_name);
+            $t->assert_true($test_name, $grp->isset());
+        }
+    }
+
+    /**
+     * test deleting a group name and switch back to the generated name
+     *
+     * @param string $grp_name the name of the group
+     * @param bool $use_func true if the sql function with log should be used
+     * @param string $test_name the unique description of the test for the developer
+     * @param test_cleanup $t the test object with the test settings
+     * @return void
+     */
+    function group_del(
+        string       $grp_name,
+        bool         $use_func,
+        string       $test_name,
+        test_cleanup $t
+    ): void
+    {
+        $grp = new group($t->usr1);
+        $grp->load_by_name($grp_name);
+        if ($grp->is_saved()) {
+            $id = $grp->id();
+            $grp->del($use_func);
+            $grp->reset();
+            $grp->load_by_id($id);
+            $t->assert($test_name, $grp->name(), $grp->name_generated());
         }
     }
 

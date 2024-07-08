@@ -298,7 +298,11 @@ class group extends sandbox_multi
      */
     function id(): int|string
     {
-        return $this->id;
+        if (is_numeric($this->id)) {
+            return (int)$this->id;
+        } else {
+            return $this->id;
+        }
     }
 
     /**
@@ -449,6 +453,14 @@ class group extends sandbox_multi
     function is_saved(): bool
     {
         return $this->is_saved;
+    }
+
+    /**
+     * mark that the groud has been saved
+     */
+    function set_saved(): void
+    {
+        $this->is_saved = true;
     }
 
 
@@ -1236,7 +1248,13 @@ class group extends sandbox_multi
         } else {
 
             // log the insert attempt first
-            $log = $this->log_add();
+            if ($this->is_prime()) {
+                $log = $this->log_add_prime();
+            } elseif ($this->is_big()) {
+                $log = $this->log_add_big();
+            } else {
+                $log = $this->log_add();
+            }
             if ($log->id() > 0) {
 
                 // insert the new object and save the object key
@@ -1246,10 +1264,11 @@ class group extends sandbox_multi
                 $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
                 if ($usr_msg->is_ok()) {
                     $this->id = $usr_msg->get_row_id();
+                    $this->set_saved();
                 }
 
                 // save the object fields if saving the key was successful
-                if ($this->is_saved() > 0) {
+                if ($this->is_saved()) {
                     log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
                     // update the id in the log
                     if (!$log->add_ref($this->id)) {
@@ -1257,7 +1276,7 @@ class group extends sandbox_multi
                     }
 
                 } else {
-                    $result->add_message('Adding ' . $this::class . ' ' . $this->dsp_id() . ' failed due to logging error.');
+                    $result->add_message('Adding ' . $this::class . ' ' . $this->dsp_id() . ' failed (missing save maker).');
                 }
             }
         }
@@ -1468,6 +1487,7 @@ class group extends sandbox_multi
      * delete a phrase group that is supposed not to be used anymore
      * the removal if the linked values must be done before calling this function
      * the word and triple links related to this phrase group are also removed
+     * TODO maybe move this to del_exe
      *
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return user_message
@@ -1476,11 +1496,29 @@ class group extends sandbox_multi
     {
         global $db_con;
         $result = new user_message();
+        $sc = $db_con->sql_creator();
 
-        $db_con->set_class(group::class);
-        $db_con->usr_id = $this->user()->id();
-        $msg = $db_con->delete_old(self::FLD_ID, $this->id);
-        $result->add_message($msg);
+        if ($use_func) {
+            $qp = $this->sql_delete($sc, new sql_type_list([sql_type::LOG]));
+            $usr_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id());
+            $result->add($usr_msg);
+        } else {
+
+            // log the delete attempt first
+            if ($this->is_prime()) {
+                $log = $this->log_del_prime();
+            } elseif ($this->is_big()) {
+                $log = $this->log_del_big();
+            } else {
+                $log = $this->log_del();
+            }
+            if ($log->id() > 0) {
+                $db_con->set_class(group::class);
+                $qp = $this->sql_delete($sc);
+                $msg = $db_con->delete($qp, 'del ' . $this->dsp_id());
+                $result->add($msg);
+            }
+        }
 
         return $result;
     }
@@ -1705,11 +1743,19 @@ class group extends sandbox_multi
             $result = $this->name;
         } else {
             // or use the standard generic description
-            $name_lst = $this->phrase_list()->names();
-            $result = implode(",", $name_lst);
+            $result = $this->name_generated();
         }
 
         return $result;
+    }
+
+    /**
+     * @return string with the generated name based on the phrase list
+     */
+    function name_generated(): string
+    {
+        $name_lst = $this->phrase_list()->names();
+        return implode(",", $name_lst);
     }
 
     /**

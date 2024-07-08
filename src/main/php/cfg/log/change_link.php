@@ -148,7 +148,7 @@ class change_link extends change_log
     public ?object $std_from = null;       // the standard from reference for all users that does not have changed it
     public ?object $std_link = null;       // the standard reference type for all users that does not have changed it
     public ?object $std_to = null;         // the standard to reference for all users that does not have changed it
-    public ?int $row_id = null;            // the reference id of the row in the database table
+    public int|string|null $row_id = null; // the reference id of the row in the database table
     // fields to save the database row that are filled here based on the object
     public ?int $old_from_id = null;       // old id ref to the from record
     public ?int $old_link_id = null;       // old id ref to the link record

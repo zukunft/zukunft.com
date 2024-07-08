@@ -450,7 +450,13 @@ class change extends change_log
         $result = false;
 
         $db_type = $db_con->get_class();
-        $db_con->set_class(change::class);
+        if ($this::class == changes_big::class) {
+            $db_con->set_class(changes_big::class);
+        } elseif ($this::class == changes_norm::class) {
+            $db_con->set_class(changes_norm::class);
+        } else {
+            $db_con->set_class(change::class);
+        }
         $db_con->set_usr($this->user()->id());
         if ($db_con->update_old($this->id(), self::FLD_ROW_ID, $row_id)) {
             // restore the type before saving the log

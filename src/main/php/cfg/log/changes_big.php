@@ -34,6 +34,7 @@ namespace cfg\log;
 include_once MODEL_LOG_PATH . 'change_value.php';
 
 use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 
 class changes_big extends change
 {
@@ -52,6 +53,11 @@ class changes_big extends change
         [self::FLD_NEW_VALUE, self::FLD_NEW_VALUE_SQLTYP, sql_field_default::NULL, '', '', ''],
         [self::FLD_OLD_ID, self::FLD_OLD_ID_BIG_SQLTYP, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
         [self::FLD_NEW_ID, self::FLD_OLD_ID_BIG_SQLTYP, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
+    );
+
+    // field list to identify the database row in the table that has been changed
+    const FLD_LST_ROW_ID = array(
+        [self::FLD_ROW_ID, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_ROW_ID_COM],
     );
 
 }

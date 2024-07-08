@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS changes_big
     change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id          bigint     NOT NULL,
     change_action_id smallint   NOT NULL,
-    row_id           bigint DEFAULT NULL,
+    row_id           text   DEFAULT NULL,
     change_field_id  smallint   NOT NULL,
     old_value        text   DEFAULT NULL,
     new_value        text   DEFAULT NULL,

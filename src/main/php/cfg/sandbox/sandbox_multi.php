@@ -55,6 +55,8 @@ use cfg\group\group;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
+use cfg\log\changes_big;
+use cfg\log\changes_norm;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use cfg\component\component;
@@ -1334,24 +1336,69 @@ class sandbox_multi extends db_object_multi_user
      */
 
     /**
-     * set the log entry parameter for a new named object
+     * set the log entry parameter for a group object with a bigint key
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
+     *
+     * @return change the change log object with the basic parameters set
      */
-    function log_add(): change
+    function log_add_prime(): change
     {
         log_debug($this->dsp_id());
 
         $log = new change($this->user());
-
-        $log->action = change_action::ADD;
-        // TODO add the table exceptions from sql_db
-        $lib = new library();
-        $class = $lib->class_to_name($this::class);
+        $class = (new library())->class_to_name($this::class);
         $log->set_table($class . sql_db::TABLE_EXTENSION);
-        $log->row_id = 0;
-        $log->add();
+        return $this->log_add_common($log);
+    }
 
+    /**
+     * similar to log_add_prime but ...
+     * ... set the log entry parameter for a group object with a 512bit key
+     *
+     * @return changes_norm the change log object with the basic parameters set
+     */
+    function log_add(): changes_norm
+    {
+        log_debug($this->dsp_id());
+
+        $log = new changes_norm($this->user());
+        $class = (new library())->class_to_name($this::class);
+        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::NORM->extension());
+        return $this->log_add_common($log);
+    }
+
+    /**
+     * similar to log_add_prime but ...
+     * * ... set the log entry parameter for a group object with a text key
+     *
+     * @return changes_big the change log object with the basic parameters set
+     */
+    function log_add_big(): changes_big
+    {
+        log_debug($this->dsp_id());
+
+        $log = new changes_big($this->user());
+        $class = (new library())->class_to_name($this::class);
+        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::BIG->extension());
+        return $this->log_add_common($log);
+    }
+
+    /**
+     * set the common parameters to log an insert of a value, result or group object and execute it
+     * @param change|changes_norm|changes_big $log with the target table set
+     * @return change|changes_norm|changes_big with the log id set
+     */
+    private function log_add_common(change|changes_norm|changes_big $log): change|changes_norm|changes_big
+    {
+        $lib = new library();
+        // a value, result or group is always identified by the group name
+        $log->set_field($lib->class_to_name(group::class) . '_name');
+        $log->old_value = '';
+        $log->new_value = $this->name();
+        $log->row_id = 0;
+        $log->action = change_action::ADD;
+        $log->add();
         return $log;
     }
 
@@ -1407,6 +1454,7 @@ class sandbox_multi extends db_object_multi_user
     /**
      * create a log object for an update of an object field or a link
      * e.g. that the user can see "moved formula list to position 3 in phrase view"
+     * TODO add _prime and _big
      */
     function log_upd()
     {
@@ -1430,13 +1478,68 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * dummy function definition that will be overwritten by the child object
-     * @return change
+     * set the log entry parameter for a group object with a bigint key
+     * for all not named objects like links, this function is overwritten
+     * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
+     *
+     * @return change the change log object with the basic parameters set
+     */
+    function log_del_prime(): change
+    {
+        log_debug($this->dsp_id());
+
+        $log = new change($this->user());
+        $class = (new library())->class_to_name($this::class);
+        $log->set_table($class . sql_db::TABLE_EXTENSION);
+        return $this->log_del_common($log);
+    }
+
+    /**
+     * similar to log_del_prime but ...
+     * ... set the log entry parameter for a group object with a 512bit key
+     *
+     * @return changes_norm the change log object with the basic parameters set
      */
     function log_del(): change
     {
-        log_err('The dummy parent method get_similar has been called, which should never happen');
-        return new change($this->user());
+        $log = new changes_norm($this->user());
+        $class = (new library())->class_to_name($this::class);
+        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::NORM->extension());
+        return $this->log_del_common($log);
+    }
+
+    /**
+     * similar to log_del_prime but ...
+     * * ... set the log entry parameter for a group object with a text key
+     *
+     * @return changes_big the change log object with the basic parameters set
+     */
+    function log_del_big(): changes_big
+    {
+        log_debug($this->dsp_id());
+
+        $log = new changes_big($this->user());
+        $class = (new library())->class_to_name($this::class);
+        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::BIG->extension());
+        return $this->log_del_common($log);
+    }
+
+    /**
+     * set the common parameters to log a delete or exclude of a value, result or group object and execute it
+     * @param change|changes_norm|changes_big $log with the target table set
+     * @return change|changes_norm|changes_big with the log id set
+     */
+    private function log_del_common(change|changes_norm|changes_big $log): change|changes_norm|changes_big
+    {
+        $lib = new library();
+        // a value, result or group is always identified by the group name
+        $log->set_field($lib->class_to_name(group::class) . '_name');
+        $log->old_value = $this->name();
+        $log->new_value = '';
+        $log->row_id = 0;
+        $log->action = change_action::DELETE;
+        $log->add();
+        return $log;
     }
 
     /**
@@ -1646,6 +1749,13 @@ class sandbox_multi extends db_object_multi_user
         $sc_par_lst_log = $sc_par_lst_sub->remove(sql_type::LOG);
         $sc_par_lst_log->add(sql_type::SELECT_FOR_INSERT);
 
+        // use for prime the standard log table and for up to 16 phrases the norm table
+        if ($sc_par_lst_log->is_prime()) {
+            $sc_par_lst_log = $sc_par_lst_log->remove(sql_type::PRIME);
+        } elseif (!$sc_par_lst_log->is_big()) {
+            $sc_par_lst_log->add(sql_type::NORM_EXT);
+        }
+
         // create the queries for the log entries
         $func_body_change = '';
 
@@ -1717,7 +1827,7 @@ class sandbox_multi extends db_object_multi_user
         $sc_par_lst_del = clone $sc_par_lst;
         $sc_par_lst_del->add(sql_type::DELETE);
         $sc_par_lst_del->add(sql_type::NAMED_PAR);
-        $qp_delete = $this->sql_common($sc_delete, $sc_par_lst_log);;
+        $qp_delete = $this->sql_common($sc_delete, $sc_par_lst_sub);;
         $qp_delete->sql = $sc_delete->create_sql_delete(
             $id_fld, $id_val, $sc_par_lst_sub);
         // add the insert row to the function body
@@ -2857,13 +2967,13 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * @return array|string the database id as used for the unique selection of one value
-     *                      either the string with the id for the group id
-     *                      or an 0 filled array with the phrase ids
+     * @return int|array|string the database id as used for the unique selection of one value
+     *                          either the string with the id for the group id
+     *                          or an 0 filled array with the phrase ids
      */
-    function id_or_lst(): array|string
+    function id_or_lst(): int|array|string
     {
-        if ($this->is_prime()) {
+        if ($this->is_prime() and $this::class != group::class) {
             $grp_id = new group_id();
             $id_lst = $grp_id->get_array($this->id());
             for ($i = count($id_lst); $i < group_id::PRIME_PHRASES_STD; $i++) {

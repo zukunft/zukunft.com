@@ -1422,6 +1422,18 @@
         "code_id": "position_types",
         "description": "",
         "id": 94
+      },
+      {
+        "name": "values_norm",
+        "code_id": "values_norm",
+        "description": "",
+        "id": 95
+      },
+      {
+        "name": "groups_norm",
+        "code_id": "groups_norm",
+        "description": "",
+        "id": 96
       }
     ],
     "change_field_list": [
@@ -6040,22 +6052,34 @@
         "id": 770
       },
       {
+        "name": "95group_name",
+        "code_id": "95group_name",
+        "description": "",
+        "id": 771
+      },
+      {
         "name": "1NOW() AS db_now",
         "code_id": "1NOW() AS db_now",
         "description": "",
-        "id": 771
+        "id": 772
       },
       {
         "name": "12formula_link_type_id",
         "code_id": "12formula_link_type_id",
         "description": "",
-        "id": 772
+        "id": 773
       },
       {
         "name": "13formula_link_type_id",
         "code_id": "13formula_link_type_id",
         "description": "",
-        "id": 773
+        "id": 774
+      },
+      {
+        "name": "96group_name",
+        "code_id": "96group_name",
+        "description": "",
+        "id": 775
       }
     ],
     "verbs": [

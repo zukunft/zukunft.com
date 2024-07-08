@@ -146,13 +146,13 @@ class change_log extends db_object_seq_id_user
      * object vars
      */
 
-    public ?string $action = null;     // text for the user action e.g. "add", "update" or "delete"
-    protected ?int $action_id = null;  // database id for the action text
-    public ?int $table_id = null;     // database id for the table text
-    protected ?int $field_id = null;   // database id for the field text
-    public ?int $row_id = null;        // the reference id of the row in the database table
+    public ?string $action = null;         // text for the user action e.g. "add", "update" or "delete"
+    protected ?int $action_id = null;      // database id for the action text
+    public ?int $table_id = null;          // database id for the table text
+    protected ?int $field_id = null;       // database id for the field text
+    public int|string|null $row_id = null; // the reference id of the row in the database table
 
-    protected DateTime $change_time; // the date and time of the change
+    protected DateTime $change_time;       // the date and time of the change
 
 
     /*
