@@ -6052,34 +6052,40 @@
         "id": 770
       },
       {
+        "name": "2group_name",
+        "code_id": "2group_name",
+        "description": "",
+        "id": 771
+      },
+      {
         "name": "95group_name",
         "code_id": "95group_name",
         "description": "",
-        "id": 771
+        "id": 772
       },
       {
         "name": "1NOW() AS db_now",
         "code_id": "1NOW() AS db_now",
         "description": "",
-        "id": 772
+        "id": 773
       },
       {
         "name": "12formula_link_type_id",
         "code_id": "12formula_link_type_id",
         "description": "",
-        "id": 773
+        "id": 774
       },
       {
         "name": "13formula_link_type_id",
         "code_id": "13formula_link_type_id",
         "description": "",
-        "id": 774
+        "id": 775
       },
       {
         "name": "96group_name",
         "code_id": "96group_name",
         "description": "",
-        "id": 775
+        "id": 776
       }
     ],
     "verbs": [

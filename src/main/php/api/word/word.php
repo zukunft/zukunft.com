@@ -145,13 +145,19 @@ class word extends sandbox_typed_api
     const TN_ADD = 'System Test Word';
     const TN_ADD_VIA_FUNC = 'System Test Word added via sql function';
     const TN_ADD_VIA_SQL = 'System Test Word added via sql insert';
-    const TN_ADD_GROUP_MOST_VIA_FUNC = 'System Test Word for main group add via sql function';
-    const TN_ADD_GROUP_MOST_VIA_SQL = 'System Test Word for main group add via sql insert';
-    const TN_ADD_GROUP_PRIME_VIA_FUNC = 'System Test Word for prime group add via sql function';
-    const TN_ADD_GROUP_PRIME_VIA_SQL = 'System Test Word for prime group add via sql insert';
-    const TN_ADD_GROUP_BIG_VIA_FUNC = 'System Test Word for big group add via sql function';
-    const TN_ADD_GROUP_BIG_VIA_SQL = 'System Test Word for big group add via sql insert';
+    const TN_ADD_GROUP_PRIME_FUNC = 'System Test Word for prime group add via sql function';
+    const TN_ADD_GROUP_PRIME_SQL = 'System Test Word for prime group add via sql insert';
+    const TN_ADD_GROUP_MOST_FUNC = 'System Test Word for main group add via sql function';
+    const TN_ADD_GROUP_MOST_SQL = 'System Test Word for main group add via sql insert';
+    const TN_ADD_GROUP_BIG_FUNC = 'System Test Word for big group add via sql function';
+    const TN_ADD_GROUP_BIG_SQL = 'System Test Word for big group add via sql insert';
     const TN_RENAMED = 'System Test Word Renamed';
+    const TN_RENAMED_GROUP_PRIME_FUNC = 'System Test Word for prime group RENAMED via sql function';
+    const TN_RENAMED_GROUP_PRIME_SQL = 'System Test Word for prime group RENAMED via sql insert';
+    const TN_RENAMED_GROUP_MOST_FUNC = 'System Test Word for main group RENAMED via sql function';
+    const TN_RENAMED_GROUP_MOST_SQL = 'System Test Word for main group RENAMED via sql insert';
+    const TN_RENAMED_GROUP_BIG_FUNC = 'System Test Word for big group RENAMED via sql function';
+    const TN_RENAMED_GROUP_BIG_SQL = 'System Test Word for big group RENAMED via sql insert';
     const TN_PARENT = 'System Test Word Parent';
     const TN_FIN_REPORT = 'System Test Word with many relations e.g. Financial Report';
     const TWN_CASH_FLOW = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
@@ -219,13 +225,19 @@ class word extends sandbox_typed_api
         self::TN_ADD,
         self::TN_ADD_VIA_FUNC,
         self::TN_ADD_VIA_SQL,
-        self::TN_ADD_GROUP_MOST_VIA_FUNC,
-        self::TN_ADD_GROUP_MOST_VIA_SQL,
-        self::TN_ADD_GROUP_PRIME_VIA_FUNC,
-        self::TN_ADD_GROUP_PRIME_VIA_SQL,
-        self::TN_ADD_GROUP_BIG_VIA_FUNC,
-        self::TN_ADD_GROUP_BIG_VIA_SQL,
+        self::TN_ADD_GROUP_MOST_FUNC,
+        self::TN_ADD_GROUP_MOST_SQL,
+        self::TN_ADD_GROUP_PRIME_FUNC,
+        self::TN_ADD_GROUP_PRIME_SQL,
+        self::TN_ADD_GROUP_BIG_FUNC,
+        self::TN_ADD_GROUP_BIG_SQL,
         self::TN_RENAMED,
+        self::TN_RENAMED_GROUP_MOST_FUNC,
+        self::TN_RENAMED_GROUP_MOST_SQL,
+        self::TN_RENAMED_GROUP_PRIME_FUNC,
+        self::TN_RENAMED_GROUP_PRIME_SQL,
+        self::TN_RENAMED_GROUP_BIG_FUNC,
+        self::TN_RENAMED_GROUP_BIG_SQL,
         self::TN_PARENT,
         self::TN_FIN_REPORT,
         self::TWN_CASH_FLOW,
@@ -264,12 +276,12 @@ class word extends sandbox_typed_api
         self::TN_ADD,
         self::TN_ADD_VIA_FUNC,
         self::TN_ADD_VIA_SQL,
-        self::TN_ADD_GROUP_MOST_VIA_FUNC,
-        self::TN_ADD_GROUP_MOST_VIA_SQL,
-        self::TN_ADD_GROUP_PRIME_VIA_FUNC,
-        self::TN_ADD_GROUP_PRIME_VIA_SQL,
-        self::TN_ADD_GROUP_BIG_VIA_FUNC,
-        self::TN_ADD_GROUP_BIG_VIA_SQL,
+        self::TN_ADD_GROUP_PRIME_FUNC,
+        self::TN_ADD_GROUP_PRIME_SQL,
+        self::TN_ADD_GROUP_MOST_FUNC,
+        self::TN_ADD_GROUP_MOST_SQL,
+        self::TN_ADD_GROUP_BIG_FUNC,
+        self::TN_ADD_GROUP_BIG_SQL,
         self::TN_RENAMED,
         self::TN_PARENT,
         self::TN_FIN_REPORT,

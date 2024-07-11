@@ -710,15 +710,6 @@ class change_log extends db_object_seq_id_user
         return $msg;
     }
 
-    /**
-     * TODO review
-     * log a user change of a word, value or formula
-     */
-    function add(): bool
-    {
-        return true;
-    }
-
     // add the row id to an existing log entry
     // e.g. because the row id is known after the adding of the real record,
     // but the log entry has been created upfront to make sure that logging is complete

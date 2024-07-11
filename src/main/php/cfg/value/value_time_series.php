@@ -300,13 +300,7 @@ class value_time_series extends sandbox_value
         $result = new user_message();
 
         // log the insert attempt first
-        if ($this->is_prime()) {
-            $log = $this->log_add_prime();
-        } elseif ($this->is_big()) {
-            $log = $this->log_add_big();
-        } else {
-            $log = $this->log_add();
-        }
+        $log = $this->log_add();
         if ($log->id() > 0) {
             $db_con->set_class(value_time_series::class);
             $this->id = $db_con->insert_old(

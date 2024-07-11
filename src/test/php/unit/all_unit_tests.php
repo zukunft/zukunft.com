@@ -147,6 +147,7 @@ use unit\html\word_list as word_list_html_tests;
 use unit\import_tests as import_tests;
 use unit_ui\local_ui_tests;
 use unit_write\phrase_group_tests;
+use unit_write\value_tests;
 
 class all_unit_tests extends test_cleanup
 {
@@ -210,6 +211,7 @@ class all_unit_tests extends test_cleanup
 
             // run the selected db write
             (new phrase_group_tests)->run($this);
+            (new value_tests)->run($this);
             //(new word_tests)->run($this);
             //(new triple_tests)->run($this);
             //$import = new import_file();

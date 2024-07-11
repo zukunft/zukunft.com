@@ -55,6 +55,9 @@ use cfg\group\group;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
+use cfg\log\change_values_big;
+use cfg\log\change_values_norm;
+use cfg\log\change_values_prime;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
 use shared\types\protection_type as protect_type_shared;
@@ -1336,68 +1339,39 @@ class sandbox_multi extends db_object_multi_user
      */
 
     /**
-     * set the log entry parameter for a group object with a bigint key
+     * create and fill a change log entry for adding a multi table object
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
      *
-     * @return change the change log object with the basic parameters set
+     * @return change|change_value|changes_norm|changes_big the change log object with the basic parameters set
      */
-    function log_add_prime(): change
+    function log_add(): change|change_value|changes_norm|changes_big
     {
         log_debug($this->dsp_id());
-
-        $log = new change($this->user());
-        $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION);
-        return $this->log_add_common($log);
-    }
-
-    /**
-     * similar to log_add_prime but ...
-     * ... set the log entry parameter for a group object with a 512bit key
-     *
-     * @return changes_norm the change log object with the basic parameters set
-     */
-    function log_add(): changes_norm
-    {
-        log_debug($this->dsp_id());
-
-        $log = new changes_norm($this->user());
-        $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::NORM->extension());
-        return $this->log_add_common($log);
-    }
-
-    /**
-     * similar to log_add_prime but ...
-     * * ... set the log entry parameter for a group object with a text key
-     *
-     * @return changes_big the change log object with the basic parameters set
-     */
-    function log_add_big(): changes_big
-    {
-        log_debug($this->dsp_id());
-
-        $log = new changes_big($this->user());
-        $class = (new library())->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::BIG->extension());
+        if ($this->is_prime()) {
+            $log = $this->log_prime();
+        } elseif ($this->is_big()) {
+            $log = $this->log_big();
+        } else {
+            $log = $this->log_norm();
+        }
         return $this->log_add_common($log);
     }
 
     /**
      * set the common parameters to log an insert of a value, result or group object and execute it
-     * @param change|changes_norm|changes_big $log with the target table set
-     * @return change|changes_norm|changes_big with the log id set
+     * @param change|change_value $log with the target table set
+     * @return change|change_value with the log id set
      */
-    private function log_add_common(change|changes_norm|changes_big $log): change|changes_norm|changes_big
+    protected function log_add_common(change|change_value $log): change|change_value
     {
         $lib = new library();
+        $log->action = change_action::ADD;
         // a value, result or group is always identified by the group name
         $log->set_field($lib->class_to_name(group::class) . '_name');
         $log->old_value = '';
         $log->new_value = $this->name();
         $log->row_id = 0;
-        $log->action = change_action::ADD;
         $log->add();
         return $log;
     }
@@ -1409,6 +1383,93 @@ class sandbox_multi extends db_object_multi_user
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
         return new change_link($this->user());
+    }
+
+    /**
+     * create a log object for an update of an object field
+     */
+    function log_upd_field(): change
+    {
+        log_debug($this->dsp_id());
+        $log = new change($this->user());
+        return $this->log_upd_common($log);
+    }
+
+    /**
+     * create a log object for an update of an object field
+     * e.g. that the user can see "value name change from "inhabitants, Switzerland" to "Swiss inhabitants"
+     * @return change|change_value|changes_norm|changes_big with the settings to log the changes of this object
+     */
+    function log_upd(): change|change_value|changes_norm|changes_big
+    {
+        log_debug($this->dsp_id());
+        if ($this->is_prime()) {
+            $log = $this->log_prime();
+        } elseif ($this->is_big()) {
+            $log = $this->log_norm();
+        } else {
+            $log = $this->log_big();
+        }
+        return $this->log_upd_common($log);
+    }
+
+    /**
+     * set the log entry parameter for a group object with a bigint key
+     * for all not named objects like links, this function is overwritten
+     * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
+     *
+     * @return change|change_value the change log object with the basic parameters set
+     */
+    private function log_prime(): change|change_value
+    {
+        if ($this::class == group::class) {
+            $log = new change($this->user());
+        } else {
+            $log = new change_values_prime($this->user());
+        }
+        $class = (new library())->class_to_name($this::class);
+        $log->set_table($class . sql_db::TABLE_EXTENSION);
+        return $log;
+    }
+
+    /**
+     * similar to log_prime but ...
+     * ... set the log entry parameter for a group object with a 512bit key
+     *
+     * @return change|change_value the change log object with the basic parameters set
+     */
+    private function log_norm(): change|change_value
+    {
+        log_debug($this->dsp_id());
+
+        if ($this::class == group::class) {
+            $log = new changes_norm($this->user());
+        } else {
+            $log = new change_values_norm($this->user());
+        }
+        $class = (new library())->class_to_name($this::class);
+        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::NORM->extension());
+        return $log;
+    }
+
+    /**
+     * similar to log_prime but ...
+     * * ... set the log entry parameter for a group object with a text key
+     *
+     * @return changes_big the change log object with the basic parameters set
+     */
+    private function log_big(): changes_big
+    {
+        log_debug($this->dsp_id());
+
+        if ($this::class == group::class) {
+            $log = new changes_big($this->user());
+        } else {
+            $log = new change_values_big($this->user());
+        }
+        $class = (new library())->class_to_name($this::class);
+        $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::BIG->extension());
+        return $log;
     }
 
     /**
@@ -1429,42 +1490,6 @@ class sandbox_multi extends db_object_multi_user
         }
 
         return $log;
-    }
-
-    /**
-     * create a log object for an update of an object field
-     */
-    function log_upd_field(): change
-    {
-        log_debug($this->dsp_id());
-        $log = new change($this->user());
-        return $this->log_upd_common($log);
-    }
-
-    /**
-     * create a log object for an update of link
-     */
-    function log_upd_link(): change_link
-    {
-        log_debug($this->dsp_id());
-        $log = new change_link($this->user());
-        return $this->log_upd_common($log);
-    }
-
-    /**
-     * create a log object for an update of an object field or a link
-     * e.g. that the user can see "moved formula list to position 3 in phrase view"
-     * TODO add _prime and _big
-     */
-    function log_upd()
-    {
-        log_debug($this->dsp_id());
-        if ($this->is_named_obj()) {
-            $log = $this->log_upd_field();
-        } else {
-            $log = $this->log_upd_link();
-        }
-        return $this->log_upd_common($log);
     }
 
     /**
@@ -2765,7 +2790,7 @@ class sandbox_multi extends db_object_multi_user
                             if ($use_func) {
                                 $msg .= $this->save_fields_func($db_con, $db_rec, $std_rec);
                             } else {
-                            $msg .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+                                $msg .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
                             }
                         }
                     }
@@ -2894,7 +2919,7 @@ class sandbox_multi extends db_object_multi_user
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
-        sandbox_multi       $sbx,
+        sandbox_multi $sbx,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
@@ -2958,10 +2983,21 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
+     * overwrittern by the child objects
      * TODO to be overwritten by the sandbox value function
-     * @return bool
+     * @return bool true if the db table for up to 4 phrases with a 8bit int key can be used
      */
     function is_prime(): bool
+    {
+        return true;
+    }
+
+    /**
+     * overwrittern by the child objects
+     * TODO to be overwritten by the sandbox value function
+     * @return bool true if the db table key of 512bit is not enough
+     */
+    function is_big(): bool
     {
         return true;
     }

@@ -52,12 +52,12 @@ class group extends sandbox_named_api implements JsonSerializable
     const TN_RENAMED = 'Pi';
 
     // persevered group names for database write tests
-    const TN_ADD_PRIME_VIA_FUNC = 'System Test Group prime added via sql function';
-    const TN_ADD_PRIME_VIA_SQL = 'System Test Group prime added via sql insert';
-    const TN_ADD_MOST_VIA_FUNC = 'System Test Group main added via sql function';
-    const TN_ADD_MOST_VIA_SQL = 'System Test Group main added via sql insert';
-    const TN_ADD_BIG_VIA_FUNC = 'System Test Group big added via sql function';
-    const TN_ADD_BIG_VIA_SQL = 'System Test Group big added via sql insert';
+    const TN_ADD_PRIME_FUNC = 'System Test Group prime added via sql function';
+    const TN_ADD_PRIME_SQL = 'System Test Group prime added via sql insert';
+    const TN_ADD_MOST_FUNC = 'System Test Group main added via sql function';
+    const TN_ADD_MOST_SQL = 'System Test Group main added via sql insert';
+    const TN_ADD_BIG_FUNC = 'System Test Group big added via sql function';
+    const TN_ADD_BIG_SQL = 'System Test Group big added via sql insert';
 
     const TN_ZH_2019 = 'inhabitant in the city of Zurich (2019)';
     const TN_CH_2019 = 'inhabitant of Switzerland in Mio (2019)';

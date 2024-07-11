@@ -54,12 +54,12 @@ class phrase_group_tests
 
         // init
         $grp_add_lst = [
-            [group_api::TN_ADD_PRIME_VIA_FUNC, true, word_api::TN_ADD_GROUP_PRIME_VIA_FUNC, sql_type::PRIME, 'function'],
-            [group_api::TN_ADD_PRIME_VIA_SQL, false, word_api::TN_ADD_GROUP_PRIME_VIA_SQL, sql_type::PRIME, 'insert'],
-            [group_api::TN_ADD_MOST_VIA_FUNC, true, word_api::TN_ADD_GROUP_MOST_VIA_FUNC, sql_type::MOST, 'function'],
-            [group_api::TN_ADD_MOST_VIA_SQL, false, word_api::TN_ADD_GROUP_MOST_VIA_SQL, sql_type::MOST, 'insert'],
-            [group_api::TN_ADD_BIG_VIA_FUNC, true, word_api::TN_ADD_GROUP_BIG_VIA_FUNC, sql_type::BIG, 'function'],
-            [group_api::TN_ADD_BIG_VIA_SQL, false, word_api::TN_ADD_GROUP_BIG_VIA_SQL, sql_type::BIG, 'insert'],
+            [group_api::TN_ADD_PRIME_FUNC, true, word_api::TN_ADD_GROUP_PRIME_FUNC, sql_type::PRIME, 'function', word_api::TN_RENAMED_GROUP_PRIME_FUNC],
+            [group_api::TN_ADD_PRIME_SQL, false, word_api::TN_ADD_GROUP_PRIME_SQL, sql_type::PRIME, 'insert', word_api::TN_RENAMED_GROUP_PRIME_SQL],
+            [group_api::TN_ADD_MOST_FUNC, true, word_api::TN_ADD_GROUP_MOST_FUNC, sql_type::MOST, 'function', word_api::TN_RENAMED_GROUP_MOST_FUNC],
+            [group_api::TN_ADD_MOST_SQL, false, word_api::TN_ADD_GROUP_MOST_SQL, sql_type::MOST, 'insert', word_api::TN_RENAMED_GROUP_MOST_SQL],
+            [group_api::TN_ADD_BIG_FUNC, true, word_api::TN_ADD_GROUP_BIG_FUNC, sql_type::BIG, 'function', word_api::TN_RENAMED_GROUP_BIG_FUNC],
+            [group_api::TN_ADD_BIG_SQL, false, word_api::TN_ADD_GROUP_BIG_SQL, sql_type::BIG, 'insert', word_api::TN_RENAMED_GROUP_BIG_SQL],
         ];
 
 
@@ -85,6 +85,16 @@ class phrase_group_tests
             }
             $this->group_add($wrd_add_lst[$i], $grp_name, $grp_add[1], $phr_lst, $test_name, $t);
             $i++;
+        }
+
+        $t->subheader('group rename');
+        $i = 0;
+        foreach ($grp_add_lst as $grp_add) {
+            $test_case = rand(1, 2);
+            $grp_name = $grp_add[0];
+            $new_name = $grp_add[5];
+            $test_name = 'rename prime group name from ' . $grp_name . ' to ' . $new_name . ' via sql ' . $grp_add[4];
+            //$this->group_rename($grp_name, $new_name, $grp_add[1], $test_case, $test_name, $t);
         }
 
         $t->subheader('group del');
@@ -224,6 +234,43 @@ class phrase_group_tests
             $grp->reset();
             $grp->load_by_name($grp_name);
             $t->assert_true($test_name, $grp->isset());
+        }
+    }
+
+    /**
+     * test renaming a group name and switch back to the generated name
+     *
+     * @param string $old_name used to select the group to rename
+     * @param string $new_name the target name of the group
+     * @param bool $use_func true if the sql function with log should be used
+     * @param int $test_case indicator to select the user
+     * @param string $test_name the unique description of the test for the developer
+     * @param test_cleanup $t the test object with the test settings
+     * @return void
+     */
+    function group_rename(
+        string       $old_name,
+        string       $new_name,
+        bool         $use_func,
+        int          $test_case,
+        string       $test_name,
+        test_cleanup $t
+    ): void
+    {
+        $grp = new group($t->usr1);
+        $grp->load_by_name($old_name);
+        if ($grp->is_saved()) {
+            $id = $grp->id();
+            if ($test_case == 2) {
+                $grp->set_user($t->usr2);
+            } else {
+                $grp->set_user($t->usr1);
+            }
+            $grp->set_name($new_name);
+            $grp->save($use_func);
+            $grp->reset();
+            $grp->load_by_id($id);
+            $t->assert($test_name, $grp->name(), $new_name);
         }
     }
 

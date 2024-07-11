@@ -1178,16 +1178,13 @@ class sandbox_value extends sandbox_multi
      * set the log entry parameter for a new value object
      * for all not named objects like links, this function is overwritten
      * e.g. that the user can see "added formula 'scale millions' to word 'mio'"
+     * @param change|change_value $log with the target table set
+     * @return change|change_value with the log id set
      */
-    function log_add_prime(): change
+    protected function log_add_common(change|change_value $log): change|change_value
     {
         log_debug($this->dsp_id());
-        $lib = new library();
-
-        $log = new change($this->user());
         $log->action = change_action::ADD;
-        $class = $lib->class_to_name($this::class);
-        $log->set_table($class . sql_db::TABLE_EXTENSION);
         $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
         $log->old_value = '';
         $log->new_value = $this->number;
