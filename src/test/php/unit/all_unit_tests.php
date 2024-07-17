@@ -91,7 +91,6 @@ use cfg\db\sql_db;
 use cfg\element_type_list;
 use cfg\formula_link_type_list;
 use cfg\formula_type_list;
-use cfg\import\import_file;
 use cfg\job_type_list;
 use cfg\language_form_list;
 use cfg\language_list;
@@ -146,8 +145,6 @@ use unit\html\word as word_html_tests;
 use unit\html\word_list as word_list_html_tests;
 use unit\import_tests as import_tests;
 use unit_ui\local_ui_tests;
-use unit_write\phrase_group_tests;
-use unit_write\value_tests;
 
 class all_unit_tests extends test_cleanup
 {

@@ -75,6 +75,9 @@ include_once SERVICE_EXPORT_PATH . 'json.php';
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
 use cfg\log\change;
+use cfg\log\change_values_big;
+use cfg\log\change_values_norm;
+use cfg\log\change_values_prime;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use api\api;
@@ -1574,13 +1577,20 @@ class value extends sandbox_value
     function log_upd(): change_value
     {
         log_debug('value->log_upd "' . $this->number . '" for user ' . $this->user()->id());
-        $log = new change_value($this->user());
-        $log->action = change_action::UPDATE;
+        if ($this->is_prime()) {
+            $log = new change_values_prime($this->user());
+        } elseif ($this->is_big()) {
+            $log = new change_values_big($this->user());
+        } else {
+            $log = new change_values_norm($this->user());
+        }
+        $log->set_action(change_action::UPDATE);
         if ($this->can_change()) {
             $log->set_table(change_table_list::VALUE);
         } else {
             $log->set_table(change_table_list::VALUE_USR);
         }
+        $log->group_id = $this->grp_id();
 
         return $log;
     }

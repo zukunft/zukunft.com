@@ -1366,7 +1366,7 @@ class sandbox_multi extends db_object_multi_user
     protected function log_add_common(change|change_value $log): change|change_value
     {
         $lib = new library();
-        $log->action = change_action::ADD;
+        $log->set_action(change_action::ADD);
         // a value, result or group is always identified by the group name
         $log->set_field($lib->class_to_name(group::class) . '_name');
         $log->old_value = '';

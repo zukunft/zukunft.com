@@ -634,7 +634,9 @@ class sql_par_field_list
             if ($fld->value === null) {
                 $sql .= 'null';
             } else {
-                if ($par_typ == sql_par_type::TEXT or $par_typ == sql_field_type::TEXT
+                if ($par_typ == sql_par_type::TEXT
+                    or $par_typ == sql_field_type::TEXT
+                    OR $par_typ == sql_par_type::KEY_512
                     or $par_typ == sql_field_type::NAME) {
                     $sql .= "'" . $fld->value . "'";
                 } elseif ($fld->value instanceof DateTime) {

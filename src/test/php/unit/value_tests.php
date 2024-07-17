@@ -36,13 +36,11 @@ include_once MODEL_VALUE_PATH . 'value_time_series.php';
 
 use api\phrase\group as group_api;
 use api\value\value as value_api;
-use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_type;
 use cfg\group\group;
 use cfg\db\sql_db;
 use cfg\value\value;
-use cfg\value\value_dsp_old;
 use cfg\value\value_time_series;
 use html\value\value as value_dsp;
 use test\test_cleanup;

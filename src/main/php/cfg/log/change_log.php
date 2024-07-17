@@ -146,11 +146,13 @@ class change_log extends db_object_seq_id_user
      * object vars
      */
 
-    public ?string $action = null;         // text for the user action e.g. "add", "update" or "delete"
     protected ?int $action_id = null;      // database id for the action text
     public ?int $table_id = null;          // database id for the table text
     protected ?int $field_id = null;       // database id for the field text
     public int|string|null $row_id = null; // the reference id of the row in the database table
+
+    // TODO deprecate
+    public ?string $action = null;         // use action id instead of text for the user action e.g. "add", "update" or "delete"
 
     protected DateTime $change_time;       // the date and time of the change
 
@@ -335,7 +337,7 @@ class change_log extends db_object_seq_id_user
         $lib = new library();
 
         $field_key = $change_field_list->name($this->field_id);
-        return $lib->str_right_of($field_key, $this->table_id);
+        return $lib->str_right_of_or_all($field_key, $this->table_id);
     }
 
     function set_time(DateTime $time): void
@@ -737,7 +739,7 @@ class change_log extends db_object_seq_id_user
      */
     function sql_insert(
         sql           $sc,
-        sql_type_list $sc_par_lst,
+        sql_type_list $sc_par_lst = new sql_type_list([]),
         string        $ext = '',
         string        $val_tbl = '',
         string        $add_fld = '',
@@ -851,12 +853,11 @@ class change_log extends db_object_seq_id_user
     function dsp_id(): string
     {
 
-        return 'change log id ' . $this->id()
-            . ' at ' . $this->change_time->format(DateTimeInterface::ATOM)
-            . ' ' . $this->action()
-            . ' ' . $this->table()
-            . ' ' . $this->field()
-            . ' row ' . $this->row_id;
+        $result = 'log ' . $this->action() . ' ';
+        $result .= $this->table() . ',' . $this->field();
+        $result .= ' db row ' . $this->row_id;
+        $result .= ' at ' . $this->change_time->format(DateTimeInterface::ATOM);
+        return $result;
     }
 
 }

@@ -74,80 +74,95 @@ class change_log_tests
         $usr->set_id(1);
 
 
-        $t->header('Unit tests of the user log display class (src/main/php/log/change_log_*.php)');
+        $t->header('log unit tests');
 
-        $t->subheader('Log action SQL setup statements');
+        $t->subheader('log action sql setup');
         $act = new change_action('');
         $t->assert_sql_table_create($act);
         $t->assert_sql_index_create($act);
 
-        $t->subheader('Log table SQL setup statements');
+        $t->subheader('log table sql setup');
         $tbl = new change_table('');
         $t->assert_sql_table_create($tbl);
         $t->assert_sql_index_create($tbl);
 
-        $t->subheader('Log field SQL setup statements');
+        $t->subheader('log field sql setup');
         $fld = new change_field('');
         $t->assert_sql_table_create($fld);
         $t->assert_sql_index_create($fld);
         $t->assert_sql_foreign_key_create($fld);
 
-        $t->subheader('Log table field view SQL setup statements');
+        $t->subheader('log table field view sql setup');
         $tbl_fld = new change_table_field();
         $t->assert_sql_view_link_create($tbl_fld);
 
-        $t->subheader('SQL statement creation tests for logging named objects e.g. formula');
+        $t->subheader('log sql setup for named objects e.g. formula');
         $log = $t->change_log_named();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
         // TODO add auto increment test for all mysql tables
 
-        $t->subheader('SQL statement creation tests for logging group names for value related to up to 16 phrases');
+        $t->subheader('log sql setup for group names for value related to up to 16 phrases');
         $log = $t->change_log_norm();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
 
-        $t->subheader('SQL statement creation tests for logging group names for value related to more than 16 phrases');
+        $t->subheader('log sql setup for group names for value related to more than 16 phrases');
         $log = $t->change_log_big();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
 
-        $t->subheader('SQL statement creation tests for logging standard value');
+        $t->subheader('log sql setup for standard value');
         $log_val_std = $t->change_log_value();
         $t->assert_sql_table_create($log_val_std);
         $t->assert_sql_index_create($log_val_std);
         $t->assert_sql_foreign_key_create($log_val_std);
 
-        $t->subheader('SQL statement creation tests for logging prime value');
+        $t->subheader('log sql setup for prime value');
         $log_val_prm = $t->change_log_value_prime();
         $t->assert_sql_table_create($log_val_prm);
         $t->assert_sql_index_create($log_val_prm);
         $t->assert_sql_foreign_key_create($log_val_prm);
 
-        $t->subheader('SQL statement creation tests for logging big value');
+        $t->subheader('log sql setup for big value');
         $log_val_big = $t->change_log_value_big();
         $t->assert_sql_table_create($log_val_big);
         $t->assert_sql_index_create($log_val_big);
         $t->assert_sql_foreign_key_create($log_val_big);
 
-        $t->subheader('SQL statement creation tests for logging link changes');
+        $t->subheader('log sql setup for link changes');
         $log_lnk = $t->change_log_link();
         $t->assert_sql_table_create($log_lnk);
         $t->assert_sql_index_create($log_lnk);
         $t->assert_sql_foreign_key_create($log_lnk);
 
-        $t->subheader('change log sql write');
+        $t->subheader('log named sql write');
         $log = $t->change_log_named();
         $t->assert_sql_insert($sc, $log);
         $t->assert_sql_insert($sc, $log, [sql_type::SUB]);
+        $log = $t->change_log_norm();
+        $t->assert_sql_insert($sc, $log);
+        $log = $t->change_log_big();
+        $t->assert_sql_insert($sc, $log);
 
-        $t->subheader('change link log sql write');
+        $t->subheader('log link sql write');
         $log_lnk = $t->change_log_link();
         $t->assert_sql_insert($sc, $log_lnk);
         $t->assert_sql_insert($sc, $log_lnk, [sql_type::SUB]);
+
+        $t->subheader('log value sql write');
+        $log_val = $t->change_log_value();
+        $t->assert_sql_insert($sc, $log_val);
+        $t->assert_sql_insert($sc, $log_val, [sql_type::SUB]);
+        $log_val = $t->change_log_value_prime();
+        $t->assert_sql_insert($sc, $log_val);
+        $t->assert_sql_insert($sc, $log_val, [sql_type::SUB]);
+        $log_val = $t->change_log_value_big();
+        $t->assert_sql_insert($sc, $log_val);
+        $t->assert_sql_insert($sc, $log_val, [sql_type::SUB]);
 
         $t->subheader('SQL statement tests');
         $log = new change($usr);

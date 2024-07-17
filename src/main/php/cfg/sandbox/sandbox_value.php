@@ -1184,9 +1184,10 @@ class sandbox_value extends sandbox_multi
     protected function log_add_common(change|change_value $log): change|change_value
     {
         log_debug($this->dsp_id());
-        $log->action = change_action::ADD;
+        $log->set_action(change_action::ADD);
         $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
-        $log->old_value = '';
+        $log->group_id = $this->grp_id();
+        $log->old_value = null;
         $log->new_value = $this->number;
 
         $log->row_id = 0;

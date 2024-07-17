@@ -82,6 +82,8 @@ class change_field_list extends type_list
 
     /**
      * adding the system log stati used for unit tests to the dummy list
+     * the field name starts always with the table id to make the field name unique
+     * the table id is remove as one of the last steps if the real table field name is requested
      */
     function load_dummy(): void
     {

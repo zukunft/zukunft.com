@@ -165,6 +165,24 @@ class lib_tests
         $result = $lib->str_right($text, $pos);
         $t->assert("str_right: What are the right \"" . $pos . "\" chars of \"" . $text . "\"", $result, $target);
 
+        $text = "ignore start<select";
+        $maker = 'start<';
+        $target = "select";
+        $result = $lib->str_right_of($text, $maker);
+        $t->assert("str_right: right of \"" . $maker . "\" is \"" . $target . "\"", $result, $target);
+
+        $text = "9code_id";
+        $maker = '9';
+        $target = "code_id";
+        $result = $lib->str_right_of_or_all($text, $maker);
+        $t->assert("str_right_of_or_all: right of (or all) \"" . $maker . "\" is \"" . $target . "\"", $result, $target);
+
+        $text = "ignore start<select";
+        $maker = 'no start<';
+        $target = "ignore start<select";
+        $result = $lib->str_right_of_or_all($text, $maker);
+        $t->assert("str_right_of_or_all: right of (or all) \"" . $maker . "\" is \", because the maker is not part of the given string" . $target . "\"", $result, $target);
+
         // test base_class_name
         $class = 'cfg\language';
         $target = 'language';

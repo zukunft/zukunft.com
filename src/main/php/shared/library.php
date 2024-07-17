@@ -346,7 +346,7 @@ class library
             $maker = "";
         }
         if ($result !== $maker) {
-            while (strpos($result, $maker) > 0) {
+            while (strpos($result, $maker) !== false) {
                 if (substr($result, strpos($result, $maker), strlen($maker)) === $maker) {
                     $result = substr($result, strpos($result, $maker) + strlen($maker));
                 }

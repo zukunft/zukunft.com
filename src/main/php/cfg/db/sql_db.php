@@ -3260,7 +3260,7 @@ class sql_db
                             }
                         }
 
-                        if ($par_type == sql_par_type::TEXT) {
+                        if ($par_type == sql_par_type::TEXT OR $par_type == sql_par_type::KEY_512) {
                             if ($id_fields[$used_fields] == sql::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
                                     $this->where .= ' AND ';

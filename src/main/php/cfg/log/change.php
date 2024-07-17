@@ -503,7 +503,13 @@ class change extends change_log
             $fvt_lst->add_field(self::FLD_NEW_ID, $this->new_id, sql_par_type::INT);
         }
 
-        $fvt_lst->add_field(self::FLD_ROW_ID, $this->row_id, sql_par_type::INT);
+        $row_typ = sql_par_type::INT;
+        if ($this::class == changes_norm::class) {
+            $row_typ = sql_par_type::KEY_512;
+        } elseif ($this::class == changes_big::class) {
+            $row_typ = sql_par_type::TEXT;
+        }
+        $fvt_lst->add_field(self::FLD_ROW_ID, $this->row_id, $row_typ);
         return $fvt_lst;
     }
 

@@ -1721,6 +1721,14 @@ class group extends sandbox_multi
     /**
      * @return string with the best possible id for this element mainly used for debugging
      */
+    function dsp_id_medium(): string
+    {
+        return $this->name() . '(' . $this->dsp_id_short() . ')';
+    }
+
+    /**
+     * @return string with the best possible id for this element mainly used for debugging
+     */
     function dsp_id_short(): string
     {
         $grp_id_obj = new group_id();

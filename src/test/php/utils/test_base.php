@@ -627,6 +627,31 @@ class test_base
         return $this->display(', ' . $msg, $needles, $haystack, $exe_max_time, $comment, $test_type);
     }
 
+
+    /*
+     * debug
+     */
+
+    /**
+     * check if the debug function dsp_id() returns an usefull text
+     * without calling other functions that might cause a loop (at least not db function)
+     *
+     * @param object $usr_obj any object with some sample vars set
+     * @param string $msg the extected text for a unique identification
+     * @return bool true if the created text matches the expected text without causing a loop
+     */
+    function assert_dsp_id(object $usr_obj, string $msg): bool
+    {
+        $lib = new library();
+        $test_name = 'debug id for ' .  $lib->class_to_name($usr_obj::class);
+        return $this->assert($test_name, $usr_obj->dsp_id(), $msg);
+    }
+
+
+    /*
+     * api
+     */
+
     /**
      * check if the frontend API object can be created
      * and if the export based recreation of the backend object result to the similar object

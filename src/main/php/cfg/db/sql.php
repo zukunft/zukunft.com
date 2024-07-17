@@ -171,7 +171,10 @@ class sql
 
     // postgres parameter types for prepared queries
     const PG_PAR_INT = 'bigint';
+    const PG_PAR_LIST = '[]';
     const PG_PAR_INT_SMALL = 'smallint';
+    const PG_PAR_TEXT = 'text';
+    const PG_PAR_FLOAT = 'numeric';
 
     // placeholder for the class name in table or field comments
     const COMMENT_CLASS_NAME = '-=class=-';
@@ -3357,7 +3360,7 @@ class sql
             }
 
             // include rows where code_id is null
-            if ($typ == sql_par_type::TEXT) {
+            if ($typ == sql_par_type::TEXT OR $typ == sql_par_type::KEY_512) {
                 if ($fld == sql::FLD_CODE_ID) {
                     if ($this->db_type == sql_db::POSTGRES) {
                         $sql_where .= ' AND ';
@@ -3530,7 +3533,7 @@ class sql
 
 
                         // include rows where code_id is null
-                        if ($typ == sql_par_type::TEXT) {
+                        if ($typ == sql_par_type::TEXT OR $typ == sql_par_type::KEY_512) {
                             if ($this->par_lst->name($i) == sql::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
                                     $result .= ' AND ';
@@ -4542,6 +4545,21 @@ class sql
         if ($result == 'blocked_ip_id') {
             $result = 'ip_range_id';
         }
+        if ($result == 'changes_norm_id') {
+            $result = 'change_id';
+        }
+        if ($result == 'changes_big_id') {
+            $result = 'change_id';
+        }
+        if ($result == 'change_values_prime_id') {
+            $result = 'change_id';
+        }
+        if ($result == 'change_values_norm_id') {
+            $result = 'change_id';
+        }
+        if ($result == 'change_values_big_id') {
+            $result = 'change_id';
+        }
         return $result;
     }
 
@@ -4909,13 +4927,18 @@ class sql
         return $result;
     }
 
+    /**
+     * convert one internal sql parameter type to a postgres db parameter type
+     * @param sql_par_type|sql_field_type $type the internal type
+     * @return string with the postgres parameter type
+     */
     function par_type_to_postgres(sql_par_type|sql_field_type $type): string
     {
         $result = '';
         switch ($type) {
             case sql_par_type::INT_LIST:
             case sql_par_type::INT_LIST_OR:
-                $result = self::PG_PAR_INT . '[]';
+                $result = self::PG_PAR_INT . self::PG_PAR_LIST;
                 break;
             case sql_par_type::INT:
             case sql_par_type::INT_OR:
@@ -4933,7 +4956,7 @@ class sql
                 $result = self::PG_PAR_INT_SMALL;
                 break;
             case sql_par_type::TEXT_LIST:
-                $result = 'text[]';
+                $result = self::PG_PAR_TEXT . self::PG_PAR_LIST;
                 break;
             case sql_field_type::NAME:
             case sql_par_type::LIKE_R:
@@ -4941,7 +4964,8 @@ class sql
             case sql_par_type::LIKE_OR:
             case sql_par_type::TEXT_OR:
             case sql_par_type::TEXT_USR:
-                $result = 'text';
+            case sql_par_type::KEY_512:
+                $result = self::PG_PAR_TEXT;
                 break;
             case sql_par_type::CONST:
             case sql_par_type::CONST_NOT:
@@ -4953,7 +4977,7 @@ class sql
             case sql_par_type::COUNT:
                 break;
             case sql_field_type::NUMERIC_FLOAT:
-                $result = 'numeric';
+                $result = self::PG_PAR_FLOAT;
                 break;
             default:
                 $result = $type->value;

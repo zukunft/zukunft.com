@@ -1342,6 +1342,19 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return phrase_list the phrases relevant for testing the max number of prime phrases
+     */
+    function phrase_list_zh_mio_2020(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->word_zh()->phrase());
+        $lst->add($this->word_inhabitant()->phrase());
+        $lst->add($this->word_2020()->phrase());
+        $lst->add($this->word_mio()->phrase());
+        return $lst;
+    }
+
+    /**
      * @return phrase_list the phrases relevant for testing the increase formula
      */
     function phrase_list_increase(): phrase_list
@@ -2327,8 +2340,9 @@ class create_test_objects extends test_base
         $chg = new change_values_norm($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
         $chg->set_action(change_action::ADD);
-        $chg->set_table(change_table_list::WORD);
-        $chg->set_field(change_field_list::FLD_WORD_NAME);
+        $chg->set_table(change_table_list::VALUE);
+        $chg->set_field(change_field_list::FLD_NUMERIC_VALUE);
+        $chg->group_id = $this->group()->id();
         $chg->new_value = value_api::TV_READ_SHORTEST;
         $chg->row_id = 1;
         return $chg;

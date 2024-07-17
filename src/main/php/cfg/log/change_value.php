@@ -83,15 +83,17 @@ class change_value extends change_log
      * object vars
      */
 
-    // additional to user_log
-    public string|float|int|null $old_value = null;      // the field value before the user change
-    public ?int $old_id = null;            // the reference id before the user change e.g. for fields using a sub table such as status
-    public string|float|int|null $new_value = null;      // the field value after the user change
-    public ?int $new_id = null;            // the reference id after the user change e.g. for fields using a sub table such as status
-    public string|float|int|null $std_value = null;  // the standard field value for all users that does not have changed it
-    public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
+    // additional to user_log TODO change to float|int|null
+    public string|float|int|null $old_value = null; // the field value before the user change
+    public string|float|int|null $new_value = null; // the field value after the user change
+    public string|float|int|null $std_value = null; // the standard field value for all users that does not have changed it
 
-    public ?string $group_id = null;  // the reference id of the row in the database table
+    public int|string|null $group_id = null;  // the reference id of the row in the database table
+
+    // TODO deprecate
+    public ?int $old_id = null;                     // the reference id before the user change e.g. for fields using a sub table such as status
+    public ?int $new_id = null;                     // the reference id after the user change e.g. for fields using a sub table such as status
+    public ?int $std_id = null;                     // the standard reference id for all users that does not have changed it
 
 
     /*
@@ -109,13 +111,19 @@ class change_value extends change_log
         $fvt_lst = parent::db_field_values_types($sc, $sc_par_lst);
 
         if ($this->old_value !== null or ($sc_par_lst->is_update_part() and $this->new_value !== null)) {
-            $fvt_lst->add_field(self::FLD_OLD_VALUE, $this->old_value, $sc->get_sql_par_type($this->old_value));
+            $fvt_lst->add_field(self::FLD_OLD_VALUE, $this->old_value, sql_par_type::FLOAT);
         }
         if ($this->new_value !== null or ($sc_par_lst->is_update_part() and $this->old_value !== null)) {
-            $fvt_lst->add_field(self::FLD_NEW_VALUE, $this->new_value, $sc->get_sql_par_type($this->new_value));
+            $fvt_lst->add_field(self::FLD_NEW_VALUE, $this->new_value, sql_par_type::FLOAT);
         }
 
-        $fvt_lst->add_field(group::FLD_ID, $this->group_id, sql_par_type::INT);
+        $grp_typ = sql_par_type::INT;
+        if ($this::class == change_values_norm::class) {
+            $grp_typ = sql_par_type::KEY_512;
+        } elseif ($this::class == change_values_big::class) {
+            $grp_typ = sql_par_type::TEXT;
+        }
+        $fvt_lst->add_field(group::FLD_ID, $this->group_id, $grp_typ);
         return $fvt_lst;
     }
 
@@ -159,6 +167,86 @@ class change_value extends change_log
 
         $sql_values[] = $this->group_id;
         return $sql_values;
+    }
+
+
+    /*
+     * save
+     */
+
+    /**
+     * log a user change of a value or result
+     * @return true if the change has been logged successfully
+     */
+    function add(): bool
+    {
+        log_debug($this->dsp_id());
+
+        global $db_con;
+
+        $db_type = $db_con->get_class();
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc);
+        $usr_msg = $db_con->insert($qp, 'log value');
+        if ($usr_msg->is_ok()) {
+            $log_id = $usr_msg->get_row_id();
+        }
+
+        if ($log_id <= 0) {
+            // write the error message in steps to get at least some message if the parameters has caused the error
+            if ($this->user() == null) {
+                log_fatal("Insert to change log failed.", "user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString());
+            } else {
+                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . ")", "user_log->add");
+                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
+            }
+            $result = False;
+        } else {
+            $this->set_id($log_id);
+            // restore the type before saving the log
+            $db_con->set_class($db_type);
+            $result = True;
+        }
+
+        return $result;
+    }
+
+
+    /*
+     * debug
+     */
+
+    function dsp_id(): string
+    {
+        $result = 'log ' . $this->action() . ' ';
+        $result .= $this->table() . ',' . $this->field() . ' ';
+        $result .= $this->name() . ' ';
+        if ($this->old_value != null) {
+            if ($this->new_value != null) {
+                $result .= 'from ' . $this->old_value;
+                $result .= 'to ' . $this->new_value;
+            } else {
+                $result .= $this->old_value;
+            }
+        } else {
+            if ($this->new_value != null) {
+                $result .= $this->new_value;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return string with the best possible id for this value mainly used for debugging
+     */
+    function name(): string
+    {
+        if ($this->group_id == null) {
+            return '';
+        } else {
+            $grp = new group($this->user(), $this->group_id);
+            return $grp->dsp_id_medium();
+        }
     }
 
 }
