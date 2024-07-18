@@ -1215,12 +1215,12 @@ class sandbox_value extends sandbox_multi
         $lib = new library();
 
         $log = new change($this->user());
-        $log->action = change_action::DELETE;
+        $log->set_action(change_action::DELETE);
         $class = $lib->class_to_name($this::class);
         $log->set_table($class . sql_db::TABLE_EXTENSION);
         $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
         $log->old_value = $this->number;
-        $log->new_value = '';
+        $log->new_value = null;
 
         $log->row_id = $this->id;
         $log->add();

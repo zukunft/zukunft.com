@@ -41,6 +41,7 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
+use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\type_object;
@@ -94,6 +95,25 @@ class change_value extends change_log
     public ?int $old_id = null;                     // the reference id before the user change e.g. for fields using a sub table such as status
     public ?int $new_id = null;                     // the reference id after the user change e.g. for fields using a sub table such as status
     public ?int $std_id = null;                     // the standard reference id for all users that does not have changed it
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * @return sql_type the sql type of the change e.g. if a value is changes it returns sql_type::UPDATE
+     */
+    function sql_type(): sql_type
+    {
+        if ($this->old_value == null) {
+            return sql_type::INSERT;
+        } elseif ($this->new_value == null) {
+            return sql_type::DELETE;
+        } else {
+            return sql_type::UPDATE;
+        }
+    }
 
 
     /*
@@ -167,48 +187,6 @@ class change_value extends change_log
 
         $sql_values[] = $this->group_id;
         return $sql_values;
-    }
-
-
-    /*
-     * save
-     */
-
-    /**
-     * log a user change of a value or result
-     * @return true if the change has been logged successfully
-     */
-    function add(): bool
-    {
-        log_debug($this->dsp_id());
-
-        global $db_con;
-
-        $db_type = $db_con->get_class();
-        $sc = $db_con->sql_creator();
-        $qp = $this->sql_insert($sc);
-        $usr_msg = $db_con->insert($qp, 'log value');
-        if ($usr_msg->is_ok()) {
-            $log_id = $usr_msg->get_row_id();
-        }
-
-        if ($log_id <= 0) {
-            // write the error message in steps to get at least some message if the parameters has caused the error
-            if ($this->user() == null) {
-                log_fatal("Insert to change log failed.", "user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString());
-            } else {
-                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . ")", "user_log->add");
-                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
-            }
-            $result = False;
-        } else {
-            $this->set_id($log_id);
-            // restore the type before saving the log
-            $db_con->set_class($db_type);
-            $result = True;
-        }
-
-        return $result;
     }
 
 

@@ -759,7 +759,7 @@ class ref extends sandbox_link_with_type
         }
 
         $log = new change_link($this->user());
-        $log->action = change_action::ADD;
+        $log->set_action(change_action::ADD);
         $log->set_table(change_table_list::REF);
         // TODO review in log_link
         // TODO object must be loaded before it can be logged
@@ -779,7 +779,7 @@ class ref extends sandbox_link_with_type
     {
         log_debug('ref->log_upd ' . $this->dsp_id());
         $log = new change_link($this->user());
-        $log->action = change_action::UPDATE;
+        $log->set_action(change_action::UPDATE);
         $log->set_table(change_table_list::REF);
         $log->old_from = $db_rec->phr;
         $log->old_link = $db_rec->type();
@@ -809,7 +809,7 @@ class ref extends sandbox_link_with_type
         }
 
         $log = new change_link($this->user());
-        $log->action = change_action::DELETE;
+        $log->set_action(change_action::DELETE);
         $log->set_table(change_table_list::REF);
         $log->old_from = $this->phr;
         $log->old_link = $this->type();

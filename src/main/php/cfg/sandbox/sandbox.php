@@ -1401,7 +1401,7 @@ class sandbox extends db_object_seq_id_user
 
         $log = new change($this->user());
 
-        $log->action = change_action::ADD;
+        $log->set_action(change_action::ADD);
         // TODO add the table exceptions from sql_db
         $log->set_table($class_name . sql_db::TABLE_EXTENSION);
         $log->row_id = 0;
@@ -1428,7 +1428,7 @@ class sandbox extends db_object_seq_id_user
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         $log->set_user($this->user());
-        $log->action = change_action::UPDATE;
+        $log->set_action(change_action::UPDATE);
         if ($this->can_change()) {
             // TODO add the table exceptions from sql_db
             $log->set_table($class_name . sql_db::TABLE_EXTENSION);

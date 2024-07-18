@@ -134,8 +134,7 @@ class change_log extends db_object_seq_id_user
         [self::FLD_ACTION, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, '', change_action::class, self::FLD_ACTION_COM],
     );
     // field list to log the actual change that is overwritten by the child object e.g. for named, value and link tables
-    const FLD_LST_CHANGE = array(
-    );
+    const FLD_LST_CHANGE = array();
     // field list to identify the database row in the table that has been changed
     const FLD_LST_ROW_ID = array(
         [self::FLD_ROW_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_ROW_ID_COM],
@@ -151,9 +150,6 @@ class change_log extends db_object_seq_id_user
     protected ?int $field_id = null;       // database id for the field text
     public int|string|null $row_id = null; // the reference id of the row in the database table
 
-    // TODO deprecate
-    public ?string $action = null;         // use action id instead of text for the user action e.g. "add", "update" or "delete"
-
     protected DateTime $change_time;       // the date and time of the change
 
 
@@ -168,8 +164,8 @@ class change_log extends db_object_seq_id_user
     function __construct(?user $usr)
     {
         parent::__construct($usr);
+        $this->change_time = new DateTime();
     }
-
 
 
     /*
@@ -213,7 +209,7 @@ class change_log extends db_object_seq_id_user
         $db_changed = false;
         $this->action_id = $change_action_list->id($action_name);
         if ($this->action_id <= 0) {
-            $this->add_action($used_db_con);
+            $this->add_action($used_db_con, $action_name);
             if ($this->action_id <= 0) {
                 log_err("Cannot add action name " . $action_name);
             } else {
@@ -679,16 +675,16 @@ class change_log extends db_object_seq_id_user
         return $field_id;
     }
 
-    protected function add_action(sql_db $db_con): void
+    protected function add_action(sql_db $db_con, string $action_name): void
     {
         // if e.g. the action is "add" the reference 1 is saved in the log table to save space
         $db_type = $db_con->get_class();
         $db_con->set_class(change_action::class);
-        $action_id = $db_con->get_id($this->action);
+        $action_id = $db_con->get_id($action_name);
 
         // add new action name if needed
         if ($action_id <= 0) {
-            $action_id = $db_con->add_id($this->action);
+            $action_id = $db_con->add_id($action_name);
         }
         if ($action_id > 0) {
             $this->action_id = $action_id;
@@ -753,13 +749,7 @@ class change_log extends db_object_seq_id_user
             // clone the sql parameter list to avoid changing the given list
             $sc_par_lst_used = clone $sc_par_lst;
             // set the sql query type
-            if ($this->old_value == null) {
-                $sc_par_lst_used->add(sql_type::INSERT);
-            } elseif ($this->new_value == null) {
-                $sc_par_lst_used->add(sql_type::DELETE);
-            } else {
-                $sc_par_lst_used->add(sql_type::UPDATE);
-            }
+            $sc_par_lst_used->add($this->sql_type());
             // do not use the user extension for the change table name
             $sc_par_lst_chg = $sc_par_lst_used->remove(sql_type::USER);
             $qp = $sc->sql_par($this::class, $sc_par_lst_chg);
@@ -778,6 +768,15 @@ class change_log extends db_object_seq_id_user
     }
 
     /**
+     * @return sql_type the sql type of the change e.g. if a value is changes it returns sql_type::UPDATE
+     *                  is in most cases overwritten by the child object
+     */
+    function sql_type(): sql_type
+    {
+        return sql_type::INSERT;
+    }
+
+    /**
      * dummy function overwritten by the child object
      * @param sql $sc
      * @param sql_type_list $sc_par_lst
@@ -787,7 +786,7 @@ class change_log extends db_object_seq_id_user
     function sql_insert_link(
         sql           $sc,
         sql_type_list $sc_par_lst,
-        ?sandbox_link  $sbx = null
+        ?sandbox_link $sbx = null
     ): sql_par
     {
         return new sql_par($this::class);
@@ -846,6 +845,48 @@ class change_log extends db_object_seq_id_user
         $sql_values[] = $this->field_id;
 
         return $sql_values;
+    }
+
+
+    /*
+     * save
+     */
+
+    /**
+     * log a user change of a word, value or formula
+     * @return true if the change has been logged successfully
+     */
+    function add(): bool
+    {
+        log_debug($this->dsp_id());
+
+        global $db_con;
+
+        $db_type = $db_con->get_class();
+        $sc = $db_con->sql_creator();
+        $qp = $this->sql_insert($sc);
+        $usr_msg = $db_con->insert($qp, 'log change');
+        if ($usr_msg->is_ok()) {
+            $log_id = $usr_msg->get_row_id();
+        }
+
+        if ($log_id <= 0) {
+            // write the error message in steps to get at least some message if the parameters has caused the error
+            if ($this->user() == null) {
+                log_fatal("Insert to change log failed.", "user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString());
+            } else {
+                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . ")", "user_log->add");
+                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
+            }
+            $result = False;
+        } else {
+            $this->set_id($log_id);
+            // restore the type before saving the log
+            $db_con->set_class($db_type);
+            $result = True;
+        }
+
+        return $result;
     }
 
 

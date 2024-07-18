@@ -440,7 +440,7 @@ class sandbox_link extends sandbox
         $log->new_from = $this->fob;
         $log->new_to = $this->tob;
 
-        $log->action = change_action::ADD;
+        $log->set_action(change_action::ADD);
         // TODO add the table exceptions from sql_db
         $tbl_name = $lib->class_to_name($this::class);
         $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
@@ -460,7 +460,7 @@ class sandbox_link extends sandbox
         $lib = new library();
 
         $log = new change_link($this->user());
-        $log->action = change_action::DELETE;
+        $log->set_action(change_action::DELETE);
         $tbl_name = $lib->class_to_name($this::class);
         $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
         $log->old_from = $this->fob();

@@ -67,6 +67,7 @@ use cfg\value\value;
 use cfg\view;
 use cfg\word;
 use DateTime;
+use DateTimeInterface;
 use Exception;
 use html\log\change_log_named as change_log_named_dsp;
 use shared\library;
@@ -390,53 +391,6 @@ class change extends change_log
      */
 
     /**
-     * log a user change of a word, value or formula
-     * @return true if the change has been logged successfully
-     */
-    function add(): bool
-    {
-        log_debug(' do "' . $this->action
-            . '" in "' . $this->table()
-            . ',' . $this->field()
-            . '" log change from "'
-            . $this->old_value . '" (id ' . $this->old_id . ')' .
-            ' to "' . $this->new_value . '" (id ' . $this->new_id . ') in row ' . $this->row_id);
-
-        global $db_con;
-
-        //parent::add_table();
-        //parent::add_field();
-        parent::add_action($db_con);
-
-        $sql_fields = $this->db_fields();
-        $sql_values = $this->db_values();
-
-        //$db_con = new mysql;
-        $db_type = $db_con->get_class();
-        $db_con->set_class(change::class);
-        $db_con->set_usr($this->user()->id());
-        $log_id = $db_con->insert_old($sql_fields, $sql_values);
-
-        if ($log_id <= 0) {
-            // write the error message in steps to get at least some message if the parameters has caused the error
-            if ($this->user() == null) {
-                log_fatal("Insert to change log failed.", "user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString());
-            } else {
-                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . ")", "user_log->add");
-                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
-            }
-            $result = False;
-        } else {
-            $this->set_id($log_id);
-            // restore the type before saving the log
-            $db_con->set_class($db_type);
-            $result = True;
-        }
-
-        return $result;
-    }
-
-    /**
      * add the row id to an existing log entry
      * e.g. because the row id is known after the adding of the real record,
      * but the log entry has been created upfront to make sure that logging is complete
@@ -467,11 +421,36 @@ class change extends change_log
             if ($this->user() == null) {
                 log_fatal("Update of reference in the change log failed.", "user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString());
             } else {
-                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . ")", "user_log->add_ref");
-                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");
+                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . ")", "user_log->add_ref");
+                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");
             }
         }
         return $result;
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * @return sql_type the sql type of the change e.g. if a name is changes it returns sql_type::UPDATE
+     */
+    function sql_type(): sql_type
+    {
+        $typ = sql_type::UPDATE;
+        if ($this->old_id == null and $this->new_id == null) {
+            if ($this->old_value == null) {
+                $typ = sql_type::INSERT;
+            } elseif ($this->new_value == null) {
+                $typ = sql_type::DELETE;
+            }
+        } elseif ($this->old_id == null) {
+            $typ = sql_type::INSERT;
+        } elseif ($this->new_id == null) {
+            $typ = sql_type::DELETE;
+        }
+        return $typ;
     }
 
 
@@ -647,6 +626,32 @@ class change extends change_log
                 $result .= 'added ' . $this->new_value;
             }
         }
+        return $result;
+    }
+
+
+    /*
+     * debug
+     */
+
+    function dsp_id(): string
+    {
+        $result = 'log ' . $this->action() . ' ';
+        $result .= $this->table() . ',' . $this->field() . ' ';
+        if ($this->old_value != null) {
+            if ($this->new_value != null) {
+                $result .= 'from ' . $this->old_value . ' (id ' . $this->old_id . ')';
+                $result .= 'to ' . $this->new_value . ' (id ' . $this->new_id . ')';
+            } else {
+                $result .= $this->old_value . ' (id ' . $this->old_id . ')';
+            }
+        } else {
+            if ($this->new_value != null) {
+                $result .= $this->new_value . ' (id ' . $this->new_id . ')';
+            }
+        }
+        $result .= ' in row ' . $this->row_id;
+        $result .= ' at ' . $this->change_time->format(DateTimeInterface::ATOM);
         return $result;
     }
 

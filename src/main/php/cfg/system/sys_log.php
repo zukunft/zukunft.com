@@ -340,7 +340,7 @@ class sys_log extends db_object_seq_id
         $lib = new library();
         $tbl_name = $lib->class_to_name(sys_log::class);
         $log = new change($this->user());
-        $log->action = change_action::UPDATE;
+        $log->set_action(change_action::UPDATE);
         $log->set_table($tbl_name);
 
         return $log;

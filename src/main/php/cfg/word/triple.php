@@ -1736,7 +1736,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     {
         log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
         $log = new change_link($this->user());
-        $log->action = change_action::ADD;
+        $log->set_action(change_action::ADD);
         $log->set_table(change_table_list::TRIPLE);
         $log->new_from = $this->fob;
         $log->new_link = $this->verb;
@@ -1753,7 +1753,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     function log_upd(): change_link
     {
         $log = new change_link($this->user());
-        $log->action = change_action::UPDATE;
+        $log->set_action(change_action::UPDATE);
         if ($this->can_change()) {
             $log->set_table(change_table_list::TRIPLE);
         } else {
@@ -1771,7 +1771,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     {
         log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
         $log = new change_link($this->user());
-        $log->action = change_action::DELETE;
+        $log->set_action(change_action::DELETE);
         $log->set_table(change_table_list::TRIPLE);
         $log->old_from = $this->fob;
         $log->old_link = $this->verb;
@@ -1788,7 +1788,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     function log_upd_field(): change
     {
         $log = new change($this->user());
-        $log->action = change_action::UPDATE;
+        $log->set_action(change_action::UPDATE);
         if ($this->can_change()) {
             $log->set_table(change_table_list::TRIPLE);
         } else {

@@ -240,7 +240,7 @@ class value_phrase_link extends db_object_seq_id_user
     {
         log_debug('val_lnk->log_add for "' . $this->phr->id() . ' to ' . $this->val->id());
         $log = new change_link($this->user());
-        $log->action = change_action::ADD;
+        $log->set_action(change_action::ADD);
         $log->set_table(change_table_list::VALUE_PHRASE_LINK);
         $log->new_from = $this->val;
         $log->new_to = $this->phr;
@@ -256,7 +256,7 @@ class value_phrase_link extends db_object_seq_id_user
     {
         log_debug('val_lnk->log_upd for "' . $this->phr->id() . ' to ' . $this->val->id());
         $log = new change_link($this->user());
-        $log->action = change_action::UPDATE;
+        $log->set_action(change_action::UPDATE);
         $log->set_table(change_table_list::VALUE_PHRASE_LINK); // no user sandbox for links, only the values itself can differ from user to user
         //$log->set_field(phrase::FLD_ID);
         $log->old_from = $db_rec->val;
@@ -269,6 +269,7 @@ class value_phrase_link extends db_object_seq_id_user
     }
 
     // save the new word link
+    // TODO review
     private function save_field_wrd(sql_db $db_con, $db_rec): string
     {
         $result = '';

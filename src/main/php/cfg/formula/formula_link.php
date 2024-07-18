@@ -547,7 +547,7 @@ class formula_link extends sandbox_link_with_type
     function log_upd_field(): change
     {
         $log = new change($this->user());
-        $log->action = change_action::UPDATE;
+        $log->set_action(change_action::UPDATE);
         if ($this->can_change()) {
             $log->set_table(change_table_list::FORMULA_LINK);
         } else {

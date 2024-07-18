@@ -1646,7 +1646,7 @@ class word extends sandbox_typed
         $msk_new->load_by_id($view_id);
 
         $log = new change($this->user());
-        $log->action = change_action::UPDATE;
+        $log->set_action(change_action::UPDATE);
         $log->set_table(change_table_list::WORD);
         $log->set_field(self::FLD_VIEW);
         if ($this->view_id() > 0) {
@@ -1655,7 +1655,7 @@ class word extends sandbox_typed
             $log->old_value = $msk_old->name();
             $log->old_id = $msk_old->id;
         } else {
-            $log->old_value = '';
+            $log->old_value = null;
             $log->old_id = 0;
         }
         $log->new_value = $msk_new->name();

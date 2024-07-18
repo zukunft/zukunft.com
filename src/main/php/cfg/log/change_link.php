@@ -314,34 +314,6 @@ class change_link extends change_log
         return $table_id;
     }
 
-    protected function add_action(sql_db $db_con): void
-    {
-        // check parameter
-        if ($this->action == "") {
-            log_err("missing action name", "user_log_link->set_action");
-        }
-        if ($this->user()->id() <= 0) {
-            log_err("missing user", "user_log_link->set_action");
-        }
-
-        // if e.g. the action is "add" the reference 1 is saved in the log table to save space
-        $db_type = $db_con->get_class();
-        $db_con->set_class(change_action::class);
-        $action_id = $db_con->get_id($this->action);
-
-        // add new action name if needed
-        if ($action_id <= 0) {
-            $action_id = $db_con->add_id($this->action);
-        }
-        if ($action_id > 0) {
-            $this->action_id = $action_id;
-        } else {
-            log_fatal("Insert to change log failed due to action id failure.", "user_log_link->set_action");
-        }
-        // restore the type before saving the log
-        $db_con->set_class($db_type);
-    }
-
     // functions used utils each call is done with the object instead of the id
     private function set_usr(): void
     {
@@ -390,14 +362,13 @@ class change_link extends change_log
     function add_link(): bool
     {
         global $db_con;
-        log_debug("user_log_link->add_link (u" . $this->user()->id() . " " . $this->action . " " . $this->table() .
+        log_debug("user_log_link->add_link (u" . $this->user()->id() . " " . $this->action() . " " . $this->table() .
             ",of" . $this->old_from . ",ol" . $this->old_link . ",ot" . $this->old_to .
             ",nf" . $this->new_from . ",nl" . $this->new_link . ",nt" . $this->new_to . ",r" . $this->row_id . ")");
 
         global $db_con;
 
         $this->add_table($db_con);
-        $this->add_action($db_con);
 
         $sql_fields = array();
         $sql_values = array();
@@ -491,18 +462,15 @@ class change_link extends change_log
      */
     function add(): bool
     {
-        log_debug('do "' . $this->action . '" of "' . $this->table() . '" for user ' . $this->user()->dsp_id());
+        log_debug('do "' . $this->action() . '" of "' . $this->table() . '" for user ' . $this->user()->dsp_id());
 
         global $db_con;
-
-        //$this->add_table();
-        $this->add_action($db_con);
 
         // set the table specific references
         log_debug('set fields');
         if ($this->table() == change_table_list::WORD
             or $this->table() == change_table_list::TRIPLE) {
-            if ($this->action == change_action::ADD or $this->action == change_action::UPDATE) {
+            if ($this->action() == change_action::ADD or $this->action() == change_action::UPDATE) {
                 if ($this->new_from != null and $this->new_link != null and $this->new_to != null) {
                     $this->new_text_from = $this->new_from->name();
                     $this->new_text_link = $this->new_link->name();
@@ -514,7 +482,7 @@ class change_link extends change_log
                     log_err('Object(s) missing when trying to log a triple add action');
                 }
             }
-            if ($this->action == change_action::DELETE or $this->action == change_action::UPDATE) {
+            if ($this->action() == change_action::DELETE or $this->action() == change_action::UPDATE) {
                 if ($this->old_from != null and $this->old_link != null and $this->old_to != null) {
                     $this->old_text_from = $this->old_from->name();
                     $this->old_text_link = $this->old_link->name();
@@ -528,7 +496,7 @@ class change_link extends change_log
             }
         }
         if ($this->table() == change_table_list::REF) {
-            if ($this->action == change_action::ADD or $this->action == change_action::UPDATE) {
+            if ($this->action() == change_action::ADD or $this->action() == change_action::UPDATE) {
                 if ($this->new_from != null and $this->new_link != null and $this->new_to != null) {
                     $this->new_text_from = $this->new_from->name();
                     $this->new_text_link = $this->new_link->name();
@@ -540,7 +508,7 @@ class change_link extends change_log
                     log_err('Object(s) missing when trying to log a ref add action');
                 }
             }
-            if ($this->action == change_action::DELETE or $this->action == change_action::UPDATE) {
+            if ($this->action() == change_action::DELETE or $this->action() == change_action::UPDATE) {
                 if ($this->old_from != null and $this->old_link != null and $this->old_to != null) {
                     $this->old_text_from = $this->old_from->name();
                     $this->old_text_link = $this->old_link->name();
@@ -556,7 +524,7 @@ class change_link extends change_log
         if ($this->table() == change_table_list::VIEW_LINK
             or $this->table() == change_table_list::VALUE_PHRASE_LINK
             or $this->table() == change_table_list::FORMULA_LINK) {
-            if ($this->action == change_action::ADD or $this->action == change_action::UPDATE) {
+            if ($this->action() == change_action::ADD or $this->action() == change_action::UPDATE) {
                 if ($this->new_from != null and $this->new_to != null) {
                     $this->new_text_from = $this->new_from->name();
                     $this->new_text_to = $this->new_to->name();
@@ -566,7 +534,7 @@ class change_link extends change_log
                     log_err('Object(s) missing when trying to log an add action');
                 }
             }
-            if ($this->action == change_action::DELETE or $this->action == change_action::UPDATE) {
+            if ($this->action() == change_action::DELETE or $this->action() == change_action::UPDATE) {
                 if ($this->old_from != null and $this->old_to != null) {
                     $this->old_text_from = $this->old_from->name();
                     $this->old_text_to = $this->old_to->name();
@@ -694,7 +662,7 @@ class change_link extends change_log
         if ($this->user() != null) {
             $result .= 'user_log_link for user ' . $this->user()->dsp_id();
         }
-        $result .= ' action ' . $this->action . ' (' . $this->action_id . ')';
+        $result .= ' action ' . $this->action() . ' (' . $this->action_id . ')';
         $result .= ' table ' . $this->table() . ' (' . $this->table_id . ')';
         if (isset($this->old_from)) {
             $result .= ' from old ' . $this->old_from->dsp_id();

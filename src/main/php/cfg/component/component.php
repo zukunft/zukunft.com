@@ -887,7 +887,7 @@ class component extends sandbox_typed
     {
         log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id());
         $log = new change_link($this->user());
-        $log->action = change_action::ADD;
+        $log->set_action(change_action::ADD);
         $log->set_table(change_table_list::VIEW_LINK);
         $log->new_from = clone $this;
         $log->new_to = clone $dsp;
@@ -903,7 +903,7 @@ class component extends sandbox_typed
     {
         log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id());
         $log = new change_link($this->user());
-        $log->action = change_action::DELETE;
+        $log->set_action(change_action::DELETE);
         $log->set_table(change_table_list::VIEW_LINK);
         $log->old_from = clone $this;
         $log->old_to = clone $dsp;

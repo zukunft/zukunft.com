@@ -140,31 +140,29 @@ class verb extends type_object
      * object vars
      */
 
-    private ?user $usr = null;         // used only to allow adding the code id on import
-    //                                    but there should not be any user specific verbs
-    //                                    otherwise if id is 0 (not NULL) the standard word link type,
-    //                                    otherwise the user specific verb
-    //public ?string $code_id = '';      // the main id to detect verbs that have a special behavior
-    //private ?string $name = '';        // the verb name to build the "sentence" for the user, which cannot be empty
-    public ?string $plural = '';       // name used if more than one word is shown
-    //                                    e.g. instead of "ABB" "is a" "company"
-    //                                         use "ABB", Nestlé" "are" "companies"
-    public ?string $reverse = '';      // name used if displayed the other way round
-    //                                    e.g. for "Country" "has a" "Human Development Index"
-    //                                         the reverse would be "Human Development Index" "is used for" "Country"
-    public ?string $rev_plural = '';   // the reverse name for many words
-    public ?string $frm_name = '';     // short name of the verb for the use in formulas
-    //                                    because there both sides are combined
-    public ?string $description = '';  // for the mouse over explain
-    public int $usage = 0;             // how often this current used has used the verb
-    //                                    (until now just the usage of all users)
+    private ?user $usr = null;          // used only to allow adding the code id on import
+    //                                     but there should not be any user specific verbs
+    //                                     otherwise if id is 0 (not NULL) the standard word link type,
+    //                                     otherwise the user specific verb
+    public ?string $plural = null;      // name used if more than one word is shown
+    //                                     e.g. instead of "ABB" "is a" "company"
+    //                                          use "ABB", Nestlé" "are" "companies"
+    public ?string $reverse = null;     // name used if displayed the other way round
+    //                                     e.g. for "Country" "has a" "Human Development Index"
+    //                                          the reverse would be "Human Development Index" "is used for" "Country"
+    public ?string $rev_plural = null;  // the reverse name for many words
+    public ?string $frm_name = null;    // short name of the verb for the use in formulas
+    //                                     because there both sides are combined
+    public ?string $description = null; // for the mouse over explain
+    public int $usage = 0;              // how often this current used has used the verb
+    //                                     (until now just the usage of all users)
 
 
     /*
      * construct and map
      */
 
-    function __construct(int $id = 0, string $name = '', string $code_id = '')
+    function __construct(int $id = 0, string $name = '', ?string $code_id = null)
     {
         parent::__construct($code_id);
         if ($id > 0) {
@@ -806,10 +804,10 @@ class verb extends type_object
     {
         log_debug('verb->log_add ' . $this->dsp_id());
         $log = new change($this->usr);
-        $log->action = change_action::ADD;
+        $log->set_action(change_action::ADD);
         $log->set_table(change_table_list::VERB);
         $log->set_field(self::FLD_NAME);
-        $log->old_value = '';
+        $log->old_value = null;
         $log->new_value = $this->name;
         $log->row_id = 0;
         $log->add();
@@ -822,7 +820,7 @@ class verb extends type_object
     {
         log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $log = new change($this->usr);
-        $log->action = change_action::UPDATE;
+        $log->set_action(change_action::UPDATE);
         $log->set_table(change_table_list::VERB);
 
         return $log;
@@ -833,11 +831,11 @@ class verb extends type_object
     {
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $log = new change($this->usr);
-        $log->action = change_action::DELETE;
+        $log->set_action(change_action::DELETE);
         $log->set_table(change_table_list::VERB);
         $log->set_field(self::FLD_NAME);
         $log->old_value = $this->name;
-        $log->new_value = '';
+        $log->new_value = null;
         $log->row_id = $this->id;
         $log->add();
 
@@ -873,7 +871,7 @@ class verb extends type_object
     private function save_field_code_id(sql_db $db_con, $db_rec): string
     {
         $result = '';
-        if ($db_rec->name <> $this->code_id) {
+        if ($db_rec->code_id <> $this->code_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->code_id;
             $log->new_value = $this->code_id;
@@ -970,7 +968,7 @@ class verb extends type_object
     private function save_field_formula_name(sql_db $db_con, $db_rec): string
     {
         $result = '';
-        if ($db_rec->description <> $this->frm_name) {
+        if ($db_rec->frm_name <> $this->frm_name) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->frm_name;
             $log->new_value = $this->frm_name;

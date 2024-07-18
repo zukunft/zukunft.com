@@ -1369,7 +1369,7 @@ class sandbox_multi extends db_object_multi_user
         $log->set_action(change_action::ADD);
         // a value, result or group is always identified by the group name
         $log->set_field($lib->class_to_name(group::class) . '_name');
-        $log->old_value = '';
+        $log->old_value = null;
         $log->new_value = $this->name();
         $log->row_id = 0;
         $log->add();
@@ -1481,7 +1481,7 @@ class sandbox_multi extends db_object_multi_user
         $class = $lib->class_to_name($this::class);
         log_debug($this->dsp_id());
         $log->set_user($this->user());
-        $log->action = change_action::UPDATE;
+        $log->set_action(change_action::UPDATE);
         if ($this->can_change()) {
             // TODO add the table exceptions from sql_db
             $log->set_table($class . sql_db::TABLE_EXTENSION);
@@ -1560,9 +1560,9 @@ class sandbox_multi extends db_object_multi_user
         // a value, result or group is always identified by the group name
         $log->set_field($lib->class_to_name(group::class) . '_name');
         $log->old_value = $this->name();
-        $log->new_value = '';
+        $log->new_value = null;
         $log->row_id = 0;
-        $log->action = change_action::DELETE;
+        $log->set_action(change_action::DELETE);
         $log->add();
         return $log;
     }

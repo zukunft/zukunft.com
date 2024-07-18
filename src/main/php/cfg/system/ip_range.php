@@ -402,7 +402,7 @@ class ip_range extends db_object_seq_id
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->user());
-        $log->action = change_action::ADD;
+        $log->set_action(change_action::ADD);
         $log->set_table($tbl_name);
         $log->set_field(self::FLD_FROM . '_' . self::FLD_TO);
         $log->row_id = 0;
@@ -422,7 +422,7 @@ class ip_range extends db_object_seq_id
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->user());
-        $log->action = change_action::UPDATE;
+        $log->set_action(change_action::UPDATE);
         $log->set_table($tbl_name);
 
         return $log;

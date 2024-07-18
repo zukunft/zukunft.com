@@ -107,7 +107,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
      * construct and map
      */
 
-    function __construct(?string $code_id, string $name = '', string $description = '', int $id = 0)
+    function __construct(?string $code_id, string $name = '', ?string $description = null, int $id = 0)
     {
         parent::__construct();
         $this->set_id($id);
@@ -121,7 +121,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
     function reset(): void
     {
         $this->id = 0;
-        $this->code_id = '';
+        $this->code_id = null;
         $this->name = '';
         $this->description = null;
     }
@@ -172,12 +172,12 @@ class type_object extends db_object_seq_id implements JsonSerializable
         $this->name = $name;
     }
 
-    function set_code_id(string $code_id): void
+    function set_code_id(?string $code_id): void
     {
         $this->code_id = $code_id;
     }
 
-    function set_description(string $description): void
+    function set_description(?string $description): void
     {
         $this->description = $description;
     }

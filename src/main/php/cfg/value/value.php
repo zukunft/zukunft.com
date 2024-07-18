@@ -78,6 +78,8 @@ use cfg\log\change;
 use cfg\log\change_values_big;
 use cfg\log\change_values_norm;
 use cfg\log\change_values_prime;
+use cfg\log\changes_big;
+use cfg\log\changes_norm;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use api\api;
@@ -1573,6 +1575,7 @@ class value extends sandbox_value
 
     /**
      * set the log entry parameters for a value update
+     * @return change_value actually a child object (prime, norm or big) with the parameters for this change
      */
     function log_upd(): change_value
     {
@@ -1595,6 +1598,31 @@ class value extends sandbox_value
         return $log;
     }
 
+    /**
+     * set the log entry parameters for value parameter updates
+     * @return change actually a child object (prime, norm or big) with the parameters for this change
+     */
+    function log_update_parameter(): change
+    {
+        log_debug();
+        if ($this->is_prime()) {
+            $log = new change($this->user());
+        } elseif ($this->is_big()) {
+            $log = new changes_big($this->user());
+        } else {
+            $log = new changes_norm($this->user());
+        }
+        $log->set_action(change_action::UPDATE);
+        if ($this->can_change()) {
+            $log->set_table(change_table_list::VALUE);
+        } else {
+            $log->set_table(change_table_list::VALUE_USR);
+        }
+        $log->row_id = $this->grp_id();
+
+        return $log;
+    }
+
     /*
     // set the log entry parameter to delete a value
     function log_del($db_type) {
@@ -1605,7 +1633,7 @@ class value extends sandbox_value
     $log->table     = $db_type;
     $log->field     = 'numeric_value';
     $log->old_value = $this->number;
-    $log->new_value = '';
+    $log->new_value = null;
     $log->row_id    = $this->id();
     $log->add();
 
@@ -1870,7 +1898,7 @@ class value extends sandbox_value
     {
         $result = '';
         if ($db_rec->get_source_id() <> $this->get_source_id()) {
-            $log = $this->log_upd();
+            $log = $this->log_update_parameter();
             $log->old_value = $db_rec->source_name();
             $log->old_id = $db_rec->get_source_id();
             $log->new_value = $this->source_name();
