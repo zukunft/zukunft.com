@@ -753,7 +753,13 @@ class change_log extends db_object_seq_id_user
             // clone the sql parameter list to avoid changing the given list
             $sc_par_lst_used = clone $sc_par_lst;
             // set the sql query type
-            $sc_par_lst_used->add(sql_type::INSERT);
+            if ($this->old_value == null) {
+                $sc_par_lst_used->add(sql_type::INSERT);
+            } elseif ($this->new_value == null) {
+                $sc_par_lst_used->add(sql_type::DELETE);
+            } else {
+                $sc_par_lst_used->add(sql_type::UPDATE);
+            }
             // do not use the user extension for the change table name
             $sc_par_lst_chg = $sc_par_lst_used->remove(sql_type::USER);
             $qp = $sc->sql_par($this::class, $sc_par_lst_chg);

@@ -41,6 +41,7 @@ include_once MODEL_LOG_PATH . 'changes_big.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
 
 use api\word\triple as triple_api;
+use api\value\value as value_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
@@ -157,6 +158,10 @@ class change_log_tests
         $log_val = $t->change_log_value();
         $t->assert_sql_insert($sc, $log_val);
         $t->assert_sql_insert($sc, $log_val, [sql_type::SUB]);
+        $log_val->old_value = value_api::TV_INT;
+        $t->assert_sql_insert($sc, $log_val);
+        $log_val->new_value = null;
+        $t->assert_sql_insert($sc, $log_val);
         $log_val = $t->change_log_value_prime();
         $t->assert_sql_insert($sc, $log_val);
         $t->assert_sql_insert($sc, $log_val, [sql_type::SUB]);
