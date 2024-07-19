@@ -42,6 +42,7 @@ include_once MODEL_LOG_PATH . 'change_link.php';
 
 use api\word\triple as triple_api;
 use api\value\value as value_api;
+use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
@@ -144,6 +145,16 @@ class change_log_tests
         $log = $t->change_log_named();
         $t->assert_sql_insert($sc, $log);
         $t->assert_sql_insert($sc, $log, [sql_type::SUB]);
+        $log = $t->change_log_named_update();
+        $t->assert_sql_insert($sc, $log);
+        $log = $t->change_log_named_delete();
+        $t->assert_sql_insert($sc, $log);
+        $log = $t->change_log_ref();
+        $t->assert_sql_insert($sc, $log);
+        $log = $t->change_log_ref_update();
+        $t->assert_sql_insert($sc, $log);
+        $log = $t->change_log_ref_delete();
+        $t->assert_sql_insert($sc, $log);
         $log = $t->change_log_norm();
         $t->assert_sql_insert($sc, $log);
         $log = $t->change_log_big();
@@ -158,11 +169,9 @@ class change_log_tests
         $log_val = $t->change_log_value();
         $t->assert_sql_insert($sc, $log_val);
         $t->assert_sql_insert($sc, $log_val, [sql_type::SUB]);
-        // log an update
-        $log_val->old_value = value_api::TV_INT;
+        $log_val = $t->change_log_value_update();
         $t->assert_sql_insert($sc, $log_val);
-        // log delete
-        $log_val->new_value = null;
+        $log_val = $t->change_log_value_delete();
         $t->assert_sql_insert($sc, $log_val);
         $log_val = $t->change_log_value_prime();
         $t->assert_sql_insert($sc, $log_val);

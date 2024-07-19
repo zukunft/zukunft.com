@@ -405,6 +405,7 @@ class ip_range extends db_object_seq_id
         $log->set_action(change_action::ADD);
         $log->set_table($tbl_name);
         $log->set_field(self::FLD_FROM . '_' . self::FLD_TO);
+        $log->new_value = $this->name();
         $log->row_id = 0;
         $log->add();
 

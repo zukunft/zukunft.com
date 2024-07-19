@@ -2280,7 +2280,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return change a change log entry of a named user sandbox object with some dummy values
+     * @return change an insert change log entry of a named user sandbox object with some dummy values
      */
     function change_log_named(): change
     {
@@ -2293,6 +2293,62 @@ class create_test_objects extends test_base
         $chg->set_field(change_field_list::FLD_WORD_NAME);
         $chg->new_value = word_api::TN_READ;
         $chg->row_id = 1;
+        return $chg;
+    }
+
+    /**
+     * @return change an update change log entry of a named user sandbox object
+     */
+    function change_log_named_update(): change
+    {
+        $chg = $this->change_log_named();
+        $chg->old_value = word_api::TN_RENAMED;
+        return $chg;
+    }
+
+    /**
+     * @return change a delete change log entry of a named user sandbox object
+     */
+    function change_log_named_delete(): change
+    {
+        $chg = $this->change_log_named_update();
+        $chg->new_value = null;
+        return $chg;
+    }
+
+    /**
+     * @return change an insert change log entry for a reference of a named user sandbox object
+     */
+    function change_log_ref(): change
+    {
+        global $phrase_types;
+        $chg = $this->change_log_named();
+        $chg->set_field(change_field_list::FLD_PHRASE_TYPE);
+        $chg->new_value = phrase_type::TIME;
+        $chg->new_id = $phrase_types->id(phrase_type::TIME);
+        return $chg;
+    }
+
+    /**
+     * @return change an insert change log entry for a reference of a named user sandbox object
+     */
+    function change_log_ref_update(): change
+    {
+        global $phrase_types;
+        $chg = $this->change_log_ref();
+        $chg->old_value = phrase_type::MEASURE;
+        $chg->old_id = $phrase_types->id(phrase_type::MEASURE);
+        return $chg;
+    }
+
+    /**
+     * @return change an insert change log entry for a reference of a named user sandbox object
+     */
+    function change_log_ref_delete(): change
+    {
+        $chg = $this->change_log_ref_update();
+        $chg->new_value = null;
+        $chg->new_id = null;
         return $chg;
     }
 
@@ -2331,7 +2387,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return change_values_norm a change log entry of a value with some dummy values and a standard group id
+     * @return change_values_norm an insert change log entry of a value with some dummy values and a standard group id
      */
     function change_log_value(): change_values_norm
     {
@@ -2345,6 +2401,26 @@ class create_test_objects extends test_base
         $chg->group_id = $this->group()->id();
         $chg->new_value = value_api::TV_READ_SHORTEST;
         $chg->row_id = 1;
+        return $chg;
+    }
+
+    /**
+     * @return change_values_norm an update change log entryof a value
+     */
+    function change_log_value_update(): change_values_norm
+    {
+        $chg = $this->change_log_value();
+        $chg->old_value = value_api::TV_INT;
+        return $chg;
+    }
+
+    /**
+     * @return change_values_norm a delete change log entryof a value
+     */
+    function change_log_value_delete(): change_values_norm
+    {
+        $chg = $this->change_log_value_update();
+        $chg->new_value = null;
         return $chg;
     }
 

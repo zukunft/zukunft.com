@@ -750,6 +750,7 @@ class change_log extends db_object_seq_id_user
             $sc_par_lst_used = clone $sc_par_lst;
             // set the sql query type
             $sc_par_lst_used->add($this->sql_type());
+            $sc_par_lst_used->add($this->sql_sub_type());
             // do not use the user extension for the change table name
             $sc_par_lst_chg = $sc_par_lst_used->remove(sql_type::USER);
             $qp = $sc->sql_par($this::class, $sc_par_lst_chg);
@@ -774,6 +775,15 @@ class change_log extends db_object_seq_id_user
     function sql_type(): sql_type
     {
         return sql_type::INSERT;
+    }
+
+    /**
+     * @return sql_type an addition sql type for the change e.g. if the phrase type is changed REF is added
+     *                  is in most cases overwritten by the child object
+     */
+    function sql_sub_type(): sql_type
+    {
+        return sql_type::NULL;
     }
 
     /**

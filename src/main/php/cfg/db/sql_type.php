@@ -35,9 +35,11 @@ enum sql_type: string
 {
 
     // curl sql statement types
+    case NULL = 'null'; // an empty type as a placeholder
     case INSERT = 'insert';
     case UPDATE = 'update';
     case DELETE = 'delete';
+    case REF = 'ref'; // to change the log query name if a reference has been changed
     case LOAD = 'load';
     case NORM = 'norm'; // the data used be most users should be loaded
     case NORM_EXT = 'norm_ext'; // force to use the norm extesion for the table name e.g. for the change log
@@ -77,21 +79,22 @@ enum sql_type: string
     public function extension(): string
     {
         return match($this) {
-            self::INSERT => sql::NAME_SEP . 'insert',
-            self::UPDATE => sql::NAME_SEP . 'update',
-            self::DELETE => sql::NAME_SEP . 'delete',
+            self::INSERT => sql::NAME_SEP . self::INSERT->value,
+            self::UPDATE => sql::NAME_SEP . self::UPDATE->value,
+            self::DELETE => sql::NAME_SEP . self::DELETE->value,
             self::EXCLUDE => sql::NAME_SEP . 'excluded',
-            self::NORM, self::NORM_EXT => sql::NAME_SEP . 'norm',
-            self::PRIME => sql::NAME_SEP . 'prime',
-            self::MAIN => sql::NAME_SEP . 'main',
-            self::BIG => sql::NAME_SEP . 'big',
-            self::INDEX => sql::NAME_SEP . 'index',
-            self::LARGE => sql::NAME_SEP . 'large',
-            self::STANDARD => sql::NAME_SEP . 'standard',
-            self::USER => sql::NAME_SEP . 'user',
-            self::SUB => sql::NAME_SEP . 'sub',
-            self::LIST => sql::NAME_SEP . 'list',
-            self::LOG => sql::NAME_SEP . 'log',
+            self::NORM, self::NORM_EXT => sql::NAME_SEP . self::NORM->value,
+            self::PRIME => sql::NAME_SEP . self::PRIME->value,
+            self::MAIN => sql::NAME_SEP . self::MAIN->value,
+            self::BIG => sql::NAME_SEP . self::BIG->value,
+            self::INDEX => sql::NAME_SEP . self::INDEX->value,
+            self::LARGE => sql::NAME_SEP . self::LARGE->value,
+            self::STANDARD => sql::NAME_SEP . self::STANDARD->value,
+            self::USER => sql::NAME_SEP . self::USER->value,
+            self::SUB => sql::NAME_SEP . self::SUB->value,
+            self::LIST => sql::NAME_SEP . self::LIST->value,
+            self::LOG => sql::NAME_SEP . self::LOG->value,
+            self::REF => sql::NAME_SEP . self::REF->value,
             default => '',
         };
     }
@@ -102,8 +105,8 @@ enum sql_type: string
     function prefix(): string
     {
         return match($this) {
-            self::PRIME => 'prime' . sql::NAME_SEP,
-            self::USER => 'user' . sql::NAME_SEP,
+            self::PRIME => self::PRIME->value . sql::NAME_SEP,
+            self::USER => self::USER->value . sql::NAME_SEP,
             default => '',
         };
     }

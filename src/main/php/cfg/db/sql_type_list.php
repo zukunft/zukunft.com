@@ -353,7 +353,31 @@ class sql_type_list
     }
 
     /**
-     * the extension of the table name excluding the sql type e.g. insert, update and delete query name extension
+     * the extension of the query name excluding the sql type e.g. insert, update and delete query name extension
+     *
+     * @return string the table name extension excluding the user sandbox indication
+     */
+    public function ext_query(): string
+    {
+        $ext = '';
+        foreach ($this->lst as $sc_par) {
+            if ($sc_par != sql_type::USER
+                and $sc_par != sql_type::INSERT
+                and $sc_par != sql_type::UPDATE
+                and $sc_par != sql_type::DELETE
+                and $sc_par != sql_type::EXCLUDE
+                and $sc_par != sql_type::LOG
+                and $sc_par != sql_type::SUB
+                and $sc_par != sql_type::LIST
+                and $sc_par != sql_type::NORM) {
+                $ext .= $sc_par->extension();
+            }
+        }
+        return $ext;
+    }
+
+    /**
+     * the extension of the table name excluding the sql type e.g. ref, insert, update and delete query name extension
      *
      * @return string the table name extension excluding the user sandbox indication
      */
@@ -368,6 +392,7 @@ class sql_type_list
                 and $sc_par != sql_type::EXCLUDE
                 and $sc_par != sql_type::LOG
                 and $sc_par != sql_type::SUB
+                and $sc_par != sql_type::REF
                 and $sc_par != sql_type::LIST
                 and $sc_par != sql_type::NORM) {
                 $ext .= $sc_par->extension();

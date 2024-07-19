@@ -453,6 +453,18 @@ class change extends change_log
         return $typ;
     }
 
+    /**
+     * @return sql_type an addition sql type for the change e.g. if the phrase type is changed REF is added
+     */
+    function sql_sub_type(): sql_type
+    {
+        $typ = sql_type::NULL;
+        if ($this->old_id != null or $this->new_id != null) {
+            $typ = sql_type::REF;
+        }
+        return $typ;
+    }
+
 
     /*
      * sql write fields

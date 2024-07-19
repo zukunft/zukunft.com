@@ -81,7 +81,7 @@ class sql_par
         }
 
         // add the table extension for select queries e.g. "_prime"
-        $name .= $sc_par_lst->ext_select();
+        $name .= $sc_par_lst->ext_query();
 
         // add the number of id fields used
         $name .= $id_ext;
