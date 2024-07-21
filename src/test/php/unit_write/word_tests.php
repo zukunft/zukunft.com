@@ -322,7 +322,7 @@ class word_tests
         // ... check if the word creation has been logged
         if ($wrd_add->id() > 0) {
             $log = new change($t->usr1);
-            $log->set_table(change_table_list::WORD);
+            $log->set_class(word::class);
             $log->set_field(change_field_list::FLD_WORD_NAME);
             $log->row_id = $wrd_add->id();
             $result = $log->dsp_last(true);
@@ -357,7 +357,7 @@ class word_tests
 
         // check if the word renaming has been logged
         $log = new change($t->usr1);
-        $log->set_table(change_table_list::WORD);
+        $log->set_class(word::class);
         $log->set_field(change_field_list::FLD_WORD_NAME);
         $log->row_id = $wrd_renamed->id();
         $result = $log->dsp_last(true);

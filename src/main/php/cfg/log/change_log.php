@@ -232,6 +232,18 @@ class change_log extends db_object_seq_id_user
     }
 
     /**
+     * set the table of this change log object by the class name
+     * @param string $class the class name
+     * @return bool true if the table/class is part of the log table
+     */
+    function set_class(string $class): bool
+    {
+        $lib = new library();
+        $name = $lib->class_to_table($class);
+        return $this->set_table($name);
+    }
+
+    /**
      * set the table of this change log object and to add a new table to the database if needed
      * @param string $table_name the name of the new table
      * @param sql_db|null $given_db_con the name of the new field
@@ -260,13 +272,6 @@ class change_log extends db_object_seq_id_user
             }
         }
         return $db_changed;
-    }
-
-    function set_table_by_class(string $class): bool
-    {
-        $lib = new library();
-        $name = $lib->class_to_name($class);
-        return $this->set_table($name . sql_db::TABLE_EXTENSION);
     }
 
     /**

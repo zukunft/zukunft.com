@@ -2838,39 +2838,43 @@ class create_test_objects extends test_base
 
         // check if the triple exists or create a new if needed
         $trp = new triple($this->usr1);
-        if ($from->id() == 0 or $to->id() == 0) {
+        if ($vrb == null) {
             log_err("Phrases " . $from_name . " and " . $to_name . " cannot be created");
         } else {
-            // check if the forward link exists
-            $trp->load_by_link_id($from->id(), $vrb->id(), $to->id());
-            if ($trp->id() > 0) {
-                // refresh the given name if needed
-                if ($name_given <> '' and $trp->name(true) <> $name_given) {
-                    $trp->set_name_given($name_given);
-                    $trp->set_name($name_given);
-                    $trp->save();
-                    $trp->load_by_id($trp->id());
-                }
-                $result = $trp;
+            if ($from->id() == 0 or $vrb->id() == 0 or $to->id() == 0) {
+                log_err("Phrases " . $from_name . " and " . $to_name . " cannot be created");
             } else {
-                // check if the backward link exists
-                $trp->fob = $to;
-                $trp->verb = $vrb;
-                $trp->tob = $from;
-                $trp->set_user($this->usr1);
-                $trp->load_by_link_id($to->id(), $vrb->id(), $from->id());
-                $result = $trp;
-                // create the link if requested
-                if ($trp->id() <= 0 and $auto_create) {
-                    $trp->fob = $from;
-                    $trp->verb = $vrb;
-                    $trp->tob = $to;
-                    if ($trp->name(true) <> $name_given) {
+                // check if the forward link exists
+                $trp->load_by_link_id($from->id(), $vrb->id(), $to->id());
+                if ($trp->id() > 0) {
+                    // refresh the given name if needed
+                    if ($name_given <> '' and $trp->name(true) <> $name_given) {
                         $trp->set_name_given($name_given);
                         $trp->set_name($name_given);
+                        $trp->save();
+                        $trp->load_by_id($trp->id());
                     }
-                    $trp->save();
-                    $trp->load_by_id($trp->id());
+                    $result = $trp;
+                } else {
+                    // check if the backward link exists
+                    $trp->fob = $to;
+                    $trp->verb = $vrb;
+                    $trp->tob = $from;
+                    $trp->set_user($this->usr1);
+                    $trp->load_by_link_id($to->id(), $vrb->id(), $from->id());
+                    $result = $trp;
+                    // create the link if requested
+                    if ($trp->id() <= 0 and $auto_create) {
+                        $trp->fob = $from;
+                        $trp->verb = $vrb;
+                        $trp->tob = $to;
+                        if ($trp->name(true) <> $name_given) {
+                            $trp->set_name_given($name_given);
+                            $trp->set_name($name_given);
+                        }
+                        $trp->save();
+                        $trp->load_by_id($trp->id());
+                    }
                 }
             }
         }

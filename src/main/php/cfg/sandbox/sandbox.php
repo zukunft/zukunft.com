@@ -2839,7 +2839,7 @@ class sandbox extends db_object_seq_id_user
 
         // create the insert log statement for the field of the loop
         $log = new change($this->user());
-        $log->set_table_by_class($this::class);
+        $log->set_class($this::class);
         if ($this->is_named_obj()) {
             $log->set_field($name_fld);
             $log->old_value = $this->name();
@@ -3452,7 +3452,7 @@ class sandbox extends db_object_seq_id_user
 
             // create the insert log statement for the field of the loop
             $log = new change($this->user());
-            $log->set_table_by_class($this::class);
+            $log->set_class($this::class);
             $log->set_field($fld->name);
             $log->old_value = $fvt_lst->get_old($fld->name);
             if ($fvt_lst->get_old_id($fld->name) != null or $fvt_lst->get_id($fld->name) != null) {

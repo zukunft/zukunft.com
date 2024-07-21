@@ -888,7 +888,7 @@ class component extends sandbox_typed
         log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id());
         $log = new change_link($this->user());
         $log->set_action(change_action::ADD);
-        $log->set_table(change_table_list::VIEW_LINK);
+        $log->set_class(component_link::class);
         $log->new_from = clone $this;
         $log->new_to = clone $dsp;
         $log->row_id = $this->id;
@@ -904,7 +904,7 @@ class component extends sandbox_typed
         log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id());
         $log = new change_link($this->user());
         $log->set_action(change_action::DELETE);
-        $log->set_table(change_table_list::VIEW_LINK);
+        $log->set_class(component_link::class);
         $log->old_from = clone $this;
         $log->old_to = clone $dsp;
         $log->row_id = $this->id;

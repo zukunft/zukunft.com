@@ -228,11 +228,15 @@ class change extends change_log
      */
     function load_sql(sql $sc, string $query_name): sql_par
     {
-        $qp = new sql_par($this::class);
-        $sc->set_class(change::class);
+        if ($this::class == changes_norm::class
+            or $this::class == changes_big::class) {
+            $qp = new sql_par(change::class);
+        } else {
+            $qp = new sql_par($this::class);
+        }
+        $sc->set_class($this::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_join_fields(array(user::FLD_NAME), user::class);
         $sc->set_join_fields(array(change_field_list::FLD_TABLE), change_field::class);

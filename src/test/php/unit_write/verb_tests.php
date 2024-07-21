@@ -63,7 +63,7 @@ class verb_tests
 
         // ... test if adding the verb is part of the change log
         $result = $t->log_last_named();
-        $t->assert('verb->add log', $result, 'zukunft.com system test added ');
+        $t->assert('verb->add log', $result, 'zukunft.com system test added System Test Verb');
 
         // test verb not yet used can be deleted
         $vrb = new verb;

@@ -203,6 +203,9 @@ class sql
         change::class,
         changes_norm::class,
         changes_big::class,
+        change_values_prime::class,
+        change_values_norm::class,
+        change_values_big::class,
         change_link::class,
         sys_log::class,
         job::class,
@@ -1693,7 +1696,7 @@ class sql
         foreach ($fld_lst as $fld) {
             // init the log object
             $log = new change($usr);
-            $log->set_table_by_class($class);
+            $log->set_class($class);
             $log->set_field($fld);
             $log->new_value = $fvt_lst->get_value($fld);
             if ($fvt_lst->get_id($fld) != null) {
@@ -1782,7 +1785,7 @@ class sql
     ): sql_par
     {
         $log = new change_link($usr);
-        $log->set_table_by_class($sbx::class);
+        $log->set_class($sbx::class);
         $log->new_from_id = $sbx->from_id();
         $log->new_text_from = $sbx->from_name();
         if ($sbx->is_link_type_obj()) {
@@ -1842,7 +1845,7 @@ class sql
     {
         // set the vars of the log link object
         $log = new change_link($usr);
-        $log->set_table_by_class($sbx::class);
+        $log->set_class($sbx::class);
         $log->old_from_id = $sbx->from_id();
         $log->new_from_id = 0;
         $log->old_text_from = $sbx->from_name();
@@ -1928,7 +1931,7 @@ class sql
         } else {
             $log = new change_values_norm($usr);
         }
-        $log->set_table_by_class($sbx::class);
+        $log->set_class($sbx::class);
         $log->set_field(sandbox_value::FLD_VALUE);
 
         $log->group_id = $fvt_lst->get_value(group::FLD_ID);

@@ -47,6 +47,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\group\group;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_field;
@@ -54,9 +55,14 @@ use cfg\log\change_link;
 use cfg\log\change_log_list;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
+use cfg\log\change_value;
+use cfg\sandbox_value;
 use cfg\triple;
 use cfg\user;
+use cfg\value\value;
+use cfg\word;
 use html\log\user_log_display;
+use html\value\value AS value_dsp;
 use shared\library;
 use test\test_cleanup;
 
@@ -98,44 +104,44 @@ class change_log_tests
         $tbl_fld = new change_table_field();
         $t->assert_sql_view_link_create($tbl_fld);
 
-        $t->subheader('log sql setup for named objects e.g. formula');
+        $t->subheader('log named sql setup');
         $log = $t->change_log_named();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
         // TODO add auto increment test for all mysql tables
 
-        $t->subheader('log sql setup for group names for value related to up to 16 phrases');
+        $t->subheader('log group name sql setup for values related to up to 16 phrases');
         $log = $t->change_log_norm();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
 
-        $t->subheader('log sql setup for group names for value related to more than 16 phrases');
+        $t->subheader('log group name sql setup for values related to more than 16 phrases');
         $log = $t->change_log_big();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
 
-        $t->subheader('log sql setup for standard value');
+        $t->subheader('log standard value sql setup');
         $log_val_std = $t->change_log_value();
         $t->assert_sql_table_create($log_val_std);
         $t->assert_sql_index_create($log_val_std);
         $t->assert_sql_foreign_key_create($log_val_std);
 
-        $t->subheader('log sql setup for prime value');
+        $t->subheader('log prime value sql setup');
         $log_val_prm = $t->change_log_value_prime();
         $t->assert_sql_table_create($log_val_prm);
         $t->assert_sql_index_create($log_val_prm);
         $t->assert_sql_foreign_key_create($log_val_prm);
 
-        $t->subheader('log sql setup for big value');
+        $t->subheader('log big value sql setup');
         $log_val_big = $t->change_log_value_big();
         $t->assert_sql_table_create($log_val_big);
         $t->assert_sql_index_create($log_val_big);
         $t->assert_sql_foreign_key_create($log_val_big);
 
-        $t->subheader('log sql setup for link changes');
+        $t->subheader('log link sql setup');
         $log_lnk = $t->change_log_link();
         $t->assert_sql_table_create($log_lnk);
         $t->assert_sql_index_create($log_lnk);
@@ -160,11 +166,6 @@ class change_log_tests
         $log = $t->change_log_big();
         $t->assert_sql_insert($sc, $log);
 
-        $t->subheader('log link sql write');
-        $log_lnk = $t->change_log_link();
-        $t->assert_sql_insert($sc, $log_lnk);
-        $t->assert_sql_insert($sc, $log_lnk, [sql_type::SUB]);
-
         $t->subheader('log value sql write');
         $log_val = $t->change_log_value();
         $t->assert_sql_insert($sc, $log_val);
@@ -180,12 +181,28 @@ class change_log_tests
         $t->assert_sql_insert($sc, $log_val);
         $t->assert_sql_insert($sc, $log_val, [sql_type::SUB]);
 
-        $t->subheader('SQL statement tests');
+        $t->subheader('log link sql write');
+        $log_lnk = $t->change_log_link();
+        $t->assert_sql_insert($sc, $log_lnk);
+        $t->assert_sql_insert($sc, $log_lnk, [sql_type::SUB]);
+
+        $t->subheader('log load by user');
         $log = new change($usr);
         $t->assert_sql_by_user($sc, $log);
-
         $log = new change_link($usr);
         $t->assert_sql_by_user($sc, $log);
+
+        $t->subheader('log load list');
+        $log_lst = new change_log_list();
+        // TODO activate
+        //$t->assert_sql_by_user($sc, $log);
+        $this->assert_sql_list_by_field(word::class, word::FLD_NAME, 1, $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group_16()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group_17_plus()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(value::class, sandbox_value::FLD_VALUE, $t->value()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(value::class, sandbox_value::FLD_VALUE, $t->value_16()->id(), $log_lst, $db_con, $t);
+        //$this->assert_sql_list_by_field(value::class, sandbox_value::FLD_VALUE, $t->value_17_plus()->id(), $log_lst, $db_con, $t);
 
         // sql to load the word by id
         $log_dsp = new user_log_display($usr);
@@ -284,33 +301,36 @@ class change_log_tests
      * @param sql_db $db_con does not need to be connected to a real database
      * @param change_log_list $log_lst the user sandbox object e.g. a word
      */
-    private function assert_sql_list_by_obj_field(
-        test_cleanup $t,
-        sql_db $db_con,
+    private function assert_sql_list_by_field(
+        string $class,
+        string $field_name,
+        int|string $id,
         change_log_list $log_lst,
-        string $table_name,
-        string $field_name): void
+        sql_db $db_con,
+        test_cleanup $t): void
     {
+        $sc = $db_con->sql_creator();
+
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
+        $sc->db_type = sql_db::POSTGRES;
         $qp = $log_lst->load_sql_obj_fld(
-            $db_con->sql_creator(),
-            $table_name,
+            $sc,
+            $class,
             $field_name,
-            1,
+            $id,
             $t->usr1);
-        $result = $t->assert_qp($qp, $db_con->db_type);
+        $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
+            $sc->db_type = sql_db::MYSQL;
             $qp = $log_lst->load_sql_obj_fld(
-                $db_con->sql_creator(),
-                $table_name,
+                $sc,
+                $class,
                 $field_name,
-                1,
+                $id,
                 $t->usr1);
-            $t->assert_qp($qp, $db_con->db_type);
+            $t->assert_qp($qp, $sc->db_type);
         }
     }
 

@@ -39,6 +39,7 @@ include_once WEB_LOG_PATH . 'change_log_named.php';
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
@@ -46,6 +47,7 @@ use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\type_object;
 use cfg\user;
+use shared\library;
 
 class change_value extends change_log
 {
@@ -67,7 +69,7 @@ class change_value extends change_log
         self::FLD_TIME,
         self::FLD_ACTION,
         self::FLD_FIELD_ID,
-        self::FLD_ROW_ID,
+        self::FLD_GROUP_ID,
         self::FLD_OLD_VALUE,
         self::FLD_NEW_VALUE,
     );
@@ -95,6 +97,38 @@ class change_value extends change_log
     public ?int $old_id = null;                     // the reference id before the user change e.g. for fields using a sub table such as status
     public ?int $new_id = null;                     // the reference id after the user change e.g. for fields using a sub table such as status
     public ?int $std_id = null;                     // the standard reference id for all users that does not have changed it
+
+
+    /*
+     * load
+     */
+
+    /**
+     * create the common part of an SQL statement to retrieve the parameters of the value change log
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql $sc, string $query_name): sql_par
+    {
+        if ($this::class == change_values_prime::class
+            or $this::class == change_values_norm::class
+            or $this::class == change_values_big::class) {
+            $qp = new sql_par(change_value::class);
+        } else {
+            $qp = new sql_par($this::class);
+        }
+        $sc->set_class($this::class);
+        $qp->name .= $query_name;
+        $sc->set_name($qp->name);
+        $sc->set_fields($this::FLD_NAMES);
+        $sc->set_join_fields(array(user::FLD_NAME), user::class);
+        $sc->set_join_fields(array(change_field_list::FLD_TABLE), change_field::class);
+        $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC);
+
+        return $qp;
+    }
 
 
     /*

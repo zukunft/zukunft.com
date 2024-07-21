@@ -229,8 +229,14 @@
       {
         "name": "reversible",
         "code_id": "reversible",
-        "description": "a formula that can ba included also in the reversed version e.g. \"minute = second \/ 60\" and \"second = minute * 60\"",
+        "description": "a formula that can be included also in the reversed version e.g. \"minute = second \/ 60\" and \"second = minute * 60\"",
         "id": 5
+      },
+      {
+        "name": "scaling",
+        "code_id": "scaling",
+        "description": "a formula that adjust the scaling e.g. \"million = one \/ 1000000\"",
+        "id": 6
       }
     ],
     "formula_link_types": [
@@ -6052,40 +6058,34 @@
         "id": 770
       },
       {
-        "name": "2group_name",
-        "code_id": "2group_name",
+        "name": "95numeric_value",
+        "code_id": "95numeric_value",
         "description": "",
         "id": 771
-      },
-      {
-        "name": "95group_name",
-        "code_id": "95group_name",
-        "description": "",
-        "id": 772
       },
       {
         "name": "1NOW() AS db_now",
         "code_id": "1NOW() AS db_now",
         "description": "",
-        "id": 773
+        "id": 772
       },
       {
         "name": "12formula_link_type_id",
         "code_id": "12formula_link_type_id",
         "description": "",
-        "id": 774
+        "id": 773
       },
       {
         "name": "13formula_link_type_id",
         "code_id": "13formula_link_type_id",
         "description": "",
-        "id": 775
+        "id": 774
       },
       {
         "name": "96group_name",
         "code_id": "96group_name",
         "description": "",
-        "id": 776
+        "id": 775
       }
     ],
     "verbs": [
@@ -6124,7 +6124,7 @@
       },
       {
         "name": "with",
-        "code_id": "",
+        "code_id": "with",
         "description": "similar to 'is part of' but where the left phrase is expected to be several times the right phrase e.g. for comparing same by same: 1 hour with full load is the same as 2 hours with half load",
         "plural": "with",
         "reverse": null,
@@ -6135,7 +6135,7 @@
       },
       {
         "name": "has a",
-        "code_id": "",
+        "code_id": null,
         "description": null,
         "plural": "has",
         "reverse": "is used for",
@@ -6146,7 +6146,7 @@
       },
       {
         "name": "is time jump for",
-        "code_id": "",
+        "code_id": null,
         "description": "is the default time jump for",
         "plural": "are the time jump for",
         "reverse": "has the default time jump",
@@ -6157,7 +6157,7 @@
       },
       {
         "name": "is term jump for",
-        "code_id": "",
+        "code_id": null,
         "description": "is the default term jump for",
         "plural": null,
         "reverse": null,
@@ -6168,7 +6168,7 @@
       },
       {
         "name": "term type needed",
-        "code_id": "",
+        "code_id": null,
         "description": "the formula needs the linked term type",
         "plural": null,
         "reverse": null,
@@ -6190,7 +6190,7 @@
       },
       {
         "name": "uses",
-        "code_id": "",
+        "code_id": null,
         "description": "real use e.g. wind energy is used by a wind turbine",
         "plural": "uses",
         "reverse": "is used by",
@@ -6201,7 +6201,7 @@
       },
       {
         "name": "issue",
-        "code_id": "",
+        "code_id": null,
         "description": null,
         "plural": "issues",
         "reverse": "is issued by",
@@ -6212,7 +6212,7 @@
       },
       {
         "name": "is measure type for",
-        "code_id": "",
+        "code_id": null,
         "description": "is the default measure type for",
         "plural": "are measure type for",
         "reverse": "has the measure type",
@@ -6223,7 +6223,7 @@
       },
       {
         "name": "is an acronym for",
-        "code_id": "",
+        "code_id": null,
         "description": "is an acronym for",
         "plural": "are an acronyms for",
         "reverse": "is an acronym of",
@@ -6245,7 +6245,7 @@
       },
       {
         "name": "influences",
-        "code_id": "",
+        "code_id": null,
         "description": null,
         "plural": "influences",
         "reverse": "is influenced by",
@@ -6256,7 +6256,7 @@
       },
       {
         "name": "is alias of",
-        "code_id": "",
+        "code_id": null,
         "description": null,
         "plural": "is alias of",
         "reverse": "is alias of",
@@ -6300,7 +6300,7 @@
       },
       {
         "name": "per",
-        "code_id": "",
+        "code_id": "per",
         "description": "to define the usual quotient e.g. meter per second is normally used not seconds per meter, that why the reverse name is empty",
         "plural": "per",
         "reverse": null,
@@ -6344,7 +6344,7 @@
       },
       {
         "name": "and",
-        "code_id": "",
+        "code_id": "and",
         "description": "combine two phrases a a new phrase",
         "plural": "and",
         "reverse": "and",

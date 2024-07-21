@@ -40,6 +40,9 @@ use api\word\word as word_api;
 use cfg\log\change;
 use cfg\log\change_field_list;
 use cfg\log\change_table_list;
+use cfg\log\change_values_big;
+use cfg\log\change_values_norm;
+use cfg\log\change_values_prime;
 use cfg\phrase_list;
 use cfg\value\value;
 use cfg\value\value_dsp_old;
@@ -284,8 +287,14 @@ class value_tests
 
         // ... check if the value adding has been logged
         if ($add_val->is_id_set()) {
+            $val_class = change_values_norm::class;
+            if ($add_val->is_prime()) {
+                $val_class = change_values_prime::class;
+            } elseif ($add_val->is_big()) {
+                $val_class = change_values_big::class;
+            }
             $log = new change($t->usr1);
-            $log->set_table(change_table_list::VALUE);
+            $log->set_class($val_class);
             $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
             $log->row_id = $add_val->id();
             $result = $log->dsp_last(true);

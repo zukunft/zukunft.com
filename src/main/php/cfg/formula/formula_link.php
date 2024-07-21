@@ -549,7 +549,7 @@ class formula_link extends sandbox_link_with_type
         $log = new change($this->user());
         $log->set_action(change_action::UPDATE);
         if ($this->can_change()) {
-            $log->set_table(change_table_list::FORMULA_LINK);
+            $log->set_class(formula_link::class);
         } else {
             $log->set_table(change_table_list::FORMULA_LINK_USR);
         }

@@ -37,6 +37,12 @@
 
 namespace cfg\db;
 
+use cfg\log\change;
+use cfg\log\change_value;
+use cfg\log\change_values_big;
+use cfg\log\change_values_norm;
+use cfg\log\changes_big;
+use cfg\log\changes_norm;
 use shared\library;
 
 /**

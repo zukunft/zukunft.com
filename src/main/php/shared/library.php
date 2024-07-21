@@ -1671,17 +1671,15 @@ class library
      */
     function class_to_table(string $class): string
     {
-        $result = $this->class_to_name($class) . sql_db::TABLE_EXTENSION;
+        $result = $this->class_to_name($class);
         // for some lists and exceptions
-        switch ($class) {
-            /*
-            case phrase_types::class;
-                $result = str_replace('_typess', '_types', $result);
-                break;
-            */
-            case sys_log_status::class;
-                $result = str_replace('_statuss', '_status', $result);
-                break;
+        if ($class != changes_norm::class
+            and $class != changes_big::class
+            and $class != change_values_prime::class
+            and $class != change_values_norm::class
+            and $class != change_values_big::class
+            and $class != sys_log_status::class) {
+            $result .= sql_db::TABLE_EXTENSION;
         }
         return $result;
     }

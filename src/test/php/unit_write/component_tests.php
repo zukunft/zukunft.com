@@ -115,7 +115,7 @@ class component_tests
 
         // check if the component adding has been logged
         $log = new change($t->usr1);
-        $log->set_table(change_table_list::VIEW_COMPONENT);
+        $log->set_class(component::class);
         $log->set_field(component::FLD_NAME);
         $log->row_id = $cmp->id();
         $result = $log->dsp_last(true);

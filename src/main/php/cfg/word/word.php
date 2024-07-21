@@ -1647,7 +1647,7 @@ class word extends sandbox_typed
 
         $log = new change($this->user());
         $log->set_action(change_action::UPDATE);
-        $log->set_table(change_table_list::WORD);
+        $log->set_class(word::class);
         $log->set_field(self::FLD_VIEW);
         if ($this->view_id() > 0) {
             $msk_old = new view($this->user());
