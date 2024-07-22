@@ -63,7 +63,6 @@ class word_tests
         $sc = new sql();
         $t->name = 'word->';
         $t->resource_path = 'db/word/';
-        $json_file = 'unit/word/second.json';
         $usr->set_id(1);
 
 
@@ -138,6 +137,7 @@ class word_tests
 
         $t->subheader('word im- and export unit tests');
 
+        $json_file = 'unit/word/second.json';
         $t->assert_json_file(new word($usr), $json_file);
 
         $test_name = 'check if database would not be updated if only the name is given in import';

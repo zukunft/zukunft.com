@@ -634,12 +634,12 @@ class change extends change_log
             }
             if ($this->old_value <> '') {
                 if ($this->new_value <> '') {
-                    $result .= 'changed ' . $this->old_value . ' to ' . $this->new_value;
+                    $result .= 'changed "' . $this->old_value . '" to "' . $this->new_value . '"';
                 } else {
-                    $result .= 'deleted ' . $this->old_value;
+                    $result .= 'deleted "' . $this->old_value . '"';;
                 }
             } else {
-                $result .= 'added ' . $this->new_value;
+                $result .= 'added "' . $this->new_value . '"';;
             }
         }
         return $result;

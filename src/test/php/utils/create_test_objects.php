@@ -163,16 +163,16 @@ use shared\library;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use shared\types\view_type;
-use unit_write\component_link_tests;
-use unit_write\component_tests;
-use unit_write\formula_link_tests;
-use unit_write\formula_tests;
-use unit_write\phrase_group_tests;
-use unit_write\source_tests;
-use unit_write\triple_tests;
-use unit_write\value_tests;
-use unit_write\view_tests;
-use unit_write\word_tests;
+use unit_write\component_link_write_tests;
+use unit_write\component_write_tests;
+use unit_write\formula_link_write_tests;
+use unit_write\formula_write_tests;
+use unit_write\group_write_tests;
+use unit_write\source_write_tests;
+use unit_write\triple_write_tests;
+use unit_write\value_write_tests;
+use unit_write\view_write_tests;
+use unit_write\word_write_tests;
 
 class create_test_objects extends test_base
 {
@@ -3465,7 +3465,21 @@ class create_test_objects extends test_base
         }
 
         $dsp = $this->add_view($dsp_name, $test_usr);
-        $this->display('view', $dsp_name, $dsp->name());
+        $this->display('view', $dsp_name, $dsp->name(), test_base::TIMEOUT_LIMIT_DB);
+        return $dsp;
+    }
+
+    function del_view(string $dsp_name, ?user $test_usr = null): view
+    {
+        if ($test_usr == null) {
+            $test_usr = $this->usr1;
+        }
+
+        $dsp = $this->load_view($dsp_name, $test_usr);
+        if ($dsp->id() != 0) {
+            $dsp->del_links();
+            $dsp->del();
+        }
         return $dsp;
     }
 
@@ -3573,17 +3587,17 @@ class create_test_objects extends test_base
      */
     function create_test_db_entries(all_tests $t): void
     {
-        (new word_tests())->create_test_words($t);
-        (new triple_tests())->create_test_triples($t);
-        (new triple_tests())->create_base_times($t);
-        (new phrase_group_tests())->create_test_groups($t);
-        (new source_tests())->create_test_sources($t);
-        (new formula_tests())->create_test_formulas($t);
-        (new formula_link_tests())->create_test_formula_links($t);
-        (new view_tests())->create_test_views($t);
-        (new component_tests())->create_test_components($t);
-        (new component_link_tests())->create_test_component_links($t);
-        (new value_tests())->create_test_values($t);
+        (new word_write_tests())->create_test_words($t);
+        (new triple_write_tests())->create_test_triples($t);
+        (new triple_write_tests())->create_base_times($t);
+        (new group_write_tests())->create_test_groups($t);
+        (new source_write_tests())->create_test_sources($t);
+        (new formula_write_tests())->create_test_formulas($t);
+        (new formula_link_write_tests())->create_test_formula_links($t);
+        (new view_write_tests())->create_test_views($t);
+        (new component_write_tests())->create_test_components($t);
+        (new component_link_write_tests())->create_test_component_links($t);
+        (new value_write_tests())->create_test_values($t);
     }
 
 }

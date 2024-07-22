@@ -232,15 +232,9 @@ class change_log_list extends base_list
     {
         global $db_con;
 
-        $val_class = change_values_norm::class;
-        if ($val->is_prime()) {
-            $val_class = change_values_prime::class;
-        } elseif ($val->is_big()) {
-            $val_class = change_values_big::class;
-        }
         $qp = $this->load_sql_obj_fld(
             $db_con->sql_creator(),
-            $val_class,
+            value::class,
             $field_name,
             $val->id(),
             $usr);
@@ -397,25 +391,6 @@ class change_log_list extends base_list
         // prepare sql to get the view changes of a user sandbox object e.g. word
         $lib = new library();
         $table_name = $lib->class_to_table($class);
-        if ($class == value::class) {
-            $grp_id = new group_id();
-            $typ = $grp_id->table_type($id);
-            if ($typ == sql_type::PRIME) {
-                $table_name = $lib->class_to_table(change_values_prime::class);
-            } elseif ($typ == sql_type::BIG) {
-                $table_name = $lib->class_to_table(change_values_big::class);
-            } else {
-                $table_name = $lib->class_to_table(change_values_norm::class);
-            }
-        } elseif ($class == group::class) {
-            $grp_id = new group_id();
-            $typ = $grp_id->table_type($id);
-            if ($typ == sql_type::BIG) {
-                $table_name = $lib->class_to_table(changes_big::class);
-            } elseif ($typ != sql_type::PRIME) {
-                $table_name = $lib->class_to_table(changes_norm::class);
-            }
-        }
         $table_id = $change_table_list->id($table_name);
         $table_field_name = $table_id . $field_name;
         $field_id = $change_field_list->id($table_field_name);
