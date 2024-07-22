@@ -65,6 +65,7 @@ use html\log\user_log_display;
 use html\value\value AS value_dsp;
 use shared\library;
 use test\test_cleanup;
+use unit\html\verb;
 
 class change_log_tests
 {
@@ -195,14 +196,15 @@ class change_log_tests
         $t->subheader('log load list');
         $log_lst = new change_log_list();
         // TODO activate
-        //$t->assert_sql_by_user($sc, $log);
+        //$t->assert_sql_by_user($sc, $log_lst);
         $this->assert_sql_list_by_field(word::class, word::FLD_NAME, 1, $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(triple::class, triple::FLD_NAME_GIVEN, 1, $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group_16()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group_17_plus()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_value::FLD_VALUE, $t->value()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(value::class, sandbox_value::FLD_VALUE, $t->value_16()->id(), $log_lst, $db_con, $t);
-        //$this->assert_sql_list_by_field(value::class, sandbox_value::FLD_VALUE, $t->value_17_plus()->id(), $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(value::class, sandbox_value::FLD_VALUE, $t->value_17_plus()->id(), $log_lst, $db_con, $t);
 
         // sql to load the word by id
         $log_dsp = new user_log_display($usr);
@@ -231,13 +233,6 @@ class change_log_tests
         $wrd = $t->word();
         $trp = new triple($usr);
         $trp->set(1, triple_api::TN_PI);
-
-        // sql to load a list of log entry by word
-        $db_con->set_usr($usr->id());
-        $log_lst = new change_log_list();
-        // TODO activate Prio 2
-        //$this->assert_sql_list_by_obj_field($t, $db_con, $log_lst,            change_table_list::WORD, change_field_list::FLD_WORD_VIEW);
-        //$this->assert_sql_list_by_obj_field($t, $db_con, $log_lst,            change_table_list::TRIPLE, change_field_list::FLD_TRIPLE_VIEW);
 
 
         $t->subheader('API unit tests');

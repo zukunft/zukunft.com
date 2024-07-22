@@ -140,6 +140,17 @@ class change_log extends db_object_seq_id_user
         [self::FLD_ROW_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_ROW_ID_COM],
     );
 
+    // list of all classes that store change log entries
+    const LOG_CLASSES = [
+        change::class,
+        changes_norm::class,
+        changes_big::class,
+        change_values_prime::class,
+        change_values_norm::class,
+        change_values_big::class,
+        change_link::class
+    ];
+
 
     /*
      * object vars

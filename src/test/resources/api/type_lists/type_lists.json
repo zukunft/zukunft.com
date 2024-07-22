@@ -1440,6 +1440,12 @@
         "code_id": "groups_norm",
         "description": "",
         "id": 96
+      },
+      {
+        "name": "change_values_prime",
+        "code_id": "change_values_prime",
+        "description": "",
+        "id": 97
       }
     ],
     "change_field_list": [
@@ -6064,28 +6070,34 @@
         "id": 771
       },
       {
-        "name": "1NOW() AS db_now",
-        "code_id": "1NOW() AS db_now",
-        "description": "",
-        "id": 772
-      },
-      {
         "name": "12formula_link_type_id",
         "code_id": "12formula_link_type_id",
         "description": "",
-        "id": 773
+        "id": 772
       },
       {
         "name": "13formula_link_type_id",
         "code_id": "13formula_link_type_id",
         "description": "",
-        "id": 774
+        "id": 773
       },
       {
         "name": "96group_name",
         "code_id": "96group_name",
         "description": "",
+        "id": 774
+      },
+      {
+        "name": "97numeric_value",
+        "code_id": "97numeric_value",
+        "description": "",
         "id": 775
+      },
+      {
+        "name": "1NOW() AS db_now",
+        "code_id": "1NOW() AS db_now",
+        "description": "",
+        "id": 776
       }
     ],
     "verbs": [

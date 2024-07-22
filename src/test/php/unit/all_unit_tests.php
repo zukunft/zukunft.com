@@ -144,6 +144,7 @@ use unit\html\view_list as view_list_html_tests;
 use unit\html\word as word_html_tests;
 use unit\html\word_list as word_list_html_tests;
 use unit\import_tests as import_tests;
+use unit_read\phrase_group_tests;
 use unit_ui\local_ui_tests;
 
 class all_unit_tests extends test_cleanup

@@ -768,3 +768,8 @@ change_field_id,change_field_name,table_id,description
 768,user_id,17,
 769,component_link_type_id,17,
 770,source_id,24,
+771,numeric_value,95,
+772,formula_link_type_id,12,
+773,formula_link_type_id,13,
+774,group_name,96,
+775,numeric_value,97,

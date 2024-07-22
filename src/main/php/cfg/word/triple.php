@@ -1858,7 +1858,12 @@ class triple extends sandbox_link_typed implements JsonSerializable
             $result = $this->is_name_used_msg($this->name());
             if ($result == '') {
                 $log = $this->log_upd_field();
-                $log->old_value = $db_rec->name();
+                // TODO review
+                if ($db_rec->name() != '') {
+                    $log->old_value = $db_rec->name();
+                } else {
+                    $log->old_value = null;
+                }
                 // ignore excluded to not overwrite an existing name
                 $log->new_value = $this->name(true);
                 $log->std_value = $std_rec->name();
@@ -1907,7 +1912,11 @@ class triple extends sandbox_link_typed implements JsonSerializable
             $result = $this->is_name_used_msg($this->name_generated());
             if ($result == '') {
                 $log = $this->log_upd_field();
-                $log->old_value = $db_rec->name_generated;
+                if ($db_rec->name_generated == '') {
+                    $log->old_value = null;
+                } else {
+                    $log->old_value = $db_rec->name_generated;
+                }
                 $log->new_value = $this->name_generated();
                 $log->std_value = $std_rec->name_generated;
                 $log->row_id = $this->id;
