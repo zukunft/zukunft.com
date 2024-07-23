@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -41,7 +41,6 @@ use api\formula\formula as formula_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
-use cfg\db\sql_type_list;
 use cfg\phrase_type;
 use cfg\word;
 use api\word\word as word_api;

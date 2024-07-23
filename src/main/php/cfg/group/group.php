@@ -682,14 +682,13 @@ class group extends sandbox_multi
     /**
      * load the standard value use by most users for the given phrase group and time
      * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @param string $class the name of this class to be delivered to the parent function
      * @return bool true if the standard value has been loaded
      */
-    function load_standard(?sql_par $qp = null, string $class = self::class): bool
+    function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
         $qp = $this->load_standard_sql($db_con->sql_creator());
-        return parent::load_standard($qp, $class);
+        return parent::load_standard($qp, $this::class);
     }
 
     /**
@@ -797,13 +796,12 @@ class group extends sandbox_multi
     /**
      * create the SQL to load the default group always by the id
      * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, string $class = self::class, array $fld_lst = []): sql_par
+    function load_standard_sql(sql $sc, array $fld_lst = []): sql_par
     {
-        return parent::load_standard_sql($sc, $class, self::FLD_NAMES);
+        return parent::load_standard_sql($sc, self::FLD_NAMES);
     }
 
 

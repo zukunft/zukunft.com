@@ -800,10 +800,9 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * load the triple parameters for all users
      *
      * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @param string $class the name of this class to be delivered to the parent function
      * @return bool true if the standard triple has been loaded
      */
-    function load_standard(?sql_par $qp = null, string $class = self::class): bool
+    function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
 
@@ -838,13 +837,12 @@ class triple extends sandbox_link_typed implements JsonSerializable
      * create the SQL to load the default triple always by the id
      *
      * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc): sql_par
     {
-        $sc->set_class($class);
-        $qp = new sql_par($class, new sql_type_list([sql_type::NORM]));
+        $sc->set_class($this::class);
+        $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
         $qp->name .= $this->load_sql_name_ext();
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
@@ -1300,7 +1298,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
             if ($key == exp_obj::FLD_VIEW) {
                 $wrd_view = new view($this->user());
                 if ($do_save) {
-                    $wrd_view->load_by_name($value, view::class);
+                    $wrd_view->load_by_name($value);
                     if ($wrd_view->id == 0) {
                         $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
                     } else {

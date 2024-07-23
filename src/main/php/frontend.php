@@ -33,14 +33,6 @@
 const SHARED_PATH = PHP_PATH . 'shared' . DIRECTORY_SEPARATOR;
 const SHARED_TYPES_PATH = SHARED_PATH . 'types' . DIRECTORY_SEPARATOR;
 
-// path of the shared api objects
-const API_PATH = PHP_PATH . 'api' . DIRECTORY_SEPARATOR;
-const API_USER_PATH = API_PATH . 'user' . DIRECTORY_SEPARATOR;
-const API_SANDBOX_PATH = API_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
-const API_WORD_PATH = API_PATH . 'word' . DIRECTORY_SEPARATOR;
-const API_PHRASE_PATH = API_PATH . 'phrase' . DIRECTORY_SEPARATOR;
-const API_COMPONENT_PATH = API_PATH . 'component' . DIRECTORY_SEPARATOR;
-
 // path of the pure html frontend objects
 const WEB_PATH = PHP_PATH . 'web' . DIRECTORY_SEPARATOR;
 const LOG_PATH = WEB_PATH . 'log' . DIRECTORY_SEPARATOR;

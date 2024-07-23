@@ -347,7 +347,8 @@ class db_object_seq_id extends db_object
         global $db_con;
 
         log_debug($id);
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_id($sc, $id);
         return $this->load($qp);
     }
 

@@ -113,7 +113,7 @@ class formula_link_write_tests
         //     so even if the word is linked the word link is nevertheless false
         // TODO add a check that the word is linked if the second user activates the word
         $frm = new formula($t->usr2);
-        $frm->load_by_name(formula_api::TN_RENAMED, formula::class);
+        $frm->load_by_name(formula_api::TN_RENAMED);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;
@@ -123,7 +123,7 @@ class formula_link_write_tests
 
         // if second user removes the new link
         $frm = new formula($t->usr2);
-        $frm->load_by_name(formula_api::TN_RENAMED, formula::class);
+        $frm->load_by_name(formula_api::TN_RENAMED);
         $phr = new phrase($t->usr2);
         $phr->load_by_name(word_api::TN_RENAMED);
         $result = $frm->unlink_phr($phr);
@@ -144,7 +144,7 @@ class formula_link_write_tests
 
         // ... check if the link is really not used any more for the second user
         $frm = new formula($t->usr2);
-        $frm->load_by_name(formula_api::TN_RENAMED, formula::class);
+        $frm->load_by_name(formula_api::TN_RENAMED);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;

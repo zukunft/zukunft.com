@@ -60,7 +60,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::DSP_VERB_DEL);
+    $msk->load_by_code_id(controller::MC_VERB_DEL);
     $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change if finished
 
     // get the parameters

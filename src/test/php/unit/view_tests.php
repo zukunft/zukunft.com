@@ -2,8 +2,8 @@
 
 /*
 
-  test/unit/view.php - unit testing of the view functions
-  ------------------
+    test/unit/view.php - unit testing of the view functions
+    ------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -57,7 +57,6 @@ class view_tests
         $sc = new sql();
         $t->name = 'view->';
         $t->resource_path = 'db/view/';
-        $json_file = 'unit/view/car_costs.json';
         $usr->set_id(1);
 
 
@@ -137,6 +136,7 @@ class view_tests
         $t->assert_sql_delete($sc, $msk, [sql_type::USER, sql_type::EXCLUDE]);
 
         $t->subheader('Im- and Export tests');
+        $json_file = 'unit/view/car_costs.json';
         $t->assert_json_file(new view($usr), $json_file);
 
 

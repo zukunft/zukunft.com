@@ -238,7 +238,6 @@ class word extends sandbox_typed
         $this->reset();
         parent::__construct($usr);
 
-        $lib = new library();
         $this->rename_can_switch = UI_CAN_CHANGE_WORD_NAME;
     }
 
@@ -499,7 +498,7 @@ class word extends sandbox_typed
             if ($key == exp_obj::FLD_VIEW) {
                 $wrd_view = new view($this->user());
                 if ($do_save) {
-                    $wrd_view->load_by_name($value, view::class);
+                    $wrd_view->load_by_name($value);
                     if ($wrd_view->id == 0) {
                         $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
                     } else {
@@ -621,14 +620,13 @@ class word extends sandbox_typed
     /**
      * load the word parameters for all users
      * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @param string $class the name of this class to be delivered to the parent function
      * @return bool true if the standard word has been loaded
      */
-    function load_standard(?sql_par $qp = null, string $class = self::class): bool
+    function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
         $qp = $this->load_standard_sql($db_con->sql_creator());
-        $result = parent::load_standard($qp, $class);
+        $result = parent::load_standard($qp);
 
         if ($result) {
             $result = $this->load_owner();
@@ -640,12 +638,11 @@ class word extends sandbox_typed
      * create the SQL to load the default word always by the id
      *
      * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc): sql_par
     {
-        $sc->set_class(word::class);
+        $sc->set_class($this::class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -653,7 +650,7 @@ class word extends sandbox_typed
             array(user::FLD_ID)
         ));
 
-        return parent::load_standard_sql($sc, $class);
+        return parent::load_standard_sql($sc);
     }
 
     /**

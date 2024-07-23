@@ -60,7 +60,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::DSP_VERBS);
+    $msk->load_by_code_id(controller::MC_VERBS);
 
     // show the header
     $msk_dsp = new view_dsp($msk->api_json());

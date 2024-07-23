@@ -56,14 +56,14 @@ class phrase_read_tests
 
         $test_name = 'load phrase ' . word_api::TN_READ . ' by word name and id';
         $phr = new phrase($t->usr1);
-        $phr->load_by_name(word_api::TN_READ, phrase::class);
+        $phr->load_by_name(word_api::TN_READ);
         $wrd_by_id = new phrase($t->usr1);
         $wrd_by_id->load_by_id($phr->id(), phrase::class);
         $t->assert($test_name, $wrd_by_id->name(), word_api::TN_READ);
 
         $test_name = 'load phrase ' . triple_api::TN_PI . ' by triple name and id';
         $phr = new phrase($t->usr1);
-        $phr->load_by_name(triple_api::TN_PI, phrase::class);
+        $phr->load_by_name(triple_api::TN_PI);
         $wrd_by_id = new phrase($t->usr1);
         $wrd_by_id->load_by_id($phr->id(), phrase::class);
         $t->assert($test_name, $wrd_by_id->name(), triple_api::TN_PI);

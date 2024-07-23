@@ -63,7 +63,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::DSP_VALUE_DEL);
+    $msk->load_by_code_id(controller::MC_VALUE_DEL);
     $back = $_GET[controller::API_BACK];  // the page from which the value deletion has been called
 
     // get the parameters

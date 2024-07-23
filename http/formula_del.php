@@ -59,7 +59,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($system_views->id(controller::DSP_FORMULA_DEL));
+    $msk->load_by_id($system_views->id(controller::MC_FORMULA_DEL));
     $back = $_GET[controller::API_BACK];
 
     // get the parameters

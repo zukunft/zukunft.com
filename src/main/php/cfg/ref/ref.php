@@ -456,15 +456,46 @@ class ref extends sandbox_link_with_type
      */
 
     /**
+     * load a verb by the verb name
+     * @param string $external_key_name the name of the external key for the reference
+     * @return int the id of the verb found and zero if nothing is found
+     */
+    function load_by_ex_key(string $external_key_name): int
+    {
+        global $db_con;
+
+        log_debug($external_key_name);
+        $qp = $this->load_sql_by_id($db_con, $external_key_name);
+        return $this->load($qp);
+    }
+
+    /**
+     * just set the class name for the user sandbox function
+     * load a reference object by database id
+     * @param int $phr_id the id of the phrase that is referenced
+     * @param int $type_id the id of the reference type
+     * @param string $class the reference class name
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_link_ids(int $phr_id, int $type_id, string $class = self::class): int
+    {
+        global $db_con;
+
+        log_debug();
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_link_ids($sc, $phr_id, $type_id);
+        return $this->load($qp);
+    }
+
+    /**
      * create the SQL to load the default ref always by the id
      *
      * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc): sql_par
     {
-        $sc->set_class($class);
+        $sc->set_class($this::class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -472,20 +503,19 @@ class ref extends sandbox_link_with_type
             array(user::FLD_ID)
         ));
 
-        return parent::load_standard_sql($sc, $class);
+        return parent::load_standard_sql($sc);
     }
 
     /**
      * load the ref parameters for all users
      * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @param string $class the name of this class to be delivered to the parent function
      * @return bool true if the standard ref has been loaded
      */
-    function load_standard(?sql_par $qp = null, string $class = self::class): bool
+    function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
         $qp = $this->load_standard_sql($db_con->sql_creator());
-        $result = parent::load_standard($qp, $class);
+        $result = parent::load_standard($qp);
 
         if ($result) {
             $result = $this->load_owner();
@@ -539,63 +569,9 @@ class ref extends sandbox_link_with_type
         return $this->id();
     }
 
-    /**
-     * just set the class name for the user sandbox function
-     * load a reference object by database id
-     * @param int $id the id of the reference
-     * @param string $class the reference class name
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id, string $class = self::class): int
-    {
-        return parent::load_by_id($id, $class);
-    }
-
-    /**
-     * just set the class name for the user sandbox function
-     * load a reference object by database id
-     * @param int $phr_id the id of the phrase that is referenced
-     * @param int $type_id the id of the reference type
-     * @param string $class the reference class name
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_link_ids(int $phr_id, int $type_id, string $class = self::class): int
-    {
-        global $db_con;
-
-        log_debug();
-        $qp = $this->load_sql_by_link_ids($db_con->sql_creator(), $phr_id, $type_id);
-        return $this->load($qp);
-    }
-
-    /**
-     * just set the class name for the user sandbox function
-     * load a reference object by name
-     * @param string $name the name reference
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_name(string $name): int
-    {
-        return parent::load_by_name($name, $this::class);
-    }
-
     function all_sandbox_fields(): array
     {
         return self::ALL_SANDBOX_FLD_NAMES;
-    }
-
-    /**
-     * load a verb by the verb name
-     * @param string $external_key_name the name of the external key for the reference
-     * @return int the id of the verb found and zero if nothing is found
-     */
-    function load_by_ex_key(string $external_key_name): int
-    {
-        global $db_con;
-
-        log_debug($external_key_name);
-        $qp = $this->load_sql_by_id($db_con, $external_key_name, self::class);
-        return $this->load($qp);
     }
 
     /**

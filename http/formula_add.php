@@ -63,7 +63,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::DSP_FORMULA_ADD);
+    $msk->load_by_code_id(controller::MC_FORMULA_ADD);
     $back = $_GET[controller::API_BACK];
 
     // init the formula object

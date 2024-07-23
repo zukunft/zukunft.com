@@ -53,7 +53,7 @@ class language_read_tests
 
         $test_name = 'load language ' . language::DEFAULT . ' by name and id';
         $lan = new language(language::DEFAULT);
-        $lan->load_by_name(language::TN_READ, language::class);
+        $lan->load_by_name(language::TN_READ);
         $lan_by_id = new language(language::DEFAULT);
         $lan_by_id->load_by_id($lan->id(), language::class);
         $t->assert($test_name, $lan_by_id->name(), language::TN_READ);

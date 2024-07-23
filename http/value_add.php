@@ -60,7 +60,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::DSP_VALUE_ADD);
+    $msk->load_by_code_id(controller::MC_VALUE_ADD);
     $back = $_GET[controller::API_BACK];     // the word id from which this value change has been called (maybe later any page)
 
     // create the object to store the parameters so that if the add form is shown again it is already filled

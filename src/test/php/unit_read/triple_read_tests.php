@@ -61,7 +61,7 @@ class triple_read_tests
 
         $test_name = 'load triple ' . triple_api::TN_READ . ' by name and id';
         $trp = new triple($t->usr1);
-        $trp->load_by_name(triple_api::TN_READ, triple::class);
+        $trp->load_by_name(triple_api::TN_READ);
         $trp_by_id = new triple($t->usr1);
         $trp_by_id->load_by_id($trp->id(), triple::class);
         $t->assert($test_name, $trp_by_id->name(), triple_api::TN_READ);

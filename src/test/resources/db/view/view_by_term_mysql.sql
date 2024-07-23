@@ -6,7 +6,6 @@ PREPARE view_by_term FROM
                 s.code_id,
                 l.term_id,
                 l.type_id,
-                l.link_type_id,
                 l.view_id,
                 IF(u.view_name     IS NULL, s.view_name,     u.view_name)     AS view_name,
                 IF(u.description   IS NULL, s.description,   u.description)   AS description,

@@ -79,7 +79,7 @@ if ($usr->id() > 0) {
 
         // prepare the display to edit the view
         $msk = new view($usr);
-        $msk->set_id($system_views->id(controller::DSP_ERR_LOG));
+        $msk->set_id($system_views->id(controller::MC_ERR_LOG));
         $msk_dsp = new view_dsp($msk->api_json());
         $result .= $msk_dsp->dsp_navbar($back);
         //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";

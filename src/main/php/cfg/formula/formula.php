@@ -530,14 +530,13 @@ class formula extends sandbox_typed
     /**
      * load the formula parameters for all users
      * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @param string $class the name of this class to be delivered to the parent function
      * @return bool true if the standard formula has been loaded
      */
-    function load_standard(?sql_par $qp = null, string $class = self::class): bool
+    function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
         $qp = $this->load_standard_sql($db_con->sql_creator());
-        $result = parent::load_standard($qp, $class);
+        $result = parent::load_standard($qp, $this::class);
 
         if ($result) {
             $result = $this->load_owner();
@@ -549,12 +548,11 @@ class formula extends sandbox_typed
      * create the SQL to load the default formula always by the id
      *
      * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc): sql_par
     {
-        $sc->set_class($class);
+        $sc->set_class($this::class);
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
@@ -562,7 +560,7 @@ class formula extends sandbox_typed
             array(user::FLD_ID)
         ));
 
-        return parent::load_standard_sql($sc, $class);
+        return parent::load_standard_sql($sc);
     }
 
     /**
@@ -2226,7 +2224,7 @@ class formula extends sandbox_typed
                 $result .= $this->save_field_user($db_con, $log);
                 // in case a word link exist, change also the name of the word
                 $wrd = new word($this->user());
-                $wrd->load_by_name($db_rec->name(), word::class);
+                $wrd->load_by_name($db_rec->name());
                 $wrd->set_name($this->name());
                 $result .= $wrd->save();
 
@@ -2251,7 +2249,7 @@ class formula extends sandbox_typed
             log_debug('->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
             // in case a word link exist, change also the name of the word
             $wrd = new word($this->user());
-            $wrd->load_by_name($db_rec->name(), word::class);
+            $wrd->load_by_name($db_rec->name());
             $wrd->set_name($this->name());
             $add_result = $wrd->save();
             if ($add_result == '') {

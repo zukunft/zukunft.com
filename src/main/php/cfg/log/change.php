@@ -61,6 +61,8 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\formula;
+use cfg\group\group;
+use cfg\group\group_id;
 use cfg\type_object;
 use cfg\user;
 use cfg\value\value;
@@ -154,12 +156,20 @@ class change extends change_log
         if ($result) {
             $this->action_id = $db_row[self::FLD_ACTION];
             $this->field_id = $db_row[self::FLD_FIELD_ID];
-            $this->row_id = $db_row[self::FLD_ROW_ID];
+            if (array_key_exists(self::FLD_ROW_ID, $db_row)) {
+                $this->row_id = $db_row[self::FLD_ROW_ID];
+            } elseif (array_key_exists(group::FLD_ID, $db_row)) {
+                $this->row_id = $db_row[group::FLD_ID];
+            }
             $this->set_time_str($db_row[self::FLD_TIME]);
             $this->old_value = $db_row[self::FLD_OLD_VALUE];
-            $this->old_id = $db_row[self::FLD_OLD_ID];
+            if (array_key_exists(self::FLD_OLD_ID, $db_row)) {
+                $this->old_id = $db_row[self::FLD_OLD_ID];
+            }
             $this->new_value = $db_row[self::FLD_NEW_VALUE];
-            $this->new_id = $db_row[self::FLD_NEW_ID];
+            if (array_key_exists(self::FLD_NEW_ID, $db_row)) {
+                $this->new_id = $db_row[self::FLD_NEW_ID];
+            }
 
             $fld_tbl = $change_field_list->get($this->field_id);
             $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);

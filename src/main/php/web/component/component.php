@@ -560,11 +560,11 @@ class component extends sandbox_typed
 
         $hidden_fields = '';
         if ($this->id <= 0) {
-            $script = controller::DSP_COMPONENT_ADD;
+            $script = controller::MC_COMPONENT_ADD;
             $fld_ext = '_add';
             $header = $html->text_h2('Create a view element');
         } else {
-            $script = controller::DSP_COMPONENT_EDIT;
+            $script = controller::MC_COMPONENT_EDIT;
             $fld_ext = '';
             $header = $html->text_h2('Change "' . $this->name . '"');
             $hidden_fields .= $html->form_hidden("id", $this->id);

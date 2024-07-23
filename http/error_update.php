@@ -66,7 +66,7 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     $msk = new view($usr);
-    $msk->set_id($system_views->id(controller::DSP_ERR_UPD));
+    $msk->set_id($system_views->id(controller::MC_ERR_UPD));
     $msk_dsp = new view_dsp($msk->api_json());
     $result .= $msk_dsp->dsp_navbar($back);
 

@@ -5,7 +5,6 @@ PREPARE view_term_link_by_id (bigint,bigint) AS
         s.user_id,
         s.term_id,
         s.type_id,
-        s.link_type_id,
         s.view_id,
         CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description   ELSE u.description   END AS description,
         CASE WHEN (u.excluded          IS     NULL) THEN s.excluded      ELSE u.excluded      END AS excluded,

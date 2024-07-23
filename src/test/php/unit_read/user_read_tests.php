@@ -55,7 +55,7 @@ class user_read_tests
 
         $test_name = 'load user ' . user::SYSTEM_TEST_NAME . ' by name and id';
         $usr = new user();
-        $usr->load_by_name(user::SYSTEM_TEST_NAME, user::class);
+        $usr->load_by_name(user::SYSTEM_TEST_NAME);
         $usr_by_id = new user($usr);
         $usr_by_id->load_by_id($usr->id(), user::class);
         $t->assert($test_name, $usr_by_id->name, user::SYSTEM_TEST_NAME);

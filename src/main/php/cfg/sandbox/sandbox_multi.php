@@ -450,12 +450,11 @@ class sandbox_multi extends db_object_multi_user
     /**
      * create the SQL to load the single default value always by the id
      * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc): sql_par
     {
-        $qp = new sql_par($class, new sql_type_list([sql_type::NORM]));
+        $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
         $qp->name .= sql_db::FLD_ID;
 
         $sc->set_name($qp->name);
@@ -487,16 +486,15 @@ class sandbox_multi extends db_object_multi_user
     /**
      * load the object parameters for all users
      * @param sql_par|null $qp the query parameter created by the function of the child object e.g. word->load_standard
-     * @param string $class the name of the child class from where the call has been triggered
      * @return bool true if the standard object has been loaded
      */
-    function load_standard(?sql_par $qp = null, string $class = ''): bool
+    function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
         $result = false;
 
         if ($this->id <= 0) {
-            log_err('The ' . $class . ' id must be set to load ' . $class, $class . '->load_standard');
+            log_err('The ' . $this::class . ' id must be set to load ' . $this::class, $this::class . '->load_standard');
         } else {
             $db_row = $db_con->get1($qp);
             $result = $this->row_mapper_sandbox_multi($db_row, $qp->ext, true, false);

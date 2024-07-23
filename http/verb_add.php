@@ -62,7 +62,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::DSP_VERB_ADD);
+    $msk->load_by_code_id(controller::MC_VERB_ADD);
     $back = $_GET[controller::API_BACK]; // the calling word which should be displayed after saving
 
     if (!$usr->is_admin()) {

@@ -53,13 +53,11 @@ class view_term_link extends sandbox_link_typed
     const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
     const FLD_TYPE_COM = '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
     const FLD_TYPE = 'type_id';
-    const FLD_LINK_TYPE = 'link_type_id';
 
     // all database field names excluding the id
     const FLD_NAMES = array(
         term::FLD_ID,
         self::FLD_TYPE,
-        self::FLD_LINK_TYPE,
         view::FLD_ID
     );
     //

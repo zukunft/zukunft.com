@@ -179,11 +179,11 @@ class api_tests
      */
     function run_ui_test(test_cleanup $t): void
     {
-        $t->assert_view(controller::DSP_WORD, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(controller::DSP_WORD_ADD, $t->usr1, new word($t->usr1));
-        $t->assert_view(controller::DSP_WORD_EDIT, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(controller::DSP_WORD_DEL, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(controller::DSP_TRIPLE_ADD, $t->usr1, new triple($t->usr1));
+        $t->assert_view(controller::MC_WORD, $t->usr1, new word($t->usr1), 1);
+        $t->assert_view(controller::MC_WORD_ADD, $t->usr1, new word($t->usr1));
+        $t->assert_view(controller::MC_WORD_EDIT, $t->usr1, new word($t->usr1), 1);
+        $t->assert_view(controller::MC_WORD_DEL, $t->usr1, new word($t->usr1), 1);
+        $t->assert_view(controller::MC_TRIPLE_ADD, $t->usr1, new triple($t->usr1));
         //$t->assert_view(controller::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1);
         // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
     }

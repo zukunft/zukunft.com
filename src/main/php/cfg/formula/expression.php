@@ -939,7 +939,7 @@ class expression
                 // check for words
                 if ($db_sym == '') {
                     $wrd = new word($this->usr);
-                    $wrd->load_by_name($name, word::class);
+                    $wrd->load_by_name($name);
                     if ($wrd->id() > 0) {
                         $db_sym = self::WORD_START . $wrd->id() . self::WORD_END;
                         log_debug('found word "' . $db_sym . '" for "' . $name . '"');
@@ -949,7 +949,7 @@ class expression
                 // check for triple
                 if ($db_sym == '') {
                     $trp = new triple($this->usr);
-                    $trp->load_by_name($name, triple::class);
+                    $trp->load_by_name($name);
                     if ($trp->id() > 0) {
                         $db_sym = self::TRIPLE_START . $trp->id() . self::TRIPLE_END;
                         log_debug('found triple "' . $db_sym . '" for "' . $name . '"');

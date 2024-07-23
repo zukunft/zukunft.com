@@ -59,7 +59,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::DSP_TRIPLE_EDIT);
+    $msk->load_by_code_id(controller::MC_TRIPLE_EDIT);
     $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change if finished
 
     // create the link object to have a place to update the parameters

@@ -860,10 +860,9 @@ class sandbox_value extends sandbox_multi
     /**
      * load the value parameters for all users
      * @param sql_par|null $qp the query parameter created by the function of the child object e.g. word->load_standard
-     * @param string $class the name of the child class from where the call has been triggered
      * @return bool true if the standard object has been loaded
      */
-    function load_standard(?sql_par $qp = null, string $class = ''): bool
+    function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
 
@@ -876,13 +875,11 @@ class sandbox_value extends sandbox_multi
      * the $sc fields must be set by the child function
      *
      * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_standard_sql(
         sql    $sc,
-        string $class = self::class,
         array  $fld_lst = []
     ): sql_par
     {
@@ -890,9 +887,9 @@ class sandbox_value extends sandbox_multi
         $sc_par_lst->add($this->table_type());
         $sc_par_lst->add(sql_type::NORM);
         $id_ext = $this->table_extension();
-        $qp = new sql_par($class, $sc_par_lst, '', $id_ext);
+        $qp = new sql_par($this::class, $sc_par_lst, '', $id_ext);
         $qp->name .= sql_db::FLD_ID;
-        $sc->set_class($class, $sc_par_lst);
+        $sc->set_class($this::class, $sc_par_lst);
         $sc->set_name($qp->name);
         $sc->set_id_field($this->id_field());
         $sc->set_fields($fld_lst);

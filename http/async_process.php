@@ -65,7 +65,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::DSP_IMPORT);
+    $msk->load_by_code_id(controller::MC_IMPORT);
 
     if ($usr->is_admin()) {
 

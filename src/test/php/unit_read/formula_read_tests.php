@@ -61,7 +61,7 @@ class formula_read_tests
         $phr = new phrase($t->usr1);
         $phr->load_by_name(word_api::TN_READ);
         $frm = new formula($t->usr2);
-        $frm->load_by_name(formula_api::TN_RENAMED, formula::class);
+        $frm->load_by_name(formula_api::TN_RENAMED);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;

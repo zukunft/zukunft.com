@@ -49,11 +49,10 @@ class word_read_tests
     {
 
         global $db_con;
-        global $usr;
         global $phrase_types;
 
         // init
-        $t->name = 'word db read->';
+        $t->name = 'word read->';
         $t->resource_path = 'db/word/';
 
 
@@ -71,19 +70,19 @@ class word_read_tests
         // TODO load plural, type and view
 
 
-        $t->subheader('Word types tests');
+        $t->subheader('word types tests');
 
-        // load the word types
+        $test_name = 'load the phrase types';
         $lst = new phrase_types();
         $result = $lst->load($db_con);
-        $t->assert('load types', $result, true);
+        $t->assert_true($test_name, $result);
 
-        // ... and check if at least the most critical is loaded
+        $test_name = 'check that at least ' . phrase_type::NORMAL . ' is loaded';
         $result = $phrase_types->id(phrase_type::NORMAL);
-        $t->assert('check type ' . phrase_type::NORMAL, $result, 1);
+        $t->assert($test_name, $result, 1);
 
 
-        $t->subheader('Word API object creation tests');
+        $t->subheader('word API object creation tests');
 
         $wrd = $t->load_word(word_api::TN_READ, $t->usr1);
         $t->assert_api_obj($wrd);
@@ -104,9 +103,9 @@ class word_read_tests
 
         // create word objects for testing
         $wrd = new word ($t->usr1);
-        $wrd->load_by_name(word_api::TN_READ, word::class);
+        $wrd->load_by_name(word_api::TN_READ);
         $wrd_scale = new word ($t->usr1);
-        $wrd_scale->load_by_name(word_api::TN_MIO, word::class);
+        $wrd_scale->load_by_name(word_api::TN_MIO);
         $phr = new phrase ($t->usr1);
         $phr->load_by_name(triple_api::TN_PI_NAME);
         $phr_grp = $t->load_phrase_group(array(triple_api::TN_PI));

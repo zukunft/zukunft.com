@@ -104,7 +104,7 @@ class html_tests
         //$t->assert_sql_name_unique($log_dsp->dsp_hist_links_sql($db_con, true));
 
         // button add
-        $url = $html->url(controller::DSP_WORD_ADD);
+        $url = $html->url(controller::MC_WORD_ADD);
         $t->html_test((new button($url))->add(messages::WORD_ADD), 'button_add', $t);
 
 

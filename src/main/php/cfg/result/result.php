@@ -470,10 +470,10 @@ class result extends sandbox_value
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, string $class = self::class, array $fld_lst = []): sql_par
+    function load_standard_sql(sql $sc, array $fld_lst = []): sql_par
     {
         $fld_lst = array_merge(self::FLD_NAMES, array(user::FLD_ID));
-        return parent::load_standard_sql($sc, $class, $fld_lst);
+        return parent::load_standard_sql($sc, $fld_lst);
     }
 
     /**

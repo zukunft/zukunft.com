@@ -443,16 +443,15 @@ class component_link extends sandbox_link_with_type
     /**
      * load the view component link parameters for all users
      * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @param string $class the name of this class to be delivered to the parent function
      * @return bool true if the standard view component link has been loaded
      */
-    function load_standard(?sql_par $qp = null, string $class = self::class): bool
+    function load_standard(?sql_par $qp = null): bool
     {
 
         global $db_con;
         $result = false;
 
-        $qp = $this->load_standard_sql($db_con->sql_creator(), $class);
+        $qp = $this->load_standard_sql($db_con->sql_creator(), $this::class);
 
         if ($qp->has_par()) {
             $db_dsl = $db_con->get1($qp);
@@ -468,18 +467,17 @@ class component_link extends sandbox_link_with_type
      * create an SQL statement to retrieve the parameters of the standard view component link from the database
      *
      * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc): sql_par
     {
         // try to get the search values from the objects
         if ($this->id <= 0) {
             $this->id = 0;
         }
 
-        $sc->set_class(self::class);
-        $qp = new sql_par(self::class);
+        $sc->set_class($this::class);
+        $qp = new sql_par($this::class);
         if ($this->id != 0) {
             $qp->name .= 'std_id';
         } else {

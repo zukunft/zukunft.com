@@ -118,7 +118,7 @@ if ($usr->id() > 0) {
                     $view_id = $wrd->calc_view_id();
                     if ($view_id <= 0) {
                         // if no one has set a view for this word, use the fallback view
-                        $view_id = $system_views->id(controller::DSP_WORD);
+                        $view_id = $system_views->id(controller::MC_WORD);
                     }
                 }
             }
@@ -136,7 +136,7 @@ if ($usr->id() > 0) {
 
             // use a fallback if the view is empty
             if ($dsp_text == '' or $msk->name() == '') {
-                $view_id = $system_views->id(controller::DSP_START);
+                $view_id = $system_views->id(controller::MC_START);
                 $msk->load_by_id($view_id, view::class);
                 $dsp_text = $msk_dsp->display($wrd, $back);
             }

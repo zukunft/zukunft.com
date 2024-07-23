@@ -61,23 +61,41 @@ class view_read_tests
         global $component_types;
 
         // init
-        $t->header('Unit database tests of the view class (src/main/php/model/value/view.php)');
-        $t->name = 'view read db->';
+        $t->name = 'view read->';
+        $t->resource_path = 'db/view/';
 
 
-        $t->subheader('View db read tests');
+        $t->header('view db read tests');
+
+        $t->subheader('view load');
 
         $test_name = 'load view ' . view_api::TN_READ . ' by name and id';
-        $dsp = new view($t->usr1);
-        $dsp->load_by_name(view_api::TN_READ, view::class);
+        $msk = new view($t->usr1);
+        $msk->load_by_name(view_api::TN_READ);
         $dsp_by_id = new view($t->usr1);
-        $dsp_by_id->load_by_id($dsp->id(), view::class);
+        $dsp_by_id->load_by_id($msk->id());
         $t->assert($test_name, $dsp_by_id->name(), view_api::TN_READ);
 
         $test_name = 'load the components of view ' . view_api::TN_READ . ' contains ' . component_api::TN_READ;
-        $dsp->load_components();
-        $t->assert_contains($test_name, $dsp->component_link_list()->names(), component_api::TN_READ);
+        $msk->load_components();
+        $t->assert_contains($test_name, $msk->component_link_list()->names(), component_api::TN_READ);
 
+        $test_name = 'load view by code id "' . controller::MC_WORD_ADD . '"';
+        $msk = new view($t->usr1);
+        $msk->load_by_code_id(controller::MC_WORD_ADD);
+        $t->assert($test_name, $msk->name(), view_api::TN_FORM_NEW);
+
+        $test_name = 'load view by phrase "' . controller::MC_WORD_ADD . '"';
+        $msk = new view($t->usr1);
+        // TODO activate
+        //$msk->load_by_phrase($t->phrase_pi());
+        //$t->assert($test_name, $msk->name(), view_api::TN_FORM_NEW);
+
+        $test_name = 'load view by term "' . controller::MC_WORD_ADD . '"';
+        $msk = new view($t->usr1);
+        // TODO activate
+        //$msk->load_by_term($t->formula()->term());
+        //$t->assert($test_name, $msk->name(), view_api::TN_FORM_NEW);
 
         $t->subheader('View types tests');
 
@@ -107,12 +125,12 @@ class view_read_tests
         $t->assert('load', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $system_views->id(controller::DSP_WORD);
+        $result = $system_views->id(controller::MC_WORD);
         $target = 0;
         if ($result > 0) {
             $target = $result; // just check if the id is found
         }
-        $t->assert('check' . controller::DSP_WORD, $result, $target);
+        $t->assert('check' . controller::MC_WORD, $result, $target);
 
         // check all system views
         // TODO activate Prio 2
@@ -126,7 +144,7 @@ class view_read_tests
 
         $test_name = 'load view component ' . component_api::TN_READ . ' by name and id';
         $cmp = new component($t->usr1);
-        $cmp->load_by_name(component_api::TN_READ, component::class);
+        $cmp->load_by_name(component_api::TN_READ);
         $cmp_by_id = new component($t->usr1);
         $cmp_by_id->load_by_id($cmp->id(), component::class);
         $t->assert($test_name, $cmp_by_id->name(), component_api::TN_READ);

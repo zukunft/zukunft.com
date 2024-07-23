@@ -64,7 +64,7 @@ class component_read_tests
 
         $test_name = 'load component link ' . view_api::TN_READ . ' to ' . component_api::TN_READ . ' by id';
         $dsp = new view($t->usr1);
-        $dsp->load_by_name(view_api::TN_READ, view::class);
+        $dsp->load_by_name(view_api::TN_READ);
         $cmp = new component($t->usr1);
         $cmp->load_by_name(component_api::TN_READ);
         $cmp_lnk = new component_link($t->usr1);

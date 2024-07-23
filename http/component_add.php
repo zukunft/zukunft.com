@@ -65,7 +65,7 @@ if ($usr->id() > 0) {
 
     // init the display object to show the standard elements such as the header
     $dsp_db = new view($usr);
-    $dsp_db->load_by_id($system_views->id(controller::DSP_COMPONENT_ADD));
+    $dsp_db->load_by_id($system_views->id(controller::MC_COMPONENT_ADD));
     $dsp = new view_dsp($dsp_db->api_json());
     // the calling stack to move back to page where the user has come from after adding the view component is done
     $back = $_GET[controller::API_BACK];

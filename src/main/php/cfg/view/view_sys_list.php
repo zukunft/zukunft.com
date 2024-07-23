@@ -164,8 +164,8 @@ class view_sys_list extends type_list
         parent::load_dummy();
         $dsp = new view($this->usr);
         $dsp->set_id(2);
-        $dsp->set_name(controller::DSP_WORD);
-        $dsp->code_id = controller::DSP_WORD;
+        $dsp->set_name(controller::MC_WORD);
+        $dsp->code_id = controller::MC_WORD;
         $this->add($dsp);
     }
 
@@ -174,7 +174,7 @@ class view_sys_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(controller::DSP_WORD);
+        return parent::id(controller::MC_WORD);
     }
 
 }

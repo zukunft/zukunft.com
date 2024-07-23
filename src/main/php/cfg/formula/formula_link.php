@@ -338,13 +338,12 @@ class formula_link extends sandbox_link_with_type
      * create an SQL statement to retrieve the parameters of the standard formula link from the database
      *
      * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc): sql_par
     {
-        $sc->set_class($class);
-        $qp = new sql_par($class, new sql_type_list([sql_type::NORM]));
+        $sc->set_class($this::class);
+        $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
         $qp->name .= $this->load_sql_name_extension();
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
@@ -367,10 +366,9 @@ class formula_link extends sandbox_link_with_type
      * load the standard formula link to check if the user has done some personal changes
      * e.g. switched off a formula assignment
      * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @param string $class the name of this class to be delivered to the parent function
      * @return bool true if the loading of the standard formula link been successful
      */
-    function load_standard(?sql_par $qp = null, string $class = self::class): bool
+    function load_standard(?sql_par $qp = null): bool
     {
 
         global $db_con;

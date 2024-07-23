@@ -71,7 +71,7 @@ if (!$db_con->connected()) {
 
         // show view header
         $msk = new view($usr);
-        $msk->set_id($system_views->id(controller::DSP_WORD_FIND));
+        $msk->set_id($system_views->id(controller::MC_WORD_FIND));
         $msk_dsp = new view_dsp($msk->api_json());
         $result .= $msk_dsp->dsp_navbar($back);
 

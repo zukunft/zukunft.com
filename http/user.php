@@ -83,7 +83,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::DSP_USER);
+    $msk->load_by_code_id(controller::MC_USER);
 
     // do user change
     $result .= $usr->upd_pars($_GET);

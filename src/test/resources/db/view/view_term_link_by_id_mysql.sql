@@ -5,7 +5,6 @@ PREPARE view_term_link_by_id FROM
         s.user_id,
         s.term_id,
         s.type_id,
-        s.link_type_id,
         s.view_id,
         IF(u.description   IS NULL, s.description,   u.description  ) AS description,
         IF(u.excluded      IS NULL, s.excluded,      u.excluded     ) AS excluded,

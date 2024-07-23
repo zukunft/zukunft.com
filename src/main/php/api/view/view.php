@@ -67,6 +67,7 @@ class view extends sandbox_typed_api
 
     // to test a system view (add word) as unit test without database
     const TN_FORM = 'Add word';
+    const TN_FORM_NEW = 'Add New Word';
     const TD_FORM = 'system form to add a word';
     const TC_FORM = 'word_add';
 

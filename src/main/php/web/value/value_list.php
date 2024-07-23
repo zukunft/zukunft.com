@@ -687,19 +687,19 @@ class value_list extends list_dsp
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
                     $result .= '    <td>';
-                    $url = $html->url(controller::DSP_VALUE_ADD, $val->id(), $back);
+                    $url = $html->url(controller::MC_VALUE_ADD, $val->id(), $back);
                     $btn = new button($url, $back);
                     $result .= \html\btn_add_value($val_phr_lst, Null, $this->phr->id());
 
                     $result .= '    </td>';
                 }
                 $result .= '    <td>';
-                $url = $html->url(controller::DSP_VALUE_EDIT, $val->id(), $back);
+                $url = $html->url(controller::MC_VALUE_EDIT, $val->id(), $back);
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->phr->id());
                 $result .= '    </td>';
                 $result .= '    <td>';
-                $url = $html->url(controller::DSP_VALUE_DEL, $val->id(), $back);
+                $url = $html->url(controller::MC_VALUE_DEL, $val->id(), $back);
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->phr->id());
                 $result .= '    </td>';

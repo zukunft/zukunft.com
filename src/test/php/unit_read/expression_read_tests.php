@@ -50,7 +50,7 @@ class expression_read_tests
 
         /*
         $frm = new formula($usr);
-        $frm->load_by_name(formula_api::TN_SECTOR, formula::class);
+        $frm->load_by_name(formula_api::TN_SECTOR);
         $result = $frm->usr_text;
         $target = '= "' . word_api::TN_COUNTRY . '" "differentiator" "' . word_api::TN_CANTON . '" / "' . word_api::TN_TOTAL . '"';
         $t->assert('expression->is_std if formula is changed by the user', $result, $target);

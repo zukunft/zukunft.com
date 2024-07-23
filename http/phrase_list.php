@@ -64,7 +64,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $dsp_db = new view($usr);
-    $dsp_db->load_by_code_id(controller::DSP_WORD_ADD);
+    $dsp_db->load_by_code_id(controller::MC_WORD_ADD);
     $dsp = new view_dsp($dsp_db->api_json());
     $back = $_GET[controller::API_BACK]; // the calling page which should be displayed after saving
 

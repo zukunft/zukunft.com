@@ -6,7 +6,6 @@ PREPARE view_by_term (bigint, bigint) AS
                 s.code_id,
                 l.term_id,
                 l.type_id,
-                l.link_type_id,
                 l.view_id,
                 CASE WHEN (u.view_name <> ''   IS NOT TRUE) THEN s.view_name     ELSE u.view_name     END AS view_name,
                 CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description   ELSE u.description   END AS description,
