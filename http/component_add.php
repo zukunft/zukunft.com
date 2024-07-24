@@ -66,7 +66,7 @@ if ($usr->id() > 0) {
     // init the display object to show the standard elements such as the header
     $dsp_db = new view($usr);
     $dsp_db->load_by_id($system_views->id(controller::MC_COMPONENT_ADD));
-    $dsp = new view_dsp($dsp_db->api_json());
+    $msk = new view_dsp($dsp_db->api_json());
     // the calling stack to move back to page where the user has come from after adding the view component is done
     $back = $_GET[controller::API_BACK];
 
@@ -80,7 +80,7 @@ if ($usr->id() > 0) {
     if (isset($_GET['word'])) {
         $result .= $wrd->load_by_id($_GET['word']);
     } else {
-        // get the default word for the view $dsp
+        // get the default word for the view $msk
     }
 
     // save the direct changes
@@ -140,7 +140,7 @@ if ($usr->id() > 0) {
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '') {
         // in view add views the view cannot be changed
-        $result .= $dsp->dsp_navbar_no_view($back);
+        $result .= $msk->dsp_navbar_no_view($back);
         $result .= $html->dsp_err($msg);
 
         // if the user has requested to use this display component also in another view, $add_link is greater than 0

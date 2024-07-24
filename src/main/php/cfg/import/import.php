@@ -387,11 +387,11 @@ class import
                     // TODO switch to view result
                     // TODO add a unit test
                     foreach ($json_obj as $value) {
-                        $dsp = new view($usr_trigger);
-                        $import_result = $dsp->import_obj($value);
+                        $msk = new view($usr_trigger);
+                        $import_result = $msk->import_obj($value);
                         if ($import_result->is_ok()) {
                             $this->view_validations_done++;
-                            $dsp_to_validate->add($dsp);
+                            $dsp_to_validate->add($msk);
                         } else {
                             $this->view_validations_failed++;
                         }

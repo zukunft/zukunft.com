@@ -70,7 +70,7 @@ class change_log_read_tests
         $frm = $t->formula();
         $src = $t->source();
         $ref = $t->reference();
-        $dsp = $t->view();
+        $msk = $t->view();
         $cmp = $t->component();
 
         // check if loading the changes technically works
@@ -144,7 +144,7 @@ class change_log_read_tests
 
         // check loading of name changes of view
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_dsp($dsp, $t->usr1, change_field_list::FLD_VIEW_NAME);
+        $result = $lst->load_by_fld_of_dsp($msk, $t->usr1, change_field_list::FLD_VIEW_NAME);
         $t->assert('view name change', $result, true);
 
         // ... and if the first entry is the setting the view name

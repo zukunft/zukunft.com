@@ -789,12 +789,12 @@ class test_base
         $filename = 'views/' . $folder . $dsp_code_id . $dbo_name;
 
         // load the view from the database
-        $dsp = new view($usr);
-        $dsp->load_by_code_id($dsp_code_id);
-        $dsp->load_components();
+        $msk = new view($usr);
+        $msk->load_by_code_id($dsp_code_id);
+        $msk->load_components();
 
         // create the api message that send to the frontend
-        $api_msg = $dsp->api_json();
+        $api_msg = $msk->api_json();
         if ($id != 0) {
             // add the database object json to the api message
             // to send only one message to the frontend

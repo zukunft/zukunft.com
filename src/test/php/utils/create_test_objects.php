@@ -1987,11 +1987,11 @@ class create_test_objects extends test_base
 
     function view(): view
     {
-        $dsp = new view($this->usr1);
-        $dsp->set(1, view_api::TN_READ);
-        $dsp->description = view_api::TD_READ;
-        $dsp->code_id = view_api::TC_READ;
-        return $dsp;
+        $msk = new view($this->usr1);
+        $msk->set(1, view_api::TN_READ);
+        $msk->description = view_api::TD_READ;
+        $msk->code_id = view_api::TC_READ;
+        return $msk;
     }
 
     /**
@@ -2045,19 +2045,19 @@ class create_test_objects extends test_base
 
     function view_with_components(): view
     {
-        $dsp = $this->view();
-        $dsp->cmp_lnk_lst = $this->component_link_list();
-        return $dsp;
+        $msk = $this->view();
+        $msk->cmp_lnk_lst = $this->component_link_list();
+        return $msk;
     }
 
     function view_word_add(): view
     {
-        $dsp = new view($this->usr1);
-        $dsp->set(3, view_api::TN_FORM);
-        $dsp->description = view_api::TD_FORM;
-        $dsp->code_id = view_api::TC_FORM;
-        $dsp->cmp_lnk_lst = $this->components_word_add($dsp);
-        return $dsp;
+        $msk = new view($this->usr1);
+        $msk->set(3, view_api::TN_FORM);
+        $msk->description = view_api::TD_FORM;
+        $msk->code_id = view_api::TC_FORM;
+        $msk->cmp_lnk_lst = $this->components_word_add($msk);
+        return $msk;
     }
 
     function view_list(): view_list
@@ -3442,20 +3442,20 @@ class create_test_objects extends test_base
             $test_usr = $this->usr1;
         }
 
-        $dsp = new view($test_usr);
-        $dsp->load_by_name($dsp_name);
-        return $dsp;
+        $msk = new view($test_usr);
+        $msk->load_by_name($dsp_name);
+        return $msk;
     }
 
     function add_view(string $dsp_name, user $test_usr): view
     {
-        $dsp = $this->load_view($dsp_name, $test_usr);
-        if ($dsp->id() == 0) {
-            $dsp->set_user($test_usr);
-            $dsp->set_name($dsp_name);
-            $dsp->save();
+        $msk = $this->load_view($dsp_name, $test_usr);
+        if ($msk->id() == 0) {
+            $msk->set_user($test_usr);
+            $msk->set_name($dsp_name);
+            $msk->save();
         }
-        return $dsp;
+        return $msk;
     }
 
     function test_view(string $dsp_name, ?user $test_usr = null): view
@@ -3464,9 +3464,9 @@ class create_test_objects extends test_base
             $test_usr = $this->usr1;
         }
 
-        $dsp = $this->add_view($dsp_name, $test_usr);
-        $this->display('view', $dsp_name, $dsp->name(), test_base::TIMEOUT_LIMIT_DB);
-        return $dsp;
+        $msk = $this->add_view($dsp_name, $test_usr);
+        $this->display('view', $dsp_name, $msk->name(), test_base::TIMEOUT_LIMIT_DB);
+        return $msk;
     }
 
     function del_view(string $dsp_name, ?user $test_usr = null): view
@@ -3475,12 +3475,12 @@ class create_test_objects extends test_base
             $test_usr = $this->usr1;
         }
 
-        $dsp = $this->load_view($dsp_name, $test_usr);
-        if ($dsp->id() != 0) {
-            $dsp->del_links();
-            $dsp->del();
+        $msk = $this->load_view($dsp_name, $test_usr);
+        if ($msk->id() != 0) {
+            $msk->del_links();
+            $msk->del();
         }
-        return $dsp;
+        return $msk;
     }
 
 
@@ -3528,11 +3528,11 @@ class create_test_objects extends test_base
 
     function test_component_lnk(string $dsp_name, string $cmp_name, int $pos): component_link
     {
-        $dsp = $this->load_view($dsp_name);
+        $msk = $this->load_view($dsp_name);
         $cmp = $this->load_component($cmp_name);
         $lnk = new component_link($this->usr1);
         $lnk->reset();
-        $lnk->fob = $dsp;
+        $lnk->fob = $msk;
         $lnk->tob = $cmp;
         $lnk->order_nbr = $pos;
         $result = $lnk->save();
@@ -3544,10 +3544,10 @@ class create_test_objects extends test_base
     function test_component_unlink(string $dsp_name, string $cmp_name): string
     {
         $result = '';
-        $dsp = $this->load_view($dsp_name);
+        $msk = $this->load_view($dsp_name);
         $cmp = $this->load_component($cmp_name);
-        if ($dsp->id() > 0 and $cmp->id() > 0) {
-            $result = $cmp->unlink($dsp);
+        if ($msk->id() > 0 and $cmp->id() > 0) {
+            $result = $cmp->unlink($msk);
         }
         return $result;
     }

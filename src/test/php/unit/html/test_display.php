@@ -58,9 +58,9 @@ function run_display_test(all_tests $t): void
 
     // test the usage of a view to create the HTML code
     $wrd = $t->load_word(word_api::TN_READ);
-    $dsp = new view($usr);
-    $dsp->load_by_name(view_api::TN_READ_RATIO);
-    //$result = $dsp->display($wrd, $back);
+    $msk = new view($usr);
+    $msk->load_by_name(view_api::TN_READ_RATIO);
+    //$result = $msk->display($wrd, $back);
     $target = true;
     //$t->dsp_contains(', view_dsp->display is "'.$result.'" which should contain '.$wrd_abb->name.'', $target, $result);
 

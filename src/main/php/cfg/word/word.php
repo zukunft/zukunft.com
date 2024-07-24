@@ -373,9 +373,9 @@ class word extends sandbox_typed
         }
     }
 
-    function set_view(view $dsp): void
+    function set_view(view $msk): void
     {
-        $this->view = $dsp;
+        $this->view = $msk;
     }
 
     /**
@@ -1329,9 +1329,9 @@ class word extends sandbox_typed
      */
     function suggested_view(): view
     {
-        $dsp = new view($this->user());
-        $dsp->load_by_phrase($this->phrase());
-        return $dsp;
+        $msk = new view($this->user());
+        $msk->load_by_phrase($this->phrase());
+        return $msk;
     }
 
     /**

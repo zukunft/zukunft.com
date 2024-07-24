@@ -132,10 +132,10 @@ class view_sys_list extends type_list
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
-                $dsp = new view($this->usr);
-                $dsp->row_mapper_sandbox($db_row);
-                $dsp->load_components($db_con);
-                $this->add($dsp);
+                $msk = new view($this->usr);
+                $msk->row_mapper_sandbox($db_row);
+                $msk->load_components($db_con);
+                $this->add($msk);
             }
         }
         return $this->lst();
@@ -162,11 +162,11 @@ class view_sys_list extends type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $dsp = new view($this->usr);
-        $dsp->set_id(2);
-        $dsp->set_name(controller::MC_WORD);
-        $dsp->code_id = controller::MC_WORD;
-        $this->add($dsp);
+        $msk = new view($this->usr);
+        $msk->set_id(2);
+        $msk->set_name(controller::MC_WORD);
+        $msk->code_id = controller::MC_WORD;
+        $this->add($msk);
     }
 
     /**

@@ -63,9 +63,9 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display
-    $dsp_db = new view($usr);
-    $dsp_db->load_by_code_id(controller::MC_WORD_ADD);
-    $dsp = new view_dsp($dsp_db->api_json());
+    $msk_db = new view($usr);
+    $msk_db->load_by_code_id(controller::MC_WORD_ADD);
+    $msk = new view_dsp($msk_db->api_json());
     $back = $_GET[controller::API_BACK]; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
@@ -179,7 +179,7 @@ if ($usr->id() > 0) {
     // if nothing yet done display the add view (and any message on the top)
     if ($result == '') {
         // display the add view again
-        $result .= $dsp->dsp_navbar($back);
+        $result .= $msk->dsp_navbar($back);
         $result .= $html->dsp_err($msg);
 
         $wrd_dsp = new word_dsp($wrd->api_json());

@@ -66,44 +66,44 @@ class view_tests
         $dsp_typ = new view_type('');
         $t->assert_sql_table_create($dsp_typ);
         $t->assert_sql_index_create($dsp_typ);
-        $dsp = $t->view();
-        $t->assert_sql_table_create($dsp);
-        $t->assert_sql_index_create($dsp);
-        $t->assert_sql_foreign_key_create($dsp);
+        $msk = $t->view();
+        $t->assert_sql_table_create($msk);
+        $t->assert_sql_index_create($msk);
+        $t->assert_sql_foreign_key_create($msk);
 
         $t->subheader('view sql read');
-        $dsp = new view($usr);
-        $t->assert_sql_by_id($sc, $dsp);
-        $t->assert_sql_by_name($sc, $dsp);
-        $t->assert_sql_by_code_id($sc, $dsp);
-        $t->assert_sql_by_term($sc, $dsp, $t->term());
+        $msk = new view($usr);
+        $t->assert_sql_by_id($sc, $msk);
+        $t->assert_sql_by_name($sc, $msk);
+        $t->assert_sql_by_code_id($sc, $msk);
+        $t->assert_sql_by_term($sc, $msk, $t->term());
 
         $t->subheader('view sql read default and user changes');
         // sql to load the view by id
-        $dsp = new view($usr);
-        $dsp->set_id(2);
-        //$t->assert_load_sql($db_con, $dsp);
-        $t->assert_sql_standard($sc, $dsp);
-        $t->assert_sql_user_changes($sc, $dsp);
+        $msk = new view($usr);
+        $msk->set_id(2);
+        //$t->assert_load_sql($db_con, $msk);
+        $t->assert_sql_standard($sc, $msk);
+        $t->assert_sql_user_changes($sc, $msk);
         // sql to load the view by name
-        $dsp = new view($usr);
-        $dsp->set_name(view_api::TN_ADD);
-        //$t->assert_load_sql($db_con, $dsp);
-        $t->assert_sql_standard($sc, $dsp);
+        $msk = new view($usr);
+        $msk->set_name(view_api::TN_ADD);
+        //$t->assert_load_sql($db_con, $msk);
+        $t->assert_sql_standard($sc, $msk);
         // sql to load the view components
-        $dsp = new view($usr);
-        $dsp->set_id(2);
+        $msk = new view($usr);
+        $msk->set_id(2);
         $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $dsp->load_components_sql($db_con)->sql;
+        $created_sql = $msk->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/component/components_by_view_id.sql');
         $t->display('view->load_components_sql by view id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($dsp->load_components_sql($db_con)->name);
+        $t->assert_sql_name_unique($msk->load_components_sql($db_con)->name);
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $dsp->load_components_sql($db_con)->sql;
+        $created_sql = $msk->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/component/components_by_view_id_mysql.sql');
         $t->display('view->load_components_sql for MySQL', $lib->trim($expected_sql), $lib->trim($created_sql));
 
@@ -142,15 +142,15 @@ class view_tests
 
         $t->subheader('API and frontend cast unit tests for views');
 
-        $dsp = $t->view();
-        $t->assert_api($dsp);
-        $t->assert_api_to_dsp($dsp, new view_dsp());
+        $msk = $t->view();
+        $t->assert_api($msk);
+        $t->assert_api_to_dsp($msk, new view_dsp());
 
-        $dsp = $t->view_with_components();
-        $t->assert_api($dsp, 'view_with_components');
-        $t->assert_api_to_dsp($dsp, new view_dsp());
+        $msk = $t->view_with_components();
+        $t->assert_api($msk, 'view_with_components');
+        $t->assert_api_to_dsp($msk, new view_dsp());
 
-        $test_name = 'view dsp create from json string';
+        $test_name = 'view msk create from json string';
         $json = '{"id":1,"name":"Word","description":"the default view for words","code_id":"word"}';
         $msk_dsp = new view_dsp($json);
         $dsp_text = $msk_dsp->display();
@@ -166,14 +166,14 @@ class view_tests
 
         /*
          * needs database connection
-        $dsp = new view_dsp;
-        $dsp->id = 1;
-        $dsp->code_id = null;
-        $dsp->name = view::TEST_NAME_ADD;
-        $dsp->usr = $usr;
+        $msk = new view_dsp;
+        $msk->id = 1;
+        $msk->code_id = null;
+        $msk->name = view::TEST_NAME_ADD;
+        $msk->usr = $usr;
         $wrd = new word($usr);
         $wrd->set_name(word::TEST_NAME);
-        $result = $dsp->display($wrd, 1);
+        $result = $msk->display($wrd, 1);
         $target = '';
         $t->display('view->display', $target, $result);
         */
@@ -191,8 +191,8 @@ class view_tests
         $t->assert_sql_foreign_key_create($dsp_trm_lnk);
 
         $t->subheader('SQL user sandbox statement tests');
-        $dsp = new view_term_link($usr);
-        $t->assert_sql_by_id($sc, $dsp);
+        $msk = new view_term_link($usr);
+        $t->assert_sql_by_id($sc, $msk);
     }
 
 }

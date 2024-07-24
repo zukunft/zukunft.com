@@ -53,9 +53,9 @@ class view_list extends list_dsp
      */
     function set_obj_from_json_array(array $json_array): object
     {
-        $dsp = new view_dsp();
-        $dsp->set_from_json_array($json_array);
-        return $dsp;
+        $msk = new view_dsp();
+        $msk->set_from_json_array($json_array);
+        return $msk;
     }
 
     function get(string $code_id): view_dsp

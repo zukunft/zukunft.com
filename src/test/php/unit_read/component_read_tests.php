@@ -63,14 +63,14 @@ class component_read_tests
         $t->subheader('Component link db read tests');
 
         $test_name = 'load component link ' . view_api::TN_READ . ' to ' . component_api::TN_READ . ' by id';
-        $dsp = new view($t->usr1);
-        $dsp->load_by_name(view_api::TN_READ);
+        $msk = new view($t->usr1);
+        $msk->load_by_name(view_api::TN_READ);
         $cmp = new component($t->usr1);
         $cmp->load_by_name(component_api::TN_READ);
         $cmp_lnk = new component_link($t->usr1);
         $cmp_lnk->load_by_link_and_type(1, 1, 1);
         $test_name .= ' view id';
-        $t->assert($test_name, $cmp_lnk->fob->id(), $dsp->id());
+        $t->assert($test_name, $cmp_lnk->fob->id(), $msk->id());
         $test_name .= ' component id';
         $t->assert($test_name, $cmp_lnk->tob->id(), $cmp->id());
 

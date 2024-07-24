@@ -393,17 +393,17 @@ class component_link extends sandbox_link_with_type
 
     /**
      * load a named user sandbox object by name
-     * @param view $dsp the view to which the component should be added
+     * @param view $msk the view to which the component should be added
      * @param component $cmp the phrase that is linked to the formula
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_link(view $dsp, component $cmp, string $class = self::class): int
+    function load_by_link(view $msk, component $cmp, string $class = self::class): int
     {
-        $id = parent::load_by_link_id($dsp->id(), 0, $cmp->id(), $class);
+        $id = parent::load_by_link_id($msk->id(), 0, $cmp->id(), $class);
         // no need to reload the linked objects, just assign it
         if ($id != 0) {
-            $this->set_view($dsp);
+            $this->set_view($msk);
             $this->set_component($cmp);
         }
         return $id;
@@ -619,9 +619,9 @@ class component_link extends sandbox_link_with_type
         $result = true;
         if ($this->view() != null) {
             if ($this->view()->id() > 0 and $this->view()->name() == '') {
-                $dsp = new view($this->user());
-                if ($dsp->load_by_id($this->view()->id())) {
-                    $this->set_view($dsp);
+                $msk = new view($this->user());
+                if ($msk->load_by_id($this->view()->id())) {
+                    $this->set_view($msk);
                 } else {
                     $result = false;
                 }
@@ -741,9 +741,9 @@ class component_link extends sandbox_link_with_type
                     if ($this->fob->cmp_lst != null) {
                         foreach ($this->fob->cmp_lst->lst() as $entry) {
                             $cmp_lnk = new component_link($this->user());
-                            $dsp = new view($this->user());
-                            $dsp->load_by_id($this->fob->id());
-                            $cmp_lnk->load_by_link($dsp, $entry);
+                            $msk = new view($this->user());
+                            $msk->load_by_id($this->fob->id());
+                            $cmp_lnk->load_by_link($msk, $entry);
                             if ($cmp_lnk->order_nbr != $order_nbr) {
                                 log_err('Component link ' . $cmp_lnk->dsp_id() . ' should have position ' . $order_nbr . ', but is ' . $cmp_lnk->order_nbr, "component_link->move");
                             }
@@ -761,9 +761,9 @@ class component_link extends sandbox_link_with_type
                     foreach ($this->fob->cmp_lnk_lst->lst() as $cmp_lnk) {
                         // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
                         //$cmp_lnk = new component_link($this->user());
-                        //$dsp = new view($this->user());
-                        //$dsp->load_by_id($this->fob->id());
-                        //$cmp_lnk->load_by_link($dsp, $entry);
+                        //$msk = new view($this->user());
+                        //$msk->load_by_id($this->fob->id());
+                        //$cmp_lnk->load_by_link($msk, $entry);
                         if ($prev_entry_down) {
                             if (isset($prev_entry)) {
                                 log_debug('component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());

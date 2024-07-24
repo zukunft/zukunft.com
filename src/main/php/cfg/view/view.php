@@ -802,19 +802,18 @@ class view extends sandbox_typed
         // after the view has it's components assign the view to the terms
         foreach ($in_ex_json as $key => $value) {
             if ($key == sandbox_exp::FLD_ASSIGN) {
-                $trm = new term($this->user());
-                // TODO activate
-                /*
-                $trm->load_by_name($value);
-                if ($trm->id() == 0) {
-                    log_warning('word "' . $value .
-                        '" created to link it to view "' . $this->name() .
-                        '" as requested by the import of ');
+                foreach ($value as $trm_name) {
+                    $trm = new term($this->user());
+                    $trm->load_by_name($trm_name);
+                    if ($trm->id() == 0) {
+                        log_warning('word "' . $trm_name .
+                            '" created to link it to view "' . $this->name() .
+                            '" as requested by the import of ');
+                    }
+                    if ($trm->id() != 0) {
+                        $this->add_term($trm);
+                    }
                 }
-                if ($trm->id() != 0) {
-                    $this->add_term($trm);
-                }
-                */
             }
         }
 
@@ -1016,7 +1015,7 @@ class view extends sandbox_typed
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|view $sbx,
+        sandbox|view  $sbx,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {

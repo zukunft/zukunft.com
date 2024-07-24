@@ -48,6 +48,7 @@ class view_write_tests
 
     function run(test_cleanup $t): void
     {
+        global $db_con;
         global $view_types;
 
         // init
@@ -71,78 +72,81 @@ class view_write_tests
         $msk->load_by_name(view_api::TN_ADD_VIA_FUNC);
         $t->assert_true($test_name, $msk->isset());
 
+        $db_con->import_system_views($t->usr1);
         $this->create_test_views($t);
+
+
         // test loading of one view
         $dsp_db = new view($t->usr1);
         $result = $dsp_db->load_by_name(view_api::TN_COMPLETE);
-        $dsp = new view_dsp($dsp_db->api_json());
+        $msk = new view_dsp($dsp_db->api_json());
         $target = 0;
         if ($result > 0) {
             $target = $result;
         }
-        $t->display('view->load of "' . $dsp->name() . '"', $target, $result);
+        $t->display('view->load of "' . $msk->name() . '"', $target, $result);
 
         // test the complete view for one word
         $wrd = new word($t->usr1);
         $wrd->load_by_name(word_api::TN_CH);
-        $result = $dsp->display($wrd, $back);
+        $result = $msk->display($wrd, $back);
         // check if the view contains the word name
         $target = word_api::TN_CH;
         // TODO review and activate
-        //$t->dsp_contains(', view->display "' . $dsp->name() . '" for "' . $wrd->name() . '" contains', $target, $result, $t::TIMEOUT_LIMIT_LONG);
+        //$t->dsp_contains(', view->display "' . $msk->name() . '" for "' . $wrd->name() . '" contains', $target, $result, $t::TIMEOUT_LIMIT_LONG);
         // check if the view contains at least one value
         $target = 'back=' . $wrd->id() . '">8.51</a>';
         /* TODO fix the result display
-        $t->dsp_contains(', view->display "' . $dsp->name . '" for "' . $wrd->name() . '" contains', $target, $result);
+        $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $target, $result);
         // check if the view contains at least the main formulas
         $target = 'System Test Word Increase';
-        $t->dsp_contains(', view->display "' . $dsp->name . '" for "' . $wrd->name() . '" contains', $target, $result);
+        $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $target, $result);
         */
         /* TODO fix the result loading
         $target = 'back='.$wrd->id.'">0.79%</a>';
-        $t->dsp_contains(', view->display "' . $dsp->name . '" for "' . $wrd->name() . '" contains', $target, $result);
+        $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $target, $result);
         */
 
         // test adding of one view
-        $dsp = new view($t->usr1);
-        $dsp->set_name(view_api::TN_ADD);
-        $dsp->description = 'Just added for testing';
-        $result = $dsp->save();
-        if ($dsp->id() > 0) {
-            $result = $dsp->description;
+        $msk = new view($t->usr1);
+        $msk->set_name(view_api::TN_ADD);
+        $msk->description = 'Just added for testing';
+        $result = $msk->save();
+        if ($msk->id() > 0) {
+            $result = $msk->description;
         }
         $target = 'Just added for testing';
-        $t->display('view->save for adding "' . $dsp->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('view->save for adding "' . $msk->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the view name has been saved
-        $dsp = new view($t->usr1);
-        $dsp->load_by_name(view_api::TN_ADD, view::class);
-        $result = $dsp->description;
+        $msk = new view($t->usr1);
+        $msk->load_by_name(view_api::TN_ADD, view::class);
+        $result = $msk->description;
         $target = 'Just added for testing';
-        $t->display('view->load the added "' . $dsp->name() . '"', $target, $result);
+        $t->display('view->load the added "' . $msk->name() . '"', $target, $result);
 
         // check if the view adding has been logged
         $log = new change($t->usr1);
         $log->set_table(change_table_list::VIEW);
         $log->set_field(view::FLD_NAME);
-        $log->row_id = $dsp->id();
+        $log->row_id = $msk->id();
         $result = $log->dsp_last(true);
         $target = 'zukunft.com system test added "System Test View"';
         $t->display('view->save adding logged for "' . view_api::TN_ADD . '"', $target, $result);
 
         // check if adding the same view again creates a correct error message
-        $dsp = new view($t->usr1);
-        $dsp->set_name(view_api::TN_ADD);
-        $result = $dsp->save();
+        $msk = new view($t->usr1);
+        $msk->set_name(view_api::TN_ADD);
+        $result = $msk->save();
         $target = 'A view with the name "' . view_api::TN_ADD . '" already exists. Please use another name.'; // is this error message really needed???
         $target = '';
-        $t->display('view->save adding "' . $dsp->name() . '" again', $target, $result, $t::TIMEOUT_LIMIT_DB);
+        $t->display('view->save adding "' . $msk->name() . '" again', $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // check if the view can be renamed
-        $dsp = new view($t->usr1);
-        $dsp->load_by_name(view_api::TN_ADD, view::class);
-        $dsp->set_name(view_api::TN_RENAMED);
-        $result = $dsp->save();
+        $msk = new view($t->usr1);
+        $msk->load_by_name(view_api::TN_ADD, view::class);
+        $msk->set_name(view_api::TN_RENAMED);
+        $result = $msk->save();
         $target = '';
         $t->display('view->save rename "' . view_api::TN_ADD . '" to "' . view_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -263,10 +267,10 @@ class view_write_tests
 
         // modify the special test cases
         global $usr;
-        $dsp = new view($usr);
-        $dsp->load_by_name(view_api::TN_EXCLUDED);
-        $dsp->set_excluded(true);
-        $dsp->save();
+        $msk = new view($usr);
+        $msk->load_by_name(view_api::TN_EXCLUDED);
+        $msk->set_excluded(true);
+        $msk->save();
     }
 
     function delete_test_views(test_cleanup $t): void

@@ -1162,10 +1162,12 @@ const DB_TABLE_LIST = [
 const BASE_CODE_LINK_FILE_TYPE = '.csv';
 const SYSTEM_USER_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'users.json';
 const SYSTEM_VERB_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'verbs.json';
+const SYSTEM_VIEW_CONFIG_FILE = 'system_views.json';
 const SYSTEM_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'config.json';
 const PATH_BASE_CONFIG_MESSAGE_FILES = PATH_BASE_CONFIG_FILES . 'messages/';
+const SYSTEM_VIEW_CONFIG_PATH = PATH_BASE_CONFIG_MESSAGE_FILES . SYSTEM_VIEW_CONFIG_FILE;
 const BASE_CONFIG_FILES = [
-    'system_views.json',
+    SYSTEM_VIEW_CONFIG_FILE,
     'sources.json',
     'units.json',
     'scaling.json',

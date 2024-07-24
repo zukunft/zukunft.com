@@ -270,9 +270,9 @@ class component_list extends sandbox_list
     {
         $result = new user_message();
         foreach ($json_obj as $dsp_json) {
-            $dsp = new component($this->user());
-            $result->add($dsp->import_obj($dsp_json, $test_obj));
-            $this->add($dsp);
+            $cmp = new component($this->user());
+            $result->add($cmp->import_obj($dsp_json, $test_obj));
+            $this->add($cmp);
         }
 
         return $result;

@@ -53,8 +53,8 @@ class system_views
         $wrd = $t->word_dsp();
 
         // check if the system views have set
-        $dsp = $html_system_views->get(word_dsp::FORM_ADD);
-        $test_page .= $dsp->show($wrd, $back) . '<br>';
+        $msk = $html_system_views->get(word_dsp::FORM_ADD);
+        $test_page .= $msk->show($wrd, $back) . '<br>';
 
         // TODO review and combine with read db tests
         $t->html_view_test($test_page, word_dsp::FORM_ADD, $t);

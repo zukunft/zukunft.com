@@ -129,6 +129,7 @@ use cfg\verb;
 use cfg\verb_list;
 use cfg\view;
 use cfg\view_link_type;
+use cfg\view_sys_list;
 use cfg\view_term_link;
 use cfg\view_type;
 use cfg\view_type_list;
@@ -5340,6 +5341,27 @@ class sql_db
 
         $verbs = new verb_list($usr);
         $verbs->load($db_con);
+
+        return $result;
+    }
+
+    function import_system_views(user $usr): bool
+    {
+        global $db_con;
+        global $system_views;
+
+        $result = false;
+
+        if ($usr->is_admin() or $usr->is_system()) {
+            $imf = new import_file();
+            $import_result = $imf->json_file(SYSTEM_VIEW_CONFIG_PATH, $usr);
+            if (str_starts_with($import_result, ' done ')) {
+                $result = true;
+            }
+        }
+
+        $system_views = new view_sys_list($usr);
+        $system_views->load($db_con);
 
         return $result;
     }

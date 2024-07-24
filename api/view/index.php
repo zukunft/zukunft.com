@@ -65,13 +65,13 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    $dsp = new view($usr);
+    $msk = new view($usr);
     if ($dsp_id > 0) {
-        $dsp->load_by_id($dsp_id);
-        $result = $dsp->api_obj();
+        $msk->load_by_id($dsp_id);
+        $result = $msk->api_obj();
     } elseif ($dsp_name != '') {
-        $dsp->load_by_name($dsp_name);
-        $result = $dsp->api_obj();
+        $msk->load_by_name($dsp_name);
+        $result = $msk->api_obj();
     } else {
         $msg = 'view id or name is missing';
     }

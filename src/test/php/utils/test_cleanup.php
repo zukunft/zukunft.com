@@ -120,9 +120,9 @@ class test_cleanup extends test_api
         $result .= $this->test_component_unlink(view_api::TN_TABLE, component_api::TN_TABLE);
 
         // load the test view
-        $dsp = $this->load_view(view_api::TN_ADD);
-        if ($dsp->id() <= 0) {
-            $dsp = $this->load_view(view_api::TN_RENAMED);
+        $msk = $this->load_view(view_api::TN_ADD);
+        if ($msk->id() <= 0) {
+            $msk = $this->load_view(view_api::TN_RENAMED);
         }
 
         // load the test view for user 2
@@ -157,20 +157,20 @@ class test_cleanup extends test_api
         }
 
         // check if the test components have been unlinked
-        if ($dsp->id() > 0 and $cmp->id() > 0) {
-            $result .= $cmp->unlink($dsp);
+        if ($msk->id() > 0 and $cmp->id() > 0) {
+            $result .= $cmp->unlink($msk);
             $target = '';
-            $this->display('cleanup: unlink first component "' . $cmp->name() . '" from "' . $dsp->name() . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
+            $this->display('cleanup: unlink first component "' . $cmp->name() . '" from "' . $msk->name() . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // unlink the second component
         // error at the moment: if the second user is still using the link,
         // the second user does not get the owner
         // instead a foreign key error happens
-        if ($dsp->id() > 0 and $cmp2->id() > 0) {
-            $result .= $cmp2->unlink($dsp);
+        if ($msk->id() > 0 and $cmp2->id() > 0) {
+            $result .= $cmp2->unlink($msk);
             $target = '';
-            $this->display('cleanup: unlink second component "' . $cmp2->name() . '" from "' . $dsp->name() . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
+            $this->display('cleanup: unlink second component "' . $cmp2->name() . '" from "' . $msk->name() . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // unlink the second component for user 2
@@ -193,9 +193,9 @@ class test_cleanup extends test_api
 
         // request to delete the added test views
         foreach (view_api::TEST_VIEWS as $dsp_name) {
-            $dsp = $this->load_view($dsp_name);
-            if ($dsp->id() > 0) {
-                $msg = $dsp->del();
+            $msk = $this->load_view($dsp_name);
+            if ($msk->id() > 0) {
+                $msg = $msk->del();
                 $result .= $msg->get_last_message();
                 $target = '';
                 $this->display('view->del of "' . $dsp_name . '"', $target, $result);
@@ -264,14 +264,14 @@ class test_cleanup extends test_api
         }
 
         // reload the test view
-        $dsp = $this->load_view(view_api::TN_ADD);
-        if ($dsp->id() <= 0) {
-            $dsp = $this->load_view(view_api::TN_RENAMED);
+        $msk = $this->load_view(view_api::TN_ADD);
+        if ($msk->id() <= 0) {
+            $msk = $this->load_view(view_api::TN_RENAMED);
         }
 
         // request to delete the added test view
-        if ($dsp->id() > 0) {
-            $msg = $dsp->del();
+        if ($msk->id() > 0) {
+            $msg = $msk->del();
             $result .= $msg->get_last_message();
             $target = '';
             $this->display('cleanup: del of view "' . view_api::TN_ADD . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
@@ -279,9 +279,9 @@ class test_cleanup extends test_api
 
         // request to delete the added test views
         foreach (view_api::TEST_VIEWS as $dsp_name) {
-            $dsp = $this->load_view($dsp_name);
-            if ($dsp->id() > 0) {
-                $msg = $dsp->del();
+            $msk = $this->load_view($dsp_name);
+            if ($msk->id() > 0) {
+                $msg = $msk->del();
                 $result .= $msg->get_last_message();
                 $target = '';
                 $this->display('view->del of "' . $dsp_name . '"', $target, $result);
@@ -321,9 +321,9 @@ class test_cleanup extends test_api
 
         // request to delete the added test formulas
         foreach (formula_api::TEST_FORMULAS as $frm_name) {
-            $dsp = $this->load_formula($frm_name);
-            if ($dsp->id() > 0) {
-                $msg = $dsp->del();
+            $msk = $this->load_formula($frm_name);
+            if ($msk->id() > 0) {
+                $msg = $msk->del();
                 $result .= $msg->get_last_message();
                 $target = '';
                 $this->display('formula->del of "' . $frm_name . '"', $target, $result);

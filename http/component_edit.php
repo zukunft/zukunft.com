@@ -77,7 +77,7 @@ if ($usr->id() > 0) {
         if (isset($_GET['word'])) {
             $result .= $wrd->load_by_id($_GET['word']);
         } else {
-            // get the default word for the view $dsp
+            // get the default word for the view $msk
         }
 
         // the calling stack to move back to page where the user has come from after editing the view component is done
