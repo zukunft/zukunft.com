@@ -2335,6 +2335,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
         return array_merge(
             parent::db_fields_all($sc_par_lst),
             [
+                phrase::FLD_TYPE,
                 verb::FLD_ID,
                 self::FLD_NAME_GIVEN,
                 self::FLD_NAME_AUTO,
@@ -2366,6 +2367,27 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
         // should be corresponding with the list of triple object vars
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+
+        // for triple the type is the phrase type
+        // the type is object specific that why it is not part of snadbox_link_types
+        if ($sbx->type_id() <> $this->type_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
+                    $change_field_list->id($table_id . phrase::FLD_TYPE),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            global $phrase_types;
+            $lst->add_type_field(
+                phrase::FLD_TYPE,
+                phrase::FLD_TYPE_NAME,
+                $this->type_id(),
+                $sbx->type_id(),
+                $phrase_types
+            );
+        }
+
         // the link type cannot be changed by the user, because this would be another link
         if (!$usr_tbl) {
             if ($sbx->verb_id() <> $this->verb_id()) {

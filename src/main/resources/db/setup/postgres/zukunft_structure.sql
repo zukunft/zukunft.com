@@ -4219,9 +4219,8 @@ CREATE TABLE IF NOT EXISTS view_term_links
     view_term_link_id BIGSERIAL PRIMARY KEY,
     term_id           bigint             NOT NULL,
     view_id           bigint             NOT NULL,
-    type_id           smallint NOT NULL DEFAULT 1,
+    view_link_type_id smallint NOT NULL DEFAULT 1,
     user_id           bigint         DEFAULT NULL,
-    view_link_type_id smallint       DEFAULT NULL,
     description       text           DEFAULT NULL,
     excluded          smallint       DEFAULT NULL,
     share_type_id     smallint       DEFAULT NULL,
@@ -4230,7 +4229,7 @@ CREATE TABLE IF NOT EXISTS view_term_links
 
 COMMENT ON TABLE view_term_links IS 'to link view to a word, triple, verb or formula with an n:m relation';
 COMMENT ON COLUMN view_term_links.view_term_link_id IS 'the internal unique primary index';
-COMMENT ON COLUMN view_term_links.type_id IS '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
+COMMENT ON COLUMN view_term_links.view_link_type_id IS '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
 COMMENT ON COLUMN view_term_links.user_id IS 'the owner / creator of the view_term_link';
 COMMENT ON COLUMN view_term_links.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN view_term_links.share_type_id IS 'to restrict the access';
@@ -6314,9 +6313,8 @@ CREATE INDEX view_link_types_type_name_idx ON view_link_types (type_name);
 
 CREATE INDEX view_term_links_term_idx ON view_term_links (term_id);
 CREATE INDEX view_term_links_view_idx ON view_term_links (view_id);
-CREATE INDEX view_term_links_type_idx ON view_term_links (type_id);
-CREATE INDEX view_term_links_user_idx ON view_term_links (user_id);
 CREATE INDEX view_term_links_view_link_type_idx ON view_term_links (view_link_type_id);
+CREATE INDEX view_term_links_user_idx ON view_term_links (user_id);
 
 --
 -- indexes for table user_view_term_links
@@ -7324,8 +7322,8 @@ ALTER TABLE user_views
 
 ALTER TABLE view_term_links
     ADD CONSTRAINT view_term_links_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
-    ADD CONSTRAINT view_term_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT view_term_links_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id);
+    ADD CONSTRAINT view_term_links_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id),
+    ADD CONSTRAINT view_term_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
 -- constraints for table user_view_term_links

@@ -64,6 +64,7 @@ use cfg\log\change_table;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
 use cfg\ref_type;
+use cfg\view_term_link;
 use html\system\messages;
 use shared\types\component_type as comp_type_shared;
 use api\api;
@@ -2272,6 +2273,14 @@ class create_test_objects extends test_base
         $pos++;
         $lst->add($pos, $msk, $this->component_word_add_form_end(), $pos);
         return $lst;
+    }
+
+    function view_term_link(): view_term_link
+    {
+        $lnk = new view_term_link($this->usr1);
+        $lnk->set_view($this->view());
+        $lnk->set_term($this->term());
+        return $lnk;
     }
 
     function language(): language

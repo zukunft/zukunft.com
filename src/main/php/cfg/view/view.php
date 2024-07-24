@@ -688,8 +688,10 @@ class view extends sandbox_typed
     function add_term(term $trm): user_message
     {
         $msg = new user_message();
-        // TODO implement
-        $msg->add_message('not yet implemented');
+        $lnk = new view_term_link($this->user());
+        $lnk->set_view($this);
+        $lnk->set_term($trm);
+        $msg->add_message($this->save());
         return $msg;
     }
 

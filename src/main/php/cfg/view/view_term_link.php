@@ -36,8 +36,11 @@ use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
+use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
 use cfg\export\view_exp;
+use cfg\log\change;
 
 class view_term_link extends sandbox_link_typed
 {
@@ -52,12 +55,11 @@ class view_term_link extends sandbox_link_typed
     const FLD_ID = 'view_term_link_id';
     const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
     const FLD_TYPE_COM = '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
-    const FLD_TYPE = 'type_id';
 
     // all database field names excluding the id
     const FLD_NAMES = array(
         term::FLD_ID,
-        self::FLD_TYPE,
+        view_link_type::FLD_ID,
         view::FLD_ID
     );
     //
@@ -68,11 +70,10 @@ class view_term_link extends sandbox_link_typed
     const FLD_LST_LINK = array(
         [term::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
         [view::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
-        [self::FLD_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::ONE, sql::INDEX, '', self::FLD_TYPE_COM],
+        [view_link_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::ONE, sql::INDEX, view_link_type::class, self::FLD_TYPE_COM],
     );
     // list of MANDATORY fields that CAN be CHANGEd by the user
     const FLD_LST_MUST_BUT_STD_ONLY = array(
-        [view_link_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
         [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CAN be CHANGEd by the user
@@ -80,6 +81,49 @@ class view_term_link extends sandbox_link_typed
         [view_link_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
         [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
     );
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * interface function to set the view always to the from object
+     * @param view $msk the view that should be linked
+     * @return void
+     */
+    function set_view(view $msk): void
+    {
+        $this->set_fob($msk);
+    }
+
+    /**
+     * interface function to set the term always to the to object
+     * @param term $trm the word, triple or formula that should be linked
+     * @return void
+     */
+    function set_term(term $trm): void
+    {
+        $this->set_tob($trm);
+    }
+
+    /**
+     * interface function to get the view
+     * @return object but actually the view object
+     */
+    function view(): object
+    {
+        return $this->fob();
+    }
+
+    /**
+     * interface function to get the term
+     * @return object but actually the term object
+     */
+    function term(): object
+    {
+        return $this->tob();
+    }
 
 
     /*
@@ -107,6 +151,65 @@ class view_term_link extends sandbox_link_typed
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * add the type fields to the list of all database fields that might be changed
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    {
+        return array_merge(
+            parent::db_fields_all($sc_par_lst),
+            [view_link_type::FLD_ID]
+        );
+    }
+
+    /**
+     * add tze type field to the list of changed database fields with name, value and type
+     * TODO move to triple
+     *
+     * @param sandbox|word $sbx the compare value to detect the changed fields
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(
+        sandbox|word $sbx,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
+    {
+        global $change_field_list;
+
+        $sc = new sql();
+        $do_log = $sc_par_lst->incl_log();
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        if ($sbx->type_id() <> $this->type_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
+                    $change_field_list->id($table_id . phrase::FLD_TYPE),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            global $phrase_types;
+            $lst->add_type_field(
+                phrase::FLD_TYPE,
+                phrase::FLD_TYPE_NAME,
+                $this->type_id(),
+                $sbx->type_id(),
+                $phrase_types
+            );
+        }
+        return $lst;
     }
 
 }

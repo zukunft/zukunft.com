@@ -73,6 +73,7 @@ class view extends sandbox_typed_api
 
     const TN_READ_RATIO = 'Company ratios';
     const TN_READ_NESN_2016 = 'Nestlé Financial Statement 2016';
+    const TD_LINK = 'System Test description for a view term link';
 
     // array of view names that used for testing and remove them after the test
     const RESERVED_VIEWS = array(
