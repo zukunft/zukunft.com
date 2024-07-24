@@ -15,6 +15,7 @@
     - construct and map: including the mapping of the db row to this word object
     - set and get:       to capsule the vars from unexpected changes
     - preloaded:         select e.g. types from cache
+    - fields:            the field names of this object as overwrite functions
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
     - im- and export:    create an export object and set the vars from an import object
@@ -644,6 +645,11 @@ class triple extends sandbox_link_typed implements JsonSerializable
         }
         return $result;
     }
+
+
+    /*
+     * fields
+     */
 
     function from_field(): string
     {

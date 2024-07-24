@@ -5,6 +5,13 @@
     model/view/view_term_link.php - to define the standard view for a word, triple, verb or formula
     -----------------------------
 
+    The main sections of this object are
+    - db const:          const for the database link
+    - set and get:       to capsule the vars from unexpected changes
+    - fields:            the field names of this object as overwrite functions
+    - load:              database access object (DAO) functions
+    - sql write fields:  field list for writing to the database
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -46,7 +53,7 @@ class view_term_link extends sandbox_link_typed
 {
 
     /*
-     * database link
+     * db const
      */
 
     // the database and JSON object field names used only for formula links
@@ -127,6 +134,36 @@ class view_term_link extends sandbox_link_typed
 
 
     /*
+     * fields
+     */
+
+    /**
+     * @return string with the field name for the view as an overwrite function
+     */
+    function from_field(): string
+    {
+        return view::FLD_ID;
+    }
+
+    /**
+     * @return string with the field name for the term as an overwrite function
+     */
+    function to_field(): string
+    {
+        return term::FLD_ID;
+    }
+
+    /**
+     * the view_term_link does not really have a name, only a description
+     * @return string
+     */
+    function name_field(): string
+    {
+        return '';
+    }
+
+
+    /*
      * load
      */
 
@@ -195,15 +232,15 @@ class view_term_link extends sandbox_link_typed
         if ($sbx->type_id() <> $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
-                    $change_field_list->id($table_id . phrase::FLD_TYPE),
+                    sql::FLD_LOG_FIELD_PREFIX . view_link_type::FLD_ID,
+                    $change_field_list->id($table_id . view_link_type::FLD_ID),
                     change::FLD_FIELD_ID_SQLTYP
                 );
             }
             global $phrase_types;
             $lst->add_type_field(
-                phrase::FLD_TYPE,
-                phrase::FLD_TYPE_NAME,
+                view_link_type::FLD_ID,
+                type_object::FLD_NAME,
                 $this->type_id(),
                 $sbx->type_id(),
                 $phrase_types

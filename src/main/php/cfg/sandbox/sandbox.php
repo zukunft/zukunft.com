@@ -450,6 +450,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * dummy function for the subject object that should always be overwritten by the child object
+     * TODO check that all child objects does overwrite this
      * @return string
      */
     function from_field(): string
