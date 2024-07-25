@@ -213,14 +213,12 @@ class view_tests
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG]);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG, sql_type::USER]);
         // delete
-        /*
         $t->assert_sql_delete($sc, $lnk);
         $t->assert_sql_delete($sc, $lnk, [sql_type::USER]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::USER, sql_type::EXCLUDE]);
-        */
 
     }
 
