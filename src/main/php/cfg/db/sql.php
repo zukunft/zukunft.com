@@ -4821,6 +4821,9 @@ class sql
         if ($result == 'view_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
+        if ($result == 'view_link_type_name') {
+            $result = sql::FLD_TYPE_NAME;
+        }
         if ($result == 'component_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }

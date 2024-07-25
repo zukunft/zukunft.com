@@ -296,6 +296,7 @@ class type_list
             formula_link_type_list::class => formula_link_type::class,
             element_type_list::class => element_type::class,
             view_type_list::class => view_type::class,
+            view_link_type_list::class => view_link_type::class,
             component_type_list::class => component_type::class,
             component_link_type_list::class => component_link_type::class,
             position_type_list::class => position_type::class,

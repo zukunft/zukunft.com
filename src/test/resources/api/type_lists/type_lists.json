@@ -323,6 +323,20 @@
         "id": 7
       }
     ],
+    "view_link_types": [
+      {
+        "name": "main word",
+        "code_id": "main_word",
+        "description": "use the main word as start for the view",
+        "id": 1
+      },
+      {
+        "name": "selected word",
+        "code_id": "selected_word",
+        "description": "use the selected words of the main view as a selector for the sub view",
+        "id": 2
+      }
+    ],
     "component_types": [
       {
         "name": "word selector",

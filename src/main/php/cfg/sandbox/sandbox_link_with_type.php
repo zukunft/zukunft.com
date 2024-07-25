@@ -34,20 +34,33 @@
 
 namespace cfg;
 
-use cfg\db\sql;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_type_list;
-use cfg\log\change;
-
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 
 class sandbox_link_with_type extends sandbox_link
 {
 
+    /*
+     * object vars
+     */
+
     // database id of the type used for named link user sandbox objects with predefined functionality
     // which is formula link and view component link
     // repeating _sandbox_typed, because php 8.1 does not yet allow multi extends
     public ?int $type_id = null;
+
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * reset the type of the link object
+     */
+    function reset(): void
+    {
+        parent::reset();
+        $this->type_id = null;
+    }
 
 
     /*
@@ -73,16 +86,6 @@ class sandbox_link_with_type extends sandbox_link
         return $this->type_id;
     }
 
-    /**
-     * dummy function that should be overwritten by the child object
-     * @return string the name of the object type
-     */
-    function type_name(): string
-    {
-        $msg = 'ERROR: the type name function should have been overwritten by the child object';
-        return log_err($msg);
-    }
-
 
     /*
      * settings
@@ -96,6 +99,20 @@ class sandbox_link_with_type extends sandbox_link
         return true;
     }
 
+
+    /*
+     * preloaded
+     */
+
+    /**
+     * dummy function that should be overwritten by the child object
+     * @return string the name of the object type
+     */
+    function type_name(): string
+    {
+        $msg = 'ERROR: the type name function should have been overwritten by the child object';
+        return log_err($msg);
+    }
 
     /*
      * cast

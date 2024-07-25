@@ -49,7 +49,7 @@ use cfg\export\sandbox_exp;
 use cfg\export\view_exp;
 use cfg\log\change;
 
-class view_term_link extends sandbox_link_typed
+class view_term_link extends sandbox_link_with_type
 {
 
     /*
@@ -91,6 +91,24 @@ class view_term_link extends sandbox_link_typed
 
 
     /*
+     * object vars
+     */
+
+    public ?string $description = null;
+
+
+    /*
+     * construct and map
+     */
+
+    function reset(): void
+    {
+        parent::reset();
+        $this->description = null;
+    }
+
+
+    /*
      * set and get
      */
 
@@ -112,6 +130,17 @@ class view_term_link extends sandbox_link_typed
     function set_term(term $trm): void
     {
         $this->set_tob($trm);
+    }
+
+    /**
+     * interface function to set the term always to the to object
+     * @param string $type_code_id the word, triple or formula that should be linked
+     * @return void
+     */
+    function set_type(string $type_code_id): void
+    {
+        global $view_link_types;
+        $this->set_type_id($view_link_types->id($type_code_id));
     }
 
     /**
@@ -154,12 +183,34 @@ class view_term_link extends sandbox_link_typed
     }
 
     /**
+     * @return string with the field name for the link type as an overwrite function
+     */
+    function type_field(): string
+    {
+        return view_link_type::FLD_ID;
+    }
+
+    /**
      * the view_term_link does not really have a name, only a description
      * @return string
      */
     function name_field(): string
     {
         return '';
+    }
+
+
+    /*
+     * preloaded
+     */
+
+    /**
+     * @return string the name of the reference type e.g. wikidata
+     */
+    function type_name(): string
+    {
+        global $view_link_types;
+        return $view_link_types->name($this->type_id);
     }
 
 
@@ -204,14 +255,16 @@ class view_term_link extends sandbox_link_typed
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
     {
         return array_merge(
-            parent::db_fields_all($sc_par_lst),
-            [view_link_type::FLD_ID]
+            parent::db_all_fields_link($sc_par_lst),
+            [
+                sandbox_named::FLD_DESCRIPTION,
+                view_link_type::FLD_ID,
+            ]
         );
     }
 
     /**
-     * add tze type field to the list of changed database fields with name, value and type
-     * TODO move to triple
+     * add the type field to the list of changed database fields with name, value and type
      *
      * @param sandbox|word $sbx the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -229,6 +282,23 @@ class view_term_link extends sandbox_link_typed
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+
+        if ($sbx->description <> $this->description) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
+                    $change_field_list->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                sandbox_named::FLD_DESCRIPTION,
+                $this->description,
+                sandbox_named::FLD_DESCRIPTION_SQLTYP,
+                $sbx->description
+            );
+        }
+
         if ($sbx->type_id() <> $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(

@@ -34,15 +34,14 @@
 
 namespace cfg;
 
-use cfg\db\sql;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_type_list;
-use cfg\log\change;
-
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 
 class sandbox_link_typed extends sandbox_link_named
 {
+
+    /*
+     * object vars
+     */
 
     // database id of the type used for named link user sandbox objects with predefined functionality
     // which is actually only triple
@@ -102,7 +101,7 @@ class sandbox_link_typed extends sandbox_link_named
 
 
     /*
-     * get preloaded information
+     * preloaded
      */
 
     /**

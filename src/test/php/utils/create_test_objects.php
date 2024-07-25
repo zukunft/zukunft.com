@@ -64,6 +64,8 @@ use cfg\log\change_table;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
 use cfg\ref_type;
+use cfg\view_link_type;
+use cfg\view_link_type_list;
 use cfg\view_term_link;
 use html\system\messages;
 use shared\types\component_type as comp_type_shared;
@@ -197,6 +199,7 @@ class create_test_objects extends test_base
         $formula_link_types = new formula_link_type_list();
         $element_types = new element_type_list();
         $view_types = new view_type_list();
+        $view_link_types = new view_link_type_list();
         $component_types = new component_type_list();
         //$component_link_types = new component_link_type_list();
         $position_types = new position_type_list();
@@ -219,6 +222,7 @@ class create_test_objects extends test_base
         $formula_link_types->load_dummy();
         $element_types->load_dummy();
         $view_types->load_dummy();
+        $view_link_types->load_dummy();
         $component_types->load_dummy();
         //$component_link_types->load_dummy();
         $position_types->load_dummy();
@@ -245,6 +249,7 @@ class create_test_objects extends test_base
         $lst->add($formula_link_types->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
         $lst->add($element_types->api_obj(), controller::API_LIST_ELEMENT_TYPES);
         $lst->add($view_types->api_obj(), controller::API_LIST_VIEW_TYPES);
+        $lst->add($view_link_types->api_obj(), controller::API_LIST_VIEW_LINK_TYPES);
         $lst->add($component_types->api_obj(), controller::API_LIST_COMPONENT_TYPES);
         //$lst->add($component_link_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
         $lst->add($position_types->api_obj(), controller::API_LIST_COMPONENT_POSITION_TYPES);
@@ -2279,6 +2284,7 @@ class create_test_objects extends test_base
     {
         $lnk = new view_term_link($this->usr1);
         $lnk->set_view($this->view());
+        $lnk->set_type(view_link_type::DEFAULT);
         $lnk->set_term($this->term());
         return $lnk;
     }

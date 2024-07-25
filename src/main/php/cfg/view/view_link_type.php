@@ -38,8 +38,8 @@ class view_link_type extends type_object
      * code links
      */
 
-    // list of link types that have a coded functionality
-    const DEFAULT = "default"; // a simple link between a formula and a phrase
+    // list of selection types for a view starting from a word, triple or formula
+    const DEFAULT = "main_word"; // use the main word as start for the view
 
 
     /*

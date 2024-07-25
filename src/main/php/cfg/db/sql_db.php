@@ -129,6 +129,7 @@ use cfg\verb;
 use cfg\verb_list;
 use cfg\view;
 use cfg\view_link_type;
+use cfg\view_link_type_list;
 use cfg\view_sys_list;
 use cfg\view_term_link;
 use cfg\view_type;
@@ -938,6 +939,7 @@ class sql_db
         global $formula_link_types;
         global $element_types;
         global $view_types;
+        global $view_link_types;
         global $component_types;
         global $component_link_types;
         global $position_types;
@@ -955,6 +957,7 @@ class sql_db
         global $change_table_list;
         global $change_field_list;
 
+        // TODO activate or remove
         //$system_users =[];
         //$user_profiles =[];
         $phrase_types = new phrase_types();
@@ -962,6 +965,7 @@ class sql_db
         $formula_link_types = new formula_link_type_list();
         $element_types = new element_type_list();
         $view_types = new view_type_list();
+        $view_link_types = new view_link_type_list();
         $component_types = new component_type_list();
         // not yet needed?
         //$component_link_types = new component_link_type_list();
@@ -2075,6 +2079,9 @@ class sql_db
             $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'phrase_type_name') {
+            $result = sql::FLD_TYPE_NAME;
+        }
+        if ($result == 'view_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {

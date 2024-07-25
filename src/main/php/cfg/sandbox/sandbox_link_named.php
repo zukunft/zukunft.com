@@ -44,6 +44,11 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 
 class sandbox_link_named extends sandbox_link
 {
+
+    /*
+     * object vars
+     */
+
     // the word, triple, verb oder formula description that is shown as a mouseover explain to the user
     // if description is NULL the database value should not be updated
     // or for triples the description that may differ from the generic created text
@@ -51,6 +56,11 @@ class sandbox_link_named extends sandbox_link
     // if the description is empty the generic created name is used
     protected ?string $name = '';   // simply the object name, which cannot be empty if it is a named object
     public ?string $description = null;
+
+
+    /*
+     * construct and map
+     */
 
     function reset(): void
     {

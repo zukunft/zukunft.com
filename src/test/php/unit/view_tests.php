@@ -201,8 +201,8 @@ class view_tests
         $t->subheader('view_term_link sql write');
         $lnk = $t->view_term_link();
         $t->assert_sql_insert($sc, $lnk);
-        /*
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
+        /*
         $lnk->description = view_api::TD_LINK;
         $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);

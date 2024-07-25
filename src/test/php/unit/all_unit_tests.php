@@ -108,6 +108,7 @@ use cfg\user\user_profile;
 use cfg\user_list;
 use cfg\user_profile_list;
 use cfg\verb_list;
+use cfg\view_link_type_list;
 use cfg\view_sys_list;
 use cfg\view_type_list;
 use test\all_tests;
@@ -411,6 +412,7 @@ class all_unit_tests extends test_cleanup
         $this->init_element_types();
         $this->init_views($usr);
         $this->init_view_types();
+        $this->init_view_link_types();
         $this->init_component_types();
         $this->init_component_link_types();
         $this->init_component_pos_types();
@@ -543,6 +545,18 @@ class all_unit_tests extends test_cleanup
 
         $view_types = new view_type_list();
         $view_types->load_dummy();
+
+    }
+
+    /**
+     * create view link type array for the unit tests without database connection
+     */
+    private function init_view_link_types(): void
+    {
+        global $view_link_types;
+
+        $view_link_types = new view_link_type_list();
+        $view_link_types->load_dummy();
 
     }
 
