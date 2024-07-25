@@ -16,8 +16,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     but first this needs to be fixed:
     TODO review unit, read and write tests
          sort load functions (done in: view
+         group function within a class e.g. by load, save ....
          use $this::class for load functions
-         use MaSK instead of DiSPlay for views
     TODO add unit test for all system views
     TODO Substeps: create insert, update and delete sql create tests for the main objects (TODO activate db write)
                    include the log in the prepared sql write statement

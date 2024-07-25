@@ -202,7 +202,6 @@ class view_tests
         $lnk = $t->view_term_link();
         $t->assert_sql_insert($sc, $lnk);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
-        /*
         $lnk->description = view_api::TD_LINK;
         $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
@@ -214,6 +213,7 @@ class view_tests
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG]);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG, sql_type::USER]);
         // delete
+        /*
         $t->assert_sql_delete($sc, $lnk);
         $t->assert_sql_delete($sc, $lnk, [sql_type::USER]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG]);
