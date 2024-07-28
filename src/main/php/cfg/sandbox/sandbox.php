@@ -1274,6 +1274,8 @@ class sandbox extends db_object_seq_id_user
     {
         $qp = new sql_par($this::class);
         $qp->name .= sql::NAME_EXT_USER_CONFIG;
+        $sc_par_lst->add(sql_type::USER);
+        $sc->set_class($this::class, $sc_par_lst);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields($this->all_sandbox_fields());
@@ -2285,7 +2287,7 @@ class sandbox extends db_object_seq_id_user
                     $db_rec = clone $this;
                     $db_rec->reset();
                     $db_rec->set_user($this->user());
-                    if ($db_rec->load_by_id($this->id, $db_rec::class) != $this->id()) {
+                    if ($db_rec->load_by_id($this->id()) != $this->id()) {
                         $result .= 'Reloading of user ' . $class_name . ' failed';
                     } else {
                         log_debug('reloaded from db');

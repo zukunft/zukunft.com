@@ -691,7 +691,7 @@ class view extends sandbox_typed
         $lnk = new view_term_link($this->user());
         $lnk->set_view($this);
         $lnk->set_term($trm);
-        $msg->add_message($this->save());
+        $msg->add_message($lnk->save());
         return $msg;
     }
 

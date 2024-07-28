@@ -18,6 +18,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
          sort load functions (done in: view
          group function within a class e.g. by load, save ....
          use $this::class for load functions
+    TODO check if MySQL create script is working
     TODO add unit test for all system views
     TODO Substeps: create insert, update and delete sql create tests for the main objects (TODO activate db write)
                    include the log in the prepared sql write statement
@@ -119,6 +120,11 @@ use html\phrase\phrase_group as phrase_group_dsp;
          load, im- and export, filter, modify, check, save, del
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO add a frontend cache e.g. for terms, formulas and view
+    TODO allow the user to configure the frontend cache size and show to the user suggestion in increase speed
+    TODO add a backend cache e.g. for terms, formulas and view
+    TODO allow the admin to configure the backend cache size and show to the user suggestion in increase speed
+    TODO add the option to separate the user config to be able to move the user config to a separate database so that each user group can run its own databaser server
     TODO check that all vars that can be empty allow null and replace null e.g. with an empty string as late as possible
     TODO check that all relevant vars are forwarded from the backend object to the api and display object
     TODO add a system execution time measurment that covers e.g. the import of words (values, ...) ber second
@@ -1163,6 +1169,7 @@ const BASE_CODE_LINK_FILE_TYPE = '.csv';
 const SYSTEM_USER_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'users.json';
 const SYSTEM_VERB_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'verbs.json';
 const SYSTEM_VIEW_CONFIG_FILE = 'system_views.json';
+const BASE_VIEW_CONFIG_FILE = 'base_views.json';
 const SYSTEM_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'config.json';
 const PATH_BASE_CONFIG_MESSAGE_FILES = PATH_BASE_CONFIG_FILES . 'messages/';
 const SYSTEM_VIEW_CONFIG_PATH = PATH_BASE_CONFIG_MESSAGE_FILES . SYSTEM_VIEW_CONFIG_FILE;
@@ -1173,6 +1180,7 @@ const BASE_CONFIG_FILES = [
     'scaling.json',
     'time_definition.json',
     'ip_blacklist.json',
+    BASE_VIEW_CONFIG_FILE,
     'country.json',
     'solution_prio.json',
     'company.json'

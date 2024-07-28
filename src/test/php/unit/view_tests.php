@@ -197,6 +197,11 @@ class view_tests
         $t->subheader('view_term_link sql read');
         $lnk = new view_term_link($usr);
         $t->assert_sql_by_id($sc, $lnk);
+        $lnk = $t->view_term_link();
+        $t->assert_sql_standard($sc, $lnk);
+        // TODO check if all links have the check
+        $t->assert_sql_by_link($sc, $lnk);
+        $t->assert_sql_user_changes($sc, $lnk);
 
         $t->subheader('view_term_link sql write');
         $lnk = $t->view_term_link();

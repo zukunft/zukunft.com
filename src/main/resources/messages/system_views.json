@@ -574,52 +574,6 @@
           "name": "XML Export"
         }
       ]
-    },
-    {
-      "name": "math const",
-      "description": "Show a mathatical constance and the related words and formulas",
-      "components": [
-        {
-          "position": "1",
-          "name": "Name",
-          "type": "phrase_name"
-        },
-        {
-          "position": "2",
-          "name": "Words related"
-        },
-        {
-          "position": "3",
-          "name": "Formulas"
-        }
-      ],
-      "assigned": [
-        "Pi",
-        "Euler's constant"
-      ]
-    },
-    {
-      "name": "Formula",
-      "description": "Show a formula and the related results and words",
-      "components": [
-        {
-          "position": "1",
-          "name": "Name",
-          "type": "phrase_name"
-        },
-        {
-          "position": "2",
-          "name": "Expression"
-        },
-        {
-          "position": "3",
-          "name": "Results related"
-        }
-      ],
-      "assigned": [
-        "scale minute to sec",
-        "increase"
-      ]
     }
   ]
 }

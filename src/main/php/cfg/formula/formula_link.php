@@ -190,6 +190,9 @@ class formula_link extends sandbox_link_with_type
      * set and get
      */
 
+    // TODO add function "formula()" that returns the "From_OBject (fob)"
+    // TODO check that all link objects have a self speaking interface function for the "From_OBject (fob)" and "To_OBject (tob)"
+
     /**
      * set the main vars with one function
      * @param int $id the database id of the link
@@ -231,8 +234,8 @@ class formula_link extends sandbox_link_with_type
     {
         $result = 0;
         if ($this->fob != null) {
-            if ($this->fob->id > 0) {
-                $result = $this->fob->id;
+            if ($this->fob->id() > 0) {
+                $result = $this->fob->id();
             }
         }
         return $result;
@@ -658,8 +661,8 @@ class formula_link extends sandbox_link_with_type
             if ($db_rec->fob != null) {
                 if ($db_rec->fob->id() <> $this->fob->id()
                     or $db_rec->tob->id() <> $this->tob->id()) {
-                    log_debug("update link settings for id " . $this->id . ": change formula " . $db_rec->formula_id() . " to " . $this->formula_id() . " and " . $db_rec->phrase_id() . " to " . $this->phrase_id());
-                    $result .= log_info('The formula link "' . $db_rec->fob->name . '" with "' . $db_rec->tob->name . '" (id ' . $db_rec->formula_id() . ',' . $db_rec->phrase_id() . ') " cannot be changed to "' . $this->fob->name . '" with "' . $this->tob->name . '" (id ' . $this->fob->id . ',' . $this->tob->id . '). Instead the program should have created a new link.', "formula_link->save");
+                    log_debug("update link settings for id " . $this->id() . ": change formula " . $db_rec->formula_id() . " to " . $this->formula_id() . " and " . $db_rec->phrase_id() . " to " . $this->phrase_id());
+                    $result .= log_info('The formula link "' . $db_rec->fob->name() . '" with "' . $db_rec->tob->name() . '" (id ' . $db_rec->formula_id() . ',' . $db_rec->phrase_id() . ') " cannot be changed to "' . $this->fob->name() . '" with "' . $this->tob->name() . '" (id ' . $this->fob->id() . ',' . $this->tob->id() . '). Instead the program should have created a new link.', "formula_link->save");
                 }
             }
 

@@ -73,6 +73,15 @@ class view_term_link extends sandbox_link_with_type
     const FLD_NAMES_USR = array(
         sandbox_named::FLD_DESCRIPTION
     );
+    // all database field names, excluding the id, used to identify if there are some user specific changes
+    // TODO check if this is used in all relevant objects
+    const ALL_SANDBOX_FLD_NAMES = array(
+        view_link_type::FLD_ID,
+        sandbox_named::FLD_DESCRIPTION,
+        sandbox::FLD_EXCLUDED,
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
+    );
     // list of fields that select the objects that should be linked
     const FLD_LST_LINK = array(
         [term::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
@@ -101,10 +110,51 @@ class view_term_link extends sandbox_link_with_type
      * construct and map
      */
 
+    /**
+     * @param user $usr the user how has requested to see his view on the object
+     */
+    function __construct(user $usr)
+    {
+        parent::__construct($usr);
+        $this->reset();
+        $this->set_type(view_link_type::DEFAULT);
+    }
+
     function reset(): void
     {
         parent::reset();
+        $this->set_type_id(null);
         $this->description = null;
+    }
+
+    /**
+     * map the database fields to the object fields
+     * TODO get the related view and term object from the cache if possible
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @return bool true if the view component link is loaded and valid
+     */
+    function row_mapper_sandbox(
+        ?array $db_row,
+        bool   $load_std = false,
+        bool   $allow_usr_protect = true,
+        string $id_fld = self::FLD_ID): bool
+    {
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
+        if ($result) {
+            $msk = new view($this->user());
+            $msk->set_id($db_row[view::FLD_ID]);
+            $this->set_view($msk);
+            $trm = new term($this->user());
+            $trm->set_id($db_row[term::FLD_ID]);
+            $this->set_term($trm);
+            $this->set_type_id($db_row[view_link_type::FLD_ID]);
+            $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
+        }
+        return $result;
     }
 
 
@@ -199,6 +249,15 @@ class view_term_link extends sandbox_link_with_type
         return '';
     }
 
+    /**
+     * @return array with the all field names that the user can change for this object
+     * TODO move to the highest object level
+     */
+    protected function all_sandbox_fields(): array
+    {
+        return self::ALL_SANDBOX_FLD_NAMES;
+    }
+
 
     /*
      * preloaded
@@ -241,6 +300,86 @@ class view_term_link extends sandbox_link_with_type
         return $qp;
     }
 
+    /**
+     * TODO move inner part to view as "load_remaining"
+     * TODO add a bool var "is_loaded" to db_object
+     *      to indicate is the object has just been created and might be incomplete
+     *      or if loaded from the db and is expected to have all vars in line with the db
+     * @return bool true if all the related objects has been loaded
+     */
+    function load_objects(): bool
+    {
+        $result = true;
+
+        $msk = $this->view();
+        if ($msk->id() == 0) {
+            if ($msk->name() != '') {
+                $result = $msk->load_by_name($msk->name());
+            } else {
+                log_warning('Cannot load view because neither id nor name is set');
+            }
+        } else {
+            if ($msk->name() == '') {
+                $result = $msk->load_by_id($msk->id());
+            }
+        }
+
+        $trm = $this->term();
+        if ($trm->id() == 0) {
+            if ($trm->name() != '') {
+                $result = $trm->load_by_name($trm->name());
+            } else {
+                log_warning('Cannot load term because neither id nor name is set');
+            }
+        } else {
+            if ($trm->name() == '') {
+                $result = $trm->load_by_id($trm->id());
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * create an SQL statement to retrieve the parameters of the standard view term link from the database
+     *
+     * @param sql $sc with the target db_type set
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_sql(sql $sc): sql_par
+    {
+        // try to get the search values from the objects
+        if ($this->id <= 0) {
+            $this->id = 0;
+        }
+
+        $sc->set_class($this::class);
+        $qp = new sql_par($this::class);
+        if ($this->id != 0) {
+            $qp->name .= 'std_id';
+        } else {
+            $qp->name .= 'std_link_ids';
+        }
+        $sc->set_name($qp->name);
+        $sc->set_fields(array_merge(
+            self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR,
+            array(user::FLD_ID)));
+        if ($this->id() > 0) {
+            $sc->add_where($this->id_field(), $this->id());
+        } elseif ($this->view()->id() > 0 and $this->term()->id() > 0) {
+            $sc->add_where(view::FLD_ID, $this->view()->id());
+            $sc->add_where(term::FLD_ID, $this->term()->id());
+        } else {
+            log_err('Cannot load default component link because id is missing');
+        }
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
 
     /*
      * sql write fields
@@ -271,7 +410,7 @@ class view_term_link extends sandbox_link_with_type
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|word $sbx,
+        sandbox|word  $sbx,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {

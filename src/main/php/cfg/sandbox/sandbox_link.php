@@ -313,6 +313,49 @@ class sandbox_link extends sandbox
      */
 
     /**
+     * load a named user sandbox object by name
+     * @param int $from the subject object id
+     * @param int $type the predicate object id
+     * @param int $to the object (grammar) object id
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_link_id(int $from, int $type = 0, int $to = 0, string $class = ''): int
+    {
+        global $db_con;
+
+        $lib = new library();
+        log_debug($lib->dsp_array(array($from, $type, $to)));
+        $qp = $this->load_sql_by_link($db_con->sql_creator(), $from, $type, $to, $class);
+        return parent::load($qp);
+    }
+
+    /**
+     * load the link parameters for all users
+     * TODO remove from the child objects
+     *
+     * @param sql_par|null $qp placeholder to align the function parameters with the parent
+     * @return bool true if the standard view component link has been loaded
+     */
+    function load_standard(?sql_par $qp = null): bool
+    {
+
+        global $db_con;
+        $result = false;
+
+        $qp = $this->load_standard_sql($db_con->sql_creator());
+
+        if ($qp->has_par()) {
+            $db_dsl = $db_con->get1($qp);
+            $result = $this->row_mapper_sandbox($db_dsl, true);
+            if ($result) {
+                $result = $this->load_owner();
+            }
+        }
+        return $result;
+    }
+
+    /**
      * create an SQL statement to retrieve a user sandbox link by the ids of the linked objects from the database
      *
      * @param sql $sc with the target db_type set
@@ -337,24 +380,6 @@ class sandbox_link extends sandbox
         $qp->par = $sc->get_par();
 
         return $qp;
-    }
-
-    /**
-     * load a named user sandbox object by name
-     * @param int $from the subject object id
-     * @param int $type the predicate object id
-     * @param int $to the object (grammar) object id
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_link_id(int $from, int $type = 0, int $to = 0, string $class = ''): int
-    {
-        global $db_con;
-
-        $lib = new library();
-        log_debug($lib->dsp_array(array($from, $type, $to)));
-        $qp = $this->load_sql_by_link($db_con->sql_creator(), $from, $type, $to, $class);
-        return parent::load($qp);
     }
 
 
@@ -567,8 +592,8 @@ class sandbox_link extends sandbox
         $result = False;
         log_debug($this->dsp_id());
 
-        if ($db_rec->fob->id <> $this->fob->id
-            or $db_rec->tob->id <> $this->tob->id) {
+        if ($db_rec->fob->id() <> $this->fob->id()
+            or $db_rec->tob->id() <> $this->tob->id()) {
             $result = True;
             // TODO check if next line is needed
             // $this->reset_objects();
@@ -639,8 +664,8 @@ class sandbox_link extends sandbox
             and isset($this->tob)
             and isset($obj_to_check->fob)
             and isset($obj_to_check->tob)) {
-            if ($this->fob->id == $obj_to_check->fob->id and
-                $this->tob->id == $obj_to_check->tob->id) {
+            if ($this->fob->id() == $obj_to_check->fob->id() and
+                $this->tob->id() == $obj_to_check->tob->id()) {
                 $result = true;
             }
         } elseif ($obj_to_check::class == triple::class) {

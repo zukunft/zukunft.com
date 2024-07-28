@@ -585,7 +585,7 @@ class sql
     /**
      * define the table that should be used for the next select, insert, update or delete statement
      * resets all previous db query settings such as fields, user_fields, so this should be the first statement when defining a database query
-     * TODO check that this is always called directly before the query is created, so that
+     * TODO check that this is always called directly before the query is created, so that no old parameters are used
      * TODO check if this is called with the class name and if there are exceptions
      *
      * @param string $class is a string that is used to select the table name, the id field and the name field

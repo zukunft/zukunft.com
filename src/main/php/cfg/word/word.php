@@ -1611,22 +1611,6 @@ class word extends sandbox_typed
         return $has_cfg;
     }
 
-    /**
-     * create an SQL statement to retrieve the user changes of the current word
-     *
-     * @param sql $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_user_changes(
-        sql           $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
-    ): sql_par
-    {
-        $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
-        return parent::load_sql_user_changes($sc, $sc_par_lst);
-    }
-
 
     /*
      * log
