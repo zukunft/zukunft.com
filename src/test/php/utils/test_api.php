@@ -89,7 +89,8 @@ use shared\library;
 class test_api extends create_test_objects
 {
     // path
-    const API_PATH = 'api/';
+    const API_PATH = 'api';
+    const JSON_EXT = '.json';
 
     /**
      * check if the HTML frontend object can be set based on the api json message
@@ -118,37 +119,6 @@ class test_api extends create_test_objects
      */
 
     /**
-     * check the api message without using the real curl api
-     * @param object $usr_obj the user sandbox object that should be tested
-     * @return bool true if the check is fine
-     */
-    function assert_api_json(object $usr_obj): bool
-    {
-        $class = $usr_obj::class;
-        $class = $this->class_to_api($class);
-        $test_name = $class . ' check that the excluded object returns a json with just the id and the excluded flag';
-        $json_excluded = $usr_obj->api_json();
-        $result = $this->assert($test_name, $json_excluded, '{"id":1,"excluded":true}');
-        if ($result) {
-            $test_name = $class . ' check that the reset function remove all object vars';
-            $usr_obj->excluded = false;
-            // check that the excluded object returns a json with just the id and the excluded flag
-            $json_api = $usr_obj->api_json();
-            $clone_obj = clone $usr_obj;
-            $clone_obj->reset();
-            $json_empty = $clone_obj->api_json();
-            $result = $this->assert($test_name, $json_empty, '{"id":0}');
-        }
-        if ($result) {
-            $test_name = $class . ' api json';
-            $clone_obj->set_by_api_string($json_api);
-            $json_compare = $clone_obj->api_json();
-            $result = $this->assert_json_string($test_name, $json_compare, $json_api);
-        }
-        return $result;
-    }
-
-    /**
      * check if the created api json message matches the api json message from the test resources
      * the unit test should be done for all api objects
      * @param object $usr_obj the user sandbox object that should be tested
@@ -165,6 +135,39 @@ class test_api extends create_test_objects
         }
         $actual = json_decode($api_obj->get_json(), true);
         return $this->assert_api_compare($class, $actual, null, $filename, $contains);
+    }
+
+    /**
+     * create a api json, recreate the object based on the json and check if it matches
+     * without using the real curl api
+     *
+     * @param object $usr_obj the user sandbox object that should be tested
+     * @return bool true if the check is fine
+     */
+    function assert_api_json(object $usr_obj): bool
+    {
+        $class = $usr_obj::class;
+        $class = $this->class_to_api($class);
+        $test_name = $class . ' excluded returns id only api json';
+        $json_excluded = $usr_obj->api_json();
+        $result = $this->assert($test_name, $json_excluded, '{"id":1,"excluded":true}');
+        if ($result) {
+            $test_name = $class . ' reset returns empty api json';
+            $usr_obj->excluded = false;
+            // check that the excluded object returns a json with just the id and the excluded flag
+            $json_api = $usr_obj->api_json();
+            $clone_obj = clone $usr_obj;
+            $clone_obj->reset();
+            $json_empty = $clone_obj->api_json();
+            $result = $this->assert($test_name, $json_empty, '{"id":0}');
+        }
+        if ($result) {
+            $test_name = $class . ' fill based on api json matches original';
+            $clone_obj->set_by_api_string($json_api);
+            $json_compare = $clone_obj->api_json();
+            $result = $this->assert_json_string($test_name, $json_compare, $json_api);
+        }
+        return $result;
     }
 
     /**
@@ -448,7 +451,10 @@ class test_api extends create_test_objects
         }
         $filename = '';
         if ($class == value::class) {
-            $filename = "value_non_std";
+            $filename = 'value_non_std';
+        }
+        if ($class == word::class) {
+            $filename = 'word_msg';
         }
         return $this->assert_api_compare($class_api, $actual, $expected, $filename, false, $ignore_id);
     }
@@ -464,12 +470,16 @@ class test_api extends create_test_objects
      */
     function assert_api_get_by_text(string $class, string $name = '', string $field = controller::URL_VAR_NAME): bool
     {
+        $filename = '';
+        if ($class == word::class) {
+            $filename = 'word_msg';
+        }
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data = array($field => $name);
         $ctrl = new rest_ctrl();
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
-        return $this->assert_api_compare($class, $actual);
+        return $this->assert_api_compare($class, $actual, null, $filename);
     }
 
     /**
@@ -551,7 +561,7 @@ class test_api extends create_test_objects
      * for testing the local deployments needs to be updated using an external script
      *
      * @param string $class the class name of the object to test
-     * @param array $actual the actual received json array
+     * @param ?array $actual the actual received json array
      * @param ?array $expected if not null, the expected result
      * @param string $filename to overwrite the class based filename to get the standard expected result
      * @param bool $contains set to true if the actual message is expected to contain more than the expected message
@@ -602,7 +612,8 @@ class test_api extends create_test_objects
         if ($file == '') {
             $file = $class;
         }
-        return $this->file('api/' . $class . '/' . $file . '.json');
+        $filename = self::API_PATH . DIRECTORY_SEPARATOR . $class . DIRECTORY_SEPARATOR . $file . self::JSON_EXT;
+        return $this->file($filename);
     }
 
     /**

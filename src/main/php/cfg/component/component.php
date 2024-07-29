@@ -507,7 +507,7 @@ class component extends sandbox_typed
     /**
      * @return component_api the view component frontend api object
      */
-    function api_obj(): object
+    function api_obj(): component_api
     {
         $api_obj = new component_api();
         $this->fill_api_obj($api_obj);

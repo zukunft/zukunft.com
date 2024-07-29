@@ -371,7 +371,7 @@ class component_link extends sandbox_link_with_type
     /**
      * @return component_link_api the view component frontend api object
      */
-    function api_obj(): object
+    function api_obj(): component_link_api
     {
         $api_obj = new component_link_api();
         $this->fill_api_obj($api_obj);

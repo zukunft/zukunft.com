@@ -436,19 +436,12 @@ class word extends sandbox_typed
         $api_obj = new word_api();
         if (!$this->is_excluded()) {
             parent::fill_api_obj($api_obj);
+            $api_obj->set_plural($this->plural);
         } else {
             $api_obj->set_id($this->id());
             $api_obj->excluded = true;
         }
         return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
     }
 
     /**
@@ -464,30 +457,13 @@ class word extends sandbox_typed
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_NAME) {
-                $this->set_name($value);
-            }
-            if ($key == api::FLD_DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
-            }
-            if ($key == api::FLD_TYPE) {
-                $this->type_id = $value;
-            }
-
-            /* TODO
+            // TODO move plural to language forms
             if ($key == self::FLD_PLURAL) {
                 if ($value <> '') {
                     $this->plural = $value;
                 }
             }
-            if ($key == share_type_shared::JSON_FLD) {
-                $this->share_id = $share_types->id($value);
-            }
-            if ($key == protect_type_shared::JSON_FLD) {
-                $this->protection_id = $protection_types->id($value);
-            }
+            /*
             if ($key == exp_obj::FLD_VIEW) {
                 $wrd_view = new view($this->user());
                 if ($do_save) {

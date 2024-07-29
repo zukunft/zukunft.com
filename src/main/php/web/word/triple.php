@@ -68,6 +68,7 @@ class triple extends sandbox_typed
     private phrase_dsp $from;
     private ?verb_dsp $verb = null;
     private phrase_dsp $to;
+    private ?string $plural = null;
 
 
     /*
@@ -134,6 +135,16 @@ class triple extends sandbox_typed
     function to(): phrase_dsp
     {
         return $this->to;
+    }
+
+    function set_plural(string $plural): void
+    {
+        $this->plural = $plural;
+    }
+
+    function plural(): ?string
+    {
+        return $this->plural;
     }
 
     /**

@@ -62,6 +62,7 @@ include_once API_VIEW_PATH . 'view.php';
 include_once API_COMPONENT_PATH . 'component.php';
 include_once API_WORD_PATH . 'word.php';
 
+use api\api;
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
 use api\phrase\phrase as phrase_api;
@@ -288,6 +289,27 @@ class sandbox_named extends sandbox
 
         $api_obj->set_name($this->name());
         $api_obj->description = $this->description;
+    }
+
+    /**
+     * set the type based on the api json
+     * @param array $api_json the api json array with the values that should be mapped
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+            if ($key == api::FLD_NAME) {
+                $this->set_name($value);
+            }
+            if ($key == api::FLD_DESCRIPTION) {
+                if ($value <> '') {
+                    $this->description = $value;
+                }
+            }
+        }
+        return $msg;
     }
 
     /**

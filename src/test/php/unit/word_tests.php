@@ -127,13 +127,8 @@ class word_tests
 
         $wrd_filled = $t->word_filled();
         $t->assert_api_json($wrd_filled);
-        $wrd = new word($usr);
-        $wrd->set(1, word_api::TN_READ, phrase_type::MATH_CONST);
-        $wrd->description = word_api::TD_READ;
-        $api_wrd = $wrd->api_obj();
-        $t->assert($t->name . 'api->id', $api_wrd->id, $wrd->id());
-        $t->assert($t->name . 'api->name', $api_wrd->name, $wrd->name_dsp());
-        $t->assert($t->name . 'api->description', $api_wrd->description, $wrd->description);
+        $wrd_filled->excluded = false;
+        $t->assert_api($wrd_filled);
 
 
         $t->subheader('word im- and export unit tests');

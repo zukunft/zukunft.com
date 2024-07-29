@@ -104,6 +104,14 @@ class combine_named extends combine_object
     }
 
     /**
+     * @return string|null the plural of the word, triple, formula or verb
+     */
+    function plural(): ?string
+    {
+        return $this->obj()?->plural();
+    }
+
+    /**
      * @param int|null $type_id the type id of the word, triple, formula or verb
      * @return void
      */

@@ -483,7 +483,7 @@ class formula extends sandbox_typed
     /**
      * @return formula_api the formula frontend api object
      */
-    function api_obj(): object
+    function api_obj(): formula_api
     {
         $api_obj = new formula_api();
         $api_obj->set_usr_text($this->usr_text);

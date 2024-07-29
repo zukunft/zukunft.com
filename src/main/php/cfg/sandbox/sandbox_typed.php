@@ -44,6 +44,7 @@ namespace cfg;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 
+use api\api;
 use cfg\db\sql_db;
 
 class sandbox_typed extends sandbox_named
@@ -123,6 +124,23 @@ class sandbox_typed extends sandbox_named
     }
 
     /**
+     * set the type based on the api json
+     * @param array $api_json the api json array with the values that should be mapped
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+            if ($key == api::FLD_TYPE) {
+                $this->set_type_id($value);
+            }
+        }
+        return $msg;
+    }
+
+    /**
+     * TODO deprecate or move to frontend part
      * @param object $dsp_obj frontend API objects that should be filled with unique object name
      */
     function fill_dsp_obj(object $dsp_obj): void

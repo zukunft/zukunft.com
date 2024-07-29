@@ -80,6 +80,7 @@ include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
 use api\api;
+use api\sandbox\sandbox as sandbox_api;
 use cfg\component\component_link_type;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
@@ -504,6 +505,28 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
+     * overwritten by the child objects with the object specific fields
+     * @return sandbox_api any frontend api object e.g. word_api
+     */
+    function api_obj(): sandbox_api
+    {
+        $api_obj = new sandbox_api();
+        if ($this->is_excluded()) {
+            $api_obj->set_id($this->id());
+            $api_obj->excluded = true;
+        }
+        return $api_obj;
+    }
+
+    /**
+     * @returns string the api json message for any child object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
      * @param object $api_obj frontend API object filled with the database id
      */
     function fill_api_obj(object $api_obj): void
@@ -553,6 +576,12 @@ class sandbox extends db_object_seq_id_user
 
             if ($key == api::FLD_ID) {
                 $this->set_id($value);
+            }
+            if ($key == share_type_shared::JSON_FLD) {
+                $this->share_id = $value;
+            }
+            if ($key == protect_type_shared::JSON_FLD) {
+                $this->protection_id = $value;
             }
 
         }

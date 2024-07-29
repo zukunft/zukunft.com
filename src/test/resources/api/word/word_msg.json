@@ -1,0 +1,13 @@
+{
+  "pod": "zukunft.com",
+  "type": "word",
+  "user_id": 2,
+  "user": "zukunft.com system test",
+  "version": "0.0.3",
+  "body": {
+    "id": 1,
+    "name": "Mathematics",
+    "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
+    "type_id": 1
+  }
+}

@@ -679,7 +679,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /**
      * @return triple_api the triple frontend api object
      */
-    function api_obj(): object
+    function api_obj(): triple_api
     {
         $api_obj = new triple_api();
         if (!$this->is_excluded()) {

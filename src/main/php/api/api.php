@@ -97,4 +97,7 @@ class api
 
     // phrase api specific fields
     const FLD_PHRASE_CLASS = 'class';
+
+    const FLD_PLURAL = 'plural';
+
 }

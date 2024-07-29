@@ -34,13 +34,16 @@ namespace api\word;
 
 include_once API_SANDBOX_PATH . 'sandbox_typed.php';
 
+use api\api;
 use api\phrase\phrase as phrase_api;
 use api\phrase\term as term_api;
+use api\sandbox\combine_object as combine_object_api;
 use api\sandbox\sandbox_typed as sandbox_typed_api;
 use cfg\phrase_type;
 use cfg\word as word_cfg;
+use JsonSerializable;
 
-class word extends sandbox_typed_api
+class word extends sandbox_typed_api implements JsonSerializable
 {
 
     /*
@@ -374,6 +377,7 @@ class word extends sandbox_typed_api
     public ?string $description = null;
 
     // the language specific forms
+    // TODO switch to public to avoid jsonSerialize usage ?
     private ?string $plural = null;
 
     // the main parent phrase
@@ -477,6 +481,23 @@ class word extends sandbox_typed_api
     function term(): term_api
     {
         return new term_api($this);
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array with the value vars including the private vars
+     */
+    function jsonSerialize(): array
+    {
+        $vars = parent::jsonSerialize();
+        if ($this->plural() != null) {
+            $vars[api::FLD_PLURAL] = $this->plural();
+        }
+        return $vars;
     }
 
 }
