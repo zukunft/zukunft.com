@@ -138,7 +138,7 @@ class test_api extends create_test_objects
     }
 
     /**
-     * create a api json, recreate the object based on the json and check if it matches
+     * create the api message json body, recreate the object based on the json and check if it matches
      * without using the real curl api
      *
      * @param object $usr_obj the user sandbox object that should be tested
@@ -149,6 +149,7 @@ class test_api extends create_test_objects
         $class = $usr_obj::class;
         $class = $this->class_to_api($class);
         $test_name = $class . ' excluded returns id only api json';
+        $usr_obj->excluded = true;
         $json_excluded = $usr_obj->api_json();
         $result = $this->assert($test_name, $json_excluded, '{"id":1,"excluded":true}');
         if ($result) {
@@ -453,9 +454,6 @@ class test_api extends create_test_objects
         if ($class == value::class) {
             $filename = 'value_non_std';
         }
-        if ($class == word::class) {
-            $filename = 'word_msg';
-        }
         return $this->assert_api_compare($class_api, $actual, $expected, $filename, false, $ignore_id);
     }
 
@@ -470,16 +468,12 @@ class test_api extends create_test_objects
      */
     function assert_api_get_by_text(string $class, string $name = '', string $field = controller::URL_VAR_NAME): bool
     {
-        $filename = '';
-        if ($class == word::class) {
-            $filename = 'word_msg';
-        }
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data = array($field => $name);
         $ctrl = new rest_ctrl();
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
-        return $this->assert_api_compare($class, $actual, null, $filename);
+        return $this->assert_api_compare($class, $actual);
     }
 
     /**

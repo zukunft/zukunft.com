@@ -125,10 +125,14 @@ class word_tests
 
         $t->subheader('word api unit tests');
 
-        $wrd_filled = $t->word_filled();
-        $t->assert_api_json($wrd_filled);
-        $wrd_filled->excluded = false;
-        $t->assert_api($wrd_filled);
+        $wrd = $t->word();
+        $t->assert_api_json($wrd);
+        $wrd = $t->word_filled();
+        $t->assert_api_json($wrd);
+        $wrd->excluded = false;
+        $t->assert_api($wrd, 'word_full');
+        $wrd = $t->word();
+        $t->assert_api($wrd, 'word_body');
 
 
         $t->subheader('word im- and export unit tests');

@@ -36,12 +36,15 @@ namespace api\sandbox;
 
 use api\api;
 use JsonSerializable;
+use shared\types\protection_type;
 
 class sandbox implements JsonSerializable
 {
 
     // fields for the backend link
     public int|string $id; // the database id of the object, which is the same as the related database object in the backend
+    public int|null $share = null; // the share type id; if not set the default share type is assumed
+    public int|null $protection = null; // the protection type id; if not set the default protection type (public) is assumed
     public bool $excluded; // to return the id with the excluded flag if an object has been excluded
 
 
@@ -115,7 +118,23 @@ class sandbox implements JsonSerializable
      */
     function jsonSerialize(): array
     {
+        global $share_types;
+        global $protection_types;
+
         $vars = get_object_vars($this);
+
+        // remove vars from the json that have the default value
+        if (array_key_exists(api::FLD_SHARE, $vars)) {
+            if ($vars[api::FLD_SHARE] == $share_types->default_id()) {
+                unset($vars[api::FLD_SHARE]);
+            }
+        }
+        if (array_key_exists(api::FLD_PROTECTION, $vars)) {
+            if ($vars[api::FLD_PROTECTION] == $protection_types->default_id()) {
+                unset($vars[api::FLD_PROTECTION]);
+            }
+        }
+
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

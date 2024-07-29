@@ -173,6 +173,13 @@ class term extends combine_named_dsp
         if ($this->is_formula()) {
             $vars[api::FLD_USER_TEXT] = $this->obj()->usr_text();
         }
+        // TODO add exclude field and move to a parent object?
+        if ($this->obj()?->share_id != null) {
+            $vars[api::FLD_SHARE] = $this->obj()?->share_id;
+        }
+        if ($this->obj()?->protection_id != null) {
+            $vars[api::FLD_PROTECTION] = $this->obj()?->protection_id;
+        }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

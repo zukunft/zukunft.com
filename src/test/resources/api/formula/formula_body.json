@@ -1,0 +1,9 @@
+{
+  "id": 1,
+  "share": 3,
+  "protection": 2,
+  "name": "scale minute to sec",
+  "description": "to convert times in minutes to seconds and the other way round",
+  "type_id": 1,
+  "user_text": "\"second\" = \"minute\" * 60"
+}

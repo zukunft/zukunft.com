@@ -154,6 +154,13 @@ class phrase extends combine_named_dsp
         $vars[api::FLD_DESCRIPTION] = $this->description();
         $vars[api::FLD_TYPE] = $this->type_id();
         $vars[api::FLD_PLURAL] = $this->plural();
+        // TODO add exclude field and move to a parent object?
+        if ($this->obj()?->share_id != null) {
+            $vars[api::FLD_SHARE] = $this->obj()?->share_id;
+        }
+        if ($this->obj()?->protection_id != null) {
+            $vars[api::FLD_PROTECTION] = $this->obj()?->protection_id;
+        }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

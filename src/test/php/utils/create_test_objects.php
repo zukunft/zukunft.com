@@ -447,6 +447,8 @@ class create_test_objects extends test_base
         $wrd->set(word_api::TI_MATH, word_api::TN_READ);
         $wrd->description = word_api::TD_READ;
         $wrd->set_type(phrase_type::NORMAL);
+        global $protection_types;
+        $wrd->protection_id = $protection_types->id(protect_type_shared::ADMIN);
         return $wrd;
     }
 
@@ -518,6 +520,8 @@ class create_test_objects extends test_base
         $wrd->set(word_api::TI_CONST, word_api::TN_CONST);
         $wrd->description = word_api::TD_CONST;
         $wrd->set_type(phrase_type::MATH_CONST);
+        global $protection_types;
+        $wrd->protection_id = $protection_types->id(protect_type_shared::ADMIN);
         return $wrd;
     }
 
@@ -530,6 +534,8 @@ class create_test_objects extends test_base
         $wrd->set(word_api::TI_PI, word_api::TN_PI);
         $wrd->description = word_api::TD_PI;
         $wrd->set_type(phrase_type::MATH_CONST);
+        global $protection_types;
+        $wrd->protection_id = $protection_types->id(protect_type_shared::ADMIN);
         return $wrd;
     }
 
@@ -835,6 +841,8 @@ class create_test_objects extends test_base
         $trp->set_verb($this->verb_part());
         $trp->set_to($this->word()->phrase());
         $trp->set_type(phrase_type::MATH_CONST);
+        global $protection_types;
+        $trp->protection_id = $protection_types->id(protect_type_shared::ADMIN);
         return $trp;
     }
 

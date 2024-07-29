@@ -36,6 +36,7 @@ include_once SANDBOX_PATH . 'db_object.php';
 include_once HTML_PATH . 'html_base.php';
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
 
+use api\api;
 use html\sandbox\db_object as db_object_dsp;
 use html\html_base;
 use html\user\user as user_dsp;
@@ -49,6 +50,60 @@ class sandbox extends db_object_dsp
 
     protected ?user_dsp $owner = null;
 
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the vars of this sandbox object bases on the api json array
+     * do not set the default share and protection type to be able to identify forced updates to the default type
+     *
+     * @param array $json_array an api json message
+     * @return void
+     */
+    function set_from_json_array(array $json_array): void
+    {
+        parent::set_from_json_array($json_array);
+
+        if (array_key_exists(api::FLD_SHARE, $json_array)) {
+            $this->share_id = $json_array[api::FLD_SHARE];
+        } else {
+            $this->share_id = null;
+        }
+        if (array_key_exists(api::FLD_PROTECTION, $json_array)) {
+            $this->protection_id = $json_array[api::FLD_PROTECTION];
+        } else {
+            $this->protection_id = null;
+        }
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars = parent::api_array();
+
+        if ($this->share_id != null) {
+            $vars[api::FLD_SHARE] = $this->share_id;
+        }
+        if ($this->protection_id != null) {
+            $vars[api::FLD_PROTECTION] = $this->protection_id;
+        }
+        return $vars;
+    }
+
+
+    /*
+     * selectors
+     */
 
     /**
      * @param string $form_name the name of the html form

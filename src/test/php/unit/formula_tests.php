@@ -60,7 +60,6 @@ class formula_tests
         $sc = new sql();
         $t->name = 'formula->';
         $t->resource_path = 'db/formula/';
-        $json_file = 'unit/formula/scale_second_to_minute.json';
         $usr->set_id(1);
 
 
@@ -82,6 +81,7 @@ class formula_tests
         // sql to load the formula by id
         $frm = new formula($usr);
         $frm->set_id(formula_api::TI_READ_ANOTHER);
+        // TODO activate
         //$t->assert_sql_all($db_con, $frm);
         $t->assert_sql_standard($sc, $frm);
         $t->assert_sql_not_changed($sc, $frm);
@@ -118,15 +118,24 @@ class formula_tests
         $t->assert_sql_delete($sc, $frm);
         $t->assert_sql_delete($sc, $frm, [sql_type::USER]);
 
-        $t->subheader('Im- and Export tests');
 
+        $t->subheader('formula api unit tests');
+
+        $frm = $t->formula_filled();
+        $t->assert_api_json($frm);
+        $frm->excluded = false;
+        $t->assert_api($frm, 'formula_body');
+
+
+        $t->subheader('formula im- and export unit tests');
+
+        $json_file = 'unit/formula/scale_second_to_minute.json';
         $t->assert_json_file(new formula($usr), $json_file);
 
 
-        $t->subheader('API and HTML frontend unit tests');
+        $t->subheader('formula HTML frontend unit tests');
 
         $frm = $t->formula();
-        $t->assert_api($frm);
         $t->assert_api_to_dsp($frm, new formula_dsp());
 
 

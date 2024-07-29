@@ -114,7 +114,7 @@ class result extends sandbox_value_api implements JsonSerializable
         // and only used to speed up the database and reduce the size
         $vars[api::FLD_PHRASES] = json_decode(json_encode($this->phr_lst()));
 
-        return $vars;
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 }

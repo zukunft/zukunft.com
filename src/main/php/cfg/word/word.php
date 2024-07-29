@@ -434,12 +434,12 @@ class word extends sandbox_typed
     function api_obj(): word_api
     {
         $api_obj = new word_api();
-        if (!$this->is_excluded()) {
-            parent::fill_api_obj($api_obj);
-            $api_obj->set_plural($this->plural);
-        } else {
+        if ($this->is_excluded()) {
             $api_obj->set_id($this->id());
             $api_obj->excluded = true;
+        } else {
+            parent::fill_api_obj($api_obj);
+            $api_obj->set_plural($this->plural);
         }
         return $api_obj;
     }
@@ -450,6 +450,7 @@ class word extends sandbox_typed
      * TODO add a test case to check if an import of a pure name overwrites the existing type setting
      *      or if loading later adding a word with admin_protection and type does not overwrite the type and protection
      * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
      */
     function set_by_api_json(array $api_json): user_message
     {
@@ -458,7 +459,7 @@ class word extends sandbox_typed
         foreach ($api_json as $key => $value) {
 
             // TODO move plural to language forms
-            if ($key == self::FLD_PLURAL) {
+            if ($key == api::FLD_PLURAL) {
                 if ($value <> '') {
                     $this->plural = $value;
                 }

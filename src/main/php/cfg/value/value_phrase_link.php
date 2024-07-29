@@ -5,6 +5,8 @@
     model/value/value_phrase_link.php - only for fast selection of the values assigned to one word, a triple or a list of words or triples
     ---------------------------------
 
+    TODO ?? deprecate because done by the group id
+
     replication of the phrases linked by the phrase group saved in the value
     the phrase group of the value is the master and these value phrase links are the slave, means they are actually replicated information
     so these value phrase links are a kind of helder table for an OLAP Cube creation

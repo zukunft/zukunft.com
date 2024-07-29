@@ -532,6 +532,8 @@ class sandbox extends db_object_seq_id_user
     function fill_api_obj(object $api_obj): void
     {
         $api_obj->set_id($this->id());
+        $api_obj->share = $this->share_id;
+        $api_obj->protection = $this->protection_id;
     }
 
     /**

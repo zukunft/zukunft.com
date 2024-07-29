@@ -75,6 +75,7 @@ include_once API_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
 
+use api\api;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
 use cfg\log\change;
@@ -486,17 +487,35 @@ class formula extends sandbox_typed
     function api_obj(): formula_api
     {
         $api_obj = new formula_api();
-        $api_obj->set_usr_text($this->usr_text);
-        parent::fill_api_obj($api_obj);
+        if ($this->is_excluded()) {
+            $api_obj->set_id($this->id());
+            $api_obj->excluded = true;
+        } else {
+            parent::fill_api_obj($api_obj);
+            $api_obj->set_usr_text($this->usr_text);
+        }
         return $api_obj;
     }
 
     /**
-     * @returns string the api json message for the object as a string
+     * map a formula api json to this model formula object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
      */
-    function api_json(): string
+    function set_by_api_json(array $api_json): user_message
     {
-        return $this->api_obj()->get_json();
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+            if ($key == api::FLD_USR_TEXT) {
+                if ($value <> '') {
+                    $this->set_user_text($value);
+                }
+            }
+        }
+
+        return $msg;
     }
 
 
