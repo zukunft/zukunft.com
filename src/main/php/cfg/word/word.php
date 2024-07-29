@@ -436,6 +436,9 @@ class word extends sandbox_typed
         $api_obj = new word_api();
         if (!$this->is_excluded()) {
             parent::fill_api_obj($api_obj);
+        } else {
+            $api_obj->set_id($this->id());
+            $api_obj->excluded = true;
         }
         return $api_obj;
     }
@@ -457,20 +460,10 @@ class word extends sandbox_typed
      */
     function set_by_api_json(array $api_json): user_message
     {
-        global $phrase_types;
-
-        $msg = new user_message();
-
-        // make sure that there are no unexpected leftovers
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
+        $msg = parent::set_by_api_json($api_json);
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_ID) {
-                $this->set_id($value);
-            }
             if ($key == api::FLD_NAME) {
                 $this->set_name($value);
             }
@@ -480,7 +473,7 @@ class word extends sandbox_typed
                 }
             }
             if ($key == api::FLD_TYPE) {
-                $this->type_id = $phrase_types->id($value);
+                $this->type_id = $value;
             }
 
             /* TODO

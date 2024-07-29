@@ -42,6 +42,7 @@ class sandbox implements JsonSerializable
 
     // fields for the backend link
     public int|string $id; // the database id of the object, which is the same as the related database object in the backend
+    public bool $excluded; // to return the id with the excluded flag if an object has been excluded
 
 
     /*

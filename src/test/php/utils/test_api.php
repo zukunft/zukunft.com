@@ -118,6 +118,37 @@ class test_api extends create_test_objects
      */
 
     /**
+     * check the api message without using the real curl api
+     * @param object $usr_obj the user sandbox object that should be tested
+     * @return bool true if the check is fine
+     */
+    function assert_api_json(object $usr_obj): bool
+    {
+        $class = $usr_obj::class;
+        $class = $this->class_to_api($class);
+        $test_name = $class . ' check that the excluded object returns a json with just the id and the excluded flag';
+        $json_excluded = $usr_obj->api_json();
+        $result = $this->assert($test_name, $json_excluded, '{"id":1,"excluded":true}');
+        if ($result) {
+            $test_name = $class . ' check that the reset function remove all object vars';
+            $usr_obj->excluded = false;
+            // check that the excluded object returns a json with just the id and the excluded flag
+            $json_api = $usr_obj->api_json();
+            $clone_obj = clone $usr_obj;
+            $clone_obj->reset();
+            $json_empty = $clone_obj->api_json();
+            $result = $this->assert($test_name, $json_empty, '{"id":0}');
+        }
+        if ($result) {
+            $test_name = $class . ' api json';
+            $clone_obj->set_by_api_string($json_api);
+            $json_compare = $clone_obj->api_json();
+            $result = $this->assert_json_string($test_name, $json_compare, $json_api);
+        }
+        return $result;
+    }
+
+    /**
      * check if the created api json message matches the api json message from the test resources
      * the unit test should be done for all api objects
      * @param object $usr_obj the user sandbox object that should be tested
@@ -371,6 +402,7 @@ class test_api extends create_test_objects
 
     /**
      * check the api message without using the real curl api
+     * @param sql_db $db_con to retrive the configuration for the message header
      * @param object $usr_obj the user sandbox object that should be tested
      * @param string $filename to overwrite the filename of the expected json message based on the usr_obj
      * @param bool $contains set to true if the actual message is expected to contain more than the expected message
@@ -476,7 +508,7 @@ class test_api extends create_test_objects
             $result = $lst->api_obj();
         }
 
-        if ($filename == '' AND $id_fld != 'ids') {
+        if ($filename == '' and $id_fld != 'ids') {
             $filename = $class . '_by_' . $id_fld;
         }
 

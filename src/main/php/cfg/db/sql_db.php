@@ -521,6 +521,19 @@ class sql_db
     private ?array $prepared_sql_names = [];        // list of all SQL queries that have already been prepared during the open connection
     private ?array $prepared_stmt = [];             // list of the MySQL stmt
 
+
+    /*
+     * construct
+     */
+
+    /**
+     * set the default db
+     */
+    function __construct()
+    {
+        $this->db_type = sql_db::POSTGRES;
+    }
+
     /*
      * set up the environment
      */

@@ -125,6 +125,8 @@ class word_tests
 
         $t->subheader('word api unit tests');
 
+        $wrd_filled = $t->word_filled();
+        $t->assert_api_json($wrd_filled);
         $wrd = new word($usr);
         $wrd->set(1, word_api::TN_READ, phrase_type::MATH_CONST);
         $wrd->description = word_api::TD_READ;

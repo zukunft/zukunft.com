@@ -2,7 +2,7 @@
 
 /*
 
-    test/unit/ref.php - unit testing of the reference and source functions
+    test/unit/ref.php - unit testing of the reference  functions
     -----------------
   
 
@@ -118,77 +118,6 @@ class ref_tests
         $ref = $t->reference_plus();
         $t->assert_api($ref);
         $t->assert_api_to_dsp($ref, new ref_dsp());
-
-
-        // init for source
-        $t->name = 'source->';
-        $t->resource_path = 'db/ref/';
-        $json_file = 'unit/ref/bipm.json';
-
-        $t->header('Unit tests of the source class (src/main/php/model/ref/source.php)');
-
-        $t->subheader('SQL statement tests');
-        $src = new source($usr);
-        $t->assert_sql_table_create($src);
-        $t->assert_sql_index_create($src);
-        $t->assert_sql_foreign_key_create($src);
-        $t->assert_sql_by_id($sc, $src);
-        $t->assert_sql_by_name($sc, $src);
-        $t->assert_sql_by_code_id($sc, $src);
-
-        // sql to load a source by id
-        $src = new source($usr);
-        $src->set_id(4);
-        $t->assert_sql_standard($sc, $src);
-
-        // sql to load a source by name
-        $src = new source($usr);
-        $src->set_name(source_api::TN_READ);
-        $t->assert_sql_standard($sc, $src);
-        $src->set_id(5);
-        $t->assert_sql_not_changed($sc, $src);
-        $t->assert_sql_user_changes($sc, $src);
-
-        // sql to load the source types
-        $source_type_list = new source_type_list();
-        $t->assert_sql_all($sc, $source_type_list);
-
-        $t->subheader('source sql write');
-        // TODO test the log version for db write
-        $src = $t->source();
-        $t->assert_sql_insert($sc, $src);
-        $t->assert_sql_insert($sc, $src, [sql_type::USER]);
-        $t->assert_sql_insert($sc, $src, [sql_type::LOG]);
-        $t->assert_sql_insert($sc, $src, [sql_type::LOG, sql_type::USER]);
-        $src_renamed = $src->cloned(source_api::TN_RENAMED);
-        $t->assert_sql_update($sc, $src_renamed, $src);
-        $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::USER]);
-        $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::LOG]);
-        $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::LOG, sql_type::USER]);
-        $t->assert_sql_delete($sc, $src);
-        $t->assert_sql_delete($sc, $src, [sql_type::USER]);
-        $t->assert_sql_delete($sc, $src, [sql_type::LOG]);
-        $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER]);
-        $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::EXCLUDE]);
-        $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
-
-        $t->subheader('Im- and Export tests');
-        $t->assert_json_file(new source($usr), $json_file);
-
-        $t->subheader('API and frontend cast unit tests for sources');
-        $src = $t->source();
-        $t->assert_api_msg($db_con, $src);
-        $t->assert_api_to_dsp($src, new source_dsp());
-
-
-        // init for source list
-        $t->name = 'source_list->';
-
-        $src_lst = new source_list($usr);
-        $trm_ids = array(1, 2, 3);
-        $t->assert_sql_by_ids($sc, $src_lst, $trm_ids);
-        $src_lst = new source_list($usr);
-        $t->assert_sql_like($sc, $src_lst);
 
     }
 

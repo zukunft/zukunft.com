@@ -79,6 +79,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
+use api\api;
 use cfg\component\component_link_type;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
@@ -532,6 +533,42 @@ class sandbox extends db_object_seq_id_user
         $dsp_obj->usr = $this->user();
         $dsp_obj->owner_id = $this->owner_id;
         $dsp_obj->excluded = $this->is_excluded();
+    }
+
+    /**
+     * fill the vars with this sandbox object based on the given api json array
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = new user_message();
+
+        // make sure that there are no unexpected leftovers
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == api::FLD_ID) {
+                $this->set_id($value);
+            }
+
+        }
+
+        return $msg;
+    }
+
+    /**
+     * set the object vars based on the given api json string
+     *
+     * @param string $json as received from the frontend
+     * @return user_message with the problem description and the suggested solution in case something is not fine
+     */
+    function set_by_api_string(string $json): user_message
+    {
+        return $this->set_by_api_json(json_decode($json, true));
     }
 
 

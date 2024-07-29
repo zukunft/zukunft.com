@@ -183,6 +183,7 @@ include_once TEST_UNIT_PATH . 'component_link_tests.php';
 include_once TEST_UNIT_PATH . 'component_list_tests.php';
 include_once TEST_UNIT_PATH . 'component_link_list_tests.php';
 include_once TEST_UNIT_PATH . 'verb_tests.php';
+include_once TEST_UNIT_PATH . 'source_tests.php';
 include_once TEST_UNIT_PATH . 'ref_tests.php';
 include_once TEST_UNIT_PATH . 'language_tests.php';
 include_once TEST_UNIT_PATH . 'job_tests.php';
@@ -876,6 +877,19 @@ class test_base
         $result_str = json_encode($result);
         $target_str = json_encode($target);
         return $this->assert_empty($test_name, $diff, $result_str, $target_str);
+    }
+
+    /**
+     * check if an object json file can be recreated by importing the object and recreating the json with the export function
+     *
+     * @param string $test_name (unique) description of the test
+     * @param string $result the actual json as string
+     * @param string $target the expected json as string
+     * @return bool true if the json has no relevant differences
+     */
+    function assert_json_string(string $test_name, string $result, string $target): bool
+    {
+        return $this->assert_json($test_name, json_decode($result, true), json_decode($target, true));
     }
 
     /**
