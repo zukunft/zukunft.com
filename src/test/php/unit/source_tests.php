@@ -50,52 +50,56 @@ class source_tests
         global $usr;
 
         // init for source
-        $db_con = new sql_db();
         $sc = new sql();
         $t->name = 'source->';
         $t->resource_path = 'db/ref/';
-        $json_file = 'unit/ref/bipm.json';
 
-        $t->header('Unit tests of the source class (src/main/php/model/ref/source.php)');
+        $t->header('source unit tests');
 
-        $t->subheader('SQL statement tests');
+        $t->subheader('source sql setup');
         $src = new source($usr);
         $t->assert_sql_table_create($src);
         $t->assert_sql_index_create($src);
         $t->assert_sql_foreign_key_create($src);
+
+        $t->subheader('source sql read');
         $t->assert_sql_by_id($sc, $src);
         $t->assert_sql_by_name($sc, $src);
         $t->assert_sql_by_code_id($sc, $src);
 
-        // sql to load a source by id
+        $t->subheader('source sql read all');
+        $source_type_list = new source_type_list();
+        $t->assert_sql_all($sc, $source_type_list);
+
+        $t->subheader('source sql read standard and user changes by id');
         $src = new source($usr);
         $src->set_id(4);
-        $t->assert_sql_standard($sc, $src);
-
-        // sql to load a source by name
-        $src = new source($usr);
-        $src->set_name(source_api::TN_READ);
         $t->assert_sql_standard($sc, $src);
         $src->set_id(5);
         $t->assert_sql_not_changed($sc, $src);
         $t->assert_sql_user_changes($sc, $src);
 
-        // sql to load the source types
-        $source_type_list = new source_type_list();
-        $t->assert_sql_all($sc, $source_type_list);
+        $t->subheader('source sql read standard by name');
+        $src = new source($usr);
+        $src->set_name(source_api::TN_READ);
+        $t->assert_sql_standard($sc, $src);
 
-        $t->subheader('source sql write');
+        $t->subheader('source sql write insert');
         // TODO test the log version for db write
         $src = $t->source();
         $t->assert_sql_insert($sc, $src);
         $t->assert_sql_insert($sc, $src, [sql_type::USER]);
         $t->assert_sql_insert($sc, $src, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $src, [sql_type::LOG, sql_type::USER]);
+
+        $t->subheader('source sql write update');
         $src_renamed = $src->cloned(source_api::TN_RENAMED);
         $t->assert_sql_update($sc, $src_renamed, $src);
         $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::USER]);
         $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::LOG]);
         $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::LOG, sql_type::USER]);
+
+        $t->subheader('source sql delete');
         $t->assert_sql_delete($sc, $src);
         $t->assert_sql_delete($sc, $src, [sql_type::USER]);
         $t->assert_sql_delete($sc, $src, [sql_type::LOG]);
@@ -103,17 +107,19 @@ class source_tests
         $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
 
-        $t->subheader('Im- and Export tests');
-        $t->assert_json_file(new source($usr), $json_file);
-
         $t->subheader('source api unit tests');
         $src = $t->source1();
         $t->assert_api_json($src);
         $src = $t->source();
+        $db_con = new sql_db();
         $t->assert_api_msg($db_con, $src);
 
         $t->subheader('source frontend unit tests');
         $t->assert_api_to_dsp($src, new source_dsp());
+
+        $t->subheader('source import and export tests');
+        $json_file = 'unit/ref/bipm.json';
+        $t->assert_json_file(new source($usr), $json_file);
 
 
         // init for source list

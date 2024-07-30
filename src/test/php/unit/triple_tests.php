@@ -11,7 +11,6 @@ use cfg\db\sql_type;
 use html\word\triple as triple_dsp;
 use cfg\db\sql_db;
 use cfg\triple;
-use cfg\verb;
 use test\test_cleanup;
 
 class triple_tests
@@ -85,20 +84,14 @@ class triple_tests
         $t->assert_api_json($trp);
         $t->assert_api($trp);
 
-        $trp = new triple($usr);
-        $trp->set(1, triple_api::TN_PI_NAME, triple_api::TN_PI, verb::IS, word_api::TN_READ);
-        $trp->description = 'The mathematical constant Pi';
-        $api_trp = $trp->api_obj();
-        $t->assert($t->name . 'api->id', $api_trp->id(), $trp->id());
-        $t->assert($t->name . 'api->name', $api_trp->name(), $trp->name());
-        $t->assert($t->name . 'api->description', $api_trp->description, $trp->description);
-        $t->assert($t->name . 'api->from', $api_trp->from()->name(), $trp->fob->obj()->name_dsp());
-        $t->assert($t->name . 'api->to', $api_trp->to()->name(), $trp->tob->obj()->name_dsp());
+        $t->subheader('triple html frontend unit tests');
+        $trp = $t->triple_pi();
+        $t->assert_api_to_dsp($trp, new triple_dsp());
 
-
-        $t->subheader('sql import and export tests');
+        $t->subheader('triple import and export tests');
         $json_file = 'unit/triple/pi.json';
         $t->assert_json_file(new triple($usr), $json_file);
+
 
         $test_name = 'check if database would not be updated if only the name is given in import';
         $in_trp = $t->triple_name_only();
@@ -109,9 +102,6 @@ class triple_tests
         $db_trp = $t->triple();
         $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp), false);
 
-        $t->subheader('triple html frontend unit tests');
-        $trp = $t->triple_pi();
-        $t->assert_api_to_dsp($trp, new triple_dsp());
     }
 
     /**

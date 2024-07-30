@@ -56,12 +56,10 @@ class formula_tests
         global $usr;
 
         // init
-        $db_con = new sql_db();
         $sc = new sql();
         $t->name = 'formula->';
         $t->resource_path = 'db/formula/';
         $usr->set_id(1);
-
 
         $t->header('formula unit tests');
 
@@ -71,14 +69,12 @@ class formula_tests
         $t->assert_sql_index_create($frm);
         $t->assert_sql_foreign_key_create($frm);
 
-
         $t->subheader('formula sql read');
         $frm = new formula($usr);
         $t->assert_sql_by_id($sc, $frm);
         $t->assert_sql_by_name($sc, $frm);
 
-        $t->subheader('formula sql read default and user changes');
-        // sql to load the formula by id
+        $t->subheader('formula sql read default and user changes by id');
         $frm = new formula($usr);
         $frm->set_id(formula_api::TI_READ_ANOTHER);
         // TODO activate
@@ -86,17 +82,17 @@ class formula_tests
         $t->assert_sql_standard($sc, $frm);
         $t->assert_sql_not_changed($sc, $frm);
         $t->assert_sql_user_changes($sc, $frm);
-        $this->assert_sql_user_changes_frm($t, $db_con, $frm);
+        $this->assert_sql_user_changes_frm($t, $frm);
 
-        // sql to load the formula by name
+        $t->subheader('formula sql read default by name');
         $frm = new formula($usr);
         $frm->set_name(formula_api::TF_READ_SCALE_MIO);
+        // TODO review
         //$t->assert_sql_all($db_con, $frm);
         $t->assert_sql_standard($sc, $frm);
 
 
-        $t->subheader('formula sql write');
-        // insert
+        $t->subheader('formula sql write insert');
         $frm = $t->formula_name_only();
         $t->assert_sql_insert($sc, $frm);
         $t->assert_sql_insert($sc, $frm, [sql_type::USER]);
@@ -107,6 +103,8 @@ class formula_tests
         $t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
         $frm = $t->formula_filled();
         $t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
+
+        $t->subheader('formula sql write update');
         $frm = $t->formula_name_only();
         $frm_renamed = $frm->cloned(formula_api::TN_RENAMED);
         $t->assert_sql_update($sc, $frm_renamed, $frm);
@@ -114,30 +112,25 @@ class formula_tests
         // TODO activate db write with log
         //$t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG]);
         //$t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG, sql_type::USER]);
+
+        $t->subheader('formula sql write delete');
         // TODO activate db write
         $t->assert_sql_delete($sc, $frm);
         $t->assert_sql_delete($sc, $frm, [sql_type::USER]);
 
-
         $t->subheader('formula api unit tests');
-
         $frm = $t->formula_filled();
         $t->assert_api_json($frm);
         $frm->excluded = false;
         $t->assert_api($frm, 'formula_body');
 
-
-        $t->subheader('formula im- and export unit tests');
-
-        $json_file = 'unit/formula/scale_second_to_minute.json';
-        $t->assert_json_file(new formula($usr), $json_file);
-
-
-        $t->subheader('formula HTML frontend unit tests');
-
+        $t->subheader('formula frontend unit tests');
         $frm = $t->formula();
         $t->assert_api_to_dsp($frm, new formula_dsp());
 
+        $t->subheader('formula im- and export unit tests');
+        $json_file = 'unit/formula/scale_second_to_minute.json';
+        $t->assert_json_file(new formula($usr), $json_file);
 
         $t->subheader('Expression tests');
 
@@ -189,11 +182,12 @@ class formula_tests
      * TODO check the diff to assert_sql_user_changes
      *
      * @param test_cleanup $t the test environment
-     * @param sql_db $db_con does not need to be connected to a real database
      * @param formula $frm the user sandbox object e.g. a word
      */
-    private function assert_sql_user_changes_frm(test_cleanup $t, sql_db $db_con, formula $frm): void
+    private function assert_sql_user_changes_frm(test_cleanup $t, formula $frm): void
     {
+        $db_con = new sql_db();
+
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $frm->load_sql_user_changes_frm($db_con);

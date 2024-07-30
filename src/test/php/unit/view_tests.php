@@ -52,20 +52,14 @@ class view_tests
         global $usr;
 
         // init
-        $lib = new library();
-        $db_con = new sql_db();
         $sc = new sql();
         $t->name = 'view->';
         $t->resource_path = 'db/view/';
         $usr->set_id(1);
 
-
         $t->header('view unit tests');
 
         $t->subheader('view sql setup');
-        $dsp_typ = new view_type('');
-        $t->assert_sql_table_create($dsp_typ);
-        $t->assert_sql_index_create($dsp_typ);
         $msk = $t->view();
         $t->assert_sql_table_create($msk);
         $t->assert_sql_index_create($msk);
@@ -78,21 +72,78 @@ class view_tests
         $t->assert_sql_by_code_id($sc, $msk);
         $t->assert_sql_by_term($sc, $msk, $t->term());
 
-        $t->subheader('view sql read default and user changes');
-        // sql to load the view by id
+        $t->subheader('view sql read standard and user changes by id');
         $msk = new view($usr);
         $msk->set_id(2);
         //$t->assert_load_sql($db_con, $msk);
         $t->assert_sql_standard($sc, $msk);
         $t->assert_sql_user_changes($sc, $msk);
-        // sql to load the view by name
+
+        $t->subheader('view sql read standard and user changes by name');
         $msk = new view($usr);
         $msk->set_name(view_api::TN_ADD);
         //$t->assert_load_sql($db_con, $msk);
         $t->assert_sql_standard($sc, $msk);
+
+        $t->subheader('view sql write insert');
+        $msk = $t->view_added();
+        $t->assert_sql_insert($sc, $msk);
+        $t->assert_sql_insert($sc, $msk, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
+        $t->assert_sql_insert($sc, $msk, [sql_type::LOG, sql_type::USER]);
+        $msk = $t->view(); // a view with a code_id as it might be imported
+        $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
+        $msk = $t->view_filled();
+        $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
+
+        $t->subheader('view sql write update');
+        $msk = $t->view_added();
+        // TODO activate db write
+        $msk_renamed = $msk->cloned(view_api::TN_RENAMED);
+        $t->assert_sql_update($sc, $msk_renamed, $msk);
+        $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::USER]);
+        $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::LOG, sql_type::USER]);
+
+        $t->subheader('view sql write delete');
+        // TODO activate db write
+        $t->assert_sql_delete($sc, $msk);
+        $t->assert_sql_delete($sc, $msk, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $msk, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $msk, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_delete($sc, $msk, [sql_type::EXCLUDE]);
+        $t->assert_sql_delete($sc, $msk, [sql_type::USER, sql_type::EXCLUDE]);
+
+        $t->subheader('view api unit tests');
+        $msk = $t->view_filled();
+        $t->assert_api_json($msk);
+        $msk = $t->view();
+        $t->assert_api($msk);
+        $t->assert_api_to_dsp($msk, new view_dsp());
+
+        $t->subheader('view with components api unit tests');
+        $msk = $t->view_with_components();
+        $t->assert_api($msk, 'view_with_components');
+        $t->assert_api_to_dsp($msk, new view_dsp());
+
+        $t->subheader('view html frontend unit tests');
+        $json_file = 'unit/view/car_costs.json';
+        $t->assert_json_file(new view($usr), $json_file);
+
+
+        $test_name = 'view create from json string';
+        $json = '{"id":1,"name":"Word","description":"the default view for words","code_id":"word"}';
+        $msk_dsp = new view_dsp($json);
+        $dsp_text = $msk_dsp->display();
+        $target = 'Word';
+        $t->assert($test_name, $dsp_text, $target);
+
         // sql to load the view components
         $msk = new view($usr);
         $msk->set_id(2);
+
+        $lib = new library();
+        $db_con = new sql_db();
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $msk->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/component/components_by_view_id.sql');
@@ -106,58 +157,6 @@ class view_tests
         $created_sql = $msk->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/component/components_by_view_id_mysql.sql');
         $t->display('view->load_components_sql for MySQL', $lib->trim($expected_sql), $lib->trim($created_sql));
-
-        $t->subheader('view sql write');
-        // insert
-        $msk = $t->view_added();
-        $t->assert_sql_insert($sc, $msk);
-        $t->assert_sql_insert($sc, $msk, [sql_type::USER]);
-        $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
-        $t->assert_sql_insert($sc, $msk, [sql_type::LOG, sql_type::USER]);
-        $msk = $t->view(); // a view with a code_id as it might be imported
-        $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
-        $msk = $t->view_filled();
-        $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
-        // update
-        $msk = $t->view_added();
-        // TODO activate db write
-        $msk_renamed = $msk->cloned(view_api::TN_RENAMED);
-        $t->assert_sql_update($sc, $msk_renamed, $msk);
-        $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::USER]);
-        $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::LOG]);
-        $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::LOG, sql_type::USER]);
-        // delete
-        // TODO activate db write
-        $t->assert_sql_delete($sc, $msk);
-        $t->assert_sql_delete($sc, $msk, [sql_type::USER]);
-        $t->assert_sql_delete($sc, $msk, [sql_type::LOG]);
-        $t->assert_sql_delete($sc, $msk, [sql_type::LOG, sql_type::USER]);
-        $t->assert_sql_delete($sc, $msk, [sql_type::EXCLUDE]);
-        $t->assert_sql_delete($sc, $msk, [sql_type::USER, sql_type::EXCLUDE]);
-
-        $t->subheader('Im- and Export tests');
-        $json_file = 'unit/view/car_costs.json';
-        $t->assert_json_file(new view($usr), $json_file);
-
-
-        $t->subheader('view api unit tests');
-
-        $msk = $t->view_filled();
-        $t->assert_api_json($msk);
-        $msk = $t->view();
-        $t->assert_api($msk);
-        $t->assert_api_to_dsp($msk, new view_dsp());
-
-        $msk = $t->view_with_components();
-        $t->assert_api($msk, 'view_with_components');
-        $t->assert_api_to_dsp($msk, new view_dsp());
-
-        $test_name = 'view msk create from json string';
-        $json = '{"id":1,"name":"Word","description":"the default view for words","code_id":"word"}';
-        $msk_dsp = new view_dsp($json);
-        $dsp_text = $msk_dsp->display();
-        $target = 'Word';
-        $t->assert($test_name, $dsp_text, $target);
 
 
         /*

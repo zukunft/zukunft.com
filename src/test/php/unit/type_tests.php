@@ -44,6 +44,7 @@ use cfg\sys_log_type;
 use cfg\user\user_profile;
 use cfg\user\user_type;
 use cfg\user_official_type;
+use cfg\view_type;
 use test\test_cleanup;
 
 class type_tests
@@ -61,66 +62,70 @@ class type_tests
 
         // TODO job_types
 
-        $t->subheader('System log type SQL setup statements');
+        $t->subheader('System log type sql setup');
         $log_typ = new sys_log_type('');
         $t->assert_sql_table_create($log_typ);
         $t->assert_sql_index_create($log_typ);
 
-        $t->subheader('System log status SQL setup statements');
+        $t->subheader('system log status sql setup');
         $log_sta = new sys_log_status('');
         $t->assert_sql_table_create($log_sta);
         $t->assert_sql_index_create($log_sta);
 
-        $t->subheader('System log status SQL setup statements');
+        $t->subheader('system log status sql setup');
         $log_fuc = new sys_log_function('');
         $t->assert_sql_table_create($log_fuc);
         $t->assert_sql_index_create($log_fuc);
 
-        $t->subheader('Job type SQL setup statements');
+        $t->subheader('job type sql setup');
         $job_typ = new job_type('');
         $t->assert_sql_table_create($job_typ);
         $t->assert_sql_index_create($job_typ);
 
-        $t->subheader('User type SQL setup statements');
+        $t->subheader('user type sql setup');
         $usr_typ = new user_type('');
         $t->assert_sql_table_create($usr_typ);
         $t->assert_sql_index_create($usr_typ);
 
-        $t->subheader('User profile SQL setup statements');
+        $t->subheader('user profile sql setup');
         $usr_prf = new user_profile('');
         $t->assert_sql_table_create($usr_prf);
         $t->assert_sql_index_create($usr_prf);
 
-        $t->subheader('User identification SQL setup statements');
+        $t->subheader('user identification sql setup');
         $usr_idt = new user_official_type('');
         $t->assert_sql_table_create($usr_idt);
         $t->assert_sql_index_create($usr_idt);
 
-        $t->subheader('Protection type SQL setup statements');
+        $t->subheader('protection type sql setup');
         $prt_typ = new protection_type('');
         $t->assert_sql_table_create($prt_typ);
         $t->assert_sql_index_create($prt_typ);
 
-        $t->subheader('Share type SQL setup statements');
+        $t->subheader('share type sql setup');
         $shr_typ = new share_type('');
         $t->assert_sql_table_create($shr_typ);
         $t->assert_sql_index_create($shr_typ);
 
-        $t->subheader('Phrase type SQL setup statements');
+        $t->subheader('phrase type sql setup');
         $phr_typ = new phrase_type('');
         $t->assert_sql_table_create($phr_typ);
         $t->assert_sql_index_create($phr_typ);
 
-        $t->subheader('Source type SQL setup statements');
+        $t->subheader('source type sql setup');
         $src_typ = new source_type('');
         $t->assert_sql_table_create($src_typ);
         $t->assert_sql_index_create($src_typ);
 
-        $t->subheader('Formula type SQL setup statements');
+        $t->subheader('formula type sql setup');
         $frm_typ = new formula_type('');
         $t->assert_sql_table_create($frm_typ);
         $t->assert_sql_index_create($frm_typ);
 
+        $t->subheader('view type sql setup');
+        $dsp_typ = new view_type('');
+        $t->assert_sql_table_create($dsp_typ);
+        $t->assert_sql_index_create($dsp_typ);
     }
 
 }

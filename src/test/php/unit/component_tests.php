@@ -57,7 +57,6 @@ class component_tests
         $t->resource_path = 'db/component/';
         $usr->set_id(1);
 
-
         $t->header('component unit tests');
 
         $t->subheader('component sql setup');
@@ -74,24 +73,20 @@ class component_tests
         $t->assert_sql_by_id($sc, $cmp);
         $t->assert_sql_by_name($sc, $cmp);
 
-
-        $t->subheader('SQL statement tests');
-
-        // sql to load the view components by id
+        $t->subheader('component sql read standard and user changes by id');
         $cmp = new component($usr);
         $cmp->set_id(2);
         //$t->assert_sql_all($db_con, $cmp);
         $t->assert_sql_standard($sc, $cmp);
         $t->assert_sql_user_changes($sc, $cmp);
 
-        // sql to load the view components by name
+        $t->subheader('component sql read standard by name');
         $cmp = new component($usr);
         $cmp->set_name(view_api::TN_ADD);
         //$t->assert_sql_all($db_con, $cmp);
         $t->assert_sql_standard($sc, $cmp);
 
-        $t->subheader('component sql write');
-        // insert
+        $t->subheader('component sql write insert');
         $cmp = $t->component();
         $t->assert_sql_insert($sc, $cmp);
         $t->assert_sql_insert($sc, $cmp, [sql_type::USER]);
@@ -101,20 +96,17 @@ class component_tests
         $t->assert_sql_insert($sc, $cmp, [sql_type::LOG]);
         $cmp = $t->component_filled();
         $t->assert_sql_insert($sc, $cmp, [sql_type::LOG]);
-        // update
+
+        $t->subheader('component sql write update');
         $cmp = $t->component();
         $cmp_renamed = $cmp->cloned(component_api::TN_RENAMED);
         $t->assert_sql_update($sc, $cmp_renamed, $cmp);
         $t->assert_sql_update($sc, $cmp_renamed, $cmp, [sql_type::LOG, sql_type::USER]);
-        // delete
+
+        $t->subheader('component sql delete');
         // TODO activate db write
         $t->assert_sql_delete($sc, $cmp);
         $t->assert_sql_delete($sc, $cmp, [sql_type::LOG]);
-
-        $t->subheader('Im- and Export tests');
-
-        $json_file = 'unit/view/component_import.json';
-        $t->assert_json_file(new component($usr), $json_file);
 
         $t->subheader('component api unit tests');
         $cmp = $t->component_filled();
@@ -124,6 +116,10 @@ class component_tests
 
         $t->subheader('component frontend unit tests');
         $t->assert_api_to_dsp($cmp, new component_dsp());
+
+        $t->subheader('component import and export tests');
+        $json_file = 'unit/view/component_import.json';
+        $t->assert_json_file(new component($usr), $json_file);
 
     }
 
