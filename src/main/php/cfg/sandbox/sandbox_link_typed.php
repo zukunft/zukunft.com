@@ -34,6 +34,8 @@
 
 namespace cfg;
 
+use api\api;
+
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 
 class sandbox_link_typed extends sandbox_link_named
@@ -127,6 +129,22 @@ class sandbox_link_typed extends sandbox_link_named
         parent::fill_api_obj($api_obj);
 
         $api_obj->set_type_id($this->type_id());
+    }
+
+    /**
+     * set the type based on the api json
+     * @param array $api_json the api json array with the values that should be mapped
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+            if ($key == api::FLD_TYPE) {
+                $this->set_type_id($value);
+            }
+        }
+        return $msg;
     }
 
     /**

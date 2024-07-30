@@ -6425,6 +6425,7 @@
             "name": "system form title word add",
             "description": "show the language specific title for the system form to add a new word",
             "type_id": 17,
+            "code_id": "form_title_word_add",
             "link_id": 3,
             "position": 1
           },
@@ -6433,6 +6434,7 @@
             "name": "system form hidden back stack",
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
+            "code_id": "form_back_stack",
             "link_id": 4,
             "position": 2
           },
@@ -6441,6 +6443,7 @@
             "name": "system form hidden confirm status",
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
+            "code_id": "form_confirm_status",
             "link_id": 5,
             "position": 3
           },
@@ -6449,6 +6452,7 @@
             "name": "system form field name",
             "description": "the name field in a form",
             "type_id": 20,
+            "code_id": "form_field_name",
             "link_id": 6,
             "position": 4
           },
@@ -6457,6 +6461,7 @@
             "name": "system form field description",
             "description": "the description field in a form",
             "type_id": 21,
+            "code_id": "form_field_description",
             "link_id": 7,
             "position": 5
           },
@@ -6465,6 +6470,7 @@
             "name": "system form select share type",
             "description": "selector for the share type",
             "type_id": 24,
+            "code_id": "form_field_share_type",
             "link_id": 8,
             "position": 6
           },
@@ -6473,6 +6479,7 @@
             "name": "system form select protection type",
             "description": "selector for the protection type",
             "type_id": 25,
+            "code_id": "form_field_protection_type",
             "link_id": 9,
             "position": 7
           },
@@ -6481,6 +6488,7 @@
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 26,
+            "code_id": "form_cancel_button",
             "link_id": 10,
             "position": 8
           },
@@ -6489,6 +6497,7 @@
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 27,
+            "code_id": "form_button_save",
             "link_id": 11,
             "position": 9
           },
@@ -6496,6 +6505,7 @@
             "id": 19,
             "name": "system form end",
             "type_id": 29,
+            "code_id": "form_end",
             "link_id": 12,
             "position": 10
           }
@@ -6513,6 +6523,7 @@
             "name": "system form title word edit",
             "description": "show the language specific title for the system form to change a word",
             "type_id": 17,
+            "code_id": "form_title_word_edit",
             "link_id": 13,
             "position": 1
           },
@@ -6521,6 +6532,7 @@
             "name": "system form hidden back stack",
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
+            "code_id": "form_back_stack",
             "link_id": 14,
             "position": 2
           },
@@ -6529,6 +6541,7 @@
             "name": "system form hidden confirm status",
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
+            "code_id": "form_confirm_status",
             "link_id": 15,
             "position": 3
           },
@@ -6537,6 +6550,7 @@
             "name": "system form field name",
             "description": "the name field in a form",
             "type_id": 20,
+            "code_id": "form_field_name",
             "link_id": 16,
             "position": 4
           },
@@ -6545,6 +6559,7 @@
             "name": "system form field description",
             "description": "the description field in a form",
             "type_id": 21,
+            "code_id": "form_field_description",
             "link_id": 17,
             "position": 5
           },
@@ -6553,6 +6568,7 @@
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 26,
+            "code_id": "form_cancel_button",
             "link_id": 18,
             "position": 6
           },
@@ -6561,6 +6577,7 @@
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 27,
+            "code_id": "form_button_save",
             "link_id": 19,
             "position": 7
           },
@@ -6568,6 +6585,7 @@
             "id": 19,
             "name": "system form end",
             "type_id": 29,
+            "code_id": "form_end",
             "link_id": 20,
             "position": 8
           }
@@ -6585,6 +6603,7 @@
             "name": "system form title word del",
             "description": "show the language specific title for the system form to delete or exclude a word",
             "type_id": 17,
+            "code_id": "form_title_word_del",
             "link_id": 21,
             "position": 1
           },
@@ -6593,6 +6612,7 @@
             "name": "system form hidden back stack",
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
+            "code_id": "form_back_stack",
             "link_id": 22,
             "position": 2
           },
@@ -6601,6 +6621,7 @@
             "name": "system form hidden confirm status",
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
+            "code_id": "form_confirm_status",
             "link_id": 23,
             "position": 3
           },
@@ -6609,6 +6630,7 @@
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 26,
+            "code_id": "form_cancel_button",
             "link_id": 24,
             "position": 4
           },
@@ -6617,6 +6639,7 @@
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 28,
+            "code_id": "form_button_del",
             "link_id": 25,
             "position": 5
           },
@@ -6624,6 +6647,7 @@
             "id": 19,
             "name": "system form end",
             "type_id": 29,
+            "code_id": "form_end",
             "link_id": 26,
             "position": 6
           }
@@ -6640,6 +6664,7 @@
             "name": "system form title triple add",
             "description": "show the language specific title for the system form to add a new triple",
             "type_id": 17,
+            "code_id": "form_title_triple_add",
             "link_id": 27,
             "position": 1
           },
@@ -6648,6 +6673,7 @@
             "name": "system form hidden back stack",
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
+            "code_id": "form_back_stack",
             "link_id": 28,
             "position": 2
           },
@@ -6656,6 +6682,7 @@
             "name": "system form hidden confirm status",
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
+            "code_id": "form_confirm_status",
             "link_id": 29,
             "position": 3
           },
@@ -6664,6 +6691,7 @@
             "name": "system form field name",
             "description": "the name field in a form",
             "type_id": 20,
+            "code_id": "form_field_name",
             "link_id": 30,
             "position": 4
           },
@@ -6672,6 +6700,7 @@
             "name": "system form field description",
             "description": "the description field in a form",
             "type_id": 21,
+            "code_id": "form_field_description",
             "link_id": 31,
             "position": 5
           },
@@ -6679,6 +6708,7 @@
             "id": 20,
             "name": "system formatter row start",
             "type_id": 30,
+            "code_id": "row_start",
             "link_id": 32,
             "position": 6
           },
@@ -6687,6 +6717,7 @@
             "name": "system form triple phrase from",
             "description": "selector for the from phrase of a triple",
             "type_id": 22,
+            "code_id": "form_field_triple_phrase_from",
             "link_id": 33,
             "position": 7
           },
@@ -6695,6 +6726,7 @@
             "name": "system form triple verb",
             "description": "selector for the verb of a triple",
             "type_id": 23,
+            "code_id": "form_field_triple_verb",
             "link_id": 34,
             "position": 8
           },
@@ -6703,6 +6735,7 @@
             "name": "system form triple phrase to",
             "description": "selector for the to phrase of a triple",
             "type_id": 22,
+            "code_id": "form_field_triple_phrase_to",
             "link_id": 35,
             "position": 9
           },
@@ -6710,6 +6743,7 @@
             "id": 22,
             "name": "system formatter row end",
             "type_id": 32,
+            "code_id": "row_end",
             "link_id": 36,
             "position": 10
           },
@@ -6717,6 +6751,7 @@
             "id": 20,
             "name": "system formatter row start",
             "type_id": 30,
+            "code_id": "row_start",
             "link_id": 37,
             "position": 11
           },
@@ -6725,6 +6760,7 @@
             "name": "system form select share type",
             "description": "selector for the share type",
             "type_id": 24,
+            "code_id": "form_field_share_type",
             "link_id": 38,
             "position": 12
           },
@@ -6733,6 +6769,7 @@
             "name": "system form select protection type",
             "description": "selector for the protection type",
             "type_id": 25,
+            "code_id": "form_field_protection_type",
             "link_id": 39,
             "position": 13
           },
@@ -6740,6 +6777,7 @@
             "id": 22,
             "name": "system formatter row end",
             "type_id": 32,
+            "code_id": "row_end",
             "link_id": 40,
             "position": 14
           },
@@ -6747,6 +6785,7 @@
             "id": 21,
             "name": "system formatter row right",
             "type_id": 31,
+            "code_id": "row_right",
             "link_id": 41,
             "position": 15
           },
@@ -6755,6 +6794,7 @@
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 26,
+            "code_id": "form_cancel_button",
             "link_id": 42,
             "position": 16
           },
@@ -6763,6 +6803,7 @@
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 27,
+            "code_id": "form_button_save",
             "link_id": 43,
             "position": 17
           },
@@ -6770,6 +6811,7 @@
             "id": 22,
             "name": "system formatter row end",
             "type_id": 32,
+            "code_id": "row_end",
             "link_id": 44,
             "position": 18
           },
@@ -6777,6 +6819,7 @@
             "id": 19,
             "name": "system form end",
             "type_id": 29,
+            "code_id": "form_end",
             "link_id": 45,
             "position": 19
           }
@@ -6964,6 +7007,7 @@
             "name": "system form title component add",
             "description": "show the language specific title for the system form to add a new component",
             "type_id": 17,
+            "code_id": "form_title_component_add",
             "link_id": 46,
             "position": 1
           },
@@ -6972,6 +7016,7 @@
             "name": "system form hidden back stack",
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
+            "code_id": "form_back_stack",
             "link_id": 47,
             "position": 2
           },
@@ -6980,6 +7025,7 @@
             "name": "system form hidden confirm status",
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
+            "code_id": "form_confirm_status",
             "link_id": 48,
             "position": 3
           },
@@ -6988,6 +7034,7 @@
             "name": "system form field name",
             "description": "the name field in a form",
             "type_id": 20,
+            "code_id": "form_field_name",
             "link_id": 49,
             "position": 4
           },
@@ -6996,6 +7043,7 @@
             "name": "system form field description",
             "description": "the description field in a form",
             "type_id": 21,
+            "code_id": "form_field_description",
             "link_id": 50,
             "position": 5
           },
@@ -7004,6 +7052,7 @@
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 26,
+            "code_id": "form_cancel_button",
             "link_id": 51,
             "position": 6
           },
@@ -7012,6 +7061,7 @@
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 27,
+            "code_id": "form_button_save",
             "link_id": 52,
             "position": 7
           }

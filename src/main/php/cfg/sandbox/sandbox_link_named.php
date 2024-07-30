@@ -31,6 +31,7 @@
 
 namespace cfg;
 
+use api\api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
@@ -153,6 +154,44 @@ class sandbox_link_named extends sandbox_link
         $obj_cpy->set_tob($this->tob());
         $obj_cpy->set_name($name);
         return $obj_cpy;
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * same as in cfg/sandbox/sanbox_named, but php does not yet allow multi extends
+     * @param object $api_obj frontend API objects that should be filled with unique object name
+     */
+    function fill_api_obj(object $api_obj): void
+    {
+        parent::fill_api_obj($api_obj);
+
+        $api_obj->set_name($this->name());
+        $api_obj->description = $this->description;
+    }
+
+    /**
+     * set the type based on the api json
+     * @param array $api_json the api json array with the values that should be mapped
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+            if ($key == api::FLD_NAME) {
+                $this->set_name($value);
+            }
+            if ($key == api::FLD_DESCRIPTION) {
+                if ($value <> '') {
+                    $this->description = $value;
+                }
+            }
+        }
+        return $msg;
     }
 
 

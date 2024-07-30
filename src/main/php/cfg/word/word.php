@@ -94,7 +94,6 @@ use cfg\export\sandbox_exp_named;
 use cfg\export\word_exp;
 use cfg\log\change;
 use cfg\log\change_action;
-use cfg\log\change_table_list;
 use cfg\value\value_list;
 use shared\library;
 
@@ -429,7 +428,8 @@ class word extends sandbox_typed
      */
 
     /**
-     * @return word_api the word frontend api object
+     * create word the api object and map the fields
+     * @return word_api the word frontend api object with all vars set
      */
     function api_obj(): word_api
     {

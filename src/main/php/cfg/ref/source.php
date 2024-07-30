@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/ref/source.php - the source object to define the source for the values
+    cfg/ref/source.php - the source object to define a source for values
     ------------------
 
     a source is always unidirectional
@@ -64,6 +64,7 @@ include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once SERVICE_EXPORT_PATH . 'source_exp.php';
 include_once WEB_REF_PATH . 'source.php';
 
+use api\api;
 use api\ref\source as source_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -265,12 +266,15 @@ class source extends sandbox_typed
      */
 
     /**
-     * @return source_api the source frontend api object
+     * @return source_api the filled source frontend api object
      */
     function api_obj(): source_api
     {
         $api_obj = new source_api();
-        if (!$this->is_excluded()) {
+        if ($this->is_excluded()) {
+            $api_obj->set_id($this->id());
+            $api_obj->excluded = true;
+        } else {
             parent::fill_api_obj($api_obj);
             $api_obj->url = $this->url;
         }
@@ -278,11 +282,26 @@ class source extends sandbox_typed
     }
 
     /**
-     * @returns string the api json message for the object as a string
+     * map a source api json to this model source object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the triple values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
      */
-    function api_json(): string
+    function set_by_api_json(array $api_json): user_message
     {
-        return $this->api_obj()->get_json();
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == api::FLD_URL) {
+                if ($value <> '') {
+                    $this->url = $value;
+                }
+            }
+
+        }
+
+        return $msg;
     }
 
 
@@ -658,7 +677,7 @@ class source extends sandbox_typed
      */
     function db_fields_changed(
         sandbox|source $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list  $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
         global $change_field_list;

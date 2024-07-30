@@ -401,6 +401,8 @@ class value extends sandbox_value
         $lib = new library();
 
         // make sure that there are no unexpected leftovers but keep the user
+        // TODO check that it is always moved to sandbox object
+        // TODO use sand
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);

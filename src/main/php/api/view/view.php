@@ -109,8 +109,7 @@ class view extends sandbox_typed_api
      * object vars
      */
 
-    // the mouse over tooltip for the word
-    public ?string $description = null;
+    // to link predefined behavier in the frontend
     public ?string $code_id = null;
 
     // the components linked to this view

@@ -66,89 +66,91 @@ class view_tests
         $dsp_typ = new view_type('');
         $t->assert_sql_table_create($dsp_typ);
         $t->assert_sql_index_create($dsp_typ);
-        $lnk = $t->view();
-        $t->assert_sql_table_create($lnk);
-        $t->assert_sql_index_create($lnk);
-        $t->assert_sql_foreign_key_create($lnk);
+        $msk = $t->view();
+        $t->assert_sql_table_create($msk);
+        $t->assert_sql_index_create($msk);
+        $t->assert_sql_foreign_key_create($msk);
 
         $t->subheader('view sql read');
-        $lnk = new view($usr);
-        $t->assert_sql_by_id($sc, $lnk);
-        $t->assert_sql_by_name($sc, $lnk);
-        $t->assert_sql_by_code_id($sc, $lnk);
-        $t->assert_sql_by_term($sc, $lnk, $t->term());
+        $msk = new view($usr);
+        $t->assert_sql_by_id($sc, $msk);
+        $t->assert_sql_by_name($sc, $msk);
+        $t->assert_sql_by_code_id($sc, $msk);
+        $t->assert_sql_by_term($sc, $msk, $t->term());
 
         $t->subheader('view sql read default and user changes');
         // sql to load the view by id
-        $lnk = new view($usr);
-        $lnk->set_id(2);
+        $msk = new view($usr);
+        $msk->set_id(2);
         //$t->assert_load_sql($db_con, $msk);
-        $t->assert_sql_standard($sc, $lnk);
-        $t->assert_sql_user_changes($sc, $lnk);
+        $t->assert_sql_standard($sc, $msk);
+        $t->assert_sql_user_changes($sc, $msk);
         // sql to load the view by name
-        $lnk = new view($usr);
-        $lnk->set_name(view_api::TN_ADD);
+        $msk = new view($usr);
+        $msk->set_name(view_api::TN_ADD);
         //$t->assert_load_sql($db_con, $msk);
-        $t->assert_sql_standard($sc, $lnk);
+        $t->assert_sql_standard($sc, $msk);
         // sql to load the view components
-        $lnk = new view($usr);
-        $lnk->set_id(2);
+        $msk = new view($usr);
+        $msk->set_id(2);
         $db_con->db_type = sql_db::POSTGRES;
-        $created_sql = $lnk->load_components_sql($db_con)->sql;
+        $created_sql = $msk->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/component/components_by_view_id.sql');
         $t->display('view->load_components_sql by view id', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // ... and check if the prepared sql name is unique
-        $t->assert_sql_name_unique($lnk->load_components_sql($db_con)->name);
+        $t->assert_sql_name_unique($msk->load_components_sql($db_con)->name);
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
-        $created_sql = $lnk->load_components_sql($db_con)->sql;
+        $created_sql = $msk->load_components_sql($db_con)->sql;
         $expected_sql = $t->file('db/component/components_by_view_id_mysql.sql');
         $t->display('view->load_components_sql for MySQL', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         $t->subheader('view sql write');
         // insert
-        $lnk = $t->view_added();
-        $t->assert_sql_insert($sc, $lnk);
-        $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
-        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
-        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
-        $lnk = $t->view(); // a view with a code_id as it might be imported
-        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
-        $lnk = $t->view_filled();
-        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
+        $msk = $t->view_added();
+        $t->assert_sql_insert($sc, $msk);
+        $t->assert_sql_insert($sc, $msk, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
+        $t->assert_sql_insert($sc, $msk, [sql_type::LOG, sql_type::USER]);
+        $msk = $t->view(); // a view with a code_id as it might be imported
+        $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
+        $msk = $t->view_filled();
+        $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
         // update
-        $lnk = $t->view_added();
+        $msk = $t->view_added();
         // TODO activate db write
-        $msk_renamed = $lnk->cloned(view_api::TN_RENAMED);
-        $t->assert_sql_update($sc, $msk_renamed, $lnk);
-        $t->assert_sql_update($sc, $msk_renamed, $lnk, [sql_type::USER]);
-        $t->assert_sql_update($sc, $msk_renamed, $lnk, [sql_type::LOG]);
-        $t->assert_sql_update($sc, $msk_renamed, $lnk, [sql_type::LOG, sql_type::USER]);
+        $msk_renamed = $msk->cloned(view_api::TN_RENAMED);
+        $t->assert_sql_update($sc, $msk_renamed, $msk);
+        $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::USER]);
+        $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::LOG, sql_type::USER]);
         // delete
         // TODO activate db write
-        $t->assert_sql_delete($sc, $lnk);
-        $t->assert_sql_delete($sc, $lnk, [sql_type::USER]);
-        $t->assert_sql_delete($sc, $lnk, [sql_type::LOG]);
-        $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
-        $t->assert_sql_delete($sc, $lnk, [sql_type::EXCLUDE]);
-        $t->assert_sql_delete($sc, $lnk, [sql_type::USER, sql_type::EXCLUDE]);
+        $t->assert_sql_delete($sc, $msk);
+        $t->assert_sql_delete($sc, $msk, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $msk, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $msk, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_delete($sc, $msk, [sql_type::EXCLUDE]);
+        $t->assert_sql_delete($sc, $msk, [sql_type::USER, sql_type::EXCLUDE]);
 
         $t->subheader('Im- and Export tests');
         $json_file = 'unit/view/car_costs.json';
         $t->assert_json_file(new view($usr), $json_file);
 
 
-        $t->subheader('API and frontend cast unit tests for views');
+        $t->subheader('view api unit tests');
 
-        $lnk = $t->view();
-        $t->assert_api($lnk);
-        $t->assert_api_to_dsp($lnk, new view_dsp());
+        $msk = $t->view_filled();
+        $t->assert_api_json($msk);
+        $msk = $t->view();
+        $t->assert_api($msk);
+        $t->assert_api_to_dsp($msk, new view_dsp());
 
-        $lnk = $t->view_with_components();
-        $t->assert_api($lnk, 'view_with_components');
-        $t->assert_api_to_dsp($lnk, new view_dsp());
+        $msk = $t->view_with_components();
+        $t->assert_api($msk, 'view_with_components');
+        $t->assert_api_to_dsp($msk, new view_dsp());
 
         $test_name = 'view msk create from json string';
         $json = '{"id":1,"name":"Word","description":"the default view for words","code_id":"word"}';
@@ -195,35 +197,35 @@ class view_tests
         $t->assert_sql_foreign_key_create($dsp_trm_lnk);
 
         $t->subheader('view_term_link sql read');
-        $lnk = new view_term_link($usr);
-        $t->assert_sql_by_id($sc, $lnk);
-        $lnk = $t->view_term_link();
-        $t->assert_sql_standard($sc, $lnk);
+        $msk = new view_term_link($usr);
+        $t->assert_sql_by_id($sc, $msk);
+        $msk = $t->view_term_link();
+        $t->assert_sql_standard($sc, $msk);
         // TODO check if all links have the check
-        $t->assert_sql_by_link($sc, $lnk);
-        $t->assert_sql_user_changes($sc, $lnk);
+        $t->assert_sql_by_link($sc, $msk);
+        $t->assert_sql_user_changes($sc, $msk);
 
         $t->subheader('view_term_link sql write');
-        $lnk = $t->view_term_link();
-        $t->assert_sql_insert($sc, $lnk);
-        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
-        $lnk->description = view_api::TD_LINK;
-        $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
-        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
+        $msk = $t->view_term_link();
+        $t->assert_sql_insert($sc, $msk);
+        $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
+        $msk->description = view_api::TD_LINK;
+        $t->assert_sql_insert($sc, $msk, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $msk, [sql_type::LOG, sql_type::USER]);
         // update
-        $lnk_described = $lnk->cloned();
+        $lnk_described = $msk->cloned();
         $lnk_described->description = view_api::TD_LINK;
-        $t->assert_sql_update($sc, $lnk_described, $lnk);
-        $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::USER]);
-        $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG]);
-        $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_update($sc, $lnk_described, $msk);
+        $t->assert_sql_update($sc, $lnk_described, $msk, [sql_type::USER]);
+        $t->assert_sql_update($sc, $lnk_described, $msk, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $lnk_described, $msk, [sql_type::LOG, sql_type::USER]);
         // delete
-        $t->assert_sql_delete($sc, $lnk);
-        $t->assert_sql_delete($sc, $lnk, [sql_type::USER]);
-        $t->assert_sql_delete($sc, $lnk, [sql_type::LOG]);
-        $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
-        $t->assert_sql_delete($sc, $lnk, [sql_type::EXCLUDE]);
-        $t->assert_sql_delete($sc, $lnk, [sql_type::USER, sql_type::EXCLUDE]);
+        $t->assert_sql_delete($sc, $msk);
+        $t->assert_sql_delete($sc, $msk, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $msk, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $msk, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_delete($sc, $msk, [sql_type::EXCLUDE]);
+        $t->assert_sql_delete($sc, $msk, [sql_type::USER, sql_type::EXCLUDE]);
 
     }
 

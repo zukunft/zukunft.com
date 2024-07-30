@@ -54,6 +54,7 @@ namespace cfg\component;
 
 include_once DB_PATH . 'sql_par_type.php';
 
+use api\api;
 use api\component\component as component_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -69,16 +70,13 @@ use cfg\formula;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
-use cfg\log\change_table_list;
 use cfg\phrase;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\sandbox_typed;
-use cfg\type_list;
 use cfg\type_object;
 use cfg\user;
 use cfg\user_message;
-use cfg\view;
 use cfg\word;
 
 class component extends sandbox_typed
@@ -510,16 +508,33 @@ class component extends sandbox_typed
     function api_obj(): component_api
     {
         $api_obj = new component_api();
-        $this->fill_api_obj($api_obj);
+        if ($this->is_excluded()) {
+            $api_obj->set_id($this->id());
+            $api_obj->excluded = true;
+        } else {
+            parent::fill_api_obj($api_obj);
+            $api_obj->code_id = $this->code_id;
+        }
         return $api_obj;
     }
 
     /**
-     * @returns string the api json message for the object as a string
+     * map a component api json to this model component object
+     * @param array $api_json the api array with the values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
      */
-    function api_json(): string
+    function set_by_api_json(array $api_json): user_message
     {
-        return $this->api_obj()->get_json();
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+            // TODO the code id might be not be mapped because this can nover be changed by the user
+            if ($key == api::FLD_CODE_ID) {
+                $this->code_id = $value;
+            }
+        }
+
+        return $msg;
     }
 
 

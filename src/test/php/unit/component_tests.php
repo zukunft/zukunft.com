@@ -52,11 +52,9 @@ class component_tests
         global $usr;
 
         // init
-        $db_con = new sql_db();
         $sc = new sql();
         $t->name = 'component->';
         $t->resource_path = 'db/component/';
-        $json_file = 'unit/view/component_import.json';
         $usr->set_id(1);
 
 
@@ -71,9 +69,7 @@ class component_tests
         $t->assert_sql_index_create($cmp);
         $t->assert_sql_foreign_key_create($cmp);
 
-
-        $t->subheader('SQL user sandbox statement tests');
-
+        $t->subheader('component sql read');
         $cmp = new component($usr);
         $t->assert_sql_by_id($sc, $cmp);
         $t->assert_sql_by_name($sc, $cmp);
@@ -115,18 +111,19 @@ class component_tests
         $t->assert_sql_delete($sc, $cmp);
         $t->assert_sql_delete($sc, $cmp, [sql_type::LOG]);
 
-
-        $t->subheader('Convert tests');
-
-        // casting API
-        $cmp = $t->component();
-        $t->assert_api($cmp);
-        $t->assert_api_to_dsp($cmp, new component_dsp());
-
-
         $t->subheader('Im- and Export tests');
 
+        $json_file = 'unit/view/component_import.json';
         $t->assert_json_file(new component($usr), $json_file);
+
+        $t->subheader('component api unit tests');
+        $cmp = $t->component_filled();
+        $t->assert_api_json($cmp);
+        $cmp = $t->component();
+        $t->assert_api($cmp);
+
+        $t->subheader('component frontend unit tests');
+        $t->assert_api_to_dsp($cmp, new component_dsp());
 
     }
 

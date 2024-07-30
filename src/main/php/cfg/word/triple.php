@@ -84,8 +84,6 @@ use html\html_base;
 use JsonSerializable;
 use shared\library;
 
-global $phrase_types;
-
 class triple extends sandbox_link_typed implements JsonSerializable
 {
 
@@ -677,16 +675,16 @@ class triple extends sandbox_link_typed implements JsonSerializable
      */
 
     /**
-     * @return triple_api the triple frontend api object
+     * @return triple_api the filled triple frontend api object
      */
     function api_obj(): triple_api
     {
         $api_obj = new triple_api();
-        if (!$this->is_excluded()) {
-            $this->fill_api_obj($api_obj);
-            $api_obj->name = $this->name();
-            $api_obj->type_id = $this->type_id();
-            $api_obj->description = $this->description;
+        if ($this->is_excluded()) {
+            $api_obj->set_id($this->id());
+            $api_obj->excluded = true;
+        } else {
+            parent::fill_api_obj($api_obj);
             if ($this->fob->obj() != null) {
                 if ($this->fob->obj()->id() <> 0 or $this->fob->obj()->name() != '') {
                     $api_obj->set_from($this->fob->obj()->api_obj()->phrase());
@@ -703,11 +701,68 @@ class triple extends sandbox_link_typed implements JsonSerializable
     }
 
     /**
-     * @returns string the api json message for the object as a string
+     * map a triple api json to this model triple object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the triple values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
      */
-    function api_json(): string
+    function set_by_api_json(array $api_json): user_message
     {
-        return $this->api_obj()->get_json();
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == api::FLD_ID) {
+                $this->set_id($value);
+            }
+            if ($key == api::FLD_NAME) {
+                $this->set_name($value);
+            }
+            if ($key == api::FLD_DESCRIPTION) {
+                if ($value <> '') {
+                    $this->description = $value;
+                }
+            }
+
+            /* TODO
+            if ($key == self::FLD_PLURAL) {
+                if ($value <> '') {
+                    $this->plural = $value;
+                }
+            }
+            if ($key == share_type_shared::JSON_FLD) {
+                $this->share_id = $share_types->id($value);
+            }
+            if ($key == protect_type_shared::JSON_FLD) {
+                $this->protection_id = $protection_types->id($value);
+            }
+            if ($key == exp_obj::FLD_VIEW) {
+                $wrd_view = new view($this->user());
+                if ($do_save) {
+                    $wrd_view->load_by_name($value);
+                    if ($wrd_view->id == 0) {
+                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
+                    } else {
+                        $this->view_id = $wrd_view->id;
+                    }
+                } else {
+                    $wrd_view->set_name($value);
+                }
+                $this->view = $wrd_view;
+            }
+
+            if ($key == api::FLD_PHRASES) {
+                $phr_lst = new phrase_list($this->user());
+                $msg->add($phr_lst->db_obj($value));
+                if ($msg->is_ok()) {
+                    $this->grp->phr_lst = $phr_lst;
+                }
+            }
+            */
+
+        }
+
+        return $msg;
     }
 
     /**
@@ -1255,80 +1310,6 @@ class triple extends sandbox_link_typed implements JsonSerializable
     /*
      * im- and export
      */
-
-    /**
-     * map a triple api json to this model triple object
-     * similar to the import_obj function but using the database id instead of names as the unique key
-     * @param array $api_json the api array with the triple values that should be mapped
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        global $phrase_types;
-
-        $msg = new user_message();
-
-        // make sure that there are no unexpected leftovers
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == api::FLD_ID) {
-                $this->set_id($value);
-            }
-            if ($key == api::FLD_NAME) {
-                $this->set_name($value);
-            }
-            if ($key == api::FLD_DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
-            }
-            if ($key == api::FLD_TYPE) {
-                $this->type_id = $phrase_types->id($value);
-            }
-
-            /* TODO
-            if ($key == self::FLD_PLURAL) {
-                if ($value <> '') {
-                    $this->plural = $value;
-                }
-            }
-            if ($key == share_type_shared::JSON_FLD) {
-                $this->share_id = $share_types->id($value);
-            }
-            if ($key == protect_type_shared::JSON_FLD) {
-                $this->protection_id = $protection_types->id($value);
-            }
-            if ($key == exp_obj::FLD_VIEW) {
-                $wrd_view = new view($this->user());
-                if ($do_save) {
-                    $wrd_view->load_by_name($value);
-                    if ($wrd_view->id == 0) {
-                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
-                    } else {
-                        $this->view_id = $wrd_view->id;
-                    }
-                } else {
-                    $wrd_view->set_name($value);
-                }
-                $this->view = $wrd_view;
-            }
-
-            if ($key == api::FLD_PHRASES) {
-                $phr_lst = new phrase_list($this->user());
-                $msg->add($phr_lst->db_obj($value));
-                if ($msg->is_ok()) {
-                    $this->grp->phr_lst = $phr_lst;
-                }
-            }
-            */
-
-        }
-
-        return $msg;
-    }
 
     /**
      * an array of the value vars including the private vars

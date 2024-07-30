@@ -49,6 +49,7 @@ include_once SERVICE_EXPORT_PATH . 'view_exp.php';
 include_once SERVICE_EXPORT_PATH . 'component_exp.php';
 include_once WEB_VIEW_PATH . 'view.php';
 
+use api\api;
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_link;
@@ -323,25 +324,61 @@ class view extends sandbox_typed
     {
         $api_obj = new view_api();
 
-        parent::fill_api_obj($api_obj);
+        if ($this->is_excluded()) {
+            $api_obj->set_id($this->id());
+            $api_obj->excluded = true;
+        } else {
+            parent::fill_api_obj($api_obj);
 
-        $api_obj->set_type_id($this->type_id);
-        $api_obj->code_id = $this->code_id;
-        $api_obj->description = $this->description;
-        if ($this->cmp_lnk_lst != null) {
-            $api_obj->components = $this->cmp_lnk_lst->api_obj();
+            $api_obj->code_id = $this->code_id;
+            if ($this->cmp_lnk_lst != null) {
+                $api_obj->components = $this->cmp_lnk_lst->api_obj();
+            }
         }
 
         return $api_obj;
     }
 
     /**
-     * @returns string the api json message for the object as a string
+     * map a view api json to this model view object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
      */
-    function api_json(): string
+    function set_by_api_json(array $api_json): user_message
     {
-        return $this->api_obj()->get_json();
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == api::FLD_CODE_ID) {
+                if ($value <> '') {
+                    $this->code_id = $value;
+                }
+            }
+            /*
+            if ($key == exp_obj::FLD_VIEW) {
+                $wrd_view = new view($this->user());
+                if ($do_save) {
+                    $wrd_view->load_by_name($value);
+                    if ($wrd_view->id == 0) {
+                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
+                    } else {
+                        $this->view_id = $wrd_view->id;
+                    }
+                } else {
+                    $wrd_view->set_name($value);
+                }
+                $this->view = $wrd_view;
+            }
+
+            */
+
+        }
+
+        return $msg;
     }
+
 
 
     /*

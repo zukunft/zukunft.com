@@ -106,9 +106,13 @@ class source_tests
         $t->subheader('Im- and Export tests');
         $t->assert_json_file(new source($usr), $json_file);
 
-        $t->subheader('API and frontend cast unit tests for sources');
+        $t->subheader('source api unit tests');
+        $src = $t->source1();
+        $t->assert_api_json($src);
         $src = $t->source();
         $t->assert_api_msg($db_con, $src);
+
+        $t->subheader('source frontend unit tests');
         $t->assert_api_to_dsp($src, new source_dsp());
 
 
