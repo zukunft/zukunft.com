@@ -44,6 +44,7 @@ use cfg\sys_log_type;
 use cfg\user\user_profile;
 use cfg\user\user_type;
 use cfg\user_official_type;
+use cfg\view_link_type;
 use cfg\view_type;
 use test\test_cleanup;
 
@@ -126,6 +127,11 @@ class type_tests
         $dsp_typ = new view_type('');
         $t->assert_sql_table_create($dsp_typ);
         $t->assert_sql_index_create($dsp_typ);
+
+        $t->subheader('view term link type sql setup');
+        $dsp_lnk_typ = new view_link_type('');
+        $t->assert_sql_table_create($dsp_lnk_typ);
+        $t->assert_sql_index_create($dsp_lnk_typ);
     }
 
 }

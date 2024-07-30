@@ -84,7 +84,7 @@ class triple_tests
         $t->assert_api_json($trp);
         $t->assert_api($trp);
 
-        $t->subheader('triple html frontend unit tests');
+        $t->subheader('triple frontend unit tests');
         $trp = $t->triple_pi();
         $t->assert_api_to_dsp($trp, new triple_dsp());
 

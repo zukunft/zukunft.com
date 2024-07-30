@@ -2,8 +2,8 @@
 
 /*
 
-    test/php/unit_write/view_tests.php - write test VIEWS to the database and check the results
-    ----------------------------------
+    test/php/unit_write/view_write_tests.php - write test VIEWS to the database and check the results
+    ----------------------------------------
   
 
     This file is part of zukunft.com - calc with words

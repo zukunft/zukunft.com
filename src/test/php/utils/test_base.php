@@ -177,6 +177,7 @@ include_once TEST_UNIT_PATH . 'figure_tests.php';
 include_once TEST_UNIT_PATH . 'figure_list_tests.php';
 include_once TEST_UNIT_PATH . 'expression_tests.php';
 include_once TEST_UNIT_PATH . 'view_tests.php';
+include_once TEST_UNIT_PATH . 'view_term_link_tests.php';
 include_once TEST_UNIT_PATH . 'view_list_tests.php';
 include_once TEST_UNIT_PATH . 'component_tests.php';
 include_once TEST_UNIT_PATH . 'component_link_tests.php';

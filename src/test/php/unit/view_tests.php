@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/view.php - unit testing of the view functions
-    ------------------
+    test/unit/view_tests.php - unit testing of the view functions
+    ------------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -37,9 +37,6 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\view;
-use cfg\view_link_type;
-use cfg\view_term_link;
-use cfg\view_type;
 use html\view\view as view_dsp;
 use shared\library;
 use test\test_cleanup;
@@ -178,53 +175,6 @@ class view_tests
         $target = '';
         $t->display('view->display', $target, $result);
         */
-
-
-        /*
-         * term link tests
-         */
-
-        $t->header('view_term_link tests');
-
-        $t->subheader('view_term_link sql setup');
-        $dsp_lnk_typ = new view_link_type('');
-        $t->assert_sql_table_create($dsp_lnk_typ);
-        $t->assert_sql_index_create($dsp_lnk_typ);
-        $dsp_trm_lnk = new view_term_link($usr);
-        $t->assert_sql_table_create($dsp_trm_lnk);
-        $t->assert_sql_index_create($dsp_trm_lnk);
-        $t->assert_sql_foreign_key_create($dsp_trm_lnk);
-
-        $t->subheader('view_term_link sql read');
-        $msk = new view_term_link($usr);
-        $t->assert_sql_by_id($sc, $msk);
-        $msk = $t->view_term_link();
-        $t->assert_sql_standard($sc, $msk);
-        // TODO check if all links have the check
-        $t->assert_sql_by_link($sc, $msk);
-        $t->assert_sql_user_changes($sc, $msk);
-
-        $t->subheader('view_term_link sql write');
-        $msk = $t->view_term_link();
-        $t->assert_sql_insert($sc, $msk);
-        $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
-        $msk->description = view_api::TD_LINK;
-        $t->assert_sql_insert($sc, $msk, [sql_type::USER]);
-        $t->assert_sql_insert($sc, $msk, [sql_type::LOG, sql_type::USER]);
-        // update
-        $lnk_described = $msk->cloned();
-        $lnk_described->description = view_api::TD_LINK;
-        $t->assert_sql_update($sc, $lnk_described, $msk);
-        $t->assert_sql_update($sc, $lnk_described, $msk, [sql_type::USER]);
-        $t->assert_sql_update($sc, $lnk_described, $msk, [sql_type::LOG]);
-        $t->assert_sql_update($sc, $lnk_described, $msk, [sql_type::LOG, sql_type::USER]);
-        // delete
-        $t->assert_sql_delete($sc, $msk);
-        $t->assert_sql_delete($sc, $msk, [sql_type::USER]);
-        $t->assert_sql_delete($sc, $msk, [sql_type::LOG]);
-        $t->assert_sql_delete($sc, $msk, [sql_type::LOG, sql_type::USER]);
-        $t->assert_sql_delete($sc, $msk, [sql_type::EXCLUDE]);
-        $t->assert_sql_delete($sc, $msk, [sql_type::USER, sql_type::EXCLUDE]);
 
     }
 
