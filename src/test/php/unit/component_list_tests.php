@@ -51,7 +51,6 @@ class component_list_tests
         $sc = new sql();
         $t->name = 'component_list->';
         $t->resource_path = 'db/component/';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the component list class (src/main/php/model/component/component_list.php)');
 

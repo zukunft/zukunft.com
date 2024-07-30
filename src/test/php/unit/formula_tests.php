@@ -59,7 +59,6 @@ class formula_tests
         $sc = new sql();
         $t->name = 'formula->';
         $t->resource_path = 'db/formula/';
-        $usr->set_id(1);
 
         $t->header('formula unit tests');
 

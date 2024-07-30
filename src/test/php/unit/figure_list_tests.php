@@ -51,12 +51,10 @@ class figure_list_tests
         global $usr;
 
         // init
-        $db_con = new sql_db();
         $sc = new sql();
         $t->name = 'figure->';
         $t->resource_path = 'db/figure/';
         $json_file = 'unit/figure/figure_list_import.json';
-        $usr->set_id(1);
 
 
         $t->header('Unit tests of the figure list class (src/main/php/model/figure/figure_list.php)');

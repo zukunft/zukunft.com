@@ -61,7 +61,6 @@ class word_tests
         $sc = new sql();
         $t->name = 'word->';
         $t->resource_path = 'db/word/';
-        $usr->set_id(1);
 
         $t->header('word unit tests');
 

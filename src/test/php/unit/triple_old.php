@@ -56,7 +56,6 @@ class triple_old
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
         $json_file = 'unit/triple/pi.json';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the word class (src/main/php/model/word/triple.php)');
 

@@ -72,7 +72,6 @@ class system_tests
         $sc = new sql();
         $t->name = 'system->';
         $t->resource_path = 'db/system/';
-        $usr->set_id(1);
 
 
         $t->header('Unit tests of objects');

@@ -59,12 +59,10 @@ class group_tests
         global $usr;
 
         // init
-        $lib = new library();
         $db_con = new sql_db();
         $sc = new sql();
         $t->name = 'group->';
         $t->resource_path = 'db/group/';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the phrase group class (src/main/php/model/group/group.php)');
 

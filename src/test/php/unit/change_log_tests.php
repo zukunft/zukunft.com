@@ -80,7 +80,6 @@ class change_log_tests
         $sc = new sql();
         $t->name = 'change_log->';
         $t->resource_path = 'db/log/';
-        $usr->set_id(1);
 
 
         $t->header('log unit tests');

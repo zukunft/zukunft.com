@@ -53,7 +53,6 @@ class user_tests
         $t->name = 'user->';
         $t->resource_path = 'db/user/';
         $json_file = 'unit/user/user_import.json';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the user class (src/main/php/model/user/user.php)');
 

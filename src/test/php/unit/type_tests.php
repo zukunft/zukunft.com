@@ -36,6 +36,7 @@ use cfg\formula_type;
 use cfg\job_type;
 use cfg\phrase_type;
 use cfg\protection_type;
+use cfg\ref_type;
 use cfg\share_type;
 use cfg\source_type;
 use cfg\sys_log_function;
@@ -117,6 +118,11 @@ class type_tests
         $src_typ = new source_type('');
         $t->assert_sql_table_create($src_typ);
         $t->assert_sql_index_create($src_typ);
+
+        $t->subheader('reference type sql setup');
+        $ref_typ = new ref_type('');
+        $t->assert_sql_table_create($ref_typ);
+        $t->assert_sql_index_create($ref_typ);
 
         $t->subheader('formula type sql setup');
         $frm_typ = new formula_type('');

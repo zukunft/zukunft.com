@@ -57,7 +57,6 @@ class formula_link_tests
         $sc = new sql();
         $t->name = 'formula_link->';
         $t->resource_path = 'db/formula/';
-        $usr->set_id(1);
 
         // TODO use assert_sql_all if possible
 

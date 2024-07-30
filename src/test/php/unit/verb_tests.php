@@ -55,7 +55,6 @@ class verb_tests
         $t->name = 'verb->';
         $t->resource_path = 'db/verb/';
         $json_file = 'unit/verb/is_a.json';
-        $usr->set_id(1);
 
 
         $t->header('verb unit tests');

@@ -405,6 +405,7 @@ class all_unit_tests extends test_cleanup
         // set the profile of the test users
         $usr->profile_id = $user_profiles->id(user_profile::NORMAL);
         $usr_sys->profile_id = $user_profiles->id(user_profile::SYSTEM);
+        $usr->set_id(1);
 
         // continue with preparing unit tests
         $this->init_phrase_types();

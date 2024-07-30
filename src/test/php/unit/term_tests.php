@@ -62,11 +62,9 @@ class term_tests
         global $usr;
 
         // init
-        $db_con = new sql_db();
         $sc = new sql();
         $t->name = 'term->';
         $t->resource_path = 'db/term/';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the term class (src/main/php/model/phrase/term.php)');
 

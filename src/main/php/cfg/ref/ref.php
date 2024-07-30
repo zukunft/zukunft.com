@@ -72,6 +72,7 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
 
+use api\api;
 use api\ref\ref as ref_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -427,10 +428,15 @@ class ref extends sandbox_link_with_type
     function api_obj(): ref_api
     {
         $api_obj = new ref_api();
-        if (!$this->is_excluded()) {
+        if ($this->is_excluded()) {
+            $api_obj->set_id($this->id());
+            $api_obj->excluded = true;
+        } else {
             parent::fill_api_obj($api_obj);
             if ($this->phr != null) {
-                $api_obj->phrase_id = $this->phr->id();
+                if ($this->phr->id() != 0) {
+                    $api_obj->phrase_id = $this->phr->id();
+                }
             }
             $api_obj->external_key = $this->external_key;
             if ($this->source != null) {
@@ -443,11 +449,43 @@ class ref extends sandbox_link_with_type
     }
 
     /**
-     * @returns string the api json message for the object as a string
+     * map a ref api json to this model ref object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the triple values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
      */
-    function api_json(): string
+    function set_by_api_json(array $api_json): user_message
     {
-        return $this->api_obj()->get_json();
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == api::FLD_PHRASE) {
+                if ($value != '' and $value != 0) {
+                    $phr = new phrase($this->user());
+                    $phr->set_id($value);
+                    $this->set_phrase($phr);
+                }
+            }
+            if ($key == api::FLD_EXTERNAL_KEY) {
+                if ($value <> '') {
+                    $this->external_key = $value;
+                }
+            }
+            if ($key == api::FLD_URL) {
+                if ($value <> '') {
+                    $this->url = $value;
+                }
+            }
+            if ($key == api::FLD_DESCRIPTION) {
+                if ($value <> '') {
+                    $this->description = $value;
+                }
+            }
+
+        }
+
+        return $msg;
     }
 
 

@@ -62,7 +62,6 @@ class word_list_tests
         $t->name = 'word_list->';
         $t->resource_path = 'db/word/';
         $json_file = 'unit/word/word_list.json';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the word list class (src/main/php/model/word/word_list.php)');
 

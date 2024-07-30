@@ -24,7 +24,6 @@ class triple_tests
         $sc = new sql();
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
-        $usr->set_id(1);
 
         $t->header('triple unit tests');
 

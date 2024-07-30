@@ -61,7 +61,6 @@ class result_tests
         $t->name = 'result->';
         $t->resource_path = 'db/result/';
         $json_file = 'unit/result/result_import_part.json';
-        $usr->set_id(1);
 
 
         $t->header('Unit tests of the result class (src/main/php/model/formula/result.php)');

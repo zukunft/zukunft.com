@@ -55,41 +55,32 @@ class ref_tests
         global $usr;
 
         // init for reference
-        $db_con = new sql_db();
         $sc = new sql();
         $t->name = 'ref->';
         $t->resource_path = 'db/ref/';
-        $json_file = 'unit/ref/wikipedia.json';
-        $usr->set_id(1);
 
-        $t->header('Unit tests of the reference class (src/main/php/model/ref/ref.php)');
+        $t->header('reference unit tests');
 
-        $t->subheader('Ref type SQL setup statements');
-        $ref_typ = new ref_type('');
-        $t->assert_sql_table_create($ref_typ);
-        $t->assert_sql_index_create($ref_typ);
-
-        $t->subheader('Ref type SQL setup statements');
+        $t->subheader('reference sql setup');
         $ref = new ref($usr);
         $t->assert_sql_table_create($ref);
         $t->assert_sql_index_create($ref);
         $t->assert_sql_foreign_key_create($ref);
 
-        $t->subheader('SQL statement tests');
-        $ref = new ref($usr);
+        $t->subheader('reference sql read');
         $t->assert_sql_by_id($sc, $ref);
-        $this->assert_sql_link_ids($t, $db_con, $ref);
+        $this->assert_sql_link_ids($t, $sc, $ref);
 
-        // sql to load a ref by id
+        $t->subheader('reference sql read standard and user changes by id');
         $ref = new ref($usr);
         $ref->set_id(3);
         $t->assert_sql_standard($sc, $ref);
 
-        // sql to load the ref types
+        $t->subheader('reference sql read all type');
         $ref_type_list = new ref_type_list();
         $t->assert_sql_all($sc, $ref_type_list);
 
-        $t->subheader('ref sql write');
+        $t->subheader('reference sql write insert');
         $ref = $t->reference();
         $t->assert_sql_insert($sc, $ref);
         $t->assert_sql_insert($sc, $ref, [sql_type::LOG]);
@@ -100,6 +91,8 @@ class ref_tests
         $t->assert_sql_insert($sc, $ref_filled, [sql_type::LOG]);
         $ref_filled_usr = $t->ref_filled_user();
         $t->assert_sql_insert($sc, $ref_filled_usr, [sql_type::LOG, sql_type::USER]);
+
+        $t->subheader('reference sql write update');
         // TODO activate db write
         $ref = $t->reference_change();
         $ref_changed = $ref->cloned_linked(ref_api::TK_CHANGED);
@@ -107,17 +100,25 @@ class ref_tests
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::USER]);
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG]);
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG, sql_type::USER]);
-        // TODO activate db write and log deleteing the link by logging the change of the external link to empty
+
+        $t->subheader('reference sql delete');
+        // TODO activate db write and log deleting the link by logging the change of the external link to empty
         $t->assert_sql_delete($sc, $ref);
         $t->assert_sql_delete($sc, $ref, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('Im- and Export tests');
-        $t->assert_json_file(new ref($usr), $json_file);
-
-        $t->subheader('API and frontend cast unit tests for references');
+        $t->subheader('reference api unit tests');
+        $ref = $t->reference1();
+        $t->assert_api_json($ref);
         $ref = $t->reference_plus();
         $t->assert_api($ref);
+
+        $t->subheader('reference frontend unit tests');
+        $ref = $t->reference_plus();
         $t->assert_api_to_dsp($ref, new ref_dsp());
+
+        $t->subheader('reference import and export tests');
+        $json_file = 'unit/ref/wikipedia.json';
+        $t->assert_json_file(new ref($usr), $json_file);
 
     }
 
@@ -126,24 +127,24 @@ class ref_tests
      * and check if the statement name is unique
      *
      * @param test_cleanup $t the test environment
-     * @param sql_db $db_con the test database connection
+     * @param sql $sc the test database connection
      * @param ref $ref the reference object for which the load by link ids sql statement creation should be tested
      * @return void
      */
     private function assert_sql_link_ids(
         test_cleanup $t,
-        sql_db $db_con,
+        sql $sc,
         ref $ref): void
     {
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $ref->load_sql_by_link_ids($db_con->sql_creator(), 1, 2);
-        $t->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $ref->load_sql_by_link_ids($sc, 1, 2);
+        $t->assert_qp($qp, $sc->db_type);
 
         // check the MySQL query syntax
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $ref->load_sql_by_link_ids($db_con->sql_creator(), 1, 2);
-        $t->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::MYSQL;
+        $qp = $ref->load_sql_by_link_ids($sc, 1, 2);
+        $t->assert_qp($qp, $sc->db_type);
     }
 
 }

@@ -55,7 +55,6 @@ class view_term_link_tests
         $sc = new sql();
         $t->name = 'view->';
         $t->resource_path = 'db/view/';
-        $usr->set_id(1);
 
         $t->header('view term link unit tests');
 

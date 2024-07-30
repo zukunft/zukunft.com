@@ -55,7 +55,6 @@ class component_tests
         $sc = new sql();
         $t->name = 'component->';
         $t->resource_path = 'db/component/';
-        $usr->set_id(1);
 
         $t->header('component unit tests');
 

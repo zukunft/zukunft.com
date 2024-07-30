@@ -49,11 +49,9 @@ class element_tests
         global $usr;
 
         // init
-        $db_con = new sql_db();
         $sc = new sql();
         $t->name = 'element->';
         $t->resource_path = 'db/element/';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the formula element class (src/main/php/model/formula/element.php)');
 

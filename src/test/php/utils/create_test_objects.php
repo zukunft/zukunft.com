@@ -1929,6 +1929,21 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return ref with the most often used fields set for unit testing
+     */
+    function reference1(): ref
+    {
+        global $ref_types;
+        $ref = new ref($this->usr1);
+        $ref->set(1);
+        $ref->set_phrase($this->word()->phrase());
+        $ref->set_type_id($ref_types->id(ref_type::WIKIDATA));
+        $ref->external_key = ref_api::TK_READ;
+        $ref->description = ref_api::TD_READ;
+        return $ref;
+    }
+
+    /**
      * @return ref with the more fields set for unit testing
      */
     function reference_plus(): ref

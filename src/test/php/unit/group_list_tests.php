@@ -47,11 +47,9 @@ class group_list_tests
         global $usr;
 
         // init
-        $db_con = new sql_db();
         $sc = new sql();
         $t->name = 'group_list->';
         $t->resource_path = 'db/group/';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the phrase group list class (src/main/php/model/group/group_list.php)');
 

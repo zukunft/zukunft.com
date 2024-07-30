@@ -58,7 +58,6 @@ class sys_log_tests
         $sc = new sql();
         $t->name = 'sys_log->';
         $t->resource_path = 'db/sys_log/';
-        $usr->set_id(1);
 
 
         $t->subheader('System log SQL setup statements');

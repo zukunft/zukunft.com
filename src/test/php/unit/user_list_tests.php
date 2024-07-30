@@ -48,12 +48,10 @@ class user_list_tests
         global $usr;
 
         // init
-        $lib = new library();
         $db_con = new sql_db();
         $sc = new sql();
         $t->name = 'user_list->';
         $t->resource_path = 'db/user/';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the user list class (src/main/php/model/user/user_list.php)');
 

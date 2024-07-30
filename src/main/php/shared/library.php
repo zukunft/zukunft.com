@@ -1733,7 +1733,6 @@ class library
                 $result = $this->class_to_name(value::class);
                 break;
             case $this->class_to_name(source::class):
-            case $this->class_to_name(ref_type::class):
                 $result = $this->class_to_name(ref::class);
                 break;
             case $this->class_to_name(element_type::class):
@@ -1763,6 +1762,7 @@ class library
             case $this->class_to_name(share_type::class):
             case $this->class_to_name(phrase_type::class):
             case $this->class_to_name(source_type::class):
+            case $this->class_to_name(ref_type::class):
             case $this->class_to_name(formula_type::class):
             case $this->class_to_name(view_type::class):
             case $this->class_to_name(view_link_type::class):
