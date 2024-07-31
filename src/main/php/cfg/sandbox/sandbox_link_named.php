@@ -39,7 +39,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
-use cfg\log\change;
+use cfg\log\change_log_list;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 
@@ -250,6 +250,35 @@ class sandbox_link_named extends sandbox_link
         return $result;
     }
 
+
+    /*
+     * log read
+     */
+
+    /**
+     * get the description of the latest change related to this object
+     * @param user $usr who has requeted to see the change
+     * @return string the description of the latest change
+     */
+    function log_last_msg(user $usr): string
+    {
+        $log = new change_log_list();
+        $log->load_obj_last($this, $usr);
+        return $log->first_msg();
+    }
+
+    /**
+     * get the description of the latest change related to this object and the given field
+     * @param user $usr who has requeted to see the change
+     * @param string $fld the field name to filter the changes
+     * @return string the description of the latest change
+     */
+    function log_last_field_msg(user $usr, string $fld): string
+    {
+        $log = new change_log_list();
+        $log->load_obj_field_last($this, $usr, $fld);
+        return $log->first_msg();
+    }
 
 
     /*

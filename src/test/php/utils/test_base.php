@@ -2048,11 +2048,11 @@ class test_base
      * or via prepared sql statement
      *
      * @param string $test_name the description of the test
-     * @param sandbox_named $sbx the sandbox object with the vars set for the test
+     * @param sandbox_named|sandbox_link_named $sbx the sandbox object with the vars set for the test
      * @param bool $use_func true if the complex function including the logging should be used
      * @return bool true if the test has been successful
      */
-    function assert_write_named(string $test_name, sandbox_named $sbx, bool $use_func): bool
+    function assert_write_named(string $test_name, sandbox_named|sandbox_link_named $sbx, bool $use_func): bool
     {
         // add the named object and remember the name
         $name = $sbx->name();

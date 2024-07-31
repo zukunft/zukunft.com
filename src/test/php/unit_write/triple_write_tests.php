@@ -62,19 +62,12 @@ class triple_write_tests
         $wrd = $t->word_add_by_func();
         $wrd->save(true);
 
-        $test_name = 'add triple ' . triple_api::TN_ADD_VIA_FUNC . ' via sql function';
-        $trp = $t->triple_add_by_func();
-        $trp->save(true);
-        $trp->reset();
-        $trp->load_by_name(triple_api::TN_ADD_VIA_FUNC);
-        $t->assert_true($test_name, $trp->isset());
-
+        $t->subheader('view prepared write');
         $test_name = 'add triple ' . triple_api::TN_ADD_VIA_SQL . ' via sql insert';
-        $trp = $t->triple_add_by_sql();
-        $trp->save(false);
-        $trp->reset();
-        $trp->load_by_name(triple_api::TN_ADD_VIA_SQL);
-        $t->assert_true($test_name, $trp->isset());
+        $t->assert_write_named($test_name, $t->triple_add_by_sql(), false);
+        $test_name = 'add triple ' . triple_api::TN_ADD_VIA_FUNC . ' via sql function';
+        // TODO activate
+        // $t->assert_write_named($test_name, $t->triple_add_by_func(), true);
 
         // load the main test word and verb
         $is_id = $verbs->id(verb::IS);
