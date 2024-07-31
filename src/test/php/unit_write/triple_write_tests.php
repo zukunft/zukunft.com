@@ -56,6 +56,12 @@ class triple_write_tests
 
         $t->header('triple db write tests');
 
+        $t->subheader('triple prepare write tests');
+        $wrd = $t->word_add_by_sql();
+        $wrd->save(false);
+        $wrd = $t->word_add_by_func();
+        $wrd->save(true);
+
         $test_name = 'add triple ' . triple_api::TN_ADD_VIA_FUNC . ' via sql function';
         $trp = $t->triple_add_by_func();
         $trp->save(true);

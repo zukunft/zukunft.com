@@ -41,6 +41,17 @@ use shared\types\protection_type;
 class sandbox implements JsonSerializable
 {
 
+    /*
+     * const for system testing
+     */
+
+    const TN_RENAMED_EXT = ' renamed';
+
+
+    /*
+     * object vars
+     */
+
     // fields for the backend link
     public int|string $id; // the database id of the object, which is the same as the related database object in the backend
     public int|null $share = null; // the share type id; if not set the default share type is assumed

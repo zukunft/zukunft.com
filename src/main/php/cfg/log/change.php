@@ -78,6 +78,15 @@ class change extends change_log
 {
 
     /*
+     * messages
+     */
+
+    // TODO replace by a language specific message id
+    const MSG_ADD = 'added';
+    const MSG_UPDATE = 'changed';
+    const MSG_DEL = 'deleted';
+
+    /*
      * db const
      */
 
@@ -644,12 +653,12 @@ class change extends change_log
             }
             if ($this->old_value <> '') {
                 if ($this->new_value <> '') {
-                    $result .= 'changed "' . $this->old_value . '" to "' . $this->new_value . '"';
+                    $result .= self::MSG_UPDATE . ' "' . $this->old_value . '" to "' . $this->new_value . '"';
                 } else {
-                    $result .= 'deleted "' . $this->old_value . '"';;
+                    $result .= self::MSG_DEL . ' "' . $this->old_value . '"';;
                 }
             } else {
-                $result .= 'added "' . $this->new_value . '"';;
+                $result .= self::MSG_ADD . ' "' . $this->new_value . '"';;
             }
         }
         return $result;

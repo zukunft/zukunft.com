@@ -645,7 +645,7 @@ class test_base
     function assert_dsp_id(object $usr_obj, string $msg): bool
     {
         $lib = new library();
-        $test_name = 'debug id for ' .  $lib->class_to_name($usr_obj::class);
+        $test_name = 'debug id for ' . $lib->class_to_name($usr_obj::class);
         return $this->assert($test_name, $usr_obj->dsp_id(), $msg);
     }
 
@@ -1948,6 +1948,11 @@ class test_base
         return $result;
     }
 
+
+    /*
+     * db load
+     */
+
     /**
      * check the object loading by id and name
      *
@@ -2032,6 +2037,82 @@ class test_base
 
         return $result;
     }
+
+    /*
+     * assert db write
+     */
+
+    /**
+     * test adding a named sandbox object e.g. a word to the database
+     * either via sql function with logging
+     * or via prepared sql statement
+     *
+     * @param string $test_name the description of the test
+     * @param sandbox_named $sbx the sandbox object with the vars set for the test
+     * @param bool $use_func true if the complex function including the logging should be used
+     * @return bool true if the test has been successful
+     */
+    function assert_write_named(string $test_name, sandbox_named $sbx, bool $use_func): bool
+    {
+        // add the named object and remember the name
+        $name = $sbx->name();
+        $sbx->save($use_func);
+        $sbx->reset();
+        $sbx->load_by_name($name);
+        $result = $this->assert_true($test_name, $sbx->isset());
+
+        // check the log
+        if ($result) {
+            $id = $sbx->id();
+            if ($use_func) {
+                $log_msg = $sbx->log_last_msg($this->usr1);
+                $result = $this->assert_text_contains($test_name . ' log add', $log_msg, $name);
+                if ($result) {
+                    $result = $this->assert_text_contains($test_name . ' log add', $log_msg, change::MSG_ADD);
+                }
+            }
+        }
+
+        // update the name
+        if ($result) {
+            $sbx->set_name($name . sandbox_api::TN_RENAMED_EXT);
+            $sbx->save($use_func);
+            $sbx->reset();
+            $sbx->load_by_id($id);
+            $result = $this->assert_true($test_name, $sbx->isset());
+
+        }
+
+        // check the log
+        if ($result and $use_func) {
+            $log_msg = $sbx->log_last_msg($this->usr1);
+            $result = $this->assert_text_contains($test_name . ' log update', $log_msg, $name);
+            if ($result) {
+                $result = $this->assert_text_contains($test_name . ' log update', $log_msg, change::MSG_UPDATE);
+            }
+        }
+
+        if ($result) {
+            // delete the name
+            $sbx->del($use_func);
+        }
+
+        // check the log
+        if ($result and $use_func) {
+            $log_msg = $sbx->log_last_msg($this->usr1);
+            $result = $this->assert_text_contains($test_name . ' log delete', $log_msg, $name);
+            if ($result) {
+                $result = $this->assert_text_contains($test_name . ' log delete', $log_msg, change::MSG_DEL);
+            }
+        }
+
+        return $result;
+    }
+
+
+    /*
+     * compare
+     */
 
     /**
      * test if a integer is greater zero

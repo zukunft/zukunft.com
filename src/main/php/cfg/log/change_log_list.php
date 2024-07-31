@@ -48,6 +48,7 @@ use cfg\db\sql_type;
 use cfg\formula;
 use cfg\group\group;
 use cfg\group\group_id;
+use cfg\sandbox;
 use cfg\source;
 use cfg\triple;
 use cfg\user;
@@ -122,6 +123,20 @@ class change_log_list extends base_list
         global $db_con;
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_user($sc, $usr);
+        return $this->load($qp, $usr);
+    }
+
+    /**
+     * load the latest changes of one object
+     * @param sandbox $sbx e.g. the word with id set
+     * @param user $usr who has requested to see the changed
+     * @return bool true if at least one change found
+     */
+    function load_obj_last(sandbox $sbx, user $usr): bool
+    {
+        global $db_con;
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_obj_last($sc, $sbx::class, $sbx->id(), $usr);
         return $this->load($qp, $usr);
     }
 
@@ -437,6 +452,66 @@ class change_log_list extends base_list
     }
 
     /**
+     * prepare sql to get the last changes of a user sandbox object
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $class the class name of the user sandbox object to select the table e.g. 'word'
+     * @param string|int $id the database id of the user sandbox object that has been changed
+     * @param user $usr the user who has requested the change
+     * @return sql_par the sql statement to get the latest changed
+     */
+    function load_sql_obj_last(
+        sql        $sc,
+        string     $class,
+        string|int $id,
+        user       $usr): sql_par
+    {
+        global $change_table_list;
+        global $change_field_list;
+
+        // prepare sql to get the view changes of a user sandbox object e.g. word
+        $log_named = new change($usr);
+        $query_ext = $this->table_field_to_query_name($class, '');
+        if ($class == value::class) {
+            $grp_id = new group_id();
+            $typ = $grp_id->table_type($id);
+            if ($typ == sql_type::PRIME) {
+                $log_named = new change_values_prime($usr);
+                $query_ext .= sql::NAME_SEP . sql_type::PRIME->value;
+            } elseif ($typ == sql_type::BIG) {
+                $log_named = new change_values_big($usr);
+                $query_ext .= sql::NAME_SEP . sql_type::BIG->value;
+            } else {
+                $log_named = new change_values_norm($usr);
+                $query_ext .= sql::NAME_SEP . sql_type::NORM->value;
+            }
+        } elseif ($class == group::class) {
+            $grp_id = new group_id();
+            $typ = $grp_id->table_type($id);
+            if ($typ == sql_type::PRIME) {
+                $log_named = new change($usr);
+                $query_ext .= sql::NAME_SEP . sql_type::PRIME->value;
+            } elseif ($typ == sql_type::BIG) {
+                $log_named = new changes_big($usr);
+                $query_ext .= sql::NAME_SEP . sql_type::BIG->value;
+            } else {
+                $log_named = new changes_norm($usr);
+                $query_ext .= sql::NAME_SEP . sql_type::NORM->value;
+            }
+        }
+        $qp = $log_named->load_sql($sc, $query_ext);
+        if ($class == value::class) {
+            $sc->add_where(group::FLD_ID, $id);
+        } else {
+            $sc->add_where(change::FLD_ROW_ID, $id);
+        }
+        $sc->set_page($this->limit, $this->offset());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
      * load this list of changes
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
      * @return bool true if at least one change found
@@ -481,6 +556,24 @@ class change_log_list extends base_list
             $result = true;
         }
         return $result;
+    }
+
+    /*
+     * info
+     */
+
+    /**
+     * @return string with the first change description of this list
+     */
+    function first_msg(): string
+    {
+        $msg = '';
+        if (!$this->is_empty()) {
+            $lst = $this->lst();
+            $first = $lst[array_key_first($lst)];
+            $msg = $first->dsp_last();
+        }
+        return $msg;
     }
 
 }

@@ -196,6 +196,7 @@ class change_log_tests
         $log_lst = new change_log_list();
         // TODO activate
         //$t->assert_sql_by_user($sc, $log_lst);
+        //$this->assert_sql_list_last(word::class, word::FLD_NAME, $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(word::class, word::FLD_NAME, 1, $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(triple::class, triple::FLD_NAME_GIVEN, 1, $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group()->id(), $log_lst, $db_con, $t);
@@ -322,6 +323,43 @@ class change_log_tests
                 $sc,
                 $class,
                 $field_name,
+                $id,
+                $t->usr1);
+            $t->assert_qp($qp, $sc->db_type);
+        }
+    }
+
+    /**
+     * check the load SQL statements to get the last log entry
+     *
+     * @param test_cleanup $t the test environment
+     * @param sql_db $db_con does not need to be connected to a real database
+     * @param change_log_list $log_lst the user sandbox object e.g. a word
+     */
+    private function assert_sql_list_last(
+        string $class,
+        int|string $id,
+        change_log_list $log_lst,
+        sql_db $db_con,
+        test_cleanup $t): void
+    {
+        $sc = $db_con->sql_creator();
+
+        // check the Postgres query syntax
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $log_lst->load_sql_obj_last(
+            $sc,
+            $class,
+            $id,
+            $t->usr1);
+        $result = $t->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $log_lst->load_sql_obj_last(
+                $sc,
+                $class,
                 $id,
                 $t->usr1);
             $t->assert_qp($qp, $sc->db_type);

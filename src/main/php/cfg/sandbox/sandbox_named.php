@@ -82,6 +82,7 @@ use cfg\export\sandbox_exp;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
+use cfg\log\change_log_list;
 use Exception;
 use shared\library;
 
@@ -477,7 +478,24 @@ class sandbox_named extends sandbox
 
 
     /*
-     * save
+     * log read
+     */
+
+    /**
+     * get the description of the latest change related to this object
+     * @param user $usr who has requeted to see the change
+     * @return string the description of the latest change
+     */
+    function log_last_msg(user $usr): string
+    {
+        $log = new change_log_list();
+        $log->load_obj_last($this, $usr);
+        return $log->first_msg();
+    }
+
+
+    /*
+     * log write
      */
 
     /**
@@ -527,6 +545,11 @@ class sandbox_named extends sandbox
 
         return $log;
     }
+
+
+    /*
+     * save support
+     */
 
     /**
      * check if this object uses any preserved names and if return a message to the user
@@ -585,6 +608,11 @@ class sandbox_named extends sandbox
         }
         return $result;
     }
+
+
+    /*
+     * save
+     */
 
     /**
      * create a new named object

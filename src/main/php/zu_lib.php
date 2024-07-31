@@ -524,7 +524,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
         expression - to convert the user format of a formula to the internal reference format and backward
 
     model objects to be reviewed
-        word_change_list
         phrase_group_list - a list of phrase group that is supposed to be a sandbox_list
         value_phrase_link - db index to find a valur by the phrase (not the db normal form to speed up)
         element_group - to combine several formula elements that are depending on each other

@@ -136,6 +136,8 @@ class word_list extends sandbox_list
      * load
      */
 
+    // TODO add a list of word where the user has changed the standard
+
     /**
      * load words with the given pattern
      *

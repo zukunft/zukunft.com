@@ -63,20 +63,10 @@ class word_write_tests
 
         $t->header('word db write tests');
 
+        $t->subheader('word prepared write');
         $test_name = 'add word ' . word_api::TN_ADD_VIA_SQL . ' via sql insert';
-        $wrd = $t->word_add_by_sql();
-        $wrd->save(false);
-        $wrd->reset();
-        $wrd->load_by_name(word_api::TN_ADD_VIA_SQL);
-        $t->assert_true($test_name, $wrd->isset());
-
-        $test_name = 'add word ' . word_api::TN_ADD_VIA_FUNC . ' via sql function';
-        $wrd = $t->word_add_by_func();
-        $wrd->save(true);
-        $wrd->reset();
-        $wrd->load_by_name(word_api::TN_ADD_VIA_FUNC);
-        $t->assert_true($test_name, $wrd->isset());
-
+        $t->assert_write_named($test_name, $t->word_add_by_sql(), false);
+        $t->assert_write_named($test_name, $t->word_add_by_func(), true);
 
         $test_name = 'test saving word type ' . phrase_type::TIME . ' by adding add time word ' . word_api::TN_2021;
         $wrd_time = $t->test_word(word_api::TN_2021, phrase_type::TIME);
