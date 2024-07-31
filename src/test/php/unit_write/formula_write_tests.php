@@ -61,19 +61,11 @@ class formula_write_tests
 
         $t->header('formula db write tests');
 
-        $test_name = 'add formula ' . formula_api::TN_ADD_VIA_FUNC . ' via sql function';
-        $frm = $t->formula_add_by_func();
-        $frm->save(true);
-        $frm->reset();
-        $frm->load_by_name(formula_api::TN_ADD_VIA_FUNC);
-        $t->assert_true($test_name, $frm->isset());
-
+        $t->subheader('formula prepared write');
         $test_name = 'add formula ' . formula_api::TN_ADD_VIA_SQL . ' via sql insert';
-        $frm = $t->formula_add_by_sql();
-        $frm->save(false);
-        $frm->reset();
-        $frm->load_by_name(formula_api::TN_ADD_VIA_SQL);
-        $t->assert_true($test_name, $frm->isset());
+        $t->assert_write_named($test_name, $t->formula_add_by_sql(), false);
+        $test_name = 'add formula ' . formula_api::TN_ADD_VIA_FUNC . ' via sql function';
+        $t->assert_write_named($test_name, $t->formula_add_by_func(), true);
 
         // test loading of one formula
         $frm = new formula($t->usr1);
