@@ -493,6 +493,19 @@ class sandbox_named extends sandbox
         return $log->first_msg();
     }
 
+    /**
+     * get the description of the latest change related to this object and the given field
+     * @param user $usr who has requeted to see the change
+     * @param string $fld the field name to filter the changes
+     * @return string the description of the latest change
+     */
+    function log_last_field_msg(user $usr, string $fld): string
+    {
+        $log = new change_log_list();
+        $log->load_obj_field_last($this, $usr, $fld);
+        return $log->first_msg();
+    }
+
 
     /*
      * log write

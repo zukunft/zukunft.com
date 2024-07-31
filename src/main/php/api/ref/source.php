@@ -56,6 +56,8 @@ class source extends sandbox_typed_api
     const TN_ADD = 'System Test Source';
     const TD_ADD = 'System Test Source Description';
     const TU_ADD = 'https://www.zukunft.com/';
+    const TN_ADD_VIA_FUNC = 'System Test Source added via sql function';
+    const TN_ADD_VIA_SQL = 'System Test Source added via sql insert';
     const TN_RENAMED = 'System Test Source Renamed';
 
     // must be the same as in /resource/api/source/source_put.json

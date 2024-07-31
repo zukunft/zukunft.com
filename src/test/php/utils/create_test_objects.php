@@ -1914,6 +1914,26 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return source to test the sql insert via function
+     */
+    function source_add_by_func(): source
+    {
+        $msk = new source($this->usr1);
+        $msk->set_name(source_api::TN_ADD_VIA_FUNC);
+        return $msk;
+    }
+
+    /**
+     * @return source to test the sql insert without use of function
+     */
+    function source_add_by_sql(): source
+    {
+        $msk = new source($this->usr1);
+        $msk->set_name(source_api::TN_ADD_VIA_SQL);
+        return $msk;
+    }
+
+    /**
      * @return ref with the most often used fields set for unit testing
      */
     function reference(): ref

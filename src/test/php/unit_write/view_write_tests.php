@@ -58,19 +58,12 @@ class view_write_tests
         // test the creation and changing of a view
         $t->header('view db write tests');
 
+        $t->subheader('view prepared write');
         $test_name = 'add view ' . view_api::TN_ADD_VIA_SQL . ' via sql insert';
-        $msk = $t->view_add_by_sql();
-        $msk->save(false);
-        $msk->reset();
-        $msk->load_by_name(view_api::TN_ADD_VIA_SQL);
-        $t->assert_true($test_name, $msk->isset());
-
+        $t->assert_write_named($test_name, $t->view_add_by_sql(), false);
         $test_name = 'add view ' . view_api::TN_ADD_VIA_FUNC . ' via sql function';
-        $msk = $t->view_add_by_func();
-        $msk->save(true);
-        $msk->reset();
-        $msk->load_by_name(view_api::TN_ADD_VIA_FUNC);
-        $t->assert_true($test_name, $msk->isset());
+        $t->assert_write_named($test_name, $t->view_add_by_func(), true);
+
 
         $db_con->import_system_views($t->usr1);
         $this->create_test_views($t);

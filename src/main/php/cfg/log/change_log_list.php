@@ -141,6 +141,20 @@ class change_log_list extends base_list
     }
 
     /**
+     * load the latest changes of one object
+     * @param sandbox $sbx e.g. the word with id set
+     * @param user $usr who has requested to see the changed
+     * @return bool true if at least one change found
+     */
+    function load_obj_field_last(sandbox $sbx, user $usr, string $fld): bool
+    {
+        global $db_con;
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_obj_fld($sc, $sbx::class, $fld, $sbx->id(), $usr);
+        return $this->load($qp, $usr);
+    }
+
+    /**
      * create an SQL statement to retrieve the changes done by the given user
      *
      * @param sql $sc with the target db_type set

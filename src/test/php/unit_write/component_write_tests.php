@@ -53,19 +53,11 @@ class component_write_tests
 
         $t->header('component db write tests');
 
+        $t->subheader('component prepared write');
         $test_name = 'add component ' . component_api::TN_ADD_VIA_SQL . ' via sql insert';
-        $cmp = $t->component_add_by_sql();
-        $cmp->save(false);
-        $cmp->reset();
-        $cmp->load_by_name(component_api::TN_ADD_VIA_SQL);
-        $t->assert_true($test_name, $cmp->isset());
-
+        $t->assert_write_named($test_name, $t->component_add_by_sql(), false);
         $test_name = 'add component ' . component_api::TN_ADD_VIA_FUNC . ' via sql function';
-        $cmp = $t->component_add_by_func();
-        $cmp->save(true);
-        $cmp->reset();
-        $cmp->load_by_name(component_api::TN_ADD_VIA_FUNC);
-        $t->assert_true($test_name, $cmp->isset());
+        $t->assert_write_named($test_name, $t->component_add_by_func(), true);
 
         /*
         // test loading of one component

@@ -45,7 +45,14 @@ class source_write_tests
 
     function run(test_cleanup $t): void
     {
-        $t->header('Test the source class (src/main/php/model/ref/source.php)');
+
+        $t->header('source db write tests');
+
+        $t->subheader('view prepared write');
+        $test_name = 'add source ' . source_api::TN_ADD_VIA_SQL . ' via sql insert';
+        $t->assert_write_named($test_name, $t->source_add_by_sql(), false);
+        $test_name = 'add source ' . source_api::TN_ADD_VIA_FUNC . ' via sql function';
+        $t->assert_write_named($test_name, $t->source_add_by_func(), true);
 
         // load the main test source
         $src_read = $t->test_word(source_api::TN_READ);
