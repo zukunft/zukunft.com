@@ -2056,7 +2056,12 @@ class test_base
     {
         // add the named object and remember the name
         $name = $sbx->name();
+        $log_name = $name;
         $sbx->save($use_func);
+        // for formulas the last log entry is the change of the ref text
+        if ($sbx::class == formula::class) {
+            $log_name = $sbx->ref_text();
+        }
         $sbx->reset();
         $sbx->load_by_name($name);
         $result = $this->assert_true($test_name, $sbx->isset());
@@ -2066,7 +2071,7 @@ class test_base
             $id = $sbx->id();
             if ($use_func) {
                 $log_msg = $sbx->log_last_msg($this->usr1);
-                $result = $this->assert_text_contains($test_name . ' log add', $log_msg, $name);
+                $result = $this->assert_text_contains($test_name . ' log add', $log_msg, $log_name);
                 if ($result) {
                     $result = $this->assert_text_contains($test_name . ' log add', $log_msg, change::MSG_ADD);
                 }
