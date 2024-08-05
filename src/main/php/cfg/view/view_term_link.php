@@ -233,6 +233,20 @@ class view_term_link extends sandbox_link_with_type
     }
 
     /**
+     * TODO check if the overwrites are correct for all objects
+     *      and if a to_id() function is needed
+     * @return string with the term name
+     */
+    function to_value(): string
+    {
+        if ($this->tob == null) {
+            return '';
+        } else {
+            return $this->tob->name();
+        }
+    }
+
+    /**
      * @return string with the field name for the link type as an overwrite function
      */
     function type_field(): string

@@ -1771,7 +1771,8 @@ class sql
 
     /**
      * create the sql function part to log adding a link
-     * @param sandbox|sandbox_link|sandbox_link_typed $sbx the name of the calling class use for the query names
+     * @param sandbox|sandbox_link|sandbox_link_typed $sbx the sandbox object that has been updated by the user
+     * @param sandbox|sandbox_link|sandbox_link_typed $dbo the sandbox object as in db without user updates
      * @param user $usr
      * @param sql_par_field_list $fvt_lst
      * @param sql_type_list $sc_par_lst
@@ -1779,37 +1780,14 @@ class sql
      */
     function sql_func_log_link(
         sandbox|sandbox_link|sandbox_link_typed $sbx,
+        sandbox|sandbox_link|sandbox_link_typed $dbo,
         user                                    $usr,
         sql_par_field_list                      $fvt_lst,
         sql_type_list                           $sc_par_lst
     ): sql_par
     {
-        $log = new change_link($usr);
-        $log->set_class($sbx::class);
-        $log->new_from_id = $sbx->from_id();
-        $log->new_text_from = $sbx->from_name();
-        if ($sbx->is_link_type_obj()) {
-            $log->new_link_id = $sbx->type_id();
-            $log->new_text_link = $sbx->type_name();
-        }
-        if (is_int($sbx->to_id())) {
-            $log->new_to_id = $sbx->to_id();
-            $log->new_text_to = $sbx->to_name();
-        } else {
-            // for external links the id is a string
-            $log->new_text_to = $sbx->to_id();
-        }
-
-        // set the parameters for the log sql statement creation
-        $sc_log = clone $this;
-        $sc_par_lst->add(sql_type::VALUE_SELECT);
-        $sc_par_lst->add(sql_type::SELECT_FOR_INSERT);
-        $sc_par_lst->add(sql_type::INSERT_PART);
-
-        // create the sql for the log entry
-        $qp = $log->sql_insert_link(
-            $sc_log, $sc_par_lst, $sbx);
-
+        // create the parameter fields for the log entry
+        // TODO remove the double creation of this list in the calling functions
         $par_lst_out = new sql_par_field_list();
         $par_lst_out->add_field(
             user::FLD_ID,
@@ -1823,6 +1801,54 @@ class sql
             change_table::FLD_ID,
             $fvt_lst->get_value(change_table::FLD_ID),
             sql_par_type::INT_SMALL);
+
+        $log = new change_link($usr);
+        $log->set_class($sbx::class);
+        if ($sc_par_lst->is_update_part() or $sc_par_lst->is_delete_part()) {
+            $log->old_from_id = $dbo->from_id();
+            $log->old_text_from = $dbo->from_name();
+            if ($dbo->is_link_type_obj()) {
+                $log->old_link_id = $dbo->type_id();
+                $log->old_text_link = $dbo->type_name();
+            }
+            if (is_int($dbo->to_id())) {
+                $log->old_to_id = $dbo->to_id();
+                $log->old_text_to = $dbo->to_name();
+            } else {
+                // for external links the id is a string
+                $log->old_text_to = $dbo->to_id();
+            }
+        }
+        if ($sc_par_lst->is_insert_part() or $sc_par_lst->is_update_part()) {
+            $log->new_from_id = $sbx->from_id();
+            $log->new_text_from = $sbx->from_name();
+            if ($sbx->is_link_type_obj()) {
+                $log->new_link_id = $sbx->type_id();
+                $log->new_text_link = $sbx->type_name();
+            }
+            if (is_int($sbx->to_id())) {
+                $log->new_to_id = $sbx->to_id();
+                $log->new_text_to = $sbx->to_name();
+            } else {
+                // for external links the id is a string
+                $log->new_text_to = $sbx->to_id();
+            }
+        }
+
+        // set the parameters for the log sql statement creation
+        $sc_log = clone $this;
+        $sc_par_lst->add(sql_type::VALUE_SELECT);
+        $sc_par_lst->add(sql_type::SELECT_FOR_INSERT);
+        if ($sc_par_lst->is_insert()) {
+            $sc_par_lst->add(sql_type::INSERT_PART);
+        }
+        if ($sc_par_lst->is_delete()) {
+            $sc_par_lst->add(sql_type::DELETE_PART);
+        }
+
+        // create the sql for the log entry
+        $qp = $log->sql_insert_link(
+            $sc_log, $sc_par_lst, $sbx);
         $qp->par_fld_lst = $par_lst_out;
 
         return $qp;
@@ -1907,7 +1933,7 @@ class sql
      * @param user $usr the user who has requested the change
      * @param sql_par_field_list $fvt_lst list of fields, values and types to fill the log entry
      * @param sql_type_list $sc_par_lst sql parameters e.g. if the prime table should be used
-     * @return sql_par the sql statement with the paraemeter to add the log entry
+     * @return sql_par the sql statement with the parameter to add the log entry
      */
     function sql_func_log_value(
         sandbox_value      $sbx,
@@ -2187,7 +2213,7 @@ class sql
         }
 
         if ($sc_par_lst->use_named_par()) {
-            if ($sc_par_lst->is_usr_tbl()) {
+            if ($sc_par_lst->is_usr_tbl_and_select()) {
                 $sql_where = $this->sql_where_no_par(
                     [$id_field, user::FLD_ID],
                     ['_' . $id_field, '_' . user::FLD_ID], 0, '_' . $id_field, true);
@@ -3363,7 +3389,7 @@ class sql
             }
 
             // include rows where code_id is null
-            if ($typ == sql_par_type::TEXT OR $typ == sql_par_type::KEY_512) {
+            if ($typ == sql_par_type::TEXT or $typ == sql_par_type::KEY_512) {
                 if ($fld == sql::FLD_CODE_ID) {
                     if ($this->db_type == sql_db::POSTGRES) {
                         $sql_where .= ' AND ';
@@ -3536,7 +3562,7 @@ class sql
 
 
                         // include rows where code_id is null
-                        if ($typ == sql_par_type::TEXT OR $typ == sql_par_type::KEY_512) {
+                        if ($typ == sql_par_type::TEXT or $typ == sql_par_type::KEY_512) {
                             if ($this->par_lst->name($i) == sql::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
                                     $result .= ' AND ';

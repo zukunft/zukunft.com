@@ -145,7 +145,9 @@ use unit\html\view_list as view_list_html_tests;
 use unit\html\word as word_html_tests;
 use unit\html\word_list as word_list_html_tests;
 use unit\import_tests as import_tests;
+use unit_read\triple_read_tests;
 use unit_ui\local_ui_tests;
+use unit_write\triple_write_tests;
 use unit_write\word_write_tests;
 
 class all_unit_tests extends test_cleanup
@@ -191,7 +193,7 @@ class all_unit_tests extends test_cleanup
 
 
         /*
-         * db write testing - prepare
+         * db testing - prepare
          */
 
         // reload the setting lists after using dummy list for the unit tests
@@ -205,12 +207,20 @@ class all_unit_tests extends test_cleanup
         if ($usr->id() > 0) {
 
             /*
+             * db read testing - run
+             */
+
+            // run the selected db write
+            (new triple_read_tests())->run($this);
+
+
+            /*
              * db write testing - run
              */
 
             // run the selected db write
-            (new word_write_tests)->run($this);
-            //(new triple_write_tests)->run($this);
+            //(new word_write_tests)->run($this);
+            (new triple_write_tests)->run($this);
             //(new group_write_tests)->run($this);
             //(new value_write_tests)->run($this);
             //(new view_write_tests)->run($this);

@@ -11,6 +11,11 @@ BEGIN
          SELECT          _user_id,_change_action_id,_field_id_triple_name,_triple_name,_triple_id ;
 
     DELETE
+      FROM user_triples
+     WHERE triple_id = _triple_id
+       AND excluded = 1;
+
+    DELETE
       FROM triples
      WHERE triple_id = _triple_id;
 

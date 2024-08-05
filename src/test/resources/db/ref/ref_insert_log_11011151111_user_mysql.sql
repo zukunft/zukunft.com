@@ -11,7 +11,6 @@ CREATE PROCEDURE ref_insert_log_11011151111_user (
     _new_text_to            text,
     _old_from_id            bigint,
     _old_link_id            smallint,
-    _old_to_id              bigint,
     _new_from_id            bigint,
     _new_link_id            smallint,
     _new_to_id              bigint,
@@ -59,7 +58,7 @@ BEGIN
 END;
 
 PREPARE ref_insert_log_11011151111_user_call FROM
-    'SELECT ref_insert_log_11011151111_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+    'SELECT ref_insert_log_11011151111_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT ref_insert_log_11011151111_user (
                1,
@@ -72,7 +71,6 @@ SELECT ref_insert_log_11011151111_user (
                null,
                null,
                0,
-               null,
                null,
                null,
                null,

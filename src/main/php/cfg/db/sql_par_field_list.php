@@ -200,8 +200,8 @@ class sql_par_field_list
      *
      * @param string $db_fld the field name to be updated in the database e.g. view_id
      * @param string $usr_fld the field name from the user point of view e.g. view_name
+     * @param sandbox|combine_named|null $chg_sbx the object with the user changes that should be saved in the database (e.g. $this)
      * @param sandbox|combine_named|null $db_sbx the object as it is in the database before the change
-     * @param sandbox|combine_named|null $chg_sbx the object with the user changes that should be saved in the database
      * @return void
      */
     function add_link_field(

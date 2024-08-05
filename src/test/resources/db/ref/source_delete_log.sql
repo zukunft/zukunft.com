@@ -11,6 +11,11 @@ BEGIN
          SELECT          _user_id,_change_action_id,_field_id_source_name,_source_name,_source_id ;
 
     DELETE
+      FROM user_sources
+     WHERE source_id = _source_id
+       AND excluded = 1;
+
+    DELETE
       FROM sources
      WHERE source_id = _source_id;
 

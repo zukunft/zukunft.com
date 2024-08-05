@@ -10,7 +10,6 @@ CREATE OR REPLACE FUNCTION ref_insert_log_11011151111_user
      _new_text_to            text,
      _old_from_id            bigint,
      _old_link_id            smallint,
-     _old_to_id              bigint,
      _new_from_id            bigint,
      _new_link_id            smallint,
      _new_to_id              bigint,
@@ -60,9 +59,9 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE ref_insert_log_11011151111_user_call
-        (bigint,smallint,smallint,text,text,text,text,text,text,bigint,smallint,bigint,bigint,smallint,bigint,smallint,text,bigint,smallint,text,bigint,smallint,text,smallint,smallint,smallint,smallint,smallint,smallint) AS
+        (bigint,smallint,smallint,text,text,text,text,text,text,bigint,smallint,bigint,smallint,bigint,smallint,text,bigint,smallint,text,bigint,smallint,text,smallint,smallint,smallint,smallint,smallint,smallint) AS
 SELECT ref_insert_log_11011151111_user
-        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29);
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28);
 
 SELECT ref_insert_log_11011151111_user (
                1::bigint,
@@ -76,7 +75,6 @@ SELECT ref_insert_log_11011151111_user (
                null::text,
                0::bigint,
                null::smallint,
-               null::bigint,
                null::bigint,
                null::smallint,
                null::bigint,

@@ -246,7 +246,7 @@ class sandbox_link extends sandbox
             $fields = array_merge($fields, sandbox::FLD_ALL_OWNER);
             // mandatory fields that can be changed the user
             $fields = array_merge($fields, $this::FLD_LST_MUST_BUT_STD_ONLY);
-            // fields that can be changed the user but are empty if the user has not overwriten the fields
+            // fields that can be changed the user but are empty if the user has not overwritten the fields
             $fields = array_merge($fields, $this::FLD_LST_USER_CAN_CHANGE);
             $fields = array_merge($fields, $this::FLD_LST_NON_CHANGEABLE);
         } else {
@@ -256,7 +256,7 @@ class sandbox_link extends sandbox
             $fields = array_merge($fields, sandbox::FLD_ALL_CHANGER);
             // mandatory fields that can be changed the user
             $fields = array_merge($fields, $this::FLD_LST_MUST_BUT_USER_CAN_CHANGE);
-            // fields that can be changed the user but are empty if the user has not overwriten the fields
+            // fields that can be changed the user but are empty if the user has not overwritten the fields
             $fields = array_merge($fields, $this::FLD_LST_USER_CAN_CHANGE);
         }
         if ($use_sandbox) {
@@ -842,6 +842,7 @@ class sandbox_link extends sandbox
     }
 
     /**
+     * @param sql_par_field_list $fvt_lst list of all
      * @return sql_par_field_list with the text values of the linked items for the log
      */
     function sql_key_fields_text_old(sql_par_field_list $fvt_lst): sql_par_field_list
@@ -919,11 +920,13 @@ class sandbox_link extends sandbox
             $type_id,
             sql_field_type::INT_SMALL
         );
-        $fvt_lst_out->add_field(
-            change_link::FLD_OLD_TO_ID,
-            $to_id,
-            sql_field_type::INT
-        );
+        if ($to_id != null) {
+            $fvt_lst_out->add_field(
+                change_link::FLD_OLD_TO_ID,
+                $to_id,
+                sql_field_type::INT
+            );
+        }
         return $fvt_lst_out;
     }
 
@@ -975,6 +978,7 @@ class sandbox_link extends sandbox
         $sc = new sql();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $is_insert = $sc_par_lst->is_insert();
+        $is_delete = $sc_par_lst->is_delete();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
@@ -1011,7 +1015,7 @@ class sandbox_link extends sandbox
                     );
                 }
                 // e.g. for external references
-                if ($this->tob == null) {
+                if ($this->tob == null and $sbx->tob == null) {
                     $lst->add_field(
                         $this->to_field(),
                         $this->to_value(),
@@ -1029,78 +1033,98 @@ class sandbox_link extends sandbox
                 }
             }
         } else {
-            // add from and to if the objects are the same
-            $from_fld = $this->fob?->name_field();
-            if ($this->tob == null) {
-                // e.g. for references the external key
-                $to_fld = $this->to_field();
-            } else {
-                if (is_string($this->tob)) {
+            // add the from and to fields even if the objects are the same in case of an insert exclude or delete to identify the rows
+            $from_fld = '';
+            $to_fld = '';
+            if ($is_insert) {
+                $from_fld = $this->fob?->name_field();
+                if ($this->tob == null) {
                     // e.g. for references the external key
                     $to_fld = $this->to_field();
                 } else {
-                    $to_fld = $this->tob->name_field();
+                    if (is_string($this->tob)) {
+                        // e.g. for references the external key
+                        $to_fld = $this->to_field();
+                    } else {
+                        $to_fld = $this->tob->name_field();
+                    }
                 }
             }
-            if ($from_fld == $to_fld) {
-                $from_fld = sql::FROM_FLD_PREFIX . $from_fld;
-                $to_fld = sql::TO_FLD_PREFIX . $to_fld;
+            if ($is_delete) {
+                $from_fld = $sbx->fob?->name_field();
+                if ($sbx->tob == null) {
+                    // e.g. for references the external key
+                    $to_fld = $sbx->to_field();
+                } else {
+                    if (is_string($sbx->tob)) {
+                        // e.g. for references the external key
+                        $to_fld = $sbx->to_field();
+                    } else {
+                        $to_fld = $sbx->tob->name_field();
+                    }
+                }
             }
-            // TODO check how to handle if the standard
-            if ($this->is_excluded() and !$sbx->is_excluded()) {
-                if ($do_log) {
-                    $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
-                        $change_field_list->id($table_id . $this->from_field()),
-                        change::FLD_FIELD_ID_SQLTYP
+            if ($is_insert or $is_delete) {
+                if ($from_fld == $to_fld) {
+                    $from_fld = sql::FROM_FLD_PREFIX . $from_fld;
+                    $to_fld = sql::TO_FLD_PREFIX . $to_fld;
+                }
+                // TODO check how to handle if the standard
+                if ($this->is_excluded() and !$sbx->is_excluded() or $is_delete) {
+                    if ($do_log) {
+                        $lst->add_field(
+                            sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
+                            $change_field_list->id($table_id . $this->from_field()),
+                            change::FLD_FIELD_ID_SQLTYP
+                        );
+                    }
+                    $lst->add_link_field(
+                        $this->from_field(),
+                        $from_fld,
+                        null,
+                        $sbx->fob
+                    );
+                    if ($do_log) {
+                        $lst->add_field(
+                            sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
+                            $change_field_list->id($table_id . $this->to_field()),
+                            change::FLD_FIELD_ID_SQLTYP
+                        );
+                    }
+                    $lst->add_link_field(
+                        $this->to_field(),
+                        $to_fld,
+                        null,
+                        $sbx->tob
+                    );
+                } elseif (!$this->is_excluded() and $sbx->is_excluded()) {
+                    if ($do_log) {
+                        $lst->add_field(
+                            sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
+                            $change_field_list->id($table_id . $this->from_field()),
+                            change::FLD_FIELD_ID_SQLTYP
+                        );
+                    }
+                    $lst->add_link_field(
+                        $this->from_field(),
+                        $from_fld,
+                        $this->fob,
+                        null
+                    );
+                    if ($do_log) {
+                        $lst->add_field(
+                            sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
+                            $change_field_list->id($table_id . $this->to_field()),
+                            change::FLD_FIELD_ID_SQLTYP
+                        );
+                    }
+                    $lst->add_link_field(
+                        $this->to_field(),
+                        $to_fld,
+                        $this->tob,
+                        null
                     );
                 }
-                $lst->add_link_field(
-                    $this->from_field(),
-                    $from_fld,
-                    null,
-                    $sbx->fob
-                );
-                if ($do_log) {
-                    $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
-                        $change_field_list->id($table_id . $this->to_field()),
-                        change::FLD_FIELD_ID_SQLTYP
-                    );
-                }
-                $lst->add_link_field(
-                    $this->to_field(),
-                    $to_fld,
-                    null,
-                    $sbx->tob
-                );
-            } elseif (!$this->is_excluded() and $sbx->is_excluded()) {
-                if ($do_log) {
-                    $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
-                        $change_field_list->id($table_id . $this->from_field()),
-                        change::FLD_FIELD_ID_SQLTYP
-                    );
-                }
-                $lst->add_link_field(
-                    $this->from_field(),
-                    $from_fld,
-                    $this->fob,
-                    null
-                );
-                if ($do_log) {
-                    $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
-                        $change_field_list->id($table_id . $this->to_field()),
-                        change::FLD_FIELD_ID_SQLTYP
-                    );
-                }
-                $lst->add_link_field(
-                    $this->to_field(),
-                    $to_fld,
-                    $this->tob,
-                    null
-                );
             }
         }
         return $lst;
@@ -1166,7 +1190,7 @@ class sandbox_link extends sandbox
         $lnk_empty = $this->clone_reset();
         // for a new component link the owner should be set, so remove the user id to force writing the user
         $lnk_empty->set_user($this->user()->clone_reset());
-        // for linked user db rows, use the link fields of the standard row, beause the link itself cannot be changed by the user
+        // for linked user db rows, use the link fields of the standard row, because the link itself cannot be changed by the user
         if ($sc_par_lst_used->is_usr_tbl()) {
             $lnk_empty = $this->set_link_objects($lnk_empty);
         }

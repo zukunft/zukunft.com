@@ -56,6 +56,7 @@ enum sql_type: string
     // the fixed table subtypes
     case STANDARD = 'standard'; // value or result that is public and unprotected
     case USER = 'user'; // for user specific values and results
+    case USER_TBL = 'user_table'; // to select the table for the user specific values without selecting the user
 
     // sql builder parameters
     case FUNCTION = 'function'; // create a function that combines a list of sql statements

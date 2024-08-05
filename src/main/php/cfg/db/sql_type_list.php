@@ -198,6 +198,19 @@ class sql_type_list
      */
     function is_usr_tbl(): bool
     {
+        if (in_array(sql_type::USER, $this->lst)
+            or in_array(sql_type::USER_TBL, $this->lst)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if sql should point to the user sandbox table and only the values for the given user should be selected
+     */
+    function is_usr_tbl_and_select(): bool
+    {
         return in_array(sql_type::USER, $this->lst);
     }
 

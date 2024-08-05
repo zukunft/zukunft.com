@@ -138,9 +138,16 @@ class ref extends sandbox_link_with_type
         sandbox_named::FLD_DESCRIPTION,
         sandbox::FLD_EXCLUDED
     );
+    // list of fields that must be set
+    const FLD_LST_MUST_BUT_STD_ONLY = array(
+        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
+    );
+    // list of fields that must be set, but CAN be changed by the user
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
+        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
+    );
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
         [self::FLD_URL, self::FLD_URL_SQLTYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
         [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
         [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
@@ -169,7 +176,7 @@ class ref extends sandbox_link_with_type
     public ?string $code_id = null;
     public ?string $description = null;
 
-    // TODO depricate
+    // TODO deprecate
     public ?string $name = null;
 
 

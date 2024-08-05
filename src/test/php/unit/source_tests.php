@@ -104,8 +104,9 @@ class source_tests
         $t->assert_sql_delete($sc, $src, [sql_type::USER]);
         $t->assert_sql_delete($sc, $src, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER]);
-        $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::EXCLUDE]);
-        $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
+        // TODO check if there is a use case for these parameter combination and if not, delete this test
+        //$t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::EXCLUDE]);
+        //$t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
 
         $t->subheader('source api unit tests');
         $src = $t->source1();

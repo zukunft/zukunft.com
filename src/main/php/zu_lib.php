@@ -15,6 +15,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
     but first this needs to be fixed:
     TODO review unit, read and write tests
+         each test should be with one line e.g. $t->assert_sql_table_create($wrd);
+         3 to 7 tests should be within a block starting with $t->subheader(' ....
          sort load functions (done in: view
          group function within a class e.g. by load, save ....
          use $this::class for load functions
@@ -120,6 +122,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
          load, im- and export, filter, modify, check, save, del
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO define a phrase range for global prime phrases (e.g. 5124)
+         and a range for pot prime terms
     TODO add a frontend cache e.g. for terms, formulas and view
     TODO allow the user to configure the frontend cache size and show to the user suggestion in increase speed
     TODO add a backend cache e.g. for terms, formulas and view

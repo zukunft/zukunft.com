@@ -11,6 +11,11 @@ BEGIN
          SELECT          _user_id,_change_action_id,_field_id_component_name,_component_name,_component_id ;
 
     DELETE
+      FROM user_components
+     WHERE component_id = _component_id
+       AND excluded = 1;
+
+    DELETE
       FROM components
      WHERE component_id = _component_id;
 

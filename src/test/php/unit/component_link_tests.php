@@ -107,6 +107,7 @@ class component_link_tests
         $t->assert_sql_update($sc, $lnk_reordered, $lnk);
         $t->assert_sql_update($sc, $lnk_reordered, $lnk, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $lnk);
+        $t->assert_sql_delete($sc, $lnk, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
 
     }

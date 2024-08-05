@@ -781,7 +781,7 @@ class change_link extends change_log
             }
             $fvt_lst->add_field(self::FLD_NEW_FROM_ID, $this->new_from_id, sql_par_type::INT, null, $par_name);
         } else {
-            if ($sbx->is_excluded()) {
+            if ($sbx->is_excluded() and !$sc_par_lst->is_delete()) {
                 $par_name = '_' . $sbx->from_field();
                 $fvt_lst->add_field(self::FLD_NEW_FROM_ID, $this->new_from_id, sql_par_type::INT, null, $par_name);
             }
@@ -793,7 +793,7 @@ class change_link extends change_log
             }
             $fvt_lst->add_field(self::FLD_NEW_LINK_ID, $this->new_link_id, sql_par_type::INT, null, $par_name);
         } else {
-            if ($sbx->is_excluded()) {
+            if ($sbx->is_excluded() and !$sc_par_lst->is_delete()) {
                 $par_name = '_' . $sbx->type_field();
                 $fvt_lst->add_field(self::FLD_NEW_LINK_ID, $this->new_link_id, sql_par_type::INT, null, $par_name);
             }
@@ -805,7 +805,7 @@ class change_link extends change_log
             }
             $fvt_lst->add_field(self::FLD_NEW_TO_ID, $this->new_to_id, sql_par_type::INT, null, $par_name);
         } else {
-            if ($sbx->is_excluded()) {
+            if ($sbx->is_excluded() and !$sc_par_lst->is_delete()) {
                 $par_name = '_' . $sbx->to_field();
                 $fvt_lst->add_field(self::FLD_NEW_TO_ID, $this->new_to_id, sql_par_type::INT, null, $par_name);
             }
@@ -813,7 +813,7 @@ class change_link extends change_log
 
         $par_name = '';
         if ($sbx != null) {
-            if ($sc_par_lst->is_insert() and !$sc_par_lst->is_usr_tbl()) {
+            if ($sc_par_lst->is_insert_part() and !$sc_par_lst->is_usr_tbl()) {
                 $par_name = sql::PAR_NEW_ID_PREFIX . $sbx->id_field();
             } else {
                 $par_name = '_' . $sbx->id_field();

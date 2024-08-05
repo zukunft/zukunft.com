@@ -2349,6 +2349,7 @@ class triple extends sandbox_link_typed implements JsonSerializable
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
+        $is_insert = $sc_par_lst->is_insert();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 
@@ -2395,40 +2396,78 @@ class triple extends sandbox_link_typed implements JsonSerializable
                 );
             }
         } else {
-            // TODO check how to handle if the standard
-            if ($this->is_excluded() and !$sbx->is_excluded()) {
-                if ($do_log) {
+            // add the from and to fields even if the objects are the same in case of an insert exclude to identify the rows
+            if ($is_insert) {
+                // TODO check how to handle if the standard
+                // $sbx can in this case be e.g. the standard object and $this is the object updated by the user
+                if ($this->is_excluded() and !$sbx->is_excluded()) {
+                    // the verb field is added for triple exclude insert statements
+                    if ($do_log) {
+                        $lst->add_field(
+                            sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
+                            $change_field_list->id($table_id . verb::FLD_ID),
+                            change::FLD_FIELD_ID_SQLTYP
+                        );
+                    }
+                    global $verbs;
+                    $lst->add_type_field(
+                        verb::FLD_ID,
+                        verb::FLD_NAME,
+                        null,
+                        $sbx->verb_id(),
+                        $verbs
+                    );
+                    // TODO check if the excluded field is not already added by the sandbox function
+                    if ($do_log) {
+                        $lst->add_field(
+                            sql::FLD_LOG_FIELD_PREFIX . sandbox::FLD_EXCLUDED,
+                            $change_field_list->id($table_id . sandbox::FLD_EXCLUDED),
+                            change::FLD_FIELD_ID_SQLTYP
+                        );
+                    }
                     $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
-                        $change_field_list->id($table_id . verb::FLD_ID),
-                        change::FLD_FIELD_ID_SQLTYP
+                        sandbox::FLD_EXCLUDED,
+                        1,
+                        sandbox::FLD_EXCLUDED_SQLTYP
+                    );
+                } elseif (!$this->is_excluded() and $sbx->is_excluded()) {
+                    if ($do_log) {
+                        $lst->add_field(
+                            sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
+                            $change_field_list->id($table_id . verb::FLD_ID),
+                            change::FLD_FIELD_ID_SQLTYP
+                        );
+                    }
+                    global $verbs;
+                    $lst->add_type_field(
+                        verb::FLD_ID,
+                        verb::FLD_NAME,
+                        $this->verb_id(),
+                        null,
+                        $verbs
                     );
                 }
-                global $verbs;
-                $lst->add_type_field(
-                    verb::FLD_ID,
-                    verb::FLD_NAME,
-                    null,
-                    $sbx->verb_id(),
-                    $verbs
-                );
-            } elseif (!$this->is_excluded() and $sbx->is_excluded()) {
-                if ($do_log) {
-                    $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
-                        $change_field_list->id($table_id . verb::FLD_ID),
-                        change::FLD_FIELD_ID_SQLTYP
-                    );
-                }
-                global $verbs;
-                $lst->add_type_field(
-                    verb::FLD_ID,
-                    verb::FLD_NAME,
-                    $this->verb_id(),
-                    null,
-                    $verbs
+            }
+        }
+        // TODO check if the excluded field is not already added by the sandbox function
+        if ($sbx->is_excluded() <> $this->is_excluded()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sandbox::FLD_EXCLUDED,
+                    $change_field_list->id($table_id . sandbox::FLD_EXCLUDED),
+                    change::FLD_FIELD_ID_SQLTYP
                 );
             }
+            if ($this->is_excluded()) {
+                $new_excl = 1;
+            } else {
+                $new_excl = 0;
+            }
+            $lst->add_field(
+                sandbox::FLD_EXCLUDED,
+                $new_excl,
+                sandbox::FLD_EXCLUDED_SQLTYP
+            );
         }
         if ($sbx->name_given() <> $this->name_given()) {
             if ($do_log) {

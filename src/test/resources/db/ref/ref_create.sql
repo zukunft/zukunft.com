@@ -37,15 +37,15 @@ COMMENT ON COLUMN refs.protect_id IS 'to protect against unwanted changes';
 
 CREATE TABLE IF NOT EXISTS user_refs
 (
-    ref_id        bigint       NOT NULL,
-    user_id       bigint       NOT NULL,
-    external_key  varchar(255) NOT NULL,
-    url           text     DEFAULT NULL,
-    source_id     bigint   DEFAULT NULL,
-    description   text     DEFAULT NULL,
-    excluded      smallint DEFAULT NULL,
-    share_type_id smallint DEFAULT NULL,
-    protect_id    smallint DEFAULT NULL
+    ref_id        bigint           NOT NULL,
+    user_id       bigint           NOT NULL,
+    external_key  varchar(255) DEFAULT NULL,
+    url           text         DEFAULT NULL,
+    source_id     bigint       DEFAULT NULL,
+    description   text         DEFAULT NULL,
+    excluded      smallint     DEFAULT NULL,
+    share_type_id smallint     DEFAULT NULL,
+    protect_id    smallint     DEFAULT NULL
 );
 
 COMMENT ON TABLE user_refs IS 'to link external data to internal for syncronisation';

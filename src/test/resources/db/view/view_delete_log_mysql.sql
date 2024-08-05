@@ -12,6 +12,11 @@ BEGIN
          SELECT          _user_id,_change_action_id,_field_id_view_name,_view_name,_view_id ;
 
     DELETE
+      FROM user_views
+     WHERE view_id = _view_id
+       AND excluded = 1;
+
+    DELETE
       FROM views
      WHERE view_id = _view_id;
 

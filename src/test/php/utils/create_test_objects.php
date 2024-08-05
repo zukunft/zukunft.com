@@ -64,6 +64,7 @@ use cfg\log\change_table;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
 use cfg\ref_type;
+use cfg\sandbox;
 use cfg\view_link_type;
 use cfg\view_link_type_list;
 use cfg\view_term_link;
@@ -2752,6 +2753,49 @@ class create_test_objects extends test_base
         $wrd = $this->add_word($wrd_name, $wrd_type_code_id, $test_usr);
         $this->assert('add_word', $wrd->name(), $wrd_name);
         return $wrd;
+    }
+
+    /**
+     * check if a object could have been added to the database
+     *
+     * @param sandbox $sbx the filled sandbox object that should be created or updated in the database
+     * @param user|null $test_usr if not null the user for whom the word should be created to test the user sandbox
+     * @return bool true if the object has been created of updated
+     */
+    function assert_db_sandbox_object(sandbox $sbx, ?user $test_usr = null): bool
+    {
+        $test_name = 'db ';
+        $result = '';
+        $target = '';
+        $db_obj = clone $sbx;
+        $db_obj->reset();
+        if ($sbx->is_named_obj()) {
+            $target = $sbx->name();
+            $test_name .= $target;
+            if ($db_obj->load_by_name($sbx->name())) {
+                if ($sbx->id() == 0) {
+                    $sbx->set_id($db_obj->id());
+                    $sbx->save();
+                    $test_name .= ' update ';
+                } elseif ($sbx->id() == $db_obj->id()) {
+                    $sbx->save();
+                    $test_name .= ' update ';
+                } else {
+                    log_err($sbx::class . ' has id ' . $db_obj->id() . ' in the database but not yet supported by assert_db_sandbox_object');
+                }
+            } else {
+                $test_name .= ' add ';
+                $sbx->save();
+            }
+        } else {
+            log_err($sbx::class . ' not yet supported by assert_db_sandbox_object');
+        }
+        $test_name .= ' of ' .$sbx::class . ' ' . $target;
+        $db_obj->reset();
+        if ($db_obj->load_by_id($sbx->id())) {
+            $target = $db_obj->name();
+        }
+        return $this->assert($test_name, $result, $target);
     }
 
     /*

@@ -11,6 +11,11 @@ BEGIN
          SELECT          _user_id,_change_action_id,_field_id_word_name,_word_name,_word_id ;
 
     DELETE
+      FROM user_words
+     WHERE word_id = _word_id
+       AND excluded = 1;
+
+    DELETE
       FROM words
      WHERE word_id = _word_id;
 

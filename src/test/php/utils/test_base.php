@@ -55,6 +55,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once DB_PATH . 'sql_type.php';
 
 use api\sandbox\sandbox as sandbox_api;
+use api\verb\verb as verb_api;
 use api\word\word as word_api;
 use api\word\triple as triple_api;
 use api\value\value as value_api;
@@ -2107,6 +2108,21 @@ class test_base
         }
 
         return $result;
+    }
+
+    /*
+     * type id
+     */
+
+    function assert_verb_id(string $code_id, int $id, string $test_name, ): int
+    {
+        global $verbs;
+        $vrb_is_id = $verbs->id($code_id);
+        if ($this->assert($test_name, $vrb_is_id, $id)) {
+            return $vrb_is_id;
+        } else {
+            return 0;
+        }
     }
 
 

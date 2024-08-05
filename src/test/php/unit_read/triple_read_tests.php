@@ -33,6 +33,7 @@
 namespace unit_read;
 
 use api\word\triple as triple_api;
+use api\word\word as word_api;
 use cfg\phrase;
 use cfg\phrase_type;
 use cfg\phrase_types;
@@ -47,18 +48,27 @@ class triple_read_tests
     function run(test_cleanup $t): void
     {
 
+        global $verbs;
         global $db_con;
         global $usr;
         global $phrase_types;
 
         // init
-        $t->header('Unit database tests of the triple class (src/main/php/model/triple/triple.php)');
         $t->name = 'triple read db->';
         $t->resource_path = 'db/triple/';
 
+        $t->header('triple db read tests');
 
-        $t->subheader('Triple db read tests');
+        $t->subheader('triple prepare read tests');
+        // load the verb used for testing
+        $is_id = $verbs->id(verb::IS);
+        // load the words used for testing the triples (Zurich (City) and Zurich (Canton)
+        $wrd_zh = $t->load_word(word_api::TN_ZH);
+        $wrd_canton = $t->load_word(word_api::TN_CANTON);
+        // create the group test word
+        $wrd_company = $t->test_word(word_api::TN_COMPANY);
 
+        $t->subheader('triple load tests');
         $test_name = 'load triple ' . triple_api::TN_READ . ' by name and id';
         $trp = new triple($t->usr1);
         $trp->load_by_name(triple_api::TN_READ);
@@ -66,6 +76,29 @@ class triple_read_tests
         $trp_by_id->load_by_id($trp->id(), triple::class);
         $t->assert($test_name, $trp_by_id->name(), triple_api::TN_READ);
         $t->assert($test_name, $trp_by_id->description, triple_api::TD_READ);
+
+        $test_name = 'triple load ' . word_api::TN_CANTON . ' ' . word_api::TN_ZH . ' by link';
+        $lnk_canton = new triple($t->usr1);
+        $lnk_canton->load_by_link_id($wrd_zh->id(), $is_id, $wrd_canton->id());
+        $target = word_api::TN_ZH . ' (' . word_api::TN_CANTON . ')';
+        $result = $lnk_canton->name();
+        $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB);
+
+        $test_name = 'triple generated name of ' . word_api::TN_CANTON . ' ' . word_api::TN_ZH . ' via function';
+        $result = $lnk_canton->name_generated();
+        $t->assert($test_name, $result, $target);
+
+        $test_name = 'triple load ' . triple_api::TN_ZH_COMPANY . ' by link';
+        $lnk_company = new triple($t->usr1);
+        $lnk_company->load_by_link_id($wrd_zh->id(), $is_id, $wrd_company->id());
+        $target = triple_api::TN_ZH_COMPANY;
+        $result = $lnk_company->name();
+        $t->assert($test_name, $result, $target);
+
+        $test_name = 'triple generated name of ' . triple_api::TN_ZH_COMPANY . ' via function';
+        $target = 'Zurich (Company)';
+        $result = $lnk_company->name_generated();
+        $t->assert($test_name, $result, $target);
 
     }
 }

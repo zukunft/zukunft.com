@@ -1032,7 +1032,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * create an SQL statement to get all the users that have changed this value
-     * TODO deprecate
+     * TODO deprecate and base it on the sql creator object
      * @param sql_db $db_con
      * @return sql_par
      */
@@ -1136,8 +1136,8 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * true if no else one has used the object
-     * TODO if this should be true if no one else has been used this object e.g. for calculation
+     * @return true if no one else one has used the object
+     * TODO rename to used_by_no_one_else: if this should be true if no one else has been used this object e.g. for calculation
      */
     function used_by_someone_else(): bool
     {
@@ -2440,60 +2440,64 @@ class sandbox extends db_object_seq_id_user
         $msg = '';
         $result = new user_message();
 
-        /*
         if ($use_func) {
+
+            // if this object has related objects delete the related object before deleting this
+            $result = $this->del_links();
+
+            // actually delete to object
             $sc = $db_con->sql_creator();
+            // TODO include deleting of user excludes in the sql function
             $qp = $this->sql_delete($sc, new sql_type_list([sql_type::LOG]));
             $usr_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id());
             $result->add($usr_msg);
         } else {
 
-        }
-        */
-        // log the deletion request
-        if ($this->is_link_obj()) {
-            $log = $this->log_del_link();
-        } else {
-            $log = $this->log_del();
-        }
-        if ($log->id() > 0) {
-            $db_con->usr_id = $this->user()->id();
-
-            // if this object has related objects delete the related object before deleting this
-            $result = $this->del_links();
-
-            // delete first all user configuration that have also been excluded
-            if ($result->is_ok()) {
-                if ($this->sql_write_prepared()) {
-                    $sc = $db_con->sql_creator();
-                    $qp = $this->sql_delete($sc, new sql_type_list([sql_type::USER, sql_type::EXCLUDE]));
-                    $msg = $db_con->delete($qp, $this::class . ' user exclusions');
-                    $result->add($msg);
-                } else {
-                    $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->user()->id());
-                    $msg = $db_con->delete_old(
-                        array($class_name . sql_db::FLD_EXT_ID, 'excluded'),
-                        array($this->id, '1'));
-                    $result->add_message($msg);
-                }
-            }
-            if ($result->is_ok()) {
-                // finally, delete the object
-                if ($this->sql_write_prepared()) {
-                    $sc = $db_con->sql_creator();
-                    $qp = $this->sql_delete($sc);
-                    $msg = $db_con->delete($qp, $this::class . ' user exclusions');
-                    $result->add($msg);
-                } else {
-                    $db_con->set_class($this::class);
-                    $db_con->set_usr($this->user()->id());
-                    $msg = $db_con->delete_old($this->id_field(), $this->id);
-                    $result->add_message($msg);
-                }
-                log_debug('of ' . $this->dsp_id() . ' done');
+            // log the deletion request
+            if ($this->is_link_obj()) {
+                $log = $this->log_del_link();
             } else {
-                log_err('Delete failed for ' . $class_name, $this::class . '->del_exe', 'Delete failed, because removing the user settings for ' . $class_name . ' ' . $this->dsp_id() . ' returns ' . $msg, (new Exception)->getTraceAsString(), $this->user());
+                $log = $this->log_del();
+            }
+            if ($log->id() > 0) {
+                $db_con->usr_id = $this->user()->id();
+
+                // if this object has related objects delete the related object before deleting this
+                $result = $this->del_links();
+
+                // delete first all user configuration that have also been excluded
+                if ($result->is_ok()) {
+                    if ($this->sql_write_prepared()) {
+                        $sc = $db_con->sql_creator();
+                        $qp = $this->sql_delete($sc, new sql_type_list([sql_type::USER, sql_type::EXCLUDE]));
+                        $msg = $db_con->delete($qp, $this::class . ' user exclusions');
+                        $result->add($msg);
+                    } else {
+                        $db_con->set_class($this::class, true);
+                        $db_con->set_usr($this->user()->id());
+                        $msg = $db_con->delete_old(
+                            array($class_name . sql_db::FLD_EXT_ID, 'excluded'),
+                            array($this->id, '1'));
+                        $result->add_message($msg);
+                    }
+                }
+                if ($result->is_ok()) {
+                    // finally, delete the object
+                    if ($this->sql_write_prepared()) {
+                        $sc = $db_con->sql_creator();
+                        $qp = $this->sql_delete($sc);
+                        $msg = $db_con->delete($qp, $this::class . ' user exclusions');
+                        $result->add($msg);
+                    } else {
+                        $db_con->set_class($this::class);
+                        $db_con->set_usr($this->user()->id());
+                        $msg = $db_con->delete_old($this->id_field(), $this->id);
+                        $result->add_message($msg);
+                    }
+                    log_debug('of ' . $this->dsp_id() . ' done');
+                } else {
+                    log_err('Delete failed for ' . $class_name, $this::class . '->del_exe', 'Delete failed, because removing the user settings for ' . $class_name . ' ' . $this->dsp_id() . ' returns ' . $msg, (new Exception)->getTraceAsString(), $this->user());
+                }
             }
         }
 
@@ -2816,8 +2820,8 @@ class sandbox extends db_object_seq_id_user
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update(
-        sql $sc,
-        sandbox $db_row,
+        sql           $sc,
+        sandbox       $db_row,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -2856,12 +2860,19 @@ class sandbox extends db_object_seq_id_user
         // set the query name
         $qp = $this->sql_common($sc, $sc_par_lst_used);
         $sc->set_name($qp->name);
+        // fields and values that the word has additional to the standard named user sandbox object
+        $sbx_empty = $this->clone_reset();
+        // for a new sandbox object the owner should be set, so remove the user id to force writing the user
+        $sbx_empty->set_user($this->user()->clone_reset());
+        // get the list of the changed fields
+        // the list of all fields is not needed because only the id fields are written to the log in case of a delete
+        $fvt_lst = $sbx_empty->db_fields_changed($this, $sc_par_lst_used);
         // delete the user overwrite
         // but if the excluded user overwrites should be deleted the overwrites for all users should be deleted
         if ($sc_par_lst_used->incl_log()) {
             // log functions must always use named parameters
             $sc_par_lst_used->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_delete_and_log($sc, $qp, $sc_par_lst_used);
+            $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst, $sc_par_lst_used);
         } else {
             $par_lst = [$this->id()];
             if ($sc_par_lst_used->is_usr_tbl() and !$sc_par_lst_used->exclude_sql()) {
@@ -2880,13 +2891,15 @@ class sandbox extends db_object_seq_id_user
     /**
      * @param sql $sc the sql creator object with the db type set
      * @param sql_par $qp the query parameter with the name already set
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types for the log entry what has been deleted
      * @param sql_type_list $sc_par_lst
      * @return sql_par
      */
     private function sql_delete_and_log(
-        sql           $sc,
-        sql_par       $qp,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql                $sc,
+        sql_par            $qp,
+        sql_par_field_list $fvt_lst,
+        sql_type_list      $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
         global $change_action_list;
@@ -2916,28 +2929,6 @@ class sandbox extends db_object_seq_id_user
         // create the queries for the log entries
         $func_body_change = '';
 
-        // create the insert log statement for the field of the loop
-        $log = new change($this->user());
-        $log->set_class($this::class);
-        if ($this->is_named_obj()) {
-            $log->set_field($name_fld);
-            $log->old_value = $this->name();
-            $log->new_value = null;
-        }
-
-        $sc_log = clone $sc;
-        // TODO replace dummy value table with an enum value
-        if ($this->is_named_obj()) {
-            $qp_log = $log->sql_insert(
-                $sc_log, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
-        } else {
-            $qp_log = $log->sql_insert(
-                $sc_log, $sc_par_lst_log, $ext, '', '', $id_val);
-        }
-
-        // TODO get the fields used in the change log sql from the sql
-        $func_body_change .= ' ' . $qp_log->sql . ';';
-
         // add the user_id if needed
         $fvt_lst_out->add_field(
             user::FLD_ID,
@@ -2962,7 +2953,37 @@ class sandbox extends db_object_seq_id_user
                 $name_fld,
                 $this->name(),
                 sql_par_type::TEXT);
+        } elseif ($this->is_link_obj()) {
+            // add the table_id of the deleted link
+            $fvt_lst_out->add_field(
+                change_table::FLD_ID,
+                $table_id,
+                sql_par_type::INT_SMALL);
         }
+
+        // create the insert log statement
+        $sc_log = clone $sc;
+        if ($this->is_named_obj()) {
+            $log = new change($this->user());
+            $log->set_class($this::class);
+            $log->set_field($name_fld);
+            $log->old_value = $this->name();
+            $log->new_value = null;
+            $qp_log = $log->sql_insert(
+                $sc_log, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
+        } elseif ($this->is_link_obj()) {
+            $qp_log = $sc->sql_func_log_link($this, $this, $this->user(), $fvt_lst_out, $sc_par_lst_log);
+            $fvt_lst_out->add_list($qp_log->par_fld_lst);
+            // TODO use these functions more often
+            $fvt_lst_out->add_list($this->sql_key_fields_text_old($fvt_lst));
+            $fvt_lst_out->add_list($this->sql_key_fields_id_old($fvt_lst));
+        } else {
+            $qp_log = new sql_par($this::class, $sc_par_lst);
+            log_err('Only named and link objects are supported in sandbox::sql_delete_and_log');
+        }
+
+        // TODO get the fields used in the change log sql from the sql
+        $func_body_change .= ' ' . $qp_log->sql . ';';
 
         // add the row id of the standard table for user overwrites
         $fvt_lst_out->add_field(
@@ -2972,6 +2993,21 @@ class sandbox extends db_object_seq_id_user
 
         $sql .= ' ' . $func_body_change;
 
+        // delete the excluded user settings if the standard is deleted
+        if (!$sc_par_lst->is_usr_tbl()) {
+            $sc_user = clone $sc;
+            $sc_par_lst_usr = clone $sc_par_lst;
+            $sc_par_lst_usr->add(sql_type::DELETE);
+            $sc_par_lst_usr->add(sql_type::USER_TBL);
+            $sc_par_lst_usr->add(sql_type::EXCLUDE);
+            $sc_par_lst_usr->add(sql_type::NAMED_PAR);
+            $qp_del_usr = $this->sql_common($sc_user, $sc_par_lst_usr);;
+            $qp_del_usr->sql = $sc_user->create_sql_delete(
+                $id_fld, $id_val, $sc_par_lst_usr);
+            // add the deleting of the user overwrites to the function body
+            $sql .= ' ' . $qp_del_usr->sql . ' ';
+        }
+
         // create the actual delete or exclude statement
         $sc_delete = clone $sc;
         $sc_par_lst_del = clone $sc_par_lst;
@@ -2980,7 +3016,7 @@ class sandbox extends db_object_seq_id_user
         $qp_delete = $this->sql_common($sc_delete, $sc_par_lst_log);;
         $qp_delete->sql = $sc_delete->create_sql_delete(
             $id_fld, $id_val, $sc_par_lst_sub);
-        // add the insert row to the function body
+        // add the delete statement to the function body
         $sql .= ' ' . $qp_delete->sql . ' ';
 
         $sql .= $sc->sql_func_end();
@@ -3001,6 +3037,7 @@ class sandbox extends db_object_seq_id_user
 
         // merge all together and create the function
         $qp->sql = $qp_func->sql . ' ' . $sql . ';';
+        $qp->par = $fvt_lst_out->values();
 
         // create the function call
         $qp->call_sql = ' ' . sql::SELECT . ' ' . $qp_func->name . ' (';
@@ -3272,6 +3309,7 @@ class sandbox extends db_object_seq_id_user
         $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
         $sc_par_lst_sub->add(sql_type::LIST);
         $sc_par_lst_log = clone $sc_par_lst_sub;
+        $sc_par_lst_log->add(sql_type::INSERT_PART);
 
         // create sql to set the prime key upfront to get the sequence id
         $qp_id = clone $qp;
@@ -3308,7 +3346,7 @@ class sandbox extends db_object_seq_id_user
             if ($usr_tbl) {
                 $qp_log_lnk = $sc->sql_func_log_user_link($this, $this->user(), $fvt_lst, $sc_par_lst_log);
             } else {
-                $qp_log_lnk = $sc->sql_func_log_link($this, $this->user(), $fvt_lst, $sc_par_lst_log);
+                $qp_log_lnk = $sc->sql_func_log_link($this, $this, $this->user(), $fvt_lst, $sc_par_lst_log);
             }
             $sql .= ' ' . $qp_log_lnk->sql . ';';
             $par_lst_out->add_list($qp_log_lnk->par_fld_lst);
