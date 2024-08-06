@@ -71,13 +71,13 @@ class element_write_tests
 
                 $result = $elm->dsp_id();
                 if ($pos == 0) {
-                    $target = 'word "Country" (' . $wrd_country->id() . ') for user 2 (zukunft.com system test)';
+                    $target = 'word "Country" (' . $wrd_country->id() . ') for user 3 (zukunft.com system test)';
                 } elseif ($pos == 1) {
-                    $target = 'verb "can be used as a differentiator for" (' . $vrb_id . ') for user 2 (zukunft.com system test)';
+                    $target = 'verb "can be used as a differentiator for" (' . $vrb_id . ') for user 3 (zukunft.com system test)';
                 } elseif ($pos == 2) {
-                    $target = 'word "Canton" (' . $wrd_canton->id() . ') for user 2 (zukunft.com system test)';
+                    $target = 'word "Canton" (' . $wrd_canton->id() . ') for user 3 (zukunft.com system test)';
                 } elseif ($pos == 3) {
-                    $target = 'word "System Test Word Total" (' . $wrd_total->id() . ') for user 2 (zukunft.com system test)';
+                    $target = 'word "System Test Word Total" (' . $wrd_total->id() . ') for user 3 (zukunft.com system test)';
                 }
                 $t->display('element->dsp_id', $target, $result);
 

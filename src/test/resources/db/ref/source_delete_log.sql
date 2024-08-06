@@ -27,4 +27,4 @@ SELECT source_delete_log
         3::smallint,
         57::smallint,
         'The International System of Units'::text,
-        3::bigint);
+        1::bigint);

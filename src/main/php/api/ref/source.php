@@ -46,13 +46,17 @@ class source extends sandbox_typed_api
     // persevered source names for unit and integration tests (TN means TEST NAME)
     // TN_* is the name of the predefined source used for testing
     // TI_* is the id after adding the predefined sources
+    // TC_* is the code_id for testing
     // TD_* is the description  of the predefined source
     // TU_* is the URL of the predefined source
     const TN_READ = 'wikidata';
+    const TI_READ = 2;
     const TN_MATH = 'Mathematical constant';
     const TN_READ_API = 'The International System of Units';
+    const TI_READ_API = 1;
     const TD_READ_API = 'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards';
     const TU_READ_API = 'https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf';
+    const TC_READ_API = 'BIPM';
     const TN_ADD = 'System Test Source';
     const TD_ADD = 'System Test Source Description';
     const TU_ADD = 'https://www.zukunft.com/';
@@ -76,6 +80,7 @@ class source extends sandbox_typed_api
     // source group for creating the test sources and remove them after the test
     const RESERVED_SOURCES = array(
         self::TN_READ, // the source for all data imported from wikidata that does not yet have a source defined in wikidata
+        self::TN_READ_API,
         self::TN_ADD,
         self::TN_ADD_API,
         self::TN_RENAMED

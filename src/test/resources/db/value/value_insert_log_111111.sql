@@ -48,7 +48,7 @@ SELECT value_insert_log_111111
         3.1415926535898::numeric,
         '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+'::text,
         2::smallint,
-        3::bigint,
+        1::bigint,
         5::smallint,
         1::smallint,
         3::smallint,

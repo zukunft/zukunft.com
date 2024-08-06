@@ -35,7 +35,6 @@ namespace unit;
 use api\ref\source as source_api;
 use cfg\db\sql;
 use cfg\db\sql_type;
-use cfg\source_list;
 use cfg\source_type_list;
 use html\ref\source as source_dsp;
 use cfg\source;
@@ -66,10 +65,6 @@ class source_tests
         $t->assert_sql_by_id($sc, $src);
         $t->assert_sql_by_name($sc, $src);
         $t->assert_sql_by_code_id($sc, $src);
-
-        $t->subheader('source sql read all');
-        $source_type_list = new source_type_list();
-        $t->assert_sql_all($sc, $source_type_list);
 
         $t->subheader('source sql read standard and user changes by id');
         $src = new source($usr);
@@ -104,14 +99,10 @@ class source_tests
         $t->assert_sql_delete($sc, $src, [sql_type::USER]);
         $t->assert_sql_delete($sc, $src, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER]);
-        // TODO check if there is a use case for these parameter combination and if not, delete this test
-        //$t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::EXCLUDE]);
-        //$t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
 
         $t->subheader('source api unit tests');
-        $src = $t->source1();
-        $t->assert_api_json($src);
         $src = $t->source();
+        $t->assert_api_json($src);
         $db_con = new sql_db();
         $t->assert_api_msg($db_con, $src);
 
@@ -123,14 +114,11 @@ class source_tests
         $t->assert_json_file(new source($usr), $json_file);
 
 
-        // init for source list
-        $t->name = 'source_list->';
+        $t->header('source type unit tests');
 
-        $src_lst = new source_list($usr);
-        $trm_ids = array(1, 2, 3);
-        $t->assert_sql_by_ids($sc, $src_lst, $trm_ids);
-        $src_lst = new source_list($usr);
-        $t->assert_sql_like($sc, $src_lst);
+        $t->subheader('source type sql read');
+        $source_type_list = new source_type_list();
+        $t->assert_sql_all($sc, $source_type_list);
 
     }
 

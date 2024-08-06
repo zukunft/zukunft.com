@@ -435,7 +435,7 @@ class create_test_objects extends test_base
     function user_sys_test(): user
     {
         $usr = new user();
-        $usr->set(2, user::SYSTEM_TEST_NAME, user::SYSTEM_TEST_EMAIL);
+        $usr->set(3, user::SYSTEM_TEST_NAME, user::SYSTEM_TEST_EMAIL);
         return $usr;
     }
 
@@ -1899,21 +1899,31 @@ class create_test_objects extends test_base
     function source(): source
     {
         $src = new source($this->usr1);
-        $src->set(3, source_api::TN_READ_API, source_type::PDF);
+        $src->set(source_api::TI_READ_API, source_api::TN_READ_API, source_type::PDF);
         $src->description = source_api::TD_READ_API;
         $src->url = source_api::TU_READ_API;
         return $src;
     }
 
-    function source1(): source
+    /**
+     * @return source used for the reference
+     */
+    function source_ref(): source
     {
         $src = new source($this->usr1);
-        $src->set(1, source_api::TN_READ_API, source_type::PDF);
-        $src->description = source_api::TD_READ_API;
-        $src->url = source_api::TU_READ_API;
+        $src->set(source_api::TI_READ, source_api::TN_READ, source_type::CSV);
         return $src;
     }
 
+    /**
+     * @return source additional with the fields that only an admin user is allowed to import
+     */
+    function source_admin(): source
+    {
+        $src = $this->source();
+        $src->code_id = source_api::TC_READ_API;
+        return $src;
+    }
     /**
      * @return source to test the sql insert via function
      */
@@ -1970,7 +1980,7 @@ class create_test_objects extends test_base
     function reference_plus(): ref
     {
         $ref = $this->reference();
-        $ref->source = $this->source1();
+        $ref->source = $this->source_ref();
         $ref->url = ref_api::TU_READ;
         return $ref;
     }
@@ -2009,7 +2019,7 @@ class create_test_objects extends test_base
         global $share_types;
         global $protection_types;
         $ref = $this->reference();
-        $ref->source = $this->source1();
+        $ref->source = $this->source();
         $ref->url = ref_api::TU_READ;
         $ref->excluded = false;
         $ref->share_id = $share_types->id(share_type_shared::GROUP);
@@ -2027,7 +2037,7 @@ class create_test_objects extends test_base
         $ref = $this->reference_user();
         $ref->external_key = ref_api::TK_READ;
         $ref->url = ref_api::TU_READ;
-        $ref->source = $this->source1();
+        $ref->source = $this->source();
         $ref->description = ref_api::TD_READ;
         $ref->excluded = true;
         $ref->share_id = $share_types->id(share_type_shared::GROUP);

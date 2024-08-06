@@ -11,11 +11,25 @@
       "email": "admin@zukunft.com"
     },
     {
+      "name": "zukunft.com admin",
+      "description": "the fallback zukunft.com admin user that should only be used in a break-glass event to recover other admin users",
+      "code_id": "admin",
+      "profile": "admin",
+      "email": "admin@zukunft.com"
+    },
+    {
       "name": "zukunft.com system test",
       "description": "the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
       "code_id": "test",
       "profile": "test",
       "email": "support@zukunft.com"
+    },
+    {
+      "name": "zukunft.com system test partner",
+      "description": "another internal zukunft.com user used for user sandbox integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
+      "code_id": "test_partner",
+      "profile": "test",
+      "email": "support.partner@zukunft.com"
     },
     {
       "name": "zukunft.com system test partner",

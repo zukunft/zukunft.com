@@ -351,6 +351,11 @@ class db_check
                 $sys_usr->set_profile(user_profile::SYSTEM);
                 $sys_usr->save($db_con);
             }
+            if (!$sys_usr->has_any_user_this_profile(user_profile::ADMIN)) {
+                $sys_usr->load_by_name(user::SYSTEM_ADMIN_NAME);
+                $sys_usr->set_profile(user_profile::ADMIN);
+                $sys_usr->save($db_con);
+            }
 
             // add missing system test users if needed
             $test_usr = new user();
@@ -362,6 +367,14 @@ class db_check
                 $test_usr2->load_by_name(user::SYSTEM_NAME_TEST_PARTNER);
                 $test_usr2->set_profile(user_profile::TEST);
                 $test_usr2->save($db_con);
+                $test_usr_admin = new user();
+                $test_usr_admin->load_by_name(user::SYSTEM_TEST_NAME_ADMIN);
+                $test_usr_admin->set_profile(user_profile::ADMIN);
+                $test_usr_admin->save($db_con);
+                $test_usr_normal = new user();
+                $test_usr_normal->load_by_name(user::SYSTEM_TEST_NAME_NORMAL);
+                $test_usr_normal->set_profile(user_profile::NORMAL);
+                $test_usr_normal->save($db_con);
             }
         }
 

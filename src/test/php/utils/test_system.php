@@ -80,11 +80,12 @@ function run_system_test(all_tests $t): void
     $t->header('Test the user class (classes/user.php)');
 
     // load by name
-    $usr_test->reset();
+    $usr_by_id = new user;
+    $usr_by_id->load_by_id(user::SYSTEM_TEST_ID);
     $usr_test = new user;
     $usr_test->load_by_name(user::SYSTEM_TEST_NAME);
     $target = '<a href="/http/user.php?id=' . $usr_test->id() . '">zukunft.com system test</a>';
-    $result = $usr->display();
+    $result = $usr_by_id->display();
     $t->display('user->load for id ' . $wrd_company->id(), $target, $result);
 
 

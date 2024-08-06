@@ -47,7 +47,7 @@ SELECT source_update_log_0022220000
         57::smallint,
         'The International System of Units'::text,
         'System Test Source Renamed'::text,
-        3::bigint,
+        1::bigint,
         58::smallint,
         'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards'::text,
         null::text,

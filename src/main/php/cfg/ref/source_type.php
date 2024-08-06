@@ -39,8 +39,11 @@ class source_type extends type_object
 {
     // list of the source types that have a coded functionality
     const XBRL = "xbrl";
+    const XBRL_ID = 2; // the fixed database ID for testing
     const CSV = "csv";
+    const CSV_ID = 3; // the fixed database ID for testing
     const PDF = "pdf";
+    const PDF_ID = 4; // the fixed database ID for testing
 
     // the url that can be used to receive data if the external key is added
     // public ?string $url = null;

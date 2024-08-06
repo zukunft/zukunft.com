@@ -186,6 +186,7 @@ include_once TEST_UNIT_PATH . 'component_list_tests.php';
 include_once TEST_UNIT_PATH . 'component_link_list_tests.php';
 include_once TEST_UNIT_PATH . 'verb_tests.php';
 include_once TEST_UNIT_PATH . 'source_tests.php';
+include_once TEST_UNIT_PATH . 'source_list_tests.php';
 include_once TEST_UNIT_PATH . 'ref_tests.php';
 include_once TEST_UNIT_PATH . 'language_tests.php';
 include_once TEST_UNIT_PATH . 'job_tests.php';
@@ -259,6 +260,7 @@ include_once TEST_UNIT_READ_PATH . 'view_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'view_list_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'component_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'component_list_read_tests.php';
+include_once TEST_UNIT_READ_PATH . 'source_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'ref_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'share_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'protection_read_tests.php';
@@ -353,6 +355,8 @@ class test_base
 
     public user $usr1; // the main user for testing
     public user $usr2; // a second testing user e.g. to test the user sandbox
+    public user $usr_admin; // a user with the admin profile to test allow of admin functionality
+    public user $usr_normal; // a user with the standard profile to test deny of admin functionality
 
     private float $start_time; // time when all tests have started
     private float $exe_start_time; // time when the single test has started (end the end time of all tests)
@@ -396,6 +400,12 @@ class test_base
 
         $this->usr2 = new user();
         $this->usr2->load_by_name(user::SYSTEM_NAME_TEST_PARTNER);
+
+        $this->usr_admin = new user();
+        $this->usr_admin->load_by_name(user::SYSTEM_TEST_NAME_ADMIN);
+
+        $this->usr_normal = new user();
+        $this->usr_normal->load_by_name(user::SYSTEM_TEST_NAME_NORMAL);
 
     }
 

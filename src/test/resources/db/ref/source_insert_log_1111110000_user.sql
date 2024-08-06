@@ -39,7 +39,7 @@ SELECT source_insert_log_1111110000_user (
                1::smallint,
                57::smallint,
                'The International System of Units'::text,
-               3::bigint,
+               1::bigint,
                58::smallint,
                'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards'::text,
                59::smallint,

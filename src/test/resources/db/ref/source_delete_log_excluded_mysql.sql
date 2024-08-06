@@ -22,4 +22,4 @@ SELECT source_delete_log_excluded
         3,
         57,
         'The International System of Units',
-        3);
+        1);

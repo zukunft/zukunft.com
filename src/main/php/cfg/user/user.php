@@ -225,13 +225,21 @@ class user extends db_object_seq_id
      */
 
     // list of the system users that have a coded functionality as defined in src/main/resources/users.json
+
+    // the system user that should only be used for internal processes
     const SYSTEM_ID = 1; //
     const SYSTEM_NAME = "zukunft.com system";                    // the system user used to log system tasks and as a fallback owner
     const SYSTEM_CODE_ID = "system";                    // unique id of the system user used to log system tasks
     const SYSTEM_EMAIL = "admin@zukunft.com";
 
+    // the system admin user that should only be used in a break-glass event to recover other admin users
+    const SYSTEM_ADMIN_ID = 2; //
+    const SYSTEM_ADMIN_NAME = "zukunft.com admin";
+    const SYSTEM_ADMIN_CODE_ID = "admin";
+    const SYSTEM_ADMIN_EMAIL = "admin@zukunft.com";
+
     // the user that performs the system tests
-    const SYSTEM_TEST_ID = 2;
+    const SYSTEM_TEST_ID = 3;
     const SYSTEM_TEST_NAME = "zukunft.com system test";
     const SYSTEM_TEST_EMAIL = "support@zukunft.com";
     const SYSTEM_TEST_IP = "localhost";
@@ -244,6 +252,16 @@ class user extends db_object_seq_id
     const SYSTEM_TEST_PROFILE_CODE_ID = "test";
     const SYSTEM_LOCAL = 'localhost';
     const SYSTEM_TEST_PARTNER_EMAIL = "support.partner@zukunft.com";
+
+    // an admin user to test the allow of functions only allowed for administrators
+    const SYSTEM_TEST_NAME_ADMIN = "zukunft.com system test admin";
+    const SYSTEM_TEST_ADMIN_CODE_ID = "admin";
+    const SYSTEM_TEST_ADMIN_EMAIL = "admin@zukunft.com";
+
+    // a normal user to test the deny of functions only allowed for administrators
+    const SYSTEM_TEST_NAME_NORMAL = "zukunft.com system test no admin";
+    const SYSTEM_TEST_NORMAL_CODE_ID = "normal";
+    const SYSTEM_TEST_NORMAL_EMAIL = "support.normal@zukunft.com";
 
     // change right levels to prevent access level gaining
     const RIGHT_LEVEL_USER = 10;

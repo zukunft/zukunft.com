@@ -1140,7 +1140,11 @@ class library
                     $msg .= $diff_val[$i];
                 }
                 if ($type != self::STR_DIFF_DEL) {
-                    $pos = $pos + strlen($diff_val[$i]);
+                    $diff_val_used = $diff_val[$i];
+                    if (is_array($diff_val_used)) {
+                        $diff_val_used = $this->dsp_array($diff_val_used);
+                    }
+                    $pos = $pos + strlen($diff_val_used);
                 }
             } else {
                 $msg .= $diff_val[$i];
@@ -1242,11 +1246,29 @@ class library
                 $from_pos++;
             } else {
                 if (is_array($from[$from_keys[$from_pos]])) {
+                    $from_key = $from_keys[$from_pos];
+                    $to_key = $to_keys[$to_pos];
+                    $from_part = $from[$from_key];
+                    $to_part = $to[$to_key];
+                    $from_sep_part = $from_sep[$from_key];
+                    $to_sep_part = $to_sep[$to_key];
+                    if (!is_array($from_part)) {
+                        $from_part = [$from_part];
+                    }
+                    if (!is_array($to_part)) {
+                        $to_part = [$to_part];
+                    }
+                    if (!is_array($from_sep_part)) {
+                        $from_sep_part = [$from_sep_part];
+                    }
+                    if (!is_array($to_sep_part)) {
+                        $to_sep_part = [$to_sep_part];
+                    }
                     $sub_diff = $this->str_diff_list(
-                        $from[$from_keys[$from_pos]],
-                        $to[$to_keys[$to_pos]],
-                        $from_sep[$from_keys[$from_pos]],
-                        $to_sep[$to_keys[$to_pos]],
+                        $from_part,
+                        $to_part,
+                        $from_sep_part,
+                        $to_sep_part,
                         $str_type
                     );
                     array_walk_recursive($sub_diff[self::STR_DIFF_VAL], function ($diff, $key) use (&$diff_part) {

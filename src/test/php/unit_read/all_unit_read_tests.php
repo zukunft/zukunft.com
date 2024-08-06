@@ -96,6 +96,7 @@ class all_unit_read_tests extends all_unit_tests
         (new view_list_read_tests)->run($this);
         (new component_read_tests)->run($this);
         (new component_list_read_tests)->run($this);
+        (new source_read_tests)->run($this);
         (new ref_read_tests)->run($this);
         (new language_read_tests)->run($this);
         (new change_log_read_tests)->run($this);

@@ -423,6 +423,11 @@ class user_list
         $type->code_id = user::SYSTEM_TEST_PROFILE_CODE_ID;
         $this->lst[2] = $type;
         $this->code_id_hash[user::SYSTEM_TEST_PROFILE_CODE_ID] = 2;
+        $type = new user();
+        $type->name = user::SYSTEM_TEST_NAME_ADMIN;
+        $type->code_id = user::SYSTEM_TEST_ADMIN_CODE_ID;
+        $this->lst[3] = $type;
+        $this->code_id_hash[user::SYSTEM_TEST_ADMIN_CODE_ID] = 3;
 
     }
 

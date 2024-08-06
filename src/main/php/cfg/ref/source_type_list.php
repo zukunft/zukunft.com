@@ -85,13 +85,13 @@ class source_type_list extends type_list
     {
         parent::load_dummy();
         $type = new source_type(source_type::XBRL, source_type::XBRL);
-        $type->set_id(2);
+        $type->set_id(source_type::XBRL_ID);
         $this->add($type);
         $type = new source_type(source_type::CSV, source_type::CSV);
-        $type->set_id(3);
+        $type->set_id(source_type::CSV_ID);
         $this->add($type);
         $type = new source_type(source_type::PDF, source_type::PDF);
-        $type->set_id(4);
+        $type->set_id(source_type::PDF_ID);
         $this->add($type);
     }
 

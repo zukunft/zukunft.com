@@ -197,6 +197,9 @@ class source_write_tests
         $t->display('source->load description for "' . source_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
 
         // TODO create and check the display functions
+        // TODO test the import of a source with a non system with the code id and check if the warning message is created and the update is rejected
+        // TODO test the import of a source with the code id does not create a warning if the code_id already matches
+        // TODO test if the import does not change the code_id if a normal user imports a source
 
     }
 

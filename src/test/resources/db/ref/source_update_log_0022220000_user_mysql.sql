@@ -49,7 +49,7 @@ SELECT source_update_log_0022220000_user
         57,
         'The International System of Units',
         'System Test Source Renamed',
-        3,
+        1,
         58,
         'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards',
         null,

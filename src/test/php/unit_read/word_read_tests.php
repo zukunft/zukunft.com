@@ -58,8 +58,7 @@ class word_read_tests
 
         $t->header('word db read tests');
 
-        $t->subheader('load');
-
+        $t->subheader('word load');
         $test_name = word_api::TN_READ . ' by name and id';
         $wrd = $t->load_word(word_api::TN_READ);
         $wrd_by_id = new word($t->usr1);

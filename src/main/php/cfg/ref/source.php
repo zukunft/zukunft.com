@@ -456,6 +456,11 @@ class source extends sandbox_typed
             if ($key == self::FLD_URL) {
                 $this->url = $value;
             }
+            if ($this->user()->is_system() or $this->user()->is_admin()) {
+                if ($key == sandbox_exp::FLD_CODE_ID) {
+                    $this->code_id = $value;
+                }
+            }
             if ($key == sandbox_exp::FLD_TYPE) {
                 $this->type_id = $source_types->id($value);
             }

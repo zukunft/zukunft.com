@@ -289,6 +289,7 @@ class all_unit_tests extends test_cleanup
         (new term_tests)->run($this);
         (new term_list_tests)->run($this);
         (new source_tests)->run($this);
+        (new source_list_tests)->run($this);
         (new ref_tests)->run($this);
         (new value_tests)->run($this);
         (new value_list_tests)->run($this);

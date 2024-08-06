@@ -108,7 +108,7 @@ class api_tests
     function run_api_test(test_cleanup $t): void
     {
 
-        $t->assert_api_get(user::class, 2);
+        $t->assert_api_get(user::class, user::SYSTEM_TEST_ID);
         $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_NAME);
         $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_EMAIL, controller::URL_VAR_EMAIL);
         $t->assert_api_get(word::class);
@@ -127,7 +127,7 @@ class api_tests
         $t->assert_api_get_by_text(view::class, view_api::TN_READ);
         $t->assert_api_get(component::class);
         $t->assert_api_get_by_text(component::class, component_api::TN_READ);
-        $t->assert_api_get(source::class, 3);
+        $t->assert_api_get(source::class, source_api::TI_READ_API);
         $t->assert_api_get_by_text(source::class, source_api::TN_READ_API);
         $t->assert_api_get(ref::class, ref_api::TI_PI);
         $t->assert_api_get(job::class);
