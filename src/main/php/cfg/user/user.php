@@ -226,14 +226,15 @@ class user extends db_object_seq_id
 
     // list of the system users that have a coded functionality as defined in src/main/resources/users.json
 
-    // the system user that should only be used for internal processes
-    const SYSTEM_ID = 1; //
-    const SYSTEM_NAME = "zukunft.com system";                    // the system user used to log system tasks and as a fallback owner
-    const SYSTEM_CODE_ID = "system";                    // unique id of the system user used to log system tasks
-    const SYSTEM_EMAIL = "admin@zukunft.com";
+    // the system user that should only be used for internal processes and to log system tasks
+    const SYSTEM_ID = 1;
+    const SYSTEM_NAME = "zukunft.com system";
+    const SYSTEM_CODE_ID = "system"; // unique id to select the user
+    const SYSTEM_EMAIL = "system@zukunft.com";
+    const SYSTEM_LOCAL_IP = "localhost"; // as a second line of defence to prevent remote manipulation
 
     // the system admin user that should only be used in a break-glass event to recover other admin users
-    const SYSTEM_ADMIN_ID = 2; //
+    const SYSTEM_ADMIN_ID = 2;
     const SYSTEM_ADMIN_NAME = "zukunft.com admin";
     const SYSTEM_ADMIN_CODE_ID = "admin";
     const SYSTEM_ADMIN_EMAIL = "admin@zukunft.com";
@@ -241,26 +242,27 @@ class user extends db_object_seq_id
     // the user that performs the system tests
     const SYSTEM_TEST_ID = 3;
     const SYSTEM_TEST_NAME = "zukunft.com system test";
-    const SYSTEM_TEST_EMAIL = "support@zukunft.com";
-    const SYSTEM_TEST_IP = "localhost";
-    const SYSTEM_TEST_NAME_FIRST = "first";
-    const SYSTEM_TEST_NAME_LAST = "last";
+    const SYSTEM_TEST_EMAIL = "test@zukunft.com";
+    const SYSTEM_TEST_CODE_ID = "test";
 
     // the user that acts as a partner for the system tests
     // so that multi-user behaviour can be tested
-    const SYSTEM_NAME_TEST_PARTNER = "zukunft.com system test partner"; // to test that the user sandbox is working e.g. that changes of the main test user has no impact of another user simulated by this test user
-    const SYSTEM_TEST_PROFILE_CODE_ID = "test";
-    const SYSTEM_LOCAL = 'localhost';
-    const SYSTEM_TEST_PARTNER_EMAIL = "support.partner@zukunft.com";
+    const SYSTEM_TEST_PARTNER_ID = 4;
+    const SYSTEM_TEST_PARTNER_NAME = "zukunft.com system test partner"; // to test that the user sandbox is working e.g. that changes of the main test user has no impact of another user simulated by this test user
+    const SYSTEM_TEST_PARTNER_CODE_ID = "test_partner";
+    const SYSTEM_TEST_PARTNER_EMAIL = "test.partner@zukunft.com";
 
     // an admin user to test the allow of functions only allowed for administrators
-    const SYSTEM_TEST_NAME_ADMIN = "zukunft.com system test admin";
+    const SYSTEM_TEST_ADMIN_ID = 5;
+    const SYSTEM_TEST_ADMIN_NAME = "zukunft.com system test admin";
     const SYSTEM_TEST_ADMIN_CODE_ID = "admin";
     const SYSTEM_TEST_ADMIN_EMAIL = "admin@zukunft.com";
 
     // a normal user to test the deny of functions only allowed for administrators
-    const SYSTEM_TEST_NAME_NORMAL = "zukunft.com system test no admin";
-    const SYSTEM_TEST_NORMAL_CODE_ID = "normal";
+    // and as a fallback owner
+    const SYSTEM_TEST_NORMAL_ID = 6;
+    const SYSTEM_TEST_NORMAL_NAME = "zukunft.com system test no admin";
+    const SYSTEM_TEST_NORMAL_CODE_ID = "test_normal";
     const SYSTEM_TEST_NORMAL_EMAIL = "support.normal@zukunft.com";
 
     // change right levels to prevent access level gaining
@@ -309,10 +311,17 @@ class user extends db_object_seq_id
      * construct and map
      */
 
-    function __construct()
+    function __construct(string $name = '', string $email = '')
     {
         parent::__construct();
         $this->reset();
+
+        if ($name != '') {
+            $this->name = $name;
+        }
+        if ($email != '') {
+            $this->email = $email;
+        }
 
         //global $user_profiles;
         //$this->profile = $user_profiles->get_by_code_id(user_profile::NORMAL);
@@ -800,7 +809,7 @@ class user extends db_object_seq_id
             $this->ip_addr = $_SERVER['REMOTE_ADDR'];
         }
         if ($this->ip_addr == null) {
-            $this->ip_addr = self::SYSTEM_LOCAL;
+            $this->ip_addr = self::SYSTEM_LOCAL_IP;
         }
         return $this->ip_addr;
     }
@@ -841,7 +850,7 @@ class user extends db_object_seq_id
                     $this->name = $this->get_ip();
 
                     // allow to fill the database only if a local user has logged in
-                    if ($this->name == self::SYSTEM_LOCAL) {
+                    if ($this->name == self::SYSTEM_LOCAL_IP) {
                         // add the local admin user to use it for the import
                         $upd_result = $this->create_local_admin($db_con);
                     } else {
@@ -1201,6 +1210,7 @@ class user extends db_object_seq_id
 
     /**
      * create a new user or update the existing
+     * TODO check if the user name or email excist before adding a new user
      * @return string an empty string if all user data are saved in the database otherwise the message that should be shown to the user
      */
     function save(sql_db $db_con): string

@@ -407,27 +407,44 @@ class user_list
     }
 
     /**
-     * create dummy system user list for the unit tests without database connection
+     * create a dummy system user list for the unit tests without database connection that matches the core system user list
      */
     function load_dummy(): void
     {
+        global $user_profiles;
+
         $this->lst = array();
         $this->code_id_hash = array();
-        $type = new user();
-        $type->name = user::SYSTEM_NAME;
-        $type->code_id = user::SYSTEM_CODE_ID;
-        $this->lst[1] = $type;
-        $this->code_id_hash[user::SYSTEM_NAME] = 1;
-        $type = new user();
-        $type->name = user::SYSTEM_TEST_NAME;
-        $type->code_id = user::SYSTEM_TEST_PROFILE_CODE_ID;
-        $this->lst[2] = $type;
-        $this->code_id_hash[user::SYSTEM_TEST_PROFILE_CODE_ID] = 2;
-        $type = new user();
-        $type->name = user::SYSTEM_TEST_NAME_ADMIN;
-        $type->code_id = user::SYSTEM_TEST_ADMIN_CODE_ID;
-        $this->lst[3] = $type;
-        $this->code_id_hash[user::SYSTEM_TEST_ADMIN_CODE_ID] = 3;
+
+        $usr = new user(user::SYSTEM_NAME, user::SYSTEM_EMAIL);
+        $usr->code_id = user::SYSTEM_CODE_ID;
+        $usr->profile_id = $user_profiles->id(user_profile::SYSTEM);
+        $this->lst[user::SYSTEM_ID] = $usr;
+        $this->code_id_hash[user::SYSTEM_CODE_ID] = user::SYSTEM_ID;
+
+        $usr = new user(user::SYSTEM_ADMIN_NAME, user::SYSTEM_ADMIN_EMAIL);
+        $usr->code_id = user::SYSTEM_ADMIN_CODE_ID;
+        $usr->profile_id = $user_profiles->id(user_profile::ADMIN);
+        $this->lst[user::SYSTEM_ADMIN_ID] = $usr;
+        $this->code_id_hash[user::SYSTEM_ADMIN_CODE_ID] = user::SYSTEM_ADMIN_ID;
+
+        $usr = new user(user::SYSTEM_TEST_NAME, user::SYSTEM_TEST_EMAIL);
+        $usr->code_id = user::SYSTEM_TEST_CODE_ID;
+        $usr->profile_id = $user_profiles->id(user_profile::TEST);
+        $this->lst[user::SYSTEM_TEST_ID] = $usr;
+        $this->code_id_hash[user::SYSTEM_TEST_CODE_ID] = user::SYSTEM_TEST_ID;
+
+        $usr = new user(user::SYSTEM_TEST_PARTNER_NAME, user::SYSTEM_TEST_PARTNER_EMAIL);
+        $usr->code_id = user::SYSTEM_TEST_PARTNER_CODE_ID;
+        $usr->profile_id = $user_profiles->id(user_profile::TEST);
+        $this->lst[user::SYSTEM_TEST_PARTNER_ID] = $usr;
+        $this->code_id_hash[user::SYSTEM_TEST_PARTNER_CODE_ID] = user::SYSTEM_TEST_PARTNER_ID;
+
+        $usr = new user(user::SYSTEM_TEST_NORMAL_NAME, user::SYSTEM_TEST_NORMAL_EMAIL);
+        $usr->code_id = user::SYSTEM_TEST_NORMAL_CODE_ID;
+        $usr->profile_id = $user_profiles->id(user_profile::NORMAL);
+        $this->lst[user::SYSTEM_TEST_NORMAL_ID] = $usr;
+        $this->code_id_hash[user::SYSTEM_TEST_NORMAL_CODE_ID] = user::SYSTEM_TEST_NORMAL_ID;
 
     }
 

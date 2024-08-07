@@ -115,7 +115,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // switch to the test user
         // create the system user before the local user and admin to get the desired database id
-        $usr->load_by_profile_code(user::SYSTEM_TEST_PROFILE_CODE_ID);
+        $usr->load_by_profile_code(user_profile::TEST);
         if ($usr->id() <= 0) {
 
             // but only from localhost
@@ -123,11 +123,11 @@ class all_unit_write_tests extends all_unit_read_tests
             if (array_key_exists("REMOTE_ADDR", $_SERVER)) {
                 $ip_addr = $_SERVER['REMOTE_ADDR'];
             }
-            if ($ip_addr == user::SYSTEM_LOCAL) {
+            if ($ip_addr == user::SYSTEM_LOCAL_IP) {
                 $db_con->import_system_users();
             }
 
-            $usr->load_by_profile_code(user::SYSTEM_TEST_PROFILE_CODE_ID);
+            $usr->load_by_profile_code(user_profile::TEST);
         }
 
         if ($usr->id() > 0) {

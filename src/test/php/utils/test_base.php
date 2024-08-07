@@ -399,13 +399,13 @@ class test_base
         $this->usr1->load_by_name(user::SYSTEM_TEST_NAME);
 
         $this->usr2 = new user();
-        $this->usr2->load_by_name(user::SYSTEM_NAME_TEST_PARTNER);
+        $this->usr2->load_by_name(user::SYSTEM_TEST_PARTNER_NAME);
 
         $this->usr_admin = new user();
-        $this->usr_admin->load_by_name(user::SYSTEM_TEST_NAME_ADMIN);
+        $this->usr_admin->load_by_name(user::SYSTEM_TEST_ADMIN_NAME);
 
         $this->usr_normal = new user();
-        $this->usr_normal->load_by_name(user::SYSTEM_TEST_NAME_NORMAL);
+        $this->usr_normal->load_by_name(user::SYSTEM_TEST_NORMAL_NAME);
 
     }
 
