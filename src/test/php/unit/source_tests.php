@@ -76,7 +76,7 @@ class source_tests
 
         $t->subheader('source sql read standard by name');
         $src = new source($usr);
-        $src->set_name(source_api::TN_READ);
+        $src->set_name(source_api::TN_READ_REF);
         $t->assert_sql_standard($sc, $src);
 
         $t->subheader('source sql write insert');

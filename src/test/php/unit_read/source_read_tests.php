@@ -56,15 +56,12 @@ class source_read_tests
         $t->header('source db read tests');
 
         $t->subheader('source load');
-        $test_name = 'load source ' . source_api::TN_READ_API . ' by name and id';
-        $src = $t->load_source(source_api::TN_READ_API);
-        $src_by_id = new source($t->usr1);
-        $src_by_id->load_by_id($src->id());
-        $t->assert($test_name, $src_by_id->name(), source_api::TN_READ_API);
-        $t->assert($test_name, $src_by_id->description, source_api::TD_READ_API);
-        $test_name = 'load by code_id ' . source_api::TN_READ_API;
+        $src = $t->assert_load(new source($t->usr1), source_api::TN_READ);
+        $test_name = 'load source ' . source_api::TN_READ . ' by name and check description';
+        $t->assert($test_name, $src->description, source_api::TD_READ);
+        $test_name = 'load by code_id ' . source_api::TN_READ;
         $src = new source($t->usr1);
-        $src_by_id->load_by_code_id($src->id());
+        $src->load_by_code_id($src->id());
 
         $t->subheader('source load types');
         $lst = new source_type_list();
@@ -76,8 +73,8 @@ class source_read_tests
         $t->subheader('source list tests');
         $test_name = 'loading by source list by ids ';
         $src_lst = new source_list($t->usr1);
-        $src_lst->load_by_ids([source_api::TI_READ]);
-        $t->assert($test_name . $src_lst->dsp_id(), $src_lst->name(), '"' . source_api::TN_READ . '"');
+        $src_lst->load_by_ids([source_api::TI_READ_REF]);
+        $t->assert($test_name . $src_lst->dsp_id(), $src_lst->name(), '"' . source_api::TN_READ_REF . '"');
 
         $test_name = 'loading the api message creation of the api index file for ';
         // TODO add this to all db read tests for all API call functions
@@ -88,9 +85,9 @@ class source_read_tests
 
         $test_name = 'loading by source list by pattern ';
         $src_lst = new source_list($t->usr1);
-        $pattern = substr(source_api::TN_READ, 0, -1);
+        $pattern = substr(source_api::TN_READ_REF, 0, -1);
         $src_lst->load_like($pattern);
-        $t->assert_contains($test_name, $src_lst->names(), source_api::TN_READ);
+        $t->assert_contains($test_name, $src_lst->names(), source_api::TN_READ_REF);
 
     }
 

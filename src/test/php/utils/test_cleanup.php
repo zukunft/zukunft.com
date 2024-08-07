@@ -299,7 +299,7 @@ class test_cleanup extends test_api
 
         // request to delete the added test sources
         foreach (source_api::TEST_SOURCES as $src_name) {
-            if ($src_name != source_api::TN_READ) {
+            if ($src_name != source_api::TN_READ_REF) {
                 $src = $this->load_source($src_name);
                 if ($src->id() > 0) {
                     $msg = $src->del();

@@ -55,14 +55,14 @@ class source_write_tests
         $t->assert_write_named($test_name, $t->source_add_by_func(), true);
 
         // load the main test source
-        $src_read = $t->test_word(source_api::TN_READ);
+        $src_read = $t->test_word(source_api::TN_READ_REF);
 
         // check if loading a source by name and id works
         $src_by_name = new source($t->usr1);
-        $src_by_name->load_by_name(source_api::TN_READ, source::class);
+        $src_by_name->load_by_name(source_api::TN_READ_REF, source::class);
         $src_by_id = new source($t->usr1);
         $src_by_id->load_by_id($src_by_name->id());
-        $target = source_api::TN_READ;
+        $target = source_api::TN_READ_REF;
         $result = $src_by_id->name();
         $t->display('source->load of ' . $src_read->id() . ' by id ' . $src_by_name->id(), $target, $result);
 
@@ -208,7 +208,7 @@ class source_write_tests
 
         $t->header('Check if all base sources are exist');
 
-        $t->test_source(source_api::TN_READ);
+        $t->test_source(source_api::TN_READ_REF);
 
     }
 

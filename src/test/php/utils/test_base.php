@@ -1967,23 +1967,27 @@ class test_base
     /**
      * check the object loading by id and name
      *
-     * @param sandbox $usr_obj the user sandbox object e.g. a word
-     * @param string $name the name
-     * @return bool true if all tests are fine
+     * @param sandbox_named $usr_obj the user sandbox object e.g. a word
+     * @param string $name the name of the object
+     * @param int $id the id of the object if not 1
+     * @return sandbox_named the load object to use it for more tests
      */
-    function assert_load(db_object_seq_id $usr_obj, string $name): bool
+    function assert_load(sandbox_named $usr_obj, string $name = '', int $id = 1): sandbox_named
     {
-        // check the loading via id and check the name
-        $usr_obj->load_by_id(1, $usr_obj::class);
-        $result = $this->assert($usr_obj::class . '->load', $usr_obj->name(), $name);
+        // check the loading via name and check the id
+        $usr_obj->load_by_name($name);
+        $result = $this->assert('load ' . $usr_obj::class . ' by name', $usr_obj->id(), $id);
 
-        // ... and check the loading via name and check the id
+        // ... and check the loading via id and check the name
         if ($result) {
             $usr_obj->reset();
-            $usr_obj->load_by_name($name);
-            $result = $this->assert($usr_obj::class . '->load', $usr_obj->id(), 1);
+            $usr_obj->load_by_id($id);
+            $result = $this->assert('load ' . $usr_obj::class . ' by id', $usr_obj->name(), $name);
+            if (!$result) {
+                $usr_obj->reset();
+            }
         }
-        return $result;
+        return $usr_obj;
     }
 
     /**

@@ -1899,9 +1899,9 @@ class create_test_objects extends test_base
     function source(): source
     {
         $src = new source($this->usr1);
-        $src->set(source_api::TI_READ_API, source_api::TN_READ_API, source_type::PDF);
-        $src->description = source_api::TD_READ_API;
-        $src->url = source_api::TU_READ_API;
+        $src->set(source_api::TI_READ, source_api::TN_READ, source_type::PDF);
+        $src->description = source_api::TD_READ;
+        $src->url = source_api::TU_READ;
         return $src;
     }
 
@@ -1911,7 +1911,7 @@ class create_test_objects extends test_base
     function source_ref(): source
     {
         $src = new source($this->usr1);
-        $src->set(source_api::TI_READ, source_api::TN_READ, source_type::CSV);
+        $src->set(source_api::TI_READ_REF, source_api::TN_READ_REF, source_type::CSV);
         return $src;
     }
 
@@ -1921,7 +1921,7 @@ class create_test_objects extends test_base
     function source_admin(): source
     {
         $src = $this->source();
-        $src->code_id = source_api::TC_READ_API;
+        $src->code_id = source_api::TC_READ;
         return $src;
     }
     /**

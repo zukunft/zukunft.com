@@ -140,7 +140,7 @@ class change_log_read_tests
         // ... and if the first entry is the setting the source name
         $first_change = $lst->lst()[0];
         $t->assert('first source change is setting', $first_change->old_value, '');
-        $t->assert('... the name', $first_change->new_value, source_api::TN_READ_API);
+        $t->assert('... the name', $first_change->new_value, source_api::TN_READ);
 
         // check loading of name changes of view
         $lst = new change_log_list();

@@ -612,7 +612,7 @@ class sandbox_named extends sandbox
                 } elseif ($this::class == source::class) {
                     if (in_array($this->name, source_api::RESERVED_SOURCES)) {
                         // the admin user needs to add the read test source during initial load
-                        if ($usr->is_admin() and $this->name() != source_api::TN_READ) {
+                        if ($usr->is_admin() and $this->name() != source_api::TN_READ_REF) {
                             $result = '"' . $this->name() . '" ' . $msg_res . ' source ' . $msg_for;
                         }
                     }

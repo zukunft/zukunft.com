@@ -127,8 +127,8 @@ class api_tests
         $t->assert_api_get_by_text(view::class, view_api::TN_READ);
         $t->assert_api_get(component::class);
         $t->assert_api_get_by_text(component::class, component_api::TN_READ);
-        $t->assert_api_get(source::class, source_api::TI_READ_API);
-        $t->assert_api_get_by_text(source::class, source_api::TN_READ_API);
+        $t->assert_api_get(source::class, source_api::TI_READ);
+        $t->assert_api_get_by_text(source::class, source_api::TN_READ);
         $t->assert_api_get(ref::class, ref_api::TI_PI);
         $t->assert_api_get(job::class);
         $t->assert_api_get(phrase_type::class);

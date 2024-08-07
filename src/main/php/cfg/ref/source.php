@@ -77,7 +77,6 @@ use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
 use cfg\export\source_exp;
 use cfg\log\change;
-use shared\library;
 
 class source extends sandbox_typed
 {
