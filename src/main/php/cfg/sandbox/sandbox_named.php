@@ -420,6 +420,16 @@ class sandbox_named extends sandbox
         return array($this->id_field(), $this->name_field());
     }
 
+    /**
+     * only to suppress the polymorthic warning and to be overwritten by the child objects
+     * @param string $code_id
+     * @return int zero if not overwritten by the child object to indicate the internal error
+     */
+    function load_by_code_id(string $code_id): int
+    {
+        log_err($this::class . ' does not have a load_by_code_id function');
+        return 0;
+    }
 
     /*
      * im- and export

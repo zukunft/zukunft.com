@@ -1906,6 +1906,32 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return source with all fields set for testing the sql function creation
+     */
+    function source_filled(): source
+    {
+        global $share_types;
+        global $protection_types;
+        $src = $this->source();
+        $src->excluded = true;
+        $src->share_id = $share_types->id(share_type_shared::GROUP);
+        $src->protection_id = $protection_types->id(protect_type_shared::USER);
+        return $src;
+    }
+
+    /**
+     * @return source with all fields set and a reseved test name for testing the db write function
+     */
+    function source_filled_add(): source
+    {
+        $src = $this->source_filled();
+        $src->include();
+        $src->set_id(0);
+        $src->set_name(source_api::TN_ADD);
+        return $src;
+    }
+
+    /**
      * @return source used for the reference
      */
     function source_ref(): source

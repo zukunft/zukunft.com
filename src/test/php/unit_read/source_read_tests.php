@@ -56,12 +56,11 @@ class source_read_tests
         $t->header('source db read tests');
 
         $t->subheader('source load');
-        $src = $t->assert_load(new source($t->usr1), source_api::TN_READ);
-        $test_name = 'load source ' . source_api::TN_READ . ' by name and check description';
-        $t->assert($test_name, $src->description, source_api::TD_READ);
-        $test_name = 'load by code_id ' . source_api::TN_READ;
         $src = new source($t->usr1);
-        $src->load_by_code_id($src->id());
+        $t->assert_load($src, source_api::TN_READ);
+        $test_name = 'check description of source ' . source_api::TN_READ;
+        $t->assert($test_name, $src->description, source_api::TD_READ);
+        $t->assert_load_by_code_id($src, source_api::TC_READ);
 
         $t->subheader('source load types');
         $lst = new source_type_list();

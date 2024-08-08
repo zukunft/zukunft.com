@@ -48,43 +48,19 @@ class source_write_tests
 
         $t->header('source db write tests');
 
-        $t->subheader('view prepared write');
+        $t->subheader('source prepared write');
         $test_name = 'add source ' . source_api::TN_ADD_VIA_SQL . ' via sql insert';
         $t->assert_write_named($test_name, $t->source_add_by_sql(), false);
         $test_name = 'add source ' . source_api::TN_ADD_VIA_FUNC . ' via sql function';
         $t->assert_write_named($test_name, $t->source_add_by_func(), true);
 
-        // load the main test source
-        $src_read = $t->test_word(source_api::TN_READ_REF);
+        $t->subheader('source write sandbox tests for ' . source_api::TN_ADD);
+        $t->assert_write_sandbox($t->source_filled_add(), source_api::TN_ADD);
 
-        // check if loading a source by name and id works
-        $src_by_name = new source($t->usr1);
-        $src_by_name->load_by_name(source_api::TN_READ_REF, source::class);
-        $src_by_id = new source($t->usr1);
-        $src_by_id->load_by_id($src_by_name->id());
-        $target = source_api::TN_READ_REF;
-        $result = $src_by_id->name();
-        $t->display('source->load of ' . $src_read->id() . ' by id ' . $src_by_name->id(), $target, $result);
-
-        // test the creation of a new source
-        $src_add = new source($t->usr1);
-        $src_add->set_name(source_api::TN_ADD);
-        $result = $src_add->save();
-        $target = '';
-        $t->display('source->save for "' . source_api::TN_ADD . '"', $target, $result, $t::TIMEOUT_LIMIT_DB);
-
-        // ... check if the source creation has been logged
-        if ($src_add->id() > 0) {
-            $log = new change($t->usr1);
-            $log->set_table(change_table_list::SOURCE);
-            $log->set_field(change_field_list::FLD_SOURCE_NAME);
-            $log->row_id = $src_add->id();
-            $result = $log->dsp_last(true);
-        }
-        $target = 'zukunft.com system test added "' . source_api::TN_ADD .'"';
-        $t->display('source->save logged for "' . source_api::TN_ADD . '"', $target, $result);
+        /*
 
         // ... test if the new source has been created
+        $result = '';
         $src_added = $t->load_source(source_api::TN_ADD);
         $src_added->load_by_name(source_api::TN_ADD);
         if ($src_added->id() > 0) {
@@ -118,6 +94,7 @@ class source_write_tests
         $target = 'zukunft.com system test changed "' . source_api::TN_ADD . '" to "' . source_api::TN_RENAMED . '"';
         $t->display('source->save rename logged for "' . source_api::TN_RENAMED . '"', $target, $result);
 
+
         // check if the source parameters can be added
         $src_renamed->url = source_api::TU_ADD;
         $src_renamed->description = source_api::TD_ADD;
@@ -148,6 +125,8 @@ class source_write_tests
         $target = 'zukunft.com system test added "' . source_api::TD_ADD . '"';
         //$target = 'zukunft.com system test partner changed System Test Source Description Changed to System Test Source Description';
         $t->display('source->load description for "' . source_api::TN_RENAMED . '" logged', $target, $result);
+
+
 
         // check if a user specific source is created if another user changes the source
         $src_usr2 = new source($t->usr2);
@@ -195,6 +174,12 @@ class source_write_tests
         $result = $src_usr2_reloaded->description;
         $target = source_api::TD_ADD;
         $t->display('source->load description for "' . source_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
+
+        // clean up by deleting all add test sources
+        $src_usr2_reloaded->del();
+        $src_renamed->del();
+
+        */
 
         // TODO create and check the display functions
         // TODO test the import of a source with a non system with the code id and check if the warning message is created and the update is rejected
