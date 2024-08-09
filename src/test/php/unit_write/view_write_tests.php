@@ -60,9 +60,9 @@ class view_write_tests
 
         $t->subheader('view prepared write');
         $test_name = 'add view ' . view_api::TN_ADD_VIA_SQL . ' via sql insert';
-        $t->assert_write_named($test_name, $t->view_add_by_sql(), false);
+        $t->assert_write_via_func_or_sql($test_name, $t->view_add_by_sql(), false);
         $test_name = 'add view ' . view_api::TN_ADD_VIA_FUNC . ' via sql function';
-        $t->assert_write_named($test_name, $t->view_add_by_func(), true);
+        $t->assert_write_via_func_or_sql($test_name, $t->view_add_by_func(), true);
 
 
         $db_con->import_system_views($t->usr1);

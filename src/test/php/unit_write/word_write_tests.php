@@ -65,9 +65,9 @@ class word_write_tests
 
         $t->subheader('word prepared write');
         $test_name = 'add word ' . word_api::TN_ADD_VIA_SQL . ' via sql insert';
-        $t->assert_write_named($test_name, $t->word_add_by_sql(), false);
+        $t->assert_write_via_func_or_sql($test_name, $t->word_add_by_sql(), false);
         $test_name = 'add word ' . word_api::TN_ADD_VIA_FUNC . ' via sql function';
-        $t->assert_write_named($test_name, $t->word_add_by_func(), true);
+        $t->assert_write_via_func_or_sql($test_name, $t->word_add_by_func(), true);
 
         $test_name = 'test saving word type ' . phrase_type::TIME . ' by adding add time word ' . word_api::TN_2021;
         $wrd_time = $t->test_word(word_api::TN_2021, phrase_type::TIME);

@@ -1636,8 +1636,9 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * save all updated fields with one sql function
+     *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param sandbox $db_obj the database record before the saving
+     * @param sandbox $db_obj the database record before saving the changes whereas $this is the record with the changes
      * @param sandbox $norm_obj the database record defined as standard because it is used by most users
      * @return string if not empty the message that should be shown to the user
      */
@@ -1647,7 +1648,9 @@ class sandbox extends db_object_seq_id_user
         $usr_msg = new user_message();
         // the sql creator is used more than once, so create it upfront
         $sc = $db_con->sql_creator();
+        // the sql function should include the log of the changes
         $sc_par_lst = new sql_type_list([sql_type::LOG]);
+        // get a list of all fields that could potentially be updated
         $all_fields = $this->db_fields_all();
         // get the object name for the log messages
         $lib = new library();
@@ -1658,7 +1661,8 @@ class sandbox extends db_object_seq_id_user
             // if there is no difference between the user row and the norm row remove all fields from the user row
             if ($this->no_diff($norm_obj)) {
                 if ($this->has_usr_cfg()) {
-                    $qp = $this->sql_delete($sc, new sql_type_list([sql_type::USER]));
+                    $sc_par_lst->add(sql_type::USER);
+                    $qp = $this->sql_delete($sc, $sc_par_lst);
                     $usr_msg->add($db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id()));
                 }
             } else {
@@ -1688,6 +1692,10 @@ class sandbox extends db_object_seq_id_user
                     $usr_msg->add($db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id()));
                 } else {
                     $sc_par_lst->add(sql_type::UPDATE);
+                    // force logging the deletion
+                    if ($this->is_excluded()) {
+                        $sc_par_lst->add(sql_type::EXCLUDE);
+                    }
                     $fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst);
                     $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
                     $usr_msg->add($db_con->update($qp, 'update user ' . $obj_name));

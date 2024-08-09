@@ -6,6 +6,8 @@ PREPARE source_norm_by_name (text) AS
            description,
            source_type_id,
            excluded,
+           share_type_id,
+           protect_id,
            user_id
       FROM sources
      WHERE source_name = $1;

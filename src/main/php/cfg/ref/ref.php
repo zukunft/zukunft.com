@@ -127,7 +127,9 @@ class ref extends sandbox_link_with_type
     // list of user specific numeric field names
     const FLD_NAMES_NUM_USR = array(
         source::FLD_ID,
-        sandbox::FLD_EXCLUDED
+        sandbox::FLD_EXCLUDED,
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_SANDBOX_FLD_NAMES = array(

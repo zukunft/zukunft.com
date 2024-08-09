@@ -2084,7 +2084,7 @@ class test_base
      * @param bool $use_func true if the complex function including the logging should be used
      * @return bool true if the test has been successful
      */
-    function assert_write_named(string $test_name, sandbox_named|sandbox_link_named $sbx, bool $use_func): bool
+    function assert_write_via_func_or_sql(string $test_name, sandbox_named|sandbox_link_named $sbx, bool $use_func): bool
     {
         // add the named object and remember the name
         $name = $sbx->name();
@@ -2142,17 +2142,21 @@ class test_base
     }
 
     /**
-     * test the user sandbox
+     * test the named user sandbox object by adding it
+     * and simulate if different users change it
      * TODO use the full set object for the creation
      *
      * @param sandbox_named|sandbox_link_named $sbx
      * @param string $name
      * @return bool
      */
-    function assert_write_sandbox(sandbox_named|sandbox_link_named $sbx, string $name): bool
+    function assert_write_named(sandbox_named|sandbox_link_named $sbx, string $name): bool
     {
-        // add the named object for the test user
+        // add the named object for the test user 1
         $id = $this->write_sandbox_add($sbx, $name, $this->usr1);
+
+        // remember the api json for later compare
+        $api_json = $sbx->api_json();
 
         // check the log
         if ($id != 0) {
@@ -2169,6 +2173,11 @@ class test_base
         // check if user 1 can load the added object
         if ($result) {
             $result = $this->assert_load($sbx, $name, $id);
+        }
+
+        // check if no relevant fields a lost during save and reload
+        if ($result) {
+            $result = $this->assert('API json based compare', $sbx->api_json(), $api_json);
         }
 
         // check renaming the added object

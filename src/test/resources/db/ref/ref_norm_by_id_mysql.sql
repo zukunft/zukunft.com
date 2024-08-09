@@ -7,6 +7,8 @@ PREPARE ref_norm_by_id FROM
             description,
             source_id,
             excluded,
+            share_type_id,
+            protect_id,
             user_id
        FROM refs
       WHERE ref_id = ?';

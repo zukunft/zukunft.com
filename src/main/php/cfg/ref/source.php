@@ -131,7 +131,9 @@ class source extends sandbox_typed
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
-        sandbox::FLD_EXCLUDED
+        sandbox::FLD_EXCLUDED,
+        sandbox::FLD_SHARE,
+        sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_SANDBOX_FLD_NAMES = array(
@@ -184,7 +186,7 @@ class source extends sandbox_typed
     function row_mapper_sandbox(
         ?array $db_row,
         bool   $load_std = false,
-        bool   $allow_usr_protect = false,
+        bool   $allow_usr_protect = true,
         string $id_fld = self::FLD_ID,
         string $name_fld = self::FLD_NAME
     ): bool

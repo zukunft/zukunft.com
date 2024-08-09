@@ -55,9 +55,9 @@ class component_write_tests
 
         $t->subheader('component prepared write');
         $test_name = 'add component ' . component_api::TN_ADD_VIA_SQL . ' via sql insert';
-        $t->assert_write_named($test_name, $t->component_add_by_sql(), false);
+        $t->assert_write_via_func_or_sql($test_name, $t->component_add_by_sql(), false);
         $test_name = 'add component ' . component_api::TN_ADD_VIA_FUNC . ' via sql function';
-        $t->assert_write_named($test_name, $t->component_add_by_func(), true);
+        $t->assert_write_via_func_or_sql($test_name, $t->component_add_by_func(), true);
 
         /*
         // test loading of one component

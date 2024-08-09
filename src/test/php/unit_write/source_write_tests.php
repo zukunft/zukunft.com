@@ -50,81 +50,16 @@ class source_write_tests
 
         $t->subheader('source prepared write');
         $test_name = 'add source ' . source_api::TN_ADD_VIA_SQL . ' via sql insert';
-        $t->assert_write_named($test_name, $t->source_add_by_sql(), false);
+        $t->assert_write_via_func_or_sql($test_name, $t->source_add_by_sql(), false);
         $test_name = 'add source ' . source_api::TN_ADD_VIA_FUNC . ' via sql function';
-        $t->assert_write_named($test_name, $t->source_add_by_func(), true);
+        $t->assert_write_via_func_or_sql($test_name, $t->source_add_by_func(), true);
 
         $t->subheader('source write sandbox tests for ' . source_api::TN_ADD);
-        $t->assert_write_sandbox($t->source_filled_add(), source_api::TN_ADD);
+        $t->assert_write_named($t->source_filled_add(), source_api::TN_ADD);
 
         /*
+        TODO remove but check upfront the replacement
 
-        // ... test if the new source has been created
-        $result = '';
-        $src_added = $t->load_source(source_api::TN_ADD);
-        $src_added->load_by_name(source_api::TN_ADD);
-        if ($src_added->id() > 0) {
-            $result = $src_added->name();
-        }
-        $target = source_api::TN_ADD;
-        $t->display('source->load of added source "' . source_api::TN_ADD . '"', $target, $result);
-
-        // check if the source can be renamed
-        $src_added->set_name(source_api::TN_RENAMED);
-        $result = $src_added->save();
-        $target = '';
-        $t->display('source->save rename "' . source_api::TN_ADD . '" to "' . source_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB);
-
-        // check if the source renaming was successful
-        $src_renamed = new source($t->usr1);
-        if ($src_renamed->load_by_name(source_api::TN_RENAMED, source::class)) {
-            if ($src_renamed->id() > 0) {
-                $result = $src_renamed->name();
-            }
-        }
-        $target = source_api::TN_RENAMED;
-        $t->display('source->load renamed source "' . source_api::TN_RENAMED . '"', $target, $result);
-
-        // check if the source renaming has been logged
-        $log = new change($t->usr1);
-        $log->set_table(change_table_list::SOURCE);
-        $log->set_field(change_field_list::FLD_SOURCE_NAME);
-        $log->row_id = $src_renamed->id();
-        $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test changed "' . source_api::TN_ADD . '" to "' . source_api::TN_RENAMED . '"';
-        $t->display('source->save rename logged for "' . source_api::TN_RENAMED . '"', $target, $result);
-
-
-        // check if the source parameters can be added
-        $src_renamed->url = source_api::TU_ADD;
-        $src_renamed->description = source_api::TD_ADD;
-        $result = $src_renamed->save();
-        $target = '';
-        $t->display('source->save all source fields beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
-
-        // check if the source parameters have been added
-        $src_reloaded = $t->load_source(source_api::TN_RENAMED);
-        $result = $src_reloaded->url;
-        $target = source_api::TU_ADD;
-        $t->display('source->load url for "' . source_api::TN_RENAMED . '"', $target, $result);
-        $result = $src_reloaded->description;
-        $target = source_api::TD_ADD;
-        $t->display('source->load description for "' . source_api::TN_RENAMED . '"', $target, $result);
-
-        // check if the source parameter adding have been logged
-        $log = new change($t->usr1);
-        $log->set_table(change_table_list::SOURCE);
-        $log->set_field(change_field_list::FLD_SOURCE_URL);
-        $log->row_id = $src_reloaded->id();
-        $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test added "' . source_api::TU_ADD . '"';
-        //$target = 'zukunft.com system test partner changed ' . source_api::TEST_URL_CHANGED . ' to ' . source_api::TEST_URL;
-        $t->display('source->load url for "' . source_api::TN_RENAMED . '" logged', $target, $result);
-        $log->set_field(sandbox_named::FLD_DESCRIPTION);
-        $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test added "' . source_api::TD_ADD . '"';
-        //$target = 'zukunft.com system test partner changed System Test Source Description Changed to System Test Source Description';
-        $t->display('source->load description for "' . source_api::TN_RENAMED . '" logged', $target, $result);
 
 
 

@@ -63,9 +63,9 @@ class triple_write_tests
 
         $t->subheader('triple prepared write');
         $test_name = 'add triple ' . triple_api::TN_ADD_VIA_SQL . ' via sql insert';
-        $t->assert_write_named($test_name, $t->triple_add_by_sql(), false);
+        $t->assert_write_via_func_or_sql($test_name, $t->triple_add_by_sql(), false);
         $test_name = 'add triple ' . triple_api::TN_ADD_VIA_FUNC . ' via sql function';
-        $t->assert_write_named($test_name, $t->triple_add_by_func(), true);
+        $t->assert_write_via_func_or_sql($test_name, $t->triple_add_by_func(), true);
 
         $t->subheader('triple user sandbox write tests');
 
