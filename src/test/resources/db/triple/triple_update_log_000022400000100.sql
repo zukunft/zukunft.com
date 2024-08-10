@@ -28,8 +28,8 @@ BEGIN
     INSERT INTO changes (user_id, change_action_id, change_field_id,   old_value,    new_value,row_id)
          SELECT         _user_id,_change_action_id,_field_id_excluded,_excluded_old,_excluded,_triple_id ;
 
-    INSERT INTO changes (user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
-         SELECT         _user_id,_change_action_id,_field_id_triple_name,_triple_name_old,_triple_name,_triple_id ;
+    INSERT INTO changes (user_id, change_action_id, change_field_id,      old_value,       row_id)
+         SELECT         _user_id,_change_action_id,_field_id_triple_name,_triple_name_old,_triple_id ;
 
     UPDATE triples
        SET triple_name    = _triple_name,

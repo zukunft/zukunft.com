@@ -135,6 +135,14 @@ class sql_type_list
     }
 
     /**
+     * @return bool true if
+     */
+    public function exclude_name_only(): bool
+    {
+        return in_array(sql_type::EXCL_NAME_ONLY, $this->lst);
+    }
+
+    /**
      * @return bool true if a delete sql statement should be created
      */
     function is_select(): bool

@@ -70,6 +70,7 @@ enum sql_type: string
     case UPDATE_PART = 'update_part'; // the sql statement is part of an update action which implies that no new db row id is added
     case DELETE_PART = 'delete_part'; // the sql statement is part of a delete function which implies that only old fields are used
     case EXCLUDE = 'exclude'; // instead of delete create a sql to exclude one row and log the deletion
+    case EXCL_NAME_ONLY = 'excl_name_only';
     case SANDBOX = 'sandbox'; // to include the standard sandbox fields in the sql statement
     case KEY_SMALL_INT = 'key_small_int'; // use a smallint as the prime db key e.g. for types
     case SELECT_FOR_INSERT = 'select_for_insert'; // use a select statement for the insert values

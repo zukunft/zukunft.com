@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION source_update_log_excluded_0000000100
+CREATE OR REPLACE FUNCTION source_update_log_excluded_0000000100_user
     (_user_id                 bigint,
      _change_action_id        smallint,
      _field_id_excluded       smallint,
@@ -17,19 +17,20 @@ BEGIN
          SELECT          _user_id,_change_action_id,_field_id_source_name,_source_name_old,_source_id ;
 
 
-    UPDATE sources
+    UPDATE user_sources
        SET excluded  = _excluded
-     WHERE source_id = _source_id;
+     WHERE source_id = _source_id
+       AND user_id = _user_id;
 
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE source_update_log_excluded_0000000100_call
+PREPARE source_update_log_excluded_0000000100_user_call
         (bigint,smallint,smallint,smallint,smallint,bigint,smallint,text) AS
-SELECT source_update_log_excluded_0000000100
+SELECT source_update_log_excluded_0000000100_user
         ($1,$2,$3,$4,$5,$6,$7,$8);
 
-SELECT source_update_log_excluded_0000000100
+SELECT source_update_log_excluded_0000000100_user
        (1::bigint,
         2::smallint,
         169::smallint,

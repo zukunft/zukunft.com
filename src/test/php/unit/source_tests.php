@@ -98,8 +98,8 @@ class source_tests
         $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
         $src_only_excluded = clone $src;
         $src_only_excluded->exclude();
-        //$t->assert_sql_update($sc, $src_only_excluded, $src, [sql_type::LOG, sql_type::EXCLUDE]);
-        //$t->assert_sql_update($sc, $src_only_excluded, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
+        $t->assert_sql_update($sc, $src_only_excluded, $src, [sql_type::LOG, sql_type::EXCLUDE]);
+        $t->assert_sql_update($sc, $src_only_excluded, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
 
         $t->subheader('source sql delete');
         $t->assert_sql_delete($sc, $src);

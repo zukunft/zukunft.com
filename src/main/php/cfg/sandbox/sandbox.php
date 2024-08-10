@@ -3688,7 +3688,7 @@ class sandbox extends db_object_seq_id_user
                             change::FLD_FIELD_ID_SQLTYP
                         );
                         $par_lst_out->add_field(
-                            $this->name_field(),
+                            $this->name_field() . change::FLD_OLD_EXT,
                             $this->name(),
                             sandbox_named::FLD_NAME_SQLTYP
                         );
@@ -3701,10 +3701,9 @@ class sandbox extends db_object_seq_id_user
 
         // add additional log entry if the row has been excluded
         if ($this->excluded) {
-            // TODO use a commen function for this part with in sql_delete_and_log
+            // TODO use a common function for this part with in sql_delete_and_log
             $sc_par_lst_log = clone $sc_par_lst_sub;
-            $sc_par_lst_log->remove(sql_type::LOG);
-            $sc_par_lst_log->remove(sql_type::UPDATE_PART);
+            $sc_par_lst_log->add(sql_type::EXCL_NAME_ONLY);
             $sc_par_lst_log->add(sql_type::SELECT_FOR_INSERT);
             $sc_log = clone $sc;
             if ($this->is_named_obj()) {

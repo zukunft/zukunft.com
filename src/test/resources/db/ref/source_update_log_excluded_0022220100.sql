@@ -31,8 +31,8 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,   old_value,     new_value, row_id)
          SELECT          _user_id,_change_action_id,_field_id_excluded,_excluded_old, _excluded, _source_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
-         SELECT          _user_id,_change_action_id,_field_id_source_name,_source_name_old,_source_name,_source_id ;
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       row_id)
+         SELECT          _user_id,_change_action_id,_field_id_source_name,_source_name_old,_source_id ;
 
 
     UPDATE sources
