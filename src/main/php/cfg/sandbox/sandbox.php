@@ -3675,8 +3675,60 @@ class sandbox extends db_object_seq_id_user
                 $id_fld,
                 $log_id,
                 db_object_seq_id::FLD_ID_SQLTYP);
+
+            // add the name field if it is missing and the object should be excluded
+            if ($this->excluded and $sc_par_lst->is_update()) {
+                if ($this->is_named_obj()) {
+                    if (!$par_lst_out->has_name($this->name_field())) {
+                        global $change_field_list;
+                        $table_id = $sc->table_id($this::class);
+                        $par_lst_out->add_field(
+                            sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
+                            $change_field_list->id($table_id . $this->name_field()),
+                            change::FLD_FIELD_ID_SQLTYP
+                        );
+                        $par_lst_out->add_field(
+                            $this->name_field(),
+                            $this->name(),
+                            sandbox_named::FLD_NAME_SQLTYP
+                        );
+                    }
+                }
+            }
+
         }
         $sql .= ' ' . $func_body_change;
+
+        // add additional log entry if the row has been excluded
+        if ($this->excluded) {
+            // TODO use a commen function for this part with in sql_delete_and_log
+            $sc_par_lst_log = clone $sc_par_lst_sub;
+            $sc_par_lst_log->remove(sql_type::LOG);
+            $sc_par_lst_log->remove(sql_type::UPDATE_PART);
+            $sc_par_lst_log->add(sql_type::SELECT_FOR_INSERT);
+            $sc_log = clone $sc;
+            if ($this->is_named_obj()) {
+                $log = new change($this->user());
+                $log->set_class($this::class);
+                $log->set_field($this->name_field());
+                $log->old_value = $this->name();
+                $log->new_value = null;
+                $qp_log = $log->sql_insert(
+                    $sc_log, $sc_par_lst_log, $ext . '_' . $this->name_field(), '', $this->name_field(), $id_val);
+            } elseif ($this->is_link_obj()) {
+                /*
+                $qp_log = $sc->sql_func_log_link($this, $this, $this->user(), $par_lst_out, $sc_par_lst_log);
+                $par_lst_out->add_list($qp_log->par_fld_lst);
+                // TODO use these functions more often
+                $par_lst_out->add_list($this->sql_key_fields_text_old($fvt_lst));
+                $par_lst_out->add_list($this->sql_key_fields_id_old($fvt_lst));
+                */
+            } else {
+                $qp_log = new sql_par($this::class, $sc_par_lst);
+                log_err('Only named and link objects are supported in sandbox::sql_delete_and_log');
+            }
+            $sql .= ' ' . $qp_log->sql . ';';
+        }
 
         // update the fields excluding the unique id
         $update_fvt_lst = new sql_par_field_list();

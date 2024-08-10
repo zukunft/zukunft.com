@@ -331,6 +331,7 @@ class sql_par_field_list
     {
         global $change_field_list;
 
+        // include the name field for the log also if the object is only excluded
         if ($sbx_db->name() <> $sbx_upd->name()) {
             if ($do_log) {
                 $this->add_field(
