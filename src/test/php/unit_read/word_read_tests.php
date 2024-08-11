@@ -59,12 +59,9 @@ class word_read_tests
         $t->header('word db read tests');
 
         $t->subheader('word load');
-        $test_name = word_api::TN_READ . ' by name and id';
-        $wrd = $t->load_word(word_api::TN_READ);
-        $wrd_by_id = new word($t->usr1);
-        $wrd_by_id->load_by_id($wrd->id());
-        $t->assert($test_name, $wrd_by_id->name(), word_api::TN_READ);
-        $t->assert($test_name, $wrd_by_id->description, word_api::TD_READ);
+        $wrd = new word($t->usr1);
+        $t->assert_load($wrd, word_api::TN_READ);
+        $t->assert('word description ', $wrd->description, word_api::TD_READ);
 
         // TODO load plural, type and view
 

@@ -69,6 +69,9 @@ class word_write_tests
         $test_name = 'add word ' . word_api::TN_ADD_VIA_FUNC . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t->word_add_by_func(), true);
 
+        $t->subheader('word write sandbox tests for ' . word_api::TN_ADD);
+        $t->assert_write_named($t->word_filled_add(), word_api::TN_ADD);
+
         $test_name = 'test saving word type ' . phrase_type::TIME . ' by adding add time word ' . word_api::TN_2021;
         $wrd_time = $t->test_word(word_api::TN_2021, phrase_type::TIME);
         $result = $wrd_time->is_type(phrase_type::TIME);
@@ -277,8 +280,13 @@ class word_write_tests
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(word_api::TN_ADD);
         $result = $wrd_add->save();
-        $target = 'A word with the name "System Test Word" already exists. Please use another word name.';
-        $t->display('word->save for "' . word_api::TN_ADD . '"', $target, $result, $t::TIMEOUT_LIMIT_DB);
+        $target = '';
+        $t->assert('word->save for "' . word_api::TN_ADD . '"', $result, $target, $t::TIMEOUT_LIMIT_DB);
+        $wrd_add = new word($t->usr1);
+        $wrd_add->set_name(word_api::TN_ADD);
+        $result = $wrd_add->save();
+        $target = 'A word with the name "'.word_api::TN_ADD.'" already exists. Please use another word name.';
+        $t->display('word->save reject for "' . word_api::TN_ADD . '"', $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // check that the word name cannot be used for a verb, triple or formula anymore
         $vrb = new verb();
@@ -506,6 +514,15 @@ class word_write_tests
         $result = $wrd_by_name->name();
         $t->display('word->main_wrd_from_txt', $target, $result);
         */
+
+        // cleanup
+        $wrd_add = new word($t->usr1);
+        $wrd_add->set_name(word_api::TN_ADD);
+        $msg = $wrd_add->del();
+        $result = $msg->get_last_message();
+        $target = '';
+        $t->assert('word->del of "' . word_api::TN_ADD . '"', $result, $target, $t::TIMEOUT_LIMIT_DB);
+
     }
 
     /**

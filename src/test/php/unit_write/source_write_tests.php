@@ -61,36 +61,6 @@ class source_write_tests
         TODO remove but check upfront the replacement
 
 
-
-
-        // check if a user specific source is created if another user changes the source
-        $src_usr2 = new source($t->usr2);
-        $src_usr2->load_by_name(source_api::TN_RENAMED, source::class);
-        $src_usr2->url = source_api::TEST_URL_CHANGED;
-        $src_usr2->description = source_api::TEST_DESCRIPTION_CHANGED;
-        $result = $src_usr2->save();
-        $target = '';
-        $t->display('source->save all source fields for user 2 beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
-
-        // check if a user specific source changes have been saved
-        $src_usr2_reloaded = new source($t->usr2);
-        $src_usr2_reloaded->load_by_name(source_api::TN_RENAMED, source::class);
-        $result = $src_usr2_reloaded->url;
-        $target = source_api::TEST_URL_CHANGED;
-        $t->display('source->load url for "' . source_api::TN_RENAMED . '"', $target, $result);
-        $result = $src_usr2_reloaded->description;
-        $target = source_api::TEST_DESCRIPTION_CHANGED;
-        $t->display('source->load description for "' . source_api::TN_RENAMED . '"', $target, $result);
-
-        // check the source for the original user remains unchanged
-        $src_reloaded = $t->load_source(source_api::TN_RENAMED);
-        $result = $src_reloaded->url;
-        $target = source_api::TU_ADD;
-        $t->display('source->load url for "' . source_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
-        $result = $src_reloaded->description;
-        $target = source_api::TD_ADD;
-        $t->display('source->load description for "' . source_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
-
         // check if undo all specific changes removes the user source
         $src_usr2 = new source($t->usr2);
         $src_usr2->load_by_name(source_api::TN_RENAMED, source::class);

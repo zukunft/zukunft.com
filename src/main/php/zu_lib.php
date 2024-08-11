@@ -436,10 +436,10 @@ use html\phrase\phrase_group as phrase_group_dsp;
                     sandbox_named - user sandbox objects that have a given name
                         sandbox_typed - named sandbox object that have a type and a predefined behavior
                             word - the base object to find values
+                            source - a non automatic source for a value
                             formulas - a calculation rule
                             view - to show an object to the user
                             component - an formatting element for the user view e.g. to show a word or number
-                            source - a non automatic source for a value
                     sandbox_Link - user sandbox objects that link two objects
                         sandbox_link_named - user sandbox objects that link two objects
                             sandbox_link_typed - objects that have additional a type and a predefined behavior

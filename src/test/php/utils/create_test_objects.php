@@ -484,6 +484,18 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return word with all fields set and a reseved test name for testing the db write function
+     */
+    function word_filled_add(): word
+    {
+        $wrd = $this->word_filled();
+        $wrd->include();
+        $wrd->set_id(0);
+        $wrd->set_name(word_api::TN_ADD);
+        return $wrd;
+    }
+
+    /**
      * @return word to test the sql insert via function
      */
     function word_add_by_func(): word

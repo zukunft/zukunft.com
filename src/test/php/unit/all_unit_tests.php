@@ -145,11 +145,18 @@ use unit\html\view_list as view_list_html_tests;
 use unit\html\word as word_html_tests;
 use unit\html\word_list as word_list_html_tests;
 use unit\import_tests as import_tests;
+use unit_read\component_read_tests;
+use unit_read\formula_read_tests;
 use unit_read\source_read_tests;
 use unit_read\triple_read_tests;
+use unit_read\view_read_tests;
+use unit_read\word_read_tests;
 use unit_ui\local_ui_tests;
+use unit_write\component_write_tests;
+use unit_write\formula_write_tests;
 use unit_write\source_write_tests;
 use unit_write\triple_write_tests;
+use unit_write\view_write_tests;
 use unit_write\word_write_tests;
 
 class all_unit_tests extends test_cleanup
@@ -213,8 +220,12 @@ class all_unit_tests extends test_cleanup
              */
 
             // run the selected db write
+            (new word_read_tests())->run($this);
             //(new triple_read_tests())->run($this);
             (new source_read_tests())->run($this);
+            (new formula_read_tests())->run($this);
+            (new view_read_tests())->run($this);
+            (new component_read_tests())->run($this);
 
 
             /*
@@ -226,6 +237,9 @@ class all_unit_tests extends test_cleanup
             //(new triple_write_tests)->run($this);
             //(new group_write_tests)->run($this);
             (new source_write_tests)->run($this);
+            //(new formula_write_tests)->run($this);
+            //(new view_write_tests)->run($this);
+            //(new component_write_tests)->run($this);
             //(new value_write_tests)->run($this);
             //(new view_write_tests)->run($this);
             //$import = new import_file();

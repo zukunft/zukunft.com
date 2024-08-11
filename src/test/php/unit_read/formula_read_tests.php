@@ -33,6 +33,7 @@
 namespace unit_read;
 
 use api\formula\formula as formula_api;
+use cfg\formula;
 use cfg\formula_type;
 use cfg\formula_type_list;
 use cfg\formula_list;
@@ -50,7 +51,11 @@ class formula_read_tests
         // init
         $t->name = 'formula read db->';
 
-        $t->header('Unit database tests of the formula class (src/main/php/model/formula/formula.php)');
+        $t->header('formula db read tests');
+
+        $t->subheader('formula load');
+        $frm = new formula($t->usr1);
+        $t->assert_load($frm, formula_api::TN_READ);
 
         $t->subheader('formula tests');
 

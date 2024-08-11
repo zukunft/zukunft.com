@@ -320,7 +320,6 @@ class word extends sandbox_typed_api implements JsonSerializable
     );
     // list of words that are used for system testing and that should be created before the system test starts
     const TEST_WORDS_CREATE = array(
-        self::TN_ADD,
         self::TN_PARENT,
         self::TN_FIN_REPORT,
         self::TWN_CASH_FLOW,

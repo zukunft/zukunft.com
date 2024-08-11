@@ -42,11 +42,9 @@ use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
 use api\view\view as view_api;
 use cfg\component\component;
-use cfg\component\component_type;
 use cfg\component\component_type_list;
 use cfg\view;
 use cfg\view_sys_list;
-use cfg\view_type;
 use cfg\view_type_list;
 use controller\controller;
 use test\test_cleanup;
@@ -71,13 +69,8 @@ class view_read_tests
         $t->header('view db read tests');
 
         $t->subheader('view load');
-
-        $test_name = 'load view ' . view_api::TN_READ . ' by name and id';
         $msk = new view($t->usr1);
-        $msk->load_by_name(view_api::TN_READ);
-        $dsp_by_id = new view($t->usr1);
-        $dsp_by_id->load_by_id($msk->id());
-        $t->assert($test_name, $dsp_by_id->name(), view_api::TN_READ);
+        $t->assert_load($msk, view_api::TN_READ);
 
         $test_name = 'load the components of view ' . view_api::TN_READ . ' contains ' . component_api::TN_READ;
         $msk->load_components();

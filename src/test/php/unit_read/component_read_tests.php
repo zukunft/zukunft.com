@@ -46,22 +46,16 @@ class component_read_tests
     {
 
         // init
-        $t->header('Unit database tests of the component class (src/main/php/model/component/component.php)');
         $t->name = 'component read db->';
 
 
-        $t->subheader('Component db read tests');
+        $t->header('component db read tests');
 
-        $test_name = 'load component ' . component_api::TN_READ . ' by name and id';
-        $cmp = new component($t->usr1);
-        $cmp->load_by_name(component_api::TN_READ);
-        $dsp_by_id = new component($t->usr1);
-        $dsp_by_id->load_by_id($cmp->id(), component::class);
-        $t->assert($test_name, $dsp_by_id->name(), component_api::TN_READ);
-
+        $t->subheader('component load');
+        $msk = new view($t->usr1);
+        $t->assert_load($msk, view_api::TN_READ);
 
         $t->subheader('Component link db read tests');
-
         $test_name = 'load component link ' . view_api::TN_READ . ' to ' . component_api::TN_READ . ' by id';
         $msk = new view($t->usr1);
         $msk->load_by_name(view_api::TN_READ);
