@@ -2030,6 +2030,32 @@ class test_base
     }
 
     /**
+     * check the object nor the id and nor the name is used
+     *
+     * @param sandbox_named $usr_obj the user sandbox object e.g. a word
+     * @param string $name the name of the object
+     * @param int $id the id of the object if not 1
+     * @return bool the load object to use it for more tests
+     */
+    function assert_not_exist(sandbox_named $usr_obj, string $name = '', int $id = 1): bool
+    {
+        // check the loading via name and check the id
+        $test_name = 'load ' . $usr_obj::class . ' by name ' . $name . ' returns zero';
+        $usr_obj->reset();
+        $usr_obj->load_by_name($name);
+        $result = $this->assert($test_name, $usr_obj->id(), 0);
+
+        // ... and check the loading via id and check the name
+        if ($result) {
+            $test_name = 'load ' . $usr_obj::class . ' by id ' . $id . ' returns an empty string';
+            $usr_obj->reset();
+            $usr_obj->load_by_id($id);
+            $result = $this->assert($test_name, $usr_obj->name(), '');
+        }
+        return $result;
+    }
+
+    /**
      * create a sql statement to check if any user has uses another than the default value
      * e.g. word, triple, value or formulas has been renamed
      *
@@ -2152,6 +2178,11 @@ class test_base
      */
     function assert_write_named(sandbox_named|sandbox_link_named $sbx, string $name): bool
     {
+
+        /*
+         * are all fields saved?
+         */
+
         // add the named object for the test user 1
         $id = $this->write_sandbox_add($sbx, $name, $this->usr1);
 
@@ -2180,6 +2211,11 @@ class test_base
             $result = $this->assert('API json based compare', $sbx->api_json(), $api_json);
         }
 
+
+        /*
+         * rename?
+         */
+
         // check renaming the added object
         $new_name = '';
         if ($result) {
@@ -2192,6 +2228,11 @@ class test_base
         } else {
             $result = false;
         }
+
+
+        /*
+         * rename by someone else?
+         */
 
         // check user sandbox based on description
         $old_description = $sbx->description;
@@ -2233,36 +2274,77 @@ class test_base
             $result = $this->write_sandbox_check_description($sbx, $this->usr2, $new_description);
         }
 
+
+        /*
+         * undo rename?
+         */
+
         if ($result) {
             // if user 2 delete it
             $result = $this->write_sandbox_del($sbx, $this->usr2);
         }
         if ($result) {
             // ... the description will be empty for user 2
-            // TODO check why not empty
-            $result = $this->write_sandbox_check_description($sbx, $this->usr2, $new_description);
+            $result = $this->write_sandbox_check_description($sbx, $this->usr2, '');
         }
         if ($result) {
             // ... but still exist for user 1
             $result = $this->write_sandbox_check_description($sbx, $this->usr1, $old_description);
         }
 
+
         /*
+         * all delete
+         */
+
         if ($result) {
-            // if the owner deletes
+            // if the owner also deletes it
             $result = $this->write_sandbox_del($sbx, $this->usr1);
         }
         if ($result) {
-            // user 2 is the owner who can change for all users
-            $result = $this->write_sandbox_update_description($sbx, $this->usr2, $new_description);
+            // the name is empty and id is not used
+            $result = $this->assert_not_exist($sbx, $name, $id);
+        }
+        if ($result) {
+            // ... and the description for user 1 will also be empty
+            $result = $this->write_sandbox_check_description($sbx, $this->usr1, '');
+        }
+
+
+        /*
+         * owner change
+         */
+
+        if ($result) {
+            // add the named object again for test user 1 for owner change test
+            $id = $this->write_sandbox_add($sbx, $name, $this->usr1);
+        }
+        // check the log
+        if ($result) {
+            if ($id != 0) {
+                // user 2 changes the description again to be the fallback user
+                $result = $this->write_sandbox_add_description($sbx, $this->usr2, $new_description);
+            } else {
+                $result = false;
+            }
+        }
+
+        if ($result) {
+            // if the owner deletes it ...
+            $result = $this->write_sandbox_del($sbx, $this->usr1);
+        }
+        /*
+        if ($result) {
+            // ... user 2 is the owner who can change for all users
+            $result = $this->write_sandbox_update_description($sbx, $this->usr2, $old_description);
         }
         if ($result) {
             // ... user 1 will also see the updated
-            $result = $this->write_sandbox_check_description($sbx, $this->usr1, $new_description);
+            $result = $this->write_sandbox_check_description($sbx, $this->usr1, $old_description);
         }
         if ($result) {
             // ... and of course user 2
-            $result = $this->write_sandbox_check_description($sbx, $this->usr2, $new_description);
+            $result = $this->write_sandbox_check_description($sbx, $this->usr2, $old_description);
         }
 
         if ($result) {
@@ -2270,6 +2352,14 @@ class test_base
             $result = $this->write_sandbox_del($sbx, $this->usr2);
         }
         */
+        if ($result) {
+            // the name is empty and id is not used
+            $result = $this->assert_not_exist($sbx, $name, $id);
+        }
+        if ($result) {
+            // ... and the description for user 1 will also be empty
+            $result = $this->write_sandbox_check_description($sbx, $this->usr1, '');
+        }
 
         // fallback delete
         $sbx->set_user($this->usr1);
@@ -2305,10 +2395,10 @@ class test_base
 
     private function write_sandbox_log(
         sandbox_named|sandbox_link_named $sbx,
-        string $fld,
-        string $name,
-        string $action,
-        string $old_name = ''
+        string                           $fld,
+        string                           $name,
+        string                           $action,
+        ?string                          $old_name = ''
     ): bool
     {
         $log = new change($sbx->user());
@@ -2320,9 +2410,9 @@ class test_base
         $result = $log->dsp_last(true);
         $target = $sbx->user()->name() . ' ' . $action . ' "';
         if ($action == change::MSG_UPDATE) {
-            $target .= $old_name .'" to "' . $name .'"';
+            $target .= $old_name . '" to "' . $name . '"';
         } else {
-            $target .= $name .'"';
+            $target .= $name . '"';
         }
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $name;
@@ -2357,6 +2447,23 @@ class test_base
         }
     }
 
+    private function write_sandbox_add_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $description): bool
+    {
+        $id = $sbx->id();
+        $sbx->set_user($usr);
+        $sbx->load_by_id($id);
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = 'add ' . $class . ' description ' . $description;
+        $sbx->description = $description;
+        $result = $sbx->save();
+        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+            return $this->write_sandbox_log($sbx,sandbox_named::FLD_DESCRIPTION, $description, change::MSG_ADD);
+        } else {
+            return false;
+        }
+    }
+
     private function write_sandbox_update_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $new_description): bool
     {
         $id = $sbx->id();
@@ -2376,7 +2483,7 @@ class test_base
         }
     }
 
-    private function write_sandbox_check_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $description): bool
+    private function write_sandbox_check_description(sandbox_named|sandbox_link_named $sbx, user $usr, ?string $description): bool
     {
         $id = $sbx->id();
         $sbx->set_user($usr);
@@ -2384,7 +2491,7 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
         $test_name = $class . ' description for user ' . $usr->dsp_id() . ' is ' . $description;
-        if ($this->assert($test_name, $sbx->description, $description, $this::TIMEOUT_LIMIT_DB)) {
+        if ($this->assert($test_name, $sbx->description(), $description, $this::TIMEOUT_LIMIT_DB)) {
             return true;
         } else {
             return false;
@@ -2403,9 +2510,7 @@ class test_base
         $msg = $sbx->del();
         $result = $msg->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
-            // TODO check for missing log del entry
-            //return $this->write_sandbox_log($sbx, $sbx->name_field(), $name, change::MSG_DEL);;
-            return true;
+            return $this->write_sandbox_log($sbx, $sbx->name_field(), $name, change::MSG_DEL);;
         } else {
             return false;
         }
@@ -2426,12 +2531,11 @@ class test_base
     }
 
 
-
     /*
      * type id
      */
 
-    function assert_verb_id(string $code_id, int $id, string $test_name, ): int
+    function assert_verb_id(string $code_id, int $id, string $test_name,): int
     {
         global $verbs;
         $vrb_is_id = $verbs->id($code_id);

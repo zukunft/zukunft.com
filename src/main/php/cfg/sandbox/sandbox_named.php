@@ -212,12 +212,18 @@ class sandbox_named extends sandbox
 
     /**
      * get the description of the sandbox object
+     * if the object is excluded null is returned
+     * to check the value before the exclution access the var direkt via $this->description
      *
      * @return string|null the description from the object e.g. word using the same function as the phrase and term
      */
     function description(): ?string
     {
-        return $this->description;
+        if ($this->excluded) {
+            return null;
+        } else {
+            return $this->description;
+        }
     }
 
     /**
