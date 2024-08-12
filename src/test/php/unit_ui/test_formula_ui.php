@@ -43,7 +43,7 @@ function run_formula_ui_test(test_cleanup $t)
     $wrd_company = $t->test_word(word_api::TN_COMPANY);
 
     // call the add formula page and check if at least some keywords are returned
-    $frm = $t->load_formula(formula_api::TN_ADD);
+    $frm = $t->load_formula(formula_api::TN_INCREASE);
     $result = file_get_contents('https://zukunft.com/http/formula_add.php?word=' . $wrd_company->id() . '&back=' . $wrd_company->id() . '');
     $target = 'Add new formula for';
     $t->dsp_contains(', frontend formula_add.php ' . $result . ' contains at least the headline', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
@@ -52,12 +52,12 @@ function run_formula_ui_test(test_cleanup $t)
 
     // test the edit formula frontend
     $result = file_get_contents('https://zukunft.com/http/formula_edit.php?id=' . $frm->id() . '&back=' . $wrd_company->id());
-    $target = formula_api::TN_ADD;
+    $target = formula_api::TN_INCREASE;
     $t->dsp_contains(', frontend formula_edit.php ' . $result . ' contains at least ' . $frm->name(), $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
     // test the del formula frontend
     $result = file_get_contents('https://zukunft.com/http/formula_del.php?id=' . $frm->id() . '&back=' . $wrd_company->id());
-    $target = formula_api::TN_ADD;
+    $target = formula_api::TN_INCREASE;
     $t->dsp_contains(', frontend formula_del.php ' . $result . ' contains at least ' . $frm->name(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
 }

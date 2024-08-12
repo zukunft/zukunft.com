@@ -77,7 +77,7 @@ class view_tests
 
         $t->subheader('view sql read standard and user changes by name');
         $msk = new view($usr);
-        $msk->set_name(view_api::TN_ADD);
+        $msk->set_name(view_api::TN_READ);
         //$t->assert_load_sql($db_con, $msk);
         $t->assert_sql_standard($sc, $msk);
 

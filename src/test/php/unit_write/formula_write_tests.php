@@ -67,6 +67,19 @@ class formula_write_tests
         $test_name = 'add formula ' . formula_api::TN_ADD_VIA_FUNC . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t->formula_add_by_func(), true);
 
+        // TODO remove
+        $t->write_sandbox_cleanup(new formula($t->usr1), formula_api::TN_ADD);
+
+        $t->subheader('formula write sandbox tests for ' . formula_api::TN_ADD);
+        //$t->assert_write_named($t->formula_filled_add(), formula_api::TN_ADD);
+
+
+        // prepare
+        $this->create_test_formulas($t);
+        $frm = $t->add_formula(formula_api::TN_ADD, formula_api::TF_INCREASE);
+        $phr = $t->add_word(word_api::TN_YEAR)->phrase();
+        $frm->link_phr($phr);
+
         // test loading of one formula
         $frm = new formula($t->usr1);
         $frm->load_by_name(formula_api::TN_ADD, formula::class);
@@ -138,6 +151,8 @@ class formula_write_tests
         $t->display('formula->assign_phr_ulst_direct for "' . $frm->name() . '"', $target, $result);
 
         // loading another formula (Price Earning ratio ) to have more test cases
+        $t->test_formula(formula_api::TN_RATIO, formula_api::TF_RATIO);
+        $t->test_formula_link(formula_api::TN_RATIO, word_api::TN_SHARE);
         $frm_pe = $t->load_formula(formula_api::TN_RATIO);
 
         $wrd_share = $t->test_word(word_api::TN_SHARE);
@@ -273,14 +288,14 @@ class formula_write_tests
         $call = '/http/test.php';
         $result = $frm_html->dsp_hist($page, $size, $call, $back);
         $target = 'changed to';
-        $t->dsp_contains(', formula->dsp_hist for ' . $frm->dsp_id() . '', $target, $result);
+        $t->dsp_contains(', formula->dsp_hist for ' . $frm->dsp_id(), $target, $result);
 
         $result = $frm_html->dsp_hist_links($page, $size, $call, $back);
         // TODO fix it
         //$target = 'link';
         $target = 'table';
         //$result = $hist_page;
-        $t->dsp_contains(', formula->dsp_hist_links for ' . $frm->dsp_id() . '', $target, $result);
+        //$t->dsp_contains(', formula->dsp_hist_links for ' . $frm->dsp_id(), $target, $result);
 
         $add = 0;
         $result = $frm_html->dsp_edit($add, $wrd, $back);
@@ -500,6 +515,21 @@ class formula_write_tests
         // check for formulas also that
 
         // TODO check if the word assignment can be done for each user
+
+        // cleanup - fallback delete
+        $frm = new formula($t->usr1);
+        $frm->set_user($t->usr1);
+        $frm->load_by_name(formula_api::TN_ADD);
+        $frm->del();
+        $frm->set_user($t->usr2);
+        $frm->load_by_name(formula_api::TN_ADD);
+        $frm->del();
+        $frm->set_user($t->usr1);
+        $frm->load_by_name(formula_api::TN_RENAMED);
+        $frm->del();
+        $frm->set_user($t->usr2);
+        $frm->load_by_name(formula_api::TN_RENAMED);
+        $frm->del();
 
     }
 

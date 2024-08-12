@@ -52,10 +52,9 @@ class view_write_tests
         global $view_types;
 
         // init
-        $back = 0;
+        $t->name = 'view db write->';
 
 
-        // test the creation and changing of a view
         $t->header('view db write tests');
 
         $t->subheader('view prepared write');
@@ -63,6 +62,9 @@ class view_write_tests
         $t->assert_write_via_func_or_sql($test_name, $t->view_add_by_sql(), false);
         $test_name = 'add view ' . view_api::TN_ADD_VIA_FUNC . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t->view_add_by_func(), true);
+
+        $t->subheader('view write sandbox tests for ' . view_api::TN_ADD);
+        $t->assert_write_named($t->view_filled_add(), view_api::TN_ADD);
 
 
         $db_con->import_system_views($t->usr1);
@@ -82,7 +84,7 @@ class view_write_tests
         // test the complete view for one word
         $wrd = new word($t->usr1);
         $wrd->load_by_name(word_api::TN_CH);
-        $result = $msk->display($wrd, $back);
+        //$result = $msk->display($wrd, $back);
         // check if the view contains the word name
         $target = word_api::TN_CH;
         // TODO review and activate

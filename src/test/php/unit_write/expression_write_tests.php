@@ -54,7 +54,7 @@ class expression_write_tests
 
         // load formulas for expression testing
         $frm_this = $t->load_formula(formula_api::TN_THIS);
-        $frm = $t->load_formula(formula_api::TN_ADD);
+        $frm = $t->load_formula(formula_api::TN_INCREASE);
         $frm_pe = $t->load_formula(formula_api::TN_RATIO);
         $frm_sector = $t->load_formula(formula_api::TN_SECTOR);
 

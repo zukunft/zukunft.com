@@ -93,7 +93,7 @@ class job_write_tests
         $t->header('Test the batch job list class (classes/job_list.php)');
 
         // prepare test adding a batch job via a list
-        $frm = $t->load_formula(formula_api::TN_ADD);
+        $frm = $t->load_formula(formula_api::TN_INCREASE);
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
 

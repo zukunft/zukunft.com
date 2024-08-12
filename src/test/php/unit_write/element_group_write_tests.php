@@ -63,7 +63,7 @@ class element_group_write_tests
         $frm_prior = $t->load_formula(formula_api::TN_READ_PRIOR);
 
         // load increase formula for testing
-        $frm = $t->load_formula(formula_api::TN_ADD);
+        $frm = $t->load_formula(formula_api::TN_INCREASE);
 
         // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
         $exp = $frm->expression();

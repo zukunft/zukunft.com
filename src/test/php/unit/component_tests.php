@@ -81,7 +81,7 @@ class component_tests
 
         $t->subheader('component sql read standard by name');
         $cmp = new component($usr);
-        $cmp->set_name(view_api::TN_ADD);
+        $cmp->set_name(view_api::TN_READ);
         //$t->assert_sql_all($db_con, $cmp);
         $t->assert_sql_standard($sc, $cmp);
 

@@ -81,9 +81,9 @@ class term_write_tests
 
         // ... check also for a formula
         $term = new term($usr);
-        $term->load_by_obj_name(formula_api::TN_ADD);
+        $term->load_by_obj_name(formula_api::TN_INCREASE);
         // each formula name has also a word
-        $target = 'A formula with the name "' . formula_api::TN_ADD . '" already exists. '
+        $target = 'A formula with the name "' . formula_api::TN_INCREASE . '" already exists. '
             . 'Please use another ' . $lib->class_to_name(word::class) . ' name.';
         $result = $term->id_used_msg($wrd_zh);
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);

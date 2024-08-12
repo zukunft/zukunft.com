@@ -474,6 +474,8 @@ class formula extends sandbox_typed
 
     /**
      * HTML code of a phrase selector
+     * TODO move load to calling function
+     *
      * @param string $name the unique name inside the form for this selector
      * @param string $form_name the name of the html form
      * @param string $label the text show to the user

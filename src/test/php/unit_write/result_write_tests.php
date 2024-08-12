@@ -37,6 +37,7 @@ namespace unit_write;
 use api\formula\formula as formula_api;
 use api\result\result as result_api;
 use api\word\word as word_api;
+use cfg\formula;
 use cfg\phrase_list;
 use cfg\result\result;
 use cfg\result\result_list;
@@ -52,6 +53,29 @@ class result_write_tests
         global $usr;
 
         $t->header('Test the result class (classes/result.php)');
+
+        /*
+         * prepare
+         */
+
+        // test adding of one formula
+        $frm = new formula($t->usr1);
+        $frm->set_name(formula_api::TN_ADD);
+        $frm->usr_text = formula_api::TF_INCREASE;
+        $result = $frm->save();
+        if ($frm->id() > 0) {
+            $result = $frm->usr_text;
+        }
+        $target = formula_api::TF_INCREASE;
+        $t->display('formula->save for adding "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+
+        // check if the formula can be renamed
+        $frm = $t->load_formula(formula_api::TN_ADD);
+        $frm->set_name(formula_api::TN_RENAMED);
+        $result = $frm->save();
+        $target = '';
+        $t->display('formula->save rename "' . formula_api::TN_ADD . '" to "' . formula_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+
 
         // test load result without time
         $phr_lst = new phrase_list($usr);
@@ -69,7 +93,7 @@ class result_write_tests
                 $result = '';
             }
         } else {
-            $result = 'no ' . word_api::TN_INHABITANTS . ' ' . formula_api::TN_ADD . ' value found for ' . word_api::TN_CH;
+            $result = 'no ' . word_api::TN_INHABITANTS . ' ' . formula_api::TN_INCREASE. ' value found for ' . word_api::TN_CH;
         }
         // TODO review
         $target = result_api::TV_INCREASE_LONG;
@@ -89,7 +113,7 @@ class result_write_tests
                 $result = '';
             }
         } else {
-            $result = 'no ' . word_api::TN_2020 . ' ' . word_api::TN_INHABITANTS . ' ' . formula_api::TN_ADD . ' value found for ' . word_api::TN_CH;
+            $result = 'no ' . word_api::TN_2020 . ' ' . word_api::TN_INHABITANTS . ' ' . formula_api::TN_INCREASE . ' value found for ' . word_api::TN_CH;
         }
         //$result = $ch_increase->phr_grp_id;
         if (isset($time_phr)) {
@@ -157,6 +181,22 @@ class result_write_tests
 
         */
 
+        // cleanup - fallback delete
+        $frm = new formula($t->usr1);
+        $frm->set_user($t->usr1);
+        $frm->load_by_name(formula_api::TN_ADD);
+        $frm->del();
+        $frm->set_user($t->usr2);
+        $frm->load_by_name(formula_api::TN_ADD);
+        $frm->del();
+        $frm->set_user($t->usr1);
+        $frm->load_by_name(formula_api::TN_RENAMED);
+        $frm->del();
+        $frm->set_user($t->usr2);
+        $frm->load_by_name(formula_api::TN_RENAMED);
+        $frm->del();
+
+
     }
 
     function run_list(test_cleanup $t): void
@@ -214,7 +254,7 @@ class result_write_tests
 
         // TODO add PE frm test
         //$frm = $t->load_formula(TF_PE);
-        $frm = $t->load_formula(formula_api::TN_ADD);
+        $frm = $t->load_formula(formula_api::TN_INCREASE);
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($frm);
         $result = $res_lst->dsp_id();

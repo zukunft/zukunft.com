@@ -2362,20 +2362,32 @@ class test_base
         }
 
         // fallback delete
-        $sbx->set_user($this->usr1);
-        $sbx->load_by_name($name);
-        $sbx->del();
-        $sbx->set_user($this->usr2);
-        $sbx->load_by_name($name);
-        $sbx->del();
-        $sbx->set_user($this->usr1);
-        $sbx->load_by_name($name . self::EXT_RENAME);
-        $sbx->del();
-        $sbx->set_user($this->usr2);
-        $sbx->load_by_name($name . self::EXT_RENAME);
-        $sbx->del();
+        $this->write_sandbox_cleanup($sbx, $name);
 
         return $result;
+    }
+
+    /**
+     * remove all remaining test rows without test
+     *
+     * @param sandbox_named|sandbox_link_named $sbx
+     * @param string $name
+     * @return void
+     */
+    function write_sandbox_cleanup(sandbox_named|sandbox_link_named $sbx, string $name): void
+    {
+        $sbx->set_user($this->usr1);
+        $sbx->load_by_name($name);
+        $sbx->del();
+        $sbx->set_user($this->usr2);
+        $sbx->load_by_name($name);
+        $sbx->del();
+        $sbx->set_user($this->usr1);
+        $sbx->load_by_name($name . self::EXT_RENAME);
+        $sbx->del();
+        $sbx->set_user($this->usr2);
+        $sbx->load_by_name($name . self::EXT_RENAME);
+        $sbx->del();
     }
 
     private function write_sandbox_add(sandbox_named|sandbox_link_named $sbx, string $name, user $usr): int

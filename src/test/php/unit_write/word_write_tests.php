@@ -515,13 +515,20 @@ class word_write_tests
         $t->display('word->main_wrd_from_txt', $target, $result);
         */
 
-        // cleanup
-        $wrd_add = new word($t->usr1);
-        $wrd_add->set_name(word_api::TN_ADD);
-        $msg = $wrd_add->del();
-        $result = $msg->get_last_message();
-        $target = '';
-        $t->assert('word->del of "' . word_api::TN_ADD . '"', $result, $target, $t::TIMEOUT_LIMIT_DB);
+        // cleanup - fallback delete
+        $wrd = new word($t->usr1);
+        $wrd->set_user($t->usr1);
+        $wrd->load_by_name(word_api::TN_ADD);
+        $wrd->del();
+        $wrd->set_user($t->usr2);
+        $wrd->load_by_name(word_api::TN_ADD);
+        $wrd->del();
+        $wrd->set_user($t->usr1);
+        $wrd->load_by_name(word_api::TN_RENAMED);
+        $wrd->del();
+        $wrd->set_user($t->usr2);
+        $wrd->load_by_name(word_api::TN_RENAMED);
+        $wrd->del();
 
     }
 

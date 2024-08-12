@@ -153,11 +153,13 @@ use unit_read\view_read_tests;
 use unit_read\word_read_tests;
 use unit_ui\local_ui_tests;
 use unit_write\component_write_tests;
+use unit_write\formula_link_write_tests;
 use unit_write\formula_write_tests;
 use unit_write\source_write_tests;
 use unit_write\triple_write_tests;
 use unit_write\view_write_tests;
 use unit_write\word_write_tests;
+use html\types\formula_type_list as formula_type_list_web;
 
 class all_unit_tests extends test_cleanup
 {
@@ -233,12 +235,13 @@ class all_unit_tests extends test_cleanup
              */
 
             // run the selected db write
-            //(new word_write_tests)->run($this);
+            (new word_write_tests)->run($this);
             //(new triple_write_tests)->run($this);
             //(new group_write_tests)->run($this);
             (new source_write_tests)->run($this);
-            //(new formula_write_tests)->run($this);
-            //(new view_write_tests)->run($this);
+            (new formula_write_tests)->run($this);
+            //(new formula_link_write_tests)->run($this);
+            (new view_write_tests)->run($this);
             //(new component_write_tests)->run($this);
             //(new value_write_tests)->run($this);
             //(new view_write_tests)->run($this);
@@ -439,6 +442,7 @@ class all_unit_tests extends test_cleanup
         $this->init_phrase_types();
         $this->init_verbs();
         $this->init_formula_types();
+        $this->init_formula_html_types();
         $this->init_formula_link_types();
         $this->init_element_types();
         $this->init_views($usr);
@@ -528,6 +532,19 @@ class all_unit_tests extends test_cleanup
 
         $formula_types = new formula_type_list();
         $formula_types->load_dummy();
+
+    }
+
+    /**
+     * create formula frontend type array for the unit tests without database connection
+     */
+    private function init_formula_html_types(): void
+    {
+        global $html_formula_types;
+        global $formula_types;
+
+        $html_formula_types = new formula_type_list_web();
+        $html_formula_types->set_obj_from_json_array(json_decode($formula_types->api_json(), true));
 
     }
 
