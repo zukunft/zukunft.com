@@ -3380,8 +3380,13 @@ class sandbox extends db_object_seq_id_user
             }
         }
 
+        // remove the internal last update field from the list of field that should be logged
+        $fld_lst_log = array_diff($fld_lst_ex_log_and_key, [
+            formula::FLD_LAST_UPDATE
+        ]);
+
         // create the query parameters for the log entries for the single fields
-        $qp_log = $sc->sql_func_log($this::class, $this->user(), $fld_lst_ex_log_and_key, $fvt_lst, $sc_par_lst_log);
+        $qp_log = $sc->sql_func_log($this::class, $this->user(), $fld_lst_log, $fvt_lst, $sc_par_lst_log);
         $sql .= ' ' . $qp_log->sql;
         $par_lst_out->add_list($qp_log->par_fld_lst);
 

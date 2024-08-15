@@ -15,8 +15,6 @@ CREATE PROCEDURE formula_insert_log_01111111151111
  _resolved_text              text,
  _field_id_all_values_needed smallint,
  _all_values_needed          smallint,
- _field_id_last_update       smallint,
- _last_update                timestamp,
  _field_id_view_id           smallint,
  _view_name                  text,
  _view_id                    bigint,
@@ -49,8 +47,6 @@ BEGIN
          SELECT         _user_id,_change_action_id,_field_id_resolved_text,    _resolved_text,       @new_formula_id ;
     INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,                    row_id)
          SELECT         _user_id,_change_action_id,_field_id_all_values_needed,_all_values_needed,   @new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,                    row_id)
-         SELECT         _user_id,_change_action_id,_field_id_last_update,      _last_update,         @new_formula_id ;
     INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,  new_id,           row_id)
          SELECT         _user_id,_change_action_id,_field_id_view_id,          _view_name, _view_id, @new_formula_id ;
     INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,                    row_id)
@@ -69,7 +65,7 @@ BEGIN
            formula_text      = _formula_text,
            resolved_text     = _resolved_text,
            all_values_needed = _all_values_needed,
-           last_update       = _last_update,
+           last_update       = Now(),
            view_id           = _view_id,
            `usage`           = _usage,
            excluded          = _excluded,
@@ -80,7 +76,7 @@ BEGIN
 END;
 
 PREPARE formula_insert_log_01111111151111_call FROM
-    'SELECT formula_insert_log_01111111151111 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+    'SELECT formula_insert_log_01111111151111 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT formula_insert_log_01111111151111 (
                'scale minute to sec',
@@ -98,8 +94,6 @@ SELECT formula_insert_log_01111111151111 (
                '"second" = "minute" * 60',
                35,
                1,
-               116,
-               '2023-01-03T20:59:59+01:00',
                655,
                '',
                1,

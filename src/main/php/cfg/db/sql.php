@@ -1458,6 +1458,7 @@ class sql
                     $sql_set .= $this->name_sql_esc($fld) . ' = ' . $this->name_sql_esc($this->par_lst->name($i));
                 } else {
                     $sql_set .= $this->name_sql_esc($fld) . ' = ' . $val;
+                    $i--;
                 }
                 $i++;
             }
@@ -3832,11 +3833,10 @@ class sql
     private function par_named_types(array $par_types): string
     {
         $result = '';
-        if (count($par_types) != $this->par_lst->count()) {
+        if (count($par_types) > $this->par_lst->count()) {
             $lib = new library();
-            log_err('the number of parameter names ' . $lib->dsp_array($this->par_lst->names())
-                . ' does not match with the number of parameter types ' . $lib->dsp_array($this->par_lst->types())
-                . ' for ' . $this->query_name);
+            log_err('the number of parameter names ' . $lib->dsp_array($par_types)
+                . ' does not match with the number of parameter types for ' . $this->query_name);
         } else {
             foreach ($par_types as $i => $par_type) {
                 if ($result != '') {

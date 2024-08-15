@@ -14,8 +14,6 @@ CREATE OR REPLACE FUNCTION formula_insert_log_01111111151111
      _resolved_text              text,
      _field_id_all_values_needed smallint,
      _all_values_needed          smallint,
-     _field_id_last_update       smallint,
-     _last_update                timestamp,
      _field_id_view_id           smallint,
      _view_name                  text,
      _view_id                    bigint,
@@ -49,8 +47,6 @@ BEGIN
          SELECT         _user_id,_change_action_id,_field_id_resolved_text,    _resolved_text,              new_formula_id ;
     INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,                  row_id)
          SELECT         _user_id,_change_action_id,_field_id_all_values_needed,_all_values_needed,          new_formula_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,                  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_last_update,      _last_update,                new_formula_id ;
     INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,         new_id,  row_id)
          SELECT         _user_id,_change_action_id,_field_id_view_id,          _view_name,        _view_id, new_formula_id ;
     INSERT INTO changes (user_id, change_action_id, change_field_id,            new_value,                  row_id)
@@ -69,7 +65,7 @@ BEGIN
            formula_text      = _formula_text,
            resolved_text     = _resolved_text,
            all_values_needed = _all_values_needed,
-           last_update       = _last_update,
+           last_update       = Now(),
            view_id           = _view_id,
            usage             = _usage,
            excluded          = _excluded,
@@ -83,9 +79,9 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE formula_insert_log_01111111151111_call
-        (text, bigint, smallint, smallint, smallint, smallint, text, smallint, bigint, smallint, text, smallint, text, smallint, smallint, smallint, timestamp, smallint, text, bigint, smallint, bigint, smallint, smallint, smallint, smallint, smallint, smallint) AS
+        (text, bigint, smallint, smallint, smallint, smallint, text, smallint, bigint, smallint, text, smallint, text, smallint, smallint, smallint, text, bigint, smallint, bigint, smallint, smallint, smallint, smallint, smallint, smallint) AS
     SELECT formula_insert_log_01111111151111
-        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28);
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26);
 
 SELECT formula_insert_log_01111111151111 (
                'scale minute to sec'::text,
@@ -103,8 +99,6 @@ SELECT formula_insert_log_01111111151111 (
                '"second" = "minute" * 60'::text,
                35::smallint,
                1::smallint,
-               116::smallint,
-               '2023-01-03T20:59:59+01:00'::timestamp,
                655::smallint,
                ''::text,
                1::bigint,

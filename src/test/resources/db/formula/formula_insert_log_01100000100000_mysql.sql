@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS formula_insert_log_01100000000000;
-CREATE PROCEDURE formula_insert_log_01100000000000
+DROP PROCEDURE IF EXISTS formula_insert_log_01100000100000;
+CREATE PROCEDURE formula_insert_log_01100000100000
     (_formula_name            text,
      _user_id                 bigint,
      _change_action_id        smallint,
@@ -19,15 +19,16 @@ BEGIN
          SELECT          _user_id,_change_action_id,_field_id_user_id,_user_id,  @new_formula_id ;
 
     UPDATE formulas
-       SET user_id = _user_id
+       SET user_id = _user_id,
+           last_update = Now()
      WHERE formulas.formula_id = @new_formula_id;
 
 END;
 
-PREPARE formula_insert_log_01100000000000_call FROM
-    'SELECT formula_insert_log_01100000000000 (?,?,?,?,?)';
+PREPARE formula_insert_log_01100000100000_call FROM
+    'SELECT formula_insert_log_01100000100000 (?,?,?,?,?)';
 
-SELECT formula_insert_log_01100000000000 (
+SELECT formula_insert_log_01100000100000 (
                '"one" = "millions" * 1000000',
                1,
                1,

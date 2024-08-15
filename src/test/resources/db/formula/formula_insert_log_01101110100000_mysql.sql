@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS formula_insert_log_01101110000000;
-CREATE PROCEDURE formula_insert_log_01101110000000
+DROP PROCEDURE IF EXISTS formula_insert_log_01101110100000;
+CREATE PROCEDURE formula_insert_log_01101110100000
 (_formula_name             text,
  _user_id                  bigint,
  _change_action_id         smallint,
@@ -33,15 +33,16 @@ BEGIN
        SET user_id         = _user_id,
            formula_type_id = _formula_type_id,
            formula_text    = _formula_text,
-           resolved_text   = _resolved_text
+           resolved_text   = _resolved_text,
+           last_update     = Now()
      WHERE formulas.formula_id = @new_formula_id;
 
 END;
 
-PREPARE formula_insert_log_01101110000000_call FROM
-    'SELECT formula_insert_log_01101110000000 (?,?,?,?,?,?,?,?,?,?,?)';
+PREPARE formula_insert_log_01101110100000_call FROM
+    'SELECT formula_insert_log_01101110100000 (?,?,?,?,?,?,?,?,?,?,?)';
 
-SELECT formula_insert_log_01101110000000 (
+SELECT formula_insert_log_01101110100000 (
                'scale minute to sec',
                1,
                1,

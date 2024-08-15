@@ -2661,6 +2661,7 @@ class formula extends sandbox_typed
 
     /**
      * get a list of database field names, values and types that have been updated
+     * the last_update field is excluded here because this is an internal only field
      *
      * @param sandbox|formula $sbx the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -2738,20 +2739,14 @@ class formula extends sandbox_typed
                 $sbx->need_all_val
             );
         }
-        // TODO maybe exclude?
-        if ($sbx->last_update <> $this->last_update) {
-            if ($do_log) {
-                $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_LAST_UPDATE,
-                    $change_field_list->id($table_id . self::FLD_LAST_UPDATE),
-                    change::FLD_FIELD_ID_SQLTYP
-                );
-            }
+        if ($sbx->ref_text <> $this->ref_text
+            or $sbx->type_id() <> $this->type_id()
+            or $sbx->need_all_val <> $this->need_all_val
+            or $this->last_update == null) {
             $lst->add_field(
                 self::FLD_LAST_UPDATE,
-                $this->last_update,
-                self::FLD_LAST_UPDATE_SQLTYP,
-                $sbx->last_update
+                sql::NOW,
+                sql_field_type::TIME
             );
         }
         if ($sbx->view_id() <> $this->view_id()) {
