@@ -76,8 +76,6 @@ class formula_tests
         $t->subheader('formula sql read default and user changes by id');
         $frm = new formula($usr);
         $frm->set_id(formula_api::TI_READ_ANOTHER);
-        // TODO activate
-        //$t->assert_sql_all($db_con, $frm);
         $t->assert_sql_standard($sc, $frm);
         $t->assert_sql_not_changed($sc, $frm);
         $t->assert_sql_user_changes($sc, $frm);
@@ -86,10 +84,7 @@ class formula_tests
         $t->subheader('formula sql read default by name');
         $frm = new formula($usr);
         $frm->set_name(formula_api::TF_READ_SCALE_MIO);
-        // TODO review
-        //$t->assert_sql_all($db_con, $frm);
         $t->assert_sql_standard($sc, $frm);
-
 
         $t->subheader('formula sql write insert');
         $frm = $t->formula_name_only();
@@ -109,8 +104,8 @@ class formula_tests
         $t->assert_sql_update($sc, $frm_renamed, $frm);
         $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::USER]);
         // TODO activate db write with log
-        //$t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG]);
-        //$t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('formula sql write delete');
         // TODO activate db write

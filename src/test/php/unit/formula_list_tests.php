@@ -82,6 +82,8 @@ class formula_list_tests
         $this->assert_sql_by_formula_ref($t, $db_con, $frm_lst);
         $this->assert_sql_by_phr($t, $db_con, $frm_lst);
         $this->assert_sql_by_phr_lst($t, $db_con, $frm_lst);
+        // TODO activate
+        //$t->assert_sql_all($db_con, $frm);
 
 
         $t->subheader('API unit tests');

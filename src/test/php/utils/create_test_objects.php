@@ -2225,6 +2225,18 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return component with all fields set and a reseved test name for testing the db write function
+     */
+    function component_filled_add(): component
+    {
+        $cmp = $this->component_filled();
+        $cmp->include();
+        $cmp->set_id(0);
+        $cmp->set_name(component_api::TN_ADD);
+        return $cmp;
+    }
+
+    /**
      * @return component to test the sql insert via function
      */
     function component_add_by_func(): component

@@ -3560,6 +3560,11 @@ class sandbox extends db_object_seq_id_user
         // don't use the log parameter for the sub queries
         $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
         $sc_par_lst_sub->add(sql_type::LIST);
+        $sc_par_lst_log = clone $sc_par_lst_sub;
+        $sc_par_lst_log->add(sql_type::INSERT_PART);
+        if ($this->excluded) {
+            $sc_par_lst_log->add(sql_type::EXCLUDE);
+        }
 
         // get the fields actually changed
         $fld_lst = $fvt_lst->names();
@@ -3576,133 +3581,41 @@ class sandbox extends db_object_seq_id_user
         // the fields that where the changes should be added to the change log
         $par_lst_chg = $fvt_lst->intersect($fld_lst_chg);
 
-        // create the queries for the log entries
-        $func_body_change = '';
-        foreach ($par_lst_chg as $fld) {
+        // remove the internal last update field from the list of field that should be logged
+        $fld_lst_log = array_diff($fld_lst_chg, [
+            formula::FLD_LAST_UPDATE
+        ]);
 
-            // create the insert log statement for the field of the loop
-            $log = new change($this->user());
-            $log->set_class($this::class);
-            $log->set_field($fld->name);
-            $log->old_value = $fvt_lst->get_old($fld->name);
-            if ($fvt_lst->get_old_id($fld->name) != null or $fvt_lst->get_id($fld->name) != null) {
-                $log->old_id = $fvt_lst->get_old_id($fld->name);
-            }
-            $log->new_value = $fld->value;
-            if ($fvt_lst->get_old_id($fld->name) != null or $fvt_lst->get_id($fld->name) != null) {
-                $log->new_id = $fvt_lst->get_id($fld->name);
-            }
-            // make sure that also overwrites are added to the log
-            if ($log->old_value != null or $log->new_value != null) {
-                if ($log->old_value == null) {
-                    $log->old_value = '';
-                }
-                if ($log->new_value == null) {
-                    $log->new_value = '';
-                }
-            }
+        // add the row id
+        $fvt_lst->add_field(
+            $sc->id_field_name(),
+            $this->id(),
+            db_object_seq_id::FLD_ID_SQLTYP);
 
-            // TODO get the id of the new entry and use it in the log
-            $sc_log = clone $sc;
-            $sc_par_lst_log = $sc_par_lst_sub;
-            $sc_par_lst_log->add(sql_type::VALUE_SELECT);
-            $sc_par_lst_log->add(sql_type::UPDATE_PART);
-            $sc_par_lst_log->add(sql_type::SELECT_FOR_INSERT);
-            // TODO replace dummy value table with an enum value
-            $qp_log = $log->sql_insert(
-                $sc_log, $sc_par_lst_log, $ext . '_' . $fld->name, '', $fld->name, $id_val, $fvt_lst->get_par_name($fld->name));
+        // create the query parameters for the log entries for the single fields
+        $qp_log = $sc->sql_func_log_update($this::class, $this->user(), $fld_lst_log, $fvt_lst, $sc_par_lst_log, $this->id());
+        $sql .= ' ' . $qp_log->sql;
+        $par_lst_out->add_list($qp_log->par_fld_lst);
 
-            // TODO get the fields used in the change log sql from the sql
-            $func_body_change .= ' ' . $qp_log->sql . ';';
-
-            // add the user_id if needed
-            $log_usr_id = $fvt_lst->get_value(user::FLD_ID);
-            if ($log_usr_id == null) {
-                $log_usr_id = $this->user_id();
-            }
-            $par_lst_out->add_field(
-                user::FLD_ID,
-                $log_usr_id,
-                db_object_seq_id::FLD_ID_SQLTYP);
-
-            // add the change_action_id if needed
-            $par_lst_out->add_field(
-                change_action::FLD_ID,
-                $fvt_lst->get_value(change_action::FLD_ID),
-                sql_par_type::INT_SMALL);
-
-            // add the field_id of the field actually changed if needed
-            $par_lst_out->add_field(
-                sql::FLD_LOG_FIELD_PREFIX . $fld->name,
-                $fvt_lst->get_value(sql::FLD_LOG_FIELD_PREFIX . $fld->name),
-                sql_par_type::INT_SMALL);
-
-            // add the db field value of the field actually changed if needed
-            if ($fvt_lst->get_old_id($fld->name) != null or $fvt_lst->get_id($fld->name) != null) {
-                $par_lst_out->add_field(
-                    $fvt_lst->get_par_name($fld->name) . change::FLD_OLD_EXT,
-                    $fvt_lst->get_old($fld->name),
-                    $fvt_lst->get_type($fld->name));
-                $par_lst_out->add_field(
-                    $fld->name . change::FLD_OLD_EXT,
-                    $fvt_lst->get_old_id($fld->name),
-                    $fvt_lst->get_type_id($fld->name));
-            } else {
-                $par_lst_out->add_field(
-                    $fld->name . change::FLD_OLD_EXT,
-                    $fvt_lst->get_old($fld->name),
-                    $fvt_lst->get_type($fld->name));
-            }
-
-            // add the field value of the field actually changed if needed
-            if ($fvt_lst->get_old_id($fld->name) != null or $fvt_lst->get_id($fld->name) != null) {
-                $par_lst_out->add_field(
-                    $fvt_lst->get_par_name($fld->name),
-                    $fvt_lst->get_value($fld->name),
-                    $fvt_lst->get_type($fld->name));
-                $par_lst_out->add_field(
-                    $fld->name,
-                    $fvt_lst->get_id($fld->name),
-                    $fvt_lst->get_type_id($fld->name));
-            } else {
-                $par_lst_out->add_field(
-                    $fld->name,
-                    $fvt_lst->get_value($fld->name),
-                    $fvt_lst->get_type($fld->name));
-            }
-
-            // add the row id of the standard table for user overwrites
-            $log_id = $fvt_lst->get_value($id_fld);
-            if ($log_id == null) {
-                $log_id = $this->id();
-            }
-            $par_lst_out->add_field(
-                $id_fld,
-                $log_id,
-                db_object_seq_id::FLD_ID_SQLTYP);
-
-            // add the name field if it is missing and the object should be excluded
-            if ($this->excluded and $sc_par_lst->is_update()) {
-                if ($this->is_named_obj()) {
-                    if (!$par_lst_out->has_name($this->name_field())) {
-                        global $change_field_list;
-                        $table_id = $sc->table_id($this::class);
-                        $par_lst_out->add_field(
-                            sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
-                            $change_field_list->id($table_id . $this->name_field()),
-                            change::FLD_FIELD_ID_SQLTYP
-                        );
-                        $par_lst_out->add_field(
-                            $this->name_field() . change::FLD_OLD_EXT,
-                            $this->name(),
-                            sandbox_named::FLD_NAME_SQLTYP
-                        );
-                    }
+        // add the name field if it is missing and the object should be excluded
+        if ($this->excluded and $sc_par_lst->is_update()) {
+            if ($this->is_named_obj()) {
+                if (!$par_lst_out->has_name($this->name_field())) {
+                    global $change_field_list;
+                    $table_id = $sc->table_id($this::class);
+                    $par_lst_out->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
+                        $change_field_list->id($table_id . $this->name_field()),
+                        change::FLD_FIELD_ID_SQLTYP
+                    );
+                    $par_lst_out->add_field(
+                        $this->name_field() . change::FLD_OLD_EXT,
+                        $this->name(),
+                        sandbox_named::FLD_NAME_SQLTYP
+                    );
                 }
             }
-
         }
-        $sql .= ' ' . $func_body_change;
 
         // add additional log entry if the row has been excluded
         if ($this->excluded) {
@@ -3710,6 +3623,7 @@ class sandbox extends db_object_seq_id_user
             $sc_par_lst_log = clone $sc_par_lst_sub;
             $sc_par_lst_log->add(sql_type::EXCL_NAME_ONLY);
             $sc_par_lst_log->add(sql_type::SELECT_FOR_INSERT);
+            $sc_par_lst_log->add(sql_type::UPDATE_PART);
             $sc_log = clone $sc;
             if ($this->is_named_obj()) {
                 $log = new change($this->user());
@@ -3719,6 +3633,7 @@ class sandbox extends db_object_seq_id_user
                 $log->new_value = null;
                 $qp_log = $log->sql_insert(
                     $sc_log, $sc_par_lst_log, $ext . '_' . $this->name_field(), '', $this->name_field(), $id_val);
+                $sql .= ' ' . $qp_log->sql . ';';
             } elseif ($this->is_link_obj()) {
                 /*
                 $qp_log = $sc->sql_func_log_link($this, $this, $this->user(), $par_lst_out, $sc_par_lst_log);
@@ -3727,11 +3642,11 @@ class sandbox extends db_object_seq_id_user
                 $par_lst_out->add_list($this->sql_key_fields_text_old($fvt_lst));
                 $par_lst_out->add_list($this->sql_key_fields_id_old($fvt_lst));
                 */
+                $sql .= ' ' . $qp_log->sql;
             } else {
                 $qp_log = new sql_par($this::class, $sc_par_lst);
                 log_err('Only named and link objects are supported in sandbox::sql_delete_and_log');
             }
-            $sql .= ' ' . $qp_log->sql . ';';
         }
 
         // update the fields excluding the unique id

@@ -716,7 +716,6 @@ class formula extends sandbox_typed
         $result = false;
         if ($this->type_cl <> "") {
             $result = true;
-            log_debug($this->dsp_id());
         }
         return $result;
     }

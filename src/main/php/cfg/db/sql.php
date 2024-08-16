@@ -41,6 +41,7 @@ include_once MODEL_DB_PATH . 'sql_where_list.php';
 include_once MODEL_DB_PATH . 'sql_pg.php';
 
 use cfg\component\component_link;
+use cfg\db_object_seq_id;
 use cfg\element;
 use cfg\formula_link;
 use cfg\group\group;
@@ -62,6 +63,7 @@ use cfg\result\result;
 use cfg\sandbox;
 use cfg\sandbox_link;
 use cfg\sandbox_link_typed;
+use cfg\sandbox_named;
 use cfg\sandbox_value;
 use cfg\sys_log;
 use cfg\triple;
@@ -1276,7 +1278,11 @@ class sql
                                 if (($par_name == change::FLD_OLD_ID or $par_name == change::FLD_NEW_ID) and $par_name != '') {
                                     $par_name = sql::PAR_PREFIX . $chg_add_fld;
                                 } else {
-                                    $par_name = sql::PAR_PREFIX . $par_name;
+                                    if ($par_name == change::FLD_ROW_ID and $sc_par_lst->is_update_part()) {
+                                        $par_name = sql::PAR_PREFIX . $chg_row_fld;
+                                    } else {
+                                        $par_name = sql::PAR_PREFIX . $par_name;
+                                    }
                                 }
                             }
                         }
@@ -1656,11 +1662,11 @@ class sql
     }
 
     /**
-     * create the sql function part to log the changes
+     * create the sql function part to log the insert changes
      * @param string $class the class name of the calling object
      * @param user $usr the user who has requested the change
-     * @param array $fld_lst list of field names that have been changed
-     * @param sql_par_field_list $fvt_lst fields (with value and type) used for the change
+     * @param array $fld_lst list of field names that should be logged (excluding internal field like last_update)
+     * @param sql_par_field_list $fvt_lst fields (with value and type) used for the change (including internal fields)
      * @param sql_type_list $sc_par_lst
      * @return sql_par with the sql and the list of parameters actually used
      */
@@ -1673,7 +1679,7 @@ class sql
     ): sql_par
     {
         // set some var names to shorten the code lines
-        $id_field = $this->id_field_name();
+        $id_fld = $this->id_field_name();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $ext = sql::NAME_SEP . sql::FILE_INSERT;
         if ($class == value::class) {
@@ -1760,8 +1766,151 @@ class sql
                 $par_lst_out->add($fvt_lst->get($fld));
             }
             if ($usr_tbl) {
-                $par_lst_out->add($fvt_lst->get($id_field));
+                $par_lst_out->add($fvt_lst->get($id_fld));
             }
+        }
+
+        // transfer the fields used to the calling function
+        $qp->par_fld_lst = $par_lst_out;
+
+        return $qp;
+    }
+
+    /**
+     * create the sql function part to log the update changes
+     * @param string $class the class name of the calling object
+     * @param user $usr the user who has requested the change
+     * @param array $fld_lst list of field names that should be logged (excluding internal field like last_update)
+     * @param sql_par_field_list $fvt_lst fields (with value and type) used for the change (including internal fields)
+     * @param sql_type_list $sc_par_lst
+     * @param int $id the id of the
+     * @return sql_par with the sql and the list of parameters actually used
+     */
+    function sql_func_log_update(
+        string             $class,
+        user               $usr,
+        array              $fld_lst,
+        sql_par_field_list $fvt_lst,
+        sql_type_list      $sc_par_lst,
+        int                $id
+    ): sql_par
+    {
+        // set some var names to shorten the code lines
+        $id_fld = $this->id_field_name();
+        $id_val = '_' . $id_fld;
+        $ext = sql::NAME_SEP . sql::FILE_INSERT;
+
+        // init the result
+        $qp = new sql_par($class);
+        $par_lst_out = new sql_par_field_list();
+        $qp->sql = ' ';
+
+        // set the parameters for the log sql statement creation
+        // TODO ??? get the id of the new entry and use it in the log
+        $sc_log = clone $this;
+        $sc_par_lst->add(sql_type::VALUE_SELECT);
+        $sc_par_lst->add(sql_type::SELECT_FOR_INSERT);
+        $sc_par_lst->add(sql_type::UPDATE_PART);
+        $sc_par_lst = $sc_par_lst->remove(sql_type::INSERT_PART);
+
+        // create the log sql statements for each field
+        foreach ($fld_lst as $fld) {
+
+            // create the insert log statement for the field of the loop
+            $log = new change($usr);
+            $log->set_class($class);
+            $log->set_field($fld);
+            $log->old_value = $fvt_lst->get_old($fld);
+            if ($fvt_lst->get_old_id($fld) != null or $fvt_lst->get_id($fld) != null) {
+                $log->old_id = $fvt_lst->get_old_id($fld);
+            }
+            $log->new_value = $fvt_lst->get_value($fld);
+            if ($fvt_lst->get_old_id($fld) != null or $fvt_lst->get_id($fld) != null) {
+                $log->new_id = $fvt_lst->get_id($fld);
+            }
+            // make sure that also overwrites are added to the log
+            if ($log->old_value != null or $log->new_value != null) {
+                if ($log->old_value == null) {
+                    $log->old_value = '';
+                }
+                if ($log->new_value == null) {
+                    $log->new_value = '';
+                }
+            }
+
+            // TODO replace dummy value table with an enum value
+            $qp_log = $log->sql_insert(
+                $sc_log, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_val, $fvt_lst->get_par_name($fld));
+
+            // TODO get the fields used in the change log sql from the sql
+            $qp->sql .= ' ' . $qp_log->sql . ';';
+
+            // add the user_id if needed
+            $log_usr_id = $fvt_lst->get_value(user::FLD_ID);
+            if ($log_usr_id == null) {
+                $log_usr_id = $usr->id();
+            }
+            $par_lst_out->add_field(
+                user::FLD_ID,
+                $log_usr_id,
+                db_object_seq_id::FLD_ID_SQLTYP);
+
+            // add the change_action_id if needed
+            $par_lst_out->add_field(
+                change_action::FLD_ID,
+                $fvt_lst->get_value(change_action::FLD_ID),
+                sql_par_type::INT_SMALL);
+
+            // add the field_id of the field actually changed if needed
+            $par_lst_out->add_field(
+                sql::FLD_LOG_FIELD_PREFIX . $fld,
+                $fvt_lst->get_value(sql::FLD_LOG_FIELD_PREFIX . $fld),
+                sql_par_type::INT_SMALL);
+
+            // add the db field value of the field actually changed if needed
+            if ($fvt_lst->get_old_id($fld) != null or $fvt_lst->get_id($fld) != null) {
+                $par_lst_out->add_field(
+                    $fvt_lst->get_par_name($fld) . change::FLD_OLD_EXT,
+                    $fvt_lst->get_old($fld),
+                    $fvt_lst->get_type($fld));
+                $par_lst_out->add_field(
+                    $fld . change::FLD_OLD_EXT,
+                    $fvt_lst->get_old_id($fld),
+                    $fvt_lst->get_type_id($fld));
+            } else {
+                $par_lst_out->add_field(
+                    $fld . change::FLD_OLD_EXT,
+                    $fvt_lst->get_old($fld),
+                    $fvt_lst->get_type($fld));
+            }
+
+            // add the field value of the field actually changed if needed
+            if ($fvt_lst->get_old_id($fld) != null or $fvt_lst->get_id($fld) != null) {
+                $par_lst_out->add_field(
+                    $fvt_lst->get_par_name($fld),
+                    $fvt_lst->get_value($fld),
+                    $fvt_lst->get_type($fld));
+                $par_lst_out->add_field(
+                    $fld,
+                    $fvt_lst->get_id($fld),
+                    $fvt_lst->get_type_id($fld));
+            } else {
+                $par_lst_out->add_field(
+                    $fld,
+                    $fvt_lst->get_value($fld),
+                    $fvt_lst->get_type($fld));
+            }
+
+            // add the row id of the standard table for user overwrites
+            $log_id = $fvt_lst->get_value($id_fld);
+            if ($log_id == null) {
+                $log_id = $id;
+            }
+            $par_lst_out->add_field(
+                $id_fld,
+                $log_id,
+                db_object_seq_id::FLD_ID_SQLTYP);
+
         }
 
         // transfer the fields used to the calling function
