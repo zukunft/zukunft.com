@@ -40,6 +40,7 @@ namespace cfg\db;
 
 use cfg\combine_named;
 use cfg\db_object_seq_id;
+use cfg\formula;
 use cfg\log\change;
 use cfg\sandbox;
 use cfg\sandbox_link_named;
@@ -413,11 +414,14 @@ class sql_par_field_list
     }
 
     /**
-     * @return bool true if the list contains only the user and the action which means that there is no need for a database update
+     * @return bool true if the list contains only internal fields
+     *              e.g. the user id, last upadte and the action
+     *              which means that there is no need for a database update
      */
-    function is_empty_except_user_action(): bool
+    function is_empty_except_internal_fields(): bool
     {
-        $names = array_diff($this->names(), [sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID, user::FLD_ID]);
+        $names = array_diff($this->names(),
+            [sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID, user::FLD_ID, formula::FLD_LAST_UPDATE]);
         if (count($names) == 0) {
             return true;
         } else {

@@ -175,7 +175,7 @@ class system_tests
             $result = true;
             $sql_names[] = $sql_name;
         }
-        $t->assert('ip_range->load_sql by id range', $result, true);
+        $t->assert_true('ip_range->load_sql by id range', $result);
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
@@ -255,7 +255,7 @@ class system_tests
         $ip_range->import_obj($json_in, $t);
         $json_ex = json_decode(json_encode($ip_range->export_obj()), true);
         $result = $lib->json_is_similar($json_in, $json_ex);
-        $t->assert('ip_range->import check', $result, true);
+        $t->assert_true('ip_range->import check', $result);
 
 
         /*
@@ -270,17 +270,17 @@ class system_tests
         $ip_range->import_obj($json_in, $t);
         $test_ip = '66.249.64.95';
         $result = $ip_range->includes($test_ip);
-        $t->assert('ip_range->includes check', $result, true);
+        $t->assert_true('ip_range->includes check', $result);
 
         // negative case before
         $test_ip = '66.249.64.94';
         $result = $ip_range->includes($test_ip);
-        $t->assert('ip_range->includes check', $result, false);
+        $t->assert_false('ip_range->includes check', $result);
 
         // negative case after
         $test_ip = '66.249.65.95';
         $result = $ip_range->includes($test_ip);
-        $t->assert('ip_range->includes check', $result, false);
+        $t->assert_false('ip_range->includes check', $result);
 
 
         /*
@@ -301,7 +301,7 @@ class system_tests
             $result = true;
             $sql_names[] = $sql_name;
         }
-        $t->assert('system_consistency->missing_owner_sql by formula', $result, true);
+        $t->assert_true('system_consistency->missing_owner_sql by formula', $result);
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
@@ -326,7 +326,7 @@ class system_tests
             $result = true;
             $sql_names[] = $sql_name;
         }
-        $t->assert('database_upgrade->remove_prefix of verb code_id name', $result, true);
+        $t->assert_true('database_upgrade->remove_prefix of verb code_id name', $result);
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;
@@ -357,7 +357,7 @@ class system_tests
             $result = true;
             $sql_names[] = $sql_name;
         }
-        $t->assert('sys_log_list->load_sql all', $result, true);
+        $t->assert_true('sys_log_list->load_sql all', $result);
 
         // ... and the same for MySQL by replication the SQL builder statements
         $db_con->db_type = sql_db::MYSQL;

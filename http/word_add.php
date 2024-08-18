@@ -166,7 +166,7 @@ if ($usr->id() > 0) {
                 $wrd->load_by_id($wrd_id);
             }
             log_debug('test word');
-            if ($wrd->isset() and $vrb_id <> 0 and $wrd_to > 0) {
+            if ($wrd->is_loaded() and $vrb_id <> 0 and $wrd_to > 0) {
                 // ... and link it to an existing word
                 log_debug('word ' . $wrd->id() . ' linked via ' . $vrb_id . ' to ' . $wrd_to . ': ' . $add_result);
                 $lnk = new triple($usr);

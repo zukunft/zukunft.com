@@ -2835,7 +2835,7 @@ class sandbox_multi extends db_object_multi_user
                 // apply the changes directly to the norm db record
                 // TODO maybe check of other user have used the object and if yes keep or inform
                 $fvt_lst = $this->db_fields_changed($db_obj, $sc_par_lst);
-                if (!$fvt_lst->is_empty_except_user_action()) {
+                if (!$fvt_lst->is_empty_except_internal_fields()) {
                     $sc_par_lst->add(sql_type::UPDATE);
                     $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
                     $usr_msg->add($db_con->update($qp, 'update ' . $obj_name . $this->dsp_id()));

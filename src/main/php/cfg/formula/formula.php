@@ -623,7 +623,7 @@ class formula extends sandbox_typed
                 // try to recreate it and report the internal error
                 // because this should actually never happen
                 if ($with_automatic_error_fixing) {
-                    if (!$this->add_wrd()) {
+                    if (!$this->wrd_add_fix()) {
                         log_err('The formula word recreation for ' . $this->dsp_id() . ' failed');
                         $result = false;
                     }
@@ -652,10 +652,83 @@ class formula extends sandbox_typed
      */
 
     /**
+     * create the corresponding name word for the formula name
+     * @return bool true if adding the word has been successful
+     */
+    function wrd_add(): bool
+    {
+        global $phrase_types;
+
+        log_debug('formula wrd_add for ' . $this->dsp_id());
+        $result = false;
+
+        // if the formula word is missing, try a word creating as a kind of auto recovery
+        $name_wrd = new word($this->user());
+        $name_wrd->set_name($this->name());
+        $name_wrd->type_id = $phrase_types->id(phrase_type::FORMULA_LINK);
+        $name_wrd->save();
+        if ($name_wrd->id() > 0) {
+            $this->name_wrd = $name_wrd;
+            $result = true;
+        } else {
+            log_err('Word with the formula name "' . $this->name() . '" missing for id ' . $this->id() . '.', 'formula->create_wrd');
+        }
+        return $result;
+    }
+
+    /**
+     * rename the corresponding name word if the formula is renamed
+     * @return bool true if adding the word has been successful
+     */
+    function wrd_rename(string $old_name): bool
+    {
+        log_debug('formula wrd_rename for ' . $this->dsp_id() . ' from ' . $old_name);
+        $result = false;
+
+        $wrd = new word($this->user());
+        $wrd->load_by_name($old_name);
+        if (!$wrd->is_loaded()) {
+            log_err('reloading of the word related to formula ' . $this->dsp_id() . ' failed');
+        } else {
+            if ($wrd->type_code_id() != phrase_type::FORMULA_LINK) {
+                log_err('reloading formula word ' . $wrd->dsp_id() . ' ist not of type ' . phrase_type::FORMULA_LINK);
+            } else {
+                $wrd->set_name($this->name());
+                $wrd->save();
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * remove the corresponding name word if the formula is deleted
+     * @return user_message true if adding the word has been successful
+     */
+    function wrd_del(): user_message
+    {
+        log_debug('formula wrd_del for ' . $this->dsp_id());
+        $msg = new user_message();
+
+        $wrd = new word($this->user());
+        $wrd->load_by_name($this->name());
+        if (!$wrd->is_loaded()) {
+            log_warning('reloading of the word related to formula ' . $this->dsp_id() . ' failed');
+        } else {
+            if ($wrd->type_code_id() != phrase_type::FORMULA_LINK) {
+                log_err('reloading formula word ' . $wrd->dsp_id() . ' ist not of type ' . phrase_type::FORMULA_LINK);
+            } else {
+                $msg = $wrd->del();
+            }
+        }
+        return $msg;
+    }
+
+    /**
      * add the corresponding name word for the formula name to the database without similar check
      * this should only be used to fix internal errors
      */
-    function add_wrd(): bool
+    function wrd_add_fix(): bool
     {
         global $phrase_types;
 
@@ -667,31 +740,6 @@ class formula extends sandbox_typed
         $name_wrd->name = $this->name();
         $name_wrd->type_id = $phrase_types->id(phrase_type::FORMULA_LINK);
         $name_wrd->add();
-        if ($name_wrd->id() > 0) {
-            //zu_info('Word with the formula name "'.$this->name().'" has been missing for id '.$this->id.'.','formula->calc');
-            $this->name_wrd = $name_wrd;
-            $result = true;
-        } else {
-            log_err('Word with the formula name "' . $this->name() . '" missing for id ' . $this->id() . '.', 'formula->create_wrd');
-        }
-        return $result;
-    }
-
-    /**
-     * create the corresponding name word for the formula name
-     */
-    function create_wrd(): bool
-    {
-        global $phrase_types;
-
-        log_debug('->create_wrd create formula linked word ' . $this->dsp_id());
-        $result = false;
-
-        // if the formula word is missing, try a word creating as a kind of auto recovery
-        $name_wrd = new word($this->user());
-        $name_wrd->set_name($this->name());
-        $name_wrd->type_id = $phrase_types->id(phrase_type::FORMULA_LINK);
-        $name_wrd->save();
         if ($name_wrd->id() > 0) {
             //zu_info('Word with the formula name "'.$this->name().'" has been missing for id '.$this->id.'.','formula->calc');
             $this->name_wrd = $name_wrd;
@@ -2266,13 +2314,7 @@ class formula extends sandbox_typed
         if ($db_rec->name() <> $this->name()) {
             log_debug('->save_id_fields to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
             // in case a word link exist, change also the name of the word
-            $wrd = new word($this->user());
-            $wrd->load_by_name($db_rec->name());
-            $wrd->set_name($this->name());
-            $add_result = $wrd->save();
-            if ($add_result == '') {
-                log_debug('->save_id_fields word "' . $db_rec->name() . '" renamed to ' . $wrd->dsp_id());
-            } else {
+            if (!$this->wrd_rename($db_rec->name())) {
                 $result .= 'formula ' . $db_rec->name() . ' cannot ba renamed to ' . $this->name() . ', because' . $add_result;
             }
 
@@ -2332,16 +2374,17 @@ class formula extends sandbox_typed
         log_debug('->save_id_if_updated has name changed from "' . $db_rec->name() . '" to ' . $this->dsp_id());
         $result = '';
 
-        // if the name has changed, check if word, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens
+        // if the name has changed, check if word, verb or formula with the same name already exists
+        // this should have been checked by the calling function, so display the error message directly if it happens
         if ($db_rec->name() <> $this->name()) {
-            // check if a verb or word with the same name is already in the database
+            // check if a word, triple or verb with the same name is already in the database
             $trm = $this->get_term();
             if ($trm->id_obj() > 0 and !$this->is_term_the_same($trm)) {
                 $result .= $trm->id_used_msg($this);
                 log_debug('->save_id_if_updated name "' . $trm->name() . '" used already as "' . $trm->type() . '"');
             } else {
 
-                // check if target formula already exists
+                // check if target formula name already exists
                 log_debug('->save_id_if_updated check if target formula already exists ' . $this->dsp_id() . ' (has been ' . $db_rec->dsp_id() . ')');
                 $db_chk = clone $this;
                 $db_chk->set_id(0); // to force the load by the id fields
@@ -2365,6 +2408,7 @@ class formula extends sandbox_typed
                         $result .= 'A view component with the name "' . $this->name() . '" already exists. Please use another name.';
                     }
                 } else {
+                    // the formula can be renamed (either for this user or for all users)
                     log_debug('->save_id_if_updated target formula name does not yet exists ' . $db_chk->dsp_id());
                     if ($this->can_change() and $this->not_used()) {
                         // in this case change is allowed and done
@@ -2377,7 +2421,7 @@ class formula extends sandbox_typed
                         $to_del = clone $db_rec;
                         $msg = $to_del->del();
                         $result .= $msg->get_last_message();
-                        // .. and create a deletion request for all users ???
+                        // ... and create a deletion request for all users ???
 
                         // ... and create a new display component link
                         $this->set_id(0);
@@ -2448,7 +2492,7 @@ class formula extends sandbox_typed
             // the creation of a formula word should not be needed if on creation a view of word, phrase, verb nad formula is used to check uniqueness
             // the creation of the formula word is switched off because the term loading should be fine now
             // TODO check and remove the create_wrd function and the phrase_type::FORMULA_LINK
-            if ($this->create_wrd()) {
+            if ($this->wrd_add()) {
 
                 // create an empty db_frm element to force saving of all set fields
                 $db_rec = new formula($this->user());
@@ -2473,7 +2517,7 @@ class formula extends sandbox_typed
      */
     function save(?bool $use_func = null): string
     {
-        log_debug('->save >' . $this->usr_text . '< (id ' . $this->id() . ') as ' . $this->dsp_id() . ' for user ' . $this->user()->name);
+        log_debug($this->dsp_id());
 
         global $db_con;
         global $phrase_types;
@@ -2549,7 +2593,11 @@ class formula extends sandbox_typed
                     // if a problem has appeared up to here, don't try to save the values
                     // the problem is shown to the user by the calling interactive script
                     if ($result == '') {
-                        $result .= $this->save_fields($db_con, $db_rec, $std_rec);
+                        if ($use_func) {
+                            $result .= $this->save_fields_func($db_con, $db_rec, $std_rec);
+                        } else {
+                            $result .= $this->save_fields($db_con, $db_rec, $std_rec);
+                        }
                     }
                 }
 
@@ -2619,12 +2667,9 @@ class formula extends sandbox_typed
 
         // and the corresponding word if possible
         if ($usr_msg->is_ok()) {
-            $wrd = new word($this->user());
-            $wrd->load_by_name($this->name());
-            $wrd->type_id = $phrase_types->id(phrase_type::FORMULA_LINK);
-            $msg = $wrd->del();
-            $usr_msg->add($msg);
+            $usr_msg->add($this->wrd_del());
         }
+
         return $usr_msg;
     }
 

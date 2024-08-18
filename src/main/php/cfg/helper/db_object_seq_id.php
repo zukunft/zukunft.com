@@ -309,7 +309,7 @@ class db_object_seq_id extends db_object
     /**
      * @return bool true if the object has a valid database id
      */
-    function isset(): bool
+    function is_loaded(): bool
     {
         if ($this->id == null) {
             return false;

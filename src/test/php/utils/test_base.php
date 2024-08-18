@@ -496,7 +496,7 @@ class test_base
     }
 
     /**
-     * check if the result is true
+     * check if the result is true and format the result as a string
      *
      * @param string $msg (unique) description of the test
      * @param bool $result the result of the previous called test
@@ -510,7 +510,26 @@ class test_base
         if ($result === true) {
             return true;
         } else {
-            return $this->assert_dsp($msg, false, '', '', '');
+            return $this->assert_dsp($msg, false, 'true', 'false', '');
+        }
+    }
+
+    /**
+     * check if the result is false and format the result as a string
+     *
+     * @param string $msg (unique) description of the test
+     * @param bool $result the result of the previous called test
+     * @return bool true is the result is fine
+     */
+    function assert_false(
+        string $msg,
+        bool   $result
+    ): bool
+    {
+        if ($result === false) {
+            return true;
+        } else {
+            return $this->assert_dsp($msg, false, 'false', 'true', '');
         }
     }
 
@@ -2117,7 +2136,7 @@ class test_base
         $sbx->save($use_func);
         $sbx->reset();
         $sbx->load_by_name($name);
-        $result = $this->assert_true($test_name, $sbx->isset());
+        $result = $this->assert_true($test_name, $sbx->is_loaded());
 
         // check the log
         if ($result) {
@@ -2137,7 +2156,7 @@ class test_base
             $sbx->save($use_func);
             $sbx->reset();
             $sbx->load_by_id($id);
-            $result = $this->assert_true($test_name, $sbx->isset());
+            $result = $this->assert_true($test_name, $sbx->is_loaded());
 
         }
 
@@ -2178,6 +2197,12 @@ class test_base
      */
     function assert_write_named(sandbox_named|sandbox_link_named $sbx, string $name): bool
     {
+
+        // remember mandetory fields
+        if ($sbx::class == formula::class) {
+            $usr_text = $sbx->usr_text;
+            $ref_text = $sbx->ref_text;
+        }
 
         /*
          * are all fields saved?
@@ -2314,6 +2339,12 @@ class test_base
         /*
          * owner change
          */
+
+        // restore mandetory fields
+        if ($sbx::class == formula::class) {
+            $sbx->usr_text = $usr_text;
+            $sbx->ref_text = $ref_text;
+        }
 
         if ($result) {
             // add the named object again for test user 1 for owner change test

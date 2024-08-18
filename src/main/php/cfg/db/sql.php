@@ -1304,7 +1304,6 @@ class sql
         if ($sc_par_lst->incl_log()) {
             $sql_type = self::FUNCTION;
         }
-        $sql = $this->prepare_this_sql($sql_type);
         if ($sc_par_lst->incl_log()) {
             $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst);
             return $this->end_sql($sql, $sql_type);

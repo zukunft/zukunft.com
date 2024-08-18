@@ -71,8 +71,11 @@ class formula_write_tests
         $t->write_sandbox_cleanup(new formula($t->usr1), formula_api::TN_ADD);
 
         $t->subheader('formula write sandbox tests for ' . formula_api::TN_ADD);
-        //$t->assert_write_named($t->formula_filled_add(), formula_api::TN_ADD);
+        $t->assert_write_named($t->formula_filled_add(), formula_api::TN_ADD);
 
+        // TODO remove
+        $t->write_sandbox_cleanup(new formula($t->usr1), formula_api::TN_ADD);
+        $t->write_sandbox_cleanup(new word($t->usr1), formula_api::TN_ADD);
 
         // prepare
         $this->create_test_formulas($t);
@@ -422,9 +425,10 @@ class formula_write_tests
         $t->display('formula->load description for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
         $log->set_field(change_field_list::FLD_FORMULA_TYPE);
         $result = $log->dsp_last(true);
-        // to review what is correct
+        // TODO review what is correct
         $target = 'zukunft.com system test changed calc to this';
         $target = 'zukunft.com system test added "this"';
+        $target = 'zukunft.com system test added "4"';
         $t->display('formula->load formula_type_id for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
         $log->set_field(change_field_list::FLD_FORMULA_ALL);
         $result = $log->dsp_last(true);

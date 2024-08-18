@@ -1758,7 +1758,7 @@ class word extends sandbox_typed
         // check the diff against standard
         $usr_fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst);
         $usr_msg = new user_message();
-        if (!$usr_fvt_lst->is_empty_except_user_action()) {
+        if (!$usr_fvt_lst->is_empty_except_internal_fields()) {
             // if the user is owner of the standard ...
             if ($this->user_id() == $norm_obj->user_id()) {
                 // ... update the standard
@@ -1784,7 +1784,7 @@ class word extends sandbox_typed
             }
         } else {
             $fvt_lst = $this->db_fields_changed($db_obj, $sc_par_lst);
-            if (!$fvt_lst->is_empty_except_user_action()) {
+            if (!$fvt_lst->is_empty_except_internal_fields()) {
                 $sc_par_lst->add(sql_type::UPDATE);
                 $qp = parent::sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
                 $usr_msg = $db_con->update($qp, 'update word');

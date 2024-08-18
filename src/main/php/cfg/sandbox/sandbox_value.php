@@ -1921,7 +1921,7 @@ class sandbox_value extends sandbox_multi
         }
         if (!$sc_par_lst->is_standard()) {
             // if any field has been updated, update the last_update field also
-            if (!$lst->is_empty_except_user_action() or $this->last_update() == null) {
+            if (!$lst->is_empty_except_internal_fields() or $this->last_update() == null) {
                 $lst->add_field(
                     self::FLD_LAST_UPDATE,
                     sql::NOW,

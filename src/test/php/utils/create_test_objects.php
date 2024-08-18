@@ -1725,7 +1725,7 @@ class create_test_objects extends test_base
     /**
      * @return formula to test the "increase" calculations
      */
-    function increase_formula(): formula
+    function formula_increase(): formula
     {
         $frm = new formula($this->usr1);
         $frm->set(formula_api::TI_INCREASE, formula_api::TN_INCREASE);

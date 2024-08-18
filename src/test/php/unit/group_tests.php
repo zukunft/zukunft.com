@@ -157,17 +157,17 @@ class group_tests
         $res_id = new result_id();
         $t->assert('64 bit result_id for the formula increase, '
             . 'the phrases Zurich (City) and inhabitants and the result only phrase 2023 (year)',
-            $res_id->get_id($t->zh_inhabitants_2020(), $t->zh_inhabitants_2020(), $t->increase_formula()),
+            $res_id->get_id($t->zh_inhabitants_2020(), $t->zh_inhabitants_2020(), $t->formula_increase()),
             6051875221405905);
         $t->assert('128 bit result_id for the formula increase, '
             . 'the phrases Zurich (City), Geneva (City) and inhabitants and the result only phrase 2023 (year)',
-            $res_id->get_id($t->zh_ge_inhabitants_2020(), $t->zh_ge_inhabitants_2020(), $t->increase_formula()),
+            $res_id->get_id($t->zh_ge_inhabitants_2020(), $t->zh_ge_inhabitants_2020(), $t->formula_increase()),
             '9234445111013697024');
         $t->assert('512 bit result_id ',
-            $res_id->get_id($t->phrase_list_14(), $t->phrase_list_14b(), $t->increase_formula()),
+            $res_id->get_id($t->phrase_list_14(), $t->phrase_list_14b(), $t->formula_increase()),
             '.....J=..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+1FajJ2(.4LYK3)1FajJ2)');
         $t->assert('512 bit result_id ',
-            $res_id->get_id($t->phrase_list_17_plus(), $t->phrase_list_17_plus(), $t->increase_formula()),
+            $res_id->get_id($t->phrase_list_17_plus(), $t->phrase_list_17_plus(), $t->formula_increase()),
             '...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-.uraWl+');
 
         $t->subheader('SQL statements - setup');

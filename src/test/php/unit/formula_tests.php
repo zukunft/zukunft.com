@@ -103,14 +103,14 @@ class formula_tests
         $frm_renamed = $frm->cloned(formula_api::TN_RENAMED);
         $t->assert_sql_update($sc, $frm_renamed, $frm);
         $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::USER]);
-        // TODO activate db write with log
         $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG]);
         $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('formula sql write delete');
-        // TODO activate db write
         $t->assert_sql_delete($sc, $frm);
         $t->assert_sql_delete($sc, $frm, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $frm, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $frm, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('formula api unit tests');
         $frm = $t->formula_filled();
@@ -127,6 +127,9 @@ class formula_tests
         $t->assert_json_file(new formula($usr), $json_file);
 
         $t->subheader('Expression tests');
+        // TODO activate
+        //$t->assert_true('formula with at least one predefined formula', $t->formula_increase()->is_special());
+        $t->assert_false('formula without predefined formula', $t->formula()->is_special());
 
         // get the id of the phrases that should be added to the result based on the formula reference text
         $target = new phrase_list($usr);
@@ -160,7 +163,7 @@ class formula_tests
         ));
         $phr_lst = $t->phrase_list_increase();
 
-        $frm = $t->increase_formula();
+        $frm = $t->formula_increase();
         // TODO activate Prio 1
         // $res_lst = $frm->to_num($phr_lst);
         //$res = $res_lst->lst[0];

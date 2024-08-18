@@ -1669,7 +1669,7 @@ class sandbox extends db_object_seq_id_user
                 // apply the changes directly to the norm db record
                 // TODO maybe check of other user have used the object and if yes keep or inform
                 $fvt_lst = $this->db_fields_changed($db_obj, $sc_par_lst);
-                if (!$fvt_lst->is_empty_except_user_action()) {
+                if (!$fvt_lst->is_empty_except_internal_fields()) {
                     $sc_par_lst->add(sql_type::UPDATE);
                     $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
                     $usr_msg->add($db_con->update($qp, 'update ' . $obj_name . $this->dsp_id()));
@@ -1830,6 +1830,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * detects if this object has be changed compared to the given object
+     * excluding changes on internal fields like last_update
      *
      * @param sandbox|sandbox_named|sandbox_link $db_obj the user database or standard record for compare
      * @return bool true if any of the fields does not match
@@ -1843,7 +1844,7 @@ class sandbox extends db_object_seq_id_user
         if ($chk_obj->id() == 0) {
             $chk_obj->set_id($db_obj->id());
         }
-        return $chk_obj->db_fields_changed($db_obj)->is_empty();
+        return $chk_obj->db_fields_changed($db_obj)->is_empty_except_internal_fields();
     }
 
     /**
