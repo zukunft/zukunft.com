@@ -240,7 +240,7 @@ class all_unit_tests extends test_cleanup
             //(new group_write_tests)->run($this);
             (new source_write_tests)->run($this);
             (new formula_write_tests)->run($this);
-            //(new formula_link_write_tests)->run($this);
+            (new formula_link_write_tests)->run($this);
             (new view_write_tests)->run($this);
             (new component_write_tests)->run($this);
             //(new value_write_tests)->run($this);

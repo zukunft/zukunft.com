@@ -444,9 +444,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
                         sandbox_link_named - user sandbox objects that link two objects
                             sandbox_link_typed - objects that have additional a type and a predefined behavior
                                 triple - link two words with a predicate / verb
-                                view_term_link - link a view to a term
                             sandbox_link_with_type - TODO combine with sandbox_link_typed?
                                 formula_link - link a formula to a phrase
+                                view_term_link - link a view to a term
                                 component_link - to assign a component to a view
                                 ref - to link a value to an external source
                     sandbox_value - to save a user specific numbers

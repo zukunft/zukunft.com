@@ -103,7 +103,6 @@ class component_tests
         $t->assert_sql_update($sc, $cmp_renamed, $cmp, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('component sql delete');
-        // TODO activate db write
         $t->assert_sql_delete($sc, $cmp);
         $t->assert_sql_delete($sc, $cmp, [sql_type::LOG]);
 

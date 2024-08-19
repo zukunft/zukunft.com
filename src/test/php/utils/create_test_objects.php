@@ -860,6 +860,18 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return triple with all fields set and a reseved test name for testing the db write function
+     */
+    function triple_filled_add(): triple
+    {
+        $trp = $this->triple();
+        $trp->include();
+        $trp->set_id(0);
+        $trp->set_name(triple_api::TN_ADD);
+        return $trp;
+    }
+
+    /**
      * @return triple "Mathematical constant" with only the name set as it may be created by the import
      */
     function triple_name_only(): triple
@@ -1748,6 +1760,27 @@ class create_test_objects extends test_base
         $lnk->set(1, $this->formula(), $this->word()->phrase());
         $lnk->set_type_id($formula_link_types->id(formula_link_type::TIME_PERIOD));
         $lnk->order_nbr = 2;
+        return $lnk;
+    }
+
+    function formula_link_filled(): formula_link
+    {
+        global $share_types;
+        global $protection_types;
+        $lnk = $this->formula_link();
+        $lnk->excluded = true;
+        $lnk->share_id = $share_types->id(share_type_shared::GROUP);
+        $lnk->protection_id = $protection_types->id(protect_type_shared::USER);
+        return $lnk;
+    }
+
+    function formula_link_filled_add(): formula_link
+    {
+        $lnk = $this->formula_link();
+        $lnk->include();
+        $lnk->set_id(0);
+        $lnk->set_formula($this->formula_filled_add());
+        $lnk->set_phrase($this->word_filled_add()->phrase());
         return $lnk;
     }
 

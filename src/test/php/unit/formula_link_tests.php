@@ -99,6 +99,8 @@ class formula_link_tests
         $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
+        $lnk_filled = $t->formula_link_filled();
+        $t->assert_sql_insert($sc, $lnk_filled, [sql_type::LOG]);
         // TODO activate db write
         $lnk_reordered = clone $lnk;
         $lnk_reordered->order_nbr = 1;

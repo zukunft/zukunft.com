@@ -49,14 +49,12 @@ class formula_link_write_tests
 
     function run(test_cleanup $t): void
     {
-        $t->header('Test the formula link class (classes/formula_link.php)');
 
-        // make sure that the word for testing exists even if the word test didn't run before
+        $t->header('formula link db write tests');
+
+        $t->subheader('prepare formula link write tests');
+        $test_name = "make sure that the word for testing exists even if the word test didn't run before";
         $t->test_word(word_api::TN_RENAMED);
-
-        /*
-         * prepare
-         */
 
         // test adding of one formula
         $frm = new formula($t->usr1);
@@ -77,6 +75,10 @@ class formula_link_write_tests
         $t->display('formula->save rename "' . formula_api::TN_ADD . '" to "' . formula_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $t->test_formula_link(formula_api::TN_RENAMED, word_api::TN_RENAMED);
+
+
+        $t->subheader('formula link write sandbox tests for ' . formula_api::TN_RENAMED);
+        //$t->assert_write_link($t->formula_link_filled_add());
 
 
 

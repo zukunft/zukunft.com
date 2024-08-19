@@ -79,6 +79,7 @@ use cfg\formula;
 use cfg\formula_list;
 use cfg\group\group;
 use cfg\log\change;
+use cfg\log\change_link;
 use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
@@ -86,7 +87,9 @@ use cfg\ref;
 use cfg\result\result;
 use cfg\result\result_list;
 use cfg\sandbox;
+use cfg\sandbox_link;
 use cfg\sandbox_link_named;
+use cfg\sandbox_link_with_type;
 use cfg\sandbox_list;
 use cfg\sandbox_named;
 use cfg\sandbox_value;
@@ -2027,6 +2030,34 @@ class test_base
     }
 
     /**
+     * check the object loading by id and name
+     *
+     * @param sandbox_link $usr_obj the user sandbox object e.g. a word
+     * @param int $fid the id of the from object
+     * @param int $typ the id of the link type
+     * @param int $tid the id of the to object
+     * @return bool the load object to use it for more tests
+     */
+    function assert_load_by_link(sandbox_link $usr_obj, int $fid = 0, int $typ = 1, int $tid = 0, int $id = 0): bool
+    {
+        // check the loading via name and check the id
+        $lid = $fid . '/' . $typ . '/' . $tid . '/';
+        $test_name = 'load ' . $usr_obj::class . ' by ' . $lid;
+        $usr_obj->reset();
+        $usr_obj->load_by_link_id($fid, $typ, $tid);
+        $result = $this->assert($test_name, $usr_obj->id(), $id);
+
+        // ... and check the loading via id and check the name
+        if ($result) {
+            $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
+            $usr_obj->reset();
+            $usr_obj->load_by_id($id);
+            $result = $this->assert($test_name, $usr_obj->name(), $lid);
+        }
+        return $result;
+    }
+
+    /**
      * check the loading by id and name of a combine object
      *
      * @param combine_object $usr_obj the combine object e.g. a phrase, term or figure
@@ -2399,6 +2430,60 @@ class test_base
     }
 
     /**
+     * test the link user sandbox object by adding it
+     * and simulate if different users change it
+     *
+     * @param sandbox_link_with_type $lnk
+     * @return bool
+     */
+    function assert_write_link(sandbox_link_with_type $lnk): bool
+    {
+
+        /*
+         * prepafe
+         */
+
+        // remember the original objects as given
+        $ori = clone $lnk;
+        $this->write_sandbox_add($lnk->fob(), $ori->fob()->name(), $this->usr1);
+        $this->write_sandbox_add($lnk->tob(), $ori->tob()->name(), $this->usr1);
+
+        // remember the api json for later compare
+        $api_json = $lnk->api_json();
+
+        /*
+         * are all fields saved?
+         */
+
+        // add the named object for the test user 1
+        $id = $this->write_link_add($lnk, $ori, $this->usr1);
+
+        // check the log
+        if ($id != 0) {
+            $result = $this->write_link_log($lnk, change::MSG_ADD);
+        } else {
+            $result = false;
+        }
+
+        // check reset
+        if ($result) {
+            $result = $this->assert_reset($lnk);
+        }
+
+        // check if user 1 can load the added object
+        if ($result) {
+            $result = $this->assert_load_by_link($lnk, $ori->from_id(), $ori->type_id(), $ori->to_id(), $id);
+        }
+
+        // check if no relevant fields a lost during save and reload
+        if ($result) {
+            $result = $this->assert('API json based compare', $lnk->api_json(), $api_json);
+        }
+
+        return $result;
+    }
+
+    /**
      * remove all remaining test rows without test
      *
      * @param sandbox_named|sandbox_link_named $sbx
@@ -2419,6 +2504,46 @@ class test_base
         $sbx->set_user($this->usr2);
         $sbx->load_by_name($name . self::EXT_RENAME);
         $sbx->del();
+    }
+
+    private function write_link_add(sandbox_link_with_type $sbx, sandbox_link_with_type $ori, user $usr): int
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = 'add ' . $class . ' ' . $ori->dsp_id() . ' for user ' . $usr->dsp_id();
+
+        $fob = clone $ori->fob();
+        $fob->load_by_name($fob->name());
+        $tob = clone $ori->tob();
+        $tob->load_by_name($tob->name());
+        $sbx->set_user($usr);
+        $sbx->set_fob($fob);
+        $sbx->set_tob($tob);
+        $sbx->set_type_id($ori->type_id());
+        $result = $sbx->save();
+        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+            return $sbx->id();
+        } else {
+            return 0;
+        }
+    }
+
+    private function write_link_log(
+        sandbox_link_with_type $sbx,
+        string                 $action
+    ): bool
+    {
+        $log = new change_link($sbx->user());
+        $lib = new library();
+        $tbl_name = $lib->class_to_table($sbx::class);
+        $log->set_table($tbl_name);
+        $log->row_id = $sbx->id();
+        $result = $log->dsp_last(true);
+        $target = $sbx->user()->name() . ' ' . $action . ' "';
+        $target .= $sbx->dsp_id() . '"';
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $sbx->dsp_id();
+        return $this->assert($test_name, $result, $target);
     }
 
     private function write_sandbox_add(sandbox_named|sandbox_link_named $sbx, string $name, user $usr): int
@@ -2501,7 +2626,7 @@ class test_base
         $sbx->description = $description;
         $result = $sbx->save();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
-            return $this->write_sandbox_log($sbx,sandbox_named::FLD_DESCRIPTION, $description, change::MSG_ADD);
+            return $this->write_sandbox_log($sbx, sandbox_named::FLD_DESCRIPTION, $description, change::MSG_ADD);
         } else {
             return false;
         }

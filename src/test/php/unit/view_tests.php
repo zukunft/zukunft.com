@@ -94,7 +94,6 @@ class view_tests
 
         $t->subheader('view sql write update');
         $msk = $t->view_added();
-        // TODO activate db write
         $msk_renamed = $msk->cloned(view_api::TN_RENAMED);
         $t->assert_sql_update($sc, $msk_renamed, $msk);
         $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::USER]);
@@ -102,7 +101,6 @@ class view_tests
         $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('view sql write delete');
-        // TODO activate db write
         $t->assert_sql_delete($sc, $msk);
         $t->assert_sql_delete($sc, $msk, [sql_type::USER]);
         $t->assert_sql_delete($sc, $msk, [sql_type::LOG]);
