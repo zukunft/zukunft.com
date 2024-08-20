@@ -501,6 +501,21 @@ class sandbox extends db_object_seq_id_user
 
 
     /*
+     * placeholder
+     */
+
+    function fob(): sandbox_named|combine_named|null
+    {
+        return null;
+    }
+
+    function tob(): sandbox_named|combine_named|string|null
+    {
+        return null;
+    }
+
+
+    /*
      * cast
      */
 
@@ -1265,6 +1280,7 @@ class sandbox extends db_object_seq_id_user
     /**
      * create a database record to save user specific settings for a user sandbox object
      * TODO combine the reread and the adding in a commit transaction; same for all db change transactions
+     * TODO create an overwrite for the link log message to be able to remove the placeholder functions fob and tob
      * @return bool false if the creation has failed and true if it was successful or not needed
      */
     protected function add_usr_cfg(string $class = self::class): bool
@@ -1280,8 +1296,8 @@ class sandbox extends db_object_seq_id_user
             if ($this->is_named_obj()) {
                 log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
             } elseif ($this->is_link_obj()) {
-                if (isset($this->fob) and isset($this->tob)) {
-                    log_debug('for "' . $this->fob->name . '"/"' . $this->tob->name . '" by user "' . $this->user()->name . '"');
+                if ($this->fob() != null and $this->tob() != null) {
+                    log_debug('for "' . $this->fob()->name() . '"/"' . $this->tob()->name() . '" by user "' . $this->user()->name . '"');
                 } else {
                     log_debug('for "' . $this->id . '" and user "' . $this->user()->name . '"');
                 }

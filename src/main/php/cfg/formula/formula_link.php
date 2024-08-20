@@ -156,8 +156,8 @@ class formula_link extends sandbox_link_with_type
      */
     private function reset_objects(user $usr): void
     {
-        $this->fob = new formula($usr);
-        $this->tob = new phrase($usr);
+        $this->set_formula(new formula($usr));
+        $this->set_phrase(new phrase($usr));
     }
 
     /**
@@ -178,8 +178,9 @@ class formula_link extends sandbox_link_with_type
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            $this->fob->set_id($db_row[formula::FLD_ID]);
-            $this->tob->set_id($db_row[phrase::FLD_ID]);
+            // TODO load by if from cache?
+            $this->formula()->set_id($db_row[formula::FLD_ID]);
+            $this->phrase()->set_id($db_row[phrase::FLD_ID]);
             $this->type_id = $db_row[formula_link_type::FLD_ID];
         }
         return $result;
@@ -227,15 +228,25 @@ class formula_link extends sandbox_link_with_type
         $this->set_tob($phr);
     }
 
+    function formula(): combine_named|sandbox_named|formula
+    {
+        return $this->fob();
+    }
+
+    function phrase(): combine_named|sandbox_named|phrase
+    {
+        return $this->tob();
+    }
+
     /**
      * @return int the formula id and null if the formula is not set
      */
     function formula_id(): int
     {
         $result = 0;
-        if ($this->fob != null) {
-            if ($this->fob->id() > 0) {
-                $result = $this->fob->id();
+        if ($this->fob() != null) {
+            if ($this->fob()->id() > 0) {
+                $result = $this->fob()->id();
             }
         }
         return $result;
@@ -247,9 +258,9 @@ class formula_link extends sandbox_link_with_type
     function phrase_id(): int
     {
         $result = 0;
-        if ($this->tob != null) {
-            if ($this->tob->id() > 0) {
-                $result = $this->tob->id();
+        if ($this->tob() != null) {
+            if ($this->tob()->id() > 0) {
+                $result = $this->tob()->id();
             }
         }
         return $result;
@@ -401,8 +412,8 @@ class formula_link extends sandbox_link_with_type
         $id = parent::load_by_link_id($frm->id(), 0, $phr->id(), $class);
         // no need to reload the linked objects, just assign it
         if ($id != 0) {
-            $this->fob = $frm;
-            $this->tob = $phr;
+            $this->set_formula($frm);
+            $this->set_phrase($phr);
         }
         return $id;
     }
@@ -419,7 +430,7 @@ class formula_link extends sandbox_link_with_type
             $frm = new formula($this->user());
             $frm->load_by_id($this->formula_id(), formula::class);
             if ($frm->id() > 0) {
-                $this->fob = $frm;
+                $this->set_formula($frm);
             } else {
                 $result = false;
             }
@@ -429,7 +440,7 @@ class formula_link extends sandbox_link_with_type
                 $phr = new phrase($this->user());
                 $phr->load_by_id($this->phrase_id());
                 if ($phr->id() != 0) {
-                    $this->tob = $phr;
+                    $this->set_phrase($phr);
                 } else {
                     $result = false;
                 }
@@ -570,7 +581,7 @@ class formula_link extends sandbox_link_with_type
         // link type not used at the moment
         $result = $this->save_field_type($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        log_debug('all fields for "' . $this->fob->name() . '" to "' . $this->tob->name() . '" has been saved');
+        log_debug('all fields for "' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '" has been saved');
         return $result;
     }
 
@@ -584,7 +595,7 @@ class formula_link extends sandbox_link_with_type
         $db_con->set_class(self::class);
         return $db_con->insert_old(
             array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user::FLD_ID, 'order_nbr'),
-            array($this->fob->id(), $this->tob->id(), $this->user()->id, $this->order_nbr));
+            array($this->formula_id(), $this->phrase_id(), $this->user()->id, $this->order_nbr));
     }
 
     /**
@@ -599,8 +610,8 @@ class formula_link extends sandbox_link_with_type
         $result = '';
 
         // check if the required parameters are set
-        if (isset($this->fob) and isset($this->tob)) {
-            log_debug('"' . $this->fob->name() . '" to "' . $this->tob->name() . '" (id ' . $this->id . ') for user ' . $this->user()->name);
+        if ($this->formula_id() != 0 and $this->phrase_id() != 0) {
+            log_debug('"' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '" (id ' . $this->id . ') for user ' . $this->user()->name);
         } elseif ($this->id > 0) {
             log_debug('id ' . $this->id . ' for user ' . $this->user()->name);
         } else {
@@ -621,11 +632,11 @@ class formula_link extends sandbox_link_with_type
 
         // check if a new value is supposed to be added
         if ($this->id <= 0) {
-            log_debug('check if a new formula_link for "' . $this->fob->name() . '" and "' . $this->tob->name() . '" needs to be created');
+            log_debug('check if a new formula_link for "' . $this->formula()->name() . '" and "' . $this->phrase()->name() . '" needs to be created');
             // check if a formula_link with the same formula and word is already in the database
             $db_chk = new formula_link($this->user());
-            $db_chk->fob = $this->fob;
-            $db_chk->tob = $this->tob;
+            $db_chk->set_formula($this->formula());
+            $db_chk->set_phrase($this->phrase());
             $db_chk->load_standard();
             if ($db_chk->id > 0) {
                 $this->id = $db_chk->id;
@@ -634,7 +645,7 @@ class formula_link extends sandbox_link_with_type
 
         if ($this->id <= 0) {
             if ($this->is_valid()) {
-                log_debug('new formula link from "' . $this->fob->name() . '" to "' . $this->tob->name() . '"');
+                log_debug('new formula link from "' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '"');
                 $result .= $this->add($use_func)->get_last_message();
             }
         } else {
@@ -658,11 +669,11 @@ class formula_link extends sandbox_link_with_type
 
             // it should not be possible to change the formula or the word, but nevertheless check
             // instead of changing the formula or the word, a new link should be created and the old deleted
-            if ($db_rec->fob != null) {
-                if ($db_rec->fob->id() <> $this->fob->id()
-                    or $db_rec->tob->id() <> $this->tob->id()) {
+            if ($db_rec->formula() != null) {
+                if ($db_rec->formula()->id() <> $this->formula()->id()
+                    or $db_rec->phrase()->id() <> $this->phrase()->id()) {
                     log_debug("update link settings for id " . $this->id() . ": change formula " . $db_rec->formula_id() . " to " . $this->formula_id() . " and " . $db_rec->phrase_id() . " to " . $this->phrase_id());
-                    $result .= log_info('The formula link "' . $db_rec->fob->name() . '" with "' . $db_rec->tob->name() . '" (id ' . $db_rec->formula_id() . ',' . $db_rec->phrase_id() . ') " cannot be changed to "' . $this->fob->name() . '" with "' . $this->tob->name() . '" (id ' . $this->fob->id() . ',' . $this->tob->id() . '). Instead the program should have created a new link.', "formula_link->save");
+                    $result .= log_info('The formula link "' . $db_rec->formula()->name() . '" with "' . $db_rec->phrase()->name() . '" (id ' . $db_rec->formula_id() . ',' . $db_rec->phrase_id() . ') " cannot be changed to "' . $this->formula()->name() . '" with "' . $this->phrase()->name() . '" (id ' . $this->formula()->id() . ',' . $this->phrase()->id() . '). Instead the program should have created a new link.', "formula_link->save");
                 }
             }
 
@@ -784,11 +795,11 @@ class formula_link extends sandbox_link_with_type
     {
         $result = '';
 
-        if ($this->fob != null) {
-            $result = $this->fob->name();
+        if ($this->formula() != null) {
+            $result = $this->formula()->name();
         }
-        if ($this->tob != null) {
-            $result = ' to ' . $this->tob->name();
+        if ($this->phrase_id() != 0) {
+            $result = ' to ' . $this->phrase()->name();
         }
 
         return $result;
@@ -802,8 +813,8 @@ class formula_link extends sandbox_link_with_type
         $result = '';
 
         $this->load_objects();
-        if (isset($this->fob) and isset($this->tob)) {
-            $result = $this->fob->name_linked($back) . ' to ' . $this->tob->display_linked();
+        if ($this->formula_id() != 0 and $this->phrase_id() != 0) {
+            $result = $this->formula()->name_linked($back) . ' to ' . $this->phrase()->display_linked();
         } else {
             $result .= log_err("The formula or the linked word cannot be loaded.", "formula_link->name");
         }

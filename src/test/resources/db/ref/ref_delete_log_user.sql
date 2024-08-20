@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION ref_delete_log_user
-    (_user_id bigint,
+    (_user_id          bigint,
      _change_action_id smallint,
      _change_table_id  smallint,
      _old_text_from    text,
@@ -26,7 +26,7 @@ SELECT ref_delete_log_user
      22::smallint,
      'global warming potential'::text,
      null::text,
-     null::text,
+     'Q999999999'::text,
      1070::bigint,
      null::smallint,
      12::bigint);

@@ -74,9 +74,9 @@ if ($usr->id() > 0) {
         if ($_GET['confirm'] == 1) {
 
             // get the parameters
-            $trp->fob->set_id($_GET['phrase1']); // the word or triple linked from
+            $trp->from()->set_id($_GET['phrase1']); // the word or triple linked from
             $trp->verb->set_id($_GET['verb']);    // the link type (verb)
-            $trp->tob->set_id($_GET['phrase2']); // the word or triple linked to
+            $trp->to()->set_id($_GET['phrase2']); // the word or triple linked to
 
             // save the changes
             $upd_result = $trp->save();

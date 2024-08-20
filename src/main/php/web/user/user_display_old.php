@@ -420,8 +420,8 @@ class user_dsp_old extends user
                 // create the formula_link objects with the minimal parameter needed
                 $frm_usr = new formula_link($this);
                 $frm_usr->set_id($sbx_row['id']);
-                $frm_usr->fob->id = $sbx_row[formula::FLD_ID];
-                $frm_usr->tob->id = $sbx_row[phrase::FLD_ID];
+                $frm_usr->formula()->set_id($sbx_row[formula::FLD_ID]);
+                $frm_usr->phrase()->set_id($sbx_row[phrase::FLD_ID]);
                 $frm_usr->type_id = $sbx_row['usr_type'];
                 $frm_usr->set_excluded($sbx_row['usr_excluded']);
                 $frm_usr->load_objects();
@@ -442,14 +442,14 @@ class user_dsp_old extends user
                 } else {
 
                     // prepare the row formula_links
-                    $sandbox_item_name = $frm_usr->fob->name_linked($back);
+                    $sandbox_item_name = $frm_usr->formula()->name_linked($back);
                     //$sandbox_item_name = $frm_usr->name_linked($back);
 
                     // format the user formula_link
                     if ($frm_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $frm_usr->tob->display_linked();
+                        $sandbox_usr_txt = $frm_usr->phrase()->display_linked();
                         //$sandbox_usr_txt = $frm_usr->link_name;
                     }
 
@@ -457,7 +457,7 @@ class user_dsp_old extends user
                     if ($frm_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
-                        $sandbox_std_txt = $frm_std->tob->display_linked();
+                        $sandbox_std_txt = $frm_std->phrase()->display_linked();
                         //$sandbox_std_txt = $frm_std->link_name;
                     }
 
@@ -1089,8 +1089,8 @@ class user_dsp_old extends user
                 // create the component_link objects with the minimal parameter needed
                 $dsp_usr = new component_link($this);
                 $dsp_usr->set_id($sbx_row['id']);
-                $dsp_usr->fob->set_id($sbx_row[view::FLD_ID]);
-                $dsp_usr->tob->set_id($sbx_row[component::FLD_ID]);
+                $dsp_usr->view()->set_id($sbx_row[view::FLD_ID]);
+                $dsp_usr->component()->set_id($sbx_row[component::FLD_ID]);
                 $dsp_usr->order_nbr = $sbx_row['usr_order'];
                 $dsp_usr->position_type = $sbx_row['usr_type'];
                 $dsp_usr->set_excluded($sbx_row['usr_excluded']);

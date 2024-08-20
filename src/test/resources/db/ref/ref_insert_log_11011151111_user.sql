@@ -69,7 +69,7 @@ SELECT ref_insert_log_11011151111_user (
                22::smallint,
                ''::text,
                null::text,
-               null::text,
+               ''::text,
                null::text,
                null::text,
                null::text,

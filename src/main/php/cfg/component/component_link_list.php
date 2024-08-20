@@ -306,11 +306,10 @@ class component_link_list extends sandbox_list
     {
         $result = array();
         foreach ($this->lst() as $lnk) {
-            if ($lnk->fob != null) {
-                if ($lnk->fob->id() <> 0) {
-                    if (!in_array($lnk->fob->id(), $result)) {
-                        $result[] = $lnk->fob->id();
-                    }
+            $id = $lnk->view()->id();
+            if ($id <> 0) {
+                if (!in_array($id, $result)) {
+                    $result[] = $id;
                 }
             }
         }
@@ -324,9 +323,10 @@ class component_link_list extends sandbox_list
     {
         $result = array();
         foreach ($this->lst() as $lnk) {
-            if ($lnk->tob->id() <> 0) {
-                if (!in_array($lnk->tob->id(), $result)) {
-                    $result[] = $lnk->tob->id();
+            $id = $lnk->component()->id();
+            if ($id <> 0) {
+                if (!in_array($id, $result)) {
+                    $result[] = $id;
                 }
             }
         }
@@ -340,10 +340,11 @@ class component_link_list extends sandbox_list
     {
         $result = array();
         foreach ($this->lst() as $lnk) {
-            if ($lnk->tob != null) {
-                if ($lnk->tob->name() <> '') {
-                    if (!in_array($lnk->tob->name(), $result)) {
-                        $result[] = $lnk->tob->name();
+            if ($lnk->component() != null) {
+                $name = $lnk->component()->name();
+                if ($name <> '') {
+                    if (!in_array($name, $result)) {
+                        $result[] = $name;
                     }
                 }
             }

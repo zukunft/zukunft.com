@@ -2960,9 +2960,9 @@ class create_test_objects extends test_base
 
         $trp = new triple($test_usr);
         $trp->set_id($id);
-        $trp->fob = $this->new_word($from_name)->phrase();
+        $trp->set_from($this->new_word($from_name)->phrase());
         $trp->verb = $verbs->get_verb($verb_code_id);
-        $trp->tob = $this->new_word($to_name)->phrase();
+        $trp->set_to($this->new_word($to_name)->phrase());
         $trp->set_name($wrd_name);
 
         if ($wrd_type_code_id != null) {
@@ -3088,17 +3088,17 @@ class create_test_objects extends test_base
                     $result = $trp;
                 } else {
                     // check if the backward link exists
-                    $trp->fob = $to;
+                    $trp->set_from($to);
                     $trp->verb = $vrb;
-                    $trp->tob = $from;
+                    $trp->set_to($from);
                     $trp->set_user($this->usr1);
                     $trp->load_by_link_id($to->id(), $vrb->id(), $from->id());
                     $result = $trp;
                     // create the link if requested
                     if ($trp->id() <= 0 and $auto_create) {
-                        $trp->fob = $from;
+                        $trp->set_from($from);
                         $trp->verb = $vrb;
-                        $trp->tob = $to;
+                        $trp->set_to($to);
                         if ($trp->name(true) <> $name_given) {
                             $trp->set_name_given($name_given);
                             $trp->set_name($name_given);
@@ -3797,8 +3797,8 @@ class create_test_objects extends test_base
         $cmp = $this->load_component($cmp_name);
         $lnk = new component_link($this->usr1);
         $lnk->reset();
-        $lnk->fob = $msk;
-        $lnk->tob = $cmp;
+        $lnk->set_view($msk);
+        $lnk->set_component($cmp);
         $lnk->order_nbr = $pos;
         $result = $lnk->save();
         $target = '';
@@ -3829,13 +3829,13 @@ class create_test_objects extends test_base
             $frm_lnk = new formula_link($this->usr1);
             $frm_lnk->load_by_link($frm, $wrd->phrase());
             if ($frm_lnk->id() > 0) {
-                $result = $frm_lnk->fob->name() . ' is linked to ' . $frm_lnk->tob->name();
+                $result = $frm_lnk->formula()->name() . ' is linked to ' . $frm_lnk->phrase()->name();
                 $target = $formula_name . ' is linked to ' . $word_name;
                 $this->display('formula_link', $target, $result);
             } else {
                 if ($autocreate) {
-                    $frm_lnk->fob = $frm;
-                    $frm_lnk->tob = $wrd->phrase();
+                    $frm_lnk->set_formula($frm);
+                    $frm_lnk->set_phrase($wrd->phrase());
                     $result = $frm_lnk->save();
                     if ($result != '') {
                         log_err('add formula link failed due to: ' . $result);

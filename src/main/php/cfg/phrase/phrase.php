@@ -667,7 +667,7 @@ class phrase extends combine_named
         if ($this->id() < 0) {
             $lnk = $this->obj;
             $lnk->load_objects(); // try to be on the save side, and it is anyway checked if loading is really needed
-            $result = $lnk->fob;
+            $result = $lnk->fob();
         } elseif ($this->id() > 0) {
             $result = $this->obj;
         } else {

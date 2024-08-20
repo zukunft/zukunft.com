@@ -81,8 +81,8 @@ class sandbox_link extends sandbox
      * object vars
      */
 
-    public ?object $fob = null; // the From OBject which this linked object is creating the connection
-    public object|string|null $tob = null; // the To OBject which this linked object is creating the connection (can be a string for external keys)
+    private sandbox_named|combine_named|null $fob = null; // the From OBject which this linked object is creating the connection
+    private sandbox_named|combine_named|string|null $tob = null; // the To OBject which this linked object is creating the connection (can be a string for external keys)
 
     // database fields only used for objects that link two objects
     // TODO create a more specific object that covers all the objects that could be linked e.g. linkable_object
@@ -111,12 +111,12 @@ class sandbox_link extends sandbox
      * set and get
      */
 
-    function set_fob(object $fob): void
+    function set_fob(sandbox_named|combine_named|null $fob): void
     {
         $this->fob = $fob;
     }
 
-    function fob(): object
+    function fob(): sandbox_named|combine_named|null
     {
         return $this->fob;
     }
@@ -154,18 +154,14 @@ class sandbox_link extends sandbox
         }
     }
 
-    function set_tob(object|string $tob): void
+    function set_tob(sandbox_named|combine_named|string|null $tob): void
     {
         $this->tob = $tob;
     }
 
-    function tob(): object|string
+    function tob(): sandbox_named|combine_named|string|null
     {
-        if ($this->tob == null) {
-            return $this->to_value();
-        } else {
-            return $this->tob;
-        }
+        return $this->tob;
     }
 
     /**
@@ -630,12 +626,12 @@ class sandbox_link extends sandbox
             log_debug('to ' . $this->dsp_id() . ' from ' . $db_rec->dsp_id() . ' (standard ' . $std_rec->dsp_id() . ')');
 
             $log = $this->log_upd_link();
-            $log->old_from = $db_rec->fob;
-            $log->new_from = $this->fob;
-            $log->std_from = $std_rec->fob;
-            $log->old_to = $db_rec->tob;
-            $log->new_to = $this->tob;
-            $log->std_to = $std_rec->tob;
+            $log->old_from = $db_rec->fob();
+            $log->new_from = $this->fob();
+            $log->std_from = $std_rec->fob();
+            $log->old_to = $db_rec->tob();
+            $log->new_to = $this->tob();
+            $log->std_to = $std_rec->tob();
 
             $log->row_id = $this->id;
             if ($log->add()) {
@@ -708,8 +704,8 @@ class sandbox_link extends sandbox
         } else {
             $db_chk = clone $this;
             $db_chk->reset();
-            $db_chk->fob = $this->fob;
-            $db_chk->tob = $this->tob;
+            $db_chk->set_fob($this->fob());
+            $db_chk->set_tob($this->tob());
             if ($db_chk->load_standard()) {
                 if ($db_chk->id() > 0) {
                     log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the standard linkspace');
@@ -1001,9 +997,9 @@ class sandbox_link extends sandbox
                 // TODO Prio 2: move "from_" to a const and or function
                 $lst->add_link_field(
                     $this->from_field(),
-                    'from_' . $this->fob?->name_field(),
-                    $this->fob,
-                    $sbx->fob
+                    'from_' . $this->fob()?->name_field(),
+                    $this->fob(),
+                    $sbx->fob()
                 );
             }
             if ($sbx->to_id() <> $this->to_id()) {
@@ -1026,9 +1022,9 @@ class sandbox_link extends sandbox
                     // TODO Prio 2: move "to_" to a const and or function
                     $lst->add_link_field(
                         $this->to_field(),
-                        'to_' . $this->tob?->name_field(),
-                        $this->tob,
-                        $sbx->tob
+                        'to_' . $this->tob()?->name_field(),
+                        $this->tob(),
+                        $sbx->tob()
                     );
                 }
             }
@@ -1037,30 +1033,30 @@ class sandbox_link extends sandbox
             $from_fld = '';
             $to_fld = '';
             if ($is_insert) {
-                $from_fld = $this->fob?->name_field();
-                if ($this->tob == null) {
+                $from_fld = $this->fob()?->name_field();
+                if ($this->tob() == null) {
                     // e.g. for references the external key
                     $to_fld = $this->to_field();
                 } else {
-                    if (is_string($this->tob)) {
+                    if (is_string($this->tob())) {
                         // e.g. for references the external key
                         $to_fld = $this->to_field();
                     } else {
-                        $to_fld = $this->tob->name_field();
+                        $to_fld = $this->tob()->name_field();
                     }
                 }
             }
             if ($is_delete) {
-                $from_fld = $sbx->fob?->name_field();
-                if ($sbx->tob == null) {
+                $from_fld = $sbx->fob()?->name_field();
+                if ($sbx->tob() == null) {
                     // e.g. for references the external key
                     $to_fld = $sbx->to_field();
                 } else {
-                    if (is_string($sbx->tob)) {
+                    if (is_string($sbx->tob())) {
                         // e.g. for references the external key
                         $to_fld = $sbx->to_field();
                     } else {
-                        $to_fld = $sbx->tob->name_field();
+                        $to_fld = $sbx->tob()->name_field();
                     }
                 }
             }
@@ -1082,7 +1078,7 @@ class sandbox_link extends sandbox
                         $this->from_field(),
                         $from_fld,
                         null,
-                        $sbx->fob
+                        $sbx->fob()
                     );
                     if ($do_log) {
                         $lst->add_field(
@@ -1091,12 +1087,25 @@ class sandbox_link extends sandbox
                             change::FLD_FIELD_ID_SQLTYP
                         );
                     }
-                    $lst->add_link_field(
-                        $this->to_field(),
-                        $to_fld,
-                        null,
-                        $sbx->tob
-                    );
+                    if ($this::class == ref::class) {
+                        $lst->add_field(
+                            $this->to_field(),
+                            null,
+                            sandbox_named::FLD_NAME_SQLTYP,
+                            $sbx->to_value(),
+                            $to_fld,
+                            null,
+                            null,
+                            db_object_seq_id::FLD_ID_SQLTYP
+                        );
+                    } else {
+                        $lst->add_link_field(
+                            $this->to_field(),
+                            $to_fld,
+                            null,
+                            $sbx->tob()
+                        );
+                    }
                 } elseif (!$this->is_excluded() and $sbx->is_excluded()) {
                     if ($do_log) {
                         $lst->add_field(
@@ -1108,7 +1117,7 @@ class sandbox_link extends sandbox
                     $lst->add_link_field(
                         $this->from_field(),
                         $from_fld,
-                        $this->fob,
+                        $this->fob(),
                         null
                     );
                     if ($do_log) {
@@ -1118,12 +1127,25 @@ class sandbox_link extends sandbox
                             change::FLD_FIELD_ID_SQLTYP
                         );
                     }
-                    $lst->add_link_field(
-                        $this->to_field(),
-                        $to_fld,
-                        $this->tob,
-                        null
-                    );
+                    if ($this::class == ref::class) {
+                        $lst->add_field(
+                            $this->to_field(),
+                            $this->tob(),
+                            sandbox_named::FLD_NAME_SQLTYP,
+                            null,
+                            $to_fld,
+                            $this->tob(),
+                            null,
+                            db_object_seq_id::FLD_ID_SQLTYP
+                        );
+                    } else {
+                        $lst->add_link_field(
+                            $this->to_field(),
+                            $to_fld,
+                            $this->tob(),
+                            null
+                        );
+                    }
                 }
             }
         }
@@ -1241,16 +1263,13 @@ class sandbox_link extends sandbox
     function dsp_id(): string
     {
         $result = '';
-        if ($this->fob != null or $this->tob != null) {
-            if ($this->fob != null) {
-                $result .= 'from ' . $this->fob->dsp_id(false) . ' ';
-            }
-            if ($this->tob != null) {
-                $result .= 'to ' . $this->tob->dsp_id(false);
-            }
-        } else {
-            $result .= $this->name() . ' (' . $this->id() . ') of type ' . $this::class;
+        if ($this->fob() != null) {
+            $result .= 'from ' . $this->fob()->dsp_id(false) . ' ';
         }
+        if ($this->tob() != null) {
+            $result .= 'to ' . $this->tob()->dsp_id(false);
+        }
+
         $result .= ' as' . parent::dsp_id();
         return $result;
     }

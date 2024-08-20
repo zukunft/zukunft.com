@@ -66,7 +66,7 @@ SELECT ref_insert_log_11011151111_user (
                22,
                '',
                null,
-               null,
+               '',
                null,
                null,
                null,

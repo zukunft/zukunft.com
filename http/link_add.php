@@ -72,20 +72,20 @@ if ($usr->id() > 0) {
 
     // load the parameters to the triple object to display it again in case of an error
     if (isset($_GET['from'])) {
-        $trp->fob->set_id($_GET['from']);
+        $trp->from()->set_id($_GET['from']);
     }   // the word or triple to be linked
     if (isset($_GET['verb'])) {
         $trp->verb->set_id($_GET['verb']);
     }   // the link type (verb)
     if (isset($_GET['phrase'])) {
-        $trp->tob->set_id($_GET['phrase']);
+        $trp->to()->set_id($_GET['phrase']);
     }
 
     // if the user has pressed save at least once
     if ($_GET['confirm'] == 1) {
 
         // check essential parameters
-        if ($trp->fob->id() == 0 or $trp->verb->id() == 0 or $trp->tob->id() == 0) {
+        if ($trp->from_id() == 0 or $trp->verb->id() == 0 or $trp->to_id() == 0) {
             $msg .= 'Please select two words and a verb.';
         } else {
 

@@ -169,7 +169,6 @@ class ref extends sandbox_link_with_type
      */
 
     // database fields
-    public ?phrase $phr = null;           // the phrase object incl. the database id of the word, verb or formula TODO to be move to fob
     public ?string $external_key = null;  // the unique key in the external system
     public ?source $source = null;        // if the reference does not allow a full automatic bidirectional update
     //                                       use the source to define an as good as possible import
@@ -272,7 +271,6 @@ class ref extends sandbox_link_with_type
     function set_phrase(phrase $phr): void
     {
         $this->set_fob($phr);
-        $this->phr = $phr;
     }
 
     function set_phrase_by_id(?int $id): void
@@ -286,9 +284,25 @@ class ref extends sandbox_link_with_type
         }
     }
 
-    function phrase(): phrase
+    function phrase(): phrase|sandbox_named|combine_named|null
     {
-        return $this->phr;
+        return $this->fob();
+    }
+
+    /**
+     * @return int the phrase id and null if the phrase is not set
+     */
+    function phrase_id(): int
+    {
+        $result = 0;
+        $phr = $this->phrase();
+        if ($phr != null) {
+            $id = $phr->id();
+            if ($id != 0) {
+                $result = $id;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -312,10 +326,10 @@ class ref extends sandbox_link_with_type
      */
     function from_id(): int
     {
-        if ($this->fob == null) {
+        if ($this->fob() == null) {
             return 0;
         } else {
-            return $this->fob->id();
+            return $this->phrase()->id();
         }
     }
 
@@ -442,10 +456,8 @@ class ref extends sandbox_link_with_type
             $api_obj->excluded = true;
         } else {
             parent::fill_api_obj($api_obj);
-            if ($this->phr != null) {
-                if ($this->phr->id() != 0) {
-                    $api_obj->phrase_id = $this->phr->id();
-                }
+            if ($this->phrase_id() != 0) {
+                $api_obj->phrase_id = $this->phrase_id();
             }
             $api_obj->external_key = $this->external_key;
             if ($this->source != null) {
@@ -629,12 +641,12 @@ class ref extends sandbox_link_with_type
     {
         $result = true;
 
-        if ($this->phr->name() == null or $this->phr->name() == '') {
-            if ($this->phr->id() <> 0) {
+        if ($this->phrase()?->name() == null or $this->phrase()?->name() == '') {
+            if ($this->phrase_id() <> 0) {
                 $phr = new phrase($this->user());
-                if ($phr->load_by_id($this->phr->id())) {
+                if ($phr->load_by_id($this->phrase_id())) {
                     $this->set_phrase($phr);
-                    log_debug('phrase ' . $this->phr->dsp_id() . ' loaded');
+                    log_debug('phrase ' . $phr->dsp_id() . ' loaded');
                 } else {
                     $result = false;
                 }
@@ -774,7 +786,7 @@ class ref extends sandbox_link_with_type
         log_debug('ref->log_add ' . $this->dsp_id());
 
         // check that the minimal parameters are set
-        if (!isset($this->phr)) {
+        if ($this->phrase() == null) {
             log_err('The phrase object must be set to log adding an external reference.', 'ref->log_add');
         }
         if ($this->type_id() <= 0) {
@@ -786,7 +798,7 @@ class ref extends sandbox_link_with_type
         $log->set_table(change_table_list::REF);
         // TODO review in log_link
         // TODO object must be loaded before it can be logged
-        $log->new_from = $this->phr;
+        $log->new_from = $this->phrase();
         $log->new_link = $this->type();
         $log->new_to = $this;
         $log->row_id = 0;
@@ -804,10 +816,10 @@ class ref extends sandbox_link_with_type
         $log = new change_link($this->user());
         $log->set_action(change_action::UPDATE);
         $log->set_table(change_table_list::REF);
-        $log->old_from = $db_rec->phr;
+        $log->old_from = $db_rec->phrase();
         $log->old_link = $db_rec->type();
         $log->old_to = $db_rec;
-        $log->new_from = $this->phr;
+        $log->new_from = $this->phrase();
         $log->new_link = $this->type();
         $log->new_to = $this;
         $log->row_id = $this->id;
@@ -824,7 +836,7 @@ class ref extends sandbox_link_with_type
         log_debug('ref->log_del ' . $this->dsp_id());
 
         // check that the minimal parameters are set
-        if (!isset($this->phr)) {
+        if ($this->phrase() == null) {
             log_err('The phrase object must be set to log deletion of an external reference.', 'ref->log_del');
         }
         if ($this->type_id() <= 0) {
@@ -834,7 +846,7 @@ class ref extends sandbox_link_with_type
         $log = new change_link($this->user());
         $log->set_action(change_action::DELETE);
         $log->set_table(change_table_list::REF);
-        $log->old_from = $this->phr;
+        $log->old_from = $this->phrase();
         $log->old_link = $this->type();
         $log->old_to = $this;
         $log->row_id = $this->id;
@@ -970,7 +982,7 @@ class ref extends sandbox_link_with_type
 
                 $this->id = $db_con->insert_old(
                     array(phrase::FLD_ID, self::FLD_EX_KEY, self::FLD_TYPE),
-                    array($this->phr->id(), $this->external_key, $this->type_id));
+                    array($this->phrase_id(), $this->external_key, $this->type_id));
                 if ($this->id > 0) {
                     // update the id in the log for the correct reference
                     if (!$log->add_ref($this->id)) {
@@ -980,8 +992,8 @@ class ref extends sandbox_link_with_type
                         // create an empty db_rec element to force saving of all set fields
                         $db_rec = clone $this;
                         $db_rec->reset();
-                        $db_rec->fob = $this->fob;
-                        $db_rec->tob = $this->tob;
+                        $db_rec->set_fob($this->fob());
+                        $db_rec->set_tob($this->tob());
                         $db_rec->set_user($this->user());
                         $std_rec = clone $db_rec;
                         // save the object fields
@@ -1007,7 +1019,7 @@ class ref extends sandbox_link_with_type
 
         $db_chk = clone $this;
         $db_chk->reset();
-        $db_chk->load_by_link_ids($this->phr->id(), $this->type_id());
+        $db_chk->load_by_link_ids($this->phrase_id(), $this->type_id());
         if ($db_chk->id > 0) {
             log_debug('ref->get_similar an external reference for ' . $this->dsp_id() . ' already exists');
             $result = $db_chk;
@@ -1203,7 +1215,7 @@ class ref extends sandbox_link_with_type
             }
         }
         if ($sc_par_lst->is_insert()) {
-            if ($sbx->phr?->id() <> $this->phr?->id()) {
+            if ($sbx->phrase_id() <> $this->phrase_id()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_ID,
@@ -1214,8 +1226,8 @@ class ref extends sandbox_link_with_type
                 $lst->add_link_field(
                     phrase::FLD_ID,
                     phrase::FLD_NAME,
-                    $this->phr,
-                    $sbx->phr
+                    $this->phrase(),
+                    $sbx->phrase()
                 );
             }
         }
@@ -1313,13 +1325,11 @@ class ref extends sandbox_link_with_type
     {
         $result = '';
 
-        if (isset($this->phr)) {
-            $result .= 'ref of "' . $this->phr->name() . '"';
+        if ($this->phrase() != null) {
+            $result .= 'ref of "' . $this->phrase()->name() . '"';
         } else {
-            if ($this->phr->id() != null) {
-                if ($this->phr->id() != 0) {
-                    $result .= 'ref of phrase id ' . $this->phr->id() . ' ';
-                }
+            if ($this->phrase_id() != 0) {
+                $result .= 'ref of phrase id ' . $this->phrase_id() . ' ';
             }
         }
         if ($this->has_type()) {

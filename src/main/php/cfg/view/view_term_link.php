@@ -239,10 +239,10 @@ class view_term_link extends sandbox_link_with_type
      */
     function to_value(): string
     {
-        if ($this->tob == null) {
+        if ($this->tob() == null) {
             return '';
         } else {
-            return $this->tob->name();
+            return $this->tob()->name();
         }
     }
 

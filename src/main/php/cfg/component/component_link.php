@@ -67,7 +67,7 @@ use cfg\log\change;
 use cfg\sandbox;
 use cfg\sandbox_link;
 use cfg\sandbox_link_with_type;
-use cfg\triple;
+use cfg\sandbox_named;
 use cfg\type_object;
 use cfg\user;
 use cfg\view;
@@ -180,8 +180,8 @@ class component_link extends sandbox_link_with_type
     {
         // assign the object specific objects to the standard link object
         // to enable the usage of the standard user sandbox link function for this view component link object
-        $this->fob = new view($usr); // the display (view) object (used to save the correct name in the log)
-        $this->tob = new component($usr); // the display component (view entry) object (used to save the correct name in the log)
+        $this->set_view(new view($usr)); // the display (view) object (used to save the correct name in the log)
+        $this->set_component(new component($usr)); // the display component (view entry) object (used to save the correct name in the log)
     }
 
     /**
@@ -201,10 +201,10 @@ class component_link extends sandbox_link_with_type
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            $this->fob = new view($this->user());
-            $this->fob->set_id($db_row[view::FLD_ID]);
-            $this->tob = new component($this->user());
-            $this->tob->set_id($db_row[component::FLD_ID]);
+            $this->set_view(new view($this->user()));
+            $this->view()->set_id($db_row[view::FLD_ID]);
+            $this->set_component(new component($this->user()));
+            $this->component()->set_id($db_row[component::FLD_ID]);
             $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
             $this->pos_type_id = $db_row[self::FLD_POS_TYPE];
         }
@@ -251,7 +251,7 @@ class component_link extends sandbox_link_with_type
      */
     function set_view(view $msk): void
     {
-        $this->fob = $msk;
+        $this->set_fob($msk);
     }
 
     /**
@@ -260,7 +260,7 @@ class component_link extends sandbox_link_with_type
      */
     function set_component(component $cmp): void
     {
-        $this->tob = $cmp;
+        $this->set_tob($cmp);
     }
 
     /**
@@ -286,20 +286,20 @@ class component_link extends sandbox_link_with_type
 
     /**
      * rename to standard link from object to view
-     * @return object
+     * @return view
      */
-    function view(): object
+    function view(): sandbox_named
     {
-        return $this->fob;
+        return $this->fob();
     }
 
     /**
      * rename to standard link to object to component
-     * @return object
+     * @return sandbox_named
      */
-    function component(): object
+    function component(): sandbox_named
     {
-        return $this->tob;
+        return $this->tob();
     }
 
     /**
@@ -320,9 +320,9 @@ class component_link extends sandbox_link_with_type
      */
     function set_link_objects(sandbox_link|component_link $lnk): component_link
     {
-        $lnk->fob = $this->fob;
+        $lnk->set_view($this->view());
         $lnk->set_type_id($this->type_id());
-        $lnk->tob = $this->tob;
+        $lnk->set_component($this->component());
         return $lnk;
     }
 
@@ -360,8 +360,8 @@ class component_link extends sandbox_link_with_type
     function fill_api_obj(object $api_obj): void
     {
         $api_obj->set_id($this->id());
-        if ($this->tob != null) {
-            $api_obj->set_component($this->tob->api_obj());
+        if ($this->tob() != null) {
+            $api_obj->set_component($this->tob()->api_obj());
         }
         $api_obj->set_pos($this->order_nbr);
 
@@ -492,9 +492,9 @@ class component_link extends sandbox_link_with_type
             array(user::FLD_ID)));
         if ($this->id() > 0) {
             $sc->add_where($this->id_field(), $this->id());
-        } elseif ($this->fob->id() > 0 and $this->tob->id() > 0) {
-            $sc->add_where(view::FLD_ID, $this->fob->id());
-            $sc->add_where(component::FLD_ID, $this->tob->id());
+        } elseif ($this->view()->id() > 0 and $this->component()->id() > 0) {
+            $sc->add_where(view::FLD_ID, $this->view()->id());
+            $sc->add_where(component::FLD_ID, $this->component()->id());
         } else {
             log_err('Cannot load default component link because id is missing');
         }
@@ -671,7 +671,7 @@ class component_link extends sandbox_link_with_type
      */
     function export_obj(bool $do_load = true): sandbox_exp
     {
-        $result = $this->tob->export_obj($do_load);
+        $result = $this->component()->export_obj($do_load);
         if ($this->order_nbr >= 0) {
             $result->position = $this->order_nbr;
         }
@@ -692,28 +692,28 @@ class component_link extends sandbox_link_with_type
         // load any missing parameters
         if ($this->id > 0) {
             $this->load_by_id($this->id);
-        } elseif ($this->fob->id() != 0 and $this->tob->id() != 0) {
-            $this->load_by_link_id($this->fob->id(), 0, $this->tob->id(), self::class);
+        } elseif ($this->view()->id() != 0 and $this->component()->id() != 0) {
+            $this->load_by_link_id($this->view()->id(), 0, $this->component()->id(), self::class);
         }
         $this->load_objects();
 
         // check the all minimal input parameters
         if ($this->id <= 0) {
             log_err("Cannot load the view component link.", "component_link->move");
-        } elseif ($this->fob->id() <= 0 or $this->tob->id() <= 0) {
+        } elseif ($this->view()->id() <= 0 or $this->component()->id() <= 0) {
             log_err("The view component id and the view component id must be given to move it.", "component_link->move");
         } else {
             log_debug('component_link->move ' . $direction . ' ' . $this->dsp_id());
 
             // new reorder code that can create a separate order for each user
-            if (!isset($this->fob) or !isset($this->tob)) {
+            if ($this->view() == null or $this->component() == null) {
                 log_err("The view component and the view component cannot be loaded to move them.", "component_link->move");
             } else {
-                $this->fob->load_components();
+                $this->view()->load_components();
 
                 // correct any wrong order numbers e.g. a missing number
                 $order_number_corrected = false;
-                log_debug('component_link->move check order numbers for ' . $this->fob->dsp_id());
+                log_debug('component_link->move check order numbers for ' . $this->view()->dsp_id());
                 // TODO define the common sorting start number, which is 1 and not 0
                 $order_nbr = 1;
                 if ($this->view()->cmp_lnk_lst != null) {
@@ -722,27 +722,27 @@ class component_link extends sandbox_link_with_type
                         if ($cmp_lnk->order_nbr != $order_nbr) {
                             log_debug('check order number of the view component '
                                 . $cmp_lnk->dsp_id() . ' corrected from ' . $cmp_lnk->order_nbr
-                                . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
+                                . ' to ' . $order_nbr . ' in ' . $this->view()->dsp_id());
                             //zu_err('Order number of the view component "'.$entry->name.'" corrected from '.$cmp_lnk->order_nbr.' to '.$order_nbr.'.', "component_link->move");
                             $cmp_lnk->order_nbr = $order_nbr;
                             $cmp_lnk->save();
                             $order_number_corrected = true;
                         }
                         log_debug('component_link->move check order numbers checked for '
-                            . $this->fob->dsp_id() . ' and ' . $cmp_lnk->dsp_id() . ' at position ' . $order_nbr);
+                            . $this->view()->dsp_id() . ' and ' . $cmp_lnk->dsp_id() . ' at position ' . $order_nbr);
                         $order_nbr++;
                     }
                 }
                 if ($order_number_corrected) {
                     log_debug('component_link->move reload after correction');
-                    $this->fob->load_components();
+                    $this->view()->load_components();
                     // check if correction was successful
                     $order_nbr = 0;
-                    if ($this->fob->cmp_lst != null) {
-                        foreach ($this->fob->cmp_lst->lst() as $entry) {
+                    if ($this->view()->cmp_lst != null) {
+                        foreach ($this->view()->cmp_lst->lst() as $entry) {
                             $cmp_lnk = new component_link($this->user());
                             $msk = new view($this->user());
-                            $msk->load_by_id($this->fob->id());
+                            $msk->load_by_id($this->view()->id());
                             $cmp_lnk->load_by_link($msk, $entry);
                             if ($cmp_lnk->order_nbr != $order_nbr) {
                                 log_err('Component link ' . $cmp_lnk->dsp_id() . ' should have position ' . $order_nbr . ', but is ' . $cmp_lnk->order_nbr, "component_link->move");
@@ -750,42 +750,42 @@ class component_link extends sandbox_link_with_type
                         }
                     }
                 }
-                log_debug('component_link->move order numbers checked for ' . $this->fob->dsp_id());
+                log_debug('component_link->move order numbers checked for ' . $this->view()->dsp_id());
 
                 // actually move the selected component
                 // TODO what happens if the another user has deleted some components?
                 $order_nbr = 1;
                 $prev_entry = null;
                 $prev_entry_down = false;
-                if ($this->fob->cmp_lnk_lst != null) {
-                    foreach ($this->fob->cmp_lnk_lst->lst() as $cmp_lnk) {
+                if ($this->view()->cmp_lnk_lst != null) {
+                    foreach ($this->view()->cmp_lnk_lst->lst() as $cmp_lnk) {
                         // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
                         //$cmp_lnk = new component_link($this->user());
                         //$msk = new view($this->user());
-                        //$msk->load_by_id($this->fob->id());
+                        //$msk->load_by_id($this->view_id());
                         //$cmp_lnk->load_by_link($msk, $entry);
                         if ($prev_entry_down) {
                             if (isset($prev_entry)) {
-                                log_debug('component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
+                                log_debug('component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->view()->dsp_id());
                                 $prev_entry->order_nbr = $order_nbr;
                                 $prev_entry->save();
                                 $prev_entry = null;
                             }
-                            log_debug('component_link->move order number of the view component "' . $cmp_lnk->tob->name() . '" changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in "' . $this->fob->name() . '"');
+                            log_debug('component_link->move order number of the view component "' . $cmp_lnk->tob->name() . '" changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in "' . $this->view()->name() . '"');
                             $cmp_lnk->order_nbr = $order_nbr - 1;
                             $cmp_lnk->save();
                             $result = true;
                             $prev_entry_down = false;
                         }
-                        if ($cmp_lnk->id() == $this->tob->id()) {
+                        if ($cmp_lnk->id() == $this->component()->id()) {
                             if ($direction == 'up') {
                                 if ($cmp_lnk->order_nbr > 0) {
-                                    log_debug('component_link->move order number of the view component ' . $cmp_lnk->tob->dsp_id() . ' changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in ' . $this->fob->dsp_id());
+                                    log_debug('component_link->move order number of the view component ' . $cmp_lnk->tob->dsp_id() . ' changed from ' . $cmp_lnk->order_nbr . ' to ' . $order_nbr . ' - 1 in ' . $this->view()->dsp_id());
                                     $cmp_lnk->order_nbr = $order_nbr - 1;
                                     $cmp_lnk->save();
                                     $result = true;
                                     if (isset($prev_entry)) {
-                                        log_debug('component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->fob->dsp_id());
+                                        log_debug('component_link->move order number of the view component ' . $prev_entry->tob->dsp_id() . ' changed from ' . $prev_entry->order_nbr . ' to ' . $order_nbr . ' in ' . $this->view()->dsp_id());
                                         $prev_entry->order_nbr = $order_nbr;
                                         $prev_entry->save();
                                     }
@@ -805,7 +805,7 @@ class component_link extends sandbox_link_with_type
 
             // force reloading view components
             log_debug('component_link->move reload');
-            $this->fob->load_components();
+            $this->view()->load_components();
         }
 
         log_debug('component_link->move done');
@@ -836,8 +836,8 @@ class component_link extends sandbox_link_with_type
         $result = true;
 
         if (!$this->has_usr_cfg()) {
-            if (isset($this->fob) and isset($this->tob)) {
-                log_debug('component_link->add_usr_cfg for "' . $this->fob->name() . '"/"' . $this->tob->name() . '" by user "' . $this->user()->name . '"');
+            if ($this->view() != null and $this->component() != null) {
+                log_debug('component_link->add_usr_cfg for "' . $this->view()->name() . '"/"' . $this->component()->name() . '" by user "' . $this->user()->name . '"');
             } else {
                 log_debug('component_link->add_usr_cfg for "' . $this->id . '" and user "' . $this->user()->name . '"');
             }
@@ -899,7 +899,7 @@ class component_link extends sandbox_link_with_type
 
         $db_chk = clone $this;
         $db_chk->reset();
-        $db_chk->load_by_link_and_pos($this->fob->id(), $this->tob->id(), $this->order_nbr);
+        $db_chk->load_by_link_and_pos($this->view()->id(), $this->component()->id(), $this->order_nbr);
         if ($db_chk->id > 0) {
             log_debug('a component link like ' . $this->dsp_id() . ' already exists');
             $result = $db_chk;

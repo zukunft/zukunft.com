@@ -941,8 +941,8 @@ class component extends sandbox_typed
 
         $dsp_lnk = new component_link($this->user());
         $dsp_lnk->reset();
-        $dsp_lnk->fob = $dsp;
-        $dsp_lnk->tob = $this;
+        $dsp_lnk->set_view($dsp);
+        $dsp_lnk->set_component($this);
         $dsp_lnk->order_nbr = $order_nbr;
         $dsp_lnk->pos_type_id = $position_types->id(position_type::BELOW);
         return $dsp_lnk->save();

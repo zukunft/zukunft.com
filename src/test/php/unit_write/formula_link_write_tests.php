@@ -108,9 +108,9 @@ class formula_link_write_tests
         $frm_lnk2->load_objects();
 
         // ... if form name is correct the chain of load via object, reload via id and load of the objects has worked
-        if ($frm_lnk2->fob != null) {
-            if ($frm_lnk2->fob::class == formula::class) {
-                $fop_dsp = new formula_dsp($frm_lnk2->fob->api_json());
+        if ($frm_lnk2->formula() != null) {
+            if ($frm_lnk2->formula()::class == formula::class) {
+                $fop_dsp = new formula_dsp($frm_lnk2->formula()->api_json());
                 $result = $fop_dsp->name();
             } else {
                 log_err('unexpected class in formula link test');
@@ -121,8 +121,8 @@ class formula_link_write_tests
         $t->display('formula_link->load by formula id and link id "' . $frm_html->name(), $target, $result);
 
         $result = '';
-        if ($frm_lnk2->tob != null) {
-            $result = $frm_lnk2->tob->name();
+        if ($frm_lnk2->phrase() != null) {
+            $result = $frm_lnk2->phrase()->name();
         }
         $target = $phr->name();
         $t->display('formula_link->load by phrase id and link id "' . $phr->dsp_name(), $target, $result);

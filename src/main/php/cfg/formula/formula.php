@@ -1525,8 +1525,8 @@ class formula extends sandbox_typed
         $result = '';
         if ($this->id() > 0 and $phr->id() <> 0) {
             $frm_lnk = new formula_link($this->user());
-            $frm_lnk->fob = $this;
-            $frm_lnk->tob = $phr;
+            $frm_lnk->set_formula($this);
+            $frm_lnk->set_phrase($phr);
             $result .= $frm_lnk->save();
         }
         return $result;
@@ -1859,8 +1859,8 @@ class formula extends sandbox_typed
         if ($this->user() != null) {
             log_debug($this->dsp_id() . ' to ' . $phr->dsp_id());
             $frm_lnk = new formula_link($this->user());
-            $frm_lnk->fob = $this;
-            $frm_lnk->tob = $phr;
+            $frm_lnk->set_formula($this);
+            $frm_lnk->set_phrase($phr);
             $result = $frm_lnk->save();
         }
         return $result;
