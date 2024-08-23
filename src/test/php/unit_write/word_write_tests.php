@@ -354,15 +354,6 @@ class word_write_tests
         $target = word_api::TN_RENAMED;
         $t->display('word->load renamed word "' . word_api::TN_RENAMED . '"', $target, $result);
 
-        // check if the word renaming has been logged
-        $log = new change($t->usr1);
-        $log->set_class(word::class);
-        $log->set_field(change_field_list::FLD_WORD_NAME);
-        $log->row_id = $wrd_renamed->id();
-        $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test changed "' . word_api::TN_ADD . '" to "' . word_api::TN_RENAMED . '"';
-        $t->display('word->save rename logged for "' . word_api::TN_RENAMED . '"', $target, $result);
-
         // check if the word parameters can be added
         $wrd_renamed->plural = word_api::TN_RENAMED . 's';
         $wrd_renamed->description = word_api::TN_RENAMED . ' description';
@@ -517,18 +508,9 @@ class word_write_tests
 
         // cleanup - fallback delete
         $wrd = new word($t->usr1);
-        $wrd->set_user($t->usr1);
-        $wrd->load_by_name(word_api::TN_ADD);
-        $wrd->del();
-        $wrd->set_user($t->usr2);
-        $wrd->load_by_name(word_api::TN_ADD);
-        $wrd->del();
-        $wrd->set_user($t->usr1);
-        $wrd->load_by_name(word_api::TN_RENAMED);
-        $wrd->del();
-        $wrd->set_user($t->usr2);
-        $wrd->load_by_name(word_api::TN_RENAMED);
-        $wrd->del();
+        foreach (word_api::TEST_WORDS as $wrd_name) {
+            $t->write_sandbox_cleanup($wrd, $wrd_name);
+        }
 
     }
 

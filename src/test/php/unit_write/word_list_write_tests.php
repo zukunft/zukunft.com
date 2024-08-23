@@ -36,6 +36,7 @@ use api\value\value as value_api;
 use api\word\word as word_api;
 use cfg\foaf_direction;
 use cfg\group\group;
+use cfg\phrase_type;
 use cfg\verb;
 use cfg\word_list;
 use shared\library;
@@ -51,6 +52,61 @@ class word_list_write_tests
         global $verbs;
 
         $t->header('Test the word list class (classes/word_list.php)');
+
+        /*
+         * prepare
+         */
+
+        // create category test words for "Zurich is a Canton" and "Zurich is a City"
+        // which implies that Canton contains Zurich and City contains Zurich
+        // to avoid conflicts the test words actually used are 'System Test Word Category e.g. Canton' as category word
+        // and 'System Test Word Member e.g. Zurich' as member
+        $wrd_canton = $t->test_word(word_api::TN_CANTON);
+        $wrd_city = $t->test_word(word_api::TN_CITY);
+        $wrd_ZH = $t->test_word(word_api::TN_ZH);
+        $t->test_triple(word_api::TN_ZH, verb::IS, word_api::TN_CANTON);
+        $t->test_triple(word_api::TN_ZH, verb::IS, word_api::TN_CITY);
+
+        // create the test words and relations for multi level contains
+        // e.g. assets contain current assets which contains cash
+        $t->test_word(word_api::TN_ASSETS);
+        $t->test_word(word_api::TN_ASSETS_CURRENT);
+        $t->test_word(word_api::TN_CASH);
+        $t->test_triple(word_api::TN_CASH, verb::IS_PART_OF, word_api::TN_ASSETS_CURRENT);
+        $t->test_triple(word_api::TN_ASSETS_CURRENT, verb::IS_PART_OF, word_api::TN_ASSETS);
+
+        // create the test words and relations for differentiators
+        // e.g. energy can be a sector
+        $t->test_word(word_api::TN_SECTOR);
+        $t->test_word(word_api::TN_ENERGY);
+        $t->test_word(word_api::TN_WIND_ENERGY);
+        $t->test_triple(word_api::TN_SECTOR, verb::CAN_CONTAIN, word_api::TN_ENERGY);
+        $t->test_triple(word_api::TN_ENERGY, verb::CAN_CONTAIN, word_api::TN_WIND_ENERGY);
+
+        // create the test words and relations for a parent child relation without inheritance
+        // e.g. ...
+        $wrd_cf = $t->test_word(word_api::TWN_CASH_FLOW);
+        $wrd_tax = $t->test_word(word_api::TN_TAX_REPORT);
+        $wrd_time = $t->test_word(word_api::TN_2021, phrase_type::TIME);
+        $t->test_triple(word_api::TN_TAX_REPORT, verb::IS_PART_OF, word_api::TWN_CASH_FLOW);
+
+        // create the test words and relations many mixed relations
+        // e.g. a financial report
+        $t->test_word(word_api::TN_FIN_REPORT);
+        $t->test_triple(word_api::TWN_CASH_FLOW, verb::IS, word_api::TN_FIN_REPORT);
+
+        // is measure
+        $wrd_measure = $t->test_word(word_api::TWN_CHF, phrase_type::MEASURE);
+        $result = $wrd_measure->is_measure();
+        $t->assert('word->is_measure for ' . word_api::TWN_CHF, $result, true);
+
+        // add a test value
+        $t->test_value(array(word_api::TN_ZH, word_api::TN_2021, word_api::TWN_CHF, word_api::TN_MIO), value_api::TV_INT);
+        $t->test_value(array(word_api::TN_CANTON, word_api::TN_2021, word_api::TWN_CHF, word_api::TN_MIO), value_api::TV_FLOAT);
+
+        /*
+         * load
+         */
 
         // test load by word list by names
         $wrd_lst = new word_list($usr);
@@ -300,7 +356,11 @@ class word_list_write_tests
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_2021, word_api::TN_MIO));
         $abb_last_year = $wrd_lst->assume_time();
-        $result = $abb_last_year->name();
+        if ($abb_last_year != null) {
+            $result = $abb_last_year->name();
+        } else {
+            $result = '';
+        }
         $target = word_api::TN_2021;
         $t->display('word_list->assume_time for ' . $wrd_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_DB);
 

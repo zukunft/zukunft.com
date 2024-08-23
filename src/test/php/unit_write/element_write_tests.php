@@ -48,6 +48,10 @@ class element_write_tests
 
         $t->header('Test the formula element class (classes/element.php)');
 
+        $t->subheader('prepare formula element write');
+        $wrd_total = $t->test_word(word_api::TN_TOTAL);
+        $frm_sector = $t->test_formula(formula_api::TN_SECTOR, formula_api::TF_SECTOR);
+
         // load increase formula for testing
         $frm = $t->load_formula(formula_api::TN_SECTOR);
         $exp = $frm->expression();
@@ -56,7 +60,6 @@ class element_write_tests
         // get the test word ids
         $wrd_country = $t->load_word(word_api::TN_COUNTRY);
         $wrd_canton = $t->load_word(word_api::TN_CANTON);
-        $wrd_total = $t->load_word(word_api::TN_TOTAL);
         $vrb_id = $verbs->id(verb::CAN_CONTAIN);
 
         if (isset($elm_lst)) {
@@ -113,6 +116,10 @@ class element_write_tests
             $t->display('expression->element_lst', $target, $result);
         }
 
+        $t->subheader('cleanup formula element write');
+        $frm_sector->del();
+        $wrd_total->del();
+
     }
 
     function run_list(test_cleanup $t): void
@@ -121,6 +128,10 @@ class element_write_tests
         $back = 0;
 
         $t->header('Test the formula element list class (classes/element_list.php)');
+
+        $t->subheader('prepare formula element write');
+        $wrd_total = $t->test_word(word_api::TN_TOTAL);
+        $frm_sector = $t->test_formula(formula_api::TN_SECTOR, formula_api::TF_SECTOR);
 
         // load increase formula for testing
         $frm = $t->load_formula(formula_api::TN_SECTOR);
@@ -136,6 +147,10 @@ class element_write_tests
             $target = '';
             $t->display('element_list->dsp_id', $target, $result);
         }
+
+        $t->subheader('cleanup formula element write');
+        $frm_sector->del();
+        $wrd_total->del();
 
     }
 

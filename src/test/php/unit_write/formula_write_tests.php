@@ -522,18 +522,9 @@ class formula_write_tests
 
         // cleanup - fallback delete
         $frm = new formula($t->usr1);
-        $frm->set_user($t->usr1);
-        $frm->load_by_name(formula_api::TN_ADD);
-        $frm->del();
-        $frm->set_user($t->usr2);
-        $frm->load_by_name(formula_api::TN_ADD);
-        $frm->del();
-        $frm->set_user($t->usr1);
-        $frm->load_by_name(formula_api::TN_RENAMED);
-        $frm->del();
-        $frm->set_user($t->usr2);
-        $frm->load_by_name(formula_api::TN_RENAMED);
-        $frm->del();
+        foreach (formula_api::TEST_FORMULAS as $frm_name) {
+            $t->write_sandbox_cleanup($frm, $frm_name);
+        }
 
     }
 

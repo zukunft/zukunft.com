@@ -47,10 +47,11 @@ class component_link_write_tests
     function run(test_cleanup $t): void
     {
 
-        $t->header('Test the view component link class (classes/component_link.php)');
 
-        // prepare testing by creating the view and components needed for testing
-        $msk = $t->test_view(view_api::TN_RENAMED);
+        $t->header('component link db write tests');
+
+        $t->subheader('prepare component link write');
+        $msk = $t->test_view(view_api::TN_ADD);
         $cmp = $t->test_component(component_api::TN_ADD);
 
         $test_name = 'link the test view component "' . $cmp->name() . '" to view  (' . $msk->name() . ')';
@@ -65,7 +66,7 @@ class component_link_write_tests
         $log->new_from_id = $msk->id();
         $log->new_to_id = $cmp->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test linked System Test View Renamed to System Test View Component';
+        $target = 'zukunft.com system test linked ' . view_api::TN_ADD . ' to ' . component_api::TN_ADD;
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check list of linked views contains the added view for user "' . $t->usr1->dsp_id() . '"';
@@ -85,7 +86,7 @@ class component_link_write_tests
         // if second user removes the new link
         $cmp = $t->load_component(component_api::TN_ADD, $t->usr2);
         $msk = new view($t->usr2);
-        $msk->load_by_name(view_api::TN_RENAMED, view::class);
+        $msk->load_by_name(view_api::TN_ADD, view::class);
         $result = $cmp->unlink($msk);
         $target = '';
         $t->display('view component_link->unlink "' . $msk->name() . '" from "' . $cmp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -96,9 +97,9 @@ class component_link_write_tests
         $log->old_from_id = $msk->id();
         $log->old_to_id = $cmp->id();
         $result = $log->dsp_last(true);
-        // TODO Prio 2 activate
-        //$target = 'zukunft.com system test partner unlinked System Test View Renamed from System Test View Component';
-        $target = 'zukunft.com system test partner ';
+        // TODO activate
+        $target = $t->usr2->name() . ' unlinked ' . view_api::TN_ADD . ' from ' . component_api::TN_ADD;
+        $target = $t->usr2->name() . ' ';
         $t->display('view component_link->unlink_dsp logged for "' . $msk->name() . '" to "' . $cmp->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
 
 
@@ -132,7 +133,7 @@ class component_link_write_tests
         $log->old_from_id = $msk->id();
         $log->old_to_id = $cmp->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test unlinked System Test View Renamed from System Test View Component';
+        $target = 'zukunft.com system test unlinked ' . view_api::TN_ADD . ' from ' . component_api::TN_ADD;
         $t->display('view component_link->unlink_dsp logged of "' . $msk->name() . '" from "' . $cmp->name() . '"', $target, $result);
 
         // check if the view component is not used any more for both users
@@ -147,8 +148,8 @@ class component_link_write_tests
         // --------------------------------------------------------------------
 
         // load the view and view component objects
-        $msk = $t->load_view(view_api::TN_RENAMED);
-        $dsp2 = $t->load_view(view_api::TN_RENAMED, $t->usr2);
+        $msk = $t->load_view(view_api::TN_ADD);
+        $dsp2 = $t->load_view(view_api::TN_ADD, $t->usr2);
         $cmp = $t->load_component(component_api::TN_ADD,);
         // create a second view element to be able to test the change of the view order
         $cmp2 = new component($t->usr1);
@@ -282,6 +283,14 @@ class component_link_write_tests
 
         // the code changes and tests for view component link should be moved the component_link
 
+        $t->subheader('cleanup component link write');
+        $msk->del();
+        $cmp->del();
+
+    }
+
+    function prepare(test_cleanup $t): void
+    {
 
     }
 

@@ -255,6 +255,13 @@ class view_write_tests
         // check if the user specific changes can be removed with one click
 
         $this->delete_test_views($t);
+
+        // cleanup - fallback delete
+        $msk = new view($t->usr1);
+        foreach (view_api::TEST_VIEWS as $msk_name) {
+            $t->write_sandbox_cleanup($msk, $msk_name);
+        }
+
     }
 
     function create_test_views(test_cleanup $t): void

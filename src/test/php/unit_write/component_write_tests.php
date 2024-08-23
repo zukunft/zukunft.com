@@ -248,6 +248,12 @@ class component_write_tests
         // redo the user specific component changes
         // check if the user specific changes can be removed with one click
 
+        // cleanup - fallback delete
+        $cmp = new component($t->usr1);
+        foreach (component_api::TEST_COMPONENTS as $cmp_name) {
+            $t->write_sandbox_cleanup($cmp, $cmp_name);
+        }
+
     }
 
     function create_test_components(test_cleanup $t): void

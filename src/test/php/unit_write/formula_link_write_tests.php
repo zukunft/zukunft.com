@@ -34,6 +34,7 @@ namespace unit_write;
 
 use api\formula\formula as formula_api;
 use api\word\word as word_api;
+use cfg\word;
 use html\formula\formula as formula_dsp;
 use cfg\log\change_link;
 use cfg\log\change_table_list;
@@ -52,9 +53,15 @@ class formula_link_write_tests
 
         $t->header('formula link db write tests');
 
-        $t->subheader('prepare formula link write tests');
-        $test_name = "make sure that the word for testing exists even if the word test didn't run before";
-        $t->test_word(word_api::TN_RENAMED);
+        $t->subheader('prepare component link write');
+        $frm = $t->test_formula(formula_api::TN_ADD, formula_api::TF_INCREASE);
+        $wrd = $t->test_word(word_api::TN_ADD);
+
+
+        $t->subheader('formula link write sandbox tests for ' . formula_api::TN_ADD);
+        //$t->assert_write_link($t->formula_link_filled_add());
+
+
 
         // test adding of one formula
         $frm = new formula($t->usr1);
@@ -67,25 +74,12 @@ class formula_link_write_tests
         $target = formula_api::TF_INCREASE;
         $t->display('formula->save for adding "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
-        // check if the formula can be renamed
-        $frm = $t->load_formula(formula_api::TN_ADD);
-        $frm->set_name(formula_api::TN_RENAMED);
-        $result = $frm->save();
-        $target = '';
-        $t->display('formula->save rename "' . formula_api::TN_ADD . '" to "' . formula_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
-
-        $t->test_formula_link(formula_api::TN_RENAMED, word_api::TN_RENAMED);
-
-
-        $t->subheader('formula link write sandbox tests for ' . formula_api::TN_RENAMED);
-        //$t->assert_write_link($t->formula_link_filled_add());
-
-
+        $t->test_formula_link(formula_api::TN_ADD, word_api::TN_ADD);
 
         // link the test formula to another word
-        $frm = $t->load_formula(formula_api::TN_RENAMED);
+        $frm = $t->load_formula(formula_api::TN_ADD);
         $phr = new phrase($t->usr1);
-        $phr->load_by_name(word_api::TN_RENAMED);
+        $phr->load_by_name(word_api::TN_ADD);
         $result = $frm->link_phr($phr);
         $target = '';
         $t->display('formula_link->link_phr "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -96,7 +90,7 @@ class formula_link_write_tests
         $log->new_from_id = $frm->id();
         $log->new_to_id = $phr->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test linked System Test Formula Renamed to ' . word_api::TN_RENAMED;
+        $target = 'zukunft.com system test linked System Test Formula to ' . word_api::TN_ADD;
         $t->display('formula_link->link_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result);
 
         // ... check if the link can be loaded by formula and phrase id and base on the id the correct formula and phrase objects are loaded
@@ -128,7 +122,7 @@ class formula_link_write_tests
         $t->display('formula_link->load by phrase id and link id "' . $phr->dsp_name(), $target, $result);
 
         // ... check if the link is shown correctly
-        $frm = $t->load_formula(formula_api::TN_RENAMED);
+        $frm = $t->load_formula(formula_api::TN_ADD);
         $phr_lst = $frm->assign_phr_ulst();
         echo $phr_lst->dsp_id() . '<br>';
         $result = $phr_lst->does_contain($phr);
@@ -140,7 +134,7 @@ class formula_link_write_tests
         //     so even if the word is linked the word link is nevertheless false
         // TODO add a check that the word is linked if the second user activates the word
         $frm = new formula($t->usr2);
-        $frm->load_by_name(formula_api::TN_RENAMED);
+        $frm->load_by_name(formula_api::TN_ADD);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;
@@ -151,9 +145,9 @@ class formula_link_write_tests
 
         // if second user removes the new link
         $frm = new formula($t->usr2);
-        $frm->load_by_name(formula_api::TN_RENAMED);
+        $frm->load_by_name(formula_api::TN_ADD);
         $phr = new phrase($t->usr2);
-        $phr->load_by_name(word_api::TN_RENAMED);
+        $phr->load_by_name(word_api::TN_ADD);
         $result = $frm->unlink_phr($phr);
         $target = '';
         $t->display('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '" by user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -165,14 +159,14 @@ class formula_link_write_tests
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last(true);
         // TODO fix it
-        $target = 'zukunft.com system test partner unlinked System Test Formula Renamed from ' . word_api::TN_RENAMED . '';
+        $target = 'zukunft.com system test partner unlinked System Test Formula Renamed from ' . word_api::TN_ADD . '';
         $target = 'zukunft.com system test partner ';
         $t->display('formula_link->unlink_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
 
 
         // ... check if the link is really not used any more for the second user
         $frm = new formula($t->usr2);
-        $frm->load_by_name(formula_api::TN_RENAMED);
+        $frm->load_by_name(formula_api::TN_ADD);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;
@@ -182,7 +176,7 @@ class formula_link_write_tests
         // ... check if the value update for the second user has been triggered
 
         // ... check if the link is still used for the first user
-        $frm = $t->load_formula(formula_api::TN_RENAMED);
+        $frm = $t->load_formula(formula_api::TN_ADD);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = true;
@@ -202,11 +196,11 @@ class formula_link_write_tests
         $log->old_from_id = $frm->id();
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test unlinked System Test Formula Renamed from ' . word_api::TN_RENAMED . '';
+        $target = 'zukunft.com system test unlinked System Test Formula from ' . word_api::TN_ADD;
         $t->display('formula_link->unlink_phr logged of "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result);
 
         // check if the formula is not used any more for both users
-        $frm = $t->load_formula(formula_api::TN_RENAMED);
+        $frm = $t->load_formula(formula_api::TN_ADD);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;
@@ -217,7 +211,7 @@ class formula_link_write_tests
 
         // insert the link again for the first user
         /*
-        $frm = $t->load_formula(formula_api::TN_RENAMED);
+        $frm = $t->load_formula(formula_api::TN_ADD);
         $phr = New phrase($t->usr2);
         $phr->load_by_name(word::TEST_NAME_CHANGED);
         $result = $frm->link_phr($phr);
@@ -237,20 +231,23 @@ class formula_link_write_tests
 
         // the code changes and tests for formula link should be moved the component_link
 
-        // cleanup - fallback delete
+        $t->subheader('cleanup formula link write');
         $frm = new formula($t->usr1);
-        $frm->set_user($t->usr1);
         $frm->load_by_name(formula_api::TN_ADD);
+        $wrd = new word($t->usr1);
+        $wrd->load_by_name(word_api::TN_ADD);
+        $lnk = new formula_link($t->usr1);
+        $lnk->load_by_link($frm, $wrd->phrase());
+        $lnk->del();
+        foreach (formula_api::TEST_FORMULAS as $frm_name) {
+            $t->write_sandbox_cleanup($frm, $frm_name);
+        }
+        foreach (word_api::TEST_WORDS as $wrd_name) {
+            $t->write_sandbox_cleanup($wrd, $wrd_name);
+        }
+
         $frm->del();
-        $frm->set_user($t->usr2);
-        $frm->load_by_name(formula_api::TN_ADD);
-        $frm->del();
-        $frm->set_user($t->usr1);
-        $frm->load_by_name(formula_api::TN_RENAMED);
-        $frm->del();
-        $frm->set_user($t->usr2);
-        $frm->load_by_name(formula_api::TN_RENAMED);
-        $frm->del();
+        $wrd->del();
 
     }
 

@@ -523,54 +523,63 @@ class sandbox_link extends sandbox
     function add(bool $use_func = false): user_message
     {
         log_debug($this->dsp_id());
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
 
         global $db_con;
         $result = new user_message();
 
-        // log the insert attempt first
-        $log = $this->log_link_add();
-        if ($log->id() > 0) {
-
-            // insert the new object and save the object key
-            // TODO check that always before a db action is called the db type is set correctly
-            if ($this->sql_write_prepared()) {
-                $sc = $db_con->sql_creator();
-                $qp = $this->sql_insert($sc);
-                $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
-                if ($usr_msg->is_ok()) {
-                    $this->id = $usr_msg->get_row_id();
-                }
-            } else {
-                $db_con->set_class($this::class);
-                $db_con->set_usr($this->user()->id);
-                $this->id = $this->add_insert();
+        if ($use_func) {
+            $sc = $db_con->sql_creator();
+            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
+            $usr_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+            if ($usr_msg->is_ok()) {
+                $this->id = $usr_msg->get_row_id();
             }
+            $result->add($usr_msg);
+        } else {
 
-            // save the object fields if saving the key was successful
-            if ($this->id > 0) {
-                log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
-                // update the id in the log
-                if (!$log->add_ref($this->id)) {
-                    $result->add_message('Updating the reference in the log failed');
-                    // TODO do rollback or retry?
+            // log the insert attempt first
+            $log = $this->log_link_add();
+            if ($log->id() > 0) {
+
+                // insert the new object and save the object key
+                // TODO check that always before a db action is called the db type is set correctly
+                if ($this->sql_write_prepared()) {
+                    $sc = $db_con->sql_creator();
+                    $qp = $this->sql_insert($sc);
+                    $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
+                    if ($usr_msg->is_ok()) {
+                        $this->id = $usr_msg->get_row_id();
+                    }
                 } else {
-                    //$result->add_message($this->set_owner($new_owner_id));
-
-                    // create an empty db_rec element to force saving of all set fields
-                    $db_rec = clone $this;
-                    $db_rec->reset();
-                    $db_rec->fob = $this->fob;
-                    $db_rec->tob = $this->tob;
-                    $db_rec->set_user($this->user());
-                    $std_rec = clone $db_rec;
-                    // save the object fields
-                    $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                    $db_con->set_class($this::class);
+                    $db_con->set_usr($this->user()->id);
+                    $this->id = $this->add_insert();
                 }
 
-            } else {
-                $result->add_message('Adding ' . $class_name . ' ' . $this->dsp_id() . ' failed due to logging error.');
+                // save the object fields if saving the key was successful
+                if ($this->id > 0) {
+                    log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
+                    // update the id in the log
+                    if (!$log->add_ref($this->id)) {
+                        $result->add_message('Updating the reference in the log failed');
+                        // TODO do rollback or retry?
+                    } else {
+                        //$result->add_message($this->set_owner($new_owner_id));
+
+                        // create an empty db_rec element to force saving of all set fields
+                        $db_rec = clone $this;
+                        $db_rec->reset();
+                        $db_rec->fob = $this->fob;
+                        $db_rec->tob = $this->tob;
+                        $db_rec->set_user($this->user());
+                        $std_rec = clone $db_rec;
+                        // save the object fields
+                        $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                    }
+
+                } else {
+                    $result->add_message('Adding ' . $this::class . ' ' . $this->dsp_id() . ' failed due to logging error.');
+                }
             }
         }
 

@@ -20,6 +20,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
          sort load functions (done in: view
          group function within a class e.g. by load, save ....
          use $this::class for load functions
+    TODO make write tests autonomies (no prerequieries, no depenedencies, no left overs)
     TODO check if MySQL create script is working
     TODO add unit test for all system views
     TODO Substeps: create insert, update and delete sql create tests for the main objects (TODO activate db write)

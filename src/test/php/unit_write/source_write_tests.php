@@ -91,6 +91,12 @@ class source_write_tests
         // TODO test the import of a source with the code id does not create a warning if the code_id already matches
         // TODO test if the import does not change the code_id if a normal user imports a source
 
+        // cleanup - fallback delete
+        $src = new source($t->usr1);
+        foreach (source_api::TEST_SOURCES as $src_name) {
+            $t->write_sandbox_cleanup($src, $src_name);
+        }
+
     }
 
     function create_test_sources(test_cleanup $t): void

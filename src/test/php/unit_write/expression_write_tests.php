@@ -50,13 +50,20 @@ class expression_write_tests
 
         $t->header('Test the expression class (src/main/php/model/formula/expression.php)');
 
+        $t->subheader('prepare expression write');
+        $wrd_price = $t->test_word(word_api::TN_PRICE);
+        $wrd_earning = $t->test_word(word_api::TN_EARNING);
+        $wrd_pe = $t->test_word(word_api::TN_PE);
+        $frm_ratio = $t->test_formula(formula_api::TN_RATIO, formula_api::TF_RATIO);
+        $wrd_total = $t->test_word(word_api::TN_TOTAL);
+        $frm_sector = $t->test_formula(formula_api::TN_SECTOR, formula_api::TF_SECTOR);
+
         $back = '';
 
         // load formulas for expression testing
         $frm_this = $t->load_formula(formula_api::TN_THIS);
         $frm = $t->load_formula(formula_api::TN_INCREASE);
         $frm_pe = $t->load_formula(formula_api::TN_RATIO);
-        $frm_sector = $t->load_formula(formula_api::TN_SECTOR);
 
         $result = $frm_sector->usr_text;
         $target = '= "' . word_api::TN_COUNTRY . '" "differentiator" "' . word_api::TN_CANTON . '" / "' . word_api::TN_TOTAL . '"';
@@ -144,6 +151,14 @@ class expression_write_tests
         $result = $frm_lst->name();
         $target = '' . formula_api::TN_READ_THIS . ',' . formula_api::TN_READ_PRIOR . '';
         // TODO $t->assert('element_special_following_frm for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
+
+        $t->subheader('cleanup expression write');
+        $frm_ratio->del();
+        $wrd_price->del();
+        $wrd_earning->del();
+        $wrd_pe->del();
+        $frm_sector->del();
+        $wrd_total->del();
 
     }
 
