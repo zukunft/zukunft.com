@@ -76,6 +76,7 @@ use cfg\db_object_seq_id_user;
 use cfg\element_list;
 use cfg\fig_ids;
 use cfg\formula;
+use cfg\formula_link;
 use cfg\formula_list;
 use cfg\group\group;
 use cfg\log\change;
@@ -105,6 +106,7 @@ use cfg\value\value_list;
 use cfg\verb;
 use cfg\view;
 use cfg\view_list;
+use cfg\view_term_link;
 use cfg\word;
 use cfg\word_list;
 use controller\controller;
@@ -2041,8 +2043,8 @@ class test_base
     function assert_load_by_link(sandbox_link $usr_obj, int $fid = 0, int $typ = 1, int $tid = 0, int $id = 0): bool
     {
         // check the loading via name and check the id
-        $lid = $fid . '/' . $typ . '/' . $tid . '/';
-        $test_name = 'load ' . $usr_obj::class . ' by ' . $lid;
+        $lnk_id = $fid . '/' . $typ . '/' . $tid;
+        $test_name = 'load ' . $usr_obj::class . ' by ' . $lnk_id;
         $usr_obj->reset();
         $usr_obj->load_by_link_id($fid, $typ, $tid);
         $result = $this->assert($test_name, $usr_obj->id(), $id);
@@ -2052,7 +2054,7 @@ class test_base
             $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
             $usr_obj->reset();
             $usr_obj->load_by_id($id);
-            $result = $this->assert($test_name, $usr_obj->name(), $lid);
+            $result = $this->assert($test_name, $usr_obj->link_id(), $lnk_id);
         }
         return $result;
     }
@@ -2440,16 +2442,25 @@ class test_base
     {
 
         /*
-         * prepafe
+         * prepare
          */
 
-        // remember the original objects as given
+        // keep the original objects as given
         $ori = clone $lnk;
-        $this->write_sandbox_add($lnk->fob(), $ori->fob()->name(), $this->usr1);
-        $this->write_sandbox_add($lnk->tob(), $ori->tob()->name(), $this->usr1);
-
         // remember the api json for later compare
         $api_json = $lnk->api_json();
+
+        // create the related objects
+        $fob = clone $ori->fob();
+        $tob = clone $ori->tob();
+        $fid = $this->write_sandbox_add($fob, $fob->name(), $this->usr1);
+        if ($tob::class == phrase::class) {
+            $add_to = new word($tob->user());
+        } else {
+            $add_to = $tob;
+        }
+        $tid = $this->write_sandbox_add($add_to, $tob->name(), $this->usr1);
+
 
         /*
          * are all fields saved?
@@ -2460,7 +2471,7 @@ class test_base
 
         // check the log
         if ($id != 0) {
-            $result = $this->write_link_log($lnk, change::MSG_ADD);
+            $result = $this->write_link_log($lnk, change::MSG_LINK);
         } else {
             $result = false;
         }
@@ -2472,13 +2483,42 @@ class test_base
 
         // check if user 1 can load the added object
         if ($result) {
-            $result = $this->assert_load_by_link($lnk, $ori->from_id(), $ori->type_id(), $ori->to_id(), $id);
+            $result = $this->assert_load_by_link($lnk, $fid, $ori->type_id(), $tid, $id);
         }
 
         // check if no relevant fields a lost during save and reload
         if ($result) {
             $result = $this->assert('API json based compare', $lnk->api_json(), $api_json);
         }
+
+        /*
+         * sandbox
+         */
+
+        if ($lnk::class == formula_link::class) {
+            $old_order_nbr = $lnk->order_nbr;
+            $new_order_nbr = $old_order_nbr + 1;
+            if ($result) {
+                // if user 2 changes the order
+                $result = $this->write_link_update_order_nbr($lnk, $this->usr2, $new_order_nbr);
+            }
+        } elseif ($lnk::class == view_term_link::class) {
+            $old_description = $lnk->description;
+            $new_description = $old_description . self::EXT_RENAME;
+            if ($result) {
+                // if user 2 changes the order
+                $result = $this->write_link_update_description($lnk, $this->usr2, $new_description);
+            }
+        } else {
+            log_err('update test field for ' . $lnk::class . ' not yet defined');
+        }
+
+
+        // cleanup
+        $this->write_link_cleanup($lnk, $id);
+        $this->write_sandbox_cleanup($ori->fob(), $ori->fob()->name());
+        $this->write_sandbox_cleanup($add_to, $ori->tob()->name());
+
 
         return $result;
     }
@@ -2506,6 +2546,23 @@ class test_base
         $sbx->del();
     }
 
+    /**
+     * remove all remaining link test rows without test
+     *
+     * @param sandbox_link $lnk the link objecz that should be deleted
+     * @param int $id the id of the link object
+     * @return void
+     */
+    function write_link_cleanup(sandbox_link $lnk, int $id): void
+    {
+        $lnk->set_user($this->usr1);
+        $lnk->load_by_id($id);
+        $lnk->del();
+        $lnk->set_user($this->usr2);
+        $lnk->load_by_id($id);
+        $lnk->del();
+    }
+
     private function write_link_add(sandbox_link_with_type $sbx, sandbox_link_with_type $ori, user $usr): int
     {
         $lib = new library();
@@ -2529,21 +2586,60 @@ class test_base
     }
 
     private function write_link_log(
-        sandbox_link_with_type $sbx,
+        sandbox_link_with_type $lnk,
         string                 $action
     ): bool
     {
-        $log = new change_link($sbx->user());
+        $log = new change_link($lnk->user());
         $lib = new library();
-        $tbl_name = $lib->class_to_table($sbx::class);
+        $tbl_name = $lib->class_to_table($lnk::class);
         $log->set_table($tbl_name);
-        $log->row_id = $sbx->id();
+        $log->row_id = $lnk->id();
         $result = $log->dsp_last(true);
-        $target = $sbx->user()->name() . ' ' . $action . ' "';
-        $target .= $sbx->dsp_id() . '"';
-        $class = $lib->class_to_name($sbx::class);
-        $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $sbx->dsp_id();
+        $target = $lnk->user()->name() . ' ' . $action . ' ';
+        $target .= $lnk->fob()->name() . ' to ';
+        $target .= $lnk->tob()->name();
+        $class = $lib->class_to_name($lnk::class);
+        $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $lnk->dsp_id();
         return $this->assert($test_name, $result, $target);
+    }
+
+    private function write_link_update_order_nbr(formula_link $lnk, user $usr, int $new_order_nbr): bool
+    {
+        $id = $lnk->id();
+        $lnk->set_user($usr);
+        $lnk->load_by_id($id);
+        $old_order_nbr = $lnk->order_nbr;
+        $lib = new library();
+        $class = $lib->class_to_name($lnk::class);
+        $test_name = 'update ' . $class . ' order nbr to ' . $new_order_nbr;
+        $lnk->order_nbr = $new_order_nbr;
+        $result = $lnk->save();
+        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+            return $this->write_link_log_field($lnk,
+                formula_link::FLD_ORDER, $new_order_nbr, change::MSG_UPDATE, $old_order_nbr);
+        } else {
+            return false;
+        }
+    }
+
+    private function write_link_update_description(view_term_link $lnk, user $usr, int $new_description): bool
+    {
+        $id = $lnk->id();
+        $lnk->set_user($usr);
+        $lnk->load_by_id($id);
+        $old_description = $lnk->description;
+        $lib = new library();
+        $class = $lib->class_to_name($lnk::class);
+        $test_name = 'update ' . $class . ' description to ' . $new_description;
+        $lnk->description = $new_description;
+        $result = $lnk->save();
+        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+            return $this->write_link_log_field($lnk,
+                sandbox_named::FLD_DESCRIPTION, $new_description, change::MSG_UPDATE, $old_description);
+        } else {
+            return false;
+        }
     }
 
     private function write_sandbox_add(sandbox_named|sandbox_link_named $sbx, string $name, user $usr): int
@@ -2559,6 +2655,32 @@ class test_base
         } else {
             return 0;
         }
+    }
+
+    private function write_link_log_field(
+        sandbox_link $sbx,
+        string       $fld,
+        string       $name,
+        string       $action,
+        ?string      $old_name = ''
+    ): bool
+    {
+        $log = new change($sbx->user());
+        $lib = new library();
+        $tbl_name = $lib->class_to_table($sbx::class);
+        $log->set_table($tbl_name);
+        $log->set_field($fld);
+        $log->row_id = $sbx->id();
+        $result = $log->dsp_last(true);
+        $target = $sbx->user()->name() . ' ' . $action . ' "';
+        if ($action == change::MSG_UPDATE) {
+            $target .= $old_name . '" to "' . $name . '"';
+        } else {
+            $target .= $name . '"';
+        }
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $name;
+        return $this->assert($test_name, $result, $target);
     }
 
     private function write_sandbox_log(
@@ -2685,10 +2807,10 @@ class test_base
     }
 
     /**
-     * @param sandbox_named|sandbox_link_named $sbx
+     * @param sandbox_named|sandbox_link $sbx
      * @return bool
      */
-    private function assert_reset(sandbox_named|sandbox_link_named $sbx): bool
+    private function assert_reset(sandbox_named|sandbox_link $sbx): bool
     {
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
@@ -2703,7 +2825,7 @@ class test_base
      * type id
      */
 
-    function assert_verb_id(string $code_id, int $id, string $test_name,): int
+    function assert_verb_id(string $code_id, int $id, string $test_name): int
     {
         global $verbs;
         $vrb_is_id = $verbs->id($code_id);

@@ -317,7 +317,7 @@ class value_phrase_link extends db_object_seq_id_user
 
     // change a link of a word to a value
     // only allowed if the value has not yet been used
-    function save()
+    function save(?bool $use_func = null): string
     {
         log_debug("val_lnk->save link word id " . $this->phr->name() . " to " . $this->val->id() . " (link id " . $this->id . " for user " . $this->user()->id() . ").");
 

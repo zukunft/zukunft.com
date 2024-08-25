@@ -34,6 +34,7 @@ namespace unit_write;
 
 use api\formula\formula as formula_api;
 use api\word\word as word_api;
+use cfg\user;
 use cfg\word;
 use html\formula\formula as formula_dsp;
 use cfg\log\change_link;
@@ -53,44 +54,33 @@ class formula_link_write_tests
 
         $t->header('formula link db write tests');
 
-        $t->subheader('prepare component link write');
+        // TODO remove after all tests are capsuled
+        $t->write_sandbox_cleanup(new word($t->usr1), word_api::TN_ADD);
+
+        $t->subheader('formula link write sandbox tests for ' . formula_api::TN_ADD);
+        $t->assert_write_link($t->formula_link_filled_add());
+
+        $t->subheader('prepare formula link specific write tests');
         $frm = $t->test_formula(formula_api::TN_ADD, formula_api::TF_INCREASE);
         $wrd = $t->test_word(word_api::TN_ADD);
 
 
-        $t->subheader('formula link write sandbox tests for ' . formula_api::TN_ADD);
-        //$t->assert_write_link($t->formula_link_filled_add());
-
-
-
-        // test adding of one formula
-        $frm = new formula($t->usr1);
-        $frm->set_name(formula_api::TN_ADD);
-        $frm->usr_text = formula_api::TF_INCREASE;
-        $result = $frm->save();
-        if ($frm->id() > 0) {
-            $result = $frm->usr_text;
-        }
-        $target = formula_api::TF_INCREASE;
-        $t->display('formula->save for adding "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
-
         $t->test_formula_link(formula_api::TN_ADD, word_api::TN_ADD);
 
         // link the test formula to another word
-        $frm = $t->load_formula(formula_api::TN_ADD);
-        $phr = new phrase($t->usr1);
-        $phr->load_by_name(word_api::TN_ADD);
-        $result = $frm->link_phr($phr);
-        $target = '';
-        $t->display('formula_link->link_phr "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $test_name = 'link phrase "' . $wrd->name() . '" to a formula "' . $frm->name() . '" using the formula function link_phr';
+        $result = $frm->link_phr($wrd->phrase());
+        $t->assert($test_name, $result, '', $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... check the correct logging
+        $phr = new phrase($t->usr1);
+        $phr->load_by_name(word_api::TN_ADD);
         $log = new change_link($t->usr1);
         $log->set_table(change_table_list::FORMULA_LINK);
         $log->new_from_id = $frm->id();
         $log->new_to_id = $phr->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test linked System Test Formula to ' . word_api::TN_ADD;
+        $target = user::SYSTEM_TEST_NAME . ' linked System Test Formula to ' . word_api::TN_ADD;
         $t->display('formula_link->link_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result);
 
         // ... check if the link can be loaded by formula and phrase id and base on the id the correct formula and phrase objects are loaded
@@ -159,8 +149,8 @@ class formula_link_write_tests
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last(true);
         // TODO fix it
-        $target = 'zukunft.com system test partner unlinked System Test Formula Renamed from ' . word_api::TN_ADD . '';
-        $target = 'zukunft.com system test partner ';
+        $target = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test Formula Renamed from ' . word_api::TN_ADD . '';
+        $target = user::SYSTEM_TEST_PARTNER_NAME . ' ';
         $t->display('formula_link->unlink_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
 
 
@@ -196,7 +186,7 @@ class formula_link_write_tests
         $log->old_from_id = $frm->id();
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test unlinked System Test Formula from ' . word_api::TN_ADD;
+        $target = user::SYSTEM_TEST_NAME . ' unlinked System Test Formula from ' . word_api::TN_ADD;
         $t->display('formula_link->unlink_phr logged of "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result);
 
         // check if the formula is not used any more for both users

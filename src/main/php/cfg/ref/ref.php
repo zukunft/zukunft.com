@@ -966,7 +966,7 @@ class ref extends sandbox_link_with_type
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert_link($sc, new sql_type_list([sql_type::LOG]));
+            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
             $usr_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
             if ($usr_msg->is_ok()) {
                 $this->id = $usr_msg->get_row_id();
@@ -1033,7 +1033,7 @@ class ref extends sandbox_link_with_type
      * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return string the id of the updated or created reference
      */
-    function save(?bool $use_func = false): string
+    function save(?bool $use_func = null): string
     {
         log_debug();
 

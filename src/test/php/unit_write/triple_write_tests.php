@@ -39,6 +39,7 @@ use cfg\formula;
 use cfg\log\change_link;
 use cfg\log\change_table_list;
 use cfg\triple;
+use cfg\user;
 use cfg\verb;
 use cfg\word;
 use shared\library;
@@ -97,7 +98,7 @@ class triple_write_tests
         $log->new_link_id = $vrb_is_id;
         $log->new_to_id = $wrd_to->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test linked ' . word_api::TN_RENAMED . ' to ' . word_api::TN_PARENT;
+        $target = user::SYSTEM_TEST_NAME . ' linked ' . word_api::TN_RENAMED . ' to ' . word_api::TN_PARENT;
         $t->assert($test_name, $result, $target);
 
         $test_name = '... check if the link is shown correctly';
@@ -137,7 +138,7 @@ class triple_write_tests
         $log->old_link_id = $vrb_is_id;
         $log->old_to_id = $wrd_to->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test partner unlinked ' . word_api::TN_RENAMED . ' from ' . word_api::TN_PARENT . '';
+        $target = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked ' . word_api::TN_RENAMED . ' from ' . word_api::TN_PARENT . '';
         $t->assert($test_name, $result, $target);
 
 
@@ -176,8 +177,8 @@ class triple_write_tests
         $log->old_link_id = $vrb_is_id;
         $log->old_to_id = $wrd_to->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test unlinked ' . word_api::TN_RENAMED . ' from ' . word_api::TN_PARENT;
-        $target = 'zukunft.com system test partner unlinked ' . word_api::TN_RENAMED . ' from ' . word_api::TN_PARENT;
+        $target = user::SYSTEM_TEST_NAME . ' unlinked ' . word_api::TN_RENAMED . ' from ' . word_api::TN_PARENT;
+        $target = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked ' . word_api::TN_RENAMED . ' from ' . word_api::TN_PARENT;
         $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd_to->name() . '" and user "' . $t->usr1->name . '"', $target, $result);
 
         // check if the formula is not used any more for both users
@@ -205,8 +206,8 @@ class triple_write_tests
         $log->old_link_id = $vrb_is_id;
         $log->old_to_id = $wrd_to->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test unlinked ' . word_api::TN_RENAMED . ' from ' . word_api::TN_PARENT;
-        $target = 'zukunft.com system test partner unlinked System Test Word Renamed from System Test Word Parent';
+        $target = user::SYSTEM_TEST_NAME . ' unlinked ' . word_api::TN_RENAMED . ' from ' . word_api::TN_PARENT;
+        $target = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test Word Renamed from System Test Word Parent';
         $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verb::IS . ' "' . $wrd_to->name() . '" and user "' . $t->usr1->name . '"', $target, $result);
 
         // check that even after renaming the triple no word with the standard name of the triple can be added

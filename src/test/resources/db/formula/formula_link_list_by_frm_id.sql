@@ -6,6 +6,7 @@ PREPARE formula_link_list_by_frm_id (bigint, bigint) AS
            s.phrase_id,
            l.phrase_type_id AS phrase_type_id1,
            CASE WHEN (u.formula_link_type_id IS     NULL) THEN s.formula_link_type_id ELSE u.formula_link_type_id END AS formula_link_type_id,
+           CASE WHEN (u.order_nbr            IS     NULL) THEN s.order_nbr            ELSE u.order_nbr            END AS order_nbr,
            CASE WHEN (u.excluded             IS     NULL) THEN s.excluded             ELSE u.excluded             END AS excluded,
            CASE WHEN (u.share_type_id        IS     NULL) THEN s.share_type_id        ELSE u.share_type_id        END AS share_type_id,
            CASE WHEN (u.protect_id           IS     NULL) THEN s.protect_id           ELSE u.protect_id           END AS protect_id,

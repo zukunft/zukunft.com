@@ -85,6 +85,7 @@ class change extends change_log
     const MSG_ADD = 'added';
     const MSG_UPDATE = 'changed';
     const MSG_DEL = 'deleted';
+    const MSG_LINK = 'linked';
 
     /*
      * db const

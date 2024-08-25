@@ -4,6 +4,7 @@ PREPARE formula_link_norm_by_id (bigint) AS
            phrase_id,
            user_id,
            formula_link_type_id,
+           order_nbr,
            excluded,
            share_type_id,
            protect_id

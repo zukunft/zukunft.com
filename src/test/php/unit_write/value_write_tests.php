@@ -44,6 +44,7 @@ use cfg\log\change_values_big;
 use cfg\log\change_values_norm;
 use cfg\log\change_values_prime;
 use cfg\phrase_list;
+use cfg\user;
 use cfg\value\value;
 use cfg\value\value_dsp_old;
 use html\figure\figure as figure_dsp;
@@ -299,7 +300,7 @@ class value_write_tests
             $log->row_id = $add_val->id();
             $result = $log->dsp_last(true);
         }
-        $target = 'zukunft.com system test added 123456789';
+        $target = user::SYSTEM_TEST_NAME . ' added 123456789';
         // TODO activate
         //$t->display(', value->save logged for "' . $phr_grp->name() . '"', $target, $result);
 
@@ -342,7 +343,7 @@ class value_write_tests
             $log->row_id = $add_val2->id();
             $result = $log->dsp_last(true);
         }
-        $target = 'zukunft.com system test added 234567890';
+        $target = user::SYSTEM_TEST_NAME . ' added 234567890';
         // TODO activate
         //$t->display(', value->save logged for "' . $phr_grp2->name() . '"', $target, $result);
 
@@ -372,9 +373,9 @@ class value_write_tests
             $result = $log->dsp_last(true);
         }
         // TODO fix it
-        $target = 'zukunft.com system test changed 123456789 to 987654321';
+        $target = user::SYSTEM_TEST_NAME . ' changed 123456789 to 987654321';
         if ($result != $target) {
-            $target = 'zukunft.com system test added 123456789';
+            $target = user::SYSTEM_TEST_NAME . ' added 123456789';
         }
         // TODO activate
         //$t->display(', value->save logged for "' . word_api::TN_RENAMED . '"', $target, $result);
@@ -404,7 +405,7 @@ class value_write_tests
             $log->row_id = $val_usr2->id();
             $result = $log->dsp_last(true);
         }
-        $target = 'zukunft.com system test partner changed 987654321 to 23456';
+        $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed 987654321 to 23456';
         // TODO fix it
         if ($result != $target) {
             $target = '';
@@ -443,7 +444,7 @@ class value_write_tests
             $log->row_id = $val_usr2->id();
             $result = $log->dsp_last(true);
         }
-        $target = 'zukunft.com system test partner changed 23456 to 987654321';
+        $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed 23456 to 987654321';
         // TODO fix it
         if ($result != $target) {
             $target = '';

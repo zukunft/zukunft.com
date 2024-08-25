@@ -42,6 +42,7 @@ use cfg\log\change_table_list;
 use cfg\phrase_type;
 use cfg\sandbox_named;
 use cfg\triple;
+use cfg\user;
 use cfg\verb;
 use cfg\word;
 use html\word\word as word_dsp;
@@ -326,7 +327,7 @@ class word_write_tests
             $log->row_id = $wrd_add->id();
             $result = $log->dsp_last(true);
         }
-        $target = 'zukunft.com system test added "' . word_api::TN_ADD . '"';
+        $target = user::SYSTEM_TEST_NAME . ' added "' . word_api::TN_ADD . '"';
         $t->display('word->save logged for "' . word_api::TN_ADD . '"', $target, $result);
 
         // ... test if the new word has been created
@@ -381,16 +382,16 @@ class word_write_tests
         $log->set_field(change_field_list::FLD_WORD_PLURAL);
         $log->row_id = $wrd_reloaded->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test added "' . word_api::TN_RENAMED . 's"';
+        $target = user::SYSTEM_TEST_NAME . ' added "' . word_api::TN_RENAMED . 's"';
         $t->display('word->load plural for "' . word_api::TN_RENAMED . '" logged', $target, $result);
         $log->set_field(sandbox_named::FLD_DESCRIPTION);
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test added "' . word_api::TN_RENAMED . ' description"';
+        $target = user::SYSTEM_TEST_NAME . ' added "' . word_api::TN_RENAMED . ' description"';
         $t->display('word->load description for "' . word_api::TN_RENAMED . '" logged', $target, $result);
         $t->display('word->load ref_2 for "' . word_api::TN_RENAMED . '" logged', $target, $result);
         $log->set_field(change_field_list::FLD_PHRASE_TYPE);
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test added "differentiator filler"';
+        $target = user::SYSTEM_TEST_NAME . ' added "differentiator filler"';
         $t->display('word->load type_id for "' . word_api::TN_RENAMED . '" logged', $target, $result);
 
         // check if a user specific word is created if another user changes the word

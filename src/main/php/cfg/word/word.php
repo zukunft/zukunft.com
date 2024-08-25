@@ -1569,18 +1569,6 @@ class word extends sandbox_typed
         return $can_change;
     }
 
-    /**
-     * true if a record for a user specific configuration already exists in the database
-     */
-    function has_usr_cfg(): bool
-    {
-        $has_cfg = false;
-        if ($this->usr_cfg_id > 0) {
-            $has_cfg = true;
-        }
-        return $has_cfg;
-    }
-
 
     /*
      * log

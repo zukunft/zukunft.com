@@ -228,42 +228,42 @@ class user extends db_object_seq_id
 
     // the system user that should only be used for internal processes and to log system tasks
     const SYSTEM_ID = 1;
-    const SYSTEM_NAME = "zukunft.com system";
-    const SYSTEM_CODE_ID = "system"; // unique id to select the user
-    const SYSTEM_EMAIL = "system@zukunft.com";
-    const SYSTEM_LOCAL_IP = "localhost"; // as a second line of defence to prevent remote manipulation
+    const SYSTEM_NAME = 'zukunft.com system';
+    const SYSTEM_CODE_ID = 'system'; // unique id to select the user
+    const SYSTEM_EMAIL = 'system@zukunft.com';
+    const SYSTEM_LOCAL_IP = 'localhost'; // as a second line of defence to prevent remote manipulation
 
     // the system admin user that should only be used in a break-glass event to recover other admin users
     const SYSTEM_ADMIN_ID = 2;
-    const SYSTEM_ADMIN_NAME = "zukunft.com admin";
-    const SYSTEM_ADMIN_CODE_ID = "admin";
-    const SYSTEM_ADMIN_EMAIL = "admin@zukunft.com";
+    const SYSTEM_ADMIN_NAME = 'zukunft.com admin';
+    const SYSTEM_ADMIN_CODE_ID = 'admin';
+    const SYSTEM_ADMIN_EMAIL = 'admin@zukunft.com';
 
     // the user that performs the system tests
     const SYSTEM_TEST_ID = 3;
-    const SYSTEM_TEST_NAME = "zukunft.com system test";
-    const SYSTEM_TEST_EMAIL = "test@zukunft.com";
-    const SYSTEM_TEST_CODE_ID = "test";
+    const SYSTEM_TEST_NAME = 'zukunft.com system test';
+    const SYSTEM_TEST_EMAIL = 'test@zukunft.com';
+    const SYSTEM_TEST_CODE_ID = 'test';
 
     // the user that acts as a partner for the system tests
     // so that multi-user behaviour can be tested
     const SYSTEM_TEST_PARTNER_ID = 4;
-    const SYSTEM_TEST_PARTNER_NAME = "zukunft.com system test partner"; // to test that the user sandbox is working e.g. that changes of the main test user has no impact of another user simulated by this test user
-    const SYSTEM_TEST_PARTNER_CODE_ID = "test_partner";
-    const SYSTEM_TEST_PARTNER_EMAIL = "test.partner@zukunft.com";
+    const SYSTEM_TEST_PARTNER_NAME = 'zukunft.com system test partner'; // to test that the user sandbox is working e.g. that changes of the main test user has no impact of another user simulated by this test user
+    const SYSTEM_TEST_PARTNER_CODE_ID = 'test_partner';
+    const SYSTEM_TEST_PARTNER_EMAIL = 'test.partner@zukunft.com';
 
     // an admin user to test the allow of functions only allowed for administrators
     const SYSTEM_TEST_ADMIN_ID = 5;
-    const SYSTEM_TEST_ADMIN_NAME = "zukunft.com system test admin";
-    const SYSTEM_TEST_ADMIN_CODE_ID = "admin";
-    const SYSTEM_TEST_ADMIN_EMAIL = "admin@zukunft.com";
+    const SYSTEM_TEST_ADMIN_NAME = 'zukunft.com system test admin';
+    const SYSTEM_TEST_ADMIN_CODE_ID = 'admin';
+    const SYSTEM_TEST_ADMIN_EMAIL = 'admin@zukunft.com';
 
     // a normal user to test the deny of functions only allowed for administrators
     // and as a fallback owner
     const SYSTEM_TEST_NORMAL_ID = 6;
-    const SYSTEM_TEST_NORMAL_NAME = "zukunft.com system test no admin";
-    const SYSTEM_TEST_NORMAL_CODE_ID = "test_normal";
-    const SYSTEM_TEST_NORMAL_EMAIL = "support.normal@zukunft.com";
+    const SYSTEM_TEST_NORMAL_NAME = 'zukunft.com system test no admin';
+    const SYSTEM_TEST_NORMAL_CODE_ID = 'test_normal';
+    const SYSTEM_TEST_NORMAL_EMAIL = 'support.normal@zukunft.com';
 
     // change right levels to prevent access level gaining
     const RIGHT_LEVEL_USER = 10;
@@ -805,7 +805,7 @@ class user extends db_object_seq_id
      */
     private function get_ip(): string
     {
-        if (array_key_exists("REMOTE_ADDR", $_SERVER)) {
+        if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
             $this->ip_addr = $_SERVER['REMOTE_ADDR'];
         }
         if ($this->ip_addr == null) {
@@ -1156,7 +1156,7 @@ class user extends db_object_seq_id
     {
         $result = '';
         if ($usr_par[$par_name] <> $db_value
-            and $usr_par[$par_name] <> "") {
+            and $usr_par[$par_name] <> '') {
             $log = $this->log_upd();
             $log->old_value = $db_value;
             $log->new_value = $usr_par[$par_name];
@@ -1225,9 +1225,9 @@ class user extends db_object_seq_id
         $db_con->set_class(user::class);
 
         if ($this->id <= 0) {
-            log_debug(" add (" . $this->name . ")");
+            log_debug(' add (' . $this->name . ')');
 
-            $this->id = $db_con->insert_old("user_name", $this->name);
+            $this->id = $db_con->insert_old('user_name', $this->name);
             // log the changes???
             if ($this->id > 0) {
                 // add the description of the user
@@ -1263,9 +1263,9 @@ class user extends db_object_seq_id
                         $result = 'Saving of user ' . $this->id . ' failed.';
                     }
                 }
-                log_debug(" add ... done");
+                log_debug(' add ... done');
             } else {
-                log_debug(" add ... failed");
+                log_debug(' add ... failed');
             }
         } else {
             // update the ip address and log the changes????

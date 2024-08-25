@@ -36,6 +36,7 @@ include_once SHARED_TYPES_PATH . 'component_type.php';
 
 use api\formula\formula as formula_api;
 use api\view\view as view_api;
+use cfg\user;
 use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
 use cfg\component\component;
@@ -116,7 +117,7 @@ class component_write_tests
         $log->set_field(component::FLD_NAME);
         $log->row_id = $cmp->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test added "System Test View Component"';
+        $target = user::SYSTEM_TEST_NAME . ' added "System Test View Component"';
         $t->display('component->save adding logged for "' . component_api::TN_ADD . '"', $target, $result);
 
         // check if adding the same component again creates a correct error message
@@ -154,7 +155,7 @@ class component_write_tests
         $log->set_field(component::FLD_NAME);
         $log->row_id = $cmp_renamed->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test changed "System Test View Component" to "System Test View Component Renamed"';
+        $target = user::SYSTEM_TEST_NAME . ' changed "System Test View Component" to "System Test View Component Renamed"';
         $t->display('component->save rename logged for "' . component_api::TN_RENAMED . '"', $target, $result);
 
         // check if the component parameters can be added
@@ -183,17 +184,17 @@ class component_write_tests
         $log->row_id = $cmp_reloaded->id();
         $result = $log->dsp_last(true);
         // TODO fix it
-        $target = 'zukunft.com system test added "Just added for testing the user sandbox"';
+        $target = user::SYSTEM_TEST_NAME . ' added "Just added for testing the user sandbox"';
         if ($result != $target) {
-            $target = 'zukunft.com system test partner changed "Just added for testing the user sandbox" to "Just changed for testing the user sandbox"';
+            $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed "Just added for testing the user sandbox" to "Just changed for testing the user sandbox"';
         }
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '" logged', $target, $result);
         $log->set_field(change_field_list::FLD_COMPONENT_TYPE);
         $result = $log->dsp_last(true);
         // TODO fix it
-        $target = 'zukunft.com system test added "word name"';
+        $target = user::SYSTEM_TEST_NAME . ' added "word name"';
         if ($result != $target) {
-            $target = 'zukunft.com system test partner changed "word name" to "formulas"';
+            $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed "word name" to "formulas"';
         }
         $t->display('component->load component_type_id for "' . component_api::TN_RENAMED . '" logged', $target, $result);
 

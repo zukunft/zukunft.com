@@ -320,6 +320,10 @@ class sandbox_link extends sandbox
     {
         global $db_con;
 
+        if ($class == '') {
+            $class = $this::class;
+        }
+
         $lib = new library();
         log_debug($lib->dsp_array(array($from, $type, $to)));
         $qp = $this->load_sql_by_link($db_con->sql_creator(), $from, $type, $to, $class);
@@ -1281,6 +1285,15 @@ class sandbox_link extends sandbox
 
         $result .= ' as' . parent::dsp_id();
         return $result;
+    }
+
+    /**
+     * @return string with the ids of the link e.g. 1/2/3
+     */
+    function link_id(): string
+    {
+        return $this->from_id() . '/' . $this->type_id() . '/' . $this->to_id();
+
     }
 
 }

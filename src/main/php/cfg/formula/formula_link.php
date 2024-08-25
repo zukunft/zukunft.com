@@ -80,6 +80,7 @@ class formula_link extends sandbox_link_with_type
         phrase::FLD_ID,
         user::FLD_ID,
         formula_link_type::FLD_ID,
+        self::FLD_ORDER,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
@@ -92,6 +93,7 @@ class formula_link extends sandbox_link_with_type
     // all database field names excluding the id
     const FLD_NAMES_NUM_USR = array(
         formula_link_type::FLD_ID,
+        self::FLD_ORDER,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
@@ -99,6 +101,7 @@ class formula_link extends sandbox_link_with_type
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_SANDBOX_FLD_NAMES = array(
         formula_link_type::FLD_ID,
+        self::FLD_ORDER,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
@@ -182,6 +185,7 @@ class formula_link extends sandbox_link_with_type
             $this->formula()->set_id($db_row[formula::FLD_ID]);
             $this->phrase()->set_id($db_row[phrase::FLD_ID]);
             $this->type_id = $db_row[formula_link_type::FLD_ID];
+            $this->order_nbr = $db_row[formula_link::FLD_ORDER];
         }
         return $result;
     }
@@ -409,7 +413,8 @@ class formula_link extends sandbox_link_with_type
      */
     function load_by_link(formula $frm, phrase $phr, string $class = self::class): int
     {
-        $id = parent::load_by_link_id($frm->id(), 0, $phr->id(), $class);
+        global $formula_link_types;
+        $id = parent::load_by_link_id($frm->id(), $formula_link_types->default_id(), $phr->id(), $class);
         // no need to reload the linked objects, just assign it
         if ($id != 0) {
             $this->set_formula($frm);
@@ -512,18 +517,6 @@ class formula_link extends sandbox_link_with_type
     }
 
     /**
-     * @return bool true if a record for a user specific configuration already exists in the database
-     */
-    function has_usr_cfg(): bool
-    {
-        $has_cfg = false;
-        if ($this->usr_cfg_id > 0) {
-            $has_cfg = true;
-        }
-        return $has_cfg;
-    }
-
-    /**
      * create a database record to save user specific settings for this formula_link
      * @return bool true if adding the new formula link has been successful
      */
@@ -539,12 +532,30 @@ class formula_link extends sandbox_link_with_type
             if ($db_row != null) {
                 $this->usr_cfg_id = $db_row[formula_link::FLD_ID];
             }
-            // create an entry in the user sandbox
-            $db_con->set_class(formula_link::class, true);
-            $log_id = $db_con->insert_old(array(formula_link::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
-            if ($log_id <= 0) {
-                log_err('Insert of user_formula_link failed.');
-                $result = false;
+            if (!$this->has_usr_cfg()) {
+                $log_id = 0;
+                if ($this->sql_write_prepared()) {
+                    $sc = $db_con->sql_creator();
+                    $qp = $this->sql_insert($sc, new sql_type_list([sql_type::USER]));
+                    $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id() . ' for user ' . $this->user()->dsp_id());
+                    if ($usr_msg->is_ok()) {
+                        $log_id = $usr_msg->get_row_id();
+                    }
+                } else {
+                    // create an entry in the user sandbox
+                    $db_con->set_class(formula_link::class, true);
+                    $log_id = $db_con->insert_old(array(formula_link::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
+                    if ($log_id <= 0) {
+                        log_err('Insert of user_formula_link failed.');
+                        $result = false;
+                    }
+                }
+                if ($log_id <= 0) {
+                    log_err('Insert of user_formula_link failed.');
+                    $result = false;
+                } else {
+                    $result = true;
+                }
             }
         }
         return $result;
@@ -603,7 +614,7 @@ class formula_link extends sandbox_link_with_type
      * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return string the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save(?bool $use_func = false): string
+    function save(?bool $use_func = null): string
     {
 
         global $db_con;
@@ -686,7 +697,11 @@ class formula_link extends sandbox_link_with_type
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
             if ($result == '') {
-                $result = $this->save_fields($db_con, $db_rec, $std_rec);
+                if ($use_func) {
+                    $result .= $this->save_fields_func($db_con, $db_rec, $std_rec);
+                } else {
+                    $result = $this->save_fields($db_con, $db_rec, $std_rec);
+                }
             }
         }
 

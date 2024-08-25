@@ -1207,8 +1207,6 @@ class sandbox extends db_object_seq_id_user
         if ($this->usr_cfg_id > 0) {
             $result = true;
         }
-
-        log_debug(zu_dsp_bool($result));
         return $result;
     }
 
@@ -2312,6 +2310,11 @@ class sandbox extends db_object_seq_id_user
         // load the objects if needed e.g. to log the names of the link
         if ($this->is_link_obj()) {
             $this->load_objects();
+
+            // check if the required parameters are set
+            if (($this->fob()->id() == 0 or $this->tob()->id() == 0) and $this->id == 0) {
+                log_err("Either the id or the link ids must be set to save a link");
+            }
         }
 
         // configure the global database connection object for the select, insert, update and delete queries

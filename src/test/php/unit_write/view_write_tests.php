@@ -34,6 +34,7 @@ namespace unit_write;
 
 use api\view\view as view_api;
 use api\word\word as word_api;
+use cfg\user;
 use cfg\view_type;
 use cfg\view;
 use html\view\view as view_dsp;
@@ -126,7 +127,7 @@ class view_write_tests
         $log->set_field(view::FLD_NAME);
         $log->row_id = $msk->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test added "System Test View"';
+        $target = user::SYSTEM_TEST_NAME . ' added "System Test View"';
         $t->display('view->save adding logged for "' . view_api::TN_ADD . '"', $target, $result);
 
         // check if adding the same view again creates a correct error message
@@ -162,7 +163,7 @@ class view_write_tests
         $log->set_field(view::FLD_NAME);
         $log->row_id = $dsp_renamed->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test changed "System Test View" to "System Test View Renamed"';
+        $target = user::SYSTEM_TEST_NAME . ' changed "System Test View" to "System Test View Renamed"';
         $t->display('view->save rename logged for "' . view_api::TN_RENAMED . '"', $target, $result);
 
         // check if the view parameters can be added
@@ -188,18 +189,18 @@ class view_write_tests
         $log->set_field(sandbox_named::FLD_DESCRIPTION);
         $log->row_id = $dsp_reloaded->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test partner changed "Just added for testing the user sandbox" to "Just changed for testing the user sandbox"';
+        $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed "Just added for testing the user sandbox" to "Just changed for testing the user sandbox"';
         // TODO fix it
         if ($result != $target) {
-            $target = 'zukunft.com system test added "Just added for testing the user sandbox"';
+            $target = user::SYSTEM_TEST_NAME . ' added "Just added for testing the user sandbox"';
         }
         $t->display('view->load comment for "' . view_api::TN_RENAMED . '" logged', $target, $result);
         $log->set_field(view::FLD_TYPE);
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test partner changed "word default" to "entry view"';
+        $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed "word default" to "entry view"';
         // TODO fix it
         if ($result != $target) {
-            $target = 'zukunft.com system test added "word default"';
+            $target = user::SYSTEM_TEST_NAME . ' added "word default"';
         }
         $t->display('view->load view_type_id for "' . view_api::TN_RENAMED . '" logged', $target, $result);
 

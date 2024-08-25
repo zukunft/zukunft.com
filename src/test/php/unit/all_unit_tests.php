@@ -200,6 +200,7 @@ class all_unit_tests extends test_cleanup
         // run the selected unit tests
         //(new system_tests)->run($this);
         //(new import_tests)->run($this);
+        (new formula_link_tests())->run($this);
 
         // restore the global vars
         $db_con = $global_db_con;
@@ -239,14 +240,14 @@ class all_unit_tests extends test_cleanup
              */
 
             // run the selected db write
-            //(new word_write_tests)->run($this);
+            (new word_write_tests)->run($this);
             //(new word_list_write_tests)->run($this);
             //(new triple_write_tests)->run($this);
             //(new group_write_tests)->run($this);
             //(new source_write_tests)->run($this);
             //(new value_write_tests)->run($this);
             //(new formula_write_tests)->run($this);
-            //(new formula_link_write_tests)->run($this);
+            (new formula_link_write_tests)->run($this);
             (new expression_write_tests)->run($this);
             (new element_write_tests)->run($this);
             (new element_write_tests)->run_list($this);

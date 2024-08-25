@@ -37,6 +37,7 @@ use api\result\result as result_api;
 use api\word\word as word_api;
 use cfg\formula_list;
 use cfg\formula_type;
+use cfg\user;
 use cfg\word;
 use html\formula\formula as formula_dsp;
 use cfg\log\change_field_list;
@@ -338,7 +339,7 @@ class formula_write_tests
         $log->set_field(change_field_list::FLD_FORMULA_NAME);
         $log->row_id = $frm->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test added "System Test Formula"';
+        $target = user::SYSTEM_TEST_NAME . ' added "System Test Formula"';
         $t->display('formula->save adding logged for "' . formula_api::TN_ADD . '"', $target, $result);
 
         // check if adding the same formula again creates a correct error message
@@ -373,7 +374,7 @@ class formula_write_tests
         $log->set_field(change_field_list::FLD_FORMULA_NAME);
         $log->row_id = $frm_renamed->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test changed "System Test Formula" to "System Test Formula Renamed"';
+        $target = user::SYSTEM_TEST_NAME . ' changed "System Test Formula" to "System Test Formula Renamed"';
         $t->display('formula->save rename logged for "' . formula_api::TN_RENAMED . '"', $target, $result);
 
         // check if the formula parameters can be added
@@ -410,29 +411,29 @@ class formula_write_tests
         $log->row_id = $frm_reloaded->id();
         $result = $log->dsp_last(true);
         // use the next line if system config is non-standard
-        $target = 'zukunft.com system test changed "percent" = ( "this" - "prior" ) / "prior" to = "this"';
-        $target = 'zukunft.com system test changed ""percent" = 1 - ( "this" / "prior" )" to "= "this""';
+        $target = user::SYSTEM_TEST_NAME . ' changed "percent" = ( "this" - "prior" ) / "prior" to = "this"';
+        $target = user::SYSTEM_TEST_NAME . ' changed ""percent" = 1 - ( "this" / "prior" )" to "= "this""';
         $t->display('formula->load resolved_text for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
         $log->set_field(change_field_list::FLD_FORMULA_REF_TEXT);
         $result = $log->dsp_last(true);
         // use the next line if system config is non-standard
-        $target = 'zukunft.com system test changed {w' . $wrd_percent->id() . '}=( {f' . $frm_this->id() . '} - {f5} ) / {f5} to ={f3}';
-        $target = 'zukunft.com system test changed "{w' . $wrd_percent->id() . '}=1-({f' . $frm_this->id() . '}/{f' . $frm_prior->id() . '})" to "={f' . $frm_this->id() . '}"';
+        $target = user::SYSTEM_TEST_NAME . ' changed {w' . $wrd_percent->id() . '}=( {f' . $frm_this->id() . '} - {f5} ) / {f5} to ={f3}';
+        $target = user::SYSTEM_TEST_NAME . ' changed "{w' . $wrd_percent->id() . '}=1-({f' . $frm_this->id() . '}/{f' . $frm_prior->id() . '})" to "={f' . $frm_this->id() . '}"';
         $t->display('formula->load formula_text for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
         $log->set_field(sandbox_named::FLD_DESCRIPTION);
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test added "System Test Formula Renamed description"';
+        $target = user::SYSTEM_TEST_NAME . ' added "System Test Formula Renamed description"';
         $t->display('formula->load description for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
         $log->set_field(change_field_list::FLD_FORMULA_TYPE);
         $result = $log->dsp_last(true);
         // TODO review what is correct
-        $target = 'zukunft.com system test changed calc to this';
-        $target = 'zukunft.com system test added "this"';
-        $target = 'zukunft.com system test added "4"';
+        $target = user::SYSTEM_TEST_NAME . ' changed calc to this';
+        $target = user::SYSTEM_TEST_NAME . ' added "this"';
+        $target = user::SYSTEM_TEST_NAME . ' added "4"';
         $t->display('formula->load formula_type_id for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
         $log->set_field(change_field_list::FLD_FORMULA_ALL);
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test changed "0" to "1"';
+        $target = user::SYSTEM_TEST_NAME . ' changed "0" to "1"';
         $t->display('formula->load all_values_needed for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
 
         // check if a user specific formula is created if another user changes the formula

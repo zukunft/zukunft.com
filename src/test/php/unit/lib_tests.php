@@ -34,6 +34,7 @@ namespace unit;
 
 include_once MODEL_USER_PATH . 'user_message.php';
 
+use cfg\user;
 use cfg\user_message;
 use DateTimeInterface;
 use shared\library;
@@ -412,8 +413,8 @@ class lib_tests
         $target = '//-"System Test Word Share"////+""//';
         $t->assert("diff_msg, replaced part", $result, $target);
         // ... string that has caused an error in an earlier version
-        $test_result = 'zukunft.com system test partner unlinked System Test View Renamed from System Test View Component';
-        $test_target = 'zukunft.com system test partner ';
+        $test_result = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test View Renamed from System Test View Component';
+        $test_target = user::SYSTEM_TEST_PARTNER_NAME . ' ';
         $result = $lib->diff_msg($test_result, $test_target);
         $target = 'zukunft.com system test partner//-////+ unlinked System Test View Renamed from System Test View Component//';
         $t->assert("diff_msg, replaced part", $result, $target);

@@ -1525,9 +1525,12 @@ class formula extends sandbox_typed
         $result = '';
         if ($this->id() > 0 and $phr->id() <> 0) {
             $frm_lnk = new formula_link($this->user());
-            $frm_lnk->set_formula($this);
-            $frm_lnk->set_phrase($phr);
-            $result .= $frm_lnk->save();
+            $frm_lnk->load_by_link($this, $phr);
+            if ($frm_lnk->id() == 0) {
+                $frm_lnk->set_formula($this);
+                $frm_lnk->set_phrase($phr);
+                $result .= $frm_lnk->save();
+            }
         }
         return $result;
     }

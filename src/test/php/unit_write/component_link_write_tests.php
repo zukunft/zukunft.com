@@ -38,6 +38,7 @@ use cfg\component\component;
 use cfg\component\component_link;
 use cfg\log\change_link;
 use cfg\log\change_table_list;
+use cfg\user;
 use cfg\view;
 use test\test_cleanup;
 
@@ -54,6 +55,10 @@ class component_link_write_tests
         $msk = $t->test_view(view_api::TN_ADD);
         $cmp = $t->test_component(component_api::TN_ADD);
 
+        $t->subheader('component link write sandbox tests for ' . view_api::TN_ADD . ' and ' . component_api::TN_ADD);
+        //$t->assert_write_link($t->formula_link_filled_add());
+
+
         $test_name = 'link the test view component "' . $cmp->name() . '" to view  (' . $msk->name() . ')';
         $order_nbr = $cmp->next_nbr($msk->id());
         $result = $cmp->link($msk, $order_nbr);
@@ -66,7 +71,7 @@ class component_link_write_tests
         $log->new_from_id = $msk->id();
         $log->new_to_id = $cmp->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test linked ' . view_api::TN_ADD . ' to ' . component_api::TN_ADD;
+        $target = user::SYSTEM_TEST_NAME . ' linked ' . view_api::TN_ADD . ' to ' . component_api::TN_ADD;
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check list of linked views contains the added view for user "' . $t->usr1->dsp_id() . '"';
@@ -133,7 +138,7 @@ class component_link_write_tests
         $log->old_from_id = $msk->id();
         $log->old_to_id = $cmp->id();
         $result = $log->dsp_last(true);
-        $target = 'zukunft.com system test unlinked ' . view_api::TN_ADD . ' from ' . component_api::TN_ADD;
+        $target = user::SYSTEM_TEST_NAME . ' unlinked ' . view_api::TN_ADD . ' from ' . component_api::TN_ADD;
         $t->display('view component_link->unlink_dsp logged of "' . $msk->name() . '" from "' . $cmp->name() . '"', $target, $result);
 
         // check if the view component is not used any more for both users
