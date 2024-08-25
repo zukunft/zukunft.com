@@ -163,6 +163,20 @@ class view_term_link extends sandbox_link_with_type
      */
 
     /**
+     * set the main vars with one function
+     * @param int $id the database id of the link
+     * @param view $msk the formula that should be linked
+     * @param term $trm the phrase to which the formula should be linked
+     * @return void
+     */
+    function set(int $id, view $msk, term $trm): void
+    {
+        $this->set_id($id);
+        $this->set_view($msk);
+        $this->set_term($trm);
+    }
+
+    /**
      * interface function to set the view always to the from object
      * @param view $msk the view that should be linked
      * @return void

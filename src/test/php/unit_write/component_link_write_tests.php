@@ -51,13 +51,14 @@ class component_link_write_tests
 
         $t->header('component link db write tests');
 
+        $t->subheader('component link write sandbox tests for ' . view_api::TN_ADD . ' and ' . component_api::TN_ADD);
+        // TODO activate (set object id instead of id)
+        // $t->assert_write_link($t->component_link_filled_add());
+
+
         $t->subheader('prepare component link write');
         $msk = $t->test_view(view_api::TN_ADD);
         $cmp = $t->test_component(component_api::TN_ADD);
-
-        $t->subheader('component link write sandbox tests for ' . view_api::TN_ADD . ' and ' . component_api::TN_ADD);
-        //$t->assert_write_link($t->formula_link_filled_add());
-
 
         $test_name = 'link the test view component "' . $cmp->name() . '" to view  (' . $msk->name() . ')';
         $order_nbr = $cmp->next_nbr($msk->id());

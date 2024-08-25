@@ -64,6 +64,7 @@ use api\formula\formula as formula_api;
 use cfg\combine_named;
 use cfg\combine_object;
 use cfg\component\component;
+use cfg\component\component_link;
 use cfg\component\component_list;
 use cfg\config;
 use cfg\db\sql;
@@ -304,6 +305,7 @@ include_once TEST_UNIT_WRITE_PATH . 'element_write_tests.php';
 include_once TEST_UNIT_WRITE_PATH . 'element_group_write_tests.php';
 include_once TEST_UNIT_WRITE_PATH . 'job_write_tests.php';
 include_once TEST_UNIT_WRITE_PATH . 'view_write_tests.php';
+include_once TEST_UNIT_WRITE_PATH . 'view_link_write_tests.php';
 include_once TEST_UNIT_WRITE_PATH . 'component_write_tests.php';
 include_once TEST_UNIT_WRITE_PATH . 'component_link_write_tests.php';
 
@@ -2455,7 +2457,7 @@ class test_base
         // detect the related objects
         $fob = clone $ori->fob();
         $tob = clone $ori->tob();
-        if ($tob::class == phrase::class) {
+        if ($tob::class == phrase::class or $tob::class == term::class) {
             $add_to = new word($tob->user());
         } else {
             $add_to = $tob;
@@ -2501,12 +2503,44 @@ class test_base
          * sandbox
          */
 
-        if ($lnk::class == formula_link::class) {
+        if ($lnk::class == formula_link::class or $lnk::class == component_link::class) {
             $old_order_nbr = $lnk->order_nbr;
             $new_order_nbr = $old_order_nbr + 1;
             if ($result) {
-                // if user 2 changes the order
+                // if user 2 changes the order number
                 $result = $this->write_link_update_order_nbr($lnk, $this->usr2, $new_order_nbr);
+            }
+            if ($result) {
+                // ... user 1 still see the old, because he has been owner of the standard
+                $result = $this->write_link_check_order_nbr($lnk, $this->usr1, $old_order_nbr);
+            }
+            if ($result) {
+                // ... but user 2 still see the new
+                $result = $this->write_link_check_order_nbr($lnk, $this->usr2, $new_order_nbr);
+            }
+            if ($result) {
+                // if user 1 also changes the order number
+                $result = $this->write_link_update_order_nbr($lnk, $this->usr1, $new_order_nbr);
+            }
+            if ($result) {
+                // ... user 1 see the new
+                $result = $this->write_link_check_order_nbr($lnk, $this->usr1, $new_order_nbr);
+            }
+            if ($result) {
+                // ... and user 2 also see the new
+                $result = $this->write_link_check_order_nbr($lnk, $this->usr2, $new_order_nbr);
+            }
+            if ($result) {
+                // if the owner changes the order number and all have the same
+                $result = $this->write_link_update_order_nbr($lnk, $this->usr1, $old_order_nbr);
+            }
+            if ($result) {
+                // ... user 1 see the changed
+                $result = $this->write_link_check_order_nbr($lnk, $this->usr1, $old_order_nbr);
+            }
+            if ($result) {
+                // ... and user 2 also see the changed (TODO or not?)
+                $result = $this->write_link_check_order_nbr($lnk, $this->usr2, $new_order_nbr);
             }
         } elseif ($lnk::class == view_term_link::class) {
             $old_description = $lnk->description;
@@ -2514,6 +2548,38 @@ class test_base
             if ($result) {
                 // if user 2 changes the order
                 $result = $this->write_link_update_description($lnk, $this->usr2, $new_description);
+            }
+            if ($result) {
+                // ... user 1 still see the old, because he has been owner of the standard
+                $result = $this->write_link_check_description($lnk, $this->usr1, $old_description);
+            }
+            if ($result) {
+                // ... but user 2 still see the new
+                $result = $this->write_link_check_description($lnk, $this->usr2, $new_description);
+            }
+            if ($result) {
+                // if user 1 also changes the description
+                $result = $this->write_link_update_description($lnk, $this->usr1, $new_description);
+            }
+            if ($result) {
+                // ... user 1 see the new
+                $result = $this->write_link_check_description($lnk, $this->usr1, $new_description);
+            }
+            if ($result) {
+                // ... and user 2 also see the new
+                $result = $this->write_link_check_description($lnk, $this->usr2, $new_description);
+            }
+            if ($result) {
+                // if the owner changes the description and all have the same
+                $result = $this->write_link_update_description($lnk, $this->usr1, $old_description);
+            }
+            if ($result) {
+                // ... user 1 see the changed
+                $result = $this->write_link_check_description($lnk, $this->usr1, $old_description);
+            }
+            if ($result) {
+                // ... and user 2 also see the changed (TODO or not?)
+                $result = $this->write_link_check_description($lnk, $this->usr2, $new_description);
             }
         } else {
             log_err('update test field for ' . $lnk::class . ' not yet defined');
@@ -2799,7 +2865,7 @@ class test_base
         }
     }
 
-    private function write_link_update_order_nbr(formula_link $lnk, user $usr, int $new_order_nbr): bool
+    private function write_link_update_order_nbr(formula_link|component_link $lnk, user $usr, int $new_order_nbr): bool
     {
         $id = $lnk->id();
         $lnk->set_user($usr);
@@ -2807,12 +2873,27 @@ class test_base
         $old_order_nbr = $lnk->order_nbr;
         $lib = new library();
         $class = $lib->class_to_name($lnk::class);
-        $test_name = 'update ' . $class . ' order nbr to ' . $new_order_nbr;
+        $test_name = 'update ' . $class . ' order number to ' . $new_order_nbr;
         $lnk->order_nbr = $new_order_nbr;
         $result = $lnk->save();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_link_log_field($lnk,
                 formula_link::FLD_ORDER, $new_order_nbr, change::MSG_UPDATE, $old_order_nbr);
+        } else {
+            return false;
+        }
+    }
+
+    private function write_link_check_order_nbr(formula_link|component_link $lnk, user $usr, ?string $order_nbr): bool
+    {
+        $id = $lnk->id();
+        $lnk->set_user($usr);
+        $lnk->load_by_id($id);
+        $lib = new library();
+        $class = $lib->class_to_name($lnk::class);
+        $test_name = $class . ' order number for user ' . $usr->dsp_id() . ' is ' . $order_nbr;
+        if ($this->assert($test_name, $lnk->order_nbr, $order_nbr, $this::TIMEOUT_LIMIT_DB)) {
+            return true;
         } else {
             return false;
         }
@@ -2832,6 +2913,21 @@ class test_base
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_link_log_field($lnk,
                 sandbox_named::FLD_DESCRIPTION, $new_description, change::MSG_UPDATE, $old_description);
+        } else {
+            return false;
+        }
+    }
+
+    private function write_link_check_description(view_term_link $lnk, user $usr, ?string $description): bool
+    {
+        $id = $lnk->id();
+        $lnk->set_user($usr);
+        $lnk->load_by_id($id);
+        $lib = new library();
+        $class = $lib->class_to_name($lnk::class);
+        $test_name = $class . ' description for user ' . $usr->dsp_id() . ' is ' . $description;
+        if ($this->assert($test_name, $lnk->description, $description, $this::TIMEOUT_LIMIT_DB)) {
+            return true;
         } else {
             return false;
         }

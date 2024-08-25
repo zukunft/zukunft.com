@@ -176,6 +176,7 @@ use unit_write\source_write_tests;
 use unit_write\triple_write_tests;
 use unit_write\value_write_tests;
 use unit_write\view_write_tests;
+use unit_write\view_link_write_tests;
 use unit_write\word_write_tests;
 
 class create_test_objects extends test_base
@@ -2225,6 +2226,37 @@ class create_test_objects extends test_base
         return $lst;
     }
 
+    function view_link(): view_term_link
+    {
+        global $view_link_types;
+        $lnk = new view_term_link($this->usr1);
+        $lnk->set(1, $this->view(), $this->word()->term());
+        $lnk->set_type_id($view_link_types->id(view_link_type::DEFAULT));
+        $lnk->description = 2;
+        return $lnk;
+    }
+
+    function view_link_filled(): view_term_link
+    {
+        global $share_types;
+        global $protection_types;
+        $lnk = $this->view_link();
+        $lnk->excluded = true;
+        $lnk->share_id = $share_types->id(share_type_shared::GROUP);
+        $lnk->protection_id = $protection_types->id(protect_type_shared::USER);
+        return $lnk;
+    }
+
+    function view_link_filled_add(): view_term_link
+    {
+        $lnk = $this->view_link_filled();
+        $lnk->include();
+        $lnk->set_id(0);
+        $lnk->set_view($this->view_filled_add());
+        $lnk->set_term($this->word_filled_add()->term());
+        return $lnk;
+    }
+
     function component(): component
     {
         $cmp = new component($this->usr1);
@@ -2407,6 +2439,16 @@ class create_test_objects extends test_base
         $lnk->excluded = true;
         $lnk->share_id = $share_types->id(share_type_shared::GROUP);
         $lnk->protection_id = $protection_types->id(protect_type_shared::USER);
+        return $lnk;
+    }
+
+    function component_link_filled_add(): component_link
+    {
+        $lnk = $this->component_link_filled();
+        $lnk->include();
+        $lnk->set_id(0);
+        $lnk->set_view($this->view_filled_add());
+        $lnk->set_component($this->component_filled_add());
         return $lnk;
     }
 
@@ -3863,6 +3905,7 @@ class create_test_objects extends test_base
         (new formula_write_tests())->create_test_formulas($t);
         (new formula_link_write_tests())->create_test_formula_links($t);
         (new view_write_tests())->create_test_views($t);
+        // (new view_link_write_tests())->create_test_views($t);
         (new component_write_tests())->create_test_components($t);
         (new component_link_write_tests())->create_test_component_links($t);
         (new value_write_tests())->create_test_values($t);

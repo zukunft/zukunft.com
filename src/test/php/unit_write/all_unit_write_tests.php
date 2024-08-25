@@ -187,6 +187,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 (new job_write_tests)->run($t);
                 (new job_write_tests)->run_list($t);
                 (new view_write_tests)->run($t);
+                (new view_link_write_tests)->run($this);
                 (new component_write_tests)->run($t);
                 (new component_link_write_tests)->run($t);
 

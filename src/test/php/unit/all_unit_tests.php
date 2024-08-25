@@ -152,6 +152,7 @@ use unit_read\triple_read_tests;
 use unit_read\view_read_tests;
 use unit_read\word_read_tests;
 use unit_ui\local_ui_tests;
+use unit_write\view_link_write_tests;
 use unit_write\component_link_write_tests;
 use unit_write\component_write_tests;
 use unit_write\element_write_tests;
@@ -252,6 +253,7 @@ class all_unit_tests extends test_cleanup
             (new element_write_tests)->run($this);
             (new element_write_tests)->run_list($this);
             //(new view_write_tests)->run($this);
+            (new view_link_write_tests)->run($this);
             //(new component_write_tests)->run($this);
             (new component_link_write_tests)->run($this);
 

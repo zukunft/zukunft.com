@@ -2502,7 +2502,11 @@ class formula extends sandbox_typed
                 $db_rec->set_name($this->name());
                 $std_rec = clone $db_rec;
                 // save the formula fields
-                $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                if ($use_func) {
+                    $result->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
+                } else {
+                    $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                }
             }
         } else {
             $result->add_message("Adding formula " . $this->name . " failed.");
