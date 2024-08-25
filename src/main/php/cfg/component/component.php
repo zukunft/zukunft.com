@@ -974,7 +974,9 @@ class component extends sandbox_typed
      * save
      */
 
-    // create a database record to save user specific settings for this component
+    /**
+     * create a database record to save user specific settings for this component
+     */
     protected function add_usr_cfg(string $class = self::class): bool
     {
         global $db_con;

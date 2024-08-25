@@ -94,7 +94,7 @@ class source_write_tests
         // cleanup - fallback delete
         $src = new source($t->usr1);
         foreach (source_api::TEST_SOURCES as $src_name) {
-            $t->write_sandbox_cleanup($src, $src_name);
+            $t->write_named_cleanup($src, $src_name);
         }
 
     }

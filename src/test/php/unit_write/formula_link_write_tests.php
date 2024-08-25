@@ -54,9 +54,6 @@ class formula_link_write_tests
 
         $t->header('formula link db write tests');
 
-        // TODO remove after all tests are capsuled
-        $t->write_sandbox_cleanup(new word($t->usr1), word_api::TN_ADD);
-
         $t->subheader('formula link write sandbox tests for ' . formula_api::TN_ADD);
         $t->assert_write_link($t->formula_link_filled_add());
 
@@ -230,10 +227,10 @@ class formula_link_write_tests
         $lnk->load_by_link($frm, $wrd->phrase());
         $lnk->del();
         foreach (formula_api::TEST_FORMULAS as $frm_name) {
-            $t->write_sandbox_cleanup($frm, $frm_name);
+            $t->write_named_cleanup($frm, $frm_name);
         }
         foreach (word_api::TEST_WORDS as $wrd_name) {
-            $t->write_sandbox_cleanup($wrd, $wrd_name);
+            $t->write_named_cleanup($wrd, $wrd_name);
         }
 
         $frm->del();

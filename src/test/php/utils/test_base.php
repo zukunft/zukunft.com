@@ -2222,7 +2222,6 @@ class test_base
     /**
      * test the named user sandbox object by adding it
      * and simulate if different users change it
-     * TODO use the full set object for the creation
      *
      * @param sandbox_named|sandbox_link_named $sbx
      * @param string $name
@@ -2230,6 +2229,9 @@ class test_base
      */
     function assert_write_named(sandbox_named|sandbox_link_named $sbx, string $name): bool
     {
+
+        // check for leftovers
+        $this->write_named_cleanup($sbx, $name, true);
 
         // remember mandetory fields
         if ($sbx::class == formula::class) {
@@ -2242,14 +2244,14 @@ class test_base
          */
 
         // add the named object for the test user 1
-        $id = $this->write_sandbox_add($sbx, $name, $this->usr1);
+        $id = $this->write_named_add($sbx, $name, $this->usr1);
 
         // remember the api json for later compare
         $api_json = $sbx->api_json();
 
         // check the log
         if ($id != 0) {
-            $result = $this->write_sandbox_log($sbx, $sbx->name_field(), $name, change::MSG_ADD);
+            $result = $this->write_named_log($sbx, $sbx->name_field(), $name, change::MSG_ADD);
         } else {
             $result = false;
         }
@@ -2277,12 +2279,12 @@ class test_base
         // check renaming the added object
         $new_name = '';
         if ($result) {
-            $new_name = $this->write_sandbox_rename($sbx, $id, $this->usr1);
+            $new_name = $this->write_named_rename($sbx, $id, $this->usr1);
         }
 
         // check the log
         if ($id != 0) {
-            $result = $this->write_sandbox_log($sbx, $sbx->name_field(), $new_name, change::MSG_UPDATE, $name);
+            $result = $this->write_named_log($sbx, $sbx->name_field(), $new_name, change::MSG_UPDATE, $name);
         } else {
             $result = false;
         }
@@ -2297,39 +2299,39 @@ class test_base
         $new_description = $old_description . self::EXT_RENAME;
         if ($result) {
             // if user 2 changes the description
-            $result = $this->write_sandbox_update_description($sbx, $this->usr2, $new_description);
+            $result = $this->write_named_update_description($sbx, $this->usr2, $new_description);
         }
         if ($result) {
             // ... user 1 still see the old, because he has been owner of the standard
-            $result = $this->write_sandbox_check_description($sbx, $this->usr1, $old_description);
+            $result = $this->write_named_check_description($sbx, $this->usr1, $old_description);
         }
         if ($result) {
             // ... but user 2 still see the new
-            $result = $this->write_sandbox_check_description($sbx, $this->usr2, $new_description);
+            $result = $this->write_named_check_description($sbx, $this->usr2, $new_description);
         }
         if ($result) {
             // if user 1 also changes the description
-            $result = $this->write_sandbox_update_description($sbx, $this->usr1, $new_description);
+            $result = $this->write_named_update_description($sbx, $this->usr1, $new_description);
         }
         if ($result) {
             // ... user 1 see the new
-            $result = $this->write_sandbox_check_description($sbx, $this->usr1, $new_description);
+            $result = $this->write_named_check_description($sbx, $this->usr1, $new_description);
         }
         if ($result) {
             // ... and user 2 also see the new
-            $result = $this->write_sandbox_check_description($sbx, $this->usr2, $new_description);
+            $result = $this->write_named_check_description($sbx, $this->usr2, $new_description);
         }
         if ($result) {
             // if the owner changes the description and all have the same
-            $result = $this->write_sandbox_update_description($sbx, $this->usr1, $old_description);
+            $result = $this->write_named_update_description($sbx, $this->usr1, $old_description);
         }
         if ($result) {
             // ... user 1 see the changed
-            $result = $this->write_sandbox_check_description($sbx, $this->usr1, $old_description);
+            $result = $this->write_named_check_description($sbx, $this->usr1, $old_description);
         }
         if ($result) {
             // ... and user 2 also see the changed (TODO or not?)
-            $result = $this->write_sandbox_check_description($sbx, $this->usr2, $new_description);
+            $result = $this->write_named_check_description($sbx, $this->usr2, $new_description);
         }
 
 
@@ -2339,15 +2341,15 @@ class test_base
 
         if ($result) {
             // if user 2 delete it
-            $result = $this->write_sandbox_del($sbx, $this->usr2);
+            $result = $this->write_named_del($sbx, $this->usr2);
         }
         if ($result) {
             // ... the description will be empty for user 2
-            $result = $this->write_sandbox_check_description($sbx, $this->usr2, '');
+            $result = $this->write_named_check_description($sbx, $this->usr2, '');
         }
         if ($result) {
             // ... but still exist for user 1
-            $result = $this->write_sandbox_check_description($sbx, $this->usr1, $old_description);
+            $result = $this->write_named_check_description($sbx, $this->usr1, $old_description);
         }
 
 
@@ -2357,7 +2359,7 @@ class test_base
 
         if ($result) {
             // if the owner also deletes it
-            $result = $this->write_sandbox_del($sbx, $this->usr1);
+            $result = $this->write_named_del($sbx, $this->usr1);
         }
         if ($result) {
             // the name is empty and id is not used
@@ -2365,7 +2367,7 @@ class test_base
         }
         if ($result) {
             // ... and the description for user 1 will also be empty
-            $result = $this->write_sandbox_check_description($sbx, $this->usr1, '');
+            $result = $this->write_named_check_description($sbx, $this->usr1, '');
         }
 
 
@@ -2381,13 +2383,13 @@ class test_base
 
         if ($result) {
             // add the named object again for test user 1 for owner change test
-            $id = $this->write_sandbox_add($sbx, $name, $this->usr1);
+            $id = $this->write_named_add($sbx, $name, $this->usr1);
         }
         // check the log
         if ($result) {
             if ($id != 0) {
                 // user 2 changes the description again to be the fallback user
-                $result = $this->write_sandbox_add_description($sbx, $this->usr2, $new_description);
+                $result = $this->write_named_add_description($sbx, $this->usr2, $new_description);
             } else {
                 $result = false;
             }
@@ -2395,7 +2397,7 @@ class test_base
 
         if ($result) {
             // if the owner deletes it ...
-            $result = $this->write_sandbox_del($sbx, $this->usr1);
+            $result = $this->write_named_del($sbx, $this->usr1);
         }
         /*
         if ($result) {
@@ -2422,11 +2424,11 @@ class test_base
         }
         if ($result) {
             // ... and the description for user 1 will also be empty
-            $result = $this->write_sandbox_check_description($sbx, $this->usr1, '');
+            $result = $this->write_named_check_description($sbx, $this->usr1, '');
         }
 
         // fallback delete
-        $this->write_sandbox_cleanup($sbx, $name);
+        $this->write_named_cleanup($sbx, $name);
 
         return $result;
     }
@@ -2450,16 +2452,20 @@ class test_base
         // remember the api json for later compare
         $api_json = $lnk->api_json();
 
-        // create the related objects
+        // detect the related objects
         $fob = clone $ori->fob();
         $tob = clone $ori->tob();
-        $fid = $this->write_sandbox_add($fob, $fob->name(), $this->usr1);
         if ($tob::class == phrase::class) {
             $add_to = new word($tob->user());
         } else {
             $add_to = $tob;
         }
-        $tid = $this->write_sandbox_add($add_to, $tob->name(), $this->usr1);
+        // check for leftovers
+        $this->write_named_cleanup($ori->fob(), $ori->fob()->name(), true);
+        $this->write_named_cleanup($add_to, $ori->tob()->name(), true);
+        // create the related objects
+        $fid = $this->write_named_add($fob, $fob->name(), $this->usr1);
+        $tid = $this->write_named_add($add_to, $tob->name(), $this->usr1);
 
 
         /*
@@ -2516,33 +2522,59 @@ class test_base
 
         // cleanup
         $this->write_link_cleanup($lnk, $id);
-        $this->write_sandbox_cleanup($ori->fob(), $ori->fob()->name());
-        $this->write_sandbox_cleanup($add_to, $ori->tob()->name());
+        $this->write_named_cleanup($ori->fob(), $ori->fob()->name());
+        $this->write_named_cleanup($add_to, $ori->tob()->name());
 
 
         return $result;
     }
 
+
+    /*
+     * write test cleanup
+     */
+
     /**
-     * remove all remaining test rows without test
+     * remove all remaining test rows of a named user sandbox object
      *
-     * @param sandbox_named|sandbox_link_named $sbx
-     * @param string $name
+     * @param sandbox_named|sandbox_link_named $sbx the named user sandbox object e.g. a word
+     * @param string $name the name of the user sandbox object that should be removed
+     * @param bool $check if true an error message is created if the object needs to be removed
+     *                    e.g. to detect incomplete cleanup of previous tests
      * @return void
      */
-    function write_sandbox_cleanup(sandbox_named|sandbox_link_named $sbx, string $name): void
+    function write_named_cleanup(sandbox_named|sandbox_link_named $sbx, string $name, bool $check = false): void
+    {
+        $this->write_named_cleanup_one($sbx, $this->usr1, $name, $check);
+        $this->write_named_cleanup_one($sbx, $this->usr2, $name, $check);
+        $this->write_named_cleanup_one($sbx, $this->usr1, $name . self::EXT_RENAME, $check);
+        $this->write_named_cleanup_one($sbx, $this->usr2, $name . self::EXT_RENAME, $check);
+    }
+
+    /**
+     * remove remaining test rows for one name and one user
+     *
+     * @param sandbox_named|sandbox_link_named $sbx the named user sandbox object e.g. a word
+     * @param string $name the name of the user sandbox object that should be removed
+     * @param user $usr the user configuration of this user should be removed
+     * @param bool $check if true an error message is created if the object needs to be removed
+     *                    e.g. to detect incomplete cleanup of previous tests
+     * @return void
+     */
+    private function write_named_cleanup_one(
+        sandbox_named|sandbox_link_named $sbx,
+        user $usr,
+        string $name,
+        bool $check = false
+    ): void
     {
         $sbx->set_user($this->usr1);
         $sbx->load_by_name($name);
-        $sbx->del();
-        $sbx->set_user($this->usr2);
-        $sbx->load_by_name($name);
-        $sbx->del();
-        $sbx->set_user($this->usr1);
-        $sbx->load_by_name($name . self::EXT_RENAME);
-        $sbx->del();
-        $sbx->set_user($this->usr2);
-        $sbx->load_by_name($name . self::EXT_RENAME);
+        if ($check) {
+            if ($sbx->id() != 0) {
+                log_warning('Unexpected cleanup of ' . $sbx->dsp_id());
+            }
+        }
         $sbx->del();
     }
 
@@ -2551,16 +2583,56 @@ class test_base
      *
      * @param sandbox_link $lnk the link objecz that should be deleted
      * @param int $id the id of the link object
+     * @param bool $check if true an error message is created if the object needs to be removed
+     * *                    e.g. to detect incomplete cleanup of previous tests
      * @return void
      */
-    function write_link_cleanup(sandbox_link $lnk, int $id): void
+    function write_link_cleanup(sandbox_link $lnk, int $id, bool $check = false): void
     {
         $lnk->set_user($this->usr1);
         $lnk->load_by_id($id);
+        if ($check) {
+            if ($lnk->id() != 0) {
+                log_err('Unexpected cleanup of ' . $lnk->dsp_id());
+            }
+        }
         $lnk->del();
         $lnk->set_user($this->usr2);
         $lnk->load_by_id($id);
+        if ($check) {
+            if ($lnk->id() != 0) {
+                log_err('Unexpected cleanup of ' . $lnk->dsp_id());
+            }
+        }
         $lnk->del();
+    }
+
+
+    /*
+     * write test internal support
+     */
+
+    /**
+     * add a named object to the database for the given user
+     *
+     * @param sandbox_named|sandbox_link_named $sbx
+     * @param string $name
+     * @param user $usr
+     * @return int the id of the added object
+     */
+    private function write_named_add(sandbox_named|sandbox_link_named $sbx, string $name, user $usr): int
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = 'add ' . $class . ' ' . $name . ' for user ' . $usr->dsp_id();
+        $sbx->set_user($usr);
+        $sbx->set_name($name);
+        $result = $sbx->save();
+        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+            return $sbx->id();
+        } else {
+            return 0;
+        }
     }
 
     private function write_link_add(sandbox_link_with_type $sbx, sandbox_link_with_type $ori, user $usr): int
@@ -2585,6 +2657,42 @@ class test_base
         }
     }
 
+    /**
+     * check if changing a named user sandbox object has been logged correctly
+     *
+     * @param sandbox_named|sandbox_link_named $sbx
+     * @param string $fld
+     * @param string $name
+     * @param string $action
+     * @param string|null $old_name
+     * @return bool
+     */
+    private function write_named_log(
+        sandbox_named|sandbox_link_named $sbx,
+        string                           $fld,
+        string                           $name,
+        string                           $action,
+        ?string                          $old_name = ''
+    ): bool
+    {
+        $log = new change($sbx->user());
+        $lib = new library();
+        $tbl_name = $lib->class_to_table($sbx::class);
+        $log->set_table($tbl_name);
+        $log->set_field($fld);
+        $log->row_id = $sbx->id();
+        $result = $log->dsp_last(true);
+        $target = $sbx->user()->name() . ' ' . $action . ' "';
+        if ($action == change::MSG_UPDATE) {
+            $target .= $old_name . '" to "' . $name . '"';
+        } else {
+            $target .= $name . '"';
+        }
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $name;
+        return $this->assert($test_name, $result, $target);
+    }
+
     private function write_link_log(
         sandbox_link_with_type $lnk,
         string                 $action
@@ -2602,6 +2710,93 @@ class test_base
         $class = $lib->class_to_name($lnk::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $lnk->dsp_id();
         return $this->assert($test_name, $result, $target);
+    }
+
+    /**
+     * rename a named user sandbox object and check if the name has really been changed
+     *
+     * @param sandbox_named|sandbox_link_named $sbx
+     * @param int $id
+     * @param user $usr
+     * @return string
+     */
+    private function write_named_rename(sandbox_named|sandbox_link_named $sbx, int $id, user $usr): string
+    {
+        $sbx->set_user($usr);
+        $sbx->load_by_id($id);
+        $name = $sbx->name();
+        $new_name = $name . self::EXT_RENAME;
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = 'rename ' . $class . ' ' . $name . ' to ' . $new_name . ' for user ' . $usr->dsp_id();
+        $sbx->set_name($new_name);
+        $result = $sbx->save();
+        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+            $sbx->reset();
+            $sbx->load_by_name($new_name);
+            if ($sbx->id() == $id) {
+                if ($this->assert_load($sbx, $new_name, $id)) {
+                    return $sbx->name();
+                } else {
+                    return '';
+                }
+            } else {
+                return '';
+            }
+        } else {
+            return '';
+        }
+    }
+
+    private function write_named_add_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $description): bool
+    {
+        $id = $sbx->id();
+        $sbx->set_user($usr);
+        $sbx->load_by_id($id);
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = 'add ' . $class . ' description ' . $description;
+        $sbx->description = $description;
+        $result = $sbx->save();
+        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+            return $this->write_named_log($sbx, sandbox_named::FLD_DESCRIPTION, $description, change::MSG_ADD);
+        } else {
+            return false;
+        }
+    }
+
+    private function write_named_update_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $new_description): bool
+    {
+        $id = $sbx->id();
+        $sbx->set_user($usr);
+        $sbx->load_by_id($id);
+        $old_description = $sbx->description;
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = 'update ' . $class . ' description to ' . $new_description;
+        $sbx->description = $new_description;
+        $result = $sbx->save();
+        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+            return $this->write_named_log($sbx,
+                sandbox_named::FLD_DESCRIPTION, $new_description, change::MSG_UPDATE, $old_description);
+        } else {
+            return false;
+        }
+    }
+
+    private function write_named_check_description(sandbox_named|sandbox_link_named $sbx, user $usr, ?string $description): bool
+    {
+        $id = $sbx->id();
+        $sbx->set_user($usr);
+        $sbx->load_by_id($id);
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = $class . ' description for user ' . $usr->dsp_id() . ' is ' . $description;
+        if ($this->assert($test_name, $sbx->description(), $description, $this::TIMEOUT_LIMIT_DB)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private function write_link_update_order_nbr(formula_link $lnk, user $usr, int $new_order_nbr): bool
@@ -2642,21 +2837,6 @@ class test_base
         }
     }
 
-    private function write_sandbox_add(sandbox_named|sandbox_link_named $sbx, string $name, user $usr): int
-    {
-        $lib = new library();
-        $class = $lib->class_to_name($sbx::class);
-        $test_name = 'add ' . $class . ' ' . $name . ' for user ' . $usr->dsp_id();
-        $sbx->set_user($usr);
-        $sbx->set_name($name);
-        $result = $sbx->save();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
-            return $sbx->id();
-        } else {
-            return 0;
-        }
-    }
-
     private function write_link_log_field(
         sandbox_link $sbx,
         string       $fld,
@@ -2683,112 +2863,7 @@ class test_base
         return $this->assert($test_name, $result, $target);
     }
 
-    private function write_sandbox_log(
-        sandbox_named|sandbox_link_named $sbx,
-        string                           $fld,
-        string                           $name,
-        string                           $action,
-        ?string                          $old_name = ''
-    ): bool
-    {
-        $log = new change($sbx->user());
-        $lib = new library();
-        $tbl_name = $lib->class_to_table($sbx::class);
-        $log->set_table($tbl_name);
-        $log->set_field($fld);
-        $log->row_id = $sbx->id();
-        $result = $log->dsp_last(true);
-        $target = $sbx->user()->name() . ' ' . $action . ' "';
-        if ($action == change::MSG_UPDATE) {
-            $target .= $old_name . '" to "' . $name . '"';
-        } else {
-            $target .= $name . '"';
-        }
-        $class = $lib->class_to_name($sbx::class);
-        $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $name;
-        return $this->assert($test_name, $result, $target);
-    }
-
-    private function write_sandbox_rename(sandbox_named|sandbox_link_named $sbx, int $id, user $usr): string
-    {
-        $sbx->set_user($usr);
-        $sbx->load_by_id($id);
-        $name = $sbx->name();
-        $new_name = $name . self::EXT_RENAME;
-        $lib = new library();
-        $class = $lib->class_to_name($sbx::class);
-        $test_name = 'rename ' . $class . ' ' . $name . ' to ' . $new_name . ' for user ' . $usr->dsp_id();
-        $sbx->set_name($new_name);
-        $result = $sbx->save();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
-            $sbx->reset();
-            $sbx->load_by_name($new_name);
-            if ($sbx->id() == $id) {
-                if ($this->assert_load($sbx, $new_name, $id)) {
-                    return $sbx->name();
-                } else {
-                    return '';
-                }
-            } else {
-                return '';
-            }
-        } else {
-            return '';
-        }
-    }
-
-    private function write_sandbox_add_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $description): bool
-    {
-        $id = $sbx->id();
-        $sbx->set_user($usr);
-        $sbx->load_by_id($id);
-        $lib = new library();
-        $class = $lib->class_to_name($sbx::class);
-        $test_name = 'add ' . $class . ' description ' . $description;
-        $sbx->description = $description;
-        $result = $sbx->save();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
-            return $this->write_sandbox_log($sbx, sandbox_named::FLD_DESCRIPTION, $description, change::MSG_ADD);
-        } else {
-            return false;
-        }
-    }
-
-    private function write_sandbox_update_description(sandbox_named|sandbox_link_named $sbx, user $usr, string $new_description): bool
-    {
-        $id = $sbx->id();
-        $sbx->set_user($usr);
-        $sbx->load_by_id($id);
-        $old_description = $sbx->description;
-        $lib = new library();
-        $class = $lib->class_to_name($sbx::class);
-        $test_name = 'update ' . $class . ' description to ' . $new_description;
-        $sbx->description = $new_description;
-        $result = $sbx->save();
-        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
-            return $this->write_sandbox_log($sbx,
-                sandbox_named::FLD_DESCRIPTION, $new_description, change::MSG_UPDATE, $old_description);
-        } else {
-            return false;
-        }
-    }
-
-    private function write_sandbox_check_description(sandbox_named|sandbox_link_named $sbx, user $usr, ?string $description): bool
-    {
-        $id = $sbx->id();
-        $sbx->set_user($usr);
-        $sbx->load_by_id($id);
-        $lib = new library();
-        $class = $lib->class_to_name($sbx::class);
-        $test_name = $class . ' description for user ' . $usr->dsp_id() . ' is ' . $description;
-        if ($this->assert($test_name, $sbx->description(), $description, $this::TIMEOUT_LIMIT_DB)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private function write_sandbox_del(sandbox_named|sandbox_link_named $sbx, user $usr): bool
+    private function write_named_del(sandbox_named|sandbox_link_named $sbx, user $usr): bool
     {
         $id = $sbx->id();
         $name = $sbx->name();
@@ -2800,7 +2875,7 @@ class test_base
         $msg = $sbx->del();
         $result = $msg->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
-            return $this->write_sandbox_log($sbx, $sbx->name_field(), $name, change::MSG_DEL);;
+            return $this->write_named_log($sbx, $sbx->name_field(), $name, change::MSG_DEL);;
         } else {
             return false;
         }

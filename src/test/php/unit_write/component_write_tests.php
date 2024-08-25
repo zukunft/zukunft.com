@@ -252,7 +252,7 @@ class component_write_tests
         // cleanup - fallback delete
         $cmp = new component($t->usr1);
         foreach (component_api::TEST_COMPONENTS as $cmp_name) {
-            $t->write_sandbox_cleanup($cmp, $cmp_name);
+            $t->write_named_cleanup($cmp, $cmp_name);
         }
 
     }

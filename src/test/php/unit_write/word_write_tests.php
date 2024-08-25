@@ -510,7 +510,7 @@ class word_write_tests
         // cleanup - fallback delete
         $wrd = new word($t->usr1);
         foreach (word_api::TEST_WORDS as $wrd_name) {
-            $t->write_sandbox_cleanup($wrd, $wrd_name);
+            $t->write_named_cleanup($wrd, $wrd_name);
         }
 
     }

@@ -260,7 +260,7 @@ class view_write_tests
         // cleanup - fallback delete
         $msk = new view($t->usr1);
         foreach (view_api::TEST_VIEWS as $msk_name) {
-            $t->write_sandbox_cleanup($msk, $msk_name);
+            $t->write_named_cleanup($msk, $msk_name);
         }
 
     }

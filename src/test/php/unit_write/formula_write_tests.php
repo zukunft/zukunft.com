@@ -69,14 +69,14 @@ class formula_write_tests
         $t->assert_write_via_func_or_sql($test_name, $t->formula_add_by_func(), true);
 
         // TODO remove
-        $t->write_sandbox_cleanup(new formula($t->usr1), formula_api::TN_ADD);
+        $t->write_named_cleanup(new formula($t->usr1), formula_api::TN_ADD);
 
         $t->subheader('formula write sandbox tests for ' . formula_api::TN_ADD);
         $t->assert_write_named($t->formula_filled_add(), formula_api::TN_ADD);
 
         // TODO remove
-        $t->write_sandbox_cleanup(new formula($t->usr1), formula_api::TN_ADD);
-        $t->write_sandbox_cleanup(new word($t->usr1), formula_api::TN_ADD);
+        $t->write_named_cleanup(new formula($t->usr1), formula_api::TN_ADD);
+        $t->write_named_cleanup(new word($t->usr1), formula_api::TN_ADD);
 
         // prepare
         $this->create_test_formulas($t);
@@ -524,7 +524,7 @@ class formula_write_tests
         // cleanup - fallback delete
         $frm = new formula($t->usr1);
         foreach (formula_api::TEST_FORMULAS as $frm_name) {
-            $t->write_sandbox_cleanup($frm, $frm_name);
+            $t->write_named_cleanup($frm, $frm_name);
         }
 
     }
