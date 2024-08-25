@@ -234,7 +234,7 @@ class ref extends db_object_dsp
         $vars[api::FLD_URL] = $this->url();
         $vars[api::FLD_EXTERNAL_KEY] = $this->external_key();
         $vars[api::FLD_PHRASE] = $this->phr->id();
-        $vars[api::FLD_SOURCE] = $this->source->id();
+        $vars[api::FLD_SOURCE] = $this->source?->id();
         $vars[api::FLD_TYPE] = $this->type_id();
         $vars[api::FLD_DESCRIPTION] = $this->description();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');

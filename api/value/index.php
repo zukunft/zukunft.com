@@ -29,11 +29,6 @@
   
 */
 
-use cfg\value\value;
-use controller\controller;
-use cfg\user;
-use api\value\value as value_api;
-
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
 $debug = $_GET['debug'] ?? 0;
@@ -47,6 +42,11 @@ include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once API_VALUE_PATH . 'value.php';
+
+use cfg\value\value;
+use controller\controller;
+use cfg\user;
+use api\value\value as value_api;
 
 // open database
 $db_con = prg_start("api/value", "", false);

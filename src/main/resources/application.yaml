@@ -1,3 +1,8 @@
+server:
+  backend:
+    url: "https://www.zukunft.com/"
+  system_log:
+    url: ""
 log:
   measure-average-response-time:
     skip-api-messages:

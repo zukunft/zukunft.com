@@ -31,27 +31,28 @@
 
 namespace html\word;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_HTML_PATH . 'html_base.php';
+include_once SANDBOX_PATH . 'sandbox_typed.php';
+include_once PHRASE_PATH . 'phrase.php';
+include_once HTML_PATH . 'html_base.php';
 include_once API_PHRASE_PATH . 'phrase.php';
 
 use cfg\db\sql_db;
 use cfg\foaf_direction;
 use cfg\phrase_type;
 use cfg\verb_list;
-use html\api;
+use html\html_selector;
+use html\rest_ctrl;
 use html\button;
 use html\formula\formula as formula_dsp;
 use html\log\change_log_named as change_log_named_dsp;
 use html\html_base;
 use html\log\user_log_display;
-use html\msg;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\term as term_dsp;
 use html\sandbox\sandbox_typed;
 use html\system\back_trace;
+use html\system\messages;
 use html\word\word as word_dsp;
 
 class word extends sandbox_typed
@@ -208,7 +209,7 @@ class word extends sandbox_typed
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(api::VIEW, $this->id, $back, api::PAR_VIEW_WORDS);
+        $url = $html->url(rest_ctrl::VIEW, $this->id, $back, rest_ctrl::PAR_VIEW_WORDS);
         return $html->ref($url, $this->name(), $this->description(), $style);
     }
 
@@ -266,12 +267,12 @@ class word extends sandbox_typed
             $title = '';
             if ($is_part_of != null) {
                 if ($is_part_of->name() <> '' and $is_part_of->name() <> 'not set') {
-                    $url = $html->url(api::VIEW, $is_part_of->id(), '', api::PAR_VIEW_WORDS);
+                    $url = $html->url(rest_ctrl::VIEW, $is_part_of->id(), '', rest_ctrl::PAR_VIEW_WORDS);
                     $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
                 }
             }
-            $url = $html->url(api::WORD . api::UPDATE, $this->id, $this->id);
-            $title .= $html->ref($url, $html->span($this->name(), api::STYLE_GLYPH), 'Rename word');
+            $url = $html->url(rest_ctrl::WORD . rest_ctrl::UPDATE, $this->id, $this->id);
+            $title .= $html->ref($url, $html->span($this->name(), rest_ctrl::STYLE_GLYPH), 'Rename word');
             $result .= $html->dsp_text_h1($title);
         }
 
@@ -319,12 +320,12 @@ class word extends sandbox_typed
     function form_add(string $back = ''): string
     {
         $html = new html_base();
-        $ui_msg = new msg();
+        $ui_msg = new messages();
 
-        $header = $html->text_h2($ui_msg->txt(msg::FORM_WORD_ADD_TITLE));
+        $header = $html->text_h2($ui_msg->txt(messages::FORM_WORD_ADD_TITLE));
         $hidden_fields = $html->form_hidden("back", $back);
         $hidden_fields .= $html->form_hidden("confirm", '1');
-        $detail_fields = $html->form_text("word_name", $this->plural(), $ui_msg->txt(msg::FORM_WORD_FLD_NAME));
+        $detail_fields = $html->form_text("word_name", $this->plural(), $ui_msg->txt(messages::FORM_WORD_FLD_NAME));
         $detail_row = $html->fr($detail_fields) . '<br>';
 
         // TODO complete
@@ -424,8 +425,8 @@ class word extends sandbox_typed
      */
     function btn_del(string $back = ''): string
     {
-        $url = (new html_base())->url(api::WORD . api::REMOVE, $this->id, $this->id);
-        return (new button($url, $back))->del(msg::WORD_DEL);
+        $url = (new html_base())->url(rest_ctrl::WORD . rest_ctrl::REMOVE, $this->id, $this->id);
+        return (new button($url, $back))->del(messages::WORD_DEL);
     }
 
     /**
@@ -433,8 +434,8 @@ class word extends sandbox_typed
      */
     function btn_unlink(int $link_id, string $back = ''): string
     {
-        $url = (new html_base())->url(api::LINK . api::REMOVE, $link_id, $this->id);
-        return (new button($url, $back))->del(msg::WORD_UNLINK);
+        $url = (new html_base())->url(rest_ctrl::LINK . rest_ctrl::REMOVE, $link_id, $this->id);
+        return (new button($url, $back))->del(messages::WORD_UNLINK);
     }
 
     /*
@@ -723,6 +724,45 @@ class word extends sandbox_typed
         return $phr_lst->selector($field_name, $form, $label, '', $id);
     }
 
+    /*
+     * select
+     */
+
+    /**
+     * TODO review
+     *
+     * select a phrase based on a given context
+     *
+     * @param string $name the unique name inside the form for this selector
+     * @param string $form_name the name of the html form
+     * @param string $label the text show to the user
+     * @param string $col_class the formatting code to adjust the formatting
+     * @param int $selected the id of the preselected phrase
+     * @param string $pattern the pattern to filter the phrases
+     * @param phrase_dsp|null $phr the context to select the phrases, which is until now just the phrase
+     * @return string the html code to select a phrase
+     */
+    protected function phrase_selector(
+        string $name,
+        string $form_name,
+        string $label = '',
+        string $col_class = '',
+        int $selected = 0,
+        string $pattern = '',
+        ?phrase_dsp $phr = null
+    ): string
+    {
+        $result = '';
+        $phr_lst = new phrase_list_dsp();
+        if ($pattern != '') {
+            $phr_lst->load_like($pattern);
+            $result = $phr_lst->selector($name, $form_name, $label, html_base::COL_SM_4, $selected, html_selector::TYPE_DATALIST);
+        } else {
+            $result = $this->name();
+        }
+        return $result;
+    }
+
     /**
      * @returns string the html code to select a word
      */
@@ -752,7 +792,7 @@ class word extends sandbox_typed
 
         $log_dsp = new user_log_display($this->user());
         $log_dsp->id = $this->id;
-        $log_dsp->type = \cfg\log\word::class;
+        $log_dsp->type = word::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;

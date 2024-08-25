@@ -286,7 +286,7 @@
         "calculation",
         "millisecond"
       ],
-      "name": "average time in milliseconds to update the results of one formula use to estimate how many formulas can be combined on one calculation block",
+      "name": "calculation block size in milliseconds",
       "description": "the average time in milliseconds to update the results of one formula use to estimate how many formulas can be combined on one calculation block",
       "number": "1000",
       "share": "public",

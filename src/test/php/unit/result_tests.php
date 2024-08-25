@@ -36,6 +36,8 @@ include_once API_RESULT_PATH . 'result.php';
 
 use api\result\result as result_api;
 use api\word\word as word_api;
+use cfg\db\sql;
+use cfg\db\sql_type;
 use cfg\formula;
 use cfg\group\group;
 use cfg\group\group_list;
@@ -55,37 +57,88 @@ class result_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'result->';
         $t->resource_path = 'db/result/';
         $json_file = 'unit/result/result_import_part.json';
-        $usr->set_id(1);
 
 
         $t->header('Unit tests of the result class (src/main/php/model/formula/result.php)');
 
         $t->subheader('SQL creation tests');
-        $res = $t->dummy_result();
+        $res = $t->result_simple();
         $t->assert_sql_table_create($res);
         $t->assert_sql_index_create($res);
         $t->assert_sql_foreign_key_create($res);
 
         // check the sql to load a result by the id
-        $res = $t->dummy_result_16();
-        $t->assert_sql_by_id($db_con, $res);
+        $res_prime = $t->result_prime();
+        $res = $t->result();
+        $res_main = $t->result_main();
+        $res_big = $t->result_big();
+        $t->assert_sql_by_id($sc, $res_prime);
+        $t->assert_sql_by_id($sc, $res);
+        $t->assert_sql_by_id($sc, $res_main);
+        $t->assert_sql_by_id($sc, $res_big);
+        $this->assert_sql_by_group($t, $db_con, $res_prime);
         $this->assert_sql_by_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group($t, $db_con, $res);
         $this->assert_sql_by_formula_and_group_list($t, $db_con, $res);
         $this->assert_sql_load_std_by_group_id($t, $db_con, $res);
 
-        $res = $t->dummy_result_prime();
-        $t->assert_sql_by_id($db_con, $res);
-        $this->assert_sql_by_group($t, $db_con, $res);
 
         $t->subheader('SQL load default statement tests');
 
         // sql to load the standard result by id
-        $t->assert_sql_standard($db_con, $res);
-        $t->assert_sql_user_changes($db_con, $res);
+        $t->assert_sql_standard($sc, $res_prime);
+        $t->assert_sql_user_changes($sc, $res_prime);
+
+        $t->subheader('result sql write');
+        // result changes are not logged because potentially they can be reproduced
+        // TODO check the move from prime and main if the source group does not fit the prime or main criterias (same for the formula id)
+        $res_prime = $t->result_prime();
+        $res_prime_max = $t->result_prime_max();
+        $res_main = $t->result_main();
+        $res_main_max = $t->result_main_max();
+        $res_filled = $t->result_main_filled();
+        $res = $t->result();
+        $res_big = $t->result_big();
+        // TODO activate db write
+        $t->assert_sql_insert($sc, $res_prime, [sql_type::STANDARD]);
+        $t->assert_sql_insert($sc, $res_prime);
+        $t->assert_sql_insert($sc, $res_prime, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $res_prime_max);
+        $t->assert_sql_insert($sc, $res_main);
+        $t->assert_sql_insert($sc, $res_main_max);
+        $t->assert_sql_insert($sc, $res_filled);
+        $t->assert_sql_insert($sc, $res_filled, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $res);
+        $t->assert_sql_insert($sc, $res, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $res_big);
+        // TODO activate db write
+        // TODO add tests for text, time and geo values
+        $db_res_prime = $res_prime->cloned(result_api::TV_FLOAT);
+        $db_res_prime_max = $res_prime_max->cloned(result_api::TV_FLOAT);
+        $db_res_main = $res_main->cloned(result_api::TV_FLOAT);
+        $db_res_filled = $res_filled->cloned(result_api::TV_FLOAT);
+        $db_res = $res->cloned(result_api::TV_FLOAT);
+        $db_res_big = $res_big->cloned(result_api::TV_FLOAT);
+        // TODO activate db write
+        $t->assert_sql_update($sc, $res_prime, $db_res_prime, [sql_type::STANDARD]);
+        $t->assert_sql_update($sc, $res_prime, $db_res_prime);
+        $t->assert_sql_update($sc, $res_prime, $db_res_prime, [sql_type::USER]);
+        $t->assert_sql_update($sc, $res_prime_max, $db_res_prime_max);
+        $t->assert_sql_update($sc, $res_main, $db_res_main);
+        $t->assert_sql_update($sc, $res_main, $db_res_main, [sql_type::STANDARD]);
+        $t->assert_sql_update($sc, $res_filled, $db_res_filled);
+        $t->assert_sql_update($sc, $res, $db_res);
+        $t->assert_sql_update($sc, $res_big, $db_res_big);
+        $t->assert_sql_update($sc, $res_big, $db_res_big, [sql_type::USER]);
+        // TODO activate db write
+        $t->assert_sql_delete($sc, $res_prime);
+        $t->assert_sql_delete($sc, $res_prime, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $res);
+        $t->assert_sql_delete($sc, $res, [sql_type::USER]);
 
         $t->subheader('Display tests');
 
@@ -95,15 +148,15 @@ class result_tests
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd_const->phrase());
         $res->grp->set_phrase_list($phr_lst);
-        $res->value = result_api::TV_INT;
+        $res->set_number(result_api::TV_INT);
         $t->assert('result->val_formatted test big numbers', $res->val_formatted(), "123'456");
 
         // ... for small values 12.35 instead of 12.34 due to rounding
-        $res->value = result_api::TV_FLOAT;
+        $res->set_number(result_api::TV_FLOAT);
         $t->assert('result->val_formatted test small numbers', $res->val_formatted(), "12.35");
 
         // ... for percent values
-        $res = $t->dummy_result_pct();
+        $res = $t->result_pct();
         $t->assert('result->val_formatted test percent formatting', $res->val_formatted(), '1.23 %');
 
 
@@ -114,8 +167,8 @@ class result_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $val = $t->dummy_result();
-        $t->assert_api_to_dsp($val, new result_dsp());
+        $res = $t->result_simple();
+        $t->assert_api_to_dsp($res, new result_dsp());
 
     }
 

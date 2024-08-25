@@ -31,12 +31,12 @@
 
 namespace html\word;
 
-include_once WEB_SANDBOX_PATH . 'list.php';
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 
 use cfg\phrase_type;
 use html\word\word as word_dsp;
 use html\html_base;
-use html\list_dsp;
+use html\sandbox\list_dsp;
 
 class word_list extends list_dsp
 {

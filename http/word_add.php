@@ -59,11 +59,11 @@ use cfg\view;
 use cfg\word;
 
 $debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . '/../';
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 /* open database */
-$db_con = prg_start(controller::DSP_WORD_ADD);
+$db_con = prg_start(controller::MC_WORD_ADD);
 $html = new html_base();
 
 $result = ''; // reset the html code var
@@ -80,7 +80,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::DSP_WORD_ADD);
+    $msk->load_by_code_id(controller::MC_WORD_ADD);
     $back = $_GET[controller::API_BACK]; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
@@ -166,13 +166,13 @@ if ($usr->id() > 0) {
                 $wrd->load_by_id($wrd_id);
             }
             log_debug('test word');
-            if ($wrd->isset() and $vrb_id <> 0 and $wrd_to > 0) {
+            if ($wrd->is_loaded() and $vrb_id <> 0 and $wrd_to > 0) {
                 // ... and link it to an existing word
                 log_debug('word ' . $wrd->id() . ' linked via ' . $vrb_id . ' to ' . $wrd_to . ': ' . $add_result);
                 $lnk = new triple($usr);
-                $lnk->fob->set_id($wrd->id());
+                $lnk->from()->set_id($wrd->id());
                 $lnk->verb->set_id($vrb_id);
-                $lnk->tob->set_id($wrd_to);
+                $lnk->to()->set_id($wrd_to);
                 $add_result .= $lnk->save();
             }
 

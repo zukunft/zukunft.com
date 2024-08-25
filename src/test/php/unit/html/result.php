@@ -44,7 +44,7 @@ class result
 
         $t->subheader('result tests');
 
-        $res = new result_dsp($t->dummy_result()->api_json(false));
+        $res = new result_dsp($t->result_simple()->api_json(false));
         $test_page = $html->text_h2('result display test');
         $test_page .= 'with tooltip: ' . $res->display() . '<br>';
         $test_page .= 'with link: ' . $res->display_linked() . '<br>';

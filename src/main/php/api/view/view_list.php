@@ -68,7 +68,7 @@ class view_list extends list_api implements JsonSerializable
      */
     function dsp_obj(): view_list_dsp
     {
-        $dsp_obj = new view_list_dsp();
+        $msk_lst = new view_list_dsp();
 
         // cast the single list objects
         $lst_dsp = array();
@@ -79,10 +79,10 @@ class view_list extends list_api implements JsonSerializable
             }
         }
 
-        $dsp_obj->set_lst($lst_dsp);
-        $dsp_obj->set_lst_dirty();
+        $msk_lst->set_lst($lst_dsp);
+        $msk_lst->set_lst_dirty();
 
-        return $dsp_obj;
+        return $msk_lst;
     }
 
     /*

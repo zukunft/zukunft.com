@@ -50,11 +50,16 @@ class view extends sandbox_typed_api
     // persevered view names for unit and integration tests
     // TN_* means 'test name'
     // TD_* means 'test description'
-    // TI_* means 'test code id'
+    // TC_* means 'test code id'
+    // TI_* means 'test id'
     const TN_READ = 'Word';
     const TD_READ = 'the default view for words';
-    const TI_READ = 'word';
+    const TC_READ = 'word';
+    const TI_READ = 1;
     const TN_ADD = 'System Test View';
+    const TN_ADD_VIA_FUNC = 'System Test View added via sql function';
+    const TN_ADD_VIA_SQL = 'System Test View added via sql insert';
+    const TC_ADD = 'System Test View Code Id';
     const TN_RENAMED = 'System Test View Renamed';
     const TN_COMPLETE = 'System Test View Complete';
     const TN_EXCLUDED = 'System Test View Excluded';
@@ -63,16 +68,20 @@ class view extends sandbox_typed_api
 
     // to test a system view (add word) as unit test without database
     const TN_FORM = 'Add word';
+    const TN_FORM_NEW = 'Add New Word';
     const TD_FORM = 'system form to add a word';
-    const TI_FORM = 'word_add';
+    const TC_FORM = 'word_add';
 
     const TN_READ_RATIO = 'Company ratios';
     const TN_READ_NESN_2016 = 'Nestlé Financial Statement 2016';
+    const TD_LINK = 'System Test description for a view term link';
 
     // array of view names that used for testing and remove them after the test
     const RESERVED_VIEWS = array(
         self::TN_READ,
         self::TN_ADD,
+        self::TN_ADD_VIA_SQL,
+        self::TN_ADD_VIA_FUNC,
         self::TN_RENAMED,
         self::TN_COMPLETE,
         self::TN_EXCLUDED,
@@ -82,6 +91,8 @@ class view extends sandbox_typed_api
     // array of test view names create before the test
     const TEST_VIEWS = array(
         self::TN_ADD,
+        self::TN_ADD_VIA_SQL,
+        self::TN_ADD_VIA_FUNC,
         self::TN_RENAMED,
         self::TN_COMPLETE,
         self::TN_EXCLUDED,
@@ -99,8 +110,7 @@ class view extends sandbox_typed_api
      * object vars
      */
 
-    // the mouse over tooltip for the word
-    public ?string $description = null;
+    // to link predefined behavier in the frontend
     public ?string $code_id = null;
 
     // the components linked to this view

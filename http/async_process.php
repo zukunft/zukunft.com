@@ -39,7 +39,7 @@ use cfg\user;
 use cfg\view;
 
 $debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . '/../';
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 if ($debug > 1) {
     echo 'lib loaded<br>';
@@ -65,7 +65,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::DSP_IMPORT);
+    $msk->load_by_code_id(controller::MC_IMPORT);
 
     if ($usr->is_admin()) {
 

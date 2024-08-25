@@ -49,5 +49,7 @@ class sandbox_exp
     const FLD_NUMBER = 'number';
     const FLD_SOURCE = 'source';
     const FLD_POSITION = 'position';
+    // to assign e.g. words, triples or formulas to a view
+    const FLD_ASSIGN = 'assigned';
 
 }

@@ -6,9 +6,8 @@
 
 CREATE INDEX view_term_links_term_idx ON view_term_links (term_id);
 CREATE INDEX view_term_links_view_idx ON view_term_links (view_id);
-CREATE INDEX view_term_links_type_idx ON view_term_links (type_id);
-CREATE INDEX view_term_links_user_idx ON view_term_links (user_id);
 CREATE INDEX view_term_links_view_link_type_idx ON view_term_links (view_link_type_id);
+CREATE INDEX view_term_links_user_idx ON view_term_links (user_id);
 
 --
 -- indexes for table user_view_term_links

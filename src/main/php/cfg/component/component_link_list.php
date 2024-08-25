@@ -159,11 +159,11 @@ class component_link_list extends sandbox_list
     /**
      * interface function to load all component links of the given view
      *
-     * @param view $dsp if set to get all links for this view
+     * @param view $msk if set to get all links for this view
      * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool true if phrases are found
      */
-    function load_by_view(view $dsp, ?sql_db $db_con_given = null): bool
+    function load_by_view(view $msk, ?sql_db $db_con_given = null): bool
     {
         global $db_con;
 
@@ -172,7 +172,7 @@ class component_link_list extends sandbox_list
             $db_con_used = $db_con;
         }
 
-        $qp = $this->load_sql_by_view($db_con_used->sql_creator(), $dsp);
+        $qp = $this->load_sql_by_view($db_con_used->sql_creator(), $msk);
         return $this->load_sys($qp, false, $db_con_given);
     }
 
@@ -180,13 +180,13 @@ class component_link_list extends sandbox_list
      * interface function to load all component links and the components of the given view
      * TODO (speed) combine the sql statements
      *
-     * @param view $dsp if set to get all links for this view
+     * @param view $msk if set to get all links for this view
      * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool true if phrases are found
      */
-    function load_by_view_with_components(view $dsp, ?sql_db $db_con_given = null): bool
+    function load_by_view_with_components(view $msk, ?sql_db $db_con_given = null): bool
     {
-        if ($this->load_by_view($dsp, $db_con_given)) {
+        if ($this->load_by_view($msk, $db_con_given)) {
             return $this->load_components($db_con_given);
         } else {
             return false;
@@ -306,11 +306,10 @@ class component_link_list extends sandbox_list
     {
         $result = array();
         foreach ($this->lst() as $lnk) {
-            if ($lnk->fob != null) {
-                if ($lnk->fob->id() <> 0) {
-                    if (!in_array($lnk->fob->id(), $result)) {
-                        $result[] = $lnk->fob->id();
-                    }
+            $id = $lnk->view()->id();
+            if ($id <> 0) {
+                if (!in_array($id, $result)) {
+                    $result[] = $id;
                 }
             }
         }
@@ -324,9 +323,10 @@ class component_link_list extends sandbox_list
     {
         $result = array();
         foreach ($this->lst() as $lnk) {
-            if ($lnk->tob->id() <> 0) {
-                if (!in_array($lnk->tob->id(), $result)) {
-                    $result[] = $lnk->tob->id();
+            $id = $lnk->component()->id();
+            if ($id <> 0) {
+                if (!in_array($id, $result)) {
+                    $result[] = $id;
                 }
             }
         }
@@ -340,10 +340,11 @@ class component_link_list extends sandbox_list
     {
         $result = array();
         foreach ($this->lst() as $lnk) {
-            if ($lnk->tob != null) {
-                if ($lnk->tob->name() <> '') {
-                    if (!in_array($lnk->tob->name(), $result)) {
-                        $result[] = $lnk->tob->name();
+            if ($lnk->component() != null) {
+                $name = $lnk->component()->name();
+                if ($name <> '') {
+                    if (!in_array($name, $result)) {
+                        $result[] = $name;
                     }
                 }
             }

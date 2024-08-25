@@ -35,6 +35,7 @@ namespace unit;
 include_once WEB_PHRASE_PATH . 'phrase.php';
 
 use api\word\word as word_api;
+use cfg\db\sql;
 use cfg\phrase_table;
 use cfg\phrase_table_status;
 use cfg\phrase_type;
@@ -57,23 +58,23 @@ class phrase_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'phrase->';
         $t->resource_path = 'db/phrase/';
         $json_file = 'unit/phrase/second.json';
-        $usr->set_id(1);
 
 
         $t->header('Unit tests of the phrase class (src/main/php/model/phrase/phrase.php)');
 
         $t->subheader('Phrase SQL setup statements');
-        $phr = $t->dummy_phrase();
+        $phr = $t->phrase();
         $t->assert_sql_view_create($phr);
 
         $t->subheader('SQL statement tests');
 
         $phr = new phrase($usr);
-        $t->assert_sql_by_id($db_con, $phr);
-        $t->assert_sql_by_name($db_con, $phr);
+        $t->assert_sql_by_id($sc, $phr);
+        $t->assert_sql_by_name($sc, $phr);
 
         // sql to load the phrase by id
         $phr = new phrase($usr);
@@ -92,9 +93,9 @@ class phrase_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $phr = $t->dummy_word()->phrase();
+        $phr = $t->word()->phrase();
         $t->assert_api_to_dsp($phr, new phrase_dsp());
-        $phr = $t->dummy_triple_pi()->phrase();
+        $phr = $t->triple_pi()->phrase();
         $t->assert_api_to_dsp($phr, new phrase_dsp());
 
 

@@ -12,5 +12,5 @@ PREPARE component_link_by_link_type_ids (bigint, bigint, bigint, bigint) AS
           FROM component_links s
      LEFT JOIN user_component_links u ON s.component_link_id = u.component_link_id AND u.user_id = $1
          WHERE s.view_id = $2
-           AND s.position_type_id = $3
+           AND s.component_link_type_id = $3
            AND s.component_id = $4;

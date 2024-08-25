@@ -34,6 +34,7 @@ namespace unit;
 
 include_once MODEL_SYSTEM_PATH . 'job_list.php';
 
+use cfg\db\sql;
 use cfg\job_time;
 use cfg\job_type_list;
 use cfg\job;
@@ -49,7 +50,7 @@ class job_tests
         global $usr;
 
         // init
-        $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'job->';
         $t->resource_path = 'db/job/';
 
@@ -72,20 +73,20 @@ class job_tests
 
         // sql to load one batch job
         $job = new job($usr);
-        $t->assert_sql_by_id($db_con, $job);
+        $t->assert_sql_by_id($sc, $job);
 
         // sql to load a list of open batch jobs
         $sys_usr = $t->system_user();
         $job_lst = new job_list($sys_usr);
-        $t->assert_sql_list_by_type($db_con, $job_lst, job_type_list::BASE_IMPORT);
+        $t->assert_sql_list_by_type($sc, $job_lst, job_type_list::BASE_IMPORT);
 
 
         $t->subheader('API unit tests');
 
-        $job = $t->dummy_job();
+        $job = $t->job();
         $t->assert_api($job);
 
-        $job_lst = $t->dummy_job_list();
+        $job_lst = $t->job_list();
         $t->assert_api($job_lst);
 
     }

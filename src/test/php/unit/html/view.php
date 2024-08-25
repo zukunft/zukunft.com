@@ -44,7 +44,7 @@ class view
 
         $t->subheader('view tests');
 
-        $vrb = new view_dsp($t->dummy_view()->api_json());
+        $vrb = new view_dsp($t->view()->api_json());
         $test_page = $html->text_h2('view display test');
         $test_page .= 'with tooltip: ' . $vrb->display() . '<br>';
         $test_page .= 'with link: ' . $vrb->display_linked() . '<br>';

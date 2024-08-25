@@ -86,6 +86,14 @@ class db_object_seq_id_user extends db_object_seq_id
         return $this->usr;
     }
 
+    /**
+     * @return int the id of the user or 0 if the user is not set
+     */
+    function user_id(): int
+    {
+        return $this->usr->id();
+    }
+
 
     /*
      * debug

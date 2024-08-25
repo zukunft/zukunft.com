@@ -35,6 +35,7 @@ namespace unit;
 include_once MODEL_VALUE_PATH . 'value_phrase_link.php';
 include_once MODEL_VALUE_PATH . 'value_phrase_link_list.php';
 
+use cfg\db\sql;
 use cfg\phrase;
 use cfg\db\sql_db;
 use cfg\value\value;
@@ -52,9 +53,9 @@ class value_phrase_link_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'value_phrase_link->';
         $t->resource_path = 'db/value/';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the value phrase link class (src/main/php/model/value/value_phrase_link.php)');
 

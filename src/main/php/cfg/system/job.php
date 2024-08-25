@@ -80,6 +80,8 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use DateTime;
 use DateTimeInterface;
 
@@ -138,12 +140,12 @@ class job extends db_object_seq_id_user
     // field lists for the table creation
     const FLD_LST_ALL = array(
         [user::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
-        [job_type::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, job_type::class, self::FLD_TYPE_COM],
+        [job_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, job_type::class, self::FLD_TYPE_COM],
         [self::FLD_TIME_REQUEST, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_REQUEST_COM],
         [self::FLD_TIME_START, sql_field_type::TIME, sql_field_default::NULL, sql::INDEX, '', self::FLD_TIME_START_COM],
         [self::FLD_TIME_END, sql_field_type::TIME, sql_field_default::NULL, sql::INDEX, '', self::FLD_TIME_END_COM],
         [self::FLD_PARAMETER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PARAMETER_COM, phrase::FLD_ID],
-        [self::FLD_CHANGE_FIELD, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_CHANGE_FIELD_COM],
+        [self::FLD_CHANGE_FIELD, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_CHANGE_FIELD_COM],
         [self::FLD_ROW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_COM],
         [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
         [ref::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, ref::class, self::FLD_REF_COM],
@@ -293,8 +295,8 @@ class job extends db_object_seq_id_user
      */
     function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_multi($sc, $query_name, $class);
-        $sc->set_class(sql_db::TBL_TASK);
+        $qp = parent::load_sql_multi($sc, $query_name, $class, new sql_type_list([sql_type::MOST]));
+        $sc->set_class(job::class);
 
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
@@ -398,7 +400,7 @@ class job extends db_object_seq_id_user
                     log_debug('connect');
                     //$db_con = New mysql;
                     $db_type = $db_con->get_class();
-                    $db_con->set_class(sql_db::TBL_TASK);
+                    $db_con->set_class(job::class);
                     $db_con->set_usr($this->user()->id());
                     $job_id = $db_con->insert_old(array(user::FLD_ID, self::FLD_TIME_REQUEST, self::FLD_TYPE, self::FLD_ROW),
                         array($this->user()->id(), sql::NOW, $this->type_id(), $this->row_id));
@@ -444,7 +446,7 @@ class job extends db_object_seq_id_user
 
         //$db_con = New mysql;
         $db_type = $db_con->get_class();
-        $db_con->set_class(sql_db::TBL_TASK);
+        $db_con->set_class(job::class);
         $db_con->usr_id = $this->user()->id();
         $result = $db_con->update_old($this->id, 'end_time', sql::NOW);
         $db_con->set_class($db_type);
@@ -461,7 +463,7 @@ class job extends db_object_seq_id_user
         //$db_con = New mysql;
         $db_type = $db_con->get_class();
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_class(sql_db::TBL_TASK);
+        $db_con->set_class(job::class);
         $result = $db_con->update_old($this->id, 'start_time', sql::NOW);
 
         log_debug($this->type_code_id() . ' with ' . $result);

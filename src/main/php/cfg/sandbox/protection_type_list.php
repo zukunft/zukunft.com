@@ -32,10 +32,12 @@
 
 namespace cfg;
 
-use cfg\db\sql_db;
-
+include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
+
+use shared\types\protection_type as protect_type_shared;
+use test\create_test_objects;
 
 global $protection_types;
 
@@ -43,29 +45,14 @@ class protection_type_list extends type_list
 {
 
     /**
-     * overwrite the general user type list load function to keep the link to the table type capsuled
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @return bool true if load was successful
-     */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_PROTECTION): bool
-    {
-        return parent::load($db_con, $db_type);
-    }
-
-    /**
      * create dummy type list for the unit tests without database connection
      */
     function load_dummy(): void
     {
         $this->reset();
-        $type = new type_object(protection_type::NO_PROTECT, protection_type::NO_PROTECT, '', 1);
-        $this->add($type);
-        $type = new type_object(protection_type::USER, protection_type::USER, '', 2);
-        $this->add($type);
-        $type = new type_object(protection_type::ADMIN, protection_type::ADMIN, '', 3);
-        $this->add($type);
-        $type = new type_object(protection_type::NO_CHANGE, protection_type::NO_CHANGE, '', 4);
-        $this->add($type);
+        // read the corresponding names and description from the internal config csv files
+        $t = new create_test_objects();
+        $t->read_from_config_csv($this);
     }
 
     /**
@@ -73,7 +60,7 @@ class protection_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(protection_type::NO_PROTECT);
+        return parent::id(protect_type_shared::NO_PROTECT);
     }
 
 }

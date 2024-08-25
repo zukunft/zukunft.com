@@ -41,7 +41,7 @@ use cfg\user;
 use cfg\view;
 
 $debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . '/../';
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 /* open database */
@@ -66,7 +66,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($system_views->id(controller::DSP_SOURCE_ADD));
+    $msk->load_by_id($system_views->id(controller::MC_SOURCE_ADD));
     $back = $_GET[controller::API_BACK];      // the calling word which should be displayed after saving
 
     // create the object to store the parameters so that if the add form is shown again it is already filled

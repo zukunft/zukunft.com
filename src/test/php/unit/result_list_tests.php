@@ -54,6 +54,7 @@ class result_list_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'result_list->';
         $t->resource_path = 'db/result/';
         $res_lst = new result_list($usr);
@@ -75,8 +76,8 @@ class result_list_tests
 
         $grp = new group($usr);
         $grp->set_id(2);
-        $t->assert_sql_by_group($db_con, $res_lst, $grp);
-        $t->assert_sql_by_group($db_con, $res_lst, $grp, true);
+        $t->assert_sql_by_group($sc, $res_lst, $grp);
+        $t->assert_sql_by_group($sc, $res_lst, $grp, true);
 
         // sql to load a list of results by the phrase group id
         $res_lst = new result_list($usr);
@@ -115,7 +116,7 @@ class result_list_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $trp_lst = $t->dummy_result_list();
+        $trp_lst = $t->result_list();
         $t->assert_api_to_dsp($trp_lst, new result_list_dsp());
 
     }

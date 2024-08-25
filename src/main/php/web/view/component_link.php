@@ -43,10 +43,10 @@ class component_link_dsp extends component_link
     {
         $result = '';
 
-        if (isset($this->fob) and isset($this->tob)) {
-            if ($this->fob->name <> '' and $this->tob->name <> '') {
-                $result .= '"' . $this->tob->name . '" in "'; // e.g. Company details
-                $result .= $this->fob->name . '"';     // e.g. cash flow statement
+        if ($this->view() != null and $this->component() != null) {
+            if ($this->view()->name() <> '' and $this->component()->name() <> '') {
+                $result .= '"' . $this->component()->name() . '" in "'; // e.g. Company details
+                $result .= $this->view()->name() . '"';     // e.g. cash flow statement
             }
         } else {
             $result .= 'view component objects not set';
@@ -62,9 +62,8 @@ class component_link_dsp extends component_link
         $result = '';
 
         $this->load_objects();
-        if (isset($this->fob)
-            and isset($this->tob)) {
-            $result = $this->fob->name_linked(NULL, $back) . ' to ' . $this->tob->name_linked($back);
+        if ($this->view() != null and $this->component() != null) {
+            $result = $this->view()->name_linked(NULL, $back) . ' to ' . $this->component()->name_linked($back);
         } else {
             $result .= log_err("The view name or the component name cannot be loaded.", "component_link->name");
         }

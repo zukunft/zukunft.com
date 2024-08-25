@@ -43,53 +43,69 @@ include_once MODEL_IMPORT_PATH . 'import_file.php';
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_type;
-use cfg\component\position_type;
 use cfg\component\component_type;
+use cfg\component\component_type_list;
+use cfg\component\position_type;
+use cfg\component\position_type_list;
 use cfg\config;
 use cfg\element;
 use cfg\element_type;
+use cfg\element_type_list;
 use cfg\formula;
 use cfg\formula_link;
 use cfg\formula_link_type;
+use cfg\formula_link_type_list;
 use cfg\formula_type;
+use cfg\formula_type_list;
 use cfg\group\group;
-use cfg\group\group_id;
 use cfg\import\import_file;
 use cfg\ip_range;
+use cfg\ip_range_list;
 use cfg\job;
 use cfg\job_time;
 use cfg\job_type;
 use cfg\job_type_list;
 use cfg\language;
 use cfg\language_form;
-use cfg\library;
+use cfg\language_form_list;
+use cfg\language_list;
 use cfg\log;
 use cfg\log\change;
 use cfg\log\change_action;
-use cfg\log\change_big_value;
+use cfg\log\change_action_list;
+use cfg\log\change_field_list;
+use cfg\log\change_table_list;
+use cfg\log\change_values_big;
 use cfg\log\change_field;
 use cfg\log\change_link;
-use cfg\log\change_prime_value;
-use cfg\log\change_standard_value;
+use cfg\log\change_values_norm;
+use cfg\log\change_values_prime;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
-use cfg\log\system_log;
+use cfg\log\changes_big;
+use cfg\log\changes_norm;
 use cfg\phrase;
 use cfg\phrase_table;
 use cfg\phrase_table_status;
 use cfg\phrase_type;
+use cfg\phrase_types;
 use cfg\pod;
 use cfg\pod_status;
 use cfg\pod_type;
 use cfg\protection_type;
+use cfg\protection_type_list;
 use cfg\ref;
 use cfg\ref_type;
+use cfg\ref_type_list;
 use cfg\result\result;
 use cfg\sandbox;
 use cfg\session;
 use cfg\share_type;
+use cfg\share_type_list;
 use cfg\source;
 use cfg\source_type;
+use cfg\source_type_list;
+use cfg\sys_log;
 use cfg\sys_log_function;
 use cfg\sys_log_level;
 use cfg\sys_log_status;
@@ -106,20 +122,26 @@ use cfg\user_message;
 use cfg\user_official_type;
 use cfg\user_profile_list;
 use cfg\value\value;
+use cfg\value\value_phrase_link;
+use cfg\value\value_time_series;
 use cfg\value\value_ts_data;
 use cfg\verb;
 use cfg\verb_list;
 use cfg\view;
 use cfg\view_link_type;
+use cfg\view_link_type_list;
+use cfg\view_sys_list;
 use cfg\view_term_link;
 use cfg\view_type;
+use cfg\view_type_list;
 use cfg\word;
 use Exception;
 use html\html_base;
 use mysqli;
 use mysqli_result;
 use PDOException;
-use unit_read\all_unit_read_tests;
+use shared\library;
+use test\all_tests;
 
 class sql_db
 {
@@ -142,67 +164,10 @@ class sql_db
     const ROW_LIMIT = 20; // default number of rows per page/query if the user has not defined another limit
     const ROW_MAX = 2000; // the max number of rows per query to avoid long response times
 
-    // SQL table and model object names used
-    // the used database objects (the table name is in most cases with an extra 's', because each table contains the data for many objects)
-    // TODO use const for all object names
-    // TODO try to use the class name if possible
-    const TBL_USER = 'user';
-    const TBL_USER_TYPE = 'user_type';
-    const TBL_USER_PROFILE = 'user_profile';
-    const TBL_USER_OFFICIAL_TYPE = 'user_official_type';
-    const TBL_WORD = 'word';
-    const TBL_PHRASE_TYPE = 'phrase_type';
-    const TBL_TRIPLE = 'triple';
-    const TBL_VERB = 'verb';
-    const TBL_PHRASE = 'phrase';
-    const TBL_GROUP = 'group';
-    const TBL_VALUE_TIME_SERIES = 'values_time_series';
-    const TBL_VALUE_TIME_SERIES_DATA = 'value_ts_data';
-    const TBL_VALUE_PHRASE_LINK = 'value_phrase_link';
-    const TBL_SOURCE = 'source';
-    const TBL_SOURCE_TYPE = 'source_type';
-    const TBL_REF = 'ref';
-    const TBL_REF_TYPE = 'ref_type';
-    const TBL_FORMULA = 'formula';
-    const TBL_FORMULA_TYPE = 'formula_type';
-    const TBL_FORMULA_LINK = 'formula_link';
-    const TBL_FORMULA_LINK_TYPE = 'formula_link_type';
-    const TBL_ELEMENT = 'element';
-    const TBL_ELEMENT_TYPE = 'element_type';
-    const TBL_RESULT = 'result';
-    const TBL_VIEW = 'view';
-    const TBL_VIEW_TYPE = 'view_type';
-    const TBL_COMPONENT = 'component';
-    const TBL_COMPONENT_LINK = 'component_link';
-    const TBL_COMPONENT_TYPE = 'component_type';
-    const TBL_COMPONENT_LINK_TYPE = 'component_link_type';
-    const TBL_COMPONENT_POS_TYPE = 'position_type';
-    const TBL_VIEW_TERM_LINK = 'view_term_link';
-
-    const TBL_CHANGE = 'change';
-    const TBL_CHANGE_TABLE = 'change_table';
-    const TBL_CHANGE_FIELD = 'change_field';
-    const TBL_CHANGE_ACTION = 'change_action';
-    const TBL_CHANGE_LINK = 'change_link';
-    const TBL_CONFIG = 'config';
-    const TBL_IP = 'ip_range';
-    const TBL_SYS_LOG = 'sys_log';
-    const TBL_SYS_LOG_STATUS = 'sys_log_status';
-    const TBL_SYS_SCRIPT = 'system_time_type'; // to log the execution times for code optimising
-    const TBL_TASK = 'job';
-    const TBL_TASK_TYPE = 'job_type';
-
-    const TBL_LANGUAGE = 'language';
-    const TBL_LANGUAGE_FORM = 'language_form';
-
-    const TBL_SHARE = 'share_type';
-    const TBL_PROTECTION = 'protection_type';
-
     const TBL_USER_PREFIX = 'user_';
 
     // the synthetic view tables (VT) for union query creation
     const VT_PHRASE_GROUP_LINK = 'group_link'; // TODO deprecate
-    const VT_TABLE_FIELD = 'change_table_field';
 
     // difference between the object name and the table name
     const TABLE_EXTENSION = 's';
@@ -230,13 +195,13 @@ class sql_db
     const SETUP_INDEX_COM = 'remark: no index needed for preloaded tables such as phrase types';
     const SETUP_FOREIGN_KEY = 'foreign key constraints and auto_increment for tables';
 
-    // classes that have a database table
+    // classes that have a database table in order of suggested table creation so that depending tables are created later
     const DB_TABLE_CLASSES = [
         config::class,
         sys_log_type::class,
         sys_log_status::class,
         sys_log_function::class,
-        system_log::class,
+        sys_log::class,
         system_time_type::class,
         system_time::class,
         job_type::class,
@@ -252,9 +217,11 @@ class sql_db
         change_table::class,
         change_field::class,
         change::class,
-        change_prime_value::class,
-        change_standard_value::class,
-        change_big_value::class,
+        changes_norm::class,
+        changes_big::class,
+        change_values_prime::class,
+        change_values_norm::class,
+        change_values_big::class,
         change_link::class,
         pod_type::class,
         pod_status::class,
@@ -293,31 +260,132 @@ class sql_db
         component::class,
         component_link::class
     ];
+
+    // classes that have a database table in order of least depending first to avoid the usage of CASCADE on truncate
+    const DB_TABLE_CLASSES_DESC_DEPENDING = [
+        [value::class, true],
+        value::class,
+        result::class,
+        element::class,
+        element_type::class,
+        [formula_link::class, true],
+        formula_link::class,
+        [formula::class, true],
+        formula::class,
+        formula_type::class,
+        [component_link::class, true],
+        component_link::class,
+        component_link_type::class,
+        [component::class, true],
+        component::class,
+        component_type::class,
+        [view::class, true],
+        view::class,
+        view_type::class,
+        [group::class, true],
+        group::class,
+        verb::class,
+        [triple::class, true],
+        triple::class,
+        [word::class, true],
+        word::class,
+        phrase_type::class,
+        [source::class, true],
+        source::class,
+        source_type::class,
+        ref::class,
+        ref_type::class,
+        change_link::class,
+        change::class,
+        changes_norm::class,
+        changes_big::class,
+        change_action::class,
+        change_field::class,
+        change_table::class,
+        config::class,
+        job::class,
+        job_type::class,
+        //sql_db::TBL_SYS_SCRIPT,
+        sys_log::class,
+        sys_log_status::class,
+        sys_log_function::class,
+        share_type::class,
+        protection_type::class,
+        user::class,
+        user_profile::class
+    ];
+
     // classes that use a database view
     const DB_VIEW_CLASSES = [
         phrase::class,
         term::class,
         change_table_field::class
     ];
+    // classes that does not have a series id
+    const DB_TABLE_WITHOUT_AUTO_ID = [
+        value_ts_data::class,
+        value::class,
+        result::class,
+        language_form::class,
+        user_official_type::class,
+        user_type::class,
+        user_profile_list::class,
+        user_profile::class
+    ];
+
+    // classes which use by default the "with log" function for saving data
+    const CLASSES_THAT_USE_SQL_FUNC = [
+        word::class,
+        triple::class,
+        source::class,
+        ref::class,
+        group::class,
+        formula::class,
+        formula_link::class,
+        view::class,
+        view_term_link::class,
+        component::class,
+        component_link::class
+    ];
+
+    // classes that use the prepared sql write statement
+    const DB_WRITE_PREPARED = [
+        word::class,
+        triple::class,
+        source::class,
+        ref::class,
+        group::class,
+        formula::class,
+        formula_link::class,
+        view::class,
+        view_term_link::class,
+        component::class,
+        component_link::class
+    ];
 
     // tables that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
+    // TODO use class
+    // TODO switch the the sql const
     const DB_TYPES_NOT_NAMED = [
-        sql_db::TBL_TRIPLE,
+        triple::class,
         value::class,
-        sql_db::TBL_VALUE_TIME_SERIES,
-        sql_db::TBL_FORMULA_LINK,
-        sql_db::TBL_RESULT,
-        sql_db::TBL_ELEMENT,
-        sql_db::TBL_COMPONENT_LINK,
-        sql_db::TBL_VALUE_PHRASE_LINK,
-        sql_db::TBL_VIEW_TERM_LINK,
-        sql_db::TBL_REF,
-        sql_db::TBL_IP,
-        sql_db::TBL_CHANGE,
-        sql_db::TBL_CHANGE_LINK,
-        sql_db::TBL_SYS_LOG,
-        sql_db::TBL_TASK,
+        value_time_series::class,
+        formula_link::class,
+        result::class,
+        element::class,
+        component_link::class,
+        value_phrase_link::class,
+        view_term_link::class,
+        ref::class,
+        ip_range::class,
+        ip_range_list::class,
+        change::class,
+        changes_norm::class,
+        changes_big::class,
+        change_link::class,
+        sys_log::class,
+        job::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
     const CLASSES_WITH_USER_CHANGES = [
@@ -327,7 +395,12 @@ class sql_db
 
     // tables that link two named tables
     // TODO set automatically by set_link_fields???
-    const DB_TYPES_LINK = [sql_db::TBL_TRIPLE, sql_db::TBL_FORMULA_LINK, sql_db::TBL_COMPONENT_LINK, sql_db::TBL_REF];
+    const DB_TYPES_LINK = [
+        triple::class,
+        formula_link::class,
+        component_link::class,
+        ref::class
+    ];
 
 
     // open used name extension for the prepared sql statements
@@ -447,6 +520,19 @@ class sql_db
 
     private ?array $prepared_sql_names = [];        // list of all SQL queries that have already been prepared during the open connection
     private ?array $prepared_stmt = [];             // list of the MySQL stmt
+
+
+    /*
+     * construct
+     */
+
+    /**
+     * set the default db
+     */
+    function __construct()
+    {
+        $this->db_type = sql_db::POSTGRES;
+    }
 
     /*
      * set up the environment
@@ -684,7 +770,7 @@ class sql_db
         $this->postgres_link = pg_connect($conn_str);
         $db_tmp = new sql_db();
         if ($this->postgres_link !== false) {
-            $sql = resource_file(DB_RES_PATH . DB_SETUP_PATH . $db_tmp->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
+            $sql = resource_file(DB_RES_SUB_PATH . DB_SETUP_SUB_PATH . $db_tmp->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
             try {
                 $sql_result = $this->exe($sql);
                 if (!$sql_result) {
@@ -715,14 +801,20 @@ class sql_db
         $usr_msg = new user_message();
 
         // create the tables, db indexes and foreign keys
-        $sql = resource_file(DB_RES_PATH . DB_SETUP_PATH . $this->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
+        $sql = resource_file(DB_RES_SUB_PATH . DB_SETUP_SUB_PATH . $this->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
         try {
             $html->echo('Run db setup sql script');
-            $sql_result = $this->exe_script($sql);
-            // TODO review
-            //if ($sql_result) {
-            //    $usr_msg->add_message($sql_result);
-            // }
+            $sql_msg = $this->exe_script($sql);
+            if (!$sql_msg->is_ok()) {
+                // retry once but try to delete upfront all remaining tables and objects
+                $usr_msg = new user_message();
+                $this->reset_db_core();
+                $sql_msg = $this->exe_script($sql);
+                $usr_msg->add($sql_msg);
+            }
+            if (!$sql_msg->is_ok()) {
+                $usr_msg->add($sql_msg);
+            }
         } catch (Exception $e) {
             $msg = ' creation of the database failed due to ' . $e->getMessage();
             log_fatal($msg, 'setup_db');
@@ -757,7 +849,7 @@ class sql_db
             $this->db_check_missing_owner();
 
             // create the test dataset to check the basic write functions
-            $t = new all_unit_read_tests();
+            $t = new all_tests();
             $t->set_users();
             $t->create_test_db_entries($t);
 
@@ -780,6 +872,129 @@ class sql_db
             $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $this);
         }
         return $usr_msg;
+    }
+
+    /**
+     * force to drop any remaining tables of the database
+     * only used for testing to reset the db after a broken db update script
+     * TODO remove or deactivate this before prod deployment
+     *
+     * @return void
+     */
+    function reset_db_core(): void
+    {
+        // run reset the main database tables
+        $tbl_lst = $this->fetch_all(sql::SELECT
+            . " table_name FROM information_schema.tables WHERE table_schema = 'public';");
+        foreach ($tbl_lst as $tbl) {
+            $tbl_name = $tbl[0];
+            $this->drop_table($tbl_name);
+        }
+
+        // load the core db rows to have at least the profile id of the system user
+        $this->db_fill_code_links();
+        $this->db_check_missing_owner();
+    }
+
+    /**
+     * truncate all tables (use only for system testing)
+     */
+    function run_db_truncate(user $sys_usr): void
+    {
+        $lib = new library();
+
+        // the tables in order to avoid the usage of CASCADE
+        $table_names = sql_db::DB_TABLE_CLASSES_DESC_DEPENDING;
+        $html = new html_base();
+        $html->echo("\n");
+        $html->echo('truncate ');
+        $html->echo("\n");
+
+        // truncate tables that have already a build in truncate statement creation
+        $sql = '';
+        $sc = new sql();
+        $grp = new group($sys_usr);
+        $sql .= $grp->sql_truncate($sc);
+
+        global $db_con;
+
+        try {
+            $db_con->exe($sql);
+        } catch (Exception $e) {
+            log_err('Cannot truncate based on sql ' . $sql . '" because: ' . $e->getMessage());
+        }
+
+        // truncate the other tables
+        foreach ($table_names as $entry) {
+            $usr_tbl = false;
+            if (is_array($entry)) {
+                $class = $entry[0];
+                $usr_tbl = $entry[1];
+            } else {
+                $class = $entry;
+            }
+            if ($usr_tbl) {
+                $table_name = sql_db::TBL_USER_PREFIX . $lib->class_to_name($class);
+            } else {
+                $table_name = $lib->class_to_name($class);
+            }
+            $db_con->truncate_table($table_name);
+        }
+
+        // reset the preloaded data
+        $this->run_preloaded_truncate();
+    }
+
+    function run_preloaded_truncate(): void
+    {
+        global $system_users;
+        global $user_profiles;
+        global $phrase_types;
+        global $formula_types;
+        global $formula_link_types;
+        global $element_types;
+        global $view_types;
+        global $view_link_types;
+        global $component_types;
+        global $component_link_types;
+        global $position_types;
+        global $ref_types;
+        global $source_types;
+        global $share_types;
+        global $protection_types;
+        global $languages;
+        global $language_forms;
+        global $verbs;
+        global $system_views;
+        global $sys_log_stati;
+        global $job_types;
+        global $change_action_list;
+        global $change_table_list;
+        global $change_field_list;
+
+        // TODO activate or remove
+        //$system_users =[];
+        //$user_profiles =[];
+        $phrase_types = new phrase_types();
+        $formula_types = new formula_type_list();
+        $formula_link_types = new formula_link_type_list();
+        $element_types = new element_type_list();
+        $view_types = new view_type_list();
+        $view_link_types = new view_link_type_list();
+        $component_types = new component_type_list();
+        // not yet needed?
+        //$component_link_types = new component_link_type_list();
+        $position_types = new position_type_list();
+        $ref_types = new ref_type_list();
+        $source_types = new source_type_list();
+        $share_types = new share_type_list();
+        $protection_types = new protection_type_list();
+        $languages = new language_list();
+        $language_forms = new language_form_list();
+        $job_types = new job_type_list();
+        $change_action_list = new change_action_list();
+        $change_table_list = new change_table_list();
+        $change_field_list = new change_field_list();
     }
 
     /**
@@ -809,8 +1024,8 @@ class sql_db
     {
         $result = true;
 
-        foreach (sandbox::DB_TYPES as $db_type) {
-            $this->set_class($db_type);
+        foreach (sandbox::DB_TYPES as $class) {
+            $this->set_class($class);
             $db_lst = $this->missing_owner();
             if ($db_lst != null) {
                 $result = $this->set_default_owner();
@@ -836,27 +1051,21 @@ class sql_db
         }
 
         // set the seq number if needed
-        $this->seq_reset(sql_db::TBL_CHANGE_TABLE);
-        $this->seq_reset(sql_db::TBL_CHANGE_FIELD);
-        $this->seq_reset(sql_db::TBL_CHANGE_ACTION);
+        $this->seq_reset(change_table::class);
+        $this->seq_reset(change_field::class);
+        $this->seq_reset(change_action::class);
     }
 
-    function load_db_code_link_file(string $csv_file_name): void
+    function load_db_code_link_file(string $class): void
     {
         global $debug;
         $lib = new library();
+        $table_name = $lib->class_to_table($class);
 
         // load the csv
-        $csv_path = PATH_BASE_CODE_LINK_FILES . $csv_file_name . BASE_CODE_LINK_FILE_TYPE;
+        $csv_path = PATH_BASE_CODE_LINK_FILES . $table_name . BASE_CODE_LINK_FILE_TYPE;
 
         $row = 1;
-        $table_name = $csv_file_name;
-        // TODO change table names to singular form
-        if ($table_name == 'sys_log_status') {
-            $db_type = $table_name;
-        } else {
-            $db_type = substr($table_name, 0, -1);
-        }
         // TODO ignore empty rows
         // TODO ignore comma within text e.g. allow 'one, two and three'
         log_debug('load "' . $table_name . '"', $debug - 6);
@@ -894,7 +1103,7 @@ class sql_db
                                 $update_col_names[] = $col_names[$i];
                                 $update_col_values[] = trim($data[$i]);
                             }
-                            $this->set_class($db_type);
+                            $this->set_class($class);
                             $this->insert_old($update_col_names, $update_col_values);
                         } else {
                             // check, which values need to be updates
@@ -912,7 +1121,7 @@ class sql_db
                             }
                             // update the values is needed
                             if (count($update_col_names) > 0) {
-                                $this->set_class($db_type);
+                                $this->set_class($class);
                                 $this->update_old($id, $update_col_names, $update_col_values);
                             }
                         }
@@ -928,7 +1137,7 @@ class sql_db
     {
         $qp = new sql_par($this::class);
         $qp->name .= 'fill_' . $id_col_name;
-        $qp->sql = "PREPARE " . $qp->name . " (int) AS select * from " . $table_name . " where " . $id_col_name . " = $1;";
+        $qp->sql = sql::PREPARE . ' ' . $qp->name . " (int) AS select * from " . $table_name . " where " . $id_col_name . " = $1;";
         $qp->par = array($id);
         return $qp;
     }
@@ -1730,6 +1939,9 @@ class sql_db
         // set the standard table name based on the type
         $result = $type . "s";
         // exceptions from the standard table for 'nicer' names
+        if ($result == 'phrase_typess') {
+            $result = 'phrase_types';
+        }
         if ($result == 'value_time_seriess') {
             $result = 'values_time_series';
         }
@@ -1744,6 +1956,12 @@ class sql_db
         }
         if ($result == 'sys_log_statuss') {
             $result = 'sys_log_status';
+        }
+        if ($result == 'changes_norms') {
+            $result = 'changes_norm';
+        }
+        if ($result == 'changes_bigs') {
+            $result = 'changes_big';
         }
         if ($result == 'configs') {
             $result = 'config';
@@ -1787,11 +2005,11 @@ class sql_db
     /**
      * set the table name based on the already set type / class
      * TODO use always the user table flag
-     * @param $usr_table
+     * @param bool $usr_table
      * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return void
      */
-    private function set_table($usr_table = false, string $ext = ''): void
+    private function set_table(bool $usr_table = false, string $ext = ''): void
     {
         global $debug;
 
@@ -1808,16 +2026,17 @@ class sql_db
         log_debug('to "' . $this->table . '"', $debug - 20);
     }
 
-    function get_id_field_name(string $type): string
+    function get_id_field_name(string $class): string
     {
         $lib = new library();
+        $type = $lib->class_to_name($class);
 
         // exceptions for user overwrite tables
         // but not for the user type table, because this is not part of the sandbox tables
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
-            and $type != sql_db::TBL_USER_TYPE
-            and $type != sql_db::TBL_USER_OFFICIAL_TYPE
-            and $type != sql_db::TBL_USER_PROFILE) {
+            and $class != user_type::class
+            and $class != user_official_type::class
+            and $class != user_profile::class) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . sql_db::FLD_EXT_ID;
@@ -1833,17 +2052,23 @@ class sql_db
 
     function set_id_field(string|array $given_name = ''): void
     {
-        $lib = new library();
-        $type = $lib->class_to_name($this->class);
-
         if ($given_name != '') {
             $this->id_field = $given_name;
         } else {
-            $this->id_field = $this->get_id_field_name($type);
+            $this->id_field = $this->get_id_field_name($this->class);
         }
         // exceptions to be adjusted
         if ($this->id_field == 'blocked_ips_id') {
             $this->id_field = 'ip_range_id';
+        }
+        if ($this->id_field == 'phrase_types_id') {
+            $this->id_field = 'phrase_type_id';
+        }
+        if ($this->id_field == 'changes_norm_id') {
+            $this->id_field = 'change_id';
+        }
+        if ($this->id_field == 'changes_big_id') {
+            $this->id_field = 'change_id';
         }
     }
 
@@ -1865,7 +2090,13 @@ class sql_db
         if ($result == 'system_time_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
+        if ($result == 'phrase_types_name') {
+            $result = sql::FLD_TYPE_NAME;
+        }
         if ($result == 'phrase_type_name') {
+            $result = sql::FLD_TYPE_NAME;
+        }
+        if ($result == 'view_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {
@@ -1950,7 +2181,7 @@ class sql_db
     {
         $result = '';
         try {
-            $sql_result = $this->exe($sql, $sql_name, $sql_array, $log_level);
+            $sql_result = $this->exe($sql, $sql_name, $sql_array, '', '', $log_level);
             if (!$sql_result) {
                 $result .= $msg . log::MSG_ERR;
             }
@@ -1980,8 +2211,10 @@ class sql_db
      * @param string $sql the sql statement that should be executed
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
+     * @param string $sql_call the query with the fields set e.g. to execute a function
+     * @param string $sql_call_name
      * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
-     * @return \PgSql\Result|mysqli_result the result of the sql statement
+     * @return \PgSql\Result|mysqli_result|null the result of the sql statement
      * @throws Exception the message that should be shown to the system admin for debugging
      *
      * TODO add the writing of potential sql errors to the sys log table to the sql execution
@@ -1992,8 +2225,10 @@ class sql_db
         string $sql,
         string $sql_name = '',
         array  $sql_array = array(),
+        string $sql_call = '',
+        string $sql_call_name = '',
         int    $log_level = sys_log_level::ERROR
-    ): \PgSql\Result|mysqli_result
+    ): \PgSql\Result|mysqli_result|null
     {
         global $debug;
         $lib = new library();
@@ -2001,9 +2236,9 @@ class sql_db
 
         // Postgres part
         if ($this->db_type == sql_db::POSTGRES) {
-            $result = $this->exe_postgres($sql, $sql_name, $sql_array, $log_level);            // check database connection
+            $result = $this->exe_postgres($sql, $sql_name, $sql_array, $sql_call, $sql_call_name, $log_level);            // check database connection
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $result = $this->exe_mysql($sql, $sql_name, $sql_array, $log_level);            // check database connection
+            $result = $this->exe_mysql($sql, $sql_name, $sql_array, $sql_call, $log_level);            // check database connection
         } else {
             throw new Exception('Unknown database type "' . $this->db_type . '"');
         }
@@ -2014,20 +2249,34 @@ class sql_db
     /**
      * execute directly an SQL script without further prepare
      * @param string $sql the sql script that should be executed
-     * @return \PgSql\Result|mysqli_result
-     * @throws Exception
+     * @return \PgSql\Result|mysqli_result|user_message either the result of the sql script or false if something failed
      */
-    function exe_script(string $sql): \PgSql\Result|mysqli_result
+    function exe_script(string $sql): \PgSql\Result|mysqli_result|user_message
     {
+        $msg = new user_message();
+        $result = true;
         // execute on the connected database
         if ($this->db_type == sql_db::POSTGRES) {
-            $result = pg_query($this->postgres_link, $sql);
+            try {
+                $result = pg_query($this->postgres_link, $sql);
+            } catch (Exception $e) {
+                $trace_link = $this->log_db_exception('execute script', $e, $sql, $log_level);
+                $msg->set_url($trace_link);
+            }
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $result = mysqli_query($this->mysql, $sql);
+            try {
+                $result = mysqli_query($this->mysql, $sql);
+            } catch (Exception $e) {
+                $trace_link = $this->log_db_exception('execute script', $e, $sql, $log_level);
+                $msg->set_url($trace_link);
+            }
         } else {
-            throw new Exception('Unknown database type "' . $this->db_type . '"');
+            log_fatal('Unknown database type "' . $this->db_type . '"', 'exe_script');
         }
-        return $result;
+        if ($result === false) {
+            $msg->add_message(pg_last_error($this->postgres_link));
+        }
+        return $msg;
     }
 
     /**
@@ -2037,8 +2286,9 @@ class sql_db
      * @param string $sql the sql statement that should be executed
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
+     * @param string $sql_call the query with the fields set e.g. to execute a function
      * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
-     * @return \PgSql\Result the message that should be shown to the user if something went wrong or an empty string
+     * @return \PgSql\Result|null the message that should be shown to the user if something went wrong or an empty string
      * @throws Exception the message that should be shown to the system admin for debugging
      *
      * TODO switch return type to bool|resource with PHP 8.0
@@ -2050,12 +2300,15 @@ class sql_db
         string $sql,
         string $sql_name = '',
         array  $sql_array = array(),
+        string $sql_call = '',
+        string $sql_call_name = '',
         int    $log_level = sys_log_level::ERROR
-    ): \PgSql\Result
+    ): \PgSql\Result|null
     {
         global $debug;
 
         $result = null;
+        $trace_link = '';
 
         // check database connection
         if ($this->postgres_link == null) {
@@ -2074,15 +2327,29 @@ class sql_db
             // remove query formatting
             $sql = str_replace("\n", " ", $sql);
             if ($sql_name == '') {
-                // simply execute old queries (to be deprecated)
-                $result = pg_query($this->postgres_link, $sql);
+                // simply execute old queries
+                // TODO to be deprecated
+                try {
+                    $result = pg_query($this->postgres_link, $sql);
+                } catch (Exception $e) {
+                    $trace_link = $this->log_db_exception('execute query', $e, $sql, $log_level);
+                }
             } else {
                 // prepare the query if needed
                 if (!$this->has_query($sql_name)) {
-                    if (str_starts_with($sql, 'PREPARE')) {
-                        $result = pg_query($this->postgres_link, $sql);
+                    if (str_starts_with($sql, sql::PREPARE)
+                        or str_starts_with($sql, sql::CREATE)) {
+                        try {
+                            $result = pg_query($this->postgres_link, $sql);
+                        } catch (Exception $e) {
+                            $trace_link = $this->log_db_exception('create prepared query', $e, $sql, $log_level);
+                        }
                     } else {
-                        $result = pg_prepare($this->postgres_link, $sql_name, $sql);
+                        try {
+                            $result = pg_prepare($this->postgres_link, $sql_name, $sql);
+                        } catch (Exception $e) {
+                            $trace_link = $this->log_db_exception('prepare query', $e, $sql, $log_level);
+                        }
                     }
                     if ($result === false) {
                         throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when preparing ' . $sql);
@@ -2090,16 +2357,44 @@ class sql_db
                         $this->prepared_sql_names[] = $sql_name;
                     }
                 }
-                // execute the query
-                /*
-                $pg_array = array();
-                $pg_array[] = '{';
-                foreach ($sql_array as $item) {
-                    $pg_array[] = $item;
+                // prepare the call query if needed
+                if ($sql_call_name != '') {
+                    if (!$this->has_query($sql_call_name)) {
+                        try {
+                            $result = pg_query($this->postgres_link, $sql_call);
+                        } catch (Exception $e) {
+                            $trace_link = $this->log_db_exception('create prepared call query', $e, $sql_call, $log_level);
+                        }
+                        if ($result === false) {
+                            throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when preparing ' . $sql);
+                        } else {
+                            $this->prepared_sql_names[] = $sql_call_name;
+                        }
+                    }
+                    // execute the query
+                    try {
+                        $result = pg_execute($this->postgres_link, $sql_call_name, $sql_array);
+                    } catch (Exception $e) {
+                        $trace_link = $this->log_db_exception('execute call name', $e, $sql_call_name, $log_level);
+                    }
+                } else {
+                    if ($sql_call != '') {
+                        // execute a query with the given parameter
+                        // TODO to be deprecated by
+                        try {
+                            $result = pg_query($this->postgres_link, $sql_call);
+                        } catch (Exception $e) {
+                            $trace_link = $this->log_db_exception('execute query', $e, $sql_call, $log_level);
+                        }
+
+                    } else {
+                        try {
+                            $result = pg_execute($this->postgres_link, $sql_name, $sql_array);
+                        } catch (Exception $e) {
+                            $trace_link = $this->log_db_exception('execute call', $e, $sql_name, $log_level);
+                        }
+                    }
                 }
-                $pg_array[] = '}';
-                */
-                $result = pg_execute($this->postgres_link, $sql_name, $sql_array);
             }
             if ($result === false) {
                 throw new Exception('Database error ' . pg_last_error($this->postgres_link) . ' when querying ' . $sql);
@@ -2110,12 +2405,60 @@ class sql_db
     }
 
     /**
+     * write a database exception to the log table if still possible
+     *
+     * @param string $msg a text from the calling function that adds an indication what might have caused the issue
+     * @param Exception $e the execption created by the db call
+     * @param string $sql the sql statement that have caused the issue from this code point of view
+     * @param int $log_level to prevent further messages in case of fatal errors
+     * @return string the message that should be shown to the user
+     */
+    private function log_db_exception(
+        string $msg,
+        Exception $e,
+        string $sql = '',
+        int $log_level = sys_log_level::ERROR
+    ): string
+    {
+        return $this->log_db_error_message($msg, $e->getMessage(), $sql, $log_level);
+    }
+
+    /**
+     * write a database exception to the log table if possible
+     * otherwise write an error log file
+     *
+     * @param string $msg a text from the calling function that adds an indication what might have caused the issue
+     * @param string $err the text of the error message
+     * @param string $sql the sql statement that have caused the issue from this code point of view
+     * @param int $log_level to prevent further messages in case of fatal errors
+     * @return string the message that should be shown to the user
+     */
+    private function log_db_error_message(
+        string $msg,
+        string $err,
+        string $sql = '',
+        int $log_level = sys_log_level::ERROR
+    ): string
+    {
+        $msg .= ' ' . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $err;
+        if ($log_level == sys_log_level::FATAL) {
+            log_fatal($msg, 'exe_postgres');
+            return $msg . log::MSG_ERR_INTERNAL;
+        } else {
+            $trace_link = log_err($msg);
+            return $msg . log::MSG_ERR_INTERNAL . $trace_link;
+        }
+
+    }
+
+    /**
      * execute an change SQL statement on a MySQL database
      * similar to exe, but database specific because the return object differs depending on the database
      *
      * @param string $sql the sql statement that should be executed
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
+     * @param string $sql_call the query with the fields set e.g. to execute a function
      * @param int $log_level the log level is given by the calling function because after some errors the program may nevertheless continue
      * @return mysqli_result the message that should be shown to the system admin for debugging
      * @throws Exception
@@ -2125,10 +2468,12 @@ class sql_db
      * TODO includes the user to be able to ask the user for details how the error has been created
      * TODO with php 8 switch to the union return type resource|false
      */
-    private function exe_mysql(
+    private
+    function exe_mysql(
         string $sql,
         string $sql_name = '',
         array  $sql_array = array(),
+        string $sql_call = '',
         int    $log_level = sys_log_level::ERROR): mysqli_result
     {
         $result = null;
@@ -2202,6 +2547,7 @@ class sql_db
         if (in_array($sql_name, $this->prepared_sql_names)) {
             return true;
         } else {
+            // TODO check if actually exists
             return false;
         }
     }
@@ -2210,7 +2556,8 @@ class sql_db
       technical function to finally get data from the MySQL database
     */
 
-    private function mysql_array_to_types(array $sql_array): string
+    private
+    function mysql_array_to_types(array $sql_array): string
     {
         $result = '';
         foreach ($sql_array as $value) {
@@ -2232,9 +2579,10 @@ class sql_db
      * @param string $sql_name the unique name of the sql statement
      * @param array $sql_array the values that should be used for executing the precompiled SQL statement
      * @param bool $fetch_all true all database rows are returned at once
-     * @return array with one or all database records
+     * @return array|null with one or all database records
      */
-    private function fetch(string $sql, string $sql_name = '', array $sql_array = array(), bool $fetch_all = false): ?array
+    private
+    function fetch(string $sql, string $sql_name = '', array $sql_array = array(), bool $fetch_all = false): ?array
     {
         $result = array();
 
@@ -2297,7 +2645,8 @@ class sql_db
     /**
      * fetch the first row from an SQL database (either Postgres or MySQL at the moment)
      */
-    private function fetch_first(string $sql, string $sql_name = '', array $sql_array = array()): ?array
+    private
+    function fetch_first(string $sql, string $sql_name = '', array $sql_array = array()): ?array
     {
         return $this->fetch($sql, $sql_name, $sql_array);
     }
@@ -2305,12 +2654,14 @@ class sql_db
     /**
      * fetch the all value from an SQL database (either Postgres or MySQL at the moment)
      */
-    private function fetch_all($sql, string $sql_name = '', array $sql_array = array()): array
+    private
+    function fetch_all($sql, string $sql_name = '', array $sql_array = array()): array
     {
         return $this->fetch($sql, $sql_name, $sql_array, true);
     }
 
-    private function debug_msg($sql, $type): void
+    private
+    function debug_msg($sql, $type): void
     {
         global $debug;
         if ($debug > 20) {
@@ -2331,6 +2682,9 @@ class sql_db
 
     /**
      * returns all values of an SQL query in an array
+     *
+     * @param sql_par $qp the sql statement to get the db rows
+     * @return array the database rows or an empty array
      */
     function get(sql_par $qp): array
     {
@@ -2339,9 +2693,21 @@ class sql_db
     }
 
     /**
+     * returns all values of an SQL query in an array
+     * without using prepared for internal use only
+     *
+     * @param string $sql the sql statement to get the db rows
+     * @return array the database row or null
+     */
+    function get_internal(string $sql): array
+    {
+        return $this->fetch_all($sql);
+    }
+
+    /**
      * get only the first record from the database
      * based on a not prepared sql query
-     * only for internal use where no parameter can be influenced by an user
+     * only for internal use where no parameter can be influenced by a user
      *
      * @param string $sql the sql statement to get the db row
      * @return array|null the database row or null
@@ -2407,7 +2773,6 @@ class sql_db
         log_debug($field_name . ' from ' . $this->class . ' where ' . $id_name . ' = ' . $this->sf($id));
 
         if ($this->class <> '') {
-            $this->set_table();
 
             // set fallback values
             if ($field_name == '') {
@@ -2447,7 +2812,6 @@ class sql_db
         $result = '';
         log_debug($field_name . ' from ' . $this->class . ' where ' . $id1_name . ' = ' . $id1 . ' and ' . $id2_name . ' = ' . $id2);
 
-        $this->set_table();
         $sql = "SELECT " . $this->name_sql_esc($field_name) .
             "     FROM " . $this->name_sql_esc($this->table);
         if ($this->db_type == self::POSTGRES) {
@@ -2481,7 +2845,6 @@ class sql_db
         $result = '';
         log_debug('for "' . $name . '" of the db object "' . $this->class . '"');
 
-        $this->set_table();
         $this->set_id_field();
         $this->set_name_field();
         $result .= $this->get_value($this->id_field, $this->name_field, $name);
@@ -2498,7 +2861,6 @@ class sql_db
         $result = '';
         log_debug('for "' . $id . '" of the db object "' . $this->class . '"');
 
-        $this->set_table();
         $this->set_id_field();
         $this->set_name_field();
         $result = $this->get_value($this->name_field, $this->id_field, $id);
@@ -2515,7 +2877,6 @@ class sql_db
         $result = '';
         log_debug('for "' . $name . ',' . $field2_name . ',' . $field2_value . '" of the db object "' . $this->class . '"');
 
-        $this->set_table();
         $this->set_id_field();
         $this->set_name_field();
         $result = $this->get_value_2key($this->id_field, $this->name_field, $name, $field2_name, $field2_value);
@@ -2531,7 +2892,6 @@ class sql_db
     {
         log_debug($this->class);
 
-        $this->set_table();
         $this->set_id_field();
         $this->set_name_field();
         /* this query looks easier than the one below, but it does not word for user exclusions
@@ -2580,7 +2940,6 @@ class sql_db
     {
         log_debug("sql_db->sql_std_lst (" . $this->class . ")");
 
-        $this->set_table();
         $this->set_id_field();
         $this->set_name_field();
         $sql = "SELECT " . $this->name_sql_esc($this->id_field) . " AS id,
@@ -2842,7 +3201,8 @@ class sql_db
      * @param array $id_fields the name of the primary id field that should be used or the list of link fields
      * @return void
      */
-    private function set_where(array $id_fields): void
+    private
+    function set_where(array $id_fields): void
     {
         $open_or_flf_lst = false;
         // if nothing is defined assume to load the row by the main if
@@ -2923,7 +3283,7 @@ class sql_db
                             }
                         }
 
-                        if ($par_type == sql_par_type::TEXT) {
+                        if ($par_type == sql_par_type::TEXT OR $par_type == sql_par_type::KEY_512) {
                             if ($id_fields[$used_fields] == sql::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
                                     $this->where .= ' AND ';
@@ -3036,7 +3396,8 @@ class sql_db
     /**
      * create the "JOIN" SQL statement based on the joined user fields
      */
-    private function set_user_join(): void
+    private
+    function set_user_join(): void
     {
         if ($this->usr_query) {
             if (!$this->join_usr_added) {
@@ -3074,7 +3435,8 @@ class sql_db
     /**
      * create the "FROM" SQL statement based on the type
      */
-    private function set_from(): void
+    private
+    function set_from(): void
     {
         if ($this->join_type <> '') {
             $join_table_name = $this->name_sql_esc($this->get_table_name($this->join_type));
@@ -3447,10 +3809,10 @@ class sql_db
      * create the SQL parameters to count the number of rows related to a database table type
      * @return ?int the number of rows or null if something went wrong
      */
-    function count(string $type_name = '', string $id_fld = ''): ?int
+    function count(string $class = '', string $id_fld = ''): ?int
     {
-        if ($type_name != '') {
-            $this->set_class($type_name);
+        if ($class != '') {
+            $this->set_class($class);
         }
         return $this->get1_int($this->count_qp());
     }
@@ -3461,11 +3823,12 @@ class sql_db
      */
     function count_qp(string $class_name = '', string $id_fld = ''): sql_par
     {
+        $lib = new library();
         if ($class_name == '') {
-            $class_name = $this->class;
+            $class_name = $lib->class_to_name($this->class);
         }
         $qp = new sql_par($class_name);
-        $qp->name = $this->class . '_count';
+        $qp->name = $class_name . '_count';
         $qp->sql = $this->count_sql($qp->name, $id_fld);
         return $qp;
     }
@@ -3477,17 +3840,18 @@ class sql_db
      */
     function count_sql(string $sql_name = '', string $id_fld = ''): string
     {
+        $lib = new library();
+        $class = $lib->class_to_name($this->class);
         if ($id_fld == '') {
-            $id_fld = $this->class . self::FLD_EXT_ID;
+            $id_fld = $class . self::FLD_EXT_ID;
         }
         if ($sql_name == '') {
-            $sql_name = $this->class . '_count';
+            $sql_name = $class . '_count';
         }
-        $sql = 'PREPARE ' . $sql_name . ' AS
+        return sql::PREPARE . ' ' . $sql_name . ' AS
                     SELECT count(' . self::STD_TBL . '.' . $id_fld . ') + count(' . self::USR_TBL . '.' . $id_fld . ') AS count
                       FROM ' . $this->table . ' ' . self::STD_TBL . '
                  LEFT JOIN ' . sql_db::USER_PREFIX . $this->table . '  ' . self::USR_TBL . ' ON ' . self::STD_TBL . '.' . $id_fld . ' = ' . self::USR_TBL . '.' . $id_fld . ';';
-        return $sql;
     }
 
     /**
@@ -3496,7 +3860,8 @@ class sql_db
      *
      * @return array with the postgres parameter types
      */
-    private function par_types_to_postgres(): array
+    private
+    function par_types_to_postgres(): array
     {
         $in_types = $this->par_types;
         $result = array();
@@ -3533,17 +3898,19 @@ class sql_db
     }
 
     /**
+     * TODO deprecate and replace by sql creator function
      * @return string with the SQL prepare statement for the current query
      */
-    private function prepare_sql(): string
+    private
+    function prepare_sql(): string
     {
         $sql = '';
         if (count($this->par_types) > 0) {
             if ($this->db_type == sql_db::POSTGRES) {
                 $par_types = $this->par_types_to_postgres();
-                $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $par_types) . ') AS SELECT';
+                $sql = sql::PREPARE . ' ' . $this->query_name . ' (' . implode(', ', $par_types) . ') AS SELECT';
             } elseif ($this->db_type == sql_db::MYSQL) {
-                $sql = "PREPARE " . $this->query_name . " FROM '" . sql::SELECT;
+                $sql = sql::PREPARE . ' ' . $this->query_name . " FROM '" . sql::SELECT;
                 $this->end = "';";
             } else {
                 log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);
@@ -3599,136 +3966,6 @@ class sql_db
     }
 
     /**
-     * create a SQL select statement for the connected database
-     * to detect if someone else has used the object
-     * @param int $id the unique database id if the object to check
-     * @param int|null $owner_id the user id of the owner of the object
-     * @param string $id_field the field name of the prime database key if not standard
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     *                 in the previous set dialect
-     */
-    function load_sql_not_changed(int $id, ?int $owner_id = 0, string $id_field = ''): sql_par
-    {
-        $qp = new sql_par($this->class);
-        $qp->name .= 'not_changed';
-        if ($owner_id > 0) {
-            $qp->name .= '_not_owned';
-        }
-        $this->set_name($qp->name);
-        $this->set_usr($this->usr_id);
-        $this->set_table();
-        $this->set_id_field($id_field);
-        $this->set_fields(array(user::FLD_ID));
-        if ($id == 0) {
-            log_err('The id must be set to detect if the link has been changed');
-        } else {
-            $this->add_par(sql_par_type::INT, $id);
-            $sql_mid = " " . user::FLD_ID .
-                " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table) .
-                " WHERE " . $this->id_field . " = " . $this->par_name() . "
-                 AND (excluded <> 1 OR excluded is NULL)";
-            if ($owner_id > 0) {
-                $this->add_par(sql_par_type::INT, $owner_id);
-                $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name();
-            }
-            $qp->sql = $this->prepare_sql() . $sql_mid;
-            $qp->sql = $this->end_sql($qp->sql);
-        }
-        $qp->par = $this->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * create a SQL select statement for the connected database
-     * to detect if someone else has used the object
-     * if the value can be stored in different tables
-     *
-     * @param int $id the unique database id if the object to check
-     * @param int|null $owner_id the user id of the owner of the object
-     * @param string|array $id_field the field name or field list of the prime database key if not standard
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     *                 in the previous set dialect
-     */
-    function load_sql_not_changed_multi(
-        int            $id,
-        ?int           $owner_id = 0,
-        string|array   $id_field = '',
-        string         $ext = '',
-        sql_table_type $tbl_typ = sql_table_type::MOST
-    ): sql_par
-    {
-        $qp = new sql_par($this->class);
-        $qp->name .= 'not_changed';
-        if ($owner_id > 0) {
-            $qp->name .= '_not_owned';
-        }
-        $this->set_name($qp->name);
-        $this->set_usr($this->usr_id);
-        $this->set_table(false, $tbl_typ->extension());
-        $this->set_id_field($id_field);
-        $this->set_fields(array(user::FLD_ID));
-        if ($id == 0) {
-            log_err('The id must be set to detect if the link has been changed');
-        } else {
-            // TODO review
-            $sql_mid_where = '';
-            if ($tbl_typ == sql_table_type::PRIME) {
-                $grp_id = new group_id();
-                $id_lst = $grp_id->get_array($id, true);
-                if (is_array($this->id_field)) {
-                    if (count($id_lst) != count($this->id_field)) {
-                        log_err('the number of id and fields differ');
-                    } else {
-                        $pos = 0;
-                        foreach ($id_lst as $id_item) {
-                            if ($id_item == null) {
-                                // TODO move null to const
-                                $this->add_par(sql_par_type::INT_SMALL, '0');
-                            } else {
-                                $this->add_par(sql_par_type::INT_SMALL, $id_item);
-                            }
-                            if ($sql_mid_where == '') {
-                                $sql_mid_where .= " WHERE ";
-                            } else {
-                                $sql_mid_where .= " AND ";
-                            }
-                            $sql_mid_where .= $this->id_field[$pos] . " = " . $this->par_name();
-                            $pos++;
-                        }
-                    }
-                } else {
-                    log_err('the id fields are expected to be an array');
-                }
-            } elseif ($tbl_typ == sql_table_type::BIG) {
-                $grp_id = new group_id();
-                $id_lst = $grp_id->get_array($id, true);
-                foreach ($id_lst as $id_item) {
-                    $this->add_par(sql_par_type::INT, $id_item);
-                }
-            } else {
-                $this->add_par(sql_par_type::INT, $id);
-            }
-            $sql_mid = " " . user::FLD_ID;
-            $sql_mid .= " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table);
-            if (!is_array($this->id_field)) {
-                $sql_mid_where .= $this->id_field . " = " . $this->par_name();
-            }
-            $sql_mid .= $sql_mid_where . " AND (excluded <> 1 OR excluded is NULL)";
-            if ($owner_id > 0) {
-                $this->add_par(sql_par_type::INT, $owner_id);
-                $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name();
-            }
-            $qp->sql = $this->prepare_sql() . $sql_mid;
-            $qp->sql = $this->end_sql($qp->sql);
-        }
-        $qp->par = $this->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement to find user sandbox objects where the owner is not set
      */
     function missing_owner_sql(): sql_par
@@ -3737,7 +3974,6 @@ class sql_db
         $qp->name .= $this->class;
         $this->set_name($qp->name);
         $this->set_usr($this->usr_id);
-        $this->set_table();
         $this->set_id_field();
         $qp->sql = "SELECT " . $this->id_field . " AS id
                       FROM " . $this->name_sql_esc($this->table) . "
@@ -3773,14 +4009,18 @@ class sql_db
             log_err('Cannot load system used in set_default_owner');
             $result = false;
         } else {
-            $this->set_table();
             $sql = "UPDATE " . $this->name_sql_esc($this->table) . "
                SET user_id = " . $sys_usr->id() . "
              WHERE user_id IS NULL;";
 
             //return $this->exe($sql, 'user_default', array());
             try {
-                $result = $this->exe($sql, '', array());
+                $sql_result = $this->exe($sql, '', array());
+                if (!$sql_result) {
+                    $result = false;
+                } else {
+                    $result = true;
+                }
             } catch (Exception $e) {
                 $msg = 'Select';
                 log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
@@ -3804,31 +4044,38 @@ class sql_db
      *
      * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
      * @param string $description for the user to identify the statement
+     * @param bool $usr_tbl true if a row in the user table is added which implies that no new id is returned
      * @return user_message
      */
-    function insert(sql_par $qp, string $description): user_message
+    function insert(sql_par $qp, string $description, bool $usr_tbl = false): user_message
     {
         $result = new user_message();
         $err_msg = 'Insert of ' . $description . ' failed.';
         try {
-            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par);
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name);
             $db_id = 0;
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
                     log_err($sql_error . ' while executing ' . $qp->sql);
+                    $result->add_message($err_msg);
                 } else {
-                    $db_id = pg_fetch_array($sql_result)[0];
-                    //$result = $db_con->lastInsertId('yourIdColumn');
+                    if (!$usr_tbl) {
+                        $db_id = pg_fetch_array($sql_result)[0];
+                    }
                 }
             } else {
-                $db_id = mysqli_fetch_array($sql_result, MYSQLI_BOTH);
+                if (!$usr_tbl) {
+                    $db_id = mysqli_fetch_array($sql_result, MYSQLI_BOTH);
+                }
             }
-            if ($db_id == 0 or $db_id == '') {
-                log_err($err_msg);
-                $result->add_message($err_msg);
-            } else {
-                $result->set_db_row_id($db_id);
+            if (!$usr_tbl) {
+                if ($db_id == 0 or $db_id == '') {
+                    log_err($err_msg);
+                    $result->add_message($err_msg);
+                } else {
+                    $result->set_db_row_id($db_id);
+                }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
@@ -3854,7 +4101,7 @@ class sql_db
         $result = new user_message();
         $err_msg = 'Update of ' . $description . ' failed';
         try {
-            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par);
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name);
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
@@ -3887,7 +4134,7 @@ class sql_db
         $result = new user_message();
         $err_msg = 'Delete of ' . $description . ' failed';
         try {
-            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par);
+            $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql);
             if ($this->db_type == sql_db::POSTGRES) {
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
@@ -3921,7 +4168,6 @@ class sql_db
         $lib = new library();
 
         // escape the fields and values and build the SQL statement
-        $this->set_table();
         $sql = 'INSERT INTO ' . $this->name_sql_esc($this->table);
 
         if (is_array($fields)) {
@@ -3959,10 +4205,8 @@ class sql_db
                     }
                 } else {
                     // return the database row id if the value is not a time series number
-                    if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
-                        and $this->class != value::class
-                        and $this->class != sql_db::TBL_RESULT) {
-                        $sql = $sql . ' RETURNING ' . $this->id_field . ';';
+                    if (!in_array($this->class, sql_db::DB_TABLE_WITHOUT_AUTO_ID)) {
+                        $sql .= ' ' . sql::RETURNING . ' ' . $this->id_field . ';';
                     }
                     if ($this->id_field == 'official_type_id') {
                         log_info('check');
@@ -3992,7 +4236,7 @@ class sql_db
                                 log_err('Execution of ' . $sql . ' failed due to ' . $sql_error);
                             }
                         } else {
-                            if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA) {
+                            if (!in_array($this->class, sql_db::DB_TABLE_WITHOUT_AUTO_ID)) {
                                 if (is_resource($sql_result) or $sql_result::class == 'PgSql\Result') {
                                     try {
                                         $result = pg_fetch_array($sql_result);
@@ -4072,7 +4316,6 @@ class sql_db
     {
         log_debug($name . ' to ' . $this->class);
 
-        $this->set_table();
         $this->set_name_field();
         $result = $this->insert_old($this->name_field, $name);
 
@@ -4087,7 +4330,6 @@ class sql_db
     {
         log_debug($name . ',' . $field2_name . ',' . $field2_value . ' to ' . $this->class);
 
-        $this->set_table();
         $this->set_name_field();
         //zu_debug('sql_db->add_id_2key add "'.$this->name_field.','.$field2_name.'" "'.$name.','.$field2_value.'"');
         $result = $this->insert_old(array($this->name_field, $field2_name), array($name, $field2_value));
@@ -4114,7 +4356,6 @@ class sql_db
 
         // check parameter
         $par_ok = true;
-        $this->set_table();
         $this->set_id_field($id_field);
         if ($debug > 0) {
             if ($this->table == "") {
@@ -4128,12 +4369,17 @@ class sql_db
         }
 
         // set the where clause user sandbox? ('.substr($this->type,0,4).')');
-        $sql_where = ' WHERE ' . $this->id_field . ' = ' . $this->sf($id);
+        $sql_where = ' WHERE ' . $this->id_field . ' = ';
+        if (is_numeric($id)) {
+            $sql_where .= $this->sf($id);
+        } else {
+            $sql_where .= "'" . $id . "'";
+        }
         if (substr($this->class, 0, 4) == 'user') {
             // ... but not for the user table itself
-            if ($this->class <> sql_db::TBL_USER
-                and $this->class <> sql_db::TBL_USER_TYPE
-                and $this->class <> sql_db::TBL_USER_PROFILE) {
+            if ($this->class <> user::class
+                and $this->class <> user_type::class
+                and $this->class <> user_profile::class) {
                 $sql_where .= ' AND user_id = ' . $this->usr_id;
             }
         }
@@ -4196,8 +4442,6 @@ class sql_db
             log_debug('in "' . $this->class . '" WHERE "' . $id_fields . '" IS "' . $id_values . '" for user ' . $this->usr_id);
 
         }
-
-        $this->set_table();
 
         if (is_array($id_fields)) {
             $sql = 'DELETE ' . 'FROM ' . $this->name_sql_esc($this->table);
@@ -4373,13 +4617,13 @@ class sql_db
 
     /**
      * reset the seq number
-     * @param string $type the class name to which the related table should be reset
+     * @param string $class the class name to which the related table should be reset
      * @return string any warning message to be shown to the admin user
      */
-    function seq_reset(string $type): string
+    function seq_reset(string $class): string
     {
         $msg = '';
-        $this->set_class($type);
+        $this->set_class($class);
         $sql_max = 'SELECT MAX(' . $this->name_sql_esc($this->id_field) . ') AS max_id FROM ' . $this->name_sql_esc($this->table) . ';';
         // $db_con->set_fields(array('MAX(group_id) AS max_id'));
         // $sql_max = $db_con->select();
@@ -4396,9 +4640,9 @@ class sql_db
                 } elseif ($this->db_type == sql_db::MYSQL) {
                     $sql = 'ALTER TABLE ' . $this->name_sql_esc($this->table) . ' auto_increment = ' . $next_id . ';';
                 } else {
-                    log_err('Unexpected SQL type ' . $type);
+                    log_err('Unexpected SQL type ' . $class);
                 }
-                $this->exe_try('Resetting sequence for ' . $type, $sql);
+                $this->exe_try('Resetting sequence for ' . $class, $sql);
                 $msg = 'Next database id for ' . $this->table . ': ' . $next_id;
 
             }
@@ -4457,6 +4701,46 @@ class sql_db
             if ($sql_result) {
                 $result = true;
             }
+        }
+        return $result;
+    }
+
+    /**
+     * for testing only
+     * @return array with the table names actually created in the database
+     */
+    function get_tables(): array
+    {
+        $result = [];
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql = "select table_name from information_schema.tables where table_schema not in ('pg_catalog', 'information_schema') and table_schema not like 'pg_toast%'";
+        } else {
+            $sql = 'SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS;';
+        }
+        $sql_result = $this->get_internal($sql);
+        foreach ($sql_result as $row) {
+            $result[] = $row[0];
+        }
+        return $result;
+    }
+
+    /**
+     * for testing only
+     * @return array with the field names of one table actually used in the database
+     */
+    function get_fields(string $tbl_name): array
+    {
+        $result = [];
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql = "SELECT column_name FROM information_schema.columns WHERE table_name   = '" . $tbl_name . "';";
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $tbl_name . "';";
+        } else {
+            $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $tbl_name . "';";
+        }
+        $sql_result = $this->get_internal($sql);
+        foreach ($sql_result as $row) {
+            $result[] = $row[0];
         }
         return $result;
     }
@@ -5079,6 +5363,27 @@ class sql_db
 
         $verbs = new verb_list($usr);
         $verbs->load($db_con);
+
+        return $result;
+    }
+
+    function import_system_views(user $usr): bool
+    {
+        global $db_con;
+        global $system_views;
+
+        $result = false;
+
+        if ($usr->is_admin() or $usr->is_system()) {
+            $imf = new import_file();
+            $import_result = $imf->json_file(SYSTEM_VIEW_CONFIG_PATH, $usr);
+            if (str_starts_with($import_result, ' done ')) {
+                $result = true;
+            }
+        }
+
+        $system_views = new view_sys_list($usr);
+        $system_views->load($db_con);
 
         return $result;
     }

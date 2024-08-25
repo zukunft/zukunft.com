@@ -31,14 +31,15 @@
 
 namespace cfg\component;
 
-use cfg\db\sql_db;
-use cfg\type_list;
-use cfg\type_object;
-
+include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_COMPONENT_PATH . 'component_type.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
+
+use shared\types\component_type as comp_type_shared;
+use cfg\type_list;
+use cfg\type_object;
 
 global $component_types;
 
@@ -46,56 +47,16 @@ class component_type_list extends type_list
 {
 
     /**
-     * overwrite the general user type list load function to keep the link to the table type capsuled
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @return bool true if load was successful
-     */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_COMPONENT_TYPE): bool
-    {
-        return parent::load($db_con, $db_type);
-    }
-
-    /**
      * adding the view component types used for unit tests to the dummy list
      */
     function load_dummy(): void {
         parent::load_dummy();
-        $type = new type_object(component_type::TEXT, component_type::TEXT, '', 2);
-        $this->add($type);
-        $type = new type_object(component_type::PHRASE_NAME, component_type::PHRASE_NAME, '', 8);
-        $this->add($type);
-        $type = new type_object(component_type::FORM_TITLE, component_type::FORM_TITLE, '', 17);
-        $this->add($type);
-        $type = new type_object(component_type::FORM_BACK, component_type::FORM_BACK, '', 18);
-        $this->add($type);
-        $type = new type_object(component_type::FORM_CONFIRM, component_type::FORM_CONFIRM, '', 19);
-        $this->add($type);
-        $type = new type_object(component_type::FORM_NAME, component_type::FORM_NAME, '', 20);
-        $this->add($type);
-        $type = new type_object(component_type::FORM_DESCRIPTION, component_type::FORM_DESCRIPTION, '', 21);
-        $this->add($type);
-        $type = new type_object(component_type::FORM_PHRASE, component_type::FORM_PHRASE, '', 22);
-        $this->add($type);
-        $type = new type_object(component_type::FORM_VERB_SELECTOR, component_type::FORM_VERB_SELECTOR, '', 23);
-        $this->add($type);
-        $type = new type_object(component_type::FORM_SHARE_TYPE, component_type::FORM_SHARE_TYPE, '', 24);
-        $this->add($type);
-        $type = new type_object(component_type::FORM_PROTECTION_TYPE, component_type::FORM_PROTECTION_TYPE, '', 25);
-        $this->add($type);
-        $type = new type_object(component_type::FORM_CANCEL, component_type::FORM_CANCEL, '', 26);
-        $this->add($type);
-        $type = new type_object(component_type::FORM_SAVE, component_type::FORM_SAVE, '', 27);
-        $this->add($type);
-        $type = new type_object(component_type::FORM_DEL, component_type::FORM_DEL, '', 28);
-        $this->add($type);
-        $type = new type_object(component_type::FORM_END, component_type::FORM_END, '', 29);
-        $this->add($type);
-        $type = new type_object(component_type::ROW_START, component_type::ROW_START, '', 30);
-        $this->add($type);
-        $type = new type_object(component_type::ROW_RIGHT, component_type::ROW_RIGHT, '', 31);
-        $this->add($type);
-        $type = new type_object(component_type::ROW_END, component_type::ROW_END, '', 32);
-        $this->add($type);
+        foreach (comp_type_shared::TEST_TYPES as $cmp_typ) {
+            $code_id = $cmp_typ[0];
+            $id = $cmp_typ[1];
+            $type = new type_object($code_id, $code_id, '', $id);
+            $this->add($type);
+        }
     }
 
     /**
@@ -103,7 +64,7 @@ class component_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(component_type::TEXT);
+        return parent::id(comp_type_shared::TEXT);
     }
 
 }

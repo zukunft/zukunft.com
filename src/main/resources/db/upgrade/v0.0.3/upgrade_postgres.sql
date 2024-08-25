@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS user_view_term_links
 (
     view_term_link_id BIGSERIAL PRIMARY KEY,
     type_id           bigint NOT NULL   DEFAULT '1',
-    link_type_id      bigint            DEFAULT NULL,
+    link_type_id      smallint          DEFAULT NULL,
     user_id           bigint NOT NULL,
     description       text   NOT NULL,
     excluded          smallint          DEFAULT NULL,
@@ -307,8 +307,8 @@ CREATE TABLE IF NOT EXISTS change_values
     change_id        BIGSERIAL PRIMARY KEY,
     change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id          bigint    NOT NULL,
-    change_action_id bigint    NOT NULL,
-    change_field_id  bigint    NOT NULL,
+    change_action_id smallint  NOT NULL,
+    change_field_id  smallint  NOT NULL,
     group_id         char(112) NOT NULL,
     old_value        double precision DEFAULT NULL,
     new_value        double precision DEFAULT NULL
@@ -326,8 +326,8 @@ CREATE TABLE IF NOT EXISTS change_values_prime
     change_id        BIGSERIAL PRIMARY KEY,
     change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id          bigint    NOT NULL,
-    change_action_id bigint    NOT NULL,
-    change_field_id  bigint    NOT NULL,
+    change_action_id smallint  NOT NULL,
+    change_field_id  smallint  NOT NULL,
     group_id         bigint    NOT NULL,
     old_value        double precision DEFAULT NULL,
     new_value        double precision DEFAULT NULL
@@ -345,8 +345,8 @@ CREATE TABLE IF NOT EXISTS change_values_big
     change_id        BIGSERIAL PRIMARY KEY,
     change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id          bigint    NOT NULL,
-    change_action_id bigint    NOT NULL,
-    change_field_id  bigint    NOT NULL,
+    change_action_id smallint  NOT NULL,
+    change_field_id  smallint  NOT NULL,
     group_id         TEXT      NOT NULL,
     old_value        double precision DEFAULT NULL,
     new_value        double precision DEFAULT NULL
@@ -519,7 +519,7 @@ CREATE TABLE IF NOT EXISTS user_values
     source_id     bigint           DEFAULT NULL,
     excluded      smallint         DEFAULT NULL,
     last_update   timestamp NULL   DEFAULT NULL,
-    share_type_id bigint           DEFAULT NULL,
+    share_type_id smallint         DEFAULT NULL,
     protect_id    bigint           DEFAULT NULL
 );
 

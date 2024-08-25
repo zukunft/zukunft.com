@@ -33,11 +33,11 @@
 namespace unit;
 
 use api\formula\formula as formula_api;
-use api\word\word as word_api;
 use api\verb\verb as verb_api;
+use api\word\word as word_api;
 use cfg\expression;
-use cfg\library;
 use cfg\term_list;
+use shared\library;
 use test\test_cleanup;
 
 class expression_tests
@@ -50,7 +50,7 @@ class expression_tests
 
         // init
         $t->name = 'expression->';
-        $trm_lst = $t->dummy_term_list_all();
+        $trm_lst = $t->term_list_all();
 
         $t->header('Unit tests of the formula expression class (src/main/php/model/formula/expression.php)');
 
@@ -89,7 +89,7 @@ class expression_tests
         $phr_lst = $exp->phr_lst($trm_lst);
         $result = $phr_lst->dsp_id();
         $target = '"' . word_api::TN_PI . '","' . word_api::TN_CIRCUMFERENCE
-            . '" (phrase_id 3,' . word_api::TI_CIRCUMFERENCE . ') for user 1 (zukunft.com system test)';
+            . '" (phrase_id ' . word_api::TI_PI . ',' . word_api::TI_CIRCUMFERENCE . ') for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         // test the phrase list of the left side
@@ -149,7 +149,7 @@ class expression_tests
 
         $test_name = 'test getting the phrase ids';
         $result = implode(",", $exp->phr_id_lst($exp->ref_text())->lst);
-        $target = implode(",", array(166, word_api::TI_THIS, word_api::TI_PRIOR));
+        $target = implode(",", array(word_api::TI_PCT, word_api::TI_THIS, word_api::TI_PRIOR));
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test the conversion of the database reference text to the user text';
@@ -195,11 +195,11 @@ class expression_tests
         // tests based on the pi formula
         $test_name = 'test the user text conversion with a triple';
         $exp = new expression($usr);
-        $exp->set_user_text(formula_api::TF_DIAMETER, $t->dummy_term_list_all());
+        $exp->set_user_text(formula_api::TF_DIAMETER, $t->term_list_all());
         $trm_names = $exp->get_usr_names();
         $trm_lst_rev = $t->term_list_for_tests($trm_names);
         $result = $exp->ref_text($trm_lst_rev);
-        $target = '={w' . word_api::TI_CIRCUMFERENCE . '}/{w3}';
+        $target = '={w' . word_api::TI_CIRCUMFERENCE . '}/{w' . word_api::TI_PI . '}';
         $t->assert($test_name, $result, $target);
 
         $test_name = 'source phrase list with id from the reference text';

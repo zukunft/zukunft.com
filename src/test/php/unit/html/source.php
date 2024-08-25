@@ -45,7 +45,7 @@ class source
 
         $t->subheader('source tests');
 
-        $src = new source_dsp($t->dummy_source()->api_json());
+        $src = new source_dsp($t->source()->api_json());
         $test_page = $html->text_h2('source display test');
         $test_page .= 'with tooltip: ' . $src->display() . '<br>';
         $test_page .= 'with link: ' . $src->display_linked() . '<br>';

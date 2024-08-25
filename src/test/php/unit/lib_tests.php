@@ -34,16 +34,17 @@ namespace unit;
 
 include_once MODEL_USER_PATH . 'user_message.php';
 
-use cfg\library;
-use DateTimeInterface;
+use cfg\user;
 use cfg\user_message;
-use test\test_cleanup;
+use DateTimeInterface;
+use shared\library;
+use test\all_tests;
 
 global $db_con;
 
 class lib_tests
 {
-    function run(test_cleanup $t): void
+    function run(all_tests $t): void
     {
         global $debug;
         $lib = new library();
@@ -164,6 +165,24 @@ class lib_tests
         $target = "right 7";
         $result = $lib->str_right($text, $pos);
         $t->assert("str_right: What are the right \"" . $pos . "\" chars of \"" . $text . "\"", $result, $target);
+
+        $text = "ignore start<select";
+        $maker = 'start<';
+        $target = "select";
+        $result = $lib->str_right_of($text, $maker);
+        $t->assert("str_right: right of \"" . $maker . "\" is \"" . $target . "\"", $result, $target);
+
+        $text = "9code_id";
+        $maker = '9';
+        $target = "code_id";
+        $result = $lib->str_right_of_or_all($text, $maker);
+        $t->assert("str_right_of_or_all: right of (or all) \"" . $maker . "\" is \"" . $target . "\"", $result, $target);
+
+        $text = "ignore start<select";
+        $maker = 'no start<';
+        $target = "ignore start<select";
+        $result = $lib->str_right_of_or_all($text, $maker);
+        $t->assert("str_right_of_or_all: right of (or all) \"" . $maker . "\" is \", because the maker is not part of the given string" . $target . "\"", $result, $target);
 
         // test base_class_name
         $class = 'cfg\language';
@@ -334,8 +353,40 @@ class lib_tests
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '';
         $t->assert("diff_msg, no diff", $result, $target);
+        // ... empty result
+        $test_result = "";
+        $test_target = "1";
+        $result = $lib->diff_msg($test_result, $test_target);
+        // TODO check why this differs in php 8.2
+        if ($result == '//-1////+//') {
+            $target = '//-1////+//';
+        } else {
+            $target = '//-1//';
+        }
+        $t->assert("empty result, no diff", $result, $target);
+        // ... null result
+        $test_result = null;
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = 'The type combination of string and NULL are not expected.';
+        $t->assert("empty result, no diff", $result, $target);
+        // ... empty result array
+        $test_result = [];
+        $test_target = ['1'];
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '0//+1//';
+        $t->assert("empty result, no diff", $result, $target);
+        // ... json result to bool
+        $test_result = $lib->json_is_similar([1,2], [1]);
+        $result = $lib->diff_msg($test_result, true);
+        if ($result == '//-1////+//') {
+            $target = '//-1////+//';
+        } else {
+            $target = '//-1//';
+        }
+        $t->assert("empty result, no diff", $result, $target);
         // ... code text with other beginning
         $test_result = 'codeStartingWithMoreCharsText';
+        $test_target = 'Text';
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '//+codeStartingWithMoreChars//Text';
         $t->assert("diff_msg, add chars before", $result, $target);
@@ -362,8 +413,8 @@ class lib_tests
         $target = '//-"System Test Word Share"////+""//';
         $t->assert("diff_msg, replaced part", $result, $target);
         // ... string that has caused an error in an earlier version
-        $test_result = 'zukunft.com system test partner unlinked System Test View Renamed from System Test View Component';
-        $test_target = 'zukunft.com system test partner ';
+        $test_result = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test View Renamed from System Test View Component';
+        $test_target = user::SYSTEM_TEST_PARTNER_NAME . ' ';
         $result = $lib->diff_msg($test_result, $test_target);
         $target = 'zukunft.com system test partner//-////+ unlinked System Test View Renamed from System Test View Component//';
         $t->assert("diff_msg, replaced part", $result, $target);
@@ -389,7 +440,7 @@ class lib_tests
         $test_result = json_decode($t->file('/web/system/result.json'), true);
         $test_target = json_decode($t->file('/web/system/target.json'), true);
         $result = $lib->diff_msg($test_result, $test_target);
-        $target = '64//+{"id":65,"code_id":"18excluded","name":"18excluded","comment":""}//, 65//+{"id":66,"code_id":"14excluded","name":"14excluded","comment":""}// ... and 1 more';
+        $target = 'pos  5: pos  20: 64//-{"id":65,"code_id":"18excluded","name":"18excluded","comment":""}//, 65//-{"id":66,"code_id":"14excluded","name":"14excluded","comment":""}// ... and 1 more';
         $t->assert("diff_msg, json in long string", $result, $target);
         // ... sql files
         $test_result = $t->file('/web/system/result.sql');
@@ -411,6 +462,12 @@ class lib_tests
         $result = $lib->str_diff($test_result, $test_target);
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '<a href="/http///-value////+result//_edit.php?id=12&back=1" title="1.55">1.55</a>';
+        $t->assert("diff_msg, with position in long html string", $result, $target);
+        // json string
+        $test_result = '{"user_id":2,"sys_log":[{"id":1,"user":"zukunft.com system test"},{"id":2,"user":"zukunft.com system test"}]}';
+        $test_target = '{"user_id":3,"sys_log":[{"id":1,"user":"zukunft.com system test"},{"id":2,"user":"zukunft.com system test"}]}';
+        $result = $lib->str_diff($test_result, $test_target);
+        $target = '//-2zukunft.com system test////+3Array//';
         $t->assert("diff_msg, with position in long html string", $result, $target);
 
 
@@ -538,6 +595,11 @@ class lib_tests
         $t->assert("count_recursive - count level 0", $result, 5);
         $result = $lib->count_recursive($json_array, 20);
         $t->assert("count_recursive - count level 0", $result, 8);
+
+        $json_text = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/democratie_index_table.json');
+        $json_array = json_decode($json_text, true);
+        $result = $lib->count_recursive($json_array, 3);
+        $t->assert("count_recursive - count level 0", $result, 177);
 
         // recursive diff
         $result = json_encode($lib->array_recursive_diff(

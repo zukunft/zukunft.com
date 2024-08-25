@@ -2,7 +2,7 @@
 
 /*
 
-    view.php - create the final HTML code to display a zukunft.com view
+    view.php - create the HTML code to display a zukunft.com view
     --------
 
     - the view contains the overall formatting like page size
@@ -34,25 +34,41 @@
 */
 
 // for callable php files the standard zukunft.com header to load all classes and allow debugging
+// to allow debugging of errors in the library that only appear on the server
+$debug = $_GET['debug'] ?? 0;
+// get the root path from the path of this file (relative path)
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+// set the other path once for all scripts
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+// load once the common const and vars used almost every time
+include_once PHP_PATH . 'zu_lib.php';
+
+// load what is used here
+include_once PHP_PATH . 'frontend.php';
+include_once API_PATH . 'controller.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
+include_once WEB_VIEW_PATH . 'view.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_WORD_PATH . 'word.php';
+
 use controller\controller;
-use html\api;
+use html\rest_ctrl;
 use html\view\view as view_dsp;
 use cfg\user;
 use cfg\view;
 use cfg\word;
+use html\types\type_lists as type_lists_dsp;
+use html\word\word as word_dsp;
 
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . '/../';
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
-
-// open database 
+// open database
 $db_con = prg_start("view");
 
 global $system_views;
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
-$back = $_GET[controller::API_BACK]; // the word id from which this value change has been called (maybe later any page)
+$back = $_GET[controller::API_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
 
 // load the session user parameters
 $usr = new user;
@@ -61,29 +77,40 @@ $result .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
+    // TODO move to the frontend __construct
+    $main = new frontend('view');
+    $api_msg = $main->api_get(type_lists_dsp::class);
+    $frontend_cache = new type_lists_dsp($api_msg);
+
     $usr->load_usr_data();
+
+    // set the object that should be displayed
+    $dbo_dsp = new word_dsp();
+
+    $view_words = $_GET[rest_ctrl::PAR_VIEW_WORDS] ?? '';
 
     // get the word(s) to display
     // TODO replace it with phrase
     $wrd = new word($usr);
-    if (isset($_GET[api::PAR_VIEW_WORDS])) {
-        $wrd->main_wrd_from_txt($_GET[api::PAR_VIEW_WORDS]);
+    if ($view_words != '') {
+        $wrd->main_wrd_from_txt($_GET[rest_ctrl::PAR_VIEW_WORDS]);
     } else {
         // get last word used by the user or a default value
         $wrd = $usr->last_wrd();
     }
 
     // select the view
+    // TODO move as much a possible to backend functions
     if ($wrd->id() > 0) {
         // if the user has changed the view for this word, save it
-        if (isset($_GET['new_id'])) {
-            $view_id = $_GET['new_id'];
-            $wrd->save_view($view_id);
+        $new_view_id = $_GET[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
+        if ($new_view_id != '') {
+            $wrd->save_view($new_view_id);
+            $view_id = $new_view_id;
         } else {
             // if the user has selected a special view, use it
-            if (isset($_GET['view'])) {
-                $view_id = $_GET['view'];
-            } else {
+            $view_id = $_GET[rest_ctrl::PAR_VIEW_ID] ?? '';
+            if ($view_id == '') {
                 // if the user has set a view for this word, use it
                 $view_id = $wrd->view_id();
                 if ($view_id <= 0) {
@@ -91,7 +118,7 @@ if ($usr->id() > 0) {
                     $view_id = $wrd->calc_view_id();
                     if ($view_id <= 0) {
                         // if no one has set a view for this word, use the fallback view
-                        $view_id = $system_views->id(controller::DSP_WORD);
+                        $view_id = $system_views->id(controller::MC_WORD);
                     }
                 }
             }
@@ -99,14 +126,17 @@ if ($usr->id() > 0) {
 
         // create a display object, select and load the view and display the word according to the view
         if ($view_id > 0) {
+            // TODO first create the frontend object and call from the frontend object the api
+            // TODO for system views avoid the backend call by using the cache from the frontend
             $msk = new view($usr);
             $msk->load_by_id($view_id, view::class);
+            $msk->load_components();
             $msk_dsp = new view_dsp($msk->api_json());
-            $dsp_text = $msk_dsp->display($wrd, $back);
+            $dsp_text = $msk_dsp->show($dbo_dsp, $back);
 
             // use a fallback if the view is empty
             if ($dsp_text == '' or $msk->name() == '') {
-                $view_id = $system_views->id(controller::DSP_START);
+                $view_id = $system_views->id(controller::MC_START);
                 $msk->load_by_id($view_id, view::class);
                 $dsp_text = $msk_dsp->display($wrd, $back);
             }

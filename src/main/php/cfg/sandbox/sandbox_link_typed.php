@@ -3,7 +3,10 @@
 /*
 
     model/sandbox/sandbox_link_typed.php - adding the type field to the user sandbox link named superclass
-    ----------------------------------------------
+    ------------------------------------
+
+    similar to sandbox_link_with_type, but for links with name
+
 
     This file is part of zukunft.com - calc with words
 
@@ -31,15 +34,35 @@
 
 namespace cfg;
 
+use api\api;
+
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 
 class sandbox_link_typed extends sandbox_link_named
 {
 
+    /*
+     * object vars
+     */
+
     // database id of the type used for named link user sandbox objects with predefined functionality
     // which is actually only triple
     // repeating _sandbox_typed, because php 8.1 does not yet allow multi extends
     public ?int $type_id = null;
+
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * reset the type of the link object
+     */
+    function reset(): void
+    {
+        parent::reset();
+        $this->type_id = null;
+    }
 
 
     /*
@@ -67,7 +90,20 @@ class sandbox_link_typed extends sandbox_link_named
 
 
     /*
-     * get preloaded information
+     * settings
+     */
+
+    /**
+     * @return bool true because all child objects use the link type
+     */
+    function is_link_type_obj(): bool
+    {
+        return true;
+    }
+
+
+    /*
+     * preloaded
      */
 
     /**
@@ -96,6 +132,22 @@ class sandbox_link_typed extends sandbox_link_named
     }
 
     /**
+     * set the type based on the api json
+     * @param array $api_json the api json array with the values that should be mapped
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+            if ($key == api::FLD_TYPE) {
+                $this->set_type_id($value);
+            }
+        }
+        return $msg;
+    }
+
+    /**
      * @param object $dsp_obj frontend API objects that should be filled with unique object name
      */
     function fill_dsp_obj(object $dsp_obj): void
@@ -103,6 +155,28 @@ class sandbox_link_typed extends sandbox_link_named
         parent::fill_api_obj($dsp_obj);
 
         $dsp_obj->set_type_id($this->type_id());
+    }
+
+
+    /*
+     * information
+     */
+
+    /**
+     * check if the typed object in the database needs to be updated
+     *
+     * @param sandbox_link_typed $db_obj the word as saved in the database
+     * @return bool true if this word has infos that should be saved in the datanase
+     */
+    function needs_db_update_typed(sandbox_link_typed $db_obj): bool
+    {
+        $result = parent::needs_db_update_named($db_obj);
+        if ($this->type_id != null) {
+            if ($this->type_id != $db_obj->type_id) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
 }

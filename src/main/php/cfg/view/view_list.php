@@ -163,7 +163,7 @@ class view_list extends sandbox_list
     function load_sql(sql_db $db_con, string $class = self::class): sql_par
     {
         $qp = new sql_par($class);
-        $db_con->set_class(sql_db::TBL_VIEW);
+        $db_con->set_class(view::class);
         $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(view::FLD_NAMES);
@@ -185,7 +185,7 @@ class view_list extends sandbox_list
         $db_con->set_name($qp->name);
         $db_con->set_join_fields(
             component_link::FLD_NAMES,
-            sql_db::TBL_COMPONENT_LINK,
+            component_link::class,
             view::FLD_ID,
             view::FLD_ID);
         $db_con->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
@@ -223,17 +223,17 @@ class view_list extends sandbox_list
 
     /**
      * add one view to the view list, but only if it is not yet part of the phrase list
-     * @param view $dsp_to_add the view that should be added to the list
+     * @param view $msk_to_add the view that should be added to the list
      */
-    function add(view $dsp_to_add): void
+    function add(view $msk_to_add): void
     {
-        log_debug($dsp_to_add->dsp_id());
-        if (!in_array($dsp_to_add->id(), $this->ids())) {
-            if ($dsp_to_add->id() <> 0) {
-                $this->add_obj($dsp_to_add);
+        log_debug($msk_to_add->dsp_id());
+        if (!in_array($msk_to_add->id(), $this->ids())) {
+            if ($msk_to_add->id() <> 0) {
+                $this->add_obj($msk_to_add);
             }
         } else {
-            log_debug($dsp_to_add->dsp_id() . ' not added, because it is already in the list');
+            log_debug($msk_to_add->dsp_id() . ' not added, because it is already in the list');
         }
     }
 
@@ -253,9 +253,9 @@ class view_list extends sandbox_list
     {
         $result = new user_message();
         foreach ($json_obj as $dsp_json) {
-            $dsp = new view($this->user());
-            $result->add($dsp->import_obj($dsp_json, $test_obj));
-            $this->add($dsp);
+            $msk = new view($this->user());
+            $result->add($msk->import_obj($dsp_json, $test_obj));
+            $this->add($msk);
         }
 
         return $result;

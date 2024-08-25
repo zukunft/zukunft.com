@@ -46,7 +46,7 @@ use html\html_base;
 use html\view\view as view_dsp;
 
 $debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . '/../';
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 $db_con = prg_start("user");
@@ -83,7 +83,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::DSP_USER);
+    $msk->load_by_code_id(controller::MC_USER);
 
     // do user change
     $result .= $usr->upd_pars($_GET);

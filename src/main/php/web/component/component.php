@@ -34,14 +34,15 @@
 
 namespace html\component;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once SANDBOX_PATH . 'sandbox_typed.php';
+include_once SHARED_TYPES_PATH . 'component_type.php';
+include_once HTML_PATH . 'sheet.php';
 
 use api\api;
 use api\word\word as word_api;
-use cfg\component\component_link_list;
-use cfg\component\component_type;
+use html\sheet;
+use shared\types\component_type;
 use cfg\db\sql_db;
-use cfg\library;
 use cfg\word;
 use controller\controller;
 use html\html_base;
@@ -51,8 +52,8 @@ use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
-use html\view\view as view_dsp;
 use html\view\view_list;
+use shared\library;
 
 class component extends sandbox_typed
 {
@@ -60,12 +61,16 @@ class component extends sandbox_typed
     const FORM_ADD = 'component_add';
     const FORM_EDIT = 'component_edit';
 
+    // TODO to be move to
+    const FLD_ID = 'component_id';
+
     /*
      * object vars
      */
 
     public ?string $code_id = null;         // the entry type code id
     public ?int $position = 0;              // for the frontend the position of the link is included in the component object
+    public ?int $link_id = 0;               // ??
 
     // mainly for table components
     public ?phrase_dsp $phr_row = null;     // the main phrase to select the table rows
@@ -84,9 +89,10 @@ class component extends sandbox_typed
     function dsp_entries(?db_object_dsp $dbo, string $back, bool $test_mode = false): string
     {
         if ($dbo == null) {
-            log_debug($this->dsp_id());
+            // the $dbo check and the message creation has already been done in the view level
+            $this->log_debug($this->dsp_id());
         } else {
-            log_debug($dbo->dsp_id() . ' with the view ' . $this->dsp_id());
+            $this->log_debug($dbo->dsp_id() . ' with the view ' . $this->dsp_id());
         }
 
         $result = '';
@@ -95,7 +101,7 @@ class component extends sandbox_typed
         $type_code_id = $this->type_code_id();
         $result .= match ($type_code_id) {
             component_type::TEXT => $this->text(),
-            component_type::WORD => $this->display_name(),
+            component_type::PHRASE => $this->display_name(),
             component_type::PHRASE_NAME => $this->phrase_name($dbo),
             component_type::VALUES_RELATED => $this->table($dbo),
             component_type::NUMERIC_VALUE => $this->num_list($dbo, $back),
@@ -123,8 +129,10 @@ class component extends sandbox_typed
             component_type::ROW_START => $this->row_start(),
             component_type::ROW_RIGHT => $this->row_right(),
             component_type::ROW_END => $this->row_end(),
+            component_type::CALC_SHEET => $this->calc_sheet(),
             default => 'program code for component type ' . $type_code_id . ' missing<br>'
         };
+        $this->log_debug($this->dsp_id() . ' created');
 
         return $result;
     }
@@ -254,11 +262,11 @@ class component extends sandbox_typed
     }
 
     /**
-     * @param db_object_dsp $dbo
+     * @param db_object_dsp|null $dbo
      * @return string the html code to start a new form and display the tile
      * TODO replace _add with a parameter value
      */
-    function form_tile(db_object_dsp $dbo): string
+    function form_tile(?db_object_dsp $dbo): string
     {
         $lib = new library();
         $html = new html_base();
@@ -424,6 +432,15 @@ class component extends sandbox_typed
         return $html->row_end();
     }
 
+    /**
+     * @return string just to indicate that a row ends
+     */
+    function calc_sheet(): string
+    {
+        $sheet = new sheet();
+        return $sheet->calc_sheet();
+    }
+
 
     /*
      * info
@@ -431,12 +448,12 @@ class component extends sandbox_typed
 
     private function type_code_id(): string
     {
-        global $component_types;
+        global $html_component_types;
         if ($this->type_id() == null) {
-            log_err('Code id for ' . $this->dsp_id() . ' missing');
+            $this->log_err('Code id for ' . $this->dsp_id() . ' missing');
             return '';
         } else {
-            return $component_types->code_id($this->type_id());
+            return $html_component_types->code_id($this->type_id());
         }
     }
 
@@ -464,6 +481,11 @@ class component extends sandbox_typed
         } else {
             $this->position = 0;
         }
+        if (array_key_exists(api::FLD_LINK_ID, $json_array)) {
+            $this->link_id = $json_array[api::FLD_LINK_ID];
+        } else {
+            $this->link_id = 0;
+        }
     }
 
     /**
@@ -489,6 +511,9 @@ class component extends sandbox_typed
     function api_array(): array
     {
         $vars = parent::api_array();
+        $vars[api::FLD_CODE_ID] = $this->code_id;
+        $vars[api::FLD_POSITION] = $this->position;
+        $vars[api::FLD_LINK_ID] = $this->link_id;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -535,11 +560,11 @@ class component extends sandbox_typed
 
         $hidden_fields = '';
         if ($this->id <= 0) {
-            $script = controller::DSP_COMPONENT_ADD;
+            $script = controller::MC_COMPONENT_ADD;
             $fld_ext = '_add';
             $header = $html->text_h2('Create a view element');
         } else {
-            $script = controller::DSP_COMPONENT_EDIT;
+            $script = controller::MC_COMPONENT_EDIT;
             $fld_ext = '';
             $header = $html->text_h2('Change "' . $this->name . '"');
             $hidden_fields .= $html->form_hidden("id", $this->id);
@@ -577,7 +602,7 @@ class component extends sandbox_typed
      */
     function dsp_edit(int $add_link, word $wrd, string $back): string
     {
-        log_debug($this->dsp_id() . ' (called from ' . $back . ')');
+        $this->log_debug($this->dsp_id() . ' (called from ' . $back . ')');
         $result = '';
         $html = new html_base();
 
@@ -810,31 +835,28 @@ class component extends sandbox_typed
      */
     private function linked_views($add_link, $wrd, $back): string
     {
-        log_debug("id " . $this->id . " (word " . $wrd->id . ", add " . $add_link . ").");
+        $this->log_debug("id " . $this->id . " (word " . $wrd->id . ", add " . $add_link . ").");
 
         global $usr;
         global $db_con;
         $html = new html_base();
         $result = '';
 
-        if (UI_USE_BOOTSTRAP) {
+        if (html_base::UI_USE_BOOTSTRAP) {
             $result .= $html->dsp_tbl_start_hist();
         } else {
             $result .= $html->dsp_tbl_start_half();
         }
 
-        $lnk_lst = new component_link_list($this->user());
-        $lnk_lst->load_by_component($this);
+        $msk_lst = new view_list();
+        $msk_lst->load_by_component_id($this->id());
 
-        foreach ($lnk_lst as $lnk) {
+        foreach ($msk_lst as $msk) {
             $result .= '  <tr>' . "\n";
             $result .= '    <td>' . "\n";
-            $dsp = new view_dsp();
-            $dsp->id = $lnk->fob->id();
-            $dsp->name = $lnk->fob->name();
-            $result .= '      ' . $dsp->name_linked($wrd, $back) . "\n";
+            $result .= '      ' . $msk->name_linked($wrd, $back) . "\n";
             $result .= '    </td>' . "\n";
-            $result .= $this->btn_unlink($lnk->fob->id(), $wrd, $back);
+            $result .= $this->btn_unlink($msk->id(), $wrd, $back);
             $result .= '  </tr>' . "\n";
         }
 
@@ -861,12 +883,12 @@ class component extends sandbox_typed
     // display the history of a view component
     function dsp_hist($page, $size, $call, $back): string
     {
-        log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        $this->log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display($this->user());
         $log_dsp->id = $this->id;
-        $log_dsp->usr = $this->user();
+        //$log_dsp->usr = $this->user();
         $log_dsp->type = component::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
@@ -874,14 +896,14 @@ class component extends sandbox_typed
         $log_dsp->back = $back;
         $result .= $log_dsp->dsp_hist();
 
-        log_debug("done");
+        $this->log_debug("done");
         return $result;
     }
 
     // display the link history of a view component
     function dsp_hist_links($page, $size, $call, $back): string
     {
-        log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        $this->log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display($this->user());
@@ -893,8 +915,18 @@ class component extends sandbox_typed
         $log_dsp->back = $back;
         $result .= $log_dsp->dsp_hist_links();
 
-        log_debug("done");
+        $this->log_debug("done");
         return $result;
+    }
+
+    function log_err(string $msg): void
+    {
+        echo $msg;
+    }
+
+    function log_debug(string $msg): void
+    {
+        echo '';
     }
 
 

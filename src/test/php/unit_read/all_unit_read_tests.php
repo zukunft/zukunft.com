@@ -38,62 +38,86 @@ use api\phrase\group as group_api;
 use api\value\value as value_api;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
+use cfg\user_message;
 use cfg\verb;
 use html\types\type_lists as type_list_dsp;
+use test\all_tests;
 use unit\api_tests;
 use unit\all_unit_tests;
 
 class all_unit_read_tests extends all_unit_tests
 {
 
-    function run_unit_db_tests(): void
+    function run_unit_db_tests(all_tests $t): void
     {
+        global $db_con;
+        global $usr;
+
         $this->header('Start the zukunft.com unit database read only tests');
 
+        // reload the setting lists after using dummy list for the unit tests
+        $db_con->close();
+        $db_con = prg_restart("reload cache after unit testing");
+
+        // create the testing users
+        $this->set_users();
+        $usr = $this->usr1;
+
+        // check that the main database test entries are still active
+        $this->create_test_db_entries($t);
+
+        // run the unit database tests
+        $this->init_unit_db_tests();
+        $this->usr1->load_usr_data();
+
         // do the database unit tests
-        (new system_tests)->run($this);
-        (new sql_db_tests)->run($this);
-        (new user_tests)->run($this);
-        (new protection_tests)->run($this);
-        (new share_tests)->run($this);
-        (new word_tests)->run($this);
-        (new word_list_tests)->run($this);
-        (new verb_tests)->run($this);
-        (new triple_tests)->run($this);
-        (new triple_list_tests)->run($this);
-        (new phrase_tests)->run($this);
-        (new phrase_list_tests)->run($this);
-        (new phrase_group_tests)->run($this);
-        (new term_tests)->run($this);
-        (new term_list_tests)->run($this);
-        (new value_tests)->run($this);
-        (new value_list_tests)->run($this);
-        (new formula_tests)->run($this);
-        (new formula_list_tests)->run($this);
-        (new expression_tests)->run($this);
-        (new view_tests)->run($this);
-        (new view_list_tests)->run($this);
-        (new component_tests)->run($this);
-        (new component_list_tests)->run($this);
-        (new ref_tests)->run($this);
-        (new language_tests)->run($this);
-        (new change_log_tests)->run($this);
-        (new system_log_tests)->run($this);
-        (new job_tests)->run($this);
+        (new system_read_tests)->run($this);
+        (new sql_db_read_tests)->run($this);
+        (new user_read_tests)->run($this);
+        (new protection_read_tests)->run($this);
+        (new share_read_tests)->run($this);
+        (new word_read_tests)->run($this);
+        (new word_list_read_tests)->run($this);
+        (new verb_read_tests)->run($this);
+        (new triple_read_tests)->run($this);
+        (new triple_list_read_tests)->run($this);
+        (new phrase_read_tests)->run($this);
+        (new phrase_list_read_tests)->run($this);
+        (new group_read_tests)->run($this);
+        (new term_read_tests)->run($this);
+        (new term_list_read_tests)->run($this);
+        (new value_read_tests)->run($this);
+        (new value_list_read_tests)->run($this);
+        (new formula_read_tests)->run($this);
+        (new formula_list_read_tests)->run($this);
+        (new expression_read_tests)->run($this);
+        (new element_list_read_tests)->run($this);
+        (new view_read_tests)->run($this);
+        (new view_list_read_tests)->run($this);
+        (new component_read_tests)->run($this);
+        (new component_list_read_tests)->run($this);
+        (new source_read_tests)->run($this);
+        (new ref_read_tests)->run($this);
+        (new language_read_tests)->run($this);
+        (new change_log_read_tests)->run($this);
+        (new sys_log_read_tests)->run($this);
+        (new job_read_tests)->run($this);
 
         // load the types from the api message
-        $api_msg = $this->dummy_type_lists_api($this->usr1)->get_json();
+        $api_msg = $this->type_lists_api($this->usr1)->get_json();
         new type_list_dsp($api_msg);
 
         $api_test = new api_tests();
         $api_test->run_api_test($this);
         $api_test->run_ui_test($this);
-        (new export_tests())->run($this);
+        (new export_read_tests())->run($this);
 
+        // cleanup also before testing to remove any leftovers
+        $this->clean_up_unit_db_tests();
 
     }
 
-    function init_unit_db_tests(): void
+    private function init_unit_db_tests(): void
     {
         // add functional test rows to the database for read testing e.g. exclude sandbox entries
         $this->test_triple(
@@ -116,7 +140,7 @@ class all_unit_read_tests extends all_unit_tests
      * to have a clean database without test rows
      * @return void
      */
-    function clean_up_unit_db_tests(): void
+    private function clean_up_unit_db_tests(): void
     {
         //$this->del_triple_by_name(triple_api::TN_READ_NAME);
         //$phr_grp = $this->load_phrase_group_by_name(group_api::TN_READ);

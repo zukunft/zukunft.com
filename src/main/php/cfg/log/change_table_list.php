@@ -34,6 +34,7 @@ namespace cfg\log;
 use cfg\db\sql_db;
 use cfg\type_list;
 use cfg\type_object;
+use test\create_test_objects;
 
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
@@ -50,6 +51,8 @@ class change_table_list extends type_list
     // and an assignment of the deprecated tables names to the table names of this version
     // this list contains only tables where a direct change by the user is possible
     // so the phrase, term and figure tables are not included here, but in the sql_db list
+    // TODO should only contain the table names of past program versions
+    //      to combine the log in case of a renamed class
     const USER = 'users';
     const WORD = 'words';
     const WORD_USR = 'user_words';
@@ -105,27 +108,14 @@ class change_table_list extends type_list
     );
 
     /**
-     * overwrite the general user type list load function to keep the link to the table type capsuled
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @return bool true if load was successful
-     */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_CHANGE_TABLE): bool
-    {
-        return parent::load($db_con, $db_type);
-    }
-
-    /**
      * adding the system log stati used for unit tests to the dummy list
      */
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new type_object(change_table_list::VALUE, change_table_list::VALUE, '', 2);
-        $this->add($type);
-        $type = new type_object(change_table_list::USER, change_table_list::USER, '', 3);
-        $this->add($type);
-        $type = new type_object(change_table_list::WORD, change_table_list::WORD, '', 5);
-        $this->add($type);
+        // read the corresponding names and description from the internal config csv files
+        $t = new create_test_objects();
+        $t->read_from_config_csv($this);
     }
 
     /**

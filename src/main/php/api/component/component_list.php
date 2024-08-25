@@ -32,6 +32,9 @@
 
 namespace api\component;
 
+include_once API_SANDBOX_PATH . 'list_object.php';
+include_once WORD_PATH . 'word_list.php';
+
 use api\sandbox\list_object as list_api;
 use html\word\word_list as word_list_dsp;
 

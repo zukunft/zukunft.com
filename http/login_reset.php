@@ -30,13 +30,14 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use html\html_base;
-use cfg\db\sql_db;
-use cfg\user;
-
+global $debug;
 $debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . '/../';
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+use html\html_base;
+use cfg\user;
 
 $html = new html_base();
 
@@ -78,7 +79,7 @@ if ($usr->id() > 0) {
 
             // save activation key
             $key = getRandomKey();
-            $db_con->set_class(sql_db::TBL_USER);
+            $db_con->set_class(user::class);
             $db_con->set_usr($usr->id());
             if (!$db_con->update_old($db_usr->id(), array("activation_key", "activation_timeout"), array($db_con->sf($key), 'NOW() + INTERVAL 1 DAY'))) {
                 log_err('Saving of activation key failed for user ' . $db_usr->id(), 'login_reset');

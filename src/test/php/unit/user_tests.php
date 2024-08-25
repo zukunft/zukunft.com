@@ -32,6 +32,7 @@
 
 namespace unit;
 
+use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\job_time;
 use cfg\user;
@@ -48,10 +49,10 @@ class user_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'user->';
         $t->resource_path = 'db/user/';
         $json_file = 'unit/user/user_import.json';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the user class (src/main/php/model/user/user.php)');
 
@@ -66,8 +67,8 @@ class user_tests
         $t->subheader('SQL statement tests');
 
         $test_usr = new user();
-        $t->assert_sql_by_id($db_con, $test_usr);
-        $t->assert_sql_by_name($db_con, $test_usr);
+        $t->assert_sql_by_id($sc, $test_usr);
+        $t->assert_sql_by_name($sc, $test_usr);
         $this->assert_sql_by_email($t, $db_con, $test_usr);
         $this->assert_sql_by_name_or_email($t, $db_con, $test_usr);
         $this->assert_sql_by_ip($t, $db_con, $test_usr);
@@ -80,7 +81,7 @@ class user_tests
 
         $t->subheader('API unit tests');
 
-        $test_usr = $t->dummy_user();
+        $test_usr = $t->user_sys_test();
         $t->assert_api($test_usr);
 
 

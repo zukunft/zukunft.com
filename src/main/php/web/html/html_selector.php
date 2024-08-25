@@ -33,7 +33,9 @@
 
 namespace html;
 
-include_once WEB_SYSTEM_PATH . 'messages.php';
+include_once SYSTEM_PATH . 'messages.php';
+
+use html\system\messages;
 
 class html_selector
 {
@@ -57,7 +59,7 @@ class html_selector
         $result = $this->start_selector();
 
         if ($this->dummy_text == '') {
-            $this->dummy_text = (new msg())->txt(msg::PLEASE_SELECT);
+            $this->dummy_text = (new messages())->txt(messages::PLEASE_SELECT);
         }
 
         if ($this->selected == 0) {
@@ -99,7 +101,7 @@ class html_selector
           $label == $this->name;
         }
         */
-        if (UI_USE_BOOTSTRAP) {
+        if (html_base::UI_USE_BOOTSTRAP) {
             $result .= '<div class="form-group ' . $this->bs_class . '">';
             if ($this->label != "") {
                 $result .= '<label for="' . $this->name . '">' . $this->label . '</label>';
@@ -144,7 +146,7 @@ class html_selector
         } else {
             $result = '</select>';
         }
-        if (UI_USE_BOOTSTRAP) {
+        if (html_base::UI_USE_BOOTSTRAP) {
             $result .= '</div>';
         }
         return $result;

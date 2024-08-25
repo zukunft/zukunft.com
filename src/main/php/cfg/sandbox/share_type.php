@@ -33,16 +33,6 @@ namespace cfg;
 
 class share_type extends type_object
 {
-    // the field name used for the JSON im- and export
-    const JSON_FLD = 'share';
-
-    // list of the ref types that have a coded functionality
-    const PUBLIC = "public";
-    const PUBLIC_ID = 1;
-    const PERSONAL = "personal";
-    const GROUP = "group";
-    const PRIVATE = "private";
-
 
     /*
      * database link

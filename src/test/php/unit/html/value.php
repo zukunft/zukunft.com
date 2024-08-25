@@ -44,7 +44,7 @@ class value
 
         $t->subheader('value tests');
 
-        $val = new value_dsp($t->dummy_value()->api_json());
+        $val = new value_dsp($t->value()->api_json());
         $test_page = $html->text_h2('value display test');
         $test_page .= 'with tooltip: ' . $val->display() . '<br>';
         $test_page .= 'with link: ' . $val->display_linked() . '<br>';

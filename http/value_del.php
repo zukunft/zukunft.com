@@ -30,18 +30,18 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+use cfg\value\value;
 use controller\controller;
-use html\api;
+use html\rest_ctrl;
 use html\button;
 use html\html_base;
-use html\msg;
+use html\system\messages;
 use html\view\view as view_dsp;
 use cfg\user;
-use cfg\value;
 use cfg\view;
 
 $debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . '/../';
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // to create the code for the html frontend
@@ -63,7 +63,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::DSP_VALUE_DEL);
+    $msk->load_by_code_id(controller::MC_VALUE_DEL);
     $back = $_GET[controller::API_BACK];  // the page from which the value deletion has been called
 
     // get the parameters
@@ -87,10 +87,10 @@ if ($usr->id() > 0) {
             $result .= $msk_dsp->dsp_navbar($back);
 
             $val->load_phrases();
-            $url = $html->url(api::VALUE . api::REMOVE, $val_id, $back);
-            $ui_msg = new msg();
+            $url = $html->url(rest_ctrl::VALUE . rest_ctrl::REMOVE, $val_id, $back);
+            $ui_msg = new messages();
             $result .= (new button($url, $back))->yesno(
-                msg::VALUE_DEL, $val->number() . $ui_msg->txt(msg::FOR) . $val->phr_lst()->dsp_name() . '?');
+                messages::VALUE_DEL, $val->number() . $ui_msg->txt(messages::FOR) . $val->phr_lst()->dsp_name() . '?');
         }
     } else {
         $result .= $html->dsp_go_back($back, $usr);

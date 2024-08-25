@@ -45,8 +45,8 @@ class phrase
 
         $t->subheader('Phrase tests');
 
-        $wrd = new phrase_dsp($t->dummy_word()->phrase()->api_json());
-        $trp = new phrase_dsp($t->dummy_triple_pi()->phrase()->api_json());
+        $wrd = new phrase_dsp($t->word()->phrase()->api_json());
+        $trp = new phrase_dsp($t->triple_pi()->phrase()->api_json());
         $test_page = $html->text_h2('Phrase display test');
         $test_page .= 'word phrase with tooltip: ' . $wrd->display() . '<br>';
         $test_page .= 'word phrase with link: ' . $wrd->display_linked() . '<br>';

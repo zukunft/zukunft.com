@@ -32,12 +32,12 @@
 namespace api;
 
 use cfg\config;
+use cfg\db\sql_db;
+use cfg\user;
 use DateTime;
 use DateTimeInterface;
 use html\html_base;
-use cfg\library;
-use cfg\db\sql_db;
-use cfg\user;
+use shared\library;
 
 class api_message
 {
@@ -70,9 +70,10 @@ class api_message
      */
 
     /**
-     * create and always set the header information
+     * create and set the api message header information
      * @param sql_db $db_con the active database link to get the configuration from the database
-     * @param string $class
+     * @param string $class the class of the message
+     * @param user $usr the user view that the api message should contain
      */
     function __construct(sql_db $db_con, string $class, user $usr)
     {

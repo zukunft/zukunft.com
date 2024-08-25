@@ -35,16 +35,16 @@ namespace unit;
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once WEB_WORD_PATH . 'word_list.php';
 
-use api\verb\verb as verb_api;
 use api\word\word as word_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\foaf_direction;
 use cfg\phrase_type;
-use cfg\library;
-use cfg\db\sql_db;
 use cfg\verb;
 use cfg\word;
 use cfg\word_list;
 use html\word\word_list as word_list_dsp;
+use shared\library;
 use test\test_cleanup;
 
 class word_list_tests
@@ -58,10 +58,10 @@ class word_list_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'word_list->';
         $t->resource_path = 'db/word/';
         $json_file = 'unit/word/word_list.json';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the word list class (src/main/php/model/word/word_list.php)');
 
@@ -69,12 +69,12 @@ class word_list_tests
 
         // load only the names
         $wrd_lst = new word_list($usr);
-        $t->assert_sql_names($db_con, $wrd_lst, new word($usr));
-        $t->assert_sql_names($db_con, $wrd_lst, new word($usr), word_api::TN_READ);
+        $t->assert_sql_names($sc, $wrd_lst, new word($usr));
+        $t->assert_sql_names($sc, $wrd_lst, new word($usr), word_api::TN_READ);
 
         // load by word ids
         $wrd_lst = new word_list($usr);
-        $t->assert_sql_by_ids($db_con, $wrd_lst, array(3, 2, 4));
+        $t->assert_sql_by_ids($sc, $wrd_lst, array(3, 2, 4));
 
         // load by word names
         $wrd_lst = new word_list($usr);
@@ -288,7 +288,7 @@ class word_list_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $wrd_lst = $t->dummy_word_list();
+        $wrd_lst = $t->word_list();
         $t->assert_api_to_dsp($wrd_lst, new word_list_dsp());
 
     }

@@ -32,7 +32,9 @@
 
 namespace html\types;
 
-use cfg\share_type;
+include_once SHARED_TYPES_PATH . 'share_type.php';
+
+use shared\types\share_type;
 
 class share extends type_list
 {
@@ -44,7 +46,7 @@ class share extends type_list
      */
     function selector(
         string $form = '',
-        int $selected = 0,
+        int    $selected = 0,
         string $name = self::NAME,
         string $bs_class = '',
         string $label = ''

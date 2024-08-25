@@ -61,13 +61,14 @@ class change_action extends type_object
 
     // comments used for the database creation
     const TBL_COMMENT = 'for add, change, delete, undo and redo actions';
+    const FLD_ID = 'change_action_id';
     const FLD_NAME = 'change_action_name';
 
     // field lists for the table creation
     const FLD_LST_ALL = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
         [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, '', '', ''],
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
     );
 
 }

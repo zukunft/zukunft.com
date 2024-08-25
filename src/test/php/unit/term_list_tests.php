@@ -32,6 +32,7 @@ use api\formula\formula as formula_api;
 use api\word\triple as triple_api;
 use api\verb\verb as verb_api;
 use api\word\word as word_api;
+use cfg\db\sql;
 use cfg\phrase_list;
 use cfg\trm_ids;
 use html\html_base;
@@ -61,6 +62,7 @@ class term_list_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'term_list->';
         $t->resource_path = 'db/term/';
 
@@ -77,25 +79,25 @@ class term_list_tests
 
         // load only the names
         $phr_lst = new term_list($usr);
-        $t->assert_sql_names($db_con, $phr_lst, new term($usr));
-        $t->assert_sql_names($db_con, $phr_lst, new term($usr), verb_api::TN_IS);
+        $t->assert_sql_names($sc, $phr_lst, new term($usr));
+        $t->assert_sql_names($sc, $phr_lst, new term($usr), verb_api::TN_IS);
 
         $trm_lst = new term_list($usr);
         $trm_ids = new trm_ids(array(3, -2, 4, -7));
-        $t->assert_sql_by_ids($db_con, $trm_lst, $trm_ids);
+        $t->assert_sql_by_ids($sc, $trm_lst, $trm_ids);
         $lst = $this->new_list();
-        $t->assert_sql_like($db_con, $lst);
+        $t->assert_sql_like($sc, $lst);
 
 
         $t->subheader('API unit tests');
 
-        $trm_lst = $t->dummy_term_list();
+        $trm_lst = $t->term_list();
         $t->assert_api($trm_lst);
 
 
         $t->subheader('HTML frontend unit tests');
 
-        $trm_lst = $t->dummy_term_list();
+        $trm_lst = $t->term_list();
         $t->assert_api_to_dsp($trm_lst, new term_list_dsp());
 
     }
@@ -125,8 +127,8 @@ class term_list_tests
     {
         global $usr;
         $trm_lst = new term_list($usr);
-        $trm_lst->add($t->dummy_triple_pi()->term());
-        $trm_lst->add($t->dummy_word()->term());
+        $trm_lst->add($t->triple_pi()->term());
+        $trm_lst->add($t->word()->term());
         return $trm_lst;
     }
 

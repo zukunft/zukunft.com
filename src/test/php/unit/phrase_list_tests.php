@@ -64,6 +64,7 @@ class phrase_list_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'phrase_list->';
         $t->resource_path = 'db/phrase/';
 
@@ -82,19 +83,19 @@ class phrase_list_tests
 
         // load by name pattern (expected to be most often used)
         $phr_lst = new phrase_list($usr);
-        $t->assert_sql_like($db_con, $phr_lst, 'S');
+        $t->assert_sql_like($sc, $phr_lst, 'S');
 
         // load by phrase ids
         $phr_lst = new phrase_list($usr);
         $phr_ids = new phr_ids(array(3, -2, 4, -7));
-        $t->assert_sql_by_ids($db_con, $phr_lst, $phr_ids);
+        $t->assert_sql_by_ids($sc, $phr_lst, $phr_ids);
         $this->assert_sql_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
         $phr_names = array(word_api::TN_READ, triple_api::TN_READ);
-        $t->assert_sql_by_names($db_con, $phr_lst, $phr_names);
+        $t->assert_sql_by_names($sc, $phr_lst, $phr_names);
 
         // to review
-        $t->assert_sql_names($db_con, $phr_lst, new phrase($usr));
-        $t->assert_sql_names($db_con, $phr_lst, new phrase($usr), triple_api::TN_READ);
+        $t->assert_sql_names($sc, $phr_lst, new phrase($usr));
+        $t->assert_sql_names($sc, $phr_lst, new phrase($usr), triple_api::TN_READ);
 
         $this->test = $t;
 
@@ -121,7 +122,7 @@ class phrase_list_tests
         $t->display('phrase_list->ex_time names', $target, $result);
 
         $test_name = 'get all words related to a phrase list: Mathematics, constant, Mathematical constant, Pi and Pi (Math) results in Mathematics, constant and Pi';
-        $phr_lst = $t->dummy_phrase_list();
+        $phr_lst = $t->phrase_list();
         $wrd_lst = $phr_lst->wrd_lst_all();
         $t->assert($test_name, $wrd_lst->count(), 3);
 
@@ -131,7 +132,7 @@ class phrase_list_tests
         $t->subheader('FOAF unit tests');
 
         $test_name = 'test the verb "are" by getting the phrases that are a city';
-        $wrd_city = $t->city_word();
+        $wrd_city = $t->word_city();
         $city_lst = $wrd_city->are($t->phrase_list_all());
         $target = $t->phrase_list_cities();
         // TODO activate Prio 2
@@ -140,17 +141,17 @@ class phrase_list_tests
 
         $t->subheader('API unit tests');
 
-        $phr_lst = $t->dummy_phrase_list();
+        $phr_lst = $t->phrase_list();
         $t->assert_api($phr_lst);
 
 
         $t->subheader('HTML frontend unit tests');
 
-        $phr_lst = $t->dummy_phrase_list();
+        $phr_lst = $t->phrase_list();
         $t->assert_api_to_dsp($phr_lst, new phrase_list_dsp());
 
         // math is dominant in a phrase list use math phrases as a suggestion for a new phrase
-        $phr_lst_dsp = $t->dummy_phrase_list_dsp();
+        $phr_lst_dsp = $t->phrase_list_dsp();
         $phr = $phr_lst_dsp->mainly();
         if ($phr != null) {
             $t->assert_text_contains('Main word is "math"', $phr->name(), word_api::TN_READ);

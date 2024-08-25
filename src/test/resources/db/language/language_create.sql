@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS languages
 (
-    language_id    BIGSERIAL PRIMARY KEY,
+    language_id    SERIAL PRIMARY KEY,
     language_name  varchar(255)     NOT NULL,
     code_id        varchar(100) DEFAULT NULL,
     description    text         DEFAULT NULL,

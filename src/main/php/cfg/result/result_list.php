@@ -32,27 +32,29 @@
 namespace cfg\result;
 
 include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_table_type.php';
+include_once DB_PATH . 'sql_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_value_list.php';
 include_once API_RESULT_PATH . 'result_list.php';
 
 use api\result\result_list as result_list_api;
-use cfg\job;
-use cfg\job_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
-use cfg\db\sql_table_type;
+use cfg\db\sql_field_list;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\formula;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_list;
-use cfg\library;
+use cfg\job;
+use cfg\job_list;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\sandbox_value_list;
 use cfg\triple;
+use cfg\user;
 use cfg\user_list;
 use cfg\user_message;
 use cfg\value\value;
@@ -63,6 +65,7 @@ use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\system\back_trace;
 use html\word\word as word_dsp;
+use shared\library;
 
 class result_list extends sandbox_value_list
 {
@@ -285,18 +288,55 @@ class result_list extends sandbox_value_list
         $name_count = '_p' . $phr_lst->count();
         $qp->name = $lib->class_to_name(result_list::class) . '_by_' . $name_ext . $name_count;
         $par_types = array();
+
+
+        // prepare adding the parameters in order of expected usage
+        $par_pos = $sc->par_count();
+        $pos_phr_lst = [];
+        $pos_grp_lst = [];
+
+        // add the single phrase parameter
+        foreach ($phr_lst->lst() as $phr) {
+            $pos_phr_lst[] = $par_pos;
+            $par_pos++;
+            $par_name = $sc->par_name($par_pos);
+            $spt = sql_par_type::INT_SAME;
+            if ($or) {
+                $spt = sql_par_type::INT_SAME_OR;
+            }
+            $sc->add_where_par(phrase::FLD_ID, $phr->id(), $spt, '', $par_name);
+        }
+
+        // add the phrase group parameter
+        foreach ($phr_lst->lst() as $phr) {
+            $pos_grp_lst[] = $par_pos;
+            $par_pos++;
+            $par_name = $sc->par_name($par_pos);
+            $spt = sql_par_type::LIKE;
+            if ($or) {
+                $spt = sql_par_type::LIKE_OR;
+            }
+            $grp_id = new group_id();
+            $sc->add_where_par(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), $spt, '', $par_name);
+        }
+
+        // add the user parameter
+        $pos_usr = $par_pos;
+        $par_pos++;
+        $par_name = $sc->par_name($par_pos);
+        $sc->add_where_par(user::FLD_ID, $this->user()->id(), sql_par_type::INT, '', $par_name);
+
+        // remember the parameters
+        $par_lst = clone $sc->par_list();
+
         // loop over the possible tables where the value might be stored in this pod
-        $par_pos = 2;
         foreach (result::TBL_LIST as $tbl_typ) {
             $sc->reset();
-            $qp_tbl = $this->load_sql_by_phr_lst_single($sc, result::class, $phr_lst, $or, $tbl_typ, $par_pos);
+            $sc->set_par_list($par_lst);
+            $qp_tbl = $this->load_sql_by_phr_lst_single(
+                $sc, result::class, $or, $tbl_typ,
+                $pos_phr_lst, $pos_grp_lst, $pos_usr);
             $qp->merge($qp_tbl);
-            $phr_pos = $par_pos + 2;
-        }
-        // sort the parameters if the parameters are part of the union
-        if ($sc->db_type() != sql_db::MYSQL) {
-            $lib = new library();
-            $qp->par = $lib->key_num_sort($qp->par);
         }
 
         foreach ($qp->par as $par) {
@@ -317,12 +357,12 @@ class result_list extends sandbox_value_list
      *     *
      * @param sql $sc with the target db_type set
      * @param formula $frm if set to get all results for this phrase
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_single(sql $sc, formula $frm, array $tbl_typ_lst): sql_par
+    function load_sql_by_frm_single(sql $sc, formula $frm, array $sc_par_lst): sql_par
     {
-        $qp = $this->load_sql_init($sc, result::class, 'frm', $tbl_typ_lst);
+        $qp = $this->load_sql_init($sc, result::class, 'frm', $sc_par_lst, new sql_field_list());
         $sc->add_where(formula::FLD_ID, $frm->id());
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
@@ -337,15 +377,15 @@ class result_list extends sandbox_value_list
      *
      * @param sql $sc the sql creator instance with the target db_type already set
      * @param string $query_name the name extension to make the query name unique
-     * @param sql_table_type $tbl_typ the table extension to force the sub table selection
+     * @param sql_type $tbl_typ the table extension to force the sub table selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql $sc, string $query_name, sql_table_type $tbl_typ = sql_table_type::MOST): sql_par
+    private function load_sql(sql $sc, string $query_name, sql_type $tbl_typ = sql_type::MOST): sql_par
     {
-        $qp = new sql_par(self::class, false, false, $tbl_typ->extension());
+        $qp = new sql_par(self::class, new sql_type_list([$tbl_typ]));
         $qp->name .= $query_name;
 
-        $sc->set_class(result::class, false, $tbl_typ->extension());
+        $sc->set_class(result::class, new sql_type_list([]), $tbl_typ->extension());
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $res = new result($this->user());
         $sc->set_id_field($res->id_field_list($tbl_typ));
@@ -470,7 +510,7 @@ class result_list extends sandbox_value_list
                 ') must be set to load a ' . self::class, self::class . '->load_sql');
             $qp->name = '';
         } else {
-            $db_con->set_class(sql_db::TBL_RESULT);
+            $db_con->set_class(result::class);
             // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
             $res = new result($this->user());
             $db_con->set_id_field($res->id_field());

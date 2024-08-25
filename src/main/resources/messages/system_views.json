@@ -9,7 +9,7 @@
     {
       "name": "Word",
       "description": "simply show the word name",
-      "type": "word_name"
+      "type": "phrase_name"
     },
     {
       "name": "system form title word add",
@@ -147,6 +147,11 @@
       "name": "system formatter row end",
       "type": "row_end",
       "code_id": "row_end"
+    },
+    {
+      "name": "spreadsheet",
+      "description": "s sheet with words, number and formulas",
+      "type": "calc_sheet"
     }
   ],
   "views": [
@@ -163,13 +168,13 @@
     },
     {
       "name": "Start view",
-      "description": "A dynamic start mask that shows a interesting fact",
+      "description": "A dynamic start mask that shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems",
       "type": "entry",
       "code_id": "entry_view",
       "components": [
         {
           "position": "1",
-          "name": "Word"
+          "name": "spreadsheet"
         }
       ]
     },
@@ -546,7 +551,7 @@
         {
           "position": "1",
           "name": "Name",
-          "type": "word_name"
+          "type": "phrase_name"
         },
         {
           "position": "2",

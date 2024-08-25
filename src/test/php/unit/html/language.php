@@ -52,7 +52,7 @@ class language
 
         $t->subheader('language tests');
 
-        $src = new language_dsp($t->dummy_language()->api_json());
+        $src = new language_dsp($t->language()->api_json());
         $test_page = $html->text_h2('language display test');
         $test_page .= 'with tooltip: ' . $src->display() . '<br>';
         $test_page .= 'with link: ' . $src->display_linked() . '<br>';

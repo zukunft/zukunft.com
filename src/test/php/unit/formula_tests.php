@@ -37,6 +37,8 @@ include_once MODEL_FORMULA_PATH . 'expression.php';
 use api\formula\formula as formula_api;
 use api\value\value as value_api;
 use api\word\word as word_api;
+use cfg\db\sql;
+use cfg\db\sql_type;
 use cfg\expression;
 use cfg\formula;
 use cfg\phrase_list;
@@ -52,72 +54,91 @@ class formula_tests
     {
 
         global $usr;
-        global $formula_types;
 
         // init
-        $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'formula->';
         $t->resource_path = 'db/formula/';
-        $json_file = 'unit/formula/scale_second_to_minute.json';
-        $usr->set_id(1);
 
-        $t->header('Unit tests of the formula class (src/main/php/model/formula/formula.php)');
+        $t->header('formula unit tests');
 
-
-        $t->subheader('SQL setup statements');
+        $t->subheader('formula sql setup');
         $frm = $t->formula();
         $t->assert_sql_table_create($frm);
         $t->assert_sql_index_create($frm);
         $t->assert_sql_foreign_key_create($frm);
 
-
-        $t->subheader('SQL user sandbox statement tests');
-
+        $t->subheader('formula sql read');
         $frm = new formula($usr);
-        $t->assert_sql_by_id($db_con, $frm);
-        $t->assert_sql_by_name($db_con, $frm);
+        $t->assert_sql_by_id($sc, $frm);
+        $t->assert_sql_by_name($sc, $frm);
 
-
-        $t->subheader('SQL statement tests');
-
-        // sql to load the formula by id
+        $t->subheader('formula sql read default and user changes by id');
         $frm = new formula($usr);
-        $frm->set_id(2);
-        //$t->assert_sql_all($db_con, $frm);
-        $t->assert_sql_standard($db_con, $frm);
-        $t->assert_sql_not_changed($db_con, $frm);
-        $t->assert_sql_user_changes($db_con, $frm);
-        $this->assert_sql_user_changes_frm($t, $db_con, $frm);
+        $frm->set_id(formula_api::TI_READ_ANOTHER);
+        $t->assert_sql_standard($sc, $frm);
+        $t->assert_sql_not_changed($sc, $frm);
+        $t->assert_sql_user_changes($sc, $frm);
+        $this->assert_sql_user_changes_frm($t, $frm);
 
-        // sql to load the formula by name
+        $t->subheader('formula sql read default by name');
         $frm = new formula($usr);
         $frm->set_name(formula_api::TF_READ_SCALE_MIO);
-        //$t->assert_sql_all($db_con, $frm);
-        $t->assert_sql_standard($db_con, $frm);
+        $t->assert_sql_standard($sc, $frm);
 
-
-        $t->subheader('Im- and Export tests');
-
-        $t->assert_json_file(new formula($usr), $json_file);
-
-
-        $t->subheader('API and HTML frontend unit tests');
-
+        $t->subheader('formula sql write insert');
+        $frm = $t->formula_name_only();
+        $t->assert_sql_insert($sc, $frm);
+        $t->assert_sql_insert($sc, $frm, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
+        $t->assert_sql_insert($sc, $frm, [sql_type::LOG, sql_type::USER]);
         $frm = $t->formula();
-        $t->assert_api($frm);
+        $t->assert_sql_insert($sc, $frm);
+        $t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
+        $frm = $t->formula_filled();
+        $t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
+
+        $t->subheader('formula sql write update');
+        $frm = $t->formula_name_only();
+        $frm_renamed = $frm->cloned(formula_api::TN_RENAMED);
+        $t->assert_sql_update($sc, $frm_renamed, $frm);
+        $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::USER]);
+        $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG, sql_type::USER]);
+
+        $t->subheader('formula sql write delete');
+        $t->assert_sql_delete($sc, $frm);
+        $t->assert_sql_delete($sc, $frm, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $frm, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $frm, [sql_type::LOG, sql_type::USER]);
+
+        $t->subheader('formula api unit tests');
+        $frm = $t->formula_filled();
+        $t->assert_api_json($frm);
+        $frm->excluded = false;
+        $t->assert_api($frm, 'formula_body');
+
+        $t->subheader('formula frontend unit tests');
+        $frm = $t->formula();
         $t->assert_api_to_dsp($frm, new formula_dsp());
 
+        $t->subheader('formula im- and export unit tests');
+        $json_file = 'unit/formula/scale_second_to_minute.json';
+        $t->assert_json_file(new formula($usr), $json_file);
 
         $t->subheader('Expression tests');
+        // TODO activate
+        //$t->assert_true('formula with at least one predefined formula', $t->formula_increase()->is_special());
+        $t->assert_false('formula without predefined formula', $t->formula()->is_special());
 
         // get the id of the phrases that should be added to the result based on the formula reference text
         $target = new phrase_list($usr);
         $trm_lst = new term_list($usr);
-        $frm = $t->dummy_word_one();
+        $frm = $t->word_one();
         $target->add($frm->phrase());
         $trm_lst->add($frm->term());
         $exp = new expression($usr);
-        $exp->set_ref_text('{w' . word_api::TI_ONE . '}={w' . word_api::TI_MIO . '}*1000000', $t->dummy_term_list_scale());
+        $exp->set_ref_text('{w' . word_api::TI_ONE . '}={w' . word_api::TI_MIO . '}*1000000', $t->term_list_scale());
         $result = $exp->res_phr_lst($trm_lst);
         $t->assert('Expression->res_phr_lst for ' . formula_api::TF_READ_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
 
@@ -140,9 +161,9 @@ class formula_tests
             formula_api::TN_READ_THIS,
             formula_api::TN_READ_PRIOR
         ));
-        $phr_lst = $t->dummy_phrase_list_increase();
+        $phr_lst = $t->phrase_list_increase();
 
-        $frm = $t->increase_formula();
+        $frm = $t->formula_increase();
         // TODO activate Prio 1
         // $res_lst = $frm->to_num($phr_lst);
         //$res = $res_lst->lst[0];
@@ -158,11 +179,12 @@ class formula_tests
      * TODO check the diff to assert_sql_user_changes
      *
      * @param test_cleanup $t the test environment
-     * @param sql_db $db_con does not need to be connected to a real database
      * @param formula $frm the user sandbox object e.g. a word
      */
-    private function assert_sql_user_changes_frm(test_cleanup $t, sql_db $db_con, formula $frm): void
+    private function assert_sql_user_changes_frm(test_cleanup $t, formula $frm): void
     {
+        $db_con = new sql_db();
+
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $frm->load_sql_user_changes_frm($db_con);

@@ -89,20 +89,20 @@ class ref_list extends type_list
      * force to reload the complete list of refs from the database
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param string $db_type the database name e.g. the table name without s
+     * @param string $class the class of the related object e.g. phrase_type or formula_type
      * @return array the list of types
      */
-    private function load_list(sql_db $db_con, string $db_type): array
+    protected function load_list(sql_db $db_con, string $class): array
     {
         global $usr;
         $this->reset();
-        $qp = $this->load_sql_all($db_con->sql_creator(), $db_type);
+        $qp = $this->load_sql_all($db_con->sql_creator(), $class);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $ref = new ref($usr);
                 $ref->row_mapper_sandbox($db_row);
-                $this->lst()[$db_row[$db_con->get_id_field_name($db_type)]] = $ref;
+                $this->lst()[$db_row[$db_con->get_id_field_name($class)]] = $ref;
             }
         }
         return $this->lst();
@@ -112,13 +112,13 @@ class ref_list extends type_list
      * force to reload the complete list of refs from the database
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param string $db_type the database name e.g. the table name without s
+     * @param string $class the database name e.g. the table name without s
      * @return bool true if at least one ref has been loaded
      */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_VERB): bool
+    function load(sql_db $db_con, string $class = verb::class): bool
     {
         $result = false;
-        $this->set_lst($this->load_list($db_con, $db_type));
+        $this->set_lst($this->load_list($db_con, $class));
         if ($this->count() > 0) {
             $result = true;
         }
@@ -128,14 +128,15 @@ class ref_list extends type_list
 
     /**
      * adding the refs used for unit tests to the dummy list
+     * TODO Prio 3: load from csv
      */
     function load_dummy(): void
     {
         global $usr;
         $type = new ref($usr);
         $type->set_id(1);
-        $type->set_name(ref_api::TN_READ);
-        $type->code_id = ref_api::TN_READ;
+        $type->set_name(ref_api::TT_READ);
+        $type->code_id = ref_api::TT_READ;
         $this->add($type);
     }
 
@@ -152,8 +153,8 @@ class ref_list extends type_list
         $result = array();
         if ($this->lst() != null) {
             foreach ($this->lst() as $ref) {
-                if ($ref->id()  > 0) {
-                    $result[] = $ref->id() ;
+                if ($ref->id() > 0) {
+                    $result[] = $ref->id();
                 }
             }
         }

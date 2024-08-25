@@ -36,6 +36,7 @@ namespace cfg;
 include_once MODEL_ELEMENT_PATH . 'element_type.php';
 
 use cfg\db\sql_db;
+use test\create_test_objects;
 
 global $element_types;
 
@@ -43,27 +44,14 @@ class element_type_list extends type_list
 {
 
     /**
-     * overwrite the general user type list load function to keep the link to the table type capsuled
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @return bool true if load was successful
-     */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_ELEMENT_TYPE): bool
-    {
-        return parent::load($db_con, $db_type);
-    }
-
-    /**
      * adding the view component types used for unit tests to the dummy list
      */
     function load_dummy(): void
     {
-        parent::load_dummy();
-        $type = new type_object(
-            element_type::WORD_SELECTOR,
-            element_type::WORD_SELECTOR,
-            '',
-            2);
-        $this->add($type);
+        $this->reset();
+        // read the corresponding names and description from the internal config csv files
+        $t = new create_test_objects();
+        $t->read_from_config_csv($this);
     }
 
     /**

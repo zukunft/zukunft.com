@@ -31,10 +31,12 @@
 
 namespace cfg\component;
 
+include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once API_COMPONENT_PATH . 'component_list.php';
 include_once API_VIEW_PATH . 'component_link_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
+use shared\types\component_type as comp_type_shared;
 use api\component\component_list as component_list_api;
 use cfg\combine_named;
 use cfg\db\sql;
@@ -121,7 +123,7 @@ class component_list extends sandbox_list
         $typ_lst = new type_list();
         $sc->add_where(
             component::FLD_TYPE,
-            implode(',', $typ_lst->component_id_list(component_type::SYSTEM_TYPES)),
+            implode(',', $typ_lst->component_id_list(comp_type_shared::SYSTEM_TYPES)),
             sql_par_type::CONST_NOT_IN);
 
         $qp->sql = $sc->sql();
@@ -139,7 +141,7 @@ class component_list extends sandbox_list
     function load_sql(sql $sc, string $class = self::class): sql_par
     {
         $qp = new sql_par($class);
-        $sc->set_class(sql_db::TBL_COMPONENT);
+        $sc->set_class(component::class);
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $sc->set_usr($this->user()->id());
         $sc->set_fields(component::FLD_NAMES);
@@ -178,10 +180,10 @@ class component_list extends sandbox_list
         $sc->set_name($qp->name);
         $sc->set_join_fields(
             component_link::FLD_NAMES,
-            sql_db::TBL_COMPONENT_LINK,
+            component_link::class,
             component::FLD_ID,
             component::FLD_ID);
-        $sc->add_where(sql_db::LNK_TBL . '.' . view::FLD_ID, $id);
+        $sc->add_where(view::FLD_ID, $id, null, sql_db::LNK_TBL);
         $sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -268,9 +270,9 @@ class component_list extends sandbox_list
     {
         $result = new user_message();
         foreach ($json_obj as $dsp_json) {
-            $dsp = new component($this->user());
-            $result->add($dsp->import_obj($dsp_json, $test_obj));
-            $this->add($dsp);
+            $cmp = new component($this->user());
+            $result->add($cmp->import_obj($dsp_json, $test_obj));
+            $this->add($cmp);
         }
 
         return $result;

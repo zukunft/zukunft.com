@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS language_forms
 (
-    language_form_id   bigint           NOT NULL COMMENT 'the internal unique primary index',
+    language_form_id   smallint         NOT NULL COMMENT 'the internal unique primary index',
     language_form_name varchar(255) DEFAULT NULL COMMENT 'type of adjustment of a term in a language e.g. plural',
     code_id            varchar(100) DEFAULT NULL,
     description        text         DEFAULT NULL,

@@ -34,6 +34,7 @@ namespace cfg;
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use shared\library;
 
 class language_form extends type_object
 {
@@ -51,7 +52,7 @@ class language_form extends type_object
     const FLD_LST_ALL = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
         [sql::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
         [language::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, language::class, ''],
     );
 
@@ -84,7 +85,7 @@ class language_form extends type_object
         $lib = new library();
         $dp_type = $lib->class_to_name($class);
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $dp_type);
-        return $this->load_typ_obj($qp, $dp_type);
+        return $this->load_typ_obj($qp, $class);
     }
 
 }

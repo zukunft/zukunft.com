@@ -31,10 +31,15 @@
 
 namespace html\user;
 
+// get the api const that are shared between the backend and the html frontend
+include_once API_PATH . 'api.php';
+// get the pure html frontend objects
+include_once HTML_PATH . 'html_base.php';
+include_once API_USER_PATH . 'user.php';
+
 use api\api;
 use api\user\user as user_api;
 use html\html_base;
-use html\phrase\phrase_group as phrase_group_dsp;
 
 class user extends user_api
 {

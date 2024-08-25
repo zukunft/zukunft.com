@@ -34,6 +34,7 @@ namespace unit;
 
 include_once WEB_FIGURE_PATH . 'figure_list.php';
 
+use cfg\db\sql;
 use cfg\fig_ids;
 use cfg\figure;
 use cfg\figure_list;
@@ -50,11 +51,10 @@ class figure_list_tests
         global $usr;
 
         // init
-        $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'figure->';
         $t->resource_path = 'db/figure/';
         $json_file = 'unit/figure/figure_list_import.json';
-        $usr->set_id(1);
 
 
         $t->header('Unit tests of the figure list class (src/main/php/model/figure/figure_list.php)');
@@ -63,18 +63,18 @@ class figure_list_tests
 
         // load by figure ids
         $fig_lst = new figure_list($usr);
-        $t->assert_sql_by_ids($db_con, $fig_lst, new fig_ids([1, -1]));
+        $t->assert_sql_by_ids($sc, $fig_lst, new fig_ids([1, -1]));
 
 
         $t->subheader('API unit tests');
 
-        $fig_lst = $t->dummy_figure_list();
+        $fig_lst = $t->figure_list();
         $t->assert_api($fig_lst);
 
 
         $t->subheader('HTML frontend unit tests');
 
-        $fig_lst = $t->dummy_figure_list();
+        $fig_lst = $t->figure_list();
         $t->assert_api_to_dsp($fig_lst, new figure_list_dsp());
 
     }

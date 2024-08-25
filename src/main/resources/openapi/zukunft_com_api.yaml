@@ -1535,7 +1535,7 @@ paths:
               schema:
                 type: string
                 description: Error message
-  /systemLogList:
+  /sysLogList:
     post:
       tags:
         - error
@@ -1563,7 +1563,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ErrorLog'
-  /systemLogList/{id}:
+  /sysLogList/{id}:
     get:
       tags:
         - error

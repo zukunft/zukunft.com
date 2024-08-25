@@ -37,7 +37,7 @@ namespace html\user;
 use api\system\type_list as type_list_api;
 use html\html_base;
 use html\html_selector;
-use cfg\library;
+use shared\library;
 
 class user_type_list extends type_list_api
 {

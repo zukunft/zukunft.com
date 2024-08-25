@@ -49,7 +49,7 @@ class term_list
         $t->subheader('term list tests');
 
         // test the term list display functions
-        $lst = new term_list_dsp($t->dummy_term_list()->api_json());
+        $lst = new term_list_dsp($t->term_list()->api_json());
         $test_page = $html->text_h2('term list display test');
         $test_page .= 'term list with tooltip: ' . $lst->display() . '<br>';
         $test_page .= 'term list with link: ' . $lst->display_linked() . '<br>';

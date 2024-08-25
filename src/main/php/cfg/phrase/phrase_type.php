@@ -31,11 +31,11 @@
 
 namespace cfg;
 
-use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use shared\library;
 
-include_once MODEL_HELPER_PATH . 'library.php';
+include_once SHARED_PATH . 'library.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 
 class phrase_type extends type_object
@@ -64,6 +64,9 @@ class phrase_type extends type_object
     const TRIPLE_HIDDEN = "hidden_triple";
     const SYSTEM_HIDDEN = "hidden_system";
     const GROUP = "group";
+    const SYMBOL = "symbol"; // is expected to be a symbol e.g. used to preselect columns for table import
+    const RANK = "rank"; // is expected to be a ranking number e.g. used to preselect columns for table import
+    const IGNORE = "ignore"; // e.g. to set column names to be excluded from the import
     const THIS = "this";
     const NEXT = "next";
     const PRIOR = "previous";
@@ -79,7 +82,6 @@ class phrase_type extends type_object
     const TBL_COMMENT = 'for the phrase type to set the predefined behaviour of a word or triple';
 
     // database and JSON object field names additional to the type field only for phrase types
-    const FLD_ID = 'phrase_type_id';
     const FLD_SCALE_COM = 'e.g. for percent the scaling factor is 100';
     const FLD_SCALE = 'scaling_factor';
     const FLD_SYMBOL_COM = 'e.g. for percent the symbol is %';
@@ -129,12 +131,8 @@ class phrase_type extends type_object
         $lib = new library();
         log_debug($id);
         $dp_type = $lib->class_to_name($class);
-        // TODO rename table phrase_type to phrase_type
-        if ($dp_type == 'phrase_type') {
-            $dp_type = 'phrase_type';
-        }
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $dp_type);
-        return $this->load_typ_obj($qp, $dp_type);
+        return $this->load_typ_obj($qp, $class);
     }
 
 }

@@ -8,12 +8,12 @@ CREATE TABLE IF NOT EXISTS jobs
 (
     job_id BIGSERIAL PRIMARY KEY,
     user_id         bigint        NOT NULL,
-    job_type_id     bigint        NOT NULL,
+    job_type_id     smallint      NOT NULL,
     request_time    timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     start_time      timestamp DEFAULT NULL,
     end_time        timestamp DEFAULT NULL,
     parameter       bigint    DEFAULT NULL,
-    change_field_id bigint    DEFAULT NULL,
+    change_field_id smallint  DEFAULT NULL,
     row_id          bigint    DEFAULT NULL,
     source_id       bigint    DEFAULT NULL,
     ref_id          bigint    DEFAULT NULL

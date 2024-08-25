@@ -31,27 +31,43 @@
 
 namespace cfg;
 
-include_once DB_PATH . 'sql_par_type.php';
-include_once WEB_VIEW_PATH . 'view.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
+include_once API_VIEW_PATH . 'view.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
+include_once MODEL_COMPONENT_PATH . 'component_link.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
+include_once MODEL_DB_PATH . 'sql.php';
+include_once MODEL_DB_PATH . 'sql_db.php';
+include_once MODEL_DB_PATH . 'sql_field_default.php';
+include_once MODEL_DB_PATH . 'sql_field_type.php';
+include_once MODEL_DB_PATH . 'sql_par.php';
+include_once MODEL_DB_PATH . 'sql_par_type.php';
+include_once MODEL_DB_PATH . 'sql_type.php';
+include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once SERVICE_EXPORT_PATH . 'view_exp.php';
 include_once SERVICE_EXPORT_PATH . 'component_exp.php';
+include_once WEB_VIEW_PATH . 'view.php';
 
+use api\api;
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_list;
+use cfg\component\position_type;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
+use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
 use cfg\export\view_exp;
+use cfg\log\change;
+use shared\library;
 
 class view extends sandbox_typed
 {
@@ -71,6 +87,7 @@ class view extends sandbox_typed
     const FLD_DESCRIPTION_COM = 'to explain the view to the user with a mouse over text; to be replaced by a language form entry';
     const FLD_TYPE_COM = 'to link coded functionality to views e.g. to use a view for the startup page';
     const FLD_TYPE = 'view_type_id';
+    const FLD_TYPE_SQLTYP = sql_field_type::INT_SMALL;
     const FLD_CODE_ID_COM = 'to link coded functionality to a specific view e.g. define the internal system views';
     // the JSON object field names
     const FLD_COMPONENT = 'components';
@@ -86,8 +103,8 @@ class view extends sandbox_typed
     );
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [self::FLD_TYPE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view_type::class, self::FLD_TYPE_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, view_type::class, self::FLD_TYPE_COM],
     );
     // list of fields that CANNOT be changed by the user
     const FLD_LST_NON_CHANGEABLE = array(
@@ -143,7 +160,6 @@ class view extends sandbox_typed
         $this->reset();
 
         parent::__construct($usr);
-        $this->obj_name = sql_db::TBL_VIEW;
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_NAME;
     }
 
@@ -152,7 +168,7 @@ class view extends sandbox_typed
         parent::reset();
 
         $this->type_id = null;
-        $this->code_id = '';
+        $this->code_id = null;
 
         $this->cmp_lnk_lst = null;
     }
@@ -308,63 +324,123 @@ class view extends sandbox_typed
     {
         $api_obj = new view_api();
 
-        parent::fill_api_obj($api_obj);
+        if ($this->is_excluded()) {
+            $api_obj->set_id($this->id());
+            $api_obj->excluded = true;
+        } else {
+            parent::fill_api_obj($api_obj);
 
-        $api_obj->set_type_id($this->type_id);
-        $api_obj->code_id = $this->code_id;
-        $api_obj->description = $this->description;
-        if ($this->cmp_lnk_lst != null) {
-            $api_obj->components = $this->cmp_lnk_lst->api_obj();
+            $api_obj->code_id = $this->code_id;
+            if ($this->cmp_lnk_lst != null) {
+                $api_obj->components = $this->cmp_lnk_lst->api_obj();
+            }
         }
 
         return $api_obj;
     }
 
     /**
-     * @returns string the api json message for the object as a string
+     * map a view api json to this model view object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
      */
-    function api_json(): string
+    function set_by_api_json(array $api_json): user_message
     {
-        return $this->api_obj()->get_json();
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == api::FLD_CODE_ID) {
+                if ($value <> '') {
+                    $this->code_id = $value;
+                }
+            }
+            /*
+            if ($key == exp_obj::FLD_VIEW) {
+                $wrd_view = new view($this->user());
+                if ($do_save) {
+                    $wrd_view->load_by_name($value);
+                    if ($wrd_view->id == 0) {
+                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
+                    } else {
+                        $this->view_id = $wrd_view->id;
+                    }
+                } else {
+                    $wrd_view->set_name($value);
+                }
+                $this->view = $wrd_view;
+            }
+
+            */
+
+        }
+
+        return $msg;
     }
 
 
+
     /*
-     * loading
+     * load
      */
 
     /**
-     * create the SQL to load the default view always by the id
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * load a view by code id
+     * @param string $code_id the code id of the view
+     * @return int the id of the object found and zero if nothing is found
      */
-    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    function load_by_code_id(string $code_id): int
     {
-        $sc->set_class($class);
-        $sc->set_fields(array_merge(
-            self::FLD_NAMES,
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)
-        ));
+        global $db_con;
 
-        return parent::load_standard_sql($sc, $class);
+        log_debug($code_id);
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_code_id($sc, $code_id);
+        return parent::load($qp);
+    }
+
+    /**
+     * load the suggested view for a phrase
+     * @param phrase $phr the phrase for which the most often used view should be loaded
+     * @return bool true if at least one view is found
+     */
+    function load_by_phrase(phrase $phr): bool
+    {
+        global $db_con;
+
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_term($sc, $phr->term());
+        $db_view = $db_con->get1($qp);
+        return $this->row_mapper_sandbox($db_view);
+    }
+
+    /**
+     * load the suggested view for a term
+     * @param term $trm the word, triple, verb or formula for which the most often used view should be loaded
+     * @return bool true if at least one view is found
+     */
+    function load_by_term(term $trm): bool
+    {
+        global $db_con;
+
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_term($sc, $trm);
+        $db_view = $db_con->get1($qp);
+        return $this->row_mapper_sandbox($db_view);
     }
 
     /**
      * load the view parameters for all users including the user id to know the owner of the standard
      * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @param string $class the name of this class to be delivered to the parent function
      * @return bool true if the standard view has been loaded
      */
-    function load_standard(?sql_par $qp = null, string $class = self::class): bool
+    function load_standard(?sql_par $qp = null): bool
     {
 
         global $db_con;
         $qp = $this->load_standard_sql($db_con->sql_creator());
-        $result = parent::load_standard($qp, $class);
+        $result = parent::load_standard($qp);
 
         if ($result) {
             $result = $this->load_owner();
@@ -373,35 +449,15 @@ class view extends sandbox_typed
     }
 
     /**
-     * create the common part of an SQL statement to retrieve the parameters of a view from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $query_name the name extension to make the query name unique
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
-    {
-        $sc->set_class($class);
-        return parent::load_sql_fields(
-            $sc, $query_name,
-            self::FLD_NAMES,
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR
-        );
-    }
-
-    /**
      * create an SQL statement to retrieve a view by code id from the database
      *
      * @param sql $sc with the target db_type set
      * @param string $code_id the code id of the view
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql $sc, string $code_id, string $class): sql_par
+    function load_sql_by_code_id(sql $sc, string $code_id): sql_par
     {
-        $qp = $this->load_sql($sc, 'code_id', $class);
+        $qp = $this->load_sql($sc, 'code_id', $this::class);
         $sc->add_where(sql::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -424,10 +480,10 @@ class view extends sandbox_typed
         $qp = $this->load_sql($sc, 'term', $class);
         $sc->set_join_fields(
             view_term_link::FLD_NAMES,
-            sql_db::TBL_VIEW_TERM_LINK,
+            view_term_link::class,
             view::FLD_ID,
             view::FLD_ID);
-        $sc->add_where(sql_db::LNK_TBL . '.' . term::FLD_ID, $trm->id());
+        $sc->add_where(term::FLD_ID, $trm->id(), null, sql_db::LNK_TBL);
         //$sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -436,46 +492,67 @@ class view extends sandbox_typed
     }
 
     /**
-     * load a view by code id
-     * @param string $code_id the code id of the view
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
+     * create the common part of an SQL statement to retrieve the parameters of a view from the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_code_id(string $code_id, string $class = self::class): int
+    function load_sql(sql $sc, string $query_name): sql_par
     {
-        global $db_con;
-
-        log_debug($code_id);
-        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id, $class);
-        return parent::load($qp);
+        $sc->set_class($this::class);
+        return parent::load_sql_fields(
+            $sc, $query_name,
+            self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR
+        );
     }
 
     /**
-     * load the suggested view for a phrase
-     * @param phrase $phr the phrase for which the most often used view should be loaded
-     * @return bool true if at least one view is found
+     * create the SQL to load the default view always by the id
+     *
+     * @param sql $sc with the target db_type set
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_phrase(phrase $phr): bool
+    function load_standard_sql(sql $sc): sql_par
     {
-        global $db_con;
+        $sc->set_class($this::class);
+        $sc->set_fields(array_merge(
+            self::FLD_NAMES,
+            self::FLD_NAMES_USR,
+            self::FLD_NAMES_NUM_USR,
+            array(user::FLD_ID)
+        ));
 
-        $qp = $this->load_sql_by_term($db_con, $phr->term());
-        $db_view = $db_con->get1($qp);
-        return $this->row_mapper_sandbox($db_view);
+        return parent::load_standard_sql($sc);
     }
 
-    /**
-     * load the suggested view for a term
-     * @param term $trm the word, triple, verb or formula for which the most often used view should be loaded
-     * @return bool true if at least one view is found
+
+    /*
+     * load related
      */
-    function load_by_term(term $trm): bool
+
+    /**
+     * load all parts of this view for this user
+     * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
+     * @return bool false if a technical error on loading has occurred; an empty list if fine and returns true
+     */
+    function load_components(?sql_db $db_con_given = null): bool
     {
         global $db_con;
 
-        $qp = $this->load_sql_by_term($db_con, $trm);
-        $db_view = $db_con->get1($qp);
-        return $this->row_mapper_sandbox($db_view);
+        log_debug();
+        $db_con_used = $db_con_given;
+        if ($db_con_used == null) {
+            $db_con_used = $db_con;
+        }
+
+        $this->cmp_lnk_lst = new component_link_list($this->user());
+        $result = $this->cmp_lnk_lst->load_by_view_with_components($this, $db_con_used);
+        log_debug($this->cmp_lnk_lst->count() . ' loaded for ' . $this->dsp_id());
+
+        return $result;
     }
 
     /**
@@ -497,17 +574,17 @@ class view extends sandbox_typed
             log_err("Either the database ID (" . $this->id . "), the view name (" . $this->name . ") or the code_id (" . $this->code_id . ")  must be set to load the components of a view.", "view->load_components_sql");
         }
 
-        $db_con->set_class(sql_db::TBL_COMPONENT_LINK);
+        $db_con->set_class(component_link::class);
         $db_con->set_usr($this->user()->id());
         $db_con->set_name($qp->name);
         $db_con->set_fields(component_link::FLD_NAMES);
         $db_con->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
         $db_con->set_join_usr_fields(
             array_merge(component::FLD_NAMES_USR, array(component::FLD_NAME)),
-            sql_db::TBL_COMPONENT);
+            component::class);
         $db_con->set_join_usr_num_fields(
             component::FLD_NAMES_NUM_USR,
-            sql_db::TBL_COMPONENT);
+            component::class);
         $db_con->add_par(sql_par_type::INT, $this->id);
         $db_con->set_order(component_link::FLD_ORDER_NBR);
         $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID));
@@ -516,62 +593,22 @@ class view extends sandbox_typed
         return $qp;
     }
 
-    /**
-     * load all parts of this view for this user
-     * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
-     * @return bool false if a technical error on loading has occurred; an empty list if fine and returns true
-     */
-    function load_components(?sql_db $db_con_given = null): bool
-    {
-        global $db_con;
-
-        log_debug($this->dsp_id());
-
-        $db_con_used = $db_con_given;
-        if ($db_con_used == null) {
-            $db_con_used = $db_con;
-        }
-
-        $this->cmp_lnk_lst = new component_link_list($this->user());
-        $result = $this->cmp_lnk_lst->load_by_view_with_components($this, $db_con_used);
-        log_debug($this->cmp_lnk_lst->count() . ' loaded for ' . $this->dsp_id());
-
-        return $result;
-    }
-
-    /**
-     * just set the class name for the user sandbox function
-     * load a view object by database id
-     * @param int $id the id of the view
-     * @param string $class the view class name
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id, string $class = self::class): int
-    {
-        return parent::load_by_id($id, $class);
-    }
-
-    /**
-     * just set the class name for the user sandbox function
-     * load a view object by name
-     * @param string $name the name view
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_name(string $name): int
-    {
-        return parent::load_by_name($name);
-    }
-
 
     /*
      * load helper
      */
 
+    /**
+     * @return string the field name of the name db field as a function for complex overwrites
+     */
     function name_field(): string
     {
         return self::FLD_NAME;
     }
 
+    /**
+     * @return array with all db field names as a function for complex overwrites
+     */
     function all_sandbox_fields(): array
     {
         return self::ALL_SANDBOX_FLD_NAMES;
@@ -583,38 +620,10 @@ class view extends sandbox_typed
      */
     function set_join(sql $sc): sql
     {
-        $sc->set_join_fields(view::FLD_NAMES, sql_db::TBL_VIEW);
-        $sc->set_join_usr_fields(view::FLD_NAMES_USR, sql_db::TBL_VIEW);
-        $sc->set_join_usr_num_fields(view::FLD_NAMES_NUM_USR, sql_db::TBL_VIEW);
+        $sc->set_join_fields(view::FLD_NAMES, view::class);
+        $sc->set_join_usr_fields(view::FLD_NAMES_USR, view::class);
+        $sc->set_join_usr_num_fields(view::FLD_NAMES_NUM_USR, view::class);
         return $sc;
-    }
-
-
-    /*
-     * display
-     */
-
-    /**
-     * return the html code to display a view name with the link
-     */
-    function name_linked($wrd, $back): string
-    {
-
-        $result = '<a href="/http/view_edit.php?id=' . $this->id;
-        if (isset($wrd)) {
-            $result .= '&word=' . $wrd->id;
-        }
-        $result .= '&back=' . $back . '">' . $this->name . '</a>';
-
-        return $result;
-    }
-
-    /**
-     * display the unique id fields
-     */
-    function name_dsp(): string
-    {
-        return '"' . $this->name . '"';
     }
 
 
@@ -632,6 +641,8 @@ class view extends sandbox_typed
      */
     function add_cmp(component $cmp, ?int $pos = null, object $test_obj = null): string
     {
+        global $position_types;
+
         $result = '';
 
         // if no position is requested add the component at the end
@@ -645,11 +656,11 @@ class view extends sandbox_typed
             if (!$test_obj) {
                 $cmp->save();
                 $cmp_lnk = new component_link($this->user());
+                $cmp_lnk->reset();
                 $cmp_lnk->view()->set_id($this->id());
                 $cmp_lnk->component()->set_id($cmp->id());
                 $cmp_lnk->order_nbr = $pos;
-                $cmp_lnk->pos_type_id = 0;
-                $cmp_lnk->pos_code = '';
+                $cmp_lnk->pos_type_id = $position_types->id(position_type::BELOW);
                 $cmp_lnk->save();
                 $this->cmp_lnk_lst->add($cmp_lnk->id(), $this, $cmp, $pos);
             } else {
@@ -700,6 +711,40 @@ class view extends sandbox_typed
         }
         return $result;
     }
+
+
+    /*
+     * assign
+     */
+
+    /**
+     * links this view to a term
+     * @param term $trm the term that should be linked
+     * @return user_message with the message to the user if something has gone wrong and the suggested solutions
+     */
+    function add_term(term $trm): user_message
+    {
+        $msg = new user_message();
+        $lnk = new view_term_link($this->user());
+        $lnk->set_view($this);
+        $lnk->set_term($trm);
+        $msg->add_message($lnk->save());
+        return $msg;
+    }
+
+    /**
+     * unlinks this view from the given term
+     * @param term $trm the term that should be remove from the list of assigned terms
+     * @return user_message with the message to the user if something has gone wrong and the suggested solutions
+     */
+    function del_term(term $trm): user_message
+    {
+        $msg = new user_message();
+        // TODO implement
+        $msg->add_message('not yet implemented');
+        return $msg;
+    }
+
 
     /*
      * im- and export
@@ -792,6 +837,25 @@ class view extends sandbox_typed
             }
         }
 
+        // TODO add the assigned terms
+        // after the view has it's components assign the view to the terms
+        foreach ($in_ex_json as $key => $value) {
+            if ($key == sandbox_exp::FLD_ASSIGN) {
+                foreach ($value as $trm_name) {
+                    $trm = new term($this->user());
+                    $trm->load_by_name($trm_name);
+                    if ($trm->id() == 0) {
+                        log_warning('word "' . $trm_name .
+                            '" created to link it to view "' . $this->name() .
+                            '" as requested by the import of ');
+                    }
+                    if ($trm->id() != 0) {
+                        $this->add_term($trm);
+                    }
+                }
+            }
+        }
+
         if (!$result->is_ok()) {
             $lib = new library();
             $result->add_message(' when importing ' . $lib->dsp_array($in_ex_json));
@@ -858,17 +922,20 @@ class view extends sandbox_typed
      * create an SQL statement to retrieve the user changes of the current view
      *
      * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
+    function load_sql_user_changes(
+        sql           $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par
     {
-        $sc->set_class($class, true);
+        $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
         $sc->set_fields(array_merge(
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR
         ));
-        return parent::load_sql_user_changes($sc, $class);
+        return parent::load_sql_user_changes($sc, $sc_par_lst);
     }
 
     /**
@@ -952,6 +1019,113 @@ class view extends sandbox_typed
         }
 
         return $result;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @param sql_type_list $sc_par_lst only used for link objects
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    {
+        return array_merge(
+            parent::db_fields_all(),
+            [
+                view::FLD_TYPE,
+                sql::FLD_CODE_ID
+            ],
+            parent::db_fields_all_sandbox()
+        );
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param sandbox|view $sbx the compare value to detect the changed fields
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(
+        sandbox|view  $sbx,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
+    {
+        global $change_field_list;
+
+        $sc = new sql();
+        $do_log = $sc_par_lst->incl_log();
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        if ($sbx->type_id() <> $this->type_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . view::FLD_TYPE,
+                    $change_field_list->id($table_id . view::FLD_TYPE),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            global $view_types;
+            $lst->add_type_field(
+                view::FLD_TYPE,
+                type_object::FLD_NAME,
+                $this->type_id(),
+                $sbx->type_id(),
+                $view_types
+            );
+        }
+        if ($sbx->code_id <> $this->code_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
+                    $change_field_list->id($table_id . sql::FLD_CODE_ID),
+                    change::FLD_FIELD_ID_SQLTYP
+                );
+            }
+            $lst->add_field(
+                sql::FLD_CODE_ID,
+                $this->code_id,
+                sql::FLD_CODE_ID_SQLTYP,
+                $sbx->code_id
+            );
+        }
+        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+    }
+
+
+    /*
+     * display
+     */
+
+    /**
+     * return the html code to display a view name with the link
+     */
+    function name_linked($wrd, $back): string
+    {
+
+        $result = '<a href="/http/view_edit.php?id=' . $this->id;
+        if (isset($wrd)) {
+            $result .= '&word=' . $wrd->id;
+        }
+        $result .= '&back=' . $back . '">' . $this->name . '</a>';
+
+        return $result;
+    }
+
+    /**
+     * display the unique id fields
+     */
+    function name_dsp(): string
+    {
+        return '"' . $this->name . '"';
     }
 
 }

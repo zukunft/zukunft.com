@@ -45,6 +45,8 @@
 
 namespace cfg;
 
+include_once SHARED_TYPES_PATH . 'protection_type.php';
+include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once API_PHRASE_PATH . 'term.php';
 include_once API_WORD_PATH . 'word.php';
@@ -59,15 +61,18 @@ include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 
+use cfg\db\sql_field_type;
+use shared\types\protection_type as protect_type_shared;
+use shared\types\share_type as share_type_shared;
 use api\phrase\term as term_api;
 use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 use html\html_base;
-use html\phrase\term as term_dsp;
 use html\word\word as word_dsp;
+use shared\library;
 
 class term extends combine_named
 {
@@ -79,6 +84,7 @@ class term extends combine_named
     // field names of the database view for terms
     // the database view is used e.g. for a fast check of a new term name
     const FLD_ID = 'term_id';
+    const FLD_ID_SQLTYP = sql_field_type::INT;
     const FLD_NAME = 'term_name';
     const FLD_USAGE = 'usage'; // included in the database view to be able to show the user the most relevant terms
     const FLD_TYPE = 'term_type_id'; // the term type for word or triple or the formula type for formulas; not used for verbs
@@ -116,10 +122,10 @@ class term extends combine_named
     // each db view can have several sql table types and as second entry a where conditions
     // or list of or where conditions
     const TBL_LIST = [
-        [sql_table_type::PRIME, [self::TBL_WORD_WHERE, self::TBL_PRIME_WHERE], self::TBL_PRIME_COM],
-        [sql_table_type::MOST, [self::TBL_WORD_WHERE], self::TBL_COM],
-        [sql_table_type::PRIME, [self::TBL_WORD_WHERE, self::TBL_PRIME_WHERE], self::TBL_PRIME_COM, sql_table_type::USER],
-        [sql_table_type::MOST, [self::TBL_WORD_WHERE], self::TBL_COM, sql_table_type::USER],
+        [sql_type::PRIME, [self::TBL_WORD_WHERE, self::TBL_PRIME_WHERE], self::TBL_PRIME_COM],
+        [sql_type::MOST, [self::TBL_WORD_WHERE], self::TBL_COM],
+        [sql_type::PRIME, [self::TBL_WORD_WHERE, self::TBL_PRIME_WHERE], self::TBL_PRIME_COM, sql_type::USER],
+        [sql_type::MOST, [self::TBL_WORD_WHERE], self::TBL_COM, sql_type::USER],
     ];
     // list of original tables that should be connoted with union
     // with fields used in the view
@@ -175,8 +181,8 @@ class term extends combine_named
             [verb::FLD_WORDS, self::FLD_USAGE],
             [sql::NULL_VALUE, self::FLD_TYPE, sql::FLD_CONST],
             [sql::NULL_VALUE, sandbox::FLD_EXCLUDED, sql::FLD_CONST],
-            [share_type::PUBLIC_ID, sandbox::FLD_SHARE, sql::FLD_CONST],
-            [protection_type::ADMIN_ID, sandbox::FLD_PROTECT, sql::FLD_CONST],
+            [share_type_shared::PUBLIC_ID, sandbox::FLD_SHARE, sql::FLD_CONST],
+            [protect_type_shared::ADMIN_ID, sandbox::FLD_PROTECT, sql::FLD_CONST],
             ['', formula::FLD_FORMULA_TEXT],
             ['', formula::FLD_FORMULA_USER_TEXT]
         ], ['', verb::FLD_ID]]

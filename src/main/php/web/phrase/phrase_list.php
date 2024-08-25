@@ -34,27 +34,26 @@
 
 namespace html\phrase;
 
-include_once WEB_SANDBOX_PATH . 'list.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once SANDBOX_PATH . 'list_dsp.php';
+include_once PHRASE_PATH . 'phrase.php';
 
 use api\phrase\term as term_api;
 use api\sandbox\combine_object as combine_object_api;
 use cfg\config;
 use cfg\foaf_direction;
 use cfg\phrase;
-use cfg\phrase_list AS phrase_list_db;
+use cfg\phrase_list as phrase_list_db;
 use cfg\user;
 use cfg\verb_list;
 use controller\controller;
-use html\api as api_dsp;
+use html\rest_ctrl as api_dsp;
 use html\html_base;
-use html\list_dsp;
-use html\word\word as word_dsp;
-use html\word\triple as triple_dsp;
+use html\sandbox\list_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
-use cfg\library;
+use html\word\triple as triple_dsp;
+use html\word\word as word_dsp;
+use shared\library;
 
 class phrase_list extends list_dsp
 {

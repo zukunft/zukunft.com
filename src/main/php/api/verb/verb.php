@@ -33,8 +33,6 @@
 namespace api\verb;
 
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once WEB_PHRASE_PATH . 'term.php';
 
 use api\phrase\term as term_api;
 use api\sandbox\sandbox_named as sandbox_named_api;
@@ -59,6 +57,7 @@ class verb extends sandbox_named_api
     const TI_OF = 4;
     const TN_TIME_STEP = "time jump";
     const TN_ADD = "System Test Verb";
+    const TN_SYMBOL = 'is symbol for';
 
     // word groups for creating the test words and remove them after the test
     const RESERVED_WORDS = array(

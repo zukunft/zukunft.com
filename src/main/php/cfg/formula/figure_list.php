@@ -39,7 +39,7 @@ use api\formula\figure_list as figure_list_api;
 use cfg\db\sql;
 use cfg\db\sql_par;
 use html\figure\figure as figure_dsp;
-use html\value\value as value_dsp;
+use shared\library;
 use test\test_api;
 
 class figure_list extends sandbox_list

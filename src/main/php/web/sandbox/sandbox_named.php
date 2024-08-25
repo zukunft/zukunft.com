@@ -32,12 +32,12 @@
 
 namespace html\sandbox;
 
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_SANDBOX_PATH . 'sandbox.php';
+include_once SANDBOX_PATH . 'db_object.php';
+include_once SANDBOX_PATH . 'sandbox.php';
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
 
 use api\api;
-use html\api as api_dsp;
+use html\rest_ctrl as api_dsp;
 
 class sandbox_named extends sandbox
 {

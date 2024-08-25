@@ -1,0 +1,29 @@
+{
+  "pod": "zukunft.com",
+  "version": "0.0.3",
+  "time": "2024-04-05T08:35:30+00:00",
+  "words": [
+    {
+      "name": "Country"
+    },
+    {
+      "name": "ISO 3166"
+    },
+    {
+      "name": "Alpha-2 code",
+      "type": "ignore"
+    },
+    {
+      "name": "Numeric code",
+      "type": "ignore"
+    },
+    {
+      "name": "Link to  ISO 3166-2",
+      "type": "ignore"
+    },
+    {
+      "name": "Independent",
+      "type": "ignore"
+    }
+  ]
+}

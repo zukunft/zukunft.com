@@ -36,6 +36,7 @@ use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use JsonSerializable;
+use shared\library;
 
 class language extends type_object implements JsonSerializable
 {
@@ -54,7 +55,7 @@ class language extends type_object implements JsonSerializable
     const FLD_LST_ALL = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
         [sql::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
         [self::FLD_WIKI_CODE, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
     );
 
@@ -121,7 +122,7 @@ class language extends type_object implements JsonSerializable
         $lib = new library();
         $dp_type = $lib->class_to_name($class);
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $dp_type);
-        return $this->load_typ_obj($qp, $dp_type);
+        return $this->load_typ_obj($qp, $class);
     }
 
     /**
@@ -139,7 +140,7 @@ class language extends type_object implements JsonSerializable
         $lib = new library();
         $dp_type = $lib->class_to_name($this::class);
         $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $dp_type);
-        return $this->load_typ_obj($qp, $dp_type);
+        return $this->load_typ_obj($qp, $this::class);
     }
 
 }

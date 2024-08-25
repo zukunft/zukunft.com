@@ -39,6 +39,12 @@
     {
       "name": "tsd.",
       "type": "scaling"
+    },
+    {
+      "name": "m"
+    },
+    {
+      "name": "b"
     }
   ],
   "triples": [
@@ -47,6 +53,16 @@
       "from": "tsd.",
       "verb": "is alias of",
       "to": "thousand"
+    },
+    {
+      "from": "m",
+      "verb": "is symbol for",
+      "to": "million"
+    },
+    {
+      "from": "b",
+      "verb": "is symbol for",
+      "to": "billion"
     }
   ],
   "formulas": [

@@ -5,6 +5,18 @@
     cfg/log/change.php - for logging changes in named objects such as words and formulas
     ------------------
 
+    The main sections of this object are
+    - db const:          const for the database link
+    - object vars:       the variables of this change log object
+    - construct and map: including the mapping of the db row to this change log object
+    - cast:              create an api object and set the vars from an api json
+    - load:              database access object (DAO) functions
+    - save:              manage to update the database
+    - sql write:         sql statement creation to write to the database
+    - sql write fields:  field list for writing to the database
+    - display:           TODO to be move to frontend
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -40,34 +52,64 @@ use api\log\change_log_named as change_log_named_api;
 use api\sandbox\user_config;
 use cfg\component\component;
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
+use cfg\db\sql_par_type;
+use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\formula;
-use cfg\db\sql_db;
+use cfg\group\group;
+use cfg\group\group_id;
+use cfg\type_object;
 use cfg\user;
 use cfg\value\value;
 use cfg\view;
 use cfg\word;
+use DateTime;
+use DateTimeInterface;
 use Exception;
 use html\log\change_log_named as change_log_named_dsp;
+use shared\library;
 
 class change extends change_log
 {
 
     /*
-      * database link
-      */
+     * messages
+     */
+
+    // TODO replace by a language specific message id
+    const MSG_ADD = 'added';
+    const MSG_UPDATE = 'changed';
+    const MSG_DEL = 'deleted';
+    const MSG_LINK = 'linked';
+
+    /*
+     * db const
+     */
 
     // user log database and JSON object field names for named user sandbox objects
+    // *_COM is the description of the field
+    // *_SQLTYP is the sql data type used for the field
     const FLD_FIELD_ID = 'change_field_id';
+    const FLD_FIELD_ID_SQLTYP = sql_field_type::INT_SMALL;
     const FLD_ROW_ID = 'row_id';
     const FLD_OLD_VALUE = 'old_value';
+    const FLD_OLD_VALUE_SQLTYP = sql_field_type::TEXT;
     const FLD_OLD_ID_COM = 'old value id';
     const FLD_OLD_ID = 'old_id';
+    const FLD_OLD_ID_SQLTYP = sql_field_type::INT;
+    const FLD_OLD_ID_NORM_SQLTYP = sql_field_type::REF_512;
+    const FLD_OLD_ID_BIG_SQLTYP = sql_field_type::TEXT;
     const FLD_NEW_VALUE = 'new_value';
+    const FLD_NEW_VALUE_SQLTYP = sql_field_type::TEXT;
     const FLD_NEW_ID_COM = 'new value id';
     const FLD_NEW_ID = 'new_id';
+    const FLD_NEW_ID_SQLTYP = sql_field_type::INT;
+    const FLD_OLD_EXT = '_old';
 
     // all database field names
     const FLD_NAMES = array(
@@ -84,11 +126,11 @@ class change extends change_log
 
     // field list to log the actual change of the named user sandbox object
     const FLD_LST_CHANGE = array(
-        [self::FLD_FIELD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, '', change_field::class, ''],
-        [self::FLD_OLD_VALUE, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
-        [self::FLD_NEW_VALUE, sql_field_type::TEXT, sql_field_default::NULL, '', '', ''],
-        [self::FLD_OLD_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
-        [self::FLD_NEW_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
+        [self::FLD_FIELD_ID, self::FLD_FIELD_ID_SQLTYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
+        [self::FLD_OLD_VALUE, self::FLD_OLD_VALUE_SQLTYP, sql_field_default::NULL, '', '', ''],
+        [self::FLD_NEW_VALUE, self::FLD_NEW_VALUE_SQLTYP, sql_field_default::NULL, '', '', ''],
+        [self::FLD_OLD_ID, self::FLD_OLD_ID_SQLTYP, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
+        [self::FLD_NEW_ID, self::FLD_NEW_ID_SQLTYP, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
     );
 
 
@@ -97,11 +139,11 @@ class change extends change_log
      */
 
     // additional to user_log
-    public string|float|int|null $old_value = null;      // the field value before the user change
+    public string|float|int|DateTime|null $old_value = null;      // the field value before the user change
     public ?int $old_id = null;            // the reference id before the user change e.g. for fields using a sub table such as status
-    public string|float|int|null $new_value = null;      // the field value after the user change
+    public string|float|int|DateTime|null $new_value = null;      // the field value after the user change
     public ?int $new_id = null;            // the reference id after the user change e.g. for fields using a sub table such as status
-    public string|float|int|null $std_value = null;  // the standard field value for all users that does not have changed it
+    public string|float|int|DateTime|null $std_value = null;  // the standard field value for all users that does not have changed it
     public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
 
 
@@ -124,12 +166,20 @@ class change extends change_log
         if ($result) {
             $this->action_id = $db_row[self::FLD_ACTION];
             $this->field_id = $db_row[self::FLD_FIELD_ID];
-            $this->row_id = $db_row[self::FLD_ROW_ID];
+            if (array_key_exists(self::FLD_ROW_ID, $db_row)) {
+                $this->row_id = $db_row[self::FLD_ROW_ID];
+            } elseif (array_key_exists(group::FLD_ID, $db_row)) {
+                $this->row_id = $db_row[group::FLD_ID];
+            }
             $this->set_time_str($db_row[self::FLD_TIME]);
             $this->old_value = $db_row[self::FLD_OLD_VALUE];
-            $this->old_id = $db_row[self::FLD_OLD_ID];
+            if (array_key_exists(self::FLD_OLD_ID, $db_row)) {
+                $this->old_id = $db_row[self::FLD_OLD_ID];
+            }
             $this->new_value = $db_row[self::FLD_NEW_VALUE];
-            $this->new_id = $db_row[self::FLD_NEW_ID];
+            if (array_key_exists(self::FLD_NEW_ID, $db_row)) {
+                $this->new_id = $db_row[self::FLD_NEW_ID];
+            }
 
             $fld_tbl = $change_field_list->get($this->field_id);
             $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
@@ -185,7 +235,7 @@ class change extends change_log
 
 
     /*
-     * loading
+     * load
      */
 
     /**
@@ -198,14 +248,18 @@ class change extends change_log
      */
     function load_sql(sql $sc, string $query_name): sql_par
     {
-        $qp = new sql_par($this::class);
-        $sc->set_class(sql_db::TBL_CHANGE);
+        if ($this::class == changes_norm::class
+            or $this::class == changes_big::class) {
+            $qp = new sql_par(change::class);
+        } else {
+            $qp = new sql_par($this::class);
+        }
+        $sc->set_class($this::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
-        $sc->set_join_fields(array(user::FLD_NAME), sql_db::TBL_USER);
-        $sc->set_join_fields(array(change_field_list::FLD_TABLE), sql_db::TBL_CHANGE_FIELD);
+        $sc->set_join_fields(array(user::FLD_NAME), user::class);
+        $sc->set_join_fields(array(change_field_list::FLD_TABLE), change_field::class);
         $sc->set_order(self::FLD_TIME, sql::ORDER_DESC);
 
         return $qp;
@@ -249,6 +303,7 @@ class change extends change_log
         if ($field_id != null) {
             $sc->add_where(change::FLD_ROW_ID, $row_id);
         }
+        // TODO check!
         //$fields[] = user::FLD_ID;
         $sc->set_page();
         $qp->sql = $sc->sql();
@@ -267,7 +322,7 @@ class change extends change_log
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'user';
-        $db_con->set_class(sql_db::TBL_CHANGE);
+        $db_con->set_class(change::class);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
@@ -354,6 +409,188 @@ class change extends change_log
         return $qp;
     }
 
+
+    /*
+     * save
+     */
+
+    /**
+     * add the row id to an existing log entry
+     * e.g. because the row id is known after the adding of the real record,
+     * but the log entry has been created upfront to make sure that logging is complete
+     * TODO: accept also strings as row_id for values and results
+     */
+    function add_ref($row_id): bool
+    {
+        log_debug("user_log->add_ref (" . $row_id . " to " . $this->id() . " for user " . $this->user()->dsp_id() . ")");
+
+        global $db_con;
+        $result = false;
+
+        $db_type = $db_con->get_class();
+        if ($this::class == changes_big::class) {
+            $db_con->set_class(changes_big::class);
+        } elseif ($this::class == changes_norm::class) {
+            $db_con->set_class(changes_norm::class);
+        } else {
+            $db_con->set_class(change::class);
+        }
+        $db_con->set_usr($this->user()->id());
+        if ($db_con->update_old($this->id(), self::FLD_ROW_ID, $row_id)) {
+            // restore the type before saving the log
+            $db_con->set_class($db_type);
+            $result = True;
+        } else {
+            // write the error message in steps to get at least some message if the parameters has caused the error
+            if ($this->user() == null) {
+                log_fatal("Update of reference in the change log failed.", "user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString());
+            } else {
+                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . ")", "user_log->add_ref");
+                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action() . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");
+            }
+        }
+        return $result;
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * @return sql_type the sql type of the change e.g. if a name is changes it returns sql_type::UPDATE
+     */
+    function sql_type(): sql_type
+    {
+        $typ = sql_type::UPDATE;
+        if ($this->old_id == null and $this->new_id == null) {
+            if ($this->old_value == null) {
+                $typ = sql_type::INSERT;
+            } elseif ($this->new_value == null) {
+                $typ = sql_type::DELETE;
+            }
+        } elseif ($this->old_id == null) {
+            $typ = sql_type::INSERT;
+        } elseif ($this->new_id == null) {
+            $typ = sql_type::DELETE;
+        }
+        return $typ;
+    }
+
+    /**
+     * @return sql_type an addition sql type for the change e.g. if the phrase type is changed REF is added
+     */
+    function sql_sub_type(): sql_type
+    {
+        $typ = sql_type::NULL;
+        if ($this->old_id != null or $this->new_id != null) {
+            $typ = sql_type::REF;
+        }
+        return $typ;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields
+     * list must be corresponding to the db_values fields
+     *
+     * @return sql_par_field_list list of the database field names
+     */
+    function db_field_values_types(sql $sc, sql_type_list $sc_par_lst): sql_par_field_list
+    {
+        $fvt_lst = parent::db_field_values_types($sc, $sc_par_lst);
+
+        if ($this->old_value !== null or ($sc_par_lst->is_update_part() and $this->new_value !== null)) {
+            $fvt_lst->add_field(self::FLD_OLD_VALUE, $this->old_value, $sc->get_sql_par_type($this->old_value));
+        }
+        if ($this->new_value !== null or ($sc_par_lst->is_update_part() and !$sc_par_lst->exclude_name_only() and $this->old_value !== null)) {
+            $fvt_lst->add_field(self::FLD_NEW_VALUE, $this->new_value, $sc->get_sql_par_type($this->new_value));
+        }
+
+        if ($this->old_id > 0 or ($sc_par_lst->is_update_part() and $this->new_id > 0)) {
+            $fvt_lst->add_field(self::FLD_OLD_ID, $this->old_id, sql_par_type::INT);
+        }
+        if ($this->new_id > 0 or ($sc_par_lst->is_update_part() and $this->old_id > 0)) {
+            $fvt_lst->add_field(self::FLD_NEW_ID, $this->new_id, sql_par_type::INT);
+        }
+
+        $row_typ = sql_par_type::INT;
+        if ($this::class == changes_norm::class) {
+            $row_typ = sql_par_type::KEY_512;
+        } elseif ($this::class == changes_big::class) {
+            $row_typ = sql_par_type::TEXT;
+        }
+        $fvt_lst->add_field(self::FLD_ROW_ID, $this->row_id, $row_typ);
+        return $fvt_lst;
+    }
+
+    /**
+     * get a list of all database fields
+     * list must be corresponding to the db_values fields
+     * TODO deprecate
+     *
+     * @return array list of the database field names
+     */
+    function db_fields(): array
+    {
+        $sql_fields = parent::db_fields();
+
+        if ($this->old_value !== null) {
+            $sql_fields[] = self::FLD_OLD_VALUE;
+        }
+        if ($this->new_value !== null) {
+            $sql_fields[] = self::FLD_NEW_VALUE;
+        }
+
+        if ($this->old_id > 0) {
+            $sql_fields[] = self::FLD_OLD_ID;
+        }
+        if ($this->new_id > 0) {
+            $sql_fields[] = self::FLD_NEW_ID;
+        }
+
+        $sql_fields[] = self::FLD_ROW_ID;
+        return $sql_fields;
+    }
+
+    /**
+     * get a list of database field values that have been updated
+     *
+     * @return array list of the database field values
+     */
+    function db_values(): array
+    {
+        $sql_values = parent::db_values();
+
+        if ($this->old_value !== null) {
+            $sql_values[] = $this->old_value;
+        }
+        if ($this->new_value !== null) {
+            $sql_values[] = $this->new_value;
+        }
+
+        if ($this->old_id > 0) {
+            $sql_values[] = $this->new_id;
+        }
+        if ($this->new_id > 0) {
+            $sql_values[] = $this->new_id;
+        }
+
+        $sql_values[] = $this->row_id;
+        return $sql_values;
+    }
+
+
+    /*
+     * display
+     */
+
+    // TODO to be move to frontend
+
     /**
      * @return string the last change of given user
      *                optional without time for automatic testing
@@ -417,114 +654,40 @@ class change extends change_log
             }
             if ($this->old_value <> '') {
                 if ($this->new_value <> '') {
-                    $result .= 'changed ' . $this->old_value . ' to ' . $this->new_value;
+                    $result .= self::MSG_UPDATE . ' "' . $this->old_value . '" to "' . $this->new_value . '"';
                 } else {
-                    $result .= 'deleted ' . $this->old_value;
+                    $result .= self::MSG_DEL . ' "' . $this->old_value . '"';;
                 }
             } else {
-                $result .= 'added ' . $this->new_value;
+                $result .= self::MSG_ADD . ' "' . $this->new_value . '"';;
             }
         }
         return $result;
     }
 
-    /**
-     * log a user change of a word, value or formula
-     * @return true if the change has been logged successfully
+
+    /*
+     * debug
      */
-    function add(): bool
+
+    function dsp_id(): string
     {
-        log_debug(' do "' . $this->action
-            . '" in "' . $this->table()
-            . ',' . $this->field()
-            . '" log change from "'
-            . $this->old_value . '" (id ' . $this->old_id . ')' .
-            ' to "' . $this->new_value . '" (id ' . $this->new_id . ') in row ' . $this->row_id);
-
-        global $db_con;
-
-        //parent::add_table();
-        //parent::add_field();
-        parent::add_action($db_con);
-
-        $sql_fields = array();
-        $sql_values = array();
-        $sql_fields[] = "user_id";
-        $sql_values[] = $this->user()->id();
-        $sql_fields[] = "change_action_id";
-        $sql_values[] = $this->action_id;
-        $sql_fields[] = "change_field_id";
-        $sql_values[] = $this->field_id;
-
-        $sql_fields[] = "old_value";
-        $sql_values[] = $this->old_value;
-        $sql_fields[] = "new_value";
-        $sql_values[] = $this->new_value;
-
-        if ($this->old_id > 0 or $this->new_id > 0) {
-            $sql_fields[] = "old_id";
-            $sql_values[] = $this->old_id;
-            $sql_fields[] = "new_id";
-            $sql_values[] = $this->new_id;
-        }
-
-        $sql_fields[] = "row_id";
-        $sql_values[] = $this->row_id;
-
-        //$db_con = new mysql;
-        $db_type = $db_con->get_class();
-        $db_con->set_class(sql_db::TBL_CHANGE);
-        $db_con->set_usr($this->user()->id());
-        $log_id = $db_con->insert_old($sql_fields, $sql_values);
-
-        if ($log_id <= 0) {
-            // write the error message in steps to get at least some message if the parameters has caused the error
-            if ($this->user() == null) {
-                log_fatal("Insert to change log failed.", "user_log->add", 'Insert to change log failed', (new Exception)->getTraceAsString());
+        $result = 'log ' . $this->action() . ' ';
+        $result .= $this->table() . ',' . $this->field() . ' ';
+        if ($this->old_value != null) {
+            if ($this->new_value != null) {
+                $result .= 'from ' . $this->old_value . ' (id ' . $this->old_id . ')';
+                $result .= 'to ' . $this->new_value . ' (id ' . $this->new_id . ')';
             } else {
-                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . ")", "user_log->add");
-                log_fatal("Insert to change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add");
+                $result .= $this->old_value . ' (id ' . $this->old_id . ')';
             }
-            $result = False;
         } else {
-            $this->set_id($log_id);
-            // restore the type before saving the log
-            $db_con->set_class($db_type);
-            $result = True;
-        }
-
-        return $result;
-    }
-
-    /**
-     * add the row id to an existing log entry
-     * e.g. because the row id is known after the adding of the real record,
-     * but the log entry has been created upfront to make sure that logging is complete
-     * TODO: accept also strings as row_id for values and results
-     */
-    function add_ref($row_id): bool
-    {
-        log_debug("user_log->add_ref (" . $row_id . " to " . $this->id() . " for user " . $this->user()->dsp_id() . ")");
-
-        global $db_con;
-        $result = false;
-
-        $db_type = $db_con->get_class();
-        $db_con->set_class(sql_db::TBL_CHANGE);
-        $db_con->set_usr($this->user()->id());
-        if ($db_con->update_old($this->id(), "row_id", $row_id)) {
-            // restore the type before saving the log
-            $db_con->set_class($db_type);
-            $result = True;
-        } else {
-            // write the error message in steps to get at least some message if the parameters has caused the error
-            if ($this->user() == null) {
-                log_fatal("Update of reference in the change log failed.", "user_log->add_ref", 'Update of reference in the change log failed', (new Exception)->getTraceAsString());
-            } else {
-                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . ")", "user_log->add_ref");
-                log_fatal("Update of reference in the change log failed with (" . $this->user()->dsp_id() . "," . $this->action . "," . $this->table() . "," . $this->field() . "," . $this->old_value . "," . $this->new_value . "," . $this->row_id . ")", "user_log->add_ref");
+            if ($this->new_value != null) {
+                $result .= $this->new_value . ' (id ' . $this->new_id . ')';
             }
         }
+        $result .= ' in row ' . $this->row_id;
+        $result .= ' at ' . $this->change_time->format(DateTimeInterface::ATOM);
         return $result;
     }
 

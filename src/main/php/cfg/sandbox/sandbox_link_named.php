@@ -31,13 +31,25 @@
 
 namespace cfg;
 
+use api\api;
+use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
+use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
+use cfg\log\change_log_list;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 
 class sandbox_link_named extends sandbox_link
 {
+
+    /*
+     * object vars
+     */
+
     // the word, triple, verb oder formula description that is shown as a mouseover explain to the user
     // if description is NULL the database value should not be updated
     // or for triples the description that may differ from the generic created text
@@ -45,6 +57,11 @@ class sandbox_link_named extends sandbox_link
     // if the description is empty the generic created name is used
     protected ?string $name = '';   // simply the object name, which cannot be empty if it is a named object
     public ?string $description = null;
+
+
+    /*
+     * construct and map
+     */
 
     function reset(): void
     {
@@ -112,6 +129,71 @@ class sandbox_link_named extends sandbox_link
         return $this->name;
     }
 
+    /**
+     * dummy function that should always be overwritten by the child object
+     * @return string
+     */
+    function name_field(): string
+    {
+        log_err('function name_field() missing in class ' . $this::class);
+        return '';
+    }
+
+    /**
+     * create a clone and update the name (mainly used for unit testing)
+     * but keep the unique db id
+     *
+     * @param string $name the target name
+     * @return $this a clone with the name changed
+     */
+    function cloned_named(string $name): sandbox_link_named
+    {
+        $obj_cpy = parent::cloned();
+        $obj_cpy->set_id($this->id());
+        $obj_cpy->set_fob($this->fob());
+        $obj_cpy->set_tob($this->tob());
+        $obj_cpy->set_name($name);
+        return $obj_cpy;
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * same as in cfg/sandbox/sanbox_named, but php does not yet allow multi extends
+     * @param object $api_obj frontend API objects that should be filled with unique object name
+     */
+    function fill_api_obj(object $api_obj): void
+    {
+        parent::fill_api_obj($api_obj);
+
+        $api_obj->set_name($this->name());
+        $api_obj->description = $this->description;
+    }
+
+    /**
+     * set the type based on the api json
+     * @param array $api_json the api json array with the values that should be mapped
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+            if ($key == api::FLD_NAME) {
+                $this->set_name($value);
+            }
+            if ($key == api::FLD_DESCRIPTION) {
+                if ($value <> '') {
+                    $this->description = $value;
+                }
+            }
+        }
+        return $msg;
+    }
+
 
     /*
      * im- and export
@@ -143,6 +225,63 @@ class sandbox_link_named extends sandbox_link
 
 
     /*
+     * information
+     */
+
+    /**
+     * check if the named object in the database needs to be updated
+     *
+     * @param sandbox_link_named $db_obj the word as saved in the database
+     * @return bool true if this word has infos that should be saved in the datanase
+     */
+    function needs_db_update_named(sandbox_link_named $db_obj): bool
+    {
+        $result = parent::needs_db_update_linked($db_obj);
+        if ($this->name != null) {
+            if ($this->name != $db_obj->name) {
+                $result = true;
+            }
+        }
+        if ($this->description != null) {
+            if ($this->description != $db_obj->description) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+
+    /*
+     * log read
+     */
+
+    /**
+     * get the description of the latest change related to this object
+     * @param user $usr who has requeted to see the change
+     * @return string the description of the latest change
+     */
+    function log_last_msg(user $usr): string
+    {
+        $log = new change_log_list();
+        $log->load_obj_last($this, $usr);
+        return $log->first_msg();
+    }
+
+    /**
+     * get the description of the latest change related to this object and the given field
+     * @param user $usr who has requeted to see the change
+     * @param string $fld the field name to filter the changes
+     * @return string the description of the latest change
+     */
+    function log_last_field_msg(user $usr, string $fld): string
+    {
+        $log = new change_log_list();
+        $log->load_obj_field_last($this, $usr, $fld);
+        return $log->first_msg();
+    }
+
+
+    /*
      * save function
      */
 
@@ -169,6 +308,130 @@ class sandbox_link_named extends sandbox_link
             }
         }
         return $result;
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to add a new named sandbox object e.g. word to the database
+     * TODO add qp merge
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_par $qp
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
+     * @param string $id_fld_new
+     * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert_key_field(
+        sql                $sc,
+        sql_par            $qp,
+        sql_par_field_list $fvt_lst,
+        string             $id_fld_new,
+        sql_type_list      $sc_par_lst_sub = new sql_type_list([])
+    ): sql_par
+    {
+        // set some var names to shorten the code lines
+        $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
+        $ext = sql::NAME_SEP . sql::FILE_INSERT;
+
+        // list of parameters actually used in order of the function usage
+        $sql = '';
+
+        $qp_lnk = parent::sql_insert_key_field($sc, $qp, $fvt_lst, $id_fld_new, $sc_par_lst_sub);
+
+        // create the sql to insert the row
+        $fvt_insert = $fvt_lst->get($this->name_field());
+        $fvt_insert_list = new sql_par_field_list();
+        $fvt_insert_list->add($fvt_insert);
+        $sc_insert = clone $sc;
+        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);;
+        $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
+        if ($sc->db_type == sql_db::MYSQL) {
+            $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+        }
+        $qp_insert->sql = $sc_insert->create_sql_insert(
+            $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
+        $qp_insert->par = [$fvt_insert->value];
+
+        // add the insert row to the function body
+        //$sql .= ' ' . $qp_insert->sql . '; ';
+
+        // get the new row id for MySQL db
+        if ($sc->db_type == sql_db::MYSQL and !$usr_tbl) {
+            $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
+        }
+
+        $qp->sql = $qp_lnk->sql . ' ' . $sql;
+        $qp->par_fld_lst = $qp_lnk->par_fld_lst;
+        $qp->par_fld = $fvt_insert;
+
+        return $qp;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed of the named link object
+     * excluding the internal fields e.g. the database id
+     * field list must be corresponding to the db_fields_changed fields
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    {
+        return array_merge(
+            parent::db_all_fields_link($sc_par_lst),
+            [
+                $this->name_field(),
+                sandbox_named::FLD_DESCRIPTION
+            ]);
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     * of the object to combine the list with the list of the child object e.g. word
+     *
+     * @param sandbox|sandbox_link_named $sbx the same named sandbox as this to compare which fields have been changed
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list with the field names of the object and any child object
+     */
+    function db_fields_changed(
+        sandbox|sandbox_link_named $sbx,
+        sql_type_list $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
+    {
+        global $change_field_list;
+
+        $sc = new sql();
+        $do_log = $sc_par_lst->incl_log();
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        // for insert statements of user sandbox rows user id fields always needs to be included
+        $lst->add_name_and_description($this, $sbx, $do_log, $table_id);
+        return $lst;
+    }
+
+
+    /*
+     * settings
+     */
+
+    /**
+     * @return bool true if this sandbox object has a name as unique key
+     * final function overwritten by the child object
+     */
+        function is_named_obj(): bool
+    {
+        return true;
     }
 
 }

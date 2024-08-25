@@ -43,7 +43,7 @@ ALTER TABLE config
 
 CREATE TABLE IF NOT EXISTS sys_log_types
 (
-    sys_log_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    sys_log_type_id   smallint         NOT NULL COMMENT 'the internal unique primary index',
     type_name         varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id           varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description       text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -66,7 +66,7 @@ ALTER TABLE sys_log_types
 
 CREATE TABLE IF NOT EXISTS sys_log_status
 (
-    sys_log_status_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    sys_log_status_id smallint         NOT NULL COMMENT 'the internal unique primary index',
     type_name         varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id           varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description       text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
@@ -90,7 +90,7 @@ ALTER TABLE sys_log_status
 
 CREATE TABLE IF NOT EXISTS sys_log_functions
 (
-    sys_log_function_id   bigint           NOT NULL COMMENT 'the internal unique primary index',
+    sys_log_function_id   smallint         NOT NULL COMMENT 'the internal unique primary index',
     sys_log_function_name varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id               varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description           text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -115,8 +115,8 @@ CREATE TABLE IF NOT EXISTS sys_log
 (
     sys_log_id          bigint     NOT NULL COMMENT 'the internal unique primary index',
     sys_log_time        timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'timestamp of the creation',
-    sys_log_type_id     bigint     NOT NULL COMMENT 'the level e.g. debug,info,warning,error or fatal',
-    sys_log_function_id bigint     NOT NULL COMMENT 'the function or function group for the entry e.g. db_write to measure the db write times',
+    sys_log_type_id     smallint   NOT NULL COMMENT 'the level e.g. debug,info,warning,error or fatal',
+    sys_log_function_id smallint   NOT NULL COMMENT 'the function or function group for the entry e.g. db_write to measure the db write times',
     sys_log_text        text   DEFAULT NULL COMMENT 'the short text of the log entry to indentify the error and to reduce the number of double entries',
     sys_log_description text   DEFAULT NULL COMMENT 'the lond description with all details of the log entry to solve ti issue',
     sys_log_trace       text   DEFAULT NULL COMMENT 'the generated code trace to local the path to the error cause',
@@ -142,7 +142,7 @@ ALTER TABLE sys_log
 
 CREATE TABLE IF NOT EXISTS system_time_types
 (
-    system_time_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    system_time_type_id smallint         NOT NULL COMMENT 'the internal unique primary index',
     type_name           varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id             varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description         text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -168,7 +168,7 @@ CREATE TABLE IF NOT EXISTS system_times
     system_time_id      bigint        NOT NULL COMMENT 'the internal unique primary index',
     start_time          timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'start time of the monitoring period',
     end_time            timestamp DEFAULT NULL COMMENT 'end time of the monitoring period',
-    system_time_type_id bigint        NOT NULL COMMENT 'the area of the execution time e.g. db write',
+    system_time_type_id smallint      NOT NULL COMMENT 'the area of the execution time e.g. db write',
     milliseconds        bigint        NOT NULL COMMENT 'the execution time in milliseconds'
 )
     ENGINE = InnoDB
@@ -189,7 +189,7 @@ ALTER TABLE system_times
 
 CREATE TABLE IF NOT EXISTS job_types
 (
-    job_type_id bigint             NOT NULL COMMENT 'the internal unique primary index',
+    job_type_id smallint           NOT NULL COMMENT 'the internal unique primary index',
     type_name     varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -214,7 +214,7 @@ CREATE TABLE IF NOT EXISTS job_times
 (
     job_time_id bigint          NOT NULL COMMENT 'the internal unique primary index',
     schedule    varchar(20) DEFAULT NULL COMMENT 'the crontab for the job schedule',
-    job_type_id bigint          NOT NULL COMMENT 'the id of the job type that should be started',
+    job_type_id smallint        NOT NULL COMMENT 'the id of the job type that should be started',
     user_id     bigint          NOT NULL COMMENT 'the id of the user who edit the scheduler the last time',
     start       timestamp   DEFAULT NULL COMMENT 'the last start of the job',
     parameter   bigint      DEFAULT NULL COMMENT 'the phrase id that contains all parameters for the next job start'
@@ -239,12 +239,12 @@ CREATE TABLE IF NOT EXISTS jobs
 (
     job_id          bigint        NOT NULL COMMENT 'the internal unique primary index',
     user_id         bigint        NOT NULL COMMENT 'the id of the user who has requested the job by editing the scheduler the last time',
-    job_type_id     bigint        NOT NULL COMMENT 'the id of the job type that should be started',
+    job_type_id     smallint      NOT NULL COMMENT 'the id of the job type that should be started',
     request_time    timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'timestamp of the request for the job execution',
     start_time      timestamp DEFAULT NULL COMMENT 'timestamp when the system has started the execution',
     end_time        timestamp DEFAULT NULL COMMENT 'timestamp when the job has been completed or canceled',
     parameter       bigint    DEFAULT NULL COMMENT 'id of the phrase with the snaped parameter set for this job start',
-    change_field_id bigint    DEFAULT NULL COMMENT 'e.g. for undo jobs the id of the field that should be changed',
+    change_field_id smallint  DEFAULT NULL COMMENT 'e.g. for undo jobs the id of the field that should be changed',
     row_id          bigint    DEFAULT NULL COMMENT 'e.g. for undo jobs the id of the row that should be changed',
     source_id       bigint    DEFAULT NULL COMMENT 'used for import to link the source',
     ref_id          bigint    DEFAULT NULL COMMENT 'used for import to link the reference'
@@ -267,10 +267,10 @@ ALTER TABLE jobs
 
 CREATE TABLE IF NOT EXISTS user_types
 (
-    user_type_id bigint NOT NULL COMMENT 'the internal unique primary index',
-    type_name varchar(255) NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
-    code_id varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
-    description text DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+    user_type_id smallint         NOT NULL COMMENT 'the internal unique primary index',
+    type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -290,7 +290,7 @@ ALTER TABLE user_types
 
 CREATE TABLE IF NOT EXISTS user_profiles
 (
-    user_profile_id bigint        NOT NULL COMMENT 'the internal unique primary index',
+    user_profile_id smallint      NOT NULL COMMENT 'the internal unique primary index',
     type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
@@ -314,10 +314,10 @@ ALTER TABLE user_profiles
 
 CREATE TABLE IF NOT EXISTS user_official_types
 (
-    user_official_type_id bigint  NOT NULL COMMENT 'the internal unique primary index',
-    type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
-    code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
-    description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+    user_official_type_id smallint NOT NULL COMMENT 'the internal unique primary index',
+    type_name    varchar(255)      NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id      varchar(255)  DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description  text          DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -438,7 +438,7 @@ ALTER TABLE sessions
 
 CREATE TABLE IF NOT EXISTS change_actions
 (
-    change_action_id   bigint       NOT NULL COMMENT 'the internal unique primary index',
+    change_action_id   smallint     NOT NULL COMMENT 'the internal unique primary index',
     change_action_name varchar(255) NOT NULL,
     code_id            varchar(255) NOT NULL,
     description        text     DEFAULT NULL
@@ -461,7 +461,7 @@ ALTER TABLE change_actions
 
 CREATE TABLE IF NOT EXISTS change_tables
 (
-    change_table_id   bigint           NOT NULL COMMENT 'the internal unique primary index',
+    change_table_id   smallint         NOT NULL COMMENT 'the internal unique primary index',
     change_table_name varchar(255)     NOT NULL COMMENT 'the real name',
     code_id           varchar(255) DEFAULT NULL COMMENT 'with this field tables can be combined in case of renaming',
     description       text         DEFAULT NULL COMMENT 'the user readable name'
@@ -484,7 +484,7 @@ ALTER TABLE change_tables
 
 CREATE TABLE IF NOT EXISTS change_fields
 (
-    change_field_id   bigint           NOT NULL COMMENT 'the internal unique primary index',
+    change_field_id   smallint         NOT NULL COMMENT 'the internal unique primary index',
     table_id          bigint           NOT NULL COMMENT 'because every field must only be unique within a table',
     change_field_name varchar(255)     NOT NULL COMMENT 'the real name',
     code_id           varchar(255) DEFAULT NULL COMMENT 'to display the change with some linked information',
@@ -513,7 +513,7 @@ CREATE TABLE IF NOT EXISTS changes
     user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
     change_action_id smallint   NOT NULL COMMENT 'the curl action',
     row_id           bigint DEFAULT NULL COMMENT 'the prime id in the table with the change',
-    change_field_id  bigint     NOT NULL,
+    change_field_id  smallint   NOT NULL,
     old_value        text   DEFAULT NULL,
     new_value        text   DEFAULT NULL,
     old_id           bigint DEFAULT NULL COMMENT 'old value id',
@@ -532,17 +532,75 @@ ALTER TABLE changes
 -- --------------------------------------------------------
 
 --
+-- table structure to log all changes done by any user on the group name for values with up to 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS changes_norm
+(
+    change_id        bigint        NOT NULL COMMENT 'the prime key to identify the change changes_norm',
+    change_time      timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
+    user_id          bigint        NOT NULL COMMENT 'reference to the user who has done the change',
+    change_action_id smallint      NOT NULL COMMENT 'the curl action',
+    row_id           char(112) DEFAULT NULL COMMENT 'the prime id in the table with the change',
+    change_field_id  smallint      NOT NULL,
+    old_value        text      DEFAULT NULL,
+    new_value        text      DEFAULT NULL,
+    old_id           char(112) DEFAULT NULL COMMENT 'old value id',
+    new_id           char(112) DEFAULT NULL COMMENT 'new value id'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to log all changes done by any user on the group name for values with up to 16 phrases';
+
+--
+-- AUTO_INCREMENT for table changes_norm
+--
+ALTER TABLE changes_norm
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
+-- table structure to log all changes done by any user on the group name for values with more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS changes_big
+(
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change changes_big',
+    change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
+    user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
+    change_action_id smallint   NOT NULL COMMENT 'the curl action',
+    row_id           text   DEFAULT NULL COMMENT 'the prime id in the table with the change',
+    change_field_id  smallint   NOT NULL,
+    old_value        text   DEFAULT NULL,
+    new_value        text   DEFAULT NULL,
+    old_id           text   DEFAULT NULL COMMENT 'old value id',
+    new_id           text   DEFAULT NULL COMMENT 'new value id'
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+    COMMENT 'to log all changes done by any user on the group name for values with more than 16 phrases';
+
+--
+-- AUTO_INCREMENT for table changes_big
+--
+ALTER TABLE changes_big
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
 -- table structure to log all changes done by any user on values with a standard group id
 --
 
-CREATE TABLE IF NOT EXISTS change_standard_values
+CREATE TABLE IF NOT EXISTS change_values_norm
 (
-    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_standard_value',
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_norm',
     change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
     user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
     change_action_id smallint   NOT NULL COMMENT 'the curl action',
     group_id         char(112)  NOT NULL,
-    change_field_id  bigint     NOT NULL,
+    change_field_id  smallint   NOT NULL,
     old_value        double DEFAULT NULL,
     new_value        double DEFAULT NULL
 )
@@ -551,9 +609,9 @@ CREATE TABLE IF NOT EXISTS change_standard_values
     COMMENT 'to log all changes done by any user on values with a standard group id';
 
 --
--- AUTO_INCREMENT for table change_standard_values
+-- AUTO_INCREMENT for table change_values_norm
 --
-ALTER TABLE change_standard_values
+ALTER TABLE change_values_norm
     MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
@@ -562,14 +620,14 @@ ALTER TABLE change_standard_values
 -- table structure to log all changes done by any user on values with a prime group id
 --
 
-CREATE TABLE IF NOT EXISTS change_prime_values
+CREATE TABLE IF NOT EXISTS change_values_prime
 (
-    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_prime_value',
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_prime',
     change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
     user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
     change_action_id smallint   NOT NULL COMMENT 'the curl action',
     group_id         bigint     NOT NULL,
-    change_field_id  bigint     NOT NULL,
+    change_field_id  smallint   NOT NULL,
     old_value        double DEFAULT NULL,
     new_value        double DEFAULT NULL
 )
@@ -578,9 +636,9 @@ CREATE TABLE IF NOT EXISTS change_prime_values
     COMMENT 'to log all changes done by any user on values with a prime group id';
 
 --
--- AUTO_INCREMENT for table change_prime_values
+-- AUTO_INCREMENT for table change_values_prime
 --
-ALTER TABLE change_prime_values
+ALTER TABLE change_values_prime
     MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
@@ -589,14 +647,14 @@ ALTER TABLE change_prime_values
 -- table structure to log all changes done by any user on values with a big group id
 --
 
-CREATE TABLE IF NOT EXISTS change_big_values
+CREATE TABLE IF NOT EXISTS change_values_big
 (
-    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_big_value',
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_big',
     change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
     user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
     change_action_id smallint   NOT NULL COMMENT 'the curl action',
     group_id         text       NOT NULL,
-    change_field_id  bigint     NOT NULL,
+    change_field_id  smallint   NOT NULL,
     old_value        double DEFAULT NULL,
     new_value        double DEFAULT NULL
 )
@@ -605,9 +663,9 @@ CREATE TABLE IF NOT EXISTS change_big_values
     COMMENT 'to log all changes done by any user on values with a big group id';
 
 --
--- AUTO_INCREMENT for table change_big_values
+-- AUTO_INCREMENT for table change_values_big
 --
-ALTER TABLE change_big_values
+ALTER TABLE change_values_big
     MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
@@ -655,7 +713,7 @@ ALTER TABLE change_links
 
 CREATE TABLE IF NOT EXISTS pod_types
 (
-    pod_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    pod_type_id smallint         NOT NULL COMMENT 'the internal unique primary index',
     type_name   varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id     varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -678,7 +736,7 @@ ALTER TABLE pod_types
 
 CREATE TABLE IF NOT EXISTS pod_status
 (
-    pod_status_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    pod_status_id smallint         NOT NULL COMMENT 'the internal unique primary index',
     type_name     varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -705,9 +763,9 @@ CREATE TABLE IF NOT EXISTS pods
     type_name       varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id         varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description     text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
-    pod_type_id     bigint       DEFAULT NULL,
+    pod_type_id     smallint     DEFAULT NULL,
     pod_url         varchar(255)     NOT NULL,
-    pod_status_id   bigint       DEFAULT NULL,
+    pod_status_id   smallint     DEFAULT NULL,
     param_triple_id bigint       DEFAULT NULL
 )
     ENGINE = InnoDB
@@ -728,7 +786,7 @@ ALTER TABLE pods
 
 CREATE TABLE IF NOT EXISTS protection_types
 (
-    protection_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    protection_type_id smallint         NOT NULL COMMENT 'the internal unique primary index',
     type_name          varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id            varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description        text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -751,7 +809,7 @@ ALTER TABLE protection_types
 
 CREATE TABLE IF NOT EXISTS share_types
 (
-    share_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    share_type_id smallint         NOT NULL COMMENT 'the internal unique primary index',
     type_name     varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -774,7 +832,7 @@ ALTER TABLE share_types
 
 CREATE TABLE IF NOT EXISTS languages
 (
-    language_id    bigint           NOT NULL COMMENT 'the internal unique primary index',
+    language_id    smallint         NOT NULL COMMENT 'the internal unique primary index',
     language_name  varchar(255)     NOT NULL,
     code_id        varchar(100) DEFAULT NULL,
     description    text         DEFAULT NULL,
@@ -798,7 +856,7 @@ ALTER TABLE languages
 
 CREATE TABLE IF NOT EXISTS language_forms
 (
-    language_form_id   bigint           NOT NULL COMMENT 'the internal unique primary index',
+    language_form_id   smallint         NOT NULL COMMENT 'the internal unique primary index',
     language_form_name varchar(255) DEFAULT NULL COMMENT 'type of adjustment of a term in a language e.g. plural',
     code_id            varchar(100) DEFAULT NULL,
     description        text         DEFAULT NULL,
@@ -827,7 +885,7 @@ CREATE TABLE IF NOT EXISTS words
     word_name      varchar(255) NOT     NULL COMMENT 'the text used for searching',
     plural         varchar(255) DEFAULT NULL COMMENT 'to be replaced by a language form entry; TODO to be move to language forms',
     description    text         DEFAULT NULL COMMENT 'to be replaced by a language form entry',
-    phrase_type_id bigint       DEFAULT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
+    phrase_type_id smallint     DEFAULT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
     view_id        bigint       DEFAULT NULL COMMENT 'the default mask for this word',
     `values`       bigint       DEFAULT NULL COMMENT 'number of values linked to the word, which gives an indication of the importance',
     inactive       smallint     DEFAULT NULL COMMENT 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id',
@@ -858,7 +916,7 @@ CREATE TABLE IF NOT EXISTS user_words
     word_name      varchar(255)          DEFAULT NULL COMMENT 'the text used for searching',
     plural         varchar(255)          DEFAULT NULL COMMENT 'to be replaced by a language form entry; TODO to be move to language forms',
     description    text                  DEFAULT NULL COMMENT 'to be replaced by a language form entry',
-    phrase_type_id bigint                DEFAULT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
+    phrase_type_id smallint              DEFAULT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
     view_id        bigint                DEFAULT NULL COMMENT 'the default mask for this word',
     `values`       bigint                DEFAULT NULL COMMENT 'number of values linked to the word, which gives an indication of the importance',
     excluded       smallint              DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
@@ -877,7 +935,7 @@ CREATE TABLE IF NOT EXISTS user_words
 
 CREATE TABLE IF NOT EXISTS verbs
 (
-    verb_id             bigint           NOT NULL COMMENT 'the internal unique primary index',
+    verb_id             smallint         NOT NULL COMMENT 'the internal unique primary index',
     verb_name           varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id             varchar(255) DEFAULT NULL COMMENT 'id text to link coded functionality to a specific verb',
     description         text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
@@ -916,7 +974,7 @@ CREATE TABLE IF NOT EXISTS triples
     name_generated      varchar(255) DEFAULT NULL COMMENT 'the generated name is saved in the database for database base unique check based on the phrases and verb,which can be overwritten by the given name',
     description         text         DEFAULT NULL COMMENT 'text that should be shown to the user in case of mouseover on the triple name',
     triple_condition_id bigint       DEFAULT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true',
-    phrase_type_id      bigint       DEFAULT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
+    phrase_type_id      smallint     DEFAULT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
     view_id             bigint       DEFAULT NULL COMMENT 'the default mask for this triple',
     `values`            bigint       DEFAULT NULL COMMENT 'number of values linked to the word,which gives an indication of the importance',
     inactive            smallint     DEFAULT NULL COMMENT 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id',
@@ -949,7 +1007,7 @@ CREATE TABLE IF NOT EXISTS user_triples
     name_generated      varchar(255) DEFAULT NULL COMMENT 'the generated name is saved in the database for database base unique check based on the phrases and verb,which can be overwritten by the given name',
     description         text         DEFAULT NULL COMMENT 'text that should be shown to the user in case of mouseover on the triple name',
     triple_condition_id bigint       DEFAULT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true',
-    phrase_type_id      bigint       DEFAULT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
+    phrase_type_id      smallint     DEFAULT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
     view_id             bigint       DEFAULT NULL COMMENT 'the default mask for this triple',
     `values`            bigint       DEFAULT NULL COMMENT 'number of values linked to the word,which gives an indication of the importance',
     excluded            smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
@@ -968,10 +1026,10 @@ CREATE TABLE IF NOT EXISTS user_triples
 
 CREATE TABLE IF NOT EXISTS phrase_table_status
 (
-    phrase_table_status_id bigint  NOT NULL COMMENT 'the internal unique primary index',
-    type_name     varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
-    code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
-    description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
+    phrase_table_status_id smallint NOT NULL COMMENT 'the internal unique primary index',
+    type_name     varchar(255)      NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
+    code_id       varchar(255)  DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
+    description   text          DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -1014,7 +1072,7 @@ ALTER TABLE phrase_tables
 
 CREATE TABLE IF NOT EXISTS phrase_types
 (
-    phrase_type_id bigint       NOT NULL     COMMENT 'the internal unique primary index',
+    phrase_type_id smallint     NOT NULL     COMMENT 'the internal unique primary index',
     type_name      varchar(255) NOT NULL     COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id        varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description    text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
@@ -1107,7 +1165,7 @@ CREATE TABLE IF NOT EXISTS user_groups_big (
 
 CREATE TABLE IF NOT EXISTS source_types
 (
-    source_type_id bigint          NOT NULL COMMENT 'the internal unique primary index',
+    source_type_id smallint        NOT NULL COMMENT 'the internal unique primary index',
     type_name     varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id       varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description   text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -1132,9 +1190,9 @@ CREATE TABLE IF NOT EXISTS sources (
     source_id      bigint           NOT NULL COMMENT 'the internal unique primary index',
     user_id        bigint       DEFAULT NULL COMMENT 'the owner / creator of the source',
     source_name    varchar(255)     NOT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
-    description    text DEFAULT         NULL COMMENT 'the user specific description of the source for mouse over helps',
-    source_type_id bigint DEFAULT       NULL COMMENT 'link to the source type',
-    `url`          text DEFAULT         NULL COMMENT 'the url of the source',
+    description    text         DEFAULT NULL COMMENT 'the user specific description of the source for mouse over helps',
+    source_type_id smallint     DEFAULT NULL COMMENT 'link to the source type',
+    `url`          text         DEFAULT NULL COMMENT 'the url of the source',
     code_id        varchar(100) DEFAULT NULL COMMENT 'to select sources used by this program',
     excluded       smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id  smallint     DEFAULT NULL COMMENT 'to restrict the access',
@@ -1159,7 +1217,7 @@ CREATE TABLE IF NOT EXISTS user_sources (
     user_id        bigint           NOT NULL COMMENT 'the changer of the source',
     source_name    varchar(255) DEFAULT NULL COMMENT 'the unique name of the source used e.g. as the primary search key',
     description    text         DEFAULT NULL COMMENT 'the user specific description of the source for mouse over helps',
-    source_type_id bigint       DEFAULT NULL COMMENT 'link to the source type',
+    source_type_id smallint     DEFAULT NULL COMMENT 'link to the source type',
     `url`          text         DEFAULT NULL COMMENT 'the url of the source',
     code_id        varchar(100) DEFAULT NULL COMMENT 'to select sources used by this program',
     excluded       smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
@@ -1178,7 +1236,7 @@ CREATE TABLE IF NOT EXISTS user_sources (
 
 CREATE TABLE IF NOT EXISTS ref_types
 (
-    ref_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    ref_type_id smallint         NOT NULL COMMENT 'the internal unique primary index',
     type_name   varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id     varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
@@ -1204,12 +1262,12 @@ CREATE TABLE IF NOT EXISTS refs
 (
     ref_id        bigint       NOT NULL COMMENT 'the internal unique primary index',
     user_id       bigint   DEFAULT NULL COMMENT 'the owner / creator of the ref',
+    external_key  varchar(255) NOT NULL COMMENT 'the unique external key used in the other system',
     `url`         text     DEFAULT NULL COMMENT 'the concrete url for the entry inluding the item id',
+    source_id     bigint   DEFAULT NULL COMMENT 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid',
     description   text     DEFAULT NULL,
     phrase_id     bigint   DEFAULT NULL COMMENT 'the phrase for which the external data should be syncronised',
-    external_key  varchar(255) NOT NULL COMMENT 'the unique external key used in the other system',
     ref_type_id   bigint       NOT NULL COMMENT 'to link code functionality to a list of references',
-    source_id     bigint   DEFAULT NULL COMMENT 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid',
     excluded      smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id smallint DEFAULT NULL COMMENT 'to restrict the access',
     protect_id    smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
@@ -1230,13 +1288,15 @@ ALTER TABLE refs
 
 CREATE TABLE IF NOT EXISTS user_refs
 (
-    ref_id        bigint       NOT NULL COMMENT 'with the user_id the internal unique primary index',
-    user_id       bigint       NOT NULL COMMENT 'the changer of the ref',
-    `url`         text     DEFAULT NULL COMMENT 'the concrete url for the entry inluding the item id',
-    description   text     DEFAULT NULL,
-    excluded      smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
-    share_type_id smallint DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    ref_id        bigint           NOT NULL COMMENT 'with the user_id the internal unique primary index',
+    user_id       bigint           NOT NULL COMMENT 'the changer of the ref',
+    external_key  varchar(255) DEFAULT NULL COMMENT 'the unique external key used in the other system',
+    `url`         text          DEFAULT NULL COMMENT 'the concrete url for the entry inluding the item id',
+    source_id     bigint        DEFAULT NULL COMMENT 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid',
+    description   text          DEFAULT NULL,
+    excluded      smallint      DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id smallint      DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id    smallint      DEFAULT NULL COMMENT 'to protect against unwanted changes'
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -1932,7 +1992,7 @@ CREATE TABLE IF NOT EXISTS value_ts_data
 
 CREATE TABLE IF NOT EXISTS element_types
 (
-    element_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    element_type_id smallint         NOT NULL COMMENT 'the internal unique primary index',
     type_name       varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id         varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description     text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -1958,7 +2018,7 @@ CREATE TABLE IF NOT EXISTS elements
     element_id      bigint     NOT NULL COMMENT 'the internal unique primary index',
     formula_id      bigint     NOT NULL COMMENT 'each element can only be used for one formula',
     order_nbr       bigint     NOT NULL,
-    element_type_id bigint     NOT NULL,
+    element_type_id smallint   NOT NULL,
     user_id         bigint DEFAULT NULL,
     ref_id          bigint DEFAULT NULL COMMENT 'either a term,verb or formula id',
     resolved_text   varchar(255) DEFAULT NULL
@@ -1981,7 +2041,7 @@ ALTER TABLE elements
 
 CREATE TABLE IF NOT EXISTS formula_types
 (
-    formula_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    formula_type_id smallint         NOT NULL COMMENT 'the internal unique primary index',
     type_name       varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id         varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description     text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -2007,8 +2067,8 @@ CREATE TABLE IF NOT EXISTS formulas
     formula_id        bigint        NOT NULL COMMENT 'the internal unique primary index',
     user_id           bigint    DEFAULT NULL COMMENT 'the owner / creator of the formula',
     formula_name      varchar(255)  NOT NULL COMMENT 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)',
-    formula_text      text          NOT NULL COMMENT 'the internal formula expression with the database references e.g. {f1} for formula with id 1',
-    resolved_text     text          NOT NULL COMMENT 'the formula expression in user readable format as shown to the user which can include formatting for better readability',
+    formula_text      text      DEFAULT NULL COMMENT 'the internal formula expression with the database references e.g. {f1} for formula with id 1',
+    resolved_text     text      DEFAULT NULL COMMENT 'the formula expression in user readable format as shown to the user which can include formatting for better readability',
     description       text      DEFAULT NULL COMMENT 'text to be shown to the user for mouse over; to be replaced by a language form entry',
     formula_type_id   bigint    DEFAULT NULL COMMENT 'the id of the formula type',
     all_values_needed smallint  DEFAULT NULL COMMENT 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"',
@@ -2062,13 +2122,12 @@ CREATE TABLE IF NOT EXISTS user_formulas
 
 CREATE TABLE IF NOT EXISTS formula_link_types
 (
-    formula_link_type_id bigint     NOT NULL COMMENT 'the internal unique primary index',
+    formula_link_type_id smallint   NOT NULL COMMENT 'the internal unique primary index',
     type_name      varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id        varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description    text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
     formula_id     bigint           NOT NULL,
-    phrase_type_id bigint           NOT NULL,
-    link_type_id   bigint           NOT NULL
+    phrase_type_id smallint         NOT NULL
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -2088,15 +2147,15 @@ ALTER TABLE formula_link_types
 
 CREATE TABLE IF NOT EXISTS formula_links
 (
-    formula_link_id bigint       NOT NULL COMMENT 'the internal unique primary index',
-    user_id         bigint   DEFAULT NULL COMMENT 'the owner / creator of the formula_link',
-    link_type_id    bigint   DEFAULT NULL,
-    order_nbr       bigint   DEFAULT NULL,
-    formula_id      bigint       NOT NULL,
-    phrase_id       bigint       NOT NULL,
-    excluded        smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
-    share_type_id   smallint DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id      smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    formula_link_id      bigint       NOT NULL COMMENT 'the internal unique primary index',
+    user_id              bigint   DEFAULT NULL COMMENT 'the owner / creator of the formula_link',
+    formula_link_type_id smallint DEFAULT NULL,
+    order_nbr            bigint   DEFAULT NULL,
+    formula_id           bigint       NOT NULL,
+    phrase_id            bigint       NOT NULL,
+    excluded             smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id        smallint DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id           smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -2114,13 +2173,13 @@ ALTER TABLE formula_links
 
 CREATE TABLE IF NOT EXISTS user_formula_links
 (
-    formula_link_id bigint NOT NULL COMMENT 'with the user_id the internal unique primary index',
-    user_id bigint NOT NULL COMMENT 'the changer of the formula_link',
-    link_type_id bigint DEFAULT NULL,
-    order_nbr bigint DEFAULT NULL,
-    excluded smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
-    share_type_id smallint DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    formula_link_id      bigint       NOT NULL COMMENT 'with the user_id the internal unique primary index',
+    user_id              bigint       NOT NULL COMMENT 'the changer of the formula_link',
+    formula_link_type_id smallint DEFAULT NULL,
+    order_nbr            bigint   DEFAULT NULL,
+    excluded             smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id        smallint DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id           smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -3090,7 +3149,7 @@ CREATE TABLE IF NOT EXISTS user_results_time_series_big
 
 CREATE TABLE IF NOT EXISTS view_types
 (
-    view_type_id bigint     NOT NULL COMMENT 'the internal unique primary index',
+    view_type_id smallint         NOT NULL COMMENT 'the internal unique primary index',
     type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -3117,7 +3176,7 @@ CREATE TABLE IF NOT EXISTS views
     user_id       bigint       DEFAULT NULL COMMENT 'the owner / creator of the view',
     view_name     varchar(255)     NOT NULL COMMENT 'the name of the view used for searching',
     description   text         DEFAULT NULL COMMENT 'to explain the view to the user with a mouse over text; to be replaced by a language form entry',
-    view_type_id  bigint       DEFAULT NULL COMMENT 'to link coded functionality to views e.g. to use a view for the startup page',
+    view_type_id  smallint     DEFAULT NULL COMMENT 'to link coded functionality to views e.g. to use a view for the startup page',
     code_id       varchar(255) DEFAULT NULL COMMENT 'to link coded functionality to a specific view e.g. define the internal system views',
     excluded      smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id smallint     DEFAULT NULL COMMENT 'to restrict the access',
@@ -3144,7 +3203,7 @@ CREATE TABLE IF NOT EXISTS user_views
     language_id   bigint NOT NULL DEFAULT 1    COMMENT 'the name of the view used for searching',
     view_name     varchar(255)    DEFAULT NULL COMMENT 'the name of the view used for searching',
     description   text            DEFAULT NULL COMMENT 'to explain the view to the user with a mouse over text; to be replaced by a language form entry',
-    view_type_id  bigint          DEFAULT NULL COMMENT 'to link coded functionality to views e.g. to use a view for the startup page',
+    view_type_id  smallint        DEFAULT NULL COMMENT 'to link coded functionality to views e.g. to use a view for the startup page',
     excluded      smallint        DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id smallint        DEFAULT NULL COMMENT 'to restrict the access',
     protect_id    smallint        DEFAULT NULL COMMENT 'to protect against unwanted changes'
@@ -3161,7 +3220,7 @@ CREATE TABLE IF NOT EXISTS user_views
 
 CREATE TABLE IF NOT EXISTS view_link_types
 (
-    view_link_type_id bigint        NOT NULL COMMENT 'the internal unique primary index',
+    view_link_type_id smallint      NOT NULL COMMENT 'the internal unique primary index',
     type_name      varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id        varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description    text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -3187,9 +3246,8 @@ CREATE TABLE IF NOT EXISTS view_term_links
     view_term_link_id bigint       NOT NULL COMMENT 'the internal unique primary index',
     term_id           bigint       NOT NULL,
     view_id           bigint       NOT NULL,
-    type_id           smallint     NOT NULL DEFAULT 1 COMMENT '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups',
+    view_link_type_id smallint     NOT NULL DEFAULT 1 COMMENT '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups',
     user_id           bigint   DEFAULT NULL COMMENT 'the owner / creator of the view_term_link',
-    view_link_type_id bigint   DEFAULT NULL,
     description       text     DEFAULT NULL,
     excluded          smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id     smallint DEFAULT NULL COMMENT 'to restrict the access',
@@ -3213,7 +3271,7 @@ CREATE TABLE IF NOT EXISTS user_view_term_links
 (
     view_term_link_id bigint       NOT NULL COMMENT 'with the user_id the internal unique primary index',
     user_id           bigint       NOT NULL COMMENT 'the changer of the view_term_link',
-    view_link_type_id bigint   DEFAULT NULL,
+    view_link_type_id smallint DEFAULT NULL,
     description       text     DEFAULT NULL,
     excluded          smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id     smallint DEFAULT NULL COMMENT 'to restrict the access',
@@ -3231,7 +3289,7 @@ CREATE TABLE IF NOT EXISTS user_view_term_links
 
 CREATE TABLE IF NOT EXISTS component_link_types
 (
-    component_link_type_id bigint           NOT NULL COMMENT 'the internal unique primary index',
+    component_link_type_id smallint         NOT NULL COMMENT 'the internal unique primary index',
     type_name              varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id                varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description            text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -3254,7 +3312,7 @@ ALTER TABLE component_link_types
 
 CREATE TABLE IF NOT EXISTS position_types
 (
-    position_type_id bigint NOT NULL COMMENT 'the internal unique primary index',
+    position_type_id smallint     NOT NULL COMMENT 'the internal unique primary index',
     type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -3277,7 +3335,7 @@ ALTER TABLE position_types
 
 CREATE TABLE IF NOT EXISTS component_types
 (
-    component_type_id bigint NOT NULL COMMENT 'the internal unique primary index',
+    component_type_id smallint    NOT NULL COMMENT 'the internal unique primary index',
     type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry'
@@ -3304,14 +3362,14 @@ CREATE TABLE IF NOT EXISTS components
     user_id                bigint       DEFAULT NULL COMMENT 'the owner / creator of the component',
     component_name         varchar(255)     NOT NULL COMMENT 'the unique name used to select a component by the user',
     description            text         DEFAULT NULL COMMENT 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry',
-    component_type_id      bigint       DEFAULT NULL COMMENT 'to select the predefined functionality',
+    component_type_id      smallint     DEFAULT NULL COMMENT 'to select the predefined functionality',
     word_id_row            bigint       DEFAULT NULL COMMENT 'for a tree the related value the start node',
     formula_id             bigint       DEFAULT NULL COMMENT 'used for type 6',
     word_id_col            bigint       DEFAULT NULL COMMENT 'to define the type for the table columns',
     word_id_col2           bigint       DEFAULT NULL COMMENT 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart',
     linked_component_id    bigint       DEFAULT NULL COMMENT 'to link this component to another component',
-    component_link_type_id bigint       DEFAULT NULL COMMENT 'to define how this entry links to the other entry',
-    link_type_id           bigint       DEFAULT NULL COMMENT 'e.g. for type 4 to select possible terms',
+    component_link_type_id smallint     DEFAULT NULL COMMENT 'to define how this entry links to the other entry',
+    link_type_id           smallint     DEFAULT NULL COMMENT 'e.g. for type 4 to select possible terms',
     code_id                varchar(255) DEFAULT NULL COMMENT 'used for system components to select the component by the program code',
     ui_msg_code_id         varchar(255) DEFAULT NULL COMMENT 'used for system components the id to select the language specific user interface message e.g. "add word"',
     excluded               smallint     DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
@@ -3338,14 +3396,14 @@ CREATE TABLE IF NOT EXISTS user_components
     user_id                bigint       NOT     NULL COMMENT 'the changer of the component',
     component_name         varchar(255) DEFAULT NULL COMMENT 'the unique name used to select a component by the user',
     description            text         DEFAULT NULL COMMENT 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry',
-    component_type_id      bigint       DEFAULT NULL COMMENT 'to select the predefined functionality',
+    component_type_id      smallint     DEFAULT NULL COMMENT 'to select the predefined functionality',
     word_id_row            bigint       DEFAULT NULL COMMENT 'for a tree the related value the start node',
     formula_id             bigint       DEFAULT NULL COMMENT 'used for type 6',
     word_id_col            bigint       DEFAULT NULL COMMENT 'to define the type for the table columns',
     word_id_col2           bigint       DEFAULT NULL COMMENT 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart',
     linked_component_id    bigint       DEFAULT NULL COMMENT 'to link this component to another component',
-    component_link_type_id bigint       DEFAULT NULL COMMENT 'to define how this entry links to the other entry',
-    link_type_id           bigint       DEFAULT NULL COMMENT 'e.g. for type 4 to select possible terms',
+    component_link_type_id smallint     DEFAULT NULL COMMENT 'to define how this entry links to the other entry',
+    link_type_id           smallint     DEFAULT NULL COMMENT 'e.g. for type 4 to select possible terms',
     excluded               smallint     DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id          smallint     DEFAULT NULL COMMENT 'to restrict the access',
     protect_id             smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
@@ -3362,16 +3420,16 @@ CREATE TABLE IF NOT EXISTS user_components
 
 CREATE TABLE IF NOT EXISTS component_links
 (
-    component_link_id          bigint       NOT NULL COMMENT 'the internal unique primary index',
-    view_id                    bigint       NOT NULL,
-    component_id               bigint       NOT NULL,
-    user_id                    bigint   DEFAULT NULL COMMENT 'the owner / creator of the component_link',
-    order_nbr                  bigint       NOT NULL,
-    component_link_type_id     bigint       NOT NULL DEFAULT 1,
-    position_type_id           bigint       NOT NULL DEFAULT 2 COMMENT 'the position of the component e.g. right or below',
-    excluded                   smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
-    share_type_id              smallint DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id                 smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    component_link_id          bigint   NOT NULL COMMENT 'the internal unique primary index',
+    view_id                    bigint   NOT NULL,
+    component_id               bigint   NOT NULL,
+    user_id                    bigint            DEFAULT NULL COMMENT 'the owner / creator of the component_link',
+    order_nbr                  bigint   NOT NULL DEFAULT 1,
+    component_link_type_id     smallint NOT NULL DEFAULT 1,
+    position_type_id           smallint NOT NULL DEFAULT 2 COMMENT 'the position of the component e.g. right or below',
+    excluded                   smallint          DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
+    share_type_id              smallint          DEFAULT NULL COMMENT 'to restrict the access',
+    protect_id                 smallint          DEFAULT NULL COMMENT 'to protect against unwanted changes'
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -3392,8 +3450,8 @@ CREATE TABLE IF NOT EXISTS user_component_links
     component_link_id          bigint       NOT NULL COMMENT 'with the user_id the internal unique primary index',
     user_id                    bigint       NOT NULL COMMENT 'the changer of the component_link',
     order_nbr                  bigint   DEFAULT NULL,
-    component_link_type_id     bigint   DEFAULT NULL,
-    position_type_id           bigint   DEFAULT NULL COMMENT 'the position of the component e.g. right or below',
+    component_link_type_id     smallint DEFAULT NULL,
+    position_type_id           smallint DEFAULT NULL COMMENT 'the position of the component e.g. right or below',
     excluded                   smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id              smallint DEFAULT NULL COMMENT 'to restrict the access',
     protect_id                 smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
@@ -4041,38 +4099,62 @@ ALTER TABLE changes
 -- --------------------------------------------------------
 
 --
--- indexes for table change_prime_values
+-- indexes for table changes_norm
 --
 
-ALTER TABLE change_prime_values
+ALTER TABLE changes_norm
     ADD PRIMARY KEY (change_id),
-    ADD KEY change_prime_values_change_idx (change_id),
-    ADD KEY change_prime_values_change_time_idx (change_time),
-    ADD KEY change_prime_values_user_idx (user_id);
+    ADD KEY changes_norm_change_idx (change_id),
+    ADD KEY changes_norm_change_time_idx (change_time),
+    ADD KEY changes_norm_user_idx (user_id);
 
 -- --------------------------------------------------------
 
 --
--- indexes for table change_standard_values
+-- indexes for table changes_big
 --
 
-ALTER TABLE change_standard_values
+ALTER TABLE changes_big
     ADD PRIMARY KEY (change_id),
-    ADD KEY change_standard_values_change_idx (change_id),
-    ADD KEY change_standard_values_change_time_idx (change_time),
-    ADD KEY change_standard_values_user_idx (user_id);
+    ADD KEY changes_big_change_idx (change_id),
+    ADD KEY changes_big_change_time_idx (change_time),
+    ADD KEY changes_big_user_idx (user_id);
 
 -- --------------------------------------------------------
 
 --
--- indexes for table change_big_values
+-- indexes for table change_values_prime
 --
 
-ALTER TABLE change_big_values
+ALTER TABLE change_values_prime
     ADD PRIMARY KEY (change_id),
-    ADD KEY change_big_values_change_idx (change_id),
-    ADD KEY change_big_values_change_time_idx (change_time),
-    ADD KEY change_big_values_user_idx (user_id);
+    ADD KEY change_values_prime_change_idx (change_id),
+    ADD KEY change_values_prime_change_time_idx (change_time),
+    ADD KEY change_values_prime_user_idx (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_values_norm
+--
+
+ALTER TABLE change_values_norm
+    ADD PRIMARY KEY (change_id),
+    ADD KEY change_values_norm_change_idx (change_id),
+    ADD KEY change_values_norm_change_time_idx (change_time),
+    ADD KEY change_values_norm_user_idx (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_values_big
+--
+
+ALTER TABLE change_values_big
+    ADD PRIMARY KEY (change_id),
+    ADD KEY change_values_big_change_idx (change_id),
+    ADD KEY change_values_big_change_time_idx (change_time),
+    ADD KEY change_values_big_user_idx (user_id);
 
 -- --------------------------------------------------------
 
@@ -4353,10 +4435,10 @@ ALTER TABLE ref_types
 ALTER TABLE refs
     ADD PRIMARY KEY (ref_id),
     ADD KEY refs_user_idx (user_id),
-    ADD KEY refs_phrase_idx (phrase_id),
     ADD KEY refs_external_key_idx (external_key),
-    ADD KEY refs_ref_type_idx (ref_type_id),
-    ADD KEY refs_source_idx (source_id);
+    ADD KEY refs_source_idx (source_id),
+    ADD KEY refs_phrase_idx (phrase_id),
+    ADD KEY refs_ref_type_idx (ref_type_id);
 
 --
 -- indexes for table user_refs
@@ -4365,7 +4447,9 @@ ALTER TABLE refs
 ALTER TABLE user_refs
     ADD PRIMARY KEY (ref_id,user_id),
     ADD KEY user_refs_ref_idx (ref_id),
-    ADD KEY user_refs_user_idx (user_id);
+    ADD KEY user_refs_user_idx (user_id),
+    ADD KEY user_refs_external_key_idx (external_key),
+    ADD KEY user_refs_source_idx (source_id);
 
 -- --------------------------------------------------------
 
@@ -4817,7 +4901,7 @@ ALTER TABLE formula_link_types
 ALTER TABLE formula_links
     ADD PRIMARY KEY (formula_link_id),
     ADD KEY formula_links_user_idx (user_id),
-    ADD KEY formula_links_link_type_idx (link_type_id),
+    ADD KEY formula_links_formula_link_type_idx (formula_link_type_id),
     ADD KEY formula_links_formula_idx (formula_id),
     ADD KEY formula_links_phrase_idx (phrase_id);
 
@@ -4829,7 +4913,7 @@ ALTER TABLE user_formula_links
     ADD PRIMARY KEY (formula_link_id,user_id),
     ADD KEY user_formula_links_formula_link_idx (formula_link_id),
     ADD KEY user_formula_links_user_idx (user_id),
-    ADD KEY user_formula_links_link_type_idx (link_type_id);
+    ADD KEY user_formula_links_formula_link_type_idx (formula_link_type_id);
 
 -- --------------------------------------------------------
 
@@ -5467,9 +5551,8 @@ ALTER TABLE view_term_links
     ADD PRIMARY KEY (view_term_link_id),
     ADD KEY view_term_links_term_idx (term_id),
     ADD KEY view_term_links_view_idx (view_id),
-    ADD KEY view_term_links_type_idx (type_id),
-    ADD KEY view_term_links_user_idx (user_id),
-    ADD KEY view_term_links_view_link_type_idx (view_link_type_id);
+    ADD KEY view_term_links_view_link_type_idx (view_link_type_id),
+    ADD KEY view_term_links_user_idx (user_id);
 
 --
 -- indexes for table user_view_term_links
@@ -5649,35 +5732,57 @@ ALTER TABLE changes
 -- --------------------------------------------------------
 
 --
--- constraints for table change_standard_values
+-- constraints for table changes_norm
 --
 
-ALTER TABLE change_standard_values
-    ADD CONSTRAINT change_standard_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT change_standard_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
-    ADD CONSTRAINT change_standard_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+ALTER TABLE changes_norm
+    ADD CONSTRAINT changes_norm_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT changes_norm_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT changes_norm_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 -- --------------------------------------------------------
 
 --
--- constraints for table change_prime_values
+-- constraints for table changes_big
 --
 
-ALTER TABLE change_prime_values
-    ADD CONSTRAINT change_prime_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT change_prime_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
-    ADD CONSTRAINT change_prime_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+ALTER TABLE changes_big
+    ADD CONSTRAINT changes_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT changes_big_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT changes_big_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 -- --------------------------------------------------------
 
 --
--- constraints for table change_big_values
+-- constraints for table change_values_norm
 --
 
-ALTER TABLE change_big_values
-    ADD CONSTRAINT change_big_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT change_big_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
-    ADD CONSTRAINT change_big_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+ALTER TABLE change_values_norm
+    ADD CONSTRAINT change_values_norm_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_norm_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_norm_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table change_values_prime
+--
+
+ALTER TABLE change_values_prime
+    ADD CONSTRAINT change_values_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_prime_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_prime_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table change_values_big
+--
+
+ALTER TABLE change_values_big
+    ADD CONSTRAINT change_values_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_big_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_big_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 -- --------------------------------------------------------
 
@@ -5825,8 +5930,8 @@ ALTER TABLE user_sources
 
 ALTER TABLE refs
     ADD CONSTRAINT refs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT refs_ref_type_fk FOREIGN KEY (ref_type_id) REFERENCES ref_types (ref_type_id),
-    ADD CONSTRAINT refs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+    ADD CONSTRAINT refs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT refs_ref_type_fk FOREIGN KEY (ref_type_id) REFERENCES ref_types (ref_type_id);
 
 --
 -- constraints for table user_refs
@@ -5834,7 +5939,8 @@ ALTER TABLE refs
 
 ALTER TABLE user_refs
     ADD CONSTRAINT user_refs_ref_fk FOREIGN KEY (ref_id) REFERENCES refs (ref_id),
-    ADD CONSTRAINT user_refs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD CONSTRAINT user_refs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_refs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 -- --------------------------------------------------------
 
@@ -6145,7 +6251,7 @@ ALTER TABLE user_formulas
 
 ALTER TABLE formula_links
     ADD CONSTRAINT formula_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id),
+    ADD CONSTRAINT formula_links_formula_link_type_fk FOREIGN KEY (formula_link_type_id) REFERENCES formula_link_types (formula_link_type_id),
     ADD CONSTRAINT formula_links_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
@@ -6155,7 +6261,7 @@ ALTER TABLE formula_links
 ALTER TABLE user_formula_links
     ADD CONSTRAINT user_formula_links_formula_link_fk FOREIGN KEY (formula_link_id) REFERENCES formula_links (formula_link_id),
     ADD CONSTRAINT user_formula_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id);
+    ADD CONSTRAINT user_formula_links_formula_link_type_fk FOREIGN KEY (formula_link_type_id) REFERENCES formula_link_types (formula_link_type_id);
 
 -- --------------------------------------------------------
 
@@ -6463,8 +6569,8 @@ ALTER TABLE user_views
 
 ALTER TABLE view_term_links
     ADD CONSTRAINT view_term_links_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
-    ADD CONSTRAINT view_term_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT view_term_links_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id);
+    ADD CONSTRAINT view_term_links_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id),
+    ADD CONSTRAINT view_term_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
 -- constraints for table user_view_term_links

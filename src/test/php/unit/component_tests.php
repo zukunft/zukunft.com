@@ -37,8 +37,11 @@ include_once MODEL_COMPONENT_PATH . 'component.php';
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_type;
+use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_type;
 use html\component\component as component_dsp;
+use api\component\component as component_api;
 use test\test_cleanup;
 
 class component_tests
@@ -49,58 +52,71 @@ class component_tests
         global $usr;
 
         // init
-        $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'component->';
         $t->resource_path = 'db/component/';
-        $json_file = 'unit/view/component_import.json';
-        $usr->set_id(1);
 
-        $t->header('Unit tests of the view component class (src/main/php/model/view/component.php)');
+        $t->header('component unit tests');
 
-
-        $t->subheader('SQL setup statements');
+        $t->subheader('component sql setup');
         $cmp_typ = new component_type('');
         $t->assert_sql_table_create($cmp_typ);
         $t->assert_sql_index_create($cmp_typ);
-        $cmp = $t->dummy_component();
+        $cmp = $t->component();
         $t->assert_sql_table_create($cmp);
         $t->assert_sql_index_create($cmp);
         $t->assert_sql_foreign_key_create($cmp);
 
-
-        $t->subheader('SQL user sandbox statement tests');
-
+        $t->subheader('component sql read');
         $cmp = new component($usr);
-        $t->assert_sql_by_id($db_con, $cmp);
-        $t->assert_sql_by_name($db_con, $cmp);
+        $t->assert_sql_by_id($sc, $cmp);
+        $t->assert_sql_by_name($sc, $cmp);
 
-
-        $t->subheader('SQL statement tests');
-
-        // sql to load the view components by id
+        $t->subheader('component sql read standard and user changes by id');
         $cmp = new component($usr);
         $cmp->set_id(2);
         //$t->assert_sql_all($db_con, $cmp);
-        $t->assert_sql_standard($db_con, $cmp);
-        $t->assert_sql_user_changes($db_con, $cmp);
+        $t->assert_sql_standard($sc, $cmp);
+        $t->assert_sql_user_changes($sc, $cmp);
 
-        // sql to load the view components by name
+        $t->subheader('component sql read standard by name');
         $cmp = new component($usr);
-        $cmp->set_name(view_api::TN_ADD);
+        $cmp->set_name(view_api::TN_READ);
         //$t->assert_sql_all($db_con, $cmp);
-        $t->assert_sql_standard($db_con, $cmp);
+        $t->assert_sql_standard($sc, $cmp);
 
+        $t->subheader('component sql write insert');
+        $cmp = $t->component();
+        $t->assert_sql_insert($sc, $cmp);
+        $t->assert_sql_insert($sc, $cmp, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $cmp, [sql_type::LOG]);
+        $t->assert_sql_insert($sc, $cmp, [sql_type::LOG, sql_type::USER]);
+        $cmp = $t->component_word_add_title(); // a component with a code_id as it might be imported
+        $t->assert_sql_insert($sc, $cmp, [sql_type::LOG]);
+        $cmp = $t->component_filled();
+        $t->assert_sql_insert($sc, $cmp, [sql_type::LOG]);
 
-        $t->subheader('Convert tests');
+        $t->subheader('component sql write update');
+        $cmp = $t->component();
+        $cmp_renamed = $cmp->cloned(component_api::TN_RENAMED);
+        $t->assert_sql_update($sc, $cmp_renamed, $cmp);
+        $t->assert_sql_update($sc, $cmp_renamed, $cmp, [sql_type::LOG, sql_type::USER]);
 
-        // casting API
-        $cmp = $t->dummy_component();
+        $t->subheader('component sql delete');
+        $t->assert_sql_delete($sc, $cmp);
+        $t->assert_sql_delete($sc, $cmp, [sql_type::LOG]);
+
+        $t->subheader('component api unit tests');
+        $cmp = $t->component_filled();
+        $t->assert_api_json($cmp);
+        $cmp = $t->component();
         $t->assert_api($cmp);
+
+        $t->subheader('component frontend unit tests');
         $t->assert_api_to_dsp($cmp, new component_dsp());
 
-
-        $t->subheader('Im- and Export tests');
-
+        $t->subheader('component import and export tests');
+        $json_file = 'unit/view/component_import.json';
         $t->assert_json_file(new component($usr), $json_file);
 
     }

@@ -33,14 +33,14 @@
 
 */
 
-namespace html;
+namespace html\sandbox;
 
-include_once WEB_SANDBOX_PATH . 'list.php';
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 
 use api\phrase\phrase_list as phrase_list_api;
 use html\phrase\phrase_list as phrase_list_dsp;
 
-class list_value_dsp extends list_dsp
+class list_value extends list_dsp
 {
 
     function __construct(?string $api_json = null)

@@ -34,6 +34,7 @@ namespace cfg\log;
 use cfg\db\sql_db;
 use cfg\type_list;
 use cfg\type_object;
+use test\create_test_objects;
 
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_LOG_PATH . 'change_table.php';
@@ -44,7 +45,7 @@ include_once MODEL_LOG_PATH . 'change_field_list.php';
 class change_field_list extends type_list
 {
 
-    const TN_WORD_VIEW = "values";
+    const TI_WORD_NAME = 10;
 
     /*
      * database link
@@ -55,6 +56,7 @@ class change_field_list extends type_list
     // *_NAME is the name as used in the program or as it has been used in a previous program version
     // *_NAME_DSP is the description that should be shown to the user
     const FLD_TABLE = 'table_id';
+    // TODO add the user_id to the field list because the owner can change and this should be included in the log
     const FLD_WORD_NAME = 'word_name';
     const FLD_WORD_NAME_DSP = 'name';
     const FLD_WORD_VIEW = 'view_id';
@@ -76,35 +78,32 @@ class change_field_list extends type_list
     const FLD_VIEW_NAME = 'view_name';
     const FLD_COMPONENT_NAME = 'component_name';
     const FLD_COMPONENT_TYPE = 'component_type_id';
-    const FLD_TABLE_FIELD = 'table_field_name';
 
-
-    /**
-     * overwrite the general user type list load function to keep the link to the field type capsuled
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @return bool true if load was successful
-     */
-    function load(sql_db $db_con, string $db_type = sql_db::VT_TABLE_FIELD): bool
-    {
-        return parent::load($db_con, $db_type);
-    }
 
     /**
      * adding the system log stati used for unit tests to the dummy list
+     * the field name starts always with the table id to make the field name unique
+     * the table id is remove as one of the last steps if the real table field name is requested
      */
     function load_dummy(): void
     {
         global $change_table_list;
 
         parent::load_dummy();
+
+        // read the corresponding names and description from the internal config csv files
+        $t = new create_test_objects();
+        $t->read_from_config_csv($this);
+        // TODO Prio 3 load from csv
         $table_id = $change_table_list->id(change_table_list::WORD);
         $table_field_name = $table_id . change_field_list::FLD_WORD_NAME;
         $type = new type_object(
             $table_field_name,
             change_field_list::FLD_WORD_NAME,
             change_field_list::FLD_WORD_NAME_DSP,
-            9);
+            change_field_list::TI_WORD_NAME);
         $this->add($type);
+
     }
 
     /**

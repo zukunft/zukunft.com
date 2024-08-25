@@ -68,28 +68,32 @@ class phrase_types extends type_list
         phrase_type::INFO,
         phrase_type::TRIPLE_HIDDEN,
         phrase_type::SYSTEM_HIDDEN,
-        phrase_type::GROUP
+        phrase_type::GROUP,
+        phrase_type::SYMBOL,
+        phrase_type::RANK,
+        phrase_type::IGNORE
     );
 
-    /**
-     * overwrite the general user type list load function to keep the link to the table type capsuled
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param string $db_type used only in the parent function to define the which type list should be loaded
-     * @return bool true if load was successful
+    /*
+     * construct and map
      */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_PHRASE_TYPE): bool
+
+    /**
+     * @param bool $usr_can_add true by default to allow seariching by name for new added phrase types
+     */
+    function __construct(bool $usr_can_add = true)
     {
-        return parent::load($db_con, $db_type);
+        parent::__construct($usr_can_add);
     }
 
     /**
      * adding the word types used for unit tests to the dummy list
+     *  TODO Prio 3: load from csv
      */
     function load_dummy(): void
     {
         $i = 1;
-        foreach (self::TYPES as $type_name)
-        {
+        foreach (self::TYPES as $type_name) {
             $type = new type_object($type_name, $type_name, '', $i);
             $this->add($type);
             $i++;

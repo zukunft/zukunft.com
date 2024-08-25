@@ -36,18 +36,16 @@ include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once WEB_WORD_PATH . 'triple_list.php';
 
 use api\word\triple as triple_api;
+use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\foaf_direction;
+use cfg\phrase;
 use cfg\phrase_list;
 use cfg\triple;
-use cfg\verb_list;
-use html\word\triple_list as triple_list_dsp;
-use cfg\library;
-use cfg\phrase;
-use cfg\db\sql_db;
 use cfg\triple_list;
 use cfg\verb;
-use cfg\word;
-use cfg\word_list;
+use html\word\triple_list as triple_list_dsp;
+use shared\library;
 use test\test_cleanup;
 
 class triple_list_tests
@@ -58,12 +56,11 @@ class triple_list_tests
         global $usr;
 
         // init
-        $lib = new library();
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'triple_list->';
         $t->resource_path = 'db/triple/';
         $json_file = 'unit/triple/triple_list.json';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the word link list class (src/main/php/model/word/triple_list.php)');
 
@@ -71,12 +68,12 @@ class triple_list_tests
 
         // load only the names
         $trp_lst = new triple_list($usr);
-        $t->assert_sql_names($db_con, $trp_lst, new triple($usr));
-        $t->assert_sql_names($db_con, $trp_lst, new triple($usr), triple_api::TD_READ);
+        $t->assert_sql_names($sc, $trp_lst, new triple($usr));
+        $t->assert_sql_names($sc, $trp_lst, new triple($usr), triple_api::TD_READ);
 
         // load by triple ids
         $trp_lst = new triple_list($usr);
-        $t->assert_sql_by_ids($db_con, $trp_lst, array(3,2,4));
+        $t->assert_sql_by_ids($sc, $trp_lst, array(3,2,4));
 
         // load by phr
         $trp_lst = new triple_list($usr);
@@ -112,7 +109,7 @@ class triple_list_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $trp_lst = $t->dummy_triple_list();
+        $trp_lst = $t->triple_list();
         $t->assert_api_to_dsp($trp_lst, new triple_list_dsp());
 
     }

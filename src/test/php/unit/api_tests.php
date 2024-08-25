@@ -50,59 +50,41 @@ include_once API_PHRASE_PATH . 'phrase_type.php';
 include_once API_LANGUAGE_PATH . 'language.php';
 include_once API_LANGUAGE_PATH . 'language_form.php';
 
-use api\api_message;
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
-use api\language\language as language_api;
-use api\language\language_form as language_form_api;
-use api\log\system_log as system_log_api;
-use api\phrase\phrase_type as phrase_type_api;
 use api\ref\ref as ref_api;
 use api\ref\source as source_api;
-use api\system\job as job_api;
-use api\system\type_object as type_api;
 use api\verb\verb as verb_api;
 use api\view\view as view_api;
 use api\word\word as word_api;
-use cfg\job;
 use cfg\component\component;
 use cfg\component\component_list;
-use cfg\db\sql_db;
-use cfg\export\export;
 use cfg\formula;
 use cfg\formula_list;
+use cfg\job;
 use cfg\language;
 use cfg\language_form;
-use cfg\library;
-use cfg\log\change_log;
 use cfg\log\change_field_list;
 use cfg\log\change_log_list;
-use cfg\log\system_log;
-use cfg\log\system_log_list;
 use cfg\phrase_list;
 use cfg\phrase_type;
 use cfg\ref;
 use cfg\source;
+use cfg\sys_log_list;
 use cfg\term_list;
 use cfg\triple;
-use cfg\trm_ids;
 use cfg\type_lists;
-use cfg\type_object;
 use cfg\user;
-use cfg\user_message;
 use cfg\value\value;
 use cfg\verb;
 use cfg\view;
 use cfg\word;
 use cfg\word_list;
 use controller\controller;
-use DateTime;
-use Exception;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
-use test\create_test_objects;
+use shared\library;
 use test\test_cleanup;
-use const test\HOST_TESTING;
 
 class api_tests
 {
@@ -126,7 +108,7 @@ class api_tests
     function run_api_test(test_cleanup $t): void
     {
 
-        $t->assert_api_get(user::class, 2);
+        $t->assert_api_get(user::class, user::SYSTEM_TEST_ID);
         $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_NAME);
         $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_EMAIL, controller::URL_VAR_EMAIL);
         $t->assert_api_get(word::class);
@@ -137,25 +119,26 @@ class api_tests
         $t->assert_api_get(triple::class);
         //$t->assert_api_get_by_text(triple::class, triple_api::TN_READ);
         //$t->assert_api_get(phrase::class);
-        $t->assert_api_get(value::class, 5);
+        // the value contains only the phrase id and name in the api message because the phrase are expected to be cached in the frontend
+        $t->assert_api_get(value::class, 32770);
         $t->assert_api_get(formula::class);
         $t->assert_api_get_by_text(formula::class, formula_api::TN_READ);
         $t->assert_api_get(view::class);
         $t->assert_api_get_by_text(view::class, view_api::TN_READ);
         $t->assert_api_get(component::class);
         $t->assert_api_get_by_text(component::class, component_api::TN_READ);
-        $t->assert_api_get(source::class, 3);
-        $t->assert_api_get_by_text(source::class, source_api::TN_READ_API);
-        $t->assert_api_get(ref::class, 4);
+        $t->assert_api_get(source::class, source_api::TI_READ);
+        $t->assert_api_get_by_text(source::class, source_api::TN_READ);
+        $t->assert_api_get(ref::class, ref_api::TI_PI);
         $t->assert_api_get(job::class);
         $t->assert_api_get(phrase_type::class);
         $t->assert_api_get(language::class);
         $t->assert_api_get(language_form::class);
 
         $t->assert_api_get_list(type_lists::class);
-        $t->assert_api_get_list(word_list::class, [1, 2, 3]);
+        $t->assert_api_get_list(word_list::class, [1, 2, word_api::TI_PI]);
         $t->assert_api_get_list(word_list::class, word_api::TN_READ, controller::URL_VAR_PATTERN);
-        $t->assert_api_get_list(phrase_list::class, [1, 2, 3, -1, -2]);
+        $t->assert_api_get_list(phrase_list::class, [1, 2, word_api::TI_PI, -1, -2]);
         $t->assert_api_get_list(phrase_list::class, word_api::TN_READ, controller::URL_VAR_PATTERN);
         $t->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $t->assert_api_get_list(formula_list::class, [1]);
@@ -165,9 +148,9 @@ class api_tests
             controller::URL_VAR_WORD_ID, 1,
             controller::URL_VAR_WORD_FLD, change_field_list::FLD_WORD_NAME);
         $t->assert_api_get_list(
-            system_log_list::class,
+            sys_log_list::class,
             [1, 2], 'ids',
-            'system_log_list_api',
+            'sys_log_list_api',
             true);
         // $t->assert_rest(new word($usr, word_api::TN_READ));
 
@@ -189,15 +172,18 @@ class api_tests
 
     /**
      * get the api message and forward it to the ui
+     * TODO move all other HTML frontend tests to this
+     *
+     * @param test_cleanup $t
      * @return void
      */
     function run_ui_test(test_cleanup $t): void
     {
-        $t->assert_view(controller::DSP_WORD, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(controller::DSP_WORD_ADD, $t->usr1, new word($t->usr1));
-        $t->assert_view(controller::DSP_WORD_EDIT, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(controller::DSP_WORD_DEL, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(controller::DSP_TRIPLE_ADD, $t->usr1, new triple($t->usr1));
+        $t->assert_view(controller::MC_WORD, $t->usr1, new word($t->usr1), 1);
+        $t->assert_view(controller::MC_WORD_ADD, $t->usr1, new word($t->usr1));
+        $t->assert_view(controller::MC_WORD_EDIT, $t->usr1, new word($t->usr1), 1);
+        $t->assert_view(controller::MC_WORD_DEL, $t->usr1, new word($t->usr1), 1);
+        $t->assert_view(controller::MC_TRIPLE_ADD, $t->usr1, new triple($t->usr1));
         //$t->assert_view(controller::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1);
         // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
     }
@@ -254,7 +240,7 @@ class api_tests
     function test_api_write(string $class, array $add_data, array $upd_data, test_cleanup $t): void
     {
         // create a new source via api call
-        // e.g. curl -i -X PUT -H 'Content-Type: application/json' -d '{"pod":"zukunft.com","type":"source","user_id":2,"user":"zukunft.com system test","version":"0.0.3","timestamp":"2023-01-23T00:07:23+01:00","body":{"id":0,"name":"System Test Source API added","description":"System Test Source Description API","type_id":4,"url":"https:\/\/api.zukunft.com\/"}}' http://localhost/api/source/
+        // e.g. curl -i -X PUT -H 'Content-Type: application/json' -d '{"pod":"zukunft.com","type":"source",user::FLD_ID:2,"user":"zukunft.com system test","version":"0.0.3","timestamp":"2023-01-23T00:07:23+01:00","body":{"id":0,"name":"System Test Source API added","description":"System Test Source Description API","type_id":4,"url":"https:\/\/api.zukunft.com\/"}}' http://localhost/api/source/
         $id = $t->assert_api_put($class, $add_data, true);
         if ($id != 0) {
             // check if the source has been created

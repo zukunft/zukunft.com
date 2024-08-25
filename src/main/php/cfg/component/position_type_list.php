@@ -34,6 +34,7 @@ namespace cfg\component;
 use cfg\db\sql_db;
 use cfg\type_list;
 use cfg\type_object;
+use test\create_test_objects;
 
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_COMPONENT_PATH . 'position_type.php';
@@ -44,22 +45,14 @@ class position_type_list extends type_list
 {
 
     /**
-     * overwrite the general user type list load function to keep the link to the table type capsuled
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @return bool true if load was successful
-     */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_COMPONENT_POS_TYPE): bool
-    {
-        return parent::load($db_con, $db_type);
-    }
-
-    /**
      * adding the view component position types used for unit tests to the dummy list
      */
-    function load_dummy(): void {
-        parent::load_dummy();
-        $type = new type_object(position_type::SIDE, position_type::SIDE, '', 2);
-        $this->add($type);
+    function load_dummy(): void
+    {
+        $this->reset();
+        // read the corresponding names and description from the internal config csv files
+        $t = new create_test_objects();
+        $t->read_from_config_csv($this);
     }
 
     /**

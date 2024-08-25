@@ -57,7 +57,7 @@ class job_time extends db_object_seq_id
     // field lists for the table creation
     const FLD_LST_ALL = array(
         [self::FLD_SCHEDULE, sql_field_type::CRONTAB, sql_field_default::NULL, sql::INDEX, '', self::FLD_SCHEDULE_COM],
-        [job_type::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, job_type::class, self::FLD_TYPE_COM],
+        [job_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, job_type::class, self::FLD_TYPE_COM],
         [user::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
         [self::FLD_START, sql_field_type::TIME, sql_field_default::NULL, '', '', self::FLD_START_COM],
         [self::FLD_PARAMETER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PARAMETER_COM, phrase::FLD_ID],

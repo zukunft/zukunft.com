@@ -61,6 +61,8 @@
 
 namespace cfg\value;
 
+include_once SHARED_TYPES_PATH . 'protection_type.php';
+include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_GROUP_PATH . 'group.php';
@@ -70,16 +72,24 @@ include_once SERVICE_EXPORT_PATH . 'source_exp.php';
 include_once SERVICE_EXPORT_PATH . 'value_exp.php';
 include_once SERVICE_EXPORT_PATH . 'json.php';
 
+use cfg\db\sql_par_field_list;
+use cfg\db\sql_type_list;
+use cfg\log\change;
+use cfg\log\change_values_big;
+use cfg\log\change_values_norm;
+use cfg\log\change_values_prime;
+use cfg\log\changes_big;
+use cfg\log\changes_norm;
+use shared\types\protection_type as protect_type_shared;
+use shared\types\share_type as share_type_shared;
 use api\api;
 use api\value\value as value_api;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\job;
-use cfg\job_type_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_default;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 use cfg\export\export;
 use cfg\export\sandbox_exp;
 use cfg\export\source_exp;
@@ -88,13 +98,14 @@ use cfg\expression;
 use cfg\figure;
 use cfg\group\group;
 use cfg\group\group_id;
-use cfg\library;
+use cfg\job;
+use cfg\job_type_list;
 use cfg\log;
-use cfg\log\change;
 use cfg\log\change_action;
-use cfg\log\change_action_list;
 use cfg\log\change_field_list;
+use cfg\log\change_log;
 use cfg\log\change_table_list;
+use cfg\log\change_value;
 use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
@@ -114,6 +125,7 @@ use DateTime;
 use Exception;
 use html\value\value as value_dsp;
 use math;
+use shared\library;
 
 class value extends sandbox_value
 {
@@ -124,14 +136,13 @@ class value extends sandbox_value
 
     // object specific database and JSON object field names
     const FLD_ID = 'group_id';
-    const FLD_VALUE = 'numeric_value';
+    // TODO move the sandbox value object
     const FLD_VALUE_TEXT = 'text_value';
     const FLD_VALUE_TIME = 'time_value';
     const FLD_VALUE_GEO = 'geo_value';
     const FLD_TS_ID_COM = 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
     const FLD_TS_ID_COM_USER = 'the 64 bit integer which is unique for the standard and the user series';
     const FLD_VALUE_TS_ID = 'value_time_series_id';
-    const FLD_LAST_UPDATE = 'last_update';
     const FLD_ALL_TIME_SERIES = array(
         [self::FLD_VALUE_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM],
     );
@@ -182,11 +193,11 @@ class value extends sandbox_value
     );
     // list of fixed tables where a value might be stored
     const TBL_LIST = array(
-        [sql_table_type::PRIME, sql_table_type::STANDARD],
-        [sql_table_type::MOST, sql_table_type::STANDARD],
-        [sql_table_type::MOST],
-        [sql_table_type::PRIME],
-        [sql_table_type::BIG]
+        [sql_type::PRIME, sql_type::STANDARD],
+        [sql_type::MOST, sql_type::STANDARD],
+        [sql_type::MOST],
+        [sql_type::PRIME],
+        [sql_type::BIG]
     );
 
 
@@ -216,14 +227,12 @@ class value extends sandbox_value
     function __construct(user $usr, ?float $num_val = null, ?group $phr_grp = null)
     {
         parent::__construct($usr);
-        $this->obj_type = sandbox::TYPE_VALUE;
-        $this->obj_name = self::class;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
 
         $this->reset();
 
-        if ($num_val != null) {
+        if ($num_val !== null) {
             $this->set_number($num_val);
         }
         if ($phr_grp != null) {
@@ -272,6 +281,7 @@ class value extends sandbox_value
         $lib = new library();
         $one_id_fld = true;
         if ($id_fld == self::FLD_ID) {
+            // TODO add $sc_par_lst ?
             $id_fld = $this->id_field();
             if (is_array($id_fld)) {
                 $grp_id = new group_id();
@@ -359,6 +369,15 @@ class value extends sandbox_value
         return $this->grp()->id();
     }
 
+    function src_id(): int
+    {
+        if ($this->source == null) {
+            return 0;
+        } else {
+            return $this->source->id();
+        }
+    }
+
     function set_symbol(string $symbol): void
     {
         $this->symbol = $symbol;
@@ -382,6 +401,8 @@ class value extends sandbox_value
         $lib = new library();
 
         // make sure that there are no unexpected leftovers but keep the user
+        // TODO check that it is always moved to sandbox object
+        // TODO use sand
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
@@ -416,13 +437,13 @@ class value extends sandbox_value
                 }
             }
 
-            if ($key == share_type::JSON_FLD) {
+            if ($key == share_type_shared::JSON_FLD) {
                 $this->share_id = $share_types->id($value);
             }
 
-            if ($key == protection_type::JSON_FLD) {
+            if ($key == protect_type_shared::JSON_FLD) {
                 $this->protection_id = $protection_types->id($value);
-                if ($value <> protection_type::NO_PROTECT) {
+                if ($value <> protect_type_shared::NO_PROTECT) {
                     $get_ownership = true;
                 }
             }
@@ -466,40 +487,35 @@ class value extends sandbox_value
 
 
     /*
-     * database load functions that reads the object from the database
+     * load
      */
 
     /**
      * create the SQL to load the single default value always by the id
      * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
+     * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, array $fld_lst = []): sql_par
     {
-        $tbl_typ = $this->grp->table_type();
-        $ext = $this->grp->table_extension();
-        $qp = new sql_par($class, true, false, $ext, $tbl_typ);
-        $qp->name .= sql_db::FLD_ID;
-        $sc->set_class($class, false, $tbl_typ->extension());
-        $sc->set_name($qp->name);
-        $sc->set_id_field($this->id_field());
-        $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR, array(user::FLD_ID)));
-
-        return $this->load_sql_set_where($qp, $sc, $ext);
+        $fld_lst = array_merge(
+            self::FLD_NAMES,
+            self::FLD_NAMES_NUM_USR,
+            array(user::FLD_ID)
+        );
+        return parent::load_standard_sql($sc, $fld_lst);
     }
 
     /**
      * load the standard value use by most users for the given phrase group and time
      * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @param string $class the name of this class to be delivered to the parent function
      * @return bool true if the standard value has been loaded
      */
-    function load_standard(?sql_par $qp = null, string $class = self::class): bool
+    function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
         $qp = $this->load_standard_sql($db_con->sql_creator());
-        return parent::load_standard($qp, $class);
+        return parent::load_standard($qp);
     }
 
     /**
@@ -508,24 +524,24 @@ class value extends sandbox_value
      * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
-     * @param sql_table_type $tbl_typ the table name extension e.g. to switch between standard and prime values
-     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @param string $id_ext the query name extension that indicated how many id fields are used e.g. "_p1"
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql            $sc,
-        string         $query_name,
-        string         $class = self::class,
-        string         $ext = '',
-        sql_table_type $tbl_typ = sql_table_type::MOST,
-        bool           $usr_tbl = false
+        sql           $sc,
+        string        $query_name,
+        string        $class = self::class,
+        sql_type_list $sc_par_lst = new sql_type_list([]),
+        string        $ext = '',
+        string        $id_ext = ''
     ): sql_par
     {
-        $qp = parent::load_sql_multi($sc, $query_name, $class, $ext, $tbl_typ, $usr_tbl);
+        $qp = parent::load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext, $id_ext);
 
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
-        $sc->set_id_field($this->id_field());
+        $sc->set_id_field($this->id_field($sc_par_lst));
 
         $sc->set_usr($this->user()->id());
         $sc->set_fields(self::FLD_NAMES);
@@ -574,7 +590,7 @@ class value extends sandbox_value
         $sql_where = '';
         $sql_grp = '';
 
-        $sc->set_class($class, false, $ext);
+        $sc->set_class($class, [], $ext);
         if ($this->is_id_set()) {
             $qp->name .= sql_db::FLD_ID;
         } elseif ($this->grp->is_id_set()) {
@@ -843,7 +859,7 @@ class value extends sandbox_value
 
     /**
      * create the source object if needed and set the id
-     * @param int $id the id of the source
+     * @param int|null $id the id of the source
      */
     function set_source_id(?int $id): void
     {
@@ -1208,12 +1224,12 @@ class value extends sandbox_value
         $result->number = $this->number;
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type_shared::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
         // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protection_type::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protect_type_shared::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 
@@ -1296,13 +1312,13 @@ class value extends sandbox_value
             }
         }
 
-        if ($key == share_type::JSON_FLD) {
+        if ($key == share_type_shared::JSON_FLD) {
             $this->share_id = $share_types->id($value);
         }
 
-        if ($key == protection_type::JSON_FLD) {
+        if ($key == protect_type_shared::JSON_FLD) {
             $this->protection_id = $protection_types->id($value);
-            if ($value <> protection_type::NO_PROTECT) {
+            if ($value <> protect_type_shared::NO_PROTECT) {
                 $get_ownership = true;
             }
         }
@@ -1447,12 +1463,15 @@ class value extends sandbox_value
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 to check if the value has been changed
      */
-    function not_changed_sql(sql_db $db_con): sql_par
+    function not_changed_sql(sql $sc): sql_par
     {
-        $tbl_typ = $this->grp->table_type();
-        $ext = $this->grp->table_extension();
-        $db_con->set_class(self::class, false, $tbl_typ->extension());
-        return $db_con->load_sql_not_changed_multi($this->id, $this->owner_id, $this->id_field(), $ext, $tbl_typ);
+        $sc_par_lst = new sql_type_list([]);
+        $tbl_typ = $this->table_type();
+        $ext = $this->table_extension();
+        $sc_par_lst->add($tbl_typ);
+        $sc->set_class(self::class, $sc_par_lst);
+        // TODO add $sc_par_lst ?
+        return $sc->load_sql_not_changed_multi($this->id, $this->owner_id, $this->id_field(), $ext, $tbl_typ);
     }
 
     /**
@@ -1468,7 +1487,7 @@ class value extends sandbox_value
         if (!$this->is_id_set()) {
             log_err('The id must be set to check if the formula has been changed');
         } else {
-            $qp = $this->not_changed_sql($db_con);
+            $qp = $this->not_changed_sql($db_con->sql_creator());
             $db_row = $db_con->get1($qp);
             if ($db_row[user::FLD_ID] > 0) {
                 $result = false;
@@ -1544,9 +1563,9 @@ class value extends sandbox_value
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
-                $ext = $this->grp->table_extension();
+                $ext = $this->table_extension();
                 $db_con->set_class($class, true, $ext);
-                $qp = $this->sql_insert($db_con->sql_creator(), true);
+                $qp = $this->sql_insert($db_con->sql_creator(), new sql_type_list([sql_type::USER]));
                 $usr_msg = $db_con->insert($qp, 'add user specific value');
                 $result = $usr_msg->is_ok();
             }
@@ -1555,34 +1574,51 @@ class value extends sandbox_value
     }
 
     /**
-     * create an SQL statement to retrieve the user changes of the current value
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_user_changes(sql $sc, string $class = self::class): sql_par
-    {
-        $tbl_typ = $this->grp->table_type();
-        $sc->set_class($class, true, $tbl_typ->extension());
-        // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
-        $sc->set_id_field($this->id_field());
-        return parent::load_sql_user_changes($sc, $class);
-    }
-
-    /**
      * set the log entry parameters for a value update
+     * @return change_value actually a child object (prime, norm or big) with the parameters for this change
      */
-    function log_upd(): change
+    function log_upd(): change_value
     {
         log_debug('value->log_upd "' . $this->number . '" for user ' . $this->user()->id());
-        $log = new change($this->user());
-        $log->action = change_action::UPDATE;
+        if ($this->is_prime()) {
+            $log = new change_values_prime($this->user());
+        } elseif ($this->is_big()) {
+            $log = new change_values_big($this->user());
+        } else {
+            $log = new change_values_norm($this->user());
+        }
+        $log->set_action(change_action::UPDATE);
         if ($this->can_change()) {
             $log->set_table(change_table_list::VALUE);
         } else {
             $log->set_table(change_table_list::VALUE_USR);
         }
+        $log->group_id = $this->grp_id();
+
+        return $log;
+    }
+
+    /**
+     * set the log entry parameters for value parameter updates
+     * @return change actually a child object (prime, norm or big) with the parameters for this change
+     */
+    function log_update_parameter(): change
+    {
+        log_debug();
+        if ($this->is_prime()) {
+            $log = new change($this->user());
+        } elseif ($this->is_big()) {
+            $log = new changes_big($this->user());
+        } else {
+            $log = new changes_norm($this->user());
+        }
+        $log->set_action(change_action::UPDATE);
+        if ($this->can_change()) {
+            $log->set_table(change_table_list::VALUE);
+        } else {
+            $log->set_table(change_table_list::VALUE_USR);
+        }
+        $log->row_id = $this->grp_id();
 
         return $log;
     }
@@ -1597,7 +1633,7 @@ class value extends sandbox_value
     $log->table     = $db_type;
     $log->field     = 'numeric_value';
     $log->old_value = $this->number;
-    $log->new_value = '';
+    $log->new_value = null;
     $log->row_id    = $this->id();
     $log->add();
 
@@ -1646,7 +1682,7 @@ class value extends sandbox_value
             // create the db link object for all actions
             $db_con->usr_id = $this->user()->id();
 
-            $table_name = $db_con->get_table_name(sql_db::TBL_VALUE_PHRASE_LINK);
+            $table_name = $db_con->get_table_name(value_phrase_link::class);
             $field_name = phrase::FLD_ID;
 
             // add the missing links
@@ -1808,7 +1844,9 @@ class value extends sandbox_value
         $this->set_last_update(new DateTime());
         $ext = $this->grp()->table_extension();
         $db_con->set_class(self::class, false, $ext);
-        $qp = $this->sql_update($db_con->sql_creator(), array(value::FLD_LAST_UPDATE), array(sql::NOW));
+        $fvt_lst = new sql_par_field_list();
+        $fvt_lst->add_field(value::FLD_LAST_UPDATE, sql::NOW, sql_field_type::TIME);
+        $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst);
         try {
             $db_con->exe_par($qp);
         } catch (Exception $e) {
@@ -1843,7 +1881,7 @@ class value extends sandbox_value
             $log->old_value = $db_rec->number();
             $log->new_value = $this->number();
             $log->std_value = $std_rec->number();
-            $log->row_id = $this->id();
+            $this->save_set_log_id($log);
             $log->set_field(self::FLD_VALUE);
             $result .= $this->save_field_user($db_con, $log);
             // updating the number is definitely relevant for calculation, so force to update the timestamp
@@ -1853,7 +1891,6 @@ class value extends sandbox_value
         return $result;
     }
 
-
     /**
      * set the update parameters for the source link
      */
@@ -1861,18 +1898,33 @@ class value extends sandbox_value
     {
         $result = '';
         if ($db_rec->get_source_id() <> $this->get_source_id()) {
-            $log = $this->log_upd();
+            $log = $this->log_update_parameter();
             $log->old_value = $db_rec->source_name();
             $log->old_id = $db_rec->get_source_id();
             $log->new_value = $this->source_name();
             $log->new_id = $this->get_source_id();
             $log->std_value = $std_rec->source_name();
             $log->std_id = $std_rec->get_source_id();
-            $log->row_id = $this->id();
+            $this->save_set_log_id($log);
             $log->set_field(source::FLD_ID);
             $result = $this->save_field_user($db_con, $log);
         }
         return $result;
+    }
+
+    /**
+     * set to row id for the log
+     * @param change_value|change_log $log
+     * @return void
+     */
+    function save_set_log_id(change_value|change_log $log): void
+    {
+        $id = $this->id();
+        if (is_string($id)) {
+            $log->group_id = $id;
+        } else {
+            $log->row_id = $id;
+        }
     }
 
     /**
@@ -2077,120 +2129,14 @@ class value extends sandbox_value
     }
 
     /**
-     * create the sql statement to add a new value to the database
-     * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if a db row should be added to the user table
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_insert(sql $sc, bool $usr_tbl = false): sql_par
-    {
-        $qp = $this->sql_common($sc, $usr_tbl);
-        // overwrite the standard auto increase id field name
-        $sc->set_id_field($this->id_field());
-        $qp->name .= '_insert';
-        $sc->set_name($qp->name);
-        if ($this->grp->is_prime()) {
-            $fields = $this->grp->id_names();
-            $fields[] = user::FLD_ID;
-            $values = $this->grp->id_lst();
-            $values[] = $this->user()->id();
-            if (!$usr_tbl) {
-                $fields[] = self::FLD_VALUE;
-                $fields[] = self::FLD_LAST_UPDATE;
-                $values[] = $this->number;
-                $values[] = sql::NOW;
-            }
-        } else {
-            if ($usr_tbl) {
-                $fields = array(group::FLD_ID, user::FLD_ID);
-                $values = array($this->grp->id(), $this->user()->id());
-            } else {
-                $fields = array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE);
-                $values = array($this->grp->id(), $this->user()->id(), $this->number, sql::NOW);
-            }
-
-        }
-        $qp->sql = $sc->sql_insert($fields, $values);
-        $par_values = [];
-        foreach (array_keys($values) as $i) {
-            if ($values[$i] != sql::NOW) {
-                $par_values[$i] = $values[$i];
-            }
-        }
-
-        $qp->par = $par_values;
-        return $qp;
-    }
-
-    /**
-     * create the sql statement to update a value in the database
-     * TODO make code review and move part to the parent sandbox value class
-     *
-     * @param sql $sc with the target db_type set
-     * @param bool $usr_tbl true if the user table row should be updated
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_update(
-        sql   $sc,
-        array $fields = [],
-        array $values = [],
-        bool  $usr_tbl = false
-    ): sql_par
-    {
-        $lib = new library();
-        $qp = $this->sql_common($sc, $usr_tbl);
-        if (count($fields) == 0) {
-            $fields = array(self::FLD_VALUE, self::FLD_LAST_UPDATE);
-        }
-        if (count($values) == 0) {
-            $values = array($this->number, sql::NOW);
-        }
-        $fld_name = implode('_', $lib->sql_name_shorten($fields));
-        $qp->name .= '_update_' . $fld_name;
-        $sc->set_name($qp->name);
-        if ($this->grp->is_prime()) {
-            $id_fields = $this->grp->id_names(true);
-        } else {
-            $id_fields = $this->id_field();
-        }
-        $id = $this->id();
-        $id_lst = [];
-        if (is_array($id_fields)) {
-            if (!is_array($id)) {
-                $grp_id = new group_id();
-                $id_lst = $grp_id->get_array($id, true);
-                foreach ($id_lst as $key => $value) {
-                    if ($value == null) {
-                        $id_lst[$key] = 0;
-                    }
-                }
-            } else {
-                $id_lst = $id;
-            }
-        } else {
-            $id_lst = $id;
-        }
-        if ($usr_tbl) {
-            $id_fields[] = user::FLD_ID;
-            if (!is_array($id_lst)) {
-                $id_lst = [$id_lst];
-            }
-            $id_lst[] = $this->user()->id();
-        }
-        $qp->sql = $sc->sql_update($id_fields, $id_lst, $fields, $values);
-
-        $qp->par = $sc->par_values();
-        return $qp;
-    }
-
-    /**
      * add a new value
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return user_message with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
      *                      including suggested solutions
      */
-    function add(): user_message
+    function add(?bool $use_func = null): user_message
     {
         log_debug();
 
@@ -2248,9 +2194,10 @@ class value extends sandbox_value
 
     /**
      * insert or update a number in the database or save a user specific number
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return string in case of a problem the message that should be shown to the user
      */
-    function save(): string
+    function save(?bool $use_func = null): string
     {
         log_debug();
 
@@ -2271,7 +2218,7 @@ class value extends sandbox_value
 
         if (!$this->is_saved()) {
             log_debug('add ' . $this->dsp_id());
-            $result .= $this->add($db_con)->get_last_message();
+            $result .= $this->add($use_func)->get_last_message();
         } else {
             log_debug('update id ' . $this->id() . ' to save "' . $this->number . '" for user ' . $this->user()->id());
             // update a value
@@ -2311,6 +2258,64 @@ class value extends sandbox_value
         }
 
         return $result;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of database fields that might be used to create an sql insert or update statement
+     *
+     * @return array list of the database field names that have been updated
+     */
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    {
+        $fields = parent::db_fields_all();
+        if (!$sc_par_lst->is_standard()) {
+            $fields[] = source::FLD_ID;
+            $fields = array_merge($fields, $this->db_fields_all_sandbox());
+        }
+        return $fields;
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     * the last_update field is excluded here because this is an internal only field
+     *
+     * @param sandbox_multi|sandbox_value|value $sbx the same value sandbox as this to compare which fields have been changed
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list with the field names of the object and any child object
+     */
+    function db_fields_changed(
+        sandbox_multi|sandbox_value|value $sbx,
+        sql_type_list                     $sc_par_lst = new sql_type_list([])
+    ): sql_par_field_list
+    {
+        global $change_field_list;
+        $sc = new sql();
+        $table_id = $sc->table_id($this::class);
+
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+
+        if (!$sc_par_lst->is_standard()) {
+            if ($sbx->src_id() <> $this->src_id()) {
+                if ($sc_par_lst->incl_log()) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
+                        $change_field_list->id($table_id . source::FLD_ID),
+                        change::FLD_FIELD_ID_SQLTYP
+                    );
+                }
+                $lst->add_field(
+                    source::FLD_ID,
+                    $this->src_id(),
+                    sql_field_type::INT
+                );
+            }
+        }
+        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
     }
 
 }

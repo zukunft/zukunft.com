@@ -82,13 +82,14 @@ class config extends db_object_seq_id
     const FLD_VALUE = 'value';
     const FLD_DESCRIPTION_COM = 'text to explain the config value to an admin user';
     const FLD_DESCRIPTION = 'description';
+    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
 
     // field lists for the table creation
     const FLD_LST_ALL = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
         [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
         [sql::FLD_VALUE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_VALUE_COM],
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
 
@@ -105,7 +106,7 @@ class config extends db_object_seq_id
     function sql_table(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_table_create($sc, false, [], '', false);
+        $sql .= $this->sql_table_create($sc);
         return $sql;
     }
 
@@ -118,7 +119,7 @@ class config extends db_object_seq_id
     function sql_index(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_index_create($sc, false, [],false);
+        $sql .= $this->sql_index_create($sc);
         return $sql;
     }
 
@@ -134,7 +135,7 @@ class config extends db_object_seq_id
             log_err("The code id must be set", "config->get_sql");
         }
 
-        $db_con->set_class(sql_db::TBL_CONFIG);
+        $db_con->set_class(config::class);
         $qp = new sql_par(self::class);
         $qp->name .= 'get';
         $db_con->set_name($qp->name);
@@ -258,6 +259,7 @@ class config extends db_object_seq_id
 
         $db_value = $this->default_value($code_id);
         $db_description = $this->default_description($code_id);
+        $db_con->set_class(self::class);
         $db_id = $db_con->insert_old(
             array(
                 sql::FLD_CODE_ID,
@@ -284,6 +286,7 @@ class config extends db_object_seq_id
     private function add(string $code_id, string $value, string $description, sql_db $db_con): bool
     {
         $result = false;
+        $db_con->set_class(self::class);
         $db_id = $db_con->insert_old(
             array(
                 sql::FLD_CODE_ID,

@@ -37,11 +37,13 @@
 
 */
 
-namespace html;
+namespace html\sandbox;
 
-use html\api as api_dsp;
+include_once HTML_PATH . 'rest_ctrl.php';
 
-class combine_object_dsp
+use html\rest_ctrl as api_dsp;
+
+class combine_object
 {
 
     /*

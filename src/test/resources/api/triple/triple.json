@@ -2,5 +2,6 @@
   "id": 1,
   "name": "Mathematical constant",
   "description": "A mathematical constant that never changes e.g. Pi",
+  "protection": 3,
   "type_id": 17
 }

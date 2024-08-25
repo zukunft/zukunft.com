@@ -48,7 +48,7 @@ class job
 
         // test the batch job html display functions
         $test_page = $html->text_h2('batch job display test');
-        $log_lst = new job_list_dsp($t->dummy_job_list()->api_json());
+        $log_lst = new job_list_dsp($t->job_list()->api_json());
         $test_page .= 'user view of a table with batch job entries<br>';
         $test_page .= $log_lst->display() . '<br>';
 

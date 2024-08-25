@@ -29,12 +29,6 @@
   
 */
 
-use controller\controller;
-use cfg\user;
-use cfg\log\change_log_list;
-use cfg\word;
-use api\phrase\term_list as term_list_api;
-
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
 $debug = $_GET['debug'] ?? 0;
@@ -49,6 +43,12 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_LOG_PATH . 'change_log_list.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once API_PHRASE_PATH . 'term_list.php';
+
+use controller\controller;
+use cfg\user;
+use cfg\log\change_log_list;
+use cfg\word;
+use api\phrase\term_list as term_list_api;
 
 // open database
 $db_con = prg_start("api/log", "", false);

@@ -121,7 +121,7 @@ class figure extends combine_object_api implements JsonSerializable
         } else {
             $vars[combine_object_api::FLD_CLASS] = self::CLASS_VALUE;
         }
-        return $vars;
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 }

@@ -35,18 +35,18 @@ include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'library.php';
+include_once SHARED_PATH . 'library.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 
-use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use html\html_base;
+use shared\library;
 
 global $verbs;
 
@@ -59,6 +59,7 @@ class verb_list extends type_list
     public ?word $wrd = null;  // to load a list related to this word
     public ?array $ids = array(); // list of the verb ids to load a list from the database
 
+
     /*
      * construct and map
      */
@@ -66,9 +67,11 @@ class verb_list extends type_list
     /**
      * define the settings for this verb list object
      * @param user|null $usr the user who requested to see the verb list
+     * @param bool $usr_can_add true by default to allow seariching by name for new added verbs
      */
-    function __construct(?user $usr = null)
+    function __construct(?user $usr = null, bool $usr_can_add = true)
     {
+        parent::__construct($usr_can_add);
         $this->set_user($usr);
     }
 
@@ -125,11 +128,11 @@ class verb_list extends type_list
         }
 
         if ($qp->name != '') {
-            $db_con->set_class(sql_db::TBL_TRIPLE);
+            $db_con->set_class(triple::class);
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
             $db_con->set_usr_num_fields(array(sandbox::FLD_EXCLUDED));
-            $db_con->set_join_fields(array_merge(verb::FLD_NAMES, array(verb::FLD_NAME)), sql_db::TBL_VERB);
+            $db_con->set_join_fields(array_merge(verb::FLD_NAMES, array(verb::FLD_NAME)), verb::class);
             $db_con->set_fields(array(verb::FLD_ID));
             // set the where clause depending on the values given
             // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
@@ -192,61 +195,16 @@ class verb_list extends type_list
     }
 
     /**
-     * common part to create an SQL statement to load all verbs from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the class name to be compatible with the user sandbox load_sql functions
-     * @param string $query_name the name extension to make the query name unique
-     * @param string $order_field set if the type list should e.g. be sorted by the name instead of the id
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql(
-        sql    $sc,
-        string $class = self::class,
-        string $query_name = 'all',
-        string $order_field = verb::FLD_ID): sql_par
-    {
-        $sc->set_class(verb::class);
-        $qp = new sql_par($class);
-        $qp->name = $class . '_' . $query_name;
-
-        $sc->set_name($qp->name);
-        //TODO check if $db_con->set_usr($this->user()->id()); is needed
-        $sc->set_fields(verb::FLD_NAMES);
-        $sc->set_order($order_field);
-
-        return $qp;
-    }
-
-
-    /**
-     * create an SQL statement to load all verbs from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $db_type the class name to be compatible with the user sandbox load_sql functions
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_all(sql $sc, string $db_type): sql_par
-    {
-        $qp = $this->load_sql($sc, $db_type);
-        $sc->set_page(sql_db::ROW_MAX, 0);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
      * force to reload the complete list of verbs from the database
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param string $db_type the database name e.g. the table name without s
+     * @param string $class the database name e.g. the table name without s
      * @return array the list of types
      */
-    private function load_list(sql_db $db_con, string $db_type): array
+    protected function load_list(sql_db $db_con, string $class): array
     {
         $this->reset();
-        $qp = $this->load_sql_all($db_con->sql_creator(), $db_type);
+        $qp = $this->load_sql_all($db_con->sql_creator(), $class);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
@@ -256,24 +214,6 @@ class verb_list extends type_list
             }
         }
         return $this->lst();
-    }
-
-    /**
-     * force to reload the complete list of verbs from the database
-     *
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param string $db_type the database name e.g. the table name without s
-     * @return bool true if at least one verb has been loaded
-     */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_VERB): bool
-    {
-        $result = false;
-        $this->set_lst($this->load_list($db_con, $db_type));
-        if ($this->count() > 0) {
-            $result = true;
-        }
-        return $result;
-
     }
 
     /**

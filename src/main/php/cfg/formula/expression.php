@@ -126,6 +126,7 @@ include_once MODEL_ELEMENT_PATH . 'element_group.php';
 include_once MODEL_ELEMENT_PATH . 'element_group_list.php';
 
 use Exception;
+use shared\library;
 
 class expression
 {
@@ -376,7 +377,7 @@ class expression
         $elm_lst = $this->element_list($trm_lst);
         if (!$elm_lst->is_empty()) {
             foreach ($elm_lst->lst() as $elm) {
-                if ($elm->type == element::TYPE_FORMULA) {
+                if ($elm->type == formula::class) {
                     if ($elm->obj != null) {
                         if ($elm->obj->type_cl == formula_type::THIS
                             or $elm->obj->type_cl == formula_type::NEXT
@@ -414,7 +415,7 @@ class expression
         $elm_lst = $this->element_list($trm_lst);
         if (!$elm_lst->is_empty()) {
             foreach ($elm_lst->lst() as $elm) {
-                if ($elm->type == element::TYPE_FORMULA) {
+                if ($elm->type == formula::class) {
                     if ($elm->obj != null) {
                         if ($elm->obj->type_cl == formula_type::THIS
                             or $elm->obj->type_cl == formula_type::NEXT
@@ -790,22 +791,22 @@ class expression
 
                     // filter the elements if requested
                     if ($type == self::SELECT_PHRASE) {
-                        if ($elm->type != element::TYPE_WORD and $elm->type != element::TYPE_TRIPLE) {
+                        if ($elm->type != word::class and $elm->type != triple::class) {
                             $elm->obj = null;
                         }
                     }
                     if ($type == self::SELECT_FORMULA) {
-                        if ($elm->type != element::TYPE_FORMULA) {
+                        if ($elm->type != formula::class) {
                             $elm->obj = null;
                         }
                     }
                     if ($type == self::SELECT_VERB) {
-                        if ($elm->type != element::TYPE_VERB) {
+                        if ($elm->type != verb::class) {
                             $elm->obj = null;
                         }
                     }
                     if ($type == self::SELECT_VERB_WORD) {
-                        if ($elm->type != element::TYPE_WORD and $elm->type != element::TYPE_VERB) {
+                        if ($elm->type != word::class and $elm->type != verb::class) {
                             $elm->obj = null;
                         }
                     }
@@ -938,7 +939,7 @@ class expression
                 // check for words
                 if ($db_sym == '') {
                     $wrd = new word($this->usr);
-                    $wrd->load_by_name($name, word::class);
+                    $wrd->load_by_name($name);
                     if ($wrd->id() > 0) {
                         $db_sym = self::WORD_START . $wrd->id() . self::WORD_END;
                         log_debug('found word "' . $db_sym . '" for "' . $name . '"');
@@ -948,7 +949,7 @@ class expression
                 // check for triple
                 if ($db_sym == '') {
                     $trp = new triple($this->usr);
-                    $trp->load_by_name($name, triple::class);
+                    $trp->load_by_name($name);
                     if ($trp->id() > 0) {
                         $db_sym = self::TRIPLE_START . $trp->id() . self::TRIPLE_END;
                         log_debug('found triple "' . $db_sym . '" for "' . $name . '"');
@@ -1131,21 +1132,21 @@ class expression
         $phr_lst = new phrase_list($this->usr);
         foreach ($elm_lst->lst() as $elm) {
             log_debug('check elements ' . $elm->name());
-            if ($elm->type == element::TYPE_FORMULA) {
+            if ($elm->type == formula::class) {
                 if (isset($elm->wrd_obj)) {
                     $phr = $elm->wrd_obj->phrase();
                     $phr_lst->add($phr);
                 } else {
                     log_err('Word missing for formula element ' . $elm->dsp_id() . '.', 'expression->phr_verb_lst');
                 }
-            } elseif ($elm->type == element::TYPE_WORD) {
+            } elseif ($elm->type == word::class) {
                 if (isset($elm->obj)) {
                     $phr = $elm->obj->phrase();
                     $phr_lst->add($phr);
                 } else {
                     log_err('Word missing for formula element ' . $elm->dsp_id() . '.', 'expression->phr_verb_lst');
                 }
-            } elseif ($elm->type == element::TYPE_VERB) {
+            } elseif ($elm->type == verb::class) {
                 log_warning('Use Formula element ' . $elm->dsp_id() . ' has an unexpected type.', 'expression->phr_verb_lst');
             } else {
                 log_err('Formula element ' . $elm->dsp_id() . ' has an unexpected type.', 'expression->phr_verb_lst');

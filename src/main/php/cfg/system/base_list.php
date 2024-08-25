@@ -34,6 +34,7 @@
 namespace cfg;
 
 use cfg\db\sql_db;
+use shared\library;
 
 class base_list
 {
@@ -218,6 +219,9 @@ class base_list
      */
 
     /**
+     * select an item by id
+     * TODO use a hash table to speed up
+     *
      * @param int $id the unique database id of the object that should be returned
      * @return sandbox|null the found user sandbox object or null if no id is found
      */

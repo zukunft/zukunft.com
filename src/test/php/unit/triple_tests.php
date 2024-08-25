@@ -6,10 +6,11 @@ include_once API_WORD_PATH . 'triple.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
+use cfg\db\sql;
+use cfg\db\sql_type;
 use html\word\triple as triple_dsp;
 use cfg\db\sql_db;
 use cfg\triple;
-use cfg\verb;
 use test\test_cleanup;
 
 class triple_tests
@@ -20,85 +21,110 @@ class triple_tests
         global $usr;
 
         // init
-        $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
-        $json_file = 'unit/triple/pi.json';
-        $usr->set_id(1);
 
-        $t->header('Unit tests of the triple class (src/main/php/model/word/triple.php)');
+        $t->header('triple unit tests');
 
-
-        $t->subheader('SQL setup statements');
-        $trp = $t->dummy_triple();
+        $t->subheader('triple sql setup');
+        $trp = $t->triple();
         $t->assert_sql_table_create($trp);
         $t->assert_sql_index_create($trp);
         $t->assert_sql_foreign_key_create($trp);
 
-
-        $t->subheader('SQL statement tests');
-
+        $t->subheader('triple sql read');
         $trp = new triple($usr);
-        $t->assert_sql_by_id($db_con, $trp);
-        $t->assert_sql_by_name($db_con, $trp);
-        $t->assert_sql_by_link($db_con, $trp);
-        $this->assert_sql_by_name_generated($db_con, $trp, $t);
+        $t->assert_sql_by_id($sc, $trp);
+        $t->assert_sql_by_name($sc, $trp);
+        $t->assert_sql_by_link($sc, $trp);
+        $this->assert_sql_by_name_generated($sc, $trp, $t);
 
-        // sql to load the triple by id
+        $t->subheader('triple sql read standard and user changes by id');
         $trp = new triple($usr);
         $trp->set_id(2);
-        $t->assert_sql_standard($db_con, $trp);
-        $t->assert_sql_user_changes($db_con, $trp);
+        $t->assert_sql_standard($sc, $trp);
+        $t->assert_sql_user_changes($sc, $trp);
 
-        // sql to load the triple by name
+        $t->subheader('triple sql read standard by name');
         $trp = new triple($usr);
         $trp->set_name(triple_api::TN_PI);
-        $t->assert_sql_standard($db_con, $trp);
+        $t->assert_sql_standard($sc, $trp);
 
+        $t->subheader('triple sql write insert');
+        $trp = $t->triple();
+        $t->assert_sql_insert($sc, $trp);
+        $t->assert_sql_insert($sc, $trp, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $trp, [sql_type::LOG]);
+        $t->assert_sql_insert($sc, $trp, [sql_type::LOG, sql_type::USER]);
+        $trp_excl = $t->triple();
+        $trp_excl->set_excluded(true);
+        $t->assert_sql_insert($sc, $trp_excl);
+        $trp_excl->description = '';
+        $trp_excl->set_type('');
+        $t->assert_sql_insert($sc, $trp_excl, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('API unit tests');
+        $t->subheader('triple sql write update');
+        $trp_renamed = $trp->cloned_named(word_api::TN_RENAMED);
+        $t->assert_sql_update($sc, $trp_renamed, $trp);
+        $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::USER]);
+        $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_update($sc, $trp_excl, $trp, [sql_type::LOG]);
 
-        $trp = new triple($usr);
-        $trp->set(1, triple_api::TN_PI_NAME, triple_api::TN_PI, verb::IS, word_api::TN_READ);
-        $trp->description = 'The mathematical constant Pi';
-        $api_trp = $trp->api_obj();
-        $t->assert($t->name . 'api->id', $api_trp->id(), $trp->id());
-        $t->assert($t->name . 'api->name', $api_trp->name(), $trp->name());
-        $t->assert($t->name . 'api->description', $api_trp->description, $trp->description);
-        $t->assert($t->name . 'api->from', $api_trp->from()->name(), $trp->fob->obj()->name_dsp());
-        $t->assert($t->name . 'api->to', $api_trp->to()->name(), $trp->tob->obj()->name_dsp());
+        $t->subheader('triple sql delete');
+        // TODO activate db write
+        $t->assert_sql_delete($sc, $trp);
+        $t->assert_sql_delete($sc, $trp, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $trp, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $trp, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_delete($sc, $trp, [sql_type::EXCLUDE]);
+        $t->assert_sql_delete($sc, $trp, [sql_type::USER, sql_type::EXCLUDE]);
 
+        $t->subheader('triple api unit tests');
+        $trp = $t->triple();
+        $t->assert_api_json($trp);
+        $t->assert_api($trp);
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader('triple frontend unit tests');
+        $trp = $t->triple_pi();
+        $t->assert_api_to_dsp($trp, new triple_dsp());
 
+        $t->subheader('triple import and export tests');
+        $json_file = 'unit/triple/pi.json';
         $t->assert_json_file(new triple($usr), $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $test_name = 'check if database would not be updated if only the name is given in import';
+        $in_trp = $t->triple_name_only();
+        $db_trp = $t->triple();
+        $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp), false);
 
-        $trp = $t->dummy_triple_pi();
-        $t->assert_api_to_dsp($trp, new triple_dsp());
+        $in_trp = $t->triple_link_only();
+        $db_trp = $t->triple();
+        $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp), false);
+
     }
 
     /**
      * similar to assert_load_sql of the test base but for the standard (generated) triple name
      * check the object load by name SQL statements for all allowed SQL database dialects
      *
-     * @param sql_db $db_con does not need to be connected to a real database
+     * @param sql $sc does not need to be connected to a real database
      * @param triple $trp the user sandbox object e.g. a word
      */
-    private function assert_sql_by_name_generated(sql_db $db_con, triple $trp, test_cleanup $t): void
+    private function assert_sql_by_name_generated(sql $sc, triple $trp, test_cleanup $t): void
     {
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $trp->load_sql_by_name_generated($db_con->sql_creator(), 'System test', $trp::class);
-        $result = $t->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $trp->load_sql_by_name_generated($sc, 'System test', $trp::class);
+        $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $trp->load_sql_by_name_generated($db_con->sql_creator(), 'System test', $trp::class);
-            $t->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $trp->load_sql_by_name_generated($sc, 'System test', $trp::class);
+            $t->assert_qp($qp, $sc->db_type);
         }
     }
 

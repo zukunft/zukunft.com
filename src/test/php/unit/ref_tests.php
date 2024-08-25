@@ -2,7 +2,7 @@
 
 /*
 
-    test/unit/ref.php - unit testing of the reference and source functions
+    test/unit/ref.php - unit testing of the reference  functions
     -----------------
   
 
@@ -33,11 +33,13 @@
 namespace unit;
 
 use api\ref\source as source_api;
+use cfg\db\sql;
+use cfg\db\sql_type;
 use cfg\ref_type;
 use cfg\ref_type_list;
 use cfg\source_list;
 use cfg\source_type_list;
-use cfg\sys_log_status;
+use api\ref\ref as ref_api;
 use html\ref\ref as ref_dsp;
 use html\ref\source as source_dsp;
 use cfg\ref;
@@ -53,98 +55,70 @@ class ref_tests
         global $usr;
 
         // init for reference
-        $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'ref->';
         $t->resource_path = 'db/ref/';
-        $json_file = 'unit/ref/wikipedia.json';
-        $usr->set_id(1);
 
-        $t->header('Unit tests of the reference class (src/main/php/model/ref/ref.php)');
+        $t->header('reference unit tests');
 
-        $t->subheader('Ref type SQL setup statements');
-        $ref_typ = new ref_type('');
-        $t->assert_sql_table_create($ref_typ);
-        $t->assert_sql_index_create($ref_typ);
-
-        $t->subheader('Ref type SQL setup statements');
+        $t->subheader('reference sql setup');
         $ref = new ref($usr);
         $t->assert_sql_table_create($ref);
         $t->assert_sql_index_create($ref);
         $t->assert_sql_foreign_key_create($ref);
 
-        $t->subheader('SQL statement tests');
-        $ref = new ref($usr);
-        $t->assert_sql_by_id($db_con, $ref);
-        $this->assert_sql_link_ids($t, $db_con, $ref);
+        $t->subheader('reference sql read');
+        $t->assert_sql_by_id($sc, $ref);
+        $this->assert_sql_link_ids($t, $sc, $ref);
 
-        // sql to load a ref by id
+        $t->subheader('reference sql read standard and user changes by id');
         $ref = new ref($usr);
         $ref->set_id(3);
-        $t->assert_sql_standard($db_con, $ref);
+        $t->assert_sql_standard($sc, $ref);
 
-        // sql to load the ref types
+        $t->subheader('reference sql read all type');
         $ref_type_list = new ref_type_list();
-        $t->assert_sql_all($db_con, $ref_type_list, sql_db::TBL_REF_TYPE);
+        $t->assert_sql_all($sc, $ref_type_list);
 
-        $t->subheader('Im- and Export tests');
-        $t->assert_json_file(new ref($usr), $json_file);
+        $t->subheader('reference sql write insert');
+        $ref = $t->reference();
+        $t->assert_sql_insert($sc, $ref);
+        $t->assert_sql_insert($sc, $ref, [sql_type::LOG]);
+        $ref_usr = $t->reference_user();
+        $t->assert_sql_insert($sc, $ref_usr, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $ref_usr, [sql_type::LOG, sql_type::USER]);
+        $ref_filled = $t->ref_filled();
+        $t->assert_sql_insert($sc, $ref_filled, [sql_type::LOG]);
+        $ref_filled_usr = $t->ref_filled_user();
+        $t->assert_sql_insert($sc, $ref_filled_usr, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('API and frontend cast unit tests for references');
-        $ref = $t->dummy_reference();
+        $t->subheader('reference sql write update');
+        // TODO activate db write
+        $ref = $t->reference_change();
+        $ref_changed = $ref->cloned_linked(ref_api::TK_CHANGED);
+        $t->assert_sql_update($sc, $ref_changed, $ref);
+        $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::USER]);
+        $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG, sql_type::USER]);
+
+        $t->subheader('reference sql delete');
+        // TODO activate db write and log deleting the link by logging the change of the external link to empty
+        $t->assert_sql_delete($sc, $ref);
+        $t->assert_sql_delete($sc, $ref, [sql_type::LOG, sql_type::USER]);
+
+        $t->subheader('reference api unit tests');
+        $ref = $t->reference1();
+        $t->assert_api_json($ref);
+        $ref = $t->reference_plus();
         $t->assert_api($ref);
+
+        $t->subheader('reference frontend unit tests');
+        $ref = $t->reference_plus();
         $t->assert_api_to_dsp($ref, new ref_dsp());
 
-
-        // init for source
-        $t->name = 'source->';
-        $t->resource_path = 'db/ref/';
-        $json_file = 'unit/ref/bipm.json';
-
-        $t->header('Unit tests of the source class (src/main/php/model/ref/source.php)');
-
-        $t->subheader('SQL statement tests');
-        $src = new source($usr);
-        $t->assert_sql_table_create($src);
-        $t->assert_sql_index_create($src);
-        $t->assert_sql_foreign_key_create($src);
-        $t->assert_sql_by_id($db_con, $src);
-        $t->assert_sql_by_name($db_con, $src);
-        $t->assert_sql_by_code_id($db_con, $src);
-
-        // sql to load a source by id
-        $src = new source($usr);
-        $src->set_id(4);
-        $t->assert_sql_standard($db_con, $src);
-
-        // sql to load a source by name
-        $src = new source($usr);
-        $src->set_name(source_api::TN_READ);
-        $t->assert_sql_standard($db_con, $src);
-        $src->set_id(5);
-        $t->assert_sql_not_changed($db_con, $src);
-        $t->assert_sql_user_changes($db_con, $src);
-
-        // sql to load the source types
-        $source_type_list = new source_type_list();
-        $t->assert_sql_all($db_con, $source_type_list, sql_db::TBL_SOURCE_TYPE);
-
-        $t->subheader('Im- and Export tests');
-        $t->assert_json_file(new source($usr), $json_file);
-
-        $t->subheader('API and frontend cast unit tests for sources');
-        $src = $t->dummy_source();
-        $t->assert_api_msg($db_con, $src);
-        $t->assert_api_to_dsp($src, new source_dsp());
-
-
-        // init for source list
-        $t->name = 'source_list->';
-
-        $src_lst = new source_list($usr);
-        $trm_ids = array(1, 2, 3);
-        $t->assert_sql_by_ids($db_con, $src_lst, $trm_ids);
-        $src_lst = new source_list($usr);
-        $t->assert_sql_like($db_con, $src_lst);
+        $t->subheader('reference import and export tests');
+        $json_file = 'unit/ref/wikipedia.json';
+        $t->assert_json_file(new ref($usr), $json_file);
 
     }
 
@@ -153,24 +127,24 @@ class ref_tests
      * and check if the statement name is unique
      *
      * @param test_cleanup $t the test environment
-     * @param sql_db $db_con the test database connection
+     * @param sql $sc the test database connection
      * @param ref $ref the reference object for which the load by link ids sql statement creation should be tested
      * @return void
      */
     private function assert_sql_link_ids(
         test_cleanup $t,
-        sql_db $db_con,
+        sql $sc,
         ref $ref): void
     {
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $ref->load_sql_by_link_ids($db_con->sql_creator(), 1, 2);
-        $t->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $ref->load_sql_by_link_ids($sc, 1, 2);
+        $t->assert_qp($qp, $sc->db_type);
 
         // check the MySQL query syntax
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $ref->load_sql_by_link_ids($db_con->sql_creator(), 1, 2);
-        $t->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::MYSQL;
+        $qp = $ref->load_sql_by_link_ids($sc, 1, 2);
+        $t->assert_qp($qp, $sc->db_type);
     }
 
 }

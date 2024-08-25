@@ -30,6 +30,9 @@
 
 */
 
+include_once SHARED_TYPES_PATH . 'component_type.php';
+
+use shared\types\component_type as comp_type_shared;
 use api\view\view as view_api;
 use api\word\word as word_api;
 use cfg\component\component;
@@ -39,10 +42,10 @@ use html\component\component as component_dsp;
 use controller\controller;
 use html\button;
 use html\html_base;
-use html\msg;
-use test\test_cleanup;
+use html\system\messages;
+use test\all_tests;
 
-function run_display_test(test_cleanup $t): void
+function run_display_test(all_tests $t): void
 {
 
     global $usr;
@@ -55,9 +58,9 @@ function run_display_test(test_cleanup $t): void
 
     // test the usage of a view to create the HTML code
     $wrd = $t->load_word(word_api::TN_READ);
-    $dsp = new view($usr);
-    $dsp->load_by_name(view_api::TN_READ_RATIO, view::class);
-    //$result = $dsp->display($wrd, $back);
+    $msk = new view($usr);
+    $msk->load_by_name(view_api::TN_READ_RATIO);
+    //$result = $msk->display($wrd, $back);
     $target = true;
     //$t->dsp_contains(', view_dsp->display is "'.$result.'" which should contain '.$wrd_abb->name.'', $target, $result);
 
@@ -66,7 +69,7 @@ function run_display_test(test_cleanup $t): void
 
     // test if a simple text component can be created
     $cmp = new component($usr);
-    $cmp->type_id = $component_types->id(component_type::TEXT);
+    $cmp->type_id = $component_types->id(comp_type_shared::TEXT);
     $cmp->set_id(1);
     $cmp->set_name(view_api::TN_READ_NESN_2016);
     $cmp_dsp = new component_dsp($cmp->api_json());
@@ -77,50 +80,50 @@ function run_display_test(test_cleanup $t): void
 
     $t->header('Test the display button class (src/main/php/web/html/button.php )');
 
-    $url = $html->url(controller::DSP_WORD_ADD);
+    $url = $html->url(controller::MC_WORD_ADD);
     $back = '1';
     $target = '<a href="/http/word_add.php" title="Add test"><img src="/src/main/resources/images/button_add.svg" alt="Add test"></a>';
     $target = '<a href="/http/word_add.php" title="add new word">';
-    $result = (new button($url, $back))->add(msg::WORD_ADD);
+    $result = (new button($url, $back))->add(messages::WORD_ADD);
     $t->dsp_contains(", btn_add", $target, $result);
 
-    $url = $html->url(controller::DSP_WORD_EDIT);
+    $url = $html->url(controller::MC_WORD_EDIT);
     $target = '<a href="/http/view.php" title="Edit test"><img src="/src/main/resources/images/button_edit.svg" alt="Edit test"></a>';
     $target = '<a href="/http/word_edit.php" title="rename word"><i class="far fa-edit"></i></a>';
-    $result = (new button($url, $back))->edit(msg::WORD_EDIT);
+    $result = (new button($url, $back))->edit(messages::WORD_EDIT);
     $t->dsp_contains(", btn_edit", $target, $result);
 
-    $url = $html->url(controller::DSP_WORD_DEL);
+    $url = $html->url(controller::MC_WORD_DEL);
     $target = '<a href="/http/view.php" title="Del test"><img src="/src/main/resources/images/button_del.svg" alt="Del test"></a>';
     $target = '<a href="/http/word_del.php" title="Delete word"><i class="far fa-times-circle"></i></a>';
-    $result = (new button($url, $back))->del(msg::WORD_DEL);
+    $result = (new button($url, $back))->del(messages::WORD_DEL);
     $t->dsp_contains(", btn_del", $target, $result);
 
-    $url = $html->url(controller::DSP_WORD);
+    $url = $html->url(controller::MC_WORD);
     $target = '<a href="/http/view.php" title="Undo test"><img src="/src/main/resources/images/button_undo.svg" alt="Undo test"></a>';
     $target = '<a href="/http/word.php" title="undo"><img src="/src/main/resources/images/button_undo.svg" alt="undo"></a>';
-    $result = (new button($url, $back))->undo(msg::UNDO);
+    $result = (new button($url, $back))->undo(messages::UNDO);
     $t->display(", btn_undo", $target, $result);
 
-    $url = $html->url(controller::DSP_WORD_ADD);
+    $url = $html->url(controller::MC_WORD_ADD);
     $target = '<a href="/http/view.php" title="Find test"><img src="/src/main/resources/images/button_find.svg" alt="Find test"></a>';
     $target = '<a href="/http/word_add.php" title=""><img src="/src/main/resources/images/button_find.svg" alt=""></a>';
     $result = (new button($url, $back))->find();
     $t->display(", btn_find", $target, $result);
 
-    $url = $html->url(controller::DSP_WORD_ADD);
+    $url = $html->url(controller::MC_WORD_ADD);
     $target = '<a href="/http/view.php" title="Show all test"><img src="/src/main/resources/images/button_filter_off.svg" alt="Show all test"></a>';
     $target = '<a href="/http/word_add.php" title=""><img src="/src/main/resources/images/button_filter_off.svg" alt=""></a>';
     $result = (new button($url, $back))->unfilter();
     $t->display(", btn_unfilter", $target, $result);
 
-    $url = $html->url(controller::DSP_WORD_ADD);
+    $url = $html->url(controller::MC_WORD_ADD);
     $target = '<h6>YesNo test</h6><a href="/http/view.php&confirm=1" title="Yes">Yes</a>/<a href="/http/view.php&confirm=-1" title="No">No</a>';
     $target = '<h6></h6><a href="/http/word_add.php&confirm=1" title="Yes">Yes</a>/<a href="/http/word_add.php&confirm=-1" title="No">No</a>';
     $result = (new button($url, $back))->yesno();
     $t->display(", btn_yesno", $target, $result);
 
-    $url = $html->url(controller::DSP_WORD_ADD);
+    $url = $html->url(controller::MC_WORD_ADD);
     $target = '<a href="/http/view.php?words=1" title="back"><img src="/src/main/resources/images/button_back.svg" alt="back"></a>';
     $result = (new button($url, $back))->back();
     $t->display(", btn_back", $target, $result);

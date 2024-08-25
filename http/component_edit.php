@@ -41,7 +41,7 @@ use html\view\view as view_dsp;
 use html\component\component as component_dsp;
 
 $debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . '/../';
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
@@ -77,7 +77,7 @@ if ($usr->id() > 0) {
         if (isset($_GET['word'])) {
             $result .= $wrd->load_by_id($_GET['word']);
         } else {
-            // get the default word for the view $dsp
+            // get the default word for the view $msk
         }
 
         // the calling stack to move back to page where the user has come from after editing the view component is done

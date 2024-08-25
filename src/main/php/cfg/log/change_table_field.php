@@ -33,12 +33,8 @@
 namespace cfg\log;
 
 use cfg\db\sql;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_table_type;
-use cfg\library;
 use cfg\sandbox_named;
-use cfg\verb;
+use shared\library;
 
 class change_table_field
 {
@@ -108,7 +104,7 @@ class change_table_field
             } else {
                 $sql_fld .= $this->sql_field_table($sc, $fld_par);
             }
-            if (count($fld_par) > 1) {
+            if (count($fld_par) > 2) {
                 $fld_as = $fld_par[2];
                 if ($fld_as != '') {
                     $sql_fld .= ' ' . sql::AS . ' ' . $fld_as;

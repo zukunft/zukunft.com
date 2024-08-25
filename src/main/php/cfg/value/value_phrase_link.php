@@ -5,6 +5,8 @@
     model/value/value_phrase_link.php - only for fast selection of the values assigned to one word, a triple or a list of words or triples
     ---------------------------------
 
+    TODO ?? deprecate because done by the group id
+
     replication of the phrases linked by the phrase group saved in the value
     the phrase group of the value is the master and these value phrase links are the slave, means they are actually replicated information
     so these value phrase links are a kind of helder table for an OLAP Cube creation
@@ -164,7 +166,7 @@ class value_phrase_link extends db_object_seq_id_user
      */
     function load_sql_obj_vars(sql_db $db_con): sql_par
     {
-        $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
+        $db_con->set_class(value_phrase_link::class);
         $qp = new sql_par(self::class);
         $sql_where = '';
 
@@ -240,7 +242,7 @@ class value_phrase_link extends db_object_seq_id_user
     {
         log_debug('val_lnk->log_add for "' . $this->phr->id() . ' to ' . $this->val->id());
         $log = new change_link($this->user());
-        $log->action = change_action::ADD;
+        $log->set_action(change_action::ADD);
         $log->set_table(change_table_list::VALUE_PHRASE_LINK);
         $log->new_from = $this->val;
         $log->new_to = $this->phr;
@@ -256,7 +258,7 @@ class value_phrase_link extends db_object_seq_id_user
     {
         log_debug('val_lnk->log_upd for "' . $this->phr->id() . ' to ' . $this->val->id());
         $log = new change_link($this->user());
-        $log->action = change_action::UPDATE;
+        $log->set_action(change_action::UPDATE);
         $log->set_table(change_table_list::VALUE_PHRASE_LINK); // no user sandbox for links, only the values itself can differ from user to user
         //$log->set_field(phrase::FLD_ID);
         $log->old_from = $db_rec->val;
@@ -269,13 +271,14 @@ class value_phrase_link extends db_object_seq_id_user
     }
 
     // save the new word link
+    // TODO review
     private function save_field_wrd(sql_db $db_con, $db_rec): string
     {
         $result = '';
         if ($db_rec->wrd->id <> $this->phr->id()) {
             $log = $this->log_upd($db_con);
             if ($log->add()) {
-                $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
+                $db_con->set_class(value_phrase_link::class);
                 $result .= $db_con->update_old($this->id, phrase::FLD_ID, $this->phr->id());
             }
         }
@@ -314,13 +317,13 @@ class value_phrase_link extends db_object_seq_id_user
 
     // change a link of a word to a value
     // only allowed if the value has not yet been used
-    function save()
+    function save(?bool $use_func = null): string
     {
         log_debug("val_lnk->save link word id " . $this->phr->name() . " to " . $this->val->id() . " (link id " . $this->id . " for user " . $this->user()->id() . ").");
 
         global $db_con;
         $db_con->set_usr($this->user()->id());
-        $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
+        $db_con->set_class(value_phrase_link::class);
 
         if (!$this->used()) {
             // check if a new value is supposed to be added
@@ -342,7 +345,7 @@ class value_phrase_link extends db_object_seq_id_user
                 $log = $this->log_add();
                 if ($log->id() > 0) {
                     // insert the new value_phrase_link
-                    $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
+                    $db_con->set_class(value_phrase_link::class);
                     $this->id = $db_con->insert_old(array("group_id", "word_id"), array($this->val->id(), $this->phr->id()));
                     if ($this->id > 0) {
                         // update the id in the log
@@ -392,7 +395,7 @@ class value_phrase_link extends db_object_seq_id_user
             if ($log->id() > 0) {
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->user()->id();
-                $db_con->set_class(sql_db::TBL_VALUE_PHRASE_LINK);
+                $db_con->set_class(value_phrase_link::class);
                 $result .= $db_con->delete_old(array(value::FLD_ID, phrase::FLD_ID), array($this->val->id(), $this->phr->id()));
             }
         } else {

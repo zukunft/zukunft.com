@@ -51,8 +51,13 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_type;
+use cfg\db\sql_type;
+use cfg\db\sql_type_list;
+use cfg\log\change_action;
+use cfg\log\change_table;
+use cfg\log\change_table_field;
 use JsonSerializable;
-use model\db_cl;
 
 class type_object extends db_object_seq_id implements JsonSerializable
 {
@@ -62,15 +67,18 @@ class type_object extends db_object_seq_id implements JsonSerializable
      */
 
     // comments used for the database creation
+    // *_SQLTYP is the sql data type used for the field
     const TBL_COMMENT = 'for a type to set the predefined behaviour of an object';
 
     // database and JSON object field names
     const FLD_ID_COM = 'the database id is also used as the array pointer';
+    const FLD_ID_SQLTYP = sql_field_type::INT_SMALL;
     const FLD_NAME_COM = 'the unique type name as shown to the user and used for the selection';
     const FLD_NAME = 'type_name';
     const FLD_CODE_ID_COM = 'this id text is unique for all code links, is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
     const FLD_DESCRIPTION_COM = 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
     const FLD_DESCRIPTION = 'description';
+    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
 
     // type name exceptions
     const FLD_ACTION = 'change_action_name';
@@ -81,7 +89,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
     const FLD_LST_ALL = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
         [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
 
@@ -99,7 +107,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
      * construct and map
      */
 
-    function __construct(?string $code_id, string $name = '', string $description = '', int $id = 0)
+    function __construct(?string $code_id, string $name = '', ?string $description = null, int $id = 0)
     {
         parent::__construct();
         $this->set_id($id);
@@ -113,27 +121,37 @@ class type_object extends db_object_seq_id implements JsonSerializable
     function reset(): void
     {
         $this->id = 0;
-        $this->code_id = '';
+        $this->code_id = null;
         $this->name = '';
         $this->description = null;
     }
 
-    function row_mapper_typ_obj(array $db_row, string $db_type): bool
+    /**
+     * fill the type object vars based on a array of fields from the database
+     * @param array $db_row with the data from the database
+     * @param string $class the type class name that should be filled
+     * @return bool true if all expected object vars have been set
+     */
+    function row_mapper_typ_obj(array $db_row, string $class): bool
     {
-        $result = parent::row_mapper($db_row, $this->id_field_typ($db_type));
+        $result = parent::row_mapper($db_row, $this->id_field_typ($class));
+        // set the id upfront to allow row mapping
+        if ($class == language::class AND array_key_exists(language::FLD_ID, $db_row)) {
+            $this->id = ($db_row[language::FLD_ID]);
+        }
         if ($this->id > 0) {
             $this->code_id = strval($db_row[sql::FLD_CODE_ID]);
             $type_name = '';
-            if ($db_type == db_cl::LOG_ACTION) {
+            if ($class == change_action::class) {
                 $type_name = strval($db_row[self::FLD_ACTION]);
-            } elseif ($db_type == db_cl::LOG_TABLE) {
+            } elseif ($class == change_table::class) {
                 $type_name = strval($db_row[self::FLD_TABLE]);
-            } elseif ($db_type == sql_db::VT_TABLE_FIELD) {
+            } elseif ($class == change_table_field::class) {
                 $type_name = strval($db_row[self::FLD_FIELD]);
-            } elseif ($db_type == sql_db::TBL_LANGUAGE) {
-                $type_name = strval($db_row[language::FLD_NAME]);
-            } elseif ($db_type == sql_db::TBL_LANGUAGE_FORM) {
+            } elseif ($class == language_form::class) {
                 $type_name = strval($db_row[language_form::FLD_NAME]);
+            } elseif ($class == language::class) {
+                $type_name = strval($db_row[language::FLD_NAME]);
             } else {
                 $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
             }
@@ -154,12 +172,12 @@ class type_object extends db_object_seq_id implements JsonSerializable
         $this->name = $name;
     }
 
-    function set_code_id(string $code_id): void
+    function set_code_id(?string $code_id): void
     {
         $this->code_id = $code_id;
     }
 
-    function set_description(string $description): void
+    function set_description(?string $description): void
     {
         $this->description = $description;
     }
@@ -224,7 +242,12 @@ class type_object extends db_object_seq_id implements JsonSerializable
     function sql_table(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_table_create($sc, false, [], '', false);
+        // the pod is a type object but the number of pods might be significant higher than the number of types
+        if ($this:: class == pod::class) {
+            $sql .= $this->sql_table_create($sc);
+        } else {
+            $sql .= $this->sql_table_create($sc, new sql_type_list([sql_type::KEY_SMALL_INT]));
+        }
         return $sql;
     }
 
@@ -237,7 +260,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
     function sql_index(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_index_create($sc, false, [],false);
+        $sql .= $this->sql_index_create($sc);
         return $sql;
     }
 
@@ -318,21 +341,22 @@ class type_object extends db_object_seq_id implements JsonSerializable
     /**
      * load a type object e.g. phrase type, language or language form from the database
      * @param sql_par $qp the query parameters created by the calling function
+     * @param string $class the type class name that should be filled
      * @return int the id of the object found and zero if nothing is found
      */
-    protected function load_typ_obj(sql_par $qp, string $db_type): int
+    protected function load_typ_obj(sql_par $qp, string $class): int
     {
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        $this->row_mapper_typ_obj($db_row, $db_type);
+        $this->row_mapper_typ_obj($db_row, $class);
         return $this->id();
     }
 
-    private function id_field_typ(string $db_type): string
+    private function id_field_typ(string $class): string
     {
         global $db_con;
-        return $db_con->get_id_field_name($db_type);
+        return $db_con->get_id_field_name($class);
     }
 
     private function name_field_typ(string $db_type): string

@@ -89,7 +89,7 @@ class value_ts_data extends db_object
     function sql_table(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_table_create($sc, false, [], '', false);
+        $sql .= $this->sql_table_create($sc);
         return $sql;
     }
 
@@ -103,20 +103,20 @@ class value_ts_data extends db_object
     function sql_index(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_index_create($sc, false, [],false);
+        $sql .= $this->sql_index_create($sc);
         return $sql;
     }
 
     /**
      * the sql statements to create all foreign keys
-     * is e.g. overwriten for the user sandbox objects
+     * is e.g. overwritten for the user sandbox objects
      *
      * @param sql $sc with the target db_type set
      * @return string the sql statement to create the foreign keys
      */
     function sql_foreign_key(sql $sc): string
     {
-        return $this->sql_foreign_key_create($sc, false, [],false);
+        return $this->sql_foreign_key_create($sc, [], [],false);
     }
 
 }

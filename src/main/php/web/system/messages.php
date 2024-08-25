@@ -30,9 +30,9 @@
 
 */
 
-namespace html;
+namespace html\system;
 
-class msg
+class messages
 {
 
     // text to be shon in buttons
@@ -137,7 +137,7 @@ class msg
             default => $message_id . ' (translation missing)',
         };
         if ($msg_text == $message_id . ' (translation missing)') {
-            log_warning('translation missing for ' . $message_id);
+            //log_warning('translation missing for ' . $message_id);
         }
         return $msg_text;
     }

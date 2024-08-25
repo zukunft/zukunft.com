@@ -41,7 +41,7 @@ use cfg\user;
 use cfg\view;
 
 $debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . '/../';
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
@@ -64,7 +64,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::DSP_TRIPLE_ADD);
+    $msk->load_by_code_id(controller::MC_TRIPLE_ADD);
     $back = $_GET[controller::API_BACK]; // the calling word which should be displayed after saving
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
@@ -72,20 +72,20 @@ if ($usr->id() > 0) {
 
     // load the parameters to the triple object to display it again in case of an error
     if (isset($_GET['from'])) {
-        $trp->fob->set_id($_GET['from']);
+        $trp->from()->set_id($_GET['from']);
     }   // the word or triple to be linked
     if (isset($_GET['verb'])) {
         $trp->verb->set_id($_GET['verb']);
     }   // the link type (verb)
     if (isset($_GET['phrase'])) {
-        $trp->tob->set_id($_GET['phrase']);
+        $trp->to()->set_id($_GET['phrase']);
     }
 
     // if the user has pressed save at least once
     if ($_GET['confirm'] == 1) {
 
         // check essential parameters
-        if ($trp->fob->id() == 0 or $trp->verb->id() == 0 or $trp->tob->id() == 0) {
+        if ($trp->from_id() == 0 or $trp->verb->id() == 0 or $trp->to_id() == 0) {
             $msg .= 'Please select two words and a verb.';
         } else {
 

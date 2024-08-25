@@ -29,10 +29,6 @@
   
 */
 
-use controller\controller;
-use cfg\user;
-use cfg\type_lists;
-
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
 $debug = $_GET['debug'] ?? 0;
@@ -45,6 +41,10 @@ include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_HELPER_PATH . 'type_lists.php';
+
+use controller\controller;
+use cfg\user;
+use cfg\type_lists;
 
 // open database
 $db_con = prg_start("api/typeLists", "", false);

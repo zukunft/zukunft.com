@@ -31,11 +31,11 @@
 
 namespace html\phrase;
 
-use html\phrase\phrase_group as phrase_group_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
-use cfg\library;
 use cfg\phrase;
 use cfg\user;
+use html\phrase\phrase_group as phrase_group_dsp;
+use html\phrase\phrase_list as phrase_list_dsp;
+use shared\library;
 
 class phrase_group_list
 {

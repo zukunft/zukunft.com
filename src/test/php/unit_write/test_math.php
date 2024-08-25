@@ -32,9 +32,9 @@
 
 use api\word\word as word_api;
 use cfg\word_list;
-use test\test_cleanup;
+use test\all_tests;
 
-function run_math_test(test_cleanup $t)
+function run_math_test(all_tests $t): void
 {
 
     global $usr;

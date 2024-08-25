@@ -32,16 +32,14 @@
 
 */
 
-namespace html;
+namespace html\sandbox;
 
-use controller\controller;
+include_once SANDBOX_PATH . 'combine_object.php';
+
 use api\api;
-use html\api as api_dsp;
-use html\word\word;
+use html\rest_ctrl as api_dsp;
 
-include_once WEB_SANDBOX_PATH . 'combine_object.php';
-
-class combine_named_dsp extends combine_object_dsp
+class combine_named extends combine_object
 {
 
     /*
@@ -103,6 +101,14 @@ class combine_named_dsp extends combine_object_dsp
     function description(): ?string
     {
         return $this->obj()?->description();
+    }
+
+    /**
+     * @return string|null the plural of the word, triple, formula or verb
+     */
+    function plural(): ?string
+    {
+        return $this->obj()?->plural();
     }
 
     /**

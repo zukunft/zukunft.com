@@ -2,9 +2,9 @@
 <html lang="en">
 <head><title>test (zukunft.com)</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="https://www.zukunft.com/lib_external/bootstrap/4.3.1/css/bootstrap.css">
+    <link rel="stylesheet" href="http://localhost/lib_external/bootstrap-5.3.3-dist/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css"/>
-    <link rel="stylesheet" href="https://www.zukunft.com/lib_external/fontawesome/css/all.css">
+    <link rel="stylesheet" href="http://localhost/lib_external/fontawesome/css/all.css">
 </head>
 <body>
 <div class="container">
@@ -28,8 +28,11 @@
     <form action="/http/view.php" id="view"><label for="user profile">user profile</label>
         <div class="form-group "><select class="form-control" name="user profile" form="view" id="user profile">
             <option value="0" selected>please select ...</option>
-            <option value="2">normal</option>
-            <option value="3">admin</option>
+            <option value="1">normal user</option>
+            <option value="2">admin</option>
+            <option value="3">developer</option>
+            <option value="4">system test</option>
+            <option value="5">system</option>
         </select></div>
         <br><label for="verb">verb</label>
         <div class="form-group "><select class="form-control" name="verb" form="view" id="verb">
@@ -67,25 +70,35 @@
             <option value="22">hidden triple</option>
             <option value="23">hidden system</option>
             <option value="24">group and select</option>
+            <option value="25">symbol</option>
+            <option value="26">rank</option>
+            <option value="27">ignore</option>
         </select></div>
         <br><label for="formula type">formula type</label>
         <div class="form-group "><select class="form-control" name="formula type" form="view" id="formula type">
             <option value="0" selected>please select ...</option>
-            <option value="1">default</option>
-            <option value="2">reversible</option>
+            <option value="1">calc</option>
+            <option value="2">next</option>
+            <option value="3">prior</option>
+            <option value="4">this</option>
+            <option value="5">reversible</option>
+            <option value="6">scaling</option>
         </select></div>
         <br><label for="link type">link type</label>
         <div class="form-group "><select class="form-control" name="link type" form="view" id="link type">
             <option value="0" selected>please select ...</option>
-            <option value="1">System Test Type Name</option>
-            <option value="2">default</option>
-            <option value="3">time_period_based</option>
+            <option value="1">default</option>
+            <option value="2">time period based</option>
         </select></div>
         <br><label for="view type">view type</label>
         <div class="form-group "><select class="form-control" name="view type" form="view" id="view type">
             <option value="0" selected>please select ...</option>
-            <option value="1">System Test Type Name</option>
-            <option value="2">default</option>
+            <option value="1">standard</option>
+            <option value="2">entry view</option>
+            <option value="3">edit</option>
+            <option value="4">presentation</option>
+            <option value="5">word default</option>
+            <option value="6">details</option>
             <option value="7">system</option>
         </select></div>
         <br><label for="component type">component type</label>
@@ -93,7 +106,7 @@
             <option value="0" selected>please select ...</option>
             <option value="1">System Test Type Name</option>
             <option value="2">text</option>
-            <option value="8">word_name</option>
+            <option value="8">phrase_name</option>
             <option value="17">system_form_title</option>
             <option value="18">system_form_back_stack</option>
             <option value="19">system_form_confirm_status</option>
@@ -114,8 +127,9 @@
         <br><label for="ref type">ref type</label>
         <div class="form-group "><select class="form-control" name="ref type" form="view" id="ref type">
             <option value="0" selected>please select ...</option>
-            <option value="1">System Test Type Name</option>
-            <option value="2">wikipedia</option>
+            <option value="1">wikipedia</option>
+            <option value="2">wikidata</option>
+            <option value="3">conceptnet</option>
         </select></div>
         <br><label for="source type">source type</label>
         <div class="form-group "><select class="form-control" name="source type" form="view" id="source type">
@@ -128,10 +142,10 @@
         <br><label for="protection">protection</label>
         <div class="form-group "><select class="form-control" name="protection" form="view" id="protection">
             <option value="0" selected>please select ...</option>
-            <option value="1">no_protection</option>
-            <option value="2">user_protection</option>
-            <option value="3">admin_protection</option>
-            <option value="4">no_change</option>
+            <option value="1">no protection</option>
+            <option value="2">user</option>
+            <option value="3">admin</option>
+            <option value="4">no change</option>
         </select></div>
         <br><label for="share">share</label>
         <div class="form-group "><select class="form-control" name="share" form="view" id="share">

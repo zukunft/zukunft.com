@@ -32,6 +32,7 @@
 
 namespace unit;
 
+use cfg\db\sql;
 use cfg\foaf_direction;
 use cfg\verb_list;
 use html\verb\verb as verb_dsp;
@@ -50,25 +51,31 @@ class verb_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'verb->';
         $t->resource_path = 'db/verb/';
         $json_file = 'unit/verb/is_a.json';
-        $usr->set_id(1);
 
 
-        $t->header('Unit tests of the verb class (src/main/php/model/verb/verb.php)');
-
-        $t->subheader('Verb SQL setup statements');
+        $t->header('verb unit tests');
         $vrb = new verb();
+
+        $t->subheader('verb sql setup');
         $t->assert_sql_table_create($vrb);
         $t->assert_sql_index_create($vrb);
 
-        $t->subheader('SQL statement tests');
+        $t->subheader('verb sql read');
+        $t->assert_sql_by_id($sc, $vrb);
+        $t->assert_sql_by_name($sc, $vrb);
+        $t->assert_sql_by_code_id($sc, $vrb);
 
-        $vrb = new verb();
-        $t->assert_sql_by_id($db_con, $vrb);
-        $t->assert_sql_by_name($db_con, $vrb);
-        $t->assert_sql_by_code_id($db_con, $vrb);
+        $t->subheader('verb sql write');
+        // TODO activate db write
+        //$t->assert_sql_insert($sc, $vrb);
+        // TODO activate db write
+        //$t->assert_sql_update($sc, $vrb);
+        // TODO activate db write
+        //$t->assert_sql_delete($sc, $vrb);
 
 
         $t->subheader('Im- and Export tests');
@@ -81,7 +88,7 @@ class verb_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $vrb = $t->dummy_verb();
+        $vrb = $t->verb();
         $t->assert_api_to_dsp($vrb, new verb_dsp());
 
 
@@ -91,7 +98,7 @@ class verb_tests
 
         // sql to load a list with all verbs
         $vrb_lst = new verb_list($usr);
-        $t->assert_sql_all($db_con, $vrb_lst);
+        $t->assert_sql_all($sc, $vrb_lst);
 
         // sql to load a verb list by phrase id and direction up
         $vrb_lst = new verb_list($usr);
