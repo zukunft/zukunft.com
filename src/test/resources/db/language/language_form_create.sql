@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS language_forms
 (
-    language_form_id   BIGSERIAL PRIMARY KEY,
+    language_form_id   SERIAL PRIMARY KEY,
     language_form_name varchar(255) DEFAULT NULL,
     code_id            varchar(100) DEFAULT NULL,
     description        text         DEFAULT NULL,

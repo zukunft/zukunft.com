@@ -39,10 +39,10 @@ use cfg\phrase;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\source;
-use cfg\system_log_list;
+use cfg\sys_log_list;
 use cfg\triple;
 use cfg\user;
-use cfg\value;
+use cfg\value\value;
 use cfg\verb;
 use cfg\view;
 use html\html_base;
@@ -94,7 +94,7 @@ class user_dsp_old extends user
         log_debug($dsp_type . ' errors for user ' . $this->name);
 
         $result = '';
-        $err_lst = new system_log_list;
+        $err_lst = new sys_log_list;
         $err_lst->set_user($this);
         $err_lst->page = $page;
         $err_lst->size = $size;
@@ -211,9 +211,9 @@ class user_dsp_old extends user
                 if ($id != 0) {
                     $trp_usr->load_by_id($id);
                 } else {
-                    $from_id = $sbx_row['from_phrase_id'];
+                    $from_id = $sbx_row[triple::FLD_FROM];
                     $vrb_id = $sbx_row[verb::FLD_ID];
-                    $to_id = $sbx_row['to_phrase_id'];
+                    $to_id = $sbx_row[triple::FLD_TO];
                     $trp_usr->load_by_link_id($from_id, $vrb_id, $to_id);
                 }
                 $trp_usr->set_name($sbx_row['usr_name']);
@@ -386,8 +386,8 @@ class user_dsp_old extends user
                    l.user_id              AS owner_id, 
                    l.formula_id, 
                    l.phrase_id, 
-                   CASE WHEN (u.link_type_id <> '' IS NOT TRUE) THEN l.link_type_id ELSE u.link_type_id END AS usr_type, 
-                   l.link_type_id                                                            AS std_type, 
+                   CASE WHEN (u.formula_link_type_id <> '' IS NOT TRUE) THEN l.formula_link_type_id ELSE u.formula_link_type_id END AS usr_type, 
+                   l.formula_link_type_id                                                            AS std_type, 
                    CASE WHEN (u.excluded     <> '' IS NOT TRUE) THEN l.excluded     ELSE u.excluded     END AS usr_excluded,
                    l.excluded                                                                AS std_excluded
               FROM user_formula_links u,
@@ -399,8 +399,8 @@ class user_dsp_old extends user
                    l.user_id              AS owner_id, 
                    l.formula_id, 
                    l.phrase_id, 
-                   IF(u.link_type_id IS NULL, l.link_type_id, u.link_type_id) AS usr_type, 
-                   l.link_type_id                                             AS std_type, 
+                   IF(u.formula_link_type_id IS NULL, l.formula_link_type_id, u.formula_link_type_id) AS usr_type, 
+                   l.formula_link_type_id                                             AS std_type, 
                    IF(u.excluded     IS NULL, l.excluded,     u.excluded)     AS usr_excluded,
                    l.excluded                                                 AS std_excluded
               FROM user_formula_links u,
@@ -420,9 +420,9 @@ class user_dsp_old extends user
                 // create the formula_link objects with the minimal parameter needed
                 $frm_usr = new formula_link($this);
                 $frm_usr->set_id($sbx_row['id']);
-                $frm_usr->fob->id = $sbx_row[formula::FLD_ID];
-                $frm_usr->tob->id = $sbx_row[phrase::FLD_ID];
-                $frm_usr->link_type_id = $sbx_row['usr_type'];
+                $frm_usr->formula()->set_id($sbx_row[formula::FLD_ID]);
+                $frm_usr->phrase()->set_id($sbx_row[phrase::FLD_ID]);
+                $frm_usr->type_id = $sbx_row['usr_type'];
                 $frm_usr->set_excluded($sbx_row['usr_excluded']);
                 $frm_usr->load_objects();
 
@@ -432,24 +432,24 @@ class user_dsp_old extends user
 
                 $frm_std = clone $frm_usr;
                 $frm_std->set_user($usr_std);
-                $frm_std->link_type_id = $sbx_row['std_type'];
+                $frm_std->type_id = $sbx_row['std_type'];
                 $frm_std->set_excluded($sbx_row['std_excluded']);
 
                 // check database consistency and correct it if needed
-                if ($frm_usr->link_type_id == $frm_std->link_type_id
+                if ($frm_usr->type_id == $frm_std->type_id
                     and $frm_usr->is_excluded() == $frm_std->is_excluded()) {
                     $frm_usr->del_usr_cfg();
                 } else {
 
                     // prepare the row formula_links
-                    $sandbox_item_name = $frm_usr->fob->name_linked($back);
+                    $sandbox_item_name = $frm_usr->formula()->name_linked($back);
                     //$sandbox_item_name = $frm_usr->name_linked($back);
 
                     // format the user formula_link
                     if ($frm_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $frm_usr->tob->display_linked();
+                        $sandbox_usr_txt = $frm_usr->phrase()->display_linked();
                         //$sandbox_usr_txt = $frm_usr->link_name;
                     }
 
@@ -457,7 +457,7 @@ class user_dsp_old extends user
                     if ($frm_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
-                        $sandbox_std_txt = $frm_std->tob->display_linked();
+                        $sandbox_std_txt = $frm_std->phrase()->display_linked();
                         //$sandbox_std_txt = $frm_std->link_name;
                     }
 
@@ -465,7 +465,7 @@ class user_dsp_old extends user
                     $sandbox_other = '';
                     $sql_other = "SELECT l.formula_link_id, 
                                u.user_id, 
-                               u.link_type_id, 
+                               u.formula_link_type_id, 
                                u.excluded
                           FROM user_formula_links u,
                                formula_links l
@@ -482,7 +482,7 @@ class user_dsp_old extends user
                         // to review: load all user formula_links with one query
                         $frm_lnk_other = clone $frm_usr;
                         $frm_lnk_other->set_user($usr_other);
-                        $frm_lnk_other->link_type_id = $frm_lnk_other_row['link_type_id'];
+                        $frm_lnk_other->type_id = $frm_lnk_other_row['link_type_id'];
                         $frm_lnk_other->set_excluded($frm_lnk_other_row[sandbox::FLD_EXCLUDED]);
                         $frm_lnk_other->load_objects();
                         if ($sandbox_other <> '') {
@@ -1089,8 +1089,8 @@ class user_dsp_old extends user
                 // create the component_link objects with the minimal parameter needed
                 $dsp_usr = new component_link($this);
                 $dsp_usr->set_id($sbx_row['id']);
-                $dsp_usr->fob->set_id($sbx_row[view::FLD_ID]);
-                $dsp_usr->tob->set_id($sbx_row[component::FLD_ID]);
+                $dsp_usr->view()->set_id($sbx_row[view::FLD_ID]);
+                $dsp_usr->component()->set_id($sbx_row[component::FLD_ID]);
                 $dsp_usr->order_nbr = $sbx_row['usr_order'];
                 $dsp_usr->position_type = $sbx_row['usr_type'];
                 $dsp_usr->set_excluded($sbx_row['usr_excluded']);

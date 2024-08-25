@@ -48,7 +48,7 @@ class component_list
         $t->subheader('component list tests');
 
         // test the component list display functions
-        $lst = new component_list_dsp($t->dummy_component_list()->api_json());
+        $lst = new component_list_dsp($t->component_list()->api_json());
         $test_page = $html->text_h2('component list display test');
         $test_page .= 'component list with tooltip: ' . $lst->display() . '<br>';
         $test_page .= 'component list with link: ' . $lst->display_linked() . '<br>';

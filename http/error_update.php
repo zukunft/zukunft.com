@@ -30,17 +30,17 @@
 
 */
 
+use cfg\sys_log;
+use cfg\sys_log_list;
+use cfg\user;
+use cfg\user\user_profile;
+use cfg\view;
 use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
-use cfg\log\system_log;
-use cfg\system_log_list;
-use cfg\user;
-use cfg\user_profile;
-use cfg\view;
 
 $debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . '/../';
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 $db_con = prg_start("error_update");
@@ -66,14 +66,14 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     $msk = new view($usr);
-    $msk->set_id($system_views->id(controller::DSP_ERR_UPD));
+    $msk->set_id($system_views->id(controller::MC_ERR_UPD));
     $msk_dsp = new view_dsp($msk->api_json());
     $result .= $msk_dsp->dsp_navbar($back);
 
     if ($usr->id() > 0 and $usr->profile_id == $user_profiles->id(user_profile::ADMIN)) {
         // update the error if requested
         if ($log_id > 0 and $status_id > 0) {
-            $err_entry = new system_log;
+            $err_entry = new sys_log;
             $err_entry->set_user($usr);
             $err_entry->set_id($log_id);
             $err_entry->status_id = $status_id;
@@ -82,9 +82,9 @@ if ($usr->id() > 0) {
 
         // display all program issues if the user is an admin
         $errors_all = '';
-        $err_lst = new system_log_list;
+        $err_lst = new sys_log_list;
         $err_lst->set_user($usr);
-        $err_lst->dsp_type = system_log_list::DSP_ALL;
+        $err_lst->dsp_type = sys_log_list::DSP_ALL;
         $err_lst->page = 1;
         $err_lst->size = 20;
         $err_lst->back = $back;

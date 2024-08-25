@@ -34,9 +34,9 @@ namespace api\phrase;
 include_once API_SANDBOX_PATH . 'combine_named.php';
 include_once API_WORD_PATH . 'word.php';
 include_once API_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WORD_PATH . 'word.php';
+include_once WORD_PATH . 'triple.php';
+include_once PHRASE_PATH . 'phrase.php';
 
 use api\api;
 use api\sandbox\combine_named as combine_named_api;
@@ -55,6 +55,7 @@ class phrase extends combine_named_api implements JsonSerializable
     const CLASS_WORD = 'word';
     const CLASS_TRIPLE = 'triple';
 
+    // TODO move to triple API
     // phrase names used for system testing
     const RESERVED_PHRASES = array(
         triple_api::TN_ADD,

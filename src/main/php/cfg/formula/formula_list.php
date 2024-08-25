@@ -41,6 +41,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use html\formula\formula as formula_dsp;
 use html\formula\formula_list as formula_list_dsp;
+use shared\library;
 
 class formula_list extends sandbox_list
 {
@@ -231,11 +232,11 @@ class formula_list extends sandbox_list
         if ($phr->id() <> 0) {
             $sc->set_join_fields(
                 array(phrase::FLD_ID),
-                sql_db::TBL_FORMULA_LINK,
+                formula_link::class,
                 formula::FLD_ID,
                 formula::FLD_ID
             );
-            $sc->add_where(sql_db::LNK_TBL . '.' . phrase::FLD_ID, $phr->id());
+            $sc->add_where(phrase::FLD_ID, $phr->id(), null, sql_db::LNK_TBL);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -256,11 +257,11 @@ class formula_list extends sandbox_list
         if ($phr_lst->count() > 0) {
             $sc->set_join_fields(
                 array(phrase::FLD_ID),
-                sql_db::TBL_FORMULA_LINK,
+                formula_link::class,
                 formula::FLD_ID,
                 formula::FLD_ID
             );
-            $sc->add_where(sql_db::LNK_TBL . '.' . phrase::FLD_ID, $phr_lst->id_lst());
+            $sc->add_where(phrase::FLD_ID, $phr_lst->id_lst(), null, sql_db::LNK_TBL);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -288,12 +289,12 @@ class formula_list extends sandbox_list
         if ($ref_id > 0) {
             $sc->set_join_fields(
                 array(formula::FLD_ID),
-                sql_db::TBL_ELEMENT,
+                element::class,
                 formula::FLD_ID,
                 formula::FLD_ID
             );
-            $sc->add_where(sql_db::LNK_TBL . '.' . element::FLD_REF_ID, $ref_id);
-            $sc->add_where(sql_db::LNK_TBL . '.' . element::FLD_TYPE, $par_type_id);
+            $sc->add_where(element::FLD_REF_ID, $ref_id, null, sql_db::LNK_TBL);
+            $sc->add_where(element::FLD_TYPE, $par_type_id, null, sql_db::LNK_TBL);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -377,7 +378,7 @@ class formula_list extends sandbox_list
     {
         $lib = new library();
         $class = $lib->class_to_name(self::class);
-        $db_con->set_class(sql_db::TBL_FORMULA);
+        $db_con->set_class(formula::class);
         $qp = new sql_par($class);
         $db_con->set_usr($this->user()->id());
         $db_con->set_all();
@@ -602,7 +603,7 @@ class formula_list extends sandbox_list
      */
     function count_db(sql_db $db_con): ?int
     {
-        return $db_con->count(sql_db::TBL_FORMULA);
+        return $db_con->count(formula::class);
     }
 
 
@@ -711,7 +712,7 @@ class formula_list extends sandbox_list
     {
         $cfg = new config();
         if ($total_formulas == 0) {
-            $total_formulas = $db_con->count(sql_db::TBL_FORMULA);
+            $total_formulas = $db_con->count(formula::class);
         }
         $avg_calc_time = $cfg->get_db(config::AVG_CALC_TIME, $db_con);
         $total_expected_time = $total_formulas * $avg_calc_time;

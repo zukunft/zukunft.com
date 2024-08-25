@@ -10,18 +10,51 @@ use html\phrase\phrase_group as phrase_group_dsp;
     for coding new features the target process is before committing:
     1. create a unit test for the new feature
     2. code the feature and fix the unit tests and code smells
-    3. create and fix the database unit and integration test for the new feature
+    3. create and fix the database read, write and integration test for the new feature
     4. commit
 
     but first this needs to be fixed:
-    TODO Substeps: create the sql setup scripts based on the objects
-    TODO Step 27: deprecate the get_old group_list
-    TODO Substeps: create insert, update and delete sql create tests for the main objects
+    TODO review unit, read and write tests
+         each test should be with one line e.g. $t->assert_sql_table_create($wrd);
+         3 to 7 tests should be within a block starting with $t->subheader(' ....
+         sort load functions (done in: view
+         group function within a class e.g. by load, save ....
+         use $this::class for load functions
+    TODO make write tests autonomies (no prerequieries, no depenedencies, no left overs)
+    TODO check if MySQL create script is working
+    TODO add unit test for all system views
+    TODO Substeps: create insert, update and delete sql create tests for the main objects (TODO activate db write)
+                   include the log in the prepared sql write statement
+    TODO combine db_row and std_row for with-log use of update word
+    TODO start all tests with setting the var $test_name
+    TODO move the read db tests from the write test classes to the read test classes
+    TODO create the test objects always based on functions in create_test_objects
+    TODO use with-log for insert links e.g. triple
+    TODO use with-log for insert values
     TODO Step 26: deprecate the get_old in result
     TODO Substeps: create insert, update and delete sql create tests for the remaining objects
-    TODO Step 25: deprecate the get_old in result_list
+    TODO Step 25: deprecate the get_old in group_list
     TODO Substeps: move all display functions from the backend objects to the frontend
+    TODO Step 24: deprecate the get_old in user_list
+    TODO Substeps: sort and group the functions in a class e.g. based on the word class sample
+    TODO Step 23: deprecate the get_old in value_dsp
+    TODO remove backend classes from frontend
+    TODO Step 22: deprecate the get_old in value_list
+    TODO remove frontend classes from backend
+    TODO Step 21: deprecate the get_old in ???
+    TODO review the main unit tests
+    TODO Step 20: deprecate the get_old in ???
+    TODO review the remaining unit tests
+    TODO Step 19: deprecate the get_old in ???
+    TODO review the main db read tests
+    TODO Step 18: deprecate the get_old in ???
+    TODO review the remaining db read tests
+    TODO Step 17: deprecate the get_old in ???
+    TODO review the main db write tests
+    TODO Step 16: deprecate the get_old in ???
+    TODO review the remaining db write tests
     TODO activate the tests and create a unit and read test if possible
+    TODO for user_values allow a source 0=not set or exclude the source_id from the prime index?
     TODO test if a table with 1, 2, 4, 8, 16, 32 or 64 smallint key is faster and more efficient than a table with one bigger index
     TODO create an use the figure database view
     TODO clean up the phrase_list (and triple_list and word_list) cfg/class and add unit and db read tests for all
@@ -34,6 +67,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add properties to verbs so that the same behavior con be used for several verbs
     TODO use the $load_all parameter for all load functions to include excluded rows for admins
     TODO add a unit and db test
+    TODO check which arrays cam be converted to a class
+    TODO add system parameter to include the log write into the curl sql statements or use seperate statements for log
     TODO combine phrase_group_word_links and phrase_group_triple_links to group_phrase_links
     TODO add a simple value format where the json key is used as the phrase name e.g "system config target number of selection entries": 7
     TODO add system and user config parameter that are e.g. 100 views a view is automatically frozen for the user
@@ -66,6 +101,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO move the time field of phrase groups to the group
     TODO check that all times include the time zone
     TODO unit test: create a unit test for all possible class functions next to review: formula expression
+    TODO check that all dummy function that are supposed to be overwritten by the child object create a error if overwrite is missing
     TODO api load: expose all load functions to the api (with security check!)
     TODO use always prepared queries based on the value_phrase_link_list_by_phrase_id.sql sample
     TODO fix error in upgrade process for MySQL
@@ -87,9 +123,23 @@ use html\phrase\phrase_group as phrase_group_dsp;
          load, im- and export, filter, modify, check, save, del
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO define a phrase range for global prime phrases (e.g. 5124)
+         and a range for pot prime terms
+    TODO add a frontend cache e.g. for terms, formulas and view
+    TODO allow the user to configure the frontend cache size and show to the user suggestion in increase speed
+    TODO add a backend cache e.g. for terms, formulas and view
+    TODO allow the admin to configure the backend cache size and show to the user suggestion in increase speed
+    TODO add the option to separate the user config to be able to move the user config to a separate database so that each user group can run its own databaser server
+    TODO check that all vars that can be empty allow null and replace null e.g. with an empty string as late as possible
+    TODO check that all relevant vars are forwarded from the backend object to the api and display object
+    TODO add a system execution time measurment that covers e.g. the import of words (values, ...) ber second
+    TODO validate the import bevor staring the import e.g. check if a triple has always from, verb and to
+    TODO create a word-list for import where just the names are listed without further indications
+    TODO the first frontend should look like Excel wit a big empty sheet and file save and load and only a few suggestions while writing to a cell
     TODO remove the time phrase from result
     TODO rename change and change_log to change
-    TODO rename system_log to log
+    TODO rename sys_log to log
+    TODO fix the button frontend issue
     TODO use the json api message header for all api messages
     TODO check if reading triples should use a view to generate the triple name and the generated name
     TODO use the sandbox list for all user lists
@@ -107,6 +157,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO check that all load function have an API and are added in the OpenAPI document
     TODO use the api functions and the html frontend function
     TODO create a vue.js based frontend
+    TODO add users to add python based hooks on types and verbs with a zukunft.com object model
+    TODO add terraform.io script for deployments
+    TODO automatically measure the test coverage (e.g. the number of facade functions that have a positive and negative test)
     TODO capsule (change from public to private or protected) all class vars that have dependencies e.g lst of user_type_list
     TODO split frontend and backend an connect them using api objects
     TODO add a text export format to the display objects and use it for JSON import validation e.g. for the travel list
@@ -242,6 +295,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add a text table for string and prosa that never should be used for selection
     TODO add a date table to save dates in an efficient way
     TODO create a alternative backend based on Rust for better speed
+    TODO all pods write change requests first to its own database
+    TODO if the local pod is not the master pod for the phrase, the change is transfered to the master pod
+    TODO in case of a conflict, that later change wins and because all changes are user specific the probability of a ultimate conflict is nearly zero
     TODO use zeroMQ or Kafka to sync the insert and update statements between the pod
     TODO use separate kafka topics for values and results of each pod e.g. switzerland_values for all updates related to Switzerland
     TODO allow to assign users to an admin and offer each admin to use different settings for "his" users so that different behavior due to setting changes can be tested to the same pod
@@ -258,6 +314,23 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO offer syntactic sugar translation for PL SQL
     TODO reduce the function parameters to 3 or less wherever possible
     TODO use popular Open Source LLM systems to fill the word and triple (and value) tables
+    TODO do not allow any HTML or script code fragments in the text fields
+    TODO if options are excluded show them in grey with the mouseover reason, why they have been excluded
+    TODO ad sample how the use Reuters RIC where the price is in pence
+    TODO create a function to earn cooperative parts by work
+    TODO because MySQL does not keep the interface stable (e.g. https://dev.mysql.com/doc/refman/8.4/en/charset-unicode-utf8.html) switch to postgres and MariaDB
+
+    TODO message handling
+        in dought return a user message to the highest level, so that it can be shown to the user
+        in case of an exception convert it to a user message as soon as all relevant information are availible
+
+    TODO use cases:
+        create a sample how to create a personal pension plan for 1. 2. and 3. pillar independend from banks and pension funds
+        these the optimal tax rates are
+            from -10% needed to fulfill the basic needed
+            to 99% for everything more than the community is able to invest to save one live
+            reason: this is the optimal combination between safety and prestige
+        Show the roof top potential solar potential of 120 Gigawatt vs. usage in persent of solar energy in turkey https://de.dsisolar.com/info/t-rkiye-s-rooftop-solar-potential-enough-to-me-89783977.html
 
     TODO because some changes e.g. a formula change might cause costly calculations estimate the cost upfront and ask the user to pay for it
 
@@ -357,43 +430,44 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
     the target model object structure is:
 
-    db_object - all database objects that have a unique id
-        phrase_group_link - db index to find a phrase group by the phrase (not the db normal form to speed up)
-            phrase_group_word_link - phrase_group_link for a word
-            phrase_group_triple_link - phrase_group_link for a triple
-        system_log - log entries by the system to improve the setup and code
-        ip_range - to filter requests from the internet
-        db_object_user - all objects that are user specific
-            phrase_group - a sorted list of phrases
-            element - the parameters / parts of a formula expression for fast finding of dependencies (not the db normal form to speed up)
-            change_log - to log a change done by a user
-                change_named - log of user changes in named objects e.g. word, triple, ...
-                change_link - log of the link changes by a user
-            job - to handle processes that takes longer than the user is expected to wait
-            sandbox - a user sandbox object
-                sandbox_named - user sandbox objects that have a given name
-                    sandbox_typed - named sandbox object that have a type and a predefined behavior
-                        word - the base object to find values
-                        formulas - a calculation rule
-                        view - to show an object to the user
-                        component - an formatting element for the user view e.g. to show a word or number
-                        source - a non automatic source for a value
-                sandbox_Link - user sandbox objects that link two objects
-                    sandbox_link_named - user sandbox objects that link two objects
-                        sandbox_link_typed - objects that have additional a type and a predefined behavior
-                            triple - link two words with a predicate / verb
-                            view_term_link - link a view to a term
-                        sandbox_link_with_type - TODO combine with sandbox_link_typed?
-                            formula_link - link a formula to a phrase
-                            component_link - to assign a component to a view
-                            ref - to link a value to an external source
-                sandbox_value - to save a user specific numbers
-                    value - a single number added by the user
-                    result - one calculated numeric result
-                    value_time_series - a list of very similar numbers added by the user e.g. that only have a different timestamp  (TODO rename to series)
+    db_object - all database objects with the sql_table_create function
+        db_object_seq_id - all database objects that have a unique id
+            db_object_seq_id_user - all objects that are user specific
+                sandbox - a user sandbox object
+                    sandbox_named - user sandbox objects that have a given name
+                        sandbox_typed - named sandbox object that have a type and a predefined behavior
+                            word - the base object to find values
+                            source - a non automatic source for a value
+                            formulas - a calculation rule
+                            view - to show an object to the user
+                            component - an formatting element for the user view e.g. to show a word or number
+                    sandbox_Link - user sandbox objects that link two objects
+                        sandbox_link_named - user sandbox objects that link two objects
+                            sandbox_link_typed - objects that have additional a type and a predefined behavior
+                                triple - link two words with a predicate / verb
+                            sandbox_link_with_type - TODO combine with sandbox_link_typed?
+                                formula_link - link a formula to a phrase
+                                view_term_link - link a view to a term
+                                component_link - to assign a component to a view
+                                ref - to link a value to an external source
+                    sandbox_value - to save a user specific numbers
+                        value - a single number added by the user
+                        result - one calculated numeric result
+                        value_time_series - a list of very similar numbers added by the user e.g. that only have a different timestamp  (TODO rename to series)
+                phrase_group - a sorted list of phrases
+                element - the parameters / parts of a formula expression for fast finding of dependencies (not the db normal form to speed up)
+                change_log - to log a change done by a user
+                    change_named - log of user changes in named objects e.g. word, triple, ...
+                    change_link - log of the link changes by a user
+                job - to handle processes that takes longer than the user is expected to wait
+            phrase_group_link - db index to find a phrase group by the phrase (not the db normal form to speed up)
+                phrase_group_word_link - phrase_group_link for a word
+                phrase_group_triple_link - phrase_group_link for a triple
+            sys_log - log entries by the system to improve the setup and code
+            ip_range - to filter requests from the internet
     base_list - a list with pages
         change_log_list - to forward changes to the UI
-        system_log_list - to forward the system log entries to the UI
+        sys_log_list - to forward the system log entries to the UI
         job_list - to forward the batch jobs to the UI
         ip_range_list - list of the ip ranges
         sandbox_list - a user specific paged list
@@ -455,7 +529,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
         expression - to convert the user format of a formula to the internal reference format and backward
 
     model objects to be reviewed
-        word_change_list
         phrase_group_list - a list of phrase group that is supposed to be a sandbox_list
         value_phrase_link - db index to find a valur by the phrase (not the db normal form to speed up)
         element_group - to combine several formula elements that are depending on each other
@@ -499,22 +572,53 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
 */
 
+use cfg\component\component_link_type;
+use cfg\component\component_type;
+use cfg\component\position_type;
 use cfg\db\db_check;
 use cfg\db\sql;
-use cfg\library;
 use cfg\db\sql_db;
+use cfg\element;
+use cfg\element_type;
+use cfg\formula_link_type;
+use cfg\formula_type;
+use cfg\job;
+use cfg\job_type;
+use cfg\language;
+use cfg\language_form;
+use cfg\log\change_action;
+use cfg\log\change_field;
+use cfg\log\change_link;
+use cfg\log\change_log;
+use cfg\log\change_table;
+use cfg\log\change_value;
+use cfg\phrase_types;
+use cfg\protection_type;
+use cfg\ref_type;
+use cfg\result\result;
+use cfg\session;
+use cfg\share_type;
+use cfg\source_type;
+use cfg\sys_log;
 use cfg\sys_log_function;
 use cfg\sys_log_level;
+use cfg\sys_log_status;
 use cfg\sys_log_status_list;
-use cfg\sys_log_function_list;
+use cfg\sys_log_type;
+use cfg\system_time;
+use cfg\system_time_type;
 use cfg\type_lists;
 use cfg\user;
 use cfg\user\user_profile;
+use cfg\user\user_type;
+use cfg\user_official_type;
 use cfg\user_profile_list;
 use cfg\view;
+use cfg\view_link_type;
+use cfg\view_type;
 use html\html_base;
 use html\view\view as view_dsp;
-use cfg\log\change_log;
+use shared\library;
 use test\test_cleanup;
 
 // the fixed system user
@@ -525,13 +629,15 @@ const SYSTEM_USER_TEST_ID = 2; //
 const LIST_MIN_NAMES = 4; // number of object names that should al least be shown
 const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
 
+// set all path for the program code here at once
 const SRC_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
 const MAIN_PATH = SRC_PATH . 'main' . DIRECTORY_SEPARATOR;
-const MODEL_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
+const PHP_PATH_LIB = MAIN_PATH . 'php' . DIRECTORY_SEPARATOR; // recreation of the PHP_PATH for library use only
+const MODEL_PATH = PHP_PATH_LIB . 'cfg' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
 const DB_LINK_PATH = ROOT_PATH . 'db_link' . DIRECTORY_SEPARATOR;
 const DB_PATH = MODEL_PATH . 'db' . DIRECTORY_SEPARATOR;
-const UTIL_PATH = PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
-const SERVICE_PATH = PHP_PATH . 'service' . DIRECTORY_SEPARATOR;
+const UTIL_PATH = PHP_PATH_LIB . 'utils' . DIRECTORY_SEPARATOR;
+const SERVICE_PATH = PHP_PATH_LIB . 'service' . DIRECTORY_SEPARATOR;
 const MODEL_IMPORT_PATH = MODEL_PATH . 'import' . DIRECTORY_SEPARATOR;
 const SERVICE_EXPORT_PATH = SERVICE_PATH . 'export' . DIRECTORY_SEPARATOR;
 const EXPORT_PATH = MODEL_PATH . 'export' . DIRECTORY_SEPARATOR;
@@ -554,7 +660,11 @@ const MODEL_FORMULA_PATH = MODEL_PATH . 'formula' . DIRECTORY_SEPARATOR;
 const MODEL_RESULT_PATH = MODEL_PATH . 'result' . DIRECTORY_SEPARATOR;
 const MODEL_VIEW_PATH = MODEL_PATH . 'view' . DIRECTORY_SEPARATOR;
 const MODEL_COMPONENT_PATH = MODEL_PATH . 'component' . DIRECTORY_SEPARATOR;
-const API_PATH = PHP_PATH . 'api' . DIRECTORY_SEPARATOR; // path of the api objects for the message creation to the frontend
+
+const SHARED_PATH = PHP_PATH_LIB . 'shared' . DIRECTORY_SEPARATOR;
+const SHARED_TYPES_PATH = SHARED_PATH . 'types' . DIRECTORY_SEPARATOR;
+
+const API_PATH = PHP_PATH_LIB . 'api' . DIRECTORY_SEPARATOR; // path of the api objects for the message creation to the frontend
 const API_SANDBOX_PATH = API_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
 const API_SYSTEM_PATH = API_PATH . 'system' . DIRECTORY_SEPARATOR;
 const API_USER_PATH = API_PATH . 'user' . DIRECTORY_SEPARATOR;
@@ -569,7 +679,7 @@ const API_RESULT_PATH = API_PATH . 'result' . DIRECTORY_SEPARATOR;
 const API_VIEW_PATH = API_PATH . 'view' . DIRECTORY_SEPARATOR;
 const API_COMPONENT_PATH = API_PATH . 'component' . DIRECTORY_SEPARATOR;
 const API_REF_PATH = API_PATH . 'ref' . DIRECTORY_SEPARATOR;
-const WEB_PATH = PHP_PATH . 'web' . DIRECTORY_SEPARATOR; // path of the pure html frontend objects
+const WEB_PATH = PHP_PATH_LIB . 'web' . DIRECTORY_SEPARATOR; // path of the pure html frontend objects
 const WEB_LOG_PATH = WEB_PATH . 'log' . DIRECTORY_SEPARATOR;
 const WEB_USER_PATH = WEB_PATH . 'user' . DIRECTORY_SEPARATOR;
 const WEB_SYSTEM_PATH = WEB_PATH . 'system' . DIRECTORY_SEPARATOR;
@@ -589,8 +699,37 @@ const WEB_COMPONENT_PATH = WEB_PATH . 'component' . DIRECTORY_SEPARATOR;
 const WEB_REF_PATH = WEB_PATH . 'ref' . DIRECTORY_SEPARATOR;
 
 // resource paths
-const DB_RES_PATH = 'db' . DIRECTORY_SEPARATOR;
-const DB_SETUP_PATH = 'setup' . DIRECTORY_SEPARATOR;
+const RES_PATH = MAIN_PATH . 'resources' . DIRECTORY_SEPARATOR;
+const IMAGE_RES_PATH = RES_PATH . 'images' . DIRECTORY_SEPARATOR;
+const DB_RES_SUB_PATH = 'db' . DIRECTORY_SEPARATOR;
+const DB_SETUP_SUB_PATH = 'setup' . DIRECTORY_SEPARATOR;
+
+// resource paths used for testing to avoid local paths in the test resources
+const REL_ROOT_PATH = DIRECTORY_SEPARATOR;
+const REL_SRC_PATH = REL_ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
+const REL_MAIN_PATH = REL_SRC_PATH . 'main' . DIRECTORY_SEPARATOR;
+const REL_RES_PATH = REL_MAIN_PATH . 'resources' . DIRECTORY_SEPARATOR;
+const REL_IMAGE_PATH = REL_RES_PATH . 'images' . DIRECTORY_SEPARATOR;
+
+// TODO remove once the frontend separation is completed
+const LOG_PATH = WEB_PATH . 'log' . DIRECTORY_SEPARATOR;
+const USER_PATH = WEB_PATH . 'user' . DIRECTORY_SEPARATOR;
+const SYSTEM_PATH = WEB_PATH . 'system' . DIRECTORY_SEPARATOR;
+const TYPES_PATH = WEB_PATH . 'types' . DIRECTORY_SEPARATOR;
+const SANDBOX_PATH = WEB_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
+const HTML_PATH = WEB_PATH . 'html' . DIRECTORY_SEPARATOR;
+const HIST_PATH = WEB_PATH . 'hist' . DIRECTORY_SEPARATOR;
+const WORD_PATH = WEB_PATH . 'word' . DIRECTORY_SEPARATOR;
+const PHRASE_PATH = WEB_PATH . 'phrase' . DIRECTORY_SEPARATOR;
+const VERB_PATH = WEB_PATH . 'verb' . DIRECTORY_SEPARATOR;
+const VALUE_PATH = WEB_PATH . 'value' . DIRECTORY_SEPARATOR;
+const FORMULA_PATH = WEB_PATH . 'formula' . DIRECTORY_SEPARATOR;
+const RESULT_PATH = WEB_PATH . 'result' . DIRECTORY_SEPARATOR;
+const FIGURE_PATH = WEB_PATH . 'figure' . DIRECTORY_SEPARATOR;
+const VIEW_PATH = WEB_PATH . 'view' . DIRECTORY_SEPARATOR;
+const COMPONENT_PATH = WEB_PATH . 'component' . DIRECTORY_SEPARATOR;
+const REF_PATH = WEB_PATH . 'ref' . DIRECTORY_SEPARATOR;
+
 
 const DB_SETUP_SQL_FILE = 'zukunft_structure.sql';
 
@@ -619,7 +758,7 @@ if ($version[0] < 8) {
         echo 'at least php version 8.1 is needed';
     }
 }
-//check if "sudo apt-get install php-curl" is done for testing
+// TODO check if "sudo apt-get install php-curl" is done for testing
 //phpinfo();
 
 // database links
@@ -631,7 +770,6 @@ include_once WEB_HTML_PATH . 'html_base.php';
 // include all other libraries that are usually needed
 include_once DB_LINK_PATH . 'zu_lib_sql_link.php';
 include_once SERVICE_PATH . 'db_code_link.php';
-include_once SERVICE_PATH . 'zu_lib_sql_code_link.php';
 include_once SERVICE_PATH . 'config.php';
 
 // to avoid circle include
@@ -676,7 +814,7 @@ include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 include_once SERVICE_MATH_PATH . 'calc_internal.php';
 
 // settings
-include_once PHP_PATH . 'application.php';
+include_once PHP_PATH_LIB . 'application.php';
 
 // potentially to be loaded by composer
 //include_once $path_php . 'utils/json-diff/JsonDiff.php';
@@ -751,15 +889,6 @@ const DEFAULT_PERCENT_DECIMALS = 2;
 
 const ZUC_MAX_CALC_LAYERS = '10000';    // max number of calculation layers
 
-
-// file links used
-//const ZUH_IMG_ADD       = "/src/main/resources/images/button_add_small.jpg";
-//const ZUH_IMG_EDIT      = "/src/main/resources/images/button_edit_small.jpg";
-const ZUH_IMG_ADD = "/src/main/resources/images/button_add.svg";
-const ZUH_IMG_EDIT = "/src/main/resources/images/button_edit.svg";
-const ZUH_IMG_DEL = "/src/main/resources/images/button_del.svg";
-const ZUH_IMG_UNDO = "/src/main/resources/images/button_undo.svg";
-
 // classes that use a standard sql sequence for the database id
 const SQL_STD_CLASSES = [
     sys_log_status_list::class,
@@ -767,38 +896,70 @@ const SQL_STD_CLASSES = [
 ];
 
 # list of JSON files that define the base configuration of zukunft.com that is supposed never to be changed
+// TODO make the csv file list based on the class name
 define("PATH_BASE_CONFIG_FILES", ROOT_PATH . 'src/main/resources/');
 const PATH_BASE_CODE_LINK_FILES = PATH_BASE_CONFIG_FILES . 'db_code_links/';
+
+// type classes that have a csv file for the initial load
 const BASE_CODE_LINK_FILES = [
-    'sys_log_status',
-    'sys_log_types',
-    'job_types',
-    'change_actions',
-    'change_tables',
-    'change_fields',
-    'element_types',
-    'formula_link_types',
-    'formula_types',
-    'languages',
-    'language_forms',
-    'protection_types',
-    'ref_types',
-    'share_types',
-    'source_types',
-    'system_time_types',
-    'user_official_types',
-    'user_profiles',
-    'user_types',
-    'position_types',
-    'component_link_types',
-    'component_types',
-    'view_link_types',
-    'view_types',
-    'phrase_types'
+    sys_log_status::class,
+    sys_log_type::class,
+    job_type::class,
+    change_action::class,
+    change_table::class,
+    change_field::class,
+    element_type::class,
+    formula_link_type::class,
+    formula_type::class,
+    language::class,
+    language_form::class,
+    protection_type::class,
+    ref_type::class,
+    share_type::class,
+    source_type::class,
+    system_time_type::class,
+    user_official_type::class,
+    user_profile::class,
+    user_type::class,
+    position_type::class,
+    component_link_type::class,
+    component_type::class,
+    view_link_type::class,
+    view_type::class,
+    phrase_types::class
 ];
+
+// list of classes that use a database table but where the changes do not need to be logged
+const CLASSES_NO_CHANGE_LOG = [
+    sys_log_status::class,
+    sys_log_function::class,
+    sys_log_type::class,
+    system_time_type::class,
+    system_time::class,
+    change_action::class,
+    change_table::class,
+    change_field::class,
+    change_link::class,
+    change_value::class,
+    'change*',
+    session::class,
+    job::class,
+    element::class,
+    'phrase*',
+    'user_phrase*',
+    'prime_phrase*',
+    'user_prime_phrase*',
+    'term*',
+    'user_term*',
+    'prime_term*',
+    'user_prime_term*',
+    'result*',
+    'user_result*',
+];
+
 const USER_CODE_LINK_FILES = [
-    'user_profiles',
-    'user_types',
+    user_profile::class,
+    user_type::class
 ];
 // list of all sequences used in the database
 // TODO base the list on the class list const and a sequence name function
@@ -854,9 +1015,11 @@ const DB_TABLE_LIST = [
     'ip_ranges',
     'sessions',
     'changes',
-    'change_standard_values',
-    'change_prime_values',
-    'change_big_values',
+    'changes_norm',
+    'changes_big',
+    'change_values_norm',
+    'change_values_prime',
+    'change_values_big',
     'change_fields',
     'change_links',
     'change_actions',
@@ -1010,48 +1173,49 @@ const DB_TABLE_LIST = [
 const BASE_CODE_LINK_FILE_TYPE = '.csv';
 const SYSTEM_USER_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'users.json';
 const SYSTEM_VERB_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'verbs.json';
+const SYSTEM_VIEW_CONFIG_FILE = 'system_views.json';
+const BASE_VIEW_CONFIG_FILE = 'base_views.json';
 const SYSTEM_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'config.json';
 const PATH_BASE_CONFIG_MESSAGE_FILES = PATH_BASE_CONFIG_FILES . 'messages/';
+const SYSTEM_VIEW_CONFIG_PATH = PATH_BASE_CONFIG_MESSAGE_FILES . SYSTEM_VIEW_CONFIG_FILE;
 const BASE_CONFIG_FILES = [
-    'system_views.json',
+    SYSTEM_VIEW_CONFIG_FILE,
     'sources.json',
     'units.json',
     'scaling.json',
     'time_definition.json',
     'ip_blacklist.json',
+    BASE_VIEW_CONFIG_FILE,
     'country.json',
+    'solution_prio.json',
     'company.json'
 ];
 
 # list of all static import files for testing the system consistency
-const PATH_RESOURCE_FILES = ROOT_PATH . 'src/main/resources/';
 const PATH_TEST_FILES = ROOT_PATH . 'src/test/resources/';
 const PATH_TEST_IMPORT_FILES = ROOT_PATH . 'src/test/resources/import/';
 const TEST_IMPORT_FILE_LIST = [
-    'wind_investment.json',
-    'companies.json',
-    'ABB_2013.json',
-    'ABB_2017.json',
-    'ABB_2019.json',
-    'NESN_2019.json',
     'countries.json',
-    'real_estate.json',
-    'Ultimatum_game.json',
-    'COVID-19.json',
-    'personal_climate_gas_emissions_timon.json',
-    'THOMY_test.json'
+    'wikipedia/country-ISO-3166.json',
+    'wikipedia/democratie_index_table.json',
+    'wikipedia/currency.json',
+    'companies.json',
+    'wind_investment.json'
 ];
 const TEST_IMPORT_FILE_LIST_ALL = [
-    'wind_investment.json',
+    'countries.json',
+    'wikipedia/country-ISO-3166.json',
+    'wikipedia/democratie_index_table.json',
+    'wikipedia/currency.json',
+    'travel_scoring.json',
+    'travel_scoring_value_list.json',
     'companies.json',
+    'wind_investment.json',
     'ABB_2013.json',
     'ABB_2017.json',
     'ABB_2019.json',
     'NESN_2019.json',
-    'countries.json',
     'real_estate.json',
-    'travel_scoring.json',
-    'travel_scoring_value_list.json',
     'Ultimatum_game.json',
     'COVID-19.json',
     'personal_climate_gas_emissions_timon.json',
@@ -1212,10 +1376,10 @@ function log_msg(string  $msg_text,
                 $fields[] = "sys_log_trace";
                 $values[] = $function_trace;
                 if ($user_id > 0) {
-                    $fields[] = "user_id";
+                    $fields[] = user::FLD_ID;
                     $values[] = $user_id;
                 }
-                $used_db_con->set_class(sql_db::TBL_SYS_LOG);
+                $used_db_con->set_class(sys_log::class);
 
                 $sys_log_id = $used_db_con->insert_old($fields, $values, false);
                 //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
@@ -1301,8 +1465,13 @@ function log_err(string $msg_text,
     $lib = new library();
     if ($function_name == '' or $function_name == null) {
         $function_name = (new Exception)->getTraceAsString();
-        $function_name = $lib->str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
-        $function_name = $lib->str_left_of($function_name, ': log_');
+        $function_name = $lib->str_right_of($function_name, '#1 ');
+        $function_name = $lib->str_left_of($function_name, '): ');
+        $function_name = $lib->str_right_of($function_name, '/main/php/');
+        $function_name = $lib->str_left_of($function_name, '.php(');
+    }
+    if ($function_name == '' or $function_name == null) {
+        $function_name = 'no function name detected';
     }
     if ($function_trace == '') {
         $function_trace = (new Exception)->getTraceAsString();
@@ -1404,6 +1573,7 @@ function log_fatal(string $msg_text,
 /**
  * should be called from all code that can be accessed by an url
  * return null if the db connection fails or the db is not compatible
+ * TODO create a seperate class for starting the backend and frontend
  *
  * @param string $code_name the place that is displayed to the user e.g. add word
  * @param string $style the display style used to show the place
@@ -1439,7 +1609,7 @@ function prg_start(string $code_name, string $style = "", $echo_header = true): 
 function prg_restart(string $code_name): sql_db
 {
 
-    global $sc;
+    global $db_con;
 
     // link to database
     $db_con = new sql_db;
@@ -1459,10 +1629,10 @@ function prg_restart(string $code_name): sql_db
 
         // check the system setup
         $db_chk = new db_check();
-        $result = $db_chk->db_check($db_con);
-        if ($result != '') {
+        $usr_msg = $db_chk->db_check($db_con);
+        if (!$usr_msg->is_ok()) {
             echo '\n';
-            echo $result;
+            echo $usr_msg->all_message_text();
             $db_con->close();
             $db_con = null;
         }
@@ -1535,7 +1705,9 @@ function prg_start_system($code_name): sql_db
 
     // load user profiles
     $user_profiles = new user_profile_list();
-    if ($db_con->has_table(sql_db::TBL_USER_PROFILE)) {
+    $lib = new library();
+    $tbl_name = $lib->class_to_name(user_profile::class);
+    if ($db_con->has_table($tbl_name)) {
         $user_profiles->load($db_con);
     } else {
         $user_profiles->load_dummy();
@@ -1554,7 +1726,7 @@ function prg_end_write_time($db_con): void
     $sys_time_end = time();
     if ($sys_time_end > $sys_time_limit) {
         $db_con->usr_id = SYSTEM_USER_ID;
-        $db_con->set_class(sql_db::TBL_SYS_SCRIPT);
+        $db_con->set_class(system_time_type::class);
         $sys_script_id = $db_con->get_id($sys_script);
         if ($sys_script_id <= 0) {
             $sys_script_id = $db_con->add_id($sys_script);
@@ -1636,31 +1808,11 @@ function prg_end_api($link)
  */
 function resource_file(string $resource_path): string
 {
-    $result = file_get_contents(PATH_RESOURCE_FILES . $resource_path);
+    $result = file_get_contents(RES_PATH . $resource_path);
     if ($result === false) {
-        $result = 'Cannot get file from ' . PATH_RESOURCE_FILES . $resource_path;
+        $result = 'Cannot get file from ' . RES_PATH . $resource_path;
     }
     return $result;
-}
-
-/**
- * @return string the content of a test resource file
- */
-function test_resource_file(string $resource_path): string
-{
-    $result = file_get_contents(PATH_TEST_FILES . $resource_path);
-    if ($result === false) {
-        $result = 'Cannot get file from ' . PATH_TEST_FILES . $resource_path;
-    }
-    return $result;
-}
-
-/**
- * @return bool true if the test resource file exists
- */
-function has_resource_file(string $resource_path): bool
-{
-    return file_exists(PATH_TEST_FILES . $resource_path);
 }
 
 

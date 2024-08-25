@@ -72,7 +72,7 @@ namespace cfg\group;
 
 include_once MODEL_GROUP_PATH . 'id.php';
 
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 use cfg\formula;
 use cfg\phrase_list;
 
@@ -95,6 +95,7 @@ class result_id extends id
     const PRIME_RESULT_PHRASES = 0;
     const MAIN_PHRASES_ALL = 8;
     const MAIN_PHRASES = 6;
+    // TODO check for consistant usage
     const MAIN_PHRASES_STD = 5;
     const MAIN_SOURCE_PHRASES = 1;
     const MAIN_RESULT_PHRASES = 1;

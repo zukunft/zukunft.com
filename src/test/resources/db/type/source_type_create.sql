@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS source_types
 (
-    source_type_id BIGSERIAL PRIMARY KEY,
+    source_type_id SERIAL PRIMARY KEY,
     type_name      varchar(255) NOT NULL,
     code_id        varchar(255) DEFAULT NULL,
     description    text         DEFAULT NULL

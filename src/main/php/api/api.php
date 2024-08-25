@@ -63,6 +63,7 @@ class api
     const FLD_PHRASES = 'phrases';
     const FLD_COMPONENTS = 'components';
     const FLD_POSITION = 'position';
+    const FLD_LINK_ID = 'link_id';
 
     // object fields
     const FLD_NUMBER = 'number'; // a float number used for values and results
@@ -75,6 +76,10 @@ class api
     const FLD_EXTERNAL_KEY = 'external_key'; // the unique key of the reference
     const FLD_PHRASE_ROW = 'word_row'; // the phrase to select the row name of a view component
     const FLD_PHRASE_COL = 'word_col'; // the phrase to select the column name of a view component
+    const FLD_PLURAL = 'plural';
+    const FLD_USR_TEXT = 'user_text'; // the formula expression in the user readable format
+    const FLD_SHARE = 'share'; //
+    const FLD_PROTECTION = 'protection'; //
 
     // batch job fields
     const FLD_TIME_REQUEST = 'request_time'; // e.g. the timestamp when a batch job has been requested
@@ -96,4 +101,5 @@ class api
 
     // phrase api specific fields
     const FLD_PHRASE_CLASS = 'class';
+
 }

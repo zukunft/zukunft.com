@@ -35,8 +35,9 @@ namespace unit;
 include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
 
 use cfg\component\component_link_list;
+use cfg\db\sql;
 use cfg\db\sql_db;
-use cfg\library;
+use shared\library;
 use test\test_cleanup;
 
 class component_link_list_tests
@@ -49,9 +50,9 @@ class component_link_list_tests
         // init
         $lib = new library();
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'component_link_list->';
         $t->resource_path = 'db/component/';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the view component link list class (src/main/php/model/component/component_link_list.php)');
 
@@ -59,7 +60,7 @@ class component_link_list_tests
 
         // load by component_link ids
         $lst = new component_link_list($usr);
-        //$t->assert_sql_by_ids($db_con, $lst, array(3, 2, 4));
+        //$t->assert_sql_by_ids($sc, $lst, array(3, 2, 4));
 
         // load by view
         $lst = new component_link_list($usr);
@@ -86,7 +87,7 @@ class component_link_list_tests
         component_link_list $lst
     ): void
     {
-        $msk = $t->dummy_view();
+        $msk = $t->view();
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -114,7 +115,7 @@ class component_link_list_tests
         component_link_list $lst
     ): void
     {
-        $cmp = $t->dummy_component();
+        $cmp = $t->component();
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

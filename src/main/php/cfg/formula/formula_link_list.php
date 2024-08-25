@@ -34,9 +34,8 @@ namespace cfg;
 include_once DB_PATH . 'sql_par_type.php';
 
 use cfg\db\sql;
-use cfg\db\sql_db;
 use cfg\db\sql_par;
-use cfg\db\sql_par_type;
+use shared\library;
 
 class formula_link_list extends sandbox_list
 {
@@ -85,19 +84,19 @@ class formula_link_list extends sandbox_list
         // also load the linked user specific phrase with the same SQL statement
         $sc->set_join_fields(
             phrase::FLD_NAMES,
-            sql_db::TBL_PHRASE,
+            phrase::class,
             phrase::FLD_ID,
             phrase::FLD_ID
         );
         $sc->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
-            sql_db::TBL_PHRASE,
+            phrase::class,
             phrase::FLD_ID,
             phrase::FLD_ID
         );
         $sc->set_join_usr_num_fields(
             phrase::FLD_NAMES_NUM_USR,
-            sql_db::TBL_PHRASE,
+            phrase::class,
             phrase::FLD_ID,
             phrase::FLD_ID,
             true
@@ -178,10 +177,10 @@ class formula_link_list extends sandbox_list
                     //$db_con = new mysql;
                     $db_con->usr_id = $this->user()->id();
                     // delete first all user configuration that have also been excluded
-                    $db_con->set_class(sql_db::TBL_USER_PREFIX . sql_db::TBL_FORMULA_LINK);
+                    $db_con->set_class(formula_link::class, true);
                     $result = $db_con->delete_old(array(formula_link::FLD_ID, sandbox::FLD_EXCLUDED), array($frm_lnk->id(), '1'));
                     if ($result == '') {
-                        $db_con->set_class(sql_db::TBL_FORMULA_LINK);
+                        $db_con->set_class(formula_link::class);
                         $result = $db_con->delete_old(formula_link::FLD_ID, $frm_lnk->id());
                     }
                 } else {

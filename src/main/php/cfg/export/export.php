@@ -43,13 +43,13 @@
 
 namespace cfg\export;
 
-include_once MODEL_HELPER_PATH . 'library.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\config;
-use cfg\library;
 use cfg\phrase_list;
 use cfg\user;
 use html\phrase\phrase_list as phrase_list_dsp;
+use shared\library;
 
 class export
 {
@@ -65,14 +65,22 @@ class export
     const USERS = 'users';
     const VERBS = 'verbs';
     const WORDS = 'words';
+    const WORD_LIST = 'word-list'; // a list of the word names without further parameters
+    const NAME = 'name';
+    const TYPE = 'type';
     const PHRASES = 'phrases';
     const PHRASE_VALUES = 'phrase-values';
     const TRIPLES = 'triples';
+    const FROM = 'from';
+    const VERB = 'verb';
+    const TO = 'to';
     const FORMULAS = 'formulas';
     const SOURCES = 'sources';
     const REFS = 'refs';
     const VALUES = 'values';
+    const VALUE_NUMBER = 'number';
     const VALUE_LIST = 'value-list';
+    const CONTEXT = 'context';
     const VIEWS = 'views';
     const COMPONENTS = 'components';
     const CALC_VALIDATION = 'calc-validation';

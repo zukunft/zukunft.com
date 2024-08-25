@@ -66,16 +66,16 @@ Target user experience:
 - prevent duplicates in the values or formulas to force user to social interaction
 
 General coding principles:
-1. **Don't repeat yourself**: one point of change (https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
-2. **test**: each function should have a unit test called from test_units.php or test_unit_db.php
+1. **Don't repeat yourself**: one point of change (https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) (but coded repeating by intention can be used)
+2. **test**: each facade function should have a unit test called from test_units.php or test_unit_db.php
   with zukunft.com/test a complete unit and integration test
   best: first write the test and then the code
-3. **least dependencies**: use the least external code possible because https://archive.fosdem.org/2021/schedule/event/dep_as_strong_as_the_weakest_link/
-4. **best guess**: in case of incomplete data best guess assumptions should be used and the assumption is shown to the user
+3. **only needed dependencies**: use the least external code possible because https://archive.fosdem.org/2021/schedule/event/dep_as_strong_as_the_weakest_link/
+4. **best guess**: assume almost everything can happen and in case of incomplete data use best guess assumptions to complete the process but report the assumption to the calling function and create the message to the user if all assumptions are collected
 5. **never change** a running system (until you have a very, very good reason)
-6. **one click update**: allow to update a pod with one click on the fly 
+6. **one click update**: allow to update a pod with one click on the fly (https://en.wikipedia.org/wiki/Continuous_delivery)
 7. **log in/out**: all user changes and data im- and export are logged with an undo and redo option
-8. **top down**: the most important functions should be on top of each class
+8. **small code package**: split if function and classes are getting too big or at least the most important functions within a class should be on top of each class
 9. **error detection** and tracking: in case something unexpected happens the code should try to create an internal error message to enable later debugging
 10. **self speaking** error messages
 11. **shared api** with in code auto check
@@ -97,7 +97,7 @@ Decisions
 Naming conventions for vars:
 ---------------------------
 
-backend
+backend - main
 - wrd (WoRD)               - a word that is used as a subject or object in a resource description framework (RDF / "triple") graph
 and used to retrieve the numeric values
 - val (VALue)              - a numeric value that can be used for calculations
@@ -106,6 +106,7 @@ which can be either in the usr (USeR) format with real words
 or in the db (DataBase) format with database id references
 or in the math (MATHematical) format, which should contain only numeric values
 
+backend - core
 - vrb (VeRB)               - a predicate (mostly just a verb) that defines the type of links two words;
 by default a verb can be used forward and backward e.g. ABB is a company and companies are ABB, ...
 if the reverse name is empty, the verb can only be used the forward way
@@ -121,19 +122,26 @@ verbs are also named as triples
 - elm (ELeMents)           - a structured reference for terms, verbs or formulas mostly used for formula elements (cancel? replace with term?)
 - res (RESult)             - the calculated number of a formula
 - fig (FIGure)             - either a value set by the user or a calculated formula result
+- src (SouRCe)             - url or description where a value is taken from
+- ref (REFerence)          - url with and external unique id to sync data with external systems
+- msk (MaSK)               - a view that is shown to the user (dsp - DiSPlay until now)
+- cmp (CoMPonent)          - one part of a view so a kind of view component (ex view entry)
+
+backend - admin
 - usr (USeR)               - the person who is logged in
 - log                      - to save all changes in a user readable format
-- src (SouRCe)             - url or description where a value is taken from
 
+backend - internal
 - sbx (SandBoX)            - the user sandbox tables where the adjustments of the users are saved
-- uso (User Sbx Object)    - an object (word, value, formula, ...) that uses the user sandbox
-(useless?)
+- lst (LiST)               - an array of objects
 - id (IDentifier)          - internal prime key of a database row
 - ids (IDentifierS)        - an simple array of database table IDs (ids_txt is the text / imploded version of the ids array)
-- lst (LiST)               - an array of objects
-- dsp (DiSPlay)            - a view/mask that is shown to the user
-- cmp (CoMPonent)          - one part of a view so a kind of view component (ex view entry)
+- sc (Sql Creator)         - for writing SQL statements
+- std (STanDard)           - a value that have not been changed and is public (for results additional "main" is used)
+- nrm (NoRMal)             - data that is used by most users
 - dsl (DSp cmp Link)       - link of a view component to a view
+- uso (User Sbx Object)    - an object (word, value, formula, ...) that uses the user sandbox
+(useless?)
 - cl (Code Link)           - a text used to identify one predefined database entry that triggers to use of some program code
 - sf (Sql Format)          - to convert a text for the database
 
@@ -156,8 +164,8 @@ a view object or a function that return HTML code that can be displayed
 to be deprecated:
 - glst (Get LiST)          - is used to name the private internal functions that can also create the user list
 - ulst (User LiST)         - an array of objects that should be shown to the user, so like lst, but without the objects exclude by the user
-  the user list should only be used to display something and never for checking if an item exists
-  this is the short for for sbx_lst
+  the list should only be used to display something and never for checking if an item exists
+  this is the short for the sbx_lst
 
 
 database change setup

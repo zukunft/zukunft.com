@@ -35,14 +35,13 @@ namespace unit;
 include_once WEB_VALUE_PATH . 'value_list.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
 
-use cfg\db\sql_par;
-use cfg\value\value_list;
-use html\value\value_list as value_list_dsp;
-use cfg\library;
+use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\phrase;
 use cfg\phrase_list;
-use cfg\db\sql_db;
-use cfg\word;
+use cfg\value\value_list;
+use html\value\value_list as value_list_dsp;
+use shared\library;
 use test\test_cleanup;
 
 class value_list_tests
@@ -58,12 +57,11 @@ class value_list_tests
         global $usr;
 
         // init
-        $lib = new library();
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'value_list->';
         $t->resource_path = 'db/value/';
         $json_file = 'unit/value/travel_scoring_value_list.json';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the value list class (src/main/php/model/value/value_list.php)');
 
@@ -77,10 +75,10 @@ class value_list_tests
         $phr = $t->phrase_zh();
         $this->assert_sql_by_phr($t, $db_con, $val_lst, $phr);
         // ... a list of ids
-        $val_ids = $t->dummy_value_list()->id_lst();
-        $t->assert_sql_by_ids($db_con, $val_lst, $val_ids);
+        $val_ids = $t->value_list()->id_lst();
+        $t->assert_sql_by_ids($sc, $val_lst, $val_ids);
         // ... a list of groups
-        $grp_lst = $t->dummy_phrase_list_small();
+        $grp_lst = $t->phrase_list_small();
         $this->assert_sql_by_grp_lst($t, $db_con, $val_lst, $grp_lst);
         $test_name = 'load values related to all phrases of a list '
             . 'e.g. the inhabitants of Canton Zurich over time';
@@ -90,7 +88,7 @@ class value_list_tests
         $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->phrase_list_math_const(), true);
         $test_name = 'load values related to any phrase of a longer word and triple list '
             . 'e.g. all phrase related to the math number pi';
-        $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->dummy_phrase_list(), true);
+        $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->phrase_list(), true);
 
 
         $t->subheader('Im- and Export tests');
@@ -100,7 +98,7 @@ class value_list_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $trp_lst = $t->dummy_value_list();
+        $trp_lst = $t->value_list();
         $t->assert_api_to_dsp($trp_lst, new value_list_dsp());
 
     }

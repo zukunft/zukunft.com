@@ -82,8 +82,11 @@ class user extends db_object_seq_id
      */
 
     // database fields and comments only used for user
+    // *_COM: the description of the field
+    // *_SQLTYP is the sql data type used for the field
     const TBL_COMMENT = 'for users including system users; only users can add data';
     const FLD_ID = 'user_id'; // also the field name for foreign keys
+    const FLD_ID_SQLTYP = sql_field_type::INT;
     // fields for the main logon
     const FLD_NAME_COM = 'the user name unique for this pod';
     const FLD_NAME = 'user_name';
@@ -94,6 +97,7 @@ class user extends db_object_seq_id
     // description and type
     const FLD_DESCRIPTION_COM = 'for system users the description to expain the profile to human users';
     const FLD_DESCRIPTION = 'description';
+    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
     const FLD_CODE_ID_COM = 'to select e.g. the system batch user';
     const FLD_CODE_ID = 'code_id';
     const FLD_PROFILE_COM = 'to define the user roles and read and write rights';
@@ -175,7 +179,7 @@ class user extends db_object_seq_id
         [self::FLD_IP_ADDR, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_IP_ADDR_COM],
         [self::FLD_PASSWORD, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_PASSWORD_COM],
         // description and type
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
         [self::FLD_PROFILE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user_profile::class, self::FLD_PROFILE_COM],
         [self::FLD_TYPE_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user_type::class, self::FLD_TYPE_ID_COM],
@@ -221,25 +225,45 @@ class user extends db_object_seq_id
      */
 
     // list of the system users that have a coded functionality as defined in src/main/resources/users.json
-    const SYSTEM_ID = 1; //
-    const SYSTEM_NAME = "zukunft.com system";                    // the system user used to log system tasks and as a fallback owner
-    const SYSTEM_CODE_ID = "system";                    // unique id of the system user used to log system tasks
-    const SYSTEM_EMAIL = "admin@zukunft.com";
+
+    // the system user that should only be used for internal processes and to log system tasks
+    const SYSTEM_ID = 1;
+    const SYSTEM_NAME = 'zukunft.com system';
+    const SYSTEM_CODE_ID = 'system'; // unique id to select the user
+    const SYSTEM_EMAIL = 'system@zukunft.com';
+    const SYSTEM_LOCAL_IP = 'localhost'; // as a second line of defence to prevent remote manipulation
+
+    // the system admin user that should only be used in a break-glass event to recover other admin users
+    const SYSTEM_ADMIN_ID = 2;
+    const SYSTEM_ADMIN_NAME = 'zukunft.com admin';
+    const SYSTEM_ADMIN_CODE_ID = 'admin';
+    const SYSTEM_ADMIN_EMAIL = 'admin@zukunft.com';
 
     // the user that performs the system tests
-    const SYSTEM_TEST_ID = 2;
-    const SYSTEM_TEST_NAME = "zukunft.com system test";
-    const SYSTEM_TEST_EMAIL = "support@zukunft.com";
-    const SYSTEM_TEST_IP = "localhost";
-    const SYSTEM_TEST_NAME_FIRST = "first";
-    const SYSTEM_TEST_NAME_LAST = "last";
+    const SYSTEM_TEST_ID = 3;
+    const SYSTEM_TEST_NAME = 'zukunft.com system test';
+    const SYSTEM_TEST_EMAIL = 'test@zukunft.com';
+    const SYSTEM_TEST_CODE_ID = 'test';
 
     // the user that acts as a partner for the system tests
     // so that multi-user behaviour can be tested
-    const SYSTEM_NAME_TEST_PARTNER = "zukunft.com system test partner"; // to test that the user sandbox is working e.g. that changes of the main test user has no impact of another user simulated by this test user
-    const SYSTEM_TEST_PROFILE_CODE_ID = "test";
-    const SYSTEM_LOCAL = 'localhost';
-    const SYSTEM_TEST_PARTNER_EMAIL = "support.partner@zukunft.com";
+    const SYSTEM_TEST_PARTNER_ID = 4;
+    const SYSTEM_TEST_PARTNER_NAME = 'zukunft.com system test partner'; // to test that the user sandbox is working e.g. that changes of the main test user has no impact of another user simulated by this test user
+    const SYSTEM_TEST_PARTNER_CODE_ID = 'test_partner';
+    const SYSTEM_TEST_PARTNER_EMAIL = 'test.partner@zukunft.com';
+
+    // an admin user to test the allow of functions only allowed for administrators
+    const SYSTEM_TEST_ADMIN_ID = 5;
+    const SYSTEM_TEST_ADMIN_NAME = 'zukunft.com system test admin';
+    const SYSTEM_TEST_ADMIN_CODE_ID = 'admin';
+    const SYSTEM_TEST_ADMIN_EMAIL = 'admin@zukunft.com';
+
+    // a normal user to test the deny of functions only allowed for administrators
+    // and as a fallback owner
+    const SYSTEM_TEST_NORMAL_ID = 6;
+    const SYSTEM_TEST_NORMAL_NAME = 'zukunft.com system test no admin';
+    const SYSTEM_TEST_NORMAL_CODE_ID = 'test_normal';
+    const SYSTEM_TEST_NORMAL_EMAIL = 'support.normal@zukunft.com';
 
     // change right levels to prevent access level gaining
     const RIGHT_LEVEL_USER = 10;
@@ -287,10 +311,17 @@ class user extends db_object_seq_id
      * construct and map
      */
 
-    function __construct()
+    function __construct(string $name = '', string $email = '')
     {
         parent::__construct();
         $this->reset();
+
+        if ($name != '') {
+            $this->name = $name;
+        }
+        if ($email != '') {
+            $this->email = $email;
+        }
 
         //global $user_profiles;
         //$this->profile = $user_profiles->get_by_code_id(user_profile::NORMAL);
@@ -774,11 +805,11 @@ class user extends db_object_seq_id
      */
     private function get_ip(): string
     {
-        if (array_key_exists("REMOTE_ADDR", $_SERVER)) {
+        if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
             $this->ip_addr = $_SERVER['REMOTE_ADDR'];
         }
         if ($this->ip_addr == null) {
-            $this->ip_addr = self::SYSTEM_LOCAL;
+            $this->ip_addr = self::SYSTEM_LOCAL_IP;
         }
         return $this->ip_addr;
     }
@@ -819,7 +850,7 @@ class user extends db_object_seq_id
                     $this->name = $this->get_ip();
 
                     // allow to fill the database only if a local user has logged in
-                    if ($this->name == self::SYSTEM_LOCAL) {
+                    if ($this->name == self::SYSTEM_LOCAL_IP) {
                         // add the local admin user to use it for the import
                         $upd_result = $this->create_local_admin($db_con);
                     } else {
@@ -981,8 +1012,10 @@ class user extends db_object_seq_id
         log_debug();
         $result = false;
 
-        if ($this->profile_id == $user_profiles->id(user_profile::ADMIN)) {
-            $result = true;
+        if ($this->is_profile_valid()) {
+            if ($this->profile_id == $user_profiles->id(user_profile::ADMIN)) {
+                $result = true;
+            }
         }
         return $result;
     }
@@ -996,11 +1029,25 @@ class user extends db_object_seq_id
         log_debug();
         $result = false;
 
-        if ($this->profile_id == $user_profiles->id(user_profile::TEST)
-            or $this->profile_id == $user_profiles->id(user_profile::SYSTEM)) {
-            $result = true;
+        if ($this->is_profile_valid()) {
+            if ($this->profile_id == $user_profiles->id(user_profile::TEST)
+                or $this->profile_id == $user_profiles->id(user_profile::SYSTEM)) {
+                $result = true;
+            }
         }
         return $result;
+    }
+
+    /**
+     * @return bool false if the profile is not set or is not found
+     */
+    private function is_profile_valid(): bool
+    {
+        if ($this->profile_id > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // true if the user has the right to import data
@@ -1065,7 +1112,7 @@ class user extends db_object_seq_id
         global $db_con;
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
-        $db_con->set_class(sql_db::TBL_USER);
+        $db_con->set_class(user::class);
         return $db_con->update_old($this->id, 'source_id', $source_id);
     }
 
@@ -1077,7 +1124,7 @@ class user extends db_object_seq_id
         global $db_con;
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
-        $result = $db_con->set_class(sql_db::TBL_USER);
+        $result = $db_con->set_class(user::class);
         //$result = $db_con->update($this->id, verb::FLD_ID, $vrb_id);
         return $result;
     }
@@ -1094,7 +1141,7 @@ class user extends db_object_seq_id
     {
         log_debug(' user ' . $this->name);
         $log = new change($this);
-        $log->action = change_action::UPDATE;
+        $log->set_action(change_action::UPDATE);
         $log->set_table(change_table_list::USER);
 
         return $log;
@@ -1109,14 +1156,14 @@ class user extends db_object_seq_id
     {
         $result = '';
         if ($usr_par[$par_name] <> $db_value
-            and $usr_par[$par_name] <> "") {
+            and $usr_par[$par_name] <> '') {
             $log = $this->log_upd();
             $log->old_value = $db_value;
             $log->new_value = $usr_par[$par_name];
             $log->row_id = $this->id;
             $log->set_field($fld_name);
             if ($log->add()) {
-                $db_con->set_class(sql_db::TBL_USER);
+                $db_con->set_class(user::class);
                 $result = $db_con->update_old($this->id, $log->field(), $log->new_value);
             }
         }
@@ -1137,7 +1184,7 @@ class user extends db_object_seq_id
 
         // build the database object because the is anyway needed
         $db_con->usr_id = $this->id;
-        $db_con->set_class(sql_db::TBL_USER);
+        $db_con->set_class(user::class);
 
         $db_usr = new user;
         $db_id = $db_usr->load_by_id($this->id);
@@ -1163,6 +1210,7 @@ class user extends db_object_seq_id
 
     /**
      * create a new user or update the existing
+     * TODO check if the user name or email excist before adding a new user
      * @return string an empty string if all user data are saved in the database otherwise the message that should be shown to the user
      */
     function save(sql_db $db_con): string
@@ -1174,12 +1222,12 @@ class user extends db_object_seq_id
         // build the database object because the is anyway needed
         //$db_con = new mysql;
         $db_con->usr_id = $this->id;
-        $db_con->set_class(sql_db::TBL_USER);
+        $db_con->set_class(user::class);
 
         if ($this->id <= 0) {
-            log_debug(" add (" . $this->name . ")");
+            log_debug(' add (' . $this->name . ')');
 
-            $this->id = $db_con->insert_old("user_name", $this->name);
+            $this->id = $db_con->insert_old('user_name', $this->name);
             // log the changes???
             if ($this->id > 0) {
                 // add the description of the user
@@ -1215,15 +1263,27 @@ class user extends db_object_seq_id
                         $result = 'Saving of user ' . $this->id . ' failed.';
                     }
                 }
-                log_debug(" add ... done");
+                log_debug(' add ... done');
             } else {
-                log_debug(" add ... failed");
+                log_debug(' add ... failed');
             }
         } else {
             // update the ip address and log the changes????
             log_warning(' method for ip update missing', 'user->save', 'method for ip update missing', (new Exception)->getTraceAsString(), $this);
         }
         return $result;
+    }
+
+    /**
+     * create a clone and empty all fields
+     *
+     * @return $this a clone with the name changed
+     */
+    function clone_reset(): user
+    {
+        $obj_cpy = clone $this;
+        $obj_cpy->reset();
+        return $obj_cpy;
     }
 
 

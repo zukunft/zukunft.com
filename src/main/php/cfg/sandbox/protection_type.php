@@ -35,16 +35,6 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 
 class protection_type extends type_object
 {
-    // the field name used for the JSON im- and export
-    const JSON_FLD = 'protection';
-
-    // list of the protection types that have a coded functionality
-    const NO_PROTECT = "no_protection";
-    const USER = "user_protection";
-    const ADMIN = "admin_protection";
-    const ADMIN_ID = 3;
-    const NO_CHANGE = "no_change";
-
 
     /*
      * database link

@@ -33,6 +33,7 @@
 namespace unit;
 
 use api\view\view as view_api;
+use cfg\db\sql;
 use cfg\view;
 use cfg\view_sys_list;
 use cfg\db\sql_db;
@@ -48,10 +49,10 @@ class view_list_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'view_list->';
         $t->resource_path = 'db/view/';
         $json_file = 'unit/view/view_list.json';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the view list class (src/main/php/model/view/view_list.php)');
 
@@ -63,8 +64,8 @@ class view_list_tests
 
         // load of non system view
         $msk_lst = new view_list($usr);
-        $t->assert_sql_names($db_con, $msk_lst, new view($usr));
-        $t->assert_sql_names($db_con, $msk_lst, new view($usr), view_api::TN_READ);
+        $t->assert_sql_names($sc, $msk_lst, new view($usr));
+        $t->assert_sql_names($sc, $msk_lst, new view($usr), view_api::TN_READ);
 
         $msk_lst = new view_list($usr);
         $this->assert_sql_by_component_id($t, $db_con, $msk_lst);

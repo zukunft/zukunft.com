@@ -37,21 +37,21 @@ namespace html\value;
 include_once WEB_PHRASE_PATH . 'phrase_group_list.php';
 
 use cfg\group\group;
-use cfg\library;
 use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\result\result_list;
 use cfg\word_list;
 use controller\controller;
-use html\api;
+use html\rest_ctrl;
 use html\button;
 use html\html_base;
-use html\list_dsp;
+use html\sandbox\list_dsp;
 use html\phrase\phrase_group_list as phrase_group_list_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\value\value as value_dsp;
 use html\word\word as word_dsp;
+use shared\library;
 
 class value_list extends list_dsp
 {
@@ -320,7 +320,7 @@ class value_list extends list_dsp
             $result .= '  <tr>' . "\n";
             $result .= '    <th></th>' . "\n";
             foreach ($time_lst->lst() as $time_word) {
-                $result .= $time_word->dsp_obj()->dsp_th($back, api::STYLE_RIGHT);
+                $result .= $time_word->dsp_obj()->dsp_th($back, rest_ctrl::STYLE_RIGHT);
             }
             $result .= '  </tr>' . "\n";
 
@@ -687,19 +687,19 @@ class value_list extends list_dsp
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
                     $result .= '    <td>';
-                    $url = $html->url(controller::DSP_VALUE_ADD, $val->id(), $back);
+                    $url = $html->url(controller::MC_VALUE_ADD, $val->id(), $back);
                     $btn = new button($url, $back);
                     $result .= \html\btn_add_value($val_phr_lst, Null, $this->phr->id());
 
                     $result .= '    </td>';
                 }
                 $result .= '    <td>';
-                $url = $html->url(controller::DSP_VALUE_EDIT, $val->id(), $back);
+                $url = $html->url(controller::MC_VALUE_EDIT, $val->id(), $back);
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->phr->id());
                 $result .= '    </td>';
                 $result .= '    <td>';
-                $url = $html->url(controller::DSP_VALUE_DEL, $val->id(), $back);
+                $url = $html->url(controller::MC_VALUE_DEL, $val->id(), $back);
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->phr->id());
                 $result .= '    </td>';

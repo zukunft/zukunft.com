@@ -41,9 +41,19 @@ use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 
 class db_object_seq_id extends db_object
 {
+
+    /*
+     * database link
+     */
+
+    // database fields and comments
+    // *_SQLTYP is the sql data type used for the field
+    const FLD_ID_SQLTYP = sql_field_type::INT; // this default type is changed e.g. if the id is part of and index
 
     /*
      * object vars
@@ -148,7 +158,7 @@ class db_object_seq_id extends db_object
     function sql_table(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_table_create($sc, false, [], '', false);
+        $sql .= $this->sql_table_create($sc);
         return $sql;
     }
 
@@ -162,47 +172,51 @@ class db_object_seq_id extends db_object
     function sql_index(sql $sc): string
     {
         $sql = $sc->sql_separator();
-        $sql .= $this->sql_index_create($sc, false, [], false);
+        $sql .= $this->sql_index_create($sc);
         return $sql;
     }
 
     /**
      * the sql statements to create all foreign keys
-     * is e.g. overwriten for the user sandbox objects
+     * is e.g. overwritten for the user sandbox objects
      *
      * @param sql $sc with the target db_type set
      * @return string the sql statement to create the foreign keys
      */
     function sql_foreign_key(sql $sc): string
     {
-        return $this->sql_foreign_key_create($sc, false, [], false);
+        return $this->sql_foreign_key_create($sc, new sql_type_list([]), [], false);
     }
 
     /**
-     * @param bool $usr_table create a second table for the user overwrites
-     * @param bool $is_sandbox true if the standard sandbox fields should be included
+     *  create a list of fields with the parameters for this object
+     *
+     * @param sql $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @return array[] with the parameters of the table fields
      */
-    protected function sql_all_field_par(bool $usr_table = false, bool $is_sandbox = true): array
+    protected function sql_all_field_par(sql $sc, sql_type_list $sc_par_lst): array
     {
-        $fields = [];
-        if (!$usr_table) {
-            if ($is_sandbox) {
-                $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_OWNER);
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $small_key =  $sc_par_lst->has_key_int_small();
+        $use_sandbox = $sc_par_lst->use_sandbox_fields();
+        if (!$usr_tbl) {
+            if ($use_sandbox) {
+                $fields = array_merge($this->sql_id_field_par(false, $small_key), sandbox::FLD_ALL_OWNER);
                 $fields = array_merge($fields, $this::FLD_LST_MUST_BE_IN_STD);
             } else {
-                $fields = array_merge($this->sql_id_field_par(false), $this::FLD_LST_ALL);
+                $fields = array_merge($this->sql_id_field_par(false, $small_key), $this::FLD_LST_ALL);
                 $fields = array_merge($fields, $this::FLD_LST_EXTRA);
             }
         } else {
-            $fields = array_merge($this->sql_id_field_par($usr_table), sandbox::FLD_ALL_CHANGER);
+            $fields = array_merge($this->sql_id_field_par(true, $small_key), sandbox::FLD_ALL_CHANGER);
             $fields = array_merge($fields, $this::FLD_LST_MUST_BUT_USER_CAN_CHANGE);
         }
         $fields = array_merge($fields, $this::FLD_LST_USER_CAN_CHANGE);
-        if (!$usr_table) {
+        if (!$usr_tbl) {
             $fields = array_merge($fields, $this::FLD_LST_NON_CHANGEABLE);
         }
-        if ($is_sandbox) {
+        if ($use_sandbox) {
             $fields = array_merge($fields, sandbox::FLD_LST_ALL);
         }
         return $fields;
@@ -211,22 +225,30 @@ class db_object_seq_id extends db_object
     /**
      * @return array[] with the parameters of the table key field
      */
-    protected function sql_id_field_par(bool $usr_table = false): array
+    protected function sql_id_field_par(bool $usr_table = false, bool $small_key = false): array
     {
-        if (!$usr_table) {
+        if ($usr_table) {
+            $fld_typ = sql_field_type::KEY_PART_INT;
+            if ($small_key) {
+                $fld_typ = sql_field_type::KEY_PART_INT_SMALL;
+            }
             return array([
                 $this->id_field(),
-                sql_field_type::KEY_INT,
-                sql_field_default::NOT_NULL,
-                '', '',
-                'the internal unique primary index']);
-        } else {
-            return array([
-                $this->id_field(),
-                sql_field_type::KEY_PART_INT,
+                $fld_typ,
                 sql_field_default::NOT_NULL,
                 sql::INDEX, $this::class,
                 'with the user_id the internal unique primary index']);
+        } else {
+            $fld_typ = sql_field_type::KEY_INT;
+            if ($small_key) {
+                $fld_typ = sql_field_type::KEY_INT_SMALL;
+            }
+            return array([
+                $this->id_field(),
+                $fld_typ,
+                sql_field_default::NOT_NULL,
+                '', '',
+                'the internal unique primary index']);
         }
     }
 
@@ -287,7 +309,7 @@ class db_object_seq_id extends db_object
     /**
      * @return bool true if the object has a valid database id
      */
-    function isset(): bool
+    function is_loaded(): bool
     {
         if ($this->id == null) {
             return false;
@@ -325,7 +347,8 @@ class db_object_seq_id extends db_object
         global $db_con;
 
         log_debug($id);
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_id($sc, $id);
         return $this->load($qp);
     }
 

@@ -1,6 +1,6 @@
-source_type_id, type_name, code_id
-1, 'XML', 'xml'
-2, 'XBRL', 'xbrl'
-3, 'CSV', 'csv'
-4, 'PDF', 'pdf'
-5, 'API', 'api'
+source_type_id, type_name, code_id, description
+1, 'XML', 'xml',
+2, 'XBRL', 'xbrl',
+3, 'CSV', 'csv',
+4, 'PDF', 'pdf',
+5, 'API', 'api',

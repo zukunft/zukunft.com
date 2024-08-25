@@ -38,7 +38,7 @@ use cfg\verb;
 use cfg\view;
 
 $debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . '/../';
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
@@ -59,7 +59,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::DSP_VERB_EDIT);
+    $msk->load_by_code_id(controller::MC_VERB_EDIT);
     $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change is finished
 
     // create the verb object to have an place to update the parameters

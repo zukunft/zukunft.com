@@ -2,8 +2,8 @@
 
 /*
 
-    /model/dp/sql_field_type.php - enum of the sql field types used
-    ----------------------------
+    /cfg/dp/sql_field_type.php - enum of the sql field types used e.g. for creating the table
+    --------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -36,6 +36,7 @@ enum sql_field_type: string
 
     // prime table index fields
     case KEY_INT = 'intKey'; // a 64-bit integer prime index with auto increase by 1
+    case KEY_INT_SMALL = 'intKeySmall'; // a small integer prime index with auto increase by 1 for a very limited number of entries
     case KEY_INT_NO_AUTO = 'intKeyNoAuto'; // a 64-bit integer prime index without auto increase
     case KEY_512 = '512bitKey'; // a 512-bit prime index without auto increase
     case KEY_TEXT = 'textKey'; // a long string prime index without auto increase
@@ -65,6 +66,7 @@ enum sql_field_type: string
     {
         return match($this) {
             self::KEY_INT => 'BIGSERIAL',
+            self::KEY_INT_SMALL => 'SERIAL',
             self::KEY_512, self::KEY_PART_512, self::REF_512 => 'char(112)',
             self::NAME, self::NAME_UNIQUE, self::NAME_UNIQUE_PART => 'varchar(255)',
             self::CRONTAB => 'varchar(20)',
@@ -83,7 +85,7 @@ enum sql_field_type: string
     public function mysql_type(): string
     {
         return match($this) {
-            self::KEY_INT, self::INT, self::KEY_INT_NO_AUTO, self::KEY_PART_INT, self::INT_UNIQUE_PART => 'bigint',
+            self::INT, self::KEY_INT, self::KEY_INT_NO_AUTO, self::KEY_PART_INT, self::INT_UNIQUE_PART => 'bigint',
             self::KEY_512, self::KEY_PART_512, self::REF_512 => 'char(112)',
             self::KEY_TEXT, self::KEY_PART_TEXT => 'char(255)',
             self::NAME, self::NAME_UNIQUE, self::NAME_UNIQUE_PART => 'varchar(255)',
@@ -91,7 +93,7 @@ enum sql_field_type: string
             self::IP_ADDR => 'varchar(46)',
             self::CODE_ID => 'varchar(100)',
             self::TEXT => 'text',
-            self::INT_SMALL, self::BOOL, self::KEY_PART_INT_SMALL => 'smallint',
+            self::INT_SMALL, self::BOOL, self::KEY_INT_SMALL, self::KEY_PART_INT_SMALL => 'smallint',
             self::NUMERIC_FLOAT => 'double',
             self::TIME => 'timestamp',
             self::GEO => 'point',
@@ -99,10 +101,21 @@ enum sql_field_type: string
         };
     }
 
+    public function par_type(): sql_par_type
+    {
+        return match($this) {
+            self::INT, self::KEY_INT, self::KEY_INT_NO_AUTO, self::KEY_PART_INT, self::INT_UNIQUE_PART => sql_par_type::INT,
+            self::INT_SMALL, self::BOOL => sql_par_type::INT_SMALL,
+            self::NUMERIC_FLOAT => sql_par_type::FLOAT,
+            self::TIME => sql_par_type::TIME,
+            default => sql_par_type::TEXT,
+        };
+    }
+
     public function is_key(): bool
     {
         return match($this) {
-            self::KEY_INT, self::KEY_INT_NO_AUTO, self::KEY_512, self::KEY_TEXT => true,
+            self::KEY_INT, self::KEY_INT_SMALL, self::KEY_INT_NO_AUTO, self::KEY_512, self::KEY_TEXT => true,
             default => false,
         };
     }
@@ -110,7 +123,7 @@ enum sql_field_type: string
     public function is_auto_increment(): bool
     {
         return match($this) {
-            self::KEY_INT => true,
+            self::KEY_INT, self::KEY_INT_SMALL => true,
             default => false,
         };
     }

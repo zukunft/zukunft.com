@@ -32,29 +32,31 @@
 
 namespace unit;
 
+include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_RESULT_PATH . 'result_list.php';
 
+use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
-use api\phrase\phrase as phrase_api;
 use api\phrase\group as group_api;
+use api\phrase\phrase as phrase_api;
 use api\phrase\phrase_list as phrase_list_api;
 use api\result\result as result_api;
 use api\value\value as value_api;
 use api\word\word as word_api;
 use cfg\component\component;
 use cfg\component\component_type;
-use cfg\library;
 use cfg\verb;
 use cfg\verb_list;
 use controller\controller;
 use html\button;
+use html\component\component as component_dsp;
 use html\html_base;
-use html\msg;
 use html\result\result as result_dsp;
 use html\result\result_list as result_list_dsp;
-use html\component\component as component_dsp;
+use html\system\messages;
+use shared\library;
 use test\test_cleanup;
 
 class html_tests
@@ -102,8 +104,8 @@ class html_tests
         //$t->assert_sql_name_unique($log_dsp->dsp_hist_links_sql($db_con, true));
 
         // button add
-        $url = $html->url(controller::DSP_WORD_ADD);
-        $t->html_test((new button($url))->add(msg::WORD_ADD), 'button_add', $t);
+        $url = $html->url(controller::MC_WORD_ADD);
+        $t->html_test((new button($url))->add(messages::WORD_ADD), 'button_add', $t);
 
 
         $t->subheader('HTML list tests');
@@ -206,7 +208,7 @@ class html_tests
         $t->subheader('View component tests');
 
         $cmp = new component($usr);
-        $cmp->set(1, component_api::TN_ADD, component_type::TEXT);
+        $cmp->set(1, component_api::TN_ADD, comp_type_shared::TEXT);
         $cmp_dsp = new component_dsp($cmp->api_json());
         $t->html_test($cmp_dsp->html(), 'component_text', $t);
 

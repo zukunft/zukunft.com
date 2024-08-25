@@ -34,9 +34,9 @@ use api\word\word as word_api;
 use api\user\user as user_api;
 use cfg\user;
 use cfg\user_list;
-use test\test_cleanup;
+use test\all_tests;
 
-function run_system_test(test_cleanup $t): void
+function run_system_test(all_tests $t): void
 {
 
     global $usr;
@@ -80,11 +80,12 @@ function run_system_test(test_cleanup $t): void
     $t->header('Test the user class (classes/user.php)');
 
     // load by name
-    $usr_test->reset();
+    $usr_by_id = new user;
+    $usr_by_id->load_by_id(user::SYSTEM_TEST_ID);
     $usr_test = new user;
     $usr_test->load_by_name(user::SYSTEM_TEST_NAME);
     $target = '<a href="/http/user.php?id=' . $usr_test->id() . '">zukunft.com system test</a>';
-    $result = $usr->display();
+    $result = $usr_by_id->display();
     $t->display('user->load for id ' . $wrd_company->id(), $target, $result);
 
 

@@ -32,7 +32,7 @@ COMMENT ON COLUMN config.description IS 'text to explain the config value to an 
 
 CREATE TABLE IF NOT EXISTS sys_log_types
 (
-    sys_log_type_id BIGSERIAL PRIMARY KEY,
+    sys_log_type_id SERIAL PRIMARY KEY,
     type_name         varchar(255)     NOT NULL,
     code_id           varchar(255) DEFAULT NULL,
     description       text         DEFAULT NULL
@@ -52,7 +52,7 @@ COMMENT ON COLUMN sys_log_types.description IS 'text to explain the type to the 
 
 CREATE TABLE IF NOT EXISTS sys_log_status
 (
-    sys_log_status_id BIGSERIAL PRIMARY KEY,
+    sys_log_status_id SERIAL PRIMARY KEY,
     type_name         varchar(255)     NOT NULL,
     code_id           varchar(255) DEFAULT NULL,
     description       text         DEFAULT NULL,
@@ -75,7 +75,7 @@ COMMENT ON COLUMN sys_log_status.action IS 'description of the action to get to 
 
 CREATE TABLE IF NOT EXISTS sys_log_functions
 (
-    sys_log_function_id   BIGSERIAL PRIMARY KEY,
+    sys_log_function_id   SERIAL PRIMARY KEY,
     sys_log_function_name varchar(255)     NOT NULL,
     code_id               varchar(255) DEFAULT NULL,
     description           text         DEFAULT NULL
@@ -97,8 +97,8 @@ CREATE TABLE IF NOT EXISTS sys_log
 (
     sys_log_id          BIGSERIAL PRIMARY KEY,
     sys_log_time        timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    sys_log_type_id     bigint     NOT NULL,
-    sys_log_function_id bigint     NOT NULL,
+    sys_log_type_id     smallint   NOT NULL,
+    sys_log_function_id smallint   NOT NULL,
     sys_log_text        text   DEFAULT NULL,
     sys_log_description text   DEFAULT NULL,
     sys_log_trace       text   DEFAULT NULL,
@@ -126,7 +126,7 @@ COMMENT ON COLUMN sys_log.solver_id IS 'user id of the user that is trying to so
 
 CREATE TABLE IF NOT EXISTS system_time_types
 (
-    system_time_type_id BIGSERIAL PRIMARY KEY,
+    system_time_type_id SERIAL PRIMARY KEY,
     type_name           varchar(255) NOT NULL,
     code_id             varchar(255) DEFAULT NULL,
     description         text         DEFAULT NULL
@@ -149,7 +149,7 @@ CREATE TABLE IF NOT EXISTS system_times
     system_time_id BIGSERIAL PRIMARY KEY,
     start_time          timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     end_time            timestamp DEFAULT NULL,
-    system_time_type_id bigint        NOT NULL,
+    system_time_type_id smallint      NOT NULL,
     milliseconds        bigint        NOT NULL
 );
 
@@ -168,7 +168,7 @@ COMMENT ON COLUMN system_times.milliseconds IS 'the execution time in millisecon
 
 CREATE TABLE IF NOT EXISTS job_types
 (
-    job_type_id BIGSERIAL PRIMARY KEY,
+    job_type_id SERIAL PRIMARY KEY,
     type_name   varchar(255) NOT NULL,
     code_id     varchar(255) DEFAULT NULL,
     description text         DEFAULT NULL
@@ -190,7 +190,7 @@ CREATE TABLE IF NOT EXISTS job_times
 (
     job_time_id BIGSERIAL PRIMARY KEY,
     schedule    varchar(20) DEFAULT NULL,
-    job_type_id bigint          NOT NULL,
+    job_type_id smallint        NOT NULL,
     user_id     bigint          NOT NULL,
     start       timestamp   DEFAULT NULL,
     parameter   bigint      DEFAULT NULL
@@ -214,12 +214,12 @@ CREATE TABLE IF NOT EXISTS jobs
 (
     job_id BIGSERIAL PRIMARY KEY,
     user_id         bigint        NOT NULL,
-    job_type_id     bigint        NOT NULL,
+    job_type_id     smallint      NOT NULL,
     request_time    timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     start_time      timestamp DEFAULT NULL,
     end_time        timestamp DEFAULT NULL,
     parameter       bigint    DEFAULT NULL,
-    change_field_id bigint    DEFAULT NULL,
+    change_field_id smallint  DEFAULT NULL,
     row_id          bigint    DEFAULT NULL,
     source_id       bigint    DEFAULT NULL,
     ref_id          bigint    DEFAULT NULL
@@ -246,7 +246,7 @@ COMMENT ON COLUMN jobs.ref_id IS 'used for import to link the reference';
 
 CREATE TABLE IF NOT EXISTS user_types
 (
-    user_type_id BIGSERIAL PRIMARY KEY,
+    user_type_id SERIAL PRIMARY KEY,
     type_name    varchar(255) NOT NULL,
     code_id      varchar(255) DEFAULT NULL,
     description  text DEFAULT NULL
@@ -266,7 +266,7 @@ COMMENT ON COLUMN user_types.description IS 'text to explain the type to the use
 
 CREATE TABLE IF NOT EXISTS user_profiles
 (
-    user_profile_id BIGSERIAL PRIMARY KEY,
+    user_profile_id SERIAL PRIMARY KEY,
     type_name    varchar(255) NOT NULL,
     code_id      varchar(255) DEFAULT NULL,
     description  text         DEFAULT NULL,
@@ -288,7 +288,7 @@ COMMENT ON COLUMN user_profiles.right_level IS 'the access right level to preven
 
 CREATE TABLE IF NOT EXISTS user_official_types
 (
-    user_official_type_id BIGSERIAL PRIMARY KEY,
+    user_official_type_id SERIAL PRIMARY KEY,
     type_name             varchar(255) NOT NULL,
     code_id               varchar(255) DEFAULT NULL,
     description           text         DEFAULT NULL
@@ -409,7 +409,7 @@ COMMENT ON COLUMN sessions.uid IS 'the user session id as get by the frontend';
 
 CREATE TABLE IF NOT EXISTS change_actions
 (
-    change_action_id BIGSERIAL PRIMARY KEY,
+    change_action_id   SERIAL PRIMARY KEY,
     change_action_name varchar(255) NOT NULL,
     code_id            varchar(255) NOT NULL,
     description        text     DEFAULT NULL
@@ -426,7 +426,7 @@ COMMENT ON COLUMN change_actions.change_action_id IS 'the internal unique primar
 
 CREATE TABLE IF NOT EXISTS change_tables
 (
-    change_table_id   BIGSERIAL PRIMARY KEY,
+    change_table_id   SERIAL PRIMARY KEY,
     change_table_name varchar(255)     NOT NULL,
     code_id           varchar(255) DEFAULT NULL,
     description       text         DEFAULT NULL
@@ -446,7 +446,7 @@ COMMENT ON COLUMN change_tables.description IS 'the user readable name';
 
 CREATE TABLE IF NOT EXISTS change_fields
 (
-    change_field_id   BIGSERIAL PRIMARY KEY,
+    change_field_id   SERIAL PRIMARY KEY,
     table_id          bigint           NOT NULL,
     change_field_name varchar(255)     NOT NULL,
     code_id           varchar(255) DEFAULT NULL,
@@ -472,7 +472,7 @@ CREATE TABLE IF NOT EXISTS changes
     user_id          bigint     NOT NULL,
     change_action_id smallint   NOT NULL,
     row_id           bigint DEFAULT NULL,
-    change_field_id  bigint     NOT NULL,
+    change_field_id  smallint   NOT NULL,
     old_value        text   DEFAULT NULL,
     new_value        text   DEFAULT NULL,
     old_id           bigint DEFAULT NULL,
@@ -491,26 +491,84 @@ COMMENT ON COLUMN changes.new_id IS 'new value id';
 -- --------------------------------------------------------
 
 --
+-- table structure to log all changes done by any user on the group name for values with up to 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS changes_norm
+(
+    change_id        BIGSERIAL PRIMARY KEY,
+    change_time      timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    user_id          bigint        NOT NULL,
+    change_action_id smallint      NOT NULL,
+    row_id           char(112) DEFAULT NULL,
+    change_field_id  smallint      NOT NULL,
+    old_value        text      DEFAULT NULL,
+    new_value        text      DEFAULT NULL,
+    old_id           char(112) DEFAULT NULL,
+    new_id           char(112) DEFAULT NULL
+);
+
+COMMENT ON TABLE changes_norm IS 'to log all changes done by any user on the group name for values with up to 16 phrases';
+COMMENT ON COLUMN changes_norm.change_id IS 'the prime key to identify the change changes_norm';
+COMMENT ON COLUMN changes_norm.change_time IS 'time when the user has confirmed the change';
+COMMENT ON COLUMN changes_norm.user_id IS 'reference to the user who has done the change';
+COMMENT ON COLUMN changes_norm.change_action_id IS 'the curl action';
+COMMENT ON COLUMN changes_norm.row_id IS 'the prime id in the table with the change';
+COMMENT ON COLUMN changes_norm.old_id IS 'old value id';
+COMMENT ON COLUMN changes_norm.new_id IS 'new value id';
+
+-- --------------------------------------------------------
+
+--
+-- table structure to log all changes done by any user on the group name for values with more than 16 phrases
+--
+
+CREATE TABLE IF NOT EXISTS changes_big
+(
+    change_id        BIGSERIAL PRIMARY KEY,
+    change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    user_id          bigint     NOT NULL,
+    change_action_id smallint   NOT NULL,
+    row_id           text   DEFAULT NULL,
+    change_field_id  smallint   NOT NULL,
+    old_value        text   DEFAULT NULL,
+    new_value        text   DEFAULT NULL,
+    old_id           text   DEFAULT NULL,
+    new_id           text   DEFAULT NULL
+);
+
+COMMENT ON TABLE changes_big IS 'to log all changes done by any user on the group name for values with more than 16 phrases';
+COMMENT ON COLUMN changes_big.change_id IS 'the prime key to identify the change changes_big';
+COMMENT ON COLUMN changes_big.change_time IS 'time when the user has confirmed the change';
+COMMENT ON COLUMN changes_big.user_id IS 'reference to the user who has done the change';
+COMMENT ON COLUMN changes_big.change_action_id IS 'the curl action';
+COMMENT ON COLUMN changes_big.row_id IS 'the prime id in the table with the change';
+COMMENT ON COLUMN changes_big.old_id IS 'old value id';
+COMMENT ON COLUMN changes_big.new_id IS 'new value id';
+
+-- --------------------------------------------------------
+
+--
 -- table structure to log all changes done by any user on values with a prime group id
 --
 
-CREATE TABLE IF NOT EXISTS change_prime_values
+CREATE TABLE IF NOT EXISTS change_values_prime
 (
     change_id        BIGSERIAL PRIMARY KEY,
     change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id          bigint    NOT NULL,
     change_action_id smallint  NOT NULL,
     group_id         bigint    NOT NULL,
-    change_field_id  bigint    NOT NULL,
+    change_field_id  smallint  NOT NULL,
     old_value        double precision DEFAULT NULL,
     new_value        double precision DEFAULT NULL
 );
 
-COMMENT ON TABLE change_prime_values IS 'to log all changes done by any user on values with a prime group id';
-COMMENT ON COLUMN change_prime_values.change_id IS 'the prime key to identify the change change_prime_value';
-COMMENT ON COLUMN change_prime_values.change_time IS 'time when the user has confirmed the change';
-COMMENT ON COLUMN change_prime_values.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_prime_values.change_action_id IS 'the curl action';
+COMMENT ON TABLE change_values_prime IS 'to log all changes done by any user on values with a prime group id';
+COMMENT ON COLUMN change_values_prime.change_id IS 'the prime key to identify the change change_values_prime';
+COMMENT ON COLUMN change_values_prime.change_time IS 'time when the user has confirmed the change';
+COMMENT ON COLUMN change_values_prime.user_id IS 'reference to the user who has done the change';
+COMMENT ON COLUMN change_values_prime.change_action_id IS 'the curl action';
 
 -- --------------------------------------------------------
 
@@ -518,23 +576,23 @@ COMMENT ON COLUMN change_prime_values.change_action_id IS 'the curl action';
 -- table structure to log all changes done by any user on values with a standard group id
 --
 
-CREATE TABLE IF NOT EXISTS change_standard_values
+CREATE TABLE IF NOT EXISTS change_values_norm
 (
     change_id        BIGSERIAL PRIMARY KEY,
     change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id          bigint    NOT NULL,
     change_action_id smallint  NOT NULL,
     group_id         char(112) NOT NULL,
-    change_field_id  bigint    NOT NULL,
+    change_field_id  smallint  NOT NULL,
     old_value        double precision DEFAULT NULL,
     new_value        double precision DEFAULT NULL
 );
 
-COMMENT ON TABLE change_standard_values IS 'to log all changes done by any user on values with a standard group id';
-COMMENT ON COLUMN change_standard_values.change_id IS 'the prime key to identify the change change_standard_value';
-COMMENT ON COLUMN change_standard_values.change_time IS 'time when the user has confirmed the change';
-COMMENT ON COLUMN change_standard_values.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_standard_values.change_action_id IS 'the curl action';
+COMMENT ON TABLE change_values_norm IS 'to log all changes done by any user on values with a standard group id';
+COMMENT ON COLUMN change_values_norm.change_id IS 'the prime key to identify the change change_values_norm';
+COMMENT ON COLUMN change_values_norm.change_time IS 'time when the user has confirmed the change';
+COMMENT ON COLUMN change_values_norm.user_id IS 'reference to the user who has done the change';
+COMMENT ON COLUMN change_values_norm.change_action_id IS 'the curl action';
 
 -- --------------------------------------------------------
 
@@ -542,23 +600,23 @@ COMMENT ON COLUMN change_standard_values.change_action_id IS 'the curl action';
 -- table structure to log all changes done by any user on values with a big group id
 --
 
-CREATE TABLE IF NOT EXISTS change_big_values
+CREATE TABLE IF NOT EXISTS change_values_big
 (
     change_id        BIGSERIAL PRIMARY KEY,
     change_time      timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     user_id          bigint    NOT NULL,
     change_action_id smallint  NOT NULL,
     group_id         text      NOT NULL,
-    change_field_id  bigint    NOT NULL,
+    change_field_id  smallint  NOT NULL,
     old_value        double precision DEFAULT NULL,
     new_value        double precision DEFAULT NULL
 );
 
-COMMENT ON TABLE change_big_values IS 'to log all changes done by any user on values with a big group id';
-COMMENT ON COLUMN change_big_values.change_id IS 'the prime key to identify the change change_big_value';
-COMMENT ON COLUMN change_big_values.change_time IS 'time when the user has confirmed the change';
-COMMENT ON COLUMN change_big_values.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_big_values.change_action_id IS 'the curl action';
+COMMENT ON TABLE change_values_big IS 'to log all changes done by any user on values with a big group id';
+COMMENT ON COLUMN change_values_big.change_id IS 'the prime key to identify the change change_values_big';
+COMMENT ON COLUMN change_values_big.change_time IS 'time when the user has confirmed the change';
+COMMENT ON COLUMN change_values_big.user_id IS 'reference to the user who has done the change';
+COMMENT ON COLUMN change_values_big.change_action_id IS 'the curl action';
 
 -- --------------------------------------------------------
 
@@ -605,7 +663,7 @@ COMMENT ON COLUMN change_links.new_text_to IS 'the fixed text to display to the 
 
 CREATE TABLE IF NOT EXISTS pod_types
 (
-    pod_type_id BIGSERIAL PRIMARY KEY,
+    pod_type_id SERIAL PRIMARY KEY,
     type_name   varchar(255)     NOT NULL,
     code_id     varchar(255) DEFAULT NULL,
     description text         DEFAULT NULL
@@ -625,7 +683,7 @@ COMMENT ON COLUMN pod_types.description IS 'text to explain the type to the user
 
 CREATE TABLE IF NOT EXISTS pod_status
 (
-    pod_status_id BIGSERIAL PRIMARY KEY,
+    pod_status_id SERIAL PRIMARY KEY,
     type_name     varchar(255)     NOT NULL,
     code_id       varchar(255) DEFAULT NULL,
     description   text         DEFAULT NULL
@@ -649,9 +707,9 @@ CREATE TABLE IF NOT EXISTS pods
     type_name       varchar(255)     NOT NULL,
     code_id         varchar(255) DEFAULT NULL,
     description     text         DEFAULT NULL,
-    pod_type_id     bigint       DEFAULT NULL,
+    pod_type_id     smallint     DEFAULT NULL,
     pod_url         varchar(255)     NOT NULL,
-    pod_status_id   bigint       DEFAULT NULL,
+    pod_status_id   smallint     DEFAULT NULL,
     param_triple_id bigint       DEFAULT NULL
 );
 
@@ -669,7 +727,7 @@ COMMENT ON COLUMN pods.description IS 'text to explain the type to the user as a
 
 CREATE TABLE IF NOT EXISTS protection_types
 (
-    protection_type_id BIGSERIAL PRIMARY KEY,
+    protection_type_id SERIAL PRIMARY KEY,
     type_name          varchar(255) NOT NULL,
     code_id            varchar(255) DEFAULT NULL,
     description        text         DEFAULT NULL
@@ -689,7 +747,7 @@ COMMENT ON COLUMN protection_types.description IS 'text to explain the type to t
 
 CREATE TABLE IF NOT EXISTS share_types
 (
-    share_type_id BIGSERIAL PRIMARY KEY,
+    share_type_id SERIAL PRIMARY KEY,
     type_name     varchar(255) NOT NULL,
     code_id       varchar(255) DEFAULT NULL,
     description   text         DEFAULT NULL
@@ -709,7 +767,7 @@ COMMENT ON COLUMN share_types.description IS 'text to explain the type to the us
 
 CREATE TABLE IF NOT EXISTS languages
 (
-    language_id    BIGSERIAL PRIMARY KEY,
+    language_id    SERIAL PRIMARY KEY,
     language_name  varchar(255)     NOT NULL,
     code_id        varchar(100) DEFAULT NULL,
     description    text         DEFAULT NULL,
@@ -727,7 +785,7 @@ COMMENT ON COLUMN languages.language_id IS 'the internal unique primary index';
 
 CREATE TABLE IF NOT EXISTS language_forms
 (
-    language_form_id   BIGSERIAL PRIMARY KEY,
+    language_form_id   SERIAL PRIMARY KEY,
     language_form_name varchar(255) DEFAULT NULL,
     code_id            varchar(100) DEFAULT NULL,
     description        text         DEFAULT NULL,
@@ -751,7 +809,7 @@ CREATE TABLE IF NOT EXISTS words
     word_name      varchar(255) NOT NULL,
     plural         varchar(255)          DEFAULT NULL,
     description    text                  DEFAULT NULL,
-    phrase_type_id bigint                DEFAULT NULL,
+    phrase_type_id smallint              DEFAULT NULL,
     view_id        bigint                DEFAULT NULL,
     values         bigint                DEFAULT NULL,
     inactive       smallint              DEFAULT NULL,
@@ -788,7 +846,7 @@ CREATE TABLE IF NOT EXISTS user_words
     word_name      varchar(255)      DEFAULT NULL,
     plural         varchar(255)      DEFAULT NULL,
     description    text              DEFAULT NULL,
-    phrase_type_id bigint            DEFAULT NULL,
+    phrase_type_id smallint          DEFAULT NULL,
     view_id        bigint            DEFAULT NULL,
     values         bigint            DEFAULT NULL,
     excluded       smallint          DEFAULT NULL,
@@ -818,7 +876,7 @@ COMMENT ON COLUMN user_words.protect_id IS 'to protect against unwanted changes'
 
 CREATE TABLE IF NOT EXISTS verbs
 (
-    verb_id             BIGSERIAL PRIMARY KEY,
+    verb_id             SERIAL PRIMARY KEY,
     verb_name           varchar(255)     NOT NULL,
     code_id             varchar(255) DEFAULT NULL,
     description         text         DEFAULT NULL,
@@ -857,7 +915,7 @@ CREATE TABLE IF NOT EXISTS triples
     name_generated      varchar(255)      DEFAULT NULL,
     description         text              DEFAULT NULL,
     triple_condition_id bigint            DEFAULT NULL,
-    phrase_type_id      bigint            DEFAULT NULL,
+    phrase_type_id      smallint          DEFAULT NULL,
     view_id             bigint            DEFAULT NULL,
     values              bigint            DEFAULT NULL,
     inactive            smallint          DEFAULT NULL,
@@ -901,7 +959,7 @@ CREATE TABLE IF NOT EXISTS user_triples
     name_generated      varchar(255)      DEFAULT NULL,
     description         text              DEFAULT NULL,
     triple_condition_id bigint            DEFAULT NULL,
-    phrase_type_id      bigint            DEFAULT NULL,
+    phrase_type_id      smallint          DEFAULT NULL,
     view_id             bigint            DEFAULT NULL,
     values              bigint            DEFAULT NULL,
     excluded            smallint          DEFAULT NULL,
@@ -933,7 +991,7 @@ COMMENT ON COLUMN user_triples.protect_id IS 'to protect against unwanted change
 
 CREATE TABLE IF NOT EXISTS phrase_table_status
 (
-    phrase_table_status_id BIGSERIAL PRIMARY KEY,
+    phrase_table_status_id SERIAL PRIMARY KEY,
     type_name     varchar(255)     NOT NULL,
     code_id       varchar(255) DEFAULT NULL,
     description   text         DEFAULT NULL
@@ -972,7 +1030,7 @@ COMMENT ON COLUMN phrase_tables.pod_id IS 'the primary pod where the values and 
 
 CREATE TABLE IF NOT EXISTS phrase_types
 (
-    phrase_type_id BIGSERIAL PRIMARY KEY,
+    phrase_type_id SERIAL PRIMARY KEY,
     type_name      varchar(255) NOT NULL,
     code_id        varchar(255) DEFAULT NULL,
     description    text         DEFAULT NULL,
@@ -1106,7 +1164,7 @@ COMMENT ON COLUMN user_groups_big.description IS 'the user specific description 
 
 CREATE TABLE IF NOT EXISTS source_types
 (
-    source_type_id BIGSERIAL PRIMARY KEY,
+    source_type_id SERIAL PRIMARY KEY,
     type_name      varchar(255) NOT NULL,
     code_id        varchar(255) DEFAULT NULL,
     description    text         DEFAULT NULL
@@ -1130,7 +1188,7 @@ CREATE TABLE IF NOT EXISTS sources
     user_id        bigint       DEFAULT NULL,
     source_name    varchar(255)     NOT NULL,
     description    text         DEFAULT NULL,
-    source_type_id bigint       DEFAULT NULL,
+    source_type_id smallint     DEFAULT NULL,
     url            text         DEFAULT NULL,
     code_id        varchar(100) DEFAULT NULL,
     excluded       smallint     DEFAULT NULL,
@@ -1160,7 +1218,7 @@ CREATE TABLE IF NOT EXISTS user_sources
     user_id        bigint           NOT NULL,
     source_name    varchar(255) DEFAULT NULL,
     description    text         DEFAULT NULL,
-    source_type_id bigint       DEFAULT NULL,
+    source_type_id smallint     DEFAULT NULL,
     url            text         DEFAULT NULL,
     code_id        varchar(100) DEFAULT NULL,
     excluded       smallint     DEFAULT NULL,
@@ -1188,7 +1246,7 @@ COMMENT ON COLUMN user_sources.protect_id     IS 'to protect against unwanted ch
 
 CREATE TABLE IF NOT EXISTS ref_types
 (
-    ref_type_id BIGSERIAL PRIMARY KEY,
+    ref_type_id SERIAL PRIMARY KEY,
     type_name   varchar(255)     NOT NULL,
     code_id     varchar(255) DEFAULT NULL,
     description text         DEFAULT NULL,
@@ -1212,12 +1270,12 @@ CREATE TABLE IF NOT EXISTS refs
 (
     ref_id BIGSERIAL PRIMARY KEY,
     user_id       bigint    DEFAULT NULL,
+    external_key  varchar(255)  NOT NULL,
     url           text      DEFAULT NULL,
+    source_id     bigint    DEFAULT NULL,
     description   text      DEFAULT NULL,
     phrase_id     bigint    DEFAULT NULL,
-    external_key  varchar(255)  NOT NULL,
     ref_type_id   bigint        NOT NULL,
-    source_id     bigint    DEFAULT NULL,
     excluded      smallint  DEFAULT NULL,
     share_type_id smallint  DEFAULT NULL,
     protect_id    smallint  DEFAULT NULL
@@ -1226,11 +1284,11 @@ CREATE TABLE IF NOT EXISTS refs
 COMMENT ON TABLE refs IS 'to link external data to internal for syncronisation';
 COMMENT ON COLUMN refs.ref_id IS 'the internal unique primary index';
 COMMENT ON COLUMN refs.user_id IS 'the owner / creator of the ref';
-COMMENT ON COLUMN refs.url IS 'the concrete url for the entry inluding the item id';
-COMMENT ON COLUMN refs.phrase_id IS 'the phrase for which the external data should be syncronised';
 COMMENT ON COLUMN refs.external_key IS 'the unique external key used in the other system';
-COMMENT ON COLUMN refs.ref_type_id IS 'to link code functionality to a list of references';
+COMMENT ON COLUMN refs.url IS 'the concrete url for the entry inluding the item id';
 COMMENT ON COLUMN refs.source_id IS 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
+COMMENT ON COLUMN refs.phrase_id IS 'the phrase for which the external data should be syncronised';
+COMMENT ON COLUMN refs.ref_type_id IS 'to link code functionality to a list of references';
 COMMENT ON COLUMN refs.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN refs.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN refs.protect_id IS 'to protect against unwanted changes';
@@ -1241,19 +1299,23 @@ COMMENT ON COLUMN refs.protect_id IS 'to protect against unwanted changes';
 
 CREATE TABLE IF NOT EXISTS user_refs
 (
-    ref_id        bigint       NOT NULL,
-    user_id       bigint       NOT NULL,
-    url           text     DEFAULT NULL,
-    description   text     DEFAULT NULL,
-    excluded      smallint DEFAULT NULL,
-    share_type_id smallint DEFAULT NULL,
-    protect_id    smallint DEFAULT NULL
+    ref_id        bigint           NOT NULL,
+    user_id       bigint           NOT NULL,
+    external_key  varchar(255) DEFAULT NULL,
+    url           text         DEFAULT NULL,
+    source_id     bigint       DEFAULT NULL,
+    description   text         DEFAULT NULL,
+    excluded      smallint     DEFAULT NULL,
+    share_type_id smallint     DEFAULT NULL,
+    protect_id    smallint     DEFAULT NULL
 );
 
 COMMENT ON TABLE user_refs IS 'to link external data to internal for syncronisation';
 COMMENT ON COLUMN user_refs.ref_id IS 'with the user_id the internal unique primary index';
 COMMENT ON COLUMN user_refs.user_id IS 'the changer of the ref';
+COMMENT ON COLUMN user_refs.external_key IS 'the unique external key used in the other system';
 COMMENT ON COLUMN user_refs.url IS 'the concrete url for the entry inluding the item id';
+COMMENT ON COLUMN user_refs.source_id IS 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
 COMMENT ON COLUMN user_refs.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN user_refs.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_refs.protect_id IS 'to protect against unwanted changes';
@@ -2314,7 +2376,7 @@ COMMENT ON COLUMN value_ts_data.number IS 'the configuration value as a string';
 
 CREATE TABLE IF NOT EXISTS element_types
 (
-    element_type_id BIGSERIAL PRIMARY KEY,
+    element_type_id SERIAL PRIMARY KEY,
     type_name       varchar(255) NOT NULL,
     code_id         varchar(255) DEFAULT NULL,
     description     text         DEFAULT NULL
@@ -2337,7 +2399,7 @@ CREATE TABLE IF NOT EXISTS elements
     element_id BIGSERIAL PRIMARY KEY,
     formula_id      bigint           NOT NULL,
     order_nbr       bigint           NOT NULL,
-    element_type_id bigint           NOT NULL,
+    element_type_id smallint         NOT NULL,
     user_id         bigint       DEFAULT NULL,
     ref_id          bigint       DEFAULT NULL,
     resolved_text   varchar(255) DEFAULT NULL
@@ -2356,7 +2418,7 @@ COMMENT ON COLUMN elements.ref_id IS 'either a term, verb or formula id';
 
 CREATE TABLE IF NOT EXISTS formula_types
 (
-    formula_type_id BIGSERIAL PRIMARY KEY,
+    formula_type_id SERIAL PRIMARY KEY,
     type_name       varchar(255) NOT NULL,
     code_id         varchar(255) DEFAULT NULL,
     description     text         DEFAULT NULL
@@ -2380,8 +2442,8 @@ CREATE TABLE IF NOT EXISTS formulas
     formula_id BIGSERIAL PRIMARY KEY,
     user_id           bigint   DEFAULT NULL,
     formula_name      varchar(255) NOT NULL,
-    formula_text      text         NOT NULL,
-    resolved_text     text         NOT NULL,
+    formula_text      text     DEFAULT NULL,
+    resolved_text     text     DEFAULT NULL,
     description       text     DEFAULT NULL,
     formula_type_id   bigint   DEFAULT NULL,
     all_values_needed smallint DEFAULT NULL,
@@ -2455,13 +2517,12 @@ COMMENT ON COLUMN user_formulas.protect_id IS 'to protect against unwanted chang
 
 CREATE TABLE IF NOT EXISTS formula_link_types
 (
-    formula_link_type_id BIGSERIAL PRIMARY KEY,
+    formula_link_type_id SERIAL PRIMARY KEY,
     type_name            varchar(255)     NOT NULL,
     code_id              varchar(255) DEFAULT NULL,
     description          text         DEFAULT NULL,
     formula_id           bigint           NOT NULL,
-    phrase_type_id       bigint           NOT NULL,
-    link_type_id         bigint           NOT NULL
+    phrase_type_id       smallint         NOT NULL
 );
 
 COMMENT ON TABLE formula_link_types IS 'to assign predefined behaviour to a formula link';
@@ -2478,15 +2539,15 @@ COMMENT ON COLUMN formula_link_types.description IS 'text to explain the type to
 
 CREATE TABLE IF NOT EXISTS formula_links
 (
-    formula_link_id BIGSERIAL PRIMARY KEY,
-    user_id         bigint   DEFAULT NULL,
-    link_type_id    bigint   DEFAULT NULL,
-    order_nbr       bigint   DEFAULT NULL,
-    formula_id      bigint       NOT NULL,
-    phrase_id       bigint       NOT NULL,
-    excluded        smallint DEFAULT NULL,
-    share_type_id   smallint DEFAULT NULL,
-    protect_id      smallint DEFAULT NULL
+    formula_link_id      BIGSERIAL PRIMARY KEY,
+    user_id              bigint   DEFAULT NULL,
+    formula_link_type_id smallint DEFAULT NULL,
+    order_nbr            bigint   DEFAULT NULL,
+    formula_id           bigint       NOT NULL,
+    phrase_id            bigint       NOT NULL,
+    excluded             smallint DEFAULT NULL,
+    share_type_id        smallint DEFAULT NULL,
+    protect_id           smallint DEFAULT NULL
 );
 
 COMMENT ON TABLE formula_links IS 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
@@ -2502,13 +2563,13 @@ COMMENT ON COLUMN formula_links.protect_id IS 'to protect against unwanted chang
 
 CREATE TABLE IF NOT EXISTS user_formula_links
 (
-    formula_link_id bigint       NOT NULL,
-    user_id         bigint       NOT NULL,
-    link_type_id    bigint   DEFAULT NULL,
-    order_nbr       bigint   DEFAULT NULL,
-    excluded        smallint DEFAULT NULL,
-    share_type_id   smallint DEFAULT NULL,
-    protect_id      smallint DEFAULT NULL
+    formula_link_id      bigint       NOT NULL,
+    user_id              bigint       NOT NULL,
+    formula_link_type_id smallint DEFAULT NULL,
+    order_nbr            bigint   DEFAULT NULL,
+    excluded             smallint DEFAULT NULL,
+    share_type_id        smallint DEFAULT NULL,
+    protect_id           smallint DEFAULT NULL
 
 );
 
@@ -4057,7 +4118,7 @@ COMMENT ON COLUMN user_results_time_series_big.protect_id            IS 'to prot
 
 CREATE TABLE IF NOT EXISTS view_types
 (
-    view_type_id BIGSERIAL PRIMARY KEY,
+    view_type_id SERIAL PRIMARY KEY,
     type_name    varchar(255)     NOT NULL,
     code_id      varchar(255) DEFAULT NULL,
     description  text         DEFAULT NULL
@@ -4081,7 +4142,7 @@ CREATE TABLE IF NOT EXISTS views
     user_id       bigint       DEFAULT NULL,
     view_name     varchar(255)     NOT NULL,
     description   text         DEFAULT NULL,
-    view_type_id  bigint       DEFAULT NULL,
+    view_type_id  smallint     DEFAULT NULL,
     code_id       varchar(255) DEFAULT NULL,
     excluded      smallint     DEFAULT NULL,
     share_type_id smallint     DEFAULT NULL,
@@ -4110,7 +4171,7 @@ CREATE TABLE IF NOT EXISTS user_views
     language_id   bigint   NOT NULL DEFAULT 1,
     view_name     varchar(255)      DEFAULT NULL,
     description   text              DEFAULT NULL,
-    view_type_id  bigint            DEFAULT NULL,
+    view_type_id  smallint          DEFAULT NULL,
     excluded      smallint          DEFAULT NULL,
     share_type_id smallint          DEFAULT NULL,
     protect_id    smallint          DEFAULT NULL
@@ -4135,7 +4196,7 @@ COMMENT ON COLUMN user_views.protect_id IS 'to protect against unwanted changes'
 
 CREATE TABLE IF NOT EXISTS view_link_types
 (
-    view_link_type_id BIGSERIAL PRIMARY KEY,
+    view_link_type_id SERIAL PRIMARY KEY,
     type_name   varchar(255)     NOT NULL,
     code_id     varchar(255) DEFAULT NULL,
     description text         DEFAULT NULL
@@ -4158,9 +4219,8 @@ CREATE TABLE IF NOT EXISTS view_term_links
     view_term_link_id BIGSERIAL PRIMARY KEY,
     term_id           bigint             NOT NULL,
     view_id           bigint             NOT NULL,
-    type_id           smallint NOT NULL DEFAULT 1,
+    view_link_type_id smallint NOT NULL DEFAULT 1,
     user_id           bigint         DEFAULT NULL,
-    view_link_type_id bigint         DEFAULT NULL,
     description       text           DEFAULT NULL,
     excluded          smallint       DEFAULT NULL,
     share_type_id     smallint       DEFAULT NULL,
@@ -4169,7 +4229,7 @@ CREATE TABLE IF NOT EXISTS view_term_links
 
 COMMENT ON TABLE view_term_links IS 'to link view to a word, triple, verb or formula with an n:m relation';
 COMMENT ON COLUMN view_term_links.view_term_link_id IS 'the internal unique primary index';
-COMMENT ON COLUMN view_term_links.type_id IS '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
+COMMENT ON COLUMN view_term_links.view_link_type_id IS '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
 COMMENT ON COLUMN view_term_links.user_id IS 'the owner / creator of the view_term_link';
 COMMENT ON COLUMN view_term_links.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN view_term_links.share_type_id IS 'to restrict the access';
@@ -4183,7 +4243,7 @@ CREATE TABLE IF NOT EXISTS user_view_term_links
 (
     view_term_link_id bigint       NOT NULL,
     user_id           bigint       NOT NULL,
-    view_link_type_id bigint   DEFAULT NULL,
+    view_link_type_id smallint DEFAULT NULL,
     description       text     DEFAULT NULL,
     excluded          smallint DEFAULT NULL,
     share_type_id     smallint DEFAULT NULL,
@@ -4205,7 +4265,7 @@ COMMENT ON COLUMN user_view_term_links.protect_id IS 'to protect against unwante
 
 CREATE TABLE IF NOT EXISTS component_link_types
 (
-    component_link_type_id BIGSERIAL PRIMARY KEY,
+    component_link_type_id SERIAL PRIMARY KEY,
     type_name   varchar(255)     NOT NULL,
     code_id     varchar(255) DEFAULT NULL,
     description text         DEFAULT NULL
@@ -4225,7 +4285,7 @@ COMMENT ON COLUMN component_link_types.description IS 'text to explain the type 
 
 CREATE TABLE IF NOT EXISTS position_types
 (
-    position_type_id BIGSERIAL PRIMARY KEY,
+    position_type_id SERIAL PRIMARY KEY,
     type_name   varchar(255)     NOT NULL,
     code_id     varchar(255) DEFAULT NULL,
     description text         DEFAULT NULL
@@ -4245,7 +4305,7 @@ COMMENT ON COLUMN position_types.description IS 'text to explain the type to the
 
 CREATE TABLE IF NOT EXISTS component_types
 (
-    component_type_id BIGSERIAL PRIMARY KEY,
+    component_type_id SERIAL PRIMARY KEY,
     type_name   varchar(255)     NOT NULL,
     code_id     varchar(255) DEFAULT NULL,
     description text         DEFAULT NULL
@@ -4269,14 +4329,14 @@ CREATE TABLE IF NOT EXISTS components
     user_id                     bigint       DEFAULT NULL,
     component_name              varchar(255)     NOT NULL,
     description                 text         DEFAULT NULL,
-    component_type_id           bigint       DEFAULT NULL,
+    component_type_id           smallint     DEFAULT NULL,
     word_id_row                 bigint       DEFAULT NULL,
     formula_id                  bigint       DEFAULT NULL,
     word_id_col                 bigint       DEFAULT NULL,
     word_id_col2                bigint       DEFAULT NULL,
     linked_component_id         bigint       DEFAULT NULL,
-    component_link_type_id      bigint       DEFAULT NULL,
-    link_type_id                bigint       DEFAULT NULL,
+    component_link_type_id      smallint     DEFAULT NULL,
+    link_type_id                smallint     DEFAULT NULL,
     code_id                     varchar(255) DEFAULT NULL,
     ui_msg_code_id              varchar(255) DEFAULT NULL,
     excluded                    smallint     DEFAULT NULL,
@@ -4313,14 +4373,14 @@ CREATE TABLE IF NOT EXISTS user_components
     user_id                bigint           NOT NULL,
     component_name         varchar(255) DEFAULT NULL,
     description            text         DEFAULT NULL,
-    component_type_id      bigint       DEFAULT NULL,
+    component_type_id      smallint     DEFAULT NULL,
     word_id_row            bigint       DEFAULT NULL,
     formula_id             bigint       DEFAULT NULL,
     word_id_col            bigint       DEFAULT NULL,
     word_id_col2           bigint       DEFAULT NULL,
     linked_component_id    bigint       DEFAULT NULL,
-    component_link_type_id bigint       DEFAULT NULL,
-    link_type_id           bigint       DEFAULT NULL,
+    component_link_type_id smallint     DEFAULT NULL,
+    link_type_id           smallint     DEFAULT NULL,
     excluded               smallint     DEFAULT NULL,
     share_type_id          smallint     DEFAULT NULL,
     protect_id             smallint     DEFAULT NULL
@@ -4352,15 +4412,15 @@ COMMENT ON COLUMN user_components.protect_id IS 'to protect against unwanted cha
 CREATE TABLE IF NOT EXISTS component_links
 (
     component_link_id BIGSERIAL PRIMARY KEY,
-    view_id                    bigint       NOT NULL,
-    component_id               bigint       NOT NULL,
-    user_id                    bigint   DEFAULT NULL,
-    order_nbr                  bigint       NOT NULL,
-    component_link_type_id     bigint   NOT NULL DEFAULT 1,
-    position_type_id           bigint   NOT NULL DEFAULT 2,
-    excluded                   smallint DEFAULT NULL,
-    share_type_id              smallint DEFAULT NULL,
-    protect_id                 smallint DEFAULT NULL
+    view_id                    bigint   NOT NULL,
+    component_id               bigint   NOT NULL,
+    user_id                    bigint            DEFAULT NULL,
+    order_nbr                  bigint   NOT NULL DEFAULT 1,
+    component_link_type_id     smallint NOT NULL DEFAULT 1,
+    position_type_id           smallint NOT NULL DEFAULT 2,
+    excluded                   smallint          DEFAULT NULL,
+    share_type_id              smallint          DEFAULT NULL,
+    protect_id                 smallint          DEFAULT NULL
 );
 
 COMMENT ON TABLE component_links IS 'to link components to views with an n:m relation';
@@ -4380,8 +4440,8 @@ CREATE TABLE IF NOT EXISTS user_component_links
     component_link_id      bigint       NOT NULL,
     user_id                bigint       NOT NULL,
     order_nbr              bigint   DEFAULT NULL,
-    component_link_type_id bigint   DEFAULT NULL,
-    position_type_id       bigint   DEFAULT NULL,
+    component_link_type_id smallint DEFAULT NULL,
+    position_type_id       smallint DEFAULT NULL,
     excluded               smallint DEFAULT NULL,
     share_type_id          smallint DEFAULT NULL,
     protect_id             smallint DEFAULT NULL
@@ -4995,32 +5055,52 @@ CREATE INDEX changes_user_idx ON changes (user_id);
 -- --------------------------------------------------------
 
 --
--- indexes for table change_prime_values
+-- indexes for table changes_norm
 --
 
-CREATE INDEX change_prime_values_change_idx ON change_prime_values (change_id);
-CREATE INDEX change_prime_values_change_time_idx ON change_prime_values (change_time);
-CREATE INDEX change_prime_values_user_idx ON change_prime_values (user_id);
+CREATE INDEX changes_norm_change_idx ON changes_norm (change_id);
+CREATE INDEX changes_norm_change_time_idx ON changes_norm (change_time);
+CREATE INDEX changes_norm_user_idx ON changes_norm (user_id);
 
 -- --------------------------------------------------------
 
 --
--- indexes for table change_standard_values
+-- indexes for table changes_big
 --
 
-CREATE INDEX change_standard_values_change_idx ON change_standard_values (change_id);
-CREATE INDEX change_standard_values_change_time_idx ON change_standard_values (change_time);
-CREATE INDEX change_standard_values_user_idx ON change_standard_values (user_id);
+CREATE INDEX changes_big_change_idx ON changes_big (change_id);
+CREATE INDEX changes_big_change_time_idx ON changes_big (change_time);
+CREATE INDEX changes_big_user_idx ON changes_big (user_id);
 
 -- --------------------------------------------------------
 
 --
--- indexes for table change_big_values
+-- indexes for table change_values_prime
 --
 
-CREATE INDEX change_big_values_change_idx ON change_big_values (change_id);
-CREATE INDEX change_big_values_change_time_idx ON change_big_values (change_time);
-CREATE INDEX change_big_values_user_idx ON change_big_values (user_id);
+CREATE INDEX change_values_prime_change_idx ON change_values_prime (change_id);
+CREATE INDEX change_values_prime_change_time_idx ON change_values_prime (change_time);
+CREATE INDEX change_values_prime_user_idx ON change_values_prime (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_values_norm
+--
+
+CREATE INDEX change_values_norm_change_idx ON change_values_norm (change_id);
+CREATE INDEX change_values_norm_change_time_idx ON change_values_norm (change_time);
+CREATE INDEX change_values_norm_user_idx ON change_values_norm (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_values_big
+--
+
+CREATE INDEX change_values_big_change_idx ON change_values_big (change_id);
+CREATE INDEX change_values_big_change_time_idx ON change_values_big (change_time);
+CREATE INDEX change_values_big_user_idx ON change_values_big (user_id);
 
 -- --------------------------------------------------------
 
@@ -5257,10 +5337,10 @@ CREATE INDEX ref_types_type_name_idx ON ref_types (type_name);
 --
 
 CREATE INDEX refs_user_idx ON refs (user_id);
-CREATE INDEX refs_phrase_idx ON refs (phrase_id);
 CREATE INDEX refs_external_key_idx ON refs (external_key);
-CREATE INDEX refs_ref_type_idx ON refs (ref_type_id);
 CREATE INDEX refs_source_idx ON refs (source_id);
+CREATE INDEX refs_phrase_idx ON refs (phrase_id);
+CREATE INDEX refs_ref_type_idx ON refs (ref_type_id);
 
 --
 -- indexes for table user_refs
@@ -5270,6 +5350,8 @@ ALTER TABLE user_refs
     ADD CONSTRAINT user_refs_pkey PRIMARY KEY (ref_id,user_id);
 CREATE INDEX user_refs_ref_idx ON user_refs (ref_id);
 CREATE INDEX user_refs_user_idx ON user_refs (user_id);
+CREATE INDEX user_refs_external_key_idx ON user_refs (external_key);
+CREATE INDEX user_refs_source_idx ON user_refs (source_id);
 
 -- --------------------------------------------------------
 
@@ -5654,7 +5736,7 @@ CREATE INDEX formula_link_types_type_name_idx ON formula_link_types (type_name);
 --
 
 CREATE INDEX formula_links_user_idx ON formula_links (user_id);
-CREATE INDEX formula_links_link_type_idx ON formula_links (link_type_id);
+CREATE INDEX formula_links_formula_link_type_idx ON formula_links (formula_link_type_id);
 CREATE INDEX formula_links_formula_idx ON formula_links (formula_id);
 CREATE INDEX formula_links_phrase_idx ON formula_links (phrase_id);
 
@@ -5665,7 +5747,7 @@ CREATE INDEX formula_links_phrase_idx ON formula_links (phrase_id);
 ALTER TABLE user_formula_links ADD CONSTRAINT user_formula_links_pkey PRIMARY KEY (formula_link_id,user_id);
 CREATE INDEX user_formula_links_formula_link_idx ON user_formula_links (formula_link_id);
 CREATE INDEX user_formula_links_user_idx ON user_formula_links (user_id);
-CREATE INDEX user_formula_links_link_type_idx ON user_formula_links (link_type_id);
+CREATE INDEX user_formula_links_formula_link_type_idx ON user_formula_links (formula_link_type_id);
 
 -- --------------------------------------------------------
 
@@ -6231,9 +6313,8 @@ CREATE INDEX view_link_types_type_name_idx ON view_link_types (type_name);
 
 CREATE INDEX view_term_links_term_idx ON view_term_links (term_id);
 CREATE INDEX view_term_links_view_idx ON view_term_links (view_id);
-CREATE INDEX view_term_links_type_idx ON view_term_links (type_id);
-CREATE INDEX view_term_links_user_idx ON view_term_links (user_id);
 CREATE INDEX view_term_links_view_link_type_idx ON view_term_links (view_link_type_id);
+CREATE INDEX view_term_links_user_idx ON view_term_links (user_id);
 
 --
 -- indexes for table user_view_term_links
@@ -6401,35 +6482,57 @@ ALTER TABLE changes
 -- --------------------------------------------------------
 
 --
--- constraints for table change_standard_values
+-- constraints for table changes_norm
 --
 
-ALTER TABLE change_standard_values
-    ADD CONSTRAINT change_standard_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT change_standard_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
-    ADD CONSTRAINT change_standard_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+ALTER TABLE changes_norm
+    ADD CONSTRAINT changes_norm_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT changes_norm_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT changes_norm_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 -- --------------------------------------------------------
 
 --
--- constraints for table change_prime_values
+-- constraints for table changes_big
 --
 
-ALTER TABLE change_prime_values
-    ADD CONSTRAINT change_prime_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT change_prime_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
-    ADD CONSTRAINT change_prime_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+ALTER TABLE changes_big
+    ADD CONSTRAINT changes_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT changes_big_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT changes_big_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 -- --------------------------------------------------------
 
 --
--- constraints for table change_big_values
+-- constraints for table change_values_norm
 --
 
-ALTER TABLE change_big_values
-    ADD CONSTRAINT change_big_values_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT change_big_values_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
-    ADD CONSTRAINT change_big_values_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+ALTER TABLE change_values_norm
+    ADD CONSTRAINT change_values_norm_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_norm_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_norm_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table change_values_prime
+--
+
+ALTER TABLE change_values_prime
+    ADD CONSTRAINT change_values_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_prime_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_prime_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table change_values_big
+--
+
+ALTER TABLE change_values_big
+    ADD CONSTRAINT change_values_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_big_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_big_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 -- --------------------------------------------------------
 
@@ -6585,8 +6688,8 @@ ALTER TABLE user_sources
 
 ALTER TABLE refs
     ADD CONSTRAINT refs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT refs_ref_type_fk FOREIGN KEY (ref_type_id) REFERENCES ref_types (ref_type_id),
-    ADD CONSTRAINT refs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
+    ADD CONSTRAINT refs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id),
+    ADD CONSTRAINT refs_ref_type_fk FOREIGN KEY (ref_type_id) REFERENCES ref_types (ref_type_id);
 
 --
 -- constraints for table user_refs
@@ -6594,7 +6697,8 @@ ALTER TABLE refs
 
 ALTER TABLE user_refs
     ADD CONSTRAINT user_refs_ref_fk FOREIGN KEY (ref_id) REFERENCES refs (ref_id),
-    ADD CONSTRAINT user_refs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+    ADD CONSTRAINT user_refs_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_refs_source_fk FOREIGN KEY (source_id) REFERENCES sources (source_id);
 
 -- --------------------------------------------------------
 
@@ -6901,7 +7005,7 @@ ALTER TABLE user_formulas
 
 ALTER TABLE formula_links
     ADD CONSTRAINT formula_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id),
+    ADD CONSTRAINT formula_links_formula_link_type_fk FOREIGN KEY (formula_link_type_id) REFERENCES formula_link_types (formula_link_type_id),
     ADD CONSTRAINT formula_links_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
@@ -6911,7 +7015,7 @@ ALTER TABLE formula_links
 ALTER TABLE user_formula_links
     ADD CONSTRAINT user_formula_links_formula_link_fk FOREIGN KEY (formula_link_id) REFERENCES formula_links (formula_link_id),
     ADD CONSTRAINT user_formula_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_formula_links_formula_link_type_fk FOREIGN KEY (link_type_id) REFERENCES formula_link_types (formula_link_type_id);
+    ADD CONSTRAINT user_formula_links_formula_link_type_fk FOREIGN KEY (formula_link_type_id) REFERENCES formula_link_types (formula_link_type_id);
 
 -- --------------------------------------------------------
 
@@ -7218,8 +7322,8 @@ ALTER TABLE user_views
 
 ALTER TABLE view_term_links
     ADD CONSTRAINT view_term_links_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
-    ADD CONSTRAINT view_term_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT view_term_links_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id);
+    ADD CONSTRAINT view_term_links_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id),
+    ADD CONSTRAINT view_term_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
 -- constraints for table user_view_term_links

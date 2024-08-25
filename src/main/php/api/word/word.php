@@ -32,15 +32,18 @@
 
 namespace api\word;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
+include_once API_SANDBOX_PATH . 'sandbox_typed.php';
 
+use api\api;
 use api\phrase\phrase as phrase_api;
 use api\phrase\term as term_api;
+use api\sandbox\combine_object as combine_object_api;
 use api\sandbox\sandbox_typed as sandbox_typed_api;
 use cfg\phrase_type;
 use cfg\word as word_cfg;
+use JsonSerializable;
 
-class word extends sandbox_typed_api
+class word extends sandbox_typed_api implements JsonSerializable
 {
 
     /*
@@ -54,77 +57,81 @@ class word extends sandbox_typed_api
     const TN_READ = 'Mathematics';
     const TD_READ = 'Mathematics is an area of knowledge that includes the topics of numbers and formulas';
     const TI_MATH = 1;
+    const TN_READ_PLURAL = 'Mathematics';
     const TN_CONST = 'constant';
     const TD_CONST = 'fixed and well-defined number';
     const TI_CONST = 2;
-    const TN_PI = 'Pi';
-    const TI_PI = 3;
-    const TD_PI = 'ratio of the circumference of a circle to its diameter';
-    const TN_E = "Euler's constant";
-    const TI_E = 4;
-    const TN_CIRCUMFERENCE = 'circumference';
-    const TI_CIRCUMFERENCE = 134;
-    const TN_DIAMETER = 'diameter';
-    const TI_DIAMETER = 135;
     const TN_ONE = 'one';
-    const TI_ONE = 162;
-    const TN_MIO = 'million';
-    const TI_MIO = 164;
-    const TN_MIO_SHORT = 'mio';
-    const TN_MINUTE = 'minute';
-    const TI_MINUTE = 98;
+    const TI_ONE = 3;
+    const TN_PI = 'Pi';
+    const TI_PI = 4;
+    const TD_PI = 'ratio of the circumference of a circle to its diameter';
+    const TN_CIRCUMFERENCE = 'circumference';
+    const TI_CIRCUMFERENCE = 5;
+    const TN_DIAMETER = 'diameter';
+    const TI_DIAMETER = 6;
+    const TN_E = "Euler's constant";
+    const TI_E = 6;
     const TN_SECOND = 'second';
-    const TI_SECOND = 17;
+    const TI_SECOND = 19;
+    const TN_YEAR = 'Year';
+    const TI_YEAR = 137;
+    const TN_MINUTE = 'minute';
+    const TI_MINUTE = 101;
+    const TN_MIO = 'million';
+    const TI_MIO = 170;
+    const TN_MIO_SHORT = 'mio';
     const TN_COUNTRY = 'Country';
     const TN_CH = 'Switzerland';
-    const TI_CH = 190;
+    const TI_CH = 197;
     const TN_DE = 'Germany';
     const TN_CANTON = 'Canton';
-    const TI_CANTON = 191;
+    const TI_CANTON = 198;
     const TN_CITY = 'City';
-    const TI_CITY = 192;
+    const TI_CITY = 199;
     const TN_ZH = 'Zurich';
-    const TI_ZH = 193;
+    const TI_ZH = 200;
     const TN_BE = 'Bern';
-    const TI_BE = 194;
+    const TI_BE = 201;
     const TN_GE = 'Geneva';
-    const TI_GE = 195;
+    const TI_GE = 202;
     const TN_INHABITANT = 'inhabitant';
-    const TI_INHABITANT = 197;
+    const TI_INHABITANT = 204;
+    // TODO add test to search for words in all language forms e.g. plural
     const TN_INHABITANTS = 'inhabitants';
-    const TN_YEAR = 'Year';
     const TN_2013 = '2013';
-    const TI_2013 = 272;
+    const TI_2013 = 326;
     const TN_2014 = '2014';
-    const TI_2014 = 271;
+    const TI_2014 = 325;
     const TN_2015 = '2015';
-    const TI_2015 = 199;
+    const TI_2015 = 205;
     const TN_2016 = '2016';
-    const TI_2016 = 200;
+    const TI_2016 = 206;
     const TN_2017 = '2017';
-    const TI_2017 = 201;
+    const TI_2017 = 207;
     const TN_2018 = '2018';
-    const TI_2018 = 202;
+    const TI_2018 = 208;
     const TN_2019 = '2019';
-    const TI_2019 = 16;
+    const TI_2019 = 142;
     const TN_2020 = '2020';
-    const TI_2020 = 203;
+    const TI_2020 = 209;
     const TN_PCT = 'percent';
-    const TI_PCT = 166;
+    const TI_PCT = 172;
     // _PRE are the predefined words
     const TN_THIS_PRE = 'this'; // the test name for the predefined word 'this'
-    const TI_THIS = 185;
+    const TI_THIS = 192;
     const TN_PRIOR_PRE = 'prior';
-    const TI_PRIOR = 187;
+    const TI_PRIOR = 194;
     const TN_PARTS = 'parts';
-    const TI_PARTS = 210;
+    const TI_PARTS = 265;
     const TN_TOTAL_PRE = 'total';
-    const TI_TOTAL = 211;
+    const TI_TOTAL = 266;
     const TN_COMPANY = 'Company';
+    const TI_COMPANY = 322;
     const TN_ABB = 'ABB';
-    const TI_ABB = 269;
+    const TI_ABB = 323;
     const TN_VESTAS = 'Vestas';
-    const TI_VESTAS = 270;
+    const TI_VESTAS = 324;
     const TN_CHF = 'CHF';
     const TI_CHF = 316;
     const TN_SALES = 'Sales';
@@ -133,11 +140,27 @@ class word extends sandbox_typed_api
     const TI_CASH_FLOW = 274;
     const TN_TAX = 'Income taxes';
     const TI_TAX = 273;
+    const TN_GWP = 'global warming potential';
+    const TI_GWP = 1070;
 
     // persevered word names for unit and integration tests based on the database
     // TWN_* - is a Test Word Name for words created only for testing (see also TN_*)
     const TN_ADD = 'System Test Word';
+    const TN_ADD_VIA_FUNC = 'System Test Word added via sql function';
+    const TN_ADD_VIA_SQL = 'System Test Word added via sql insert';
+    const TN_ADD_GROUP_PRIME_FUNC = 'System Test Word for prime group add via sql function';
+    const TN_ADD_GROUP_PRIME_SQL = 'System Test Word for prime group add via sql insert';
+    const TN_ADD_GROUP_MOST_FUNC = 'System Test Word for main group add via sql function';
+    const TN_ADD_GROUP_MOST_SQL = 'System Test Word for main group add via sql insert';
+    const TN_ADD_GROUP_BIG_FUNC = 'System Test Word for big group add via sql function';
+    const TN_ADD_GROUP_BIG_SQL = 'System Test Word for big group add via sql insert';
     const TN_RENAMED = 'System Test Word Renamed';
+    const TN_RENAMED_GROUP_PRIME_FUNC = 'System Test Word for prime group RENAMED via sql function';
+    const TN_RENAMED_GROUP_PRIME_SQL = 'System Test Word for prime group RENAMED via sql insert';
+    const TN_RENAMED_GROUP_MOST_FUNC = 'System Test Word for main group RENAMED via sql function';
+    const TN_RENAMED_GROUP_MOST_SQL = 'System Test Word for main group RENAMED via sql insert';
+    const TN_RENAMED_GROUP_BIG_FUNC = 'System Test Word for big group RENAMED via sql function';
+    const TN_RENAMED_GROUP_BIG_SQL = 'System Test Word for big group RENAMED via sql insert';
     const TN_PARENT = 'System Test Word Parent';
     const TN_FIN_REPORT = 'System Test Word with many relations e.g. Financial Report';
     const TWN_CASH_FLOW = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
@@ -203,7 +226,21 @@ class word extends sandbox_typed_api
         self::TN_PCT,
         self::TN_COMPANY,
         self::TN_ADD,
+        self::TN_ADD_VIA_FUNC,
+        self::TN_ADD_VIA_SQL,
+        self::TN_ADD_GROUP_MOST_FUNC,
+        self::TN_ADD_GROUP_MOST_SQL,
+        self::TN_ADD_GROUP_PRIME_FUNC,
+        self::TN_ADD_GROUP_PRIME_SQL,
+        self::TN_ADD_GROUP_BIG_FUNC,
+        self::TN_ADD_GROUP_BIG_SQL,
         self::TN_RENAMED,
+        self::TN_RENAMED_GROUP_MOST_FUNC,
+        self::TN_RENAMED_GROUP_MOST_SQL,
+        self::TN_RENAMED_GROUP_PRIME_FUNC,
+        self::TN_RENAMED_GROUP_PRIME_SQL,
+        self::TN_RENAMED_GROUP_BIG_FUNC,
+        self::TN_RENAMED_GROUP_BIG_SQL,
         self::TN_PARENT,
         self::TN_FIN_REPORT,
         self::TWN_CASH_FLOW,
@@ -240,6 +277,14 @@ class word extends sandbox_typed_api
     // and that are never expected to be used by a user
     const TEST_WORDS = array(
         self::TN_ADD,
+        self::TN_ADD_VIA_FUNC,
+        self::TN_ADD_VIA_SQL,
+        self::TN_ADD_GROUP_PRIME_FUNC,
+        self::TN_ADD_GROUP_PRIME_SQL,
+        self::TN_ADD_GROUP_MOST_FUNC,
+        self::TN_ADD_GROUP_MOST_SQL,
+        self::TN_ADD_GROUP_BIG_FUNC,
+        self::TN_ADD_GROUP_BIG_SQL,
         self::TN_RENAMED,
         self::TN_PARENT,
         self::TN_FIN_REPORT,
@@ -275,7 +320,6 @@ class word extends sandbox_typed_api
     );
     // list of words that are used for system testing and that should be created before the system test starts
     const TEST_WORDS_CREATE = array(
-        self::TN_ADD,
         self::TN_PARENT,
         self::TN_FIN_REPORT,
         self::TWN_CASH_FLOW,
@@ -332,6 +376,7 @@ class word extends sandbox_typed_api
     public ?string $description = null;
 
     // the language specific forms
+    // TODO switch to public to avoid jsonSerialize usage ?
     private ?string $plural = null;
 
     // the main parent phrase
@@ -435,6 +480,23 @@ class word extends sandbox_typed_api
     function term(): term_api
     {
         return new term_api($this);
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array with the value vars including the private vars
+     */
+    function jsonSerialize(): array
+    {
+        $vars = parent::jsonSerialize();
+        if ($this->plural() != null) {
+            $vars[api::FLD_PLURAL] = $this->plural();
+        }
+        return $vars;
     }
 
 }

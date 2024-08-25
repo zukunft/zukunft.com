@@ -35,8 +35,11 @@
 namespace cfg;
 
 use cfg\db\sql;
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
+use cfg\db\sql_where_type;
+use shared\library;
 
+include_once MODEL_DB_PATH . 'sql_where_type.php';
 include_once MODEL_HELPER_PATH . 'combine_object.php';
 
 class combine_named extends combine_object
@@ -48,10 +51,10 @@ class combine_named extends combine_object
 
     // list of phrase types used for the database views
     const TBL_LIST = array(
-        [sql_table_type::PRIME],
-        [sql_table_type::MOST],
-        [sql_table_type::PRIME, sql_table_type::USER],
-        [sql_table_type::MOST, sql_table_type::USER]
+        [sql_type::PRIME],
+        [sql_type::MOST],
+        [sql_type::PRIME, sql_type::USER],
+        [sql_type::MOST, sql_type::USER]
     );
     // list of original tables that should be connoted with union
     // with fields used in the view
@@ -167,28 +170,28 @@ class combine_named extends combine_object
         $sql = $sc->sql_separator();
         $lib = new library();
         $tbl_name = $lib->class_to_name($class);
-        foreach ($this::TBL_LIST as $tbl_typ_lst) {
-            $tbl_typ = $tbl_typ_lst[0];
-            $tbl_com = $tbl_typ_lst[2];
+        foreach ($this::TBL_LIST as $sc_par_lst) {
+            $tbl_typ = $sc_par_lst[0];
+            $tbl_com = $sc_par_lst[2];
             $usr_prefix = '';
-            if ($sc->is_user($tbl_typ_lst)) {
-                $usr_prefix = sql_table_type::USER->prefix();
+            if ($sc->is_user($sc_par_lst)) {
+                $usr_prefix = sql_type::USER->prefix();
             }
             $sql .= $sc->sql_view_header($sc->get_table_name($usr_prefix . $tbl_typ->prefix() . $tbl_name), $tbl_com);
-            $sql .= $this->sql_create_view($sc, $tbl_name, $tbl_typ_lst) . '; ';
+            $sql .= $this->sql_create_view($sc, $tbl_name, $sc_par_lst) . '; ';
         }
         return $sql;
     }
 
-    function sql_create_view(sql $sc, string $tbl_name, array $tbl_typ_lst): string
+    function sql_create_view(sql $sc, string $tbl_name, array $sc_par_lst): string
     {
         $lib = new library();
         $usr_prefix = '';
-        if ($sc->is_user($tbl_typ_lst)) {
-            $usr_prefix = sql_table_type::USER->prefix();
+        if ($sc->is_user($sc_par_lst)) {
+            $usr_prefix = sql_type::USER->prefix();
         }
-        $tbl_typ = $tbl_typ_lst[0];
-        $tbl_where = $tbl_typ_lst[1];
+        $tbl_typ = $sc_par_lst[0];
+        $tbl_where = $sc_par_lst[1];
         $sql = sql::CREATE . ' ';
         $sql .= sql::VIEW . ' ';
         $sql .= $sc->get_table_name($usr_prefix . $tbl_typ->prefix() . $tbl_name) . ' ' . sql::AS . ' ';

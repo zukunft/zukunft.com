@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS change_tables
 (
-    change_table_id   BIGSERIAL PRIMARY KEY,
+    change_table_id   SERIAL PRIMARY KEY,
     change_table_name varchar(255)     NOT NULL,
     code_id           varchar(255) DEFAULT NULL,
     description       text         DEFAULT NULL

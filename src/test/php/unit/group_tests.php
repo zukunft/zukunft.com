@@ -39,16 +39,16 @@ include_once MODEL_GROUP_PATH . 'group_list.php';
 include_once MODEL_GROUP_PATH . 'result_id.php';
 
 use api\phrase\group as group_api;
-use cfg\group\group_id;
-use cfg\group\group;
-use cfg\group\group_link;
-use cfg\group\group_list;
-use cfg\group\result_id;
-use cfg\library;
-use cfg\phrase_list;
+use cfg\db\sql;
 use cfg\db\sql_db;
-use cfg\word;
-use cfg\word_list;
+use cfg\db\sql_type;
+use cfg\db\sql_type_list;
+use cfg\group\group;
+use cfg\group\group_id;
+use cfg\group\group_link;
+use cfg\group\result_id;
+use cfg\phrase_list;
+use shared\library;
 use test\test_cleanup;
 
 class group_tests
@@ -59,49 +59,53 @@ class group_tests
         global $usr;
 
         // init
-        $lib = new library();
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'group->';
         $t->resource_path = 'db/group/';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the phrase group class (src/main/php/model/group/group.php)');
 
         $t->subheader('Group id tests');
         $grp_id = new group_id();
-        $t->assert('64 bit group_id short word list', $grp_id->get_id($t->dummy_word_list_short()->phrase_lst()),
-            131078);
-        $t->assert('phrase ids of 64 bit group_id short', $grp_id->get_array(131078),
-            $t->dummy_word_list_short()->phrase_lst()->ids());
-        $t->assert('64 bit group_id word list', $grp_id->get_id($t->dummy_word_list()->phrase_lst()),
-            562967133683720);
-        $t->assert('phrase ids of 64 bit group_id', $grp_id->get_array(562967133683720),
-            $t->dummy_word_list()->phrase_lst()->ids());
+        $t->assert('64 bit group_id short word list', $grp_id->get_id($t->word_list_short()->phrase_lst()),
+            262145);
+        $t->assert('phrase ids of 64 bit group_id short', $grp_id->get_array(262145),
+            $t->word_list_short()->phrase_lst()->ids());
+        $t->assert('64 bit group_id word list', $grp_id->get_id($t->word_list()->phrase_lst()),
+            1688867040264193);
+        $t->assert('phrase ids of 64 bit group_id', $grp_id->get_array(1688867040264193),
+            $t->word_list()->phrase_lst()->ids());
 
         //$this->check_64_bit_key($t, [0,0,0,0], 0);
-        $this->check_64_bit_key($t, [1], 2);
-        $this->check_64_bit_key($t, [-1], 3);
-        $this->check_64_bit_key($t, [2], 4);
-        $this->check_64_bit_key($t, [-2], 5);
-        $this->check_64_bit_key($t, [32767], 65534);
+        $this->check_64_bit_key($t, [1], 1);
+        $this->check_64_bit_key($t, [-1], 32769);
+        $this->check_64_bit_key($t, [2], 2);
+        $this->check_64_bit_key($t, [4], 4);
+        $this->check_64_bit_key($t, [7], 7);
+        $this->check_64_bit_key($t, [-2], 32770);
+        $this->check_64_bit_key($t, [32767], 32767);
         $this->check_64_bit_key($t, [-32767], 65535);
-        $this->check_64_bit_key($t, [1,32767], 196606);
-        $this->check_64_bit_key($t, [2,32767], 327678);
-        $this->check_64_bit_key($t, [-2,32767], 393214);
-        $this->check_64_bit_key($t, [-32767,-1], 4294901763);
-        $this->check_64_bit_key($t, [-32767,32767], 4294967294);
-        $this->check_64_bit_key($t, [-32767,1,32767], 281470681939966);
-        $this->check_64_bit_key($t, [-32767,-1,32767], 281470682005502);
-        $this->check_64_bit_key($t, [-1,-32767,32767], 281470682005502);
-        $this->check_64_bit_key($t, [32765,32766,32767], 281453501677566);
-        $this->check_64_bit_key($t, [1,32765,32766,32767], 844403455098878);
-        $this->check_64_bit_key($t, [1234,32765,32766,32767], 694961696023576574);
-        $this->check_64_bit_key($t, [15678,32765,32766,32767], 8826210823241007102);
-        // TODO fix it
-        //$this->check_64_bit_key($t, [-32767,-32766,-15678,32767], -10829824000);
-        // TODO fix it
-        //$this->check_64_bit_key($t, [32767,32766,32765,32764], -281487861940224);
-        //$this->check_64_bit_key($t, [-32767,32767,-32766,32766], 9223231297218904063);
+        $this->check_64_bit_key($t, [1,32767], 2147418113);
+        $this->check_64_bit_key($t, [2,32767], 2147418114);
+        $this->check_64_bit_key($t, [-2,32767], 2147450882);
+        $this->check_64_bit_key($t, [-32767,-1], 2147614719);
+        $this->check_64_bit_key($t, [-32767,32767], 2147483647);
+        $this->check_64_bit_key($t, [-32767,1,32767], 140733193519103);
+        $this->check_64_bit_key($t, [-32767,-1,32767], 140735341002751);
+        $this->check_64_bit_key($t, [-1,-32767,32767], 140735341002751);
+        $this->check_64_bit_key($t, [32765,32766,32767], 140735340773373);
+        $this->check_64_bit_key($t, [1,32765,32766,32767], 9223231292923772929);
+        $this->check_64_bit_key($t, [1234,32765,32766,32767], 9223231292923774162);
+        $this->check_64_bit_key($t, [15678,32765,32766,32767], 9223231292923788606);
+        $this->check_64_bit_key($t, [-15677,32767,-15676,32766], 9223231293951360317);
+        $this->check_64_bit_key($t, [32767,32766,32765,32764], 9223231292923805692);
+        $this->check_64_bit_key($t, [-15678,32767,-32766,32766], 9223231293951508478);
+        $this->check_64_bit_key($t, [-32765,32767,-32766,32766], 9223231295071322110);
+        $this->check_64_bit_key($t, [-32767,-32766,-32765,32767], 9223372028264775679);
+        // these are not "prime" anymore because at least one id must be positiv to avoid exeeding PHP_INT_MAX
+        $this->check_64_bit_key($t, [-1,-2,-3,-4], '.....2-.....1-.....0-...../-......+......+......+......+......+......+......+......+......+......+......+......+');
+        $this->check_64_bit_key($t, [-32767,-32766,-32765,-1], '...5zz-...5zy-...5zx-...../-......+......+......+......+......+......+......+......+......+......+......+......+');
 
         $this->check_int2alpha($t, 0, '......+');
         $this->check_int2alpha($t, 1, '...../+');
@@ -126,18 +130,18 @@ class group_tests
         $this->check_int2alpha($t, -12, '.....A(', true, );
         $this->check_int2alpha($t, -12, '.....A)', false, true);
 
-        $t->assert('group_id triple list', $grp_id->get_id($t->dummy_triple_list()->phrase_lst()),5);
-        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(5), $t->dummy_triple_list()->phrase_lst()->ids());
+        $t->assert('group_id triple list', $grp_id->get_id($t->triple_list()->phrase_lst()),32770);
+        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(32770), $t->triple_list()->phrase_lst()->ids());
         $phr_lst = new phrase_list($usr);
-        $phr_lst->merge($t->dummy_word_list()->phrase_lst());
-        $phr_lst->merge($t->dummy_triple_list()->phrase_lst());
+        $phr_lst->merge($t->word_list()->phrase_lst());
+        $phr_lst->merge($t->triple_list()->phrase_lst());
         $t->assert('group_id combine phrase list', $grp_id->get_id($phr_lst),
-            '.....0-...../+.....0+.....1+.....2+......+......+......+......+......+......+......+......+......+......+......+');
-        $t->assert('group_id phrase list', $grp_id->get_id($t->dummy_phrase_list()),
-            '.....0-...../-...../+.....0+.....1+......+......+......+......+......+......+......+......+......+......+......+');
-        $t->assert('group_id phrase list 16', $grp_id->get_id($t->dummy_phrase_list_16()),
+            '.....0-...../+.....0+.....2+.....4+......+......+......+......+......+......+......+......+......+......+......+');
+        $t->assert('group_id phrase list', $grp_id->get_id($t->phrase_list()),
+            '.....0-...../-...../+.....0+.....2+......+......+......+......+......+......+......+......+......+......+......+');
+        $t->assert('group_id phrase list 16', $grp_id->get_id($t->phrase_list_16()),
             '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+');
-        $t->assert('group_id phrase list 16', $grp_id->get_id($t->dummy_phrase_list_17_plus()),
+        $t->assert('group_id phrase list 16', $grp_id->get_id($t->phrase_list_17_plus()),
             '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+.uraWl+');
         $t->assert('group_id revers phrase list 16',
             implode(',', $grp_id->get_array('...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-')),
@@ -153,17 +157,17 @@ class group_tests
         $res_id = new result_id();
         $t->assert('64 bit result_id for the formula increase, '
             . 'the phrases Zurich (City) and inhabitants and the result only phrase 2023 (year)',
-            $res_id->get_id($t->zh_inhabitants_2020(), $t->zh_inhabitants_2020(), $t->increase_formula()),
-            11822279760150934);
+            $res_id->get_id($t->zh_inhabitants_2020(), $t->zh_inhabitants_2020(), $t->formula_increase()),
+            6051875221405905);
         $t->assert('128 bit result_id for the formula increase, '
             . 'the phrases Zurich (City), Geneva (City) and inhabitants and the result only phrase 2023 (year)',
-            $res_id->get_id($t->zh_ge_inhabitants_2020(), $t->zh_ge_inhabitants_2020(), $t->increase_formula()),
-            '18039393492526607616');
+            $res_id->get_id($t->zh_ge_inhabitants_2020(), $t->zh_ge_inhabitants_2020(), $t->formula_increase()),
+            '9234445111013697024');
         $t->assert('512 bit result_id ',
-            $res_id->get_id($t->dummy_phrase_list_14(), $t->dummy_phrase_list_14b(), $t->increase_formula()),
+            $res_id->get_id($t->phrase_list_14(), $t->phrase_list_14b(), $t->formula_increase()),
             '.....J=..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+1FajJ2(.4LYK3)1FajJ2)');
         $t->assert('512 bit result_id ',
-            $res_id->get_id($t->dummy_phrase_list_17_plus(), $t->dummy_phrase_list_17_plus(), $t->increase_formula()),
+            $res_id->get_id($t->phrase_list_17_plus(), $t->phrase_list_17_plus(), $t->formula_increase()),
             '...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-.uraWl+');
 
         $t->subheader('SQL statements - setup');
@@ -171,23 +175,35 @@ class group_tests
         $t->assert_sql_table_create($grp);
         $t->assert_sql_index_create($grp);
         $t->assert_sql_foreign_key_create($grp);
-        $t->assert_sql_truncate($db_con, $grp);
+        $t->assert_sql_truncate($sc, $grp);
 
         $t->subheader('SQL statements - read');
-        //$t->assert_sql_by_id($db_con, $grp);
-        $t->assert_sql_by_name($db_con, $grp);
+        //$t->assert_sql_by_id($sc, $grp);
+        $t->assert_sql_by_name($sc, $grp);
         $this->assert_sql_by_phrase_list($t, $db_con);
 
         $t->subheader('SQL statements - write');
-        $grp->set_phrase_list($t->dummy_phrase_list_prime());
-        $t->assert_sql_insert($db_con, $grp);
-        $t->assert_sql_insert($db_con, $grp, true);
-        $t->assert_sql_update($db_con, $grp);
-        $t->assert_sql_update($db_con, $grp, true);
-        $grp->set_phrase_list($t->dummy_phrase_list_16());
-        $t->assert_sql_insert($db_con, $grp);
-        $grp->set_phrase_list($t->dummy_phrase_list_17_plus());
-        $t->assert_sql_insert($db_con, $grp, true);
+        $grp->set_phrase_list($t->phrase_list_prime());
+        $t->assert_sql_insert($sc, $grp);
+        $t->assert_sql_insert($sc, $grp, [sql_type::USER]);
+        $db_grp = $t->group();
+        $grp = $grp->renamed(group_api::TN_RENAMED);
+        $t->assert_sql_update($sc, $grp, $db_grp);
+        $t->assert_sql_update($sc, $grp, $db_grp, [sql_type::USER]);
+        $grp->set_phrase_list($t->phrase_list_16());
+        $t->assert_sql_insert($sc, $grp);
+        $grp->set_phrase_list($t->phrase_list_17_plus());
+        $t->assert_sql_insert($sc, $grp, [sql_type::USER]);
+        // TODO activate db write
+        $grp->set_phrase_list($t->phrase_list_prime());
+        $t->assert_sql_delete($sc, $grp, [sql_type::LOG]);
+        $grp->set_phrase_list($t->phrase_list_16());
+        $t->assert_sql_delete($sc, $grp, [sql_type::LOG, sql_type::USER]);
+        $grp->set_phrase_list($t->phrase_list_17_plus());
+        $t->assert_sql_delete($sc, $grp);
+        $t->assert_sql_delete($sc, $grp, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $grp, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $grp, [sql_type::LOG, sql_type::USER]);
 
 
         $t->header('Unit tests of the phrase group link class (src/main/php/model/group/group_link.php)');
@@ -199,7 +215,7 @@ class group_tests
         // sql to load the phrase links related to a group
         $grp_lnk = new group_link();
         // TODO activate Prio 3 or use group id
-        //$t->assert_sql_by_id($db_con, $grp_lnk);
+        //$t->assert_sql_by_id($sc, $grp_lnk);
 
         $grp->set_id(14);
         // TODO activate Prio 3 or use group id
@@ -254,52 +270,53 @@ class group_tests
 
         // check the Postgres query syntax for a list of up to four prime phrases
         $db_con->db_type = sql_db::POSTGRES;
-        $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_prime());
-        $result = $t->assert_qp($qp, $db_con->db_type);
+        $sc = $db_con->sql_creator();
+        $qp = $grp->load_sql_by_phrase_list($sc, $t->phrase_list_prime());
+        $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and for 16 phrase
         if ($result) {
-            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_16());
-            $t->assert_qp($qp, $db_con->db_type);
+            $qp = $grp->load_sql_by_phrase_list($sc, $t->phrase_list_16());
+            $t->assert_qp($qp, $sc->db_type);
         }
 
         // ... and for more than 16 phrase
         if ($result) {
-            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_17_plus());
-            $t->assert_qp($qp, $db_con->db_type);
+            $qp = $grp->load_sql_by_phrase_list($sc, $t->phrase_list_17_plus());
+            $t->assert_qp($qp, $sc->db_type);
         }
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_prime());
-            $t->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $grp->load_sql_by_phrase_list($sc, $t->phrase_list_prime());
+            $t->assert_qp($qp, $sc->db_type);
         }
 
         // ... and for 16 phrase
         if ($result) {
-            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_16());
-            $t->assert_qp($qp, $db_con->db_type);
+            $qp = $grp->load_sql_by_phrase_list($sc, $t->phrase_list_16());
+            $t->assert_qp($qp, $sc->db_type);
         }
 
         // ... and for more than 16 phrase
         if ($result) {
-            $qp = $grp->load_sql_by_phrase_list($db_con->sql_creator(), $t->dummy_phrase_list_17_plus());
-            $t->assert_qp($qp, $db_con->db_type);
+            $qp = $grp->load_sql_by_phrase_list($sc, $t->phrase_list_17_plus());
+            $t->assert_qp($qp, $sc->db_type);
         }
     }
 
-    private function check_64_bit_key(test_cleanup $t, array $ids, int $id): void
+    private function check_64_bit_key(test_cleanup $t, array $ids, int|string $id): void
     {
         $grp_id = new group_id();
         $phr_lst = new phrase_list($t->usr1);
         foreach ($ids as $phr_id) {
             if ($phr_id < 0) {
-                $trp_phr = $t->dummy_triple()->phrase();
+                $trp_phr = $t->triple()->phrase();
                 $trp_phr->set_id($phr_id);
                 $phr_lst->add($trp_phr);
             } else {
-                $wrd_phr = $t->dummy_word()->phrase();
+                $wrd_phr = $t->word()->phrase();
                 $wrd_phr->set_id($phr_id);
                 $phr_lst->add($wrd_phr);
             }

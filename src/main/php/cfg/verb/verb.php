@@ -36,6 +36,8 @@ namespace cfg;
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'changes_norm.php';
+include_once MODEL_LOG_PATH . 'changes_big.php';
 include_once API_VERB_PATH . 'verb.php';
 include_once SERVICE_EXPORT_PATH . 'verb_exp.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
@@ -48,15 +50,12 @@ use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\sandbox_exp;
-use cfg\export\sandbox_exp_named;
 use cfg\export\verb_exp;
 use cfg\log\change;
 use cfg\log\change_action;
-use cfg\log\change_action_list;
 use cfg\log\change_table_list;
 use html\html_base;
-use html\html_selector;
-use html\verb\verb as verb_dsp;
+use shared\library;
 
 class verb extends type_object
 {
@@ -67,6 +66,8 @@ class verb extends type_object
 
     // the unique id of predicates or verbs
     // to link a db row to predefined program code
+    // TODO add an easy way to get the name from the code id
+    // TODO add a check if all verbs have a const und linked functionalities
     const NOT_SET = "not_set";
     const IS = "is";
     const IS_PART_OF = "contains";
@@ -83,6 +84,7 @@ class verb extends type_object
     // directional forms of verbs (maybe move to verb_api or test if only used for testing)
     const FOLLOWED_BY = "is followed by";
     const FOLLOWER_OF = "is follower of";
+    const SYMBOL = "symbol";
 
     // search directions to get related words (phrases)
     const DIRECTION_NO = '';
@@ -124,7 +126,7 @@ class verb extends type_object
     const FLD_LST_ALL = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
         [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
-        [self::FLD_DESCRIPTION, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_CONDITION, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
         [self::FLD_FORMULA, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_FORMULA_COM],
         [self::FLD_PLURAL_REVERSE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_PLURAL_REVERSE_COM],
@@ -138,31 +140,29 @@ class verb extends type_object
      * object vars
      */
 
-    private ?user $usr = null;         // used only to allow adding the code id on import
-    //                                    but there should not be any user specific verbs
-    //                                    otherwise if id is 0 (not NULL) the standard word link type,
-    //                                    otherwise the user specific verb
-    //public ?string $code_id = '';      // the main id to detect verbs that have a special behavior
-    //private ?string $name = '';        // the verb name to build the "sentence" for the user, which cannot be empty
-    public ?string $plural = '';       // name used if more than one word is shown
-    //                                    e.g. instead of "ABB" "is a" "company"
-    //                                         use "ABB", Nestlé" "are" "companies"
-    public ?string $reverse = '';      // name used if displayed the other way round
-    //                                    e.g. for "Country" "has a" "Human Development Index"
-    //                                         the reverse would be "Human Development Index" "is used for" "Country"
-    public ?string $rev_plural = '';   // the reverse name for many words
-    public ?string $frm_name = '';     // short name of the verb for the use in formulas
-    //                                    because there both sides are combined
-    public ?string $description = '';  // for the mouse over explain
-    public int $usage = 0;             // how often this current used has used the verb
-    //                                    (until now just the usage of all users)
+    private ?user $usr = null;          // used only to allow adding the code id on import
+    //                                     but there should not be any user specific verbs
+    //                                     otherwise if id is 0 (not NULL) the standard word link type,
+    //                                     otherwise the user specific verb
+    public ?string $plural = null;      // name used if more than one word is shown
+    //                                     e.g. instead of "ABB" "is a" "company"
+    //                                          use "ABB", Nestlé" "are" "companies"
+    public ?string $reverse = null;     // name used if displayed the other way round
+    //                                     e.g. for "Country" "has a" "Human Development Index"
+    //                                          the reverse would be "Human Development Index" "is used for" "Country"
+    public ?string $rev_plural = null;  // the reverse name for many words
+    public ?string $frm_name = null;    // short name of the verb for the use in formulas
+    //                                     because there both sides are combined
+    public ?string $description = null; // for the mouse over explain
+    public int $usage = 0;              // how often this current used has used the verb
+    //                                     (until now just the usage of all users)
 
 
     /*
      * construct and map
      */
 
-    function __construct(int $id = 0, string $name = '', string $code_id = '')
+    function __construct(int $id = 0, string $name = '', ?string $code_id = null)
     {
         parent::__construct($code_id);
         if ($id > 0) {
@@ -804,10 +804,10 @@ class verb extends type_object
     {
         log_debug('verb->log_add ' . $this->dsp_id());
         $log = new change($this->usr);
-        $log->action = change_action::ADD;
+        $log->set_action(change_action::ADD);
         $log->set_table(change_table_list::VERB);
         $log->set_field(self::FLD_NAME);
-        $log->old_value = '';
+        $log->old_value = null;
         $log->new_value = $this->name;
         $log->row_id = 0;
         $log->add();
@@ -820,7 +820,7 @@ class verb extends type_object
     {
         log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $log = new change($this->usr);
-        $log->action = change_action::UPDATE;
+        $log->set_action(change_action::UPDATE);
         $log->set_table(change_table_list::VERB);
 
         return $log;
@@ -831,11 +831,11 @@ class verb extends type_object
     {
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $log = new change($this->usr);
-        $log->action = change_action::DELETE;
+        $log->set_action(change_action::DELETE);
         $log->set_table(change_table_list::VERB);
         $log->set_field(self::FLD_NAME);
         $log->old_value = $this->name;
-        $log->new_value = '';
+        $log->new_value = null;
         $log->row_id = $this->id;
         $log->add();
 
@@ -855,7 +855,7 @@ class verb extends type_object
         }
         if ($log->add()) {
             if ($this->can_change()) {
-                $db_con->set_class(sql_db::TBL_VERB);
+                $db_con->set_class(verb::class);
                 if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
                     $result .= 'updating ' . $log->field() . ' to ' . $new_value . ' for verb ' . $this->dsp_id() . ' failed';
                 }
@@ -871,7 +871,7 @@ class verb extends type_object
     private function save_field_code_id(sql_db $db_con, $db_rec): string
     {
         $result = '';
-        if ($db_rec->name <> $this->code_id) {
+        if ($db_rec->code_id <> $this->code_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->code_id;
             $log->new_value = $this->code_id;
@@ -968,7 +968,7 @@ class verb extends type_object
     private function save_field_formula_name(sql_db $db_con, $db_rec): string
     {
         $result = '';
-        if ($db_rec->description <> $this->frm_name) {
+        if ($db_rec->frm_name <> $this->frm_name) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->frm_name;
             $log->new_value = $this->frm_name;
@@ -1059,7 +1059,7 @@ class verb extends type_object
         $log = $this->log_add();
         if ($log->id() > 0) {
             // insert the new verb
-            $db_con->set_class(sql_db::TBL_VERB);
+            $db_con->set_class(verb::class);
             $this->id = $db_con->insert_old(self::FLD_NAME, $this->name);
             if ($this->id > 0) {
                 // update the id in the log
@@ -1122,7 +1122,7 @@ class verb extends type_object
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->user()->id());
-        $db_con->set_class(sql_db::TBL_VERB);
+        $db_con->set_class(verb::class);
 
         // check if a new verb is supposed to be added
         if ($this->id <= 0) {
@@ -1215,7 +1215,7 @@ class verb extends type_object
                 $log = $this->log_del();
                 if ($log->id() > 0) {
                     $db_con->usr_id = $this->user()->id();
-                    $db_con->set_class(sql_db::TBL_VERB);
+                    $db_con->set_class(verb::class);
                     $result = $db_con->delete_old(self::FLD_ID, $this->id);
                 }
             } else {

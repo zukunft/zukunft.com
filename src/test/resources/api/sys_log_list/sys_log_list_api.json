@@ -1,0 +1,18 @@
+{
+  "pod": "zukunft.com",
+  "type": "sys_log",
+  "user_id": 4,
+  "user": "zukunft.com system test",
+  "version": "0.0.3",
+  "sys_log": [
+    {
+      "id": 1,
+      "user": "zukunft.com system",
+      "text": "'base setup'",
+      "trace": "'import_base_config'",
+      "prg_part": "import_base_config",
+      "owner": "",
+      "status": "new"
+    }
+  ]
+}

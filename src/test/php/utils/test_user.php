@@ -36,9 +36,9 @@
 
 use cfg\user;
 use html\user\user as user_dsp;
-use test\test_cleanup;
+use test\all_tests;
 
-function run_user_test(test_cleanup $t): void
+function run_user_test(all_tests $t): void
 {
 
     global $usr;

@@ -35,22 +35,48 @@ include_once DB_PATH . 'sql_db.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 include_once MODEL_DB_PATH . 'sql_field_type.php';
 include_once MODEL_DB_PATH . 'sql_field_default.php';
+include_once MODEL_DB_PATH . 'sql_where_type.php';
+include_once MODEL_DB_PATH . 'sql_where.php';
+include_once MODEL_DB_PATH . 'sql_where_list.php';
 include_once MODEL_DB_PATH . 'sql_pg.php';
 
 use cfg\component\component_link;
+use cfg\db_object_seq_id;
 use cfg\element;
 use cfg\formula_link;
 use cfg\group\group;
 use cfg\group\group_id;
-use cfg\library;
+use cfg\ip_range;
+use cfg\ip_range_list;
+use cfg\job;
+use cfg\log\change;
+use cfg\log\change_action;
+use cfg\log\change_values_big;
+use cfg\log\change_link;
+use cfg\log\change_values_norm;
+use cfg\log\change_values_prime;
+use cfg\log\change_table;
+use cfg\log\changes_big;
+use cfg\log\changes_norm;
 use cfg\ref;
 use cfg\result\result;
 use cfg\sandbox;
+use cfg\sandbox_link;
+use cfg\sandbox_link_typed;
+use cfg\sandbox_named;
+use cfg\sandbox_value;
+use cfg\sys_log;
 use cfg\triple;
 use cfg\user;
+use cfg\user\user_profile;
+use cfg\user\user_type;
+use cfg\user_official_type;
 use cfg\value\value;
+use cfg\value\value_phrase_link;
 use cfg\value\value_time_series;
 use cfg\view_term_link;
+use DateTime;
+use shared\library;
 
 class sql
 {
@@ -67,7 +93,24 @@ class sql
     const NULL_VALUE = 'NULL';
     const INDEX = 'INDEX';
     const UNIQUE = 'UNIQUE INDEX';  // TODO check if UNIQUE needs to be used for word and triple names
+    const PREPARE = 'PREPARE';
     const CREATE = 'CREATE OR REPLACE';
+    const DROP_MYSQL = 'DROP PROCEDURE IF EXISTS';
+    const FUNCTION = 'FUNCTION';
+    const FUNCTION_MYSQL = 'CREATE PROCEDURE';
+    const FUNCTION_NAME = '$$';
+    const FUNCTION_DECLARE = 'DECLARE';
+    const FUNCTION_BEGIN = 'BEGIN';
+    const FUNCTION_BEGIN_MYSQL = 'BEGIN';
+    const INTO = 'INTO';
+    const FUNCTION_END = 'END $$ LANGUAGE plpgsql';
+    const FUNCTION_END_MYSQL = 'END';
+    const FUNCTION_RETURN_INT = 'RETURNS bigint AS';
+    const FUNCTION_RETURN_INT_MYSQL = '';
+    const FUNCTION_NO_RETURN = 'RETURNS void AS';
+    const FUNCTION_NO_RETURN_MYSQL = '';
+    const RETURNING = 'RETURNING';
+    const RETURN = 'RETURN';
     const VIEW = 'VIEW';
     const AS = 'AS';
     const FROM = 'FROM';
@@ -85,15 +128,42 @@ class sql
     const END = 'END';
     const END_MYSQL = ')';
     const UNION = 'UNION';
+    const IN = 'IN';
+    const SEP = ';';
+    const TBL_SEP = '.';
+    const WITH = 'WITH';
+
+    const LAST_ID_MYSQL = 'SELECT LAST_INSERT_ID() AS ';
     const TRUE = '1'; // representing true in the where part for a smallint field
     const FALSE = '0'; // representing true in the where part for a smallint field
     const ID_NULL = 0; // the 'not set' value for an id; could have been null if postgres index would allow it
 
     // sql field names used for several classes
     const FLD_CODE_ID = 'code_id';     // field name for the code link e.g. for words used for the system configuration
+    const FLD_CODE_ID_SQLTYP = sql_field_type::CODE_ID;
     const FLD_VALUE = 'value';         // field name e.g. for the configuration value
     const FLD_TYPE_NAME = 'type_name'; // field name for the user specific name of a type; types are used to assign code to a db row
     const FLD_CONST = 'const'; // for the view creation to indicate that the field name as a const
+
+    // query name extentions to make the quere name unique
+    const NAME_ALL = 'all'; // for queries that should return all rows without paging
+    const NAME_SEP = '_'; // for snake case query and file names
+    const NAME_BY = 'by'; // to seperate the query selection in the query name e.g. for (load) word_by_name
+    const NAME_EXT_USER = '_user';
+    const NAME_EXT_MEDIAN_USER = 'median_user'; // to get the user that is owner of the most often used db row
+    const NAME_EXT_EX_OWNER = 'ex_owner'; // excluding the owner of the loaded db row
+    const NAME_EXT_USER_CONFIG = 'usr_cfg';
+
+    // for sql functions that do the change log and the actual change with on function
+    const FLD_LOG_FIELD_PREFIX = 'field_id_'; // added to the field name to include the preloaded log field id
+    const FLD_LOG_ID_PREFIX = 'id_'; // added to the field name to include the actual id changed in the log e.g. for type changes
+    const PAR_PREFIX = '_'; // to seperate the parameter names e.g. _word_id instead of word_id for the given parameter
+    const PAR_PREFIX_MYSQL = '@'; // for the new sequence id using MySQL
+    const PAR_NEW_ID_PREFIX = 'new_'; // added to the field id name to remember the sequence id
+
+    // query field prefixes to make the field name unique
+    const FROM_FLD_PREFIX = 'from_';
+    const TO_FLD_PREFIX = 'to_';
 
     // enum values used for the table creation
     const fld_type_ = '';
@@ -103,10 +173,19 @@ class sql
 
     // postgres parameter types for prepared queries
     const PG_PAR_INT = 'bigint';
+    const PG_PAR_LIST = '[]';
     const PG_PAR_INT_SMALL = 'smallint';
+    const PG_PAR_TEXT = 'text';
+    const PG_PAR_FLOAT = 'numeric';
 
     // placeholder for the class name in table or field comments
     const COMMENT_CLASS_NAME = '-=class=-';
+
+    // internal const for unit testing
+    const FILE_INSERT = 'insert'; // for insert (or create in curl notation) unit test files
+    const FILE_UPDATE = 'update'; // for update unit test files
+    const FILE_DELETE = 'delete'; // for delete (or remove in curl notation) unit test files
+    const FILE_LOAD = 'load'; // for load unit test files
 
     // classes where the table that do not have a name
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
@@ -118,14 +197,20 @@ class sql
         result::class,
         element::class,
         component_link::class,
-        sql_db::TBL_VALUE_PHRASE_LINK,
+        value_phrase_link::class,
         view_term_link::class,
         ref::class,
-        sql_db::TBL_IP,
-        sql_db::TBL_CHANGE,
-        sql_db::TBL_CHANGE_LINK,
-        sql_db::TBL_SYS_LOG,
-        sql_db::TBL_TASK,
+        ip_range::class,
+        ip_range_list::class,
+        change::class,
+        changes_norm::class,
+        changes_big::class,
+        change_values_prime::class,
+        change_values_norm::class,
+        change_values_big::class,
+        change_link::class,
+        sys_log::class,
+        job::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
     // classes where the tables have no auto increase id
@@ -144,6 +229,11 @@ class sql
     private const FLD_POS_COMMENT = 5;
     private const FLD_POS_NAME_LINK = 6;
 
+    // positions in the field, value and type array
+    private const FVT_FLD = 0;
+    private const FVT_VAL = 1;
+    private const FVT_TYP = 2;
+
     // parameters for the sql creation that are set step by step with the functions of the sql creator
     private ?int $usr_id;           // the user id of the person who request the database changes
     private ?int $usr_view_id;      // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
@@ -153,7 +243,9 @@ class sql
     private ?string $query_name;    // unique name of the query to precompile and use the query
     private bool $usr_query;        // true, if the query is expected to retrieve user specific data
     private bool $grp_query;        // true, if the query should calculate the value for a group of database rows; cannot be combined with other query types
+    // TODO replace by a sc_par_lst
     private bool $sub_query;        // true, if the query is a sub query for another query
+    private bool $list_query;       // true, if the query is part of a list of queries used for a with statement
     private bool $all_query;        // true, if the query is expected to retrieve the standard and the user specific data
     private string|array|null $id_field;  // primary key field or field list of the table used
     private string|array|null $id_field_dummy;  // an empty primary key field for a union query
@@ -162,9 +254,8 @@ class sql
     private ?string $id_from_field; // only for link objects the id field of the source object
     private ?string $id_to_field;   // only for link objects the id field of the destination object
     private ?string $id_link_field; // only for link objects the id field of the link type object
-    private ?array $par_fields;     // list of field names to create the sql where statement
-    private ?array $par_values;     // list of the parameter value to make sure they are in the same order as the parameter
-    private ?array $par_types;      // list of the parameter types, which also defines a precompiled query
+    private ?sql_field_list $par_lst; // the list of parameter fields with values and types for the call of the complete sql statement
+    private ?sql_where_list $par_where; // list of where parameters for one sql statement part e.g
 
     private ?array $par_use_link;   // array of bool, true if the parameter should be used on the linked table
     private array $par_named;       // array of bool, true if the parameter placeholder is already used in the SQL statement
@@ -281,6 +372,7 @@ class sql
         $this->usr_query = false;
         $this->grp_query = false;
         $this->sub_query = false;
+        $this->list_query = false;
         $this->all_query = false;
         $this->id_field = '';
         $this->id_field_dummy = '';
@@ -289,9 +381,8 @@ class sql
         $this->id_from_field = '';
         $this->id_to_field = '';
         $this->id_link_field = '';
-        $this->par_fields = [];
-        $this->par_values = [];
-        $this->par_types = [];
+        $this->par_lst = new sql_field_list();
+        $this->par_where = new sql_where_list();
         $this->par_use_link = [];
         $this->par_named = [];
         $this->par_name = [];
@@ -442,9 +533,37 @@ class sql
         }
     }
 
+    /**
+     * set the complete par list e.g. for unition queries to get the parameters from the previous union part
+     * @param sql_field_list $fvt_lst list of parameters already set
+     * @return void
+     */
+    function set_par_list(sql_field_list $fvt_lst): void
+    {
+        $this->par_lst = $fvt_lst;
+    }
+
+    function par_list(): sql_field_list
+    {
+        return $this->par_lst;
+    }
+
     function par_values(): array
     {
-        return $this->par_values;
+        return $this->par_lst->values();
+    }
+
+    /**
+     * get the preloaded table id for change log entries
+     *
+     * @param string $class the class name including the namespace
+     * @return int the database id of the table selected by the given class
+     */
+    function table_id(string $class): int
+    {
+        $lib = new library();
+        global $change_table_list;
+        return $change_table_list->id($this->get_table_name($class));
     }
 
 
@@ -453,17 +572,30 @@ class sql
      */
 
     /**
+     * create a sql parameter object with presets based on the class and a sql type list
+     *
+     * @param string $class the class name to which the sql statements should be created
+     * @param sql_type_list $sc_par_lst list of sql types to specify which kind of sql statement should be created
+     * @return sql_par set of sql parameters with some presets
+     */
+    function sql_par(string $class, sql_type_list $sc_par_lst): sql_par
+    {
+        $this->set_class($class, new sql_type_list([]));
+        return new sql_par($class, $sc_par_lst);
+    }
+
+    /**
      * define the table that should be used for the next select, insert, update or delete statement
      * resets all previous db query settings such as fields, user_fields, so this should be the first statement when defining a database query
-     * TODO check that this is always called directly before the query is created, so that
+     * TODO check that this is always called directly before the query is created, so that no old parameters are used
      * TODO check if this is called with the class name and if there are exceptions
      *
      * @param string $class is a string that is used to select the table name, the id field and the name field
-     * @param bool $usr_table if it is true the user table instead of the standard table is used
-     * @param string $ext the table name extension e.g. to switch between standard and prime values
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param string $ext the table name extension that is not implied in the $sc_par_lst e.g. to switch between standard and prime values
      * @return bool true if setting the type was successful
      */
-    function set_class(string $class, bool $usr_table = false, string $ext = ''): bool
+    function set_class(string $class, sql_type_list $sc_par_lst = new sql_type_list([]), string $ext = ''): bool
     {
         global $usr;
 
@@ -478,7 +610,7 @@ class sql
                 $this->set_usr($usr->id()); // by default use the session user id
             }
         }
-        $this->set_table($usr_table, $ext);
+        $this->set_table($sc_par_lst, $ext);
         $this->set_id_field();
         return true;
     }
@@ -562,9 +694,9 @@ class sql
 
     /**
      * define a field that is taken from a complex sub query that is not yet created
-     * @param string $fld_name the field names from the sub query that should be included in the main query
      * @param string $sql the sql of the sub query
-     * @param string $link_field the field that should be used to link the queries
+     * @param array $join_field_lst the field names from the sub query that should be included in the main query
+     * @param string $join_field the field that should be used to link the queries
      * @return void
      */
     function set_join_sql(string $sql, array $join_field_lst, string $join_field): void
@@ -834,77 +966,145 @@ class sql
      */
 
     /**
+     * set the where condition based on a field. value and type list
+     *
+     * @param sql_par_field_list $fvt_lst list with the ids for the where condition
+     * @return void
+     */
+    function add_where_fvt(sql_par_field_list $fvt_lst): void
+    {
+        foreach ($fvt_lst->lst as $fvt) {
+            $this->add_where($fvt->name, $fvt->value, $fvt->type, '', $fvt->par_name);
+        }
+    }
+
+    /**
      * add a where condition a list of id are one field or another
      * e.g. used to select both sides of a phrase tree
      * TODO move the table prefix to a separate parameter
      *
      * @param string $fld the field name used in the sql where statement
-     * @param int|string|array $fld_val with the database id that should be selected
+     * @param int|string|array|null $fld_val with the database id that should be selected
      * @param sql_par_type|null $spt to force using a non-standard parameter type e.g. OR instead of AND
+     * @param string|null $tbl the table name or letter if not the standard table
      * @param string $name the unique name of the parameter to force to use the same parameter more than once
      * @return void
      */
     function add_where(
-        string            $fld,
-        int|string|array  $fld_val,
-        sql_par_type|null $spt = null,
-        string            $name = ''
+        string                $fld,
+        int|string|array|null $fld_val,
+        sql_par_type|null     $spt = null,
+        string|null           $tbl = null,
+        string                $name = '',
+        int                   $offset = 0
     ): void
     {
-        $this->add_field($fld);
-
         // set the default parameter type for the sql parameter type (spt)
         if ($spt == null) {
             $spt = $this->get_sql_par_type($fld_val);
         }
 
-        // format the values if needed
-        if ($spt == sql_par_type::INT_LIST
-            or $spt == sql_par_type::INT_LIST_OR) {
-            $this->add_par($spt, $this->int_array_to_sql_string($fld_val));
-        } elseif ($spt == sql_par_type::TEXT_LIST) {
-            $this->add_par($spt, $this->str_array_to_sql_string($fld_val));
-        } elseif ($spt == sql_par_type::INT
-            or $spt == sql_par_type::INT_SMALL
-            or $spt == sql_par_type::INT_HIGHER
-            or $spt == sql_par_type::INT_LOWER
-            or $spt == sql_par_type::INT_OR
-            or $spt == sql_par_type::INT_NOT
-            or $spt == sql_par_type::INT_NOT_OR_NULL
-            or $spt == sql_par_type::LIMIT
-            or $spt == sql_par_type::OFFSET) {
-            $this->add_par($spt, $fld_val);
-        } elseif ($spt == sql_par_type::INT_SAME
-            or $spt == sql_par_type::INT_SAME_OR) {
-            $this->add_par($spt, $fld_val, false, false, $name);
-        } elseif ($spt == sql_par_type::TEXT
-            or $spt == sql_par_type::TEXT_USR
-            or $spt == sql_par_type::TEXT_OR
-            or $spt == sql_par_type::INT_SUB
-            or $spt == sql_par_type::INT_SUB_IN) {
-            $this->add_par($spt, $fld_val);
-        } elseif ($spt == sql_par_type::CONST
-            or $spt == sql_par_type::CONST_NOT
-            or $spt == sql_par_type::CONST_NOT_IN) {
-            $this->add_par($spt, $fld_val);
-            log_debug('For SQL parameter type const no parameter is needed');
-        } elseif ($spt == sql_par_type::MIN
-            or $spt == sql_par_type::MAX
-            or $spt == sql_par_type::COUNT) {
-            $this->add_par($spt, '');
-            log_debug('For group SQL parameter type and no parameter and value is needed');
-        } elseif ($spt == sql_par_type::IS_NULL) {
-            $this->add_par($spt, '');
-        } elseif ($spt == sql_par_type::NOT_NULL) {
-            $this->add_par($spt, '');
-        } elseif ($spt == sql_par_type::LIKE_R) {
-            $this->add_par($spt, $fld_val . '%', false, false, $name);
-        } elseif ($spt == sql_par_type::LIKE
-            or $spt == sql_par_type::LIKE_OR) {
-            $this->add_par($spt, '%' . $fld_val . '%', false, false, $name);
-        } else {
-            log_err('SQL parameter type ' . $spt->value . ' not expected');
+        // add the parameter for the where selection list
+        $this->add_where_par($fld, $fld_val, $spt, $tbl, $name, $offset);
+        // add the added parameter to the where list
+        $this->add_where_no_par($tbl, $fld, $spt, $this->get_par_pos());
+    }
+
+    /**
+     * add the parameter for a where condition a list of id are one field or another
+     * e.g. used to select both sides of a phrase tree
+     * TODO move the table prefix to a separate parameter
+     *
+     * @param string $fld the field name used in the sql where statement
+     * @param int|string|array|null $fld_val with the database id that should be selected
+     * @param sql_par_type|null $spt to force using a non-standard parameter type e.g. OR instead of AND
+     * @param string|null $tbl the table name or letter if not the standard table
+     * @param string $name the unique name of the parameter to force to use the same parameter more than once
+     * @return void
+     */
+    function add_where_par(
+        string                $fld,
+        int|string|array|null $fld_val,
+        sql_par_type|null     $spt = null,
+        string|null           $tbl = null,
+        string                $name = '',
+        int                   $offset = 0
+    ): void
+    {
+
+        // if the parameter has already been used
+        if ($name == '') {
+            if ($this->par_lst->has($fld)) {
+                $name = $this->par_name($this->par_lst->pos($fld));
+            } else {
+                $pos = $this->par_lst->count() + 1 + $offset;
+                $name = $this->par_name($pos);
+            }
         }
+        // add a null parameter e.g. for the value or result group id
+        if ($fld_val === null) {
+            if ($spt === null) {
+                log_err('value and type missing in add_where');
+            } else {
+                $this->add_par($spt, 0, $name);
+            }
+        } else {
+
+            // format the values if needed
+            if ($spt == sql_par_type::INT_LIST
+                or $spt == sql_par_type::INT_LIST_OR) {
+                $this->add_par($spt, $this->int_array_to_sql_string($fld_val), $name);
+            } elseif ($spt == sql_par_type::TEXT_LIST) {
+                $this->add_par($spt, $this->str_array_to_sql_string($fld_val), $name);
+            } elseif ($spt == sql_par_type::INT
+                or $spt == sql_par_type::INT_SMALL
+                or $spt == sql_par_type::INT_HIGHER
+                or $spt == sql_par_type::INT_LOWER
+                or $spt == sql_par_type::INT_OR
+                or $spt == sql_par_type::INT_NOT
+                or $spt == sql_par_type::INT_NOT_OR_NULL
+                or $spt == sql_par_type::LIMIT
+                or $spt == sql_par_type::OFFSET) {
+                $this->add_par($spt, $fld_val, $name);
+            } elseif ($spt == sql_par_type::INT_SAME
+                or $spt == sql_par_type::INT_SAME_OR) {
+                $this->add_par($spt, $fld_val, $name);
+            } elseif ($spt->is_text()) {
+                $this->add_par($spt, $fld_val, $name);
+            } elseif ($spt == sql_par_type::CONST
+                or $spt == sql_par_type::CONST_NOT
+                or $spt == sql_par_type::CONST_NOT_IN) {
+                $this->add_par($spt, $fld_val, $name);
+                log_debug('For SQL parameter type const no parameter is needed');
+            } elseif ($spt == sql_par_type::MIN
+                or $spt == sql_par_type::MAX
+                or $spt == sql_par_type::COUNT) {
+                $this->add_par($spt, '', $name);
+                log_debug('For group SQL parameter type and no parameter and value is needed');
+            } elseif ($spt == sql_par_type::IS_NULL) {
+                $this->add_par($spt, '', $name);
+            } elseif ($spt == sql_par_type::NOT_NULL) {
+                $this->add_par($spt, '', $name);
+            } elseif ($spt == sql_par_type::LIKE_R) {
+                $this->add_par($spt, $fld_val . '%', $name);
+            } elseif ($spt == sql_par_type::LIKE
+                or $spt == sql_par_type::LIKE_OR) {
+                $this->add_par($spt, '%' . $fld_val . '%', $name);
+            } else {
+                log_err('SQL parameter type ' . $spt->value . ' not expected');
+            }
+        }
+    }
+
+    function add_where_no_par(?string $tbl, string $fld, sql_par_type $spt, int $pos): void
+    {
+        // add the parameter to the where list
+        $pwh = new sql_where();
+        $pwh->tbl = $tbl;
+        $pwh->fld = $fld;
+        $pwh->typ = $spt;
+        $pwh->pos = $pos;
+        $this->par_where->add($pwh);
     }
 
 
@@ -918,7 +1118,7 @@ class sql
      *
      * @param int $par_offset in case of a sub query the number of parameter set until here of the main query
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
-     * @param bool $prepare can be set to false the create sql parts of a union query
+     * @param bool $prepare can be set to false the created sql parts of a union query
      * @return string the created SQL statement in the previous set dialect
      */
     function sql(int $par_offset = 0, bool $has_id = true, bool $prepare = true): string
@@ -955,13 +1155,26 @@ class sql
     /**
      * create the sql statement to add a row to the database
      * TODO add fields types for inserting prime values to change the id to smallint
+     * TODO check if log_err is always set correctly
      *
-     * @param array $fields with the fields names to add
-     * @param array $values with the field values to add
-     * @param bool $log_err false if
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types to add
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param bool $log_err false if called from a log function to prevent loops
+     * @param string $val_tbl name of the table to select the values to insert
+     * @param string $chg_add_fld the field name of the field that should be added (only used for change log)
+     * @param string $chg_row_fld the row name of the field that should be added (only used for change log)
      * @return string the prepared sql insert statement
      */
-    function sql_insert(array $fields, array $values, bool $log_err = true): string
+    function create_sql_insert(
+        sql_par_field_list $fvt_lst,
+        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        bool               $log_err = true,
+        string             $val_tbl = '',
+        string             $chg_add_fld = '',
+        string             $chg_row_fld = '',
+        string             $new_id_fld = '',
+        string             $par_name_in = ''
+    ): string
     {
         $lib = new library();
 
@@ -969,89 +1182,220 @@ class sql
         if ($this->query_name == '') {
             log_err('SQL statement is not yet named');
         }
-        $sql_fld = '';
-        $sql_val = '';
-        if (count($fields) <> count($values)) {
-            if ($log_err) {
-                log_fatal_db(
-                    'SQL insert call with different number of fields (' . $lib->dsp_count($fields)
-                    . ': ' . $lib->dsp_array($fields) . ') and values (' . $lib->dsp_count($values)
-                    . ': ' . $lib->dsp_array($values) . ').', "user_log->add");
-            }
-        } else {
-            // escape the field names if needed
-            foreach (array_keys($fields) as $i) {
-                $fields[$i] = $this->name_sql_esc($fields[$i]);
-            }
-            $sql_fld = $lib->sql_array($fields, ' (', ') ');
 
-            // gat the value parameter types
-            $par_pos = 1;
-            foreach (array_keys($values) as $i) {
-                $this->par_values[] = $values[$i];
-                if ($values[$i] != sql::NOW) {
-                    $this->par_types[] = $this->get_sql_par_type($values[$i]);
-                    $this->par_fields[] = $this->par_name($par_pos);
-                    $par_pos++;
-                } else {
-                    $this->par_fields[] = $values[$i];
-                }
-            }
-            $sql_val = $lib->sql_array($this->par_fields, ' (', ') ');
+        // set the missing parameter from the list
+        if ($sc_par_lst->is_sub_tbl() or $sc_par_lst->is_list_tbl()) {
+            $this->sub_query = true;
         }
+        if ($sc_par_lst->is_list_tbl()) {
+            $this->list_query = true;
+        }
+
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $insert_part = $sc_par_lst->is_insert_part();
+        $update_part = $sc_par_lst->is_update_part();
+        $delete_part = $sc_par_lst->is_delete_part();
+
+        $fld_names = $fvt_lst->names();
+        $fld_names_esc = [];
+        foreach ($fld_names as $fld_name) {
+            $fld_names_esc[] = $this->name_sql_esc($fld_name);
+        }
+        $sql_fld = $lib->sql_array($fld_names_esc, ' (', ') ');
+
+        // get the value parameter types
+        $par_pos = 1;
+        $use_named_par = $sc_par_lst->use_named_par();
+        foreach ($fvt_lst->lst as $fvt) {
+            $par_name = $fvt->name;
+            $par_val = $fvt->value;
+            $par_typ = $fvt->type;
+            // for field not yet split use the id by default
+            if ($fvt->id != null and $fvt->type_id != null) {
+                $par_val = $fvt->id;
+                $par_typ = $fvt->type_id;
+            }
+            $par = $fvt->par_name;
+            if ($fvt->value != sql::NOW) {
+                if ($par_typ == '') {
+                    $par_typ = $this->get_sql_par_type($par_val);
+                }
+                if ($use_named_par) {
+                    // TODO remove these exceptions
+                    if ($par_name == change::FLD_FIELD_ID) {
+                        $par_name = sql::FLD_LOG_FIELD_PREFIX . $chg_add_fld;
+                    }
+                    if ($par_name == change::FLD_OLD_VALUE) {
+                        if ($par_name_in != '') {
+                            $par_name = $par_name_in;
+                        } else {
+                            $par_name = $chg_add_fld;
+                        }
+                        if (!$delete_part) {
+                            $par_name = $par_name . change::FLD_OLD_EXT;
+                        }
+                    }
+                    if ($par_name == change::FLD_NEW_VALUE) {
+                        if ($par_name_in != '') {
+                            $par_name = $par_name_in;
+                        } else {
+                            $par_name = $chg_add_fld;
+                        }
+                    }
+                    if ($par_name == change::FLD_OLD_ID) {
+                        $par_name = $chg_add_fld . change::FLD_OLD_EXT;
+                    }
+                    if ($par_name == change::FLD_ROW_ID
+                        and $val_tbl != ''
+                        and !$sc_par_lst->use_select_for_insert()) {
+                        $par_name = $val_tbl . '.' . $chg_row_fld;
+                    } else {
+                        if ($par_name == change::FLD_ROW_ID
+                            and ($usr_tbl or $insert_part or $update_part or $delete_part)) {
+                            if ($this->db_type == sql_db::MYSQL
+                                and !$usr_tbl
+                                and $insert_part) {
+                                if ($par != '') {
+                                    $par_name = sql::PAR_PREFIX_MYSQL . $par;
+                                } else {
+                                    if ($chg_row_fld == sql::NAME_SEP . group::FLD_ID) {
+                                        $par_name = $chg_row_fld;
+                                    } else {
+                                        $par_name = sql::PAR_PREFIX_MYSQL . $chg_row_fld;
+                                    }
+                                }
+                            } else {
+                                if ($par != '') {
+                                    $par_name = $par;
+                                } else {
+                                    $par_name = $chg_row_fld;
+                                }
+                            }
+                        } else {
+                            if ($par != '' and !$usr_tbl) {
+                                $par_name = $par;
+                            } else {
+                                if (($par_name == change::FLD_OLD_ID or $par_name == change::FLD_NEW_ID) and $par_name != '') {
+                                    $par_name = sql::PAR_PREFIX . $chg_add_fld;
+                                } else {
+                                    if ($par_name == change::FLD_ROW_ID and $sc_par_lst->is_update_part()) {
+                                        $par_name = sql::PAR_PREFIX . $chg_row_fld;
+                                    } else {
+                                        $par_name = sql::PAR_PREFIX . $par_name;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    $par_name = $this->par_name($par_pos);
+                }
+                $this->par_lst->add_field($par_name, $par_val, $par_typ);
+                $par_pos++;
+            } else {
+                $this->par_lst->add_value($par_val);
+            }
+        }
+        $sql_val = $this->par_lst->sql_names();
 
         // create a prepare SQL statement if possible
-        $sql = $this->prepare_this_sql(self::INSERT);
-        $sql .= ' INTO ' . $this->name_sql_esc($this->table);
-        $sql .= $sql_fld;
-        $sql .= ' VALUES ';
-        $sql .= $sql_val;
+        $sql_type = self::INSERT;
+        $sc_par_lst_end = [];
+        if ($sc_par_lst->incl_log()) {
+            $sql_type = self::FUNCTION;
+        }
+        if ($sc_par_lst->incl_log()) {
+            $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst);
+            return $this->end_sql($sql, $sql_type);
+        } else {
+            $sql = $this->prepare_this_sql(self::INSERT);
+            $sql .= ' INTO ' . $this->name_sql_esc($this->table);
+            $sql .= $sql_fld;
+            if ($sc_par_lst->use_select_for_insert() or $val_tbl != '' or $usr_tbl) {
+                $sql .= ' ' . sql::SELECT . ' ';
+                $sql .= $sql_val;
+            } else {
+                $sql .= ' VALUES ';
+                $sql .= '(' . $sql_val . ')';
+            }
+            if ($val_tbl != '') {
+                $sql .= ' ' . sql::FROM . ' ' . $val_tbl;
+                $sql_type = self::FUNCTION;
+            } else {
+                // for log entries and user changes the change id does not need to be returned
+                // to indicate this tell the sql end function that this is a log table
+                if (($this->class == change::class or $this->class == change_link::class)
+                    and $sc_par_lst->use_named_par()) {
+                    $sc_par_lst->add(sql_type::NO_ID_RETURN);
+                }
+            }
+            $sc_par_lst_end = $sc_par_lst;
+        }
 
-        return $this->end_sql($sql, self::INSERT);
+        return $this->end_sql($sql, $sql_type, $sc_par_lst_end, $new_id_fld);
     }
 
-    function sql_update(
-        string|array     $id_field,
-        string|array|int $id,
-        array            $fields,
-        array            $values,
-        bool             $log_err = true): string
+    /**
+     * create the sql statement to update a row to the database
+     * TODO use a sql_par_field for the id_field
+     *
+     * @param string|array $id_field name of the id field (or list of field names)
+     * @param int|string|array $id the unique id of the row that should be updated
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param bool $log_err false if
+     * @param string $val_tbl name of the table to select the values to insert
+     * @param string $chg_row_fld the row name of the field that should be added (only used for change log)
+     * @return string the prepared sql insert statement
+     */
+    function create_sql_update(
+        string|array       $id_field,
+        string|array|int   $id,
+        sql_par_field_list $fvt_lst,
+        array              $types = [],
+        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        bool               $log_err = true,
+        string             $val_tbl = '',
+        string             $chg_row_fld = ''): string
     {
-        $lib = new library();
+
         $id_field_par = '';
-        $offset = 0;
+        $use_named_par = $sc_par_lst->use_named_par();
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
 
         // check if the minimum parameters are set
         if ($this->query_name == '') {
             log_err('SQL statement is not yet named');
         }
-        if (count($fields) <> count($values)) {
-            if ($log_err) {
-                log_fatal_db(
-                    'SQL update call with different number of fields (' . $lib->dsp_count($fields)
-                    . ': ' . $lib->dsp_array($fields) . ') and values (' . $lib->dsp_count($values)
-                    . ': ' . $lib->dsp_array($values) . ').', "user_log->add");
-            }
-        } else {
-            // escape the field names if needed
-            foreach (array_keys($fields) as $i) {
-                if ($values[$i] != sql::NOW) {
-                    $fields[$i] = $this->name_sql_esc($fields[$i]);
-                }
-            }
 
-            // gat the value parameter types
-            $par_pos = 0;
-            foreach (array_keys($values) as $i) {
-                if ($values[$i] != sql::NOW) {
-                    $this->par_types[] = $this->get_sql_par_type($values[$i]);
-                    $this->par_fields[$par_pos] = $this->par_name($par_pos);
-                    $this->par_values[] = $values[$i];
-                    $par_pos++;
-                }
+        // gat the value parameter types
+        $par_pos = 1;
+        foreach ($fvt_lst->lst as $fvt) {
+            $fld = $fvt->name;
+            $val = $fvt->value;
+            if ($fvt->type_id != null) {
+                $typ = $fvt->type_id;
+            } else {
+                $typ = $fvt->type;
             }
-            $offset = $par_pos;
+            if ($val != sql::NOW) {
+                if ($typ != '') {
+                    $par_type = $typ;
+                } else {
+                    $par_type = $this->get_sql_par_type($val);
+                }
+                if ($use_named_par) {
+                    $fld_name = $fld;
+                    $fld_name = '_' . $fld_name;
+                    $par_name = $fld_name;
+                } else {
+                    $par_name = $this->par_name($par_pos);
+                }
+                $this->par_lst->add_field($par_name, $val, $par_type);
+                $par_pos++;
+            }
         }
+        $offset = $par_pos - 1;
 
         // prepare the where class
         // TODO maybe can be removed because done already in the calling function
@@ -1069,110 +1413,1130 @@ class sql
             }
             $sql_where = $this->sql_where($id_field, $id_lst, $offset, $id_field_par);
         } else {
-            $sql_where = $this->sql_where($id_field, $id, $offset, $id_field_par);
+            if ($use_named_par) {
+                if ($sc_par_lst->is_insert()) {
+                    $id_field_used = $this->table . '.' . $id_field;
+                    $sql_where = $this->sql_where($id_field_used, $id, $offset, $id);
+                } else {
+                    if ($usr_tbl) {
+                        $sql_where = $this->sql_where_no_par(
+                            [$id_field, user::FLD_ID],
+                            [$id, '_' . user::FLD_ID], $offset, $id, true);
+
+                    } else {
+                        $sql_where = $this->sql_where($id_field, $id, $offset, $id);
+                    }
+                }
+            } else {
+                $sql_where = $this->sql_where($id_field, $id, $offset, $id_field_par);
+            }
         }
 
         // create a prepare SQL statement if possible
-        $sql = $this->prepare_this_sql(self::UPDATE);
-        $sql .= ' ' . $this->name_sql_esc($this->table);
-        $sql_set = '';
-        $par_pos = 0;
-        foreach (array_keys($fields) as $i) {
-            if ($sql_set == '') {
-                $sql_set .= ' SET ';
-            } else {
-                $sql_set .= ', ';
-            }
-            if ($values[$i] != sql::NOW) {
-                $sql_set .= $fields[$i] . ' = ' . $this->par_fields[$par_pos];
-                $par_pos++;
-            } else {
-                $sql_set .= $fields[$i] . ' = ' . $values[$i];
-            }
+        $sql_type = self::UPDATE;
+        if ($sc_par_lst->incl_log()) {
+            $sql_type = self::FUNCTION;
         }
-        $sql .= $sql_set;
+        if ($sc_par_lst->is_sub_tbl()) {
+            $this->sub_query = true;
+        }
+        if ($sc_par_lst->incl_log()) {
+            $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst);
+        } else {
+            if ($sc_par_lst->is_update_part()) {
+                $sql = sql::UPDATE;
+            } else {
+                $sql = $this->prepare_this_sql($sql_type);
+            }
+            $sql .= ' ' . $this->name_sql_esc($this->table);
+            $sql_set = '';
+            $i = 0;
+            foreach ($fvt_lst->lst as $fvt) {
+                $fld = $fvt->name;
+                $val = $fvt->value;
+                if ($sql_set == '') {
+                    $sql_set .= ' SET ';
+                } else {
+                    $sql_set .= ', ';
+                }
+                if ($val != sql::NOW) {
+                    $sql_set .= $this->name_sql_esc($fld) . ' = ' . $this->name_sql_esc($this->par_lst->name($i));
+                } else {
+                    $sql_set .= $this->name_sql_esc($fld) . ' = ' . $val;
+                    $i--;
+                }
+                $i++;
+            }
+            $sql .= $sql_set;
 
-        $sql .= $sql_where;
+            if ($val_tbl != '') {
+                $sql .= ' ' . sql::FROM . ' ' . $this->name_sql_esc($val_tbl);
+            }
 
-        return $this->end_sql($sql, self::UPDATE);
+            $sql .= $sql_where;
+
+        }
+        return $this->end_sql($sql, $sql_type);
     }
 
     /**
-     * create a sql statement to delete a database row
-     * @param string|array $id_field the id field or id fields of the table from where the row should be deleted
-     * @param string|array $id
-     * @param bool $excluded true if only the excluded user rows should be deleted
-     * @return string
+     * create the sql statement to update a row to the database
+     * using sql_par_field for the id_field
+     *
+     * @param sql_par_field_list $fvt_lst_id name, value and type of the id field (or list of field names)
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param string $val_tbl name of the table to select the values to insert
+     * @return string the prepared sql insert statement
      */
-    function sql_delete(
-        string|array $id_field,
-        string|array $id,
-        bool         $excluded = false): string
+    function create_sql_update_fvt(
+        sql_par_field_list $fvt_lst_id,
+        sql_par_field_list $fvt_lst,
+        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        string             $val_tbl = ''): string
     {
-        $lib = new library();
+
+        $id_field = $fvt_lst_id->names();
+        $id = $fvt_lst_id->values();
+
         $id_field_par = '';
+        $use_named_par = $sc_par_lst->use_named_par();
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
 
         // check if the minimum parameters are set
         if ($this->query_name == '') {
             log_err('SQL statement is not yet named');
         }
 
-        $sql_where = $this->sql_where($id_field, $id);
+        // get the value parameter types
+        $par_pos = 1;
+        foreach ($fvt_lst->lst as $fvt) {
+            $fld = $fvt->name;
+            $val = $fvt->value;
+            if ($fvt->type_id != null) {
+                $typ = $fvt->type_id;
+            } else {
+                $typ = $fvt->type;
+            }
+            if ($val != sql::NOW) {
+                if ($typ != '') {
+                    $par_type = $typ;
+                } else {
+                    $par_type = $this->get_sql_par_type($val);
+                }
+                if ($use_named_par) {
+                    $fld_name = $fld;
+                    $fld_name = sql::PAR_PREFIX . $fld_name;
+                    $par_name = $fld_name;
+                } else {
+                    $par_name = $this->par_name($par_pos);
+                }
+                $this->par_lst->add_field($par_name, $val, $par_type);
+                $par_pos++;
+            }
+        }
+        $offset = $par_pos - 1;
 
-        $sql = $this->prepare_this_sql(self::DELETE);
-        $sql .= ' ' . $this->name_sql_esc($this->table);
-        $sql .= $sql_where;
+        // prepare the where class
+        // TODO maybe can be removed because done already in the calling function
+        if (is_array($id_field)) {
+            if (!is_array($id)) {
+                $grp_id = new group_id();
+                $id_lst = $grp_id->get_array($id, true);
+                foreach ($id_lst as $key => $value) {
+                    if ($value == null) {
+                        $id_lst[$key] = 0;
+                    }
+                }
+            } else {
+                $id_lst = $id;
+            }
 
-        if ($excluded) {
-            $sql .= ' AND ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+            // set missing par names
+            if ($use_named_par) {
+                foreach ($fvt_lst_id->lst as $fvt) {
+                    if ($fvt->par_name == '') {
+                        $fvt->par_name = '_' . $fvt->name;
+                    }
+                }
+            }
+
+            $sql_where = $this->sql_where_fvt($fvt_lst_id, $offset, $id_field_par);
+        } else {
+            $id = $id[0];
+            if ($use_named_par) {
+                if ($sc_par_lst->is_insert()) {
+                    $id_field_used = $this->table . '.' . $id_field;
+                    $sql_where = $this->sql_where($id_field_used, $id, $offset, $id);
+                } else {
+                    if ($usr_tbl) {
+                        $sql_where = $this->sql_where_no_par(
+                            [$id_field, user::FLD_ID],
+                            [$id, '_' . user::FLD_ID], $offset, $id, true);
+
+                    } else {
+                        $sql_where = $this->sql_where($id_field, $id, $offset, $id);
+                    }
+                }
+            } else {
+                $sql_where = $this->sql_where($id_field, $id, $offset, $id_field_par);
+            }
         }
 
-        return $this->end_sql($sql, self::DELETE);
+        // create a prepare SQL statement if possible
+        $sql_type = self::UPDATE;
+        if ($sc_par_lst->incl_log()) {
+            $sql_type = self::FUNCTION;
+        }
+        if ($sc_par_lst->is_sub_tbl()) {
+            $this->sub_query = true;
+        }
+        if ($sc_par_lst->incl_log()) {
+            $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst);
+        } else {
+            if ($sc_par_lst->is_update_part()) {
+                $sql = sql::UPDATE;
+            } else {
+                $sql = $this->prepare_this_sql($sql_type);
+            }
+            $sql .= ' ' . $this->name_sql_esc($this->table);
+            $sql_set = '';
+            $i = 0;
+            foreach ($fvt_lst->lst as $fvt) {
+                $fld = $fvt->name;
+                $val = $fvt->value;
+                if ($sql_set == '') {
+                    $sql_set .= ' SET ';
+                } else {
+                    $sql_set .= ', ';
+                }
+                if ($val != sql::NOW) {
+                    $sql_set .= $this->name_sql_esc($fld) . ' = ' . $this->name_sql_esc($this->par_lst->name($i));
+                    $i++;
+                } else {
+                    $sql_set .= $this->name_sql_esc($fld) . ' = ' . $val;
+                }
+            }
+            $sql .= $sql_set;
+
+            if ($val_tbl != '') {
+                $sql .= ' ' . sql::FROM . ' ' . $this->name_sql_esc($val_tbl);
+            }
+
+            $sql .= $sql_where;
+
+        }
+        return $this->end_sql($sql, $sql_type);
+    }
+
+    /**
+     * @return string that starts a sql function
+     */
+    function sql_func_start(string $fld_new_id, sql_type_list $sc_par_lst): string
+    {
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql = sql::FUNCTION_NAME . ' ';
+            if ($fld_new_id != '' and !$usr_tbl) {
+                $sql .= sql::FUNCTION_DECLARE . ' ' . $fld_new_id . ' ' . sql_field_type::INT->value . '; ';
+            }
+            $sql .= sql::FUNCTION_BEGIN;
+        } else {
+            $sql = sql::FUNCTION_BEGIN_MYSQL;
+        }
+        return $sql;
+    }
+
+    /**
+     * @return string that starts a sql function
+     */
+    function sql_func_end(): string
+    {
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql = ' ' . sql::FUNCTION_END;
+        } else {
+            $sql = ' ' . sql::FUNCTION_END_MYSQL;
+        }
+        return $sql;
+    }
+
+    /**
+     * create the sql function part to log the insert changes
+     * @param string $class the class name of the calling object
+     * @param user $usr the user who has requested the change
+     * @param array $fld_lst list of field names that should be logged (excluding internal field like last_update)
+     * @param sql_par_field_list $fvt_lst fields (with value and type) used for the change (including internal fields)
+     * @param sql_type_list $sc_par_lst
+     * @return sql_par with the sql and the list of parameters actually used
+     */
+    function sql_func_log(
+        string             $class,
+        user               $usr,
+        array              $fld_lst,
+        sql_par_field_list $fvt_lst,
+        sql_type_list      $sc_par_lst
+    ): sql_par
+    {
+        // set some var names to shorten the code lines
+        $id_fld = $this->id_field_name();
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $ext = sql::NAME_SEP . sql::FILE_INSERT;
+        if ($class == value::class) {
+            $id_fld_new = sql::NAME_SEP . $this->id_field_name();
+        } else {
+            $id_fld_new = $this->var_name_new_id($sc_par_lst);
+        }
+
+        // init the result
+        $qp = new sql_par($this::class);
+        $par_lst_out = new sql_par_field_list();
+        $qp->sql = ' ';
+
+        // set the parameters for the log sql statement creation
+        $sc_log = clone $this;
+        $sc_par_lst->add(sql_type::VALUE_SELECT);
+        $sc_par_lst->add(sql_type::SELECT_FOR_INSERT);
+        $sc_par_lst->add(sql_type::INSERT_PART);
+
+        // create the log sql statements for each field
+        foreach ($fld_lst as $fld) {
+            // init the log object
+            $log = new change($usr);
+            $log->set_class($class);
+            $log->set_field($fld);
+            $log->new_value = $fvt_lst->get_value($fld);
+            if ($fvt_lst->get_id($fld) != null) {
+                $log->new_id = $fvt_lst->get_id($fld);
+            }
+            $log->old_value = $fvt_lst->get_old($fld);
+            if ($fvt_lst->get_old_id($fld) != null) {
+                $log->old_id = $fvt_lst->get_old_id($fld);
+            }
+
+            // create the sql for the log entry
+            $qp_log = $log->sql_insert(
+                $sc_log, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_fld_new, $fvt_lst->get_par_name($fld));
+
+            // add the fields used to the list
+            // maybe later get the fields used in the change log sql from the sql
+            $qp->sql .= ' ' . $qp_log->sql;
+            if (!str_ends_with($qp->sql, ';')) {
+                $qp->sql .= '; ';
+            }
+            $par_lst_out->add_field(
+                user::FLD_ID,
+                $fvt_lst->get_value(user::FLD_ID),
+                sql_par_type::INT);
+            $par_lst_out->add_field(
+                change_action::FLD_ID,
+                $fvt_lst->get_value(change_action::FLD_ID),
+                sql_par_type::INT_SMALL);
+            $par_lst_out->add_field(
+                sql::FLD_LOG_FIELD_PREFIX . $fld,
+                $fvt_lst->get_value(sql::FLD_LOG_FIELD_PREFIX . $fld),
+                sql_par_type::INT_SMALL);
+            if ($fvt_lst->get_old($fld) != null) {
+                if ($fvt_lst->get_old_id($fld) != null) {
+                    $par_lst_out->add_field(
+                        $fvt_lst->get_par_name($fld) . change::FLD_OLD_EXT,
+                        $fvt_lst->get_old($fld),
+                        $fvt_lst->get_type($fld));
+                    $par_lst_out->add_field(
+                        $fld . change::FLD_OLD_EXT,
+                        $fvt_lst->get_old_id($fld),
+                        $fvt_lst->get_type_id($fld));
+                } else {
+                    $par_lst_out->add_field(
+                        $fld . change::FLD_OLD_EXT,
+                        $fvt_lst->get_old($fld),
+                        $fvt_lst->get_type($fld));
+                }
+            }
+            if ($fvt_lst->get_id($fld) != null) {
+                $par_lst_out->add_field(
+                    $fvt_lst->get_par_name($fld),
+                    $fvt_lst->get_value($fld),
+                    $fvt_lst->get_type($fld));
+                $par_lst_out->add_field(
+                    $fld,
+                    $fvt_lst->get_id($fld),
+                    $fvt_lst->get_type_id($fld));
+            } else {
+                $par_lst_out->add($fvt_lst->get($fld));
+            }
+            if ($usr_tbl) {
+                $par_lst_out->add($fvt_lst->get($id_fld));
+            }
+        }
+
+        // transfer the fields used to the calling function
+        $qp->par_fld_lst = $par_lst_out;
+
+        return $qp;
+    }
+
+    /**
+     * create the sql function part to log the update changes
+     * @param string $class the class name of the calling object
+     * @param user $usr the user who has requested the change
+     * @param array $fld_lst list of field names that should be logged (excluding internal field like last_update)
+     * @param sql_par_field_list $fvt_lst fields (with value and type) used for the change (including internal fields)
+     * @param sql_type_list $sc_par_lst
+     * @param int $id the id of the
+     * @return sql_par with the sql and the list of parameters actually used
+     */
+    function sql_func_log_update(
+        string             $class,
+        user               $usr,
+        array              $fld_lst,
+        sql_par_field_list $fvt_lst,
+        sql_type_list      $sc_par_lst,
+        int                $id
+    ): sql_par
+    {
+        // set some var names to shorten the code lines
+        $id_fld = $this->id_field_name();
+        $id_val = '_' . $id_fld;
+        $ext = sql::NAME_SEP . sql::FILE_INSERT;
+
+        // init the result
+        $qp = new sql_par($class);
+        $par_lst_out = new sql_par_field_list();
+        $qp->sql = ' ';
+
+        // set the parameters for the log sql statement creation
+        // TODO ??? get the id of the new entry and use it in the log
+        $sc_log = clone $this;
+        $sc_par_lst->add(sql_type::VALUE_SELECT);
+        $sc_par_lst->add(sql_type::SELECT_FOR_INSERT);
+        $sc_par_lst->add(sql_type::UPDATE_PART);
+        $sc_par_lst = $sc_par_lst->remove(sql_type::INSERT_PART);
+
+        // create the log sql statements for each field
+        foreach ($fld_lst as $fld) {
+
+            // create the insert log statement for the field of the loop
+            $log = new change($usr);
+            $log->set_class($class);
+            $log->set_field($fld);
+            $log->old_value = $fvt_lst->get_old($fld);
+            if ($fvt_lst->get_old_id($fld) != null or $fvt_lst->get_id($fld) != null) {
+                $log->old_id = $fvt_lst->get_old_id($fld);
+            }
+            $log->new_value = $fvt_lst->get_value($fld);
+            if ($fvt_lst->get_old_id($fld) != null or $fvt_lst->get_id($fld) != null) {
+                $log->new_id = $fvt_lst->get_id($fld);
+            }
+            // make sure that also overwrites are added to the log
+            if ($log->old_value != null or $log->new_value != null) {
+                if ($log->old_value == null) {
+                    $log->old_value = '';
+                }
+                if ($log->new_value == null) {
+                    $log->new_value = '';
+                }
+            }
+
+            // TODO replace dummy value table with an enum value
+            $qp_log = $log->sql_insert(
+                $sc_log, $sc_par_lst, $ext . '_' . $fld, '', $fld, $id_val, $fvt_lst->get_par_name($fld));
+
+            // TODO get the fields used in the change log sql from the sql
+            $qp->sql .= ' ' . $qp_log->sql . ';';
+
+            // add the user_id if needed
+            $log_usr_id = $fvt_lst->get_value(user::FLD_ID);
+            if ($log_usr_id == null) {
+                $log_usr_id = $usr->id();
+            }
+            $par_lst_out->add_field(
+                user::FLD_ID,
+                $log_usr_id,
+                db_object_seq_id::FLD_ID_SQLTYP);
+
+            // add the change_action_id if needed
+            $par_lst_out->add_field(
+                change_action::FLD_ID,
+                $fvt_lst->get_value(change_action::FLD_ID),
+                sql_par_type::INT_SMALL);
+
+            // add the field_id of the field actually changed if needed
+            $par_lst_out->add_field(
+                sql::FLD_LOG_FIELD_PREFIX . $fld,
+                $fvt_lst->get_value(sql::FLD_LOG_FIELD_PREFIX . $fld),
+                sql_par_type::INT_SMALL);
+
+            // add the db field value of the field actually changed if needed
+            if ($fvt_lst->get_old_id($fld) != null or $fvt_lst->get_id($fld) != null) {
+                $par_lst_out->add_field(
+                    $fvt_lst->get_par_name($fld) . change::FLD_OLD_EXT,
+                    $fvt_lst->get_old($fld),
+                    $fvt_lst->get_type($fld));
+                $par_lst_out->add_field(
+                    $fld . change::FLD_OLD_EXT,
+                    $fvt_lst->get_old_id($fld),
+                    $fvt_lst->get_type_id($fld));
+            } else {
+                $par_lst_out->add_field(
+                    $fld . change::FLD_OLD_EXT,
+                    $fvt_lst->get_old($fld),
+                    $fvt_lst->get_type($fld));
+            }
+
+            // add the field value of the field actually changed if needed
+            if ($fvt_lst->get_old_id($fld) != null or $fvt_lst->get_id($fld) != null) {
+                $par_lst_out->add_field(
+                    $fvt_lst->get_par_name($fld),
+                    $fvt_lst->get_value($fld),
+                    $fvt_lst->get_type($fld));
+                $par_lst_out->add_field(
+                    $fld,
+                    $fvt_lst->get_id($fld),
+                    $fvt_lst->get_type_id($fld));
+            } else {
+                $par_lst_out->add_field(
+                    $fld,
+                    $fvt_lst->get_value($fld),
+                    $fvt_lst->get_type($fld));
+            }
+
+            // add the row id of the standard table for user overwrites
+            $log_id = $fvt_lst->get_value($id_fld);
+            if ($log_id == null) {
+                $log_id = $id;
+            }
+            $par_lst_out->add_field(
+                $id_fld,
+                $log_id,
+                db_object_seq_id::FLD_ID_SQLTYP);
+
+        }
+
+        // transfer the fields used to the calling function
+        $qp->par_fld_lst = $par_lst_out;
+
+        return $qp;
+    }
+
+    /**
+     * create the sql function part to log adding a link
+     * @param sandbox|sandbox_link|sandbox_link_typed $sbx the sandbox object that has been updated by the user
+     * @param sandbox|sandbox_link|sandbox_link_typed $dbo the sandbox object as in db without user updates
+     * @param user $usr
+     * @param sql_par_field_list $fvt_lst
+     * @param sql_type_list $sc_par_lst
+     * @return sql_par
+     */
+    function sql_func_log_link(
+        sandbox|sandbox_link|sandbox_link_typed $sbx,
+        sandbox|sandbox_link|sandbox_link_typed $dbo,
+        user                                    $usr,
+        sql_par_field_list                      $fvt_lst,
+        sql_type_list                           $sc_par_lst
+    ): sql_par
+    {
+        // create the parameter fields for the log entry
+        // TODO remove the double creation of this list in the calling functions
+        $par_lst_out = new sql_par_field_list();
+        $par_lst_out->add_field(
+            user::FLD_ID,
+            $fvt_lst->get_value(user::FLD_ID),
+            sql_par_type::INT);
+        $par_lst_out->add_field(
+            change_action::FLD_ID,
+            $fvt_lst->get_value(change_action::FLD_ID),
+            sql_par_type::INT_SMALL);
+        $par_lst_out->add_field(
+            change_table::FLD_ID,
+            $fvt_lst->get_value(change_table::FLD_ID),
+            sql_par_type::INT_SMALL);
+
+        $log = new change_link($usr);
+        $log->set_class($sbx::class);
+        if ($sc_par_lst->is_update_part() or $sc_par_lst->is_delete_part()) {
+            $log->old_from_id = $dbo->from_id();
+            $log->old_text_from = $dbo->from_name();
+            if ($dbo->is_link_type_obj()) {
+                $log->old_link_id = $dbo->type_id();
+                $log->old_text_link = $dbo->type_name();
+            }
+            if (is_int($dbo->to_id())) {
+                $log->old_to_id = $dbo->to_id();
+                $log->old_text_to = $dbo->to_name();
+            } else {
+                // for external links the id is a string
+                $log->old_text_to = $dbo->to_id();
+            }
+        }
+        if ($sc_par_lst->is_insert_part() or $sc_par_lst->is_update_part()) {
+            $log->new_from_id = $sbx->from_id();
+            $log->new_text_from = $sbx->from_name();
+            if ($sbx->is_link_type_obj()) {
+                $log->new_link_id = $sbx->type_id();
+                $log->new_text_link = $sbx->type_name();
+            }
+            if (is_int($sbx->to_id())) {
+                $log->new_to_id = $sbx->to_id();
+                $log->new_text_to = $sbx->to_name();
+            } else {
+                // for external links the id is a string
+                $log->new_text_to = $sbx->to_id();
+            }
+        }
+
+        // set the parameters for the log sql statement creation
+        $sc_log = clone $this;
+        $sc_par_lst->add(sql_type::VALUE_SELECT);
+        $sc_par_lst->add(sql_type::SELECT_FOR_INSERT);
+        if ($sc_par_lst->is_insert()) {
+            $sc_par_lst->add(sql_type::INSERT_PART);
+        }
+        if ($sc_par_lst->is_delete()) {
+            $sc_par_lst->add(sql_type::DELETE_PART);
+        }
+
+        // create the sql for the log entry
+        $qp = $log->sql_insert_link(
+            $sc_log, $sc_par_lst, $sbx);
+        $qp->par_fld_lst = $par_lst_out;
+
+        return $qp;
+    }
+
+    /**
+     * create the sql function part to log adding a link
+     * @param sandbox|sandbox_link|sandbox_link_typed $sbx the name of the calling class use for the query names
+     * @param user $usr
+     * @param sql_par_field_list $fvt_lst
+     * @param sql_type_list $sc_par_lst
+     * @return sql_par
+     */
+    function sql_func_log_user_link(
+        sandbox|sandbox_link|sandbox_link_typed $sbx,
+        user                                    $usr,
+        sql_par_field_list                      $fvt_lst,
+        sql_type_list                           $sc_par_lst
+    ): sql_par
+    {
+        // set the vars of the log link object
+        $log = new change_link($usr);
+        $log->set_class($sbx::class);
+        $log->old_from_id = $sbx->from_id();
+        $log->new_from_id = 0;
+        $log->old_text_from = $sbx->from_name();
+        $log->new_text_from = '';
+        if ($sbx::class == triple::class) {
+            // triples have a verb as type
+            $log->old_link_id = $sbx->verb_id();
+            $log->new_link_id = 0;
+            $log->old_text_link = $sbx->verb_name();
+            $log->new_text_link = '';
+        } elseif ($sbx->is_link_type_obj()) {
+            // other links can have a type
+            $log->old_link_id = $sbx->type_id();
+            $log->new_link_id = 0;
+            $log->old_text_link = $sbx->type_name();
+            $log->new_text_link = '';
+        }
+        if (is_int($sbx->to_id())) {
+            $log->old_to_id = $sbx->to_id();
+            $log->old_text_to = $sbx->to_name();
+        } else {
+            // for external links the "to_id" is a string
+            $log->old_text_to = $sbx->to_id();
+        }
+        $log->new_to_id = 0;
+        $log->new_text_to = '';
+
+        // set the parameters for the log sql statement creation
+        $sc_log = clone $this;
+        $sc_par_lst->add(sql_type::VALUE_SELECT);
+        $sc_par_lst->add(sql_type::SELECT_FOR_INSERT);
+        $sc_par_lst->add(sql_type::INSERT_PART);
+
+        // create the sql for the log entry
+        $qp = $log->sql_insert_link(
+            $sc_log, $sc_par_lst, $sbx);
+
+        $par_lst_out = new sql_par_field_list();
+        $par_lst_out->add_field(
+            user::FLD_ID,
+            $fvt_lst->get_value(user::FLD_ID),
+            sql_par_type::INT);
+        $par_lst_out->add_field(
+            change_action::FLD_ID,
+            $fvt_lst->get_value(change_action::FLD_ID),
+            sql_par_type::INT_SMALL);
+        $par_lst_out->add_field(
+            change_table::FLD_ID,
+            $fvt_lst->get_value(change_table::FLD_ID),
+            sql_par_type::INT_SMALL);
+        $qp->par_fld_lst = $par_lst_out;
+
+        return $qp;
+    }
+
+    /**
+     * create the sql function part to log adding a link
+     * @param sandbox_value $sbx the name of the calling class use for the query names
+     * @param user $usr the user who has requested the change
+     * @param sql_par_field_list $fvt_lst list of fields, values and types to fill the log entry
+     * @param sql_type_list $sc_par_lst sql parameters e.g. if the prime table should be used
+     * @return sql_par the sql statement with the parameter to add the log entry
+     */
+    function sql_func_log_value(
+        sandbox_value      $sbx,
+        user               $usr,
+        sql_par_field_list $fvt_lst,
+        sql_type_list      $sc_par_lst
+    ): sql_par
+    {
+        // get the change table id
+        global $change_table_list;
+        global $change_field_list;
+        $lib = new library();
+        $table_name = $lib->class_to_table($sbx::class);
+        $table_id = $change_table_list->id($table_name);
+
+        // select which log to use and set the parameters
+        if ($sc_par_lst->is_prime()) {
+            $log = new change_values_prime($usr);
+        } elseif ($sc_par_lst->is_big()) {
+            $log = new change_values_big($usr);
+        } else {
+            $log = new change_values_norm($usr);
+        }
+        $log->set_class($sbx::class);
+        $log->set_field(sandbox_value::FLD_VALUE);
+
+        $log->group_id = $fvt_lst->get_value(group::FLD_ID);
+        $val_old = null;
+        if ($sc_par_lst->is_update()) {
+            $val_old = $fvt_lst->get_old(sandbox_value::FLD_VALUE);
+            $log->old_value = $val_old;
+        }
+        $val_new = $fvt_lst->get_value(sandbox_value::FLD_VALUE);
+        $log->new_value = $val_new;
+
+        // set the parameters for the log sql statement creation
+        $sc_log = clone $this;
+        $sc_par_lst->add(sql_type::VALUE_SELECT);
+        $sc_par_lst->add(sql_type::SELECT_FOR_INSERT);
+        $sc_par_lst->add(sql_type::INSERT_PART);
+
+        // create the sql for the log entry
+        $qp = $log->sql_insert($sc_log, $sc_par_lst, '', '', sandbox_value::FLD_VALUE);
+
+        // fill the parameter list in order of usage in the sql
+        $par_lst_out = new sql_par_field_list();
+        $usr_id = $fvt_lst->get_value(user::FLD_ID);
+        if ($usr_id == null) {
+            $usr_id = $usr->id();
+        }
+        $par_lst_out->add_field(
+            user::FLD_ID,
+            $usr_id,
+            sql_par_type::INT);
+        $par_lst_out->add_field(
+            change_action::FLD_ID,
+            $fvt_lst->get_value(change_action::FLD_ID),
+            sql_par_type::INT_SMALL);
+        $par_lst_out->add_field(
+            sql::FLD_LOG_FIELD_PREFIX . sandbox_value::FLD_VALUE,
+            $change_field_list->id($table_id . sandbox_value::FLD_VALUE),
+            change::FLD_FIELD_ID_SQLTYP
+        );
+        if ($sc_par_lst->is_update()) {
+            $par_lst_out->add_field(
+                sandbox_value::FLD_VALUE . change::FLD_OLD_EXT,
+                $val_old,
+                sql_field_type::NUMERIC_FLOAT
+            );
+        }
+        if (!$sc_par_lst->is_delete()) {
+            $par_lst_out->add_field(
+                sandbox_value::FLD_VALUE,
+                $val_new,
+                sql_field_type::NUMERIC_FLOAT
+            );
+        }
+        if (is_numeric($log->group_id)) {
+            $par_lst_out->add_field(
+                group::FLD_ID,
+                intval($log->group_id),
+                sql_par_type::INT);
+        } else {
+            $par_lst_out->add_field(
+                group::FLD_ID,
+                $log->group_id,
+                sql_par_type::TEXT);
+        }
+        $qp->par_fld_lst = $par_lst_out;
+
+        return $qp;
+    }
+
+    /**
+     * create the call statement for insert and update sql functions
+     *
+     * @param sql_par $qp the query parameter with the name already set
+     * @param string $name the name of the function
+     * @param sql_par_field_list $par_lst_out the list of parameter used for the call
+     * @return sql_par with the call statement set
+     */
+    function sql_call(sql_par $qp, string $name, sql_par_field_list $par_lst_out): sql_par
+    {
+        // create the prepared call sql statement
+        $qp->call_name = $name . '_call';
+        $qp->call_sql = ' ' . sql::PREPARE . ' ' . $qp->call_name;
+        if ($this->db_type == sql_db::POSTGRES) {
+            $qp->call_sql .= ' (' . $par_lst_out->par_types($this) . ') ' . sql::AS . ' ';
+        } else {
+            $qp->call_sql .= ' ' . sql::FROM . " '";
+        }
+        $qp->call_sql .= sql::SELECT . ' ' . $name;
+        $qp->call_sql .= ' (' . $par_lst_out->par_vars($this) . ')';
+        if ($this->db_type == sql_db::POSTGRES) {
+            $qp->call_sql .= ';';
+        } else {
+            $qp->call_sql .= "';";
+        }
+
+        // create a sample call for testing
+        $qp->call = ' ' . sql::SELECT . ' ' . $name . ' (';
+        $call_val_str = $par_lst_out->par_sql($this);
+        $qp->call .= $call_val_str . ');';
+
+        return $qp;
+    }
+
+    /**
+     * create the sql function variable name for the db row id e.g. _word_id
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return string the sql function var name for the row id e.g. _word_id
+     */
+    function var_name_row_id(sql_type_list $sc_par_lst): string
+    {
+        $result = $this->id_field_name();
+        $new_id_fld = $this->var_name_new_id($sc_par_lst);
+        if ($this->db_type == sql_db::POSTGRES) {
+            $result = $new_id_fld;
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            if ($sc_par_lst->is_usr_tbl()) {
+                $result = self::PAR_PREFIX . $this->id_field_name();
+            } else {
+                $result = self::PAR_PREFIX_MYSQL . $new_id_fld;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * create the sql function variable name for the new sequence db row id e.g. new_word_id
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return string the sql function var name for the new sequence db row id e.g. new_word_id
+     */
+    function var_name_new_id(sql_type_list $sc_par_lst): string
+    {
+        $id_field = $this->id_field_name();
+        $result = self::PAR_NEW_ID_PREFIX . $id_field;
+        if ($sc_par_lst->is_usr_tbl()) {
+            $result = self::PAR_PREFIX . $id_field;
+        }
+        return $result;
+    }
+
+    /**
+     * create a sql statement to delete or exclude a database row
+     * @param sql_par_field_list $fvt_lst_id name, value and type of the id field (or list of field names)
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return string
+     */
+    function create_sql_delete_fvt(
+        sql_par_field_list $fvt_lst_id,
+        sql_type_list      $sc_par_lst = new sql_type_list([])
+    ): string
+    {
+
+        $id_fields = $fvt_lst_id->names();
+        $id_field = $id_fields[0];
+
+        // check if the minimum parameters are set
+        if ($this->query_name == '') {
+            log_err('SQL statement is not yet named');
+        }
+
+        if ($sc_par_lst->use_named_par()) {
+            if ($sc_par_lst->is_usr_tbl()) {
+
+                $sql_where = $this->sql_where_no_par(
+                    [$id_field, user::FLD_ID],
+                    ['_' . $id_field, '_' . user::FLD_ID], 0, '_' . $id_field, true);
+            } else {
+                $sql_where = $this->sql_where_fvt($fvt_lst_id);
+            }
+        } else {
+            $sql_where = $this->sql_where_fvt($fvt_lst_id);
+        }
+
+        if ($sc_par_lst->incl_log()) {
+            if ($sc_par_lst->create_function()) {
+                $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst);
+            } else {
+                $sql = sql::DELETE . ' ' . $this->table . ' ';
+                $sql .= $sql_where;
+                if ($sc_par_lst->exclude_sql()) {
+                    $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                }
+            }
+        } else {
+            $sql = $this->prepare_this_sql(self::DELETE);
+            $sql .= ' ' . $this->name_sql_esc($this->table);
+            $sql .= $sql_where;
+
+            if ($sc_par_lst->exclude_sql()) {
+                $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+            }
+        }
+
+        if ($sc_par_lst->create_function()) {
+            return $sql;
+        } else {
+            return $this->end_sql($sql, self::DELETE);
+        }
+    }
+
+    /**
+     * create a sql statement to delete or exclude a database row
+     * @param sql_par_field_list $fvt_lst_id name, value and type of the id field (or list of field names)
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param sql_par_field_list $fvt_lst list of all parameters used for the function with name, value and type
+     * @return string
+     */
+    function create_sql_delete_fvt_new(
+        sql_par_field_list $fvt_lst_id,
+        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        sql_par_field_list $fvt_lst = new sql_par_field_list()
+    ): string
+    {
+        if ($sc_par_lst->create_function()) {
+            $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst, $fvt_lst);
+        } else {
+            $sql = $this->prepare_this_sql(self::DELETE, $sc_par_lst);
+            $sql .= ' ' . $this->name_sql_esc($this->table) . ' ';
+            $sql .= $this->sql_where_fvt($fvt_lst_id);
+            if ($sc_par_lst->exclude_sql()) {
+                $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+            }
+            $sql .= sql::SEP;
+        }
+
+        return $sql;
+    }
+
+    /**
+     * create a sql statement to delete or exclude a database row
+     * TODO deprecate and replace by create_sql_delete_fvt
+     *
+     * @param int|string|array $id_field the id field or id fields of the table from where the row should be deleted
+     * @param int|string|array $id
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return string
+     */
+    function create_sql_delete(
+        int|string|array   $id_field,
+        int|string|array   $id,
+        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        sql_par_field_list $fvt_lst = new sql_par_field_list(),
+    ): string
+    {
+        $excluded = $sc_par_lst->exclude_sql();
+
+        // check if the minimum parameters are set
+        if (!$sc_par_lst->is_sub_tbl()) {
+            if ($this->query_name == '') {
+                log_err('SQL statement is not yet named');
+            }
+        }
+
+        if ($sc_par_lst->use_named_par()) {
+            if ($sc_par_lst->is_usr_tbl_and_select()) {
+                $sql_where = $this->sql_where_no_par(
+                    [$id_field, user::FLD_ID],
+                    ['_' . $id_field, '_' . user::FLD_ID], 0, '_' . $id_field, true);
+            } else {
+                if (is_array($id_field)) {
+                    $sql_where = $this->sql_where_no_par($id_field, $id);
+                } else {
+                    $sql_where = $this->sql_where_no_par($id_field, '_' . $id_field, 0, '_' . $id_field);
+                }
+            }
+        } else {
+            $sql_where = $this->sql_where($id_field, $id);
+        }
+
+        if ($sc_par_lst->incl_log()) {
+            if ($sc_par_lst->create_function()) {
+                $sql = $this->prepare_this_sql(self::FUNCTION, $sc_par_lst, $fvt_lst);
+            } else {
+                $sql = sql::DELETE . ' ' . $this->table . ' ';
+                $sql .= $sql_where;
+                if ($excluded) {
+                    $sql .= ' AND ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                }
+            }
+        } else {
+            $sql = $this->prepare_this_sql(self::DELETE, $sc_par_lst);
+            $sql .= ' ' . $this->name_sql_esc($this->table);
+            $sql .= $sql_where;
+
+            if ($excluded) {
+                $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+            }
+        }
+
+        if ($sc_par_lst->create_function()) {
+            return $sql;
+        } else {
+            return $this->end_sql($sql, self::DELETE);
+        }
     }
 
     /**
      * @param string|array $id_field the id field or id fields of the table from where the row should be deleted
      * @param int|string|array $id
+     * @param int $offset
      * @param string $id_field_par
+     * @param bool $is_named = false true if named parameters are used
      * @return string with the where statement
      */
     private function sql_where(
         string|array     $id_field,
         int|string|array $id,
         int              $offset = 0,
-        string           $id_field_par = ''): string
+        string           $id_field_par = '',
+        bool             $is_named = false
+    ): string
     {
         // gat the value parameter types
         if (is_array($id_field)) {
             foreach ($id as $id_item) {
-                $this->par_types[] = $this->get_sql_par_type($id_item);
-                $this->par_values[] = $id_item;
-                $this->par_fields[] = $this->par_name();
+                $pos = $this->par_lst->count() + 1;
+                $this->par_lst->add_field($this->par_name($pos), $id_item, $this->get_sql_par_type($id_item));
             }
         } else {
-            $this->par_types[] = $this->get_sql_par_type($id);
-            $this->par_values[] = $id;
-            if ($id_field_par == '') {
-                $id_field_par = $this->par_name();
+            if (!in_array($id_field_par, $this->par_lst->names())) {
+                $pos = $this->par_lst->count() + 1;
+                if ($id_field_par == '') {
+                    $id_field_par = $this->par_name($pos);
+                }
+                $this->par_lst->add_field($id_field_par, $id, $this->get_sql_par_type($id));
             }
-            $this->par_fields[] = $id_field_par;
         }
 
         // create a prepare SQL statement if possible
+        return $this->sql_where_no_par($id_field, $id, $offset, $id_field_par, $is_named);
+    }
+
+    /**
+     * @param sql_par_field_list $fvt_lst the id field or id fields of the table from where the row should be deleted
+     * @param int $offset
+     * @param string $id_field_par
+     * @param bool $is_named = false true if named parameters are used
+     * @return string with the where statement
+     */
+    private function sql_where_fvt(
+        sql_par_field_list $fvt_lst,
+        int                $offset = 0,
+        string             $id_field_par = '',
+        bool               $is_named = false
+    ): string
+    {
+        // gat the value parameter types
+        foreach ($fvt_lst->names() as $fld) {
+            $pos = $this->par_lst->count() + 1;
+            if ($fvt_lst->get_par_name($fld) == '') {
+                $par_name = $this->par_name($pos);
+            } else {
+                $par_name = $fvt_lst->get_par_name($fld);
+            }
+            $this->par_lst->add_field($par_name, $fvt_lst->get_value($fld), $fvt_lst->get_type($fld));
+        }
+
+        // create a prepare SQL statement if possible
+        return $this->sql_where_no_par($fvt_lst->names(), $fvt_lst->values(), $offset, $id_field_par, $is_named);
+    }
+
+    /**
+     * create the where part of a sql statement
+     *
+     * @param string|array $id_field the id field or id fields of the table from where the row should be deleted
+     * @param int|string|array $id the id or list of ids to select the row
+     * @param int $offset for the par number e.g. 4 for $4
+     * @param string $id_field_par with the parameter name for a single field e.g. "$4" or "new_word_id"
+     * @param bool $is_named true if named paremeters like "_word_name" should be used
+     * @return string with the where statement
+     */
+    private function sql_where_no_par(
+        string|array     $id_field,
+        int|string|array $id,
+        int              $offset = 0,
+        string           $id_field_par = '',
+        bool             $is_named = false
+    ): string
+    {
         $sql_where = '';
         if (is_array($id_field)) {
             $pos = $offset;
-            foreach ($id_field as $id_fld) {
+            foreach ($id_field as $key => $id_fld) {
                 if ($sql_where != '') {
-                    $sql_where .= ' AND ';
+                    $sql_where .= ' ' . sql::AND . ' ';
                 } else {
-                    $sql_where .= ' WHERE ';
+                    $sql_where .= ' ' . sql::WHERE . ' ';
                 }
-                $sql_where .= $id_fld . ' = ' . $this->par_fields[$pos];
+                if ($is_named) {
+                    $sql_where .= $id_fld . ' = ' . $id[$key];
+                } else {
+                    $sql_where .= $id_fld . ' = ' . $this->par_lst->name($pos);
+                }
                 $pos++;
             }
         } else {
-            $sql_where = ' WHERE ' . $id_field . ' = ' . $id_field_par;
+            $sql_where = ' ' . sql::WHERE . ' ' . $id_field . ' = ' . $id_field_par;
+        }
+        return $sql_where;
+    }
+
+    /**
+     * create the where part of a sql statement
+     *
+     * @param sql_par_field_list $fvt_lst_id list of id fields with the value and type
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param int $offset for the par number e.g. 4 for $4
+     * @return string with the where statement
+     */
+    private function sql_where_fvt_new(
+        sql_par_field_list $fvt_lst_id,
+        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        int                $offset = 0
+    ): string
+    {
+        $sql_where = '';
+        $pos = $offset + 1;
+        foreach ($fvt_lst_id as $fvt) {
+            if ($sql_where != '') {
+                $sql_where .= ' ' . sql::AND . ' ';
+            } else {
+                $sql_where .= ' ' . sql::WHERE . ' ';
+            }
+            if ($sc_par_lst->use_named_par()) {
+                $sql_where .= $fvt->name . ' = ' . $fvt->par_name;
+            } else {
+                $sql_where .= $fvt->name . ' = ' . $this->par_name($pos);
+            }
+            $pos++;
         }
         return $sql_where;
     }
@@ -1185,12 +2549,10 @@ class sql
     function add_usr_grp_field(string $fld_name, sql_par_type $spt): void
     {
         // assuming that the user specific part is selected in the sub query
-        $this->add_field(sql_db::USR_TBL . '.' . user::FLD_ID);
-        $this->add_par(sql_par_type::INT_SUB, $this->usr_id);
+        $this->add_par(sql_par_type::INT_SUB, $this->usr_id, sql_db::USR_TBL . '.' . user::FLD_ID);
 
         $this->grp_field_lst[] = $fld_name;
-        $this->add_field($fld_name);
-        $this->add_par($spt, '');
+        //$this->add_par($spt, '', $fld_name);
         $this->set_grp_query();
     }
 
@@ -1199,14 +2561,9 @@ class sql
      * internal where
      */
 
-    private function add_field(string $fld): void
-    {
-        $this->par_fields[] = $fld;
-    }
-
     private function has_field(string $fld): bool
     {
-        if (in_array($fld, $this->par_fields)) {
+        if (in_array($fld, $this->par_lst->names())) {
             return true;
         } else {
             return false;
@@ -1244,9 +2601,15 @@ class sql
                         $this->join .= $this->usr_view_id;
                     } else {
                         if ($std_fld) {
-                            $this->add_field(sql_db::USR_TBL . '.' . user::FLD_ID);
-                            $this->add_par(sql_par_type::INT, $this->usr_id, false, false, $usr_par);
-                            $this->join_usr_par_name = $this->par_name();
+                            $usr_fld = '';
+                            if ($usr_par == '') {
+                                $usr_par = $this->par_name();
+                                $usr_fld = sql_db::USR_TBL . '.' . user::FLD_ID;
+                            }
+                            $this->join_usr_par_name = $usr_par;
+                            if ($usr_par == '' or !$this->has_field($usr_par)) {
+                                $this->add_par(sql_par_type::INT, $this->usr_id, $usr_fld);
+                            }
                         } else {
                             // TODO make the field pos of the user field more dynamic to cover more cases
                             $this->join_usr_par_name = $this->par_name(1, false);
@@ -1260,10 +2623,10 @@ class sql
     }
 
     /**
-     * @param string|array|float|int|null $fld_val the field value to detect the sql parameter type that should be used
+     * @param string|array|float|int|DateTime|null $fld_val the field value to detect the sql parameter type that should be used
      * @return sql_par_type the prime sql parameter type
      */
-    private function get_sql_par_type(string|array|float|int|null $fld_val): sql_par_type
+    public function get_sql_par_type(string|array|float|int|DateTime|null $fld_val): sql_par_type
     {
         $text_type = sql_par_type::TEXT;
         if ($fld_val == sql::NOW) {
@@ -1281,23 +2644,23 @@ class sql
      * add a parameter for a prepared query
      * @param sql_par_type $par_type the SQL parameter type used e.g. for Postgres as int or text
      * @param string $value the int, float value or text value that is used for the concrete execution of the query
-     * @param bool $named true if the parameter name is already used
-     * @param bool $use_link true if the parameter should be applied on the linked table
-     * @param string $name if set to combine the same parameter
+     * @param string $name the field name as used for the where condition including the table name if needed
      */
     private function add_par(
         sql_par_type $par_type,
         string       $value,
-        bool         $named = false,
-        bool         $use_link = false,
         string       $name = ''
     ): void
     {
-        $this->par_types[] = $par_type;
-        $this->par_values[] = $value;
-        $this->par_named[] = $named;
-        $this->par_use_link[] = $use_link;
-        $this->par_name[] = $name;
+        $this->par_lst->add_field($name, $value, $par_type);
+    }
+
+    /**
+     * @return int with the last add parameter position (count minus 1 because the array starts with zero)
+     */
+    private function get_par_pos(): int
+    {
+        return $this->par_lst->count() - 1;
     }
 
     /**
@@ -1563,7 +2926,7 @@ class sql
                 $result = $this->sep($result);
                 $result .= ' ' . sql_db::ULK_TBL . '.' . $field_esc;
                 // switched off because at the moment only the change sum should be calculated
-            //} elseif ($this->join_sub_query) {
+                //} elseif ($this->join_sub_query) {
                 //$result = $this->sep($result);
                 //$result .= ' ' . sql_db::GRP_TBL . '.' . $field_esc;
             }
@@ -1754,12 +3117,8 @@ class sql
             $sc_sub->set_usr($this->usr_id);
             $sc_sub->set_usr_num_fields($this->grp_field_lst);
             // move parameter to the sub query if possible
-            $i = $par_offset;
-            while ($i < count($this->par_fields)) {
-                $sc_sub->add_where($this->par_fields[$i], $this->par_values[$i], $this->par_types[$i]);
-                $this->move_where_to_sub($i);
-                $i++;
-            }
+            $sc_sub->par_lst = $this->par_lst;
+            $sc_sub->par_where = $this->par_where;
 
             $result = ' FROM ( ' . $sc_sub->sql(0, false) . ' ) AS ' . sql_db::GRP_TBL;
         }
@@ -1833,7 +3192,7 @@ class sql
                         } else {
                             // for MySQL the parameter needs to be repeated
                             if ($this->db_type == sql_db::MYSQL) {
-                                $this->add_par(sql_par_type::INT, $this->usr_id, true);
+                                $this->add_par(sql_par_type::INT, $this->usr_id, '', true);
                             }
                             $this->join .= $this->join_usr_par_name;
                         }
@@ -1873,7 +3232,7 @@ class sql
                     } else {
                         // for MySQL the parameter needs to be repeated
                         if ($this->db_type == sql_db::MYSQL) {
-                            $this->add_par(sql_par_type::INT, $this->usr_id, true);
+                            $this->add_par(sql_par_type::INT, $this->usr_id, '', true);
                         }
                         $this->join .= $this->join_usr_par_name;
                     }
@@ -1912,7 +3271,7 @@ class sql
                     } else {
                         // for MySQL the parameter needs to be repeated
                         if ($this->db_type == sql_db::MYSQL) {
-                            $this->add_par(sql_par_type::INT, $this->usr_id, true);
+                            $this->add_par(sql_par_type::INT, $this->usr_id, '', true);
                         }
                         $this->join .= $this->join_usr_par_name;
                     }
@@ -1951,7 +3310,7 @@ class sql
                     } else {
                         // for MySQL the parameter needs to be repeated
                         if ($this->db_type == sql_db::MYSQL) {
-                            $this->add_par(sql_par_type::INT, $this->usr_id, true);
+                            $this->add_par(sql_par_type::INT, $this->usr_id, '', true);
                         }
                         $this->join .= $this->join_usr_par_name;
                     }
@@ -1983,196 +3342,388 @@ class sql
      */
     private function where(int $par_offset = 0): string
     {
+        if ($this->par_lst->count() > 0) {
+            return $this->where_new($par_offset);
+        } else {
+            return $this->where_old($par_offset);
+        }
+    }
+
+    /**
+     * set the where statement based on the parameter set until now
+     * in case of a sub query the where condition list is resetted, but the parameter list is continued
+     *
+     * @return string the sql where statement
+     */
+    private function where_new(int $par_offset = 0): string
+    {
+        $sql_where = '';
+
+        // reset the number of open brackets
+        $open_or_flf_lst = false;
+
+        // loop over the where fields
+        $pos = 0;
+        foreach ($this->par_where->lst as $key => $where_fld) {
+            $par = $this->par_lst->get($where_fld->pos);
+            $typ = $where_fld->typ;
+
+            // set the closing bracket around a or field list if needed
+            if ($open_or_flf_lst) {
+                if (!$typ->is_or()) {
+                    $sql_where .= ' ) ';
+                    $open_or_flf_lst = false;
+                }
+            }
+
+            // start with the where statement
+            $sql_where = $this->where_start($sql_where, $typ);
+
+            // set the opening bracket around a or field list if needed
+            $is_or = $typ->is_or();
+
+            // check if the next is an or and if yes open the braket now
+            if (!$typ->is_or()) {
+                if (isset($this->par_where->lst[$key + 1])) {
+                    $next_where_fld = $this->par_where->lst[$key + 1];
+                    $is_or = $next_where_fld->typ->is_or();
+                }
+            }
+
+            if ($is_or) {
+                if (!$open_or_flf_lst) {
+                    $sql_where .= ' ( ';
+                    $open_or_flf_lst = true;
+                }
+            }
+
+            // start with the where statement
+            $sql_where .= $this->where_expression($where_fld, $par);
+
+        }
+
+        // close any open brackets
+        if ($open_or_flf_lst) {
+            $sql_where .= ' ) ';
+        }
+
+        return $sql_where;
+    }
+
+    /**
+     * add WHERE to the sql statement (or OR or AND)
+     * @param string $sql_where the sql where statement until now
+     * @param sql_par_type $typ the parameter type
+     * @return string the sql where statement with WHERE
+     */
+    private function where_start(string $sql_where, sql_par_type $typ): string
+    {
+        if (!$typ->is_function() and ($typ != sql_par_type::INT_SUB or $this->sub_query)) {
+            if ($sql_where == '') {
+                $sql_where = ' ' . sql::WHERE . ' ';
+            } else {
+                if ($typ->is_or()) {
+                    $sql_where .= ' ' . sql::OR . ' ';
+                } else {
+                    $sql_where .= ' ' . sql::AND . ' ';
+                }
+            }
+        }
+        return $sql_where;
+    }
+
+    /**
+     * @param sql_where $whp
+     * @param sql_field $par
+     * @return string
+     */
+    private function where_expression(sql_where $whp, sql_field $par): string
+    {
+        $sql_where = '';
+
+        // shorten the var names
+        $tbl = $whp->tbl;
+        $fld = $whp->fld;
+        $typ = $par->type;
+
+        // add the standard table
+        if ($tbl == null) {
+            $tbl = '';
+        }
+        if ($tbl == '' and $this->is_multi_table()) {
+            $tbl = sql_db::STD_TBL . sql::TBL_SEP;
+        } else {
+            // add the sql-table-field-separator to the table name
+            if ($tbl != '' and !str_ends_with($tbl, sql::TBL_SEP)) {
+                $tbl = $tbl . sql::TBL_SEP;
+            }
+        }
+
+        // select by the user specific name
+        if ($typ == sql_par_type::TEXT_USR) {
+            $sql_where .= '(' . sql_db::USR_TBL . '.';
+            $sql_where .= $fld . " = " . $par->name;
+            $sql_where .= ' ' . sql::OR . ' (' . sql_db::STD_TBL . '.';
+            /*
+            if (SQL_DB_TYPE != sql_db::POSTGRES) {
+                $this->add_par(sql_par_type::TEXT, $name);
+            }
+            */
+            $sql_where .= $fld . " = " . $par->name;
+            $sql_where .= ' ' . sql::AND . ' ' . sql_db::USR_TBL . '.';
+            $sql_where .= $fld . " IS NULL))";
+        } else {
+            // add the other fields
+            if ($typ->is_list()) {
+                if ($this->db_type == sql_db::POSTGRES) {
+                    $sql_where .= $tbl . $fld
+                        . ' = ANY (' . $par->name . ')';
+                } else {
+                    $sql_where .= $tbl . $fld
+                        . ' IN (' . $par->name . ')';
+                }
+            } elseif ($typ == sql_par_type::INT_SUB and $this->sub_query) {
+                $sql_where .= $tbl . $fld
+                    . ' = ' . $par->name;
+            } elseif ($typ == sql_par_type::INT_SUB and !$this->sub_query) {
+                //$par_offset--;
+                $sql_where .= ''; // because added with the page statement
+            } elseif ($typ == sql_par_type::INT_SUB_IN) {
+                // $sql_where .= $tbl . $fld . ' IN (' . $this->par_value($i + 1) . ')';
+                $sql_where .= $tbl . $fld . ' IN (' . $par->name . ')';
+            } elseif ($typ == sql_par_type::MIN
+                or $typ == sql_par_type::MAX
+                or $typ == sql_par_type::COUNT
+                or $typ == sql_par_type::LIMIT
+                or $typ == sql_par_type::OFFSET) {
+                // $par_offset--;
+                $sql_where .= ''; // because added with the page statement
+            } elseif ($typ == sql_par_type::LIKE_R
+                or $typ == sql_par_type::LIKE
+                or $typ == sql_par_type::LIKE_OR) {
+                $sql_where .= $tbl . $fld . ' like ' . $par->name;
+            } elseif ($typ == sql_par_type::CONST) {
+                // $par_offset--;
+                $sql_where .= $tbl . $fld . ' = ' . $par->value;
+            } elseif ($typ == sql_par_type::CONST_NOT) {
+                //$par_offset--;
+                $sql_where .= $tbl . $fld . ' <> ' . $par->value;
+            } elseif ($typ == sql_par_type::CONST_NOT_IN) {
+                //$par_offset--;
+                $sql_where .= ' ( ' . $tbl . $fld
+                    . ' NOT IN (' . $par->value . ')'
+                    . ' OR ' . $tbl . $fld . ' IS NULL )';
+            } elseif ($typ == sql_par_type::IS_NULL) {
+                //$par_offset--;
+                $sql_where .= $tbl . $fld . ' IS NULL ';
+            } elseif ($typ == sql_par_type::NOT_NULL) {
+                //$par_offset--;
+                // TODO review table prefix
+                $sql_where .= sql_db::LNK_TBL . '.' . $fld . ' IS NOT NULL ';
+            } elseif ($typ == sql_par_type::INT_NOT) {
+                $sql_where .= $tbl . $fld . ' <> ' . $par->name;
+            } elseif ($typ == sql_par_type::INT_NOT_OR_NULL) {
+                $sql_where .= '( ' . $tbl . $fld . ' <> ' . $par->name
+                    . ' OR ' . $tbl . $fld . ' IS NULL )';
+            } elseif ($typ == sql_par_type::INT_HIGHER) {
+                $sql_where .= $tbl . $fld . ' >= ' . $par->name;
+            } elseif ($typ == sql_par_type::INT_LOWER) {
+                $sql_where .= $tbl . $fld . ' =< ' . $par->name;
+            } elseif ($typ == sql_par_type::INT_SAME
+                or $typ == sql_par_type::INT_SAME_OR) {
+                $sql_where .= $tbl . $fld . ' = ' . $par->name;
+                //$par_offset--;
+            } else {
+                $sql_where .= $tbl . $fld . ' = ' . $par->name;
+            }
+
+            // include rows where code_id is null
+            if ($typ == sql_par_type::TEXT or $typ == sql_par_type::KEY_512) {
+                if ($fld == sql::FLD_CODE_ID) {
+                    if ($this->db_type == sql_db::POSTGRES) {
+                        $sql_where .= ' AND ';
+                        if ($this->usr_query or $this->join <> '') {
+                            $sql_where .= sql_db::STD_TBL . '.';
+                        }
+                        $sql_where .= sql::FLD_CODE_ID . ' IS NOT NULL';
+                    }
+                }
+            }
+        }
+
+        return $sql_where;
+    }
+
+    /**
+     * set the where statement based on the parameter set until now
+     * @param int $par_offset in case of a sub query the number of parameter set until here of the main query
+     * @return string the sql where statement
+     */
+    private function where_old(int $par_offset = 0): string
+    {
 
         $result = '';
         $open_or_flf_lst = false;
         // if nothing is defined assume to load the row by the main if
         if ($result == '') {
-            if (count($this->par_types) > 0) {
-                // consistency check of the parameters set until now
-                if (count($this->par_types) <> count($this->par_named)) {
-                    log_err('Number of parameter types does not match the number of name parameter indicators');
-                }
-                if (count($this->par_types) <> count($this->par_use_link)) {
-                    log_err('Number of parameter types does not match the number of link usage indicators');
-                }
+            if ($this->par_lst->count() > 0) {
                 $i = 0; // the position in the SQL parameter array
                 $used_fields = 0; // the position of the fields used in the where statement
-                foreach ($this->par_types as $par_type) {
+                foreach ($this->par_lst->lst as $par_fld) {
+                    $typ = $par_fld->type;
                     // set the closing bracket around a or field list if needed
                     if ($open_or_flf_lst) {
-                        if (!($par_type == sql_par_type::TEXT_OR
-                            or $par_type == sql_par_type::INT_OR
-                            or $par_type == sql_par_type::INT_LIST_OR)) {
+                        if (!$typ->is_or()) {
                             $result .= ' ) ';
                             $open_or_flf_lst = false;
                         }
                     }
-                    if ($this->par_named[$i] == false) {
-                        // start with the where statement
-                        if ($par_type != sql_par_type::MIN
-                            and $par_type != sql_par_type::MAX
-                            and $par_type != sql_par_type::COUNT
-                            and ($par_type != sql_par_type::INT_SUB or $this->sub_query)
-                            and $par_type != sql_par_type::LIMIT
-                            and $par_type != sql_par_type::OFFSET) {
-                            if ($result == '') {
-                                $result = ' WHERE ';
-                            } else {
-                                if ($par_type == sql_par_type::TEXT_OR
-                                    or $par_type == sql_par_type::INT_OR
-                                    or $par_type == sql_par_type::INT_LIST_OR
-                                    or $par_type == sql_par_type::LIKE_OR
-                                    or $par_type == sql_par_type::INT_SAME_OR) {
-                                    $result .= ' OR ';
-                                } else {
-                                    $result .= ' AND ';
-                                }
-                            }
+                    // start with the where statement
+                    $result = $this->where_start($result, $typ);
+
+                    // set the opening bracket around a or field list if needed
+                    if ($typ->is_or()) {
+                        if (!$open_or_flf_lst) {
+                            $result .= ' ( ';
+                            $open_or_flf_lst = true;
                         }
-
-                        // set the opening bracket around a or field list if needed
-                        if ($par_type == sql_par_type::TEXT_OR
-                            or $par_type == sql_par_type::INT_OR
-                            or $par_type == sql_par_type::INT_LIST_OR) {
-                            if (!$open_or_flf_lst) {
-                                $result .= ' ( ';
-                                $open_or_flf_lst = true;
-                            }
-                        }
-
-                        $par_pos = $i + 1 + $par_offset;
-
-                        // select by the user specific name
-                        if ($par_type == sql_par_type::TEXT_USR) {
-                            $result .= '(' . sql_db::USR_TBL . '.';
-                            $result .= $this->par_fields[$i] . " = " . $this->par_name($par_pos);
-                            $result .= ' OR (' . sql_db::STD_TBL . '.';
-                            /*
-                            if (SQL_DB_TYPE != sql_db::POSTGRES) {
-                                $this->add_par(sql_par_type::TEXT, $name);
-                            }
-                            */
-                            $result .= $this->par_fields[$i] . " = " . $this->par_name($par_pos);
-                            $result .= ' AND ' . sql_db::USR_TBL . '.';
-                            $result .= $this->par_fields[$i] . " IS NULL))";
-                        } else {
-
-                            // set the table prefix
-                            $tbl_id = '';
-                            if ($par_type != sql_par_type::MIN
-                                and $par_type != sql_par_type::MAX
-                                and $par_type != sql_par_type::COUNT
-                                and ($par_type != sql_par_type::INT_SUB or $this->sub_query)
-                                and $par_type != sql_par_type::LIMIT
-                                and $par_type != sql_par_type::OFFSET) {
-                                if ($this->usr_query
-                                    or $this->join <> ''
-                                    or $this->join_type <> ''
-                                    or $this->join2_type <> '') {
-                                    if (!str_contains($this->par_fields[$i], '.')) {
-                                        if ($this->par_use_link[$i]) {
-                                            $tbl_id = sql_db::LNK_TBL . '.';
-                                        } else {
-                                            $tbl_id = sql_db::STD_TBL . '.';
-                                        }
-                                    }
-                                }
-                            }
-
-                            // add the other fields
-                            if ($par_type == sql_par_type::INT_LIST
-                                or $par_type == sql_par_type::INT_LIST_OR
-                                or $par_type == sql_par_type::TEXT_LIST) {
-                                if ($this->db_type == sql_db::POSTGRES) {
-                                    $result .= $tbl_id . $this->par_fields[$i]
-                                        . ' = ANY (' . $this->par_name($par_pos) . ')';
-                                } else {
-                                    $result .= $tbl_id . $this->par_fields[$i]
-                                        . ' IN (' . $this->par_name($par_pos) . ')';
-                                }
-                            } elseif ($par_type == sql_par_type::INT_SUB and $this->sub_query) {
-                                $result .= $tbl_id . $this->par_fields[$i]
-                                    . ' = ' . $this->par_name($par_pos);
-                            } elseif ($par_type == sql_par_type::INT_SUB and !$this->sub_query) {
-                                //$par_offset--;
-                                $result .= ''; // because added with the page statement
-                            } elseif ($par_type == sql_par_type::INT_SUB_IN) {
-                                $result .= $tbl_id . $this->par_fields[$i]
-                                    . ' IN (' . $this->par_value($i + 1) . ')';
-                            } elseif ($par_type == sql_par_type::MIN
-                                or $par_type == sql_par_type::MAX
-                                or $par_type == sql_par_type::COUNT
-                                or $par_type == sql_par_type::LIMIT
-                                or $par_type == sql_par_type::OFFSET) {
-                                $par_offset--;
-                                $result .= ''; // because added with the page statement
-                            } elseif ($par_type == sql_par_type::LIKE_R
-                                or $par_type == sql_par_type::LIKE
-                                or $par_type == sql_par_type::LIKE_OR) {
-                                $result .= $tbl_id . $this->par_fields[$i] . ' like ';
-                                if ($this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
-                                    $result .= $this->par_name[$i];
-                                } else {
-                                    $result .= $this->par_name($par_pos);
-                                }
-                            } elseif ($par_type == sql_par_type::CONST) {
-                                $par_offset--;
-                                $result .= $tbl_id . $this->par_fields[$i] . ' = ' . $this->par_value($i + 1);
-                            } elseif ($par_type == sql_par_type::CONST_NOT) {
-                                $par_offset--;
-                                $result .= $tbl_id . $this->par_fields[$i] . ' <> ' . $this->par_value($i + 1);
-                            } elseif ($par_type == sql_par_type::CONST_NOT_IN) {
-                                $par_offset--;
-                                $result .= ' ( ' . $tbl_id . $this->par_fields[$i]
-                                    . ' NOT IN (' . $this->par_value($i + 1) . ')'
-                                    . ' OR ' . $tbl_id . $this->par_fields[$i] . ' IS NULL )';
-                            } elseif ($par_type == sql_par_type::IS_NULL) {
-                                $par_offset--;
-                                $result .= $tbl_id . $this->par_fields[$i] . ' IS NULL ';
-                            } elseif ($par_type == sql_par_type::NOT_NULL) {
-                                $par_offset--;
-                                // TODO review table prefix
-                                $result .= sql_db::LNK_TBL . '.' . $this->par_fields[$i] . ' IS NOT NULL ';
-                            } elseif ($par_type == sql_par_type::INT_NOT) {
-                                $result .= $tbl_id . $this->par_fields[$i] . ' <> ' . $this->par_name($par_pos);
-                            } elseif ($par_type == sql_par_type::INT_NOT_OR_NULL) {
-                                $result .= '( ' . $tbl_id . $this->par_fields[$i] . ' <> ' . $this->par_name($par_pos)
-                                    . ' OR ' . $tbl_id . $this->par_fields[$i] . ' IS NULL )';
-                            } elseif ($par_type == sql_par_type::INT_HIGHER) {
-                                $result .= $tbl_id . $this->par_fields[$i] . ' >= ' . $this->par_name($par_pos);
-                            } elseif ($par_type == sql_par_type::INT_LOWER) {
-                                $result .= $tbl_id . $this->par_fields[$i] . ' =< ' . $this->par_name($par_pos);
-                            } elseif ($par_type == sql_par_type::INT_SAME
-                                or $par_type == sql_par_type::INT_SAME_OR) {
-                                $result .= $tbl_id . $this->par_fields[$i] . ' = ';
-                                if ($this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
-                                    $result .= $this->par_name[$i];
-                                } else {
-                                    $result .= $this->par_name($par_pos);
-                                }
-                                $par_offset--;
-                            } else {
-                                $result .= $tbl_id . $this->par_fields[$i] . ' = ' . $this->par_name($par_pos);
-                            }
-
-
-                            // include rows where code_id is null
-                            if ($par_type == sql_par_type::TEXT) {
-                                if ($this->par_fields[$i] == sql::FLD_CODE_ID) {
-                                    if ($this->db_type == sql_db::POSTGRES) {
-                                        $result .= ' AND ';
-                                        if ($this->usr_query or $this->join <> '') {
-                                            $result .= sql_db::STD_TBL . '.';
-                                        }
-                                        $result .= sql::FLD_CODE_ID . ' IS NOT NULL';
-                                    }
-                                }
-                            }
-                        }
-
-                        $used_fields++;
                     }
+
+                    $par_pos = $i + 1 + $par_offset;
+
+                    // select by the user specific name
+                    if ($typ == sql_par_type::TEXT_USR) {
+                        $result .= '(' . sql_db::USR_TBL . '.';
+                        $result .= $this->par_lst->name($i) . " = " . $this->par_name($par_pos);
+                        $result .= ' ' . sql::OR . ' (' . sql_db::STD_TBL . '.';
+                        /*
+                        if (SQL_DB_TYPE != sql_db::POSTGRES) {
+                            $this->add_par(sql_par_type::TEXT, $name);
+                        }
+                        */
+                        $result .= $this->par_lst->name($i) . " = " . $this->par_name($par_pos);
+                        $result .= ' ' . sql::AND . ' ' . sql_db::USR_TBL . '.';
+                        $result .= $this->par_lst->name($i) . " IS NULL))";
+                    } else {
+
+                        // set the table prefix
+                        $tbl_id = '';
+                        if ($typ->is_function() and ($typ != sql_par_type::INT_SUB or $this->sub_query)) {
+                            if ($this->usr_query
+                                or $this->join <> ''
+                                or $this->join_type <> ''
+                                or $this->join2_type <> '') {
+                                if (!str_contains($this->par_lst->name($i), '.')) {
+                                    if ($this->par_use_link[$i]) {
+                                        $tbl_id = sql_db::LNK_TBL . '.';
+                                    } else {
+                                        $tbl_id = sql_db::STD_TBL . '.';
+                                    }
+                                }
+                            }
+                        }
+
+                        // add the other fields
+                        if ($typ == sql_par_type::INT_LIST
+                            or $typ == sql_par_type::INT_LIST_OR
+                            or $typ == sql_par_type::TEXT_LIST) {
+                            if ($this->db_type == sql_db::POSTGRES) {
+                                $result .= $tbl_id . $this->par_lst->name($i)
+                                    . ' = ANY (' . $this->par_name($par_pos) . ')';
+                            } else {
+                                $result .= $tbl_id . $this->par_lst->name($i)
+                                    . ' IN (' . $this->par_name($par_pos) . ')';
+                            }
+                        } elseif ($typ == sql_par_type::INT_SUB and $this->sub_query) {
+                            $result .= $tbl_id . $this->par_lst->name($i)
+                                . ' = ' . $this->par_name($par_pos);
+                        } elseif ($typ == sql_par_type::INT_SUB and !$this->sub_query) {
+                            //$par_offset--;
+                            $result .= ''; // because added with the page statement
+                        } elseif ($typ == sql_par_type::INT_SUB_IN) {
+                            $result .= $tbl_id . $this->par_lst->name($i)
+                                . ' IN (' . $this->par_value($i + 1) . ')';
+                        } elseif ($typ == sql_par_type::MIN
+                            or $typ == sql_par_type::MAX
+                            or $typ == sql_par_type::COUNT
+                            or $typ == sql_par_type::LIMIT
+                            or $typ == sql_par_type::OFFSET) {
+                            $par_offset--;
+                            $result .= ''; // because added with the page statement
+                        } elseif ($typ == sql_par_type::LIKE_R
+                            or $typ == sql_par_type::LIKE
+                            or $typ == sql_par_type::LIKE_OR) {
+                            $result .= $tbl_id . $this->par_lst->name($i) . ' like ';
+                            if ($this->par_named[$i]) {
+                                if ($this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
+                                    // if the same parameter is used more than once use the same placeholder again
+                                    // e.g. if phrase_1 = $1 or phrase_2 = $1
+                                    $result .= $this->par_name[$i];
+                                } else {
+                                    $result .= $this->par_name($par_pos);
+                                }
+                            } else {
+                                $result .= $this->par_name($par_pos);
+                            }
+                        } elseif ($typ == sql_par_type::CONST) {
+                            $par_offset--;
+                            $result .= $tbl_id . $this->par_lst->name($i) . ' = ' . $this->par_value($i + 1);
+                        } elseif ($typ == sql_par_type::CONST_NOT) {
+                            $par_offset--;
+                            $result .= $tbl_id . $this->par_lst->name($i) . ' <> ' . $this->par_value($i + 1);
+                        } elseif ($typ == sql_par_type::CONST_NOT_IN) {
+                            $par_offset--;
+                            $result .= ' ( ' . $tbl_id . $this->par_lst->name($i)
+                                . ' NOT IN (' . $this->par_value($i + 1) . ')'
+                                . ' OR ' . $tbl_id . $this->par_lst->name($i) . ' IS NULL )';
+                        } elseif ($typ == sql_par_type::IS_NULL) {
+                            $par_offset--;
+                            $result .= $tbl_id . $this->par_lst->name($i) . ' IS NULL ';
+                        } elseif ($typ == sql_par_type::NOT_NULL) {
+                            $par_offset--;
+                            // TODO review table prefix
+                            $result .= sql_db::LNK_TBL . '.' . $this->par_lst->name($i) . ' IS NOT NULL ';
+                        } elseif ($typ == sql_par_type::INT_NOT) {
+                            $result .= $tbl_id . $this->par_lst->name($i) . ' <> ' . $this->par_name($par_pos);
+                        } elseif ($typ == sql_par_type::INT_NOT_OR_NULL) {
+                            $result .= '( ' . $tbl_id . $this->par_lst->name($i) . ' <> ' . $this->par_name($par_pos)
+                                . ' OR ' . $tbl_id . $this->par_lst->name($i) . ' IS NULL )';
+                        } elseif ($typ == sql_par_type::INT_HIGHER) {
+                            $result .= $tbl_id . $this->par_lst->name($i) . ' >= ' . $this->par_name($par_pos);
+                        } elseif ($typ == sql_par_type::INT_LOWER) {
+                            $result .= $tbl_id . $this->par_lst->name($i) . ' =< ' . $this->par_name($par_pos);
+                        } elseif ($typ == sql_par_type::INT_SAME
+                            or $typ == sql_par_type::INT_SAME_OR) {
+                            $result .= $tbl_id . $this->par_lst->name($i) . ' = ';
+                            if ($this->par_named[$i]) {
+                                if ($this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
+                                    $result .= $this->par_name[$i];
+                                } else {
+                                    $result .= $this->par_name($par_pos);
+                                }
+                            } else {
+                                $result .= $this->par_name($par_pos);
+                            }
+                            $par_offset--;
+                        } else {
+                            $result .= $tbl_id . $this->par_lst->name($i) . ' = ' . $this->par_name($par_pos);
+                        }
+
+
+                        // include rows where code_id is null
+                        if ($typ == sql_par_type::TEXT or $typ == sql_par_type::KEY_512) {
+                            if ($this->par_lst->name($i) == sql::FLD_CODE_ID) {
+                                if ($this->db_type == sql_db::POSTGRES) {
+                                    $result .= ' AND ';
+                                    if ($this->usr_query or $this->join <> '') {
+                                        $result .= sql_db::STD_TBL . '.';
+                                    }
+                                    $result .= sql::FLD_CODE_ID . ' IS NOT NULL';
+                                }
+                            }
+                        }
+                    }
+
                     $i++;
                 }
                 // close any open brackets
@@ -2191,6 +3742,21 @@ class sql
     function get_order(): string
     {
         return $this->order;
+    }
+
+    /**
+     * @return bool true if the query is based on more than one table
+     */
+    private function is_multi_table(): bool
+    {
+        if ($this->usr_query
+            or $this->join <> ''
+            or $this->join_type <> ''
+            or $this->join2_type <> '') {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -2240,10 +3806,8 @@ class sql
             }
         }
         $this->use_page = true;
-        $this->add_field(sql_par_type::LIMIT->value);
-        $this->add_par(sql_par_type::LIMIT, $limit);
-        $this->add_field(sql_par_type::OFFSET->value);
-        $this->add_par(sql_par_type::OFFSET, $offset * $limit);
+        $this->add_par(sql_par_type::LIMIT, $limit, sql_par_type::LIMIT->value);
+        $this->add_par(sql_par_type::OFFSET, $offset * $limit, sql_par_type::OFFSET->value);
     }
 
     /**
@@ -2266,7 +3830,7 @@ class sql
     function par_count(): int
     {
         $result = 0;
-        foreach ($this->par_types as $par_type) {
+        foreach ($this->par_lst->types() as $par_type) {
             if ($par_type != sql_par_type::CONST
                 and $par_type != sql_par_type::CONST_NOT
                 and $par_type != sql_par_type::CONST_NOT_IN
@@ -2291,58 +3855,146 @@ class sql
         if ($this->db_type == sql_db::POSTGRES) {
             $par_types = $this->par_types_to_postgres($par_types);
             if ($this->used_par_types() > 0) {
-                $sql = 'PREPARE ' . $query_name . ' (' . implode(', ', $par_types) . ') AS ' . $sql;
+                $sql = sql::PREPARE . ' ' . $query_name . ' (' . implode(', ', $par_types) . ') AS ' . $sql;
             } else {
-                $sql = 'PREPARE ' . $query_name . ' AS ' . $sql;
+                $sql = sql::PREPARE . ' ' . $query_name . ' AS ' . $sql;
             }
             $sql .= ";";
         } elseif ($this->db_type == sql_db::MYSQL) {
             $sql = "PREPARE " . $query_name . " FROM '" . $sql;
             $sql .= "';";
         } else {
-            log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);
+            log_err(sql::PREPARE . ' SQL not yet defined for SQL dialect ' . $this->db_type);
         }
         return $sql;
     }
 
     /**
+     * create a prepared sql statement based to the already given sql creator parameters
      * @param string $sql_statement_type either SELECT, INSERT, UPDATE or DELETE
      * @return string with the SQL prepare statement for the current query
      */
-    private function prepare_this_sql(string $sql_statement_type = sql::SELECT): string
+    private function prepare_this_sql(
+        string             $sql_statement_type = sql::SELECT,
+        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        sql_par_field_list $fvt_lst = new sql_par_field_list()
+    ): string
     {
         $sql = '';
-        if (count($this->par_types) > 0
-            or $this->join_sub_query
-            or $this->join2_sub_query
-            or $this->join3_sub_query
-            or $this->join4_sub_query) {
-            // used for sub queries
-            if ($this->query_name == '') {
-                $sql = $sql_statement_type;
-            } else {
+        if (!$fvt_lst->is_empty()) {
+            if ($sc_par_lst->create_function()) {
+                $par_string = '(' . $fvt_lst->sql_par_names($this) . ')';
                 if ($this->db_type == sql_db::POSTGRES) {
-                    $par_types = $this->par_types_to_postgres();
-                    if ($this->used_par_types() > 0) {
-                        $sql = 'PREPARE ' . $this->query_name . ' (' . implode(', ', $par_types) . ') AS ' . $sql_statement_type;
+                    $sql = sql::CREATE . ' ' . sql::FUNCTION . ' ' . $this->query_name . ' '
+                        . $par_string . ' ';
+                    if ($sc_par_lst->no_id_return()) {
+                        $sql .= sql::FUNCTION_NO_RETURN;
                     } else {
-                        $sql = 'PREPARE ' . $this->query_name . ' AS ' . $sql_statement_type;
+                        $sql .= sql::FUNCTION_RETURN_INT . ' ';
                     }
-                } elseif ($this->db_type == sql_db::MYSQL) {
-                    $sql = "PREPARE " . $this->query_name . " FROM '" . $sql_statement_type;
-                    $this->end = "';";
                 } else {
-                    log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);
+                    $sql = sql::DROP_MYSQL . ' ' . $this->query_name . '; ';
+                    $sql .= sql::FUNCTION_MYSQL . ' ' . $this->query_name . ' '
+                        . $par_string;
+                    if ($sc_par_lst->no_id_return()) {
+                        $sql .= sql::FUNCTION_NO_RETURN_MYSQL;
+                    } else {
+                        $sql .= sql::FUNCTION_RETURN_INT_MYSQL . ' ';
+                    }
                 }
-            }
-        } else {
-            if ($this->sub_query) {
-                $sql = $sql_statement_type;
             } else {
-                log_err('Query name is given, but parameters types are missing for ' . $this->query_name);
+                log_err('SQL statement creation not yet defined for SQL ' . $sc_par_lst->dsp_id());
+            }
+
+        } else {
+
+            // TODO move this to fvt_lst based
+
+            if ($this->sub_query or $sc_par_lst->is_sub_tbl()) {
+                $sql = $sql_statement_type;
+            } elseif ($this->par_lst->count() > 0
+                or $this->join_sub_query
+                or $this->join2_sub_query
+                or $this->join3_sub_query
+                or $this->join4_sub_query) {
+                // used for sub queries
+                if ($this->query_name == '') {
+                    $sql = $sql_statement_type;
+                } else {
+                    if ($this->db_type == sql_db::POSTGRES) {
+                        if ($this->used_par_types() > 0) {
+                            $par_types = $this->par_types_to_postgres();
+                            if ($sql_statement_type == sql::FUNCTION) {
+                                $par_string = '(' . $this->par_named_types($par_types) . ')';
+                                $sql = sql::CREATE . ' ' . sql::FUNCTION . ' ' . $this->query_name . ' '
+                                    . $par_string . ' ';
+                                if ($sc_par_lst->no_id_return()) {
+                                    $sql .= sql::FUNCTION_NO_RETURN;
+                                } else {
+                                    $sql .= sql::FUNCTION_RETURN_INT;
+                                }
+                            } else {
+                                $par_string = '(' . implode(', ', $par_types) . ')';
+                                $sql = sql::PREPARE . ' ' . $this->query_name . ' '
+                                    . $par_string . ' AS ' . $sql_statement_type;
+                            }
+                        } else {
+                            $sql = sql::PREPARE . ' ' . $this->query_name . ' AS ' . $sql_statement_type;
+                        }
+                    } elseif ($this->db_type == sql_db::MYSQL) {
+                        if ($this->used_par_types() > 0) {
+                            $par_types = $this->par_types_to_postgres();
+                            if ($sql_statement_type == sql::FUNCTION) {
+                                $par_string = '(' . $this->par_named_types($par_types) . ')';
+                                $sql = sql::DROP_MYSQL . ' ' . $this->query_name . '; ';
+                                $sql .= sql::FUNCTION_MYSQL . ' ' . $this->query_name . ' '
+                                    . $par_string . ' ';
+                                if ($sc_par_lst->no_id_return()) {
+                                    $sql .= sql::FUNCTION_NO_RETURN_MYSQL;
+                                } else {
+                                    $sql .= sql::FUNCTION_RETURN_INT_MYSQL;
+                                }
+                                $this->end = ' ';
+                            } else {
+                                $sql = sql::PREPARE . ' ' . $this->query_name . " FROM '" . $sql_statement_type;
+                                $this->end = "';";
+                            }
+                        } else {
+                            $sql = sql::PREPARE . ' ' . $this->query_name . " FROM '" . $sql_statement_type;
+                            $this->end = "';";
+                        }
+                    } else {
+                        log_err('Prepare SQL not yet defined for SQL dialect ' . $this->db_type);
+                    }
+                }
+            } else {
+                log_err('Query is not a sub query, but parameters types are missing for ' . $this->query_name);
             }
         }
+
         return $sql;
+    }
+
+    /**
+     * @return string with the named parameter types for a function, statement or query
+     */
+    private function par_named_types(array $par_types): string
+    {
+        $result = '';
+        if (count($par_types) > $this->par_lst->count()) {
+            $lib = new library();
+            log_err('the number of parameter names ' . $lib->dsp_array($par_types)
+                . ' does not match with the number of parameter types for ' . $this->query_name);
+        } else {
+            foreach ($par_types as $i => $par_type) {
+                if ($result != '') {
+                    $result .= ', ';
+                }
+                $result .= $this->par_lst->name($i);
+                $result .= ' ' . $par_type;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -2753,34 +4405,54 @@ class sql
     }
 
     /**
+     * finish an sql statement
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return string with the SQL closing statement for the current query
      */
-    private function end_sql(string $sql, string $sql_statement_type = sql::SELECT): string
+    private function end_sql(
+        string        $sql,
+        string        $sql_statement_type = sql::SELECT,
+        sql_type_list $sc_par_lst = new sql_type_list([]),
+        string        $new_id_fld = ''
+    ): string
     {
         $lib = new library();
+        $no_id_return = $sc_par_lst->no_id_return();
         if ($sql_statement_type == self::INSERT) {
             if ($this->db_type == sql_db::POSTGRES) {
-                // return the database row id if the value is not a time series number
-                if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
-                    and $this->class != $lib->class_to_name(value::class)
-                    and $this->class != sql_db::TBL_RESULT
-                    and $this->class != sql_db::TBL_LANGUAGE_FORM
-                    and $this->class != sql_db::TBL_USER_OFFICIAL_TYPE
-                    and $this->class != sql_db::TBL_USER_TYPE
-                    and $this->class != sql_db::TBL_USER_PROFILE) {
-                    $sql .= ' RETURNING ';
-                    if (is_array($this->id_field)) {
-                        $sql .= implode(',', $this->id_field);
-                    } else {
+                // return the database row id if the table uses auto id series
+                if (!in_array($this::class, sql_db::DB_TABLE_WITHOUT_AUTO_ID)) {
+                    // for the change log and user specific changes the id of the new change log entry is not needed
+                    // because the id is combination of user_id amd the row_id and both are know already
+                    if (!$no_id_return) {
+                        $sql .= ' ' . sql::RETURNING . ' ';
+                        if (is_array($this->id_field)) {
+                            $sql .= implode(',', $this->id_field);
+                        } else {
+                            $sql .= $this->id_field;
+                        }
+                        if ($new_id_fld != '') {
+                            $sql .= ' ' . sql::INTO . ' ' . $new_id_fld;
+                        }
+                        // TODO check if not the next line needs to be used
+                        // $sql = $sql . " SELECT currval('" . $this->id_field . "_seq'); ";
+                    }
+                }
+            } else {
+                if ($sc_par_lst->use_named_par()) {
+                    if (!$no_id_return) {
+                        $sql .= ' ' . sql::RETURNING . ' ';
                         $sql .= $this->id_field;
                     }
-                    // TODO check if not the next line needs to be used
-                    // $sql = $sql . " SELECT currval('" . $this->id_field . "_seq'); ";
                 }
             }
         }
-        if ($this->end == '') {
-            $this->end = ';';
+        if ($this->end == '' and !$this->list_query) {
+            if ($sql_statement_type == self::FUNCTION) {
+                $this->end = ' ';
+            } else {
+                $this->end = ';';
+            }
         }
         if (!str_ends_with($sql, ";") and $this->query_name != '') {
             $sql .= $this->end;
@@ -2794,31 +4466,29 @@ class sql
     function get_par(): array
     {
         $used_par_values = [];
-        $i = 0; // the position in the SQL parameter array
-        foreach ($this->par_types as $par_type) {
-            if ($par_type != sql_par_type::CONST
-                and $par_type != sql_par_type::CONST_NOT
-                and $par_type != sql_par_type::CONST_NOT_IN
-                and $par_type != sql_par_type::IS_NULL
-                and $par_type != sql_par_type::NOT_NULL
-                and $par_type != sql_par_type::MIN
-                and $par_type != sql_par_type::MAX
-                and $par_type != sql_par_type::COUNT
-                and $par_type != sql_par_type::INT_SUB_IN) {
-                if ($this->par_name[$i] != '' and $this->db_type() != sql_db::MYSQL) {
-                    $used_par_values[$this->par_name[$i]] = $this->par_value($i + 1);;
+        foreach ($this->par_lst->lst as $par_fld) {
+            if ($par_fld->type != sql_par_type::CONST
+                and $par_fld->type != sql_par_type::CONST_NOT
+                and $par_fld->type != sql_par_type::CONST_NOT_IN
+                and $par_fld->type != sql_par_type::IS_NULL
+                and $par_fld->type != sql_par_type::NOT_NULL
+                and $par_fld->type != sql_par_type::MIN
+                and $par_fld->type != sql_par_type::MAX
+                and $par_fld->type != sql_par_type::COUNT
+                and $par_fld->type != sql_par_type::INT_SUB_IN) {
+                if ($par_fld->name != '' and $this->db_type() != sql_db::MYSQL) {
+                    $used_par_values[$par_fld->name] = $par_fld->value;
                 } else {
-                    $used_par_values[] = $this->par_value($i + 1);;
+                    $used_par_values[] = $par_fld->value;
                 }
             }
-            $i++;
         }
         return $used_par_values;
     }
 
     function get_par_types(): array
     {
-        return $this->par_types;
+        return $this->par_lst->types();
     }
 
     /**
@@ -2830,9 +4500,9 @@ class sql
     function move_where_to_sub(int $pos): void
     {
         /*
-        unset($this->par_fields[$pos]);
-        unset($this->par_values[$pos]);
-        unset($this->par_types[$pos]);
+        unset($this->par_lst->name($pos));
+        unset($this->par_lst->value($pos));
+        unset($this->par_lst->type($pos));
         */
     }
 
@@ -2897,13 +4567,9 @@ class sql
                         log_err('Database connection lost', 'insert');
                     }
                 } else {
-                    // return the database row id if the value is not a time series number
-                    if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA
-                        and $this->class != sql_db::TBL_LANGUAGE_FORM
-                        and $this->class != sql_db::TBL_USER_OFFICIAL_TYPE
-                        and $this->class != sql_db::TBL_USER_TYPE
-                        and $this->class != sql_db::TBL_USER_PROFILE) {
-                        $sql = $sql . ' RETURNING ' . $this->id_field . ';';
+                    // return the database row id if the table uses auto id series
+                    if (!in_array($this::class, sql_db::DB_TABLE_WITHOUT_AUTO_ID)) {
+                        $sql .= ' ' . sql::RETURNING . ' ' . $this->id_field . ';';
                     }
 
                     /*
@@ -2930,7 +4596,7 @@ class sql
                                 log_err('Execution of ' . $sql . ' failed due to ' . $sql_error);
                             }
                         } else {
-                            if ($this->class != sql_db::TBL_VALUE_TIME_SERIES_DATA) {
+                            if (!in_array($this->class, sql_db::DB_TABLE_WITHOUT_AUTO_ID)) {
                                 if (is_resource($sql_result) or $sql_result::class == 'PgSql\Result') {
                                     $result = pg_fetch_array($sql_result)[0];
                                 } else {
@@ -3038,14 +4704,14 @@ class sql
     function get_id_field_name(string $class): string
     {
         $lib = new library();
-
         $type = $lib->class_to_name($class);
 
         // exceptions for user overwrite tables
         // but not for the user type table, because this is not part of the sandbox tables
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)
-            and $type != sql_db::TBL_USER_TYPE
-            and $type != sql_db::TBL_USER_PROFILE) {
+            and $class != user_type::class
+            and $class != user_official_type::class
+            and $class != user_profile::class) {
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . sql_db::FLD_EXT_ID;
@@ -3055,6 +4721,21 @@ class sql
         }
         if ($result == 'blocked_ip_id') {
             $result = 'ip_range_id';
+        }
+        if ($result == 'changes_norm_id') {
+            $result = 'change_id';
+        }
+        if ($result == 'changes_big_id') {
+            $result = 'change_id';
+        }
+        if ($result == 'change_values_prime_id') {
+            $result = 'change_id';
+        }
+        if ($result == 'change_values_norm_id') {
+            $result = 'change_id';
+        }
+        if ($result == 'change_values_big_id') {
+            $result = 'change_id';
         }
         return $result;
     }
@@ -3164,19 +4845,26 @@ class sql
 
     /**
      * set the table name and init some related parameters
-     * @param bool $usr_table true if the user sandbox table should be used
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the table name extension e.g. to switch between standard and prime values
      * @return void
      */
-    private function set_table(bool $usr_table = false, string $ext = ''): void
+    private function set_table(sql_type_list $sc_par_lst, string $ext = ''): void
     {
         global $debug;
         $this->table = '';
-        if ($usr_table) {
+
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        if ($ext == '') {
+            $ext = $sc_par_lst->ext_select();
+        }
+        if ($usr_tbl) {
             $this->table = sql_db::USER_PREFIX;
         }
         $this->table .= $this->get_table_name($this->class);
-        $this->table .= $ext;
+        if (!str_ends_with($this->table, $ext)) {
+            $this->table .= $ext;
+        }
         log_debug('to "' . $this->table . '"', $debug - 20);
     }
 
@@ -3211,10 +4899,25 @@ class sql
         if ($result == 'configs') {
             $result = 'config';
         }
+        if ($result == 'changes_norms') {
+            $result = 'changes_norm';
+        }
+        if ($result == 'changes_bigs') {
+            $result = 'changes_big';
+        }
+        if ($result == 'change_values_norms') {
+            $result = 'change_values_norm';
+        }
+        if ($result == 'change_values_primes') {
+            $result = 'change_values_prime';
+        }
+        if ($result == 'change_values_bigs') {
+            $result = 'change_values_big';
+        }
         if ($result == 'sys_log_statuss') {
             $result = 'sys_log_status';
         }
-        if ($result == 'system_logs') {
+        if ($result == 'sys_logs') {
             $result = 'sys_log';
         }
         if ($result == 'sys_logs') {
@@ -3292,6 +4995,9 @@ class sql
         if ($result == 'view_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
+        if ($result == 'view_link_type_name') {
+            $result = sql::FLD_TYPE_NAME;
+        }
         if ($result == 'component_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
@@ -3343,19 +5049,13 @@ class sql
      * get the SQL parameter placeholder in the used SQL dialect
      *
      * @param int $pos to get the placeholder of another position than the last
-     * @param bool $remove_from_list false if the name should not be removed from the list e.g. because offset is used
      * @return string the SQL var name for the latest added query parameter
      */
-    function par_name(int $pos = 0, bool $remove_from_list = true): string
+    function par_name(int $pos = 0): string
     {
         // if the position is not given use the last parameter added
         if ($pos == 0) {
-            $pos = count($this->par_types);
-        }
-
-        // remember that the parameter name has already been used
-        if ($remove_from_list) {
-            $this->par_named[$pos - 1] = true;
+            $pos = $this->par_lst->count() + 1;
         }
 
         // create the parameter placeholder for the SQL dialect
@@ -3378,10 +5078,10 @@ class sql
     {
         // if the position is not given use the last parameter added
         if ($pos == 0) {
-            $pos = count($this->par_types);
+            $pos = $this->par_lst->count();
         }
 
-        $par_values = array_values($this->par_values);
+        $par_values = array_values($this->par_lst->values());
 
         return $par_values[$pos - 1];
     }
@@ -3391,58 +5091,240 @@ class sql
      * TODO move postgres const to a separate class sql_pg
      * @return array with the postgres parameter types
      */
-    private function par_types_to_postgres(array $in_types = []): array
+    public function par_types_to_postgres(array $in_types = []): array
     {
         if ($in_types == []) {
-            $in_types = $this->par_types;
+            $in_types = $this->par_lst->types();
         }
         $result = array();
         foreach ($in_types as $type) {
-            switch ($type) {
-                case sql_par_type::INT_LIST:
-                case sql_par_type::INT_LIST_OR:
-                    $result[] = self::PG_PAR_INT . '[]';
-                    break;
-                case sql_par_type::INT:
-                case sql_par_type::INT_OR:
-                case sql_par_type::INT_HIGHER:
-                case sql_par_type::INT_LOWER:
-                case sql_par_type::INT_NOT:
-                case sql_par_type::INT_NOT_OR_NULL:
-                case sql_par_type::INT_SUB:
-                case sql_par_type::INT_SUB_IN:
-                case sql_par_type::LIMIT:
-                case sql_par_type::OFFSET:
-                    $result[] = self::PG_PAR_INT;
-                    break;
-                case sql_par_type::INT_SMALL:
-                    $result[] = self::PG_PAR_INT_SMALL;
-                    break;
-                case sql_par_type::TEXT_LIST:
-                    $result[] = 'text[]';
-                    break;
-                case sql_par_type::LIKE_R:
-                case sql_par_type::LIKE:
-                case sql_par_type::LIKE_OR:
-                case sql_par_type::TEXT_OR:
-                case sql_par_type::TEXT_USR:
-                    $result[] = 'text';
-                    break;
-                case sql_par_type::CONST:
-                case sql_par_type::CONST_NOT:
-                case sql_par_type::CONST_NOT_IN:
-                case sql_par_type::IS_NULL:
-                case sql_par_type::NOT_NULL:
-                case sql_par_type::MIN:
-                case sql_par_type::MAX:
-                case sql_par_type::COUNT:
-                    break;
-                default:
-                    $result[] = $type->value;
+            $pg_type = $this->par_type_to_postgres($type);
+            // TODO review const excusion
+            if ($pg_type != '') {
+                $result[] = $this->par_type_to_postgres($type);
             }
         }
         return $result;
     }
+
+    /**
+     * convert one internal sql parameter type to a postgres db parameter type
+     * @param sql_par_type|sql_field_type $type the internal type
+     * @return string with the postgres parameter type
+     */
+    function par_type_to_postgres(sql_par_type|sql_field_type $type): string
+    {
+        $result = '';
+        switch ($type) {
+            case sql_par_type::INT_LIST:
+            case sql_par_type::INT_LIST_OR:
+                $result = self::PG_PAR_INT . self::PG_PAR_LIST;
+                break;
+            case sql_par_type::INT:
+            case sql_par_type::INT_OR:
+            case sql_par_type::INT_HIGHER:
+            case sql_par_type::INT_LOWER:
+            case sql_par_type::INT_NOT:
+            case sql_par_type::INT_NOT_OR_NULL:
+            case sql_par_type::INT_SUB:
+            case sql_par_type::INT_SUB_IN:
+            case sql_par_type::LIMIT:
+            case sql_par_type::OFFSET:
+                $result = self::PG_PAR_INT;
+                break;
+            case sql_par_type::INT_SMALL:
+                $result = self::PG_PAR_INT_SMALL;
+                break;
+            case sql_par_type::TEXT_LIST:
+                $result = self::PG_PAR_TEXT . self::PG_PAR_LIST;
+                break;
+            case sql_field_type::NAME:
+            case sql_par_type::LIKE_R:
+            case sql_par_type::LIKE:
+            case sql_par_type::LIKE_OR:
+            case sql_par_type::TEXT_OR:
+            case sql_par_type::TEXT_USR:
+            case sql_par_type::KEY_512:
+                $result = self::PG_PAR_TEXT;
+                break;
+            case sql_par_type::CONST:
+            case sql_par_type::CONST_NOT:
+            case sql_par_type::CONST_NOT_IN:
+            case sql_par_type::IS_NULL:
+            case sql_par_type::NOT_NULL:
+            case sql_par_type::MIN:
+            case sql_par_type::MAX:
+            case sql_par_type::COUNT:
+                break;
+            case sql_field_type::NUMERIC_FLOAT:
+                $result = self::PG_PAR_FLOAT;
+                break;
+            default:
+                $result = $type->value;
+        }
+        return $result;
+    }
+
+    /**
+     * create a SQL select statement for the connected database
+     * to detect if someone else has used the object
+     * if the value can be stored in different tables
+     *
+     * @param int|string $id the unique database id if the object to check
+     * @param int|null $owner_id the user id of the owner of the object
+     * @param string|array $id_field the field name or field list of the prime database key if not standard
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 in the previous set dialect
+     */
+    function load_sql_not_changed_multi(
+        int|string   $id,
+        ?int         $owner_id = 0,
+        string|array $id_field = '',
+        string       $ext = '',
+        sql_type     $tbl_typ = sql_type::MOST
+    ): sql_par
+    {
+        $sc_par_lst = new sql_type_list([]);
+        $sc_par_lst->add($tbl_typ);
+        $qp = new sql_par($this->class, $sc_par_lst);
+        $qp->name .= 'not_changed';
+        if ($owner_id > 0) {
+            $qp->name .= '_not_owned';
+        }
+        $this->set_name($qp->name);
+        $this->set_table($sc_par_lst);
+        $this->set_id_field($id_field);
+        $this->set_fields(array(user::FLD_ID));
+        $pos = $this->par_count();
+        if ($id == 0) {
+            log_err('The id must be set to detect if the link has been changed');
+        } else {
+            // TODO review
+            $sql_mid_where = '';
+            if ($tbl_typ == sql_type::PRIME) {
+                $grp_id = new group_id();
+                $id_lst = $grp_id->get_array($id, true);
+                if (is_array($this->id_field)) {
+                    if (count($id_lst) != count($this->id_field)) {
+                        log_err('the number of id and fields differ');
+                    } else {
+                        $pos = 0;
+                        foreach ($id_lst as $id_item) {
+                            if ($id_item == null) {
+                                // TODO move null to const
+                                $this->add_par(sql_par_type::INT_SMALL, '0');
+                            } else {
+                                $this->add_par(sql_par_type::INT_SMALL, $id_item);
+                            }
+                            if ($sql_mid_where == '') {
+                                $sql_mid_where .= ' ' . sql::WHERE . ' ';
+                            } else {
+                                $sql_mid_where .= ' ' . sql::AND . ' ';
+                            }
+                            $sql_mid_where .= $this->id_field[$pos] . " = " . $this->par_name($pos + 1);
+                            $pos++;
+                        }
+                    }
+                } else {
+                    log_err('the id fields are expected to be an array');
+                }
+            } elseif ($tbl_typ == sql_type::BIG) {
+                $sql_mid_where .= ' ' . sql::WHERE . ' ';
+                $this->add_par(sql_par_type::TEXT, $id);
+            } else {
+                $sql_mid_where .= ' ' . sql::WHERE . ' ';
+                $this->add_par(sql_par_type::INT, $id);
+            }
+            $sql_mid = " " . user::FLD_ID;
+            $sql_mid .= " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table);
+            if (!is_array($this->id_field)) {
+                $pos++;
+                $sql_mid_where .= $this->id_field . " = " . $this->par_name($pos);
+            }
+            $sql_mid .= $sql_mid_where . " AND (excluded <> 1 OR excluded is NULL)";
+            if ($owner_id > 0) {
+                $pos++;
+                $this->add_par(sql_par_type::INT, $owner_id);
+                $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name($pos);
+            }
+            $sql_mid = sql::SELECT . ' ' . $sql_mid;
+            $qp->sql = $this->prepare_sql($sql_mid, $qp->name, $this->get_par_types());
+        }
+        $qp->par = $this->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create a SQL select statement for the connected database
+     * to detect if someone else has used the object
+     * @param int $id the unique database id if the object to check
+     * @param int|null $owner_id the user id of the owner of the object
+     * @param string $id_field the field name of the prime database key if not standard
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     *                 in the previous set dialect
+     */
+    function load_sql_not_changed(int $id, ?int $owner_id = 0, string $id_field = ''): sql_par
+    {
+        $qp = new sql_par($this->class);
+        $qp->name .= 'not_changed';
+        if ($owner_id > 0) {
+            $qp->name .= '_not_owned';
+        }
+        $this->set_name($qp->name);
+        $this->set_usr($this->usr_id);
+        $this->set_id_field($id_field);
+        $this->set_fields(array(user::FLD_ID));
+        if ($id == 0) {
+            log_err('The id must be set to detect if the link has been changed');
+        } else {
+            // TODO use where function
+            $pos = 1;
+            $this->add_par(sql_par_type::INT, $id);
+            $sql_mid = " " . user::FLD_ID .
+                " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table) .
+                " WHERE " . $this->id_field . " = " . $this->par_name($pos) . "
+                 AND (excluded <> 1 OR excluded is NULL)";
+            $pos++;
+            if ($owner_id > 0) {
+                $this->add_par(sql_par_type::INT, $owner_id);
+                $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name($pos);
+                $pos++;
+            }
+            $sql_mid = sql::SELECT . ' ' . $sql_mid;
+            $qp->sql = $this->prepare_sql($sql_mid, $qp->name, $this->get_par_types());
+            $qp->sql = $this->end_sql($qp->sql);
+        }
+        $qp->par = $this->get_par();
+
+        return $qp;
+    }
+
+
+    /**
+     * create a sql statment to delete all rows that have one of the given ids
+     *
+     * @param string $class the class name e.g. element not element_list
+     * @param string $id_field the name of the id fields of the class
+     * @param array $id_lst the list of id that should be deleted
+     * @return sql_par the sql statement to delete the row selected by the id list
+     */
+    function del_sql_list_without_log(string $class, string $id_field, array $id_lst): sql_par
+    {
+        $lib = new library();
+
+        $qp = new sql_par($class, new sql_type_list([sql_type::DELETE]));
+        $this->set_class($class, new sql_type_list([]));
+        $this->add_where($id_field, $id_lst, sql_par_type::INT_LIST);
+        $sql = sql::DELETE . ' ' . $this->name_sql_esc($this->table) . ' ';
+        $sql .= sql::WHERE . ' ' . $id_field . ' ';
+        $sql .= sql::IN . ' (' . $this->par_name(1) . ')';
+        $qp->name .= '_by_ids';
+        $qp->sql = $this->prepare_sql($sql, $qp->name, [sql_par_type::INT_LIST]);
+        $qp->par = [implode(',', $id_lst)];
+        return $qp;
+    }
+
 
 
     /*
@@ -3619,7 +5501,7 @@ class sql
      */
     function is_user(array $tbl_types): bool
     {
-        if (in_array(sql_table_type::USER, $tbl_types)) {
+        if (in_array(sql_type::USER, $tbl_types)) {
             return true;
         } else {
             return false;
@@ -3633,6 +5515,71 @@ class sql
         } else {
             return false;
         }
+    }
+
+    /**
+     * function that can be overwritten by the child object
+     * e.g. if the object name does not match the generated id field name
+     * e.g. to group_id for values and results
+     * @return string|array the field name(s) of the prime database index of the object
+     */
+    function id_field(): string|array
+    {
+        $lib = new library();
+        return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;
+    }
+
+    /**
+     * @return string with the name of the id field
+     */
+    function id_field_name(): string
+    {
+        return $this->id_field;
+    }
+
+
+
+    /*
+     * field, value and sql field type list
+     */
+
+    /**
+     * @param array $fld_val_typ_lst an array with an array of the field name, value and the sql field type
+     * @return array with the sql field names of the given list
+     */
+    function get_fields(array $fld_val_typ_lst): array
+    {
+        $fields = [];
+        foreach ($fld_val_typ_lst as $fld_val) {
+            $fields[] = $fld_val[0];
+        }
+        return $fields;
+    }
+
+    /**
+     * @param array $fld_val_typ_lst an array with an array of the field name, value and the sql field type
+     * @return array with the sql field values of the given list
+     */
+    function get_values(array $fld_val_typ_lst): array
+    {
+        $values = [];
+        foreach ($fld_val_typ_lst as $fld_val) {
+            $values[] = $fld_val[1];
+        }
+        return $values;
+    }
+
+    /**
+     * @param array $fld_val_typ_lst an array with an array of the field name, value and the sql field type
+     * @return array with the sql field types of the given list
+     */
+    function get_types(array $fld_val_typ_lst): array
+    {
+        $types = [];
+        foreach ($fld_val_typ_lst as $fld_val) {
+            $types[] = $fld_val[2];
+        }
+        return $types;
     }
 
 }

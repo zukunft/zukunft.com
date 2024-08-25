@@ -29,12 +29,6 @@
   
 */
 
-use api\formula\figure as figure_api;
-use cfg\value\value;
-use controller\controller;
-use cfg\result\result;
-use cfg\user;
-
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
 $debug = $_GET['debug'] ?? 0;
@@ -49,6 +43,12 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once API_FORMULA_PATH . 'figure.php';
+
+use api\formula\figure as figure_api;
+use cfg\value\value;
+use controller\controller;
+use cfg\result\result;
+use cfg\user;
 
 // open database
 $db_con = prg_start("api/figure", "", false);

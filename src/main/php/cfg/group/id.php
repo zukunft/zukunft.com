@@ -61,11 +61,10 @@ class id
     {
         $bin_key = $this->id_lst_to_bin($id_lst);
         $bin_key = str_pad($bin_key, 64, '0', STR_PAD_LEFT);
-        $result = (int)bindec($bin_key);
-        if ($result > PHP_INT_MAX or $result < PHP_INT_MIN) {
+        if (substr($bin_key, 0, 1) == 1) {
             log_err('Integer size on this system is not the expected 64 bit');
         }
-        return $result;
+        return (int)bindec($bin_key);
     }
 
     /**
@@ -80,9 +79,9 @@ class id
         foreach ($id_lst as $id) {
             $key = str_pad(decbin(abs($id)), 15, '0', STR_PAD_LEFT);
             if ($id < 0) {
-                $key = $key . '1';
+                $key = '1' . $key;
             } else {
-                $key = $key . '0';
+                $key = '0' . $key;
             }
             $keys[] = $key;
         }

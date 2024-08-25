@@ -32,11 +32,6 @@
 
 */
 
-use controller\controller;
-use cfg\user;
-use cfg\phrase_type;
-use api\phrase\phrase_list as phrase_list_api;
-
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
 $debug = $_GET['debug'] ?? 0;
@@ -50,6 +45,11 @@ include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once API_PHRASE_PATH . 'phrase_list.php';
+
+use controller\controller;
+use cfg\user;
+use cfg\phrase_type;
+use api\phrase\phrase_list as phrase_list_api;
 
 // open database
 $db_con = prg_start("api/phraseType", "", false);

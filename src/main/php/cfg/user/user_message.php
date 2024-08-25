@@ -56,6 +56,8 @@ class user_message
     private array $msg_text;
     // the prime database row that has caused the user message
     private int|string $db_row_id;
+    // to trace to progress
+    private string $url;
 
     // a list of solutions suggested by the program
     //private user_actions $actions;
@@ -110,6 +112,20 @@ class user_message
     function set_db_row_id(int|string $id): void
     {
         $this->db_row_id = $id;
+    }
+
+    /**
+     * @param string $url the url used to trace to progress
+     * @return void
+     */
+    function set_url(string $url): void
+    {
+        $this->url = $url;
+    }
+
+    function url(): string
+    {
+        return $this->url;
     }
 
 

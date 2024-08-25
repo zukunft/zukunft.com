@@ -163,38 +163,38 @@ class triple_list extends sandbox_list
         // also load the linked user specific phrase with the same SQL statement (word until now)
         $sc->set_join_fields(
             phrase::FLD_NAMES,
-            sql_db::TBL_PHRASE,
+            phrase::class,
             triple::FLD_FROM,
             phrase::FLD_ID
         );
         $sc->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
-            sql_db::TBL_PHRASE,
+            phrase::class,
             triple::FLD_FROM,
             phrase::FLD_ID
         );
         $sc->set_join_usr_num_fields(
             phrase::FLD_NAMES_NUM_USR,
-            sql_db::TBL_PHRASE,
+            phrase::class,
             triple::FLD_FROM,
             phrase::FLD_ID,
             true
         );
         $sc->set_join_fields(
             phrase::FLD_NAMES,
-            sql_db::TBL_PHRASE,
+            phrase::class,
             triple::FLD_TO,
             phrase::FLD_ID
         );
         $sc->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
-            sql_db::TBL_PHRASE,
+            phrase::class,
             triple::FLD_TO,
             phrase::FLD_ID
         );
         $sc->set_join_usr_num_fields(
             phrase::FLD_NAMES_NUM_USR,
-            sql_db::TBL_PHRASE,
+            phrase::class,
             triple::FLD_TO,
             phrase::FLD_ID,
             true
@@ -342,11 +342,11 @@ class triple_list extends sandbox_list
                         // fill verb
                         $trp->verb = $verbs->get_verb_by_id($db_row[verb::FLD_ID]);
                         // fill from
-                        $trp->fob = new phrase($this->user());
-                        $trp->fob->row_mapper_sandbox($db_row, triple::FLD_FROM, '1');
+                        $trp->set_fob(new phrase($this->user()));
+                        $trp->fob()->row_mapper_sandbox($db_row, triple::FLD_FROM, '1');
                         // fill to
-                        $trp->tob = new phrase($this->user());
-                        $trp->tob->row_mapper_sandbox($db_row, triple::FLD_TO, '2');
+                        $trp->set_tob(new phrase($this->user()));
+                        $trp->tob()->row_mapper_sandbox($db_row, triple::FLD_TO, '2');
                     }
                 }
             }
@@ -592,7 +592,7 @@ class triple_list extends sandbox_list
                     // use the last word as a sample for the new word type
                     $last_linked_word_id = 0;
                     if ($lnk->verb()->id() == $verbs->id(verb::FOLLOW)) {
-                        $last_linked_word_id = $lnk->tob()->id;
+                        $last_linked_word_id = $lnk->to()->id();
                     }
 
                     // in case of the verb "following" continue the series after the last element

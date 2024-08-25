@@ -36,29 +36,30 @@ namespace html\formula;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 
+use api\api;
 use cfg\db\sql_db;
 use cfg\expression;
 use cfg\formula_link_list;
-use cfg\library;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\result\result;
 use cfg\result\result_list;
 use cfg\term_list;
 use controller\controller;
-use api\api;
-use html\api as api_dsp;
+use html\rest_ctrl as api_dsp;
 use html\button;
 use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;
-use html\msg;
+use html\message;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\term as term_dsp;
 use html\result\result as result_dsp;
 use html\sandbox\sandbox_typed;
+use html\system\messages;
 use html\word\word as word_dsp;
+use shared\library;
 
 class formula extends sandbox_typed
 {
@@ -207,7 +208,7 @@ class formula extends sandbox_typed
      */
     function edit_link(?string $back = ''): string
     {
-        $url = $this->obj_url(controller::DSP_FORMULA_EDIT, $back);
+        $url = $this->obj_url(controller::MC_FORMULA_EDIT, $back);
         return (new html_base())->ref($url, $this->name(), $this->name());
     }
 
@@ -218,8 +219,8 @@ class formula extends sandbox_typed
      */
     function btn_add(string $back = ''): string
     {
-        $url = $this->obj_url(controller::DSP_FORMULA_ADD);
-        return (new button($url, $back))->add(msg::FORMULA_ADD, $this->name);
+        $url = $this->obj_url(controller::MC_FORMULA_ADD);
+        return (new button($url, $back))->add(messages::FORMULA_ADD, $this->name);
     }
 
     /**
@@ -229,8 +230,8 @@ class formula extends sandbox_typed
      */
     function btn_edit(string $back = ''): string
     {
-        $url = $this->obj_url(controller::DSP_FORMULA_EDIT);
-        return (new button($url, $back))->edit(msg::FORMULA_EDIT, msg::FOR . $this->name);
+        $url = $this->obj_url(controller::MC_FORMULA_EDIT);
+        return (new button($url, $back))->edit(messages::FORMULA_EDIT, messages::FOR . $this->name);
     }
 
     /**
@@ -240,8 +241,8 @@ class formula extends sandbox_typed
      */
     function btn_del(string $back = ''): string
     {
-        $url = $this->obj_url(controller::DSP_FORMULA_DEL);
-        return (new button($url, $back))->del(msg::FORMULA_DEL, msg::OF . $this->name);
+        $url = $this->obj_url(controller::MC_FORMULA_DEL);
+        return (new button($url, $back))->del(messages::FORMULA_DEL, messages::OF . $this->name);
     }
 
 
@@ -457,9 +458,9 @@ class formula extends sandbox_typed
                     '', $selected) . ' ';
         } else {
             if ($this->id > 0) {
-                $url = $this->obj_url(controller::DSP_FORMULA_ADD);
+                $url = $this->obj_url(controller::MC_FORMULA_ADD);
                 // TODO check if 'add_link=1' is needed
-                $result .= (new button($url, $back))->add(msg::FORMULA_ADD);
+                $result .= (new button($url, $back))->add(messages::FORMULA_ADD);
             }
         }
         $result .= '    </td>';
@@ -473,6 +474,8 @@ class formula extends sandbox_typed
 
     /**
      * HTML code of a phrase selector
+     * TODO move load to calling function
+     *
      * @param string $name the unique name inside the form for this selector
      * @param string $form_name the name of the html form
      * @param string $label the text show to the user
@@ -583,8 +586,8 @@ class formula extends sandbox_typed
     {
         log_debug($phr_id);
         $result = '    <td>' . "\n";
-        $url = \html\api::PATH_FIXED . self::class . api_dsp::UPDATE . api_dsp::EXT . '?id=' . $this->id . '&unlink_phrase=' . $phr_id . '&back=' . $back;
-        $result .= (new button($url, $back))->del(msg::FORMULA_UNLINK);
+        $url = \html\rest_ctrl::PATH_FIXED . self::class . api_dsp::UPDATE . api_dsp::EXT . '?id=' . $this->id . '&unlink_phrase=' . $phr_id . '&back=' . $back;
+        $result .= (new button($url, $back))->del(messages::FORMULA_UNLINK);
         $result .= '    </td>' . "\n";
         return $result;
     }

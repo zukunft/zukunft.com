@@ -43,7 +43,7 @@ include_once WEB_VERB_PATH . 'verb.php';
 use api\api;
 use api\phrase\term as term_api;
 use api\sandbox\combine_object as combine_object_api;
-use html\combine_named_dsp;
+use html\sandbox\combine_named as combine_named_dsp;
 use html\formula\formula as formula_dsp;
 use html\verb\verb as verb_dsp;
 use html\word\word as word_dsp;
@@ -172,6 +172,13 @@ class term extends combine_named_dsp
         }
         if ($this->is_formula()) {
             $vars[api::FLD_USER_TEXT] = $this->obj()->usr_text();
+        }
+        // TODO add exclude field and move to a parent object?
+        if ($this->obj()?->share_id != null) {
+            $vars[api::FLD_SHARE] = $this->obj()?->share_id;
+        }
+        if ($this->obj()?->protection_id != null) {
+            $vars[api::FLD_PROTECTION] = $this->obj()?->protection_id;
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

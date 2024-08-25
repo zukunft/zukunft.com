@@ -36,9 +36,11 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\result\result_list;
 use cfg\value\value_list;
+use shared\library;
 
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
@@ -158,7 +160,7 @@ class sandbox_list extends base_list
     {
         $lib = new library();
 
-        $qp = new sql_par($sbx::class, false, true);
+        $qp = new sql_par($sbx::class, new sql_type_list([sql_type::COMPLETE]));
         $qp->name .= 'names';
 
         //$sc->set_class($lib->class_to_name($sbx::class));
@@ -453,7 +455,7 @@ class sandbox_list extends base_list
     }
 
     /*
-     * sql_table_type_list
+     * sql_type_list
      */
 
     /**
@@ -462,7 +464,7 @@ class sandbox_list extends base_list
      */
     protected function is_std(array $tbl_types): bool
     {
-        if (in_array(sql_table_type::STANDARD, $tbl_types)) {
+        if (in_array(sql_type::STANDARD, $tbl_types)) {
             return true;
         } else {
             return false;
@@ -475,7 +477,7 @@ class sandbox_list extends base_list
      */
     protected function is_prime(array $tbl_types): bool
     {
-        if (in_array(sql_table_type::PRIME, $tbl_types)) {
+        if (in_array(sql_type::PRIME, $tbl_types)) {
             return true;
         } else {
             return false;
@@ -489,7 +491,7 @@ class sandbox_list extends base_list
      */
     protected function is_main(array $tbl_types): bool
     {
-        if (in_array(sql_table_type::MAIN, $tbl_types)) {
+        if (in_array(sql_type::MAIN, $tbl_types)) {
             return true;
         } else {
             return false;
@@ -502,7 +504,7 @@ class sandbox_list extends base_list
      */
     protected function is_big(array $tbl_types): bool
     {
-        if (in_array(sql_table_type::BIG, $tbl_types)) {
+        if (in_array(sql_type::BIG, $tbl_types)) {
             return true;
         } else {
             return false;
@@ -517,16 +519,16 @@ class sandbox_list extends base_list
     {
         $result = '';
         if ($this->is_std($tbl_types)) {
-            $result .= sql_table_type::STANDARD->extension();
+            $result .= sql_type::STANDARD->extension();
         }
         if ($this->is_prime($tbl_types)) {
-            $result .= sql_table_type::PRIME->extension();
+            $result .= sql_type::PRIME->extension();
         }
         if ($this->is_main($tbl_types)) {
-            $result .= sql_table_type::MAIN->extension();
+            $result .= sql_type::MAIN->extension();
         }
         if ($this->is_big($tbl_types)) {
-            $result .= sql_table_type::BIG->extension();
+            $result .= sql_type::BIG->extension();
         }
         return $result;
     }
@@ -537,7 +539,7 @@ class sandbox_list extends base_list
      */
     protected function is_user(array $tbl_types): bool
     {
-        if (in_array(sql_table_type::STANDARD, $tbl_types)) {
+        if (in_array(sql_type::STANDARD, $tbl_types)) {
             return true;
         } else {
             return false;

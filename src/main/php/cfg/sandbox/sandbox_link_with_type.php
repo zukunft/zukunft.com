@@ -2,8 +2,11 @@
 
 /*
 
-    model/sandbox/sandbox_link_with_type.php - adding the type field to the user sandbox link named superclass
+    model/sandbox/sandbox_link_with_type.php - adding the type field to the user sandbox link superclass
     ----------------------------------------
+
+    similar to sandbox_link_typed, but for links without name
+
 
     This file is part of zukunft.com - calc with words
 
@@ -31,15 +34,35 @@
 
 namespace cfg;
 
+use api\api;
+
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 
 class sandbox_link_with_type extends sandbox_link
 {
 
+    /*
+     * object vars
+     */
+
     // database id of the type used for named link user sandbox objects with predefined functionality
     // which is formula link and view component link
     // repeating _sandbox_typed, because php 8.1 does not yet allow multi extends
     public ?int $type_id = null;
+
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * reset the type of the link object
+     */
+    function reset(): void
+    {
+        parent::reset();
+        $this->type_id = null;
+    }
 
 
     /*
@@ -65,6 +88,24 @@ class sandbox_link_with_type extends sandbox_link
         return $this->type_id;
     }
 
+
+    /*
+     * settings
+     */
+
+    /**
+     * @return bool true because all child objects use the link type
+     */
+    function is_link_type_obj(): bool
+    {
+        return true;
+    }
+
+
+    /*
+     * preloaded
+     */
+
     /**
      * dummy function that should be overwritten by the child object
      * @return string the name of the object type
@@ -74,7 +115,6 @@ class sandbox_link_with_type extends sandbox_link
         $msg = 'ERROR: the type name function should have been overwritten by the child object';
         return log_err($msg);
     }
-
 
     /*
      * cast
@@ -87,7 +127,30 @@ class sandbox_link_with_type extends sandbox_link
     {
         parent::fill_api_obj($api_obj);
 
-        $api_obj->set_type_id($this->type_id());
+        if ($this->type_id() != 0) {
+            $api_obj->set_type_id($this->type_id());
+        }
+    }
+
+    /**
+     * fill the vars with this link type sandbox object based on the given api json array
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == api::FLD_TYPE) {
+                $this->type_id = $value;
+            }
+
+        }
+
+        return $msg;
     }
 
     /**

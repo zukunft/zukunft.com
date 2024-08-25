@@ -52,7 +52,7 @@ class phrase_list
         $t->subheader('HTML phrase list tests');
 
         // fill the phrase list based on the api message
-        $db_lst = $t->dummy_phrase_list();
+        $db_lst = $t->phrase_list();
         $lst = new phrase_list_dsp($db_lst->api_json());
         $t->assert('HTML phrase list names match backend names', $lst->names(), $db_lst->names());
 

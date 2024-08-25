@@ -31,10 +31,10 @@
 
 namespace html\formula;
 
-include_once WEB_SANDBOX_PATH . 'list.php';
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 
 use html\html_base;
-use html\list_dsp;
+use html\sandbox\list_dsp;
 use html\formula\formula as formula_dsp;
 
 class formula_list extends list_dsp

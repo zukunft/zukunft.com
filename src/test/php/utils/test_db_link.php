@@ -31,13 +31,13 @@
 */
 
 use cfg\log\change_table_list;
-use test\test_cleanup;
+use test\all_tests;
 
-function run_db_link_test(test_cleanup $t): void
+function run_db_link_test(all_tests $t): void
 {
     global $change_table_list;
 
-    $t->header('Test database link functions (zu_lib_sql_code_link.php)');
+    $t->header('Test database link functions');
 
     // test code link
     $id = change_table_list::WORD;

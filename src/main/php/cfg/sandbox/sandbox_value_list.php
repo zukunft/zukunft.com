@@ -36,8 +36,10 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
 use cfg\db\sql;
 use cfg\db\sql_db;
-use cfg\db\sql_par_type;
+use cfg\db\sql_field_list;
 use cfg\db\sql_par;
+use cfg\db\sql_par_type;
+use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\result_id;
@@ -45,6 +47,7 @@ use cfg\result\result;
 use cfg\result\result_list;
 use cfg\value\value;
 use cfg\value\value_list;
+use shared\library;
 
 class sandbox_value_list extends sandbox_list
 {
@@ -122,7 +125,7 @@ class sandbox_value_list extends sandbox_list
         // differences between value and result list
         $list_class = value_list::class;
         $tbl_lst = value::TBL_LIST;
-        if ($class != value::class) {
+        if ($class !== value::class) {
             $list_class = result_list::class;
             $tbl_lst = result::TBL_LIST;
         }
@@ -139,18 +142,54 @@ class sandbox_value_list extends sandbox_list
         $name_count = '_p' . $phr_lst->count();
         $qp->name = $lib->class_to_name($list_class) . '_by_' . $name_ext . $name_count;
         $par_types = array();
+
+        // prepare adding the parameters in order of expected usage
+        $par_pos = $sc->par_count();
+        $pos_phr_lst = [];
+        $pos_grp_lst = [];
+
+        // add the single phrase parameter
+        foreach ($phr_lst->lst() as $phr) {
+            $pos_phr_lst[] = $par_pos;
+            $par_pos++;
+            $par_name = $sc->par_name($par_pos);
+            $spt = sql_par_type::INT_SAME;
+            if ($or) {
+                $spt = sql_par_type::INT_SAME_OR;
+            }
+            $sc->add_where_par(phrase::FLD_ID, $phr->id(), $spt, '', $par_name);
+        }
+
+        // add the phrase group parameter
+        foreach ($phr_lst->lst() as $phr) {
+            $pos_grp_lst[] = $par_pos;
+            $par_pos++;
+            $par_name = $sc->par_name($par_pos);
+            $spt = sql_par_type::LIKE;
+            if ($or) {
+                $spt = sql_par_type::LIKE_OR;
+            }
+            $grp_id = new group_id();
+            $sc->add_where_par(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), $spt, '', $par_name);
+        }
+
+        // add the user parameter
+        $pos_usr = $par_pos;
+        $par_pos++;
+        $par_name = $sc->par_name($par_pos);
+        $sc->add_where_par(user::FLD_ID, $this->user()->id(), sql_par_type::INT, '', $par_name);
+
+        // remember the parameters
+        $par_lst = clone $sc->par_list();
+
         // loop over the possible tables where the value might be stored in this pod
-        $par_pos = 2;
         foreach ($tbl_lst as $tbl_typ) {
             $sc->reset();
-            $qp_tbl = $this->load_sql_by_phr_lst_single($sc, $class, $phr_lst, $or, $tbl_typ, $par_pos);
+            $sc->set_par_list($par_lst);
+            $qp_tbl = $this->load_sql_by_phr_lst_single(
+                $sc, $class, $or, $tbl_typ,
+                $pos_phr_lst, $pos_grp_lst, $pos_usr);
             $qp->merge($qp_tbl);
-            $phr_pos = $par_pos + 2;
-        }
-        // sort the parameters if the parameters are part of the union
-        if ($sc->db_type() != sql_db::MYSQL) {
-            $lib = new library();
-            $qp->par = $lib->key_num_sort($qp->par);
         }
 
         foreach ($qp->par as $par) {
@@ -171,56 +210,59 @@ class sandbox_value_list extends sandbox_list
      *     *
      * @param sql $sc with the target db_type set
      * @param string $class the value or result class name
-     * @param phrase_list $phr_lst if set to get all values for this phrase
      * @param bool $or true if all values related to any phrase of the list should be loaded
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
+     * @param array $phr_pos_lst list of array keys of the query parameter for the phrase id
+     * @param array $grp_pos_lst list of array keys of the query parameter for the phrase id as group id
+     * @param int $usr_pos the array key of the query parameter for the user id
+     * @param int $frm_pos the array key of the query parameter for the user id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr_lst_single(
-        sql         $sc,
-        string      $class,
-        phrase_list $phr_lst,
-        bool        $or,
-        array       $tbl_typ_lst,
-        int         $par_pos,
-        int         $frm_id = 0
+        sql    $sc,
+        string $class,
+        bool   $or,
+        array  $sc_par_lst,
+        array  $phr_pos_lst,
+        array  $grp_pos_lst,
+        int    $usr_pos,
+        int    $frm_pos = 0
     ): sql_par
     {
-        $qp = $this->load_sql_init($sc, $class, 'phr', $tbl_typ_lst);
-        if ($this->is_prime($tbl_typ_lst)) {
+        $qp = $this->load_sql_init(
+            $sc, $class, 'phr',
+            $sc_par_lst, $sc->par_list(), $usr_pos);
+        if ($this->is_prime($sc_par_lst)) {
             $max_phr = group_id::PRIME_PHRASES_STD;
             if (($class == result::class
-                    or $class == result_list::class) and $this->is_std($tbl_typ_lst)) {
+                    or $class == result_list::class) and $this->is_std($sc_par_lst)) {
                 $max_phr = result_id::PRIME_PHRASES_STD;
-                if ($frm_id != 0) {
-                    $sc->add_where(formula::FLD_ID, $frm_id, sql_par_type::INT_SAME, '$' . $par_pos);
-                    $par_pos = $par_pos + 2;
+                if ($frm_pos != 0) {
+                    $sc->add_where_no_par(
+                        '', formula::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
                 }
             }
-            $par_pos = $this->load_sql_set_phrase_fields($sc, $phr_lst, $or, $par_pos, $max_phr);
-        } elseif ($this->is_main($tbl_typ_lst)) {
+            $this->load_sql_set_phrase_fields($sc, $phr_pos_lst, $or, $max_phr);
+        } elseif ($this->is_main($sc_par_lst)) {
             // only for results
             $max_phr = result_id::MAIN_SOURCE_PHRASES + result_id::MAIN_RESULT_PHRASES;
-            if ($this->is_std($tbl_typ_lst)) {
+            if ($this->is_std($sc_par_lst)) {
                 $max_phr += result_id::MAIN_PHRASES_STD;
             } else {
                 $max_phr += result_id::MAIN_PHRASES;
             }
-            if ($frm_id != 0) {
-                $sc->add_where(formula::FLD_ID, $frm_id, sql_par_type::INT_SAME, '$' . $par_pos);
-                $par_pos = $par_pos + 2;
+            if ($frm_pos != 0) {
+                $sc->add_where_no_par(
+                    '', formula::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
             }
-            $par_pos = $this->load_sql_set_phrase_fields($sc, $phr_lst, $or, $par_pos, $max_phr);
+            $this->load_sql_set_phrase_fields($sc, $phr_pos_lst, $or, $max_phr);
         } else {
-            foreach ($phr_lst->lst() as $phr) {
-                $grp_id = new group_id();
+            foreach ($grp_pos_lst as $grp_pos) {
                 $spt = sql_par_type::LIKE;
                 if ($or) {
                     $spt = sql_par_type::LIKE_OR;
                 }
-                $sc->add_where(group::FLD_ID,
-                    $grp_id->int2alpha_num($phr->id()), $spt, '$' . $par_pos + 1);
-                $par_pos = $par_pos + 2;
+                $sc->add_where_no_par('', group::FLD_ID, $spt, $grp_pos);
             }
         }
         $qp->sql = $sc->sql(0, true, false);
@@ -234,33 +276,30 @@ class sandbox_value_list extends sandbox_list
      * TODO make $par_pos unnecessary
      *
      * @param sql $sc with the target db_type set
-     * @param phrase_list $phr_lst if set to get all values for this phrase
+     * @param array $phr_pos_lst to set a fixed name for the parameter
      * @param bool $or true if all values related to any phrase of the list should be loaded
-     * @param int $par_pos to set a fixed name for the parameter
      * @param int $max_phr the maximal number of phrases allowed for this table
-     * @return int the parameter position after adding the fields
      */
     private function load_sql_set_phrase_fields(
-        sql         $sc,
-        phrase_list $phr_lst,
-        bool        $or,
-        int         $par_pos,
-        int         $max_phr
-    ): int
+        sql   $sc,
+        array $phr_pos_lst,
+        bool  $or,
+        int   $max_phr
+    ): void
     {
-        foreach ($phr_lst->lst() as $phr) {
+        $used_or = true; // the first phrase is always or to force staring with brakest
+        foreach ($phr_pos_lst as $phr_pos) {
             $spt = sql_par_type::INT_SAME;
-            if ($or) {
+            if ($used_or) {
                 $spt = sql_par_type::INT_SAME_OR;
             }
             for ($i = 1; $i <= $max_phr; $i++) {
-                $sc->add_where(phrase::FLD_ID . '_' . $i,
-                    $phr->id(), $spt, '$' . $par_pos);
+                $sc->add_where_no_par('', phrase::FLD_ID . '_' . $i,
+                    $spt, $phr_pos);
                 $spt = sql_par_type::INT_SAME_OR;
             }
-            $par_pos = $par_pos + 2;
+            $used_or = $or; // the following where connection should use the user selected logical connection
         }
-        return $par_pos;
     }
 
     /**
@@ -273,10 +312,12 @@ class sandbox_value_list extends sandbox_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_init(
-        sql    $sc,
-        string $class,
-        string $query_name,
-        array  $tbl_types = []
+        sql            $sc,
+        string         $class,
+        string         $query_name,
+        array          $tbl_types,
+        sql_field_list $par_lst,
+        ?int           $usr_pos = null
     ): sql_par
     {
         $is_std = $this->is_std($tbl_types);
@@ -313,10 +354,13 @@ class sandbox_value_list extends sandbox_list
         }
 
         $tbl_ext = $this->table_extension($tbl_types);
-        $qp = new sql_par($list_class, $is_std, false, $tbl_ext);
+        $qp = new sql_par($list_class, new sql_type_list($tbl_types), $tbl_ext);
         $qp->name .= $query_name;
 
-        $sc->set_class($class, false, $tbl_ext);
+        $sc->set_class($class, new sql_type_list([]), $tbl_ext);
+        if ($par_lst->count() > 0) {
+            $sc->set_par_list($par_lst);
+        }
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $val = new value($this->user());
         if ($is_prime) {
@@ -373,7 +417,12 @@ class sandbox_value_list extends sandbox_list
             $sc->set_fields_dummy(array_merge($fld_lst_usr_num_ex_std, $fld_lst_usr_only));
         } else {
             $sc->set_fields($fld_lst);
-            $sc->set_usr_num_fields($fld_lst_usr_num, true, '$1');
+            $usr_par_name = $sc->par_name(1);
+            if ($usr_pos != null) {
+                $usr_par = $par_lst->get($usr_pos);
+                $usr_par_name = $usr_par->name;
+            }
+            $sc->set_usr_num_fields($fld_lst_usr_num, true, $usr_par_name);
             $sc->set_usr_only_fields($fld_lst_usr_only);
         }
         return $qp;

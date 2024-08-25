@@ -41,7 +41,7 @@ use api\value\value as value_api;
 use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
 use html\result\result as result_dsp;
-use html\api;
+use html\rest_ctrl;
 use test\test_cleanup;
 
 class figure_tests
@@ -69,42 +69,42 @@ class figure_tests
 
         $t->subheader('set and get unit tests');
 
-        $fig = $t->dummy_figure_value();
-        $t->assert('figure value id', $fig->id(), 5);
-        $t->assert('figure value obj id', $fig->obj_id(), 5);
+        $fig = $t->figure_value();
+        $t->assert('figure value id', $fig->id(), 32770);
+        $t->assert('figure value obj id', $fig->obj_id(), 32770);
         $t->assert('figure value number', $fig->number(), value_api::TV_READ_SHORTEST);
-        $fig = $t->dummy_figure_result();
-        $t->assert('figure result id', $fig->id(), -2);
-        $t->assert('figure result obj id', $fig->obj_id(), 2);
+        $fig = $t->figure_result();
+        $t->assert('figure result id', $fig->id(), -1);
+        $t->assert('figure result obj id', $fig->obj_id(), 1);
         $t->assert('figure result number', $fig->number(), result_api::TV_INT);
 
-        $fig = $t->dummy_figure_value();
+        $fig = $t->figure_value();
         $t->assert('figure value symbol', $fig->symbol(), "");
-        $fig = $t->dummy_figure_result();
+        $fig = $t->figure_result();
         // TODO review
         //$t->assert('figure result symbol', $fig->symbol(), "{f1}");
 
 
         $t->subheader('API unit tests');
 
-        $fig = $t->dummy_figure_value();
+        $fig = $t->figure_value();
         $t->assert_api($fig);
 
-        $fig = $t->dummy_figure_result();
+        $fig = $t->figure_result();
         $t->assert_api($fig, 'figure_result');
 
 
         $t->subheader('HTML frontend unit tests');
 
-        $fig = $t->dummy_figure_value();
+        $fig = $t->figure_value();
         $t->assert_api_to_dsp($fig, new figure_dsp());
-        $fig = $t->dummy_figure_result();
+        $fig = $t->figure_result();
         $t->assert_api_to_dsp($fig, new figure_dsp());
 
-        $fig = $t->dummy_figure_value();
+        $fig = $t->figure_value();
         $dsp = $t->dsp_obj($fig, new figure_dsp());
         $html_link = $dsp->display_linked();
-        $t->assert_text_contains('figure html link', $html_link, api::RESULT_EDIT);
+        $t->assert_text_contains('figure html link', $html_link, rest_ctrl::RESULT_EDIT);
 
     }
 

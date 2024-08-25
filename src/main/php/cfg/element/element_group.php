@@ -47,6 +47,7 @@ include_once MODEL_FORMULA_PATH . 'figure_list.php';
 use cfg\result\result;
 use cfg\value\value;
 use html\figure\figure as figure_dsp;
+use shared\library;
 use test\test_api;
 
 class element_group
@@ -294,7 +295,7 @@ class element_group
                     $fig->set_symbol($this->symbol);
                     $fig_lst->add($fig);
 
-                    log_debug('result for ' . $val_phr_lst->dsp_name() . ', time ' . $val_time_phr->name() . '" (word group ' . $val_phr_grp->id() . ', user ' . $this->usr->id() . ') = ' . $grp_res->value);
+                    log_debug('result for ' . $val_phr_lst->dsp_name() . ', time ' . $val_time_phr->name() . '" (word group ' . $val_phr_grp->id() . ', user ' . $this->usr->id() . ') = ' . $grp_res->number());
                 } else {
                     // if there is also not a formula result at least one number of the formula is not valid
                     $fig_lst->fig_missing = True;

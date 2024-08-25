@@ -40,7 +40,9 @@ include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
 use cfg\component\component_link;
 use cfg\component\component_link_type;
 use cfg\component\position_type;
+use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_type;
 use test\test_cleanup;
 
 class component_link_tests
@@ -52,9 +54,9 @@ class component_link_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'component_link->';
         $t->resource_path = 'db/component/';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the view component link class (src/main/php/model/view/component_link.php)');
 
@@ -66,7 +68,7 @@ class component_link_tests
         $cmp_pos_typ = new position_type('');
         $t->assert_sql_table_create($cmp_pos_typ);
         $t->assert_sql_index_create($cmp_pos_typ);
-        $cmp_lnk = $t->dummy_component_link();
+        $cmp_lnk = $t->component_link();
         $t->assert_sql_table_create($cmp_lnk);
         $t->assert_sql_index_create($cmp_lnk);
         $t->assert_sql_foreign_key_create($cmp_lnk);
@@ -75,8 +77,8 @@ class component_link_tests
 
         // SQL creation tests (mainly to use the IDE check for the generated SQL statements)
         $vcl = new component_link($usr);
-        $t->assert_sql_by_id($db_con, $vcl);
-        $t->assert_sql_by_link($db_con, $vcl);
+        $t->assert_sql_by_id($sc, $vcl);
+        $t->assert_sql_by_link($sc, $vcl);
         $this->assert_sql_link_and_type($t, $db_con, $vcl);
         $this->assert_sql_link_and_pos($t, $db_con, $vcl);
         $this->assert_sql_max_pos($t, $db_con, $vcl);
@@ -87,7 +89,26 @@ class component_link_tests
         // sql to load a view component link by the id
         $lnk = new component_link($usr);
         $lnk->set_id(1);
-        $t->assert_sql_user_changes($db_con, $lnk);
+        $t->assert_sql_user_changes($sc, $lnk);
+
+        $t->subheader('component link sql write');
+        $lnk = $t->component_link();
+        $t->assert_sql_insert($sc, $lnk);
+        $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
+        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
+        $lnk = $t->component_link();
+        $lnk->exclude();
+        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
+        $lnk_filled = $t->component_link_filled();
+        $t->assert_sql_insert($sc, $lnk_filled, [sql_type::LOG]);
+        $lnk_reordered = clone $lnk;
+        $lnk_reordered->order_nbr = 2;
+        $t->assert_sql_update($sc, $lnk_reordered, $lnk);
+        $t->assert_sql_update($sc, $lnk_reordered, $lnk, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_delete($sc, $lnk);
+        $t->assert_sql_delete($sc, $lnk, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
 
     }
 

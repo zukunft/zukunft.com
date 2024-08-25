@@ -19,9 +19,9 @@ PREPARE result_list_by_phr_lst_p3 FROM
            0 AS change_user_id,
            0 AS share_type_id
       FROM results_standard_prime
-     WHERE phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ?
-       AND phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ?
-       AND phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ?
+     WHERE (phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ?)
+       AND (phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ?)
+       AND (phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ?)
 UNION
     SELECT NULL AS group_id,
            NULL AS user_group_id,
@@ -43,9 +43,9 @@ UNION
            0 AS change_user_id,
            0 AS share_type_id
       FROM results_standard_main
-     WHERE phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? OR phrase_id_4 = ? OR phrase_id_5 = ? OR phrase_id_6 = ? OR phrase_id_7 = ?
-       AND phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? OR phrase_id_4 = ? OR phrase_id_5 = ? OR phrase_id_6 = ? OR phrase_id_7 = ?
-       AND phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? OR phrase_id_4 = ? OR phrase_id_5 = ? OR phrase_id_6 = ? OR phrase_id_7 = ?
+     WHERE (phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? OR phrase_id_4 = ? OR phrase_id_5 = ? OR phrase_id_6 = ? OR phrase_id_7 = ?)
+       AND (phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? OR phrase_id_4 = ? OR phrase_id_5 = ? OR phrase_id_6 = ? OR phrase_id_7 = ?)
+       AND (phrase_id_1 = ? OR phrase_id_2 = ? OR phrase_id_3 = ? OR phrase_id_4 = ? OR phrase_id_5 = ? OR phrase_id_6 = ? OR phrase_id_7 = ?)
 UNION
     SELECT group_id,
            NULL AS user_group_id,
@@ -120,9 +120,9 @@ UNION
                                AND s.phrase_id_2 = u.phrase_id_2
                                AND s.phrase_id_3 = u.phrase_id_3
                                AND s.phrase_id_4 = u.phrase_id_4 AND u.user_id = ?
-     WHERE s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ?
-       AND s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ?
-       AND s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ?
+     WHERE (s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ?)
+       AND (s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ?)
+       AND (s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ?)
 UNION
     SELECT NULL AS group_id,
            NULL AS user_group_id,
@@ -152,9 +152,9 @@ UNION
                               AND s.phrase_id_6 = u.phrase_id_6
                               AND s.phrase_id_7 = u.phrase_id_7
                               AND s.phrase_id_8 = u.phrase_id_8 AND u.user_id = ?
-     WHERE s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ? OR s.phrase_id_5 = ? OR s.phrase_id_6 = ? OR s.phrase_id_7 = ? OR s.phrase_id_8 = ?
-       AND s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ? OR s.phrase_id_5 = ? OR s.phrase_id_6 = ? OR s.phrase_id_7 = ? OR s.phrase_id_8 = ?
-       AND s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ? OR s.phrase_id_5 = ? OR s.phrase_id_6 = ? OR s.phrase_id_7 = ? OR s.phrase_id_8 = ?
+     WHERE (s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ? OR s.phrase_id_5 = ? OR s.phrase_id_6 = ? OR s.phrase_id_7 = ? OR s.phrase_id_8 = ?)
+       AND (s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ? OR s.phrase_id_5 = ? OR s.phrase_id_6 = ? OR s.phrase_id_7 = ? OR s.phrase_id_8 = ?)
+       AND (s.phrase_id_1 = ? OR s.phrase_id_2 = ? OR s.phrase_id_3 = ? OR s.phrase_id_4 = ? OR s.phrase_id_5 = ? OR s.phrase_id_6 = ? OR s.phrase_id_7 = ? OR s.phrase_id_8 = ?)
 UNION
     SELECT s.group_id,
            u.group_id AS user_group_id,

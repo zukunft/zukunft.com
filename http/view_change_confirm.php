@@ -38,7 +38,7 @@ use cfg\view;
 use cfg\word;
 
 $debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . '/../';
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
@@ -71,10 +71,10 @@ if ($usr->id() > 0) {
     if ($word_id <= 0) {
         $result .= $html->dsp_err('word not found');
     } else {
-        $dsp = new view_dsp();
+        $msk = new view_dsp();
         //$dsp->set_id(cl(SQL_VIEW_FORMULA_EXPLAIN));
         $back = $word_id;
-        $result .= $dsp->dsp_navbar_no_view($back);
+        $result .= $msk->dsp_navbar_no_view($back);
 
         // show the word name
         $wrd = new word($usr);
@@ -86,9 +86,9 @@ if ($usr->id() > 0) {
     if ($view_id <= 0) {
         $result .= $html->dsp_err('view not found');
     } else {
-        $dsp = new view_dsp();
-        $dsp->set_id($view_id);
-        $result .= $dsp->selector_page($word_id, $back);
+        $msk = new view_dsp();
+        $msk->set_id($view_id);
+        $result .= $msk->selector_page($word_id, $back);
     }
 }
 

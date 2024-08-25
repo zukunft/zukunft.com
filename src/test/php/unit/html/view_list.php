@@ -48,7 +48,7 @@ class view_list
         $t->subheader('view list tests');
 
         // test the view list display functions
-        $lst = new view_list_dsp($t->dummy_view_list()->api_json());
+        $lst = new view_list_dsp($t->view_list()->api_json());
         $test_page = $html->text_h2('view list display test');
         $test_page .= 'view list with tooltip: ' . $lst->display() . '<br>';
         $test_page .= 'view list with link: ' . $lst->display_linked() . '<br>';

@@ -1,0 +1,385 @@
+{
+  "version": "0.0.3",
+  "time": "2024-03-26 19:58:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "solution priorities"
+  ],
+  "words": [
+    {
+      "name": "problem",
+      "comment": "here more a personal issue (wikipedia does not really match)",
+      "refs": [
+        {
+          "name": "List_of_global_issues",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q65117122",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "solution",
+      "refs": [
+        {
+          "name": "Problem solving",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q730920",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "priority",
+      "refs": [
+        {
+          "name": "Prioritization",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11888847",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "potential",
+      "refs": [
+        {
+          "name": "Potential",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q1202245",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "gain",
+      "refs": [
+        {
+          "name": "Utility",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q466707",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "loss"
+    },
+    {
+      "name": "percent",
+      "comment": "to specify numbers in percent",
+      "type": "percent",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Climate",
+      "refs": [
+        {
+          "name": "Climate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7937",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "warm",
+      "refs": [
+        {
+          "name": "heating",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4311765",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "reduce"
+    },
+    {
+      "name": "gas",
+      "refs": [
+        {
+          "name": "gas",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11432",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "global",
+      "refs": [
+        {
+          "name": "Globalization",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7181",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "emissions"
+    },
+    {
+      "name": "populism"
+    },
+    {
+      "name": "avoid"
+    },
+    {
+      "name": "wrong"
+    },
+    {
+      "name": "decisions"
+    },
+    {
+      "name": "artificial"
+    },
+    {
+      "name": "intelligence"
+    },
+    {
+      "name": "Health"
+    },
+    {
+      "name": "research"
+    },
+    {
+      "name": "povertiy"
+    },
+    {
+      "name": "taxes"
+    },
+    {
+      "name": "education"
+    },
+    {
+      "name": "spending"
+    },
+    {
+      "name": "pension",
+      "refs": [
+        {
+          "name": "Pension",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q156223",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "happy"
+    },
+    {
+      "name": "unhappy"
+    },
+    {
+      "name": "time"
+    },
+    {
+      "name": "points"
+    },
+    {
+      "name": "DALY",
+      "refs": [
+        {
+          "name": "Disability-adjusted life year",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q55627",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "human",
+      "refs": [
+        {
+          "name": "Homo",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q15978631",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Population",
+      "refs": [
+        {
+          "name": "Population",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2625603",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "htp"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "b"
+    },
+    {
+      "name": "million",
+      "comment": "to specify numbers in millions",
+      "type": "scaling",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "m"
+    }
+  ],
+  "triples": [
+    {
+      "name": "climate warming",
+      "from": "climate",
+      "verb": "can",
+      "to": "warm",
+      "refs": [
+        {
+          "name": "Climate_change",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7942",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "warming potential",
+      "from": "warming",
+      "verb": "can use",
+      "to": "potential"
+    },
+    {
+      "name": "Climate gas",
+      "from": "gas",
+      "verb": "can cause",
+      "to": "warm",
+      "refs": [
+        {
+          "name": "Climate_change",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7942",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "world population",
+      "from": "Population",
+      "verb": "of",
+      "to": "human",
+      "refs": [
+        {
+          "name": "World population",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11188",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "time points",
+      "from": "points",
+      "verb": "is measure type for",
+      "to": "time",
+      "description": "a value multiplied by the time e.g. used for the UN Disability-adjusted life year (DALYs)"
+    },
+    {
+      "name": "happy time points",
+      "from": "happy",
+      "verb": "and",
+      "to": "time points",
+      "description": "To measure the \"happy points\" ask the person how happy he feels let's say on a scale from 1 (least happy) to 10 (most happy). If you sum the number of happy points over a period, you get the \"happy time points\". "
+    },
+    {
+      "from": "htp",
+      "verb": "is symbol for",
+      "to": "happy time points"
+    },
+    {
+      "from": "m",
+      "verb": "is symbol for",
+      "to": "million"
+    },
+    {
+      "from": "b",
+      "verb": "is symbol for",
+      "to": "billion"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "global",
+        "human",
+        "population",
+        "billion"
+      ],
+      "number": "8.5"
+    },
+    {
+      "words": [
+        "climate warming",
+        "potential",
+        "loss",
+        "percent",
+        "htp"
+      ],
+      "number": "-30"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "scale million to one",
+      "expression": "\"one\" = \"million\" * 1000000",
+      "assigned_word": "million"
+    },
+    {
+      "name": "scale billion to one",
+      "expression": "\"one\" = \"billion\" * 1000000000",
+      "assigned_word": "billion"
+    },
+    {
+      "name": "global happy time points",
+      "expression": "\"htp\" = \"htp\",\"percent\" * \"global\",\"human\",\"population\"",
+      "assigned_word": "htp"
+    }
+  ]
+}
+

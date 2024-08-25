@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS views
     user_id       bigint       DEFAULT NULL,
     view_name     varchar(255)     NOT NULL,
     description   text         DEFAULT NULL,
-    view_type_id  bigint       DEFAULT NULL,
+    view_type_id  smallint     DEFAULT NULL,
     code_id       varchar(255) DEFAULT NULL,
     excluded      smallint     DEFAULT NULL,
     share_type_id smallint     DEFAULT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS user_views
     language_id   bigint   NOT NULL DEFAULT 1,
     view_name     varchar(255)      DEFAULT NULL,
     description   text              DEFAULT NULL,
-    view_type_id  bigint            DEFAULT NULL,
+    view_type_id  smallint          DEFAULT NULL,
     excluded      smallint          DEFAULT NULL,
     share_type_id smallint          DEFAULT NULL,
     protect_id    smallint          DEFAULT NULL

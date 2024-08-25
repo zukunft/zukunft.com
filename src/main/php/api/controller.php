@@ -95,7 +95,7 @@ class controller
 
 
     const API_BODY = 'body';
-    const API_BODY_SYS_LOG = 'system_log';
+    const API_BODY_SYS_LOG = 'sys_log';
 
     // to include the objects that should be displayed in one api message
     const API_WORD = 'word';
@@ -109,6 +109,7 @@ class controller
     const API_LIST_FORMULA_LINK_TYPES = 'formula_link_types';
     const API_LIST_ELEMENT_TYPES = 'element_types';
     const API_LIST_VIEW_TYPES = 'view_types';
+    const API_LIST_VIEW_LINK_TYPES = 'view_link_types';
     const API_LIST_COMPONENT_TYPES = 'component_types';
     // const API_LIST_COMPONENT_LINK_TYPES = 'component_link_types';
     const API_LIST_COMPONENT_POSITION_TYPES = 'position_types';
@@ -138,51 +139,54 @@ class controller
 
     // list of the view used by the program that are never supposed to be changed
     // also the list of the view code_id
-    const DSP_START = "start";
-    const DSP_WORD = "word";
-    const DSP_WORD_ADD = "word_add";
-    const DSP_WORD_EDIT = "word_edit";
-    const DSP_WORD_DEL = "word_del";
-    const DSP_WORD_FIND = "word_find";
-    const DSP_TRIPLE_ADD = "triple_add";
-    const DSP_TRIPLE_EDIT = "triple_edit";
-    const DSP_TRIPLE_DEL = "triple_del";
-    const DSP_VALUE_DISPLAY = "value";
-    const DSP_VALUE_ADD = "value_add";
-    const DSP_VALUE_EDIT = "value_edit";
-    const DSP_VALUE_DEL = "value_del";
-    const DSP_FORMULA_ADD = "formula_add";
-    const DSP_FORMULA_EDIT = "formula_edit";
-    const DSP_FORMULA_DEL = "formula_del";
-    const DSP_FORMULA_EXPLAIN = "formula_explain";
-    const DSP_FORMULA_TEST = "formula_test";
-    const DSP_SOURCE_ADD = "source_add";
-    const DSP_SOURCE_EDIT = "source_edit";
-    const DSP_SOURCE_DEL = "source_del";
-    const DSP_VERBS = "verbs";
-    const DSP_VERB_ADD = "verb_add";
-    const DSP_VERB_EDIT = "verb_edit";
-    const DSP_VERB_DEL = "verb_del";
-    const DSP_USER = "user";
-    const DSP_ERR_LOG = "error_log";
-    const DSP_ERR_UPD = "error_update";
-    const DSP_IMPORT = "import";
+    // MC_* is the Mask Code id that is expected never to change
+    // MI_* is the Mask ID that is expected never to change
+    const MC_START = "start";
+    const MI_START = 2;
+    const MC_WORD = "word";
+    const MC_WORD_ADD = "word_add";
+    const MC_WORD_EDIT = "word_edit";
+    const MC_WORD_DEL = "word_del";
+    const MC_WORD_FIND = "word_find";
+    const MC_TRIPLE_ADD = "triple_add";
+    const MC_TRIPLE_EDIT = "triple_edit";
+    const MC_TRIPLE_DEL = "triple_del";
+    const MC_VALUE_DISPLAY = "value";
+    const MC_VALUE_ADD = "value_add";
+    const MC_VALUE_EDIT = "value_edit";
+    const MC_VALUE_DEL = "value_del";
+    const MC_FORMULA_ADD = "formula_add";
+    const MC_FORMULA_EDIT = "formula_edit";
+    const MC_FORMULA_DEL = "formula_del";
+    const MC_FORMULA_EXPLAIN = "formula_explain";
+    const MC_FORMULA_TEST = "formula_test";
+    const MC_SOURCE_ADD = "source_add";
+    const MC_SOURCE_EDIT = "source_edit";
+    const MC_SOURCE_DEL = "source_del";
+    const MC_VERBS = "verbs";
+    const MC_VERB_ADD = "verb_add";
+    const MC_VERB_EDIT = "verb_edit";
+    const MC_VERB_DEL = "verb_del";
+    const MC_USER = "user";
+    const MC_ERR_LOG = "error_log";
+    const MC_ERR_UPD = "error_update";
+    const MC_IMPORT = "import";
     // views to edit views
-    const DSP_VIEW_ADD = "view_add";
-    const DSP_VIEW_EDIT = "view_edit";
-    const DSP_VIEW_DEL = "view_del";
-    const DSP_COMPONENT_ADD = "component_add";
-    const DSP_COMPONENT_EDIT = "component_edit";
-    const DSP_COMPONENT_DEL = "component_del";
-    const DSP_COMPONENT_LINK = "component_link";
-    const DSP_COMPONENT_UNLINK = "component_unlink";
+    const MC_VIEW_ADD = "view_add";
+    const MC_VIEW_EDIT = "view_edit";
+    const MC_VIEW_DEL = "view_del";
+    const MC_COMPONENT_ADD = "component_add";
+    const MC_COMPONENT_EDIT = "component_edit";
+    const MC_COMPONENT_DEL = "component_del";
+    const MC_COMPONENT_LINK = "component_link";
+    const MC_COMPONENT_UNLINK = "component_unlink";
 
     // list of add system views which don't need an object
     const DSP_SYS_ADD = array(
-        self::DSP_WORD_ADD,
-        self::DSP_TRIPLE_ADD,
-        self::DSP_VALUE_ADD,
-        self::DSP_COMPONENT_ADD
+        self::MC_WORD_ADD,
+        self::MC_TRIPLE_ADD,
+        self::MC_VALUE_ADD,
+        self::MC_COMPONENT_ADD
     );
 
 
@@ -430,28 +434,32 @@ class controller
 
     /**
      * check if an api message is fine
-     * @param array $api_msg the complete api message including the header and in some cases several body parts
+     * @param array|null $api_msg the complete api message including the header and in some cases several body parts
      * @param string $body_key to select a body part of the api message
      * @return array the message body if everything has been fine or an empty array
      */
-    function check_api_msg(array $api_msg, string $body_key = controller::API_BODY): array
+    function check_api_msg(?array $api_msg, string $body_key = controller::API_BODY): array
     {
         $msg_ok = true;
         $body = array();
-        // TODO check transfer time
-        // TODO check if version matches
-        if ($msg_ok) {
-            if (array_key_exists($body_key, $api_msg)) {
-                $body = $api_msg[$body_key];
-            } else {
-                // TODO activate Prio 3 next line and avoid these cases
-                // $msg_ok = false;
-                $body = $api_msg;
-                log_warning('message header missing in api message');
+        if ($api_msg !== null) {
+            // TODO check transfer time
+            // TODO check if version matches
+            if ($msg_ok) {
+                if (array_key_exists($body_key, $api_msg)) {
+                    $body = $api_msg[$body_key];
+                } else {
+                    // TODO activate Prio 3 next line and avoid these cases
+                    // $msg_ok = false;
+                    $body = $api_msg;
+                    log_warning('message header missing in api message');
+                }
             }
-        }
-        if ($msg_ok) {
-            return $body;
+            if ($msg_ok) {
+                return $body;
+            } else {
+                return array();
+            }
         } else {
             return array();
         }

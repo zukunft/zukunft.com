@@ -2,8 +2,8 @@
 
 /*
 
-    test/unit/word.php - unit testing of the word functions
-    ------------------
+    test/unit/word_tests.php - word unit tests
+    ------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -38,7 +38,9 @@ include_once API_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'word.php';
 
 use api\formula\formula as formula_api;
+use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_type;
 use cfg\phrase_type;
 use cfg\word;
 use api\word\word as word_api;
@@ -52,64 +54,97 @@ class word_tests
     {
 
         global $usr;
+        global $usr_sys;
+        global $phrase_types;
 
         // init
-        $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'word->';
         $t->resource_path = 'db/word/';
-        $json_file = 'unit/word/second.json';
-        $usr->set_id(1);
 
-        $t->header('Unit tests of the word class (src/main/php/model/word/word.php)');
+        $t->header('word unit tests');
 
-
-        $t->subheader('SQL setup statements');
-        $wrd = $t->dummy_word();
+        $t->subheader('word sql setup');
+        $wrd = $t->word();
         $t->assert_sql_table_create($wrd);
         $t->assert_sql_index_create($wrd);
         $t->assert_sql_foreign_key_create($wrd);
 
-
-        $t->subheader('SQL user sandbox statement tests');
-
+        $t->subheader('word sql read');
         $wrd = new word($usr);
-        $t->assert_sql_by_id($db_con, $wrd);
-        $t->assert_sql_by_name($db_con, $wrd);
-        $this->assert_sql_formula_name($t, $db_con, $wrd);
+        $t->assert_sql_by_id($sc, $wrd);
+        $t->assert_sql_by_name($sc, $wrd);
+        $this->assert_sql_formula_name($t, $sc, $wrd);
 
-
-        $t->subheader('SQL load default statement tests');
-
-        // sql to load the word by id
+        $t->subheader('word sql read default and user changes');
         $wrd = new word($usr);
-        $wrd->set_id(2);
-        $t->assert_sql_standard($db_con, $wrd);
-        $t->assert_sql_not_changed($db_con, $wrd);
-        $t->assert_sql_user_changes($db_con, $wrd);
-        $t->assert_sql_changing_users($db_con, $wrd);
-        $this->assert_sql_view($t, $db_con, $wrd);
+        $wrd->set_id(word_api::TI_CONST);
+        $t->assert_sql_standard($sc, $wrd);
+        $t->assert_sql_not_changed($sc, $wrd);
+        $t->assert_sql_user_changes($sc, $wrd);
+        $t->assert_sql_changing_users($sc, $wrd);
+        $this->assert_sql_view($t, $wrd);
 
+        $t->subheader('word sql write insert');
+        $wrd = $t->word();
+        $t->assert_sql_insert($sc, $wrd);
+        $t->assert_sql_insert($sc, $wrd, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $wrd, [sql_type::LOG]);
+        $t->assert_sql_insert($sc, $wrd, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('API unit tests');
+        $t->subheader('word sql write update');
+        $wrd_renamed = $wrd->cloned(word_api::TN_RENAMED);
+        $t->assert_sql_update($sc, $wrd_renamed, $wrd);
+        $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::USER]);
+        $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG, sql_type::USER]);
 
-        $wrd = new word($usr);
-        $wrd->set(1, word_api::TN_READ, phrase_type::MATH_CONST);
+        $t->subheader('word sql write update failed cases e.g. description update');
+        $wrd = $t->word();
         $wrd->description = word_api::TD_READ;
-        $api_wrd = $wrd->api_obj();
-        $t->assert($t->name . 'api->id', $api_wrd->id, $wrd->id());
-        $t->assert($t->name . 'api->name', $api_wrd->name, $wrd->name_dsp());
-        $t->assert($t->name . 'api->description', $api_wrd->description, $wrd->description);
+        $wrd_updated = $t->word();
+        $wrd_updated->set_user($usr_sys);
+        $wrd_updated->plural = word_api::TN_RENAMED;
+        $wrd_updated->description = word_api::TN_RENAMED;
+        $wrd_updated->type_id = $phrase_types->id(phrase_type::TIME);
+        $t->assert_sql_update($sc, $wrd_updated, $wrd, [sql_type::LOG, sql_type::USER]);
 
+        $t->subheader('word sql write update of all fields changed');
+        $wrd_filled = $t->word_filled();
+        $wrd_renamed->set_id($wrd->id());
+        $t->assert_sql_update($sc, $wrd_renamed, $wrd_filled, [sql_type::LOG]);
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader('word sql write delete');
+        $t->assert_sql_delete($sc, $wrd);
+        $t->assert_sql_delete($sc, $wrd, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $wrd, [sql_type::LOG]);
+        $t->assert_sql_delete($sc, $wrd, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_delete($sc, $wrd, [sql_type::EXCLUDE]);
+        $t->assert_sql_delete($sc, $wrd, [sql_type::USER, sql_type::EXCLUDE]);
 
+        $t->subheader('word api unit tests');
+        $wrd = $t->word();
+        $t->assert_api_json($wrd);
+        $wrd = $t->word_filled();
+        $t->assert_api_json($wrd);
+        $wrd->excluded = false;
+        $t->assert_api($wrd, 'word_full');
+        $wrd = $t->word();
+        $t->assert_api($wrd, 'word_body');
+
+        $t->subheader('word html frontend unit tests');
+        $wrd = $t->word();
+        $t->assert_api_to_dsp($wrd, new word_dsp());
+
+        $t->subheader('word im- and export unit tests');
+        $json_file = 'unit/word/second.json';
         $t->assert_json_file(new word($usr), $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
-
-        $wrd = $t->dummy_word();
-        $t->assert_api_to_dsp($wrd, new word_dsp());
+        $test_name = 'check if database would not be updated if only the name is given in import';
+        $in_wrd = $t->word_name_only();
+        $db_wrd = $t->word_filled();
+        $t->assert($t->name . 'needs_db_update ' . $test_name, $in_wrd->needs_db_update($db_wrd), false);
 
     }
 
@@ -117,22 +152,22 @@ class word_tests
      * check the load SQL statements creation to get the word corresponding to the formula name
      *
      * @param test_cleanup $t the testing object with the error counter
-     * @param sql_db $db_con does not need to be connected to a real database
+     * @param sql $sc does not need to be connected to a real database
      * @param word $wrd the user sandbox object e.g. a word
      * @return void true if all tests are fine
      */
-    private function assert_sql_formula_name(test_cleanup $t, sql_db $db_con, word $wrd): void
+    private function assert_sql_formula_name(test_cleanup $t, sql $sc, word $wrd): void
     {
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $wrd->load_sql_by_formula_name($db_con->sql_creator(), formula_api::TN_READ);
-        $result = $t->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $wrd->load_sql_by_formula_name($sc, formula_api::TN_READ);
+        $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $db_con->db_type = sql_db::MYSQL;
-            $qp = $wrd->load_sql_by_formula_name($db_con->sql_creator(), formula_api::TN_READ);
-            $t->assert_qp($qp, $db_con->db_type);
+            $sc->db_type = sql_db::MYSQL;
+            $qp = $wrd->load_sql_by_formula_name($sc, formula_api::TN_READ);
+            $t->assert_qp($qp, $sc->db_type);
         }
     }
 
@@ -140,12 +175,13 @@ class word_tests
      * check the load SQL statements creation to get the view
      *
      * @param test_cleanup $t the testing object with the error counter
-     * @param sql_db $db_con does not need to be connected to a real database
      * @param word $wrd the user sandbox object e.g. a word
      * @return void true if all tests are fine
      */
-    private function assert_sql_view(test_cleanup $t, sql_db $db_con, word $wrd): void
+    private function assert_sql_view(test_cleanup $t, word $wrd): void
     {
+        $db_con = new sql_db();
+
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
         $qp = $wrd->view_sql($db_con);

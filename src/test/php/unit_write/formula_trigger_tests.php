@@ -57,7 +57,7 @@ class formula_trigger_tests
         $phr_lst2 = clone $phr_lst1;
         $phr_lst1->add_name(word_api::TN_2019);
         $phr_lst2->add_name(word_api::TN_2020);
-        $frm = $t->load_formula(formula_api::TN_ADD);
+        $frm = $t->load_formula(formula_api::TN_INCREASE);
 
         // add a number to the test word
         $val_add1 = new value($usr);

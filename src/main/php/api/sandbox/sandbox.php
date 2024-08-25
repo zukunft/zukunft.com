@@ -35,25 +35,28 @@
 namespace api\sandbox;
 
 use api\api;
-use api\formula\formula as formula_api;
-use api\value\value as value_api;
-use api\word\triple as triple_api;
-use api\word\word as word_api;
-use cfg\value\value;
 use JsonSerializable;
-use cfg\formula;
-use cfg\sandbox as sandbox_cfg;
-use cfg\sandbox_value as sandbox_value_cfg;
-use cfg\triple;
-use cfg\user;
-use cfg\word;
-use function log_err;
+use shared\types\protection_type;
 
 class sandbox implements JsonSerializable
 {
 
+    /*
+     * const for system testing
+     */
+
+    const TN_RENAMED_EXT = ' renamed';
+
+
+    /*
+     * object vars
+     */
+
     // fields for the backend link
     public int|string $id; // the database id of the object, which is the same as the related database object in the backend
+    public int|null $share = null; // the share type id; if not set the default share type is assumed
+    public int|null $protection = null; // the protection type id; if not set the default protection type (public) is assumed
+    public bool $excluded; // to return the id with the excluded flag if an object has been excluded
 
 
     /*
@@ -107,34 +110,6 @@ class sandbox implements JsonSerializable
 
 
     /*
-     * casting
-     */
-
-    /**
-     * helper function for unit testing to create an empty model object from an api object
-     * fill the model / db object based on the api json message
-     * should be part of the save_from_api_msg functions
-     * TODO review
-     */
-    function db_obj(user $usr, string $class): sandbox_cfg|sandbox_value_cfg
-    {
-        $db_obj = null;
-        if ($class == word_api::class) {
-            $db_obj = new word($usr);
-        } elseif ($class == triple_api::class) {
-            $db_obj = new triple($usr);
-        } elseif ($class == value_api::class) {
-            $db_obj = new value($usr);
-        } elseif ($class == formula_api::class) {
-            $db_obj = new formula($usr);
-        } else {
-            log_err('API class "' . $class . '" not yet implemented');
-        }
-        return $db_obj;
-    }
-
-
-    /*
      * interface
      */
 
@@ -154,7 +129,23 @@ class sandbox implements JsonSerializable
      */
     function jsonSerialize(): array
     {
+        global $share_types;
+        global $protection_types;
+
         $vars = get_object_vars($this);
+
+        // remove vars from the json that have the default value
+        if (array_key_exists(api::FLD_SHARE, $vars)) {
+            if ($vars[api::FLD_SHARE] == $share_types->default_id()) {
+                unset($vars[api::FLD_SHARE]);
+            }
+        }
+        if (array_key_exists(api::FLD_PROTECTION, $vars)) {
+            if ($vars[api::FLD_PROTECTION] == $protection_types->default_id()) {
+                unset($vars[api::FLD_PROTECTION]);
+            }
+        }
+
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

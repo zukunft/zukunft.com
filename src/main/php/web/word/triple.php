@@ -31,15 +31,15 @@
 
 namespace html\word;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once SANDBOX_PATH . 'sandbox_typed.php';
 
 use cfg\phrase_type;
-use html\api;
+use html\rest_ctrl;
 use html\button;
 use html\html_base;
 use html\html_selector;
-use html\msg;
 use html\phrase\phrase_list as phrase_list_dsp;
+use html\system\messages;
 use html\word\word as word_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\sandbox\sandbox_typed;
@@ -68,6 +68,7 @@ class triple extends sandbox_typed
     private phrase_dsp $from;
     private ?verb_dsp $verb = null;
     private phrase_dsp $to;
+    private ?string $plural = null;
 
 
     /*
@@ -136,6 +137,16 @@ class triple extends sandbox_typed
         return $this->to;
     }
 
+    function set_plural(string $plural): void
+    {
+        $this->plural = $plural;
+    }
+
+    function plural(): ?string
+    {
+        return $this->plural;
+    }
+
     /**
      * @param string|null $code_id the code id of the phrase type
      */
@@ -185,7 +196,7 @@ class triple extends sandbox_typed
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(api::TRIPLE, $this->id, $back, api::PAR_VIEW_TRIPLES);
+        $url = $html->url(rest_ctrl::TRIPLE, $this->id, $back, rest_ctrl::PAR_VIEW_TRIPLES);
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 
@@ -287,8 +298,8 @@ class triple extends sandbox_typed
     {
 
         $html = new html_base();
-        $url = $html->url(api::PATH_FIXED . 'link' . api::CREATE . api::EXT, $this->id, $this->id);
-        $btn = (new button($url. $back))->edit(msg::TRIPLE_ADD);
+        $url = $html->url(rest_ctrl::PATH_FIXED . 'link' . rest_ctrl::CREATE . rest_ctrl::EXT, $this->id, $this->id);
+        $btn = (new button($url. $back))->edit(messages::TRIPLE_ADD);
 
         return $html->td($btn);
     }
@@ -300,8 +311,8 @@ class triple extends sandbox_typed
     {
 
         $html = new html_base();
-        $url = $html->url(api::PATH_FIXED . 'link' . api::UPDATE . api::EXT, $this->id, $trp->id());
-        $btn = (new button($url. $back))->edit(msg::TRIPLE_EDIT);
+        $url = $html->url(rest_ctrl::PATH_FIXED . 'link' . rest_ctrl::UPDATE . rest_ctrl::EXT, $this->id, $trp->id());
+        $btn = (new button($url. $back))->edit(messages::TRIPLE_EDIT);
 
         return $html->td($btn);
     }

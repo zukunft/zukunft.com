@@ -34,8 +34,14 @@
 
 namespace html;
 
-use cfg\library;
-use cfg\phrase_list;
+include_once SHARED_PATH . 'library.php';
+include_once PHRASE_PATH . 'phrase_list.php';
+include_once SYSTEM_PATH . 'messages.php';
+
+use shared\library;
+use html\phrase\phrase_list;
+use html\system\messages;
+//use http\Message;
 
 class button
 {
@@ -43,10 +49,10 @@ class button
     const IMG_ADD_FA = "fa-plus-square";
     const IMG_EDIT_FA = "fa-edit";
     const IMG_DEL_FA = "fa-times-circle";
-    const IMG_UNDO = "/src/main/resources/images/button_undo.svg";
-    const IMG_FIND = "/src/main/resources/images/button_find.svg";
-    const IMG_UN_FILTER = "/src/main/resources/images/button_filter_off.svg";
-    const IMG_BACK = "/src/main/resources/images/button_back.svg";
+    const IMG_UNDO = REL_IMAGE_PATH . 'button_undo.svg';
+    const IMG_FIND = REL_IMAGE_PATH . 'button_find.svg';
+    const IMG_UN_FILTER = REL_IMAGE_PATH . 'button_filter_off.svg';
+    const IMG_BACK = REL_IMAGE_PATH . 'button_back.svg';
 
     // parameters for the simple buttons
     public string $title = ''; // title to display on mouse over
@@ -105,7 +111,7 @@ class button
     private function set_ui_msg(string $ui_msg_id = '', string $explain = ''): void
     {
         if ($ui_msg_id != '') {
-            $ui_msg = new msg();
+            $ui_msg = new messages();
             $this->title = $ui_msg->txt($ui_msg_id);
         }
         if ($explain != '') {
@@ -201,8 +207,10 @@ class button
         //zu_debug("button->yesno ".$this->title.".", 10);
 
         if ($ui_msg_id != '') {
-            $ui_msg = new msg();
-            $this->title = $ui_msg->txt($ui_msg_id);
+            // TODO review
+            //$ui_msg = new message();
+            //$this->title = $ui_msg->txt($ui_msg_id);
+            $this->title = '';
         }
         if ($explain != '') {
             $this->title .= $explain;
@@ -235,7 +243,8 @@ class button
                 } else {
                     $this->title = "add new value";
                 }
-                $url_phr = $phr_lst->id_url_long();
+                // TODO activate
+                //$url_phr = $phr_lst->id_url_long();
             }
         }
 

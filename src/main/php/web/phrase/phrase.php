@@ -32,22 +32,22 @@
 
 namespace html\phrase;
 
-include_once WEB_SANDBOX_PATH . 'combine_named.php';
+include_once SANDBOX_PATH . 'combine_named.php';
 include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once API_PHRASE_PATH . 'phrase.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_WORD_PATH . 'triple.php';
+include_once WORD_PATH . 'word.php';
+include_once WORD_PATH . 'triple.php';
 
 use api\phrase\phrase as phrase_api;
 use api\sandbox\combine_object as combine_object_api;
 use api\api;
 use cfg\foaf_direction;
 use cfg\verb_list;
-use html\api as api_dsp;
+use html\rest_ctrl as api_dsp;
 use html\button;
-use html\combine_named_dsp;
+use html\sandbox\combine_named as combine_named_dsp;
 use html\html_base;
-use html\msg;
+use html\system\messages;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
@@ -153,6 +153,14 @@ class phrase extends combine_named_dsp
         $vars[api::FLD_NAME] = $this->name();
         $vars[api::FLD_DESCRIPTION] = $this->description();
         $vars[api::FLD_TYPE] = $this->type_id();
+        $vars[api::FLD_PLURAL] = $this->plural();
+        // TODO add exclude field and move to a parent object?
+        if ($this->obj()?->share_id != null) {
+            $vars[api::FLD_SHARE] = $this->obj()?->share_id;
+        }
+        if ($this->obj()?->protection_id != null) {
+            $vars[api::FLD_PROTECTION] = $this->obj()?->protection_id;
+        }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -248,10 +256,10 @@ class phrase extends combine_named_dsp
     {
         if ($this->is_word()) {
             $obj_name = api_dsp::WORD;
-            $ui_msg_id = msg::WORD_DEL;
+            $ui_msg_id = messages::WORD_DEL;
         } else {
             $obj_name = api_dsp::TRIPLE;
-            $ui_msg_id = msg::TRIPLE_DEL;
+            $ui_msg_id = messages::TRIPLE_DEL;
         }
         $url = (new html_base())->url($obj_name . api_dsp::REMOVE, $this->id(), $this->id());
         return (new button($url))->del($ui_msg_id);

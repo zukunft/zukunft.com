@@ -44,7 +44,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\log\change;
 use cfg\log\change_action;
-use cfg\log\change_action_list;
+use shared\library;
 
 class ip_range extends db_object_seq_id
 {
@@ -176,7 +176,7 @@ class ip_range extends db_object_seq_id
     function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
-        $sc->set_class(sql_db::TBL_IP);
+        $sc->set_class($class);
 
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
@@ -192,11 +192,11 @@ class ip_range extends db_object_seq_id
      */
     function load_sql_by_vars(sql_db $db_con): sql_par
     {
-        $db_con->set_class(sql_db::TBL_IP);
+        $db_con->set_class($this::class);
         $lib = new library();
-        $class = $lib->class_to_name(self::class);
-        $qp = new sql_par($class);
-        $qp->name = $class . '_by_';
+        $class_name = $lib->class_to_name($this::class);
+        $qp = new sql_par($class_name);
+        $qp->name = $class_name . '_by_';
         $sql_where = '';
         if ($this->id != 0) {
             $qp->name .= sql_db::FLD_ID;
@@ -212,7 +212,7 @@ class ip_range extends db_object_seq_id
             $qp->name = '';
             log_err("Either the database ID (" . $this->id .
                 ") or the ip range (" . $this->dsp_id() .
-                ") must be set to load an ip range.", $class . '->load_sql');
+                ") must be set to load an ip range.", $class_name . '->load_sql');
         }
 
         if ($qp->name != '') {
@@ -340,7 +340,7 @@ class ip_range extends db_object_seq_id
     {
         $result = '';
         if ($log->add()) {
-            $db_con->set_class(sql_db::TBL_IP);
+            $db_con->set_class(self::class);
             if (!$db_con->update_old($this->id, $log->field(), $log->new_value)) {
                 $result .= 'updating ' . $log->field() . ' to ' . $log->new_value . ' for ' . self::OBJ_NAME . ' ' . $this->dsp_id() . ' failed';
             }
@@ -398,11 +398,14 @@ class ip_range extends db_object_seq_id
     function log_add(): change
     {
         log_debug('->log_add ' . $this->dsp_id());
+        $lib = new library();
+        $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->user());
-        $log->action = change_action::ADD;
-        $log->set_table(sql_db::TBL_IP);
+        $log->set_action(change_action::ADD);
+        $log->set_table($tbl_name);
         $log->set_field(self::FLD_FROM . '_' . self::FLD_TO);
+        $log->new_value = $this->name();
         $log->row_id = 0;
         $log->add();
 
@@ -416,9 +419,12 @@ class ip_range extends db_object_seq_id
     private function log_upd(): change
     {
         log_debug('->log_upd ' . $this->dsp_id());
+        $lib = new library();
+        $tbl_name = $lib->class_to_name($this::class);
+
         $log = new change($this->user());
-        $log->action = change_action::UPDATE;
-        $log->set_table(sql_db::TBL_IP);
+        $log->set_action(change_action::UPDATE);
+        $log->set_table($tbl_name);
 
         return $log;
     }
@@ -450,7 +456,7 @@ class ip_range extends db_object_seq_id
         $log = $this->log_add();
         if ($log->id() > 0) {
             // insert the new ip range
-            $db_con->set_class(sql_db::TBL_IP);
+            $db_con->set_class($this::class);
             $db_con->set_usr($this->user()->id());
 
             $this->id = $db_con->insert_old(
@@ -510,7 +516,7 @@ class ip_range extends db_object_seq_id
 
         // build the database object because this is needed anyway
         $db_con->set_usr($this->user()->id());
-        $db_con->set_class(sql_db::TBL_IP);
+        $db_con->set_class($this::class);
 
         // check if the external reference is supposed to be added
         if ($this->id <= 0) {

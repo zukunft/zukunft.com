@@ -56,7 +56,7 @@ namespace cfg\group;
 
 include_once MODEL_GROUP_PATH . 'id.php';
 
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 use cfg\phrase_list;
 
 class group_id extends id
@@ -71,6 +71,7 @@ class group_id extends id
     const TBL_EXT_BIG = '_big'; // the table name extension for more than 16 phrase ids
     const TBL_EXT_PHRASE_ID = '_p'; // the table name extension with the number of phrases for up to four prime phrase ids
     const PRIME_PHRASES_STD = 4;
+    const MAIN_PHRASES_STD = 7;
     const STANDARD_PHRASES = 16;
 
     /**
@@ -80,12 +81,17 @@ class group_id extends id
      */
     function get_id(phrase_list $phr_lst): int|string
     {
-        $phr_lst = $phr_lst->sort_by_id();
-        if ($phr_lst->count() <= self::PRIME_PHRASES_STD and $phr_lst->prime_only()) {
+        if ($phr_lst->count() <= self::PRIME_PHRASES_STD
+            and $phr_lst->prime_only()
+            and ($phr_lst->one_positiv() or $phr_lst->count() < self::PRIME_PHRASES_STD)
+        ) {
+            $phr_lst = $phr_lst->sort_rev_by_id();
             $db_key = $this->int_group_id($phr_lst);
         } elseif ($phr_lst->count() <= self::STANDARD_PHRASES) {
+            $phr_lst = $phr_lst->sort_by_id();
             $db_key = $this->alpha_num($phr_lst);
         } else {
+            $phr_lst = $phr_lst->sort_by_id();
             $db_key = $this->alpha_num_big($phr_lst);
         }
         return $db_key;
@@ -99,12 +105,12 @@ class group_id extends id
     function max_number_of_phrase(int|string $id): int
     {
         $tbl_typ = $this->table_type($id);
-        if ($tbl_typ == sql_table_type::PRIME) {
+        if ($tbl_typ == sql_type::PRIME) {
             return self::PRIME_PHRASES_STD;
-        } elseif ($tbl_typ == sql_table_type::BIG) {
+        } elseif ($tbl_typ == sql_type::BIG) {
             $id_keys = preg_split("/[+-]/", $id);
             return count($id_keys);
-        } elseif ($tbl_typ == sql_table_type::MOST) {
+        } elseif ($tbl_typ == sql_type::MOST) {
             return self::STANDARD_PHRASES;
         } else {
             log_err('Unexpected table type ' . $tbl_typ->value);
@@ -150,7 +156,7 @@ class group_id extends id
 
     /**
      * TODO use directly the phrase list without converting to a group id and back
-     * @return int tze number of phrases of this group id
+     * @return int the number of phrases of this group id
      */
     function count(int|string $grp_id): int
     {
@@ -169,9 +175,9 @@ class group_id extends id
     function table_extension(int|string $grp_id, bool $with_phrase_count = true): string
     {
         $tbl_typ = $this->table_type($grp_id);
-        $ext = $tbl_typ->extension();
+        $ext = '';
         // only for prime value and result tables the number of ids is relevant
-        if ($tbl_typ == sql_table_type::PRIME) {
+        if ($tbl_typ == sql_type::PRIME) {
             if ($with_phrase_count) {
                 $ext .= self::TBL_EXT_PHRASE_ID . $this->count($grp_id);
             }
@@ -185,17 +191,17 @@ class group_id extends id
      * for faster searching
      *
      * @param int|string $grp_id
-     * @return sql_table_type the extension for the table name based on the id
+     * @return sql_type the extension for the table name based on the id
      */
-    function table_type(int|string $grp_id): sql_table_type
+    function table_type(int|string $grp_id): sql_type
     {
         $ext = '';
         if ($this->is_prime($grp_id)) {
-            $ext = sql_table_type::PRIME;
+            $ext = sql_type::PRIME;
         } elseif ($this->is_big($grp_id)) {
-            $ext = sql_table_type::BIG;
+            $ext = sql_type::BIG;
         } else {
-            $ext = sql_table_type::MOST;
+            $ext = sql_type::MOST;
         }
         return $ext;
     }
@@ -218,7 +224,9 @@ class group_id extends id
      */
     function is_prime(int|string $grp_id): bool
     {
-        if (is_int($grp_id)) {
+        // TODO check why is_int is not working
+        // if (is_int($grp_id)) {
+        if (is_numeric($grp_id) and $grp_id < PHP_INT_MAX and $grp_id > PHP_INT_MIN) {
             return true;
         } else {
             return false;
@@ -244,8 +252,8 @@ class group_id extends id
         $bin_key = decbin($grp_id);
         $bin_key = str_pad($bin_key, 64, "0", STR_PAD_LEFT);
         while ($bin_key != '') {
-            $id = bindec(substr($bin_key, 0, 15));
-            $sign = substr($bin_key, 15, 1);
+            $sign = substr($bin_key, 0, 1);
+            $id = bindec(substr($bin_key, 1, 15));
             if ($id != 0) {
                 if ($sign == 1) {
                     $result[] = $id * -1;

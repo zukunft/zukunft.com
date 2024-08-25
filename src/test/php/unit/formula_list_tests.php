@@ -33,6 +33,7 @@ include_once WEB_FORMULA_PATH . 'formula_list.php';
 
 use api\formula\formula as formula_api;
 use api\word\word as word_api;
+use cfg\db\sql;
 use cfg\formula;
 use cfg\triple;
 use cfg\verb;
@@ -55,6 +56,7 @@ class formula_list_tests
 
         // init
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'formula_list->';
         $t->resource_path = 'db/formula/';
         $json_file = 'unit/formula/formula_list.json';
@@ -65,14 +67,14 @@ class formula_list_tests
 
         // load only the names
         $frm_lst = new formula_list($usr);
-        $t->assert_sql_names($db_con, $frm_lst, new formula($usr));
-        $t->assert_sql_names($db_con, $frm_lst, new formula($usr), formula_api::TN_READ);
+        $t->assert_sql_names($sc, $frm_lst, new formula($usr));
+        $t->assert_sql_names($sc, $frm_lst, new formula($usr), formula_api::TN_READ);
 
         // sql to load a list of formulas by the id, name or ...
         $frm_lst = new formula_list($usr);
-        $t->assert_sql_by_ids($db_con, $frm_lst);
-        $t->assert_sql_by_names($db_con, $frm_lst, array(formula_api::TN_INCREASE, formula_api::TN_ADD));
-        $t->assert_sql_like($db_con, $frm_lst, 'i');
+        $t->assert_sql_by_ids($sc, $frm_lst);
+        $t->assert_sql_by_names($sc, $frm_lst, array(formula_api::TN_INCREASE, formula_api::TN_INCREASE));
+        $t->assert_sql_like($sc, $frm_lst, 'i');
         $t->assert_sql_all_paged($db_con, $frm_lst);
         $this->assert_sql_by_word_ref($t, $db_con, $frm_lst);
         $this->assert_sql_by_triple_ref($t, $db_con, $frm_lst);
@@ -80,11 +82,13 @@ class formula_list_tests
         $this->assert_sql_by_formula_ref($t, $db_con, $frm_lst);
         $this->assert_sql_by_phr($t, $db_con, $frm_lst);
         $this->assert_sql_by_phr_lst($t, $db_con, $frm_lst);
+        // TODO activate
+        //$t->assert_sql_all($db_con, $frm);
 
 
         $t->subheader('API unit tests');
 
-        $frm_lst = $t->dummy_formula_list();
+        $frm_lst = $t->formula_list();
         $t->assert_api($frm_lst);
 
 
@@ -95,7 +99,7 @@ class formula_list_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $trp_lst = $t->dummy_formula_list();
+        $trp_lst = $t->formula_list();
         $t->assert_api_to_dsp($trp_lst, new formula_list_dsp());
 
     }

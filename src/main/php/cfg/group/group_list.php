@@ -36,18 +36,16 @@ namespace cfg\group;
 include_once DB_PATH . 'sql_par_type.php';
 
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\library;
+use cfg\db\sql_type_list;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\sandbox_list;
-use cfg\db\sql_db;
 use cfg\term_list;
-use cfg\triple;
 use cfg\user_message;
-use cfg\value\value;
-use cfg\word;
+use shared\library;
 
 class group_list extends sandbox_list
 {
@@ -142,14 +140,14 @@ class group_list extends sandbox_list
      *
      * @param sql $sc with the target db_type set
      * @param phrase $phr if set to get all values for this phrase
-     * @param array $tbl_typ_lst the table types for this table
+     * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_phr_single(sql $sc, phrase $phr, array $tbl_typ_lst): sql_par
+    function load_sql_by_phr_single(sql $sc, phrase $phr, array $sc_par_lst): sql_par
     {
-        $qp = $this->load_sql_init($sc, group::class, 'phr', $tbl_typ_lst);
+        $qp = $this->load_sql_init($sc, group::class, 'phr', $sc_par_lst);
         $grp_id = new group_id();
-        $sc->add_where(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE, '$3');
+        $sc->add_where(group::FLD_ID, $grp_id->int2alpha_num($phr->id()), sql_par_type::LIKE);
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
 
@@ -175,11 +173,11 @@ class group_list extends sandbox_list
         $is_prime = $this->is_prime($tbl_types);
         $is_main = $this->is_main($tbl_types);
 
-        $tbl_ext = $this->table_extension($tbl_types);
-        $qp = new sql_par(group_list::class, false, false, $tbl_ext);
+        $qp = new sql_par(group_list::class, new sql_type_list($tbl_types));
         $qp->name .= $query_name;
 
-        $sc->set_class($class, false, $tbl_ext);
+        $tbl_ext = $this->table_extension($tbl_types);
+        $sc->set_class($class, new sql_type_list([]), $tbl_ext);
         // TODO add pattern filter for the prime group id
         $grp = new group($this->user());
         $sc->set_id_field($grp->id_field());

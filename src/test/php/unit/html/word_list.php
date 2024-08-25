@@ -50,8 +50,8 @@ class word_list
         $t->subheader('Word list tests');
 
         // create the word list test set
-        $lst = new word_list_dsp($t->dummy_word_list_short()->api_json());
-        $lst_long = new word_list_dsp($t->dummy_word_list_all_types()->api_json());
+        $lst = new word_list_dsp($t->word_list_short()->api_json());
+        $lst_long = new word_list_dsp($t->word_list_all_types()->api_json());
 
         // test the word list display functions
         $test_page = $html->text_h1('Word list display test');

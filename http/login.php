@@ -30,15 +30,18 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use html\api;
+global $debug;
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+use controller\controller;
+use html\rest_ctrl;
 use html\html_base;
 use cfg\user;
 
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . '/../';
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
-
-// open database 
+// open database
 $db_con = prg_start("login", "center_form");
 $html = new html_base();
 
@@ -89,7 +92,7 @@ if ($usr->id() > 0) {
             //header("Location: ../view.php?sid=".SID."");
             exit;
         } else {
-            $msg .= $html->dsp_err('Login failed. ' .  $html->ref($html->url(api::LOGIN_RESET), 'Forgot password?', 'Send a new password via email.'));
+            $msg .= $html->dsp_err('Login failed. ' .  $html->ref($html->url(rest_ctrl::LOGIN_RESET), 'Forgot password?', 'Send a new password via email.'));
         }
     }
 }

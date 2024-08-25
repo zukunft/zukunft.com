@@ -65,7 +65,7 @@
 */
 
 use cfg\expression;
-use cfg\library;
+use shared\library;
 
 class math
 {

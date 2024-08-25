@@ -33,7 +33,9 @@
 namespace api\formula;
 
 include_once API_SANDBOX_PATH . 'sandbox_typed.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
+include_once API_PHRASE_PATH . 'term.php';
+include_once API_WORD_PATH . 'word.php';
+include_once API_VERB_PATH . 'verb.php';
 
 use api\phrase\term as term_api;
 use api\sandbox\sandbox_typed as sandbox_typed_api;
@@ -54,7 +56,9 @@ class formula extends sandbox_typed_api
     // TR_* is the formula expression in the database reference format
     const TN_READ = 'scale minute to sec';
     const TF_READ = '"second" = "minute" * 60';
+    const TD_READ = 'to convert times in minutes to seconds and the other way round';
     const TN_READ_ANOTHER = 'scale hour to sec';
+    const TI_READ_ANOTHER = 2;
     const TF_DIAMETER = '= "circumference" / "Pi"';
     const TR_DIAMETER = '={w' . word_api::TI_CIRCUMFERENCE . '}/{w' . word_api::TI_PI . '}';
     const TN_READ_THIS = 'this';
@@ -76,6 +80,8 @@ class formula extends sandbox_typed_api
 
     // persevered formula names for unit and integration tests
     const TN_ADD = 'System Test Formula'; // to test adding a new formula to the database and using the increase formula
+    const TN_ADD_VIA_FUNC = 'System Test Formula via SQL function';
+    const TN_ADD_VIA_SQL = 'System Test Formula via SQL insert';
     const TN_RENAMED = 'System Test Formula Renamed';
     const TN_EXCLUDED = 'System Test Formula Excluded';
     const TN_THIS = 'System Test Formula This'; // to test if another formula of the functional type "this" can be created
@@ -100,6 +106,8 @@ class formula extends sandbox_typed_api
     const RESERVED_FORMULAS = array(
         self::TN_READ,
         self::TN_ADD,
+        self::TN_ADD_VIA_FUNC,
+        self::TN_ADD_VIA_SQL,
         self::TN_RENAMED,
         self::TN_EXCLUDED,
         self::TN_THIS,
@@ -116,6 +124,8 @@ class formula extends sandbox_typed_api
     // and therefore cannot be used by users
     const TEST_FORMULAS = array(
         self::TN_ADD,
+        self::TN_ADD_VIA_FUNC,
+        self::TN_ADD_VIA_SQL,
         self::TN_RENAMED,
         self::TN_EXCLUDED,
         self::TN_THIS,
@@ -150,9 +160,13 @@ class formula extends sandbox_typed_api
      * set and get
      */
 
-    function set_usr_text(string $usr_text): void
+    function set_usr_text(?string $usr_text): void
     {
-        $this->user_text = $usr_text;
+        if ($usr_text != null) {
+            $this->user_text = $usr_text;
+        } else {
+            $this->user_text = '';
+        }
     }
 
     function usr_text(): string

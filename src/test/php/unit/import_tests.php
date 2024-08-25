@@ -33,9 +33,12 @@
 namespace unit;
 
 include_once MODEL_IMPORT_PATH . 'import.php';
+include_once MODEL_IMPORT_PATH . 'convert_wikipedia_table.php';
 
+use cfg\import\convert_wikipedia_table;
 use cfg\import\import;
 use html\html_base;
+use test\test_base;
 use test\test_cleanup;
 
 class import_tests
@@ -53,6 +56,46 @@ class import_tests
         $result = $file_import->put($json_str, $usr);
         $target = 'Unknown element test';
         $t->assert($test_name, $result->get_last_message(), $target);
+
+        $t->subheader('Convert unit tests');
+
+        $test_name = 'wikipedia table to zukunft.com JSON string';
+        $in_table = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/democratie_index_table.txt');
+        $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/democratie_index_table.json');
+        $conv_wiki = new convert_wikipedia_table;
+        $conv_str = $conv_wiki->convert($in_table, $usr, test_base::TEST_TIMESTAMP,
+            ['Democracy Index'],
+            'Country', 1,
+            'Year', 'time', 3);
+        $result = json_decode($conv_str, true);
+        $target = json_decode($json_str, true);
+        $t->assert_json($test_name, $result, $target);
+
+        $test_name = 'wikipedia table json to zukunft.com JSON';
+        $in_table = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/country-ISO-3166-wiki.json');
+        $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/country-ISO-3166.json');
+        $context_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/country-ISO-3166-context.json');
+        $conv_wiki = new convert_wikipedia_table;
+        // TODO review the parameter context
+        $conv_str = $conv_wiki->convert_wiki_json($in_table, $usr, test_base::TEST_TIMESTAMP, $context_str,
+            ['Country', 'ISO 3166'], [], 1,
+            'English short name  (using title case)','Country',
+            'Alpha-3 code',      '');
+        $result = json_decode($conv_str, true);
+        $target = json_decode($json_str, true);
+        $t->assert_json($test_name, $result, $target);
+
+        $test_name = 'wikipedia data table json to zukunft.com JSON';
+        $in_table = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/currency-wiki.json');
+        $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/currency.json');
+        $context_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/currency-context.json');
+        $conv_wiki = new convert_wikipedia_table;
+        $conv_str = $conv_wiki->convert_wiki_json(
+            $in_table, $usr, test_base::TEST_TIMESTAMP, $context_str);
+        $result = json_decode($conv_str, true);
+        $target = json_decode($json_str, true);
+        $t->assert_json($test_name, $result, $target);
+
     }
 
 }

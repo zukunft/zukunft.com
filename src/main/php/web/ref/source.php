@@ -33,7 +33,7 @@ namespace html\ref;
 
 use controller\controller;
 use api\api;
-use html\api as api_dsp;
+use html\rest_ctrl as api_dsp;
 use html\html_base;
 use html\html_selector;
 use html\sandbox\sandbox_typed;

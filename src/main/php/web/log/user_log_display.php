@@ -32,21 +32,21 @@
 
 namespace html\log;
 
-use cfg\db\sql;
-use cfg\formula;
-use html\formula\formula AS formula_dsp;
-use cfg\log\change_table_list;
 use cfg\component\component;
-use cfg\library;
+use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\formula;
+use cfg\log\change_table_list;
 use cfg\user;
 use cfg\value\value;
 use cfg\view;
 use cfg\word;
-use html\api;
+use html\rest_ctrl;
 use html\button;
+use html\formula\formula as formula_dsp;
 use html\html_base;
-use html\msg;
+use html\system\messages;
+use shared\library;
 
 class user_log_display
 {
@@ -260,8 +260,8 @@ class user_log_display
                 $undo_btn = '';
                 if ($this->type == 'word') {
                     if ($db_row['type'] == 'add') {
-                        $undo_call = $html->url('value' . api::REMOVE, $this->id, $this->back);
-                        $undo_btn = (new button($undo_call))->undo(msg::UNDO_ADD);
+                        $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id, $this->back);
+                        $undo_btn = (new button($undo_call))->undo(messages::UNDO_ADD);
                     }
                 } elseif ($this->type == 'value') {
                     if ($db_row['type'] == 'add') {
@@ -269,8 +269,8 @@ class user_log_display
                     }
                 } elseif ($this->type == 'formula') {
                     if ($db_row['type'] == 'update') {
-                        $undo_call = $html->url(formula::class . api::UPDATE, $db_row["row_id"], $this->back . '&undo_change=' . $db_row["change_id"]);
-                        $undo_btn = (new button($undo_call))->undo(msg::UNDO_ADD);
+                        $undo_call = $html->url(formula::class . rest_ctrl::UPDATE, $db_row["row_id"], $this->back . '&undo_change=' . $db_row["change_id"]);
+                        $undo_btn = (new button($undo_call))->undo(messages::UNDO_ADD);
                     }
                 }
                 // display the undo button
@@ -439,8 +439,8 @@ class user_log_display
                 $undo_call = '';
                 $undo_btn = '';
                 if ($this->type == formula::class) {
-                    $undo_call = $html->url(formula::class . api::UPDATE, $db_row["row_id"], $this->back . '&undo_change=' . $db_row["change_link_id"]);
-                    $undo_btn = (new button($undo_call))->undo(msg::UNDO_EDIT);
+                    $undo_call = $html->url(formula::class . rest_ctrl::UPDATE, $db_row["row_id"], $this->back . '&undo_change=' . $db_row["change_link_id"]);
+                    $undo_btn = (new button($undo_call))->undo(messages::UNDO_EDIT);
                 }
                 // display the undo button
                 if ($undo_call <> '') {

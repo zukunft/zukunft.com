@@ -9,14 +9,14 @@
 */
 
 // standard start for all php code that can be called
-use cfg\db\db_check;
-use cfg\phrase_type;
-use controller\controller;
-use cfg\user;
+global $debug;
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
 
-if (isset($_GET['debug'])) { $debug = $_GET['debug']; } else { $debug = 0; }
-const ROOT_PATH = __DIR__ . '/../';
-include_once ROOT_PATH . 'src/main/php/zu_lib.php'; if ($debug > 0) { echo 'libs loaded<br>'; }
+use cfg\db\db_check;
+use cfg\user;
 
 /*
 
@@ -43,35 +43,13 @@ if ($usr->id() > 0) {
 
         // recreate the code link database rows
         $db_chk = new db_check();
-        $db_con->db_fill_code_links();
-        $db_con->import_verbs($usr);
 
-
-        // create all code linked records in the database
-        // created in the database because on one hand, they can be used like all user added records
-        // on the other side, these records have special function that are defined in the code
-        // link always is done with the field "code_id"
-        // this way the user can give the record another name without using the code link
-        // maybe the code link should be shown to the user for
-        sql_code_link(controller::DSP_WORD_ADD, "Add new words", $db_con);
-        sql_code_link(controller::DSP_WORD_EDIT, "Word Edit", $db_con);
-        sql_code_link(controller::DSP_VALUE_ADD, "Add new values", $db_con);
-        sql_code_link(controller::DSP_VALUE_EDIT, "Value Edit", $db_con);
-        sql_code_link(controller::DSP_FORMULA_ADD, "Add new formula", $db_con);
-        sql_code_link(controller::DSP_FORMULA_EDIT, "Formula Edit", $db_con);
-        sql_code_link(controller::DSP_VIEW_ADD, "Add new view", $db_con);
-        sql_code_link(controller::DSP_VIEW_EDIT, "view Edit", $db_con);
-        sql_code_link(controller::DSP_IMPORT, "Import", $db_con);
-
-        sql_code_link(phrase_type::TIME, "Time Word", $db_con);
-        //sql_code_link(DBL_LINK_TYPE_IS,      "is a", $db_con);
-
-        // create test records
-        // these records are used for the test cases
-
-        // TODO check why loading seems to be not needed here
-        // import_config($usr);
-
+        // with the check the tables will be created and the system data will be loaded
+        // TODO compare with test_recreate.php
+        $usr_msg = $db_chk->db_check($db_con);
+        if (!$usr_msg->is_ok()) {
+            echo $usr_msg->all_message_text();
+        }
 
         log_debug("setup ... done.");
     }}

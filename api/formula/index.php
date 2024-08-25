@@ -29,11 +29,6 @@
   
 */
 
-use controller\controller;
-use cfg\user;
-use cfg\formula;
-use api\formula\formula as formula_api;
-
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
 $debug = $_GET['debug'] ?? 0;
@@ -47,6 +42,11 @@ include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once API_FORMULA_PATH . 'formula.php';
+
+use controller\controller;
+use cfg\user;
+use cfg\formula;
+use api\formula\formula as formula_api;
 
 // open database
 $db_con = prg_start("api/formula", "", false);

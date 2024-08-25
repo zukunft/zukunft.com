@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS views
     user_id       bigint       DEFAULT NULL COMMENT 'the owner / creator of the view',
     view_name     varchar(255)     NOT NULL COMMENT 'the name of the view used for searching',
     description   text         DEFAULT NULL COMMENT 'to explain the view to the user with a mouse over text; to be replaced by a language form entry',
-    view_type_id  bigint       DEFAULT NULL COMMENT 'to link coded functionality to views e.g. to use a view for the startup page',
+    view_type_id  smallint     DEFAULT NULL COMMENT 'to link coded functionality to views e.g. to use a view for the startup page',
     code_id       varchar(255) DEFAULT NULL COMMENT 'to link coded functionality to a specific view e.g. define the internal system views',
     excluded      smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id smallint     DEFAULT NULL COMMENT 'to restrict the access',
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS user_views
     language_id   bigint NOT NULL DEFAULT 1    COMMENT 'the name of the view used for searching',
     view_name     varchar(255)    DEFAULT NULL COMMENT 'the name of the view used for searching',
     description   text            DEFAULT NULL COMMENT 'to explain the view to the user with a mouse over text; to be replaced by a language form entry',
-    view_type_id  bigint          DEFAULT NULL COMMENT 'to link coded functionality to views e.g. to use a view for the startup page',
+    view_type_id  smallint        DEFAULT NULL COMMENT 'to link coded functionality to views e.g. to use a view for the startup page',
     excluded      smallint        DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id smallint        DEFAULT NULL COMMENT 'to restrict the access',
     protect_id    smallint        DEFAULT NULL COMMENT 'to protect against unwanted changes'

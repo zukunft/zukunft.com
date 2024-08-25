@@ -1,0 +1,59 @@
+{
+  "version": "0.0.4",
+  "time": "2024-06-25 20:54:00",
+  "user": "linus",
+  "selection": [
+    "Bus line Meilen Uster"
+  ],
+  "words": [
+    {
+      "name": "2024",
+      "type": "time"
+    },
+    {
+      "name": "Bus"
+    },
+    {
+      "name": "Max"
+    },
+    {
+      "name": "Capacity"
+    },
+    {
+      "name": "Line"
+    },
+    {
+      "name": "Town"
+    },
+    {
+      "name": "Meilen"
+    },
+    {
+      "name": "Uster"
+    }
+  ],
+  "triples": [
+    {
+      "name": "",
+      "from": "Meilen",
+      "verb": "is a",
+      "to": "Town"
+    },
+    {
+      "name": "",
+      "from": "Uster",
+      "verb": "is a",
+      "to": "Town"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "Bus",
+        "Max",
+        "Capacity"
+      ],
+      "number": "31"
+    }
+  ]
+}

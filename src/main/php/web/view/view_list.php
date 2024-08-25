@@ -31,11 +31,13 @@
 
 namespace html\view;
 
-include_once WEB_SANDBOX_PATH . 'list.php';
-include_once MODEL_VIEW_PATH . 'view_list.php';
+include_once SANDBOX_PATH . 'list_dsp.php';
+include_once VIEW_PATH . 'view.php';
 
-use html\list_dsp;
+use html\rest_ctrl;
+use html\sandbox\list_dsp;
 use html\view\view as view_dsp;
+use shared\api;
 
 class view_list extends list_dsp
 {
@@ -51,9 +53,9 @@ class view_list extends list_dsp
      */
     function set_obj_from_json_array(array $json_array): object
     {
-        $dsp = new view_dsp();
-        $dsp->set_from_json_array($json_array);
-        return $dsp;
+        $msk = new view_dsp();
+        $msk->set_from_json_array($json_array);
+        return $msk;
     }
 
     function get(string $code_id): view_dsp
@@ -64,6 +66,42 @@ class view_list extends list_dsp
             if ($dsp->code_id() == $code_id) {
                 $result = $dsp;
             }
+        }
+        return $result;
+    }
+
+    function get_by_id(int $id): view_dsp
+    {
+        // TODO use a hash list
+        $result = new view_dsp();
+        foreach ($this->lst as $msk) {
+            if ($msk->id() == $id) {
+                $result = $msk;
+            }
+        }
+        return $result;
+    }
+
+    /*
+     * load
+     */
+
+    /**
+     * get the views that use this component from the backend
+     *
+     * @param int $id of the component
+     * @return bool true if the load has been successful
+     */
+    function load_by_component_id(int $id): bool
+    {
+        $result = false;
+
+        $data = array(api::URL_VAR_CMP_ID => $id);
+        $rest = new rest_ctrl();
+        $json_body = $rest->api_get(view::class, $data);
+        $this->set_from_json_array($json_body);
+        if (!$this->is_empty()) {
+            $result = true;
         }
         return $result;
     }

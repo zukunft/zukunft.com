@@ -50,6 +50,7 @@ include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
+include_once MODEL_VIEW_PATH . 'view_link_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'position_type_list.php';
@@ -94,6 +95,7 @@ class type_lists
         global $formula_link_types;
         global $element_types;
         global $view_types;
+        global $view_link_types;
         global $component_types;
         global $component_link_types;
         global $position_types;
@@ -119,6 +121,7 @@ class type_lists
         $lst->add($formula_link_types->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
         $lst->add($element_types->api_obj(), controller::API_LIST_ELEMENT_TYPES);
         $lst->add($view_types->api_obj(), controller::API_LIST_VIEW_TYPES);
+        $lst->add($view_link_types->api_obj(), controller::API_LIST_VIEW_LINK_TYPES);
         $lst->add($component_types->api_obj(), controller::API_LIST_COMPONENT_TYPES);
         //$lst->add($component_link_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
         $lst->add($position_types->api_obj(), controller::API_LIST_COMPONENT_POSITION_TYPES);
@@ -155,6 +158,7 @@ class type_lists
         global $formula_link_types;
         global $element_types;
         global $view_types;
+        global $view_link_types;
         global $component_types;
         global $component_link_types;
         global $position_types;
@@ -194,6 +198,8 @@ class type_lists
         $element_types->load($db_con);
         $view_types = new view_type_list();
         $view_types->load($db_con);
+        $view_link_types = new view_link_type_list();
+        $view_link_types->load($db_con);
         $component_types = new component_type_list();
         $component_types->load($db_con);
         // TODO review: not yet needed?

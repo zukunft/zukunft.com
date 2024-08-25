@@ -35,12 +35,13 @@ namespace unit;
 include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
 include_once MODEL_FORMULA_PATH . 'formula_link_list.php';
 
-use cfg\element_type;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\db\sql_type;
 use cfg\formula_link;
 use cfg\formula_link_list;
 use cfg\formula_link_type;
-use cfg\library;
-use cfg\db\sql_db;
+use shared\library;
 use test\test_cleanup;
 
 class formula_link_tests
@@ -53,9 +54,9 @@ class formula_link_tests
         // init
         $lib = new library();
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'formula_link->';
         $t->resource_path = 'db/formula/';
-        $usr->set_id(1);
 
         // TODO use assert_sql_all if possible
 
@@ -65,7 +66,7 @@ class formula_link_tests
         $frm_lnk_typ = new formula_link_type('');
         $t->assert_sql_table_create($frm_lnk_typ);
         $t->assert_sql_index_create($frm_lnk_typ);
-        $frm_lnk = $t->dummy_formula_link();
+        $frm_lnk = $t->formula_link();
         $t->assert_sql_table_create($frm_lnk);
         $t->assert_sql_index_create($frm_lnk);
         $t->assert_sql_foreign_key_create($frm_lnk);
@@ -74,8 +75,8 @@ class formula_link_tests
 
         // SQL creation tests (mainly to use the IDE check for the generated SQL statements)
         $flk = new formula_link($usr);
-        $t->assert_sql_by_id($db_con, $flk);
-        $t->assert_sql_by_link($db_con, $flk);
+        $t->assert_sql_by_id($sc, $flk);
+        $t->assert_sql_by_link($sc, $flk);
 
 
         $t->subheader('SQL load default statement tests');
@@ -83,14 +84,29 @@ class formula_link_tests
         // sql to load the standard formula link by id
         $lnk = new formula_link($usr);
         $lnk->set_id(1);
-        $t->assert_sql_standard($db_con, $lnk);
-        $t->assert_sql_not_changed($db_con, $lnk);
+        $t->assert_sql_standard($sc, $lnk);
+        $t->assert_sql_not_changed($sc, $lnk);
 
         // sql to load the user formula link by id
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $lnk->load_sql_user_changes($db_con->sql_creator())->sql;
         $expected_sql = $t->file('db/formula/formula_link_by_usr_cfg.sql');
         $t->assert('formula_link->load_user_sql by formula link id', $lib->trim($created_sql), $lib->trim($expected_sql));
+
+        $t->subheader('formula link sql write');
+        $lnk = $t->formula_link();
+        $t->assert_sql_insert($sc, $lnk);
+        $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
+        $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
+        $lnk_filled = $t->formula_link_filled();
+        $t->assert_sql_insert($sc, $lnk_filled, [sql_type::LOG]);
+        $lnk_reordered = clone $lnk;
+        $lnk_reordered->order_nbr = 1;
+        $t->assert_sql_update($sc, $lnk_reordered, $lnk);
+        $t->assert_sql_update($sc, $lnk_reordered, $lnk, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_delete($sc, $lnk);
+        $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
 
         /*
         $t->subheader('Im- and Export tests');

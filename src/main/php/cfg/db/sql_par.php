@@ -2,31 +2,31 @@
 
 /*
 
-  sql_par.php - combine the query name, the sql statement and the parameters in one object
-  -----------
-  
+    cfg/db/sql_par.php - combine the query name, the sql statement and the parameters in one object
+    ------------------
 
-  This file is part of zukunft.com - calc with words
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
   
 */
 
@@ -37,55 +37,89 @@
 
 namespace cfg\db;
 
-use cfg\group\group_id;
-use cfg\library;
+use cfg\log\change;
+use cfg\log\change_value;
+use cfg\log\change_values_big;
+use cfg\log\change_values_norm;
+use cfg\log\changes_big;
+use cfg\log\changes_norm;
+use shared\library;
 
 /**
  * a query object to build and fill prepared queries
  */
 class sql_par
 {
-    public string $sql;   // the SQL statement to create a prepared query
-    public string $name;  // the unique name of the SQL statement
-    public array $par;    // the list of the parameters used for the execution
-    public string $ext;   // the extension used e.g. to decide if the index is int or string
-    public sql_table_type $typ; // to handle table that does not have a bigint prime index
+    public string $sql;       // the SQL statement to create a prepared query or function
+    public string $name;      // the unique name of the SQL statement
+    public array $par;        // the list of the parameters used for this execution
+    public string $call_sql;  // the sql call for function sql statements
+    public string $call_name; // the sql call name
+    public string $call;      // sample call for testing only
+    public array $par_name_lst; // the list of the parameters names to reuse already added parameters
+    public sql_par_field $par_fld; //
+    public sql_par_field_list $par_fld_lst; //
+    public string $ext;     // the extension used e.g. to decide if the index is int or string
+    public sql_type $typ; // to handle table that does not have a bigint prime index
 
     /**
-     * TODO replace $ext with $tbl_typ
      * @param string $class the name of the calling class used for the unique query name
-     * @param bool $is_std true if the standard data for all users should be loaded
-     * @param bool $all true if all rows should be loaded
-     * @param string $ext the query name extension e.g. to separate the queries by the number of parameters
-     * @param sql_table_type $tbl_typ the table extension e.g. to select the table where the data should be saved
+     * @param sql_type_list $sc_par_lst list of sql types e.g. insert or load
+     * @param string $ext the query name extension that cannot be created based on $sc_par_lst e.g. to separate the queries by the number of parameters
+     * @param string $id_ext the query name extension that indicated how many id fields are used e.g. "_p1"
      */
     function __construct(
-        string         $class,
-        bool           $is_std = false,
-        bool           $all = false,
-        string         $ext = '',
-        sql_table_type $tbl_typ = sql_table_type::MOST
-    )
+        string        $class,
+        sql_type_list $sc_par_lst = new sql_type_list([]),
+        string        $ext = '',
+        string        $id_ext = '')
     {
+
+        // prepare the object values
+
+        // get the relevant part from the class name
         $lib = new library();
-        if ($ext == '') {
-            if ($tbl_typ != sql_table_type::MOST) {
-                $ext = $tbl_typ->extension();
-            }
+        $name = $lib->class_to_name($class);
+
+        // add "_sub" to queries that are part of other queries
+        if ($sc_par_lst->is_sub_tbl()) {
+            $name .= sql_type::SUB->extension();
         }
+
+        // add the table extension for select queries e.g. "_prime"
+        $name .= $sc_par_lst->ext_query();
+
+        // add the number of id fields used
+        $name .= $id_ext;
+
+        // add the table extension to get the normal value e.g. "_norm"
+        $name .= $sc_par_lst->ext_norm();
+
+        // add "_by" to the query name e.g. "word_by_name" to selects a word by the name
+        if ($sc_par_lst->is_select()) {
+            $name .= $sc_par_lst->ext_by();
+        }
+
+        // add the sql type e.g. "_insert" to query name
+        $name .= $sc_par_lst->ext_type();
+
+        // add extesion that cannot be created by the sql_type_list e.g. "_0012" for the changed fields
+        $name .= $ext;
+
+        // add "_user" to queries the handle user specific values
+        if ($sc_par_lst->is_usr_tbl()) {
+            $name .= sql::NAME_EXT_USER;
+        }
+
+        // set the object values
         $this->sql = '';
-        $class = $lib->class_to_name($class);
-        $name = $class . $ext;
-        if ($is_std) {
-            $this->name = $name . '_std_by_';
-        } elseif ($all) {
-            $this->name = $name . '_';
-        } else {
-            $this->name = $name . '_by_';
-        }
+        $this->name = $name;
         $this->par = array();
         $this->ext = $ext;
-        $this->typ = $tbl_typ;
+        $this->typ = $sc_par_lst->value_table_type();
+        $this->call_sql = '';
+        $this->call_name = '';
+        $this->call = '';
     }
 
     /**
@@ -101,7 +135,7 @@ class sql_par
     }
 
     /**
-     * combine two sql and the related parameters to one sql statement
+     * merge two sql and the related parameters to one sql statement
      *
      * @param sql_par $qp
      * @param bool $unique true if the parameters should be unique
@@ -114,6 +148,25 @@ class sql_par
         } else {
             $this->sql .= ' UNION ' . $qp->sql;
         }
+        if ($unique) {
+            $this->par = array_unique(array_merge($this->par, $qp->par));
+        } else {
+            $this->par = array_merge($this->par, $qp->par);
+        }
+        return $this;
+    }
+
+    /**
+     * combine two sql and the related parameters to one sql statement
+     * without the union for a sql function
+     *
+     * @param sql_par $qp
+     * @param bool $unique true if the parameters should be unique
+     * @return sql_par
+     */
+    function combine(sql_par $qp, bool $unique = false): sql_par
+    {
+        $this->sql .= $qp->sql;
         if ($unique) {
             $this->par = array_unique(array_merge($this->par, $qp->par));
         } else {

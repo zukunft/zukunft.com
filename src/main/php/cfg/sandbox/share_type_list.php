@@ -32,10 +32,13 @@
 
 namespace cfg;
 
-use cfg\db\sql_db;
-
+include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
+
+use shared\types\share_type as share_type_shared;
+use cfg\db\sql_db;
+use test\create_test_objects;
 
 global $share_types;
 
@@ -43,29 +46,14 @@ class share_type_list extends type_list
 {
 
     /**
-     * overwrite the general user type list load function to keep the link to the table type capsuled
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @return bool true if load was successful
-     */
-    function load(sql_db $db_con, string $db_type = sql_db::TBL_SHARE): bool
-    {
-        return parent::load($db_con, $db_type);
-    }
-
-    /**
      * create dummy type list for the unit tests without database connection
      */
     function load_dummy(): void
     {
         $this->reset();
-        $type = new type_object(share_type::PUBLIC, share_type::PUBLIC, '', 1);
-        $this->add($type);
-        $type = new type_object(share_type::PERSONAL, share_type::PERSONAL, '', 2);
-        $this->add($type);
-        $type = new type_object(share_type::GROUP, share_type::GROUP, '', 3);
-        $this->add($type);
-        $type = new type_object(share_type::PRIVATE, share_type::PRIVATE, '', 4);
-        $this->add($type);
+        // read the corresponding names and description from the internal config csv files
+        $t = new create_test_objects();
+        $t->read_from_config_csv($this);
     }
 
     /**
@@ -73,7 +61,7 @@ class share_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(share_type::PUBLIC);
+        return parent::id(share_type_shared::PUBLIC);
     }
 
 }

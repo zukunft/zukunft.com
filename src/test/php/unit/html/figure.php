@@ -44,7 +44,7 @@ class figure
 
         $t->subheader('Figure tests');
 
-        $fig = new figure_dsp($t->dummy_figure_value()->api_json());
+        $fig = new figure_dsp($t->figure_value()->api_json());
         $test_page = $html->text_h2('Figure display test');
         $test_page .= 'with tooltip: ' . $fig->display() . '<br>';
         $test_page .= 'with link: ' . $fig->display_linked() . '<br>';

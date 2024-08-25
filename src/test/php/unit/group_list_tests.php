@@ -34,6 +34,7 @@ namespace unit;
 
 include_once MODEL_GROUP_PATH . 'group_list.php';
 
+use cfg\db\sql;
 use cfg\group\group_list;
 use cfg\db\sql_db;
 use test\test_cleanup;
@@ -46,10 +47,9 @@ class group_list_tests
         global $usr;
 
         // init
-        $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'group_list->';
         $t->resource_path = 'db/group/';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the phrase group list class (src/main/php/model/group/group_list.php)');
 
@@ -57,9 +57,9 @@ class group_list_tests
 
         // load by triple ids
         $grp_lst = new group_list($usr);
-        $t->assert_sql_by_ids($db_con, $grp_lst, array(3,2,4));
-        $t->assert_sql_names_by_ids($db_con, $grp_lst, array(3,2,4));
-        $t->assert_sql_by_phrase($db_con, $grp_lst, $t->dummy_word()->phrase());
+        $t->assert_sql_by_ids($sc, $grp_lst, array(3,2,4));
+        $t->assert_sql_names_by_ids($sc, $grp_lst, array(3,2,4));
+        $t->assert_sql_by_phrase($sc, $grp_lst, $t->word()->phrase());
 
     }
 

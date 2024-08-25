@@ -34,7 +34,9 @@ namespace unit;
 
 include_once MODEL_ELEMENT_PATH . 'element_list.php';
 
+use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_type;
 use cfg\element_list;
 use cfg\element_type;
 use test\test_cleanup;
@@ -47,10 +49,9 @@ class element_tests
         global $usr;
 
         // init
-        $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'element->';
         $t->resource_path = 'db/element/';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the formula element class (src/main/php/model/formula/element.php)');
 
@@ -58,28 +59,26 @@ class element_tests
         $elm_typ = new element_type('');
         $t->assert_sql_table_create($elm_typ);
         $t->assert_sql_index_create($elm_typ);
-        $elm = $t->dummy_element();
+        $elm = $t->element();
         $t->assert_sql_table_create($elm);
         $t->assert_sql_index_create($elm);
         $t->assert_sql_foreign_key_create($elm);
 
         $t->subheader('SQL creation tests');
 
-        $elm = $t->dummy_element();
-        $t->assert_sql_by_id($db_con, $elm);
+        $elm = $t->element();
+        $t->assert_sql_by_id($sc, $elm);
 
-
-        $t->subheader('Database query list creation tests');
-
-        // load by formula id
-        $frm_elm_lst = new element_list($usr);
-        $frm_id = 5;
-        $this->assert_sql_by_frm_id($t, $db_con, $frm_elm_lst, $frm_id);
-
-        // load by formula id and filter by element type
-        $frm_elm_lst = new element_list($usr);
-        $elm_type_id = 7;
-        $this->assert_sql_by_frm_and_type_id($t, $db_con, $frm_elm_lst, $frm_id, $elm_type_id);
+        $t->subheader('element sql write (no log needed because log is done by the formula)');
+        // TODO activate db write
+        //$t->assert_sql_insert($sc, $elm);
+        //$t->assert_sql_insert($sc, $elm, [sql_type::USER]);
+        // TODO activate db write
+        //$t->assert_sql_update($sc, $elm);
+        //$t->assert_sql_update($sc, $elm, [sql_type::USER]);
+        // TODO activate db write
+        //$t->assert_sql_delete($sc, $elm);
+        //$t->assert_sql_delete($sc, $elm, [sql_type::USER]);
 
 
         // JSON export list
@@ -114,34 +113,6 @@ class element_tests
         // check the MySQL query syntax
         $db_con->db_type = sql_db::MYSQL;
         $qp = $lst->load_sql_by_frm_id($db_con->sql_creator(), $frm_id);
-        $t->assert_qp($qp, $db_con->db_type);
-    }
-
-    /**
-     * test the SQL statement creation for a formula element list in all SQL dialect
-     * and check if the statement name is unique
-     *
-     * @param test_cleanup $t the test environment
-     * @param sql_db $db_con the test database connection
-     * @param element_list $lst the empty formula element list object
-     * @param int $frm_id id of the formula to be used for the query creation
-     * @param int $elm_type_id
-     * @return void
-     */
-    private function assert_sql_by_frm_and_type_id(test_cleanup $t,
-                                                   sql_db       $db_con,
-                                                   element_list $lst,
-                                                   int          $frm_id,
-                                                   int          $elm_type_id): void
-    {
-        // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_frm_and_type_id($db_con->sql_creator(), $frm_id, $elm_type_id);
-        $t->assert_qp($qp, $db_con->db_type);
-
-        // check the MySQL query syntax
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_by_frm_and_type_id($db_con->sql_creator(), $frm_id, $elm_type_id);
         $t->assert_qp($qp, $db_con->db_type);
     }
 

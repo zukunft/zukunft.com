@@ -54,25 +54,23 @@ use api\api_message;
 use api\component\component as component_api;
 use api\language\language as language_api;
 use api\language\language_form as language_form_api;
-use api\log\system_log as system_log_api;
 use api\phrase\phrase_type as phrase_type_api;
 use api\ref\ref as ref_api;
 use api\system\job as job_api;
 use api\system\type_object as type_api;
-use cfg\job;
 use cfg\component\component;
 use cfg\db\sql_db;
 use cfg\export\export;
 use cfg\formula;
+use cfg\job;
 use cfg\language;
 use cfg\language_form;
-use cfg\library;
 use cfg\log\change_log;
-use cfg\log\system_log;
-use cfg\log\system_log_list;
 use cfg\phrase_type;
 use cfg\ref;
 use cfg\source;
+use cfg\sys_log;
+use cfg\sys_log_list;
 use cfg\term_list;
 use cfg\trm_ids;
 use cfg\type_lists;
@@ -82,13 +80,17 @@ use cfg\user_message;
 use cfg\value\value;
 use cfg\word;
 use controller\controller;
+use controller\system\sys_log as sys_log_api;
 use DateTime;
 use Exception;
+use html\rest_ctrl;
+use shared\library;
 
 class test_api extends create_test_objects
 {
     // path
-    const API_PATH = 'api/';
+    const API_PATH = 'api';
+    const JSON_EXT = '.json';
 
     /**
      * check if the HTML frontend object can be set based on the api json message
@@ -125,7 +127,7 @@ class test_api extends create_test_objects
     {
         $class = $usr_obj::class;
         $class = $this->class_to_api($class);
-        if ($usr_obj::class == system_log_list::class
+        if ($usr_obj::class == sys_log_list::class
             or $usr_obj::class == type_lists::class) {
             $api_obj = $usr_obj->api_obj($this->usr1, false);
         } else {
@@ -133,6 +135,40 @@ class test_api extends create_test_objects
         }
         $actual = json_decode($api_obj->get_json(), true);
         return $this->assert_api_compare($class, $actual, null, $filename, $contains);
+    }
+
+    /**
+     * create the api message json body, recreate the object based on the json and check if it matches
+     * without using the real curl api
+     *
+     * @param object $usr_obj the user sandbox object that should be tested
+     * @return bool true if the check is fine
+     */
+    function assert_api_json(object $usr_obj): bool
+    {
+        $class = $usr_obj::class;
+        $class = $this->class_to_api($class);
+        $test_name = $class . ' excluded returns id only api json';
+        $usr_obj->excluded = true;
+        $json_excluded = $usr_obj->api_json();
+        $result = $this->assert($test_name, $json_excluded, '{"id":1,"excluded":true}');
+        if ($result) {
+            $test_name = $class . ' reset returns empty api json';
+            $usr_obj->excluded = false;
+            // check that the excluded object returns a json with just the id and the excluded flag
+            $json_api = $usr_obj->api_json();
+            $clone_obj = clone $usr_obj;
+            $clone_obj->reset();
+            $json_empty = $clone_obj->api_json();
+            $result = $this->assert($test_name, $json_empty, '{"id":0}');
+        }
+        if ($result) {
+            $test_name = $class . ' fill based on api json matches original';
+            $clone_obj->set_by_api_string($json_api);
+            $json_compare = $clone_obj->api_json();
+            $result = $this->assert_json_string($test_name, $json_compare, $json_api);
+        }
+        return $result;
     }
 
     /**
@@ -153,7 +189,8 @@ class test_api extends create_test_objects
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data_string = json_encode($data);
-        $actual = json_decode($this->api_call("PUT", $url . '/', $data), true);
+        $ctrl = new rest_ctrl();
+        $actual = json_decode($ctrl->api_call(rest_ctrl::PUT, $url . '/', $data), true);
         $actual_text = json_encode($actual);
         $expected_raw_text = $this->file('api/' . $class . '/' . $class . '_put_response.json');
         $expected = json_decode($expected_raw_text, true);
@@ -208,7 +245,8 @@ class test_api extends create_test_objects
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data = array("id" => $id);
-        $actual = json_decode($this->api_call("DELETE", $url, $data), true);
+        $ctrl = new rest_ctrl();
+        $actual = json_decode($ctrl->api_call(rest_ctrl::DELETE, $url, $data), true);
         if ($actual == null) {
             return false;
         } else {
@@ -368,6 +406,7 @@ class test_api extends create_test_objects
 
     /**
      * check the api message without using the real curl api
+     * @param sql_db $db_con to retrive the configuration for the message header
      * @param object $usr_obj the user sandbox object that should be tested
      * @param string $filename to overwrite the filename of the expected json message based on the usr_obj
      * @param bool $contains set to true if the actual message is expected to contain more than the expected message
@@ -398,23 +437,24 @@ class test_api extends create_test_objects
     {
         // naming exception (to be removed?)
         $lib = new library();
-        $class = $this->class_to_api($class);
-        $url = $this->class_to_url($class);
+        $ctrl = new rest_ctrl();
+        $class_api = $this->class_to_api($class);
+        $url = $this->class_to_url($class_api);
         $data = array(controller::URL_VAR_ID => $id);
         // TODO check why for formula a double call is needed
         if ($class == formula::class) {
-            $actual = json_decode($this->api_call("GET", $url, $data), true);
+            $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
         }
         // TODO simulate other users
-        $actual = json_decode($this->api_call("GET", $url, $data), true);
+        $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
         if ($actual == null) {
-            log_err('GET api call for ' . $class . ' returned an empty result');
+            log_err('GET api call for ' . $class_api . ' returned an empty result');
         }
         $filename = '';
-        if ($class == value::class or $class == $lib->class_to_name(value::class)) {
-            $filename = "value_non_std";
+        if ($class == value::class) {
+            $filename = 'value_non_std';
         }
-        return $this->assert_api_compare($class, $actual, $expected, $filename, false, $ignore_id);
+        return $this->assert_api_compare($class_api, $actual, $expected, $filename, false, $ignore_id);
     }
 
     /**
@@ -431,7 +471,8 @@ class test_api extends create_test_objects
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data = array($field => $name);
-        $actual = json_decode($this->api_call("GET", $url, $data), true);
+        $ctrl = new rest_ctrl();
+        $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
         return $this->assert_api_compare($class, $actual);
     }
 
@@ -461,7 +502,8 @@ class test_api extends create_test_objects
         } else {
             $data = array($id_fld => $ids);
         }
-        $actual = json_decode($this->api_call("GET", $url, $data), true);
+        $ctrl = new rest_ctrl();
+        $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
 
         // TODO remove
         if ($class == $lib->class_to_name(term_list::class)) {
@@ -470,7 +512,7 @@ class test_api extends create_test_objects
             $result = $lst->api_obj();
         }
 
-        if ($filename == '' AND $id_fld != 'ids') {
+        if ($filename == '' and $id_fld != 'ids') {
             $filename = $class . '_by_' . $id_fld;
         }
 
@@ -498,7 +540,8 @@ class test_api extends create_test_objects
         } else {
             $data = array($id_fld => $id);
         }
-        $actual = json_decode($this->api_call("GET", $url, $data), true);
+        $ctrl = new rest_ctrl();
+        $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
 
         return $this->assert_api_compare($class, $actual);
     }
@@ -512,7 +555,7 @@ class test_api extends create_test_objects
      * for testing the local deployments needs to be updated using an external script
      *
      * @param string $class the class name of the object to test
-     * @param array $actual the actual received json array
+     * @param ?array $actual the actual received json array
      * @param ?array $expected if not null, the expected result
      * @param string $filename to overwrite the class based filename to get the standard expected result
      * @param bool $contains set to true if the actual message is expected to contain more than the expected message
@@ -547,7 +590,7 @@ class test_api extends create_test_objects
         if ($contains) {
             return $this->assert($class . ' API GET', $lib->json_contains($expected, $actual), true);
         } else {
-            return $this->assert_json($class . ' API GET', $expected, $actual);
+            return $this->assert_json($class . ' API GET', $actual, $expected);
         }
     }
 
@@ -563,7 +606,8 @@ class test_api extends create_test_objects
         if ($file == '') {
             $file = $class;
         }
-        return $this->file('api/' . $class . '/' . $file . '.json');
+        $filename = self::API_PATH . DIRECTORY_SEPARATOR . $class . DIRECTORY_SEPARATOR . $file . self::JSON_EXT;
+        return $this->file($filename);
     }
 
     /**
@@ -712,8 +756,8 @@ class test_api extends create_test_objects
     private function json_remove_volatile_item(array $json, bool $ignore_id): array
     {
         // remove or replace the volatile time fields
-        $json = $this->json_remove_volatile_time_field($json, system_log::FLD_TIME_JSON);
-        $json = $this->json_remove_volatile_time_field($json, system_log::FLD_TIMESTAMP_JSON);
+        $json = $this->json_remove_volatile_time_field($json, sys_log::FLD_TIME_JSON);
+        $json = $this->json_remove_volatile_time_field($json, sys_log::FLD_TIMESTAMP_JSON);
         $json = $this->json_remove_volatile_time_field($json, change_log::FLD_TIME);
         $json = $this->json_remove_volatile_time_field($json, job::FLD_TIME_REQUEST);
         $json = $this->json_remove_volatile_time_field($json, job::FLD_TIME_START);
@@ -772,7 +816,7 @@ class test_api extends create_test_objects
                 $json = $this->json_remove_volatile_unset_field($json, $fld_name);
                 unset($json[$fld_name]);
             } else {
-                $new_value = (new DateTime(system_log_api::TV_TIME))->format('Y-m-d H:i:s');
+                $new_value = (new DateTime(sys_log_api::TV_TIME))->format('Y-m-d H:i:s');
                 $json = $this->json_remove_volatile_replace_field($json, $fld_name, $new_value);
             }
         }

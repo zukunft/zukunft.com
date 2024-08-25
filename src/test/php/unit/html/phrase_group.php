@@ -44,7 +44,7 @@ class phrase_group
 
         $t->subheader('Phrase group tests');
 
-        $api_msg = $t->dummy_phrase_group()->api_json();
+        $api_msg = $t->group()->api_json();
         $grp = new phrase_group_dsp($api_msg);
         $test_page = $html->text_h2('Phrase group display test');
         $test_page .= 'phrase group with tooltip: ' . $grp->display() . '<br>';

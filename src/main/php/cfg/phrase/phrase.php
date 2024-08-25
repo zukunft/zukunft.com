@@ -64,14 +64,16 @@ use api\api;
 use api\phrase\phrase as phrase_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\db\sql_field_type;
 use cfg\db\sql_par;
-use cfg\db\sql_table_type;
+use cfg\db\sql_type;
 use cfg\group\group_list;
 use cfg\value\value_list;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
+use shared\library;
 
 class phrase extends combine_named
 {
@@ -81,9 +83,13 @@ class phrase extends combine_named
      */
 
     // the database and JSON object duplicate field names for combined word and triples mainly to link phrases
+    // *_SQLTYP is the sql data type used for the field
     const FLD_ID = 'phrase_id';
+    const FLD_ID_SQLTYP = sql_field_type::INT;
     const FLD_NAME = 'phrase_name';
     const FLD_TYPE = 'phrase_type_id';
+    const FLD_TYPE_NAME = 'phrase_type_name'; // used for the log parameter only
+    const FLD_TYPE_SQLTYP = sql_field_type::INT_SMALL;
     const FLD_VALUES = 'values';
 
     // the common phrase database field names excluding the id and excluding the user specific fields
@@ -116,10 +122,10 @@ class phrase extends combine_named
     const TBL_PRIME_WHERE = '< 32767';
     const TBL_COM = 'phrases with an id that is not prime';
     const TBL_LIST = [
-        [sql_table_type::PRIME, self::TBL_PRIME_WHERE, self::TBL_PRIME_COM],
-        [sql_table_type::MOST, '', self::TBL_COM],
-        [sql_table_type::PRIME, self::TBL_PRIME_WHERE, self::TBL_PRIME_COM, sql_table_type::USER],
-        [sql_table_type::MOST, '', self::TBL_COM, sql_table_type::USER],
+        [sql_type::PRIME, self::TBL_PRIME_WHERE, self::TBL_PRIME_COM],
+        [sql_type::MOST, '', self::TBL_COM],
+        [sql_type::PRIME, self::TBL_PRIME_WHERE, self::TBL_PRIME_COM, sql_type::USER],
+        [sql_type::MOST, '', self::TBL_COM, sql_type::USER],
     ];
     // list of original tables that should be connoted with union
     // with fields used in the view
@@ -661,7 +667,7 @@ class phrase extends combine_named
         if ($this->id() < 0) {
             $lnk = $this->obj;
             $lnk->load_objects(); // try to be on the save side, and it is anyway checked if loading is really needed
-            $result = $lnk->fob;
+            $result = $lnk->fob();
         } elseif ($this->id() > 0) {
             $result = $this->obj;
         } else {
@@ -720,7 +726,7 @@ class phrase extends combine_named
     {
         global $db_con;
 
-        $db_con->set_class(sql_db::TBL_FORMULA_LINK);
+        $db_con->set_class(formula_link::class);
         $qp = new sql_par(self::class);
         $qp->name = 'phrase_formula_by_id';
         $db_con->set_name($qp->name);
@@ -855,6 +861,49 @@ class phrase extends combine_named
         }
     }
 
+    /*
+     * information
+     */
+
+    /**
+     * check if the word in the database needs to be updated
+     * e.g. for import  if this word has only the name set, the protection should not be updated in the database
+     *
+     * @param phrase $db_phr the word as saved in the database
+     * @return bool true if this word has infos that should be saved in the datanase
+     */
+    function needs_db_update(phrase $db_phr): bool
+    {
+        if ($this->is_word() and $db_phr->is_word()) {
+            $wrd = $this->obj();
+            $db_wrd = $this->obj();
+            return $wrd->needs_db_update($db_wrd);
+        } elseif ($this->is_triple() and $db_phr->is_triple()) {
+            $trp = $this->obj();
+            $db_trp = $this->obj();
+            return $trp->needs_db_update($db_trp);
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * @param string $type the ENUM string of the fixed type
+     * @returns bool true if the word has the given type
+     */
+    function is_type(string $type): bool
+    {
+        if ($this->is_word()) {
+            $wrd = $this->obj();
+            return $wrd->is_type($type);
+        } elseif ($this->is_triple()) {
+            $trp = $this->obj();
+            return $trp->is_type($type);
+        } else {
+            return false;
+        }
+    }
+
 
     /*
      * data retrieval
@@ -934,7 +983,7 @@ class phrase extends combine_named
      * display functions
      */
 
-// return the name (just because all objects should have a name function)
+    // return the name (just because all objects should have a name function)
     function dsp_name(): string
     {
         //$result = $this->name();
@@ -1048,7 +1097,9 @@ class phrase extends combine_named
     }
 
 
-// returns a list of phrase that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
+    /**
+     * returns a list of phrase that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
+     */
     function is(): phrase_list
     {
         $this_lst = $this->lst();
@@ -1350,8 +1401,8 @@ class phrase extends combine_named
         //$link_id = cl(db_cl::VERB, verb::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_class(sql_db::TBL_TRIPLE);
-        $key_result = $db_con->get_value_2key('from_phrase_id', 'to_phrase_id', $this->id(), verb::FLD_ID, $link_id);
+        $db_con->set_class(triple::class);
+        $key_result = $db_con->get_value_2key(triple::FLD_FROM, triple::FLD_TO, $this->id(), verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {
@@ -1379,8 +1430,8 @@ class phrase extends combine_named
         //$link_id = cl(db_cl::VERB, verb::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_class(sql_db::TBL_TRIPLE);
-        $key_result = $db_con->get_value_2key('to_phrase_id', 'from_phrase_id', $this->id(), verb::FLD_ID, $link_id);
+        $db_con->set_class(triple::class);
+        $key_result = $db_con->get_value_2key(triple::FLD_TO, triple::FLD_FROM, $this->id(), verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {

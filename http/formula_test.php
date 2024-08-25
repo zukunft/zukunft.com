@@ -38,19 +38,19 @@
 
 */
 
-use controller\controller;
-use html\html_base;
-use html\view\view as view_dsp;
 use cfg\formula_list;
-use cfg\library;
 use cfg\phr_ids;
 use cfg\phrase_list;
 use cfg\result_list;
 use cfg\user;
 use cfg\view;
+use controller\controller;
+use html\html_base;
+use html\view\view as view_dsp;
+use shared\library;
 
 $debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . '/../';
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
@@ -71,7 +71,7 @@ if ($session_usr->id() > 0) {
 
     // show the header even if all parameters are wrong
     $msk = new view($session_usr);
-    $msk->set_id($system_views->id(controller::DSP_FORMULA_TEST));
+    $msk->set_id($system_views->id(controller::MC_FORMULA_TEST));
     $back = $_GET[controller::API_BACK]; // the page (or phrase id) from which formula testing has been called
     $msk_dsp = new view_dsp($msk->api_json());
     echo $msk_dsp->dsp_navbar($back);

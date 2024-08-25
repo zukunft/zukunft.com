@@ -39,16 +39,16 @@ namespace cfg\value;
 
 use cfg\db\sql;
 use cfg\db\sql_db;
-use cfg\db\sql_table_type;
 use cfg\db\sql_par;
+use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\group\group;
-use cfg\library;
 use cfg\sandbox;
 use cfg\sandbox_value;
 use cfg\source;
 use cfg\user;
 use cfg\user_message;
-use DateTime;
+use shared\library;
 
 class value_time_series extends sandbox_value
 {
@@ -85,9 +85,9 @@ class value_time_series extends sandbox_value
 
     // list of fixed tables for the time series header
     const TBL_LIST = array(
-        [sql_table_type::MOST],
-        [sql_table_type::PRIME],
-        [sql_table_type::BIG]
+        [sql_type::MOST],
+        [sql_type::PRIME],
+        [sql_type::BIG]
     );
 
 
@@ -110,8 +110,6 @@ class value_time_series extends sandbox_value
     function __construct(user $usr)
     {
         parent::__construct($usr);
-        $this->obj_type = sandbox::TYPE_VALUE;
-        $this->obj_name = sql_db::TBL_VALUE_TIME_SERIES;
 
         $this->rename_can_switch = UI_CAN_CHANGE_VALUE;
 
@@ -146,7 +144,7 @@ class value_time_series extends sandbox_value
         string $id_fld = self::FLD_ID): bool
     {
         $lib = new library();
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
+        $result = parent::row_mapper_multi($db_row, '', self::FLD_ID);
         if ($result) {
             $this->grp->set_id($db_row[group::FLD_ID]);
             if ($db_row[source::FLD_ID] > 0) {
@@ -161,15 +159,13 @@ class value_time_series extends sandbox_value
     /**
      * create the SQL to load the default time series always by the id
      * @param sql $sc with the target db_type set
-     * @param string $class the name of this class
+     * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, array $fld_lst = []): sql_par
     {
-        $sc->set_class(self::class);
-        $sc->set_fields(array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR));
-
-        return parent::load_standard_sql($sc, $class);
+        $fld_lst = array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR);
+        return parent::load_standard_sql($sc, $fld_lst);
     }
 
     /**
@@ -198,14 +194,13 @@ class value_time_series extends sandbox_value
     /**
      * load the standard value use by most users
      * @param sql_par|null $qp placeholder to align the function parameters with the parent
-     * @param string $class the name of this class to be delivered to the parent function
      * @return bool true if a time series has been loaded
      */
-    function load_standard(?sql_par $qp = null, string $class = self::class): bool
+    function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
         $qp = $this->load_standard_sql($db_con->sql_creator());
-        return parent::load_standard($qp, $class);
+        return parent::load_standard($qp);
     }
 
     /**
@@ -214,21 +209,21 @@ class value_time_series extends sandbox_value
      * @param sql $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension e.g. to differentiate queries based on 1,2, or more phrases
-     * @param sql_table_type $tbl_typ the table name extension e.g. to switch between standard and prime values
-     * @param bool $usr_tbl true if a db row should be added to the user table
+     * @param string $id_ext the query name extension that indicated how many id fields are used e.g. "_p1"
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql            $sc,
-        string         $query_name,
-        string         $class = self::class,
-        string         $ext = '',
-        sql_table_type $tbl_typ = sql_table_type::MOST,
-        bool           $usr_tbl = false
+        sql      $sc,
+        string   $query_name,
+        string   $class = self::class,
+        sql_type_list    $sc_par_lst = new sql_type_list([]),
+        string   $ext = '',
+        string   $id_ext = ''
     ): sql_par
     {
-        $qp = parent::load_sql_multi($sc, $query_name, $class, $ext, $tbl_typ, $usr_tbl);
+        $qp = parent::load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext, $id_ext);
 
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field());
@@ -289,12 +284,13 @@ class value_time_series extends sandbox_value
 
     /**
      * add a new time series
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return user_message with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
      *                      including suggested solutions
      */
-    function add(): user_message
+    function add(?bool $use_func = null): user_message
     {
         log_debug('->add');
 
@@ -304,7 +300,7 @@ class value_time_series extends sandbox_value
         // log the insert attempt first
         $log = $this->log_add();
         if ($log->id() > 0) {
-            $db_con->set_class(sql_db::TBL_VALUE_TIME_SERIES);
+            $db_con->set_class(value_time_series::class);
             $this->id = $db_con->insert_old(
                 array(group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
                 array($this->grp->id(), $this->user()->id(), sql::NOW));
@@ -339,9 +335,11 @@ class value_time_series extends sandbox_value
 
     /**
      * temp overwrite of the id_field function of sandbox_value class until this class is revied
+     *
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return string|array the field name(s) of the prime database index of the object
      */
-    function id_field(): string|array
+    function id_field(sql_type_list $sc_par_lst = new sql_type_list([])): string|array
     {
         $lib = new library();
         return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;
@@ -354,8 +352,10 @@ class value_time_series extends sandbox_value
 
     /**
      * insert or update a time series in the database or save user specific time series numbers
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
+     * @return string the message that should be shown to the user in case something went wrong
      */
-    function save(): string
+    function save(?bool $use_func = null): string
     {
         log_debug('->save');
 
@@ -363,7 +363,7 @@ class value_time_series extends sandbox_value
         $result = '';
 
         // build the database object because the is anyway needed
-        $db_con->set_class(sql_db::TBL_VALUE_TIME_SERIES);
+        $db_con->set_class(value_time_series::class);
         $db_con->set_usr($this->user()->id());
 
         // check if a new time series is supposed to be added

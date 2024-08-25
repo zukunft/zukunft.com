@@ -46,7 +46,7 @@ class formula_list
         $t->subheader('formula list tests');
 
         // test the formula list display functions
-        $lst = new formula_list_dsp($t->dummy_formula_list()->api_json());
+        $lst = new formula_list_dsp($t->formula_list()->api_json());
         $test_page = $html->text_h2('formula list display test');
         $test_page .= 'formula list with tooltip: ' . $lst->display() . '<br>';
         $test_page .= 'formula list with link: ' . $lst->display_linked() . '<br>';

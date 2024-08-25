@@ -35,7 +35,6 @@
 namespace unit;
 
 use math;
-use cfg\library;
 use test\test_cleanup;
 
 global $db_con;

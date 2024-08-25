@@ -5,9 +5,16 @@
   "users": [
     {
       "name": "zukunft.com system",
-      "description": "the internal zukunft.com system user mainly used as a log entry for the initial setup and batch jobs",
+      "description": "the internal zukunft.com system user mainly used for the log entries of the initial setup and batch jobs",
       "code_id": "system",
       "profile": "system",
+      "email": "system@zukunft.com"
+    },
+    {
+      "name": "zukunft.com admin",
+      "description": "the fallback zukunft.com admin user that should only be used in a break-glass event to recover other admin users",
+      "code_id": "admin",
+      "profile": "admin",
       "email": "admin@zukunft.com"
     },
     {
@@ -15,14 +22,28 @@
       "description": "the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
       "code_id": "test",
       "profile": "test",
-      "email": "support@zukunft.com"
+      "email": "test@zukunft.com"
     },
     {
       "name": "zukunft.com system test partner",
-      "description": "another internal zukunft.com user used for user sandbox integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
+      "description": "an internal zukunft.com user used for user sandbox integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
       "code_id": "test_partner",
       "profile": "test",
-      "email": "support.partner@zukunft.com"
+      "email": "test.partner@zukunft.com"
+    },
+    {
+      "name": "zukunft.com system test admin",
+      "description": "an internal zukunft.com test user to check the allow for admin users",
+      "code_id": "test_admin",
+      "profile": "admin",
+      "email": "test.admin@zukunft.com"
+    },
+    {
+      "name": "zukunft.com system test no admin",
+      "description": "an internal zukunft.com test user to check the deny for normal users",
+      "code_id": "test_normal",
+      "profile": "normal",
+      "email": "test.normal@zukunft.com"
     }
   ]
 }

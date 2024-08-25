@@ -5,6 +5,12 @@
     cfg/element/element_list.php - a list of formula elements to place the name function
     ----------------------------
 
+    The main sections of this object are
+    - construct and map: including the mapping of the db row to this element object
+    - load:              database access object (DAO) functions
+    - modification:      change this list
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -31,6 +37,7 @@
 
 namespace cfg;
 
+use cfg\component\component;
 use cfg\db\sql;
 use cfg\db\sql_par;
 
@@ -41,11 +48,45 @@ include_once MODEL_FORMULA_PATH . 'parameter_type.php';
 class element_list extends sandbox_list
 {
 
-    // array $lst is the list of formula elements
+    /*
+     * construct and map
+     */
+
+    /**
+     * add the element object
+     * to the parent function that fills the element list based on a database records
+     *
+     * @param array $db_rows is an array of an array with the database values
+     * @param bool $load_all force to include also the excluded phrases e.g. for admins
+     * @return bool true if at least one component has been loaded
+     */
+    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
+    {
+        return parent::rows_mapper_obj(new element($this->user()), $db_rows, $load_all);
+    }
+
 
     /*
-     * load functions
+     * load
      */
+
+    function load_by_frm(int $frm_id): bool
+    {
+        global $db_con;
+
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_frm_id($sc, $frm_id);
+        return $this->load($qp);
+    }
+
+    function load_by_frm_and_type_id(int $frm_id, int $elm_type_id): bool
+    {
+        global $db_con;
+
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_frm_and_type_id($sc, $frm_id, $elm_type_id);
+        return $this->load($qp);
+    }
 
     /**
      * set the SQL query parameters to load a list of formula elements
@@ -108,27 +149,9 @@ class element_list extends sandbox_list
         return $qp;
     }
 
-    function load_by_frm_and_type_id(int $frm_id, int $elm_type_id): bool
-    {
-        global $db_con;
-        $result = false;
-
-        $qp = $this->load_sql_by_frm_and_type_id($db_con->sql_creator(), $frm_id, $elm_type_id);
-        $db_rows = $db_con->get($qp);
-        if ($db_rows != null) {
-            foreach ($db_rows as $db_row) {
-                $elm = new element($this->user());
-                $elm->row_mapper($db_row);
-                $this->add_obj($elm);
-                $result = true;
-            }
-        }
-
-        return $result;
-    }
 
     /*
-     * modification function
+     * modification
      */
 
     /**
@@ -140,6 +163,35 @@ class element_list extends sandbox_list
         $this->add_obj($elm_to_add, true);
         $this->set_lst_dirty();
         return true;
+    }
+
+
+    /*
+     * del
+     */
+
+    function del_without_log(): user_message
+    {
+        global $db_con;
+
+        $usr_msg = new user_message();
+        $sc = $db_con->sql_creator();
+        $qp = $this->del_sql_without_log($sc);
+        $usr_msg->add_message(
+            $db_con->exe_try('del elements', $qp->sql, '', array(), sys_log_level::FATAL));
+        return $usr_msg;
+    }
+
+    /**
+     * create a sql statement that deletes all formula elements of this list
+     *
+     * @param sql $sc with the target db_type set
+     * @return sql_par
+     */
+    function del_sql_without_log(sql $sc): sql_par
+    {
+        return $sc->del_sql_list_without_log(
+            element::class, (new element($this->user()))->id_field(), $this->ids());
     }
 
 }

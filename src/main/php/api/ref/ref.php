@@ -38,6 +38,17 @@ class ref extends sandbox_api
 {
 
     /*
+     * const for system testing
+     */
+
+    // references for stand-alone unit tests that are added with the system initial data load
+    // TN_* is the name of the word used for testing created with the initial setup (see also TWN_*)
+    // TI_* is the database id based on the initial load
+    // TD_* is the tooltip/description of the word
+    const TI_PI = 5;
+
+
+    /*
      * const for the api
      */
 
@@ -49,21 +60,33 @@ class ref extends sandbox_api
      */
 
     // persevered reference names for unit and integration tests
-    const TN_READ = 'wikidata';
-    const TN_ADD = 'System Test Reference Name';
+    // TT_* is the code_id of the reference type
+    // TD_* is the description of the link to the external reference
+    // TK_* is the unique key/id in the external system
+    // TU_* is the url overwrite for this reference
+    const TT_READ = 'wikidata';
+    const TD_READ = 'pi - ratio of the circumference of a circle to its diameter';
     const TK_READ = 'Q167';
-    const TU_READ = 'https://www.wikidata.org/wiki/';
-    const TD_READ = 'ratio of the circumference of a circle to its diameter';
+    const TU_READ = 'https://www.wikidata.org/wiki/Special:EntityData/Q167.json';
+    // to test changing the external key of a reference
+    const TT_CHANGE = 'wikidata';
+    const TD_CHANGE = 'Q901028';
+    const TK_CHANGE = 'global warming potential - estimate of how an atmospheric gas affects global climate change';
+    const TK_CHANGED = 'Q999999999';
+
+    // to test adding a new reference type
+    const TT_ADD = 'System Test Reference Type';
 
     // must be the same as in /resource/api/source/source_put.json
     const TK_ADD_API = 'System Test Reference API added';
     const TD_ADD_API = 'System Test Reference Description API';
     const TU_ADD_API = 'https://api.zukunft.com/';
+    const TK_ADD = 'Q168';
 
     // reference group for testing
     // TODO activate Prio 3
-    const RESERVED_REFERENCES = array(
-        self::TN_READ
+    const RESERVED_REFERENCES_TYPES = array(
+        self::TT_ADD
     );
 
 

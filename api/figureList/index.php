@@ -32,12 +32,6 @@
   
 */
 
-use cfg\fig_ids;
-use controller\controller;
-use cfg\user;
-use cfg\figure_list;
-use api\formula\figure_list as figure_list_api;
-
 // standard zukunft header for callable php files to allow debugging and lib loading
 global $debug;
 $debug = $_GET['debug'] ?? 0;
@@ -51,6 +45,12 @@ include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_FORMULA_PATH . 'figure_list.php';
 include_once API_FORMULA_PATH . 'figure_list.php';
+
+use cfg\fig_ids;
+use controller\controller;
+use cfg\user;
+use cfg\figure_list;
+use api\formula\figure_list as figure_list_api;
 
 // open database
 $db_con = prg_start("api/figureList", "", false);

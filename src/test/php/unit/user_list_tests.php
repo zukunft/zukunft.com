@@ -32,10 +32,11 @@
 
 namespace unit;
 
-use cfg\library;
+use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\user;
 use cfg\user_list;
+use shared\library;
 use test\test_cleanup;
 
 class user_list_tests
@@ -47,11 +48,10 @@ class user_list_tests
         global $usr;
 
         // init
-        $lib = new library();
         $db_con = new sql_db();
+        $sc = new sql();
         $t->name = 'user_list->';
         $t->resource_path = 'db/user/';
-        $usr->set_id(1);
 
         $t->header('Unit tests of the user list class (src/main/php/model/user/user_list.php)');
 
@@ -61,8 +61,8 @@ class user_list_tests
 
         // sql to load a list of value by ids
         $usr_lst = new user_list($usr);
-        $t->assert_sql_by_ids($db_con, $usr_lst);
-        $t->assert_sql_by_code_id($db_con, $usr_lst);
+        $t->assert_sql_by_ids($sc, $usr_lst);
+        $t->assert_sql_by_code_id($sc, $usr_lst);
         $this->assert_sql_by_profile_and_higher($t, $db_con, $usr_lst);
 
 

@@ -7,15 +7,15 @@
 CREATE TABLE IF NOT EXISTS component_links
 (
     component_link_id BIGSERIAL PRIMARY KEY,
-    view_id                bigint       NOT NULL,
-    component_id           bigint       NOT NULL,
-    user_id                bigint   DEFAULT NULL,
-    order_nbr              bigint       NOT NULL,
-    component_link_type_id bigint   NOT NULL DEFAULT 1,
-    position_type_id       bigint   NOT NULL DEFAULT 2,
-    excluded               smallint DEFAULT NULL,
-    share_type_id          smallint DEFAULT NULL,
-    protect_id             smallint DEFAULT NULL
+    view_id                bigint   NOT NULL,
+    component_id           bigint   NOT NULL,
+    user_id                bigint            DEFAULT NULL,
+    order_nbr              bigint   NOT NULL DEFAULT 1,
+    component_link_type_id smallint NOT NULL DEFAULT 1,
+    position_type_id       smallint NOT NULL DEFAULT 2,
+    excluded               smallint          DEFAULT NULL,
+    share_type_id          smallint          DEFAULT NULL,
+    protect_id             smallint          DEFAULT NULL
 );
 
 COMMENT ON TABLE component_links IS 'to link components to views with an n:m relation';
@@ -35,8 +35,8 @@ CREATE TABLE IF NOT EXISTS user_component_links
     component_link_id      bigint        NOT NULL,
     user_id                bigint       NOT NULL,
     order_nbr              bigint   DEFAULT NULL,
-    component_link_type_id bigint   DEFAULT NULL,
-    position_type_id       bigint   DEFAULT NULL,
+    component_link_type_id smallint DEFAULT NULL,
+    position_type_id       smallint DEFAULT NULL,
     excluded               smallint DEFAULT NULL,
     share_type_id          smallint DEFAULT NULL,
     protect_id             smallint DEFAULT NULL

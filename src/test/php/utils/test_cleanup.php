@@ -36,26 +36,30 @@ use api\component\component as component_api;
 use api\formula\formula as formula_api;
 use api\phrase\phrase as phrase_api;
 use api\ref\source as source_api;
-use api\word\triple as triple_api;
 use api\verb\verb as verb_api;
 use api\view\view as view_api;
+use api\word\triple as triple_api;
 use api\word\word as word_api;
+use cfg\component\component;
+use cfg\component\component_link;
 use cfg\db\sql_par;
 use cfg\formula;
+use cfg\formula_link;
 use cfg\formula_type;
-use cfg\library;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\phrase_type;
 use cfg\ref_type;
-use cfg\db\sql_db;
+use cfg\source;
 use cfg\term;
 use cfg\term_list;
 use cfg\triple;
 use cfg\value\value;
 use cfg\verb;
+use cfg\view;
 use cfg\word;
 use html\html_base;
+use shared\library;
 
 class test_cleanup extends test_api
 {
@@ -116,9 +120,9 @@ class test_cleanup extends test_api
         $result .= $this->test_component_unlink(view_api::TN_TABLE, component_api::TN_TABLE);
 
         // load the test view
-        $dsp = $this->load_view(view_api::TN_ADD);
-        if ($dsp->id() <= 0) {
-            $dsp = $this->load_view(view_api::TN_RENAMED);
+        $msk = $this->load_view(view_api::TN_ADD);
+        if ($msk->id() <= 0) {
+            $msk = $this->load_view(view_api::TN_RENAMED);
         }
 
         // load the test view for user 2
@@ -153,20 +157,20 @@ class test_cleanup extends test_api
         }
 
         // check if the test components have been unlinked
-        if ($dsp->id() > 0 and $cmp->id() > 0) {
-            $result .= $cmp->unlink($dsp);
+        if ($msk->id() > 0 and $cmp->id() > 0) {
+            $result .= $cmp->unlink($msk);
             $target = '';
-            $this->display('cleanup: unlink first component "' . $cmp->name() . '" from "' . $dsp->name() . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
+            $this->display('cleanup: unlink first component "' . $cmp->name() . '" from "' . $msk->name() . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // unlink the second component
         // error at the moment: if the second user is still using the link,
         // the second user does not get the owner
         // instead a foreign key error happens
-        if ($dsp->id() > 0 and $cmp2->id() > 0) {
-            $result .= $cmp2->unlink($dsp);
+        if ($msk->id() > 0 and $cmp2->id() > 0) {
+            $result .= $cmp2->unlink($msk);
             $target = '';
-            $this->display('cleanup: unlink second component "' . $cmp2->name() . '" from "' . $dsp->name() . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
+            $this->display('cleanup: unlink second component "' . $cmp2->name() . '" from "' . $msk->name() . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
         }
 
         // unlink the second component for user 2
@@ -189,9 +193,9 @@ class test_cleanup extends test_api
 
         // request to delete the added test views
         foreach (view_api::TEST_VIEWS as $dsp_name) {
-            $dsp = $this->load_view($dsp_name);
-            if ($dsp->id() > 0) {
-                $msg = $dsp->del();
+            $msk = $this->load_view($dsp_name);
+            if ($msk->id() > 0) {
+                $msg = $msk->del();
                 $result .= $msg->get_last_message();
                 $target = '';
                 $this->display('view->del of "' . $dsp_name . '"', $target, $result);
@@ -260,14 +264,14 @@ class test_cleanup extends test_api
         }
 
         // reload the test view
-        $dsp = $this->load_view(view_api::TN_ADD);
-        if ($dsp->id() <= 0) {
-            $dsp = $this->load_view(view_api::TN_RENAMED);
+        $msk = $this->load_view(view_api::TN_ADD);
+        if ($msk->id() <= 0) {
+            $msk = $this->load_view(view_api::TN_RENAMED);
         }
 
         // request to delete the added test view
-        if ($dsp->id() > 0) {
-            $msg = $dsp->del();
+        if ($msk->id() > 0) {
+            $msg = $msk->del();
             $result .= $msg->get_last_message();
             $target = '';
             $this->display('cleanup: del of view "' . view_api::TN_ADD . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
@@ -275,9 +279,9 @@ class test_cleanup extends test_api
 
         // request to delete the added test views
         foreach (view_api::TEST_VIEWS as $dsp_name) {
-            $dsp = $this->load_view($dsp_name);
-            if ($dsp->id() > 0) {
-                $msg = $dsp->del();
+            $msk = $this->load_view($dsp_name);
+            if ($msk->id() > 0) {
+                $msg = $msk->del();
                 $result .= $msg->get_last_message();
                 $target = '';
                 $this->display('view->del of "' . $dsp_name . '"', $target, $result);
@@ -295,7 +299,7 @@ class test_cleanup extends test_api
 
         // request to delete the added test sources
         foreach (source_api::TEST_SOURCES as $src_name) {
-            if ($src_name != source_api::TN_READ) {
+            if ($src_name != source_api::TN_READ_REF) {
                 $src = $this->load_source($src_name);
                 if ($src->id() > 0) {
                     $msg = $src->del();
@@ -317,9 +321,9 @@ class test_cleanup extends test_api
 
         // request to delete the added test formulas
         foreach (formula_api::TEST_FORMULAS as $frm_name) {
-            $dsp = $this->load_formula($frm_name);
-            if ($dsp->id() > 0) {
-                $msg = $dsp->del();
+            $msk = $this->load_formula($frm_name);
+            if ($msk->id() > 0) {
+                $msg = $msk->del();
                 $result .= $msg->get_last_message();
                 $target = '';
                 $this->display('formula->del of "' . $frm_name . '"', $target, $result);
@@ -387,15 +391,15 @@ class test_cleanup extends test_api
 
         // TODO better use a info system log message
         $html = new html_base();
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_WORD));
+        $html->echo_html($db_con->seq_reset(word::class));
         //$html->echo_html($db_con->seq_reset(sql_db::TBL_GROUP_LINK));
         //$html->echo_html($db_con->seq_reset(sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK));
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_FORMULA));
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_FORMULA_LINK));
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_VIEW));
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_COMPONENT));
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_COMPONENT_LINK));
-        $html->echo_html($db_con->seq_reset(sql_db::TBL_SOURCE));
+        $html->echo_html($db_con->seq_reset(formula::class));
+        $html->echo_html($db_con->seq_reset(formula_link::class));
+        $html->echo_html($db_con->seq_reset(view::class));
+        $html->echo_html($db_con->seq_reset(component::class));
+        $html->echo_html($db_con->seq_reset(component_link::class));
+        $html->echo_html($db_con->seq_reset(source::class));
 
         if ($result == '') {
             return true;
@@ -526,7 +530,7 @@ class test_cleanup extends test_api
         $result = true;
         $qp = new sql_par(self::class);
         $qp->name .= $sql_file_name;
-        $qp->sql = file_get_contents(PATH_TEST_FILES . $sql_file_name);
+        $qp->sql = $this->file($sql_file_name);
         $db_rows = $db_con->get($qp);
         if ($db_rows != false) {
             log_err('There are ' . count($db_rows) . ' unexpected system test rows detected by ' . $sql_file_name);
