@@ -32,6 +32,7 @@
 
 namespace unit_write;
 
+use api\view\view as view_api;
 use api\word\word as word_api;
 use cfg\ref_type;
 use cfg\ref_type_list;
@@ -46,7 +47,10 @@ class ref_write_tests
 
         global $usr;
 
-        $t->header('Test the ref class (src/main/php/model/ref/ref.php)');
+        $t->header('reference db write tests');
+
+        $t->subheader('reference write sandbox tests for ' . ref::TEST_REF_NAME);
+        //$t->assert_write_link($t->ref_filled_add());
 
         // create the test ref
         $wrd = $t->test_word(word_api::TN_ADD);

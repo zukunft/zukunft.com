@@ -2455,19 +2455,31 @@ class test_base
         $api_json = $lnk->api_json();
 
         // detect the related objects
-        $fob = clone $ori->fob();
-        $tob = clone $ori->tob();
-        if ($tob::class == phrase::class or $tob::class == term::class) {
-            $add_to = new word($tob->user());
+        if ($lnk::class == ref::class) {
+            $fob = new word($ori->user());
+            $tob = $lnk->to_id();
+            $add_to = $lnk->to_id();
         } else {
-            $add_to = $tob;
+            $fob = clone $ori->fob();
+            $tob = clone $ori->tob();
+            if ($tob::class == phrase::class or $tob::class == term::class) {
+                $add_to = new word($tob->user());
+            } else {
+                $add_to = $tob;
+            }
         }
         // check for leftovers
-        $this->write_named_cleanup($ori->fob(), $ori->fob()->name(), true);
-        $this->write_named_cleanup($add_to, $ori->tob()->name(), true);
+        $this->write_named_cleanup($fob, $ori->fob()->name(), true);
+        if ($lnk::class != ref::class) {
+            $this->write_named_cleanup($add_to, $ori->tob()->name(), true);
+        }
         // create the related objects
         $fid = $this->write_named_add($fob, $fob->name(), $this->usr1);
-        $tid = $this->write_named_add($add_to, $tob->name(), $this->usr1);
+        if ($lnk::class == ref::class) {
+            $tid = $lnk->to_id();
+        } else {
+            $tid = $this->write_named_add($add_to, $tob->name(), $this->usr1);
+        }
 
 
         /*
@@ -2629,9 +2641,9 @@ class test_base
      */
     private function write_named_cleanup_one(
         sandbox_named|sandbox_link_named $sbx,
-        user $usr,
-        string $name,
-        bool $check = false
+        user                             $usr,
+        string                           $name,
+        bool                             $check = false
     ): void
     {
         $sbx->set_user($this->usr1);

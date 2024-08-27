@@ -2130,6 +2130,15 @@ class create_test_objects extends test_base
         return $ref;
     }
 
+    function ref_filled_add(): ref
+    {
+        $ref = $this->ref_filled();
+        $ref->include();
+        $ref->set_id(0);
+        $ref->set_phrase($this->word_filled_add()->phrase());
+        return $ref;
+    }
+
     function view(): view
     {
         $msk = new view($this->usr1);
