@@ -50,7 +50,7 @@ class combine_object
      * object vars
      */
 
-    protected object $obj;
+    protected ?object $obj = null;
 
 
     /*
@@ -99,7 +99,7 @@ class combine_object
         $this->obj = $obj;
     }
 
-    function obj(): object
+    function obj(): object|null
     {
         return $this->obj;
     }

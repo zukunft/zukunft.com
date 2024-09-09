@@ -485,7 +485,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return word with all fields set and a reseved test name for testing the db write function
+     * @return word with all fields set and a reserved test name for testing the db write function
      */
     function word_filled_add(): word
     {
@@ -493,6 +493,18 @@ class create_test_objects extends test_base
         $wrd->include();
         $wrd->set_id(0);
         $wrd->set_name(word_api::TN_ADD);
+        return $wrd;
+    }
+
+    /**
+     * @return word with all fields set and a another reserved test name for testing the db write function
+     */
+    function word_filled_add_to(): word
+    {
+        $wrd = $this->word_filled();
+        $wrd->include();
+        $wrd->set_id(0);
+        $wrd->set_name(word_api::TN_ADD_TO);
         return $wrd;
     }
 
@@ -869,6 +881,8 @@ class create_test_objects extends test_base
         $trp->include();
         $trp->set_id(0);
         $trp->set_name(triple_api::TN_ADD);
+        $trp->set_from($this->word_filled_add()->phrase());
+        $trp->set_to($this->word_filled_add_to()->phrase());
         return $trp;
     }
 
@@ -1759,7 +1773,7 @@ class create_test_objects extends test_base
         global $formula_link_types;
         $lnk = new formula_link($this->usr1);
         $lnk->set(1, $this->formula(), $this->word()->phrase());
-        $lnk->set_type_id($formula_link_types->id(formula_link_type::TIME_PERIOD));
+        $lnk->set_predicate_id($formula_link_types->id(formula_link_type::TIME_PERIOD));
         $lnk->order_nbr = 2;
         return $lnk;
     }
@@ -2038,7 +2052,7 @@ class create_test_objects extends test_base
         $ref = new ref($this->usr1);
         $ref->set(ref_api::TI_PI);
         $ref->set_phrase($this->word_pi()->phrase());
-        $ref->set_type_id($ref_types->id(ref_type::WIKIDATA));
+        $ref->set_predicate_id($ref_types->id(ref_type::WIKIDATA));
         $ref->external_key = ref_api::TK_READ;
         $ref->description = ref_api::TD_READ;
         return $ref;
@@ -2053,7 +2067,7 @@ class create_test_objects extends test_base
         $ref = new ref($this->usr1);
         $ref->set(1);
         $ref->set_phrase($this->word()->phrase());
-        $ref->set_type_id($ref_types->id(ref_type::WIKIDATA));
+        $ref->set_predicate_id($ref_types->id(ref_type::WIKIDATA));
         $ref->external_key = ref_api::TK_READ;
         $ref->description = ref_api::TD_READ;
         return $ref;
@@ -2090,7 +2104,7 @@ class create_test_objects extends test_base
         $ref = new ref($this->usr1);
         $ref->set(12);
         $ref->set_phrase($this->word_gwp()->phrase());
-        $ref->set_type_id($ref_types->id(ref_type::WIKIDATA));
+        $ref->set_predicate_id($ref_types->id(ref_type::WIKIDATA));
         $ref->external_key = ref_api::TK_CHANGED;
         $ref->description = ref_api::TD_CHANGE;
         return $ref;
@@ -2240,7 +2254,7 @@ class create_test_objects extends test_base
         global $view_link_types;
         $lnk = new view_term_link($this->usr1);
         $lnk->set(1, $this->view(), $this->word()->term());
-        $lnk->set_type_id($view_link_types->id(view_link_type::DEFAULT));
+        $lnk->set_predicate_id($view_link_types->id(view_link_type::DEFAULT));
         $lnk->description = 2;
         return $lnk;
     }
@@ -2443,7 +2457,7 @@ class create_test_objects extends test_base
         global $protection_types;
         $lnk = new component_link($this->usr1);
         $lnk->set(1, $this->view(), $this->component(), 1);
-        $lnk->set_type(component_link_type::EXPRESSION);
+        $lnk->set_predicate(component_link_type::EXPRESSION);
         $lnk->set_pos_type(position_type::SIDE);
         $lnk->excluded = true;
         $lnk->share_id = $share_types->id(share_type_shared::GROUP);
@@ -2498,7 +2512,7 @@ class create_test_objects extends test_base
     {
         $lnk = new view_term_link($this->usr1);
         $lnk->set_view($this->view());
-        $lnk->set_type(view_link_type::DEFAULT);
+        $lnk->set_predicate(view_link_type::DEFAULT);
         $lnk->set_term($this->term());
         return $lnk;
     }
@@ -3012,7 +3026,7 @@ class create_test_objects extends test_base
         $trp = new triple($test_usr);
         $trp->set_id($id);
         $trp->set_from($this->new_word($from_name)->phrase());
-        $trp->verb = $verbs->get_verb($verb_code_id);
+        $trp->set_verb_id($verbs->id($verb_code_id));
         $trp->set_to($this->new_word($to_name)->phrase());
         $trp->set_name($wrd_name);
 
@@ -3140,7 +3154,7 @@ class create_test_objects extends test_base
                 } else {
                     // check if the backward link exists
                     $trp->set_from($to);
-                    $trp->verb = $vrb;
+                    $trp->set_verb($vrb);
                     $trp->set_to($from);
                     $trp->set_user($this->usr1);
                     $trp->load_by_link_id($to->id(), $vrb->id(), $from->id());
@@ -3148,7 +3162,7 @@ class create_test_objects extends test_base
                     // create the link if requested
                     if ($trp->id() <= 0 and $auto_create) {
                         $trp->set_from($from);
-                        $trp->verb = $vrb;
+                        $trp->set_verb($vrb);
                         $trp->set_to($to);
                         if ($trp->name(true) <> $name_given) {
                             $trp->set_name_given($name_given);
@@ -3380,7 +3394,7 @@ class create_test_objects extends test_base
         if ($ref->id() == 0) {
             $ref->set_phrase($phr);
             // TODO check if type name is the code id or really the name
-            $ref->set_type_id($ref_types->id($type_name));
+            $ref->set_predicate_id($ref_types->id($type_name));
             $ref->external_key = $external_key;
             $result = $ref->save();
             if ($result != '') {
@@ -3734,7 +3748,7 @@ class create_test_objects extends test_base
         $ref->external_key = ref_api::TK_ADD_API;
         $ref->description = ref_api::TD_ADD_API;
         $ref->url = ref_api::TU_ADD_API;
-        $ref->type_id = $reference_types->id(source_type::PDF);
+        $ref->predicate_id = $reference_types->id(source_type::PDF);
         $msg->add_body($ref);
         return $msg->get_json_array();
     }

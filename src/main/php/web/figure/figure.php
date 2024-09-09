@@ -101,10 +101,10 @@ class figure extends combine_named_dsp
     }
 
     /**
-     * @return int|string the id of the value or result id (not unique!)
+     * @return int|string|null the id of the value or result id (not unique!)
      * must have the same logic as the database view and the frontend
      */
-    function obj_id(): int|string
+    function obj_id(): int|string|null
     {
         if ($this->obj() == null) {
             return 0;

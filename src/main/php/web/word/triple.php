@@ -33,6 +33,7 @@ namespace html\word;
 
 include_once SANDBOX_PATH . 'sandbox_typed.php';
 
+use api\api;
 use cfg\phrase_type;
 use html\rest_ctrl;
 use html\button;
@@ -41,6 +42,7 @@ use html\html_selector;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\system\messages;
 use html\word\word as word_dsp;
+use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\sandbox\sandbox_typed;
 use html\phrase\term as term_dsp;
@@ -54,20 +56,16 @@ class triple extends sandbox_typed
     const FORM_EDIT = 'triple_edit';
     const FORM_DEL = 'triple_del';
 
-    // the json field names in the api json message which is supposed to be the same as the var $id
-    const FLD_FROM = 'from';
-    const FLD_VERB = 'parent';
-    const FLD_TO = 'to';
-
 
     /*
      * object vars
      */
 
     // the triple components
-    private phrase_dsp $from;
+    // they can be null to allow front end error messages to the user
+    private ?phrase_dsp $from = null;
     private ?verb_dsp $verb = null;
-    private phrase_dsp $to;
+    private ?phrase_dsp $to = null;
     private ?string $plural = null;
 
 
@@ -83,18 +81,18 @@ class triple extends sandbox_typed
     function set_from_json_array(array $json_array): void
     {
         parent::set_from_json_array($json_array);
-        if (array_key_exists(self::FLD_FROM, $json_array)) {
-            $this->set_from($json_array[self::FLD_FROM]);
+        if (array_key_exists(api::FLD_FROM, $json_array)) {
+            $this->set_from_by_id($json_array[api::FLD_FROM]);
         } else {
             $this->set_from(new phrase_dsp());
         }
-        if (array_key_exists(self::FLD_VERB, $json_array)) {
-            $this->set_verb($json_array[self::FLD_VERB]);
+        if (array_key_exists(api::FLD_VERB, $json_array)) {
+            $this->set_verb_by_id($json_array[api::FLD_VERB]);
         } else {
             $this->set_verb(new verb_dsp());
         }
-        if (array_key_exists(self::FLD_TO, $json_array)) {
-            $this->set_to($json_array[self::FLD_TO]);
+        if (array_key_exists(api::FLD_TO, $json_array)) {
+            $this->set_to_by_id($json_array[api::FLD_TO]);
         } else {
             $this->set_to(new phrase_dsp());
         }
@@ -112,14 +110,49 @@ class triple extends sandbox_typed
         $this->from = $from;
     }
 
+    function set_from_by_id(int $id): void
+    {
+        $this->from = $this->set_phrase_by_id($id);
+    }
+
     function set_verb(verb_dsp $vrb): void
     {
+        $this->verb = $vrb;
+    }
+
+    function set_verb_by_id(int $id): void
+    {
+        $vrb = new verb_dsp();
+        $vrb->set_id($id);
         $this->verb = $vrb;
     }
 
     function set_to(phrase_dsp $to): void
     {
         $this->to = $to;
+    }
+
+    function set_to_by_id(int $id): void
+    {
+        $this->to = $this->set_phrase_by_id($id);
+    }
+
+    private function set_phrase_by_id(int $id): phrase_dsp
+    {
+        if ($id > 0) {
+            $wrd = new word_dsp();
+            $wrd->set_id($id);
+            $phr = $wrd->phrase();
+        } elseif ($id < 0) {
+            $trp = new triple_dsp();
+            $trp->set_id($id * -1);
+            $phr = $trp->phrase();
+        } else {
+            $wrd = new word_dsp();
+            $wrd->set_id(0);
+            $phr = $wrd->phrase();
+        }
+        return $phr;
     }
 
     function from(): phrase_dsp
@@ -375,6 +408,24 @@ class triple extends sandbox_typed
     function is_percent(): bool
     {
         return $this->is_type(phrase_type::PERCENT);
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars = parent::api_array();
+        $vars[api::FLD_FROM] = $this->from()->id();
+        $vars[api::FLD_VERB] = $this->verb()->id();
+        $vars[api::FLD_TO] = $this->to()->id();
+        return $vars;
     }
 
 }

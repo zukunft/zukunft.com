@@ -88,7 +88,7 @@ class term_list_read_tests
         // TODO add this to all db read tests for all API call functions
         $result = json_decode(json_encode($trm_lst->api_obj()), true);
         $class_for_file = $t->class_without_namespace(term_list::class);
-        $target = json_decode($t->api_json_expected($class_for_file), true);
+        $target = json_decode($t->api_json_expected($class_for_file . '_without_link'), true);
         $t->assert($test_name . $trm_lst->dsp_id(), $lib->json_is_similar($target, $result), true);
 
         $test_name = 'loading by term list by pattern ';

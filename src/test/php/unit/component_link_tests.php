@@ -122,8 +122,8 @@ class component_link_tests
      * @return void
      */
     private function assert_sql_link_and_type(
-        test_cleanup $t,
-        sql_db $db_con,
+        test_cleanup   $t,
+        sql_db         $db_con,
         component_link $vcl): void
     {
         // check the Postgres query syntax
@@ -147,8 +147,8 @@ class component_link_tests
      * @return void
      */
     private function assert_sql_link_and_pos(
-        test_cleanup $t,
-        sql_db $db_con,
+        test_cleanup   $t,
+        sql_db         $db_con,
         component_link $vcl): void
     {
         // check the Postgres query syntax
@@ -172,8 +172,8 @@ class component_link_tests
      * @return void
      */
     private function assert_sql_max_pos(
-        test_cleanup $t,
-        sql_db $db_con,
+        test_cleanup   $t,
+        sql_db         $db_con,
         component_link $vcl): void
     {
         // check the Postgres query syntax

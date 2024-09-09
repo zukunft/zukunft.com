@@ -57,9 +57,9 @@ use cfg\log\change_action;
 use cfg\log\change_table_list;
 use shared\library;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 
-class formula_link extends sandbox_link_with_type
+class formula_link extends sandbox_link
 {
 
     /*
@@ -122,7 +122,7 @@ class formula_link extends sandbox_link_with_type
      * object vars
      */
 
-    // database fields additional to the user sandbox_link_with_type fields
+    // database fields additional to the user sandbox_link fields
     public ?int $order_nbr = null;    // to set the priority of the formula links
 
 
@@ -151,7 +151,7 @@ class formula_link extends sandbox_link_with_type
 
         $this->order_nbr = null;
         global $formula_link_types;
-        $this->set_type_id($formula_link_types->id(formula_link_type::DEFAULT));
+        $this->set_predicate_id($formula_link_types->id(formula_link_type::DEFAULT));
     }
 
     /**
@@ -184,7 +184,7 @@ class formula_link extends sandbox_link_with_type
             // TODO load by if from cache?
             $this->formula()->set_id($db_row[formula::FLD_ID]);
             $this->phrase()->set_id($db_row[phrase::FLD_ID]);
-            $this->type_id = $db_row[formula_link_type::FLD_ID];
+            $this->predicate_id = $db_row[formula_link_type::FLD_ID];
             $this->order_nbr = $db_row[formula_link::FLD_ORDER];
         }
         return $result;
@@ -288,10 +288,10 @@ class formula_link extends sandbox_link_with_type
      * get the name of the formula link type
      * @return string the name of the formula link type
      */
-    function type_name(): string
+    function predicate_name(): string
     {
         global $formula_link_types;
-        return $formula_link_types->name($this->type_id);
+        return $formula_link_types->name($this->predicate_id);
     }
 
 
@@ -763,7 +763,7 @@ class formula_link extends sandbox_link_with_type
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);
         // for the standard table the type field should always be included because it is part of the prime indey
-        if ($sbx->type_id() <> $this->type_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
+        if ($sbx->predicate_id() <> $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_link_type::FLD_ID,
@@ -775,8 +775,8 @@ class formula_link extends sandbox_link_with_type
             $lst->add_type_field(
                 formula_link_type::FLD_ID,
                 type_object::FLD_NAME,
-                $this->type_id(),
-                $sbx->type_id(),
+                $this->predicate_id(),
+                $sbx->predicate_id(),
                 $formula_link_types
             );
         }

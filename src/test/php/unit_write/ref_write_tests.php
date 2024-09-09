@@ -60,8 +60,8 @@ class ref_write_tests
         global $ref_types;
         $ref = new ref($usr);
         $ref->set_phrase($wrd->phrase());
-        $ref->set_type_id($ref_types->id(ref_type::WIKIDATA));
-        $ref->load_by_link_ids($wrd->phrase()->id(), $ref->type_id());
+        $ref->set_predicate_id($ref_types->id(ref_type::WIKIDATA));
+        $ref->load_by_link_ids($wrd->phrase()->id(), $ref->predicate_id());
         $result = $ref->external_key;
         $target = ref::TEST_REF_NAME;
         $t->display('ref->load "' . word_api::TN_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
@@ -73,7 +73,7 @@ class ref_write_tests
             $result = $ref2->phrase()->name();
             $target = word_api::TN_ADD;
             $t->display('ref->load_object word', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
-            $result = $ref2->type_name();
+            $result = $ref2->predicate_name();
             $target = ref_type::WIKIDATA;
             $t->display('ref->load_object type', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
         }

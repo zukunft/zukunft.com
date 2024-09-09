@@ -251,6 +251,8 @@ class sandbox extends db_object_seq_id_user
         $this->share_id = null;
         $this->protection_id = null;
         $this->excluded = false;
+        // TODO move to the objects that actually use the type
+        $this->type_id = null;
     }
 
     /**

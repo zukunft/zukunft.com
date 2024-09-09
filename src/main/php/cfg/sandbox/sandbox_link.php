@@ -51,6 +51,7 @@
 
 namespace cfg;
 
+use api\api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_type;
@@ -84,6 +85,11 @@ class sandbox_link extends sandbox
     private sandbox_named|combine_named|null $fob = null; // the From OBject which this linked object is creating the connection
     private sandbox_named|combine_named|string|null $tob = null; // the To OBject which this linked object is creating the connection (can be a string for external keys)
 
+    // database id of the type used for named link user sandbox objects with predefined functionality
+    // which is formula link and view component link
+    // repeating _sandbox_typed, because php 8.1 does not yet allow multi extends
+    public ?int $predicate_id = null;
+
     // database fields only used for objects that link two objects
     // TODO create a more specific object that covers all the objects that could be linked e.g. linkable_object
     public ?string $from_name = null;  // the name of the from object type e.g. view for component_links
@@ -104,6 +110,7 @@ class sandbox_link extends sandbox
 
         $this->fob = null;
         $this->tob = null;
+        $this->predicate_id = null;
     }
 
 
@@ -134,12 +141,31 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * dummy to be overwriten by the child object
-     * @return int|null the id of the linked object
+     * set the database id of the type
+     *
+     * @param int|null $predicate_id the database id of the type
+     * @return void
      */
-    function type_id(): ?int
+    function set_predicate_id(?int $predicate_id): void
     {
-        return 0;
+        $this->predicate_id = $predicate_id;
+    }
+
+    /**
+     * @return int|null the database id of the type
+     */
+    function predicate_id(): ?int
+    {
+        return $this->predicate_id;
+    }
+
+    /**
+     * to be overwritten by the child objects
+     * @return string|null the name of connection type
+     */
+    function predicate_name(): ?string
+    {
+        return null;
     }
 
     /**
@@ -219,6 +245,19 @@ class sandbox_link extends sandbox
 
 
     /*
+     * settings
+     */
+
+    /**
+     * @return bool true because all child objects use the link type
+     */
+    function is_link_type_obj(): bool
+    {
+        return true;
+    }
+
+
+    /*
      * sql create
      */
 
@@ -266,6 +305,18 @@ class sandbox_link extends sandbox
      * cast
      */
 
+    /**
+     * @param object $api_obj frontend API objects that should be filled with unique object name
+     */
+    function fill_api_obj(object $api_obj): void
+    {
+        parent::fill_api_obj($api_obj);
+
+        if ($this->predicate_id() != 0) {
+            $api_obj->set_predicate_id($this->predicate_id());
+        }
+    }
+
     /*
     /**
      * set the vars of the minimal api object based on this link object
@@ -286,6 +337,27 @@ class sandbox_link extends sandbox
     */
 
     /**
+     * fill the vars with this link type sandbox object based on the given api json array
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == api::FLD_PREDICATE) {
+                $this->predicate_id = $value;
+            }
+
+        }
+
+        return $msg;
+    }
+
+    /**
      * fill a similar object that is extended with display interface functions
      * @param object $dsp_obj
      *
@@ -301,6 +373,7 @@ class sandbox_link extends sandbox
         if ($this->tob != null) {
             $dsp_obj->tob = $this->tob->dsp_obj();
         }
+        $dsp_obj->set_predicate_id($this->predicate_id());
     }
 
 
@@ -679,13 +752,13 @@ class sandbox_link extends sandbox
             }
         } elseif ($obj_to_check::class == triple::class) {
             if (isset($this->fob)
-                and isset($this->verb)
+                and $this->has_verb()
                 and isset($this->tob)
                 and isset($obj_to_check->fob)
-                and isset($obj_to_check->verb)
+                and $obj_to_check->has_verb()
                 and isset($obj_to_check->tob)) {
                 if ($this->fob->id() == $obj_to_check->fob->id()
-                    and $this->verb->id() == $obj_to_check->verb->id()
+                    and $this->predicate_id() == $obj_to_check->predicate_id()
                     and $this->tob->id() == $obj_to_check->tob->id()) {
                     $result = true;
                 }
@@ -1292,7 +1365,7 @@ class sandbox_link extends sandbox
      */
     function link_id(): string
     {
-        return $this->from_id() . '/' . $this->type_id() . '/' . $this->to_id();
+        return $this->from_id() . '/' . $this->predicate_id() . '/' . $this->to_id();
 
     }
 

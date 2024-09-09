@@ -2,8 +2,8 @@
 
 /*
 
-    sandbox_exp_link.php - the superclass for the link export objects
-    -------------------------
+    api/sandbox/sandbox_link.php - extends the superclass for link api objects with the predicate id
+    ----------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,21 +30,44 @@
 
 */
 
-namespace cfg\export;
+namespace controller\sandbox;
 
-class sandbox_exp_link extends sandbox_exp
+use api\sandbox\sandbox;
+
+include_once API_SANDBOX_PATH . 'sandbox.php';
+
+class sandbox_link extends sandbox
 {
-    // field names used for JSON creation
-    public ?string $name = null;   // the target (to) object name, which cannot be empty; the source (from) object is defined by the placement in the JSON
-    public ?string $share = null;     // the share permissions of the object; null means that the default share type is used whereas an empty string means that the share type should be overwritten with the default share type
-    public ?string $protection= null; // the protection of the given object; TODO check that empty string over writes the setting
 
-    // reset the search values of this object
-    function reset(): void
+    // all link objects can have a connection type for predefined functionality to it
+    public ?int $predicate_id;
+
+
+    /*
+     * construct and map
+     */
+
+    function __construct(int $id = 0, ?int $predicate_id = null)
     {
-        $this->name = '';
-        $this->share = null;
-        $this->protection = null;
+        parent::__construct($id);
+        $this->set_predicate_id($predicate_id);
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function set_predicate_id(?int $predicate_id): void
+    {
+        $this->predicate_id = $predicate_id;
+    }
+
+    function predicate_id(): ?int
+    {
+        return $this->predicate_id;
     }
 
 }
+
+

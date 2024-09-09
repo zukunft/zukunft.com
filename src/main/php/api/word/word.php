@@ -146,6 +146,7 @@ class word extends sandbox_typed_api implements JsonSerializable
     // persevered word names for unit and integration tests based on the database
     // TWN_* - is a Test Word Name for words created only for testing (see also TN_*)
     const TN_ADD = 'System Test Word';
+    const TN_ADD_TO = 'System Test Word To';
     const TN_ADD_VIA_FUNC = 'System Test Word added via sql function';
     const TN_ADD_VIA_SQL = 'System Test Word added via sql insert';
     const TN_ADD_GROUP_PRIME_FUNC = 'System Test Word for prime group add via sql function';

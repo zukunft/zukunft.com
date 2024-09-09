@@ -49,7 +49,7 @@ use cfg\export\sandbox_exp;
 use cfg\export\view_exp;
 use cfg\log\change;
 
-class view_term_link extends sandbox_link_with_type
+class view_term_link extends sandbox_link
 {
 
     /*
@@ -117,13 +117,13 @@ class view_term_link extends sandbox_link_with_type
     {
         parent::__construct($usr);
         $this->reset();
-        $this->set_type(view_link_type::DEFAULT);
+        $this->set_predicate(view_link_type::DEFAULT);
     }
 
     function reset(): void
     {
         parent::reset();
-        $this->set_type_id(null);
+        $this->set_predicate_id(null);
         $this->description = null;
     }
 
@@ -151,7 +151,7 @@ class view_term_link extends sandbox_link_with_type
             $trm = new term($this->user());
             $trm->set_id($db_row[term::FLD_ID]);
             $this->set_term($trm);
-            $this->set_type_id($db_row[view_link_type::FLD_ID]);
+            $this->set_predicate_id($db_row[view_link_type::FLD_ID]);
             $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
         }
         return $result;
@@ -197,14 +197,14 @@ class view_term_link extends sandbox_link_with_type
     }
 
     /**
-     * interface function to set the term always to the to object
+     * interface function to set the connection type from the term to the view
      * @param string $type_code_id the word, triple or formula that should be linked
      * @return void
      */
-    function set_type(string $type_code_id): void
+    function set_predicate(string $type_code_id): void
     {
         global $view_link_types;
-        $this->set_type_id($view_link_types->id($type_code_id));
+        $this->set_predicate_id($view_link_types->id($type_code_id));
     }
 
     /**
@@ -294,10 +294,10 @@ class view_term_link extends sandbox_link_with_type
     /**
      * @return string the name of the reference type e.g. wikidata
      */
-    function type_name(): string
+    function predicate_name(): string
     {
         global $view_link_types;
-        return $view_link_types->name($this->type_id);
+        return $view_link_types->name($this->predicate_id);
     }
 
 
@@ -433,13 +433,13 @@ class view_term_link extends sandbox_link_with_type
     /**
      * add the type field to the list of changed database fields with name, value and type
      *
-     * @param sandbox|word $sbx the compare value to detect the changed fields
+     * @param sandbox|view_term_link $sbx the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|word  $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sandbox|view_term_link $sbx,
+        sql_type_list          $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
         global $change_field_list;
@@ -466,7 +466,7 @@ class view_term_link extends sandbox_link_with_type
             );
         }
 
-        if ($sbx->type_id() <> $this->type_id()) {
+        if ($sbx->predicate_id() <> $this->predicate_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_link_type::FLD_ID,
@@ -478,8 +478,8 @@ class view_term_link extends sandbox_link_with_type
             $lst->add_type_field(
                 view_link_type::FLD_ID,
                 type_object::FLD_NAME,
-                $this->type_id(),
-                $sbx->type_id(),
+                $this->predicate_id(),
+                $sbx->predicate_id(),
                 $phrase_types
             );
         }

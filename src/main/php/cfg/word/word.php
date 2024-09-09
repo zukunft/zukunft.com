@@ -1142,7 +1142,7 @@ class word extends sandbox_typed
         if (!$wrd_lst->does_contain($child)) {
             $wrd_lnk = new triple($this->user());
             $wrd_lnk->set_from($child->phrase());
-            $wrd_lnk->verb = $verbs->get_verb(verb::IS);
+            $wrd_lnk->set_verb($verbs->get_verb(verb::IS));
             $wrd_lnk->set_to($this->phrase());
             if ($wrd_lnk->save() == '') {
                 $result = true;

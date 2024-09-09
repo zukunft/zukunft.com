@@ -125,10 +125,10 @@ class phrase extends combine_named_dsp
     }
 
     /**
-     * @return int|string the id of the word or triple
+     * @return int|string|null the id of the word or triple
      * e.g 1 for a word with id 1, 1 for a triple with id 1
      */
-    function obj_id(): int|string
+    function obj_id(): int|string|null
     {
         return $this->obj()?->id();
     }
@@ -148,6 +148,10 @@ class phrase extends combine_named_dsp
             $vars[combine_object_api::FLD_CLASS] = phrase_api::CLASS_WORD;
         } else {
             $vars[combine_object_api::FLD_CLASS] = phrase_api::CLASS_TRIPLE;
+            $trp = $this->obj();
+            $vars[api::FLD_FROM] = $trp->from()->id();
+            $vars[api::FLD_VERB] = $trp->verb()->id();
+            $vars[api::FLD_TO] = $trp->to()->id();
         }
         $vars[api::FLD_ID] = $this->obj_id();
         $vars[api::FLD_NAME] = $this->name();

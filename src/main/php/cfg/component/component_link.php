@@ -66,14 +66,13 @@ use cfg\export\sandbox_exp;
 use cfg\log\change;
 use cfg\sandbox;
 use cfg\sandbox_link;
-use cfg\sandbox_link_with_type;
 use cfg\sandbox_named;
 use cfg\type_object;
 use cfg\user;
 use cfg\view;
 use shared\library;
 
-class component_link extends sandbox_link_with_type
+class component_link extends sandbox_link
 {
 
     /*
@@ -166,7 +165,7 @@ class component_link extends sandbox_link_with_type
 
         $this->reset_objects($this->user());
 
-        $this->set_type(component_link_type::ALWAYS);
+        $this->set_predicate(component_link_type::ALWAYS);
         $this->set_pos_type(position_type::BELOW);
 
         $this->order_nbr = null;
@@ -239,10 +238,10 @@ class component_link extends sandbox_link_with_type
      * @param string $type_code_id the code id that should be added to this view component link
      * @return void
      */
-    function set_type(string $type_code_id): void
+    function set_predicate(string $type_code_id): void
     {
         global $component_link_types;
-        $this->type_id = $component_link_types->id($type_code_id);
+        $this->predicate_id = $component_link_types->id($type_code_id);
     }
 
     /**
@@ -321,7 +320,7 @@ class component_link extends sandbox_link_with_type
     function set_link_objects(sandbox_link|component_link $lnk): component_link
     {
         $lnk->set_view($this->view());
-        $lnk->set_type_id($this->type_id());
+        $lnk->set_predicate_id($this->predicate_id());
         $lnk->set_component($this->component());
         return $lnk;
     }
@@ -334,10 +333,10 @@ class component_link extends sandbox_link_with_type
     /**
      * @return string the name of the preloaded view component link type
      */
-    function type_name(): string
+    function predicate_name(): string
     {
         global $component_link_types;
-        return $component_link_types->name($this->type_id);
+        return $component_link_types->name($this->predicate_id);
     }
 
     /**
@@ -1010,7 +1009,7 @@ class component_link extends sandbox_link_with_type
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);
         // for the standard table the type field should always be included because it is part of the prime indey
-        if ($sbx->type_id() <> $this->type_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
+        if ($sbx->predicate_id() <> $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_link_type::FLD_ID,
@@ -1022,8 +1021,8 @@ class component_link extends sandbox_link_with_type
             $lst->add_type_field(
                 component_link_type::FLD_ID,
                 type_object::FLD_NAME,
-                $this->type_id(),
-                $sbx->type_id(),
+                $this->predicate_id(),
+                $sbx->predicate_id(),
                 $component_link_types
             );
         }

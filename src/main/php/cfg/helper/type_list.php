@@ -419,7 +419,6 @@ class type_list
                 if ($this->usr_can_add) {
                     if (array_key_exists($code_id, $this->name_hash)) {
                         $result = $this->name_hash[$code_id];
-
                     } else {
                         $result = self::CODE_ID_NOT_FOUND;
                         log_debug('Type id not found for name "' . $code_id . '" in ' . $lib->dsp_array_keys($this->name_hash));
@@ -497,6 +496,15 @@ class type_list
     function get_by_code_id(string $code_id): type_object
     {
         return $this->get($this->id($code_id));
+    }
+
+    function get_by_name(string $name): ?type_object
+    {
+        $result = null;
+        if (array_key_exists($name, $this->name_hash)) {
+            $result = $this->get($this->name_hash[$name]);
+        }
+        return $result;
     }
 
     function code_id(int $id): string

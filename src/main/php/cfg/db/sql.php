@@ -62,7 +62,7 @@ use cfg\ref;
 use cfg\result\result;
 use cfg\sandbox;
 use cfg\sandbox_link;
-use cfg\sandbox_link_typed;
+use cfg\sandbox_link_named;
 use cfg\sandbox_named;
 use cfg\sandbox_value;
 use cfg\sys_log;
@@ -1920,16 +1920,16 @@ class sql
 
     /**
      * create the sql function part to log adding a link
-     * @param sandbox|sandbox_link|sandbox_link_typed $sbx the sandbox object that has been updated by the user
-     * @param sandbox|sandbox_link|sandbox_link_typed $dbo the sandbox object as in db without user updates
+     * @param sandbox|sandbox_link|sandbox_link_named $sbx the sandbox object that has been updated by the user
+     * @param sandbox|sandbox_link|sandbox_link_named $dbo the sandbox object as in db without user updates
      * @param user $usr
      * @param sql_par_field_list $fvt_lst
      * @param sql_type_list $sc_par_lst
      * @return sql_par
      */
     function sql_func_log_link(
-        sandbox|sandbox_link|sandbox_link_typed $sbx,
-        sandbox|sandbox_link|sandbox_link_typed $dbo,
+        sandbox|sandbox_link|sandbox_link_named $sbx,
+        sandbox|sandbox_link|sandbox_link_named $dbo,
         user                                    $usr,
         sql_par_field_list                      $fvt_lst,
         sql_type_list                           $sc_par_lst
@@ -1957,8 +1957,8 @@ class sql
             $log->old_from_id = $dbo->from_id();
             $log->old_text_from = $dbo->from_name();
             if ($dbo->is_link_type_obj()) {
-                $log->old_link_id = $dbo->type_id();
-                $log->old_text_link = $dbo->type_name();
+                $log->old_link_id = $dbo->predicate_id();
+                $log->old_text_link = $dbo->predicate_name();
             }
             if (is_int($dbo->to_id())) {
                 $log->old_to_id = $dbo->to_id();
@@ -1972,8 +1972,8 @@ class sql
             $log->new_from_id = $sbx->from_id();
             $log->new_text_from = $sbx->from_name();
             if ($sbx->is_link_type_obj()) {
-                $log->new_link_id = $sbx->type_id();
-                $log->new_text_link = $sbx->type_name();
+                $log->new_link_id = $sbx->predicate_id();
+                $log->new_text_link = $sbx->predicate_name();
             }
             if (is_int($sbx->to_id())) {
                 $log->new_to_id = $sbx->to_id();
@@ -2005,14 +2005,14 @@ class sql
 
     /**
      * create the sql function part to log adding a link
-     * @param sandbox|sandbox_link|sandbox_link_typed $sbx the name of the calling class use for the query names
+     * @param sandbox|sandbox_link|sandbox_link_named $sbx the name of the calling class use for the query names
      * @param user $usr
      * @param sql_par_field_list $fvt_lst
      * @param sql_type_list $sc_par_lst
      * @return sql_par
      */
     function sql_func_log_user_link(
-        sandbox|sandbox_link|sandbox_link_typed $sbx,
+        sandbox|sandbox_link|sandbox_link_named $sbx,
         user                                    $usr,
         sql_par_field_list                      $fvt_lst,
         sql_type_list                           $sc_par_lst
@@ -2033,9 +2033,9 @@ class sql
             $log->new_text_link = '';
         } elseif ($sbx->is_link_type_obj()) {
             // other links can have a type
-            $log->old_link_id = $sbx->type_id();
+            $log->old_link_id = $sbx->predicate_id();
             $log->new_link_id = 0;
-            $log->old_text_link = $sbx->type_name();
+            $log->old_text_link = $sbx->predicate_name();
             $log->new_text_link = '';
         }
         if (is_int($sbx->to_id())) {

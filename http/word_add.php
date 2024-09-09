@@ -140,18 +140,18 @@ if ($usr->id() > 0) {
 
         } elseif ($wrd_id > 0) {
             // check link of the existing word already exists
-            $lnk_test = new triple($usr);
-            $lnk_test->load_by_link_id($wrd_id, $vrb_id, $wrd_to);
-            if ($lnk_test->id() > 0) {
-                $lnk_test->load_objects();
+            $trp_test = new triple($usr);
+            $trp_test->load_by_link_id($wrd_id, $vrb_id, $wrd_to);
+            if ($trp_test->id() > 0) {
+                $trp_test->load_objects();
                 log_debug('check forward link ' . $wrd_id . ' ' . $vrb_id . ' ' . $wrd_to . '');
-                $msg .= '"' . $lnk_test->from_name . ' ' . $lnk_test->verb->name() . ' ' . $lnk_test->to_name . '" already exists. ';
+                $msg .= '"' . $trp_test->from_name . ' ' . $trp_test->verb_name() . ' ' . $trp_test->to_name . '" already exists. ';
             }
-            $lnk_rev = new triple($usr);
-            $lnk_rev->load_by_link_id($wrd_to, $vrb_id, $wrd_id);
-            if ($lnk_rev->id() > 0) {
-                $lnk_rev->load_objects();
-                $msg .= 'The reverse of "' . $lnk_rev->from_name . ' ' . $lnk_rev->verb->name() . ' ' . $lnk_rev->to_name . '" already exists. Do you really want to add both sides? ';
+            $trp_rev = new triple($usr);
+            $trp_rev->load_by_link_id($wrd_to, $vrb_id, $wrd_id);
+            if ($trp_rev->id() > 0) {
+                $trp_rev->load_objects();
+                $msg .= 'The reverse of "' . $trp_rev->from_name . ' ' . $trp_rev->verb_name() . ' ' . $trp_rev->to_name . '" already exists. Do you really want to add both sides? ';
             }
         }
 
@@ -171,7 +171,7 @@ if ($usr->id() > 0) {
                 log_debug('word ' . $wrd->id() . ' linked via ' . $vrb_id . ' to ' . $wrd_to . ': ' . $add_result);
                 $lnk = new triple($usr);
                 $lnk->from()->set_id($wrd->id());
-                $lnk->verb->set_id($vrb_id);
+                $lnk->set_verb_id($vrb_id);
                 $lnk->to()->set_id($wrd_to);
                 $add_result .= $lnk->save();
             }

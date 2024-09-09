@@ -14,6 +14,10 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO convert from null e.g. to empty string at the last possible point e.g. to distinguish between not set
+    TODO check the consistency of the object var default values e.g. if == null is used it must be possible that the var is null
+    TODO in api use always field names from the api object
+    TODO reduce the api objects as much as possible and move functionality to the cfg object
     TODO review unit, read and write tests
          each test should be with one line e.g. $t->assert_sql_table_create($wrd);
          3 to 7 tests should be within a block starting with $t->subheader(' ....
@@ -443,13 +447,11 @@ use html\phrase\phrase_group as phrase_group_dsp;
                             component - an formatting element for the user view e.g. to show a word or number
                     sandbox_Link - user sandbox objects that link two objects
                         sandbox_link_named - user sandbox objects that link two objects
-                            sandbox_link_typed - objects that have additional a type and a predefined behavior
-                                triple - link two words with a predicate / verb
-                            sandbox_link_with_type - TODO combine with sandbox_link_typed?
-                                formula_link - link a formula to a phrase
-                                view_term_link - link a view to a term
-                                component_link - to assign a component to a view
-                                ref - to link a value to an external source
+                            triple - link two words with a predicate / verb
+                        formula_link - link a formula to a phrase
+                        view_term_link - link a view to a term
+                        component_link - to assign a component to a view
+                        ref - to link a value to an external source
                     sandbox_value - to save a user specific numbers
                         value - a single number added by the user
                         result - one calculated numeric result

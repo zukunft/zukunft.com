@@ -51,7 +51,7 @@ class ref extends db_object_dsp
     private ?source $source;
     private ?string $external_key; // maybe use field name instead
     private ?string $url;
-    private ?int $type_id;
+    private ?int $predicate_id;
     // the mouse over tooltip for the named object e.g. word, triple, formula, verb, view or component
     public ?string $description = null;
 
@@ -67,7 +67,7 @@ class ref extends db_object_dsp
     function __construct(?string $api_json = null)
     {
         $this->set_phrase();
-        $this->set_type_id();
+        $this->set_predicate_id();
         parent::__construct($api_json);
     }
 
@@ -111,10 +111,10 @@ class ref extends db_object_dsp
         } else {
             $this->set_url(null);
         }
-        if (array_key_exists(api::FLD_TYPE, $json_array)) {
-            $this->set_type_id($json_array[api::FLD_TYPE]);
+        if (array_key_exists(api::FLD_PREDICATE, $json_array)) {
+            $this->set_predicate_id($json_array[api::FLD_PREDICATE]);
         } else {
-            $this->set_type_id();
+            $this->set_predicate_id();
         }
         if (array_key_exists(api::FLD_DESCRIPTION, $json_array)) {
             $this->set_description($json_array[api::FLD_DESCRIPTION]);
@@ -149,7 +149,7 @@ class ref extends db_object_dsp
     function type_name(): string
     {
         global $ref_types;
-        return $ref_types->name($this->type_id());
+        return $ref_types->name($this->predicate_id());
     }
 
     function set_external_key(?string $external_key): void
@@ -172,14 +172,14 @@ class ref extends db_object_dsp
         return $this->url;
     }
 
-    function set_type_id(?int $type_id = null): void
+    function set_predicate_id(?int $type_id = null): void
     {
-        $this->type_id = $type_id;
+        $this->predicate_id = $type_id;
     }
 
-    function type_id(): ?int
+    function predicate_id(): ?int
     {
-        return $this->type_id;
+        return $this->predicate_id;
     }
 
     function set_description(?string $description): void
@@ -235,7 +235,7 @@ class ref extends db_object_dsp
         $vars[api::FLD_EXTERNAL_KEY] = $this->external_key();
         $vars[api::FLD_PHRASE] = $this->phr->id();
         $vars[api::FLD_SOURCE] = $this->source?->id();
-        $vars[api::FLD_TYPE] = $this->type_id();
+        $vars[api::FLD_PREDICATE] = $this->predicate_id();
         $vars[api::FLD_DESCRIPTION] = $this->description();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

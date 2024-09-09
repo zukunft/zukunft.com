@@ -91,8 +91,6 @@ use cfg\result\result_list;
 use cfg\sandbox;
 use cfg\sandbox_link;
 use cfg\sandbox_link_named;
-use cfg\sandbox_link_with_type;
-use cfg\sandbox_list;
 use cfg\sandbox_named;
 use cfg\sandbox_value;
 use cfg\source;
@@ -2002,12 +2000,12 @@ class test_base
     /**
      * check the object loading by id and name
      *
-     * @param sandbox_named $usr_obj the user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link_named $usr_obj the user sandbox object e.g. a word
      * @param string $name the name of the object
      * @param int $id the id of the object if not 1
      * @return bool the load object to use it for more tests
      */
-    function assert_load(sandbox_named $usr_obj, string $name = '', int $id = 1): bool
+    function assert_load(sandbox_named|sandbox_link_named $usr_obj, string $name = '', int $id = 1): bool
     {
         // check the loading via name and check the id
         $test_name = 'load ' . $usr_obj::class . ' by name ' . $name;
@@ -2226,7 +2224,7 @@ class test_base
      * and simulate if different users change it
      *
      * @param sandbox_named|sandbox_link_named $sbx
-     * @param string $name
+     * @param string $name target name of the object
      * @return bool
      */
     function assert_write_named(sandbox_named|sandbox_link_named $sbx, string $name): bool
@@ -2235,7 +2233,7 @@ class test_base
         // check for leftovers
         $this->write_named_cleanup($sbx, $name, true);
 
-        // remember mandetory fields
+        // remember mandatory fields
         if ($sbx::class == formula::class) {
             $usr_text = $sbx->usr_text;
             $ref_text = $sbx->ref_text;
@@ -2439,10 +2437,11 @@ class test_base
      * test the link user sandbox object by adding it
      * and simulate if different users change it
      *
-     * @param sandbox_link_with_type $lnk
+     * @param sandbox_link|triple $lnk
+     * @param string $name target name of the object
      * @return bool
      */
-    function assert_write_link(sandbox_link_with_type $lnk): bool
+    function assert_write_link(sandbox_link|triple $lnk, string $name = ''): bool
     {
 
         /*
@@ -2457,10 +2456,16 @@ class test_base
         // detect the related objects
         if ($lnk::class == ref::class) {
             $fob = new word($ori->user());
+            $add_from = $fob;
             $tob = $lnk->to_id();
             $add_to = $lnk->to_id();
         } else {
             $fob = clone $ori->fob();
+            if ($fob::class == phrase::class or $fob::class == term::class) {
+                $add_from = new word($fob->user());
+            } else {
+                $add_from = $fob;
+            }
             $tob = clone $ori->tob();
             if ($tob::class == phrase::class or $tob::class == term::class) {
                 $add_to = new word($tob->user());
@@ -2469,12 +2474,12 @@ class test_base
             }
         }
         // check for leftovers
-        $this->write_named_cleanup($fob, $ori->fob()->name(), true);
+        $this->write_named_cleanup($add_from, $ori->fob()->name(), true);
         if ($lnk::class != ref::class) {
             $this->write_named_cleanup($add_to, $ori->tob()->name(), true);
         }
         // create the related objects
-        $fid = $this->write_named_add($fob, $fob->name(), $this->usr1);
+        $fid = $this->write_named_add($add_from, $fob->name(), $this->usr1);
         if ($lnk::class == ref::class) {
             $tid = $lnk->to_id();
         } else {
@@ -2487,11 +2492,19 @@ class test_base
          */
 
         // add the named object for the test user 1
-        $id = $this->write_link_add($lnk, $ori, $this->usr1);
+        if ($lnk::class == triple::class) {
+            $id = $this->write_named_link_add($lnk, $ori, $name, $this->usr1);
+        } else {
+            $id = $this->write_link_add($lnk, $ori, $this->usr1);
+        }
 
         // check the log
         if ($id != 0) {
-            $result = $this->write_link_log($lnk, change::MSG_LINK);
+            if ($lnk::class == triple::class) {
+                $result = $this->write_named_link_log($lnk, change::MSG_LINK);
+            } else {
+                $result = $this->write_link_log($lnk, change::MSG_LINK);
+            }
         } else {
             $result = false;
         }
@@ -2503,7 +2516,7 @@ class test_base
 
         // check if user 1 can load the added object
         if ($result) {
-            $result = $this->assert_load_by_link($lnk, $fid, $ori->type_id(), $tid, $id);
+            $result = $this->assert_load_by_link($lnk, $fid, $ori->predicate_id(), $tid, $id);
         }
 
         // check if no relevant fields a lost during save and reload
@@ -2615,13 +2628,13 @@ class test_base
     /**
      * remove all remaining test rows of a named user sandbox object
      *
-     * @param sandbox_named|sandbox_link_named $sbx the named user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link_named|phrase $sbx the named user sandbox object e.g. a word
      * @param string $name the name of the user sandbox object that should be removed
      * @param bool $check if true an error message is created if the object needs to be removed
      *                    e.g. to detect incomplete cleanup of previous tests
      * @return void
      */
-    function write_named_cleanup(sandbox_named|sandbox_link_named $sbx, string $name, bool $check = false): void
+    function write_named_cleanup(sandbox_named|sandbox_link_named|phrase $sbx, string $name, bool $check = false): void
     {
         $this->write_named_cleanup_one($sbx, $this->usr1, $name, $check);
         $this->write_named_cleanup_one($sbx, $this->usr2, $name, $check);
@@ -2632,7 +2645,7 @@ class test_base
     /**
      * remove remaining test rows for one name and one user
      *
-     * @param sandbox_named|sandbox_link_named $sbx the named user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link_named|phrase $sbx the named user sandbox object e.g. a word
      * @param string $name the name of the user sandbox object that should be removed
      * @param user $usr the user configuration of this user should be removed
      * @param bool $check if true an error message is created if the object needs to be removed
@@ -2640,10 +2653,10 @@ class test_base
      * @return void
      */
     private function write_named_cleanup_one(
-        sandbox_named|sandbox_link_named $sbx,
-        user                             $usr,
-        string                           $name,
-        bool                             $check = false
+        sandbox_named|sandbox_link_named|phrase $sbx,
+        user                                    $usr,
+        string                                  $name,
+        bool                                    $check = false
     ): void
     {
         $sbx->set_user($this->usr1);
@@ -2713,7 +2726,7 @@ class test_base
         }
     }
 
-    private function write_link_add(sandbox_link_with_type $sbx, sandbox_link_with_type $ori, user $usr): int
+    private function write_named_link_add(triple $sbx, triple $ori, string $name, user $usr): int
     {
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
@@ -2726,7 +2739,30 @@ class test_base
         $sbx->set_user($usr);
         $sbx->set_fob($fob);
         $sbx->set_tob($tob);
-        $sbx->set_type_id($ori->type_id());
+        $sbx->set_name($name);
+        $sbx->set_predicate_id($ori->predicate_id());
+        $result = $sbx->save();
+        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+            return $sbx->id();
+        } else {
+            return 0;
+        }
+    }
+
+    private function write_link_add(sandbox_link $sbx, sandbox_link $ori, user $usr): int
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = 'add ' . $class . ' ' . $ori->dsp_id() . ' for user ' . $usr->dsp_id();
+
+        $fob = clone $ori->fob();
+        $fob->load_by_name($fob->name());
+        $tob = clone $ori->tob();
+        $tob->load_by_name($tob->name());
+        $sbx->set_user($usr);
+        $sbx->set_fob($fob);
+        $sbx->set_tob($tob);
+        $sbx->set_predicate_id($ori->predicate_id());
         $result = $sbx->save();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             return $sbx->id();
@@ -2771,9 +2807,28 @@ class test_base
         return $this->assert($test_name, $result, $target);
     }
 
+    private function write_named_link_log(
+        triple $lnk,
+        string $action
+    ): bool
+    {
+        $log = new change_link($lnk->user());
+        $lib = new library();
+        $tbl_name = $lib->class_to_table($lnk::class);
+        $log->set_table($tbl_name);
+        $log->row_id = $lnk->id();
+        $result = $log->dsp_last(true);
+        $target = $lnk->user()->name() . ' ' . $action . ' ';
+        $target .= $lnk->fob()->name() . ' to ';
+        $target .= $lnk->tob()->name();
+        $class = $lib->class_to_name($lnk::class);
+        $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $lnk->dsp_id();
+        return $this->assert($test_name, $result, $target);
+    }
+
     private function write_link_log(
-        sandbox_link_with_type $lnk,
-        string                 $action
+        sandbox_link $lnk,
+        string                  $action
     ): bool
     {
         $log = new change_link($lnk->user());

@@ -75,7 +75,7 @@ if ($usr->id() > 0) {
         $trp->from()->set_id($_GET['from']);
     }   // the word or triple to be linked
     if (isset($_GET['verb'])) {
-        $trp->verb->set_id($_GET['verb']);
+        $trp->set_verb_id($_GET['verb']);
     }   // the link type (verb)
     if (isset($_GET['phrase'])) {
         $trp->to()->set_id($_GET['phrase']);
@@ -85,7 +85,7 @@ if ($usr->id() > 0) {
     if ($_GET['confirm'] == 1) {
 
         // check essential parameters
-        if ($trp->from_id() == 0 or $trp->verb->id() == 0 or $trp->to_id() == 0) {
+        if ($trp->from_id() == 0 or $trp->verb_id() == 0 or $trp->to_id() == 0) {
             $msg .= 'Please select two words and a verb.';
         } else {
 

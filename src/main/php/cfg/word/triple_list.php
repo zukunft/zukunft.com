@@ -340,7 +340,7 @@ class triple_list extends sandbox_list
                         $this->add_obj($trp);
                         $result = true;
                         // fill verb
-                        $trp->verb = $verbs->get_verb_by_id($db_row[verb::FLD_ID]);
+                        $trp->set_verb_id($db_row[verb::FLD_ID]);
                         // fill from
                         $trp->set_fob(new phrase($this->user()));
                         $trp->fob()->row_mapper_sandbox($db_row, triple::FLD_FROM, '1');
@@ -535,10 +535,10 @@ class triple_list extends sandbox_list
                 }
 
                 // display type header
-                if ($lnk->verb == null) {
+                if (!$lnk->has_verb()) {
                     log_warning('graph->display type is missing');
                 } else {
-                    if ($lnk->verb()->id() <> $prev_verb_id) {
+                    if ($lnk->verb_id() <> $prev_verb_id) {
                         log_debug('graph->display type "' . $lnk->verb()->name() . '"');
 
                         // select the same side of the verb

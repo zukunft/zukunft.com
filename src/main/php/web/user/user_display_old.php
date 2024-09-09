@@ -422,7 +422,7 @@ class user_dsp_old extends user
                 $frm_usr->set_id($sbx_row['id']);
                 $frm_usr->formula()->set_id($sbx_row[formula::FLD_ID]);
                 $frm_usr->phrase()->set_id($sbx_row[phrase::FLD_ID]);
-                $frm_usr->type_id = $sbx_row['usr_type'];
+                $frm_usr->predicate_id = $sbx_row['usr_type'];
                 $frm_usr->set_excluded($sbx_row['usr_excluded']);
                 $frm_usr->load_objects();
 
@@ -432,11 +432,11 @@ class user_dsp_old extends user
 
                 $frm_std = clone $frm_usr;
                 $frm_std->set_user($usr_std);
-                $frm_std->type_id = $sbx_row['std_type'];
+                $frm_std->predicate_id = $sbx_row['std_type'];
                 $frm_std->set_excluded($sbx_row['std_excluded']);
 
                 // check database consistency and correct it if needed
-                if ($frm_usr->type_id == $frm_std->type_id
+                if ($frm_usr->predicate_id == $frm_std->predicate_id
                     and $frm_usr->is_excluded() == $frm_std->is_excluded()) {
                     $frm_usr->del_usr_cfg();
                 } else {
@@ -482,13 +482,13 @@ class user_dsp_old extends user
                         // to review: load all user formula_links with one query
                         $frm_lnk_other = clone $frm_usr;
                         $frm_lnk_other->set_user($usr_other);
-                        $frm_lnk_other->type_id = $frm_lnk_other_row['link_type_id'];
+                        $frm_lnk_other->predicate_id = $frm_lnk_other_row['link_type_id'];
                         $frm_lnk_other->set_excluded($frm_lnk_other_row[sandbox::FLD_EXCLUDED]);
                         $frm_lnk_other->load_objects();
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $sandbox_other .= $frm_lnk_other->tob->display_linked();
+                        $sandbox_other .= $frm_lnk_other->tob()->display_linked();
                     }
                     $sandbox_other = '<a href="/http/user_formula_link.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 

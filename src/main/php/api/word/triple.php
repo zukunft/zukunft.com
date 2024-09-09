@@ -32,6 +32,7 @@
 
 namespace api\word;
 
+use api\api;
 use api\word\word as word_api;
 use api\phrase\phrase as phrase_api;
 use api\phrase\term as term_api;
@@ -119,9 +120,7 @@ class triple extends sandbox_typed_api
     )
     {
         parent::__construct($id, $name);
-        if ($from != '' or $verb != '' or $to != '') {
-            $this->set($from, $verb, $to);
-        }
+        $this->set($from, $verb, $to);
     }
 
 
@@ -131,15 +130,9 @@ class triple extends sandbox_typed_api
 
     function set(string $from, string $verb, string $to): void
     {
-        if ($from != '') {
-            $this->set_from(new phrase_api(new word_api(0, $from)));
-        }
-        if ($verb != '') {
-            $this->set_verb(new verb_api(0, $verb));
-        }
-        if ($to != '') {
-            $this->set_to(new phrase_api(new word_api(0, $to)));
-        }
+        $this->set_from(new phrase_api(new word_api(0, $from)));
+        $this->set_verb(new verb_api(0, $verb));
+        $this->set_to(new phrase_api(new word_api(0, $to)));
     }
 
     function set_from(phrase_api $from): void
@@ -170,6 +163,16 @@ class triple extends sandbox_typed_api
     function to(): phrase_api
     {
         return $this->to;
+    }
+
+    function set_predicate_id(?int $predicate_id): void
+    {
+        $this->verb->id = $predicate_id;
+    }
+
+    function predicate_id(): ?int
+    {
+        return $this->verb()->id();
     }
 
 
@@ -273,6 +276,32 @@ class triple extends sandbox_typed_api
             $result = true;
         }
         return $result;
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array with the triple vars without empty values that are not needed
+     * the message from the backend to the frontend does not need to include empty fields
+     * the message from the frontend to the backend on the other side must include empty fields
+     * to be able to unset fields in the backend
+     */
+    function jsonSerialize(): array
+    {
+        $vars = parent::jsonSerialize();
+        if ($this->from()->id() != 0) {
+            $vars[api::FLD_FROM] = $this->from()->id();
+        }
+        if ($this->verb()->id() != 0) {
+            $vars[api::FLD_VERB] = $this->verb()->id();
+        }
+        if ($this->to()->id() != 0) {
+            $vars[api::FLD_TO] = $this->to()->id();
+        }
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 }

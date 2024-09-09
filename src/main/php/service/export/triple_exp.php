@@ -39,12 +39,12 @@ class triple_exp extends sandbox_exp_link implements JsonSerializable
 {
 
     // field names used for JSON creation
-    public ?string $description = '';
+    public ?string $description = null;
     public ?string $from = null;
     public ?string $verb = null;
     public ?string $to = null;
-    public ?string $type = '';
-    public ?string $view = '';
+    public ?string $type = null;
+    public ?string $view = null;
     public ?array $refs = null;
 
     function reset(): void

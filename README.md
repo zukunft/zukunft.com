@@ -134,6 +134,8 @@ backend - admin
 backend - internal
 - sbx (SandBoX)            - the user sandbox tables where the adjustments of the users are saved
 - lst (LiST)               - an array of objects
+- typ (TYPe)               - field name to connect predefind functionality to a core object
+- pdi (PreDIcate)          - define the connection type between two core objects (verb is a spcial form of predicate for triples)
 - id (IDentifier)          - internal prime key of a database row
 - ids (IDentifierS)        - an simple array of database table IDs (ids_txt is the text / imploded version of the ids array)
 - sc (Sql Creator)         - for writing SQL statements

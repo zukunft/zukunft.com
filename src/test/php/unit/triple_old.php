@@ -83,7 +83,7 @@ class triple_old
         $wrd_to = new word($usr);
         $wrd_to->set_id(4);
         $trp->set_from($wrd_from->phrase());
-        $trp->verb = $vrb;
+        $trp->set_verb($vrb);
         $trp->set_to($wrd_to->phrase());
         $t->assert_sql_by_obj_vars($db_con, $trp);
         $t->assert_sql_standard($sc, $trp);

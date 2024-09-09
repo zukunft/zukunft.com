@@ -70,7 +70,8 @@ class verb extends type_object
     // TODO add a check if all verbs have a const und linked functionalities
     const NOT_SET = "not_set";
     const IS = "is";
-    const IS_PART_OF = "contains";
+    const IS_PART_OF = "is part of";
+    const IS_PART_OF_REVERSE = "contains";
     const IS_WITH = "with";
     const FOLLOW = "follow";
     const CAN_CONTAIN = "can_contain";

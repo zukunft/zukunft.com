@@ -131,10 +131,10 @@ class term extends combine_named_dsp
     }
 
     /**
-     * @return int|string the id of the object
+     * @return int|string|null the id of the object
      * e.g 1 for a word 1, 1 for a triple 1, 1 for a formula 1 and 1 for a verb 1
      */
-    function obj_id(): int|string
+    function obj_id(): int|string|null
     {
         return $this->obj()->id();
     }
@@ -157,6 +157,10 @@ class term extends combine_named_dsp
             $vars[combine_object_api::FLD_CLASS] = term_api::CLASS_WORD;
         } elseif ($this->is_triple()) {
             $vars[combine_object_api::FLD_CLASS] = term_api::CLASS_TRIPLE;
+            $trp = $this->obj();
+            $vars[api::FLD_FROM] = $trp->from()->id();
+            $vars[api::FLD_VERB] = $trp->verb()->id();
+            $vars[api::FLD_TO] = $trp->to()->id();
         } elseif ($this->is_formula()) {
             $vars[combine_object_api::FLD_CLASS] = term_api::CLASS_FORMULA;
         } elseif ($this->is_verb()) {

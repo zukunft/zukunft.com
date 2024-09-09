@@ -45,6 +45,7 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use api\verb\verb as verb_api;
 use html\html_base;
 use shared\library;
 
@@ -218,6 +219,7 @@ class verb_list extends type_list
 
     /**
      * adding the verbs used for unit tests to the dummy list
+     * TODO use always the verb_api name const
      */
     function load_dummy(): void
     {
@@ -228,7 +230,7 @@ class verb_list extends type_list
         $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(2);
-        $vrb->set_name(verb::IS);
+        $vrb->set_name(verb_api::TN_IS);
         $vrb->code_id = verb::IS;
         $this->add_verb($vrb);
         $vrb = new verb();

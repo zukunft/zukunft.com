@@ -28,9 +28,6 @@
     "name": "Mathematical constant",
     "description": "A mathematical constant that never changes e.g. Pi",
     "type_id": 17,
-    "from_id": 2,
-    "verb_id": 3,
-    "to_id": 1,
     "protection": 3,
     "class": "triple"
   },
@@ -39,9 +36,6 @@
     "name": "Pi (math)",
     "description": "ratio of the circumference of a circle to its diameter",
     "type_id": 22,
-    "from_id": 4,
-    "verb_id": 2,
-    "to_id": -1,
     "class": "triple"
   }
 ]

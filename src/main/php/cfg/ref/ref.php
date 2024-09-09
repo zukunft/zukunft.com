@@ -70,7 +70,7 @@ include_once WEB_REF_PATH . 'ref.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 
 use api\api;
 use api\ref\ref as ref_api;
@@ -89,7 +89,7 @@ use cfg\log\change_action;
 use cfg\log\change_link;
 use cfg\log\change_table_list;
 
-class ref extends sandbox_link_with_type
+class ref extends sandbox_link
 {
 
     /*
@@ -99,19 +99,19 @@ class ref extends sandbox_link_with_type
     // object specific database and JSON object field names
     // *_COM: the description of the field
     // *_SQLTYP is the sql data type used for the field
-    const TBL_COMMENT = 'to link external data to internal for syncronisation';
+    const TBL_COMMENT = 'to link external data to internal for synchronisation';
     const FLD_ID = 'ref_id';
     const FLD_USER_COM = 'the user who has created or adjusted the reference';
     const FLD_EX_KEY_COM = 'the unique external key used in the other system';
     const FLD_EX_KEY = 'external_key';
     const FLD_EX_KEY_SQLTYP = sql_field_type::NAME;
     const FLD_TYPE = 'ref_type_id';
-    const FLD_URL_COM = 'the concrete url for the entry inluding the item id';
+    const FLD_URL_COM = 'the concrete url for the entry including the item id';
     const FLD_URL = 'url';
     const FLD_URL_SQLTYP = sql_field_type::TEXT;
     const FLD_SOURCE_COM = 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
     const FLD_SOURCE = 'source_id';
-    const FLD_PHRASE_COM = 'the phrase for which the external data should be syncronised';
+    const FLD_PHRASE_COM = 'the phrase for which the external data should be synchronised';
 
     // field names that cannot be user specific
     const FLD_NAMES = array(
@@ -195,7 +195,7 @@ class ref extends sandbox_link_with_type
     {
         parent::reset();
         $this->create_objects($this->user());
-        $this->set_type_id(0);
+        $this->set_predicate_id(0);
         $this->external_key = '';
         $this->source = null;
         $this->url = null;
@@ -229,7 +229,7 @@ class ref extends sandbox_link_with_type
         if ($result) {
             $this->set_phrase_by_id($db_row[phrase::FLD_ID]);
             $this->external_key = $db_row[self::FLD_EX_KEY];
-            $this->set_type_id($db_row[self::FLD_TYPE]);
+            $this->set_predicate_id($db_row[self::FLD_TYPE]);
             $this->url = $db_row[self::FLD_URL];
             $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
             $this->set_source_by_id($db_row[source::FLD_ID]);
@@ -341,9 +341,10 @@ class ref extends sandbox_link_with_type
         return $this->external_key;
     }
 
+    // TODO check why >= and not >
     function has_type(): bool
     {
-        if ($this->type_id() >= 0) {
+        if ($this->predicate_id() >= 0) {
             return true;
         } else {
             return false;
@@ -401,7 +402,7 @@ class ref extends sandbox_link_with_type
     {
 
         $obj_cpy = parent::cloned();
-        $obj_cpy->set_type_id($this->type_id());
+        $obj_cpy->set_predicate_id($this->predicate_id());
         $obj_cpy->external_key = $external_key;
         return $obj_cpy;
     }
@@ -412,23 +413,23 @@ class ref extends sandbox_link_with_type
      */
 
     /**
-     * get the name of the reference type
-     * @return string the name of the reference type
+     * overwrite the link type function
+     * @return string|null the name of the verb
      */
-    function type_name(): string
+    function predicate_name(): ?string
     {
         global $ref_types;
-        return $ref_types->name($this->type_id);
+        return $ref_types->name($this->predicate_id());
     }
 
     /**
      * get the code_id of the reference type
      * @return string the code_id of the reference type
      */
-    function type_code_id(): string
+    function predicate_code_id(): string
     {
         global $ref_types;
-        return $ref_types->code_id($this->type_id);
+        return $ref_types->code_id($this->predicate_id);
     }
 
     /**
@@ -437,7 +438,7 @@ class ref extends sandbox_link_with_type
     function type(): ?type_object
     {
         global $ref_types;
-        return $ref_types->get($this->type_id);
+        return $ref_types->get($this->predicate_id);
     }
 
 
@@ -717,9 +718,9 @@ class ref extends sandbox_link_with_type
                 $this->source = $src;
             }
             if ($key == sandbox_exp::FLD_TYPE) {
-                $this->set_type_id($ref_types->id($value));
+                $this->set_predicate_id($ref_types->id($value));
 
-                if ($this->type_id() == null or $this->type_id() <= 0) {
+                if ($this->predicate_id() == null or $this->predicate_id() <= 0) {
                     $result->add_message('Reference type for ' . $value . ' not found');
                 }
             }
@@ -757,8 +758,8 @@ class ref extends sandbox_link_with_type
         if ($this->source != null) {
             $result->source = $this->source->name();
         }
-        if ($this->type_id > 0) {
-            $result->type = $this->type_code_id();
+        if ($this->predicate_id > 0) {
+            $result->type = $this->predicate_code_id();
         }
         if ($this->external_key <> '') {
             $result->name = $this->external_key;
@@ -789,7 +790,7 @@ class ref extends sandbox_link_with_type
         if ($this->phrase() == null) {
             log_err('The phrase object must be set to log adding an external reference.', 'ref->log_add');
         }
-        if ($this->type_id() <= 0) {
+        if ($this->predicate_id() <= 0) {
             log_err('The reference type object must be set to log adding an external reference.', 'ref->log_add');
         }
 
@@ -839,7 +840,7 @@ class ref extends sandbox_link_with_type
         if ($this->phrase() == null) {
             log_err('The phrase object must be set to log deletion of an external reference.', 'ref->log_del');
         }
-        if ($this->type_id() <= 0) {
+        if ($this->predicate_id() <= 0) {
             log_err('The reference type object must be set to log deletion of an external reference.', 'ref->log_del');
         }
 
@@ -982,7 +983,7 @@ class ref extends sandbox_link_with_type
 
                 $this->id = $db_con->insert_old(
                     array(phrase::FLD_ID, self::FLD_EX_KEY, self::FLD_TYPE),
-                    array($this->phrase_id(), $this->external_key, $this->type_id));
+                    array($this->phrase_id(), $this->external_key, $this->predicate_id));
                 if ($this->id > 0) {
                     // update the id in the log for the correct reference
                     if (!$log->add_ref($this->id)) {
@@ -1019,7 +1020,7 @@ class ref extends sandbox_link_with_type
 
         $db_chk = clone $this;
         $db_chk->reset();
-        $db_chk->load_by_link_ids($this->phrase_id(), $this->type_id());
+        $db_chk->load_by_link_ids($this->phrase_id(), $this->predicate_id());
         if ($db_chk->id > 0) {
             log_debug('ref->get_similar an external reference for ' . $this->dsp_id() . ' already exists');
             $result = $db_chk;
@@ -1195,8 +1196,8 @@ class ref extends sandbox_link_with_type
         // the link type cannot be changed by the user, because this would be another link
         if (!$usr_tbl) {
             // for insert into the standard table the type field should always be included
-            // because it is part of the prime indey
-            if ($sbx->type_id() <> $this->type_id() or $sc_par_lst->is_insert()) {
+            // because it is part of the prime index
+            if ($sbx->predicate_id() <> $this->predicate_id() or $sc_par_lst->is_insert()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . ref_type::FLD_ID,
@@ -1208,8 +1209,8 @@ class ref extends sandbox_link_with_type
                 $lst->add_type_field(
                     ref_type::FLD_ID,
                     type_object::FLD_NAME,
-                    $this->type_id(),
-                    $sbx->type_id(),
+                    $this->predicate_id(),
+                    $sbx->predicate_id(),
                     $ref_types
                 );
             }
@@ -1333,11 +1334,11 @@ class ref extends sandbox_link_with_type
             }
         }
         if ($this->has_type()) {
-            $result .= ' to "' . $this->type_name() . '"';
+            $result .= ' to "' . $this->predicate_name() . '"';
         } else {
-            if ($this->type_id != null) {
-                if ($this->type_id > 0) {
-                    $result .= 'to type id ' . $this->type_id() . ' ';
+            if ($this->predicate_id != null) {
+                if ($this->predicate_id > 0) {
+                    $result .= 'to type id ' . $this->predicate_id() . ' ';
                 }
             }
         }

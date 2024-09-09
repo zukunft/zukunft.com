@@ -51,6 +51,9 @@ class api
     // e.g. for the word api message it contains the id of the phrase type
     const FLD_TYPE = 'type_id';
 
+    // for link api objects the id of the preloaded link type
+    const FLD_PREDICATE = 'predicate_id';
+
     // the json field name for code id to select a single object
     // e.g. to select a system view
     const FLD_CODE_ID = 'code_id';
@@ -58,6 +61,9 @@ class api
     // reference fields e.g. to link a phrase to an external reference
     const FLD_PHRASE = 'phrase_id';
     const FLD_SOURCE = 'source_id';
+    const FLD_FROM = 'from_id';
+    const FLD_TO = 'to_id';
+    const FLD_VERB = 'verb_id';
 
     // object list
     const FLD_PHRASES = 'phrases';

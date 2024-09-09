@@ -66,6 +66,7 @@ use cfg\job;
 use cfg\language;
 use cfg\language_form;
 use cfg\log\change_log;
+use cfg\phrase_list;
 use cfg\phrase_type;
 use cfg\ref;
 use cfg\source;
@@ -506,10 +507,18 @@ class test_api extends create_test_objects
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
 
         // TODO remove
+        if ($class == $lib->class_to_name(phrase_list::class)) {
+            if ($filename == '' and $id_fld != 'ids') {
+                $filename = $class . '_without_link' . '_by_' . $id_fld;
+            } else {
+                $filename = $class . '_without_link';
+            }
+        }
         if ($class == $lib->class_to_name(term_list::class)) {
             $lst = new term_list($this->usr1);
             $lst->load_by_ids((new trm_ids($ids)));
             $result = $lst->api_obj();
+            $filename = $class . '_without_link';
         }
 
         if ($filename == '' and $id_fld != 'ids') {

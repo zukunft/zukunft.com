@@ -96,7 +96,7 @@ class ref extends sandbox_api
 
     public ?int $phrase_id;
     public ?string $external_key;
-    public ?int $type_id;
+    public ?int $predicate_id;
     public ?int $source_id;
     public ?string $url;
     public ?string $description;
@@ -106,17 +106,23 @@ class ref extends sandbox_api
      * set and get
      */
 
-    function set_type_id(?int $type_id): void
+    function set_predicate_id(?int $predicate_id): void
     {
-        $this->type_id = $type_id;
+        $this->predicate_id = $predicate_id;
     }
+
+
+    /*
+     * preloaded
+     */
 
     /**
      * @return string the name of the reference type e.g. wikidata
      */
-    function type_name(): string
+    function predicate_name(): string
     {
         global $ref_types;
-        return $ref_types->name($this->type_id);
+        return $ref_types->name($this->predicate_id);
     }
+
 }

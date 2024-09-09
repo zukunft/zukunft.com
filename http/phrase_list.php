@@ -126,18 +126,18 @@ if ($usr->id() > 0) {
 
         } elseif ($phr_id > 0) {
             // check link of the existing word already exists
-            $lnk_test = new triple($usr);
-            $lnk_test->load_by_link_id($phr_id, $vrb_id, $phr_to);
-            if ($lnk_test->id() > 0) {
-                $lnk_test->load_objects();
+            $trp = new triple($usr);
+            $trp->load_by_link_id($phr_id, $vrb_id, $phr_to);
+            if ($trp->id() > 0) {
+                $trp->load_objects();
                 log_debug('forward link ' . $phr_id . ' ' . $vrb_id . ' ' . $phr_to . '');
-                $msg .= '"' . $lnk_test->from_name . ' ' . $lnk_test->verb->name() . ' ' . $lnk_test->to_name . '" already exists. ';
+                $msg .= '"' . $trp->from_name . ' ' . $trp->verb_name() . ' ' . $trp->to_name . '" already exists. ';
             }
-            $lnk_rev = new triple($usr);
-            $lnk_rev->load_by_link_id($phr_to, $vrb_id, $phr_id);
-            if ($lnk_rev->id() > 0) {
-                $lnk_rev->load_objects();
-                $msg .= 'The reverse of "' . $lnk_rev->from_name . ' ' . $lnk_rev->verb->name() . ' ' . $lnk_rev->to_name . '" already exists. Do you really want to add both sides? ';
+            $trp_rev = new triple($usr);
+            $trp_rev->load_by_link_id($phr_to, $vrb_id, $phr_id);
+            if ($trp_rev->id() > 0) {
+                $trp_rev->load_objects();
+                $msg .= 'The reverse of "' . $trp_rev->from_name . ' ' . $trp_rev->verb_name() . ' ' . $trp_rev->to_name . '" already exists. Do you really want to add both sides? ';
             }
         }
 
@@ -157,7 +157,7 @@ if ($usr->id() > 0) {
                 log_debug('word ' . $wrd->id() . ' linked via ' . $vrb_id . ' to ' . $phr_to . ': ' . $add_result);
                 $lnk = new triple($usr);
                 $lnk->from()->set_id($wrd->id());
-                $lnk->verb->set_id($vrb_id);
+                $lnk->set_verb_id($vrb_id);
                 $lnk->to()->set_id($phr_to);
                 $add_result .= $lnk->save();
             }

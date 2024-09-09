@@ -58,6 +58,11 @@ class sandbox_link_named extends sandbox_link
     protected ?string $name = '';   // simply the object name, which cannot be empty if it is a named object
     public ?string $description = null;
 
+    // database id of the type used for named link user sandbox objects with predefined functionality
+    // which is actually only triple
+    // repeating _sandbox_typed, because php 8.1 does not yet allow multi extends
+    public ?int $type_id = null;
+
 
     /*
      * construct and map
@@ -67,6 +72,7 @@ class sandbox_link_named extends sandbox_link
     {
         parent::reset();
         $this->description = null;
+        $this->type_id = null;
     }
 
     /**
@@ -156,6 +162,25 @@ class sandbox_link_named extends sandbox_link
         return $obj_cpy;
     }
 
+    /**
+     * set the database id of the type
+     *
+     * @param int|null $type_id the database id of the type
+     * @return void
+     */
+    function set_type_id(?int $type_id): void
+    {
+        $this->type_id = $type_id;
+    }
+
+    /**
+     * @return int|null the database id of the type
+     */
+    function type_id(): ?int
+    {
+        return $this->type_id;
+    }
+
 
     /*
      * cast
@@ -171,6 +196,7 @@ class sandbox_link_named extends sandbox_link
 
         $api_obj->set_name($this->name());
         $api_obj->description = $this->description;
+        $api_obj->set_type_id($this->type_id());
     }
 
     /**
@@ -190,8 +216,21 @@ class sandbox_link_named extends sandbox_link
                     $this->description = $value;
                 }
             }
+            if ($key == api::FLD_TYPE) {
+                $this->set_type_id($value);
+            }
         }
         return $msg;
+    }
+
+    /**
+     * @param object $dsp_obj frontend API objects that should be filled with unique object name
+     */
+    function fill_dsp_obj(object $dsp_obj): void
+    {
+        parent::fill_api_obj($dsp_obj);
+
+        $dsp_obj->set_type_id($this->predicate_id());
     }
 
 
@@ -244,6 +283,11 @@ class sandbox_link_named extends sandbox_link
         }
         if ($this->description != null) {
             if ($this->description != $db_obj->description) {
+                $result = true;
+            }
+        }
+        if ($this->type_id != null) {
+            if ($this->type_id != $db_obj->type_id) {
                 $result = true;
             }
         }
