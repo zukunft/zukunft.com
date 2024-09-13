@@ -1,4 +1,4 @@
-PREPARE formula_link_by_link_ids (bigint, bigint, bigint) AS
+PREPARE formula_link_by_link_type_ids (bigint, bigint, bigint, bigint) AS
     SELECT
                s.formula_link_id,
                u.formula_link_id AS user_formula_link_id,
@@ -13,4 +13,6 @@ PREPARE formula_link_by_link_ids (bigint, bigint, bigint) AS
           FROM formula_links s
      LEFT JOIN user_formula_links u ON s.formula_link_id = u.formula_link_id
            AND u.user_id = $1
-         WHERE s.formula_id = $2 AND s.phrase_id = $3;
+         WHERE s.formula_id = $2
+           AND s.formula_link_type_id = $3
+           AND s.phrase_id = $4;

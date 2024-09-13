@@ -1,4 +1,4 @@
-PREPARE formula_link_by_link_ids FROM
+PREPARE formula_link_by_link_type_ids FROM
     'SELECT
                s.formula_link_id,
                u.formula_link_id AS user_formula_link_id,
@@ -13,4 +13,6 @@ PREPARE formula_link_by_link_ids FROM
           FROM formula_links s
      LEFT JOIN user_formula_links u ON s.formula_link_id = u.formula_link_id
            AND u.user_id = ?
-         WHERE s.formula_id = ? AND s.phrase_id = ?';
+         WHERE s.formula_id = ?
+           AND s.formula_link_type_id = ?
+           AND s.phrase_id = ?';

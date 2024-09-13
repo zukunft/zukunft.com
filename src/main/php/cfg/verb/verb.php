@@ -255,14 +255,6 @@ class verb extends type_object
     }
 
     /**
-     * @param int $id the database id of the verb
-     */
-    function set_id(int $id): void
-    {
-        $this->id = $id;
-    }
-
-    /**
      * @param string|null $name the unique name of the verb
      */
     function set_name(?string $name): void

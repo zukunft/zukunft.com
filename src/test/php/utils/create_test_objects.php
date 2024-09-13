@@ -2050,10 +2050,8 @@ class create_test_objects extends test_base
     {
         global $ref_types;
         $ref = new ref($this->usr1);
-        $ref->set(ref_api::TI_PI);
-        $ref->set_phrase($this->word_pi()->phrase());
-        $ref->set_predicate_id($ref_types->id(ref_type::WIKIDATA));
-        $ref->external_key = ref_api::TK_READ;
+        $ref->set(ref_api::TI_PI,
+            $this->word_pi()->phrase(), $ref_types->id(ref_type::WIKIDATA), ref_api::TK_READ);
         $ref->description = ref_api::TD_READ;
         return $ref;
     }
@@ -2065,10 +2063,8 @@ class create_test_objects extends test_base
     {
         global $ref_types;
         $ref = new ref($this->usr1);
-        $ref->set(1);
-        $ref->set_phrase($this->word()->phrase());
-        $ref->set_predicate_id($ref_types->id(ref_type::WIKIDATA));
-        $ref->external_key = ref_api::TK_READ;
+        $ref->set(1,
+            $this->word()->phrase(), $ref_types->id(ref_type::WIKIDATA), ref_api::TK_READ);
         $ref->description = ref_api::TD_READ;
         return $ref;
     }
@@ -2102,10 +2098,8 @@ class create_test_objects extends test_base
     {
         global $ref_types;
         $ref = new ref($this->usr1);
-        $ref->set(12);
-        $ref->set_phrase($this->word_gwp()->phrase());
-        $ref->set_predicate_id($ref_types->id(ref_type::WIKIDATA));
-        $ref->external_key = ref_api::TK_CHANGED;
+        $ref->set(12,
+            $this->word_gwp()->phrase(), $ref_types->id(ref_type::WIKIDATA), ref_api::TK_CHANGED);
         $ref->description = ref_api::TD_CHANGE;
         return $ref;
     }

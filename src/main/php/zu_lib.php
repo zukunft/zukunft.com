@@ -14,6 +14,11 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO cleanup set and get functions:
+            1. start with set for the core values
+            2. group set and get
+            3. order the functions by importance
+            4. remove unneeded overwrites
     TODO convert from null e.g. to empty string at the last possible point e.g. to distinguish between not set
     TODO check the consistency of the object var default values e.g. if == null is used it must be possible that the var is null
     TODO in api use always field names from the api object

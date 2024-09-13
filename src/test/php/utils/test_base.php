@@ -1501,20 +1501,25 @@ class test_base
      * similar to assert_sql_by_id but select one row based on the linked components
      *
      * @param sql $sc a sql creator object that can be empty
-     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param sandbox_link $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_link(sql $sc, object $usr_obj): bool
+    function assert_sql_by_link(sql $sc, sandbox_link $usr_obj): bool
     {
         // check the Postgres query syntax
         $sc->db_type = sql_db::POSTGRES;
-        $qp = $usr_obj->load_sql_by_link($sc, 1, 0, 3, $usr_obj::class);
+        if ($usr_obj::class == ref::class) {
+            $target_id = 'external key';
+        } else {
+            $target_id = 3;
+        }
+        $qp = $usr_obj->load_sql_by_link($sc, 1, 1, $target_id, $usr_obj::class);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->db_type = sql_db::MYSQL;
-            $qp = $usr_obj->load_sql_by_link($sc, 1, 0, 3, $usr_obj::class);
+            $qp = $usr_obj->load_sql_by_link($sc, 1, 1, $target_id, $usr_obj::class);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -2037,10 +2042,10 @@ class test_base
      * @param sandbox_link $usr_obj the user sandbox object e.g. a word
      * @param int $fid the id of the from object
      * @param int $typ the id of the link type
-     * @param int $tid the id of the to object
+     * @param int|string $tid the id of the to object or the unique external key
      * @return bool the load object to use it for more tests
      */
-    function assert_load_by_link(sandbox_link $usr_obj, int $fid = 0, int $typ = 1, int $tid = 0, int $id = 0): bool
+    function assert_load_by_link(sandbox_link $usr_obj, int $fid = 0, int $typ = 1, int|string $tid = 0, int $id = 0): bool
     {
         // check the loading via name and check the id
         $lnk_id = $fid . '/' . $typ . '/' . $tid;
@@ -2450,33 +2455,31 @@ class test_base
 
         // keep the original objects as given
         $ori = clone $lnk;
-        // remember the api json for later compare
-        $api_json = $lnk->api_json();
 
         // detect the related objects
-        if ($lnk::class == ref::class) {
-            $fob = new word($ori->user());
+        $fob = clone $ori->fob();
+        if ($fob::class == phrase::class or $fob::class == term::class) {
+            $add_from = new word($fob->user());
+            $add_from->set_name($fob->name());
+        } else {
             $add_from = $fob;
+        }
+        if ($lnk::class == ref::class) {
             $tob = $lnk->to_id();
             $add_to = $lnk->to_id();
         } else {
-            $fob = clone $ori->fob();
-            if ($fob::class == phrase::class or $fob::class == term::class) {
-                $add_from = new word($fob->user());
-            } else {
-                $add_from = $fob;
-            }
             $tob = clone $ori->tob();
             if ($tob::class == phrase::class or $tob::class == term::class) {
                 $add_to = new word($tob->user());
+                $add_to->set_name($tob->name());
             } else {
                 $add_to = $tob;
             }
         }
         // check for leftovers
-        $this->write_named_cleanup($add_from, $ori->fob()->name(), true);
+        $this->write_named_cleanup($add_from, $ori->from_name(), true);
         if ($lnk::class != ref::class) {
-            $this->write_named_cleanup($add_to, $ori->tob()->name(), true);
+            $this->write_named_cleanup($add_to, $ori->to_name(), true);
         }
         // create the related objects
         $fid = $this->write_named_add($add_from, $fob->name(), $this->usr1);
@@ -2497,6 +2500,9 @@ class test_base
         } else {
             $id = $this->write_link_add($lnk, $ori, $this->usr1);
         }
+
+        // remember the api json for later compare
+        $api_json = $lnk->api_json();
 
         // check the log
         if ($id != 0) {
@@ -2567,7 +2573,8 @@ class test_base
                 // ... and user 2 also see the changed (TODO or not?)
                 $result = $this->write_link_check_order_nbr($lnk, $this->usr2, $new_order_nbr);
             }
-        } elseif ($lnk::class == view_term_link::class) {
+        } elseif ($lnk::class == view_term_link::class
+            or $lnk::class == ref::class) {
             $old_description = $lnk->description;
             $new_description = $old_description . self::EXT_RENAME;
             if ($result) {
@@ -2613,8 +2620,10 @@ class test_base
 
         // cleanup
         $this->write_link_cleanup($lnk, $id);
-        $this->write_named_cleanup($ori->fob(), $ori->fob()->name());
-        $this->write_named_cleanup($add_to, $ori->tob()->name());
+        $this->write_named_cleanup($ori->fob(), $ori->from_name());
+        if ($lnk::class != ref::class) {
+            $this->write_named_cleanup($add_to, $ori->to_name());
+        }
 
 
         return $result;
@@ -2749,19 +2758,23 @@ class test_base
         }
     }
 
-    private function write_link_add(sandbox_link $sbx, sandbox_link $ori, user $usr): int
+    private function write_link_add(sandbox_link|ref $sbx, sandbox_link|ref $ori, user $usr): int
     {
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' ' . $ori->dsp_id() . ' for user ' . $usr->dsp_id();
 
+        $sbx->set_user($usr);
         $fob = clone $ori->fob();
         $fob->load_by_name($fob->name());
-        $tob = clone $ori->tob();
-        $tob->load_by_name($tob->name());
-        $sbx->set_user($usr);
         $sbx->set_fob($fob);
-        $sbx->set_tob($tob);
+        if ($ori::class == ref::class) {
+            $sbx->set_to_id($ori->to_id());
+        } else {
+            $tob = clone $ori->tob();
+            $tob->load_by_name($tob->name());
+            $sbx->set_tob($tob);
+        }
         $sbx->set_predicate_id($ori->predicate_id());
         $result = $sbx->save();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
@@ -2819,8 +2832,8 @@ class test_base
         $log->row_id = $lnk->id();
         $result = $log->dsp_last(true);
         $target = $lnk->user()->name() . ' ' . $action . ' ';
-        $target .= $lnk->fob()->name() . ' to ';
-        $target .= $lnk->tob()->name();
+        $target .= $lnk->from_name() . ' to ';
+        $target .= $lnk->to_name();
         $class = $lib->class_to_name($lnk::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $lnk->dsp_id();
         return $this->assert($test_name, $result, $target);
@@ -2828,7 +2841,7 @@ class test_base
 
     private function write_link_log(
         sandbox_link $lnk,
-        string                  $action
+        string       $action
     ): bool
     {
         $log = new change_link($lnk->user());
@@ -2838,8 +2851,8 @@ class test_base
         $log->row_id = $lnk->id();
         $result = $log->dsp_last(true);
         $target = $lnk->user()->name() . ' ' . $action . ' ';
-        $target .= $lnk->fob()->name() . ' to ';
-        $target .= $lnk->tob()->name();
+        $target .= $lnk->from_name() . ' to ';
+        $target .= $lnk->to_name();
         $class = $lib->class_to_name($lnk::class);
         $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $lnk->dsp_id();
         return $this->assert($test_name, $result, $target);
@@ -2966,7 +2979,7 @@ class test_base
         }
     }
 
-    private function write_link_update_description(view_term_link $lnk, user $usr, int $new_description): bool
+    private function write_link_update_description(view_term_link|ref $lnk, user $usr, string $new_description): bool
     {
         $id = $lnk->id();
         $lnk->set_user($usr);
@@ -2985,7 +2998,7 @@ class test_base
         }
     }
 
-    private function write_link_check_description(view_term_link $lnk, user $usr, ?string $description): bool
+    private function write_link_check_description(view_term_link|ref $lnk, user $usr, ?string $description): bool
     {
         $id = $lnk->id();
         $lnk->set_user($usr);

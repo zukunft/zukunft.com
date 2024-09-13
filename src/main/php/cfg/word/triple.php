@@ -910,17 +910,17 @@ class triple extends sandbox_link_named implements JsonSerializable
     /**
      * load a triple by the ids of the linked objects
      * @param int $from the id of the phrase that is linked
-     * @param int $type the type id of the link
-     * @param int $to the id of the phrase to which is the link directed
+     * @param int $predicate_id the type id of the link
+     * @param int|string $to the id of the phrase to which is the link directed
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_link_id(int $from, int $type = 0, int $to = 0, string $class = self::class): int
+    function load_by_link_id(int $from, int $predicate_id = 0, int|string $to = 0, string $class = self::class): int
     {
         global $db_con;
 
-        log_debug($from . ' ' . $type . ' ' . $to);
-        $qp = $this->load_sql_by_link($db_con->sql_creator(), $from, $type, $to, $class);
+        log_debug($from . ' ' . $predicate_id . ' ' . $to);
+        $qp = $this->load_sql_by_link($db_con->sql_creator(), $from, $predicate_id, $to, $class);
         return $this->load($qp);
     }
 
@@ -1061,17 +1061,17 @@ class triple extends sandbox_link_named implements JsonSerializable
      *
      * @param sql $sc with the target db_type set
      * @param int $from the id of the phrase that is linked
-     * @param int $type the type id of the link
-     * @param int $to the id of the phrase to which is the link directed
+     * @param int $predicate_id the type id of the link
+     * @param int|string $to the id of the phrase to which is the link directed
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link(sql $sc, int $from, int $type, int $to, string $class): sql_par
+    function load_sql_by_link(sql $sc, int $from, int $predicate_id, int|string $to, string $class): sql_par
     {
         $qp = $this->load_sql($sc, 'link_ids', $class);
         $sc->add_where(self::FLD_FROM, $from);
         $sc->add_where(self::FLD_TO, $to);
-        $sc->add_where(verb::FLD_ID, $type);
+        $sc->add_where(verb::FLD_ID, $predicate_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -2194,7 +2194,6 @@ class triple extends sandbox_link_named implements JsonSerializable
         log_debug($this->dsp_id());
 
         global $db_con;
-        $html = new html_base();
 
         // decide which db write method should be used
         if ($use_func === null) {
@@ -2236,7 +2235,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 $db_chk_rev->load_standard();
                 if ($db_chk_rev->id() > 0) {
                     $this->set_id($db_chk_rev->id());
-                    $result .= $html->dsp_err('The reverse of "' . $this->from()->name() . ' ' . $this->verb_name() . ' ' . $this->to()->name() . '" already exists. Do you really want to create both sides?');
+                    $result .= 'The reverse of "' . $this->from()->name() . ' ' . $this->verb_name() . ' ' . $this->to()->name() . '" already exists. Do you really want to create both sides?';
                 }
             }
 

@@ -141,6 +141,14 @@ class sandbox_link extends sandbox
     }
 
     /**
+     * @return string|null the name of the linked object
+     */
+    function from_name(): ?string
+    {
+        return $this->fob()?->name();
+    }
+
+    /**
      * set the database id of the type
      *
      * @param int|null $predicate_id the database id of the type
@@ -166,18 +174,6 @@ class sandbox_link extends sandbox
     function predicate_name(): ?string
     {
         return null;
-    }
-
-    /**
-     * @return string the name of the linked object
-     */
-    function from_name(): string
-    {
-        if ($this->fob == null) {
-            return '';
-        } else {
-            return $this->fob->name();
-        }
     }
 
     function set_tob(sandbox_named|combine_named|string|null $tob): void
@@ -208,11 +204,7 @@ class sandbox_link extends sandbox
      */
     function to_name(): string
     {
-        if ($this->tob == null) {
-            return '';
-        } else {
-            return $this->tob->name();
-        }
+        return $this->tob()?->name();
     }
 
     /**
@@ -384,12 +376,12 @@ class sandbox_link extends sandbox
     /**
      * load a named user sandbox object by name
      * @param int $from the subject object id
-     * @param int $type the predicate object id
-     * @param int $to the object (grammar) object id
+     * @param int $predicate_id the predicate object id
+     * @param int|string $to the object (grammar) object id or the unique external key
      * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_link_id(int $from, int $type = 0, int $to = 0, string $class = ''): int
+    function load_by_link_id(int $from, int $predicate_id = 0, int|string $to = 0, string $class = ''): int
     {
         global $db_con;
 
@@ -398,8 +390,8 @@ class sandbox_link extends sandbox
         }
 
         $lib = new library();
-        log_debug($lib->dsp_array(array($from, $type, $to)));
-        $qp = $this->load_sql_by_link($db_con->sql_creator(), $from, $type, $to, $class);
+        log_debug($lib->dsp_array(array($from, $predicate_id, $to)));
+        $qp = $this->load_sql_by_link($db_con->sql_creator(), $from, $predicate_id, $to, $class);
         return parent::load($qp);
     }
 
@@ -433,17 +425,17 @@ class sandbox_link extends sandbox
      *
      * @param sql $sc with the target db_type set
      * @param int $from the subject object id
-     * @param int $type the predicate object id
-     * @param int $to the object (grammar) object id
+     * @param int $predicate_id the predicate object id
+     * @param int|string $to the object (grammar) object id or the the unique external key
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link(sql $sc, int $from, int $type, int $to, string $class): sql_par
+    function load_sql_by_link(sql $sc, int $from, int $predicate_id, int|string $to, string $class): sql_par
     {
-        if ($type > 0) {
+        if ($predicate_id > 0) {
             $qp = $this->load_sql($sc, 'link_type_ids', $class);
             $sc->add_where($this->from_field(), $from);
-            $sc->add_where($this->type_field(), $type);
+            $sc->add_where($this->type_field(), $predicate_id);
         } else {
             $qp = $this->load_sql($sc, 'link_ids', $class);
             $sc->add_where($this->from_field(), $from);

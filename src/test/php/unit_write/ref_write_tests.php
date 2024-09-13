@@ -50,7 +50,7 @@ class ref_write_tests
         $t->header('reference db write tests');
 
         $t->subheader('reference write sandbox tests for ' . ref::TEST_REF_NAME);
-        //$t->assert_write_link($t->ref_filled_add());
+        $t->assert_write_link($t->ref_filled_add());
 
         // create the test ref
         $wrd = $t->test_word(word_api::TN_ADD);

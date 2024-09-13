@@ -133,9 +133,7 @@ class ref extends sandbox_link
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_SANDBOX_FLD_NAMES = array(
-        phrase::FLD_ID,
         self::FLD_EX_KEY,
-        self::FLD_TYPE,
         self::FLD_URL,
         sandbox_named::FLD_DESCRIPTION,
         sandbox::FLD_EXCLUDED
@@ -248,19 +246,21 @@ class ref extends sandbox_link
 
     /**
      * set the most often used reference vars with one set statement
-     * @param int $id mainly for test creation the database id of the reference
+     * @param int $id the database id of the reference mainly for unit testing
+     * @param phrase|null $phr the phrase that should be linked to an external source for data exchange
      */
-    function set(int $id = 0): void
+    function set(int $id = 0, phrase $phr = null, int $predicate_id = 0, string|null $external_key = null): void
     {
         $this->set_id($id);
-    }
-
-    /**
-     * @param int $id the database id of the verb
-     */
-    function set_id(int $id): void
-    {
-        $this->id = $id;
+        if ($phr != null) {
+            $this->set_phrase($phr);
+        }
+        if ($predicate_id != 0) {
+            $this->set_predicate_id($predicate_id);
+        }
+        if ($external_key != null) {
+            $this->set_to_id($external_key);
+        }
     }
 
     /**
@@ -306,39 +306,45 @@ class ref extends sandbox_link
     }
 
     /**
+     * interface function to overwrite the corresponding parent function
+     * @return int the id of the linked object with is in this case the phrase id (or maybe later the group_id))
+     */
+    function from_id(): int
+    {
+            return $this->phrase_id();
+    }
+
+    /**
+     * interface function to overwrite the corresponding parent function
+     * @param string $external_key the unique id of the external object
+     */
+    function set_to_id(string $external_key): void
+    {
+        $this->external_key = $external_key;
+    }
+
+    /**
+     * @return int|string the unique id of the external object
+     */
+    function to_id(): int|string
+    {
+        return $this->external_key;
+    }
+
+    /**
+     * @return string the unique external key of the linked object
+     */
+    function to_name(): string
+    {
+        return $this->external_key;
+    }
+
+    /**
      * @param string|null $name the name of the reference
      */
     function set_name(?string $name): void
     {
         $this->name = $name;
-    }
-
-    /**
-     * @return int the database id which is not 0 if the object has been saved
-     */
-    function id(): int
-    {
-        return $this->id;
-    }
-
-    /**
-     * @return int the id of the linked object with is in this case the phrase id (or maybe later the group_id))
-     */
-    function from_id(): int
-    {
-        if ($this->fob() == null) {
-            return 0;
-        } else {
-            return $this->phrase()->id();
-        }
-    }
-
-    /**
-     * @return int|string the id of the linked object with is in this case the phrase id (or maybe later the group_id))
-     */
-    function to_id(): int|string
-    {
-        return $this->external_key;
     }
 
     // TODO check why >= and not >
@@ -530,6 +536,23 @@ class ref extends sandbox_link
     }
 
     /**
+     * load a reference by the id, predicate and the external key
+     * @param int $from the id of the phrase that is linked
+     * @param int $predicate_id the type id of the link
+     * @param int|string $to the unique external key to which is the link directed
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_link_id(int $from, int $predicate_id = 0, int|string $to = 0, string $class = self::class): int
+    {
+        global $db_con;
+
+        log_debug($from . ' ' . $predicate_id . ' ' . $to);
+        $qp = $this->load_sql_by_link($db_con->sql_creator(), $from, $predicate_id, $to, $class);
+        return $this->load($qp);
+    }
+
+    /**
      * just set the class name for the user sandbox function
      * load a reference object by database id
      * @param int $phr_id the id of the phrase that is referenced
@@ -625,7 +648,7 @@ class ref extends sandbox_link
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        $this->row_mapper_sandbox($db_row);
+        $this->row_mapper_sandbox($db_row, false, true);
         return $this->id();
     }
 
@@ -1031,6 +1054,7 @@ class ref extends sandbox_link
 
     /**
      * update a ref in the database or update the existing
+     * TODO review by comparing with sandbox function
      * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return string the id of the updated or created reference
      */
@@ -1096,51 +1120,14 @@ class ref extends sandbox_link
             // if everything has been fine until here
             // update the
             if ($result == '') {
-                $result = $this->save_fields($db_con, $db_rec, $std_rec);
-            }
-        }
-
-        return $result;
-    }
-
-
-    /*
-     * del
-     */
-
-    /**
-     * delete a reference of return false if it fails
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message in case of an issue with the message to the user and a suggested solution
-     */
-    function del(?bool $use_func = null): user_message
-    {
-        global $db_con;
-        $result = new user_message();
-
-        $reloaded = false;
-        $reloaded_id = $this->load_by_id($this->id());
-        if ($reloaded_id != 0) {
-            $reloaded = true;
-        }
-        if (!$reloaded) {
-            log_warning('Reload of ref ' . $this->dsp_id() . ' for deletion failed', 'ref->del');
-        } else {
-            if ($this->id <= 0) {
-                log_warning('Delete failed, because it seems that the ref ' . $this->dsp_id() . ' has been deleted in the meantime.', 'ref->del');
-            } else {
-                $log = $this->log_link_del();
-                if ($log->id() > 0) {
-                    $db_con->set_class(ref::class);
-                    $del_result = $db_con->delete_old(self::FLD_ID, $this->id);
-                    if ($del_result == '') {
-                        log_debug('done.');
-                    } else {
-                        $result->add_message($del_result);
-                    }
+                if ($use_func) {
+                    $result .= $this->save_fields_func($db_con, $db_rec, $std_rec);
+                } else {
+                    $result = $this->save_fields($db_con, $db_rec, $std_rec);
                 }
             }
         }
+
         return $result;
     }
 

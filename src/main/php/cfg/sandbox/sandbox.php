@@ -1297,7 +1297,7 @@ class sandbox extends db_object_seq_id_user
                 log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
             } elseif ($this->is_link_obj()) {
                 if ($this->fob() != null and $this->tob() != null) {
-                    log_debug('for "' . $this->fob()->name() . '"/"' . $this->tob()->name() . '" by user "' . $this->user()->name . '"');
+                    log_debug('for "' . $this->from_name() . '"/"' . $this->to_name() . '" by user "' . $this->user()->name . '"');
                 } else {
                     log_debug('for "' . $this->id . '" and user "' . $this->user()->name . '"');
                 }

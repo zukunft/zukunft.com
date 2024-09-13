@@ -247,7 +247,7 @@ class all_unit_tests extends test_cleanup
             //(new triple_write_tests)->run($this);
             //(new group_write_tests)->run($this);
             //(new source_write_tests)->run($this);
-            //(new ref_write_tests)->run($this);
+            (new ref_write_tests)->run($this);
             //(new value_write_tests)->run($this);
             //(new formula_write_tests)->run($this);
             (new formula_link_write_tests)->run($this);

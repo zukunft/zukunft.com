@@ -1,4 +1,4 @@
-PREPARE view_term_link_by_link_ids FROM
+PREPARE view_term_link_by_link_type_ids FROM
     'SELECT
             s.view_term_link_id,
             u.view_term_link_id AS user_view_term_link_id,
@@ -14,4 +14,5 @@ PREPARE view_term_link_by_link_ids FROM
   LEFT JOIN user_view_term_links u ON s.view_term_link_id = u.view_term_link_id
                                   AND u.user_id = ?
       WHERE s.view_id = ?
+        AND s.view_link_type_id = ?
         AND s.term_id = ?';

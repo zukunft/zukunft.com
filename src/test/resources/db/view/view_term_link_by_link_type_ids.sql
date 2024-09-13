@@ -1,5 +1,5 @@
-PREPARE view_term_link_by_link_ids
-    (bigint,bigint,bigint) AS
+PREPARE view_term_link_by_link_type_ids
+    (bigint, bigint, bigint, bigint) AS
         SELECT
                 s.view_term_link_id,
                 u.view_term_link_id AS user_view_term_link_id,
@@ -15,4 +15,5 @@ PREPARE view_term_link_by_link_ids
       LEFT JOIN user_view_term_links u ON s.view_term_link_id = u.view_term_link_id
                                       AND u.user_id = $1
           WHERE s.view_id = $2
-            AND s.term_id = $3;
+            AND s.view_link_type_id = $3
+            AND s.term_id = $4;

@@ -69,6 +69,7 @@ class ref_tests
 
         $t->subheader('reference sql read');
         $t->assert_sql_by_id($sc, $ref);
+        $t->assert_sql_by_link($sc, $ref);
         $this->assert_sql_link_ids($t, $sc, $ref);
 
         $t->subheader('reference sql read standard and user changes by id');

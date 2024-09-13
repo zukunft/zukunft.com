@@ -574,7 +574,7 @@ class triple_list extends sandbox_list
                     if ($lnk->fob() == null) {
                         log_warning('graph->display from is missing');
                     } else {
-                        log_debug('word->dsp_graph display word ' . $lnk->fob()->name());
+                        log_debug('word->dsp_graph display word ' . $lnk->from_name());
                         $result .= '  <tr>' . "\n";
                         if ($lnk->tob() != null) {
                             $dsp_obj = $lnk->tob()->get_dsp_obj();
