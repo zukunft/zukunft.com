@@ -94,7 +94,6 @@ class ref_tests
         $t->assert_sql_insert($sc, $ref_filled_usr, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('reference sql write update');
-        // TODO activate db write
         $ref = $t->reference_change();
         $ref_changed = $ref->cloned_linked(ref_api::TK_CHANGED);
         $t->assert_sql_update($sc, $ref_changed, $ref);
@@ -103,7 +102,7 @@ class ref_tests
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('reference sql delete');
-        // TODO activate db write and log deleting the link by logging the change of the external link to empty
+        // TODO log deleting the link by logging the change of the external link to empty
         $t->assert_sql_delete($sc, $ref);
         $t->assert_sql_delete($sc, $ref, [sql_type::LOG, sql_type::USER]);
 

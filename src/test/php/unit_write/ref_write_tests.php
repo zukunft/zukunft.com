@@ -78,6 +78,8 @@ class ref_write_tests
             $t->display('ref->load_object type', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
         }
 
+        // cleanup of ref specific tests
+        $t->write_named_cleanup($wrd, word_api::TN_ADD);
     }
 
 }
