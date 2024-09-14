@@ -2195,13 +2195,17 @@ class triple extends sandbox_link_named implements JsonSerializable
 
         global $db_con;
 
+        // init
+        //$lib = new library();
+        //$class_name = $lib->class_to_name($this::class);
+
+        // check the preserved names
+        $result = $this->check_save();
+
         // decide which db write method should be used
         if ($use_func === null) {
             $use_func = $this->sql_default_script_usage();
         }
-
-        // check the preserved names
-        $result = $this->check_preserved();
 
         if ($result == '') {
 
@@ -2314,6 +2318,26 @@ class triple extends sandbox_link_named implements JsonSerializable
 
 
         return $result;
+    }
+
+    /*
+     * save helper
+     */
+
+    /**
+     * @return array with the reserved triple names
+     */
+    protected function reserved_names(): array
+    {
+        return triple_api::RESERVED_NAMES;
+    }
+
+    /**
+     * @return array with the fixed triple names for db read testing
+     */
+    protected function fixed_names(): array
+    {
+        return triple_api::FIXED_NAMES;
     }
 
     /**

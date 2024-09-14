@@ -69,6 +69,7 @@
 
 namespace cfg;
 
+include_once MODEL_SYSTEM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once DB_PATH . 'sql_db.php';
@@ -1580,13 +1581,13 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * dummy function definition that will be overwritten by the child object
-     * check if this object uses any preserved names and if return a message to the user
+     * preform the pre save checks e.g.
+     * check if the user has requested to use a preserved name for the sandbox object and if return a message to the user
      * @return string
      */
-    protected function check_preserved(): string
+    protected function check_save(): string
     {
-        log_err('The dummy parent method get_similar has been called, which should never happen');
+        log_err('The dummy parent method reserved_names has been called, which should never happen');
         return '';
     }
 
@@ -2008,7 +2009,7 @@ class sandbox extends db_object_seq_id_user
         if ($this->is_id_updated($db_rec)) {
 
             // check the preserved names
-            $result = $this->check_preserved();
+            $result = $this->check_save();
 
             if ($result == '') {
                 $db_chk = $this->get_obj_with_same_id_fields();
@@ -2300,28 +2301,32 @@ class sandbox extends db_object_seq_id_user
         global $db_con;
 
         // init
-        $result = '';
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
+
+        // check the preserved names
+        $result = $this->check_save();
 
         // decide which db write method should be used
         if ($use_func === null) {
             $use_func = $this->sql_default_script_usage();
         }
 
-        // load the objects if needed e.g. to log the names of the link
-        if ($this->is_link_obj()) {
-            $this->load_objects();
+        if ($result == '') {
+            // load the objects if needed e.g. to log the names of the link
+            if ($this->is_link_obj()) {
+                $this->load_objects();
 
-            // check if the required parameters are set
-            if (($this->fob()->id() == 0 or $this->tob()->id() == 0) and $this->id == 0) {
-                log_err("Either the id or the link ids must be set to save a link");
+                // check if the required parameters are set
+                if (($this->fob()->id() == 0 or $this->tob()->id() == 0) and $this->id == 0) {
+                    log_err("Either the id or the link ids must be set to save a link");
+                }
             }
-        }
 
-        // configure the global database connection object for the select, insert, update and delete queries
-        $db_con->set_class($this::class);
-        $db_con->set_usr($this->user()->id());
+            // configure the global database connection object for the select, insert, update and delete queries
+            $db_con->set_class($this::class);
+            $db_con->set_usr($this->user()->id());
+        }
 
         // create an object to check possible duplicates
         $similar = null;
@@ -2355,15 +2360,10 @@ class sandbox extends db_object_seq_id_user
 
         // create a new object if nothing similar has been found
         if ($result == '') {
-            if ($this->id == 0) {
+            if ($this->id() == 0) {
 
-                // check the preserved names
-                $result = $this->check_preserved();
-
-                if ($result == '') {
                     log_debug('add');
                     $result = $this->add($use_func)->get_last_message();
-                }
 
             } else {
                 // if the similar object is not the same as $this object, suggest renaming $this object

@@ -331,7 +331,7 @@ class test_cleanup extends test_api
         }
 
         // request to delete the added test phrases
-        foreach (phrase_api::TEST_TRIPLE_STANDARD as $phr_name) {
+        foreach (triple_api::TEST_TRIPLE_STANDARD as $phr_name) {
             $phr = $this->load_phrase($phr_name);
             if ($phr->id() <> 0) {
                 $msg = $phr->del();

@@ -1074,7 +1074,7 @@ class group extends sandbox_multi
         $msg_res = 'is a reserved';
         $msg_for = 'name for system testing. Please use another name';
         $result = '';
-        if (in_array($this->name, group_api::RESERVED_GROUP_NAMES)) {
+        if (in_array($this->name, $this->reserved_names())) {
             // the admin user needs to add the read test group name during initial load
             // so for admin do not create a message
             if (!$usr->is_admin() and !$usr->is_system()) {
@@ -1082,6 +1082,14 @@ class group extends sandbox_multi
             }
         }
         return $result;
+    }
+
+    /**
+     * @return array with the reserved triple names
+     */
+    protected function reserved_names(): array
+    {
+        return group_api::RESERVED_GROUP_NAMES;
     }
 
     /*

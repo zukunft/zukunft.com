@@ -2535,7 +2535,7 @@ class formula extends sandbox_typed
         }
 
         // check the preserved names
-        $result = $this->check_preserved();
+        $result = $this->check_save();
 
         if ($result == '') {
 
@@ -2625,6 +2625,27 @@ class formula extends sandbox_typed
 
         return $result;
 
+    }
+
+
+    /*
+     * save helper
+     */
+
+    /**
+     * @return array with the reserved formula names
+     */
+    protected function reserved_names(): array
+    {
+        return formula_api::RESERVED_NAMES;
+    }
+
+    /**
+     * @return array with the fixed formula names for db read testing
+     */
+    protected function fixed_names(): array
+    {
+        return formula_api::FIXED_NAMES;
     }
 
 

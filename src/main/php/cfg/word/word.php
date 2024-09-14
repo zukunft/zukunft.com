@@ -36,6 +36,7 @@
     - sandbox:           manage the user sandbox
     - log:               write the changes to the log
     - save:              manage to update the database
+    - save helper:       helpers for updating the database
     - del:               manage to remove from the database
     - sql write fields:  field list for writing to the database
     - debug:             internal support functions for debugging
@@ -1787,6 +1788,27 @@ class word extends sandbox_typed
         $result = $usr_msg->get_last_message();
         log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
+    }
+
+
+    /*
+     * save helper
+     */
+
+    /**
+     * @return array with the reserved word names
+     */
+    protected function reserved_names(): array
+    {
+        return word_api::RESERVED_NAMES;
+    }
+
+    /**
+     * @return array with the fixed word names for db read testing
+     */
+    protected function fixed_names(): array
+    {
+        return word_api::FIXED_NAMES;
     }
 
 

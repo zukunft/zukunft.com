@@ -77,7 +77,7 @@ class view extends sandbox_typed_api
     const TD_LINK = 'System Test description for a view term link';
 
     // array of view names that used for testing and remove them after the test
-    const RESERVED_VIEWS = array(
+    const RESERVED_NAMES = array(
         self::TN_READ,
         self::TN_ADD,
         self::TN_ADD_VIA_SQL,
@@ -86,6 +86,11 @@ class view extends sandbox_typed_api
         self::TN_COMPLETE,
         self::TN_EXCLUDED,
         self::TN_TABLE
+    );
+
+    // array of view names that used for db read testing and that should not be renamed
+    const FIXED_NAMES = array(
+        self::TN_READ
     );
 
     // array of test view names create before the test

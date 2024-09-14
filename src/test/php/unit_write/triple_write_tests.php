@@ -69,7 +69,7 @@ class triple_write_tests
         $t->assert_write_via_func_or_sql($test_name, $t->triple_add_by_func(), true);
 
         $t->subheader('triple write sandbox tests for ' . triple_api::TN_ADD);
-        //$t->assert_write_named($t->triple_filled_add(), triple_api::TN_ADD);
+        //$t->assert_write_link($t->triple_filled_add(), triple_api::TN_ADD);
 
 
         // create the related objects for link objects

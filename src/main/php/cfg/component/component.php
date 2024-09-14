@@ -1185,6 +1185,27 @@ class component extends sandbox_typed
 
 
     /*
+     * save helper
+     */
+
+    /**
+     * @return array with the reserved component names
+     */
+    protected function reserved_names(): array
+    {
+        return component_api::RESERVED_COMPONENTS;
+    }
+
+    /**
+     * @return array with the fixed component names for db read testing
+     */
+    protected function fixed_names(): array
+    {
+        return component_api::FIXED_NAMES;
+    }
+
+
+    /*
      * del
      */
 

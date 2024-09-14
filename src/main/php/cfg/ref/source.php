@@ -650,6 +650,27 @@ class source extends sandbox_typed
 
 
     /*
+     * save helper
+     */
+
+    /**
+     * @return array with the reserved source names
+     */
+    protected function reserved_names(): array
+    {
+        return source_api::RESERVED_NAMES;
+    }
+
+    /**
+     * @return array with the fixed source names for db read testing
+     */
+    protected function fixed_names(): array
+    {
+        return source_api::FIXED_NAMES;
+    }
+
+
+    /*
      * sql write fields
      */
 

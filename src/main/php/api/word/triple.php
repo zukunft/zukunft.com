@@ -84,11 +84,17 @@ class triple extends sandbox_typed_api
     const TN_TAXES_OF_CF = "Income taxes is part of cash flow statement";
 
     // list of predefined triple used for system testing that are expected to be never renamed
-    const RESERVED_TRIPLES = array(
+    const RESERVED_NAMES = array(
         word_cfg::SYSTEM_CONFIG,
         self::TN_ADD,
         self::TN_EXCLUDED
     );
+
+    // array of triple names that used for db read testing and that should not be renamed
+    const FIXED_NAMES = array(
+        self::TN_READ
+    );
+
     // list of triples that are used for system testing that should be removed are the system test has been completed
     // and that are never expected to be used by a user
     const TEST_TRIPLES = array(
@@ -96,6 +102,12 @@ class triple extends sandbox_typed_api
         self::TN_ADD_VIA_FUNC,
         self::TN_ADD_VIA_SQL
     );
+
+    const TEST_TRIPLE_STANDARD = array(
+        self::TN_ADD,
+        self::TN_EXCLUDED
+    );
+
 
     /*
      * object vars

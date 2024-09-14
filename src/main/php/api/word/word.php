@@ -198,8 +198,8 @@ class word extends sandbox_typed_api implements JsonSerializable
     const TD_UPD_API = 'System Test Word API Description Renamed';
 
 
-    // list of predefined words used for system testing that are expected to be never renamed
-    const RESERVED_WORDS = array(
+    // list of predefined word names used for system testing that are expected to be never renamed
+    const RESERVED_NAMES = array(
         word_cfg::SYSTEM_CONFIG,
         self::TN_READ,
         self::TN_CONST,
@@ -274,6 +274,12 @@ class word extends sandbox_typed_api implements JsonSerializable
         self::TN_ADD_API,
         self::TN_UPD_API
     );
+
+    // array of word names that used for db read testing and that should not be renamed
+    const FIXED_NAMES = array(
+        self::TN_READ
+    );
+
     // list of words that are used for system testing that should be removed are the system test has been completed
     // and that are never expected to be used by a user
     const TEST_WORDS = array(

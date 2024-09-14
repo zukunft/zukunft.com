@@ -244,7 +244,7 @@ class all_unit_tests extends test_cleanup
             // run the selected db write
             (new word_write_tests)->run($this);
             //(new word_list_write_tests)->run($this);
-            //(new triple_write_tests)->run($this);
+            (new triple_write_tests)->run($this);
             //(new group_write_tests)->run($this);
             //(new source_write_tests)->run($this);
             (new ref_write_tests)->run($this);

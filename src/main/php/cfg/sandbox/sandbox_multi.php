@@ -827,7 +827,7 @@ class sandbox_multi extends db_object_multi_user
 
 
     /*
-     * save support - ownership and access
+     * save helper - ownership and access
      */
 
     /**
@@ -1092,7 +1092,7 @@ class sandbox_multi extends db_object_multi_user
 
 
     /*
-     * save support - user sandbox
+     * save helper - user sandbox
      */
 
     /**
@@ -1333,7 +1333,7 @@ class sandbox_multi extends db_object_multi_user
 
 
     /*
-     * save support - log changes
+     * save helper - log changes
      */
 
     /**
@@ -1578,7 +1578,7 @@ class sandbox_multi extends db_object_multi_user
 
 
     /*
-     * save support - save fields
+     * save helper - save fields
      */
 
     /**
@@ -2121,7 +2121,7 @@ class sandbox_multi extends db_object_multi_user
 
 
     /*
-     * save support - check id
+     * save helper - check id
      */
 
     /**
@@ -2259,7 +2259,7 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /*
-     * save support - check similar
+     * save helper - check similar
      */
 
     /**

@@ -66,6 +66,7 @@ class language extends type_object implements JsonSerializable
 
     // list of the languages that have a coded functionality
     const DEFAULT = "english";
+    const DEFAULT_ID = 1;
     const TN_READ = "English";
 
 

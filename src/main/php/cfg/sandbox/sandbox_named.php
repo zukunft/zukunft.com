@@ -65,7 +65,7 @@ include_once API_WORD_PATH . 'word.php';
 use api\api;
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
-use api\phrase\phrase as phrase_api;
+use api\word\triple as triple_api;
 use api\ref\source as source_api;
 use api\view\view as view_api;
 use api\word\word as word_api;
@@ -577,66 +577,8 @@ class sandbox_named extends sandbox
 
 
     /*
-     * save support
+     * save helper
      */
-
-    /**
-     * check if this object uses any preserved names and if return a message to the user
-     * TODO move to the single objects
-     *
-     * @return string
-     */
-    protected function check_preserved(): string
-    {
-        global $usr;
-
-        // TODO move to languga based messages
-        $msg_res = 'is a reserved';
-        $msg_for = 'name for system testing. Please use another name';
-        $result = '';
-        if (!$usr->is_system()) {
-            if ($this->is_named_obj()) {
-                if ($this::class == word::class) {
-                    if (in_array($this->name, word_api::RESERVED_WORDS)) {
-                        // the admin user needs to add the read test word during initial load
-                        if (!$usr->is_admin()) {
-                            $result = '"' . $this->name() . '" ' . $msg_res . ' ' . $msg_for;
-                        }
-                    }
-                } elseif ($this::class == phrase::class) {
-                    if (in_array($this->name, phrase_api::RESERVED_PHRASES)) {
-                        $result = '"' . $this->name() . '" ' . $msg_res . ' phrase ' . $msg_for;
-                    }
-                } elseif ($this::class == formula::class) {
-                    if (in_array($this->name, formula_api::RESERVED_FORMULAS)) {
-                        if ($usr->is_admin() and $this->name() != formula_api::TN_READ) {
-                            $result = '"' . $this->name() . '" ' . $msg_res . ' formula ' . $msg_for;
-                        }
-                    }
-                } elseif ($this::class == view::class) {
-                    if (in_array($this->name, view_api::RESERVED_VIEWS)) {
-                        if ($usr->is_admin() and $this->name() != view_api::TN_READ) {
-                            $result = '"' . $this->name() . '" ' . $msg_res . ' view ' . $msg_for;
-                        }
-                    }
-                } elseif ($this::class == component::class) {
-                    if (in_array($this->name, component_api::RESERVED_COMPONENTS)) {
-                        if ($usr->is_admin() and $this->name() != component_api::TN_READ) {
-                            $result = '"' . $this->name() . '" ' . $msg_res . ' view component ' . $msg_for;
-                        }
-                    }
-                } elseif ($this::class == source::class) {
-                    if (in_array($this->name, source_api::RESERVED_SOURCES)) {
-                        // the admin user needs to add the read test source during initial load
-                        if ($usr->is_admin() and $this->name() != source_api::TN_READ_REF) {
-                            $result = '"' . $this->name() . '" ' . $msg_res . ' source ' . $msg_for;
-                        }
-                    }
-                }
-            }
-        }
-        return $result;
-    }
 
 
     /*
@@ -724,6 +666,69 @@ class sandbox_named extends sandbox
         }
 
         return $result;
+    }
+
+
+    /*
+     * save helper
+     */
+
+    /**
+     * preform the pre save checks which means
+     * for these named objects check if the user has requested to use a preserved name
+     * and if yes return a message and a suggested solution to the user
+     *
+     * @return string
+     */
+    protected function check_save(): string
+    {
+        return $this->check_preserved();
+    }
+
+    /**
+     * check if the user has requested to use a preserved name for the sandbox object and if return a message to the user
+     * @return string
+     */
+    protected function check_preserved(): string
+    {
+        global $usr;
+
+        // init
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+
+        $lms = new messages();
+        $msg_res = $lms->txt(messages::RESERVED_IS);
+        $msg_for = $lms->txt(messages::RESERVED_NAME);
+        $result = '';
+        // system users are always allowed to add objects e.g. for the system views
+        if (!$usr->is_system()) {
+            if (in_array($this->name(), $this->reserved_names())) {
+                // the admin user needs to add the read test objects during initial load
+                if ($usr->is_admin() and !in_array($this->name(), $this->fixed_names())) {
+                    $result = '"' . $this->name() . '" ' . $msg_res . ' ' . $class_name . ' ' . $msg_for;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return array with the reserved names of the child object
+     */
+    protected function reserved_names(): array
+    {
+        log_err('The dummy parent method reserved_names has been called, which should never happen');
+        return [];
+    }
+
+    /**
+     * @return array with the fixed names of the child object for db read testing
+     */
+    protected function fixed_names(): array
+    {
+        log_err('The dummy parent method fixed_names has been called, which should never happen');
+        return [];
     }
 
     /**

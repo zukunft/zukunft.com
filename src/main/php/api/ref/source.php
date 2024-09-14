@@ -77,14 +77,20 @@ class source extends sandbox_typed_api
     const TEST_URL_CHANGED = 'https://api.zukunft.com/';
     const TEST_DESCRIPTION_CHANGED = 'System Test Source Description Changed';
 
-    // source group for creating the test sources and remove them after the test
-    const RESERVED_SOURCES = array(
+    // array of source names that used for testing and remove them after the test
+    const RESERVED_NAMES = array(
         self::TN_READ_REF, // the source for all data imported from wikidata that does not yet have a source defined in wikidata
         self::TN_READ,
         self::TN_ADD,
         self::TN_ADD_API,
         self::TN_RENAMED
     );
+
+    // array of source names that used for db read testing and that should not be renamed
+    const FIXED_NAMES = array(
+        self::TN_READ
+    );
+
     const TEST_SOURCES = array(
         self::TN_ADD,
         self::TN_ADD_API,

@@ -2574,7 +2574,8 @@ class test_base
                 $result = $this->write_link_check_order_nbr($lnk, $this->usr2, $new_order_nbr);
             }
         } elseif ($lnk::class == view_term_link::class
-            or $lnk::class == ref::class) {
+            or $lnk::class == ref::class
+            or $lnk::class == triple::class) {
             $old_description = $lnk->description;
             $new_description = $old_description . self::EXT_RENAME;
             if ($result) {
@@ -2979,7 +2980,7 @@ class test_base
         }
     }
 
-    private function write_link_update_description(view_term_link|ref $lnk, user $usr, string $new_description): bool
+    private function write_link_update_description(view_term_link|ref|triple $lnk, user $usr, string $new_description): bool
     {
         $id = $lnk->id();
         $lnk->set_user($usr);
@@ -2998,7 +2999,7 @@ class test_base
         }
     }
 
-    private function write_link_check_description(view_term_link|ref $lnk, user $usr, ?string $description): bool
+    private function write_link_check_description(view_term_link|ref|triple $lnk, user $usr, ?string $description): bool
     {
         $id = $lnk->id();
         $lnk->set_user($usr);

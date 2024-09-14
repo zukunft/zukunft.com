@@ -1240,7 +1240,7 @@ class sandbox_link extends sandbox
      * TODO check why it is called
      * @return string
      */
-    protected function check_preserved(): string
+    protected function check_save(): string
     {
         log_warning('The dummy parent method get_similar has been called, which should never happen');
         return '';

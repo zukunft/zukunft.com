@@ -2,8 +2,12 @@
 
 /*
 
-    model/view/view.php - the main display object
-    -------------------
+    cfg/view/view.php - the main display object
+    -----------------
+
+    The main sections of this object are
+    - save helper:       helpers for updating the database
+
 
     This file is part of zukunft.com - calc with words
 
@@ -978,26 +982,25 @@ class view extends sandbox_typed
         return $result;
     }
 
-    /**
-     * check if a view name is a reserved system view and if return a message to the user
-     *
-     * @return string
-     */
-    protected function check_preserved(): string
-    {
-        global $usr;
 
-        $result = '';
-        // system user are always allowed to add system views
-        if (!$usr->is_system()) {
-            if (in_array($this->name, view_api::RESERVED_VIEWS)) {
-                // the admin user needs to add the read test word during initial load
-                if (!$usr->is_admin()) {
-                    $result = '"' . $this->name() . '" is a reserved view name for system testing. Please use another name';
-                }
-            }
-        }
-        return $result;
+    /*
+     * save helper
+     */
+
+    /**
+     * @return array with the reserved view names
+     */
+    protected function reserved_names(): array
+    {
+        return view_api::RESERVED_NAMES;
+    }
+
+    /**
+     * @return array with the fixed view names for db read testing
+     */
+    protected function fixed_names(): array
+    {
+        return view_api::FIXED_NAMES;
     }
 
     /**
