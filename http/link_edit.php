@@ -79,7 +79,7 @@ if ($usr->id() > 0) {
             $trp->to()->set_id($_GET['phrase2']); // the word or triple linked to
 
             // save the changes
-            $upd_result = $trp->save();
+            $upd_result = $trp->save()->get_last_message();
 
             // if update was successful ...
             if (str_replace('1', '', $upd_result) == '') {

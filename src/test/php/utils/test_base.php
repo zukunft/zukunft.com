@@ -2728,7 +2728,7 @@ class test_base
         $test_name = 'add ' . $class . ' ' . $name . ' for user ' . $usr->dsp_id();
         $sbx->set_user($usr);
         $sbx->set_name($name);
-        $result = $sbx->save();
+        $result = $sbx->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             return $sbx->id();
         } else {
@@ -2751,7 +2751,7 @@ class test_base
         $sbx->set_tob($tob);
         $sbx->set_name($name);
         $sbx->set_predicate_id($ori->predicate_id());
-        $result = $sbx->save();
+        $result = $sbx->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             return $sbx->id();
         } else {
@@ -2777,7 +2777,7 @@ class test_base
             $sbx->set_tob($tob);
         }
         $sbx->set_predicate_id($ori->predicate_id());
-        $result = $sbx->save();
+        $result = $sbx->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             return $sbx->id();
         } else {
@@ -2877,7 +2877,7 @@ class test_base
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'rename ' . $class . ' ' . $name . ' to ' . $new_name . ' for user ' . $usr->dsp_id();
         $sbx->set_name($new_name);
-        $result = $sbx->save();
+        $result = $sbx->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             $sbx->reset();
             $sbx->load_by_name($new_name);
@@ -2904,7 +2904,7 @@ class test_base
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'add ' . $class . ' description ' . $description;
         $sbx->description = $description;
-        $result = $sbx->save();
+        $result = $sbx->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_named_log($sbx, sandbox_named::FLD_DESCRIPTION, $description, change::MSG_ADD);
         } else {
@@ -2922,7 +2922,7 @@ class test_base
         $class = $lib->class_to_name($sbx::class);
         $test_name = 'update ' . $class . ' description to ' . $new_description;
         $sbx->description = $new_description;
-        $result = $sbx->save();
+        $result = $sbx->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_named_log($sbx,
                 sandbox_named::FLD_DESCRIPTION, $new_description, change::MSG_UPDATE, $old_description);
@@ -2956,7 +2956,7 @@ class test_base
         $class = $lib->class_to_name($lnk::class);
         $test_name = 'update ' . $class . ' order number to ' . $new_order_nbr;
         $lnk->order_nbr = $new_order_nbr;
-        $result = $lnk->save();
+        $result = $lnk->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_link_log_field($lnk,
                 formula_link::FLD_ORDER, $new_order_nbr, change::MSG_UPDATE, $old_order_nbr);
@@ -2990,7 +2990,7 @@ class test_base
         $class = $lib->class_to_name($lnk::class);
         $test_name = 'update ' . $class . ' description to ' . $new_description;
         $lnk->description = $new_description;
-        $result = $lnk->save();
+        $result = $lnk->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_link_log_field($lnk,
                 sandbox_named::FLD_DESCRIPTION, $new_description, change::MSG_UPDATE, $old_description);

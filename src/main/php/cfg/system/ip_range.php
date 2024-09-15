@@ -257,7 +257,7 @@ class ip_range extends db_object_seq_id
      */
     function import_obj(array $json_obj, object $test_obj = null): user_message
     {
-        $result = parent::import_db_obj($this, $test_obj);
+        $usr_msg = parent::import_db_obj($this, $test_obj);
 
         // reset of object not needed, because the calling function has just created the object
         foreach ($json_obj as $key => $value) {
@@ -277,12 +277,12 @@ class ip_range extends db_object_seq_id
 
         // save the ip range in the database
         if (!$test_obj) {
-            if ($result->is_ok()) {
-                $result->add_message($this->save());
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save());
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -445,12 +445,12 @@ class ip_range extends db_object_seq_id
     /**
      * add an ip range to the database
      *
-     * @return string the database id of the created reference or 0 if not successful
+     * @return user_message the database id of the created reference or 0 if not successful
      */
-    private function add(): string
+    private function add(): user_message
     {
         global $db_con;
-        $result = '';
+        $usr_msg = new user_message();
 
         // log the insert attempt first
         $log = $this->log_add();
@@ -465,16 +465,18 @@ class ip_range extends db_object_seq_id
             if ($this->id > 0) {
                 // update the id in the log for the correct reference
                 if (!$log->add_ref($this->id)) {
-                    $result .= 'Adding reference for ' . $this->dsp_id() . ' in the log failed.';
-                    log_err($result, self::class . '->add');
+                    $msg = 'Adding reference for ' . $this->dsp_id() . ' in the log failed.';
+                    $usr_msg->add_message($msg);
+                    log_err($msg, self::class . '->add');
                 }
             } else {
-                $result .= 'Adding reference ' . $this->dsp_id() . ' failed.';
-                log_err($result, self::class . '->add');
+                $msg = 'Adding reference ' . $this->dsp_id() . ' failed.';
+                $usr_msg->add_message($msg);
+                log_err($msg, self::class . '->add');
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -505,14 +507,14 @@ class ip_range extends db_object_seq_id
 
     /**
      * update an ip range in the database or update the existing
-     * @return string the error message for the user if it has failed or an empty string
+     * @return user_message the error message for the user if it has failed or an empty string
      */
-    function save(): string
+    function save(): user_message
     {
         log_debug('ip_range->save ' . $this->dsp_id());
 
         global $db_con;
-        $result = '';
+        $usr_msg = new user_message();
 
         // build the database object because this is needed anyway
         $db_con->set_usr($this->user()->id());
@@ -532,7 +534,7 @@ class ip_range extends db_object_seq_id
 
         // create a new object or update an existing
         if ($this->id <= 0) {
-            $result .= $this->add();
+            $usr_msg->add($this->add());
         } else {
             log_debug('->save update');
 
@@ -544,10 +546,10 @@ class ip_range extends db_object_seq_id
             $db_rec->set_user($this->user());
             $qp = $this->load_sql_by_vars($db_con);
             if ($db_rec->load($qp) > 0) {
-                $result .= $this->save_fields($db_con, $db_rec);
+                $usr_msg->add_message($this->save_fields($db_con, $db_rec));
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**

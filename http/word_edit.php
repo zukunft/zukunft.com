@@ -93,7 +93,7 @@ if ($usr->id() > 0) {
                 $msg .= 'An empty name should never be saved. Please delete the word instead.';
             } else {
                 // save the changes
-                $upd_result = $wrd->save();
+                $upd_result = $wrd->save()->get_last_message();
 
                 // if update was fine ...
                 if (str_replace('1', '', $upd_result) == '') {

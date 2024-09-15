@@ -273,19 +273,19 @@ class word_write_tests
         $test_name = 'check if saving a word with an existing name (' . word_api::TN_READ . ') creates a warning message for the user';
         $wrd_new = new word($t->usr1);
         $wrd_new->set_name(word_api::TN_READ);
-        $result = $wrd_new->save();
+        $result = $wrd_new->save()->get_last_message();
         $target = 'A word with the name "'.word_api::TN_READ.'" already exists. Please use another word name.';
         $t->display($test_name, $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // test the creation of a new word
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(word_api::TN_ADD);
-        $result = $wrd_add->save();
+        $result = $wrd_add->save()->get_last_message();
         $target = '';
         $t->assert('word->save for "' . word_api::TN_ADD . '"', $result, $target, $t::TIMEOUT_LIMIT_DB);
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(word_api::TN_ADD);
-        $result = $wrd_add->save();
+        $result = $wrd_add->save()->get_last_message();
         $target = 'A word with the name "'.word_api::TN_ADD.'" already exists. Please use another word name.';
         $t->display('word->save reject for "' . word_api::TN_ADD . '"', $target, $result, $t::TIMEOUT_LIMIT_DB);
 
@@ -293,7 +293,7 @@ class word_write_tests
         $vrb = new verb();
         $vrb->set_user($t->usr1);
         $vrb->set_name(word_api::TN_ADD);
-        $result = $vrb->save();
+        $result = $vrb->save()->get_last_message();
         $target = '<style class="text-danger">A word with the name "System Test Word" already exists. '
             . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.</style>';
         $t->assert('verb cannot have an already used word name', $result, $target);
@@ -302,7 +302,7 @@ class word_write_tests
         $trp = new triple($t->usr1);
         $trp->load_by_name(triple_api::TN_PI_NAME);
         $trp->set_name(word_api::TN_ADD);
-        $result = $trp->save();
+        $result = $trp->save()->get_last_message();
         $target = '<style class="text-danger">A word with the name "System Test Word" already exists. '
             . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.</style>';
         $t->assert('triple cannot by renamed to an already used word name', $result, $target);
@@ -311,7 +311,7 @@ class word_write_tests
         $frm = new formula($t->usr1);
         $frm->load_by_name(formula_api::TN_READ);
         $frm->set_name(word_api::TN_ADD);
-        $result = $frm->save();
+        $result = $frm->save()->get_last_message();
         $target = '<style class="text-danger">A word with the name "System Test Word" already exists. '
             . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.</style>';
         $t->assert('formula cannot by renamed to an already used word name', $result, $target);
@@ -341,7 +341,7 @@ class word_write_tests
 
         // check if the word can be renamed
         $wrd_added->set_name(word_api::TN_RENAMED);
-        $result = $wrd_added->save();
+        $result = $wrd_added->save()->get_last_message();
         $target = '';
         $t->display('word->save rename "' . word_api::TN_ADD . '" to "' . word_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB);
 
@@ -359,7 +359,7 @@ class word_write_tests
         $wrd_renamed->plural = word_api::TN_RENAMED . 's';
         $wrd_renamed->description = word_api::TN_RENAMED . ' description';
         $wrd_renamed->type_id = $phrase_types->id(phrase_type::OTHER);
-        $result = $wrd_renamed->save();
+        $result = $wrd_renamed->save()->get_last_message();
         $target = '';
         $t->display('word->save all word fields beside the name for "' . word_api::TN_RENAMED . '"',
             $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -400,7 +400,7 @@ class word_write_tests
         $wrd_usr2->plural = word_api::TN_RENAMED . 's2';
         $wrd_usr2->description = word_api::TN_RENAMED . ' description2';
         $wrd_usr2->type_id = $phrase_types->id(phrase_type::TIME);
-        $result = $wrd_usr2->save();
+        $result = $wrd_usr2->save()->get_last_message();
         $target = '';
         $t->display('word->save all word fields for user 2 beside the name for "' . word_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -437,7 +437,7 @@ class word_write_tests
         $wrd_usr2->plural = word_api::TN_RENAMED . 's';
         $wrd_usr2->description = word_api::TN_RENAMED . ' description';
         $wrd_usr2->type_id = $phrase_types->id(phrase_type::OTHER);
-        $result = $wrd_usr2->save();
+        $result = $wrd_usr2->save()->get_last_message();
         $target = '';
         $t->display('word->save undo the user word fields beside the name for "' . word_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 

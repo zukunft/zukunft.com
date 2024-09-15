@@ -124,7 +124,7 @@ if ($usr->id() > 0) {
             log_debug('do');
 
             // add to db
-            $add_result = $frm->save();
+            $add_result = $frm->save()->get_last_message();
 
             // in case of a problem show the message
             if (str_replace('1', '', $add_result) <> '') {

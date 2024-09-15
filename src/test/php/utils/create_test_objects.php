@@ -2906,7 +2906,7 @@ class create_test_objects extends test_base
         $wrd = $this->load_word($wrd_name, $test_usr);
         if ($wrd->id() == 0) {
             $wrd->set_name($wrd_name);
-            $result = $wrd->save();
+            $result = $wrd->save()->get_last_message();
             if ($result != '') {
                 log_err('add formula failed due to: ' . $result);
             }
@@ -2916,7 +2916,7 @@ class create_test_objects extends test_base
         }
         if ($wrd_type_code_id != null) {
             $wrd->type_id = $phrase_types->id($wrd_type_code_id);
-            $result = $wrd->save();
+            $result = $wrd->save()->get_last_message();
             if ($result != '') {
                 log_err('add formula failed due to: ' . $result);
             }
@@ -3138,7 +3138,7 @@ class create_test_objects extends test_base
                     if ($name_given <> '' and $trp->name(true) <> $name_given) {
                         $trp->set_name_given($name_given);
                         $trp->set_name($name_given);
-                        $result = $trp->save();
+                        $result = $trp->save()->get_last_message();
                         if ($result != '') {
                             log_err('save tripple failed due to: ' . $result);
                         }
@@ -3162,7 +3162,7 @@ class create_test_objects extends test_base
                             $trp->set_name_given($name_given);
                             $trp->set_name($name_given);
                         }
-                        $save_result = $trp->save();
+                        $save_result = $trp->save()->get_last_message();
                         if ($save_result != '') {
                             log_err('save tripple failed due to: ' . $save_result);
                         }
@@ -3268,7 +3268,7 @@ class create_test_objects extends test_base
             $phr_lst->load_by_names($phr_names);
             $grp = $this->create_group($phr_lst, $test_usr);
             $grp->set_name($grp_name);
-            $result = $grp->save();
+            $result = $grp->save()->get_last_message();
             if ($result != '') {
                 log_err('add group failed due to: ' . $result);
             }
@@ -3343,7 +3343,7 @@ class create_test_objects extends test_base
             $frm->set_name($frm_name);
             $frm->usr_text = $frm_text;
             $frm->generate_ref_text();
-            $result = $frm->save();
+            $result = $frm->save()->get_last_message();
             // TODO add this check to all add functions
             if ($result != '') {
                 log_err('add formula failed due to: ' . $result);
@@ -3390,7 +3390,7 @@ class create_test_objects extends test_base
             // TODO check if type name is the code id or really the name
             $ref->set_predicate_id($ref_types->id($type_name));
             $ref->external_key = $external_key;
-            $result = $ref->save();
+            $result = $ref->save()->get_last_message();
             if ($result != '') {
                 log_err('add ref failed due to: ' . $result);
             }
@@ -3558,7 +3558,7 @@ class create_test_objects extends test_base
                 $val->grp = $phr_grp;
             }
             $val->set_number($target);
-            $result = $val->save();
+            $result = $val->save()->get_last_message();
             if ($result != '') {
                 log_err('add value failed due to: ' . $result);
             }
@@ -3588,7 +3588,7 @@ class create_test_objects extends test_base
         if (!$val->is_saved()) {
             $val->set_grp($phr_grp);
             $val->set_number($target);
-            $result = $val->save();
+            $result = $val->save()->get_last_message();
             if ($result != '') {
                 log_err('add value by group failed due to: ' . $result);
             }
@@ -3653,7 +3653,7 @@ class create_test_objects extends test_base
         $src = $this->load_source($src_name);
         if ($src->id() == 0) {
             $src->set_name($src_name);
-            $result = $src->save();
+            $result = $src->save()->get_last_message();
             if ($result != '') {
                 log_err('add source failed due to: ' . $result);
             }
@@ -3771,7 +3771,7 @@ class create_test_objects extends test_base
         if ($msk->id() == 0) {
             $msk->set_user($test_usr);
             $msk->set_name($dsp_name);
-            $result = $msk->save();
+            $result = $msk->save()->get_last_message();
             if ($result != '') {
                 log_err('add view failed due to: ' . $result);
             }
@@ -3831,7 +3831,7 @@ class create_test_objects extends test_base
             if ($type_code_id != '') {
                 $cmp->type_id = $component_types->id($type_code_id);
             }
-            $result = $cmp->save();
+            $result = $cmp->save()->get_last_message();
             if ($result != '') {
                 log_err('add component failed due to: ' . $result);
             }
@@ -3859,7 +3859,7 @@ class create_test_objects extends test_base
         $lnk->set_view($msk);
         $lnk->set_component($cmp);
         $lnk->order_nbr = $pos;
-        $result = $lnk->save();
+        $result = $lnk->save()->get_last_message();
         $target = '';
         $this->display('view component link', $target, $result);
         return $lnk;
@@ -3895,7 +3895,7 @@ class create_test_objects extends test_base
                 if ($autocreate) {
                     $frm_lnk->set_formula($frm);
                     $frm_lnk->set_phrase($wrd->phrase());
-                    $result = $frm_lnk->save();
+                    $result = $frm_lnk->save()->get_last_message();
                     if ($result != '') {
                         log_err('add formula link failed due to: ' . $result);
                     }

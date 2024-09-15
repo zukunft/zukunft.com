@@ -62,7 +62,7 @@ class result_write_tests
         $frm = new formula($t->usr1);
         $frm->set_name(formula_api::TN_ADD);
         $frm->usr_text = formula_api::TF_INCREASE;
-        $result = $frm->save();
+        $result = $frm->save()->get_last_message();
         if ($frm->id() > 0) {
             $result = $frm->usr_text;
         }
@@ -72,7 +72,7 @@ class result_write_tests
         // check if the formula can be renamed
         $frm = $t->load_formula(formula_api::TN_ADD);
         $frm->set_name(formula_api::TN_RENAMED);
-        $result = $frm->save();
+        $result = $frm->save()->get_last_message();
         $target = '';
         $t->display('formula->save rename "' . formula_api::TN_ADD . '" to "' . formula_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 

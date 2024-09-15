@@ -58,7 +58,7 @@ class verb_write_tests
         $vrb = new verb;
         $vrb->set_user($t->usr1);
         $vrb->set_name(verb_api::TN_ADD);
-        $result = $vrb->save();
+        $result = $vrb->save()->get_last_message();
         $t->assert('verb->add', $result);
 
         // ... test if adding the verb is part of the change log

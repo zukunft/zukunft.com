@@ -161,7 +161,7 @@ if ($usr->id() > 0) {
             $add_result = '';
             // ... add the new word to the database
             if ($wrd->name() <> "") {
-                $add_result .= $wrd->save();
+                $add_result .= $wrd->save()->get_last_message();
             } else {
                 $wrd->load_by_id($wrd_id);
             }
@@ -173,7 +173,7 @@ if ($usr->id() > 0) {
                 $lnk->from()->set_id($wrd->id());
                 $lnk->set_verb_id($vrb_id);
                 $lnk->to()->set_id($wrd_to);
-                $add_result .= $lnk->save();
+                $add_result .= $lnk->save()->get_last_message();
             }
 
             // if adding was successful ...

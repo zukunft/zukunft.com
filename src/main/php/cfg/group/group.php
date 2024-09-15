@@ -62,6 +62,7 @@ include_once MODEL_GROUP_PATH . 'group_link.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once API_PHRASE_PATH . 'group.php';
 
+use api\system\messeges as msg_enum;
 use api\phrase\group as group_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -73,6 +74,7 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
+use cfg\message_translator;
 use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
@@ -926,7 +928,7 @@ class group extends sandbox_multi
         string      $description = '',
         bool        $do_save = true): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         $db_entry_needed = false;
         $this->set_phrase_list($phr_lst);
         if ($name != '' and $name != $this->generic_name()) {
@@ -947,7 +949,7 @@ class group extends sandbox_multi
                 //$result .= $this->save_id();
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1061,27 +1063,31 @@ class group extends sandbox_multi
     }
 
     /**
-     * check if this object uses any preserved name and if yes, returns a message to the user
-     * TODO return a user message instead of a string
+     * check if the user has requested a group with a preserved name
+     * and yes if return a message to the user
      *
-     * @return string
+     * @return user_message
      */
-    protected function check_preserved(): string
+    protected function check_preserved(): user_message
     {
         global $usr;
 
-        // TODO move to language based messages
-        $msg_res = 'is a reserved';
-        $msg_for = 'name for system testing. Please use another name';
-        $result = '';
+        // init
+        $usr_msg = new user_message();
+        $mtr = new message_translator();
+        $msg_res = $mtr->txt(msg_enum::IS_RESERVED);
+        $msg_for = $mtr->txt(msg_enum::RESERVED_NAME);
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+
         if (in_array($this->name, $this->reserved_names())) {
             // the admin user needs to add the read test group name during initial load
             // so for admin do not create a message
             if (!$usr->is_admin() and !$usr->is_system()) {
-                $result = '"' . $this->name() . '" ' . $msg_res . ' ' . $msg_for;
+                $usr_msg->add_message('"' . $this->name() . '" ' . $msg_res . ' ' . $class_name . ' ' . $msg_for);
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1241,16 +1247,16 @@ class group extends sandbox_multi
         log_debug($this->dsp_id());
 
         global $db_con;
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
-            $usr_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-            if ($usr_msg->is_ok()) {
-                $this->id = $usr_msg->get_row_id();
+            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+            if ($ins_msg->is_ok()) {
+                $this->id = $ins_msg->get_row_id();
             }
-            $result->add($usr_msg);
+            $usr_msg->add($ins_msg);
         } else {
 
             // log the insert attempt first
@@ -1261,9 +1267,9 @@ class group extends sandbox_multi
                 // TODO check that always before a db action is called the db type is set correctly
                 $sc = $db_con->sql_creator();
                 $qp = $this->sql_insert($sc);
-                $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
-                if ($usr_msg->is_ok()) {
-                    $this->id = $usr_msg->get_row_id();
+                $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
+                if ($ins_msg->is_ok()) {
+                    $this->id = $ins_msg->get_row_id();
                     $this->set_saved();
                 }
 
@@ -1272,16 +1278,16 @@ class group extends sandbox_multi
                     log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
                     // update the id in the log
                     if (!$log->add_ref($this->id)) {
-                        $result->add_message('Updating the reference in the log failed');
+                        $usr_msg->add_message('Updating the reference in the log failed');
                     }
 
                 } else {
-                    $result->add_message('Adding ' . $this::class . ' ' . $this->dsp_id() . ' failed (missing save maker).');
+                    $usr_msg->add_message('Adding ' . $this::class . ' ' . $this->dsp_id() . ' failed (missing save maker).');
                 }
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 
@@ -1442,7 +1448,7 @@ class group extends sandbox_multi
     function save_from_api_msg(array $api_json, bool $do_save = true): user_message
     {
         log_debug();
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         foreach ($api_json as $key => $value) {
 
@@ -1451,11 +1457,11 @@ class group extends sandbox_multi
             }
         }
 
-        if ($result->is_ok() and $do_save) {
-            $result->add_message($this->save_id());
+        if ($usr_msg->is_ok() and $do_save) {
+            $usr_msg->add_message($this->save_id());
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 
@@ -1495,13 +1501,13 @@ class group extends sandbox_multi
     function del(?bool $use_func = null): user_message
     {
         global $db_con;
-        $result = new user_message();
+        $usr_msg = new user_message();
         $sc = $db_con->sql_creator();
 
         if ($use_func) {
             $qp = $this->sql_delete($sc, new sql_type_list([sql_type::LOG]));
-            $usr_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id());
-            $result->add($usr_msg);
+            $del_msg = $db_con->delete($qp, 'del and log ' . $this->dsp_id());
+            $usr_msg->add($del_msg);
         } else {
 
             // log the delete attempt first
@@ -1516,11 +1522,11 @@ class group extends sandbox_multi
                 $db_con->set_class(group::class);
                 $qp = $this->sql_delete($sc);
                 $msg = $db_con->delete($qp, 'del ' . $this->dsp_id());
-                $result->add($msg);
+                $usr_msg->add($msg);
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 

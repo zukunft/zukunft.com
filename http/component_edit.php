@@ -125,7 +125,7 @@ if ($usr->id() > 0) {
             } //
 
             // save the changes
-            $upd_result .= $cmp->save();
+            $upd_result .= $cmp->save()->get_last_message();
 
             // if update was fine ...
             if (str_replace('1', '', $upd_result) == '') {

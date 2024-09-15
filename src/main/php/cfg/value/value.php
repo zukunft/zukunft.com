@@ -397,7 +397,7 @@ class value extends sandbox_value
         global $share_types;
         global $protection_types;
 
-        $msg = new user_message();
+        $usr_msg = new user_message();
         $lib = new library();
 
         // make sure that there are no unexpected leftovers but keep the user
@@ -415,8 +415,8 @@ class value extends sandbox_value
 
             if ($key == api::FLD_PHRASES) {
                 $phr_lst = new phrase_list($this->user());
-                $msg->add($phr_lst->set_by_api_json($value));
-                if ($msg->is_ok()) {
+                $usr_msg->add($phr_lst->set_by_api_json($value));
+                if ($usr_msg->is_ok()) {
                     $this->grp->set_phrase_list($phr_lst);
                 }
             }
@@ -425,7 +425,7 @@ class value extends sandbox_value
                 if (strtotime($value)) {
                     $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
                 } else {
-                    $msg->add_message('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
+                    $usr_msg->add_message('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
                 }
             }
 
@@ -433,7 +433,7 @@ class value extends sandbox_value
                 if (is_numeric($value)) {
                     $this->number = $value;
                 } else {
-                    $msg->add_message('Import value: "' . $value . '" is expected to be a number (' . $this->grp->dsp_id() . ')');
+                    $usr_msg->add_message('Import value: "' . $value . '" is expected to be a number (' . $this->grp->dsp_id() . ')');
                 }
             }
 
@@ -456,7 +456,7 @@ class value extends sandbox_value
 
         }
 
-        return $msg;
+        return $usr_msg;
     }
 
     /**
@@ -590,7 +590,7 @@ class value extends sandbox_value
         $sql_where = '';
         $sql_grp = '';
 
-        $sc->set_class($class, [], $ext);
+        $sc->set_class($class, new sql_type_list([]), $ext);
         if ($this->is_id_set()) {
             $qp->name .= sql_db::FLD_ID;
         } elseif ($this->grp->is_id_set()) {
@@ -1119,7 +1119,7 @@ class value extends sandbox_value
         // save the value in the database
         if (!$test_obj) {
             if ($result->is_ok()) {
-                $result->add_message($this->save());
+                $result->add($this->save());
             }
         }
 
@@ -1141,7 +1141,7 @@ class value extends sandbox_value
      */
     function import_phrase_value(string $phr_name, float $value, object $test_obj = null): user_message
     {
-        $msg = new user_message();
+        $usr_msg = new user_message();
         log_debug();
 
         if ($test_obj) {
@@ -1154,12 +1154,12 @@ class value extends sandbox_value
         $phr_lst = new phrase_list($this->user());
         $phr = new phrase($this->user());
         if ($do_save) {
-            $msg = $phr->get_or_add($phr_name);
+            $usr_msg = $phr->get_or_add($phr_name);
         } else {
             $phr->set_name($phr_name);
         }
 
-        if ($msg->is_ok()) {
+        if ($usr_msg->is_ok()) {
             $phr_lst->add($phr);
             $phr_grp = $phr_lst->get_grp_id($do_save);
             $this->grp = $phr_grp;
@@ -1167,11 +1167,11 @@ class value extends sandbox_value
 
             // save the value in the database
             if ($do_save) {
-                $msg->add_message($this->save());
+                $usr_msg->add($this->save());
             }
         }
 
-        return $msg;
+        return $usr_msg;
     }
 
     /**
@@ -1253,27 +1253,27 @@ class value extends sandbox_value
     function save_from_api_msg(array $api_json, bool $do_save = true): user_message
     {
         log_debug();
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         foreach ($api_json as $key => $value) {
 
             if ($key == export::WORDS) {
                 $grp = new group($this->user());
-                $result->add($grp->save_from_api_msg($value, $do_save));
-                if ($result->is_ok()) {
+                $usr_msg->add($grp->save_from_api_msg($value, $do_save));
+                if ($usr_msg->is_ok()) {
                     $this->grp = $value;
                 }
             }
 
-            $result->add($this->set_fields_from_json($key, $value, $result, $do_save));
+            $usr_msg->add($this->set_fields_from_json($key, $value, $usr_msg, $do_save));
 
         }
 
-        if ($result->is_ok() and $do_save) {
-            $result->add_message($this->save());
+        if ($usr_msg->is_ok() and $do_save) {
+            $usr_msg->add($this->save());
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -2092,7 +2092,7 @@ class value extends sandbox_value
             if ($chk_val->is_id_set()) {
                 // TODO if the target value is already in the database combine the user changes with this values
                 // $this->id() = $chk_val->id();
-                // $result .= $this->save();
+                // $result .= $this->save()->get_last_message();
                 log_debug('value->save_id_if_updated update the existing ' . $chk_val->dsp_id());
             } else {
 
@@ -2141,7 +2141,7 @@ class value extends sandbox_value
         log_debug();
 
         global $db_con;
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         // log the insert attempt first
         $log = $this->log_add();
@@ -2158,7 +2158,7 @@ class value extends sandbox_value
                 // update the reference in the log
                 if ($this->grp()->is_prime()) {
                     if (!$log->add_ref($this->id())) {
-                        $result->add_message('adding the value reference in the system log failed');
+                        $usr_msg->add_message('adding the value reference in the system log failed');
                     }
                 } else {
                     // TODO: save in the value or value big change log
@@ -2181,28 +2181,28 @@ class value extends sandbox_value
                     $db_val->number = $this->number; // ... but not the field saved already with the insert
                     $std_val = clone $db_val;
                     // save the value fields
-                    $result->add_message($this->save_fields($db_con, $db_val, $std_val));
+                    $usr_msg->add_message($this->save_fields($db_con, $db_val, $std_val));
                 }
 
             } else {
-                $result->add_message("Adding value " . $this->id() . " failed.");
+                $usr_msg->add_message("Adding value " . $this->id() . " failed.");
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * insert or update a number in the database or save a user specific number
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return string in case of a problem the message that should be shown to the user
+     * @return user_message in case of a problem the message that should be shown to the user
      */
-    function save(?bool $use_func = null): string
+    function save(?bool $use_func = null): user_message
     {
         log_debug();
 
         global $db_con;
-        $result = '';
+        $usr_msg = new user_message();
 
         // check if a new value is supposed to be added
         // TODO combine this db call with the add or update to one SQL sequence with one commit at the end
@@ -2218,7 +2218,7 @@ class value extends sandbox_value
 
         if (!$this->is_saved()) {
             log_debug('add ' . $this->dsp_id());
-            $result .= $this->add($use_func)->get_last_message();
+            $usr_msg->add($this->add($use_func));
         } else {
             log_debug('update id ' . $this->id() . ' to save "' . $this->number . '" for user ' . $this->user()->id());
             // update a value
@@ -2240,24 +2240,25 @@ class value extends sandbox_value
             }
 
             // check if the id parameters are supposed to be changed
-            if ($result == '') {
-                $result = $this->save_id_if_updated($db_con, $db_rec, $std_rec);
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add_message($this->save_id_if_updated($db_con, $db_rec, $std_rec));
             }
 
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
-            if ($result == '') {
+            // TODO add db write via function
+            if ($usr_msg->is_ok()) {
                 // if the user is the owner and no other user has adjusted the value, really delete the value in the database
-                $result = $this->save_fields($db_con, $db_rec, $std_rec);
+                $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
             }
 
         }
 
-        if ($result != '') {
-            log_err($result);
+        if (!$usr_msg->is_ok()) {
+            log_err($usr_msg->get_last_message());
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 

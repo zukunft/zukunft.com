@@ -724,7 +724,7 @@ class component_link extends sandbox_link
                                 . ' to ' . $order_nbr . ' in ' . $this->view()->dsp_id());
                             //zu_err('Order number of the view component "'.$entry->name.'" corrected from '.$cmp_lnk->order_nbr.' to '.$order_nbr.'.', "component_link->move");
                             $cmp_lnk->order_nbr = $order_nbr;
-                            $cmp_lnk->save();
+                            $cmp_lnk->save()->get_last_message();
                             $order_number_corrected = true;
                         }
                         log_debug('component_link->move check order numbers checked for '

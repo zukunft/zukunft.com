@@ -407,14 +407,14 @@ class db_check
 // TODO finish
     function db_move_time_phrase_to_group(): user_message
     {
-        $msg = new user_message();
+        $usr_msg = new user_message();
         // get all values where the time word is used
         $qp = new sql_par(value::class);
 
         // loop over values that needs to be adjusted
         // create the new group including the time
         // update the value
-        return $msg;
+        return $usr_msg;
     }
 
     /**

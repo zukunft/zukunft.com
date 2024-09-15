@@ -118,17 +118,17 @@ class phrase_list extends sandbox_list_named
      */
     function set_by_api_json(array $api_json): user_message
     {
-        $msg = new user_message();
+        $usr_msg = new user_message();
 
         foreach ($api_json as $json_phr) {
             $phr = new phrase($this->user());
-            $msg->add($phr->set_by_api_json($json_phr));
-            if ($msg->is_ok()) {
+            $usr_msg->add($phr->set_by_api_json($json_phr));
+            if ($usr_msg->is_ok()) {
                 $this->add($phr);
             }
         }
 
-        return $msg;
+        return $usr_msg;
     }
 
     /**
@@ -808,11 +808,11 @@ class phrase_list extends sandbox_list_named
     {
         global $phrase_types;
 
-        $result = new user_message();
+        $usr_msg = new user_message();
         foreach ($json_obj as $phr_name) {
             if ($phr_name != '') {
                 $phr = new phrase($this->user());
-                if ($result->is_ok()) {
+                if ($usr_msg->is_ok()) {
                     if (!$test_obj) {
                         // TODO prevent that this happens at all
                         if (is_array($phr_name)) {
@@ -834,7 +834,7 @@ class phrase_list extends sandbox_list_named
                                 if ($wrd->id() == 0) {
                                     $wrd->set_name($phr_name);
                                     $wrd->type_id = $phrase_types->default_id();
-                                    $result->add_message($wrd->save());
+                                    $usr_msg->add($wrd->save());
                                 }
                                 if ($wrd->id() == 0) {
                                     log_err('Cannot add word "' . $phr_name . '" when importing ' . $this->dsp_id(), 'value->import_obj');
@@ -855,11 +855,11 @@ class phrase_list extends sandbox_list_named
 
         // save the word in the database
         // TODO check why this is needed
-        if ($result == '' and $test_obj == null) {
-            $result->add_message($this->save());
+        if ($usr_msg == '' and $test_obj == null) {
+            $usr_msg->add($this->save());
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -870,7 +870,7 @@ class phrase_list extends sandbox_list_named
      */
     function import_names(array $json_obj): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         foreach ($json_obj as $word_name) {
             $wrd = new word($this->user());
             $wrd->set_name($word_name);
@@ -878,37 +878,37 @@ class phrase_list extends sandbox_list_named
         }
         $this->save();
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * fill this list with the phrases of the given json without writing to the database
      * @param array $json_array
-     * @return bool
+     * @return user_message
      */
     function import_context(array $json_array): user_message
     {
         global $usr;
 
-        $result = new user_message();
+        $usr_msg = new user_message();
         foreach ($json_array as $key => $json_obj) {
             if ($key == export::WORDS) {
                 foreach ($json_obj as $word) {
                     $wrd = new word($usr);
                     $import_result = $wrd->import_obj_fill($word);
                     $this->add($wrd->phrase());
-                    $result->add($import_result);
+                    $usr_msg->add($import_result);
                 }
             } elseif ($key == export::TRIPLES) {
                 foreach ($json_obj as $triple) {
-                    $wrd_lnk = new triple($usr);
-                    $import_result = $wrd_lnk->import_obj($triple);
-                    $this->add($wrd->phrase());
-                    $result->add($import_result);
+                    $trp = new triple($usr);
+                    $import_result = $trp->import_obj($triple);
+                    $this->add($trp->phrase());
+                    $usr_msg->add($import_result);
                 }
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -2063,11 +2063,11 @@ class phrase_list extends sandbox_list_named
      * save all changes of the phrase list to the database
      * TODO speed up by creation one SQL statement
      *
-     * @return string the message that should be shown to the user if something went wrong
+     * @return user_message the message that should be shown to the user if something went wrong
      */
-    function save(): string
+    function save(): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
 
         // get the phrase names that are already in the database
         $db_lst = clone $this;
@@ -2092,14 +2092,14 @@ class phrase_list extends sandbox_list_named
 
         // add the missing phrase
         foreach ($add_lst->lst() as $phr) {
-            $result .= $phr->save();
+            $usr_msg->add($phr->save());
         }
         // update the phrase that are needed
         foreach ($chg_lst->lst() as $phr) {
-            $result .= $phr->save();
+            $usr_msg->add($phr->save());
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 

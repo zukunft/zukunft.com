@@ -42,6 +42,7 @@ include_once API_VERB_PATH . 'verb.php';
 include_once SERVICE_EXPORT_PATH . 'verb_exp.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
 
+use api\system\messeges as msg_enum;
 use api\verb\verb as verb_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -503,7 +504,7 @@ class verb extends type_object
         global $verbs;
 
         log_debug();
-        $result = parent::import_db_obj($this, $test_obj);
+        $usr_msg = parent::import_db_obj($this, $test_obj);
 
         // reset all parameters of this verb object but keep the user
         $usr = $this->usr;
@@ -539,12 +540,12 @@ class verb extends type_object
 
         // save the verb in the database
         if (!$test_obj) {
-            if ($result->is_ok()) {
-                $result->add_message($this->save());
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save());
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1078,24 +1079,32 @@ class verb extends type_object
     }
 
     /**
-     * check if this object uses any preserved names and if return a message to the user
+     * check if the user has requested a verb with a preserved name
+     * and if yes return a message to the user
      *
-     * @return string
+     * @return user_message
      */
-    protected function check_preserved(): string
+    protected function check_preserved(): user_message
     {
         global $usr;
 
-        $result = '';
+        // init
+        $usr_msg = new user_message();
+        $mtr = new message_translator();
+        $msg_res = $mtr->txt(msg_enum::IS_RESERVED);
+        $msg_for = $mtr->txt(msg_enum::RESERVED_NAME);
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+
         if (!$usr->is_system()) {
             if (in_array($this->name, verb_api::RESERVED_WORDS)) {
                 // the admin user needs to add the read test word during initial load
                 if (!$usr->is_admin()) {
-                    $result = '"' . $this->name() . '" is a reserved name for system testing. Please use another name';
+                    $usr_msg->add_message('"' . $this->name() . '" ' . $msg_res . ' ' . $class_name . ' ' . $msg_for);
                 }
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1103,15 +1112,14 @@ class verb extends type_object
      * add or update a verb in the database (or create a user verb if the program settings allow this)
      *
      */
-    function save(): string
+    function save(): user_message
     {
         log_debug($this->dsp_id());
 
         global $db_con;
-        $result = '';
 
         // check the preserved names
-        $result = $this->check_preserved();
+        $usr_msg = $this->check_preserved();
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->user()->id());
@@ -1122,7 +1130,7 @@ class verb extends type_object
             // check if a word, triple or formula with the same name is already in the database
             $trm = $this->get_term();
             if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
-                $result .= $trm->id_used_msg($this);
+                $usr_msg->add_message($trm->id_used_msg($this));
             } else {
                 $this->id = $trm->id_obj();
                 log_debug('verb->save adding verb name ' . $this->dsp_id() . ' is OK');
@@ -1130,9 +1138,9 @@ class verb extends type_object
         }
 
         // create a new verb or update an existing
-        if ($result == '') {
+        if ($usr_msg->is_ok()) {
             if ($this->id <= 0) {
-                $result .= $this->add($db_con);
+                $usr_msg->add_message($this->add($db_con));
             } else {
                 log_debug('update "' . $this->id . '"');
                 // read the database values to be able to check if something has been changed; done first,
@@ -1147,10 +1155,10 @@ class verb extends type_object
                     // check if a verb, formula or verb with the same name is already in the database
                     $trm = $this->get_term();
                     if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
-                        $result .= $trm->id_used_msg($this);
+                        $usr_msg->add_message($trm->id_used_msg($this));
                     } else {
                         if ($this->can_change()) {
-                            $result .= $this->save_field_name($db_con, $db_rec);
+                            $usr_msg->add_message($this->save_field_name($db_con, $db_rec));
                         } else {
                             // TODO: create a new verb and request to delete the old
                             log_err('Creating a new verb is not yet possible');
@@ -1159,23 +1167,23 @@ class verb extends type_object
                 }
 
                 if ($db_rec->code_id <> $this->code_id) {
-                    $result .= $this->save_field_code_id($db_con, $db_rec);
+                    $usr_msg->add_message($this->save_field_code_id($db_con, $db_rec));
                 }
 
                 // if a problem has appeared up to here, don't try to save the values
                 // the problem is shown to the user by the calling interactive script
-                if ($result == '') {
-                    $result = $this->save_fields($db_con, $db_rec);
+                if ($usr_msg->is_ok()) {
+                    $usr_msg->add_message($this->save_fields($db_con, $db_rec));
                 }
             }
         }
 
         // TODO log internal errors as errors but user warnings as info
-        if ($result != '') {
-            log_info($result);
+        if (!$usr_msg->is_ok()) {
+            log_info($usr_msg->get_last_message());
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**

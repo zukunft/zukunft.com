@@ -335,15 +335,14 @@ class source extends sandbox_typed
     /**
      * load a source by code id
      * @param string $code_id the code id of the source
-     * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_code_id(string $code_id, string $class = self::class): int
+    function load_by_code_id(string $code_id): int
     {
         global $db_con;
 
         log_debug($code_id);
-        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id, $class);
+        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id);
         return parent::load($qp);
     }
 
@@ -369,12 +368,11 @@ class source extends sandbox_typed
      *
      * @param sql $sc with the target db_type set
      * @param string $code_id the code id of the source
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql $sc, string $code_id, string $class): sql_par
+    function load_sql_by_code_id(sql $sc, string $code_id): sql_par
     {
-        $qp = $this->load_sql($sc, 'code_id', $class);
+        $qp = $this->load_sql($sc, 'code_id');
         $sc->add_where(sql::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -470,7 +468,7 @@ class source extends sandbox_typed
         // save the source in the database
         if (!$test_obj) {
             if ($result->is_ok()) {
-                $result->add_message($this->save());
+                $result->add($this->save());
             }
         }
 
@@ -515,7 +513,7 @@ class source extends sandbox_typed
     function save_from_api_msg(array $api_json, bool $do_save = true): user_message
     {
         log_debug();
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         foreach ($api_json as $key => $value) {
 
@@ -533,11 +531,11 @@ class source extends sandbox_typed
             }
         }
 
-        if ($result->is_ok() and $do_save) {
-            $result->add_message($this->save());
+        if ($usr_msg->is_ok() and $do_save) {
+            $usr_msg->add($this->save());
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 

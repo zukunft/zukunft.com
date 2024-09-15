@@ -89,7 +89,7 @@ if ($usr->id() > 0) {
             $msg .= 'Please select two words and a verb.';
         } else {
 
-            $add_result = $trp->save();
+            $add_result = $trp->save()->get_last_message();
 
             // if adding was successful ...
             if (str_replace('1', '', $add_result) == '') {

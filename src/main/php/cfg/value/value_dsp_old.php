@@ -659,11 +659,11 @@ class value_dsp_old extends value
      */
     private function reload(): user_message
     {
-        $msg = new user_message();
+        $usr_msg = new user_message();
         if ($this->is_id_set()) {
             $this->load_by_id($this->id());
         }
-        return $msg;
+        return $usr_msg;
     }
 
     /**
@@ -673,11 +673,11 @@ class value_dsp_old extends value
      */
     private function reload_if_needed(): user_message
     {
-        $msg = new user_message();
+        $usr_msg = new user_message();
         if (!$this->is_loaded()) {
-            $msg = $this->reload();
+            $usr_msg = $this->reload();
         }
-        return $msg;
+        return $usr_msg;
     }
 
     /**

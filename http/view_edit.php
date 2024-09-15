@@ -118,12 +118,12 @@ if ($usr->id() > 0) {
                 $cmp = new component($usr);
                 $cmp_name = $_GET['entry_name'];
                 $cmp->set_name($cmp_name);
-                $add_result = $cmp->save();
+                $add_result = $cmp->save()->get_last_message();
                 if ($add_result == '') {
                     $cmp->load_by_name($cmp_name);
                     if ($cmp->id() > 0) {
                         $cmp->type_id = $_GET['new_entry_type'];
-                        $cmp->save();
+                        $cmp->save()->get_last_message();
                         $order_nbr = $cmp->next_nbr($msk_edit->id());
                         $cmp->link($msk_edit, $order_nbr);
                     }
@@ -148,7 +148,7 @@ if ($usr->id() > 0) {
             } //
 
             // save the changes
-            $upd_result = $msk_edit->save();
+            $upd_result = $msk_edit->save()->get_last_message();
 
             // if update was fine ...
             if (str_replace('1', '', $upd_result) == '') {

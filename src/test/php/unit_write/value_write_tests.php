@@ -280,7 +280,7 @@ class value_write_tests
         $add_val = new value($t->usr1);
         $add_val->grp = $phr_grp;
         $add_val->set_number(value_api::TV_BIG);
-        $result = $add_val->save();
+        $result = $add_val->save()->get_last_message();
         $target = '';
         $t->display(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         $test_val_lst[] = $add_val->id();
@@ -319,7 +319,7 @@ class value_write_tests
         $add_val2 = new value($t->usr1);
         $add_val2->grp = $phr_grp2;
         $add_val2->set_number(value_api::TV_BIGGER);
-        $result = $add_val2->save();
+        $result = $add_val2->save()->get_last_message();
         $target = '';
         $t->display(', value->save ' . $add_val2->number() . ' for ' . $phr_grp2->name() . ' by user "' . $t->usr1->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -330,7 +330,7 @@ class value_write_tests
         $add_val_ts->ids = $phr_lst_ts->ids;
         $add_val_ts->set_number(TV_ABB_PRICE_20200515;
         $add_val_ts->time_stamp = new DateTime('2020-05-15');
-        $result = $add_val_ts->save();
+        $result = $add_val_ts->save()->get_last_message();
         $target = '';
         $t->display(', value->save ' . $add_val_ts->number() . ' for ' . $phr_lst_ts->name() . ' and ' . $add_val_ts->time_stamp->format(DateTimeInterface::ATOM) . ' by user "' . $t->usr1->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         */
@@ -360,7 +360,7 @@ class value_write_tests
         $added_val = new value($t->usr1);
         $added_val->load_by_id($added_val_id);
         $added_val->set_number(987654321);
-        $result = $added_val->save();
+        $result = $added_val->save()->get_last_message();
         $target = '';
         $t->display(', word->save update value id "' . $added_val_id . '" from  "' . $add_val->number() . '" to "' . $added_val->number() . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -391,7 +391,7 @@ class value_write_tests
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_id($added_val_id);
         $val_usr2->set_number(23456);
-        $result = $val_usr2->save();
+        $result = $val_usr2->save()->get_last_message();
         $target = '';
         $t->display(', value->save ' . $val_usr2->number() . ' for ' . $phr_lst->name() . ' and user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -430,7 +430,7 @@ class value_write_tests
         $added_val_usr2 = new value($t->usr2);
         $added_val_usr2->load_by_grp($phr_grp);
         $added_val_usr2->set_number(987654321);
-        $result = $added_val_usr2->save();
+        $result = $added_val_usr2->save()->get_last_message();
         $target = '';
         $t->display(', value->save change to ' . $val_usr2->number() . ' for ' . $phr_grp->name() . ' and user "' . $t->usr2->name . '" should undo the user change', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 

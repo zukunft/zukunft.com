@@ -161,7 +161,7 @@ class component_link_write_tests
         $cmp2 = new component($t->usr1);
         $cmp2->set_name(component_api::TN_ADD2);
         $cmp2->description = 'Just added a second view component for testing';
-        $result = $cmp2->save();
+        $result = $cmp2->save()->get_last_message();
         if ($cmp2->id() > 0) {
             $result = $cmp2->description;
         }

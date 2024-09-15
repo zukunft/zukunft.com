@@ -118,7 +118,7 @@ if ($usr->id() > 0) {
                 $val->convert();
 
                 // save the value change
-                $upd_result = $val->save();
+                $upd_result = $val->save()->get_last_message();
 
                 // if update was successful ...
                 if (str_replace('1', '', $upd_result) == '') {

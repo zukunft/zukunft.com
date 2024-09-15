@@ -107,7 +107,7 @@ class view_write_tests
         $msk = new view($t->usr1);
         $msk->set_name(view_api::TN_ADD);
         $msk->description = 'Just added for testing';
-        $result = $msk->save();
+        $result = $msk->save()->get_last_message();
         if ($msk->id() > 0) {
             $result = $msk->description;
         }
@@ -133,7 +133,7 @@ class view_write_tests
         // check if adding the same view again creates a correct error message
         $msk = new view($t->usr1);
         $msk->set_name(view_api::TN_ADD);
-        $result = $msk->save();
+        $result = $msk->save()->get_last_message();
         $target = 'A view with the name "' . view_api::TN_ADD . '" already exists. Please use another name.'; // is this error message really needed???
         $target = '';
         $t->display('view->save adding "' . $msk->name() . '" again', $target, $result, $t::TIMEOUT_LIMIT_DB);
@@ -142,7 +142,7 @@ class view_write_tests
         $msk = new view($t->usr1);
         $msk->load_by_name(view_api::TN_ADD, view::class);
         $msk->set_name(view_api::TN_RENAMED);
-        $result = $msk->save();
+        $result = $msk->save()->get_last_message();
         $target = '';
         $t->display('view->save rename "' . view_api::TN_ADD . '" to "' . view_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -169,7 +169,7 @@ class view_write_tests
         // check if the view parameters can be added
         $dsp_renamed->description = 'Just added for testing the user sandbox';
         $dsp_renamed->type_id = $view_types->id(view_type::WORD_DEFAULT);
-        $result = $dsp_renamed->save();
+        $result = $dsp_renamed->save()->get_last_message();
         $target = '';
         $t->display('view->save all view fields beside the name for "' . view_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -209,7 +209,7 @@ class view_write_tests
         $dsp_usr2->load_by_name(view_api::TN_RENAMED, view::class);
         $dsp_usr2->description = 'Just changed for testing the user sandbox';
         $dsp_usr2->type_id = $view_types->id(view_type::ENTRY);
-        $result = $dsp_usr2->save();
+        $result = $dsp_usr2->save()->get_last_message();
         $target = '';
         $t->display('view->save all view fields for user 2 beside the name for "' . view_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -238,7 +238,7 @@ class view_write_tests
         $dsp_usr2->load_by_name(view_api::TN_RENAMED, view::class);
         $dsp_usr2->description = 'Just added for testing the user sandbox';
         $dsp_usr2->type_id = $view_types->id(view_type::WORD_DEFAULT);
-        $result = $dsp_usr2->save();
+        $result = $dsp_usr2->save()->get_last_message();
         $target = '';
         $t->display('view->save undo the user view fields beside the name for "' . view_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 

@@ -976,7 +976,7 @@ class result extends sandbox_value
         // save the result in the database
         if (!$test_obj) {
             if ($result->is_ok()) {
-                $this->save();
+                $this->save()->get_last_message();
                 log_debug($this->dsp_id());
             } else {
                 log_debug($result->all_message_text());
@@ -1337,7 +1337,7 @@ class result extends sandbox_value
                 $res_upd->load_by_id($val_row[self::FLD_ID]);
                 $res_upd->update();
                 // if the value is really updated, remember the value is to check if this triggers more updates
-                $result[] = $res_upd->save();
+                $result[] = $res_upd->save()->get_last_message();
             }
         }
 
@@ -1371,7 +1371,7 @@ class result extends sandbox_value
     {
         $res_no_time = clone $this;
         // $res_no_time->time_phr = null;
-        return $res_no_time->save();
+        return $res_no_time->save()->get_last_message();
     }
 
 
@@ -1482,7 +1482,7 @@ class result extends sandbox_value
                     }
 
                     // save the result
-                    $this->save();
+                    $this->save()->get_last_message();
                     $res_id = $this->id();
 
                     if ($debug > 0) {
@@ -1506,14 +1506,14 @@ class result extends sandbox_value
      * TODO check if user specific result needs to be added
      * for the word selection the id list is the lead, not the object list and not the group
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return string the message that should be shown to the user in case something went wrong
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save(?bool $use_func = null): string
+    function save(?bool $use_func = null): user_message
     {
 
         global $db_con;
         global $debug;
-        $result = '';
+        $usr_msg = new user_message();
 
         // check the parameters e.g. a result must always be linked to a formula
         if ($this->frm->id() <= 0) {
@@ -1554,21 +1554,21 @@ class result extends sandbox_value
             // updates of results are not logged because they could be reproduced
             if ($row_id > 0) {
                 if ($db_con->sf($db_val) <> $db_con->sf($this->number())) {
-                    $msg = 'update result ' . result::FLD_VALUE . ' to ' . $this->number()
+                    $msg = 'update result ' . sandbox_value::FLD_VALUE . ' to ' . $this->number()
                         . ' from ' . $db_val . ' for ' . $this->dsp_id();
                     log_debug($msg);
                     $db_con->set_class(result::class);
                     $sc = $db_con->sql_creator();
                     $qp = $this->sql_update($sc, $res_db);
-                    $usr_msg = $db_con->update($qp, $msg);
-                    if ($usr_msg->is_ok()) {
-                        $result = $row_id;
+                    $upd_msg = $db_con->update($qp, $msg);
+                    if ($upd_msg->is_ok()) {
+                        $usr_msg->set_db_row_id($row_id);
                     }
                 } else {
-                    $msg = 'update of result ' . result::FLD_VALUE . ' ' . $this->dsp_id() . ' not needed';
+                    $msg = 'update of result ' . sandbox_value::FLD_VALUE . ' ' . $this->dsp_id() . ' not needed';
                     log_debug($msg);
                     $this->id = $row_id;
-                    $result = $row_id;
+                    $usr_msg->set_db_row_id($row_id);
                 }
             } else {
                 $msg = 'insert result ' . $this->number() . ' for ' . $this->dsp_id();
@@ -1576,7 +1576,7 @@ class result extends sandbox_value
                 $field_values = array();
                 $field_names[] = formula::FLD_ID;
                 $field_values[] = $this->frm->id();
-                $field_names[] = result::FLD_VALUE;
+                $field_names[] = sandbox_value::FLD_VALUE;
                 $field_values[] = $this->number();
                 $field_names[] = result::FLD_GRP;
                 $field_values[] = $this->grp->id();
@@ -1586,21 +1586,21 @@ class result extends sandbox_value
                     $field_names[] = user::FLD_ID;
                     $field_values[] = $this->user()->id();
                 }
-                $field_names[] = result::FLD_LAST_UPDATE;
+                $field_names[] = sandbox_value::FLD_LAST_UPDATE;
                 //$field_values[] = sql_creator::NOW; // replaced with time of last change that has been included in the calculation
                 $field_values[] = $this->last_val_update->format('Y-m-d H:i:s');
                 $db_con->set_class(result::class);
                 $sc = $db_con->sql_creator();
                 $qp = $this->sql_insert($sc);
-                $usr_msg = $db_con->insert($qp, $msg);
-                if ($usr_msg->is_ok()) {
-                    $result = $row_id;
+                $upd_msg = $db_con->insert($qp, $msg);
+                if ($upd_msg->is_ok()) {
+                    $usr_msg->set_db_row_id($row_id);
                 }
             }
         }
 
-        log_debug("id (" . $result . ")");
-        return $result;
+        log_debug("id (" . $usr_msg->get_row_id() . ")");
+        return $usr_msg;
 
     }
 

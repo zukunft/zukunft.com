@@ -784,14 +784,14 @@ class word_list extends sandbox_list
      */
     function import_obj(array $json_obj, object $test_obj = null): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         foreach ($json_obj as $value) {
             $wrd = new word($this->user());
-            $result->add($wrd->import_obj($value, $test_obj));
+            $usr_msg->add($wrd->import_obj($value, $test_obj));
             $this->add($wrd);
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**

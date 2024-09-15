@@ -780,7 +780,7 @@ class word extends sandbox_typed
         // save the word in the database
         if (!$test_obj) {
             if ($result->is_ok()) {
-                $result->add_message($this->save());
+                $result->add($this->save());
             }
         }
 
@@ -1622,7 +1622,7 @@ class word extends sandbox_typed
     function save_from_api_msg(array $api_json, bool $do_save = true): user_message
     {
         log_debug();
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         foreach ($api_json as $key => $value) {
 
@@ -1637,11 +1637,11 @@ class word extends sandbox_typed
             }
         }
 
-        if ($result->is_ok() and $do_save) {
-            $result->add_message($this->save());
+        if ($usr_msg->is_ok() and $do_save) {
+            $usr_msg->add($this->save());
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1824,7 +1824,7 @@ class word extends sandbox_typed
      */
     function del_links(): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         // collect all phrase groups where this word is used
         // TODO activate
@@ -1841,19 +1841,19 @@ class word extends sandbox_typed
 
         // if there are still values, ask if they really should be deleted
         if ($val_lst->has_values()) {
-            $result->add($val_lst->del());
+            $usr_msg->add($val_lst->del());
         }
 
         // if there are still triples, ask if they really should be deleted
         if ($trp_lst->has_values()) {
-            $result->add($trp_lst->del());
+            $usr_msg->add($trp_lst->del());
         }
 
         // delete the phrase groups
         // TODO activate
-        //$result->add($grp_lst->del());
+        //$usr_msg->add($grp_lst->del());
 
-        return $result;
+        return $usr_msg;
     }
 
 

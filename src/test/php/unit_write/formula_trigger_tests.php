@@ -63,12 +63,12 @@ class formula_trigger_tests
         $val_add1 = new value($usr);
         $val_add1->grp = $phr_lst1->get_grp_id();
         $val_add1->set_number(value_api::TV_CH_INHABITANTS_2019_IN_MIO);
-        $result = $val_add1->save();
+        $result = $val_add1->save()->get_last_message();
         // add a second number to the test word
         $val_add2 = new value($usr);
         $val_add2->grp = $phr_lst2->get_grp_id();
         $val_add2->set_number(value_api::TV_CH_INHABITANTS_2020_IN_MIO);
-        $result = $val_add2->save();
+        $result = $val_add2->save()->get_last_message();
 
         // check if the first number have been saved correctly
         $added_val = new value($usr);

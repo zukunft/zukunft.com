@@ -761,7 +761,7 @@ class ref extends sandbox_link
         if (!$test_obj) {
             if ($this->load_objects()) {
                 if ($result->is_ok()) {
-                    $result->add_message($this->save());
+                    $result->add($this->save());
                 }
             }
         }
@@ -986,16 +986,16 @@ class ref extends sandbox_link
         log_debug('ref->add ' . $this->dsp_id());
 
         global $db_con;
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
-            $usr_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-            if ($usr_msg->is_ok()) {
-                $this->id = $usr_msg->get_row_id();
+            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+            if ($ins_msg->is_ok()) {
+                $this->id = $ins_msg->get_row_id();
             }
-            $result->add($usr_msg);
+            $usr_msg->add($ins_msg);
         } else {
             // log the insert attempt first
             $log = $this->log_link_add();
@@ -1010,8 +1010,8 @@ class ref extends sandbox_link
                 if ($this->id > 0) {
                     // update the id in the log for the correct reference
                     if (!$log->add_ref($this->id)) {
-                        $result->add_message('Adding reference ' . $this->dsp_id() . ' in the log failed.');
-                        log_err($result->get_message(), 'ref->add');
+                        $usr_msg->add_message('Adding reference ' . $this->dsp_id() . ' in the log failed.');
+                        log_err($usr_msg->get_message(), 'ref->add');
                     } else {
                         // create an empty db_rec element to force saving of all set fields
                         $db_rec = clone $this;
@@ -1021,16 +1021,16 @@ class ref extends sandbox_link
                         $db_rec->set_user($this->user());
                         $std_rec = clone $db_rec;
                         // save the object fields
-                        $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                        $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
                     }
                 } else {
-                    $result->add_message('Adding reference ' . $this->dsp_id() . ' failed.');
-                    log_err($result->get_message(), 'ref->add');
+                    $usr_msg->add_message('Adding reference ' . $this->dsp_id() . ' failed.');
+                    log_err($usr_msg->get_message(), 'ref->add');
                 }
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1056,14 +1056,14 @@ class ref extends sandbox_link
      * update a ref in the database or update the existing
      * TODO review by comparing with sandbox function
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return string the id of the updated or created reference
+     * @return user_message the id of the updated or created reference
      */
-    function save(?bool $use_func = null): string
+    function save(?bool $use_func = null): user_message
     {
         log_debug();
 
         global $db_con;
-        $result = '';
+        $usr_msg = new user_message();
 
         // decide which db write method should be used
         if ($use_func === null) {
@@ -1091,7 +1091,7 @@ class ref extends sandbox_link
         // create a new object or update an existing
         if ($this->id <= 0) {
             log_debug('add ' . $this->dsp_id());
-            $result .= $this->add($use_func)->get_message();
+            $usr_msg->add($this->add($use_func));
         } else {
             log_debug('update ' . $this->dsp_id());
 
@@ -1119,16 +1119,16 @@ class ref extends sandbox_link
 
             // if everything has been fine until here
             // update the
-            if ($result == '') {
+            if ($usr_msg->is_ok()) {
                 if ($use_func) {
-                    $result .= $this->save_fields_func($db_con, $db_rec, $std_rec);
+                    $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
                 } else {
-                    $result = $this->save_fields($db_con, $db_rec, $std_rec);
+                    $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
                 }
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 

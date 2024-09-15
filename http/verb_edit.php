@@ -89,7 +89,7 @@ if ($usr->id() > 0) {
             }
 
             // save the changes
-            $upd_result = $vrb->save();
+            $upd_result = $vrb->save()->get_last_message();
 
             // if update was successful ...
             if (str_replace('1', '', $upd_result) == '') {

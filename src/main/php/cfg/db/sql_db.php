@@ -2253,7 +2253,7 @@ class sql_db
      */
     function exe_script(string $sql): \PgSql\Result|mysqli_result|user_message
     {
-        $msg = new user_message();
+        $usr_msg = new user_message();
         $result = true;
         // execute on the connected database
         if ($this->db_type == sql_db::POSTGRES) {
@@ -2261,22 +2261,22 @@ class sql_db
                 $result = pg_query($this->postgres_link, $sql);
             } catch (Exception $e) {
                 $trace_link = $this->log_db_exception('execute script', $e, $sql, $log_level);
-                $msg->set_url($trace_link);
+                $usr_msg->set_url($trace_link);
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
             try {
                 $result = mysqli_query($this->mysql, $sql);
             } catch (Exception $e) {
                 $trace_link = $this->log_db_exception('execute script', $e, $sql, $log_level);
-                $msg->set_url($trace_link);
+                $usr_msg->set_url($trace_link);
             }
         } else {
             log_fatal('Unknown database type "' . $this->db_type . '"', 'exe_script');
         }
         if ($result === false) {
-            $msg->add_message(pg_last_error($this->postgres_link));
+            $usr_msg->add_message(pg_last_error($this->postgres_link));
         }
-        return $msg;
+        return $usr_msg;
     }
 
     /**
@@ -4049,7 +4049,7 @@ class sql_db
      */
     function insert(sql_par $qp, string $description, bool $usr_tbl = false): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         $err_msg = 'Insert of ' . $description . ' failed.';
         try {
             $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name);
@@ -4058,7 +4058,7 @@ class sql_db
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
                     log_err($sql_error . ' while executing ' . $qp->sql);
-                    $result->add_message($err_msg);
+                    $usr_msg->add_message($err_msg);
                 } else {
                     if (!$usr_tbl) {
                         $db_id = pg_fetch_array($sql_result)[0];
@@ -4072,17 +4072,17 @@ class sql_db
             if (!$usr_tbl) {
                 if ($db_id == 0 or $db_id == '') {
                     log_err($err_msg);
-                    $result->add_message($err_msg);
+                    $usr_msg->add_message($err_msg);
                 } else {
-                    $result->set_db_row_id($db_id);
+                    $usr_msg->set_db_row_id($db_id);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $result->add_message($trace_link);
+            $usr_msg->add_message($trace_link);
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -4098,7 +4098,7 @@ class sql_db
      */
     function update(sql_par $qp, string $description): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         $err_msg = 'Update of ' . $description . ' failed';
         try {
             $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name);
@@ -4107,15 +4107,15 @@ class sql_db
                 if ($sql_error != '') {
                     $err_msg .= ' due to ' . $sql_error;
                     log_err($err_msg);
-                    $result->add_message($err_msg);
+                    $usr_msg->add_message($err_msg);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $result->add_message($trace_link);
+            $usr_msg->add_message($trace_link);
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -4131,7 +4131,7 @@ class sql_db
      */
     function delete(sql_par $qp, string $description): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         $err_msg = 'Delete of ' . $description . ' failed';
         try {
             $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql);
@@ -4140,15 +4140,15 @@ class sql_db
                 if ($sql_error != '') {
                     $err_msg .= ' due to ' . $sql_error;
                     log_err($err_msg);
-                    $result->add_message($err_msg);
+                    $usr_msg->add_message($err_msg);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $result->add_message($trace_link);
+            $usr_msg->add_message($trace_link);
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -4861,7 +4861,7 @@ class sql_db
      */
     function del_field(string $table_name, string $field_name): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         // adjust the parameters to the used database used
         $table_name = $this->get_table_name($table_name);
@@ -4872,10 +4872,10 @@ class sql_db
             // actually add the column
             $sql = 'ALTER TABLE IF EXISTS ' . $this->name_sql_esc($table_name) .
                 ' DROP COLUMN IF EXISTS ' . $this->name_sql_esc($field_name) . ';';
-            $result->add_message($this->exe_try('Deleting column ' . $field_name . ' of ' . $table_name, $sql));
+            $usr_msg->add_message($this->exe_try('Deleting column ' . $field_name . ' of ' . $table_name, $sql));
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**

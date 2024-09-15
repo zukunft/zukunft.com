@@ -116,7 +116,7 @@ if ($usr->id() > 0) {
         if ($frm->usr_text <> '') {
 
             // update the formula if it has been changed
-            $upd_result = $frm->save();
+            $upd_result = $frm->save()->get_last_message();
 
             // if update was successful ...
             if (str_replace('1', '', $upd_result) == '') {

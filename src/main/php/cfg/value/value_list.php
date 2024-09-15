@@ -723,7 +723,7 @@ class value_list extends sandbox_value_list
         global $protection_types;
 
         log_debug();
-        $result = new user_message();
+        $usr_msg = new user_message();
         $lib = new library();
 
         $val = new value($this->user());
@@ -739,7 +739,7 @@ class value_list extends sandbox_value_list
 
             if ($key == self::FLD_EX_CONTEXT) {
                 $phr_lst = new phrase_list($this->user());
-                $result->add($phr_lst->import_lst($value, $test_obj));
+                $usr_msg->add($phr_lst->import_lst($value, $test_obj));
                 $val->grp = $phr_lst->get_grp_id($do_save);
             }
 
@@ -747,7 +747,7 @@ class value_list extends sandbox_value_list
                 if (strtotime($value)) {
                     $val->time_stamp = $lib->get_datetime($value, $val->dsp_id(), 'JSON import');
                 } else {
-                    $result->add_message('Cannot add timestamp "' . $value . '" when importing ' . $val->dsp_id());
+                    $usr_msg->add_message('Cannot add timestamp "' . $value . '" when importing ' . $val->dsp_id());
                 }
             }
 
@@ -765,10 +765,10 @@ class value_list extends sandbox_value_list
                 if ($test_obj) {
                     $src->set_id($test_obj->seq_id());
                 } else {
-                    if ($result->is_ok()) {
+                    if ($usr_msg->is_ok()) {
                         $src->load_by_name($value);
                         if ($src->id() == 0) {
-                            $result->add_message($src->save());
+                            $usr_msg->add($src->save());
                         }
                     }
                 }
@@ -779,40 +779,40 @@ class value_list extends sandbox_value_list
                 foreach ($value as $val_entry_key => $val_entry) {
                     if (is_array($val_entry)) {
                         foreach ($val_entry as $val_key => $val_number) {
-                            $result = $this->add_value(
+                            $usr_msg = $this->add_value(
                                 $val_key,
                                 $val_number,
                                 $val,
                                 $phr_lst,
                                 $do_save,
-                                $result,
+                                $usr_msg,
                                 $test_obj);
                         }
                     } else {
-                        $result = $this->add_value(
+                        $usr_msg = $this->add_value(
                             $val_entry_key,
                             $val_entry,
                             $val,
                             $phr_lst,
                             $do_save,
-                            $result,
+                            $usr_msg,
                             $test_obj);
                     }
                 }
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     private function add_value(
-        $val_key,
-        $val_number,
-        value $val,
-        phrase_list $phr_lst,
-        bool $do_save,
-        user_message $result,
-        object $test_obj = null
+                     $val_key,
+                     $val_number,
+        value        $val,
+        phrase_list  $phr_lst,
+        bool         $do_save,
+        user_message $usr_msg,
+        object       $test_obj = null
     ): user_message
     {
         $val_to_add = clone $val;
@@ -830,10 +830,10 @@ class value_list extends sandbox_value_list
         if ($test_obj) {
             $val_to_add->set_id($test_obj->seq_id());
         } else {
-            $result->add_message($val_to_add->save());
+            $usr_msg->add($val_to_add->save());
         }
         $this->add_obj($val_to_add);
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1390,10 +1390,10 @@ class value_list extends sandbox_value_list
      */
     function del(): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         foreach ($this->lst() as $val) {
-            $result->add($val->del());
+            $usr_msg->add($val->del());
         }
         return new user_message();
     }

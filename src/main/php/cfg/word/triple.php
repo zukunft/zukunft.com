@@ -1431,7 +1431,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             if ($result->is_ok()) {
                 // remove unneeded given names
                 $this->set_names();
-                $result->add_message($this->save());
+                $result->add($this->save());
             }
         }
 
@@ -2044,16 +2044,16 @@ class triple extends sandbox_link_named implements JsonSerializable
      * @param triple|sandbox $db_rec the database record before the saving
      * @param triple|sandbox $std_rec the database record defined as standard because it is used by most users
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @returns string an empty string if everything is fine or a messages for the user what should be changed
+     * @returns user_message a messages for the user what should be changed if something failed
      */
     function save_id_if_updated(
         sql_db         $db_con,
         triple|sandbox $db_rec,
         triple|sandbox $std_rec,
         bool           $use_func
-    ): string
+    ): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
 
         if ($db_rec->from_id() <> $this->from_id()
             or $db_rec->verb_id() <> $this->verb_id()
@@ -2067,11 +2067,11 @@ class triple extends sandbox_link_named implements JsonSerializable
                 // ... if yes request to delete or exclude the record with the id parameters before the change
                 $to_del = clone $db_rec;
                 $msg = $to_del->del();
-                $result .= $msg->get_last_message();
+                $usr_msg->add($msg);
                 if (!$msg->is_ok()) {
-                    $result .= 'Failed to delete the unused work link';
+                    $usr_msg->add_message('Failed to delete the unused work link');
                 }
-                if ($result = '') {
+                if ($usr_msg->is_ok()) {
                     // ... and use it for the update
                     $this->set_id($db_chk->id());
                     $this->owner_id = $db_chk->owner_id;
@@ -2087,29 +2087,29 @@ class triple extends sandbox_link_named implements JsonSerializable
                     // in this case change is allowed and done
                     log_debug('triple->save_id_if_updated change the existing triple ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
                     $this->load_objects();
-                    $result .= $this->save_id_fields($db_con, $db_rec, $std_rec);
+                    $usr_msg->add_message($this->save_id_fields($db_con, $db_rec, $std_rec));
                 } else {
                     // if the target link has not yet been created
                     // ... request to delete the old
                     $to_del = clone $db_rec;
                     $msg = $to_del->del();
-                    $result .= $msg->get_last_message();
+                    $usr_msg->add($msg);
                     if (!$msg->is_ok()) {
-                        $result .= 'Failed to delete the unused work link';
+                        $usr_msg->add_message('Failed to delete the unused work link');
                     }
                     // ... and create a deletion request for all users ???
 
                     // ... and create a new triple
                     $this->set_id(0);
                     $this->owner_id = $this->user()->id();
-                    $result .= $this->add()->get_last_message();
+                    $usr_msg->add($this->add());
                     log_debug('triple->save_id_if_updated recreate the triple del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
                 }
             }
         }
 
         log_debug('triple->save_id_if_updated for ' . $this->dsp_id() . ' has been done');
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -2125,18 +2125,18 @@ class triple extends sandbox_link_named implements JsonSerializable
         log_debug('triple->add new triple for "' . $this->from()->name() . '" ' . $this->verb_name() . ' "' . $this->to()->name() . '"');
 
         global $db_con;
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         if ($use_func) {
             // TODO review: do not set the generated name if it matches the name
             $this->set_names();
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
-            $usr_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-            if ($usr_msg->is_ok()) {
-                $this->id = $usr_msg->get_row_id();
+            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+            if ($ins_msg->is_ok()) {
+                $this->id = $ins_msg->get_row_id();
             }
-            $result->add($usr_msg);
+            $usr_msg->add($ins_msg);
         } else {
 
             // log the insert attempt first
@@ -2146,9 +2146,9 @@ class triple extends sandbox_link_named implements JsonSerializable
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
                     $qp = $this->sql_insert($sc);
-                    $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
-                    if ($usr_msg->is_ok()) {
-                        $this->set_id($usr_msg->get_row_id());
+                    $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
+                    if ($ins_msg->is_ok()) {
+                        $this->set_id($ins_msg->get_row_id());
                     }
                 } else {
                     $db_con->set_class(triple::class);
@@ -2160,7 +2160,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 if ($this->id() > 0) {
                     // update the id in the log
                     if (!$log->add_ref($this->id())) {
-                        $result->add_message('Updating the reference in the log failed');
+                        $usr_msg->add_message('Updating the reference in the log failed');
                         // TODO do rollback or retry?
                     } else {
 
@@ -2171,25 +2171,25 @@ class triple extends sandbox_link_named implements JsonSerializable
                         $db_rec->set_to($this->to());
                         $std_rec = clone $db_rec;
                         // save the triple fields
-                        $result->add_message($this->save_name_fields($db_con, $db_rec, $std_rec));
-                        $result->add_message($this->save_triple_fields($db_con, $db_rec, $std_rec));
+                        $usr_msg->add_message($this->save_name_fields($db_con, $db_rec, $std_rec));
+                        $usr_msg->add_message($this->save_triple_fields($db_con, $db_rec, $std_rec));
                     }
 
                 } else {
-                    $result->add_message("Adding triple " . $this->name . " failed");
+                    $usr_msg->add_message("Adding triple " . $this->name . " failed");
                 }
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * update a triple in the database or create a user triple
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return string an empty string if everything is fine otherwise the message that should be shown to the user
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save(?bool $use_func = null): string
+    function save(?bool $use_func = null): user_message
     {
         log_debug($this->dsp_id());
 
@@ -2200,14 +2200,14 @@ class triple extends sandbox_link_named implements JsonSerializable
         //$class_name = $lib->class_to_name($this::class);
 
         // check the preserved names
-        $result = $this->check_save();
+        $usr_msg = $this->check_save();
 
         // decide which db write method should be used
         if ($use_func === null) {
             $use_func = $this->sql_default_script_usage();
         }
 
-        if ($result == '') {
+        if ($usr_msg->is_ok()) {
 
             // load the objects if needed
             $this->load_objects();
@@ -2239,12 +2239,12 @@ class triple extends sandbox_link_named implements JsonSerializable
                 $db_chk_rev->load_standard();
                 if ($db_chk_rev->id() > 0) {
                     $this->set_id($db_chk_rev->id());
-                    $result .= 'The reverse of "' . $this->from()->name() . ' ' . $this->verb_name() . ' ' . $this->to()->name() . '" already exists. Do you really want to create both sides?';
+                    $usr_msg->add_message('The reverse of "' . $this->from()->name() . ' ' . $this->verb_name() . ' ' . $this->to()->name() . '" already exists. Do you really want to create both sides?');
                 }
             }
 
             // check if the triple already exists as standard and if yes, update it if needed
-            if ($this->id() == 0 and $result == '') {
+            if ($this->id() == 0 and $usr_msg->is_ok()) {
                 log_debug('check if a new triple for "' . $this->from()->name() . '" and "' . $this->to()->name() . '" needs to be created');
                 // check if the same triple is already in the database
                 $db_chk = clone $this;
@@ -2256,14 +2256,14 @@ class triple extends sandbox_link_named implements JsonSerializable
         }
 
         // try to save the link only if no question has been raised utils now
-        if ($result == '') {
+        if ($usr_msg->is_ok()) {
             // check if a new value is supposed to be added
             if ($this->id() == 0) {
-                $result .= $this->is_name_used_msg($this->name());
-                if ($result == '') {
-                    $result .= $this->add($use_func)->get_last_message();
-                    if ($result != '') {
-                        log_info($result);
+                $usr_msg->add_message($this->is_name_used_msg($this->name()));
+                if ($usr_msg->is_ok()) {
+                    $usr_msg->add($this->add($use_func));
+                    if (!$usr_msg->is_ok()) {
+                        log_info($usr_msg->get_last_message());
                     }
                 }
             } else {
@@ -2272,18 +2272,18 @@ class triple extends sandbox_link_named implements JsonSerializable
                 // done first, because it needs to be done for user and general phrases
                 $db_rec = new triple($this->user());
                 if (!$db_rec->load_by_id($this->id())) {
-                    $result .= 'Reloading of triple failed';
-                    if ($result != '') {
-                        log_err($result);
+                    $usr_msg->add_message('Reloading of triple failed');
+                    if (!$usr_msg->is_ok()) {
+                        log_err($usr_msg->get_last_message());
                     }
                 }
                 log_debug('database triple "' . $db_rec->name() . '" (' . $db_rec->id() . ') loaded');
                 $std_rec = new triple($this->user()); // the user must also be set to allow to take the ownership
                 $std_rec->set_id($this->id());
                 if (!$std_rec->load_standard()) {
-                    $result .= 'Reloading of the default values for triple failed';
-                    if ($result != '') {
-                        log_err($result);
+                    $usr_msg->add_message('Reloading of the default values for triple failed');
+                    if (!$usr_msg->is_ok()) {
+                        log_err($usr_msg->get_last_message());
                     }
                 }
                 log_debug('standard triple settings for "' . $std_rec->name() . '" (' . $std_rec->id() . ') loaded');
@@ -2294,30 +2294,30 @@ class triple extends sandbox_link_named implements JsonSerializable
                 }
 
                 // check if the id parameters are supposed to be changed
-                if ($result == '') {
-                    $result .= $this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func);
-                    if ($result != '') {
-                        log_err($result);
+                if ($usr_msg->is_ok()) {
+                    $usr_msg->add($this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func));
+                    if (!$usr_msg->is_ok()) {
+                        log_err($usr_msg->get_last_message());
                     }
                 }
 
-                if ($result == '') {
-                    $result .= $this->save_name_fields($db_con, $db_rec, $std_rec);
+                if ($usr_msg->is_ok()) {
+                    $usr_msg->add_message($this->save_name_fields($db_con, $db_rec, $std_rec));
                 }
 
                 // if a problem has appeared up to here, don't try to save the values
                 // the problem is shown to the user by the calling interactive script
-                if ($result == '') {
-                    $result .= $this->save_triple_fields($db_con, $db_rec, $std_rec);
-                    if ($result != '') {
-                        log_err($result);
+                if ($usr_msg->is_ok()) {
+                    $usr_msg->add_message($this->save_triple_fields($db_con, $db_rec, $std_rec));
+                    if (!$usr_msg->is_ok()) {
+                        log_err($usr_msg->get_last_message());
                     }
                 }
             }
         }
 
 
-        return $result;
+        return $usr_msg;
     }
 
     /*
@@ -2347,7 +2347,7 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function del_links(): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         // collect all phrase groups where this triple is used
         // TODO activate
@@ -2360,14 +2360,14 @@ class triple extends sandbox_link_named implements JsonSerializable
 
         // if there are still values, ask if they really should be deleted
         if ($val_lst->has_values()) {
-            $result->add($val_lst->del());
+            $usr_msg->add($val_lst->del());
         }
 
         // if the user confirms the deletion, the removal process is started with a retry of the triple deletion at the end
         // TODO activate
-        //$result->add($grp_lst->del());
+        //$usr_msg->add($grp_lst->del());
 
-        return $result;
+        return $usr_msg;
     }
 
 

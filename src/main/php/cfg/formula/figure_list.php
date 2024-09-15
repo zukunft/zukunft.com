@@ -84,17 +84,17 @@ class figure_list extends sandbox_list
      */
     function set_by_api_json(array $api_json): user_message
     {
-        $msg = new user_message();
+        $usr_msg = new user_message();
 
         foreach ($api_json as $json_phr) {
             $fig = new figure($this->user());
-            $msg->add($fig->set_by_api_json($json_phr));
-            if ($msg->is_ok()) {
+            $usr_msg->add($fig->set_by_api_json($json_phr));
+            if ($usr_msg->is_ok()) {
                 $this->add($fig);
             }
         }
 
-        return $msg;
+        return $usr_msg;
     }
 
 

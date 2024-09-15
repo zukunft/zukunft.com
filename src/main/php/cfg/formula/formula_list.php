@@ -545,10 +545,10 @@ class formula_list extends sandbox_list
      */
     function import_obj(array $json_obj, object $test_obj = null): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         foreach ($json_obj as $key => $value) {
             $frm = new formula($this->user());
-            $result->add($frm->import_obj($value, $test_obj));
+            $usr_msg->add($frm->import_obj($value, $test_obj));
             // add a dummy id for unit testing
             if ($test_obj) {
                 $frm->set_id($test_obj->seq_id());
@@ -556,7 +556,7 @@ class formula_list extends sandbox_list
             $this->add($frm);
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -623,7 +623,7 @@ class formula_list extends sandbox_list
             foreach ($this->lst() as $frm) {
                 $frm->set_ref_text();
             }
-            $msg = $this->save();
+            $msg = $this->save()->get_last_message();
             if ($msg != '') {
                 $result = false;
             }
@@ -729,7 +729,7 @@ class formula_list extends sandbox_list
     {
         $result = '';
         foreach ($this->lst() as $frm) {
-            $result .= $frm->save();
+            $result .= $frm->save()->get_last_message();
         }
         return $result;
     }

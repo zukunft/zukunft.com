@@ -101,7 +101,7 @@ if ($usr->id() > 0) {
             // if the parameters are fine
             if ($msg == '') {
                 // add the new source to the database
-                $add_result = $src->save();
+                $add_result = $src->save()->get_last_message();
 
                 // if adding was successful ...
                 if (str_replace('1', '', $add_result) == '') {

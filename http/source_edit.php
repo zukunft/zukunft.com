@@ -88,7 +88,7 @@ if ($usr->id() > 0) {
             }
 
             // save the changes
-            $upd_result = $src->save();
+            $upd_result = $src->save()->get_last_message();
 
             // if update was successful ...
             if (str_replace('1', '', $upd_result) == '') {

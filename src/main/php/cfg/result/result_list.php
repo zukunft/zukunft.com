@@ -621,14 +621,14 @@ class result_list extends sandbox_value_list
      */
     function import_obj(array $json_obj, object $test_obj = null): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         foreach ($json_obj as $res_json) {
             $res = new result($this->user());
-            $result->add($res->import_obj($res_json, $test_obj));
+            $usr_msg->add($res->import_obj($res_json, $test_obj));
             $this->add($res);
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**

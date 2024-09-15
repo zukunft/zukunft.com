@@ -490,23 +490,23 @@ class phrase extends combine_named
      */
     function set_by_api_json(array $api_json): user_message
     {
-        $msg = new user_message();
+        $usr_msg = new user_message();
 
         if ($api_json[api::FLD_ID] > 0) {
             $wrd = new word($this->user());
-            $msg->add($wrd->set_by_api_json($api_json));
-            if ($msg->is_ok()) {
+            $usr_msg->add($wrd->set_by_api_json($api_json));
+            if ($usr_msg->is_ok()) {
                 $this->obj = $wrd;
             }
         } else {
             $trp = new triple($this->user());
             $api_json[api::FLD_ID] = $api_json[api::FLD_ID] * -1;
-            $msg->add($trp->set_by_api_json($api_json));
-            if ($msg->is_ok()) {
+            $usr_msg->add($trp->set_by_api_json($api_json));
+            if ($usr_msg->is_ok()) {
                 $this->obj = $trp;
             }
         }
-        return $msg;
+        return $usr_msg;
     }
 
 
@@ -1447,17 +1447,17 @@ class phrase extends combine_named
      */
 
     /**
-     * @return string
+     * @return user_message
      */
-    function save(): string
+    function save(): user_message
     {
         global $phrase_types;
 
-        $result = '';
+        $usr_msg = new user_message();
 
         /*
         if (isset($this->obj)) {
-            $result = $this->obj->save();
+            $usr_msg = $this->obj->save();
         }
         */
 
@@ -1477,7 +1477,7 @@ class phrase extends combine_named
                 $wrd = new word($this->user());
                 $wrd->set_name($this->name());
                 $wrd->type_id = $phrase_types->default_id();
-                $result = $wrd->save();
+                $usr_msg->add($wrd->save());
                 if ($wrd->id() == 0) {
                     log_err('Cannot add from word ' . $this->dsp_id(), 'phrase->save');
                 } else {
@@ -1486,7 +1486,7 @@ class phrase extends combine_named
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1496,23 +1496,23 @@ class phrase extends combine_named
     function del(): user_message
     {
         log_debug($this->dsp_id());
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         // direct delete if the object is loaded
         if ($this->is_triple()) {
             $lnk = $this->obj;
             if ($lnk != null) {
-                $result->add($lnk->del());
+                $usr_msg->add($lnk->del());
             }
         } elseif ($this->is_word()) {
             $wrd = $this->obj;
             if ($wrd != null) {
-                $result->add($wrd->del());
+                $usr_msg->add($wrd->del());
             }
         } else {
             log_err('Unknown object type of ' . $this->dsp_id());
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1523,16 +1523,16 @@ class phrase extends combine_named
     function get_or_add(string $name): user_message
     {
         // init the result
-        $msg = new user_message();
+        $usr_msg = new user_message();
         // load the word or triple if it exists
         $this->load_by_name($name);
         if ($this->id() == 0) {
             // add a simple word if it does not yet exist
             $wrd = new word($this->user());
             $wrd->set_name($name);
-            $msg->add_message($wrd->save());
+            $usr_msg->add($wrd->save());
         }
-        return $msg;
+        return $usr_msg;
     }
 
 

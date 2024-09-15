@@ -263,11 +263,11 @@ class component_link_list extends sandbox_list
      */
     function del(): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         if (!$this->is_empty()) {
             foreach ($this->lst() as $dsp_cmp_lnk) {
-                $result->add($dsp_cmp_lnk->del());
+                $usr_msg->add($dsp_cmp_lnk->del());
             }
         }
         return new user_message();

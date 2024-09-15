@@ -67,7 +67,7 @@ function run_sandbox_test(all_tests $t): void
     // create a new source (_sandbox->save case 1)
     $src = new source($t->usr1);
     $src->set_name(source_api::TN_IPCC_AR6_SYNTHESIS);
-    $result = $src->save();
+    $result = $src->save()->get_last_message();
     $target = '';
     $t->display('_sandbox->save create a new source', $target, $result);
 
@@ -89,7 +89,7 @@ function run_sandbox_test(all_tests $t): void
     $src = new source($t->usr1);
     $src->set_name(source_api::TN_IPCC_AR6_SYNTHESIS);
     $src->url = source_api::TU_IPCC_AR6_SYNTHESIS;
-    $result = $src->save();
+    $result = $src->save()->get_last_message();
     $target = '';
     $t->display('_sandbox->save update the source url by name', $target, $result);
 

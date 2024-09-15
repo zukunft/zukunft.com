@@ -179,32 +179,32 @@ class job_list extends base_list
      */
     function add(job $job): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         log_debug('job_list->add');
 
         // check if the job to add has all needed parameters
         if ($job->type_code_id() != job_type_list::BASE_IMPORT) {
             if (!isset($job->frm)) {
                 $msg = 'Job ' . $job->dsp_id() . ' cannot be added, because formula is missing.';
-                $result->add_message($msg);
+                $usr_msg->add_message($msg);
             } elseif (!isset($job->phr_lst)) {
                 $msg = 'Job ' . $job->dsp_id() . ' cannot be added, because no words or triples are defined.';
-                $result->add_message($msg);
+                $usr_msg->add_message($msg);
             }
         }
 
         // do not add similar jobs
-        if ($result->is_ok()) {
-            $result->add($this->has_similar($job));
+        if ($usr_msg->is_ok()) {
+            $usr_msg->add($this->has_similar($job));
         }
 
         // finally add the job to the list if everything has been fine
-        if ($result->is_ok()) {
+        if ($usr_msg->is_ok()) {
             $this->add_obj($job);
         }
 
         log_debug('done');
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -215,7 +215,7 @@ class job_list extends base_list
      */
     private function has_similar(job $job): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         // build the list of phrase ids
         $chk_phr_lst_ids = array();
@@ -228,12 +228,12 @@ class job_list extends base_list
                 if ($chk_job->usr == $job->user()) {
                     if (in_array($chk_job->phr_lst->id(), $chk_phr_lst_ids)) {
                         $msg = 'Job for phrases ' . $chk_job->phr_lst->name() . ' is already in the list of active jobs';
-                        $result->add_message($msg);
+                        $usr_msg->add_message($msg);
                     }
                 }
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**

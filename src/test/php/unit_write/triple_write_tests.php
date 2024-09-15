@@ -191,7 +191,7 @@ class triple_write_tests
         // check if the name of a triple can be changed
         $trp = $t->test_triple(word_api::TN_RENAMED, verb::IS, word_api::TN_PARENT);
         $trp->set_name(triple_api::TN_ADD);
-        $result = $trp->save();
+        $result = $trp->save()->get_last_message();
         $t->assert('triple->save name to ' . triple_api::TN_ADD, $result);
 
         // ... and if the name check if the name of a triple can be changed
@@ -213,7 +213,7 @@ class triple_write_tests
         // check that even after renaming the triple no word with the standard name of the triple can be added
         $wrd = new word($t->usr1);
         $wrd->set_name(triple_api::TN_ADD_AUTO);
-        $result = $wrd->save();
+        $result = $wrd->save()->get_last_message();
         $target = 'A triple with the name "System Test Triple" already exists. ' .
             'Please use another word name.';
         $t->assert('word cannot have a standard triple name', $result, $target);
@@ -222,7 +222,7 @@ class triple_write_tests
         $vrb = new verb();
         $vrb->set_user($t->usr1);
         $vrb->set_name(triple_api::TN_ADD_AUTO);
-        $result = $vrb->save();
+        $result = $vrb->save()->get_last_message();
         $target = '<style class="text-danger">A triple with the name "System Test Triple" already exists. '
             . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.</style>';
         $t->assert('verb cannot have a standard triple name', $result, $target);
@@ -230,7 +230,7 @@ class triple_write_tests
         // ... and no formula either
         $frm = new formula($t->usr1);
         $frm->set_name(triple_api::TN_ADD_AUTO);
-        $result = $frm->save();
+        $result = $frm->save()->get_last_message();
         $target = '<style class="text-danger">A triple with the name "System Test Triple" already exists. '
             . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.</style>';
         $t->assert('word cannot have a standard triple name', $result, $target);

@@ -144,15 +144,15 @@ class import
         $lib = new library();
 
         log_debug();
-        $result = new user_message();
+        $usr_msg = new user_message();
         $this->last_display_time = microtime(true);
 
         $json_array = json_decode($json_str, true);
         if ($json_array == null) {
             if ($json_str != '') {
-                $result->add_message('JSON decode failed of ' . $json_str);
+                $usr_msg->add_message('JSON decode failed of ' . $json_str);
             } else {
-                $result->add_warning('JSON string is empty');
+                $usr_msg->add_warning('JSON string is empty');
             }
         } else {
             $total = $lib->count_recursive($json_array, 3);
@@ -175,7 +175,7 @@ class import
                                 $this->users_failed++;
                             }
                         }
-                        $result->add($import_result);
+                        $usr_msg->add($import_result);
                     }
                 }
             }
@@ -184,7 +184,7 @@ class import
                 $usr_import = $usr;
             }
 
-            // remember the result and view that should be validated after the import
+            // remember the usr_msg and view that should be validated after the import
             $res_to_validate = new result_list($usr_import);
             $frm_to_calc = new formula_list($usr_import);
             $dsp_to_validate = new view_list($usr_import);
@@ -194,7 +194,7 @@ class import
                 $pos++;
                 if ($key == export::VERSION) {
                     if (prg_version_is_newer($json_obj)) {
-                        $result->add_message('Import file has been created with version ' . $json_obj . ', which is newer than this, which is ' . PRG_VERSION);
+                        $usr_msg->add_message('Import file has been created with version ' . $json_obj . ', which is newer than this, which is ' . PRG_VERSION);
                     }
                 } elseif ($key == export::POD) {
                     // TODO set the source pod
@@ -222,7 +222,7 @@ class import
                         $this->display_progress($pos, $total, verb::class);
                         $pos++;
                     }
-                    $result->add($import_result);
+                    $usr_msg->add($import_result);
                 } elseif ($key == export::WORDS) {
                     foreach ($json_obj as $word) {
                         $wrd = new word($usr_trigger);
@@ -232,7 +232,7 @@ class import
                         } else {
                             $this->words_failed++;
                         }
-                        $result->add($import_result);
+                        $usr_msg->add($import_result);
                         $this->display_progress($pos, $total, word::class);
                         $pos++;
                     }
@@ -246,7 +246,7 @@ class import
                     } else {
                         $this->words_failed++;
                     }
-                    $result->add($import_result);
+                    $usr_msg->add($import_result);
                     $this->display_progress($pos, $total, phrase_list::class);
                     $pos++;
                 } elseif ($key == export::TRIPLES) {
@@ -258,7 +258,7 @@ class import
                         } else {
                             $this->triples_failed++;
                         }
-                        $result->add($import_result);
+                        $usr_msg->add($import_result);
                         $this->display_progress($pos, $total, triple::class);
                         $pos++;
                     }
@@ -272,7 +272,7 @@ class import
                         } else {
                             $this->formulas_failed++;
                         }
-                        $result->add($import_result);
+                        $usr_msg->add($import_result);
                         $this->display_progress($pos, $total, formula::class);
                         $pos++;
                     }
@@ -285,7 +285,7 @@ class import
                         } else {
                             $this->sources_failed++;
                         }
-                        $result->add($import_result);
+                        $usr_msg->add($import_result);
                         $this->display_progress($pos, $total, source::class);
                         $pos++;
                     }
@@ -298,7 +298,7 @@ class import
                         } else {
                             $this->refs_failed++;
                         }
-                        $result->add($import_result);
+                        $usr_msg->add($import_result);
                         $this->display_progress($pos, $total, ref::class);
                         $pos++;
                     }
@@ -311,7 +311,7 @@ class import
                         } else {
                             $this->values_failed++;
                         }
-                        $result->add($import_result);
+                        $usr_msg->add($import_result);
                         $this->display_progress($pos, $total, value::class);
                         $pos++;
                     }
@@ -324,7 +324,7 @@ class import
                         } else {
                             $this->values_failed++;
                         }
-                        $result->add($import_result);
+                        $usr_msg->add($import_result);
                         $this->display_progress($pos, $total, value::class);
                         $pos++;
                     }
@@ -338,7 +338,7 @@ class import
                         } else {
                             $this->list_values_failed++;
                         }
-                        $result->add($import_result);
+                        $usr_msg->add($import_result);
                         $this->display_progress($pos, $total, value_list::class);
                         $pos++;
                     }
@@ -351,7 +351,7 @@ class import
                         } else {
                             $this->views_failed++;
                         }
-                        $result->add($import_result);
+                        $usr_msg->add($import_result);
                         $this->display_progress($pos, $total, view::class);
                         $pos++;
                     }
@@ -364,7 +364,7 @@ class import
                         } else {
                             $this->components_failed++;
                         }
-                        $result->add($import_result);
+                        $usr_msg->add($import_result);
                         $this->display_progress($pos, $total, component::class);
                         $pos++;
                     }
@@ -379,12 +379,12 @@ class import
                         } else {
                             $this->calc_validations_failed++;
                         }
-                        $result->add($import_result);
+                        $usr_msg->add($import_result);
                         $this->display_progress($pos, $total, result::class);
                         $pos++;
                     }
                 } elseif ($key == export::VIEW_VALIDATION) {
-                    // TODO switch to view result
+                    // TODO switch to view usr_msg
                     // TODO add a unit test
                     foreach ($json_obj as $value) {
                         $msk = new view($usr_trigger);
@@ -395,7 +395,7 @@ class import
                         } else {
                             $this->view_validations_failed++;
                         }
-                        $result->add($import_result);
+                        $usr_msg->add($import_result);
                         $this->display_progress($pos, $total, view::class);
                         $pos++;
                     }
@@ -409,12 +409,12 @@ class import
                         } else {
                             $this->system_failed++;
                         }
-                        $result->add($import_result);
+                        $usr_msg->add($import_result);
                         $this->display_progress($pos, $total, ip_range::class);
                         $pos++;
                     }
                 } else {
-                    $result->add_message('Unknown element ' . $key);
+                    $usr_msg->add_message('Unknown element ' . $key);
                 }
             }
 
@@ -440,7 +440,7 @@ class import
             $this->display_progress($total, $total);
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 }

@@ -254,23 +254,23 @@ class figure extends combine_object
      */
     function set_by_api_json(array $api_json): user_message
     {
-        $msg = new user_message();
+        $usr_msg = new user_message();
 
         if ($api_json[api::FLD_ID] > 0) {
             $val = new value($this->user());
-            $msg->add($val->set_by_api_json($api_json));
-            if ($msg->is_ok()) {
+            $usr_msg->add($val->set_by_api_json($api_json));
+            if ($usr_msg->is_ok()) {
                 $this->obj = $val;
             }
         } else {
             $res = new result($this->user());
             $api_json[api::FLD_ID] = $api_json[api::FLD_ID] * -1;
-            $msg->add($res->set_by_api_json($api_json));
-            if ($msg->is_ok()) {
+            $usr_msg->add($res->set_by_api_json($api_json));
+            if ($usr_msg->is_ok()) {
                 $this->obj = $res;
             }
         }
-        return $msg;
+        return $usr_msg;
     }
 
 

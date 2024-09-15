@@ -61,15 +61,10 @@ include_once API_REF_PATH . 'source.php';
 include_once API_VIEW_PATH . 'view.php';
 include_once API_COMPONENT_PATH . 'component.php';
 include_once API_WORD_PATH . 'word.php';
+include_once API_SYSTEM_PATH . 'messeges.php';
 
 use api\api;
-use api\component\component as component_api;
-use api\formula\formula as formula_api;
-use api\word\triple as triple_api;
-use api\ref\source as source_api;
-use api\view\view as view_api;
-use api\word\word as word_api;
-use cfg\component\component;
+use api\system\messeges as msg_enum;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_type;
@@ -451,7 +446,7 @@ class sandbox_named extends sandbox
      */
     function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
-        $result = parent::import_obj($in_ex_json, $test_obj);
+        $usr_msg = parent::import_obj($in_ex_json, $test_obj);
         foreach ($in_ex_json as $key => $value) {
             if ($key == sandbox_exp::FLD_NAME) {
                 $this->set_name($value);
@@ -462,7 +457,7 @@ class sandbox_named extends sandbox
                 }
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
 
@@ -603,16 +598,16 @@ class sandbox_named extends sandbox
         log_debug($this->dsp_id());
 
         global $db_con;
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
-            $usr_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-            if ($usr_msg->is_ok()) {
-                $this->id = $usr_msg->get_row_id();
+            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+            if ($ins_msg->is_ok()) {
+                $this->id = $ins_msg->get_row_id();
             }
-            $result->add($usr_msg);
+            $usr_msg->add($ins_msg);
         } else {
 
             // log the insert attempt first
@@ -624,9 +619,9 @@ class sandbox_named extends sandbox
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
                     $qp = $this->sql_insert($sc);
-                    $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
-                    if ($usr_msg->is_ok()) {
-                        $this->id = $usr_msg->get_row_id();
+                    $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
+                    if ($ins_msg->is_ok()) {
+                        $this->id = $ins_msg->get_row_id();
                     }
                 } else {
                     $lib = new library();
@@ -641,10 +636,10 @@ class sandbox_named extends sandbox
                     log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
                     // update the id in the log
                     if (!$log->add_ref($this->id)) {
-                        $result->add_message('Updating the reference in the log failed');
+                        $usr_msg->add_message('Updating the reference in the log failed');
                         // TODO do rollback or retry?
                     } else {
-                        //$result->add_message($this->set_owner($new_owner_id));
+                        //$usr_msg->add_message($this->set_owner($new_owner_id));
 
                         // TODO all all objects to the pontential used of the prepared sql function with log
                         if (!$this->sql_write_prepared()) {
@@ -655,17 +650,17 @@ class sandbox_named extends sandbox
                             $db_rec->set_user($this->user());
                             $std_rec = clone $db_rec;
                             // save the object fields
-                            $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                            $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
                         }
                     }
 
                 } else {
-                    $result->add_message('Adding ' . $class_name . ' ' . $this->dsp_id() . ' failed due to logging error.');
+                    $usr_msg->add_message('Adding ' . $class_name . ' ' . $this->dsp_id() . ' failed due to logging error.');
                 }
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 
@@ -678,39 +673,41 @@ class sandbox_named extends sandbox
      * for these named objects check if the user has requested to use a preserved name
      * and if yes return a message and a suggested solution to the user
      *
-     * @return string
+     * @return user_message
      */
-    protected function check_save(): string
+    protected function check_save(): user_message
     {
         return $this->check_preserved();
     }
 
     /**
-     * check if the user has requested to use a preserved name for the sandbox object and if return a message to the user
-     * @return string
+     * check if the user has requested to use a preserved name for the sandbox object
+     * and if yes return a message to the user
+     *
+     * @return user_message
      */
-    protected function check_preserved(): string
+    protected function check_preserved(): user_message
     {
         global $usr;
 
         // init
+        $usr_msg = new user_message();
+        $mtr = new message_translator();
+        $msg_res = $mtr->txt(msg_enum::IS_RESERVED);
+        $msg_for = $mtr->txt(msg_enum::RESERVED_NAME);
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
-        $lms = new messages();
-        $msg_res = $lms->txt(messages::RESERVED_IS);
-        $msg_for = $lms->txt(messages::RESERVED_NAME);
-        $result = '';
         // system users are always allowed to add objects e.g. for the system views
         if (!$usr->is_system()) {
             if (in_array($this->name(), $this->reserved_names())) {
                 // the admin user needs to add the read test objects during initial load
                 if ($usr->is_admin() and !in_array($this->name(), $this->fixed_names())) {
-                    $result = '"' . $this->name() . '" ' . $msg_res . ' ' . $class_name . ' ' . $msg_for;
+                    $usr_msg->add_message('"' . $this->name() . '" ' . $msg_res . ' ' . $class_name . ' ' . $msg_for);
                 }
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**

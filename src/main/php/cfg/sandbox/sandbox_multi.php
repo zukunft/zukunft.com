@@ -1567,13 +1567,13 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * dummy function definition that will be overwritten by the child object
-     * check if this object uses any preserved names and if return a message to the user
-     * @return string
+     * check if the user requested a preserved name and if yes return a message to the user
+     * @return user_message
      */
-    protected function check_preserved(): string
+    protected function check_preserved(): user_message
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
-        return '';
+        return new user_message();
     }
 
 
@@ -2391,11 +2391,11 @@ class sandbox_multi extends db_object_multi_user
      */
     function add(bool $use_func = false): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         $msg = 'The dummy parent add function has been called, which should never happen';
         log_err($msg);
-        $result->add_message($msg);
-        return $result;
+        $usr_msg->add_message($msg);
+        return $usr_msg;
     }
 
     /*
@@ -2404,7 +2404,7 @@ class sandbox_multi extends db_object_multi_user
      *
      */
 
-    function save(?bool $use_func = null): string
+    function save(?bool $use_func = null): user_message
     {
         log_debug($this->dsp_id());
 
@@ -2420,9 +2420,9 @@ class sandbox_multi extends db_object_multi_user
         }
 
         // check the preserved names (only used for group names)
-        $result = $this->check_preserved();
+        $usr_msg = $this->check_preserved();
 
-        if ($result == '') {
+        if ($usr_msg->is_ok()) {
 
             // load the objects if needed
             if ($this->is_link_obj()) {
@@ -2443,7 +2443,7 @@ class sandbox_multi extends db_object_multi_user
                 if ($similar->id() <> 0) {
                     // check that the get_similar function has really found a similar object and report potential program errors
                     if (!$this->is_similar($similar)) {
-                        $result .= $this->dsp_id() . ' seems to be not similar to ' . $similar->dsp_id();
+                        $usr_msg->add_message($this->dsp_id() . ' seems to be not similar to ' . $similar->dsp_id());
                     } else {
                         // if similar is found set the id to trigger the updating instead of adding
                         $similar->load_by_id($similar->id, $similar::class); // e.g. to get the type_id
@@ -2453,7 +2453,7 @@ class sandbox_multi extends db_object_multi_user
                         } else {
                             if (!((get_class($this) == word::class and get_class($similar) == formula::class)
                                 or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
-                                $result = $similar->id_used_msg($this);
+                                $usr_msg->add_message($similar->id_used_msg($this));
                             }
                         }
                     }
@@ -2465,10 +2465,10 @@ class sandbox_multi extends db_object_multi_user
         }
 
         // create a new object if nothing similar has been found
-        if ($result == '') {
+        if ($usr_msg->is_ok()) {
             if (!$this->is_saved()) {
                 log_debug('add');
-                $result = $this->add($use_func)->get_last_message();
+                $usr_msg->add($this->add($use_func));
             } else {
                 // if the similar object is not the same as $this object, suggest renaming $this object
                 if ($similar != null) {
@@ -2476,12 +2476,12 @@ class sandbox_multi extends db_object_multi_user
                     // e.g. if a source already exists update the source
                     // but if a word with the same name of a formula already exists suggest a new formula name
                     if (!$this->is_same($similar)) {
-                        $result = $similar->id_used_msg($this);
+                        $usr_msg->add_message($similar->id_used_msg($this));
                     }
                 }
 
                 // update the existing object
-                if ($result == '') {
+                if ($usr_msg->is_ok()) {
                     log_debug('update');
 
                     // read the database values to be able to check if something has been changed;
@@ -2490,12 +2490,12 @@ class sandbox_multi extends db_object_multi_user
                     $db_rec->reset();
                     $db_rec->set_user($this->user());
                     if ($db_rec->load_by_id($this->id, $db_rec::class) != $this->id()) {
-                        $result .= 'Reloading of user ' . $class_name . ' failed';
+                        $usr_msg->add_message('Reloading of user ' . $class_name . ' failed');
                     } else {
                         log_debug('reloaded from db');
                         if ($this->is_link_obj()) {
                             if (!$db_rec->load_objects()) {
-                                $result .= 'Reloading of the object for ' . $class_name . ' failed';
+                                $usr_msg->add_message('Reloading of the object for ' . $class_name . ' failed');
                             }
                             // configure the global database connection object again to overwrite any changes from load_objects
                             $db_con->set_class($this::class);
@@ -2514,14 +2514,14 @@ class sandbox_multi extends db_object_multi_user
                     $std_rec->reset();
                     $std_rec->id = $this->id;
                     $std_rec->set_user($this->user()); // must also be set to allow to take the ownership
-                    if ($result == '') {
+                    if ($usr_msg->is_ok()) {
                         if (!$std_rec->load_standard()) {
-                            $result .= 'Reloading of the default values for ' . $class_name . ' failed';
+                            $usr_msg->add_message('Reloading of the default values for ' . $class_name . ' failed');
                         }
                     }
 
                     // for a correct user setting detection (function can_change) set the owner even if the object has not been loaded before the save
-                    if ($result == '') {
+                    if ($usr_msg->is_ok()) {
                         log_debug('standard loaded');
 
                         if ($this->owner_id <= 0) {
@@ -2530,23 +2530,24 @@ class sandbox_multi extends db_object_multi_user
                     }
 
                     // check if the id parameters are supposed to be changed
-                    if ($result == '') {
-                        $result .= $this->save_id_if_updated($db_con, $db_rec, $std_rec);
+                    if ($usr_msg->is_ok()) {
+                        $usr_msg->add_message($this->save_id_if_updated($db_con, $db_rec, $std_rec));
                     }
 
                     // if a problem has appeared up to here, don't try to save the values
                     // the problem is shown to the user by the calling interactive script
-                    if ($result == '') {
-                        $result .= $this->save_fields($db_con, $db_rec, $std_rec);
+                    // TODO add function based saving
+                    if ($usr_msg->is_ok()) {
+                        $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
                     }
                 }
             }
-            if ($result != '') {
-                log_err($result, 'user_sandbox_' . $class_name . '->save');
+            if (!$usr_msg->is_ok()) {
+                log_err($usr_msg->get_last_message(), 'user_sandbox_' . $class_name . '->save');
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 
@@ -2568,7 +2569,7 @@ class sandbox_multi extends db_object_multi_user
         global $phrase_types;
 
         $msg = '';
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         // log the deletion request
         if ($this->is_link_obj()) {
@@ -2582,43 +2583,43 @@ class sandbox_multi extends db_object_multi_user
             // for words first delete all links
             if ($this::class == word::class) {
                 $msg = $this->del_links();
-                $result->add($msg);
+                $usr_msg->add($msg);
             }
 
             // for triples first delete all links
             if ($this::class == triple::class) {
                 $msg = $this->del_links();
-                $result->add($msg);
+                $usr_msg->add($msg);
             }
 
             // for formulas first delete all links
             if ($this::class == formula::class) {
                 $msg = $this->del_links();
-                $result->add($msg);
+                $usr_msg->add($msg);
 
                 // and the corresponding formula elements
-                if ($result->is_ok()) {
+                if ($usr_msg->is_ok()) {
                     $db_con->set_class(element::class);
                     $db_con->set_usr($this->user()->id());
                     $msg = $db_con->delete_old($this->id_field(), $this->id);
-                    $result->add_message($msg);
+                    $usr_msg->add_message($msg);
                 }
 
                 // and the corresponding results
-                if ($result->is_ok()) {
+                if ($usr_msg->is_ok()) {
                     $db_con->set_class(result::class);
                     $db_con->set_usr($this->user()->id());
                     $msg = $db_con->delete_old($this->id_field(), $this->id);
-                    $result->add_message($msg);
+                    $usr_msg->add_message($msg);
                 }
 
                 // and the corresponding word if possible
-                if ($result->is_ok()) {
+                if ($usr_msg->is_ok()) {
                     $wrd = new word($this->user());
                     $wrd->load_by_name($this->name());
                     $wrd->type_id = $phrase_types->id(phrase_type::FORMULA_LINK);
                     $msg = $wrd->del();
-                    $result->add($msg);
+                    $usr_msg->add($msg);
                 }
 
             }
@@ -2626,22 +2627,22 @@ class sandbox_multi extends db_object_multi_user
             // for view components first delete all links
             if ($this::class == component::class) {
                 $msg = $this->del_links();
-                $result->add($msg);
+                $usr_msg->add($msg);
             }
 
             // for views first delete all links
             if ($this::class == view::class) {
                 $msg = $this->del_links();
-                $result->add($msg);
+                $usr_msg->add($msg);
             }
 
             // delete first all user configuration that have also been excluded
-            if ($result->is_ok()) {
+            if ($usr_msg->is_ok()) {
                 // TODO always use the qp based setup
                 if ($this::class == value::class) {
                     $qp = $this->sql_delete($db_con->sql_creator(), new sql_type_list([sql_type::USER, sql_type::EXCLUDE]));
                     $msg = $db_con->delete($qp, $this::class . ' user exclusions');
-                    $result->add($msg);
+                    $usr_msg->add($msg);
                 } else {
                     $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id());
@@ -2649,20 +2650,20 @@ class sandbox_multi extends db_object_multi_user
                     $msg = $db_con->delete_old(
                         array($class_name . sql_db::FLD_EXT_ID, 'excluded'),
                         array($this->id, '1'));
-                    $result->add_message($msg);
+                    $usr_msg->add_message($msg);
                 }
             }
-            if ($result->is_ok()) {
+            if ($usr_msg->is_ok()) {
                 // finally, delete the object
                 if ($this::class == value::class) {
                     $qp = $this->sql_delete($db_con->sql_creator());
                     $msg = $db_con->delete($qp, $this::class . ' user exclusions');
-                    $result->add($msg);
+                    $usr_msg->add($msg);
                 } else {
                     $db_con->set_class($this::class);
                     $db_con->set_usr($this->user()->id());
                     $msg = $db_con->delete_old($this->id_field(), $this->id);
-                    $result->add_message($msg);
+                    $usr_msg->add_message($msg);
                 }
                 log_debug('of ' . $this->dsp_id() . ' done');
             } else {
@@ -2670,7 +2671,7 @@ class sandbox_multi extends db_object_multi_user
             }
         }
 
-        return $result->get_last_message();
+        return $usr_msg->get_last_message();
     }
 
     /**
@@ -2694,7 +2695,7 @@ class sandbox_multi extends db_object_multi_user
         $class_name = $lib->class_to_name($this::class);
 
         global $db_con;
-        $result = new user_message();
+        $usr_msg = new user_message();
         $msg = '';
 
         // decide which db write method should be used
@@ -2798,8 +2799,8 @@ class sandbox_multi extends db_object_multi_user
             log_debug('done');
         }
 
-        $result->add_message($msg);
-        return $result;
+        $usr_msg->add_message($msg);
+        return $usr_msg;
     }
 
     /**

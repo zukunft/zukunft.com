@@ -381,23 +381,23 @@ class test_api extends create_test_objects
         $class = $this->class_to_api($class);
 
         // apply the payload to the backend object (add more switches)
-        $result = new user_message();
+        $usr_msg = new user_message();
         switch ($class) {
             case word::class:
                 $wrd = new word($usr);
                 $wrd->set_id($id);
-                $result = $wrd->del();
+                $usr_msg = $wrd->del();
                 break;
             case source::class:
                 $src = new source($usr);
                 $src->set_id($id);
-                $result = $src->del();
+                $usr_msg = $src->del();
                 break;
             default:
                 log_err($class . ' not yet mapped in assert_api_del_no_rest');
         }
         // if no row id is returned report the problem
-        if ($result->is_ok()) {
+        if ($usr_msg->is_ok()) {
             return true;
         } else {
             $this->assert_fail('api write del test without REST call of ' . $class . ' failed');

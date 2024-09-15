@@ -32,37 +32,25 @@
 
 namespace cfg;
 
-class messages
-{
+use api\system\messeges as msg_enum;
 
-    // backend messages in the default language
-    const RESERVED_IS = 'is a reserved';
-    const RESERVED_NAME = 'name for system testing. Please use another name';
-    const MISSING = ' message missing';
-    const MISSING_TRANSLATION = ' translation missing';
+class message_translator
+{
 
     /**
      * create a text message for the user by default in the user language
      * TODO read translation from yaml and use it
      *
-     * @param string $message_id the id const of the message that should be shown
+     * @param msg_enum $msg_id the id const of the message that should be shown
      * @param int $language_id the id const of the message that should be shown
      * @return string the message text in the user specific language that should be shown to the user
      */
-    function txt(string $message_id, int $language_id = language::DEFAULT_ID): string
+    function txt(msg_enum $msg_id, int $language_id = language::DEFAULT_ID): string
     {
         // to be replaced with a get_cfg function
         $user_language = 'en';
         // $msg_file = yaml_parse_file('/resources/translation/en.yaml');
-        $msg_text = match ($message_id) {
-            self::RESERVED_IS => 'is a reserved',
-            self::RESERVED_NAME => 'name for system testing. Please use another name',
-            default => $message_id . self::MISSING,
-        };
-        if ($msg_text == $message_id . self::MISSING) {
-            log_warning($msg_text);
-        }
-        return $msg_text;
+        return $msg_id->text();
     }
 
 }

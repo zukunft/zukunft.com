@@ -66,7 +66,7 @@ class source_write_tests
         $src_usr2->load_by_name(source_api::TN_RENAMED, source::class);
         $src_usr2->url = source_api::TU_ADD;
         $src_usr2->description = source_api::TD_ADD;
-        $result = $src_usr2->save();
+        $result = $src_usr2->save()->get_last_message();
         $target = '';
         $t->display('source->save undo the user source fields beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 

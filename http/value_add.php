@@ -105,7 +105,7 @@ if ($usr->id() > 0) {
         $val->convert();
 
         // add the new value to the database
-        $upd_result = $val->save();
+        $upd_result = $val->save()->get_last_message();
 
         // if update was successful ...
         if ($val->id() > 0 and str_replace('1', '', $upd_result) == '') {
@@ -117,7 +117,7 @@ if ($usr->id() > 0) {
                 if ($val->get_source_id() > 0) {
                     log_debug("save source" . $val->get_source_id() . ".");
                     $usr->set_source($val->get_source_id());
-                    $upd_result = $val->save();
+                    $upd_result = $val->save()->get_last_message();
                     log_debug("save source done.");
                 }
             }

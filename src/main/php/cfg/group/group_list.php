@@ -279,10 +279,10 @@ class group_list extends sandbox_list
      */
     function del(): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         foreach ($this->lst() as $phr_grp) {
-            $result->add($phr_grp->del());
+            $usr_msg->add($phr_grp->del());
         }
         return new user_message();
     }

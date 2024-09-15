@@ -900,7 +900,7 @@ class user extends db_object_seq_id
         global $user_profiles;
 
         log_debug();
-        $result = parent::import_db_obj($this, $test_obj);
+        $usr_msg = parent::import_db_obj($this, $test_obj);
 
         // reset all parameters of this user object
         $this->reset();
@@ -936,19 +936,19 @@ class user extends db_object_seq_id
 
         // save the user in the database
         if (!$test_obj) {
-            if ($result->is_ok()) {
+            if ($usr_msg->is_ok()) {
                 // check the importing profile and make sure that gaining additional privileges is impossible
                 // the user profiles must always be in the order that the lower ID has same or less rights
                 // TODO use the right level of the profile
                 if ($profile_id >= $this->profile_id) {
                     global $db_con;
-                    $result->add_message($this->save($db_con));
+                    $usr_msg->add_message($this->save($db_con));
                 }
             }
         }
 
 
-        return $result;
+        return $usr_msg;
     }
 
     /**

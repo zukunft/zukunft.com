@@ -171,11 +171,11 @@ class value_phrase_link_list extends sandbox_list
      */
     function del(): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         if (!$this->is_empty()) {
             foreach ($this->lst() as $val_phr_lmk) {
-                $result->add($val_phr_lmk->del());
+                $usr_msg->add($val_phr_lmk->del());
             }
         }
         return new user_message();

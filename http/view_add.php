@@ -85,7 +85,7 @@ if ($usr->id() > 0) {
             $msg .= 'Name missing; Please press back and enter a name for the new view.';
         } else {
 
-            $add_result = $msk_add->save();
+            $add_result = $msk_add->save()->get_last_message();
 
             // if adding was successful ...
             if (str_replace('1', '', $add_result) == '') {

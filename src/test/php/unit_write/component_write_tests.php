@@ -97,7 +97,7 @@ class component_write_tests
         $cmp = new component($t->usr1);
         $cmp->set_name(component_api::TN_ADD);
         $cmp->description = 'Just added for testing';
-        $result = $cmp->save();
+        $result = $cmp->save()->get_last_message();
         if ($cmp->id() > 0) {
             $result = $cmp->description;
         }
@@ -123,7 +123,7 @@ class component_write_tests
         // check if adding the same component again creates a correct error message
         $cmp = new component($t->usr1);
         $cmp->set_name(component_api::TN_ADD);
-        $result = $cmp->save();
+        $result = $cmp->save()->get_last_message();
         // in case of other settings
         $target = 'A view component with the name "' . component_api::TN_ADD . '" already exists. Please use another name.';
         // for the standard settings
@@ -134,7 +134,7 @@ class component_write_tests
         $cmp = new component($t->usr1);
         $cmp->load_by_name(component_api::TN_ADD, component::class);
         $cmp->set_name(component_api::TN_RENAMED);
-        $result = $cmp->save();
+        $result = $cmp->save()->get_last_message();
         $target = '';
         $t->display('component->save rename "' . component_api::TN_ADD . '" to "' . component_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -163,7 +163,7 @@ class component_write_tests
         $cmp_renamed->load_by_name(component_api::TN_RENAMED, component::class);
         $cmp_renamed->description = 'Just added for testing the user sandbox';
         $cmp_renamed->type_id = $component_types->id(comp_type_shared::PHRASE_NAME);
-        $result = $cmp_renamed->save();
+        $result = $cmp_renamed->save()->get_last_message();
         $target = '';
         $t->display('component->save all component fields beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_LONG);
 
@@ -203,7 +203,7 @@ class component_write_tests
         $cmp_usr2->load_by_name(component_api::TN_RENAMED, component::class);
         $cmp_usr2->description = 'Just changed for testing the user sandbox';
         $cmp_usr2->type_id = $component_types->id(comp_type_shared::FORMULAS);
-        $result = $cmp_usr2->save();
+        $result = $cmp_usr2->save()->get_last_message();
         $target = '';
         $t->display('component->save all component fields for user 2 beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -232,7 +232,7 @@ class component_write_tests
         $cmp_usr2->load_by_name(component_api::TN_RENAMED, component::class);
         $cmp_usr2->description = 'Just added for testing the user sandbox';
         $cmp_usr2->type_id = $component_types->id(comp_type_shared::PHRASE_NAME);
-        $result = $cmp_usr2->save();
+        $result = $cmp_usr2->save()->get_last_message();
         $target = '';
         $t->display('component->save undo the user component fields beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 

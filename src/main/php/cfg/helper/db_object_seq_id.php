@@ -293,12 +293,12 @@ class db_object_seq_id extends db_object
      */
     function import_db_obj(db_object_seq_id $db_obj, object $test_obj = null): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         // add a dummy id for unit testing
         if ($test_obj) {
             $db_obj->set_id($test_obj->seq_id());
         }
-        return $result;
+        return $usr_msg;
     }
 
 

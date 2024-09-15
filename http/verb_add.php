@@ -104,7 +104,7 @@ if ($usr->id() > 0) {
                 // if the parameters are fine
                 if ($msg == '') {
                     // add the new verb
-                    $add_result = $vrb->save();
+                    $add_result = $vrb->save()->get_last_message();
 
                     // if adding was successful ...
                     if (str_replace('1', '', $add_result) == '') {

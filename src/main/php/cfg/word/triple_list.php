@@ -467,14 +467,14 @@ class triple_list extends sandbox_list
      */
     function import_obj(array $json_obj, object $test_obj = null): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         foreach ($json_obj as $value) {
             $trp = new triple($this->user());
-            $result->add($trp->import_obj($value, $test_obj));
+            $usr_msg->add($trp->import_obj($value, $test_obj));
             $this->add($trp);
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -670,10 +670,10 @@ class triple_list extends sandbox_list
      */
     function del(): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         foreach ($this->lst() as $trp) {
-            $result->add($trp->del());
+            $usr_msg->add($trp->del());
         }
         return new user_message();
     }

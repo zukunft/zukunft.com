@@ -400,7 +400,7 @@ class view_term_link extends sandbox_link
             $sc->add_where(view::FLD_ID, $this->view()->id());
             $sc->add_where(term::FLD_ID, $this->term()->id());
         } else {
-            log_err('Cannot load default component link because id is missing');
+            log_err('Cannot load default view term link because id is missing');
         }
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

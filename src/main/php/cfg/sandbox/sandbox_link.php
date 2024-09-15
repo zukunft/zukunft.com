@@ -594,16 +594,16 @@ class sandbox_link extends sandbox
         log_debug($this->dsp_id());
 
         global $db_con;
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
-            $usr_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-            if ($usr_msg->is_ok()) {
-                $this->id = $usr_msg->get_row_id();
+            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+            if ($ins_msg->is_ok()) {
+                $this->id = $ins_msg->get_row_id();
             }
-            $result->add($usr_msg);
+            $usr_msg->add($ins_msg);
         } else {
 
             // log the insert attempt first
@@ -615,9 +615,9 @@ class sandbox_link extends sandbox
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
                     $qp = $this->sql_insert($sc);
-                    $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
-                    if ($usr_msg->is_ok()) {
-                        $this->id = $usr_msg->get_row_id();
+                    $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
+                    if ($ins_msg->is_ok()) {
+                        $this->id = $ins_msg->get_row_id();
                     }
                 } else {
                     $db_con->set_class($this::class);
@@ -630,10 +630,10 @@ class sandbox_link extends sandbox
                     log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
                     // update the id in the log
                     if (!$log->add_ref($this->id)) {
-                        $result->add_message('Updating the reference in the log failed');
+                        $usr_msg->add_message('Updating the reference in the log failed');
                         // TODO do rollback or retry?
                     } else {
-                        //$result->add_message($this->set_owner($new_owner_id));
+                        //$usr_msg->add_message($this->set_owner($new_owner_id));
 
                         // create an empty db_rec element to force saving of all set fields
                         $db_rec = clone $this;
@@ -643,16 +643,16 @@ class sandbox_link extends sandbox
                         $db_rec->set_user($this->user());
                         $std_rec = clone $db_rec;
                         // save the object fields
-                        $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                        $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
                     }
 
                 } else {
-                    $result->add_message('Adding ' . $this::class . ' ' . $this->dsp_id() . ' failed due to logging error.');
+                    $usr_msg->add_message('Adding ' . $this::class . ' ' . $this->dsp_id() . ' failed due to logging error.');
                 }
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -784,6 +784,7 @@ class sandbox_link extends sandbox
             $db_chk->reset();
             $db_chk->set_fob($this->fob());
             $db_chk->set_tob($this->tob());
+            $db_chk->set_predicate_id($this->predicate_id());
             if ($db_chk->load_standard()) {
                 if ($db_chk->id() > 0) {
                     log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the standard linkspace');
@@ -1238,12 +1239,12 @@ class sandbox_link extends sandbox
     /**
      * dummy function definition that should not be called
      * TODO check why it is called
-     * @return string
+     * @return user_message
      */
-    protected function check_save(): string
+    protected function check_save(): user_message
     {
         log_warning('The dummy parent method get_similar has been called, which should never happen');
-        return '';
+        return new user_message();
     }
 
 

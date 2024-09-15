@@ -251,14 +251,14 @@ class view_list extends sandbox_list
      */
     function import_obj(array $json_obj, object $test_obj = null): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         foreach ($json_obj as $dsp_json) {
             $msk = new view($this->user());
-            $result->add($msk->import_obj($dsp_json, $test_obj));
+            $usr_msg->add($msk->import_obj($dsp_json, $test_obj));
             $this->add($msk);
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**

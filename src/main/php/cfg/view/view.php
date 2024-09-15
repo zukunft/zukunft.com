@@ -728,12 +728,12 @@ class view extends sandbox_typed
      */
     function add_term(term $trm): user_message
     {
-        $msg = new user_message();
+        $usr_msg = new user_message();
         $lnk = new view_term_link($this->user());
         $lnk->set_view($this);
         $lnk->set_term($trm);
-        $msg->add_message($lnk->save());
-        return $msg;
+        $usr_msg->add($lnk->save());
+        return $usr_msg;
     }
 
     /**
@@ -743,10 +743,10 @@ class view extends sandbox_typed
      */
     function del_term(term $trm): user_message
     {
-        $msg = new user_message();
+        $usr_msg = new user_message();
         // TODO implement
-        $msg->add_message('not yet implemented');
-        return $msg;
+        $usr_msg->add_message('not yet implemented');
+        return $usr_msg;
     }
 
 
@@ -798,7 +798,7 @@ class view extends sandbox_typed
             if ($this->name == '') {
                 $result->add_message('name in view missing');
             } else {
-                $result->add_message($this->save());
+                $result->add($this->save());
 
                 if ($result->is_ok()) {
                     // TODO save also the links
@@ -1009,7 +1009,7 @@ class view extends sandbox_typed
      */
     function del_links(): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         // collect all component links where this view is used
         $lnk_lst = new component_link_list($this->user());
@@ -1018,10 +1018,10 @@ class view extends sandbox_typed
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else
         if (!$lnk_lst->is_empty()) {
-            $result->add($lnk_lst->del());
+            $usr_msg->add($lnk_lst->del());
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 

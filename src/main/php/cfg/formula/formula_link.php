@@ -612,13 +612,13 @@ class formula_link extends sandbox_link
     /**
      * update a formula_link in the database or create a user formula_link
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save(?bool $use_func = null): string
+    function save(?bool $use_func = null): user_message
     {
 
         global $db_con;
-        $result = '';
+        $usr_msg = new user_message();
 
         // check if the required parameters are set
         if ($this->formula_id() != 0 and $this->phrase_id() != 0) {
@@ -657,7 +657,7 @@ class formula_link extends sandbox_link
         if ($this->id <= 0) {
             if ($this->is_valid()) {
                 log_debug('new formula link from "' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '"');
-                $result .= $this->add($use_func)->get_last_message();
+                $usr_msg->add_message($this->add($use_func)->get_last_message());
             }
         } else {
             log_debug('update "' . $this->id . '"');
@@ -684,32 +684,32 @@ class formula_link extends sandbox_link
                 if ($db_rec->formula()->id() <> $this->formula()->id()
                     or $db_rec->phrase()->id() <> $this->phrase()->id()) {
                     log_debug("update link settings for id " . $this->id() . ": change formula " . $db_rec->formula_id() . " to " . $this->formula_id() . " and " . $db_rec->phrase_id() . " to " . $this->phrase_id());
-                    $result .= log_info('The formula link "' . $db_rec->formula()->name() . '" with "' . $db_rec->phrase()->name() . '" (id ' . $db_rec->formula_id() . ',' . $db_rec->phrase_id() . ') " cannot be changed to "' . $this->formula()->name() . '" with "' . $this->phrase()->name() . '" (id ' . $this->formula()->id() . ',' . $this->phrase()->id() . '). Instead the program should have created a new link.', "formula_link->save");
+                    $usr_msg->add_message(log_info('The formula link "' . $db_rec->formula()->name() . '" with "' . $db_rec->phrase()->name() . '" (id ' . $db_rec->formula_id() . ',' . $db_rec->phrase_id() . ') " cannot be changed to "' . $this->formula()->name() . '" with "' . $this->phrase()->name() . '" (id ' . $this->formula()->id() . ',' . $this->phrase()->id() . '). Instead the program should have created a new link.', "formula_link->save"));
                 }
             }
 
             // check if the id parameters are supposed to be changed
             $this->load_objects();
-            if ($result == '') {
-                $result = $this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func);
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func));
             }
 
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
-            if ($result == '') {
+            if ($usr_msg->is_ok()) {
                 if ($use_func) {
-                    $result .= $this->save_fields_func($db_con, $db_rec, $std_rec);
+                    $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
                 } else {
-                    $result = $this->save_fields($db_con, $db_rec, $std_rec);
+                    $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
                 }
             }
         }
 
-        if ($result != '') {
-            log_err($result);
+        if (!$usr_msg->is_ok()) {
+            log_err($usr_msg->get_last_message());
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 

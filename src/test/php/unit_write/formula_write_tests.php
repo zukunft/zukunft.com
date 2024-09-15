@@ -320,7 +320,7 @@ class formula_write_tests
         $frm = new formula($t->usr1);
         $frm->set_name(formula_api::TN_ADD);
         $frm->usr_text = formula_api::TF_INCREASE;
-        $result = $frm->save();
+        $result = $frm->save()->get_last_message();
         if ($frm->id() > 0) {
             $result = $frm->usr_text;
         }
@@ -346,7 +346,7 @@ class formula_write_tests
         $frm = new formula($t->usr1);
         $frm->set_name(formula_api::TN_ADD);
         $frm->usr_text = formula_api::TF_INCREASE_ALTERNATIVE;
-        $result = $frm->save();
+        $result = $frm->save()->get_last_message();
         // use the next line if system config is non-standard
         //$target = 'A formula with the name "'.formula_api::TN_ADD.'" already exists. Please use another name.';
         $target = '';
@@ -355,7 +355,7 @@ class formula_write_tests
         // check if the formula can be renamed
         $frm = $t->load_formula(formula_api::TN_ADD);
         $frm->set_name(formula_api::TN_RENAMED);
-        $result = $frm->save();
+        $result = $frm->save()->get_last_message();
         $target = '';
         $t->display('formula->save rename "' . formula_api::TN_ADD . '" to "' . formula_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -382,7 +382,7 @@ class formula_write_tests
         $frm_renamed->description = formula_api::TN_RENAMED . ' description';
         $frm_renamed->type_id = $formula_types->id(formula_type::THIS);
         $frm_renamed->need_all_val = True;
-        $result = $frm_renamed->save();
+        $result = $frm_renamed->save()->get_last_message();
         $target = '';
         $t->display('formula->save all formula fields beside the name for "' . formula_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -443,7 +443,7 @@ class formula_write_tests
         $frm_usr2->description = formula_api::TN_RENAMED . ' description2';
         $frm_usr2->type_id = $formula_types->id(formula_type::NEXT);
         $frm_usr2->need_all_val = False;
-        $result = $frm_usr2->save();
+        $result = $frm_usr2->save()->get_last_message();
         $target = '';
         $t->display('formula->save all formula fields for user 2 beside the name for "' . formula_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -491,7 +491,7 @@ class formula_write_tests
         $frm_usr2->description = formula_api::TN_RENAMED . ' description';
         $frm_usr2->type_id = $formula_types->id(formula_type::THIS);
         $frm_usr2->need_all_val = True;
-        $result = $frm_usr2->save();
+        $result = $frm_usr2->save()->get_last_message();
         $target = '';
         $t->display('formula->save undo the user formula fields beside the name for "' . formula_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 

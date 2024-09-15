@@ -779,7 +779,7 @@ class component extends sandbox_typed
      */
     function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
-        $result = parent::import_obj($in_ex_json, $test_obj);
+        $usr_msg = parent::import_obj($in_ex_json, $test_obj);
 
         foreach ($in_ex_json as $key => $value) {
 
@@ -810,14 +810,14 @@ class component extends sandbox_typed
         }
 
         if (!$test_obj) {
-            if ($result->is_ok()) {
-                $result->add_message($this->save());
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save());
             } else {
-                log_debug('not saved because ' . $result->get_last_message());
+                log_debug('not saved because ' . $usr_msg->get_last_message());
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -945,7 +945,7 @@ class component extends sandbox_typed
         $dsp_lnk->set_component($this);
         $dsp_lnk->order_nbr = $order_nbr;
         $dsp_lnk->pos_type_id = $position_types->id(position_type::BELOW);
-        return $dsp_lnk->save();
+        return $dsp_lnk->save()->get_last_message();
     }
 
     // remove a view component from a view
@@ -1215,7 +1215,7 @@ class component extends sandbox_typed
      */
     function del_links(): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         // collect all component links where this component is used
         $lnk_lst = new component_link_list($this->user());
@@ -1224,10 +1224,10 @@ class component extends sandbox_typed
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else
         if (!$lnk_lst->is_empty()) {
-            $result->add($lnk_lst->del());
+            $usr_msg->add($lnk_lst->del());
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 
