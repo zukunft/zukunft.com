@@ -522,7 +522,6 @@ class change_link extends change_log
             }
         }
         if ($this->table() == change_table_list::VIEW_LINK
-            or $this->table() == change_table_list::VALUE_PHRASE_LINK
             or $this->table() == change_table_list::FORMULA_LINK) {
             if ($this->action() == change_action::ADD or $this->action() == change_action::UPDATE) {
                 if ($this->new_from != null and $this->new_to != null) {

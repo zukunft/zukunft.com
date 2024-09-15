@@ -353,7 +353,7 @@ class group_list extends sandbox_list
     - $frm_linked: the words and triples assigned to the formula e.g. "Year" for "increase"
     - $frm_used:   the words and triples that are used in the formula e.g. "this" and "next" for "increase"
 
-    the function is assuming that the "view" table "value_phrase_links" is up to date
+    the function is should be based on the group table which is supposed to be always up to date
     including the user specific exceptions based on the formula expression
 
     used to request an update for a formula result for each phrase group

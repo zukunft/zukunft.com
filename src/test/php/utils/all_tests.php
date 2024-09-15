@@ -99,7 +99,6 @@
     classes that can be tested with later, because they are not yet used
 
     display_list.php
-    value_phrase_link.php
 
 
     Frontend scrips that needs to be tested

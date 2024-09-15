@@ -67,7 +67,6 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_FORMULA_PATH . 'figure.php';
-include_once MODEL_VALUE_PATH . 'value_phrase_link_list.php';
 include_once SERVICE_EXPORT_PATH . 'source_exp.php';
 include_once SERVICE_EXPORT_PATH . 'value_exp.php';
 include_once SERVICE_EXPORT_PATH . 'json.php';
@@ -1641,116 +1640,6 @@ class value extends sandbox_value
     }
     */
 
-    /**
-     * update the phrase links to the value based on the group and time for faster searching
-     * e.g. if the value "46'000" is linked to the group "2116 (ABB, SALES, CHF, MIO)" it is checked that lines to all phrases to the value are in the database
-     *      to be able to search the value by a single phrase
-     * TODO: REVIEW and make it user specific!
-     */
-    function upd_phr_links(): string
-    {
-        log_debug('value->upd_phr_links');
-
-        global $db_con;
-        $result = '';
-        $lib = new library();
-
-        // get the list of phrases assigned to this value based on the phrase group
-        // this list is the master
-        $this->grp->load_by_obj_vars();
-        $phr_lst = $this->phrase_list();
-        if ($phr_lst == null) {
-            log_err('Cannot load phrases for value "' . $this->dsp_id() . '" and group "' . $this->grp->dsp_id() . '".', "value->upd_phr_links");
-        } else {
-            // TODO check if the phrases are already loaded
-            // $phr_lst->load();
-            $grp_ids = $phr_lst->id_lst();
-
-            // read all existing phrase to value links for this value
-            $lst = new value_phrase_link_list($this->user());
-            $lst->load_by_value($this->user(), $this);
-            $db_ids = $lst->phr_ids();
-
-            // get what needs to be added or removed
-            log_debug('should have phrase ids ' . implode(",", $grp_ids));
-            $add_ids = array_diff($grp_ids, $db_ids);
-            $del_ids = array_diff($db_ids, $grp_ids);
-            log_debug('add ids ' . implode(",", $add_ids));
-            log_debug('del ids ' . implode(",", $del_ids));
-
-
-            // create the db link object for all actions
-            $db_con->usr_id = $this->user()->id();
-
-            $table_name = $db_con->get_table_name(value_phrase_link::class);
-            $field_name = phrase::FLD_ID;
-
-            // add the missing links
-            if (count($add_ids) > 0) {
-                $add_nbr = 0;
-                $sql = '';
-                foreach ($add_ids as $add_id) {
-                    if ($add_id <> '') {
-                        if ($sql == '') {
-                            $sql = 'INSERT INTO ' . $table_name . ' (group_id, ' . $field_name . ') VALUES ';
-                        }
-                        $sql .= " (" . $this->id() . "," . $add_id . ") ";
-                        $add_nbr++;
-                        if ($add_nbr < count($add_ids)) {
-                            $sql .= ",";
-                        } else {
-                            $sql .= ";";
-                        }
-                    }
-                }
-                $lib = new library();
-                log_debug('add sql');
-                if ($sql <> '') {
-                    //$sql_result = $db_con->exe($sql, "value->upd_phr_links", array());
-                    try {
-                        $sql_result = $db_con->exe($sql);
-                        if ($sql_result) {
-                            $sql_error = pg_result_error($sql_result);
-                            if ($sql_error != '') {
-                                log_err('Error adding new group links "' . $lib->dsp_array($add_ids) . '" for ' . $this->id() . ' using ' . $sql . ' failed due to ' . $sql_error);
-                            }
-                        }
-                    } catch (Exception $e) {
-                        $trace_link = log_err('Cannot remove phrase group links with "' . $sql . '" because: ' . $e->getMessage());
-                        $result = 'Removing of the phrase group links' . log::MSG_ERR_INTERNAL . $trace_link;
-                    }
-                }
-            }
-            $lib = new library();
-            log_debug('added links "' . $lib->dsp_array($add_ids) . '" lead to ' . implode(",", $db_ids));
-
-            // remove the links not needed any more
-            if (count($del_ids) > 0) {
-                log_debug('del ' . implode(",", $del_ids) . '');
-                $del_nbr = 0;
-                $sql_ids = $lib->sql_array($del_ids,
-                    ' AND ' . $field_name . ' IN (', ')');
-                $sql = 'DELETE FROM ' . $table_name . ' 
-               WHERE group_id = ' . $this->id() . $sql_ids;
-                //$sql_result = $db_con->exe($sql, "value->upd_phr_links_delete", array());
-                try {
-                    $sql_result = $db_con->exe($sql);
-                    if ($sql_result != '') {
-                        $msg = 'Removing the phrase group links "' . $lib->dsp_array($del_ids) . '" from ' . $this->id() . ' failed because: ' . $sql_result;
-                        log_warning($msg);
-                        $result = $msg;
-                    }
-                } catch (Exception $e) {
-                    $trace_link = log_err('Cannot remove phrase group links with "' . $sql . '" because: ' . $e->getMessage());
-                    $result = 'Removing of the phrase group links' . log::MSG_ERR_INTERNAL . $trace_link;
-                }
-            }
-
-            log_debug('done');
-        }
-        return $result;
-    }
-
     /*
     // set the parameter for the log entry to link a word to value
     function log_add_link($wrd_id) {
@@ -1758,7 +1647,6 @@ class value extends sandbox_value
     $log = New user_log_link;
     $log->usr       = $this->user();
     $log->action    = user_log::ACTION_ADD;
-    $log->table     = 'value_phrase_links';
     $log->new_from  = $this->id();
     $log->new_to    = $wrd_id;
     $log->row_id    = $this->id();
@@ -1774,7 +1662,6 @@ class value extends sandbox_value
     $log = New user_log_link;
     $log->usr       = $this->user();
     $log->action    = user_log::ACTION_DELETE;
-    $log->table     = 'value_phrase_links';
     $log->old_from  = $this->id();
     $log->old_to    = $wrd_id;
     $log->row_id    = $this->id();
@@ -1796,7 +1683,6 @@ class value extends sandbox_value
         // insert the link
         $db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
         $val_wrd_id = $db_con->insert(array("group_id","phrase_id"), array($this->id,$phr_id));
         if ($val_wrd_id > 0) {
           // get the link id, but updating the reference in the log should not be done, because the row id should be the ref to the original value
@@ -1821,7 +1707,6 @@ class value extends sandbox_value
         // remove the link
         $db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
-        $db_con->set_type(sql_db::TBL_VALUE_PHRASE_LINK);
         $result = $db_con->delete(array("group_id","phrase_id"), array($this->id,$wrd->id()));
         //$result = str_replace ('1','',$result);
       }

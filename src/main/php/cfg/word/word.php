@@ -1379,12 +1379,15 @@ class word extends sandbox_typed
     {
         global $db_con;
 
+        // TODO recreate based on the group
+        /*
         $sql = 'UPDATE words t
              SET ' . $db_con->sf("values") . ' = ( 
           SELECT COUNT(group_id) 
-            FROM value_phrase_links l
-           WHERE l.phrase_id = t.word_id);';
+            FROM group g
+           WHERE g.phrase_id = t.word_id);';
         $db_con->exe_try('Calculate word usage', $sql);
+        */
         return true;
     }
 
@@ -1538,7 +1541,7 @@ class word extends sandbox_typed
         global $db_con;
         $result = true;
 
-        if ($this->id == 0) {
+        if ($this->id() == 0) {
             log_err('The id must be set to check if the triple has been changed');
         } else {
             $qp = $this->not_changed_sql($db_con);

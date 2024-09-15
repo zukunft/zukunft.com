@@ -148,7 +148,6 @@ use cfg\user;
 use cfg\user_profile_list;
 use cfg\value\value;
 use cfg\value\value_list;
-use cfg\value\value_phrase_link;
 use cfg\value\value_time_series;
 use cfg\value\value_ts_data;
 use cfg\verb;
@@ -1664,13 +1663,6 @@ class create_test_objects extends test_base
         $lst->add($this->value());
         $lst->add($this->value_zh());
         return $lst;
-    }
-
-    function value_phrase_link(): value_phrase_link
-    {
-        $lnk = new value_phrase_link($this->usr1);
-        $lnk->set(1, $this->value(), $this->phrase());
-        return $lnk;
     }
 
     /**

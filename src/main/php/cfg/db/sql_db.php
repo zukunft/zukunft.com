@@ -122,7 +122,6 @@ use cfg\user_message;
 use cfg\user_official_type;
 use cfg\user_profile_list;
 use cfg\value\value;
-use cfg\value\value_phrase_link;
 use cfg\value\value_time_series;
 use cfg\value\value_ts_data;
 use cfg\verb;
@@ -375,7 +374,6 @@ class sql_db
         result::class,
         element::class,
         component_link::class,
-        value_phrase_link::class,
         view_term_link::class,
         ref::class,
         ip_range::class,

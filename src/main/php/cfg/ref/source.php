@@ -569,12 +569,12 @@ class source extends sandbox_typed
      */
     function not_changed(): bool
     {
-        log_debug($this->id . ' by someone else than the owner (' . $this->owner_id . ')');
+        log_debug($this->dsp_id() . ' by someone else than the owner (' . $this->owner_id . ')');
 
         global $db_con;
         $result = true;
 
-        if ($this->id == 0) {
+        if ($this->id() == 0) {
             log_err('The id must be set to detect if the link has been changed');
         } else {
             $qp = $this->not_changed_sql($db_con->sql_creator());
@@ -584,7 +584,7 @@ class source extends sandbox_typed
                 $result = false;
             }
         }
-        log_debug('for ' . $this->id . ' is ' . zu_dsp_bool($result));
+        log_debug('for ' . $this->dsp_id() . ' is ' . zu_dsp_bool($result));
         return $result;
     }
 

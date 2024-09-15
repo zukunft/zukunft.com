@@ -62,7 +62,6 @@ class change_table_list extends type_list
     const VALUE = 'values';
     const VALUE_USR = 'user_values';
     const VALUE_LINK = 'value_links';
-    const VALUE_PHRASE_LINK = 'value_phrase_links';
     const FORMULA = 'formulas';
     const FORMULA_USR = 'user_formulas';
     const FORMULA_LINK = 'formula_links';

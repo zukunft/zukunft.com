@@ -112,7 +112,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO unit test: create a unit test for all possible class functions next to review: formula expression
     TODO check that all dummy function that are supposed to be overwritten by the child object create a error if overwrite is missing
     TODO api load: expose all load functions to the api (with security check!)
-    TODO use always prepared queries based on the value_phrase_link_list_by_phrase_id.sql sample
     TODO fix error in upgrade process for MySQL
     TODO fix syntax suggestions in existing code
     TODO add the view result at least as simple text to the JSON export
@@ -294,6 +293,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO make sure that "sudo apt-get install php-dom" is part of the install process
     TODO before deleting a word make sure that there are not depending triples
     TODO Include in the message the user@pot or usergroup@pot that can read, write and export the data and who is owner
+    TODO base all messages to the final user on a language translation (whereas all log messages are for admin only and only in english)
     TODO Export of restricted data is always pgp secured and the header includes the access rights,
     TODO rename phrase_group to group
     TODO rename element to element
@@ -327,6 +327,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO if options are excluded show them in grey with the mouseover reason, why they have been excluded
     TODO ad sample how the use Reuters RIC where the price is in pence
     TODO create a function to earn cooperative parts by work
+    TODO creat a pod prime phrase mapping table, so that each pod can have its own prime phrases without losing the connection to other pod
+    TODO create an id range for all pod prime phrases e.g. 1 to 16'384 and a range for this pod only prime phrases e.g. 16'385 to 32'768 and reserve an temp id range used during the relocation process
     TODO because MySQL does not keep the interface stable (e.g. https://dev.mysql.com/doc/refman/8.4/en/charset-unicode-utf8.html) switch to postgres and MariaDB
 
     TODO message handling
@@ -481,7 +483,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
             word_list - a list of words (TODO move to sandbox_list_named?)
             triple_list - a list of triples (TODO move to sandbox_list_named?)
             value_list - a list of values
-            value_phrase_link_list - list of value_phrase_link
             formula_list - a list of formulas
             element_list - a list of formula elements
             element_group_list - a list of formula element groups
@@ -537,7 +538,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
     model objects to be reviewed
         phrase_group_list - a list of phrase group that is supposed to be a sandbox_list
-        value_phrase_link - db index to find a valur by the phrase (not the db normal form to speed up)
         element_group - to combine several formula elements that are depending on each other
         component_type - TODO rename to component_type and move to type_object?
         component_pos_type - TODO use a simple enum?
@@ -781,7 +781,6 @@ include_once SERVICE_PATH . 'config.php';
 
 // to avoid circle include
 include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_phrase_link.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
 
 // preloaded lists

@@ -1257,7 +1257,6 @@ class value_list extends sandbox_value_list
     /**
      * check the consistency for all values
      * so get the words and triples linked from the word group
-     *    and update the slave table value_phrase_links (which should be renamed to value_phrase_links)
      * TODO split into smaller sections by adding LIMIT to the query and start a loop
      */
     function check_all(): bool
@@ -1283,98 +1282,6 @@ class value_list extends sandbox_value_list
         log_debug($lib->dsp_count($this->lst()));
         return $result;
     }
-
-    /**
-     * to be integrated into load
-     * list of values related to a formula
-     * described by the word to which the formula is assigned
-     * and the words used in the formula
-     */
-    function load_frm_related($phr_id, $phr_ids, $user_id)
-    {
-        log_debug("value_list->load_frm_related (" . $phr_id . ",ft" . implode(",", $phr_ids) . ",u" . $user_id . ")");
-
-        global $db_con;
-        $result = array();
-
-        if ($phr_id > 0 and !empty($phr_ids)) {
-            $sql = "SELECT l1.group_id
-                FROM value_phrase_links l1,
-                    value_phrase_links l2
-              WHERE l1.group_id = l2.group_id
-                AND l1.phrase_id = " . $phr_id . "
-                AND l2.phrase_id IN (" . implode(",", $phr_ids) . ");";
-            //$db_con = New mysql;
-            $db_con->usr_id = $this->user()->id();
-            $db_lst = $db_con->get_old($sql);
-            foreach ($db_lst as $db_val) {
-                $result = $db_val[value::FLD_ID];
-            }
-        }
-
-        log_debug(implode(",", $result));
-        return $result;
-    }
-
-    /*
-     * group words
-     * kind of similar to zu_sql_val_lst_wrd
-    function load_frm_related_grp_phrs_part($val_ids, $phr_id, $phr_ids, $user_id): array
-    {
-        log_debug("(v" . implode(",", $val_ids) . ",t" . $phr_id . ",ft" . implode(",", $phr_ids) . ",u" . $user_id . ")");
-
-        global $db_con;
-        $result = array();
-
-        if ($phr_id > 0 and !empty($phr_ids) and !empty($val_ids)) {
-            $phr_ids[] = $phr_id; // add the main word to the exclude words
-            $sql = "SELECT l.group_id,
-                    " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    l.phrase_id, 
-                    v.excluded, 
-                    u.excluded AS user_excluded 
-                FROM value_phrase_links l,
-                    " . $db_con->get_table_name_esc(value::class) . " v
-          LEFT JOIN user_values u ON v.group_id = u.group_id AND u.user_id = " . $user_id . " 
-              WHERE l.group_id = v.group_id
-                AND l.phrase_id NOT IN (" . implode(",", $phr_ids) . ")
-                AND l.group_id IN (" . implode(",", $val_ids) . ")
-                AND (u.excluded IS NULL OR u.excluded = 0) 
-            GROUP BY l.group_id, l.phrase_id;";
-            //$db_con = New mysql;
-            $db_con->usr_id = $this->user()->id();
-            $db_lst = $db_con->get_old($sql);
-            $group_id = -1; // set to an id that is never used to force the creation of a new entry at start
-            foreach ($db_lst as $db_val) {
-                if ($group_id == $db_val[value::FLD_ID]) {
-                    $phr_result[] = $db_val[phrase::FLD_ID];
-                } else {
-                    if ($group_id >= 0) {
-                        // remember the previous values
-                        $row_result[] = $phr_result;
-                        $result[$group_id] = $row_result;
-                    }
-                    // remember the values for a new result row
-                    $group_id = $db_val[value::FLD_ID];
-                    $val_num = $db_val[value::FLD_VALUE];
-                    $row_result = array();
-                    $row_result[] = $val_num;
-                    $phr_result = array();
-                    $phr_result[] = $db_val[phrase::FLD_ID];
-                }
-            }
-            if ($group_id >= 0) {
-                // remember the last values
-                $row_result[] = $phr_result;
-                $result[$group_id] = $row_result;
-            }
-        }
-
-        log_debug(zu_lst_dsp($result));
-        return $result;
-    }
-     */
-
 
     /*
     private function common_phrases(): phrase_list

@@ -11,5 +11,4 @@ PREPARE value_list_by_phrase_id FROM
            u.share_type_id
       FROM `values` s
  LEFT JOIN user_values u         ON s.group_id = u.group_id AND u.user_id = ?
- LEFT JOIN value_phrase_links l  ON s.group_id = l.group_id
      WHERE l.phrase_id = ?';

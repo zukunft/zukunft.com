@@ -203,17 +203,17 @@ class db_object_multi extends db_object
      */
     function isset(): bool
     {
-        if ($this->id == null) {
+        if ($this->id() == null) {
             return false;
         } else {
-            if (is_string($this->id)) {
-                if ($this->id != '') {
+            if (is_string($this->id())) {
+                if ($this->id() != '') {
                     return true;
                 } else {
                     return false;
                 }
             } else {
-                if ($this->id != 0) {
+                if ($this->id() != 0) {
                     return true;
                 } else {
                     return false;

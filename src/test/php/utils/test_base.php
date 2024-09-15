@@ -170,7 +170,6 @@ include_once TEST_UNIT_PATH . 'group_list_tests.php';
 include_once TEST_UNIT_PATH . 'term_tests.php';
 include_once TEST_UNIT_PATH . 'term_list_tests.php';
 include_once TEST_UNIT_PATH . 'value_tests.php';
-include_once TEST_UNIT_PATH . 'value_phrase_link_tests.php';
 include_once TEST_UNIT_PATH . 'value_list_tests.php';
 include_once TEST_UNIT_PATH . 'formula_tests.php';
 include_once TEST_UNIT_PATH . 'formula_list_tests.php';

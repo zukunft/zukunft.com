@@ -513,10 +513,10 @@ class user extends db_object_seq_id
             if ($this->id == null) {
                 $sc->set_usr(0);
             } else {
-                $sc->set_usr($this->id);
+                $sc->set_usr($this->id());
             }
         } else {
-            $sc->set_usr($this->viewer->id);
+            $sc->set_usr($this->viewer->id());
         }
         $sc->set_fields(self::FLD_NAMES);
         return $qp;
@@ -1093,9 +1093,8 @@ class user extends db_object_seq_id
     // create the display user object based on the object (not needed any more if always the display user object is used)
     function dsp_user(): user_dsp
     {
-        global $db_con;
         $usr = new user;
-        $usr->load_by_id($this->id);
+        $usr->load_by_id($this->id());
         return new user_dsp($usr->api_json());
     }
 

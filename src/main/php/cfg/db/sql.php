@@ -63,7 +63,6 @@ use cfg\result\result;
 use cfg\sandbox;
 use cfg\sandbox_link;
 use cfg\sandbox_link_named;
-use cfg\sandbox_named;
 use cfg\sandbox_value;
 use cfg\sys_log;
 use cfg\triple;
@@ -72,7 +71,6 @@ use cfg\user\user_profile;
 use cfg\user\user_type;
 use cfg\user_official_type;
 use cfg\value\value;
-use cfg\value\value_phrase_link;
 use cfg\value\value_time_series;
 use cfg\view_term_link;
 use DateTime;
@@ -197,7 +195,6 @@ class sql
         result::class,
         element::class,
         component_link::class,
-        value_phrase_link::class,
         view_term_link::class,
         ref::class,
         ip_range::class,

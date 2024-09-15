@@ -1199,25 +1199,25 @@ class verb extends type_object
 
         // reload only if needed
         if ($this->name == '') {
-            if ($this->id > 0) {
-                $this->load_by_id($this->id);
+            if ($this->id() > 0) {
+                $this->load_by_id($this->id());
             } else {
                 log_err('Cannot delete verb, because neither the id or name is given');
             }
         } else {
-            if ($this->id == 0) {
+            if ($this->id() == 0) {
                 $this->load_by_name($this->name);
             }
         }
 
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             log_debug('verb->del ' . $this->dsp_id());
             if ($this->can_change()) {
                 $log = $this->log_del();
                 if ($log->id() > 0) {
                     $db_con->usr_id = $this->user()->id();
                     $db_con->set_class(verb::class);
-                    $result = $db_con->delete_old(self::FLD_ID, $this->id);
+                    $result = $db_con->delete_old(self::FLD_ID, $this->id());
                 }
             } else {
                 // TODO: create a new verb and request to delete the old

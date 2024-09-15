@@ -2185,7 +2185,7 @@ class triple extends sandbox_link_named implements JsonSerializable
     }
 
     /**
-     * update a triple in the database or create a user triple
+     * add or update a triple in the database or create a user triple
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return user_message the message that should be shown to the user in case something went wrong
      */
@@ -2315,7 +2315,6 @@ class triple extends sandbox_link_named implements JsonSerializable
                 }
             }
         }
-
 
         return $usr_msg;
     }

@@ -175,7 +175,7 @@ database change setup
 
 User Sandbox: values, formulas, formula_links, views and view elements are included in the user sandbox, which means, each user can exclude or adjust single entries
 
-to avoid confusion words, formula names, triples (verbs) and value_phrase_links are excluded from the user sandbox, but a normal user can change the name, which will hopefully not happen often.
+to avoid confusion words, formula names, triples and verbs may have a limited user sandbox, but a normal user can change the name, which will hopefully not happen often.
 
 for words, formulas and verbs the user can add a specific name in any language
 

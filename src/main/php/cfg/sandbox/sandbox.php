@@ -2308,13 +2308,13 @@ class sandbox extends db_object_seq_id_user
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
-        // check the preserved names
-        $usr_msg = $this->check_save();
-
         // decide which db write method should be used
         if ($use_func === null) {
             $use_func = $this->sql_default_script_usage();
         }
+
+        // check the preserved names
+        $usr_msg = $this->check_save();
 
         if ($usr_msg->is_ok()) {
             // load the objects if needed e.g. to log the names of the link
@@ -2322,8 +2322,8 @@ class sandbox extends db_object_seq_id_user
                 $this->load_objects();
 
                 // check if the required parameters are set
-                if (($this->fob()->id() == 0 or $this->tob()->id() == 0) and $this->id == 0) {
-                    log_err("Either the id or the link ids must be set to save a link");
+                if (($this->fob()->id() == 0 or $this->tob()->id() == 0) and $this->id() == 0) {
+                    log_err('Either the id or the link ids must be set to save a link');
                 }
             }
 

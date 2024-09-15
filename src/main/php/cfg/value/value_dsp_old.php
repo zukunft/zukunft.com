@@ -256,7 +256,8 @@ class value_dsp_old extends value
 
     // display some value samples related to the wrd_id
     // with a preference of the start_word_ids
-    // TODO use value_phrase_link_list as a base
+    /*
+     * TODO recreate based on the group
     function dsp_samples($wrd_id, $start_wrd_ids, $size, $back): string
     {
         log_debug("value->dsp_samples (" . $wrd_id . ",rt" . implode(",", $start_wrd_ids) . ",size" . $size . ")");
@@ -271,8 +272,8 @@ class value_dsp_old extends value
                     " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                    t.word_id,
                    t.word_name
-              FROM value_phrase_links l,
-                   value_phrase_links lt,
+              FROM groups g,
+                   groups gt,
                    words t,
                    " . $db_con->get_table_name_esc(value::class) . " v
          LEFT JOIN user_values u ON v.group_id = u.group_id AND u.user_id = " . $this->user()->id() . " 
@@ -335,6 +336,7 @@ class value_dsp_old extends value
         log_debug("done.");
         return $result;
     }
+    */
 
     // simple modal box to add a value
     function dsp_add_fast($back): string
@@ -641,12 +643,15 @@ class value_dsp_old extends value
             // display similar values as a sample for the user to force a consistent type of entry e.g. cost should always be a negative number
             if (isset($main_wrd)) {
                 $main_wrd->load();
+                // TODO activate based on a group load
+                /*
                 $samples = $this->dsp_samples($main_wrd->id, $this->ids(), 10, $back);
                 log_debug("value->dsp_edit samples.");
                 if (trim($samples) <> "") {
                     $result .= $html->dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_obj()->display_linked(rest_ctrl::STYLE_GREY) . '" values as an indication', 'change_hist');
                     $result .= $samples;
                 }
+                */
             }
         }
 

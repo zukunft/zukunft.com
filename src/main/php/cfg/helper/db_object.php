@@ -2,7 +2,7 @@
 
 /*
 
-    model/helper/db_object.php - a base object for all model database objects which just contains the unique id
+    model/helper/db_object.php - a base object for all model database objects for the table and index creation
     --------------------------
 
 
@@ -38,13 +38,6 @@ use cfg\db\sql_par;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\group\group;
-use cfg\log\change;
-use cfg\log\change_field;
-use cfg\log\change_field_list;
-use cfg\log\change_value;
-use cfg\log\change_values_big;
-use cfg\log\change_values_norm;
-use cfg\log\change_values_prime;
 use cfg\result\result;
 use cfg\value\value;
 use shared\library;
@@ -112,7 +105,7 @@ class db_object
             $sc->set_class($this::class, $sc_par_lst);
         }
         if ($fields == []) {
-            $fields = $this->sql_all_field_par($sc, $sc_par_lst);
+            $fields = $this->sql_all_field_par($sc_par_lst);
         }
         if ($tbl_comment == '') {
             $tbl_comment = $this::TBL_COMMENT;
@@ -149,7 +142,7 @@ class db_object
             $sc->set_class($this::class, $sc_par_lst);
         }
         if ($fields == []) {
-            $fields = $this->sql_all_field_par($sc, $sc_par_lst);
+            $fields = $this->sql_all_field_par($sc_par_lst);
         }
         return $sc->index_create($fields);
     }
@@ -168,7 +161,7 @@ class db_object
             $sc->set_class($this::class, $sc_par_lst);
         }
         if ($fields == []) {
-            $fields = $this->sql_all_field_par($sc, $sc_par_lst);
+            $fields = $this->sql_all_field_par($sc_par_lst);
         }
         return $sc->foreign_key_create($fields);
     }
@@ -176,14 +169,13 @@ class db_object
     /**
      * create a list of fields with the parameters for this object
      *
-     * @param sql $sc with the target db_type set
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @return array[] with the parameters of the table fields
      */
-    protected function sql_all_field_par(sql $sc, sql_type_list $sc_par_lst): array
+    protected function sql_all_field_par(sql_type_list $sc_par_lst): array
     {
         $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $use_sandbox = $sc_par_lst->use_sandbox_fields($sc_par_lst);
+        $use_sandbox = $sc_par_lst->use_sandbox_fields();
         $fields = [];
         if (!$usr_tbl) {
             $fields = array_merge($fields, $this::FLD_LST_NON_CHANGEABLE);
@@ -274,14 +266,12 @@ class db_object
      */
     function load_sql_by_id_str(sql $sc, int|string $id, string $class = self::class): sql_par
     {
-        $ext = '';
         if ($class == group::class
             or $class == value::class
             or $class == result::class) {
             $grp = new group(new user());
             $grp->set_id($id);
-            $sc_par_lst = [];
-            $sc_par_lst[] = $grp->table_type();
+            $sc_par_lst = new sql_type_list([$grp->table_type()]);
             $ext = $grp->table_extension();
             $qp = $this->load_sql_multi($sc, sql_db::FLD_ID, $class, $sc_par_lst, $ext);
         } else {
@@ -315,6 +305,7 @@ class db_object
      */
 
     /**
+     * name of prime index field of the table
      * function that can be overwritten by the child object
      * e.g. if the object name does not match the generated id field name
      * e.g. to group_id for values and results

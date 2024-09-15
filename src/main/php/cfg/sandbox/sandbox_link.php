@@ -256,11 +256,10 @@ class sandbox_link extends sandbox
     /**
      * create an array with the fields and parameters for the sql table creation of the link object
      *
-     * @param sql $sc with the target db_type set
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @return array[] with the parameters of the table fields
      */
-    protected function sql_all_field_par(sql $sc, sql_type_list $sc_par_lst): array
+    protected function sql_all_field_par(sql_type_list $sc_par_lst): array
     {
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $use_sandbox = $sc_par_lst->use_sandbox_fields();

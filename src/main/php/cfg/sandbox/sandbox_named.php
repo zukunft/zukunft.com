@@ -372,7 +372,7 @@ class sandbox_named extends sandbox
         global $db_con;
         $result = false;
 
-        if ($this->id == 0 and $this->name() == '') {
+        if ($this->id() == 0 and $this->name() == '') {
             log_err('The ' . $this::class . ' id or name must be set to load ' . $this::class, $this::class . '->load_standard');
         } else {
             $db_row = $db_con->get1($qp);

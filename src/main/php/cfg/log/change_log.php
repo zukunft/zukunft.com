@@ -95,7 +95,6 @@ use cfg\triple;
 use cfg\type_object;
 use cfg\user;
 use cfg\value\value;
-use cfg\value\value_phrase_link;
 use cfg\verb;
 use cfg\view;
 use cfg\view_term_link;
@@ -522,11 +521,6 @@ class change_log extends db_object_seq_id_user
             } elseif ($table_name == change_table_list::VALUE_USR) {
                 $db_con->set_class(value::class, true);
                 foreach (value::ALL_SANDBOX_FLD_NAMES as $field_name) {
-                    $db_changed = $this->set_field($field_name, $db_con);
-                }
-            } elseif ($table_name == change_table_list::VALUE_LINK) {
-                $db_con->set_class(value_phrase_link::class);
-                foreach (value_phrase_link::FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_table_list::FORMULA) {
