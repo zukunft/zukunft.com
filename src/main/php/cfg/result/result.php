@@ -49,6 +49,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once SERVICE_EXPORT_PATH . 'result_exp.php';
 
+use api\api;
 use api\result\result as result_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -58,7 +59,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\element_list;
+use cfg\element\element_list;
 use cfg\export\export;
 use cfg\export\result_exp;
 use cfg\export\sandbox_exp;
@@ -429,6 +430,46 @@ class result extends sandbox_value
     function phr_names(): array
     {
         return $this->grp->phrase_list()->names();
+    }
+
+    /**
+     * map a result api json to this model result object
+     * @param array $api_json the api array with the values that should be mapped
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        // make sure that there are no unexpected leftovers but keep the user
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == api::FLD_ID) {
+                $this->set_id($value);
+            }
+
+            if ($key == api::FLD_PHRASES) {
+                $phr_lst = new phrase_list($this->user());
+                $usr_msg->add($phr_lst->set_by_api_json($value));
+                if ($usr_msg->is_ok()) {
+                    $this->grp->set_phrase_list($phr_lst);
+                }
+            }
+
+            if ($key == sandbox_exp::FLD_NUMBER) {
+                if (is_numeric($value)) {
+                    $this->number = $value;
+                } else {
+                    $usr_msg->add_message('Import result: "' . $value . '" is expected to be a number (' . $this->grp->dsp_id() . ')');
+                }
+            }
+
+        }
+
+        return $usr_msg;
     }
 
 
@@ -929,11 +970,11 @@ class result extends sandbox_value
     /**
      * validate a formulas value by comparing the external object result with the calculated result
      *
-     * @param array $json_obj an array with the data of the json object
+     * @param array $in_ex_json an array with the data of the json object
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, object $test_obj = null): user_message
+    function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
         log_debug();
         $result = parent::import_db_obj($this, $test_obj);
@@ -944,7 +985,7 @@ class result extends sandbox_value
             $do_save = true;
         }
 
-        foreach ($json_obj as $key => $res) {
+        foreach ($in_ex_json as $key => $res) {
 
             if ($key == export::WORDS) {
                 $phr_lst = new phrase_list($this->user());
@@ -1065,7 +1106,7 @@ class result extends sandbox_value
     }
 
     // update the word ids based on the word objects (usually done before saving the formula result to the database)
-    private function save_prepare_wrds()
+    private function save_prepare_wrds(): void
     {
         log_debug();
         $this->save_prepare_phr_lst_src();
@@ -1219,7 +1260,7 @@ class result extends sandbox_value
         $val_phr_lst = clone $this->grp->phrase_list();
         $val_wrd_lst = $val_phr_lst->wrd_lst_all();
         $title .= $lib->dsp_array($val_wrd_lst->api_obj()->ex_measure_and_time_lst()->dsp_obj()->names_linked());
-        $time_phr = $lib->dsp_array($val_wrd_lst->dsp_obj()->time_lst()->dsp_obj()->names_linked());
+        $time_phr = $lib->dsp_array($val_wrd_lst->dsp_obj()->time_lst()->names_linked());
         if ($time_phr <> '') {
             $title .= ' (' . $time_phr . ')';
         }

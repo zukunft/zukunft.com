@@ -125,6 +125,10 @@ namespace cfg;
 include_once MODEL_ELEMENT_PATH . 'element_group.php';
 include_once MODEL_ELEMENT_PATH . 'element_group_list.php';
 
+use cfg\element\element;
+use cfg\element\element_group;
+use cfg\element\element_group_list;
+use cfg\element\element_list;
 use Exception;
 use shared\library;
 

@@ -48,9 +48,9 @@ use cfg\component\component_type_list;
 use cfg\component\position_type;
 use cfg\component\position_type_list;
 use cfg\config;
-use cfg\element;
-use cfg\element_type;
-use cfg\element_type_list;
+use cfg\element\element;
+use cfg\element\element_type;
+use cfg\element\element_type_list;
 use cfg\formula;
 use cfg\formula_link;
 use cfg\formula_link_type;
@@ -736,7 +736,7 @@ class sql_db
             if (!$sql_result) {
                 // show the error message direct to the setup user because database does not yet exist
                 echo 'ERROR: creation of the technical pod user failed ';
-                echo 'due to ' . $sql_result;
+                echo 'due to ' . pg_last_error();
             }
         } catch (Exception $e) {
             // show the error message direct to the setup user because database does not yet exist
@@ -754,7 +754,7 @@ class sql_db
                 if (!$sql_result) {
                     // show the error message direct to the setup user because database does not yet exist
                     echo 'ERROR: creation of the database failed ';
-                    echo 'due to ' . $sql_result;
+                    echo 'due to ' . pg_last_error();
                 }
             } catch (Exception $e) {
                 // show the error message direct to the setup user because database does not yet exist
@@ -774,7 +774,7 @@ class sql_db
                 if (!$sql_result) {
                     // show the error message direct to the setup user because database does not yet exist
                     echo 'ERROR: creation of the database failed ';
-                    echo 'due to ' . $sql_result;
+                    echo 'due to ' . pg_last_error();
                 }
             } catch (Exception $e) {
                 // show the error message direct to the setup user because database does not yet exist
@@ -4299,7 +4299,7 @@ class sql_db
         }
 
         if ($result == null) {
-            log_err('Unexpected result for "' . $this->db_type . '"', 'sql_db->fetch');
+            log_warning('Unexpected result for "' . $this->db_type . '"', 'sql_db->fetch');
             $result = 0;
         }
 

@@ -38,7 +38,6 @@ include_once MODEL_USER_PATH . 'user_message.php';
 
 use cfg\db\sql_db;
 use cfg\db\sql_par;
-use html\message;
 use html\system\messages;
 
 class ip_range_list extends base_list

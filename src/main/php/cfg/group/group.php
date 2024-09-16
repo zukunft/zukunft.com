@@ -947,6 +947,7 @@ class group extends sandbox_multi
             if ($db_rec->name() != $this->name() or $db_rec->description != $this->description) {
                 // TODO call insert or update sql statement
                 //$result .= $this->save_id();
+                log_warning('save of group description not yet implimented');
             }
         }
         return $usr_msg;

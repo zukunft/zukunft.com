@@ -1284,7 +1284,7 @@ class phrase_list extends sandbox_list_named
      * the new phrases are not loaded from the database, which should be done later if required
      * @param int $phr_id_to_add the id that should be added
      */
-    function add_id(int $phr_id_to_add)
+    function add_id(int $phr_id_to_add): void
     {
         log_debug('phrase_list->add_id (' . $phr_id_to_add . ')');
         if ($phr_id_to_add <> 0) {
@@ -1476,7 +1476,7 @@ class phrase_list extends sandbox_list_named
     /**
      * same as diff but sometimes this name looks better
      */
-    function not_in(phrase_list $del_phr_lst)
+    function not_in(phrase_list $del_phr_lst): void
     {
         log_debug('phrase_list->not_in get out of ' . $this->dsp_name() . ' not in ' . $del_phr_lst->name() . ')');
         $this->diff($del_phr_lst);

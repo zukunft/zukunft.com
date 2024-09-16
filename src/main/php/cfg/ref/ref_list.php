@@ -54,6 +54,7 @@ class ref_list extends type_list
      */
     function __construct(?user $usr = null)
     {
+        parent::__construct();
         $this->set_user($usr);
     }
 

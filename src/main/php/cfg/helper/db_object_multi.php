@@ -5,7 +5,7 @@
     model/helper/db_object_multi.php - a base object for all db objects which use more than one table to store the data
     --------------------------------
 
-    like db_object_seq_id but not using a auto sequence as db index
+    like db_object_seq_id but not using an auto sequence as db index
 
 
     This file is part of zukunft.com - calc with words

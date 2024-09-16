@@ -53,6 +53,8 @@ use cfg\job_list;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\sandbox_value_list;
+use cfg\term;
+use cfg\term_list;
 use cfg\triple;
 use cfg\user;
 use cfg\user_list;
@@ -843,7 +845,12 @@ class result_list extends sandbox_value_list
      */
     function frm_upd_lst_usr(
         formula $frm,
-                $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos)
+                $phr_lst_frm_assigned,
+                $phr_lst_frm_used,
+                $phr_grp_lst_used,
+                $usr,
+                $last_msg_time,
+                $collect_pos): job_list
     {
         $lib = new library();
         log_debug('res_lst->frm_upd_lst_usr(' . $frm->name() . ',fat' . $phr_lst_frm_assigned->name() . ',ft' . $phr_lst_frm_used->name() . ',' . $usr->name . ')');
@@ -985,7 +992,7 @@ class result_list extends sandbox_value_list
      * @param formula $frm - the formula that has been updated
      * $usr - to define which user view should be updated
      */
-    function frm_upd_lst(formula $frm, $back)
+    function frm_upd_lst(formula $frm, string $back): job_list
     {
         log_debug('add ' . $frm->dsp_id() . ' to queue ...');
         $lib = new library();
@@ -1011,8 +1018,12 @@ class result_list extends sandbox_value_list
         log_debug('formula "' . $frm->name() . '" uses ' . $phr_lst_frm_used->name_linked() . ' (taken from ' . $frm->usr_text . ')');
 
         // get the list of predefined "following" phrases/formulas like "prior" or "next"
-        $phr_lst_preset_following = $exp->element_special_following($back);
-        $frm_lst_preset_following = $exp->element_special_following_frm($back);
+        $trm_lst_back = new term_list($this->user());
+        $trm_back = new term($this->user());
+        $trm_back->load_by_id($back);
+        $trm_lst_back->add($trm_back);
+        $phr_lst_preset_following = $exp->element_special_following($trm_lst_back);
+        $frm_lst_preset_following = $exp->element_special_following_frm($trm_lst_back);
 
         // combine all used predefined phrases/formulas
         $phr_lst_preset = $phr_lst_preset_following;

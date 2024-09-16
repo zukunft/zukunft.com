@@ -39,6 +39,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\element\element;
 use html\formula\formula as formula_dsp;
 use html\formula\formula_list as formula_list_dsp;
 use shared\library;
@@ -485,7 +486,7 @@ class formula_list extends sandbox_list
     /**
      * load all formulas that use the given triple
      * @param triple $trp the triple that
-     * @return bool true if at least one formula has bee loaded
+     * @return bool true if at least one formula has been loaded
      */
     function load_by_triple_ref(triple $trp): bool
     {
@@ -497,7 +498,7 @@ class formula_list extends sandbox_list
     /**
      * load all formulas that use the given verb
      * @param verb $vrb the verb that
-     * @return bool true if at least one formula has bee loaded
+     * @return bool true if at least one formula has been loaded
      */
     function load_by_verb_ref(verb $vrb): bool
     {
@@ -509,7 +510,7 @@ class formula_list extends sandbox_list
     /**
      * load all formulas that use the given formula
      * @param formula $frm the formula that
-     * @return bool true if at least one formula has bee loaded
+     * @return bool true if at least one formula has been loaded
      */
     function load_by_formula_ref(formula $frm): bool
     {
@@ -723,13 +724,13 @@ class formula_list extends sandbox_list
      * save all formulas of this list
      * TODO create one SQL and commit statement for faster execution
      *
-     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save(): string
+    function save(): user_message
     {
-        $result = '';
+        $result = new user_message();
         foreach ($this->lst() as $frm) {
-            $result .= $frm->save()->get_last_message();
+            $result->add($frm->save());
         }
         return $result;
     }

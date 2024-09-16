@@ -83,6 +83,8 @@ use cfg\value\value_list;
 use html\html_base;
 use JsonSerializable;
 use shared\library;
+use html\phrase\phrase as phrase_dsp;
+
 
 class triple extends sandbox_link_named implements JsonSerializable
 {
@@ -2715,6 +2717,7 @@ class triple extends sandbox_link_named implements JsonSerializable
     function dsp_add(string $back = ''): string
     {
         log_debug();
+
         $html = new html_base();
         $result = ''; // reset the html code var
 
@@ -2735,7 +2738,9 @@ class triple extends sandbox_link_named implements JsonSerializable
             $result .= $this->verb()->dsp_selector('both', $form_name, html_base::COL_SM_6, $back);
         }
         if ($this->to() != null) {
-            $result .= $this->to()->dsp_selector(0, $form_name, 0, html_base::COL_SM_6, $back);
+            $type_phr = new phrase($this->user());
+            $type_phr->load_by_id(0);
+            $result .= $this->to()->dsp_selector($type_phr->dsp_obj(), $form_name, 0, html_base::COL_SM_6, $back);
         }
         $result .= '</div>';
         $result .= '<br>';

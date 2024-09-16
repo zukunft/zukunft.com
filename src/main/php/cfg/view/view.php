@@ -58,6 +58,7 @@ use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_list;
+use cfg\component\component_list;
 use cfg\component\position_type;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -266,11 +267,22 @@ class view extends sandbox_typed
     }
 
     /**
-     * @return component_link_list the list of the linked components of this view
+     * @return component_link_list the list of the component links of this view
      */
     function component_link_list(): component_link_list
     {
         return $this->cmp_lnk_lst;
+    }
+
+    /**
+     * @return component_list the list of the linked components of this view
+     */
+    function components(): component_list
+    {
+        $ids = $this->cmp_lnk_lst->cmp_ids();
+        $cmp_lst = new component_list($this->user());
+        $cmp_lst->load_by_ids($ids);
+        return $cmp_lst;
     }
 
     /**

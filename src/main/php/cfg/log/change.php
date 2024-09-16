@@ -332,7 +332,7 @@ class change extends change_log
         return $qp;
     }
 
-    function load_sql_old(string $type): sql_par
+    function load_sql_old(string $type, int $limit = 0): sql_par
     {
         global $db_con;
         global $change_table_list;
@@ -342,12 +342,8 @@ class change extends change_log
         $qp = new sql_par(self::class);
 
         // set default values
-        if (!isset($this->size)) {
-            $this->size = sql_db::ROW_LIMIT;
-        } else {
-            if ($this->size <= 0) {
-                $this->size = sql_db::ROW_LIMIT;
-            }
+        if ($limit <= 0) {
+            $limit = sql_db::ROW_LIMIT;
         }
 
         // select the change table to use
@@ -402,7 +398,7 @@ class change extends change_log
            LEFT JOIN change_fields l2 ON s.change_field_id = l2.change_field_id
                WHERE " . $sql_where . " AND " . $sql_row . " 
             ORDER BY s.change_time DESC
-               LIMIT " . $this->size . ";";
+               LIMIT " . $limit . ";";
             log_debug('user_log_display->dsp_hist ' . $qp->sql);
             $db_con->usr_id = $this->user()->id();
         }

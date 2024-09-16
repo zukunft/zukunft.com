@@ -1589,7 +1589,7 @@ class sandbox extends db_object_seq_id_user
     protected function check_save(): user_message
     {
         log_err('The dummy parent method reserved_names has been called, which should never happen');
-        return '';
+        return new user_message();
     }
 
 

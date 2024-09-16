@@ -31,14 +31,12 @@
   
 */
 
-namespace cfg;
+namespace cfg\element;
 
 include_once MODEL_ELEMENT_PATH . 'element_type.php';
 
-use cfg\db\sql_db;
+use cfg\type_list;
 use test\create_test_objects;
-
-global $element_types;
 
 class element_type_list extends type_list
 {

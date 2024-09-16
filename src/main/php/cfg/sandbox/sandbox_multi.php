@@ -51,6 +51,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
+use cfg\element\element;
 use cfg\group\group;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par_field_list;

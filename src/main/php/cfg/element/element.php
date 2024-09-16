@@ -37,7 +37,7 @@
 
 */
 
-namespace cfg;
+namespace cfg\element;
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 
@@ -48,7 +48,16 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\log\change;
+use cfg\db_object_seq_id_user;
+use cfg\expression;
+use cfg\formula;
+use cfg\parameter_type;
+use cfg\term;
+use cfg\triple;
+use cfg\type_object;
+use cfg\user;
+use cfg\verb;
+use cfg\word;
 use html\formula\formula as formula_dsp;
 use html\word\word as word_dsp;
 use shared\library;

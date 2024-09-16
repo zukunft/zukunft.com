@@ -50,6 +50,8 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\element\element_type;
+use cfg\element\element_type_list;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
 use cfg\log\change_field_list;

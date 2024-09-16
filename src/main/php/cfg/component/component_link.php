@@ -294,9 +294,9 @@ class component_link extends sandbox_link
 
     /**
      * rename to standard link to object to component
-     * @return sandbox_named
+     * @return sandbox_named|component
      */
-    function component(): sandbox_named
+    function component(): sandbox_named|component
     {
         return $this->tob();
     }
@@ -737,8 +737,9 @@ class component_link extends sandbox_link
                     $this->view()->load_components();
                     // check if correction was successful
                     $order_nbr = 0;
-                    if ($this->view()->cmp_lst != null) {
-                        foreach ($this->view()->cmp_lst->lst() as $entry) {
+                    $cmp_lst = $this->view()->components();
+                    if (!$cmp_lst->is_empty()) {
+                        foreach ($cmp_lst->lst() as $entry) {
                             $cmp_lnk = new component_link($this->user());
                             $msk = new view($this->user());
                             $msk->load_by_id($this->view()->id());
@@ -913,7 +914,7 @@ class component_link extends sandbox_link
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component_link $db_rec the view component link as saved in the database before the update
      * @param component_link $std_rec the default parameter used for this view component link
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     * @returns string any message that should be shown to the user or an empty string if everything is fine
      */
     private
     function save_field_order_nbr(sql_db $db_con, component_link $db_rec, component_link $std_rec): string
@@ -937,7 +938,7 @@ class component_link extends sandbox_link
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component_link|sandbox $db_rec the view component link as saved in the database before the update
      * @param component_link|sandbox $std_rec the default parameter used for this view component link
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     * @returns string any message that should be shown to the user or an empty string if everything is fine
      */
     function save_fields(sql_db $db_con, component_link|sandbox $db_rec, component_link|sandbox $std_rec): string
     {

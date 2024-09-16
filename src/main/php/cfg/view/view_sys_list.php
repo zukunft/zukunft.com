@@ -51,6 +51,7 @@ class view_sys_list extends type_list
 
     function __construct(user $usr)
     {
+        parent::__construct();
         $this->set_user($usr);
     }
 

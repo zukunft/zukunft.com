@@ -1021,7 +1021,7 @@ class component extends sandbox_typed
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     * @returns string any message that should be shown to the user or an empty string if everything is fine
      */
     function save_field_code_id(sql_db $db_con, component $db_rec): string
     {
@@ -1042,7 +1042,7 @@ class component extends sandbox_typed
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     * @returns string any message that should be shown to the user or an empty string if everything is fine
      */
     function save_field_ui_msg_id(sql_db $db_con, component $db_rec): string
     {
@@ -1064,7 +1064,7 @@ class component extends sandbox_typed
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
      * @param component $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     * @returns string any message that should be shown to the user or an empty string if everything is fine
      */
     function save_field_wrd_row(sql_db $db_con, component $db_rec, component $std_rec): string
     {
@@ -1090,7 +1090,7 @@ class component extends sandbox_typed
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
      * @param component $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     * @returns string any message that should be shown to the user or an empty string if everything is fine
      */
     function save_field_wrd_col(sql_db $db_con, component $db_rec, component $std_rec): string
     {
@@ -1116,7 +1116,7 @@ class component extends sandbox_typed
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
      * @param component $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     * @returns string any message that should be shown to the user or an empty string if everything is fine
      */
     function save_field_wrd_col2(sql_db $db_con, component $db_rec, component $std_rec): string
     {
@@ -1168,7 +1168,7 @@ class component extends sandbox_typed
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component|sandbox $db_rec the view component as saved in the database before the update
      * @param component|sandbox $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     * @returns string any message that should be shown to the user or an empty string if everything is fine
      */
     function save_fields(sql_db $db_con, component|sandbox $db_rec, component|sandbox $std_rec): string
     {

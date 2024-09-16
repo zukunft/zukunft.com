@@ -198,16 +198,22 @@ class import
                     }
                 } elseif ($key == export::POD) {
                     // TODO set the source pod
+                    log_warning('import of pod details not yet implimented');
                 } elseif ($key == export::TIME) {
                     // TODO set the time of the export
+                    log_warning('import of time not yet implimented');
                 } elseif ($key == export::SELECTION) {
                     // TODO set the selection as context
+                    log_warning('import of selection not yet implimented');
                 } elseif ($key == export::DESCRIPTION) {
                     // TODO remember the description for the log
+                    log_warning('import of description not yet implimented');
                 } elseif ($key == export::USER) {
                     // TODO set the user that has created the export
+                    log_warning('import of a single user not yet implimented');
                 } elseif ($key == export::USERS) {
                     // TODO import the users (but only by a user with the privileges)
+                    log_warning('import of users not yet implimented');
                 } elseif ($key == export::VERBS) {
                     $import_result = new user_message();
                     foreach ($json_obj as $verb) {

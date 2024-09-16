@@ -88,7 +88,7 @@ use cfg\component\component_link_type_list;
 use cfg\component\position_type_list;
 use cfg\component\component_type_list;
 use cfg\db\sql_db;
-use cfg\element_type_list;
+use cfg\element\element_type_list;
 use cfg\formula_link_type_list;
 use cfg\formula_type_list;
 use cfg\job_type_list;

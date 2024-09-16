@@ -29,7 +29,10 @@
   
 */
 
-namespace cfg;
+namespace cfg\element;
+
+use cfg\sandbox_list;
+use cfg\term_list;
 
 class element_group_list extends sandbox_list
 {

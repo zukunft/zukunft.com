@@ -35,11 +35,15 @@
 
 */
 
-namespace cfg;
+namespace cfg\element;
 
-use cfg\component\component;
 use cfg\db\sql;
 use cfg\db\sql_par;
+use cfg\formula;
+use cfg\sandbox_list;
+use cfg\sys_log_level;
+use cfg\user;
+use cfg\user_message;
 
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_ELEMENT_PATH . 'element.php';

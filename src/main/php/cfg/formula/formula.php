@@ -78,6 +78,8 @@ include_once WEB_WORD_PATH . 'word.php';
 use api\api;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
+use cfg\element\element;
+use cfg\element\element_list;
 use cfg\log\change;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
@@ -385,7 +387,7 @@ class formula extends sandbox_typed
     }
 
     /**
-     * @param int $id the id of the default view the should be remembered
+     * @param int $id the id of the default view that should be remembered
      */
     function set_view_id(int $id): void
     {
@@ -1071,7 +1073,7 @@ class formula extends sandbox_typed
             log_debug('figures ');
             log_debug('figures ' . $fig_lst->dsp_id() . ' (' . $lib->dsp_count($fig_lst->lst()) . ') for ' . $elm_grp->dsp_id());
 
-            // fill the figure into the formula text and create as much results / results as needed
+            // fill the figure into the formula text and create as much value and results as needed
             if ($fig_lst->lst() != null) {
                 if (count($fig_lst->lst()) == 1) {
                     // if no figure is found use the master result as placeholder
@@ -2245,7 +2247,7 @@ class formula extends sandbox_typed
             $log->row_id = $this->id;
             $log->set_field(self::FLD_ALL_NEEDED);
             $result = $this->save_field_user($db_con, $log);
-            // if it is switch on that all fields are needed for the calculation, probably some formula results can be removed
+            // switch on that all fields are needed for the calculation, probably some formula results can be removed
             if ($result == '') {
                 $result = $this->save_field_trigger_update($db_con);
             }

@@ -42,7 +42,7 @@ include_once MODEL_DB_PATH . 'sql_pg.php';
 
 use cfg\component\component_link;
 use cfg\db_object_seq_id;
-use cfg\element;
+use cfg\element\element;
 use cfg\formula_link;
 use cfg\group\group;
 use cfg\group\group_id;
@@ -4527,7 +4527,7 @@ class sql
         $lib = new library();
 
         // escape the fields and values and build the SQL statement
-        $this->set_table();
+        $this->set_table(new sql_type_list([]));
         $sql = 'INSERT INTO ' . $this->name_sql_esc($this->table);
 
         if (is_array($fields)) {

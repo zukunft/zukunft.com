@@ -29,7 +29,9 @@
 
 */
 
-namespace cfg;
+namespace cfg\element;
+
+use cfg\type_object;
 
 class element_type extends type_object
 {

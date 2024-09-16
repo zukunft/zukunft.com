@@ -74,6 +74,7 @@ use api\system\type_lists as type_lists_api;
 use cfg\component\position_type_list;
 use cfg\component\component_type_list;
 use cfg\db\sql_db;
+use cfg\element\element_type_list;
 use cfg\log\change_action_list;
 use cfg\log\change_field_list;
 use cfg\log\change_table_list;

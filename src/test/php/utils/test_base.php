@@ -74,7 +74,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_type_list;
 use cfg\db_object_seq_id;
 use cfg\db_object_seq_id_user;
-use cfg\element_list;
+use cfg\element\element_list;
 use cfg\fig_ids;
 use cfg\formula;
 use cfg\formula_link;
@@ -3051,7 +3051,7 @@ class test_base
         $msg = $sbx->del();
         $result = $msg->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
-            return $this->write_named_log($sbx, $sbx->name_field(), $name, change::MSG_DEL);;
+            return $this->write_named_log($sbx, $sbx->name_field(), $name, change::MSG_DEL);
         } else {
             return false;
         }

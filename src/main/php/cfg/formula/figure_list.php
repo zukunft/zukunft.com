@@ -38,6 +38,8 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 use api\formula\figure_list as figure_list_api;
 use cfg\db\sql;
 use cfg\db\sql_par;
+use cfg\result\result;
+use cfg\value\value;
 use html\figure\figure as figure_dsp;
 use shared\library;
 use test\test_api;
@@ -159,11 +161,13 @@ class figure_list extends sandbox_list
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     if ($db_row[figure::FLD_ID] > 0) {
-                        $fig = new figure(new value($this->user()));
+                        $val = new value($this->user());
+                        $fig = new figure($val);
                     } else {
-                        $fig = new figure(new value($this->user()));
+                        $res = new result($this->user());
+                        $fig = new figure($res);
                     }
-                    $fig->row_mapper($db_row);
+                    $fig->row_mapper($db_row, $qp->ext);
                     $this->add_obj($fig);
                     $result = true;
                 }

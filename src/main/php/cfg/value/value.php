@@ -1961,7 +1961,12 @@ class value extends sandbox_value
     /**
      * check if the id parameters are supposed to be changed
      */
-    function save_id_if_updated($db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
+    function save_id_if_updated(
+        sql_db              $db_con,
+        sandbox_multi|value $db_rec,
+        sandbox_multi|value $std_rec,
+        ?bool               $use_func = null
+    ): string
     {
         log_debug('value->save_id_if_updated has name changed from "' . $db_rec->dsp_id() . '" to "' . $this->dsp_id() . '"');
         $result = '';
@@ -2001,12 +2006,12 @@ class value extends sandbox_value
                     // ... and create a new display component link
                     $this->set_id(0);
                     $this->owner_id = $this->user()->id();
-                    $result .= $this->add($db_con)->get_last_message();
+                    $result .= $this->add($use_func)->get_last_message();
                     log_debug('value->save_id_if_updated recreate the value "' . $db_rec->dsp_id() . '" as ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
                 }
             }
         } else {
-            log_debug('value->save_id_if_updated no id field updated (group ' . $db_rec->grp->id() . '=' . $this->grp->id() . ')');
+            log_debug('value->save_id_if_updated no id field updated (group ' . $db_rec->grp()->id() . '=' . $this->grp->id() . ')');
         }
 
         log_debug('value->save_id_if_updated for ' . $this->dsp_id() . ' has been done');
@@ -2126,7 +2131,7 @@ class value extends sandbox_value
 
             // check if the id parameters are supposed to be changed
             if ($usr_msg->is_ok()) {
-                $usr_msg->add_message($this->save_id_if_updated($db_con, $db_rec, $std_rec));
+                $usr_msg->add_message($this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func));
             }
 
             // if a problem has appeared up to here, don't try to save the values

@@ -35,6 +35,7 @@ namespace cfg\value;
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use cfg\db\sql_type_list;
 use cfg\db_object;
 use cfg\sandbox;
 use DateTime;
@@ -116,7 +117,7 @@ class value_ts_data extends db_object
      */
     function sql_foreign_key(sql $sc): string
     {
-        return $this->sql_foreign_key_create($sc, [], [],false);
+        return $this->sql_foreign_key_create($sc, new sql_type_list([]), [],false);
     }
 
 }

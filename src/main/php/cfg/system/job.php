@@ -45,7 +45,7 @@ To update the formula results the main actions are
   C) create the depending on formula results (or delete if not valid anymore)
   D) calculate und update the depending on formula results
   
-A add, update or delete on an object always triggers all action from A) to D)
+add, update or delete on an object always triggers all action from A) to D)
   except the update of a value, which for which A) is not needed
   
 If the change influences the standard result additional to the user value the standard value needs to be updated

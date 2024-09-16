@@ -691,7 +691,8 @@ class phrase extends combine_named
                 $wrd_lst->add($wrd);
             }
         } else {
-            $wrd_lst->add($this->obj());
+            $wrd = $this->obj();
+            $wrd_lst->add($wrd);
         }
         return $wrd_lst;
     }
@@ -1114,7 +1115,7 @@ class phrase extends combine_named
     }
 
     public
-    static function cmp($a, $b)
+    static function cmp($a, $b): string
     {
         return strcmp($a->name(), $b->name());
     }

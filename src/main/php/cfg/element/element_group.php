@@ -40,12 +40,19 @@
   
 */
 
-namespace cfg;
+namespace cfg\element;
 
 include_once MODEL_FORMULA_PATH . 'figure_list.php';
 
+use cfg\figure_list;
+use cfg\formula;
+use cfg\phrase;
+use cfg\phrase_list;
 use cfg\result\result;
+use cfg\term_list;
+use cfg\user;
 use cfg\value\value;
+use cfg\word;
 use html\figure\figure as figure_dsp;
 use shared\library;
 use test\test_api;

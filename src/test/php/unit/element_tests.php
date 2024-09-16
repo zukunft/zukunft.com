@@ -37,8 +37,8 @@ include_once MODEL_ELEMENT_PATH . 'element_list.php';
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
-use cfg\element_list;
-use cfg\element_type;
+use cfg\element\element_list;
+use cfg\element\element_type;
 use test\test_cleanup;
 
 class element_tests
