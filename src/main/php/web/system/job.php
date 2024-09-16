@@ -286,7 +286,7 @@ class job extends db_object_dsp
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(\html\rest_ctrl::VIEW, $this->id, $back, api_dsp::PAR_VIEW_WORDS);
+        $url = $html->url(\html\rest_ctrl::VIEW, $this->id(), $back, api_dsp::PAR_VIEW_WORDS);
         return $html->ref($url, $this->name(), $this->description(), $style);
     }
 

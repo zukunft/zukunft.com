@@ -129,7 +129,7 @@ class verb extends sandbox_named_dsp
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(api_dsp::VERB, $this->id, $back, api_dsp::PAR_VIEW_VERBS);
+        $url = $html->url(api_dsp::VERB, $this->id(), $back, api_dsp::PAR_VIEW_VERBS);
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 

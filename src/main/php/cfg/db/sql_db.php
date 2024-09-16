@@ -5238,7 +5238,7 @@ class sql_db
     {
         // the sequence names of the tables to reset
         $html = new html_base();
-        $html->echo('truncate ');
+        $html->echo('truncate all tables ');
         foreach (DB_SEQ_LIST as $seq_name) {
             $this->reset_seq($seq_name);
         }
@@ -5247,8 +5247,8 @@ class sql_db
     function truncate_table(string $table_name): void
     {
         $html = new html_base();
-        $html->echo('TRUNCATE TABLE ' . $table_name);
-        $sql = 'TRUNCATE ' . $this->get_table_name_esc($table_name) . ' CASCADE;';
+        $html->echo('truncate table ' . $table_name);
+        $sql = sql::TRUNCATE . ' ' . $this->get_table_name_esc($table_name) . ' ' . sql::CASCADE . '; ';
         try {
             $this->exe($sql);
         } catch (Exception $e) {

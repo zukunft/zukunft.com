@@ -1487,7 +1487,7 @@ class phrase_list extends sandbox_list_named
     function not_in($del_phr_lst) {
       zu_debug('phrase_list->not_in');
       foreach ($this->lst() AS $phr) {
-        if ($phr->id <> 0) {
+        if ($phr->id() != 0) {
           if (in_array($phr->id, $del_phr_lst->ids)) {
             $del_pos = array_search($phr->id, $this->ids);
             zu_debug('phrase_list->not_in -> to exclude ('.$this->get($del_pos(->name.')');
@@ -2248,11 +2248,11 @@ class phrase_list extends sandbox_list_named
             //$field_name = "time";
         }
         //
-        if ($type->id > 0) {
+        if ($type->id() > 0) {
             $sql_from = "triples l, words w";
             $sql_where_and = "AND w.word_id = l.from_phrase_id
                         AND l.verb_id = " . $verbs->id(verb::IS_A) . "
-                        AND l.to_phrase_id = " . $type->id;
+                        AND l.to_phrase_id = " . $type->id();
         } else {
             $sql_from = "words w";
             $sql_where_and = "";
@@ -2274,7 +2274,7 @@ class phrase_list extends sandbox_list_named
         $sel->form = $form_name;
         $sel->name = $field_name;
         $sel->sql = $sql;
-        $sel->selected = $this->id;
+        $sel->selected = $this->id();
         $sel->dummy_text = '... please select';
         $result .= $sel->display();
          */
@@ -2355,7 +2355,7 @@ class phrase_list extends sandbox_list_named
                         $phr->load();
                         log_warning('Phrase ' . $phr->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                     }
-                    // TODO check if old can ge removed: if ($phr->id > 0) {
+                    // TODO check if old can ge removed: if ($phr->id() > 0) {
                     if (get_class($phr->obj()) == word::class or get_class($phr->obj()) == word_dsp::class) {
                         $wrd_lst->add($phr->obj());
                     } elseif (get_class($phr->obj()) == triple::class) {

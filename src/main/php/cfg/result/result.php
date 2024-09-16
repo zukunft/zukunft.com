@@ -482,7 +482,7 @@ class result extends sandbox_value
      */
     function api_obj(bool $do_save = true): object
     {
-        $api_obj = new result_api($this->id);
+        $api_obj = new result_api($this->id());
         $api_obj->set_number($this->number());
         if ($this->grp->phrase_list() != null) {
             $grp = $this->grp->phrase_list()->get_grp_id($do_save);
@@ -667,7 +667,7 @@ class result extends sandbox_value
             $this->set_id($id);
         } else {
             // if the id is not given, refresh the object based pn the database
-            if ($this->id != 0) {
+            if ($this->id() != 0) {
                 $id = $this->id();
                 $res_usr = $this->user();
                 $this->reset();
@@ -937,7 +937,7 @@ class result extends sandbox_value
      */
     function load_phrases(bool $force_reload = false): void
     {
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             log_debug('for user ' . $this->user()->name);
             $this->load_phr_lst_src($force_reload);
             $this->load_phr_lst($force_reload);
@@ -1358,7 +1358,7 @@ class result extends sandbox_value
         $frm_ids = array();
         foreach ($frm_elm_lst as $frm_elm) {
             if ($frm_elm->obj != null) {
-                $frm_ids[] = $frm_elm->obj->id;
+                $frm_ids[] = $frm_elm->obj->id();
             }
         }
         // get formula results that may need an update (maybe include also word groups that have any word of the updated word group)

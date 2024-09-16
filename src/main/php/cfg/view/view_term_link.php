@@ -377,13 +377,13 @@ class view_term_link extends sandbox_link
     function load_standard_sql(sql $sc): sql_par
     {
         // try to get the search values from the objects
-        if ($this->id <= 0) {
-            $this->id = 0;
+        if ($this->id() <= 0) {
+            $this->set_id(0);
         }
 
         $sc->set_class($this::class);
         $qp = new sql_par($this::class);
-        if ($this->id != 0) {
+        if ($this->id() != 0) {
             $qp->name .= 'std_id';
         } else {
             $qp->name .= 'std_link_ids';

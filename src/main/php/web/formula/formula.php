@@ -197,7 +197,7 @@ class formula extends sandbox_typed
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(api_dsp::FORMULA, $this->id, $back, api_dsp::PAR_VIEW_FORMULAS);
+        $url = $html->url(api_dsp::FORMULA, $this->id(), $back, api_dsp::PAR_VIEW_FORMULAS);
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 
@@ -285,7 +285,7 @@ class formula extends sandbox_typed
     // display the history of a formula
     function dsp_hist($page, $size, $call, $back): string
     {
-        log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
         $log_dsp = $this->dsp_hist_log($page, $size, $call, $back);
@@ -300,7 +300,7 @@ class formula extends sandbox_typed
     {
         global $usr;
         $log_dsp = new user_log_display($usr);
-        $log_dsp->id = $this->id;
+        $log_dsp->id = $this->id();
         $log_dsp->type = formula::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
@@ -312,7 +312,7 @@ class formula extends sandbox_typed
     // display the link history of a formula
     function dsp_hist_links($page, $size, $call, $back): string
     {
-        log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
         $log_dsp = $this->dsp_hist_log($page, $size, $call, $back);
@@ -336,7 +336,7 @@ class formula extends sandbox_typed
         $resolved_text = str_replace('"', '&quot;', $this->usr_text);
 
         // add new or change an existing formula
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             $script = "formula_add";
             $result .= $html->dsp_text_h2('Add new formula for ' . $wrd->dsp_tbl_row() . ' ');
         } else {
@@ -346,13 +346,13 @@ class formula extends sandbox_typed
         $result .= '<div class="row">';
 
         // when changing a view show the fields only on the left side
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $result .= '<div class="' . html_base::COL_SM_7 . '">';
         }
 
         // formula fields
         $result .= $html->dsp_form_start($script);
-        $result .= $html->dsp_form_hidden("id", $this->id);
+        $result .= $html->dsp_form_hidden("id", $this->id());
         $result .= $html->dsp_form_hidden("word", $wrd->id());
         $result .= $html->dsp_form_hidden("confirm", 1);
         if (trim($back) <> '') {
@@ -373,7 +373,7 @@ class formula extends sandbox_typed
         $result .= $html->dsp_form_end('', $back);
 
         // list the assigned words
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $result .= '</div>';
 
             // list all words linked to the formula and allow to unlink or add new words
@@ -457,7 +457,7 @@ class formula extends sandbox_typed
             $result .= $this->phrase_selector('link_phrase', "formula_edit",
                     '', $selected) . ' ';
         } else {
-            if ($this->id > 0) {
+            if ($this->id() > 0) {
                 $url = $this->obj_url(controller::MC_FORMULA_ADD);
                 // TODO check if 'add_link=1' is needed
                 $result .= (new button($url, $back))->add(messages::FORMULA_ADD);
@@ -509,8 +509,8 @@ class formula extends sandbox_typed
         $result = '<br>';
         $html = new html_base();
 
-        $result .= $html->dsp_btn_text("Test", '/http/formula_test.php?id=' . $this->id . '&user=' . $usr->id() . '&back=' . $back);
-        $result .= $html->dsp_btn_text("Refresh results", '/http/formula_test.php?id=' . $this->id . '&user=' . $usr->id() . '&back=' . $back . '&refresh=1');
+        $result .= $html->dsp_btn_text("Test", '/http/formula_test.php?id=' . $this->id() . '&user=' . $usr->id() . '&back=' . $back);
+        $result .= $html->dsp_btn_text("Refresh results", '/http/formula_test.php?id=' . $this->id() . '&user=' . $usr->id() . '&back=' . $back . '&refresh=1');
 
         $result .= '<br><br>';
 
@@ -566,7 +566,7 @@ class formula extends sandbox_typed
         if ($this->id() > 0 and $usr != null) {
             log_debug('for formula ' . $this->dsp_id() . ' and user "' . $usr->name . '"');
             $frm_lnk_lst = new formula_link_list($usr);
-            $frm_lnk_lst->load_by_frm_id($this->id);
+            $frm_lnk_lst->load_by_frm_id($this->id());
             $phr_ids = $frm_lnk_lst->phrase_ids($sbx);
 
             if (count($phr_ids->lst) > 0) {
@@ -586,7 +586,7 @@ class formula extends sandbox_typed
     {
         log_debug($phr_id);
         $result = '    <td>' . "\n";
-        $url = \html\rest_ctrl::PATH_FIXED . self::class . api_dsp::UPDATE . api_dsp::EXT . '?id=' . $this->id . '&unlink_phrase=' . $phr_id . '&back=' . $back;
+        $url = \html\rest_ctrl::PATH_FIXED . self::class . api_dsp::UPDATE . api_dsp::EXT . '?id=' . $this->id() . '&unlink_phrase=' . $phr_id . '&back=' . $back;
         $result .= (new button($url, $back))->del(messages::FORMULA_UNLINK);
         $result .= '    </td>' . "\n";
         return $result;

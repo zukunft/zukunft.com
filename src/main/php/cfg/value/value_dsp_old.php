@@ -89,7 +89,7 @@ class value_dsp_old extends value
     {
         $result = '';
 
-        log_debug('value->display_linked (' . $this->id . ',u' . $this->user()->id() . ')');
+        log_debug('value->display_linked (' . $this->id() . ',u' . $this->user()->id() . ')');
         if (!is_null($this->number)) {
             $num_text = $this->val_formatted();
             $link_format = '';
@@ -99,7 +99,7 @@ class value_dsp_old extends value
                 }
             }
             // to review
-            $result .= '<a href="/http/value_edit.php?id=' . $this->id . '&back=' . $back . '" ' . $link_format . ' >' . $num_text . '</a>';
+            $result .= '<a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '" ' . $link_format . ' >' . $num_text . '</a>';
         }
         log_debug('done');
         return $result;
@@ -171,7 +171,7 @@ class value_dsp_old extends value
     // the same as \html\btn_del_value, but with another icon
     function btn_undo_add_value($back): string
     {
-        return \html\btn_undo('delete this value', '/http/value_del.php?id=' . $this->id . '&back=' . $back . '');
+        return \html\btn_undo('delete this value', '/http/value_del.php?id=' . $this->id() . '&back=' . $back . '');
     }
 
     // display a value, means create the HTML code that allows to edit the value
@@ -180,7 +180,7 @@ class value_dsp_old extends value
         log_debug('value->dsp_tbl_std ');
         $result = '';
         $result .= '    <td>' . "\n";
-        $result .= '      <div class="right_ref"><a href="/http/value_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->val_formatted() . '</a></div>' . "\n";
+        $result .= '      <div class="right_ref"><a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '">' . $this->val_formatted() . '</a></div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -191,7 +191,7 @@ class value_dsp_old extends value
         log_debug('value->dsp_tbl_usr');
         $result = '';
         $result .= '    <td>' . "\n";
-        $result .= '      <div class="right_ref"><a href="/http/value_edit.php?id=' . $this->id . '&back=' . $back . '" class="user_specific">' . $this->val_formatted() . '</a></div>' . "\n";
+        $result .= '      <div class="right_ref"><a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '" class="user_specific">' . $this->val_formatted() . '</a></div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -212,11 +212,11 @@ class value_dsp_old extends value
     // display the history of a value
     function dsp_hist($page, $size, $call, $back): string
     {
-        log_debug("value->dsp_hist for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        log_debug("value->dsp_hist for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display($this->user());
-        $log_dsp->id = $this->id;
+        $log_dsp->id = $this->id();
         $log_dsp->obj = $this;
         $log_dsp->type = value::class;
         $log_dsp->page = $page;
@@ -232,11 +232,11 @@ class value_dsp_old extends value
     // display the history of a value
     function dsp_hist_links($page, $size, $call, $back): string
     {
-        log_debug($this->id . ",size" . $size . ",b" . $size);
+        log_debug($this->id() . ",size" . $size . ",b" . $size);
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display($this->user());
-        $log_dsp->id = $this->id;
+        $log_dsp->id = $this->id();
         $log_dsp->type = value::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
@@ -363,7 +363,7 @@ class value_dsp_old extends value
         $html = new html_base();
 
         // set main display parameters for the add or edit view
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             $script = "value_add";
             $result .= $html->dsp_form_start($script);
             $result .= $html->dsp_text_h3("Add value for");
@@ -377,7 +377,7 @@ class value_dsp_old extends value
                 log_debug('value->dsp_edit ' . $this->dsp_id());
             }
         }
-        $this_url = '/http/' . $script . '.php?id=' . $this->id . '&back=' . $back; // url to call this display again to display the user changes
+        $this_url = '/http/' . $script . '.php?id=' . $this->id() . '&back=' . $back; // url to call this display again to display the user changes
 
         // display the words and triples
         $result .= $html->dsp_tbl_start_select();
@@ -402,7 +402,7 @@ class value_dsp_old extends value
       if ($this->time_id <= 0) {
         $this->time_phr = $phr_lst->time_useful();
         $phr_lst->del($this->time_phr);
-        $this->time_id = $this->time_phr->id; // not really needed ...
+        $this->time_id = $this->time_phr->id(); // not really needed ...
       }
       */
 
@@ -423,8 +423,8 @@ class value_dsp_old extends value
                 if ($phr->is_wrd_id == 0) {
                     log_debug('guess type for "' . $phr->name() . '"');
                     $phr->is_wrd = $phr->is_mainly();
-                    if ($phr->is_wrd->id > 0) {
-                        $phr->is_wrd_id = $phr->is_wrd->id;
+                    if ($phr->is_wrd->id() > 0) {
+                        $phr->is_wrd_id = $phr->is_wrd->id();
                         log_debug('guessed type for ' . $phr->name() . ': ' . $phr->is_wrd->name);
                     }
                 }
@@ -482,7 +482,7 @@ class value_dsp_old extends value
                         $lib->ids_to_url($type_ids_adj, "type") .
                         '&confirm=1';
                     // url for the case that this phrase should be renamed
-                    if ($phr->id > 0) {
+                    if ($phr->id() > 0) {
                         $phrase_url = '/http/word_edit.php?id=' . $phr->id . '&back=' . $back;
                     } else {
                         $lnk_id = $phr->id * -1;
@@ -494,7 +494,7 @@ class value_dsp_old extends value
 
                     // show the phrases that have a type
                     if ($dsp_type == 0) {
-                        if ($phr->is_wrd->id > 0) {
+                        if ($phr->is_wrd->id() > 0) {
                             log_debug('id ' . $phr->id . ' has a type');
                             $result .= '    <td>';
                             $result .= $phr->is_wrd->name . ':';
@@ -516,7 +516,7 @@ class value_dsp_old extends value
 
                     // show the phrases that don't have a type
                     if ($dsp_type == 1) {
-                        if ($phr->is_wrd->id == 0 and $phr->id > 0) {
+                        if ($phr->is_wrd->id == 0 and $phr->id() > 0) {
                             log_debug('id ' . $phr->id . ' has no type');
                             if (!isset($main_wrd)) {
                                 $main_wrd = $phr;
@@ -602,7 +602,7 @@ class value_dsp_old extends value
         $result .= '  ' . \html\btn_add("Add another phrase", $used_url);
         $result .= '  <br><br>';
         $result .= '  <input type="hidden" name="back" value="' . $back . '">';
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $result .= '  to <input type="text" name="value" value="' . $this->number . '">';
         } else {
             $result .= '  is <input type="text" name="value">';
@@ -628,7 +628,7 @@ class value_dsp_old extends value
 
         // display the user changes
         log_debug('user changes');
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $changes = $this->dsp_hist(0, sql_db::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $result .= $html->dsp_text_h3("Latest changes related to this value", "change_hist");

@@ -81,7 +81,7 @@ class type_list extends list_api implements JsonSerializable
                     if ($obj::class == verb::class or $obj::class == view::class) {
                         $id = $obj->id();
                     } else {
-                        $id = $obj->id;
+                        $id = $obj->id();
                     }
                 }
                 $api_obj = new type_api(
@@ -196,7 +196,7 @@ class type_list extends list_api implements JsonSerializable
     function add(type_api $type): bool
     {
         $result = false;
-        if ($type->id == 0) {
+        if ($type->id() == 0) {
             if (!in_array($type->code_id, $this->code_id_lst())) {
                 $this->add_obj($type);
                 $this->set_lst_dirty();

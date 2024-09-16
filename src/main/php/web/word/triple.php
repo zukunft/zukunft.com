@@ -229,7 +229,7 @@ class triple extends sandbox_typed
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(rest_ctrl::TRIPLE, $this->id, $back, rest_ctrl::PAR_VIEW_TRIPLES);
+        $url = $html->url(rest_ctrl::TRIPLE, $this->id(), $back, rest_ctrl::PAR_VIEW_TRIPLES);
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 
@@ -296,9 +296,9 @@ class triple extends sandbox_typed
         $result = ''; // reset the html code var
 
         // prepare to show the word link
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $header = $html->text_h2('Change "' . $this->from()->name() . ' ' . $this->verb()->name() . ' ' . $this->to()->name() . '"');
-            $hidden_fields = $html->form_hidden("id", $this->id);
+            $hidden_fields = $html->form_hidden("id", $this->id());
             $hidden_fields .= $html->form_hidden("back", $back);
             $hidden_fields .= $html->form_hidden("confirm", '1');
             $detail_fields = $html->form_text("name", $this->name());
@@ -331,7 +331,7 @@ class triple extends sandbox_typed
     {
 
         $html = new html_base();
-        $url = $html->url(rest_ctrl::PATH_FIXED . 'link' . rest_ctrl::CREATE . rest_ctrl::EXT, $this->id, $this->id);
+        $url = $html->url(rest_ctrl::PATH_FIXED . 'link' . rest_ctrl::CREATE . rest_ctrl::EXT, $this->id(), $this->id());
         $btn = (new button($url. $back))->edit(messages::TRIPLE_ADD);
 
         return $html->td($btn);
@@ -344,7 +344,7 @@ class triple extends sandbox_typed
     {
 
         $html = new html_base();
-        $url = $html->url(rest_ctrl::PATH_FIXED . 'link' . rest_ctrl::UPDATE . rest_ctrl::EXT, $this->id, $trp->id());
+        $url = $html->url(rest_ctrl::PATH_FIXED . 'link' . rest_ctrl::UPDATE . rest_ctrl::EXT, $this->id(), $trp->id());
         $btn = (new button($url. $back))->edit(messages::TRIPLE_EDIT);
 
         return $html->td($btn);

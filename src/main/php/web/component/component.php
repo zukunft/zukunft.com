@@ -559,7 +559,7 @@ class component extends sandbox_typed
         $result = '';
 
         $hidden_fields = '';
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             $script = controller::MC_COMPONENT_ADD;
             $fld_ext = '_add';
             $header = $html->text_h2('Create a view element');
@@ -567,7 +567,7 @@ class component extends sandbox_typed
             $script = controller::MC_COMPONENT_EDIT;
             $fld_ext = '';
             $header = $html->text_h2('Change "' . $this->name . '"');
-            $hidden_fields .= $html->form_hidden("id", $this->id);
+            $hidden_fields .= $html->form_hidden("id", $this->id());
         }
         $hidden_fields .= $html->form_hidden("back", $back);
         $hidden_fields .= $html->form_hidden("confirm", '1');
@@ -607,7 +607,7 @@ class component extends sandbox_typed
         $html = new html_base();
 
         // show the view component name
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             $script = "component_add";
             $result .= $html->dsp_text_h2('Create a view element for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>');
         } else {
@@ -617,13 +617,13 @@ class component extends sandbox_typed
         $result .= '<div class="row">';
 
         // when changing a view component show the fields only on the left side
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $result .= '<div class="' . html_base::COL_SM_7 . '">';
         }
 
         $result .= $html->dsp_form_start($script);
-        if ($this->id > 0) {
-            $result .= $html->dsp_form_id($this->id);
+        if ($this->id() > 0) {
+            $result .= $html->dsp_form_id($this->id());
         }
         $result .= $html->dsp_form_hidden("word", $wrd->id());
         $result .= $html->dsp_form_hidden("back", $back);
@@ -638,14 +638,14 @@ class component extends sandbox_typed
         $result .= '</div>';
         $result .= $html->dsp_form_fld("comment", $this->description, "Comment:");
         if ($add_link <= 0) {
-            if ($this->id > 0) {
-                $result .= $html->dsp_form_end('', $back, "/http/component_del.php?id=" . $this->id . "&back=" . $back);
+            if ($this->id() > 0) {
+                $result .= $html->dsp_form_end('', $back, "/http/component_del.php?id=" . $this->id() . "&back=" . $back);
             } else {
                 $result .= $html->dsp_form_end('', $back, '');
             }
         }
 
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $result .= '</div>';
 
             $view_html = $this->linked_views($add_link, $wrd, $back);
@@ -695,7 +695,7 @@ class component extends sandbox_typed
         $result = '';
 
         $hidden_fields = '';
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             $script = self::FORM_ADD;
             $fld_ext = '_add';
             $header = $html->text_h2('Create a view element');
@@ -703,7 +703,7 @@ class component extends sandbox_typed
             $script = self::FORM_EDIT;
             $fld_ext = '';
             $header = $html->text_h2('Change "' . $this->name . '"');
-            $hidden_fields .= $html->form_hidden("id", $this->id);
+            $hidden_fields .= $html->form_hidden("id", $this->id());
         }
         $hidden_fields .= $html->form_hidden("back", $back);
         $hidden_fields .= $html->form_hidden("confirm", '1');
@@ -835,7 +835,7 @@ class component extends sandbox_typed
      */
     private function linked_views($add_link, $wrd, $back): string
     {
-        $this->log_debug("id " . $this->id . " (word " . $wrd->id . ", add " . $add_link . ").");
+        $this->log_debug("id " . $this->id() . " (word " . $wrd->id() . ", add " . $add_link . ").");
 
         global $usr;
         global $db_con;
@@ -869,7 +869,7 @@ class component extends sandbox_typed
 
             $result .= $html->dsp_form_end('', $back);
         } else {
-            $result .= '      ' . \html\btn_add('add new', '/http/component_edit.php?id=' . $this->id . '&add_link=1&word=' . $wrd->id . '&back=' . $back);
+            $result .= '      ' . \html\btn_add('add new', '/http/component_edit.php?id=' . $this->id() . '&add_link=1&word=' . $wrd->id . '&back=' . $back);
         }
         $result .= '    </td>';
         $result .= '  </tr>';
@@ -883,11 +883,11 @@ class component extends sandbox_typed
     // display the history of a view component
     function dsp_hist($page, $size, $call, $back): string
     {
-        $this->log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display($this->user());
-        $log_dsp->id = $this->id;
+        $log_dsp->id = $this->id();
         //$log_dsp->usr = $this->user();
         $log_dsp->type = component::class;
         $log_dsp->page = $page;
@@ -903,11 +903,11 @@ class component extends sandbox_typed
     // display the link history of a view component
     function dsp_hist_links($page, $size, $call, $back): string
     {
-        $this->log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display($this->user());
-        $log_dsp->id = $this->id;
+        $log_dsp->id = $this->id();
         $log_dsp->type = component::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;

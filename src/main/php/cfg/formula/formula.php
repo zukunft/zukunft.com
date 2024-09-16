@@ -886,7 +886,7 @@ class formula extends sandbox_typed
         if ($this->id() > 0 and $this->user() != null) {
             log_debug('for formula ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
             $frm_lnk_lst = new formula_link_list($this->user());
-            $frm_lnk_lst->load_by_frm_id($this->id);
+            $frm_lnk_lst->load_by_frm_id($this->id());
             $phr_ids = $frm_lnk_lst->phrase_ids($sbx);
 
             if (count($phr_ids->lst) > 0) {
@@ -993,8 +993,8 @@ class formula extends sandbox_typed
         global $db_con;
 
         $db_con->set_class(result::class);
-        $db_con->set_usr($this->user()->id);
-        return $db_con->delete_old(self::FLD_ID, $this->id);
+        $db_con->set_usr($this->user()->id());
+        return $db_con->delete_old(self::FLD_ID, $this->id());
     }
 
     /**
@@ -1290,7 +1290,7 @@ class formula extends sandbox_typed
       if ($this->has_verb ($this->ref_text, $this->user()->id)) {
         $needs_update = true; // this case will be checked later
       } else {
-        $frm_wrd_ids = $this->wrd_ids($this->ref_text, $this->user()->id);
+        $frm_wrd_ids = $this->wrd_ids($this->ref_text, $this->user()->id());
       } */
 
             // reload the formula if needed, but this should be done by the calling function, so create an info message
@@ -1740,7 +1740,7 @@ class formula extends sandbox_typed
             $field_names = array();
             $field_values = array();
             $field_names[] = self::FLD_ID;
-            $field_values[] = $this->id;
+            $field_values[] = $this->id();
             $field_names[] = user::FLD_ID;
             if ($frm_usr_id > 0) {
                 $field_values[] = $frm_usr_id;
@@ -1770,7 +1770,7 @@ class formula extends sandbox_typed
             $field_names = array();
             $field_values = array();
             $field_names[] = self::FLD_ID;
-            $field_values[] = $this->id;
+            $field_values[] = $this->id();
             if ($frm_usr_id > 0) {
                 $field_names[] = user::FLD_ID;
                 $field_values[] = $frm_usr_id;
@@ -1805,21 +1805,21 @@ class formula extends sandbox_typed
         $result = true;
 
         // refresh the links for the standard formula used if the user has not changed the formula
-        $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, 0, $this->user()->id);
+        $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, 0, $this->user()->id());
 
         // update triple links of the standard formula
         if ($result) {
-            $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, 0, $this->user()->id);
+            $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, 0, $this->user()->id());
         }
 
         // update verb links of the standard formula
         if ($result) {
-            $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, 0, $this->user()->id);
+            $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, 0, $this->user()->id());
         }
 
         // update formula links of the standard formula
         if ($result) {
-            $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, 0, $this->user()->id);
+            $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, 0, $this->user()->id());
         }
 
         // refresh the links for the user specific formula
@@ -1829,19 +1829,19 @@ class formula extends sandbox_typed
             foreach ($db_lst as $db_row) {
                 // update word links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, $db_row[user::FLD_ID], $this->user()->id);
+                    $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, $db_row[user::FLD_ID], $this->user()->id());
                 }
                 // update triple links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, $db_row[user::FLD_ID], $this->user()->id);
+                    $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, $db_row[user::FLD_ID], $this->user()->id());
                 }
                 // update verb links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, $db_row[user::FLD_ID], $this->user()->id);
+                    $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, $db_row[user::FLD_ID], $this->user()->id());
                 }
                 // update formula links of the standard formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, $db_row[user::FLD_ID], $this->user()->id);
+                    $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, $db_row[user::FLD_ID], $this->user()->id());
                 }
             }
         }
@@ -2031,7 +2031,7 @@ class formula extends sandbox_typed
             if (!$this->check_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_class(formula::class, true);
-                $log_id = $db_con->insert_old(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id));
+                $log_id = $db_con->insert_old(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_formula failed.');
                     $result = false;
@@ -2059,9 +2059,9 @@ class formula extends sandbox_typed
         $qp = new sql_par($class);
         $qp->name = $class . '_user_sandbox';
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id);
+        $db_con->set_usr($this->user()->id());
         $db_con->set_fields(array_merge(array(user::FLD_ID), self::FLD_NAMES_USR, self::FLD_NAMES_NUM_USR));
-        $db_con->add_par(sql_par_type::INT, strval($this->id));
+        $db_con->add_par(sql_par_type::INT, strval($this->id()));
         $qp->sql = $db_con->select_by_field(self::FLD_ID);
         $qp->par = $db_con->get_par();
 
@@ -2109,7 +2109,7 @@ class formula extends sandbox_typed
         try {
             $msg = $db_con->delete_old(
                 array(self::FLD_ID, user::FLD_ID),
-                array($this->id(), $this->user()->id));
+                array($this->id(), $this->user()->id()));
         } catch (Exception $e) {
             log_err($action . ' elements ' . $msg_failed . ' because ' . $e);
         }
@@ -2120,7 +2120,7 @@ class formula extends sandbox_typed
             try {
                 $msg = $db_con->delete_old(
                     array(self::FLD_ID, user::FLD_ID),
-                    array($this->id(), $this->user()->id));
+                    array($this->id(), $this->user()->id()));
                 if ($msg == '') {
                     $this->usr_cfg_id = null;
                     $result = true;
@@ -2190,7 +2190,7 @@ class formula extends sandbox_typed
             $log->old_value = $db_rec->usr_text;
             $log->new_value = $this->usr_text;
             $log->std_value = $std_rec->usr_text;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_FORMULA_USER_TEXT);
             $result = $this->save_field_user($db_con, $log);
         }
@@ -2209,7 +2209,7 @@ class formula extends sandbox_typed
             $log->old_value = $db_rec->ref_text;
             $log->new_value = $this->ref_text;
             $log->std_value = $std_rec->ref_text;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_FORMULA_TEXT);
             $result = $this->save_field_user($db_con, $log);
             // updating the reference expression is probably relevant for calculation, so force to update the timestamp
@@ -2244,7 +2244,7 @@ class formula extends sandbox_typed
             } else {
                 $log->std_value = '0';
             }
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_ALL_NEEDED);
             $result = $this->save_field_user($db_con, $log);
             // switch on that all fields are needed for the calculation, probably some formula results can be removed
@@ -2290,7 +2290,7 @@ class formula extends sandbox_typed
                 $log->old_value = $db_rec->name();
                 $log->new_value = $this->name();
                 $log->std_value = $std_rec->name();
-                $log->row_id = $this->id;
+                $log->row_id = $this->id();
                 $log->set_field(self::FLD_NAME);
                 $result .= $this->save_field_user($db_con, $log);
                 // in case a word link exist, change also the name of the word
@@ -2328,7 +2328,7 @@ class formula extends sandbox_typed
             $log->old_value = $db_rec->name();
             $log->new_value = $this->name();
             $log->std_value = $std_rec->name();
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_NAME);
             if ($log->add()) {
                 $db_con->set_class(formula::class);
@@ -2402,7 +2402,7 @@ class formula extends sandbox_typed
                         $msg = $to_del->del();
                         $usr_msg->add($msg);
                         // ... and use it for the update
-                        $this->set_id($db_chk->id);
+                        $this->set_id($db_chk->id());
                         $this->owner_id = $db_chk->owner_id;
                         // force including again
                         $this->include();
@@ -2478,11 +2478,11 @@ class formula extends sandbox_typed
                 // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
                 $this->set_id($db_con->insert_old(
                     array(self::FLD_NAME, user::FLD_ID, self::FLD_LAST_UPDATE, self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT),
-                    array($this->name(), $this->user()->id, sql::NOW, $this->ref_text, $this->usr_text)));
+                    array($this->name(), $this->user()->id(), sql::NOW, $this->ref_text, $this->usr_text)));
                 if ($this->id() > 0) {
-                    log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id);
+                    log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id());
                     // update the id in the log for the correct reference
-                    if (!$log->add_ref($this->id)) {
+                    if (!$log->add_ref($this->id())) {
                         $usr_msg->add_message('Updating the reference in the log failed');
                         $this->set_id(0);
                         // TODO do rollback or retry?
@@ -2543,7 +2543,7 @@ class formula extends sandbox_typed
 
             // build the database object because the is anyway needed
             $db_con->set_class(formula::class);
-            $db_con->set_usr($this->user()->id);
+            $db_con->set_usr($this->user()->id());
 
             // check if a new formula is supposed to be added
             if ($this->id() <= 0) {
@@ -2576,14 +2576,14 @@ class formula extends sandbox_typed
                     $usr_msg->add_message($this->add($use_func)->get_last_message());
                 }
             } else {
-                log_debug('update ' . $this->id);
+                log_debug('update ' . $this->id());
                 // read the database values to be able to check if something has been changed; done first,
                 // because it needs to be done for user and general formulas
                 $db_rec = new formula($this->user());
                 $db_rec->load_by_id($this->id(), formula::class);
                 log_debug('database formula "' . $db_rec->name() . '" (' . $db_rec->id() . ') loaded');
                 $std_rec = new formula($this->user()); // must also be set to allow to take the ownership
-                $std_rec->set_id($this->id);
+                $std_rec->set_id($this->id());
                 $std_rec->load_standard();
                 log_debug('standard formula "' . $std_rec->name() . '" (' . $std_rec->id() . ') loaded');
 
@@ -2669,7 +2669,7 @@ class formula extends sandbox_typed
         $usr_msg = new user_message();
 
         $frm_lnk_lst = new formula_link_list($this->user());
-        if ($frm_lnk_lst->load_by_frm_id($this->id)) {
+        if ($frm_lnk_lst->load_by_frm_id($this->id())) {
             $msg = $frm_lnk_lst->del_without_log();
             $usr_msg->add_message($msg);
         }
@@ -2677,13 +2677,13 @@ class formula extends sandbox_typed
         // and the corresponding formula elements
         if ($usr_msg->is_ok()) {
             $elm_lst = new element_list($this->user());
-            $elm_lst->load_by_frm($this->id);
+            $elm_lst->load_by_frm($this->id());
             // TODO add del function with test
             //$usr_msg->add($elm_lst->del_without_log());
 
             $db_con->set_class(element::class);
             $db_con->set_usr($this->user()->id());
-            $msg = $db_con->delete_old($this->id_field(), $this->id);
+            $msg = $db_con->delete_old($this->id_field(), $this->id());
             $usr_msg->add_message($msg);
         }
 
@@ -2691,7 +2691,7 @@ class formula extends sandbox_typed
         if ($usr_msg->is_ok()) {
             $db_con->set_class(result::class);
             $db_con->set_usr($this->user()->id());
-            $msg = $db_con->delete_old($this->id_field(), $this->id);
+            $msg = $db_con->delete_old($this->id_field(), $this->id());
             $usr_msg->add_message($msg);
         }
 

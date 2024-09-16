@@ -135,10 +135,10 @@ class user extends user_api
         $html = new html_base();
         $result = ''; // reset the html code var
 
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             // display the user fields using a table and not using px in css to be independent of any screen solution
             $header = $html->text_h2('User "' . $this->name . '"');
-            $hidden_fields = $html->form_hidden("id", $this->id);
+            $hidden_fields = $html->form_hidden("id", $this->id());
             $hidden_fields .= $html->form_hidden("back", $back);
             $detail_fields = $html->form_text("username", $this->name);
             $detail_fields .= $html->form_text("email", $this->email);

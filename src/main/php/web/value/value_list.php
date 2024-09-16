@@ -182,7 +182,7 @@ class value_list extends list_dsp
             if ($grp != null) {
                 $grp_lst->lst[] = $grp;
             } else {
-                log_err("The phrase group for value " . $val->id . " cannot be loaded.", "value_list->phrase_groups");
+                log_err("The phrase group for value " . $val->id() . " cannot be loaded.", "value_list->phrase_groups");
             }
         }
 
@@ -208,7 +208,7 @@ class value_list extends list_dsp
         if (!isset($this->phr)) {
             $result = log_warning('The main phrase is not set.', "value_list_dsp->dsp_table");
         }
-        if ($phr_row->id == 0) {
+        if ($phr_row->id() == 0) {
             $result = log_warning('The main phrase is not selected.', "value_list_dsp->dsp_table");
         }
         if (!isset($phr_row)) {
@@ -218,7 +218,7 @@ class value_list extends list_dsp
             $result = log_err('The row is of type ' . get_class($phr_row) . ' but should be a phrase.', "value_list_dsp->dsp_table");
         }
         // if (get_class($phr_row) <> phrase::class) { $result = zu_err('The row is of type '.get_class($phr_row).' but should be a phrase.', "value_list_dsp->dsp_table"); }
-        if ($phr_row->id == 0) {
+        if ($phr_row->id() == 0) {
             $result = log_warning('The row type is not selected.', "value_list_dsp->dsp_table");
         }
 
@@ -330,7 +330,7 @@ class value_list extends list_dsp
             foreach ($row_wrd_lst->lst as $sub_wrd) {
                 $wrd_ids = array();
                 $wrd_ids[] = $this->phr->id();
-                $wrd_ids[] = $sub_wrd->id;
+                $wrd_ids[] = $sub_wrd->id();
                 foreach ($common_lst->id_lst() as $extra_id) {
                     if (!in_array($extra_id, $wrd_ids)) {
                         $wrd_ids[] = $extra_id;
@@ -358,7 +358,7 @@ class value_list extends list_dsp
                     foreach ($time_lst->lst() as $time_wrd) {
                         $val_wrd_ids = $wrd_ids;
                         if (!in_array($time_wrd->id, $val_wrd_ids)) {
-                            $val_wrd_ids[] = $time_wrd->id;
+                            $val_wrd_ids[] = $time_wrd->id();
                         }
 
                         // get the phrase group for the value row
@@ -382,13 +382,13 @@ class value_list extends list_dsp
 
                             if ($sub_wrd->id() > 0) {
                                 $add_phr_lst->add($sub_wrd->phrase());
-                                $add_phr_ids[] = $sub_wrd->id;
-                                $type_ids[] = $sub_wrd->id; // TODO check if it should not be $type_word_id
+                                $add_phr_ids[] = $sub_wrd->id();
+                                $type_ids[] = $sub_wrd->id(); // TODO check if it should not be $type_word_id
                             }
                             // if values for just one column are added, the column head word id is already in the common id list and due to that does not need to be added
                             if (!in_array($time_wrd->id(), $add_phr_ids) and $time_wrd->id() > 0) {
                                 $add_phr_lst->add($time_wrd->phrase());
-                                $add_phr_ids[] = $time_wrd->id;
+                                $add_phr_ids[] = $time_wrd->id();
                                 $type_ids[] = 0;
                             }
 
@@ -446,10 +446,10 @@ class value_list extends list_dsp
                             $wrd_ids = array();
                             $wrd_ids[] = $this->phr->id();
                             if (!in_array($sub_wrd->id, $wrd_ids)) {
-                                $wrd_ids[] = $sub_wrd->id;
+                                $wrd_ids[] = $sub_wrd->id();
                             }
                             if (!in_array($diff_phrase->id, $wrd_ids)) {
-                                $wrd_ids[] = $diff_phrase->id;
+                                $wrd_ids[] = $diff_phrase->id();
                             }
                             foreach ($common_lst->id_lst() as $extra_id) {
                                 if (!in_array($extra_id, $wrd_ids)) {
@@ -460,7 +460,7 @@ class value_list extends list_dsp
                             foreach ($time_lst->lst() as $time_wrd) {
                                 $val_wrd_ids = $wrd_ids;
                                 if (!in_array($time_wrd->id, $val_wrd_ids)) {
-                                    $val_wrd_ids[] = $time_wrd->id;
+                                    $val_wrd_ids[] = $time_wrd->id();
                                 }
 
                                 // get the phrase group for the value row
@@ -484,18 +484,18 @@ class value_list extends list_dsp
 
                                     if ($sub_wrd->id() > 0) {
                                         $add_phr_lst->add($sub_wrd->phrase());
-                                        $add_phr_ids[] = $sub_wrd->id;
-                                        $type_ids[] = $type_phr->id;
+                                        $add_phr_ids[] = $sub_wrd->id();
+                                        $type_ids[] = $type_phr->id();
                                     }
                                     if ($diff_phrase->id() <> 0) {
                                         $add_phr_lst->add($diff_phrase);
-                                        $add_phr_ids[] = $diff_phrase->id;
+                                        $add_phr_ids[] = $diff_phrase->id();
                                         $type_ids[] = 0;
                                     }
                                     // if values for just one column are added, the column head word id is already in the common id list and due to that does not need to be added
                                     if (!in_array($time_wrd->id, $add_phr_ids) and $time_wrd->id() > 0) {
                                         $add_phr_lst->add($time_wrd->phrase());
-                                        $add_phr_ids[] = $time_wrd->id;
+                                        $add_phr_ids[] = $time_wrd->id();
                                         $type_ids[] = 0;
                                     }
 
@@ -521,16 +521,16 @@ class value_list extends list_dsp
                             $type_ids[] = 0;
                         }
 
-                        $add_phr_ids[] = $sub_wrd->id;
+                        $add_phr_ids[] = $sub_wrd->id();
                         if ($time_wrd != null) {
-                            $add_phr_ids[] = $time_wrd->id;
+                            $add_phr_ids[] = $time_wrd->id();
                         }
                         if ($diff_phrase != null) {
-                            $add_phr_ids[] = $diff_phrase->id;
+                            $add_phr_ids[] = $diff_phrase->id();
                         }
-                        $type_ids[] = $type_phr->id;
-                        $type_ids[] = $type_phr->id;
-                        $type_ids[] = $type_phr->id;
+                        $type_ids[] = $type_phr->id();
+                        $type_ids[] = $type_phr->id();
+                        $type_ids[] = $type_phr->id();
 
                         $result .= '      &nbsp;&nbsp;' . \html\btn_add_value($add_phr_ids, $type_ids, $back);
                         $result .= '      </td>' . "\n";
@@ -659,7 +659,7 @@ class value_list extends list_dsp
                 //if (isset($val->time_phr)) {
                 log_debug('add time ' . $val->id);
                 if ($val->time_phr != null) {
-                    if ($val->time_phr->id > 0) {
+                    if ($val->time_phr->id() > 0) {
                         $time_phr = new phrase($val->user());
                         $time_phr->load_by_id($val->time_phr->id());
                         $val->time_phr = $time_phr;

@@ -2,7 +2,7 @@
 
 /*
 
-    model/helper/db_object.php - a base object for all model database objects for the table and index creation
+    model/helper/db_object.php - a base object for all model database objects contains the table and index creation
     --------------------------
 
 
@@ -120,12 +120,15 @@ class db_object
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @return string the sql statement to create the table
      */
-    function sql_truncate_create(sql $sc, sql_type_list $sc_par_lst): string
+    function sql_truncate_create(
+        sql $sc,
+        sql_type_list $sc_par_lst
+    ): string
     {
         if ($sc->get_table() == '') {
             $sc->set_class($this::class, $sc_par_lst);
         }
-        return 'TRUNCATE ' . $sc->get_table() . ' CASCADE; ';
+        return sql::TRUNCATE . ' ' . $sc->get_table() . ' ' . sql::CASCADE . '; ';
     }
 
     /**
@@ -136,7 +139,11 @@ class db_object
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
      * @return string the sql statement to create the table
      */
-    function sql_index_create(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([]), array $fields = []): string
+    function sql_index_create(
+        sql $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([]),
+        array $fields = []
+    ): string
     {
         if ($sc->get_table() == '') {
             $sc->set_class($this::class, $sc_par_lst);
@@ -155,7 +162,11 @@ class db_object
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
      * @return string the sql statement to create the table
      */
-    function sql_foreign_key_create(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([]), array $fields = []): string
+    function sql_foreign_key_create(
+        sql $sc,
+        sql_type_list $sc_par_lst = new sql_type_list([]),
+        array $fields = []
+    ): string
     {
         if ($sc->get_table() == '') {
             $sc->set_class($this::class, $sc_par_lst);

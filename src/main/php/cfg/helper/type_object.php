@@ -120,7 +120,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
 
     function reset(): void
     {
-        $this->id = 0;
+        $this->set_id(0);
         $this->code_id = null;
         $this->name = '';
         $this->description = null;
@@ -137,9 +137,9 @@ class type_object extends db_object_seq_id implements JsonSerializable
         $result = parent::row_mapper($db_row, $this->id_field_typ($class));
         // set the id upfront to allow row mapping
         if ($class == language::class AND array_key_exists(language::FLD_ID, $db_row)) {
-            $this->id = ($db_row[language::FLD_ID]);
+            $this->set_id(($db_row[language::FLD_ID]));
         }
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $this->code_id = strval($db_row[sql::FLD_CODE_ID]);
             $type_name = '';
             if ($class == change_action::class) {
@@ -208,7 +208,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
     function api_obj(): type_object_api
     {
         $api_obj = new type_object_api();
-        $api_obj->id = $this->id;
+        $api_obj->id = $this->id();
         $api_obj->name = $this->name;
         $api_obj->code_id = $this->code_id;
         return $api_obj;

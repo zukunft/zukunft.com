@@ -215,11 +215,11 @@ class change_link extends change_log
         $sc->set_class(change_link::class);
 
         $sc->set_name($qp->name);
-        $sc->set_usr($usr->id);
+        $sc->set_usr($usr->id());
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_join_fields(array(user::FLD_NAME), user::class);
 
-        $sc->add_where(user::FLD_ID, $usr->id);
+        $sc->add_where(user::FLD_ID, $usr->id());
         $sc->set_order(self::FLD_ID, sql::ORDER_DESC);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

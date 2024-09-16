@@ -1166,7 +1166,7 @@ class value_list extends sandbox_value_list
             if (!$found) {
                 // show only a few debug messages for a useful result
                 if ($row < 6) {
-                    log_debug("value_list->get_by_grp check if " . $val->grp_id . " = " . $grp->id . " and " . $val->time_id . " = " . $time->id . ".");
+                    log_debug("value_list->get_by_grp check if " . $val->grp_id . " = " . $grp->id() . " and " . $val->time_id . " = " . $time->id() . ".");
                 }
                 if ($val->grp_id == $grp->id
                     and $val->time_id == $time->id) {
@@ -1229,7 +1229,7 @@ class value_list extends sandbox_value_list
             if (isset($val->grp)) {
                 $grp_lst->add_obj($val->grp);
             } else {
-                log_err("The phrase group for value " . $val->id . " cannot be loaded.", "value_list->phrase_groups");
+                log_err("The phrase group for value " . $val->id() . " cannot be loaded.", "value_list->phrase_groups");
             }
         }
 

@@ -180,7 +180,7 @@ class verb extends type_object
 
     function reset(): void
     {
-        $this->id = 0;
+        $this->set_id(0);
         $this->set_user(null);
         $this->code_id = null;
         $this->name = '';
@@ -283,14 +283,6 @@ class verb extends type_object
     function set_usage(int $usage): void
     {
         //$this->values = $usage;
-    }
-
-    /**
-     * @return int the database id which is not 0 if the object has been saved
-     */
-    function id(): int
-    {
-        return $this->id;
     }
 
     /**
@@ -603,7 +595,7 @@ class verb extends type_object
     // create the HTML code to display the formula name with the HTML link
     function display(?string $back = ''): string
     {
-        return '<a href="/http/verb_edit.php?id=' . $this->id . '&back=' . $back . '">' . $this->name . '</a>';
+        return '<a href="/http/verb_edit.php?id=' . $this->id() . '&back=' . $back . '">' . $this->name . '</a>';
     }
 
     // returns the html code to select a verb link type
@@ -615,7 +607,7 @@ class verb extends type_object
         $result = "Verb:";
         $result .= $html_verbs->selector('verb', $form, $this->id(), $class);
 
-        log_debug('admin id ' . $this->id);
+        log_debug('admin id ' . $this->id());
         if ($this->user() != null) {
             if ($this->user()->is_admin()) {
                 // admin users should always have the possibility to create a new verb / link type
@@ -623,7 +615,7 @@ class verb extends type_object
             }
         }
 
-        log_debug('done verb id ' . $this->id);
+        log_debug('done verb id ' . $this->id());
         return $result;
     }
 
@@ -634,7 +626,7 @@ class verb extends type_object
         log_debug('verb->dsp_edit ' . $this->dsp_id());
         $result = '';
 
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             $script = "verb_add";
             $result .= $html->dsp_text_h2('Add verb (word link type)');
         } else {
@@ -705,7 +697,7 @@ class verb extends type_object
     function term(): term
     {
         $trm = new term($this->usr);
-        $trm->set_id_from_obj($this->id, self::class);
+        $trm->set_id_from_obj($this->id(), self::class);
         $trm->set_name($this->name);
         $trm->set_obj($this);
         return $trm;
@@ -725,7 +717,7 @@ class verb extends type_object
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_where_std($this->id);
+        $db_con->set_where_std($this->id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
 
@@ -737,7 +729,7 @@ class verb extends type_object
      */
     private function not_used(): bool
     {
-        log_debug('verb->not_used (' . $this->id . ')');
+        log_debug('verb->not_used (' . $this->id() . ')');
 
         global $db_con;
         $result = true;
@@ -756,7 +748,7 @@ class verb extends type_object
     // true if no other user has modified the verb
     private function not_changed(): bool
     {
-        log_debug('verb->not_changed (' . $this->id . ') by someone else than the owner (' . $this->user()->id() . ')');
+        log_debug('verb->not_changed (' . $this->id() . ') by someone else than the owner (' . $this->user()->id() . ')');
 
         global $db_con;
         $result = true;
@@ -776,14 +768,14 @@ class verb extends type_object
         }
         */
 
-        log_debug('verb->not_changed for ' . $this->id . ' is ' . zu_dsp_bool($result));
+        log_debug('verb->not_changed for ' . $this->id() . ' is ' . zu_dsp_bool($result));
         return $result;
     }
 
     // true if no one else has used the verb
     function can_change(): bool
     {
-        log_debug('verb->can_change ' . $this->id);
+        log_debug('verb->can_change ' . $this->id());
         $can_change = false;
         if ($this->usage == 0) {
             $can_change = true;
@@ -830,7 +822,7 @@ class verb extends type_object
         $log->set_field(self::FLD_NAME);
         $log->old_value = $this->name;
         $log->new_value = null;
-        $log->row_id = $this->id;
+        $log->row_id = $this->id();
         $log->add();
 
         return $log;
@@ -850,7 +842,7 @@ class verb extends type_object
         if ($log->add()) {
             if ($this->can_change()) {
                 $db_con->set_class(verb::class);
-                if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
+                if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
                     $result .= 'updating ' . $log->field() . ' to ' . $new_value . ' for verb ' . $this->dsp_id() . ' failed';
                 }
 
@@ -870,7 +862,7 @@ class verb extends type_object
             $log->old_value = $db_rec->code_id;
             $log->new_value = $this->code_id;
             $log->std_value = $db_rec->code_id;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(sql::FLD_CODE_ID);
             $result .= $this->save_field_do($db_con, $log);
         }
@@ -887,7 +879,7 @@ class verb extends type_object
             $log->old_value = $db_rec->name;
             $log->new_value = $this->name;
             $log->std_value = $db_rec->name;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_NAME);
             $result .= $this->save_field_do($db_con, $log);
         }
@@ -903,7 +895,7 @@ class verb extends type_object
             $log->old_value = $db_rec->plural;
             $log->new_value = $this->plural;
             $log->std_value = $db_rec->plural;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_PLURAL);
             $result .= $this->save_field_do($db_con, $log);
         }
@@ -919,7 +911,7 @@ class verb extends type_object
             $log->old_value = $db_rec->reverse;
             $log->new_value = $this->reverse;
             $log->std_value = $db_rec->reverse;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_REVERSE);
             $result .= $this->save_field_do($db_con, $log);
         }
@@ -935,7 +927,7 @@ class verb extends type_object
             $log->old_value = $db_rec->rev_plural;
             $log->new_value = $this->rev_plural;
             $log->std_value = $db_rec->rev_plural;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_PLURAL_REVERSE);
             $result .= $this->save_field_do($db_con, $log);
         }
@@ -951,7 +943,7 @@ class verb extends type_object
             $log->old_value = $db_rec->description;
             $log->new_value = $this->description;
             $log->std_value = $db_rec->description;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(sandbox_named::FLD_DESCRIPTION);
             $result .= $this->save_field_do($db_con, $log);
         }
@@ -967,7 +959,7 @@ class verb extends type_object
             $log->old_value = $db_rec->frm_name;
             $log->new_value = $this->frm_name;
             $log->std_value = $db_rec->frm_name;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_FORMULA);
             $result .= $this->save_field_do($db_con, $log);
         }
@@ -997,15 +989,15 @@ class verb extends type_object
               // check if target link already exists
               zu_debug('verb->save_id_if_updated check if target link already exists '.$this->dsp_id().' (has been "'.$db_rec->dsp_id().'")');
               $db_chk = clone $this;
-              $db_chk->id = 0; // to force the load by the id fields
+              $db_chk->set_id(0); // to force the load by the id fields
               $db_chk->load_standard();
-              if ($db_chk->id > 0) {
+              if ($db_chk->id() > 0) {
                 if (UI_CAN_CHANGE_VIEW_COMPONENT_NAME) {
                   // ... if yes request to delete or exclude the record with the id parameters before the change
                   $to_del = clone $db_rec;
                   $result .= $to_del->del();
                   // .. and use it for the update
-                  $this->id = $db_chk->id;
+                  $this->id = $db_chk->id();
                   $this->owner_id = $db_chk->owner_id;
                   // force the include again
                   $this->excluded = null;
@@ -1029,7 +1021,7 @@ class verb extends type_object
                   // .. and create a deletion request for all users ???
 
                   // ... and create a new display component link
-                  $this->id = 0;
+                  $this->set_id(0);
                   $this->owner_id = $this->user()->id();
                   $result .= $this->add($db_con);
                   zu_debug('verb->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'")');
@@ -1054,10 +1046,10 @@ class verb extends type_object
         if ($log->id() > 0) {
             // insert the new verb
             $db_con->set_class(verb::class);
-            $this->id = $db_con->insert_old(self::FLD_NAME, $this->name);
-            if ($this->id > 0) {
+            $this->set_id($db_con->insert_old(self::FLD_NAME, $this->name));
+            if ($this->id() > 0) {
                 // update the id in the log
-                if (!$log->add_ref($this->id)) {
+                if (!$log->add_ref($this->id())) {
                     $result .= 'Updating the reference in the log failed';
                     // TODO do rollback or retry?
                 } else {
@@ -1126,28 +1118,28 @@ class verb extends type_object
         $db_con->set_class(verb::class);
 
         // check if a new verb is supposed to be added
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             // check if a word, triple or formula with the same name is already in the database
             $trm = $this->get_term();
             if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
                 $usr_msg->add_message($trm->id_used_msg($this));
             } else {
-                $this->id = $trm->id_obj();
+                $this->set_id($trm->id_obj());
                 log_debug('verb->save adding verb name ' . $this->dsp_id() . ' is OK');
             }
         }
 
         // create a new verb or update an existing
         if ($usr_msg->is_ok()) {
-            if ($this->id <= 0) {
+            if ($this->id() <= 0) {
                 $usr_msg->add_message($this->add($db_con));
             } else {
-                log_debug('update "' . $this->id . '"');
+                log_debug('update "' . $this->id() . '"');
                 // read the database values to be able to check if something has been changed; done first,
                 // because it needs to be done for user and general formulas
                 $db_rec = new verb;
                 $db_rec->usr = $this->usr;
-                $db_rec->load_by_id($this->id);
+                $db_rec->load_by_id($this->id());
                 log_debug("database verb loaded (" . $db_rec->name . ")");
 
                 // if the name has changed, check if verb, verb or formula with the same name already exists; this should have been checked by the calling function, so display the error message directly if it happens

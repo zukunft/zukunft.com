@@ -470,10 +470,10 @@ class word extends sandbox_typed
                 $wrd_view = new view($this->user());
                 if ($do_save) {
                     $wrd_view->load_by_name($value);
-                    if ($wrd_view->id == 0) {
+                    if ($wrd_view->id() == 0) {
                         $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
                     } else {
-                        $this->view_id = $wrd_view->id;
+                        $this->view_id = $wrd_view->id();
                     }
                 } else {
                     $wrd_view->set_name($value);
@@ -507,7 +507,7 @@ class word extends sandbox_typed
             log_debug('check if "' . $wrd_ids[0] . '" is a number');
             if (is_numeric($wrd_ids[0])) {
                 $this->load_by_id($wrd_ids[0]);
-                log_debug('from "' . $id_txt . '" got id ' . $this->id);
+                log_debug('from "' . $id_txt . '" got id ' . $this->id());
             } else {
                 $this->load_by_name($wrd_ids[0]);
                 log_debug('from "' . $id_txt . '" got name ' . $this->name);
@@ -537,7 +537,7 @@ class word extends sandbox_typed
     function term(): term
     {
         $trm = new term($this->user());
-        $trm->set_id_from_obj($this->id, self::class);
+        $trm->set_id_from_obj($this->id(), self::class);
         $trm->set_obj($this);
         log_debug($this->dsp_id());
         return $trm;
@@ -738,7 +738,7 @@ class word extends sandbox_typed
         $qp->name = 'word_formula_by_id';
         $db_con->set_name($qp->name);
         $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_where_link_no_fld(0, 0, $this->id);
+        $db_con->set_where_link_no_fld(0, 0, $this->id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
         $db_row = $db_con->get1($qp);
@@ -788,7 +788,7 @@ class word extends sandbox_typed
         if ($result->is_ok()) {
             log_debug('saved ' . $this->dsp_id());
 
-            if ($this->id <= 0) {
+            if ($this->id() <= 0) {
                 $result->add_message('Word ' . $this->dsp_id() . ' cannot be saved');
             } else {
                 foreach ($in_ex_json as $key => $value) {
@@ -840,7 +840,7 @@ class word extends sandbox_typed
                 $wrd_view = new view($this->user());
                 if (!$test_obj) {
                     $wrd_view->load_by_name($value);
-                    if ($wrd_view->id == 0) {
+                    if ($wrd_view->id() == 0) {
                         $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
                     } else {
                         $this->set_view_id($wrd_view->id());
@@ -1253,7 +1253,7 @@ class word extends sandbox_typed
         $link_id = $verbs->id(verb::FOLLOW);
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
-        $key_result = $db_con->get_value_2key(triple::FLD_FROM, triple::FLD_TO, $this->id, verb::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key(triple::FLD_FROM, triple::FLD_TO, $this->id(), verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {
@@ -1279,7 +1279,7 @@ class word extends sandbox_typed
         $link_id = $verbs->id(verb::FOLLOW);
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
-        $key_result = $db_con->get_value_2key(triple::FLD_TO, triple::FLD_FROM, $this->id, verb::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key(triple::FLD_TO, triple::FLD_FROM, $this->id(), verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {
@@ -1493,7 +1493,7 @@ class word extends sandbox_typed
 
     function not_used(): bool
     {
-        log_debug($this->id);
+        log_debug($this->id());
 
         if (parent::not_used()) {
             $result = true;
@@ -1527,7 +1527,7 @@ class word extends sandbox_typed
     function not_changed_sql(sql $sc): sql_par
     {
         $sc->set_class(word::class);
-        return $sc->load_sql_not_changed($this->id, $this->owner_id);
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id);
     }
 
     /**
@@ -1536,7 +1536,7 @@ class word extends sandbox_typed
      */
     function not_changed(): bool
     {
-        log_debug($this->id . ' by someone else than the owner (' . $this->owner_id);
+        log_debug($this->id() . ' by someone else than the owner (' . $this->owner_id);
 
         global $db_con;
         $result = true;
@@ -1550,7 +1550,7 @@ class word extends sandbox_typed
                 $result = false;
             }
         }
-        log_debug('for ' . $this->id);
+        log_debug('for ' . $this->id());
         return $result;
     }
 
@@ -1560,7 +1560,7 @@ class word extends sandbox_typed
      */
     function can_change(): bool
     {
-        log_debug($this->id . ',u' . $this->user()->id());
+        log_debug($this->id() . ',u' . $this->user()->id());
         $can_change = false;
         if ($this->owner_id == $this->user()->id() or $this->owner_id <= 0) {
             $wrd_user = $this->changer();
@@ -1596,14 +1596,14 @@ class word extends sandbox_typed
             $msk_old = new view($this->user());
             $msk_old->load_by_id($this->view_id());
             $log->old_value = $msk_old->name();
-            $log->old_id = $msk_old->id;
+            $log->old_id = $msk_old->id();
         } else {
             $log->old_value = null;
             $log->old_id = 0;
         }
         $log->new_value = $msk_new->name();
-        $log->new_id = $msk_new->id;
-        $log->row_id = $this->id;
+        $log->new_id = $msk_new->id();
+        $log->row_id = $this->id();
         $log->add();
 
         return $log;
@@ -1657,7 +1657,7 @@ class word extends sandbox_typed
         global $db_con;
         $result = '';
 
-        if ($this->id > 0 and $view_id > 0 and $view_id <> $this->view_id()) {
+        if ($this->id() > 0 and $view_id > 0 and $view_id <> $this->view_id()) {
             $this->set_view_id($view_id);
             if ($this->log_upd_view($view_id) > 0) {
                 //$db_con = new mysql;
@@ -1694,7 +1694,7 @@ class word extends sandbox_typed
                 $log->old_value = $db_rec->plural;
                 $log->new_value = $this->plural;
                 $log->std_value = $std_rec->plural;
-                $log->row_id = $this->id;
+                $log->row_id = $this->id();
                 $log->set_field(self::FLD_PLURAL);
                 $result = $this->save_field_user($db_con, $log);
             }

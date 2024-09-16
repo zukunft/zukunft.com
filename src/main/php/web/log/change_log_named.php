@@ -136,12 +136,12 @@ class change_log_named extends change_log_named_api
         $undo_btn = '';
         if ($this->table_name() == change_table_list::WORD) {
             if ($this->action_code_id() == change_action::ADD) {
-                $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id, $back->url_encode());
+                $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
                 $undo_btn = (new button($undo_call))->undo(messages::UNDO_ADD);
             }
         } elseif ($this->table_name() == change_table_list::VIEW) {
             if ($this->action_code_id() == change_action::ADD) {
-                $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id, $back->url_encode());
+                $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
                 $undo_btn = (new button($undo_call))->undo(messages::UNDO_EDIT);
             }
         } elseif ($this->table_name() == change_table_list::FORMULA) {

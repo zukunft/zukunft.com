@@ -65,11 +65,11 @@ class sandbox implements JsonSerializable
 
     function __construct(int $id = 0)
     {
-        $this->id = 0;
+        $this->set_id(0);
 
         // set the id if included in new call
         if ($id <> 0) {
-            $this->id = $id;
+            $this->set_id($id);
         }
     }
 

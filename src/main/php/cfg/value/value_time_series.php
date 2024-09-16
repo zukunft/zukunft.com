@@ -304,9 +304,9 @@ class value_time_series extends sandbox_value
             $this->id = $db_con->insert_old(
                 array(group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
                 array($this->grp->id(), $this->user()->id(), sql::NOW));
-            if ($this->id > 0) {
+            if ($this->id() > 0) {
                 // update the reference in the log
-                if (!$log->add_ref($this->id)) {
+                if (!$log->add_ref($this->id())) {
                     $usr_msg->add_message('adding the value time series reference in the system log failed');
                 }
 
@@ -315,13 +315,13 @@ class value_time_series extends sandbox_value
                 $upd_result = $this->upd_phr_links();
                 if ($upd_result != '') {
                     $result->add_message('Adding the phrase links of the value time series failed because ' . $upd_result);
-                    $this->id = 0;
+                    $this->set_id(0);
                 }
                 */
 
                 // create an empty db_rec element to force saving of all set fields
                 //$db_vts = new value_time_series($this->user());
-                //$db_vts->id = $this->id;
+                //$db_vts->id = $this->id();
                 // TODO add the data list saving
             }
         }
@@ -367,7 +367,7 @@ class value_time_series extends sandbox_value
         $db_con->set_usr($this->user()->id());
 
         // check if a new time series is supposed to be added
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             // check if a time series for the phrase group is already in the database
             $db_chk = new value_time_series($this->user());
             $db_chk->load_by_grp($this->grp);
@@ -376,7 +376,7 @@ class value_time_series extends sandbox_value
             }
         }
 
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             $usr_msg->add($this->add());
         } else {
             // update a value
@@ -385,9 +385,9 @@ class value_time_series extends sandbox_value
             // read the database value to be able to check if something has been changed
             // done first, because it needs to be done for user and general values
             $db_rec = new value_time_series($this->user());
-            $db_rec->load_by_id($this->id);
+            $db_rec->load_by_id($this->id());
             $std_rec = new value_time_series($this->user()); // user must also be set to allow to take the ownership
-            $std_rec->id = $this->id;
+            $std_rec->id = $this->id();
             $std_rec->load_standard();
 
             // for a correct user value detection (function can_change) set the owner even if the value has not been loaded before the save

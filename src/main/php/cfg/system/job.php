@@ -257,7 +257,7 @@ class job extends db_object_seq_id_user
     function api_obj(): job_api
     {
         $api_obj = new job_api($this->user());
-        $api_obj->id = $this->id;
+        $api_obj->id = $this->id();
         // TODO use time zone?
         $api_obj->request_time = $this->request_time->format(DateTimeInterface::ATOM);
         if ($this->start_time != null) {
@@ -408,7 +408,7 @@ class job extends db_object_seq_id_user
 
                     // execute the job if possible
                     if ($job_id > 0 and $code_id != job_type_list::BASE_IMPORT) {
-                        $this->id = $job_id;
+                        $this->set_id($job_id);
                         $this->exe();
                         $result = $job_id;
                     }
@@ -448,7 +448,7 @@ class job extends db_object_seq_id_user
         $db_type = $db_con->get_class();
         $db_con->set_class(job::class);
         $db_con->usr_id = $this->user()->id();
-        $result = $db_con->update_old($this->id, 'end_time', sql::NOW);
+        $result = $db_con->update_old($this->id(), 'end_time', sql::NOW);
         $db_con->set_class($db_type);
 
         log_debug('done with ' . $result);
@@ -464,7 +464,7 @@ class job extends db_object_seq_id_user
         $db_type = $db_con->get_class();
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(job::class);
-        $result = $db_con->update_old($this->id, 'start_time', sql::NOW);
+        $result = $db_con->update_old($this->id(), 'start_time', sql::NOW);
 
         log_debug($this->type_code_id() . ' with ' . $result);
         if ($this->type_code_id() == job_type_list::VALUE_UPDATE) {
@@ -509,8 +509,8 @@ class job extends db_object_seq_id_user
                 $result .= ' ' . get_class($this->phr_lst) . ' ' . $this->phr_lst->dsp_id();
             }
         }
-        if ($this->id > 0) {
-            $result .= ' (' . $this->id . ')';
+        if ($this->id() > 0) {
+            $result .= ' (' . $this->id() . ')';
         }
         $result .= $this->dsp_id_user();
         return $result;

@@ -176,7 +176,7 @@ class phrase_group extends sandbox_named_dsp
         if ($this->lst_dirty) {
             foreach ($this->lst as $phr) {
                 if (!in_array($phr->id, $result)) {
-                    $result[] = $phr->id;
+                    $result[] = $phr->id();
                 }
             }
             $this->lst_dirty = false;

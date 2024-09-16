@@ -227,7 +227,7 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function __construct(user $usr)
     {
-        $this->id = 0;
+        $this->set_id(0);
 
         parent::__construct($usr);
 
@@ -809,10 +809,10 @@ class triple extends sandbox_link_named implements JsonSerializable
                 $wrd_view = new view($this->user());
                 if ($do_save) {
                     $wrd_view->load_by_name($value);
-                    if ($wrd_view->id == 0) {
+                    if ($wrd_view->id() == 0) {
                         $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
                     } else {
-                        $this->view_id = $wrd_view->id;
+                        $this->view_id = $wrd_view->id();
                     }
                 } else {
                     $wrd_view->set_name($value);
@@ -1523,7 +1523,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 $trp_view = new view($this->user());
                 if (!$test_obj) {
                     $trp_view->load_by_name($value);
-                    if ($trp_view->id == 0) {
+                    if ($trp_view->id() == 0) {
                         $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
                     }
                 } else {
@@ -1806,7 +1806,7 @@ class triple extends sandbox_link_named implements JsonSerializable
         $log->old_from = $this->from();
         $log->old_link = $this->verb();
         $log->old_to = $this->to();
-        $log->row_id = $this->id;
+        $log->row_id = $this->id();
         $log->add();
 
         return $log;
@@ -1897,7 +1897,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 // ignore excluded to not overwrite an existing name
                 $log->new_value = $this->name(true);
                 $log->std_value = $std_rec->name();
-                $log->row_id = $this->id;
+                $log->row_id = $this->id();
                 $log->set_field(self::FLD_NAME);
                 $result .= $this->save_field_user($db_con, $log);
             }
@@ -1922,7 +1922,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 $log->old_value = $db_rec->name_given();
                 $log->new_value = $this->name_given();
                 $log->std_value = $std_rec->name_given();
-                $log->row_id = $this->id;
+                $log->row_id = $this->id();
                 $log->set_field(self::FLD_NAME_GIVEN);
                 $result .= $this->save_field_user($db_con, $log);
             }
@@ -1949,7 +1949,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 }
                 $log->new_value = $this->name_generated();
                 $log->std_value = $std_rec->name_generated;
-                $log->row_id = $this->id;
+                $log->row_id = $this->id();
                 $log->set_field(self::FLD_NAME_AUTO);
                 $result .= $this->save_field_user($db_con, $log);
             }
@@ -1968,7 +1968,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             $log->old_value = $db_rec->description;
             $log->new_value = $this->description;
             $log->std_value = $std_rec->description;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(sandbox_named::FLD_DESCRIPTION);
             $result .= $this->save_field_user($db_con, $log);
         }
@@ -2023,7 +2023,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             $log->old_to = $db_rec->to();
             $log->new_to = $this->to();
             $log->std_to = $std_rec->to();
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             //$log->set_field(self::FLD_FROM);
             if ($log->add()) {
                 $db_con->set_class(triple::class);
@@ -2136,7 +2136,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
             $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
             if ($ins_msg->is_ok()) {
-                $this->id = $ins_msg->get_row_id();
+                $this->set_id($ins_msg->get_row_id());
             }
             $usr_msg->add($ins_msg);
         } else {

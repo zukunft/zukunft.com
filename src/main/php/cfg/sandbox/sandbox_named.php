@@ -350,8 +350,8 @@ class sandbox_named extends sandbox
         }
 
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
-        if ($this->id != 0) {
+        $sc->set_usr($this->user()->id());
+        if ($this->id() != 0) {
             $sc->add_where($this->id_field(), $this->id());
         } else {
             $sc->add_where($this->name_field(), $this->name());
@@ -564,7 +564,7 @@ class sandbox_named extends sandbox
         $log->old_value = $this->name();
         $log->new_value = null;
 
-        $log->row_id = $this->id;
+        $log->row_id = $this->id();
         $log->add();
 
         return $log;
@@ -605,7 +605,7 @@ class sandbox_named extends sandbox
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
             $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
             if ($ins_msg->is_ok()) {
-                $this->id = $ins_msg->get_row_id();
+                $this->set_id($ins_msg->get_row_id());
             }
             $usr_msg->add($ins_msg);
         } else {
@@ -621,21 +621,23 @@ class sandbox_named extends sandbox
                     $qp = $this->sql_insert($sc);
                     $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
                     if ($ins_msg->is_ok()) {
-                        $this->id = $ins_msg->get_row_id();
+                        $this->set_id($ins_msg->get_row_id());
                     }
                 } else {
                     $lib = new library();
                     $class_name = $lib->class_to_name($this::class);
                     $db_con->set_class($this::class);
-                    $db_con->set_usr($this->user()->id);
-                    $this->id = $db_con->insert_old(array($class_name . '_name', user::FLD_ID), array($this->name, $this->user()->id));
+                    $db_con->set_usr($this->user()->id());
+                    $this->set_id(
+                        $db_con->insert_old(
+                            array($class_name . '_name', user::FLD_ID), array($this->name, $this->user()->id())));
                 }
 
                 // save the object fields if saving the key was successful
-                if ($this->id > 0) {
+                if ($this->id() > 0) {
                     log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
                     // update the id in the log
-                    if (!$log->add_ref($this->id)) {
+                    if (!$log->add_ref($this->id())) {
                         $usr_msg->add_message('Updating the reference in the log failed');
                         // TODO do rollback or retry?
                     } else {
@@ -777,7 +779,7 @@ class sandbox_named extends sandbox
                 $log->old_value = $db_rec->description;
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
-                $log->row_id = $this->id;
+                $log->row_id = $this->id();
                 $log->set_field(self::FLD_DESCRIPTION);
                 $result = $this->save_field_user($db_con, $log);
             }
@@ -824,7 +826,7 @@ class sandbox_named extends sandbox
             $log->std_value = $std_rec->name();
             $log->set_field($tbl_name . '_name');
 
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             if ($log->add()) {
                 // TODO activate when the prepared SQL is ready to use
                 // only do the update here if the update is not done with one sql statement at the end
@@ -834,8 +836,8 @@ class sandbox_named extends sandbox
                     $result = $usr_msg->get_message();
                 } else {
                     $db_con->set_class($this::class);
-                    $db_con->set_usr($this->user()->id);
-                    if (!$db_con->update_old($this->id,
+                    $db_con->set_usr($this->user()->id());
+                    if (!$db_con->update_old($this->id(),
                         array($tbl_name . '_name'),
                         array($this->name))) {
                         $result .= 'update of name to ' . $this->name() . 'failed';

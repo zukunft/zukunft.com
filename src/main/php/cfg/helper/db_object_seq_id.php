@@ -54,6 +54,7 @@ class db_object_seq_id extends db_object
     // *_SQLTYP is the sql data type used for the field
     const FLD_ID_SQLTYP = sql_field_type::INT; // this default type is changed e.g. if the id is part of and index
 
+
     /*
      * object vars
      */
@@ -309,10 +310,10 @@ class db_object_seq_id extends db_object
      */
     function is_loaded(): bool
     {
-        if ($this->id == null) {
+        if ($this->id() == null) {
             return false;
         } else {
-            if ($this->id != 0) {
+            if ($this->id() != 0) {
                 return true;
             } else {
                 return false;

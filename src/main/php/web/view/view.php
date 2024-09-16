@@ -281,8 +281,8 @@ class view extends sandbox_typed
         $result = '';
 
         // check the all minimal input parameters are set
-        if ($this->id <= 0) {
-            $this->log_err("The display ID (" . $this->id . ") must be set to display a view.", "view_dsp->dsp_navbar");
+        if ($this->id() <= 0) {
+            $this->log_err("The display ID (" . $this->id() . ") must be set to display a view.", "view_dsp->dsp_navbar");
         } else {
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result = $this->dsp_navbar_bs(TRUE, $back);
@@ -322,8 +322,8 @@ class view extends sandbox_typed
             $result .= '      <li class="active">';
             $result .= $this->dsp_view_name($back);
             $class = $lib->class_to_name(view::class);
-            //$url_edit = $html->url($class . api_dsp::UPDATE, $this->id, $back, '', word::class . '=' . $back);
-            $url_edit = $html->url($class . api_dsp::UPDATE, $this->id, '', '');
+            //$url_edit = $html->url($class . api_dsp::UPDATE, $this->id(), $back, '', word::class . '=' . $back);
+            $url_edit = $html->url($class . api_dsp::UPDATE, $this->id(), '', '');
             // TODO fix for frontend based version
             //echo 'button init';
             $result .= $this->btn_edit(messages::VIEW_EDIT, $url_edit);
@@ -665,7 +665,7 @@ class view extends sandbox_typed
         }
 
         // the header to add or change a view
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             $this->log_debug('create a view');
             $script = "view_add";
             $result .= $html->dsp_text_h2('Create a new view (for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
@@ -677,13 +677,13 @@ class view extends sandbox_typed
         $result .= '<div class="row">';
 
         // when changing a view show the fields only on the left side
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $result .= '<div class="' . html_base::COL_SM_7 . '">';
         }
 
         // show the edit fields
         $result .= $html->dsp_form_start($script);
-        $result .= $html->dsp_form_id($this->id);
+        $result .= $html->dsp_form_id($this->id());
         $result .= $html->dsp_form_hidden("word", $wrd->id);
         $result .= $html->dsp_form_hidden("back", $back);
         $result .= $html->dsp_form_hidden("confirm", '1');
@@ -700,11 +700,11 @@ class view extends sandbox_typed
             $result .= $this->dsp_type_selector($script, html_base::COL_SM_4, "");
             $result .= '</div>';
             $result .= $html->dsp_form_text_big("description", $this->description, "Comment:");
-            $result .= $html->dsp_form_end('', $back, "/http/view_del.php?id=" . $this->id . "&back=" . $back);
+            $result .= $html->dsp_form_end('', $back, "/http/view_del.php?id=" . $this->id() . "&back=" . $back);
         }
 
         // in edit mode show the assigned words and the hist on the right
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $result .= '</div>';
 
             $comp_html = $this->linked_components($add_cmp, $wrd, $script, $back);
@@ -774,7 +774,7 @@ class view extends sandbox_typed
             $dsp_list->id_field = component_dsp::FLD_ID;
             $dsp_list->script_name = "view_edit.php";
             $dsp_list->class_edit = view::class;
-            $dsp_list->script_parameter = $this->id . "&back=" . $back . "&word=" . $wrd->id;
+            $dsp_list->script_parameter = $this->id() . "&back=" . $back . "&word=" . $wrd->id();
             $result .= $dsp_list->display($back);
             $this->log_debug('displayed');
             if (html_base::UI_USE_BOOTSTRAP) {
@@ -784,20 +784,20 @@ class view extends sandbox_typed
             // check if the add button has been pressed and ask the user what to add
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
-                $url = $html->url(api_shared::DSP_VIEW_ADD, $this->id, $back, '', word_dsp::class . '=' . $wrd->id() . '&add_entry=-1&');
+                $url = $html->url(api_shared::DSP_VIEW_ADD, $this->id(), $back, '', word_dsp::class . '=' . $wrd->id() . '&add_entry=-1&');
                 $result .= (new button_dsp($url, $back))->add(messages::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $this->component_selector($script, '', $id_selected);
 
-                $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
+                $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new display element: ';
                 $result .= $html->input('entry_name', '', html_base::INPUT_TEXT);
                 // TODO ??? should this not be the default entry type
                 $result .= $this->component_selector($script, '', $this->type_id());
-                $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id . "&word=" . $wrd->id() . "&back=" . $back);
+                $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
             } else {
-                $url = $html->url(api_shared::DSP_COMPONENT_LINK, $this->id, $back, '', word_dsp::class . '=' . $wrd->id() . '&add_entry=1');
+                $url = $html->url(api_shared::DSP_COMPONENT_LINK, $this->id(), $back, '', word_dsp::class . '=' . $wrd->id() . '&add_entry=1');
                 $result .= (new button_dsp($url, $back))->add(messages::COMPONENT_ADD);
             }
         }
@@ -818,11 +818,11 @@ class view extends sandbox_typed
     function dsp_hist($page, $size, $call, $back): string
     {
         global $usr;
-        $this->log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display($usr);
-        $log_dsp->id = $this->id;
+        $log_dsp->id = $this->id();
         $log_dsp->type = view::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
@@ -840,11 +840,11 @@ class view extends sandbox_typed
     function dsp_hist_links($page, $size, $call, $back): string
     {
         global $usr;
-        $this->log_debug("for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display($usr);
-        $log_dsp->id = $this->id;
+        $log_dsp->id = $this->id();
         $log_dsp->type = view::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
@@ -868,7 +868,7 @@ class view extends sandbox_typed
      */
     function selector_page($wrd_id, $back): string
     {
-        $this->log_debug($this->id . ',' . $wrd_id);
+        $this->log_debug($this->id() . ',' . $wrd_id);
 
         global $usr;
         $result = '';
@@ -881,7 +881,7 @@ class view extends sandbox_typed
         foreach ($dsp_lst as $dsp) {
             $view_id = $dsp->id();;
             $view_name = $dsp->name();
-            if ($view_id == $this->id) {
+            if ($view_id == $this->id()) {
                 $result .= '<b><a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a></b> ';
             } else {
                 $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';

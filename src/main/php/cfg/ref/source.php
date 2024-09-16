@@ -548,7 +548,7 @@ class source extends sandbox_typed
      */
     function not_used(): bool
     {
-        log_debug($this->id);
+        log_debug($this->id());
 
         // to review: maybe replace by a database foreign key check
         return $this->not_changed();
@@ -561,7 +561,7 @@ class source extends sandbox_typed
     function not_changed_sql(sql $sc): sql_par
     {
         $sc->set_class(source::class);
-        return $sc->load_sql_not_changed($this->id, $this->owner_id);
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id);
     }
 
     /**
@@ -624,7 +624,7 @@ class source extends sandbox_typed
             $log->old_value = $db_rec->url;
             $log->new_value = $this->url;
             $log->std_value = $std_rec->url;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_URL);
             $result = $this->save_field_user($db_con, $log);
         }

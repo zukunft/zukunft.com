@@ -110,7 +110,7 @@ class source extends sandbox_typed
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(api_dsp::SOURCE, $this->id, $back, api_dsp::PAR_VIEW_SOURCES);
+        $url = $html->url(api_dsp::SOURCE, $this->id(), $back, api_dsp::PAR_VIEW_SOURCES);
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 
@@ -148,7 +148,7 @@ class source extends sandbox_typed
         $html = new html_base();
         $result = '';
 
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             $script = "source_add";
             $result .= $html->dsp_text_h2("Add source");
         } else {
@@ -157,7 +157,7 @@ class source extends sandbox_typed
         }
         $result .= $html->dsp_form_start($script);
         //$result .= dsp_tbl_start();
-        $result .= $html->dsp_form_hidden("id", $this->id);
+        $result .= $html->dsp_form_hidden("id", $this->id());
         $result .= $html->dsp_form_hidden("back", $back);
         $result .= $html->dsp_form_hidden("confirm", 1);
         $result .= $html->dsp_form_fld("name", $this->name, "Source name:");
@@ -181,13 +181,13 @@ class source extends sandbox_typed
         $result = ''; // reset the html code var
 
         // for new values assume the last source used, but not for existing values to enable only changing the value, but not setting the source
-        if ($this->id <= 0 and $form_name == "value_add") {
+        if ($this->id() <= 0 and $form_name == "value_add") {
             $this->id = $usr->source_id;
         }
 
-        log_debug("source id used (" . $this->id . ")");
+        log_debug("source id used (" . $this->id() . ")");
         $result .= '      taken from ' . $this->source_selector($form_name, '') . ' ';
-        $result .= '    <td>' . \html\btn_edit("Rename " . $this->name, '/http/source_edit.php?id=' . $this->id . '&back=' . $back) . '</td>';
+        $result .= '    <td>' . \html\btn_edit("Rename " . $this->name, '/http/source_edit.php?id=' . $this->id() . '&back=' . $back) . '</td>';
         $result .= '    <td>' . \html\btn_add("Add new source", '/http/source_add.php?back=' . $back) . '</td>';
         return $result;
     }

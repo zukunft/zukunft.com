@@ -1219,7 +1219,7 @@ class sandbox_value extends sandbox_multi
         $log->old_value = $this->number;
         $log->new_value = null;
 
-        $log->row_id = $this->id;
+        $log->row_id = $this->id();
         $log->add();
 
         return $log;

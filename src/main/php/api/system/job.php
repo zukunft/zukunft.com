@@ -38,7 +38,7 @@ use cfg\db_object_seq_id;
 use cfg\user;
 use DateTime;
 
-class job extends db_object_seq_id
+class job
 {
 
     /*
@@ -60,7 +60,6 @@ class job extends db_object_seq_id
 
     function __construct(user $usr)
     {
-        parent::__construct();
         $this->set_user($usr);
         $this->id = 0;
         $this->request_time = '';

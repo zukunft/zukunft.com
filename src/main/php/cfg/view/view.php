@@ -377,10 +377,10 @@ class view extends sandbox_typed
                 $wrd_view = new view($this->user());
                 if ($do_save) {
                     $wrd_view->load_by_name($value);
-                    if ($wrd_view->id == 0) {
+                    if ($wrd_view->id() == 0) {
                         $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
                     } else {
-                        $this->view_id = $wrd_view->id;
+                        $this->view_id = $wrd_view->id();
                     }
                 } else {
                     $wrd_view->set_name($value);
@@ -582,12 +582,12 @@ class view extends sandbox_typed
     function load_components_sql(sql_db $db_con): sql_par
     {
         $qp = parent::load_sql_obj_vars($db_con->sql_creator(), component::class);
-        if ($this->id != 0) {
+        if ($this->id() != 0) {
             $qp->name .= 'view_id';
         } elseif ($this->name != '') {
             $qp->name .= sql_db::FLD_NAME;
         } else {
-            log_err("Either the database ID (" . $this->id . "), the view name (" . $this->name . ") or the code_id (" . $this->code_id . ")  must be set to load the components of a view.", "view->load_components_sql");
+            log_err("Either the database ID (" . $this->id() . "), the view name (" . $this->name . ") or the code_id (" . $this->code_id . ")  must be set to load the components of a view.", "view->load_components_sql");
         }
 
         $db_con->set_class(component_link::class);
@@ -601,7 +601,7 @@ class view extends sandbox_typed
         $db_con->set_join_usr_num_fields(
             component::FLD_NAMES_NUM_USR,
             component::class);
-        $db_con->add_par(sql_par_type::INT, $this->id);
+        $db_con->add_par(sql_par_type::INT, $this->id());
         $db_con->set_order(component_link::FLD_ORDER_NBR);
         $qp->sql = $db_con->select_by_field_list(array(view::FLD_ID));
         $qp->par = $db_con->get_par();
@@ -920,8 +920,8 @@ class view extends sandbox_typed
         $result = false;
 
         foreach ($dsp_lst as $dsp_id) {
-            log_debug($dsp_id . ' = ' . $this->id . '?');
-            if ($dsp_id == $this->id) {
+            log_debug($dsp_id . ' = ' . $this->id() . '?');
+            if ($dsp_id == $this->id()) {
                 $result = true;
             }
         }
@@ -971,7 +971,7 @@ class view extends sandbox_typed
                 $log->old_value = $db_rec->code_id;
                 $log->new_value = $this->code_id;
                 $log->std_value = $std_rec->code_id;
-                $log->row_id = $this->id;
+                $log->row_id = $this->id();
                 $log->set_field(sql::FLD_CODE_ID);
                 $result = $this->save_field_user($db_con, $log);
             }
@@ -1126,9 +1126,9 @@ class view extends sandbox_typed
     function name_linked($wrd, $back): string
     {
 
-        $result = '<a href="/http/view_edit.php?id=' . $this->id;
+        $result = '<a href="/http/view_edit.php?id=' . $this->id();
         if (isset($wrd)) {
-            $result .= '&word=' . $wrd->id;
+            $result .= '&word=' . $wrd->id();
         }
         $result .= '&back=' . $back . '">' . $this->name . '</a>';
 

@@ -551,7 +551,7 @@ class component extends sandbox_typed
     function load_by_name(string $name): int
     {
         $id = parent::load_by_name($name);
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $this->load_phrases();
         }
         return $id;
@@ -567,7 +567,7 @@ class component extends sandbox_typed
     function load_by_id(int $id, string $class = self::class): int
     {
         $id = parent::load_by_id($id, $class);
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $this->load_phrases();
         }
         return $id;
@@ -904,7 +904,7 @@ class component extends sandbox_typed
         $log->set_class(component_link::class);
         $log->new_from = clone $this;
         $log->new_to = clone $dsp;
-        $log->row_id = $this->id;
+        $log->row_id = $this->id();
         $result = $log->add_link_ref();
 
         log_debug('logged ' . $log->id());
@@ -920,7 +920,7 @@ class component extends sandbox_typed
         $log->set_class(component_link::class);
         $log->old_from = clone $this;
         $log->old_to = clone $dsp;
-        $log->row_id = $this->id;
+        $log->row_id = $this->id();
         $result = $log->add_link_ref();
 
         log_debug('logged ' . $log->id());
@@ -992,7 +992,7 @@ class component extends sandbox_typed
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
             $db_con->set_fields(array(component::FLD_ID));
-            $db_con->set_where_std($this->id);
+            $db_con->set_where_std($this->id());
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
             $db_row = $db_con->get1($qp);
@@ -1002,13 +1002,13 @@ class component extends sandbox_typed
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_class(component::class, true);
-                $log_id = $db_con->insert_old(array(component::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
+                $log_id = $db_con->insert_old(array(component::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_component failed.');
                     $result = false;
                 } else {
                     // TODO check if correct in all cases
-                    $this->usr_cfg_id = $this->id;
+                    $this->usr_cfg_id = $this->id();
                     $result = true;
                 }
             }
@@ -1030,7 +1030,7 @@ class component extends sandbox_typed
             $log = $this->log_upd();
             $log->old_value = $db_rec->code_id;
             $log->new_value = $this->code_id;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(sql::FLD_CODE_ID);
             $result = $this->save_field($db_con, $log);
         }
@@ -1051,7 +1051,7 @@ class component extends sandbox_typed
             $log = $this->log_upd();
             $log->old_value = $db_rec->ui_msg_code_id;
             $log->new_value = $this->ui_msg_code_id;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_UI_MSG_ID);
             $result = $this->save_field($db_con, $log);
         }
@@ -1129,7 +1129,7 @@ class component extends sandbox_typed
             $log->new_id = $this->word_id_col2;
             $log->std_value = $std_rec->load_wrd_col2();
             $log->std_id = $std_rec->word_id_col2;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_COL2_PHRASE);
             $result = $this->save_field_user($db_con, $log);
         }
@@ -1155,7 +1155,7 @@ class component extends sandbox_typed
             $log->new_id = $this->formula_id;
             $log->std_value = $std_rec->load_formula();
             $log->std_id = $std_rec->formula_id;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(formula::FLD_ID);
             $result = $this->save_field_user($db_con, $log);
         }
@@ -1459,7 +1459,7 @@ class component extends sandbox_typed
     {
         $result = array();
 
-        if ($this->id > 0 and $this->user() != null) {
+        if ($this->id() > 0 and $this->user() != null) {
             $lst = new component_link_list($this->user());
             $lst->load_by_component($this);
             $result = $lst->view_ids();

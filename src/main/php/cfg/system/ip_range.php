@@ -99,7 +99,7 @@ class ip_range extends db_object_seq_id
 
     function reset(): void
     {
-        $this->id = 0;
+        $this->set_id(0);
         $this->from = '';
         $this->to = '';
         $this->reason = null;
@@ -142,14 +142,6 @@ class ip_range extends db_object_seq_id
     function set_user(?user $usr): void
     {
         $this->usr = $usr;
-    }
-
-    /**
-     * @returns int the protected id of the ip range
-     */
-    function id(): int
-    {
-        return $this->id;
     }
 
     /**
@@ -198,9 +190,9 @@ class ip_range extends db_object_seq_id
         $qp = new sql_par($class_name);
         $qp->name = $class_name . '_by_';
         $sql_where = '';
-        if ($this->id != 0) {
+        if ($this->id() != 0) {
             $qp->name .= sql_db::FLD_ID;
-            $db_con->add_par(sql_par_type::INT, $this->id);
+            $db_con->add_par(sql_par_type::INT, $this->id());
             $sql_where .= self::FLD_ID . ' = ' . $db_con->par_name();
         } elseif ($this->from != '' and $this->to != '') {
             $qp->name .= 'range';
@@ -210,7 +202,7 @@ class ip_range extends db_object_seq_id
             $sql_where .= " and " . self::FLD_TO . " = " . $db_con->par_name();
         } else {
             $qp->name = '';
-            log_err("Either the database ID (" . $this->id .
+            log_err("Either the database ID (" . $this->id() .
                 ") or the ip range (" . $this->dsp_id() .
                 ") must be set to load an ip range.", $class_name . '->load_sql');
         }
@@ -238,7 +230,7 @@ class ip_range extends db_object_seq_id
         global $db_con;
 
         $this->reset();
-        $this->id = $id;
+        $this->set_id($id);
         $qp = $this->load_sql_by_vars($db_con);
         return $this->load($qp);
     }
@@ -341,7 +333,7 @@ class ip_range extends db_object_seq_id
         $result = '';
         if ($log->add()) {
             $db_con->set_class(self::class);
-            if (!$db_con->update_old($this->id, $log->field(), $log->new_value)) {
+            if (!$db_con->update_old($this->id(), $log->field(), $log->new_value)) {
                 $result .= 'updating ' . $log->field() . ' to ' . $log->new_value . ' for ' . self::OBJ_NAME . ' ' . $this->dsp_id() . ' failed';
             }
 
@@ -363,7 +355,7 @@ class ip_range extends db_object_seq_id
             $log->old_value = $db_rec->reason;
             $log->new_value = $this->reason;
             $log->std_value = $db_rec->reason;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_REASON);
             $result .= $this->save_field_do($db_con, $log);
         }
@@ -384,7 +376,7 @@ class ip_range extends db_object_seq_id
             $log->old_value = $db_rec->active;
             $log->new_value = $this->active;
             $log->std_value = $db_rec->active;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_ACTIVE);
             $result .= $this->save_field_do($db_con, $log);
         }
@@ -459,12 +451,12 @@ class ip_range extends db_object_seq_id
             $db_con->set_class($this::class);
             $db_con->set_usr($this->user()->id());
 
-            $this->id = $db_con->insert_old(
+            $this->set_id($db_con->insert_old(
                 array(self::FLD_FROM, self::FLD_TO, self::FLD_REASON, self::FLD_ACTIVE),
-                array($this->from, $this->to, $this->reason, $this->active));
-            if ($this->id > 0) {
+                array($this->from, $this->to, $this->reason, $this->active)));
+            if ($this->id() > 0) {
                 // update the id in the log for the correct reference
-                if (!$log->add_ref($this->id)) {
+                if (!$log->add_ref($this->id())) {
                     $msg = 'Adding reference for ' . $this->dsp_id() . ' in the log failed.';
                     $usr_msg->add_message($msg);
                     log_err($msg, self::class . '->add');
@@ -491,13 +483,13 @@ class ip_range extends db_object_seq_id
 
         $db_chk = clone $this;
         $db_chk->reset();
-        $db_chk->id = $this->id;
+        $db_chk->set_id($this->id());
         $db_chk->from = $this->from;
         $db_chk->to = $this->to;
         $db_chk->set_user($this->user());
         $qp = $this->load_sql_by_vars($db_con);
         $db_chk->load($qp);
-        if ($db_chk->id > 0) {
+        if ($db_chk->id() > 0) {
             log_debug('->get_similar an ' . $this->dsp_id() . ' already exists');
             $result = $db_chk;
         }
@@ -521,19 +513,19 @@ class ip_range extends db_object_seq_id
         $db_con->set_class($this::class);
 
         // check if the external reference is supposed to be added
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             // check possible duplicates before adding
             log_debug('->save check possible duplicates before adding ' . $this->dsp_id());
             $similar = $this->get_similar();
             if ($similar != null) {
-                if ($similar->id <> 0) {
-                    $this->id = $similar->id;
+                if ($similar->id() != 0) {
+                    $this->set_id($similar->id());
                 }
             }
         }
 
         // create a new object or update an existing
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             $usr_msg->add($this->add());
         } else {
             log_debug('->save update');
@@ -542,7 +534,7 @@ class ip_range extends db_object_seq_id
             // done first, because it needs to be done for user and general object values
             $db_rec = clone $this;
             $db_rec->reset();
-            $db_rec->id = $this->id;
+            $db_rec->set_id($this->id());
             $db_rec->set_user($this->user());
             $qp = $this->load_sql_by_vars($db_con);
             if ($db_rec->load($qp) > 0) {
@@ -573,11 +565,11 @@ class ip_range extends db_object_seq_id
     {
         $result = self::OBJ_NAME . ' ' . $this->name();
         if ($result <> '') {
-            if ($this->id > 0) {
-                $result .= ' (' . $this->id . ')';
+            if ($this->id() > 0) {
+                $result .= ' (' . $this->id() . ')';
             }
         } else {
-            $result .= $this->id;
+            $result .= $this->id();
         }
         return $result;
     }

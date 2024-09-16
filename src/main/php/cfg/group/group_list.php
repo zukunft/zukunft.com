@@ -305,7 +305,7 @@ class group_list extends sandbox_list
             }
         }
         if (isset($time)) {
-            $time_id = $time->id;
+            $time_id = $time->id();
             if ($time_id > 0) {
                 if ($id <> '') {
                     $id = $id . '@' . $time_id;

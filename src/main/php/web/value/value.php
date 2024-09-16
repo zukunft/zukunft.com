@@ -66,7 +66,7 @@ class value extends sandbox_value
     function ref_edit(string $back): string
     {
         $html = new html_base();
-        return $html->ref($html->url(api_dsp::VALUE_EDIT, $this->id, $back), $this->val_formatted());
+        return $html->ref($html->url(api_dsp::VALUE_EDIT, $this->id(), $back), $this->val_formatted());
     }
 
 

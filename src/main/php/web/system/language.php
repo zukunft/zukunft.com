@@ -109,7 +109,7 @@ class language extends sandbox_typed
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(api_dsp::LANGUAGE, $this->id, $back, api_dsp::PAR_VIEW_LANGUAGES);
+        $url = $html->url(api_dsp::LANGUAGE, $this->id(), $back, api_dsp::PAR_VIEW_LANGUAGES);
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 

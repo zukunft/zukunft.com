@@ -576,7 +576,7 @@ class sandbox_link extends sandbox
         $db_con->set_class(self::class);
         return $db_con->insert_old(
             array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user::FLD_ID),
-            array($this->fob->id, $this->tob->id, $this->user()->id));
+            array($this->fob()->id(), $this->tob()->id(), $this->user()->id()));
     }
 
     /**
@@ -600,7 +600,7 @@ class sandbox_link extends sandbox
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
             $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
             if ($ins_msg->is_ok()) {
-                $this->id = $ins_msg->get_row_id();
+                $this->set_id($ins_msg->get_row_id());
             }
             $usr_msg->add($ins_msg);
         } else {
@@ -616,19 +616,19 @@ class sandbox_link extends sandbox
                     $qp = $this->sql_insert($sc);
                     $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
                     if ($ins_msg->is_ok()) {
-                        $this->id = $ins_msg->get_row_id();
+                        $this->set_id($ins_msg->get_row_id());
                     }
                 } else {
                     $db_con->set_class($this::class);
-                    $db_con->set_usr($this->user()->id);
-                    $this->id = $this->add_insert();
+                    $db_con->set_usr($this->user()->id());
+                    $this->set_id($this->add_insert());
                 }
 
                 // save the object fields if saving the key was successful
-                if ($this->id > 0) {
+                if ($this->id() > 0) {
                     log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
                     // update the id in the log
-                    if (!$log->add_ref($this->id)) {
+                    if (!$log->add_ref($this->id())) {
                         $usr_msg->add_message('Updating the reference in the log failed');
                         // TODO do rollback or retry?
                     } else {
@@ -710,13 +710,13 @@ class sandbox_link extends sandbox
             $log->new_to = $this->tob();
             $log->std_to = $std_rec->tob();
 
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             if ($log->add()) {
                 $db_con->set_class($this::class);
-                $db_con->set_usr($this->user()->id);
-                if (!$db_con->update_old($this->id,
+                $db_con->set_usr($this->user()->id());
+                if (!$db_con->update_old($this->id(),
                     array($this->from_name . sql_db::FLD_EXT_ID, $this->from_name . sql_db::FLD_EXT_ID),
-                    array($this->fob->id, $this->tob->id))) {
+                    array($this->fob()->id(), $this->tob()->id()))) {
                     $result .= 'update from link to ' . $this->from_name . 'failed';
                 }
             }

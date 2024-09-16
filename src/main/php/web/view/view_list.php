@@ -186,7 +186,7 @@ class view_list extends list_dsp
         foreach ($dsp_lst as $dsp) {
             $view_id = $dsp['id'];
             $view_name = $dsp['name'];
-            if ($view_id == $this->id) {
+            if ($view_id == $this->id()) {
                 $result .= '<b><a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a></b> ';
             } else {
                 $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';

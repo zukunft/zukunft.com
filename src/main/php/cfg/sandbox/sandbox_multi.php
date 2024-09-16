@@ -101,15 +101,6 @@ class sandbox_multi extends db_object_multi_user
     const FLD_PROTECT = "protect_id";   // field name for the protection level
     const FLD_PROTECT_SQLTYP = sql_field_type::INT_SMALL;
 
-    // numeric and user specific database field names that are user for most user sandbox objects
-    const FLD_NAMES_NUM_USR_SBX = array(
-        self::FLD_EXCLUDED,
-        self::FLD_PROTECT
-    );
-    // numeric database field names that only exist in the table for the user specific data
-    const FLD_NAMES_NUM_USR_ONLY_SBX = array(
-        self::FLD_SHARE // the standard value is per definition share to public
-    );
     // dummy arrays that should be overwritten by the child object
     const FLD_NAMES = array();
     const FLD_NAMES_USR = array();
@@ -494,7 +485,7 @@ class sandbox_multi extends db_object_multi_user
         global $db_con;
         $result = false;
 
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             log_err('The ' . $this::class . ' id must be set to load ' . $this::class, $this::class . '->load_standard');
         } else {
             $db_row = $db_con->get1($qp);
@@ -582,7 +573,7 @@ class sandbox_multi extends db_object_multi_user
         global $db_con;
         $result = false;
 
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
 
             // TODO: try to avoid using load_test_user
             if ($this->owner_id > 0) {
@@ -595,7 +586,7 @@ class sandbox_multi extends db_object_multi_user
                 // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
                 $db_con->set_class($this::class);
                 $db_con->set_usr($this->user()->id());
-                if ($db_con->update_old($this->id, user::FLD_ID, $this->user()->id())) {
+                if ($db_con->update_old($this->id(), user::FLD_ID, $this->user()->id())) {
                     $result = true;
                 }
             }
@@ -791,7 +782,7 @@ class sandbox_multi extends db_object_multi_user
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(array(user::FLD_ID));
-        $qp->sql = $sc->select_by_id_not_owner($this->id);
+        $qp->sql = $sc->select_by_id_not_owner($this->id());
 
         $qp->par = $sc->get_par();
 
@@ -872,7 +863,7 @@ class sandbox_multi extends db_object_multi_user
         global $db_con;
         $result = true;
 
-        if ($this->id > 0 and $new_owner_id > 0) {
+        if ($this->id() > 0 and $new_owner_id > 0) {
             // to recreate the calling object
             $std = clone $this;
             $std->reset();
@@ -892,7 +883,7 @@ class sandbox_multi extends db_object_multi_user
                 $std->save();
             } else {
                 if (!$db_con->update_old(
-                    $this->id, user::FLD_ID, $new_owner_id, group::FLD_ID)) {
+                    $this->id(), user::FLD_ID, $new_owner_id, group::FLD_ID)) {
                     $result = false;
                 }
             }
@@ -915,14 +906,14 @@ class sandbox_multi extends db_object_multi_user
     function not_changed(): bool
     {
         $result = true;
-        log_debug($this->id . ' by someone else than the owner ' . $this->owner_id);
+        log_debug($this->id() . ' by someone else than the owner ' . $this->owner_id);
 
         $other_usr_id = $this->changer();
         if ($other_usr_id > 0) {
             $result = false;
         }
 
-        log_debug($this->id . ' is ' . zu_dsp_bool($result));
+        log_debug($this->id() . ' is ' . zu_dsp_bool($result));
         return $result;
     }
 
@@ -933,7 +924,7 @@ class sandbox_multi extends db_object_multi_user
     function not_used(): bool
     {
         $result = true;
-        log_debug($this->id);
+        log_debug($this->id());
 
         $using_usr_id = $this->median_user();
         if ($using_usr_id > 0) {
@@ -961,7 +952,7 @@ class sandbox_multi extends db_object_multi_user
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(array(user::FLD_ID));
-        $qp->sql = $db_con->select_by_id_not_owner($this->id, $this->owner_id);
+        $qp->sql = $db_con->select_by_id_not_owner($this->id(), $this->owner_id);
 
         $qp->par = $db_con->get_par();
 
@@ -1055,7 +1046,7 @@ class sandbox_multi extends db_object_multi_user
     function used_by_someone_else(): bool
     {
         $result = true;
-        log_debug($this->id);
+        log_debug($this->id());
 
         log_debug('owner is ' . $this->owner_id . ' and the change is requested by ' . $this->user()->id());
         if ($this->owner_id == $this->user()->id() or $this->owner_id <= 0) {
@@ -1124,7 +1115,7 @@ class sandbox_multi extends db_object_multi_user
 
         $result = false;
         $action = 'Deletion of user ' . $class_name . ' ';
-        $msg_failed = $this->id . ' failed for ' . $this->user()->name;
+        $msg_failed = $this->id() . ' failed for ' . $this->user()->name;
 
         $db_con->set_class($this::class, true);
         try {
@@ -1155,7 +1146,7 @@ class sandbox_multi extends db_object_multi_user
         global $db_con;
         $result = true;
 
-        if ($this->id > 0 and $this->user()->id() > 0) {
+        if ($this->id() > 0 and $this->user()->id() > 0) {
             $log = $this->log_del();
             if ($log->id() > 0) {
                 $db_con->usr_id = $this->user()->id();
@@ -1192,7 +1183,7 @@ class sandbox_multi extends db_object_multi_user
                 if (isset($this->fob) and isset($this->tob)) {
                     log_debug('for "' . $this->fob->name . '"/"' . $this->tob->name . '" by user "' . $this->user()->name . '"');
                 } else {
-                    log_debug('for "' . $this->id . '" and user "' . $this->user()->name . '"');
+                    log_debug('for "' . $this->id() . '" and user "' . $this->user()->name . '"');
                 }
             } else {
                 log_err('Unknown user sandbox type ' . $class_name . ' in ' . $class, $class . '->log_add');
@@ -1204,7 +1195,7 @@ class sandbox_multi extends db_object_multi_user
             $qp->name = $class . '_add_usr_cfg';
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
-            $db_con->set_where_std($this->id);
+            $db_con->set_where_std($this->id());
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
             $db_row = $db_con->get1($qp);
@@ -1215,7 +1206,7 @@ class sandbox_multi extends db_object_multi_user
                 // create an entry in the user sandbox
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . $class);
                 $db_con->set_usr($this->user()->id());
-                $log_id = $db_con->insert_old(array($this->id_field(), user::FLD_ID), array($this->id, $this->user()->id()));
+                $log_id = $db_con->insert_old(array($this->id_field(), user::FLD_ID), array($this->id(), $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $class . ' failed.');
                     $result = false;
@@ -1615,7 +1606,7 @@ class sandbox_multi extends db_object_multi_user
                         log_debug('remove user change');
                         $db_con->set_class($this::class, true);
                         $db_con->set_usr($this->user()->id());
-                        if (!$db_con->update_old($this->id, $log->field(), Null)) {
+                        if (!$db_con->update_old($this->id(), $log->field(), Null)) {
                             $result = 'remove of ' . $log->field() . ' failed';
                         }
                     }
@@ -1623,7 +1614,7 @@ class sandbox_multi extends db_object_multi_user
                 } else {
                     $db_con->set_class($this::class);
                     $db_con->set_usr($this->user()->id());
-                    if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
+                    if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
                         $result = 'update of ' . $log->field() . ' to ' . $new_value . ' failed';
                     }
                 }
@@ -1638,11 +1629,11 @@ class sandbox_multi extends db_object_multi_user
                     $db_con->set_usr($this->user()->id());
                     if ($new_value == $std_value) {
                         log_debug('remove user change');
-                        if (!$db_con->update_old($this->id, $log->field(), Null)) {
+                        if (!$db_con->update_old($this->id(), $log->field(), Null)) {
                             $result = 'remove of user value for ' . $log->field() . ' failed';
                         }
                     } else {
-                        if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
+                        if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
                             $result = 'update of user value for ' . $log->field() . ' to ' . $new_value . ' failed';
                         }
                     }
@@ -1939,7 +1930,7 @@ class sandbox_multi extends db_object_multi_user
         if ($log->add()) {
             $db_con->set_class($this::class);
             $db_con->set_usr($this->user()->id());
-            if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
+            if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
                 $result = 'update of value for ' . $log->field() . ' to ' . $new_value . ' failed';
             }
         }
@@ -1995,7 +1986,7 @@ class sandbox_multi extends db_object_multi_user
             if ($this->can_change()) {
                 $db_con->set_class($this::class);
                 $db_con->set_usr($this->user()->id());
-                if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
+                if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
                     $result .= 'excluding of ' . $class_name . ' failed';
                 }
             } else {
@@ -2008,11 +1999,11 @@ class sandbox_multi extends db_object_multi_user
                     $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id());
                     if ($new_value == $std_value) {
-                        if (!$db_con->update_old($this->id, $log->field(), Null)) {
+                        if (!$db_con->update_old($this->id(), $log->field(), Null)) {
                             $result .= 'include of ' . $class_name . ' for user failed';
                         }
                     } else {
-                        if (!$db_con->update_old($this->id, $log->field(), $new_value)) {
+                        if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
                             $result .= 'excluding of ' . $class_name . ' for user failed';
                         }
                     }
@@ -2146,7 +2137,7 @@ class sandbox_multi extends db_object_multi_user
     {
         log_debug('check if target already exists ' . $this->dsp_id());
         $db_chk = clone $this;
-        $db_chk->id = 0; // to force the load by the id fields
+        $db_chk->set_id(0); // to force the load by the id fields
         $db_chk->load_standard(); // TODO should not ADDITIONAL the user specific load be called
         return $db_chk;
     }
@@ -2178,7 +2169,7 @@ class sandbox_multi extends db_object_multi_user
 
         if ($this->is_id_updated($db_rec)) {
             $db_chk = $this->get_obj_with_same_id_fields();
-            if ($db_chk->id <> 0) {
+            if ($db_chk->id() != 0) {
                 log_debug('target already exists');
                 if ($this->rename_can_switch) {
                     // ... if yes request to delete or exclude the record with the id parameters before the change
@@ -2190,7 +2181,7 @@ class sandbox_multi extends db_object_multi_user
                     if ($result = '') {
                         // .. and use it for the update
                         // TODO review the logging: from the user view this is a change not a delete and update
-                        $this->id = $db_chk->id;
+                        $this->id = $db_chk->id();
                         $this->owner_id = $db_chk->owner_id;
                         // TODO check which links needs to be updated, because this is a kind of combine objects
                         // force the include again
@@ -2232,7 +2223,7 @@ class sandbox_multi extends db_object_multi_user
 
                     if ($result = '') {
                         // ... and create a new display component link
-                        $this->id = 0;
+                        $this->set_id(0);
                         $this->owner_id = $this->user()->id();
                         $result .= $this->add()->get_last_message();
                     }
@@ -2450,7 +2441,7 @@ class sandbox_multi extends db_object_multi_user
                         $similar->load_by_id($similar->id, $similar::class); // e.g. to get the type_id
                         // prevent that the id of a formula is used for the word with the type formula link
                         if (get_class($this) == get_class($similar)) {
-                            $this->id = $similar->id;
+                            $this->id = $similar->id();
                         } else {
                             if (!((get_class($this) == word::class and get_class($similar) == formula::class)
                                 or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
@@ -2490,7 +2481,7 @@ class sandbox_multi extends db_object_multi_user
                     $db_rec = clone $this;
                     $db_rec->reset();
                     $db_rec->set_user($this->user());
-                    if ($db_rec->load_by_id($this->id, $db_rec::class) != $this->id()) {
+                    if ($db_rec->load_by_id($this->id(), $db_rec::class) != $this->id()) {
                         $usr_msg->add_message('Reloading of user ' . $class_name . ' failed');
                     } else {
                         log_debug('reloaded from db');
@@ -2513,7 +2504,7 @@ class sandbox_multi extends db_object_multi_user
                     // load the common object
                     $std_rec = clone $this;
                     $std_rec->reset();
-                    $std_rec->id = $this->id;
+                    $std_rec->id = $this->id();
                     $std_rec->set_user($this->user()); // must also be set to allow to take the ownership
                     if ($usr_msg->is_ok()) {
                         if (!$std_rec->load_standard()) {
@@ -2602,7 +2593,7 @@ class sandbox_multi extends db_object_multi_user
                 if ($usr_msg->is_ok()) {
                     $db_con->set_class(element::class);
                     $db_con->set_usr($this->user()->id());
-                    $msg = $db_con->delete_old($this->id_field(), $this->id);
+                    $msg = $db_con->delete_old($this->id_field(), $this->id());
                     $usr_msg->add_message($msg);
                 }
 
@@ -2610,7 +2601,7 @@ class sandbox_multi extends db_object_multi_user
                 if ($usr_msg->is_ok()) {
                     $db_con->set_class(result::class);
                     $db_con->set_usr($this->user()->id());
-                    $msg = $db_con->delete_old($this->id_field(), $this->id);
+                    $msg = $db_con->delete_old($this->id_field(), $this->id());
                     $usr_msg->add_message($msg);
                 }
 
@@ -2650,7 +2641,7 @@ class sandbox_multi extends db_object_multi_user
                     // TODO use prepared query
                     $msg = $db_con->delete_old(
                         array($class_name . sql_db::FLD_EXT_ID, 'excluded'),
-                        array($this->id, '1'));
+                        array($this->id(), '1'));
                     $usr_msg->add_message($msg);
                 }
             }
@@ -2663,7 +2654,7 @@ class sandbox_multi extends db_object_multi_user
                 } else {
                     $db_con->set_class($this::class);
                     $db_con->set_usr($this->user()->id());
-                    $msg = $db_con->delete_old($this->id_field(), $this->id);
+                    $msg = $db_con->delete_old($this->id_field(), $this->id());
                     $usr_msg->add_message($msg);
                 }
                 log_debug('of ' . $this->dsp_id() . ' done');
@@ -2717,7 +2708,7 @@ class sandbox_multi extends db_object_multi_user
         } else {
             log_debug('reloaded ' . $this->dsp_id());
             // check if the object is still valid
-            if ($this->id <= 0) {
+            if ($this->id() <= 0) {
                 log_warning('Delete failed', $this::class . '->del', 'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id() . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $this->user());
             } else {
                 // reload the objects if needed
@@ -2773,7 +2764,7 @@ class sandbox_multi extends db_object_multi_user
                         $db_rec = clone $this;
                         $db_rec->reset();
                         $db_rec->set_user($this->user());
-                        if ($db_rec->load_by_id($this->id, $db_rec::class)) {
+                        if ($db_rec->load_by_id($this->id(), $db_rec::class)) {
                             log_debug('reloaded ' . $db_rec->dsp_id() . ' from database');
                         }
                         if ($msg == '') {
@@ -3156,7 +3147,7 @@ class sandbox_multi extends db_object_multi_user
             $log->new_id = $this->type_id;
             $log->std_value = $std_rec->type_name();
             $log->std_id = $std_rec->type_id;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             // special case just to shorten the field name
             if ($this::class == formula_link::class) {
                 $log->set_field(formula_link_type::FLD_ID);

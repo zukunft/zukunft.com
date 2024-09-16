@@ -858,14 +858,14 @@ class group extends sandbox_multi
      */
     private function load_sql_name_ext(): string
     {
-        if ($this->id != 0) {
+        if ($this->id() != 0) {
             return sql_db::FLD_ID;
         } elseif (!$this->phrase_list()->is_empty()) {
             return 'phr_ids';
         } elseif ($this->name != '') {
             return sql_db::FLD_NAME;
         } else {
-            log_err('Either the database ID (' . $this->id . ') or the ' .
+            log_err('Either the database ID (' . $this->id() . ') or the ' .
                 self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->user()->id() . ') must be set to load a ' .
                 self::class, self::class . '->load');
             return '';
@@ -881,11 +881,11 @@ class group extends sandbox_multi
      */
     private function load_sql_select_qp(sql $sc, sql_par $qp): sql_par
     {
-        if ($this->id != 0) {
-            $sc->add_where(self::FLD_ID, $this->id);
+        if ($this->id() != 0) {
+            $sc->add_where(self::FLD_ID, $this->id());
         } elseif (!$this->phrase_list()->is_empty()) {
             $this->set_id_from_phrase_list($this->phrase_list());
-            $sc->add_where(self::FLD_ID, $this->id);
+            $sc->add_where(self::FLD_ID, $this->id());
         } elseif ($this->name != '') {
             $sc->add_where(self::FLD_NAME, $this->name, sql_par_type::TEXT);
         }
@@ -974,8 +974,8 @@ class group extends sandbox_multi
         }
 
         // use the loaded group or create the word group if it is missing
-        if ($test_load->id > 0) {
-            $this->id = $test_load->id;
+        if ($test_load->id() > 0) {
+            $this->id = $test_load->id();
         } else {
             log_debug('save ' . $this->dsp_id());
             $this->load_by_obj_vars();
@@ -983,7 +983,7 @@ class group extends sandbox_multi
         }
 
         // update the database for correct selection references
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $result .= $this->generic_name($do_save); // update the generic name if needed
         }
 
@@ -1012,20 +1012,20 @@ class group extends sandbox_multi
         $wrd_lst = $this->phrase_list()->wrd_lst();
 
         $sql_name = 'group_by_';
-        if ($this->id != 0) {
+        if ($this->id() != 0) {
             $sql_name .= sql_db::FLD_ID;
         } elseif (!$wrd_lst->is_empty()) {
             $sql_name .= count($wrd_lst->lst()) . 'word_id';
         } else {
-            log_err("Either the database ID (" . $this->id . ") or a word list and the user (" . $this->user()->id() . ") must be set to load a phrase list.", "phrase_list->load");
+            log_err("Either the database ID (" . $this->id() . ") or a word list and the user (" . $this->user()->id() . ") must be set to load a phrase list.", "phrase_list->load");
         }
 
         $sql_from = '';
         $sql_from_prefix = '';
         $sql_where = '';
-        if ($this->id != 0) {
+        if ($this->id() != 0) {
             $sql_from .= 'groups ';
-            $sql_where .= 'group_id = ' . $this->id;
+            $sql_where .= 'group_id = ' . $this->id();
         } else {
             $pos = 1;
             $prev_pos = 1;
@@ -1141,10 +1141,10 @@ class group extends sandbox_multi
                 $db_grp = $db_con->get1_old($sql);
                 if ($db_grp != null) {
                     $this->id = $db_grp[group::FLD_ID];
-                    if ($this->id > 0) {
-                        log_debug('group->get_by_wrd_lst got id ' . $this->id);
+                    if ($this->id() > 0) {
+                        log_debug('group->get_by_wrd_lst got id ' . $this->id());
                         $result = $this->load();
-                        log_debug('group->get_by_wrd_lst ' . $result . ' found <' . $this->id . '> for ' . $wrd_lst->name() . ' and user ' . $this->user()->name);
+                        log_debug('group->get_by_wrd_lst ' . $result . ' found <' . $this->id() . '> for ' . $wrd_lst->name() . ' and user ' . $this->user()->name);
                     } else {
                         log_warning('No group found for words ' . $wrd_lst->name() . '.', "group->get_by_wrd_lst");
                     }
@@ -1213,7 +1213,7 @@ class group extends sandbox_multi
     {
         $grp_id = new group_id();
         $id = $grp_id->get_id($this->phr_lst);
-        if (count($this->phr_lst->lst()) == 0 and is_string($this->id)) {
+        if (count($this->phr_lst->lst()) == 0 and is_string($this->id())) {
             if ($this->id() != '') {
                 $id = $this->id();
                 log_warning('fix wrong using of value id');
@@ -1278,7 +1278,7 @@ class group extends sandbox_multi
                 if ($this->is_saved()) {
                     log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
                     // update the id in the log
-                    if (!$log->add_ref($this->id)) {
+                    if (!$log->add_ref($this->id())) {
                         $usr_msg->add_message('Updating the reference in the log failed');
                     }
 
@@ -1333,7 +1333,7 @@ class group extends sandbox_multi
      */
     function result($time_wrd_id): result
     {
-        log_debug($this->id . ",time" . $time_wrd_id . ",u" . $this->user()->name);
+        log_debug($this->id() . ",time" . $time_wrd_id . ",u" . $this->user()->name);
 
         global $db_con;
 
@@ -1387,13 +1387,13 @@ class group extends sandbox_multi
         // update the name if possible and needed
         /*
         if ($this->description <> $group_name and $do_save) {
-            if ($this->id > 0) {
+            if ($this->id() > 0) {
                 // update the generic name in the database
                 $db_con->usr_id = $this->user()->id();
                 $db_con->set_class(group::class);
                 // TODO activate Prio 2
                 /*
-                if ($db_con->update_old($this->id, self::FLD_DESCRIPTION, $group_name)) {
+                if ($db_con->update_old($this->id(), self::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;
                 }
                 log_debug('updated to ' . $group_name);
@@ -1419,7 +1419,7 @@ class group extends sandbox_multi
     private function selector()
     {
         $result = '';
-        log_debug('group->selector for ' . $this->id . ' and user "' . $this->user()->name . '"');
+        log_debug('group->selector for ' . $this->id() . ' and user "' . $this->user()->name . '"');
 
         new function: load_main_type to load all word and phrase types with one query
 
@@ -1475,7 +1475,7 @@ class group extends sandbox_multi
 
         global $db_con;
 
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             $this->generic_name();
 
             // write new group
@@ -1680,7 +1680,7 @@ class group extends sandbox_multi
         $qp->name .= 'test_link_ids';
         $db_con->set_name($qp->name);
         $db_con->set_fields(array(phrase::FLD_ID));
-        $db_con->add_par(sql_par_type::INT, $this->id);
+        $db_con->add_par(sql_par_type::INT, $this->id());
         $qp->sql = $db_con->select_by_field(group::FLD_ID);
         $qp->par = $db_con->get_par();
         $lnk_id_lst = $db_con->get($qp);
@@ -1709,9 +1709,9 @@ class group extends sandbox_multi
         $result = '';
 
         if ($this->name() <> '') {
-            $result .= '"' . $this->name() . '" (group_id ' . $this->id . ')';
+            $result .= '"' . $this->name() . '" (group_id ' . $this->id() . ')';
         } else {
-            $result .= 'group_id ' . $this->id;
+            $result .= 'group_id ' . $this->id();
         }
         if ($this->name <> '') {
             $result .= ' as "' . $this->name . '"';

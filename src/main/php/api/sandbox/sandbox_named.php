@@ -108,11 +108,11 @@ class sandbox_named extends sandbox_api
         $result = '';
         if ($this->name <> '') {
             $result .= '"' . $this->name . '"';
-            if ($this->id > 0) {
-                $result .= ' (' . $this->id . ')';
+            if ($this->id() > 0) {
+                $result .= ' (' . $this->id() . ')';
             }
         } else {
-            $result .= $this->id;
+            $result .= $this->id();
         }
         $result .= '';
         return $result;

@@ -94,6 +94,8 @@ class sql
     const PREPARE = 'PREPARE';
     const CREATE = 'CREATE OR REPLACE';
     const DROP_MYSQL = 'DROP PROCEDURE IF EXISTS';
+    const TRUNCATE = 'TRUNCATE';
+    const CASCADE = 'CASCADE';
     const FUNCTION = 'FUNCTION';
     const FUNCTION_MYSQL = 'CREATE PROCEDURE';
     const FUNCTION_NAME = '$$';

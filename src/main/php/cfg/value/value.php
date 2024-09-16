@@ -612,7 +612,7 @@ class value extends sandbox_value
         $sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
 
         if ($this->is_id_set()) {
-            $sql_where = $sc->where_id(self::FLD_ID, $this->id, true);
+            $sql_where = $sc->where_id(self::FLD_ID, $this->id(), true);
         } elseif ($this->grp->is_id_set()) {
             $sql_where = $sc->where_par(array(group::FLD_ID), array($this->grp->id()), true);
         } elseif ($this->phrase_list() != null) {
@@ -1470,7 +1470,7 @@ class value extends sandbox_value
         $sc_par_lst->add($tbl_typ);
         $sc->set_class(self::class, $sc_par_lst);
         // TODO add $sc_par_lst ?
-        return $sc->load_sql_not_changed_multi($this->id, $this->owner_id, $this->id_field(), $ext, $tbl_typ);
+        return $sc->load_sql_not_changed_multi($this->id(), $this->owner_id, $this->id_field(), $ext, $tbl_typ);
     }
 
     /**
@@ -1683,7 +1683,7 @@ class value extends sandbox_value
         // insert the link
         $db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
-        $val_wrd_id = $db_con->insert(array("group_id","phrase_id"), array($this->id,$phr_id));
+        $val_wrd_id = $db_con->insert(array("group_id","phrase_id"), array($this->id(),$phr_id));
         if ($val_wrd_id > 0) {
           // get the link id, but updating the reference in the log should not be done, because the row id should be the ref to the original value
           // TODO: call the word group creation
@@ -1707,7 +1707,7 @@ class value extends sandbox_value
         // remove the link
         $db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
-        $result = $db_con->delete(array("group_id","phrase_id"), array($this->id,$wrd->id()));
+        $result = $db_con->delete(array("group_id","phrase_id"), array($this->id(),$wrd->id()));
         //$result = str_replace ('1','',$result);
       }
     } else {
@@ -1931,7 +1931,7 @@ class value extends sandbox_value
             if ($log->add()) {
                 $ext = $this->grp->table_extension();
                 $db_con->set_class(self::class, false, $ext);
-                $result = $db_con->update_old($this->id,
+                $result = $db_con->update_old($this->id(),
                     array(group::FLD_ID),
                     array($this->grp->id()));
             }
@@ -1949,7 +1949,7 @@ class value extends sandbox_value
           $log->row_id    = $this->id();
           $log->field     = 'time_stamp';
           if ($log->add()) {
-            $result .= $db_con->update($this->id, array("time_stamp"),
+            $result .= $db_con->update($this->id(), array("time_stamp"),
                                                   array($this->time_stamp));
           }
         }

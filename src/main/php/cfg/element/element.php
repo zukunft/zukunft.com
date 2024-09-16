@@ -152,7 +152,7 @@ class element extends db_object_seq_id_user
      */
     function row_mapper_sandbox(?array $db_row, string $id_fld = ''): bool
     {
-        $this->id = 0;
+        $this->set_id(0);
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $par_typ = new parameter_type();
@@ -241,7 +241,7 @@ class element extends db_object_seq_id_user
                 $vrb = new verb;
                 $vrb->set_user($this->user());
                 $vrb->load_by_id($id);
-                $this->symbol = expression::TRIPLE_START . $vrb->id . expression::TRIPLE_END;
+                $this->symbol = expression::TRIPLE_START . $vrb->id() . expression::TRIPLE_END;
                 $this->obj = $vrb;
             } elseif ($this->type == formula::class) {
                 $frm = new formula($this->user());
@@ -298,8 +298,8 @@ class element extends db_object_seq_id_user
         if ($name <> '') {
             $result .= '"' . $name . '" ';
         }
-        if ($this->id > 0) {
-            $result .= '(' . $this->id . ')';
+        if ($this->id() > 0) {
+            $result .= '(' . $this->id() . ')';
         } else {
             if ($this->obj != null) {
                 $result .= '(' . $this->obj->id() . ')';

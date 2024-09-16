@@ -894,13 +894,13 @@ class result_list extends sandbox_value_list
 
         // loop over the word categories assigned to the formulas
         // get the words where the formula is used including the based on the assigned word e.g. Company or year
-        //$sql_result = zuf_wrd_lst ($frm_lst->ids, $this->user()->id);
+        //$sql_result = zuf_wrd_lst ($frm_lst->ids, $this->user()->id());
         //zu_debug('res_lst->frm_upd_lst_usr -> number of formula assigned words '. mysqli_num_rows ($sql_result));
         //while ($frm_row = mysqli_fetch_array($sql_result, MySQLi_ASSOC)) {
-        //zu_debug('res_lst->frm_upd_lst_usr -> formula '.$frm_row['formula_name'].' ('.$frm_row['resolved_text'].') linked to '.zut_name($frm_row['word_id'], $this->user()->id));
+        //zu_debug('res_lst->frm_upd_lst_usr -> formula '.$frm_row['formula_name'].' ('.$frm_row['resolved_text'].') linked to '.zut_name($frm_row['word_id'], $this->user()->id()));
 
         // also use the formula for all related words e.g. if the formula should be used for "Company" use it also for "ABB"
-        //$is_word_ids = zut_ids_are($frm_row['word_id'], $this->user()->id); // should later be taken from the original array to increase speed
+        //$is_word_ids = zut_ids_are($frm_row['word_id'], $this->user()->id()); // should later be taken from the original array to increase speed
 
         // include also the main word in the testing
         //$is_word_ids[] = $frm_row['word_id'];
@@ -922,7 +922,7 @@ class result_list extends sandbox_value_list
           } else {
 
             // include all results of the underlying formulas
-            $all_frm_ids = zuf_frm_ids ($frm_row['formula_text'], $this->user()->id);
+            $all_frm_ids = zuf_frm_ids ($frm_row['formula_text'], $this->user()->id());
 
             // get fixed / special formulas
             $frm_ids = array();
@@ -937,14 +937,14 @@ class result_list extends sandbox_value_list
             }
 
             // include the results of the underlying formulas, but only the once related to one of the words assigned to the formula
-            $result_res = zuc_upd_lst_res($val_wrd_lst, $phr_id, $frm_ids, $frm_row, $this->user()->id);
+            $result_res = zuc_upd_lst_res($val_wrd_lst, $phr_id, $frm_ids, $frm_row, $this->user()->id());
             $result = array_merge($result, $result_res);
 
             // get all values related to assigned word and to the formula words
             // and based on this value get the unique word list
             // e.g. if the formula text contains the word "Sales" all values that are related to Sales should be taken into account
             //      $frm_phr_ids is the list of words for the value selection, so in this case it would contain "Sales"
-            $frm_phr_ids = zuf_phr_ids ($frm_row['formula_text'], $this->user()->id);
+            $frm_phr_ids = zuf_phr_ids ($frm_row['formula_text'], $this->user()->id());
             zu_debug('res_lst->frm_upd_lst_usr -> frm_phr_ids1 ('.implode(",",$frm_phr_ids).')');
 
             // add word words for the special formulas
@@ -954,8 +954,8 @@ class result_list extends sandbox_value_list
             $frm_phr_ids = array_filter($frm_phr_ids);
             zu_debug('res_lst->frm_upd_lst_usr -> frm_phr_ids2 ('.implode(",",$frm_phr_ids).')');
 
-            $result_val = $this->add_frm_val($phr_id, $frm_phr_ids, $frm_row, $this->user()->id);
-            // $result_val = zuc_upd_lst_val($phr_id, $frm_phr_ids, $frm_row, $this->user()->id);
+            $result_val = $this->add_frm_val($phr_id, $frm_phr_ids, $frm_row, $this->user()->id());
+            // $result_val = zuc_upd_lst_val($phr_id, $frm_phr_ids, $frm_row, $this->user()->id());
             $result = array_merge($result, $result_val);
 
             // show the user the progress every two seconds

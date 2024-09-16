@@ -331,7 +331,7 @@ class user extends db_object_seq_id
 
     function reset(): void
     {
-        $this->id = 0;
+        $this->set_id(0);
         $this->name = null;
         $this->description = null;
         $this->ip_addr = null;
@@ -475,7 +475,7 @@ class user extends db_object_seq_id
      */
     private function api_obj_fields(user_api|user_dsp $api_obj): user_api|user_dsp
     {
-        $api_obj->id = $this->id;
+        $api_obj->id = $this->id();
         if ($this->name != null) {
             $api_obj->name = $this->name;
         } else {
@@ -510,7 +510,7 @@ class user extends db_object_seq_id
         $sc->set_name($qp->name);
 
         if ($this->viewer == null) {
-            if ($this->id == null) {
+            if ($this->id() == null) {
                 $sc->set_usr(0);
             } else {
                 $sc->set_usr($this->id());
@@ -795,7 +795,7 @@ class user extends db_object_seq_id
         $ip_lst->load();
         $test_result = $ip_lst->includes($ip_addr);
         if (!$test_result->is_ok()) {
-            $this->id = 0; // switch off the permission
+            $this->set_id(0); // switch off the permission
         }
         return $test_result->all_message_text();
     }
@@ -837,7 +837,7 @@ class user extends db_object_seq_id
             if (isset($_SESSION['logged'])) {
                 if ($_SESSION['logged']) {
                     $this->load_by_id($_SESSION['usr_id']);
-                    log_debug('use (' . $this->id . ')');
+                    log_debug('use (' . $this->id() . ')');
                 }
             } else {
                 // else use the IP address (for testing don't overwrite any testing ip)
@@ -845,7 +845,7 @@ class user extends db_object_seq_id
                 global $db_con;
 
                 $this->load_by_ip($this->get_ip());
-                if ($this->id <= 0) {
+                if ($this->id() <= 0) {
                     // use the ip address as the username and add the user
                     $this->name = $this->get_ip();
 
@@ -865,7 +865,7 @@ class user extends db_object_seq_id
                 }
             }
         }
-        log_debug(' "' . $this->name . '" (' . $this->id . ')');
+        log_debug(' "' . $this->name . '" (' . $this->id() . ')');
         return $result;
     }
 
@@ -996,7 +996,7 @@ class user extends db_object_seq_id
      */
     function is_set(): bool
     {
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             return true;
         } else {
             return false;
@@ -1084,7 +1084,7 @@ class user extends db_object_seq_id
      */
     function dummy_all(): void
     {
-        $this->id = 0;
+        $this->set_id(0);
         $this->code_id = 'all';
         $this->name = 'standard user view for all users';
     }
@@ -1101,30 +1101,30 @@ class user extends db_object_seq_id
     // create the HTML code to display the username with the HTML link
     function display(): string
     {
-        return '<a href="/http/user.php?id=' . $this->id . '">' . $this->name . '</a>';
+        return '<a href="/http/user.php?id=' . $this->id() . '">' . $this->name . '</a>';
     }
 
     // remember the last source that the user has used
     function set_source($source_id): bool
     {
-        log_debug('(' . $this->id . ',s' . $source_id . ')');
+        log_debug('(' . $this->id() . ',s' . $source_id . ')');
         global $db_con;
         //$db_con = new mysql;
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
         $db_con->set_class(user::class);
-        return $db_con->update_old($this->id, 'source_id', $source_id);
+        return $db_con->update_old($this->id(), 'source_id', $source_id);
     }
 
     // remember the last source that the user has used
     // TODO add the database field
     function set_verb($vrb_id): bool
     {
-        log_debug('(' . $this->id . ',s' . $vrb_id . ')');
+        log_debug('(' . $this->id() . ',s' . $vrb_id . ')');
         global $db_con;
         //$db_con = new mysql;
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
         $result = $db_con->set_class(user::class);
-        //$result = $db_con->update($this->id, verb::FLD_ID, $vrb_id);
+        //$result = $db_con->update($this->id(), verb::FLD_ID, $vrb_id);
         return $result;
     }
 
@@ -1159,11 +1159,11 @@ class user extends db_object_seq_id
             $log = $this->log_upd();
             $log->old_value = $db_value;
             $log->new_value = $usr_par[$par_name];
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field($fld_name);
             if ($log->add()) {
                 $db_con->set_class(user::class);
-                $result = $db_con->update_old($this->id, $log->field(), $log->new_value);
+                $result = $db_con->update_old($this->id(), $log->field(), $log->new_value);
             }
         }
     }
@@ -1182,11 +1182,11 @@ class user extends db_object_seq_id
         $result = ''; // reset the html code var
 
         // build the database object because the is anyway needed
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
         $db_con->set_class(user::class);
 
         $db_usr = new user;
-        $db_id = $db_usr->load_by_id($this->id);
+        $db_id = $db_usr->load_by_id($this->id());
         log_debug('database user loaded "' . $db_id . '"');
 
         $this->upd_par($db_con, $usr_par, $db_usr->name, self::FLD_NAME, 'name');
@@ -1220,46 +1220,46 @@ class user extends db_object_seq_id
 
         // build the database object because the is anyway needed
         //$db_con = new mysql;
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
         $db_con->set_class(user::class);
 
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             log_debug(' add (' . $this->name . ')');
 
-            $this->id = $db_con->insert_old('user_name', $this->name);
+            $this->set_id($db_con->insert_old('user_name', $this->name));
             // log the changes???
-            if ($this->id > 0) {
+            if ($this->id() > 0) {
                 // add the description of the user
-                if (!$db_con->update_old($this->id, sandbox_named::FLD_DESCRIPTION, $this->description)) {
-                    $result = 'Saving of user description ' . $this->id . ' failed.';
+                if (!$db_con->update_old($this->id(), sandbox_named::FLD_DESCRIPTION, $this->description)) {
+                    $result = 'Saving of user description ' . $this->id() . ' failed.';
                 }
                 // add the email of the user
-                if (!$db_con->update_old($this->id, self::FLD_EMAIL, $this->email)) {
-                    $result = 'Saving of user email ' . $this->id . ' failed.';
+                if (!$db_con->update_old($this->id(), self::FLD_EMAIL, $this->email)) {
+                    $result = 'Saving of user email ' . $this->id() . ' failed.';
                 }
                 // add the first name of the user
-                if (!$db_con->update_old($this->id, self::FLD_FIRST_NAME, $this->first_name)) {
-                    $result = 'Saving of user first name ' . $this->id . ' failed.';
+                if (!$db_con->update_old($this->id(), self::FLD_FIRST_NAME, $this->first_name)) {
+                    $result = 'Saving of user first name ' . $this->id() . ' failed.';
                 }
                 // add the last name of the user
-                if (!$db_con->update_old($this->id, self::FLD_LAST_NAME, $this->last_name)) {
-                    $result = 'Saving of user last name ' . $this->id . ' failed.';
+                if (!$db_con->update_old($this->id(), self::FLD_LAST_NAME, $this->last_name)) {
+                    $result = 'Saving of user last name ' . $this->id() . ' failed.';
                 }
                 // add the code of the user
                 if ($this->code_id != '') {
-                    if (!$db_con->update_old($this->id, self::FLD_CODE_ID, $this->code_id)) {
-                        $result = 'Saving of user code id ' . $this->id . ' failed.';
+                    if (!$db_con->update_old($this->id(), self::FLD_CODE_ID, $this->code_id)) {
+                        $result = 'Saving of user code id ' . $this->id() . ' failed.';
                     }
                 }
                 // add the profile of the user
-                if (!$db_con->update_old($this->id, self::FLD_PROFILE, $this->profile_id)) {
-                    $result = 'Saving of user profile ' . $this->id . ' failed.';
+                if (!$db_con->update_old($this->id(), self::FLD_PROFILE, $this->profile_id)) {
+                    $result = 'Saving of user profile ' . $this->id() . ' failed.';
                 }
                 // add the ip address to the user, but never for system users
                 if ($this->profile_id != $user_profiles->id(user_profile::SYSTEM)
                     and $this->profile_id != $user_profiles->id(user_profile::TEST)) {
-                    if (!$db_con->update_old($this->id, self::FLD_IP_ADDR, $this->get_ip())) {
-                        $result = 'Saving of user ' . $this->id . ' failed.';
+                    if (!$db_con->update_old($this->id(), self::FLD_IP_ADDR, $this->get_ip())) {
+                        $result = 'Saving of user ' . $this->id() . ' failed.';
                     }
                 }
                 log_debug(' add ... done');
@@ -1292,7 +1292,7 @@ class user extends db_object_seq_id
 
     function dsp_id(): string
     {
-        return $this->name . ' (' . $this->id . ')';
+        return $this->name . ' (' . $this->id() . ')';
     }
 
 }

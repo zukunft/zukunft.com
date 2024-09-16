@@ -1243,12 +1243,12 @@ class word_list extends sandbox_list
         /*
         TODO check if a new group is not created
         $result = $grp->get_id();
-        if ($result->id > 0) {
+        if ($result->id() > 0) {
           zu_debug('word_list->get_grp <'.$result->id.'> for "'.$this->name().'" and user '.$this->user()->name);
         } else {
           zu_debug('word_list->get_grp create for "'.implode(",",$grp->wrd_lst->names()).'" ('.implode(",",$grp->wrd_lst->ids()).') and user '.$grp->usr->name);
           $result = $grp->get_id();
-          if ($result->id > 0) {
+          if ($result->id() > 0) {
             zu_debug('word_list->get_grp created <'.$result->id.'> for "'.$this->name().'" and user '.$this->user()->name);
           }
         }

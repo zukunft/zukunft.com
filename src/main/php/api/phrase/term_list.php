@@ -55,11 +55,12 @@ class term_list extends list_api implements JsonSerializable
 
     /**
      * add a term to the list
+     * dublicate id is allowed because the phrase and term objects have an extra field for the class
      * @returns bool true if the term has been added
      */
     function add(term $trm): bool
     {
-        return parent::add_obj($trm);
+        return parent::add_obj($trm, true);
     }
 
 

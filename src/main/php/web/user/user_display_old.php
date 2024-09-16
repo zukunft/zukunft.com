@@ -70,12 +70,12 @@ class user_dsp_old extends user
      */
     function dsp_changes($call, $size, $page, $back): string
     {
-        log_debug('user_dsp->dsp_changes (u' . $this->id . ',b' . $back . ')');
+        log_debug('user_dsp->dsp_changes (u' . $this->id() . ',b' . $back . ')');
         $result = ''; // reset the html code var
 
         // get value changes by the user that are not standard
         $log_dsp = new user_log_display($this);
-        $log_dsp->id = $this->id;
+        $log_dsp->id = $this->id();
         $log_dsp->type = user::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
@@ -113,7 +113,7 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_wrd($back): string
     {
-        log_debug($this->id);
+        log_debug($this->id());
 
         global $db_con;
         $html = new html_base();
@@ -125,9 +125,9 @@ class user_dsp_old extends user
                    t.word_id 
               FROM user_words u,
                    words t
-             WHERE u.user_id = " . $this->id . "
+             WHERE u.user_id = " . $this->id() . "
                AND u.word_id = t.word_id;";
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
         $wrd_lst = $db_con->get_old($sql);
 
         // prepare to show the word link
@@ -141,7 +141,7 @@ class user_dsp_old extends user
             }
             $result .= '<td>' . $wrd_row['usr_word_name'] . '</td><td>' . $wrd_row['word_name'] . '</td>';
             //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_word='.$log_row['type_table'].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
-            $url = '/http/user.php?id=' . $this->id . '&undo_word=' . $wrd_row['word_id'] . '&back=' . $back . '';
+            $url = '/http/user.php?id=' . $this->id() . '&undo_word=' . $wrd_row['word_id'] . '&back=' . $back . '';
             $result .= '<td>' . \html\btn_del("Undo your change and use the standard word " . $wrd_row['word_name'], $url) . '</td>';
             $result .= '</tr>';
         }
@@ -156,14 +156,14 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_wrd_link($back): string
     {
-        log_debug($this->id);
+        log_debug($this->id());
 
         global $db_con;
         $result = ''; // reset the html code var
         $html = new html_base();
 
         // create the databased link
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
 
         // get all values changed by the user to a non standard triple
         if (SQL_DB_TYPE == sql_db::POSTGRES) {
@@ -178,7 +178,7 @@ class user_dsp_old extends user
                    l.excluded                                                    AS std_excluded
               FROM user_triples u,
                    triples l
-             WHERE u.user_id = " . $this->id . "
+             WHERE u.user_id = " . $this->id() . "
                AND u.triple_id = l.triple_id;";
         } else {
             $sql = "SELECT u.triple_id AS id, 
@@ -192,7 +192,7 @@ class user_dsp_old extends user
                    l.excluded                                     AS std_excluded
               FROM user_triples u,
                    triples l
-             WHERE u.user_id = " . $this->id . "
+             WHERE u.user_id = " . $this->id() . "
                AND u.triple_id = l.triple_id;";
         }
         $sbx_lst = $db_con->get_old($sql);
@@ -260,7 +260,7 @@ class user_dsp_old extends user
                                u.excluded
                           FROM user_triples u,
                                triples l
-                         WHERE u.user_id <> " . $this->id . "
+                         WHERE u.user_id <> " . $this->id() . "
                            AND u.triple_id = l.triple_id
                            AND u.triple_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
@@ -281,10 +281,10 @@ class user_dsp_old extends user
                         }
                         $sandbox_other .= $wrd_lnk_other->name();
                     }
-                    $sandbox_other = '<a href="/http/user_triple.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = '<a href="/http/user_triple.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id . '&undo_triple=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = '/http/user.php?id=' . $this->id() . '&undo_triple=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard triple " . $sbx_row['std_triple'], $url) . '</td>';
 
                     // display the triple changes by the user
@@ -322,7 +322,7 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_frm($back): string
     {
-        log_debug('user_dsp->dsp_sandbox_frm(u' . $this->id . ')');
+        log_debug('user_dsp->dsp_sandbox_frm(u' . $this->id() . ')');
 
         global $db_con;
         $result = ''; // reset the html code var
@@ -335,9 +335,9 @@ class user_dsp_old extends user
                   f.formula_id 
               FROM user_formulas u,
                   formulas f
-            WHERE u.user_id = " . $this->id . "
+            WHERE u.user_id = " . $this->id() . "
               AND u.formula_id = f.formula_id;";
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
         $frm_lst = $db_con->get_old($sql);
 
         // prepare to show the word link
@@ -356,7 +356,7 @@ class user_dsp_old extends user
             $result .= '<td>' . $frm_row['usr_formula_text'] . '</td>';
             $result .= '<td>' . $frm_row[formula::FLD_FORMULA_TEXT] . '</td>';
             //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula::FLD_ID].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
-            $url = '/http/user.php?id=' . $this->id . '&undo_formula=' . $frm_row[formula::FLD_ID] . '&back=' . $back . '';
+            $url = '/http/user.php?id=' . $this->id() . '&undo_formula=' . $frm_row[formula::FLD_ID] . '&back=' . $back . '';
             $result .= '<td>' . \html\btn_del("Undo your change and use the standard formula " . $frm_row[formula::FLD_FORMULA_TEXT], $url) . '</td>';
             $result .= '</tr>';
         }
@@ -371,14 +371,14 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_frm_link($back): string
     {
-        log_debug($this->id);
+        log_debug($this->id());
 
         global $db_con;
         $result = ''; // reset the html code var
         $html = new html_base();
 
         // create the databased link
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
 
         // get all values changed by the user to a non standard formula_link
         if (SQL_DB_TYPE == sql_db::POSTGRES) {
@@ -392,7 +392,7 @@ class user_dsp_old extends user
                    l.excluded                                                                AS std_excluded
               FROM user_formula_links u,
                    formula_links l
-             WHERE u.user_id = " . $this->id . "
+             WHERE u.user_id = " . $this->id() . "
                AND u.formula_link_id = l.formula_link_id;";
         } else {
             $sql = "SELECT u.formula_link_id AS id, 
@@ -405,7 +405,7 @@ class user_dsp_old extends user
                    l.excluded                                                 AS std_excluded
               FROM user_formula_links u,
                    formula_links l
-             WHERE u.user_id = " . $this->id . "
+             WHERE u.user_id = " . $this->id() . "
                AND u.formula_link_id = l.formula_link_id;";
         }
         $sbx_lst = $db_con->get_old($sql);
@@ -469,7 +469,7 @@ class user_dsp_old extends user
                                u.excluded
                           FROM user_formula_links u,
                                formula_links l
-                         WHERE u.user_id <> " . $this->id . "
+                         WHERE u.user_id <> " . $this->id() . "
                            AND u.formula_link_id = l.formula_link_id
                            AND u.formula_link_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
@@ -490,10 +490,10 @@ class user_dsp_old extends user
                         }
                         $sandbox_other .= $frm_lnk_other->tob()->display_linked();
                     }
-                    $sandbox_other = '<a href="/http/user_formula_link.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = '<a href="/http/user_formula_link.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id . '&undo_formula_link=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = '/http/user.php?id=' . $this->id() . '&undo_formula_link=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard formula_link " . $sbx_row['std_formula_link'], $url) . '</td>';
 
                     // display the formula_link changes by the user
@@ -531,14 +531,14 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_val($back): string
     {
-        log_debug($this->id);
+        log_debug($this->id());
 
         global $db_con;
         $result = ''; // reset the html code var
         $html = new html_base();
 
         // create the databased link
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
 
         // get all values changed by the user to a non standard value
         if (SQL_DB_TYPE == sql_db::POSTGRES) {
@@ -554,7 +554,7 @@ class user_dsp_old extends user
                     v.group_id
                FROM user_values u,
                     values v
-              WHERE u.user_id = " . $this->id . "
+              WHERE u.user_id = " . $this->id() . "
                 AND u.group_id = v.group_id;";
         } else {
             $sql = "SELECT 
@@ -569,7 +569,7 @@ class user_dsp_old extends user
                     v.phrase_group_id
                FROM user_values u,
                     `values` v
-              WHERE u.user_id = " . $this->id . "
+              WHERE u.user_id = " . $this->id() . "
                 AND u.group_id = v.group_id;";
         }
         $val_lst = $db_con->get_old($sql);
@@ -638,7 +638,7 @@ class user_dsp_old extends user
                                u.excluded
                           FROM user_values u,
                                `values` v
-                         WHERE u.user_id <> " . $this->id . "
+                         WHERE u.user_id <> " . $this->id() . "
                            AND u.group_id = v.group_id
                            AND u.group_id = " . $val_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
@@ -659,10 +659,10 @@ class user_dsp_old extends user
                         }
                         $sandbox_other .= $val_other->val_formatted();
                     }
-                    $sandbox_other = '<a href="/http/user_value.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = '<a href="/http/user_value.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id . '&undo_value=' . $val_row['id'] . '&back=' . $back;
+                    $url = '/http/user.php?id=' . $this->id() . '&undo_value=' . $val_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard value " . $val_row['std_value'], $url) . '</td>';
 
                     // display the value changes by the user
@@ -699,14 +699,14 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_view($back): string
     {
-        log_debug($this->id);
+        log_debug($this->id());
 
         global $db_con;
         $result = ''; // reset the html code var
         $html = new html_base();
 
         // create the databased link
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
 
         // get all values changed by the user to a non standard view
         if (SQL_DB_TYPE == sql_db::POSTGRES) {
@@ -723,7 +723,7 @@ class user_dsp_old extends user
                     m.excluded                                                                AS std_excluded
                 FROM user_views u,
                     views m
-              WHERE u.user_id = " . $this->id . "
+              WHERE u.user_id = " . $this->id() . "
                 AND u.view_id = m.view_id;";
         } else {
             $sql = "SELECT 
@@ -739,7 +739,7 @@ class user_dsp_old extends user
                     m.excluded                                                 AS std_excluded
                 FROM user_views u,
                     views m
-              WHERE u.user_id = " . $this->id . "
+              WHERE u.user_id = " . $this->id() . "
                 AND u.view_id = m.view_id;";
         }
         $sbx_lst = $db_con->get_old($sql);
@@ -804,7 +804,7 @@ class user_dsp_old extends user
                                u.excluded
                           FROM user_views u,
                                views m
-                         WHERE u.user_id <> " . $this->id . "
+                         WHERE u.user_id <> " . $this->id() . "
                            AND u.view_id = m.view_id
                            AND u.view_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
@@ -826,10 +826,10 @@ class user_dsp_old extends user
                         }
                         $sandbox_other .= $dsp_other->name();
                     }
-                    $sandbox_other = '<a href="/http/user_view.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = '<a href="/http/user_view.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id . '&undo_view=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = '/http/user.php?id=' . $this->id() . '&undo_view=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard view " . $sbx_row['std_view'], $url) . '</td>';
 
                     // display the view changes by the user
@@ -865,14 +865,14 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_component($back): string
     {
-        log_debug($this->id);
+        log_debug($this->id());
 
         global $db_con;
         $result = ''; // reset the html code var
         $html = new html_base();
 
         // create the databased link
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
 
         // get all values changed by the user to a non standard component
         if (SQL_DB_TYPE == sql_db::POSTGRES) {
@@ -889,7 +889,7 @@ class user_dsp_old extends user
                     m.excluded                                                                                              AS std_excluded
                FROM user_components u,
                     components m
-              WHERE u.user_id = " . $this->id . "
+              WHERE u.user_id = " . $this->id() . "
                 AND u.component_id = m.component_id;";
         } else {
             $sql = "SELECT
@@ -905,7 +905,7 @@ class user_dsp_old extends user
                     m.excluded                                                                               AS std_excluded
                FROM user_components u,
                     components m
-              WHERE u.user_id = " . $this->id . "
+              WHERE u.user_id = " . $this->id() . "
                 AND u.component_id = m.component_id;";
         }
         $sbx_lst = $db_con->get_old($sql);
@@ -969,7 +969,7 @@ class user_dsp_old extends user
                                u.excluded
                           FROM user_components u,
                                components m
-                         WHERE u.user_id <> " . $this->id . "
+                         WHERE u.user_id <> " . $this->id() . "
                            AND u.component_id = m.component_id
                            AND u.component_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
@@ -991,10 +991,10 @@ class user_dsp_old extends user
                         }
                         $sandbox_other .= $cmp_other->name();
                     }
-                    $sandbox_other = '<a href="/http/user.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = '<a href="/http/user.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id . '&undo_component=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = '/http/user.php?id=' . $this->id() . '&undo_component=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard component " . $sbx_row['std_component'], $url) . '</td>';
 
                     // display the component changes by the user
@@ -1030,14 +1030,14 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_view_link($back): string
     {
-        log_debug($this->id);
+        log_debug($this->id());
 
         global $db_con;
         $result = ''; // reset the html code var
         $html = new html_base();
 
         // create the databased link
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
 
         // get all values changed by the user to a non standard component_link
         $sql = '';
@@ -1057,7 +1057,7 @@ class user_dsp_old extends user
                     l.excluded                                                                   AS std_excluded
                FROM user_component_links u,
                     component_links l
-              WHERE u.user_id = " . $this->id . "
+              WHERE u.user_id = " . $this->id() . "
                 AND u.component_link_id = l.component_link_id;";
             } else {
                 $sql = "SELECT 
@@ -1073,7 +1073,7 @@ class user_dsp_old extends user
                     l.excluded                                                    AS std_excluded
                FROM user_component_links u,
                     component_links l
-              WHERE u.user_id = " . $this->id . "
+              WHERE u.user_id = " . $this->id() . "
                 AND u.component_link_id = l.component_link_id;";
             }
         }
@@ -1139,7 +1139,7 @@ class user_dsp_old extends user
                                u.excluded
                           FROM user_component_links u,
                                component_links l
-                         WHERE u.user_id <> " . $this->id . "
+                         WHERE u.user_id <> " . $this->id() . "
                            AND u.component_link_id = l.component_link_id
                            AND u.component_link_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
@@ -1160,10 +1160,10 @@ class user_dsp_old extends user
                         }
                         $sandbox_other .= $dsp_lnk_other->name();
                     }
-                    $sandbox_other = '<a href="/http/user_component_link.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = '<a href="/http/user_component_link.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id . '&undo_component_link=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = '/http/user.php?id=' . $this->id() . '&undo_component_link=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard component_link " . $sbx_row['std_component_link'], $url) . '</td>';
 
                     // display the component_link changes by the user
@@ -1201,14 +1201,14 @@ class user_dsp_old extends user
      */
     function dsp_sandbox_source($back): string
     {
-        log_debug($this->id);
+        log_debug($this->id());
 
         global $db_con;
         $result = ''; // reset the html code var
         $html = new html_base();
 
         // create the databased link
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
 
         // get all values changed by the user to a non standard source
         if (SQL_DB_TYPE == sql_db::POSTGRES) {
@@ -1227,7 +1227,7 @@ class user_dsp_old extends user
                     m.excluded                                                                      AS std_excluded
                FROM user_sources u,
                     sources m
-              WHERE u.user_id = " . $this->id . "
+              WHERE u.user_id = " . $this->id() . "
                 AND u.source_id = m.source_id;";
         } else {
             $sql = "SELECT
@@ -1245,7 +1245,7 @@ class user_dsp_old extends user
                     m.excluded                                                       AS std_excluded
                FROM user_sources u,
                     sources m
-              WHERE u.user_id = " . $this->id . "
+              WHERE u.user_id = " . $this->id() . "
                 AND u.source_id = m.source_id;";
         }
         $sbx_lst = $db_con->get_old($sql);
@@ -1315,7 +1315,7 @@ class user_dsp_old extends user
                                u.excluded
                           FROM user_sources u,
                                sources m
-                         WHERE u.user_id <> " . $this->id . "
+                         WHERE u.user_id <> " . $this->id() . "
                            AND u.source_id = m.source_id
                            AND u.source_id = " . $sbx_row['id'] . "
                            AND (u.excluded <> 1 OR u.excluded is NULL);";
@@ -1338,10 +1338,10 @@ class user_dsp_old extends user
                         }
                         $sandbox_other .= $dsp_other->name();
                     }
-                    $sandbox_other = '<a href="/http/user_source.php?id=' . $this->id . '&back=' . $back . '">' . $sandbox_other . '</a> ';
+                    $sandbox_other = '<a href="/http/user_source.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 
                     // create the button
-                    $url = '/http/user.php?id=' . $this->id . '&undo_source=' . $sbx_row['id'] . '&back=' . $back;
+                    $url = '/http/user.php?id=' . $this->id() . '&undo_source=' . $sbx_row['id'] . '&back=' . $back;
                     $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard source " . $sbx_row['std_source'], $url) . '</td>';
 
                     // display the source changes by the user
@@ -1377,7 +1377,7 @@ class user_dsp_old extends user
      */
     function dsp_sandbox($back): string
     {
-        log_debug($this->id . ',b' . $back);
+        log_debug($this->id() . ',b' . $back);
         $result = $this->dsp_sandbox_val($back);
         $result .= $this->dsp_sandbox_frm($back);
         $result .= $this->dsp_sandbox_frm_link($back);

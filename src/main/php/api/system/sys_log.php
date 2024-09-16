@@ -41,7 +41,7 @@ use cfg\user;
 use html\rest_ctrl;
 use html\html_base;
 
-class sys_log extends db_object_seq_id
+class sys_log
 {
 
     CONST TV_TIME = '2023-01-03T20:59:59+0100'; // time for unit tests
@@ -68,7 +68,6 @@ class sys_log extends db_object_seq_id
 
     function __construct()
     {
-        parent::__construct();
         $this->id = 0;
         $this->time = '';
         $this->user = '';

@@ -209,7 +209,7 @@ class word extends sandbox_typed
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(rest_ctrl::VIEW, $this->id, $back, rest_ctrl::PAR_VIEW_WORDS);
+        $url = $html->url(rest_ctrl::VIEW, $this->id(), $back, rest_ctrl::PAR_VIEW_WORDS);
         return $html->ref($url, $this->name(), $this->description(), $style);
     }
 
@@ -255,12 +255,12 @@ class word extends sandbox_typed
 
         $result = '';
 
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             $result .= 'no word selected';
         } else {
             // load the word parameters if not yet done
             if ($this->name == "") {
-                log_err('Name for word with id ' . $this->id . ' is empty', 'word_dsp->dsp_header');
+                log_err('Name for word with id ' . $this->id() . ' is empty', 'word_dsp->dsp_header');
             }
 
             //$default_view_id = cl(DBL_VIEW_WORD);
@@ -271,7 +271,7 @@ class word extends sandbox_typed
                     $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
                 }
             }
-            $url = $html->url(rest_ctrl::WORD . rest_ctrl::UPDATE, $this->id, $this->id);
+            $url = $html->url(rest_ctrl::WORD . rest_ctrl::UPDATE, $this->id(), $this->id());
             $title .= $html->ref($url, $html->span($this->name(), rest_ctrl::STYLE_GLYPH), 'Rename word');
             $result .= $html->dsp_text_h1($title);
         }
@@ -347,9 +347,9 @@ class word extends sandbox_typed
         $html = new html_base();
         $result = '';
 
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $header = $html->text_h2('Change "' . $this->name . '"');
-            $hidden_fields = $html->form_hidden("id", $this->id);
+            $hidden_fields = $html->form_hidden("id", $this->id());
             $hidden_fields .= $html->form_hidden("back", $back);
             $hidden_fields .= $html->form_hidden("confirm", '1');
             $detail_fields = $dsp_frm;
@@ -377,7 +377,7 @@ class word extends sandbox_typed
         $html = new html_base();
 
         $header = $html->text_h2('Delete "' . $this->name . '"');
-        $hidden_fields = $html->form_hidden("id", $this->id);
+        $hidden_fields = $html->form_hidden("id", $this->id());
         $hidden_fields .= $html->form_hidden("back", $back);
         $hidden_fields .= $html->form_hidden("confirm", '1');
         $detail_row = $this->btn_del() . '<br>';
@@ -425,7 +425,7 @@ class word extends sandbox_typed
      */
     function btn_del(string $back = ''): string
     {
-        $url = (new html_base())->url(rest_ctrl::WORD . rest_ctrl::REMOVE, $this->id, $this->id);
+        $url = (new html_base())->url(rest_ctrl::WORD . rest_ctrl::REMOVE, $this->id(), $this->id());
         return (new button($url, $back))->del(messages::WORD_DEL);
     }
 
@@ -434,7 +434,7 @@ class word extends sandbox_typed
      */
     function btn_unlink(int $link_id, string $back = ''): string
     {
-        $url = (new html_base())->url(rest_ctrl::LINK . rest_ctrl::REMOVE, $link_id, $this->id);
+        $url = (new html_base())->url(rest_ctrl::LINK . rest_ctrl::REMOVE, $link_id, $this->id());
         return (new button($url, $back))->del(messages::WORD_UNLINK);
     }
 
@@ -787,11 +787,11 @@ class word extends sandbox_typed
      */
     function dsp_hist(int $page = 1, int $size = 20, string $call = '', string $back = ''): string
     {
-        log_debug("word_dsp->dsp_hist for id " . $this->id . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        log_debug("word_dsp->dsp_hist for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display($this->user());
-        $log_dsp->id = $this->id;
+        $log_dsp->id = $this->id();
         $log_dsp->type = word::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
@@ -808,11 +808,11 @@ class word extends sandbox_typed
      */
     function dsp_hist_links($page, $size, $call, $back): string
     {
-        log_debug($this->id . ",size" . $size . ",b" . $size);
+        log_debug($this->id() . ",size" . $size . ",b" . $size);
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display($this->user());
-        $log_dsp->id = $this->id;
+        $log_dsp->id = $this->id();
         $log_dsp->type = word::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;

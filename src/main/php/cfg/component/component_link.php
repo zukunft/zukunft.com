@@ -471,13 +471,13 @@ class component_link extends sandbox_link
     function load_standard_sql(sql $sc): sql_par
     {
         // try to get the search values from the objects
-        if ($this->id <= 0) {
-            $this->id = 0;
+        if ($this->id() <= 0) {
+            $this->set_id(0);
         }
 
         $sc->set_class($this::class);
         $qp = new sql_par($this::class);
-        if ($this->id != 0) {
+        if ($this->id() != 0) {
             $qp->name .= 'std_id';
         } else {
             $qp->name .= 'std_link_ids';
@@ -689,15 +689,15 @@ class component_link extends sandbox_link
         $result = false;
 
         // load any missing parameters
-        if ($this->id > 0) {
-            $this->load_by_id($this->id);
+        if ($this->id() > 0) {
+            $this->load_by_id($this->id());
         } elseif ($this->view()->id() != 0 and $this->component()->id() != 0) {
             $this->load_by_link_id($this->view()->id(), 0, $this->component()->id(), self::class);
         }
         $this->load_objects();
 
         // check the all minimal input parameters
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             log_err("Cannot load the view component link.", "component_link->move");
         } elseif ($this->view()->id() <= 0 or $this->component()->id() <= 0) {
             log_err("The view component id and the view component id must be given to move it.", "component_link->move");
@@ -839,7 +839,7 @@ class component_link extends sandbox_link
             if ($this->view() != null and $this->component() != null) {
                 log_debug('component_link->add_usr_cfg for "' . $this->view()->name() . '"/"' . $this->component()->name() . '" by user "' . $this->user()->name . '"');
             } else {
-                log_debug('component_link->add_usr_cfg for "' . $this->id . '" and user "' . $this->user()->name . '"');
+                log_debug('component_link->add_usr_cfg for "' . $this->id() . '" and user "' . $this->user()->name . '"');
             }
 
             // check again if there is not yet a record
@@ -848,7 +848,7 @@ class component_link extends sandbox_link
             $qp->name = 'component_link_add_usr_cfg';
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
-            $db_con->set_where_std($this->id);
+            $db_con->set_where_std($this->id());
             $qp->sql = $db_con->select_by_set_id();
             $qp->par = $db_con->get_par();
             $db_row = $db_con->get1($qp);
@@ -858,7 +858,7 @@ class component_link extends sandbox_link
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_class(component_link::class, true);
-                $log_id = $db_con->insert_old(array(self::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
+                $log_id = $db_con->insert_old(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of user_component_link failed.');
                     $result = false;
@@ -900,7 +900,7 @@ class component_link extends sandbox_link
         $db_chk = clone $this;
         $db_chk->reset();
         $db_chk->load_by_link_and_pos($this->view()->id(), $this->component()->id(), $this->order_nbr);
-        if ($db_chk->id > 0) {
+        if ($db_chk->id() > 0) {
             log_debug('a component link like ' . $this->dsp_id() . ' already exists');
             $result = $db_chk;
         }
@@ -925,7 +925,7 @@ class component_link extends sandbox_link
             $log->old_value = $db_rec->order_nbr;
             $log->new_value = $this->order_nbr;
             $log->std_value = $std_rec->order_nbr;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_ORDER_NBR);
             $result .= $this->save_field_user($db_con, $log);
         }

@@ -732,7 +732,7 @@ class ref extends sandbox_link
                 $src = new source($this->user());
                 if (!$test_obj) {
                     $src->load_by_name($value);
-                    if ($src->id == 0) {
+                    if ($src->id() == 0) {
                         $result->add_message('Cannot find source "' . $value . '" when importing ' . $this->dsp_id());
                     }
                 } else {
@@ -846,7 +846,7 @@ class ref extends sandbox_link
         $log->new_from = $this->phrase();
         $log->new_link = $this->type();
         $log->new_to = $this;
-        $log->row_id = $this->id;
+        $log->row_id = $this->id();
         $log->add();
 
         return $log;
@@ -873,7 +873,7 @@ class ref extends sandbox_link
         $log->old_from = $this->phrase();
         $log->old_link = $this->type();
         $log->old_to = $this;
-        $log->row_id = $this->id;
+        $log->row_id = $this->id();
         $log->add();
 
         return $log;
@@ -901,7 +901,7 @@ class ref extends sandbox_link
                 $log->old_value = $db_rec->description;
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
-                $log->row_id = $this->id;
+                $log->row_id = $this->id();
                 $log->set_field(sandbox_named::FLD_DESCRIPTION);
                 $result = $this->save_field_user($db_con, $log);
             }
@@ -926,7 +926,7 @@ class ref extends sandbox_link
                 $log->old_value = $db_rec->url;
                 $log->new_value = $this->url;
                 $log->std_value = $std_rec->url;
-                $log->row_id = $this->id;
+                $log->row_id = $this->id();
                 $log->set_field(self::FLD_URL);
                 $result = $this->save_field_user($db_con, $log);
             }
@@ -993,7 +993,7 @@ class ref extends sandbox_link
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
             $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
             if ($ins_msg->is_ok()) {
-                $this->id = $ins_msg->get_row_id();
+                $this->set_id($ins_msg->get_row_id());
             }
             $usr_msg->add($ins_msg);
         } else {
@@ -1004,12 +1004,12 @@ class ref extends sandbox_link
                 $db_con->set_class(ref::class);
                 $db_con->set_usr($this->user()->id());
 
-                $this->id = $db_con->insert_old(
+                $this->set_id($db_con->insert_old(
                     array(phrase::FLD_ID, self::FLD_EX_KEY, self::FLD_TYPE),
-                    array($this->phrase_id(), $this->external_key, $this->predicate_id));
-                if ($this->id > 0) {
+                    array($this->phrase_id(), $this->external_key, $this->predicate_id)));
+                if ($this->id() > 0) {
                     // update the id in the log for the correct reference
-                    if (!$log->add_ref($this->id)) {
+                    if (!$log->add_ref($this->id())) {
                         $usr_msg->add_message('Adding reference ' . $this->dsp_id() . ' in the log failed.');
                         log_err($usr_msg->get_message(), 'ref->add');
                     } else {
@@ -1044,7 +1044,7 @@ class ref extends sandbox_link
         $db_chk = clone $this;
         $db_chk->reset();
         $db_chk->load_by_link_ids($this->phrase_id(), $this->predicate_id());
-        if ($db_chk->id > 0) {
+        if ($db_chk->id() > 0) {
             log_debug('ref->get_similar an external reference for ' . $this->dsp_id() . ' already exists');
             $result = $db_chk;
         }
@@ -1077,19 +1077,19 @@ class ref extends sandbox_link
         $db_con->set_class(ref::class);
 
         // check if the external reference is supposed to be added
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             // check possible duplicates before adding
             log_debug('ref->save check possible duplicates before adding ' . $this->dsp_id());
             $similar = $this->get_similar();
             if (isset($similar)) {
-                if ($similar->id <> 0) {
-                    $this->id = $similar->id;
+                if ($similar->id() != 0) {
+                    $this->set_id($similar->id());
                 }
             }
         }
 
         // create a new object or update an existing
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             log_debug('add ' . $this->dsp_id());
             $usr_msg->add($this->add($use_func));
         } else {
@@ -1099,19 +1099,19 @@ class ref extends sandbox_link
             // done first, because it needs to be done for user and general object values
             $db_rec = clone $this;
             $db_rec->reset();
-            $db_rec->load_by_id($this->id);
+            $db_rec->load_by_id($this->id());
             log_debug('ref->save reloaded from db');
             $std_rec = new ref($this->user()); // must also be set to allow to take the ownership
-            $std_rec->id = $this->id;
+            $std_rec->set_id($this->id());
             $std_rec->load_standard();
-            log_debug("standard reference settings loaded (" . $std_rec->id . ")");
+            log_debug("standard reference settings loaded (" . $std_rec->id() . ")");
 
             // if needed log the change and update the database
             if ($this->external_key <> $db_rec->external_key) {
                 $log = $this->log_link_upd($db_rec);
                 if ($log->id() > 0) {
                     $db_con->set_class(ref::class);
-                    if ($db_con->update_old($this->id, self::FLD_EX_KEY, $this->external_key)) {
+                    if ($db_con->update_old($this->id(), self::FLD_EX_KEY, $this->external_key)) {
                         log_debug('ref->save update ... done.');
                     }
                 }
@@ -1297,11 +1297,11 @@ class ref extends sandbox_link
     {
         $result = $this->name();
         if ($result <> '') {
-            if ($this->id > 0) {
-                $result .= ' (' . $this->id . ')';
+            if ($this->id() > 0) {
+                $result .= ' (' . $this->id() . ')';
             }
         } else {
-            $result .= $this->id;
+            $result .= $this->id();
         }
         return $result;
     }
