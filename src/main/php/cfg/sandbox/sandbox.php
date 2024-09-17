@@ -281,7 +281,7 @@ class sandbox extends db_object_seq_id_user
                 $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
             }
             if ($allow_usr_protect) {
-                $this->row_mapper_usr($db_row, $id_fld);
+                $this->row_mapper_usr($db_row);
             } else {
                 $this->row_mapper_std();
             }
@@ -534,15 +534,6 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * @return object frontend API object filled with the database id
-     */
-    function fill_min_obj(object $min_obj): object
-    {
-        $min_obj->set_id($this->id());
-        return $min_obj;
-    }
-
-    /**
      * TODO deprecate
      * fill a similar object that is extended with display interface functions
      *
@@ -586,17 +577,6 @@ class sandbox extends db_object_seq_id_user
         }
 
         return $usr_msg;
-    }
-
-    /**
-     * set the object vars based on the given api json string
-     *
-     * @param string $json as received from the frontend
-     * @return user_message with the problem description and the suggested solution in case something is not fine
-     */
-    function set_by_api_string(string $json): user_message
-    {
-        return $this->set_by_api_json(json_decode($json, true));
     }
 
 
@@ -667,23 +647,6 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * create the SQL to load the single default value always by something else than the main id
-     * @param sql $sc with the target db_type set
-     * @param sql_par $qp the query parameters with the class and name already set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_standard_sql_by(sql $sc, sql_par $qp): sql_par
-    {
-        $qp->name .= '_std';
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
      * create the SQL to load a sandbox object with numeric user specific fields
      *
      * @param sql $sc with the target db_type set
@@ -693,8 +656,6 @@ class sandbox extends db_object_seq_id_user
      */
     function load_sql_usr_num(sql $sc, sandbox $sbx, string $query_name): sql_par
     {
-        $lib = new library();
-
         $qp = new sql_par($sbx::class);
         $qp->name .= $query_name;
 
@@ -743,19 +704,6 @@ class sandbox extends db_object_seq_id_user
     protected function all_sandbox_fields(): array
     {
         return array();
-    }
-
-    /**
-     * create the SQL to load a single user specific value
-     * TODO replace by load_sql_usr or load_sql_usr_num
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_obj_vars(sql $sc, string $class): sql_par
-    {
-        return new sql_par($class);
     }
 
     function load_owner(): bool
@@ -934,6 +882,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * if the user is an admin the user can force to be the owner of this object
+     * TODO add an unit test
      * TODO review
      */
     function take_ownership(): bool

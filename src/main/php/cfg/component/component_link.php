@@ -513,7 +513,7 @@ class component_link extends sandbox_link
      */
     function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_obj_vars($sc, $class);
+        $qp = new sql_par($class);
         $qp->name .= $query_name;
 
         $sc->set_class($class);
@@ -569,7 +569,7 @@ class component_link extends sandbox_link
      */
     function load_sql_max_pos(sql $sc, int $id): sql_par
     {
-        $qp = parent::load_sql_obj_vars($sc, self::class);
+        $qp = new sql_par(self::class);
         $qp->name .= 'max_pos';
 
         $sc->set_class(self::class);

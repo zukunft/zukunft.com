@@ -323,15 +323,6 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * @return object frontend API object filled with the database id
-     */
-    function fill_min_obj(object $min_obj): object
-    {
-        $min_obj->set_id($this->id());
-        return $min_obj;
-    }
-
-    /**
      * TODO deprecate
      * fill a similar object that is extended with display interface functions
      *

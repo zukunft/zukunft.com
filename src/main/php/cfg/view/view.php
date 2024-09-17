@@ -581,7 +581,7 @@ class view extends sandbox_typed
      */
     function load_components_sql(sql_db $db_con): sql_par
     {
-        $qp = parent::load_sql_obj_vars($db_con->sql_creator(), component::class);
+        $qp = new sql_par(component::class);
         if ($this->id() != 0) {
             $qp->name .= 'view_id';
         } elseif ($this->name != '') {

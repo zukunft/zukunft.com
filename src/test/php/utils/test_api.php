@@ -165,7 +165,7 @@ class test_api extends create_test_objects
         }
         if ($result) {
             $test_name = $class . ' fill based on api json matches original';
-            $clone_obj->set_by_api_string($json_api);
+            $clone_obj->set_by_api_json(json_decode($json_api, true));
             $json_compare = $clone_obj->api_json();
             $result = $this->assert_json_string($test_name, $json_compare, $json_api);
         }

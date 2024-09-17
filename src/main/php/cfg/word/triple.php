@@ -997,7 +997,7 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_obj_vars($sc, $class);
+        $qp = new sql_par($class);
         $qp->name .= $query_name;
 
         $sc->set_class($class);
