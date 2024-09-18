@@ -502,7 +502,7 @@ class value_list extends sandbox_value_list
     function load_sql_by_ids(sql $sc, array $ids, bool $usr_tbl = false): sql_par
     {
         /*
-         * 1. collect the potential source tables (maybe all
+         * 1. collect the potential source tables (maybe all)
          * 2. set the names based on the tables and
          */
 

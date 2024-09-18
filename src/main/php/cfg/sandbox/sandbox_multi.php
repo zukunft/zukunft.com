@@ -1378,7 +1378,7 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * create a log object for an update of an object field
-     * e.g. that the user can see "value name change from "inhabitants, Switzerland" to "Swiss inhabitants"
+     * e.g. that the user can see >value name change from "inhabitants, Switzerland" to "Swiss inhabitants"<
      * @return change|change_value|changes_norm|changes_big with the settings to log the changes of this object
      */
     function log_upd(): change|change_value|changes_norm|changes_big
@@ -1531,7 +1531,7 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * set the common parameters to log a delete or exclude of a value, result or group object and execute it
+     * set the common parameters to log the delete or exclude of a value, result or group object and execute it
      * @param change|changes_norm|changes_big $log with the target table set
      * @return change|changes_norm|changes_big with the log id set
      */

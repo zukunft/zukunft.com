@@ -14,11 +14,17 @@
     - set and get:       to capsule the vars from unexpected changes
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
+    - load sql:          create the sql statements for loading from the db
     - im- and export:    create an export object and set the vars from an import object
     - information:       functions to make code easier to read
-    - save:              manage to update the database
+    - log read:          read related log messages
+    - log write:         write changes to the log table
+    - add:               insert a new row the database
+    - save helper:       to support updating the database
     - sql write:         sql statement creation to write to the database
     - sql write fields:  field list for writing to the database
+    - internal:          e.g. to generate the name based on the link
+    - debug:             internal support functions for debugging
 
 
     This file is part of zukunft.com - calc with words
@@ -236,22 +242,6 @@ class sandbox_named extends sandbox
         return $obj_cpy;
     }
 
-    /**
-     * @return array with the field names of the object and any child object
-     *         is a function and not a const because the id and name fields are a function and php does not yet have final functions
-     */
-    function field_list_named(): array
-    {
-        return [
-            user::FLD_ID,
-            $this->name_field(),
-            self::FLD_DESCRIPTION,
-            sandbox::FLD_EXCLUDED,
-            sandbox::FLD_SHARE,
-            sandbox::FLD_PROTECT
-        ];
-    }
-
 
     /*
      * cast
@@ -334,6 +324,72 @@ class sandbox_named extends sandbox
      */
 
     /**
+     * load a named user sandbox object by name
+     * @param string $name the name of the word, triple, formula, verb, view or view component
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_name(string $name): int
+    {
+        global $db_con;
+
+        log_debug($name);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
+        return parent::load($qp);
+    }
+
+    /**
+     * only to suppress the polymorthic warning and to be overwritten by the child objects
+     * @param string $code_id
+     * @return int zero if not overwritten by the child object to indicate the internal error
+     */
+    function load_by_code_id(string $code_id): int
+    {
+        log_err($this::class . ' does not have a load_by_code_id function');
+        return 0;
+    }
+
+    /**
+     * load the object parameters for all users
+     * @param sql_par|null $qp the query parameter created by the function of the child object e.g. word->load_standard
+     * @return bool true if the standard object has been loaded
+     */
+    function load_standard(?sql_par $qp = null): bool
+    {
+        global $db_con;
+        $result = false;
+
+        if ($this->id() == 0 and $this->name() == '') {
+            log_err('The ' . $this::class . ' id or name must be set to load ' . $this::class, $this::class . '->load_standard');
+        } else {
+            $db_row = $db_con->get1($qp);
+            $result = $this->row_mapper_sandbox($db_row, true);
+        }
+        return $result;
+    }
+
+
+    /*
+     * load sql
+     */
+
+    /**
+     * create an SQL statement to retrieve a term by name from the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $name the name of the term and the related word, triple, formula or verb
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_name(sql $sc, string $name): sql_par
+    {
+        $qp = $this->load_sql($sc, sql_db::FLD_NAME);
+        $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
      * create the SQL to load the single default value always by the id or name
      * @param sql $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
@@ -362,75 +418,6 @@ class sandbox_named extends sandbox
         return $qp;
     }
 
-    /**
-     * load the object parameters for all users
-     * @param sql_par|null $qp the query parameter created by the function of the child object e.g. word->load_standard
-     * @return bool true if the standard object has been loaded
-     */
-    function load_standard(?sql_par $qp = null): bool
-    {
-        global $db_con;
-        $result = false;
-
-        if ($this->id() == 0 and $this->name() == '') {
-            log_err('The ' . $this::class . ' id or name must be set to load ' . $this::class, $this::class . '->load_standard');
-        } else {
-            $db_row = $db_con->get1($qp);
-            $result = $this->row_mapper_sandbox($db_row, true);
-        }
-        return $result;
-    }
-
-    /**
-     * create an SQL statement to retrieve a term by name from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $name the name of the term and the related word, triple, formula or verb
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_name(sql $sc, string $name, string $class): sql_par
-    {
-        $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
-        $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * load a named user sandbox object by name
-     * @param string $name the name of the word, triple, formula, verb, view or view component
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_name(string $name): int
-    {
-        global $db_con;
-
-        log_debug($name);
-        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $this::class);
-        return parent::load($qp);
-    }
-
-    /**
-     * @return array with the id and name field of the child object
-     */
-    function main_fields(): array
-    {
-        return array($this->id_field(), $this->name_field());
-    }
-
-    /**
-     * only to suppress the polymorthic warning and to be overwritten by the child objects
-     * @param string $code_id
-     * @return int zero if not overwritten by the child object to indicate the internal error
-     */
-    function load_by_code_id(string $code_id): int
-    {
-        log_err($this::class . ' does not have a load_by_code_id function');
-        return 0;
-    }
 
     /*
      * im- and export
@@ -572,12 +559,7 @@ class sandbox_named extends sandbox
 
 
     /*
-     * save helper
-     */
-
-
-    /*
-     * save
+     * add
      */
 
     /**
@@ -657,6 +639,8 @@ class sandbox_named extends sandbox
                     }
 
                 } else {
+                    $lib = new library();
+                    $class_name = $lib->class_to_name($this::class);
                     $usr_msg->add_message('Adding ' . $class_name . ' ' . $this->dsp_id() . ' failed due to logging error.');
                 }
             }
@@ -1032,9 +1016,6 @@ class sandbox_named extends sandbox
         $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
         $ext = sql::NAME_SEP . sql::FILE_INSERT;
 
-        // init the function body
-        $id_field = $sc->id_field_name();
-
         // list of parameters actually used in order of the function usage
         $sql = '';
         $fvt_insert = $fvt_lst->get($this->name_field());
@@ -1043,7 +1024,7 @@ class sandbox_named extends sandbox
         $fvt_insert_list = new sql_par_field_list();
         $fvt_insert_list->add($fvt_insert);
         $sc_insert = clone $sc;
-        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);;
+        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
         $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
         if ($sc->db_type == sql_db::MYSQL) {
             $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);

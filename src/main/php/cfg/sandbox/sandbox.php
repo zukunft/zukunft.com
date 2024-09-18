@@ -12,7 +12,6 @@
     For value objects the sandbox_multi object is used as a base because values are based on more than one db table
 
     The main sections of this object are
-    - sandbox types:     const to group the classes
     - db const:          const for the database link
     - object vars:       the variables of this sandbox object
     - construct and map: including the mapping of the db row to this word object
@@ -36,6 +35,7 @@
     - sql write:         sql statement creation to write to the database
     - sql write fields:  field list for writing to the database
     - sql create:        to create the database table, index and foreign keys
+    - sql write switch:  select the best db write method
     - internal check:    for testing during development
     - settings:          internal information aboud this or the child objects e.g. is_named_obj()
 
@@ -1413,16 +1413,16 @@ class sandbox extends db_object_seq_id_user
      * remove all user setting that are not needed any more based on the new standard object
      * TODO review
      */
-    function usr_cfg_cleanup(sandbox $std): string
+    function usr_cfg_cleanup(): string
     {
         $result = '';
         log_debug($this->dsp_id());
 
         // get a list of users that have a user cfg of this object
         $usr_lst = $this->changed_by();
-        foreach ($usr_lst as $usr) {
+        if (!$usr_lst->is_empty()) {
             // remove the usr cfg if not needed any more
-            $this->del_usr_cfg_if_not_needed($this->id_field(), $this->all_sandbox_fields());
+            $this->del_usr_cfg_if_not_needed();
         }
 
         log_debug('for ' . $this->dsp_id() . ': ' . $result);
@@ -1561,11 +1561,10 @@ class sandbox extends db_object_seq_id_user
      * TODO activate and use it
      *
      * @param sql_db $db_con the active database connection that should be used
-     * @param sandbox $db_obj this object with the variables set in the database before the update
      * @param sandbox $norm_obj this object with the variables of the norm set as in the database before the update
      * @return user_message if anything fails the message for the user to fix the issue
      */
-    function save_all_fields(sql_db $db_con, sandbox $db_obj, sandbox $norm_obj): user_message
+    function save_all_fields(sql_db $db_con, sandbox $norm_obj): user_message
     {
         // always return a user message and if everything is fine, it is just empty
         $usr_msg = new user_message();
@@ -2126,11 +2125,9 @@ class sandbox extends db_object_seq_id_user
                             and $this->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
                             // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
                             $result = true;
-                        } elseif ($this->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)
-                            or $obj_to_check->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
-                            // if one of the two words is a formula link and not both, the user should ge no suggestion to combine them
-                            $result = false;
-                        } else {
+                        } elseif ($this->type_id != $phrase_types->id(phrase_type::FORMULA_LINK)
+                            and $obj_to_check->type_id != $phrase_types->id(phrase_type::FORMULA_LINK)) {
+                            // if not one of the two words is a formula link and not both, the user should ge no suggestion to combine them
                             // a measure word can be combined with a measure scale word
                             $result = true;
                         }
@@ -2767,7 +2764,6 @@ class sandbox extends db_object_seq_id_user
         $db_con->set_class($this::class, $sc_par_lst->is_usr_tbl());
         // TODO check if needed
         $db_con->usr_id = $this->user_id();
-        $sc = $db_con->sql_creator();
         // reload the database row to prevent failures due to caching
         $db_row = clone $this;
         $db_row->load_by_id($this->id());
@@ -3016,7 +3012,6 @@ class sandbox extends db_object_seq_id_user
         $sql .= $sc->sql_func_end();
 
         // create the query parameters for the call
-        $qp_func = clone $qp;
         $sc_par_lst_func = clone $sc_par_lst;
         $sc_par_lst_func->add(sql_type::FUNCTION);
         $sc_par_lst_func->add(sql_type::DELETE);
@@ -3270,7 +3265,6 @@ class sandbox extends db_object_seq_id_user
     {
         // set some var names to shorten the code lines
         $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $ext = sql::NAME_SEP . sql::FILE_INSERT;
         $id_field = $sc->id_field_name();
         $var_name_row_id = $sc->var_name_row_id($sc_par_lst);
 
@@ -3478,9 +3472,6 @@ class sandbox extends db_object_seq_id_user
         sql_type_list      $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
-        // TODO deprecate
-        $val_lst = $fvt_lst->values();
-
         // make the query name unique based on the changed fields
         $lib = new library();
         $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all);
@@ -3564,9 +3555,6 @@ class sandbox extends db_object_seq_id_user
             unset($fld_lst_chg[$key_fld_pos]);
         }
 
-        // the fields that where the changes should be added to the change log
-        $par_lst_chg = $fvt_lst->intersect($fld_lst_chg);
-
         // remove the internal last update field from the list of field that should be logged
         $fld_lst_log = array_diff($fld_lst_chg, [
             formula::FLD_LAST_UPDATE
@@ -3630,7 +3618,6 @@ class sandbox extends db_object_seq_id_user
                 */
                 $sql .= ' ' . $qp_log->sql;
             } else {
-                $qp_log = new sql_par($this::class, $sc_par_lst);
                 log_err('Only named and link objects are supported in sandbox::sql_delete_and_log');
             }
         }
@@ -3750,12 +3737,6 @@ class sandbox extends db_object_seq_id_user
     {
         $lib = new library();
         return $lib->class_to_name($class) . sql_db::FLD_EXT_ID;
-    }
-
-    function fld_usr_id(string $class = self::class): string
-    {
-        $lib = new library();
-        return sql_db::USER_PREFIX . $lib->class_to_name($class) . sql_db::FLD_EXT_ID;
     }
 
     function fld_name(string $class = self::class): string

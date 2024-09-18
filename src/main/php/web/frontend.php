@@ -29,6 +29,8 @@
 
 */
 
+namespace html;
+
 // path of the const and classes that are shared between the backend and the html frontend
 const SHARED_PATH = PHP_PATH . 'shared' . DIRECTORY_SEPARATOR;
 const SHARED_TYPES_PATH = SHARED_PATH . 'types' . DIRECTORY_SEPARATOR;

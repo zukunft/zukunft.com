@@ -425,7 +425,7 @@ class sandbox_link extends sandbox
      * @param sql $sc with the target db_type set
      * @param int $from the subject object id
      * @param int $predicate_id the predicate object id
-     * @param int|string $to the object (grammar) object id or the the unique external key
+     * @param int|string $to the object (grammar) object id or the unique external key
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */

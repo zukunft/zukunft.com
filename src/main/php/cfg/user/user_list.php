@@ -448,4 +448,18 @@ class user_list
 
     }
 
+
+    /*
+     * information
+     */
+
+    function is_empty(): bool
+    {
+        $result = true;
+        if ($this->lst > 0) {
+            $result = false;
+        }
+        return $result;
+    }
+
 }

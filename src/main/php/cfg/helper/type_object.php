@@ -127,7 +127,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
     }
 
     /**
-     * fill the type object vars based on a array of fields from the database
+     * fill the type object vars based on an array of fields from the database
      * @param array $db_row with the data from the database
      * @param string $class the type class name that should be filled
      * @return bool true if all expected object vars have been set

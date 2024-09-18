@@ -750,7 +750,7 @@ class view extends sandbox_typed
 
     /**
      * unlinks this view from the given term
-     * @param term $trm the term that should be remove from the list of assigned terms
+     * @param term $trm the term that should be removed from the list of assigned terms
      * @return user_message with the message to the user if something has gone wrong and the suggested solutions
      */
     function del_term(term $trm): user_message

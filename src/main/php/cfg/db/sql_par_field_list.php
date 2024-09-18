@@ -225,7 +225,7 @@ class sql_par_field_list
 
     /**
      * add a type or predicate field
-     * and include the type name for logging based om the given type list
+     * and include the type name for logging based on the given type list
      * e.g. the phrase type or reference type
      *
      * @param string $db_fld the field name to be updated in the database e.g. view_id

@@ -1291,7 +1291,7 @@ class result extends sandbox_value
         // each element group can contain several elements
         // e.g. for <journey time premium offset = "journey time average" / "journey time max premium" "percent">
         // <"journey time max premium" "percent"> is one element group with two elements
-        // and these two elements together are use to select the value
+        // and these two elements together are used to select the value
         $exp = $frm->expression();
         //$elm_lst = $exp->element_lst ($back);
         $elm_grp_lst = $exp->element_grp_lst($back);

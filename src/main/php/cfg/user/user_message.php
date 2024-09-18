@@ -273,7 +273,7 @@ class user_message
     }
 
     /**
-     * combine the status of two user messages and assume the worse
+     * combine the status of two user messages and assume the worst
      * @param user_message $msg_to_add the user messages that should be combined with this user message
      * @return void
      */

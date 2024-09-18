@@ -686,7 +686,7 @@ class triple extends sandbox_link_named implements JsonSerializable
     }
 
     /**
-     * @return bool true if the triple is a of the given type
+     * @return bool true if the triple is of the given type
      */
     function is_type(string $typ): bool
     {

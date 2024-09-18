@@ -428,7 +428,7 @@ class result_list extends sandbox_value_list
     }
 
     /**
-     * load a list of results by the source group e.g. to get the depending results
+     * load a list of results by the source group e.g. to get the dependent results
      *
      * @param sql $sc the sql creator instance with the target db_type already set
      * @param group $grp the group of phrases to select the results

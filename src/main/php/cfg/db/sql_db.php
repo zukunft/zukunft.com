@@ -194,7 +194,7 @@ class sql_db
     const SETUP_INDEX_COM = 'remark: no index needed for preloaded tables such as phrase types';
     const SETUP_FOREIGN_KEY = 'foreign key constraints and auto_increment for tables';
 
-    // classes that have a database table in order of suggested table creation so that depending tables are created later
+    // classes that have a database table in order of suggested table creation so that depending on tables are created later
     const DB_TABLE_CLASSES = [
         config::class,
         sys_log_type::class,
@@ -442,7 +442,7 @@ class sql_db
     private int $reconnect_delay = 0;               // number of seconds of the last reconnect retry delay
 
     public ?int $usr_id = null;                     // the user id of the person who request the database changes
-    private ?int $usr_view_id = null;               // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
+    private ?int $usr_view_id = null;               // the user id of the person which values should be returned e.g. an admin might want to check the data of a user
 
     private ?string $class = '';                    // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
     private ?string $table = '';                    // name of the table that is used for the next query

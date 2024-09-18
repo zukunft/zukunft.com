@@ -2003,7 +2003,7 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
-     * create a clone and reset the timestamp to trigger the update of the depending results
+     * create a clone and reset the timestamp to trigger the updating the dependent results
      * @return $this a clone with the last update set to null
      */
     function updated(): sandbox_value

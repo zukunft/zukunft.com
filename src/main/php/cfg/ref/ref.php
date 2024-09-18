@@ -307,7 +307,7 @@ class ref extends sandbox_link
 
     /**
      * interface function to overwrite the corresponding parent function
-     * @return int the id of the linked object with is in this case the phrase id (or maybe later the group_id))
+     * @return int the id of the linked object with is in this case the phrase id (or maybe later the group_id)
      */
     function from_id(): int
     {

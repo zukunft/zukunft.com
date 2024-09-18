@@ -235,7 +235,7 @@ class sql
 
     // parameters for the sql creation that are set step by step with the functions of the sql creator
     private ?int $usr_id;           // the user id of the person who request the database changes
-    private ?int $usr_view_id;      // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
+    private ?int $usr_view_id;      // the user id of the person which values should be returned e.g. an admin might want to check the data of a user
     public ?string $db_type;       // the database type which should be used for this connection e.g. Postgres or MYSQL
     private ?string $class;         // the object class name used for the table name and the standard fields are defined e.g. for type "cfg\word" the table "words" and the field "word_name" is used
     private ?string $table;         // name of the table that is used for the next query including the extension if one class lead to many tables e.g. values_prime
@@ -254,7 +254,7 @@ class sql
     private ?string $id_to_field;   // only for link objects the id field of the destination object
     private ?string $id_link_field; // only for link objects the id field of the link type object
     private ?sql_field_list $par_lst; // the list of parameter fields with values and types for the call of the complete sql statement
-    private ?sql_where_list $par_where; // list of where parameters for one sql statement part e.g
+    private ?sql_where_list $par_where; // list of where parameters for one sql statement part
 
     private ?array $par_use_link;   // array of bool, true if the parameter should be used on the linked table
     private array $par_named;       // array of bool, true if the parameter placeholder is already used in the SQL statement
@@ -678,7 +678,7 @@ class sql
 
     /**
      * activate that in the SQL statement the user sandbox name field should be included
-     * @param bool $std_fld true if the standard field e.g. the user id should no be added again
+     * @param bool $std_fld true if the standard field e.g. the user id should not be added again
      * @param string $usr_par the name of the user id parameter e.g. $1 for some postgres queries for correct merge in union queries
      */
     function set_usr_query(bool $std_fld = true, string $usr_par = ''): void
@@ -760,7 +760,7 @@ class sql
      * which can be user specific
      *
      * @param array $usr_field_lst list of the numeric user specific fields that should be loaded from the database
-     * @param bool $std_fld false if the standard fields e.g. the user id should no be added again
+     * @param bool $std_fld false if the standard fields e.g. the user id should not be added again
      * @param string $usr_par the name of the user id parameter e.g. $1 for some postgres queries for correct merge in union queries
      */
     function set_usr_num_fields(
@@ -4404,7 +4404,7 @@ class sql
     }
 
     /**
-     * finish an sql statement
+     * finish a sql statement
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return string with the SQL closing statement for the current query
      */

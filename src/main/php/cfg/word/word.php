@@ -351,7 +351,7 @@ class word extends sandbox_typed
     }
 
     /**
-     * @param int $id the id of the default view the should be remembered
+     * @param int $id the id of the default view that should be remembered
      */
     function set_view_id(int $id): void
     {

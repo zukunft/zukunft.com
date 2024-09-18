@@ -1432,8 +1432,8 @@ class value extends sandbox_value
     cases for user
     1) user a creates a value -> he can change it
     2) user b changes the value -> the change is saved only for this user
-    3a) user a changes the original value -> the change is save in the original record -> user a is still the owner
-    3b) user a changes the original value to the same value as b -> the user specific record is removed -> user a is still the owner
+    3a) user a changes the original value -> the change is save in the original record -> user is still the owner
+    3b) user a changes the original value to the same value as b -> the user specific record is removed -> user is still the owner
     3c) user b changes the value -> the user specific record is updated
     3d) user b changes the value to the same value as a -> the user specific record is removed
     3e) user a excludes the value -> b gets the owner and a user specific exclusion for a is created

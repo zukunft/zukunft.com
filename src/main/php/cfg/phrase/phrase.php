@@ -386,8 +386,8 @@ class phrase extends combine_named
 
     /**
      * @return int the id of the containing object
-     * e.g if the phrase id is  1 and the object is a word   with id 1 simply 1 is returned
-     * but if the phrase id is -1 and the object is a triple with id 1   also 1 is returned
+     * e.g. if the phrase id is  1 and the object is a word   with id 1 simply 1 is returned
+     * but  if the phrase id is -1 and the object is a triple with id 1   also 1 is returned
      */
     function id_obj(): int
     {
@@ -1256,7 +1256,7 @@ class phrase extends combine_named
                                                         AND u.user_id = '.$this->user()->id.'
                                       '.$sql_type_from.'
                                       '.$sql_type_where_triples.'
-                              GROUP BY name';
+                              'GROUP BY name';
                               */
             }
         }

@@ -590,7 +590,7 @@ class word extends sandbox_typed
      */
     function dsp_add(int $wrd_id, int $wrd_to, int $vrb_id, $back): string
     {
-        log_debug('word_dsp->dsp_add ' . $this->dsp_id() . ' or link the existing word with id ' . $wrd_id . ' to ' . $wrd_to . ' by verb ' . $vrb_id . ' for user ' . $this->user()->name . ' (called by ' . $back . ')');
+        log_debug('word_dsp->dsp_add ' . $this->dsp_id() . ' or link the existing word with id ' . $wrd_id . ' to ' . $wrd_to . ' by verb ' . $vrb_id . ' (called by ' . $back . ')');
         $result = '';
         $html = new html_base();
 
