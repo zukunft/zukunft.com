@@ -13,7 +13,7 @@
     The main sections of this object are
     - sandbox types:     const to group the classes
     - db const:          const for the database link
-    - object vars:       the variables of this word object
+    - object vars:       the variables of this sandbox object
     - construct and map: including the mapping of the db row to this word object
     - set and get:       to capsule the vars from unexpected changes
     - preloaded:         select e.g. types from cache

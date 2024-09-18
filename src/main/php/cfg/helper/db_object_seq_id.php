@@ -7,6 +7,20 @@
 
     similar to db_object_seq_id
 
+    The main sections of this object are
+    - db const:          const for the database link
+    - object vars:       the variables of this object
+    - construct and map: including the mapping of the db row to this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - cast:              create an api object and set the vars from an api json
+    - sql create:        to create the database objects
+    - load:              database access object (DAO) functions
+    - im- and export:    create an export object and set the vars from an import object
+    - information:       functions to make code easier to read
+    - to overwrite:      functions that should always be overwritten by the child objects
+    - interface:         to fill api messages
+    - debug:             internal support functions for debugging
+
 
     This file is part of zukunft.com - calc with words
 
@@ -25,7 +39,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -36,18 +50,20 @@ namespace cfg;
 
 include_once MODEL_HELPER_PATH . 'db_object.php';
 
+use api\api;
 use api\system\db_object as db_object_api;
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type_list;
+use JsonSerializable;
 
-class db_object_seq_id extends db_object
+class db_object_seq_id extends db_object implements JsonSerializable
 {
 
     /*
-     * database link
+     * db const
      */
 
     // database fields and comments
@@ -61,7 +77,8 @@ class db_object_seq_id extends db_object
 
     // database fields that are used in all model objects
     // the database id is the unique prime key
-    protected int $id;
+    // is private because some objects like group have a complex id which needs a id() function
+    private int $id;
 
 
     /*
@@ -323,7 +340,7 @@ class db_object_seq_id extends db_object
 
 
     /*
-     * dummy functions that should always be overwritten by the child
+     * to overwrite
      */
 
     /**
@@ -333,7 +350,7 @@ class db_object_seq_id extends db_object
      */
     function name(): string
     {
-        return 'ERROR: name function not overwritten by child';
+        return 'ERROR: name function not overwritten by child object';
     }
 
     /**
@@ -361,6 +378,21 @@ class db_object_seq_id extends db_object
         return 0;
     }
 
+
+    /*
+     * interface
+     */
+
+    /**
+     * for the message from the backend to the frontend
+     * @return array with the ID
+     */
+    function jsonSerialize(): array
+    {
+        $vars = [];
+        $vars[api::FLD_ID] = $this->id();
+        return $vars;
+    }
 
     /*
      * debug

@@ -130,7 +130,8 @@ class component_link extends sandbox_api implements JsonSerializable
      */
     function jsonSerialize(): array
     {
-        $vars = get_object_vars($this->component());
+        $vars = parent::jsonSerialize();
+        $vars = array_merge($vars, get_object_vars($this->component()));
         $vars[self::FLD_LINK_ID] = $this->id();
         $vars[self::FLD_POS] = $this->pos();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');

@@ -199,7 +199,8 @@ class formula extends sandbox_typed_api
      */
     function jsonSerialize(): array
     {
-        $vars = get_object_vars($this);
+        $vars = parent::jsonSerialize();
+        $vars = array_merge($vars, get_object_vars($this));
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

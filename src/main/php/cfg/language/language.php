@@ -32,6 +32,7 @@
 namespace cfg;
 
 
+use api\api;
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -98,7 +99,9 @@ class language extends type_object implements JsonSerializable
      */
     function jsonSerialize(): array
     {
-        $vars = get_object_vars($this);
+        $vars = parent::jsonSerialize();
+        $vars = array_merge($vars, get_object_vars($this));
+        $vars[api::FLD_ID] = $this->id();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

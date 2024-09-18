@@ -1373,7 +1373,8 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function jsonSerialize(): array
     {
-        $vars = get_object_vars($this);
+        $vars = parent::jsonSerialize();
+        $vars = array_merge($vars, get_object_vars($this));
         if ($this->from()->obj() != null) {
             $vars[self::FLD_EX_FROM] = $this->from()->obj()->name_dsp();
         }

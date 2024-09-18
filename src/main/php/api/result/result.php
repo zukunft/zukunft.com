@@ -97,7 +97,8 @@ class result extends sandbox_value_api implements JsonSerializable
      */
     function jsonSerialize(): array
     {
-        $vars = get_object_vars($this);
+        $vars = parent::jsonSerialize();
+        $vars = array_merge($vars, get_object_vars($this));
 
         // add the var of the parent object
         $vars[sandbox_value_api::FLD_NUMBER] = $this->number();

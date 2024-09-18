@@ -39,9 +39,7 @@ use cfg\log\change_action;
 use html\rest_ctrl;
 use html\button;
 use html\html_base;
-use html\message;
 use html\system\back_trace;
-use cfg\log\change_action_list;
 use cfg\log\change_table_list;
 use cfg\formula;
 use html\system\messages;
@@ -131,7 +129,7 @@ class change_log_named extends change_log_named_api
         }
 
         // encode the undo action
-        $undo_text = '';
+        // $undo_text = '';
         $undo_call = '';
         $undo_btn = '';
         if ($this->table_name() == change_table_list::WORD) {

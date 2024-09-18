@@ -115,7 +115,8 @@ class figure extends combine_object_api implements JsonSerializable
      */
     function jsonSerialize(): array
     {
-        $vars = $this->obj()->jsonSerialize();
+        $vars = parent::jsonSerialize();
+        $vars = array_merge($vars, $this->obj()->jsonSerialize());
         if ($this->is_result()) {
             $vars[combine_object_api::FLD_CLASS] = self::CLASS_RESULT;
         } else {
