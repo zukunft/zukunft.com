@@ -151,7 +151,7 @@ class view_read_tests
         $cmp = new component($t->usr1);
         $cmp->load_by_name(component_api::TN_READ);
         $cmp_by_id = new component($t->usr1);
-        $cmp_by_id->load_by_id($cmp->id(), component::class);
+        $cmp_by_id->load_by_id($cmp->id());
         $t->assert($test_name, $cmp_by_id->name(), component_api::TN_READ);
         $t->assert($test_name, $cmp_by_id->description, component_api::TD_READ);
 

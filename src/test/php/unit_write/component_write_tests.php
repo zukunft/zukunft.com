@@ -106,7 +106,7 @@ class component_write_tests
 
         // check if the component name has been saved
         $cmp_added = new component($t->usr1);
-        $cmp_added->load_by_name(component_api::TN_ADD, component::class);
+        $cmp_added->load_by_name(component_api::TN_ADD);
         $result = $cmp_added->description;
         $target = 'Just added for testing';
         $t->display('component->load the added "' . $cmp_added->name() . '"', $target, $result);
@@ -132,7 +132,7 @@ class component_write_tests
 
         // check if the component can be renamed
         $cmp = new component($t->usr1);
-        $cmp->load_by_name(component_api::TN_ADD, component::class);
+        $cmp->load_by_name(component_api::TN_ADD);
         $cmp->set_name(component_api::TN_RENAMED);
         $result = $cmp->save()->get_last_message();
         $target = '';
@@ -140,10 +140,10 @@ class component_write_tests
 
         // check if the component renaming was successful
         $cmp_renamed = new component($t->usr1);
-        $cmp_renamed->load_by_name(component_api::TN_RENAMED, component::class);
+        $cmp_renamed->load_by_name(component_api::TN_RENAMED);
         if ($cmp_renamed->id() > 0) {
             $cmp_renamed_reloaded = new component($t->usr1);
-            $cmp_renamed_reloaded->load_by_id($cmp_renamed->id(), component::class);
+            $cmp_renamed_reloaded->load_by_id($cmp_renamed->id());
             $result = $cmp_renamed_reloaded->name();
         }
         $target = component_api::TN_RENAMED;
@@ -160,7 +160,7 @@ class component_write_tests
 
         // check if the component parameters can be added
         $cmp_renamed = new component($t->usr1);
-        $cmp_renamed->load_by_name(component_api::TN_RENAMED, component::class);
+        $cmp_renamed->load_by_name(component_api::TN_RENAMED);
         $cmp_renamed->description = 'Just added for testing the user sandbox';
         $cmp_renamed->type_id = $component_types->id(comp_type_shared::PHRASE_NAME);
         $result = $cmp_renamed->save()->get_last_message();
@@ -169,7 +169,7 @@ class component_write_tests
 
         // check if the component parameters have been added
         $cmp_reloaded = new component($t->usr1);
-        $cmp_reloaded->load_by_name(component_api::TN_RENAMED, component::class);
+        $cmp_reloaded->load_by_name(component_api::TN_RENAMED);
         $result = $cmp_reloaded->description;
         $target = 'Just added for testing the user sandbox';
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '"', $target, $result);
@@ -200,7 +200,7 @@ class component_write_tests
 
         // check if a user specific component is created if another user changes the component
         $cmp_usr2 = new component($t->usr2);
-        $cmp_usr2->load_by_name(component_api::TN_RENAMED, component::class);
+        $cmp_usr2->load_by_name(component_api::TN_RENAMED);
         $cmp_usr2->description = 'Just changed for testing the user sandbox';
         $cmp_usr2->type_id = $component_types->id(comp_type_shared::FORMULAS);
         $result = $cmp_usr2->save()->get_last_message();
@@ -209,7 +209,7 @@ class component_write_tests
 
         // check if a user specific component changes have been saved
         $cmp_usr2_reloaded = new component($t->usr2);
-        $cmp_usr2_reloaded->load_by_name(component_api::TN_RENAMED, component::class);
+        $cmp_usr2_reloaded->load_by_name(component_api::TN_RENAMED);
         $result = $cmp_usr2_reloaded->description;
         $target = 'Just changed for testing the user sandbox';
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '"', $target, $result);
@@ -219,7 +219,7 @@ class component_write_tests
 
         // check the component for the original user remains unchanged
         $cmp_reloaded = new component($t->usr1);
-        $cmp_reloaded->load_by_name(component_api::TN_RENAMED, component::class);
+        $cmp_reloaded->load_by_name(component_api::TN_RENAMED);
         $result = $cmp_reloaded->description;
         $target = 'Just added for testing the user sandbox';
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '"', $target, $result);
@@ -229,7 +229,7 @@ class component_write_tests
 
         // check if undo all specific changes removes the user component
         $cmp_usr2 = new component($t->usr2);
-        $cmp_usr2->load_by_name(component_api::TN_RENAMED, component::class);
+        $cmp_usr2->load_by_name(component_api::TN_RENAMED);
         $cmp_usr2->description = 'Just added for testing the user sandbox';
         $cmp_usr2->type_id = $component_types->id(comp_type_shared::PHRASE_NAME);
         $result = $cmp_usr2->save()->get_last_message();
@@ -238,7 +238,7 @@ class component_write_tests
 
         // check if a user specific component changes have been saved
         $cmp_usr2_reloaded = new component($t->usr2);
-        $cmp_usr2_reloaded->load_by_name(component_api::TN_RENAMED, component::class);
+        $cmp_usr2_reloaded->load_by_name(component_api::TN_RENAMED);
         $result = $cmp_usr2_reloaded->description;
         $target = 'Just added for testing the user sandbox';
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '"', $target, $result);

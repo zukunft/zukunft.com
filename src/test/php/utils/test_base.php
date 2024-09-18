@@ -2340,6 +2340,15 @@ class test_base
 
 
         /*
+         * ownership
+         */
+
+        // check if an admin can force to take over ownership
+
+        // check if taking ownership is rejected for normal user
+
+
+        /*
          * undo rename?
          */
 

@@ -549,29 +549,6 @@ class word extends sandbox_typed
      */
 
     /**
-     * just set the class name for the user sandbox function
-     * load a word object by name
-     * @param string $name the name word
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_name(string $name): int
-    {
-        return parent::load_by_name($name);
-    }
-
-    /**
-     * just set the class name for the user sandbox function
-     * load a word object by database id
-     * @param int $id the id of the word
-     * @param string $class the word class name
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id, string $class = self::class): int
-    {
-        return parent::load_by_id($id, $class);
-    }
-
-    /**
      * load a word that represents a formula by the name
      * TODO exclude the formula words in all other queries
      *
@@ -745,7 +722,7 @@ class word extends sandbox_typed
         $frm = new formula($this->user());
         if ($db_row !== false) {
             if ($db_row[formula::FLD_ID] > 0) {
-                $frm->load_by_id($db_row[formula::FLD_ID], formula::class);
+                $frm->load_by_id($db_row[formula::FLD_ID]);
             }
         }
 

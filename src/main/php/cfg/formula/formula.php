@@ -526,29 +526,6 @@ class formula extends sandbox_typed
      */
 
     /**
-     * just set the class name for the user sandbox function
-     * load a formula object by name
-     * @param string $name the name formula
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_name(string $name): int
-    {
-        return parent::load_by_name($name);
-    }
-
-    /**
-     * just set the class name for the user sandbox function
-     * load a formula object by database id
-     * @param int $id the id of the formula
-     * @param string $class the formula class name
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id, string $class = self::class): int
-    {
-        return parent::load_by_id($id, $class);
-    }
-
-    /**
      * load the formula parameters for all users
      * @param sql_par|null $qp placeholder to align the function parameters with the parent
      * @return bool true if the standard formula has been loaded
@@ -557,7 +534,7 @@ class formula extends sandbox_typed
     {
         global $db_con;
         $qp = $this->load_standard_sql($db_con->sql_creator());
-        $result = parent::load_standard($qp, $this::class);
+        $result = parent::load_standard($qp);
 
         if ($result) {
             $result = $this->load_owner();
@@ -2580,7 +2557,7 @@ class formula extends sandbox_typed
                 // read the database values to be able to check if something has been changed; done first,
                 // because it needs to be done for user and general formulas
                 $db_rec = new formula($this->user());
-                $db_rec->load_by_id($this->id(), formula::class);
+                $db_rec->load_by_id($this->id());
                 log_debug('database formula "' . $db_rec->name() . '" (' . $db_rec->id() . ') loaded');
                 $std_rec = new formula($this->user()); // must also be set to allow to take the ownership
                 $std_rec->set_id($this->id());

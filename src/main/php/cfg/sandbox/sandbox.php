@@ -5,10 +5,11 @@
     cfg/sandbox/sandbox.php - the superclass for handling user specific objects including the database saving
     -----------------------
 
-    TODO should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
+    TODO should be merged when php allows aggregating extends e.g. sandbox extends db_object, db_user_object
 
     This superclass should be used by the classes words, formula, ... to enable user specific values and links
     similar to sandbox.php but for database objects that have an auto sequence prime id
+    For value objects the sandbox_multi object is used as a base because values are based on more than one db table
 
     The main sections of this object are
     - sandbox types:     const to group the classes
@@ -17,6 +18,7 @@
     - construct and map: including the mapping of the db row to this word object
     - set and get:       to capsule the vars from unexpected changes
     - preloaded:         select e.g. types from cache
+    - placeholder:       function that are overwritten by the child objects (some load related)
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
     - im- and export:    create an export object and set the vars from an import object
@@ -419,58 +421,6 @@ class sandbox extends db_object_seq_id_user
         return $protection_types->name($this->protection_id);
     }
 
-    /*
-     * dummy load related function that are overwritten by the child objects
-     */
-
-    /**
-     * dummy function that should always be overwritten by the child object
-     * @return string
-     */
-    function name_field(): string
-    {
-        return '';
-    }
-
-    /**
-     * dummy function for the subject object that should always be overwritten by the child object
-     * TODO check that all child objects does overwrite this
-     * @return string
-     */
-    function from_field(): string
-    {
-        return '';
-    }
-
-    /**
-     * dummy function for the predicate object that should always be overwritten by the child object
-     * @return string
-     */
-    function type_field(): string
-    {
-        return '';
-    }
-
-    /**
-     * dummy function for the object (grammar) object (computer science)
-     * that should always be overwritten by the child object
-     * @return string
-     */
-    function to_field(): string
-    {
-        return '';
-    }
-
-    /**
-     * dummy function for the link target value
-     * that should always be overwritten by the child object
-     * @return string
-     */
-    function to_value(): string
-    {
-        return '';
-    }
-
     /**
      * dummy function for the link objects
      * that should always be overwritten by the child object
@@ -486,11 +436,93 @@ class sandbox extends db_object_seq_id_user
      * placeholder
      */
 
+    /**
+     * dummy function that should always be overwritten by the child object
+     * @return string
+     */
+    function name_field(): string
+    {
+        return '';
+    }
+
+    /**
+     * dummy function for the predicate object that should always be overwritten by the child object
+     * @return string
+     */
+    function type_field(): string
+    {
+        return '';
+    }
+
+    /**
+     * dummy function for the subject object that should always be overwritten by the child object
+     * TODO check that all child objects does overwrite this
+     * @return string
+     */
+    function from_field(): string
+    {
+        return '';
+    }
+
+    /**
+     * only for link objects
+     * the name of the from object
+     * to be overwritten by the child object
+     * @return string|null
+     */
+    function from_name(): ?string
+    {
+        return '';
+    }
+
+    /**
+     * dummy function for the object (grammar) object (computer science)
+     * that should always be overwritten by the child object
+     * @return string
+     */
+    function to_field(): string
+    {
+        return '';
+    }
+
+    /**
+     * only for link objects
+     * the name of the destination object
+     * to be overwritten by the child object
+     * @return string|null
+     */
+    function to_name(): ?string
+    {
+        return '';
+    }
+
+    /**
+     * placeholder function for the link target value
+     * that should always be overwritten by the child object
+     * @return string
+     */
+    function to_value(): string
+    {
+        return '';
+    }
+
+    /**
+     * only for link objects
+     * the from object
+     * to be overwritten by the child object
+     * @return sandbox_named|combine_named|null
+     */
     function fob(): sandbox_named|combine_named|null
     {
         return null;
     }
 
+    /**
+     * only for link objects
+     * the destination object
+     * to be overwritten by the child object
+     * @return sandbox_named|combine_named|string|null
+     */
     function tob(): sandbox_named|combine_named|string|null
     {
         return null;
@@ -882,7 +914,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * if the user is an admin the user can force to be the owner of this object
-     * TODO add an unit test
+     * TODO add a test
      * TODO review
      */
     function take_ownership(): bool
@@ -2066,6 +2098,7 @@ class sandbox extends db_object_seq_id_user
      * handles the specials case that for each formula a corresponding word is created (which needs to be checked if this is really needed)
      * so if a formula word "millions" is not the same as the standard word "millions" because the formula word "millions" is representing a formula which should not be combined
      * in short: if two objects are the same by this definition, they are supposed to be merged
+     * @return bool true if the given object is exactly the same as this object
      */
     function is_same($obj_to_check): bool
     {
@@ -2397,7 +2430,6 @@ class sandbox extends db_object_seq_id_user
         $class_name = $lib->class_to_name($this::class);
 
         global $db_con;
-        global $phrase_types;
 
         $msg = '';
         $usr_msg = new user_message();
@@ -2561,7 +2593,7 @@ class sandbox extends db_object_seq_id_user
                         $db_rec = clone $this;
                         $db_rec->reset();
                         $db_rec->set_user($this->user());
-                        if ($db_rec->load_by_id($this->id(), $db_rec::class)) {
+                        if ($db_rec->load_by_id($this->id())) {
                             log_debug('reloaded ' . $db_rec->dsp_id() . ' from database');
                             if ($this->is_link_obj()) {
                                 if (!$db_rec->load_objects()) {
@@ -2963,7 +2995,7 @@ class sandbox extends db_object_seq_id_user
             $sc_par_lst_usr->add(sql_type::USER_TBL);
             $sc_par_lst_usr->add(sql_type::EXCLUDE);
             $sc_par_lst_usr->add(sql_type::NAMED_PAR);
-            $qp_del_usr = $this->sql_common($sc_user, $sc_par_lst_usr);;
+            $qp_del_usr = $this->sql_common($sc_user, $sc_par_lst_usr);
             $qp_del_usr->sql = $sc_user->create_sql_delete(
                 $id_fld, $id_val, $sc_par_lst_usr);
             // add the deleting of the user overwrites to the function body
@@ -2975,7 +3007,7 @@ class sandbox extends db_object_seq_id_user
         $sc_par_lst_del = clone $sc_par_lst;
         $sc_par_lst_del->add(sql_type::DELETE);
         $sc_par_lst_del->add(sql_type::NAMED_PAR);
-        $qp_delete = $this->sql_common($sc_delete, $sc_par_lst_log);;
+        $qp_delete = $this->sql_common($sc_delete, $sc_par_lst_log);
         $qp_delete->sql = $sc_delete->create_sql_delete(
             $id_fld, $id_val, $sc_par_lst_sub);
         // add the delete statement to the function body
@@ -3372,7 +3404,7 @@ class sandbox extends db_object_seq_id_user
             $sc_par_lst_upd->add(sql_type::UPDATE);
             $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
             $sc_par_lst_upd_ex_log->add(sql_type::SUB);
-            $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);;
+            $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
             if ($this->is_link_obj()) {
                 $update_fvt_lst->del($this->from_field());
                 $update_fvt_lst->del($this->type_field());
@@ -3614,7 +3646,7 @@ class sandbox extends db_object_seq_id_user
         if ($usr_tbl) {
             $sc_par_lst_upd_ex_log->add(sql_type::USER);
         }
-        $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);;
+        $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
         if ($usr_tbl) {
             $sc_par_lst_upd->add(sql_type::USER);
         }
@@ -3760,15 +3792,6 @@ class sandbox extends db_object_seq_id_user
      * final function overwritten by the child object
      */
     function is_link_type_obj(): bool
-    {
-        return false;
-    }
-
-    /**
-     * @return bool true if this sandbox object is a value or result
-     * final function overwritten by the child object
-     */
-    function is_value_obj(): bool
     {
         return false;
     }

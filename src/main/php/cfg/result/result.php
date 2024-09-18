@@ -952,7 +952,7 @@ class result extends sandbox_value
         if ($this->frm->id() > 0) {
             log_debug('for user ' . $this->user()->name);
             $frm = new formula($this->user());
-            $frm->load_by_id($this->frm->id(), formula::class);
+            $frm->load_by_id($this->frm->id());
             $this->frm = $frm;
         }
     }
@@ -1280,7 +1280,7 @@ class result extends sandbox_value
 
         // display the formula with links
         $frm = new formula($this->user());
-        $frm->load_by_id($this->frm->id(), formula::class);
+        $frm->load_by_id($this->frm->id());
         $frm_html = new formula_dsp($frm->api_json());
         $result .= ' based on</br>' . $frm_html->display_linked($back);
         $result .= ' ' . $frm_html->dsp_text($back) . "\n";

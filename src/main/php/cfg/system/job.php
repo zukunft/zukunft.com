@@ -310,12 +310,11 @@ class job extends db_object_seq_id_user
      *
      * @param sql $sc with the target db_type set
      * @param int $id the id of the user sandbox object
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int $id): sql_par
     {
-        return parent::load_sql_by_id($sc, $id, $class);
+        return parent::load_sql_by_id($sc, $id);
     }
 
     /**
@@ -330,21 +329,6 @@ class job extends db_object_seq_id_user
         $db_row = $db_con->get1($qp);
         $this->row_mapper($db_row);
         return $this->id();
-    }
-
-    /**
-     * load a batch job by database id
-     * @param int $id the id of the batch job
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id, string $class = self::class): int
-    {
-        global $db_con;
-
-        log_debug($id);
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
-        return $this->load($qp);
     }
 
     /**

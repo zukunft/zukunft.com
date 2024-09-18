@@ -579,13 +579,13 @@ class phrase extends combine_named
         $result = 0;
         if ($this->is_triple()) {
             $trp = new triple($this->user());
-            $result = $trp->load_by_id($this->obj_id(), triple::class);
+            $result = $trp->load_by_id($this->obj_id());
             $this->obj = $trp;
             // TODO check: $this->set_name($trp->name()); // is this really useful? better save execution time and have longer code using ->obj->name
             log_debug('triple ' . $this->dsp_id());
         } elseif ($this->is_word()) {
             $wrd = new word($this->user());
-            $result = $wrd->load_by_id($this->obj_id(), word::class);
+            $result = $wrd->load_by_id($this->obj_id());
             $this->obj = $wrd;
             $this->set_name($wrd->name());
             log_debug('word ' . $this->dsp_id());
@@ -739,7 +739,7 @@ class phrase extends combine_named
         $frm = new formula($this->user());
         if ($db_row !== false) {
             if ($db_row[formula::FLD_ID] > 0) {
-                $frm->load_by_id($db_row[formula::FLD_ID], formula::class);
+                $frm->load_by_id($db_row[formula::FLD_ID]);
             }
         }
 

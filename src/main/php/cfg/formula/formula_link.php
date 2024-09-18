@@ -433,7 +433,7 @@ class formula_link extends sandbox_link
         $result = true;
         if ($this->formula_id() > 0) {
             $frm = new formula($this->user());
-            $frm->load_by_id($this->formula_id(), formula::class);
+            $frm->load_by_id($this->formula_id());
             if ($frm->id() > 0) {
                 $this->set_formula($frm);
             } else {

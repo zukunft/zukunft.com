@@ -311,28 +311,6 @@ class source extends sandbox_typed
      */
 
     /**
-     * just set the class name for the user sandbox function
-     * load a source object by name
-     * @param string $name the name source
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_name(string $name): int
-    {
-        return parent::load_by_name($name);
-    }
-
-    /**
-     * just set the class name for the user sandbox function
-     * load a source object by database id
-     * @param int $id the id of the source
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id): int
-    {
-        return parent::load_by_id($id);
-    }
-
-    /**
      * load a source by code id
      * @param string $code_id the code id of the source
      * @return int the id of the object found and zero if nothing is found

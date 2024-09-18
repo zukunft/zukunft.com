@@ -222,10 +222,9 @@ class ip_range extends db_object_seq_id
     /**
      * load an ip range from the database selected by id
      * @param int $id the id of an ip range
-     * @param string $class the name of this ip range class
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id, string $class = self::class): int
+    function load_by_id(int $id): int
     {
         global $db_con;
 

@@ -438,20 +438,6 @@ class verb extends type_object
     }
 
     /**
-     * load a verb by database id
-     * @param int $id the id of the verb
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id, string $class = self::class): int
-    {
-        global $db_con;
-
-        log_debug($id);
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
-        return $this->load($qp);
-    }
-
-    /**
      * load a verb by the verb name
      * @param string $name the name of the verb
      * @return int the id of the verb found and zero if nothing is found

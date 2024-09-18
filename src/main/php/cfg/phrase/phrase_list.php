@@ -1712,7 +1712,7 @@ class phrase_list extends sandbox_list_named
         foreach ($time_wrds->ids() as $time_id) {
             if (is_null($result)) {
                 $time_wrd = new word($this->user());
-                $time_wrd->load_by_id($time_id, word::class);
+                $time_wrd->load_by_id($time_id);
                 // return a phrase not a word because "Q1" can be also a wikidata Qualifier and to differentiate this, "Q1 (Quarter)" should be returned
                 $result = $time_wrd->phrase();
             } else {

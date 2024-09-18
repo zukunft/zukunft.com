@@ -335,7 +335,7 @@ class test_api extends create_test_objects
         switch ($class) {
             case word::class:
                 $wrd = new word($usr);
-                $wrd->load_by_id($id, word::class);
+                $wrd->load_by_id($id);
                 $result = $wrd->save_from_api_msg($request_body)->get_last_message();
                 // if no message should be shown to the user the adding is expected to be fine
                 // so get the row id to be able to remove the test row later

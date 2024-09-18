@@ -561,12 +561,11 @@ class component extends sandbox_typed
      * just set the class name for the user sandbox function
      * load a view component object by database id
      * @param int $id the id of the view component
-     * @param string $class the view component class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id, string $class = self::class): int
+    function load_by_id(int $id): int
     {
-        $id = parent::load_by_id($id, $class);
+        $id = parent::load_by_id($id);
         if ($this->id() > 0) {
             $this->load_phrases();
         }
@@ -724,7 +723,7 @@ class component extends sandbox_typed
         $result = '';
         if ($this->word_id_col2 > 0) {
             $wrd_col2 = new word($this->user());
-            $wrd_col2->load_by_id($this->word_id_col2, word::class);
+            $wrd_col2->load_by_id($this->word_id_col2);
             $this->col_sub_phrase = $wrd_col2->phrase();
             $result = $wrd_col2->name();
         }
@@ -737,7 +736,7 @@ class component extends sandbox_typed
         $result = '';
         if ($this->formula_id > 0) {
             $frm = new formula($this->user());
-            $frm->load_by_id($this->formula_id, formula::class);
+            $frm->load_by_id($this->formula_id);
             $this->frm = $frm;
             $result = $frm->name();
         }

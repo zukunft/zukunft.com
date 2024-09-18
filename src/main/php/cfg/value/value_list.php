@@ -1273,7 +1273,7 @@ class value_list extends sandbox_value_list
         $db_val_lst = $db_con->get_old($sql);
         foreach ($db_val_lst as $db_val) {
             $val = new value($this->user());
-            $val->load_by_id($db_val[value::FLD_ID], value::class);
+            $val->load_by_id($db_val[value::FLD_ID]);
             if (!$val->check()) {
                 $result = false;
             }

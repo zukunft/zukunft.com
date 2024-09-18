@@ -881,21 +881,6 @@ class triple extends sandbox_link_named implements JsonSerializable
     }
 
     /**
-     * load a triple by database id
-     * @param int $id the id of the word, triple, formula, verb, view or view component
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id, string $class = self::class): int
-    {
-        global $db_con;
-
-        log_debug($id);
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
-        return $this->load($qp);
-    }
-
-    /**
      * load a triple by the generated name (the name that the triple would have if the user has done not overwrite)
      * @param string $name the generated name of the triple
      * @return int the id of the object found and zero if nothing is found
@@ -1008,19 +993,6 @@ class triple extends sandbox_link_named implements JsonSerializable
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
         return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve a formula by id from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param int $id the id of the user sandbox object
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
-    {
-        return parent::load_sql_by_id($sc, $id, $class);
     }
 
     /**
@@ -1165,7 +1137,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             if ($this->from_id() <> 0 and !is_null($this->user()->id())) {
                 if ($this->from_id() > 0) {
                     $wrd = new word($this->user());
-                    $wrd->load_by_id($this->from_id(), word::class);
+                    $wrd->load_by_id($this->from_id());
                     if ($wrd->name() <> '') {
                         $this->set_from($wrd->phrase());
                         $this->from()->set_name($wrd->name());
@@ -1175,7 +1147,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                     }
                 } elseif ($this->from_id() < 0) {
                     $lnk = new triple($this->user());
-                    $lnk->load_by_id($this->from()->obj_id(), triple::class);
+                    $lnk->load_by_id($this->from()->obj_id());
                     if ($lnk->id() > 0) {
                         $this->set_from($lnk->phrase());
                         $this->from()->set_name($lnk->name());
@@ -1208,7 +1180,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             if ($this->to_id() <> 0 and !is_null($this->user()->id())) {
                 if ($this->to_id() > 0) {
                     $wrd_to = new word($this->user());
-                    $wrd_to->load_by_id($this->to_id(), word::class);
+                    $wrd_to->load_by_id($this->to_id());
                     if ($wrd_to->name() <> '') {
                         $this->set_to($wrd_to->phrase());
                         $this->to()->set_name($wrd_to->name());
@@ -1218,7 +1190,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                     }
                 } elseif ($this->to_id() < 0) {
                     $lnk = new triple($this->user());
-                    $lnk->load_by_id($this->to()->obj_id(), triple::class);
+                    $lnk->load_by_id($this->to()->obj_id());
                     if ($lnk->id() > 0) {
                         $this->set_to($lnk->phrase());
                         $this->to()->set_name($lnk->name());

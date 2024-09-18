@@ -652,11 +652,10 @@ class user extends db_object_seq_id
      * TODO make sure that it is always checked if the requesting user has the sufficient permissions
      *  param user|null $request_usr the user who has requested the loading of the user data to prevent right gains
      *
-     * @param int $id
-     * @param string $class the name of the user
-     * @return int
+     * @param int $id of the user that should be loaded
+     * @return int an id > 0 if the loading has been successful
      */
-    function load_by_id(int $id, string $class = self::class): int
+    function load_by_id(int $id): int
     {
         global $db_con;
 
@@ -1074,7 +1073,7 @@ class user extends db_object_seq_id
             $this->wrd_id = DEFAULT_WORD_ID;
         }
         $wrd = new word($this);
-        $wrd->load_by_id($this->wrd_id, word::class);
+        $wrd->load_by_id($this->wrd_id);
         $this->wrd = $wrd;
         return $wrd;
     }

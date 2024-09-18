@@ -722,7 +722,7 @@ class term extends combine_named
 
         $result = false;
         $wrd = new word($this->user());
-        if ($wrd->load_by_id($id, word::class)) {
+        if ($wrd->load_by_id($id)) {
             log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $phrase_types->id(phrase_type::FORMULA_LINK));
             if ($wrd->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
                 $result = $this->load_formula_by_id($id);
@@ -744,7 +744,7 @@ class term extends combine_named
         $result = false;
         if ($including_triples) {
             $trp = new triple($this->user());
-            if ($trp->load_by_id($id, triple::class)) {
+            if ($trp->load_by_id($id)) {
                 $this->set_id_from_obj($trp->id(), triple::class);
                 $this->obj = $trp;
                 $result = true;
@@ -761,7 +761,7 @@ class term extends combine_named
     {
         $result = false;
         $frm = new formula($this->user());
-        if ($frm->load_by_id($id, formula::class)) {
+        if ($frm->load_by_id($id)) {
             $this->set_id_from_obj($frm->id(), formula::class);
             $this->obj = $frm;
             $result = true;
