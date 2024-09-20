@@ -955,7 +955,7 @@ class component extends sandbox_typed
         $result = '';
 
         if (isset($dsp) and $this->user() != null) {
-            log_debug($this->dsp_id() . ' from "' . $dsp->name . '" (' . $dsp->id . ')');
+            log_debug($this->dsp_id() . ' from "' . $dsp->name() . '" (' . $dsp->id() . ')');
             $dsp_lnk = new component_link($this->user());
             $dsp_lnk->load_by_link($dsp, $this);
             $dsp_lnk->load_objects();
@@ -1020,20 +1020,20 @@ class component extends sandbox_typed
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
-     * @returns string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_code_id(sql_db $db_con, component $db_rec): string
+    function save_field_code_id(sql_db $db_con, component $db_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($this->code_id <> $db_rec->code_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->code_id;
             $log->new_value = $this->code_id;
             $log->row_id = $this->id();
             $log->set_field(sql::FLD_CODE_ID);
-            $result = $this->save_field($db_con, $log);
+            $usr_msg = $this->save_field($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1041,20 +1041,20 @@ class component extends sandbox_typed
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
-     * @returns string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_ui_msg_id(sql_db $db_con, component $db_rec): string
+    function save_field_ui_msg_id(sql_db $db_con, component $db_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($this->ui_msg_code_id <> $db_rec->ui_msg_code_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->ui_msg_code_id;
             $log->new_value = $this->ui_msg_code_id;
             $log->row_id = $this->id();
             $log->set_field(self::FLD_UI_MSG_ID);
-            $result = $this->save_field($db_con, $log);
+            $usr_msg = $this->save_field($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1063,11 +1063,11 @@ class component extends sandbox_typed
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
      * @param component $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_wrd_row(sql_db $db_con, component $db_rec, component $std_rec): string
+    function save_field_wrd_row(sql_db $db_con, component $db_rec, component $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->row_phrase_id() <> $this->row_phrase_id()) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->row_phrase_name();
@@ -1078,9 +1078,9 @@ class component extends sandbox_typed
             $log->std_id = $std_rec->row_phrase_id();
             $log->row_id = $this->id();
             $log->set_field(self::FLD_ROW_PHRASE);
-            $result = $this->save_field_user($db_con, $log);
+            $usr_msg->add($this->save_field_user($db_con, $log));
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1089,11 +1089,11 @@ class component extends sandbox_typed
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
      * @param component $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_wrd_col(sql_db $db_con, component $db_rec, component $std_rec): string
+    function save_field_wrd_col(sql_db $db_con, component $db_rec, component $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->col_phrase_id() <> $this->col_phrase_id()) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->col_phrase_name();
@@ -1104,9 +1104,9 @@ class component extends sandbox_typed
             $log->std_id = $std_rec->col_phrase_id();
             $log->row_id = $this->id();
             $log->set_field(self::FLD_COL_PHRASE);
-            $result = $this->save_field_user($db_con, $log);
+            $usr_msg = $this->save_field_user($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1115,11 +1115,11 @@ class component extends sandbox_typed
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
      * @param component $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_wrd_col2(sql_db $db_con, component $db_rec, component $std_rec): string
+    function save_field_wrd_col2(sql_db $db_con, component $db_rec, component $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->word_id_col2 <> $this->word_id_col2) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->load_wrd_col2();
@@ -1130,9 +1130,9 @@ class component extends sandbox_typed
             $log->std_id = $std_rec->word_id_col2;
             $log->row_id = $this->id();
             $log->set_field(self::FLD_COL2_PHRASE);
-            $result = $this->save_field_user($db_con, $log);
+            $usr_msg = $this->save_field_user($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1141,11 +1141,11 @@ class component extends sandbox_typed
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
      * @param component $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_formula(sql_db $db_con, component $db_rec, component $std_rec): string
+    function save_field_formula(sql_db $db_con, component $db_rec, component $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->formula_id <> $this->formula_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->load_formula();
@@ -1156,28 +1156,28 @@ class component extends sandbox_typed
             $log->std_id = $std_rec->formula_id;
             $log->row_id = $this->id();
             $log->set_field(formula::FLD_ID);
-            $result = $this->save_field_user($db_con, $log);
+            $usr_msg = $this->save_field_user($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * save all updated component fields excluding the name, because already done when adding a component
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param component|sandbox $db_rec the view component as saved in the database before the update
-     * @param component|sandbox $std_rec the default parameter used for this view component
+     * @param component|sandbox $db_obj the view component as saved in the database before the update
+     * @param component|sandbox $norm_obj the default parameter used for this view component
      * @returns string any message that should be shown to the user or an empty string if everything is fine
      */
-    function save_fields(sql_db $db_con, component|sandbox $db_rec, component|sandbox $std_rec): string
+    function save_all_fields(sql_db $db_con, component|sandbox $db_obj, component|sandbox $norm_obj): user_message
     {
-        $result = parent::save_fields_typed($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_code_id($db_con, $db_rec);
-        $result .= $this->save_field_ui_msg_id($db_con, $db_rec);
-        $result .= $this->save_field_wrd_row($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_wrd_col($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_wrd_col2($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_formula($db_con, $db_rec, $std_rec);
+        $result = parent::save_fields_typed($db_con, $db_obj, $norm_obj);
+        $result->add($this->save_field_code_id($db_con, $db_obj));
+        $result->add($this->save_field_ui_msg_id($db_con, $db_obj));
+        $result->add($this->save_field_wrd_row($db_con, $db_obj, $norm_obj));
+        $result->add($this->save_field_wrd_col($db_con, $db_obj, $norm_obj));
+        $result->add($this->save_field_wrd_col2($db_con, $db_obj, $norm_obj));
+        $result->add($this->save_field_formula($db_con, $db_obj, $norm_obj));
         log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }

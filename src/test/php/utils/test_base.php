@@ -2275,6 +2275,11 @@ class test_base
             $result = $this->assert('API json based compare', $sbx->api_json(), $api_json);
         }
 
+        // check if the system reports correctly, that no one has changed the named object
+        if ($result) {
+            $result = $this->write_named_changed_by_noone($sbx);
+        }
+
 
         /*
          * rename?
@@ -2314,6 +2319,11 @@ class test_base
             $result = $this->write_named_check_description($sbx, $this->usr2, $new_description);
         }
         if ($result) {
+            // ... and the user 2 is reported as a changer
+            $result = $this->write_named_check_changed_by($sbx, $this->usr2);
+        }
+
+        if ($result) {
             // if user 1 also changes the description
             $result = $this->write_named_update_description($sbx, $this->usr1, $new_description);
         }
@@ -2340,15 +2350,6 @@ class test_base
 
 
         /*
-         * ownership
-         */
-
-        // check if an admin can force to take over ownership
-
-        // check if taking ownership is rejected for normal user
-
-
-        /*
          * undo rename?
          */
 
@@ -2363,6 +2364,16 @@ class test_base
         if ($result) {
             // ... but still exist for user 1
             $result = $this->write_named_check_description($sbx, $this->usr1, $old_description);
+        }
+
+
+        /*
+         * ownership
+         */
+
+        if ($result) {
+            // check if an admin can force to take over ownership
+            $result = $this->write_named_ownership($sbx, $this->usr_admin, $this->usr1);
         }
 
 
@@ -3064,6 +3075,47 @@ class test_base
         } else {
             return false;
         }
+    }
+
+    private function write_named_changed_by_noone(
+        sandbox_named|sandbox_link_named $sbx
+    ): bool
+    {
+        // check if noone has changed it
+        $usr_lst = $sbx->changed_by();
+
+        if ($usr_lst->is_empty()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function write_named_check_changed_by(
+        sandbox_named|sandbox_link_named $sbx,
+        user                             $usr
+    ): bool
+    {
+        $test_name = 'user ' . $usr->dsp_id() . ' as reported as changer';
+        $usr_lst = $sbx->changed_by();
+        return $this->assert_contains($test_name, $usr_lst->names(), $usr->name());
+    }
+
+    private function write_named_ownership(
+        sandbox_named|sandbox_link_named $sbx,
+        user                             $admin,
+        user                             $usr
+    ): bool
+    {
+        // check if an admin can force to take over ownership
+        $result = $sbx->take_ownership($admin);
+
+        // check if taking ownership is rejected for normal user
+        if ($result) {
+            $result = !$sbx->take_ownership($usr);
+        }
+
+        return $result;
     }
 
     /**

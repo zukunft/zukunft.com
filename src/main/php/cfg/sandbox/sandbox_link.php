@@ -642,7 +642,7 @@ class sandbox_link extends sandbox
                         $db_rec->set_user($this->user());
                         $std_rec = clone $db_rec;
                         // save the object fields
-                        $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                        $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                     }
 
                 } else {

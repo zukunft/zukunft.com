@@ -2140,27 +2140,30 @@ class formula extends sandbox_typed
     /**
      * update the time stamp to trigger an update of the depending on results
      */
-    function save_field_trigger_update(sql_db $db_con): string
+    function save_field_trigger_update(sql_db $db_con): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         $this->last_update = new DateTime();
         $db_con->set_class(formula::class);
         if (!$db_con->update_old($this->id(), self::FLD_LAST_UPDATE, sql::NOW)) {
-            $result = 'saving the update trigger for formula ' . $this->dsp_id() . ' failed';
+            $usr_msg->add_message('saving the update trigger for formula ' . $this->dsp_id() . ' failed');
         }
 
-        log_debug('->save_field_trigger_update timestamp of ' . $this->id() . ' updated to "' . $this->last_update->format('Y-m-d H:i:s') . '" with ' . $result);
+        log_debug('->save_field_trigger_update timestamp of ' .
+            $this->id() . ' updated to "' . $this->last_update->format('Y-m-d H:i:s') .
+            '" with ' . $usr_msg->get_last_message());
 
         // save the pending update to the database for the batch calculation
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * set the update parameters for the formula text as written by the user if needed
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_usr_text(sql_db $db_con, formula $db_rec, formula $std_rec): string
+    function save_field_usr_text(sql_db $db_con, formula $db_rec, formula $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->usr_text <> $this->usr_text) {
             $this->needs_res_upd = true;
             $log = $this->log_upd();
@@ -2169,17 +2172,18 @@ class formula extends sandbox_typed
             $log->std_value = $std_rec->usr_text;
             $log->row_id = $this->id();
             $log->set_field(self::FLD_FORMULA_USER_TEXT);
-            $result = $this->save_field_user($db_con, $log);
+            $usr_msg->add($this->save_field_user($db_con, $log));
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * set the update parameters for the formula in the database reference format
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_ref_text(sql_db $db_con, formula $db_rec, formula $std_rec): string
+    function save_field_ref_text(sql_db $db_con, formula $db_rec, formula $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->ref_text <> $this->ref_text) {
             $this->needs_res_upd = true;
             $log = $this->log_upd();
@@ -2188,21 +2192,22 @@ class formula extends sandbox_typed
             $log->std_value = $std_rec->ref_text;
             $log->row_id = $this->id();
             $log->set_field(self::FLD_FORMULA_TEXT);
-            $result = $this->save_field_user($db_con, $log);
+            $usr_msg->add($this->save_field_user($db_con, $log));
             // updating the reference expression is probably relevant for calculation, so force to update the timestamp
-            if ($result == '') {
-                $result = $this->save_field_trigger_update($db_con);
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save_field_trigger_update($db_con));
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * set the update parameters that define if all results are needed to calculate a result
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_need_all(sql_db $db_con, formula $db_rec, formula $std_rec): string
+    function save_field_need_all(sql_db $db_con, formula $db_rec, formula $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->need_all_val <> $this->need_all_val) {
             $this->needs_res_upd = true;
             $log = $this->log_upd();
@@ -2223,42 +2228,43 @@ class formula extends sandbox_typed
             }
             $log->row_id = $this->id();
             $log->set_field(self::FLD_ALL_NEEDED);
-            $result = $this->save_field_user($db_con, $log);
+            $usr_msg->add($this->save_field_user($db_con, $log));
             // switch on that all fields are needed for the calculation, probably some formula results can be removed
-            if ($result == '') {
-                $result = $this->save_field_trigger_update($db_con);
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save_field_trigger_update($db_con));
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * save all updated formula fields
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param formula|sandbox $db_rec the database record before the saving
-     * @param formula|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
+     * @param formula|sandbox $db_obj the database record before the saving
+     * @param formula|sandbox $norm_obj the database record defined as standard because it is used by most users
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_fields(sql_db $db_con, formula|sandbox $db_rec, formula|sandbox $std_rec): string
+    function save_all_fields(sql_db $db_con, formula|sandbox $db_obj, formula|sandbox $norm_obj): user_message
     {
-        $result = parent::save_fields_typed($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_usr_text($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_ref_text($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_need_all($db_con, $db_rec, $std_rec);
-        if ($result != '') {
-            log_debug('not all fields for ' . $this->dsp_id() . ' have been saved because ' . $result);
+        $usr_msg = parent::save_fields_typed($db_con, $db_obj, $norm_obj);
+        $usr_msg->add($this->save_field_usr_text($db_con, $db_obj, $norm_obj));
+        $usr_msg->add($this->save_field_ref_text($db_con, $db_obj, $norm_obj));
+        $usr_msg->add($this->save_field_need_all($db_con, $db_obj, $norm_obj));
+        if (!$usr_msg->is_ok()) {
+            log_debug('not all fields for ' . $this->dsp_id() . ' have been saved because ' . $usr_msg->get_last_message());
         } else {
             log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * set the update parameters for the formula text as written by the user if needed
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_name(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
+    function save_field_name(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->name() <> $this->name()) {
             log_debug('->save_field_name to ' . $this->dsp_id() . ' from "' . $db_rec->name() . '"');
             $this->needs_res_upd = true;
@@ -2269,21 +2275,22 @@ class formula extends sandbox_typed
                 $log->std_value = $std_rec->name();
                 $log->row_id = $this->id();
                 $log->set_field(self::FLD_NAME);
-                $result .= $this->save_field_user($db_con, $log);
+                $usr_msg->add($this->save_field_user($db_con, $log));
                 // in case a word link exist, change also the name of the word
                 $wrd = new word($this->user());
                 $wrd->load_by_name($db_rec->name());
                 $wrd->set_name($this->name());
-                $result .= $wrd->save()->get_last_message();
+                $usr_msg->add($wrd->save());
 
             } else {
                 // create a new formula
                 // and request the deletion confirms for the old from all changers
                 // ???? or update the user formula table
-                log_warning('formula->save_field_name automatic creation of a new formula (' . $this->dsp_id() . ') and deletion of the old  (' . $db_rec->dsp_id() . ') is not yet coded');
+                log_warning('formula->save_field_name automatic creation of a new formula (' . $this->dsp_id()
+                    . ') and deletion of the old  (' . $db_rec->dsp_id() . ') is not yet coded');
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -2484,7 +2491,7 @@ class formula extends sandbox_typed
                 if ($use_func) {
                     $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
                 } else {
-                    $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                    $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                 }
             }
         } else {
@@ -2582,7 +2589,7 @@ class formula extends sandbox_typed
                         if ($use_func) {
                             $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
                         } else {
-                            $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                            $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                         }
                     }
                 }

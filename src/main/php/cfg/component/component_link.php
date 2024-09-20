@@ -69,6 +69,7 @@ use cfg\sandbox_link;
 use cfg\sandbox_named;
 use cfg\type_object;
 use cfg\user;
+use cfg\user_message;
 use cfg\view;
 use shared\library;
 
@@ -914,12 +915,12 @@ class component_link extends sandbox_link
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component_link $db_rec the view component link as saved in the database before the update
      * @param component_link $std_rec the default parameter used for this view component link
-     * @returns string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
     private
-    function save_field_order_nbr(sql_db $db_con, component_link $db_rec, component_link $std_rec): string
+    function save_field_order_nbr(sql_db $db_con, component_link $db_rec, component_link $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->order_nbr <> $this->order_nbr) {
             $log = $this->log_upd_field();
             $log->old_value = $db_rec->order_nbr;
@@ -927,26 +928,26 @@ class component_link extends sandbox_link
             $log->std_value = $std_rec->order_nbr;
             $log->row_id = $this->id();
             $log->set_field(self::FLD_ORDER_NBR);
-            $result .= $this->save_field_user($db_con, $log);
+            $usr_msg->add($this->save_field_user($db_con, $log));
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * save all updated component_link fields excluding the name, because already done when adding a component_link
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param component_link|sandbox $db_rec the view component link as saved in the database before the update
-     * @param component_link|sandbox $std_rec the default parameter used for this view component link
-     * @returns string any message that should be shown to the user or an empty string if everything is fine
+     * @param component_link|sandbox $db_obj the view component link as saved in the database before the update
+     * @param component_link|sandbox $norm_obj the default parameter used for this view component link
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_fields(sql_db $db_con, component_link|sandbox $db_rec, component_link|sandbox $std_rec): string
+    function save_all_fields(sql_db $db_con, component_link|sandbox $db_obj, component_link|sandbox $norm_obj): user_message
     {
-        $result = $this->save_field_order_nbr($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+        $usr_msg = $this->save_field_order_nbr($db_con, $db_obj, $norm_obj);
+        $usr_msg->add($this->save_field_type($db_con, $db_obj, $norm_obj));
+        $usr_msg->add($this->save_field_excluded($db_con, $db_obj, $norm_obj));
         log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        return $result;
+        return $usr_msg;
     }
 
     /**

@@ -583,17 +583,17 @@ class formula_link extends sandbox_link
     /**
      * save all updated formula_link fields excluding the name, because already done when adding a formula_link
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param formula_link|sandbox $db_rec the database record before the saving
-     * @param formula_link|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param formula_link|sandbox $db_obj the database record before the saving
+     * @param formula_link|sandbox $norm_obj the database record defined as standard because it is used by most users
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_fields(sql_db $db_con, formula_link|sandbox $db_rec, formula_link|sandbox $std_rec): string
+    function save_all_fields(sql_db $db_con, formula_link|sandbox $db_obj, formula_link|sandbox $norm_obj): user_message
     {
         // link type not used at the moment
-        $result = $this->save_field_type($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+        $usr_msg = $this->save_field_type($db_con, $db_obj, $norm_obj);
+        $usr_msg->add($this->save_field_excluded($db_con, $db_obj, $norm_obj));
         log_debug('all fields for "' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '" has been saved');
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -612,7 +612,7 @@ class formula_link extends sandbox_link
     /**
      * update a formula_link in the database or create a user formula_link
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
     function save(?bool $use_func = null): user_message
     {
@@ -700,7 +700,7 @@ class formula_link extends sandbox_link
                 if ($use_func) {
                     $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
                 } else {
-                    $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                    $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                 }
             }
         }

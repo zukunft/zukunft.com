@@ -1628,11 +1628,11 @@ class word extends sandbox_typed
      * remember the word view, which means to save the view id for this word
      * each user can define set the view individually, so this is user specific
      */
-    function save_view(int $view_id): string
+    function save_view(int $view_id): user_message
     {
 
         global $db_con;
-        $result = '';
+        $usr_msg = new user_message();
 
         if ($this->id() > 0 and $view_id > 0 and $view_id <> $this->view_id()) {
             $this->set_view_id($view_id);
@@ -1640,30 +1640,29 @@ class word extends sandbox_typed
                 //$db_con = new mysql;
                 $db_con->usr_id = $this->user()->id();
                 if ($this->can_change()) {
-                    $usr_msg = $this->update('view of word');
-                    $result = $usr_msg->get_last_message();
+                    $usr_msg->add($this->update('view of word'));
                 } else {
                     if (!$this->has_usr_cfg()) {
                         if (!$this->add_usr_cfg()) {
-                            $result = 'adding of user configuration failed';
+                            $usr_msg->add_message('adding of user configuration failed');
                         }
                     }
-                    if ($result == '') {
-                        $usr_msg = $this->update('user view of word');
-                        $result = $usr_msg->get_last_message();
+                    if ($usr_msg == '') {
+                        $usr_msg->add($this->update('user view of word'));
                     }
                 }
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * set the update parameters for the word plural
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    private function save_field_plural(sql_db $db_con, word $db_rec, word $std_rec): string
+    private function save_field_plural(sql_db $db_con, word $db_rec, word $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         // if the plural is not set, don't overwrite any db entry
         if ($this->plural <> Null) {
             if ($this->plural <> $db_rec->plural) {
@@ -1673,41 +1672,41 @@ class word extends sandbox_typed
                 $log->std_value = $std_rec->plural;
                 $log->row_id = $this->id();
                 $log->set_field(self::FLD_PLURAL);
-                $result = $this->save_field_user($db_con, $log);
+                $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * set the update parameters for the word view_id
      * @param word|sandbox $db_rec the database record before the saving
-     * @return string an error message that should be shown to the user if something fails
+     * @return user_message the message that should be shown to the user in case something went wrong
      * TODO replace string by usr_msg to include more infos e.g. suggested solutions
      */
-    private function save_field_view(word|sandbox $db_rec): string
+    private function save_field_view(word|sandbox $db_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->view_id() <> $this->view_id()) {
-            $result = $this->save_view($this->view_id());
+            $usr_msg->add($this->save_view($this->view_id()));
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * save all updated word fields
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param word|sandbox $db_rec the database record before the saving
-     * @param word|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
+     * @param word|sandbox $db_obj the database record before the saving
+     * @param word|sandbox $norm_obj the database record defined as standard because it is used by most users
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_fields(sql_db $db_con, word|sandbox $db_rec, word|sandbox $std_rec): string
+    function save_all_fields(sql_db $db_con, word|sandbox $db_obj, word|sandbox $norm_obj): user_message
     {
-        $result = $this->save_field_plural($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_description($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_view($db_rec);
-        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+        $result = $this->save_field_plural($db_con, $db_obj, $norm_obj);
+        $result->add($this->save_field_description($db_con, $db_obj, $norm_obj));
+        $result->add($this->save_field_type($db_con, $db_obj, $norm_obj));
+        $result->add($this->save_field_view($db_obj));
+        $result->add($this->save_field_excluded($db_con, $db_obj, $norm_obj));
         log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }

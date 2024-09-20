@@ -129,10 +129,10 @@ class sandbox_value extends sandbox_multi
         [group::FLD_ID, sql_field_type::KEY_PART_TEXT, sql_field_default::NOT_NULL, '', '', 'the text index for more than 16 phrases to find the -=class=-'],
     );
     const FLD_ALL_VALUE_NUM = array(
-        [value::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NOT_NULL, '', '', 'the numeric value given by the user'],
+        [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NOT_NULL, '', '', 'the numeric value given by the user'],
     );
     const FLD_ALL_VALUE_NUM_USER = array(
-        [value::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', 'the user specific numeric value change'],
+        [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', 'the user specific numeric value change'],
     );
     const FLD_ALL_VALUE_TEXT = array(
         [value::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', 'the text value given by the user'],
@@ -160,7 +160,7 @@ class sandbox_value extends sandbox_multi
         [source::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_USER_SOURCE_COM],
     );
     const FLD_ALL_CHANGED = array(
-        [value::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
+        [self::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
     );
     // dummy list which is always overwritten by either the value or result object
     const FLD_ALL_TIME_SERIES = array();
@@ -508,6 +508,7 @@ class sandbox_value extends sandbox_multi
      * @param array $fld_par_usr the user specific parameters for the value field
      * @param string $ext_type the additional table extension for the field type
      * @param string $type_name the name of the value type
+     * @param string $comment_overwrite
      * @return array the sql statements to create the tables, indices and foreign keys
      */
     protected function sql_one_type(
@@ -1768,7 +1769,7 @@ class sandbox_value extends sandbox_multi
 
         // create the actual delete or exclude statement
         $sc_delete = clone $sc;
-        $qp_delete = $this->sql_common($sc_delete, $sc_par_lst_log);;
+        $qp_delete = $this->sql_common($sc_delete, $sc_par_lst_log);
         $qp_delete->sql = $sc_delete->create_sql_delete_fvt_new($fvt_lst_id, $sc_par_lst_sub);
         // add the insert row to the function body
         $sql .= ' ' . $qp_delete->sql . ' ';

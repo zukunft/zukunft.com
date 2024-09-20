@@ -959,11 +959,11 @@ class view extends sandbox_typed
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param view $db_rec the database record before the saving
      * @param view $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_code_id(sql_db $db_con, view $db_rec, view $std_rec): string
+    function save_field_code_id(sql_db $db_con, view $db_rec, view $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message;
         // special case: do not remove a code id
         if ($this->code_id != '') {
             if ($db_rec->code_id <> $this->code_id) {
@@ -973,25 +973,25 @@ class view extends sandbox_typed
                 $log->std_value = $std_rec->code_id;
                 $log->row_id = $this->id();
                 $log->set_field(sql::FLD_CODE_ID);
-                $result = $this->save_field_user($db_con, $log);
+                $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * save all updated view fields excluding the name, because already done when adding a view
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param view|sandbox $db_rec the database record before the saving
-     * @param view|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
+     * @param view|sandbox $db_obj the database record before the saving
+     * @param view|sandbox $norm_obj the database record defined as standard because it is used by most users
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_fields(sql_db $db_con, view|sandbox $db_rec, view|sandbox $std_rec): string
+    function save_all_fields(sql_db $db_con, view|sandbox $db_obj, view|sandbox $norm_obj): user_message
     {
-        $result = parent::save_fields_typed($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_code_id($db_con, $db_rec, $std_rec);
+        $usr_msg = parent::save_fields_typed($db_con, $db_obj, $norm_obj);
+        $usr_msg->add($this->save_field_code_id($db_con, $db_obj, $norm_obj));
         log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        return $result;
+        return $usr_msg;
     }
 
 

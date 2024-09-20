@@ -1832,34 +1832,35 @@ class triple extends sandbox_link_named implements JsonSerializable
 
     /**
      * check if the given name can be used for this triple
-     * @return string
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    private function is_name_used_msg(): string
+    private function is_name_used_msg(): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         // check if the name is used
         $similar = $this->get_similar_named();
         // if the similar object is not the same as $this object, suggest renaming $this object
         if ($similar != null) {
-            $result = $similar->id_used_msg($this);
+            $usr_msg->add_message($similar->id_used_msg($this));
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * set the update parameters for the triple name
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_name(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
+    function save_field_name(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
 
         // the name field is a generic created field, so update it before saving
         // the generic name of $this is saved to the database for faster uniqueness check (TODO to be checked if this is really faster)
         $this->set_names();
 
         if ($db_rec->name() <> $this->name() and !$this->is_excluded()) {
-            $result = $this->is_name_used_msg($this->name());
-            if ($result == '') {
+            $usr_msg->add($this->is_name_used_msg());
+            if ($usr_msg->is_ok()) {
                 $log = $this->log_upd_field();
                 // TODO review
                 if ($db_rec->name() != '') {
@@ -1872,48 +1873,48 @@ class triple extends sandbox_link_named implements JsonSerializable
                 $log->std_value = $std_rec->name();
                 $log->row_id = $this->id();
                 $log->set_field(self::FLD_NAME);
-                $result .= $this->save_field_user($db_con, $log);
+                $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * set the update parameters for the triple given name
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
     private
-    function save_field_name_given(sql_db $db_con, triple $db_rec, triple $std_rec): string
+    function save_field_name_given(sql_db $db_con, triple $db_rec, triple $std_rec): user_message
     {
-        $result = '';
-
+        $usr_msg = new user_message();
         if ($db_rec->name_given() <> $this->name_given()) {
             if ($this->name_given() != null) {
                 $result = $this->is_name_used_msg($this->name_given());
             }
-            if ($result == '') {
+            if ($usr_msg->is_ok()) {
                 $log = $this->log_upd_field();
                 $log->old_value = $db_rec->name_given();
                 $log->new_value = $this->name_given();
                 $log->std_value = $std_rec->name_given();
                 $log->row_id = $this->id();
                 $log->set_field(self::FLD_NAME_GIVEN);
-                $result .= $this->save_field_user($db_con, $log);
+                $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * set the update parameters for the triple generated name
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
     private
-    function save_field_name_generated(sql_db $db_con, triple $db_rec, triple $std_rec): string
+    function save_field_name_generated(sql_db $db_con, triple $db_rec, triple $std_rec): user_message
     {
-        $result = '';
-
+        $usr_msg = new user_message();
         if ($db_rec->name_generated <> $this->name_generated()) {
-            $result = $this->is_name_used_msg($this->name_generated());
-            if ($result == '') {
+            $usr_msg->add($this->is_name_used_msg($this->name_generated()));
+            if ($usr_msg->is_ok()) {
                 $log = $this->log_upd_field();
                 if ($db_rec->name_generated == '') {
                     $log->old_value = null;
@@ -1924,18 +1925,19 @@ class triple extends sandbox_link_named implements JsonSerializable
                 $log->std_value = $std_rec->name_generated;
                 $log->row_id = $this->id();
                 $log->set_field(self::FLD_NAME_AUTO);
-                $result .= $this->save_field_user($db_con, $log);
+                $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * set the update parameters for the triple description
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_triple_description(sql_db $db_con, triple $db_rec, triple $std_rec): string
+    function save_field_triple_description(sql_db $db_con, triple $db_rec, triple $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->description <> $this->description) {
             $log = $this->log_upd_field();
             $log->old_value = $db_rec->description;
@@ -1943,36 +1945,38 @@ class triple extends sandbox_link_named implements JsonSerializable
             $log->std_value = $std_rec->description;
             $log->row_id = $this->id();
             $log->set_field(sandbox_named::FLD_DESCRIPTION);
-            $result .= $this->save_field_user($db_con, $log);
+            $usr_msg->add($this->save_field_user($db_con, $log));
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * save all updated triple fields excluding id fields (from, verb and to), because already done when adding a triple
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_triple_fields(sql_db $db_con, triple $db_rec, triple $std_rec): string
+    function save_triple_fields(sql_db $db_con, triple $db_rec, triple $std_rec): user_message
     {
-        $result = $this->save_field_triple_description($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
+        $usr_msg = $this->save_field_triple_description($db_con, $db_rec, $std_rec);
+        $usr_msg->add($this->save_field_excluded($db_con, $db_rec, $std_rec));
+        $usr_msg->add($this->save_field_type($db_con, $db_rec, $std_rec));
         log_debug('triple->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * save all updated triple fields excluding id fields (from, verb and to), because already done when adding a triple
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_name_fields(sql_db $db_con, triple $db_rec, triple $std_rec): string
+    function save_name_fields(sql_db $db_con, triple $db_rec, triple $std_rec): user_message
     {
-        $result = $this->save_field_name($db_con, $db_rec, $std_rec);
-        if ($result == '') {
-            $result .= $this->save_field_name_given($db_con, $db_rec, $std_rec);
+        $usr_msg = $this->save_field_name($db_con, $db_rec, $std_rec);
+        if ($usr_msg->is_ok()) {
+            $usr_msg->add($this->save_field_name_given($db_con, $db_rec, $std_rec));
         }
-        if ($result == '') {
-            $result .= $this->save_field_name_generated($db_con, $db_rec, $std_rec);
+        if ($usr_msg->is_ok()) {
+            $usr_msg->add($this->save_field_name_generated($db_con, $db_rec, $std_rec));
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -2146,8 +2150,8 @@ class triple extends sandbox_link_named implements JsonSerializable
                         $db_rec->set_to($this->to());
                         $std_rec = clone $db_rec;
                         // save the triple fields
-                        $usr_msg->add_message($this->save_name_fields($db_con, $db_rec, $std_rec));
-                        $usr_msg->add_message($this->save_triple_fields($db_con, $db_rec, $std_rec));
+                        $usr_msg->add($this->save_name_fields($db_con, $db_rec, $std_rec));
+                        $usr_msg->add($this->save_triple_fields($db_con, $db_rec, $std_rec));
                     }
 
                 } else {
@@ -2234,7 +2238,7 @@ class triple extends sandbox_link_named implements JsonSerializable
         if ($usr_msg->is_ok()) {
             // check if a new value is supposed to be added
             if ($this->id() == 0) {
-                $usr_msg->add_message($this->is_name_used_msg($this->name()));
+                $usr_msg->add($this->is_name_used_msg($this->name()));
                 if ($usr_msg->is_ok()) {
                     $usr_msg->add($this->add($use_func));
                     if (!$usr_msg->is_ok()) {
@@ -2277,13 +2281,13 @@ class triple extends sandbox_link_named implements JsonSerializable
                 }
 
                 if ($usr_msg->is_ok()) {
-                    $usr_msg->add_message($this->save_name_fields($db_con, $db_rec, $std_rec));
+                    $usr_msg->add($this->save_name_fields($db_con, $db_rec, $std_rec));
                 }
 
                 // if a problem has appeared up to here, don't try to save the values
                 // the problem is shown to the user by the calling interactive script
                 if ($usr_msg->is_ok()) {
-                    $usr_msg->add_message($this->save_triple_fields($db_con, $db_rec, $std_rec));
+                    $usr_msg->add($this->save_triple_fields($db_con, $db_rec, $std_rec));
                     if (!$usr_msg->is_ok()) {
                         log_err($usr_msg->get_last_message());
                     }

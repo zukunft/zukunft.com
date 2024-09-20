@@ -634,7 +634,7 @@ class sandbox_named extends sandbox
                             $db_rec->set_user($this->user());
                             $std_rec = clone $db_rec;
                             // save the object fields
-                            $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                            $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                         }
                     }
 
@@ -751,11 +751,11 @@ class sandbox_named extends sandbox
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param sandbox_named $db_rec the database record before the saving
      * @param sandbox_named $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_description(sql_db $db_con, sandbox_named $db_rec, sandbox_named $std_rec): string
+    function save_field_description(sql_db $db_con, sandbox_named $db_rec, sandbox_named $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         // if the description is not set, don't overwrite any db entry
         if ($this->description <> Null) {
             if ($this->description <> $db_rec->description) {
@@ -765,10 +765,10 @@ class sandbox_named extends sandbox
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id();
                 $log->set_field(self::FLD_DESCRIPTION);
-                $result = $this->save_field_user($db_con, $log);
+                $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -776,13 +776,13 @@ class sandbox_named extends sandbox
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param sandbox_named $db_rec the database record before the saving
      * @param sandbox_named $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_fields_named(sql_db $db_con, sandbox_named $db_rec, sandbox_named $std_rec): string
+    function save_fields_named(sql_db $db_con, sandbox_named $db_rec, sandbox_named $std_rec): user_message
     {
-        $result = $this->save_field_description($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        return $result;
+        $usr_msg = $this->save_field_description($db_con, $db_rec, $std_rec);
+        $usr_msg->add($this->save_field_excluded($db_con, $db_rec, $std_rec));
+        return $usr_msg;
     }
 
     /**

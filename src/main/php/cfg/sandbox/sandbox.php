@@ -917,14 +917,17 @@ class sandbox extends db_object_seq_id_user
      * TODO add a test
      * TODO review
      */
-    function take_ownership(): bool
+    function take_ownership(user $usr): bool
     {
         $result = false;
         log_debug($this->dsp_id());
 
         if ($this->user()->is_admin()) {
+            // create a user db row for the current owner
             // TODO activate Prio 3 $result .= $this->usr_cfg_create_all();
-            $result = $this->set_owner($this->user()->id()); // TODO remove double getting of the user object
+            // take over the ownership by an admin
+            $result = $this->set_owner($usr->id()); // TODO remove double getting of the user object
+            // set the protection to avoid that the admin is losing the ownership
             // TODO activate Prio 3 $result .= $this->usr_cfg_cleanup();
         }
 
@@ -1088,7 +1091,7 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * @return user_list a list of all user that have ever changed the object
+     * @return user_list a list of all user that have ever changed the object (beside the owner)
      */
     function changed_by(): user_list
     {
@@ -1100,7 +1103,7 @@ class sandbox extends db_object_seq_id_user
         $result = new user_list($this->user());
 
         // add object owner
-        $usr_id_lst[] = $this->owner_id;
+        //$usr_id_lst[] = $this->owner_id;
         $qp = $this->load_sql_of_users_that_changed($db_con->sql_creator());
         $db_usr_lst = $db_con->get($qp);
         foreach ($db_usr_lst as $db_usr) {
@@ -1409,26 +1412,6 @@ class sandbox extends db_object_seq_id_user
         return $result;
     }
 
-    /**
-     * remove all user setting that are not needed any more based on the new standard object
-     * TODO review
-     */
-    function usr_cfg_cleanup(): string
-    {
-        $result = '';
-        log_debug($this->dsp_id());
-
-        // get a list of users that have a user cfg of this object
-        $usr_lst = $this->changed_by();
-        if (!$usr_lst->is_empty()) {
-            // remove the usr cfg if not needed any more
-            $this->del_usr_cfg_if_not_needed();
-        }
-
-        log_debug('for ' . $this->dsp_id() . ': ' . $result);
-        return $result;
-    }
-
 
     /*
      * log
@@ -1561,15 +1544,17 @@ class sandbox extends db_object_seq_id_user
      * TODO activate and use it
      *
      * @param sql_db $db_con the active database connection that should be used
+     * @param sandbox $db_obj the database record before saving the changes whereas $this is the record with the changes
      * @param sandbox $norm_obj this object with the variables of the norm set as in the database before the update
-     * @return user_message if anything fails the message for the user to fix the issue
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_all_fields(sql_db $db_con, sandbox $norm_obj): user_message
+    function save_all_fields(sql_db $db_con, sandbox $db_obj, sandbox $norm_obj): user_message
     {
         // always return a user message and if everything is fine, it is just empty
         $usr_msg = new user_message();
         // the sql creator is used more than once, so create it upfront
         $sc = $db_con->sql_creator();
+
         // if the user is allowed to change the norm row e.g. because no other user has used it, change the norm row directly
         if ($this->can_change()) {
             // if there is no difference between the user row and the norm row remove all fields from the user row
@@ -1582,7 +1567,7 @@ class sandbox extends db_object_seq_id_user
                 $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
             } else {
                 // apply the changes directly to the norm db record
-                $qp = $this->sql_update($sc, $norm_obj);
+                $qp = $this->sql_update($sc, $db_obj);
                 $usr_msg->add($db_con->update($qp, 'update ' . $this->dsp_id()));
             }
         } else {
@@ -1705,25 +1690,15 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * dummy function to save all updated word fields, which is always overwritten by the child class
-     */
-    function save_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
-    {
-        // TODO activate
-        //log_err('function save_fields missing for class ' . $this::class);
-        return '';
-    }
-
-    /**
      * actually update a field in the main database record or the user sandbox
      * the usr id is taken into account in sql_db->update (maybe move outside)
      * @param sql_db $db_con the active database connection that should be used
      * @param change|change_link $log the log object to track the change and allow a rollback
-     * @return string an empty string if everything is fine or the message that should be shown to the user
+     * @return user_message if anything fails the message for the user to fix the issue
      */
-    function save_field_user(sql_db $db_con, change|change_link $log): string
+    function save_field_user(sql_db $db_con, change|change_link $log): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
 
         if ($log->new_id > 0) {
             $new_value = $log->new_id;
@@ -1740,7 +1715,7 @@ class sandbox extends db_object_seq_id_user
                         $db_con->set_class($this::class, true);
                         $db_con->set_usr($this->user()->id());
                         if (!$db_con->update_old($this->id(), $log->field(), Null)) {
-                            $result = 'remove of ' . $log->field() . ' failed';
+                            $usr_msg->add_message('remove of ' . $log->field() . ' failed');
                         }
                     }
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
@@ -1748,33 +1723,33 @@ class sandbox extends db_object_seq_id_user
                     $db_con->set_class($this::class);
                     $db_con->set_usr($this->user()->id());
                     if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                        $result = 'update of ' . $log->field() . ' to ' . $new_value . ' failed';
+                        $usr_msg->add_message('update of ' . $log->field() . ' to ' . $new_value . ' failed');
                     }
                 }
             } else {
                 if (!$this->has_usr_cfg()) {
                     if (!$this->add_usr_cfg()) {
-                        $result = 'creation of user sandbox for ' . $log->field() . ' failed';
+                        $usr_msg->add_message('creation of user sandbox for ' . $log->field() . ' failed');
                     }
                 }
-                if ($result == '') {
+                if ($usr_msg->is_ok()) {
                     $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id());
                     if ($new_value == $std_value) {
                         log_debug('remove user change');
                         if (!$db_con->update_old($this->id(), $log->field(), Null)) {
-                            $result = 'remove of user value for ' . $log->field() . ' failed';
+                            $usr_msg->add_message('remove of user value for ' . $log->field() . ' failed');
                         }
                     } else {
                         if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                            $result = 'update of user value for ' . $log->field() . ' to ' . $new_value . ' failed';
+                            $usr_msg->add_message('update of user value for ' . $log->field() . ' to ' . $new_value . ' failed');
                         }
                     }
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 }
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1854,12 +1829,12 @@ class sandbox extends db_object_seq_id_user
      * @param sql_db $db_con the active database connection that should be used
      * @param sandbox $db_rec the object as saved in the database before this field is updated
      * @param sandbox $std_rec the default object without user specific changes
-     * returns false if something has gone wrong
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_excluded(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
+    function save_field_excluded(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): user_message
     {
         log_debug($this->dsp_id());
-        $result = '';
+        $usr_msg = new user_message();
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
@@ -1872,33 +1847,33 @@ class sandbox extends db_object_seq_id_user
                 $db_con->set_class($this::class);
                 $db_con->set_usr($this->user()->id());
                 if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                    $result .= 'excluding of ' . $class_name . ' failed';
+                    $usr_msg->add_message('excluding of ' . $class_name . ' failed');
                 }
             } else {
                 if (!$this->has_usr_cfg()) {
                     if (!$this->add_usr_cfg()) {
-                        $result = 'creation of user sandbox to exclude failed';
+                        $usr_msg->add_message('creation of user sandbox to exclude failed');
                     }
                 }
-                if ($result == '') {
+                if ($usr_msg->is_ok()) {
                     $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id());
                     if ($new_value == $std_value) {
                         if (!$db_con->update_old($this->id(), $log->field(), Null)) {
-                            $result .= 'include of ' . $class_name . ' for user failed';
+                            $usr_msg->add_message('include of ' . $class_name . ' for user failed');
                         }
                     } else {
                         if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                            $result .= 'excluding of ' . $class_name . ' for user failed';
+                            $usr_msg->add_message('excluding of ' . $class_name . ' for user failed');
                         }
                     }
                     if (!$this->del_usr_cfg_if_not_needed()) {
-                        $result .= ' and user sandbox cannot be cleaned';
+                        $usr_msg->add_message(' and user sandbox cannot be cleaned');
                     }
                 }
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
 
@@ -1993,7 +1968,7 @@ class sandbox extends db_object_seq_id_user
                             if ($use_func) {
                                 $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
                             } else {
-                                $usr_msg->add_message($this->save_field_excluded($db_con, $db_rec, $std_rec));
+                                $usr_msg->add($this->save_field_excluded($db_con, $db_rec, $std_rec));
                             }
                             if ($usr_msg->is_ok()) {
                                 log_debug('found a ' . $class_name . ' target ' . $db_chk->dsp_id() . ', so del ' . $db_rec->dsp_id() . ' and add ' . $this->dsp_id());
@@ -2398,7 +2373,7 @@ class sandbox extends db_object_seq_id_user
                         if ($use_func) {
                             $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
                         } else {
-                            $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                            $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                         }
                     }
                 }
@@ -2612,7 +2587,7 @@ class sandbox extends db_object_seq_id_user
                             if ($use_func) {
                                 $msg .= $this->save_fields_func($db_con, $db_rec, $std_rec);
                             } else {
-                                $msg .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
+                                $usr_msg->add($this->save_field_excluded($db_con, $db_rec, $std_rec));
                             }
                         }
                     }
@@ -2668,15 +2643,15 @@ class sandbox extends db_object_seq_id_user
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param sandbox $db_rec the database record before the saving
      * @param sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
     function save_field_type(
         sql_db  $db_con,
         sandbox $db_rec,
         sandbox $std_rec
-    ): string
+    ): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->type_id <> $this->type_id) {
             if ($this::class == triple::class) {
                 $log = $this->log_upd_field();
@@ -2704,10 +2679,10 @@ class sandbox extends db_object_seq_id_user
                 $lib = new library();
                 $log->set_field($lib->class_to_name($this::class) . sql_db::FLD_EXT_TYPE_ID);
             }
-            $result .= $this->save_field_user($db_con, $log);
+            $usr_msg->add($this->save_field_user($db_con, $log));
             log_debug('changed type to "' . $log->new_value . '" (from ' . $log->new_id . ')');
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**

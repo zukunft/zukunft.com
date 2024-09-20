@@ -557,10 +557,9 @@ class ref extends sandbox_link
      * load a reference object by database id
      * @param int $phr_id the id of the phrase that is referenced
      * @param int $type_id the id of the reference type
-     * @param string $class the reference class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_link_ids(int $phr_id, int $type_id, string $class = self::class): int
+    function load_by_link_ids(int $phr_id, int $type_id): int
     {
         global $db_con;
 
@@ -889,11 +888,11 @@ class ref extends sandbox_link
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param ref|sandbox $db_rec the database record before the saving
      * @param ref|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    private function save_field_description(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): string
+    private function save_field_description(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         // if the plural is not set, don't overwrite any db entry
         if ($this->description <> Null) {
             if ($this->description <> $db_rec->description) {
@@ -903,10 +902,10 @@ class ref extends sandbox_link
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id();
                 $log->set_field(sandbox_named::FLD_DESCRIPTION);
-                $result = $this->save_field_user($db_con, $log);
+                $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -914,11 +913,11 @@ class ref extends sandbox_link
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param ref|sandbox $db_rec the database record before the saving
      * @param ref|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    private function save_field_url(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): string
+    private function save_field_url(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         // if the plural is not set, don't overwrite any db entry
         if ($this->url <> Null) {
             if ($this->url <> $db_rec->url) {
@@ -928,10 +927,10 @@ class ref extends sandbox_link
                 $log->std_value = $std_rec->url;
                 $log->row_id = $this->id();
                 $log->set_field(self::FLD_URL);
-                $result = $this->save_field_user($db_con, $log);
+                $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -939,11 +938,11 @@ class ref extends sandbox_link
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param ref|sandbox $db_rec the database record before the saving
      * @param ref|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    private function save_field_source(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): string
+    private function save_field_source(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->source_id() <> $this->source_id()) {
             $log = $this->log_upd_field();
             $log->old_value = $db_rec->source_name();
@@ -954,26 +953,26 @@ class ref extends sandbox_link
             $log->std_id = $std_rec->source_id();
             $log->row_id = $this->id();
             $log->set_field(self::FLD_SOURCE);
-            $result = $this->save_field_user($db_con, $log);
+            $usr_msg->add($this->save_field_user($db_con, $log));
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * save all updated reference fields
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param ref|sandbox $db_rec the database record before the saving
-     * @param ref|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param ref|sandbox $db_obj the database record before the saving
+     * @param ref|sandbox $norm_obj the database record defined as standard because it is used by most users
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_fields(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): string
+    function save_all_fields(sql_db $db_con, ref|sandbox $db_obj, ref|sandbox $norm_obj): user_message
     {
-        $result = parent::save_fields($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_description($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_url($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_source($db_con, $db_rec, $std_rec);
+        $usr_msg = parent::save_all_fields($db_con, $db_obj, $norm_obj);
+        $usr_msg->add($this->save_field_description($db_con, $db_obj, $norm_obj));
+        $usr_msg->add($this->save_field_url($db_con, $db_obj, $norm_obj));
+        $usr_msg->add($this->save_field_source($db_con, $db_obj, $norm_obj));
         log_debug('all fields for "' . $this->dsp_id() . '" has been saved');
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1021,7 +1020,7 @@ class ref extends sandbox_link
                         $db_rec->set_user($this->user());
                         $std_rec = clone $db_rec;
                         // save the object fields
-                        $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                        $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                     }
                 } else {
                     $usr_msg->add_message('Adding reference ' . $this->dsp_id() . ' failed.');
@@ -1123,7 +1122,7 @@ class ref extends sandbox_link
                 if ($use_func) {
                     $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
                 } else {
-                    $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                    $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                 }
             }
         }
