@@ -139,17 +139,6 @@ class sandbox_typed extends sandbox_named
         return $msg;
     }
 
-    /**
-     * TODO deprecate or move to frontend part
-     * @param object $dsp_obj frontend API objects that should be filled with unique object name
-     */
-    function fill_dsp_obj(object $dsp_obj): void
-    {
-        parent::fill_api_obj($dsp_obj);
-
-        $dsp_obj->set_type_id($this->type_id());
-    }
-
 
     /*
      * information

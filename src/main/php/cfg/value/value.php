@@ -262,7 +262,7 @@ class value extends sandbox_value
      *
      * @param array|null $db_row with the data directly from the database
      * @param string $ext the table type e.g. to indicate if the id is int
-     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @param bool $one_id_fld false if the unique database id is based on more than one field

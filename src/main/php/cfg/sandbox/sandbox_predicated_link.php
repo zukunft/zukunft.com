@@ -60,11 +60,6 @@ class sandbox_predicated_link extends sandbox_link
 
 
     /*
-     * set and get
-     */
-
-
-    /*
      * settings
      */
 
@@ -89,19 +84,6 @@ class sandbox_predicated_link extends sandbox_link
     {
         $msg = 'ERROR: the type name function should have been overwritten by the child object';
         return log_err($msg);
-    }
-
-    /*
-     * cast
-     */
-
-    /**
-     * @param object $dsp_obj frontend API objects that should be filled with unique object name
-     */
-    function fill_dsp_obj(object $dsp_obj): void
-    {
-        parent::fill_api_obj($dsp_obj);
-
     }
 
 }

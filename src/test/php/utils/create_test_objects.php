@@ -477,7 +477,7 @@ class create_test_objects extends test_base
         $wrd->plural = word_api::TN_READ_PLURAL;
         $wrd->set_view_id(view_api::TI_READ);
         $wrd->values = 2;
-        $wrd->excluded = true;
+        $wrd->exclude();
         $wrd->share_id = $share_types->id(share_type_shared::GROUP);
         $wrd->protection_id = $protection_types->id(protect_type_shared::USER);
         return $wrd;
@@ -1639,7 +1639,7 @@ class create_test_objects extends test_base
         $grp = $this->group_16();
         $val = new value($this->usr1, round(value_api::TV_READ, 13), $grp);
         $val->set_source_id($this->source()->id());
-        $val->excluded = true;
+        $val->exclude();
         $val->share_id = $share_types->id(share_type_shared::GROUP);
         $val->protection_id = $protection_types->id(protect_type_shared::USER);
         return $val;
@@ -1723,7 +1723,7 @@ class create_test_objects extends test_base
         $frm->last_update = new DateTime(sys_log_api::TV_TIME);
         $frm->set_view_id(view_api::TI_READ);
         $frm->set_usage(2);
-        $frm->excluded = true;
+        $frm->exclude();
         $frm->share_id = $share_types->id(share_type_shared::GROUP);
         $frm->protection_id = $protection_types->id(protect_type_shared::USER);
         return $frm;
@@ -1775,7 +1775,7 @@ class create_test_objects extends test_base
         global $share_types;
         global $protection_types;
         $lnk = $this->formula_link();
-        $lnk->excluded = true;
+        $lnk->exclude();
         $lnk->share_id = $share_types->id(share_type_shared::GROUP);
         $lnk->protection_id = $protection_types->id(protect_type_shared::USER);
         return $lnk;
@@ -1891,7 +1891,7 @@ class create_test_objects extends test_base
         global $share_types;
         global $protection_types;
         $res = $this->result_main_max();
-        $res->excluded = true;
+        $res->exclude();
         $res->share_id = $share_types->id(share_type_shared::GROUP);
         $res->protection_id = $protection_types->id(protect_type_shared::USER);
         return $res;
@@ -1977,7 +1977,7 @@ class create_test_objects extends test_base
         global $share_types;
         global $protection_types;
         $src = $this->source();
-        $src->excluded = true;
+        $src->exclude();
         $src->share_id = $share_types->id(share_type_shared::GROUP);
         $src->protection_id = $protection_types->id(protect_type_shared::USER);
         return $src;
@@ -2106,7 +2106,7 @@ class create_test_objects extends test_base
         $ref = $this->reference();
         $ref->source = $this->source();
         $ref->url = ref_api::TU_READ;
-        $ref->excluded = false;
+        $ref->include();
         $ref->share_id = $share_types->id(share_type_shared::GROUP);
         $ref->protection_id = $protection_types->id(protect_type_shared::USER);
         return $ref;
@@ -2124,7 +2124,7 @@ class create_test_objects extends test_base
         $ref->url = ref_api::TU_READ;
         $ref->source = $this->source();
         $ref->description = ref_api::TD_READ;
-        $ref->excluded = true;
+        $ref->exclude();
         $ref->share_id = $share_types->id(share_type_shared::GROUP);
         $ref->protection_id = $protection_types->id(protect_type_shared::USER);
         return $ref;
@@ -2171,7 +2171,7 @@ class create_test_objects extends test_base
         $msk->description = view_api::TD_READ;
         $msk->code_id = view_api::TC_READ;
         $msk->set_type(view_type::DETAIL);
-        $msk->excluded = true;
+        $msk->exclude();
         $msk->share_id = $share_types->id(share_type_shared::GROUP);
         $msk->protection_id = $protection_types->id(protect_type_shared::USER);
         return $msk;
@@ -2250,7 +2250,7 @@ class create_test_objects extends test_base
         global $share_types;
         global $protection_types;
         $lnk = $this->view_link();
-        $lnk->excluded = true;
+        $lnk->exclude();
         $lnk->share_id = $share_types->id(share_type_shared::GROUP);
         $lnk->protection_id = $protection_types->id(protect_type_shared::USER);
         return $lnk;
@@ -2292,7 +2292,7 @@ class create_test_objects extends test_base
         $cmp->set_col_sub_phrase($this->city());
         $cmp->set_formula($this->formula());
         $cmp->set_link_type(component_link_type::EXPRESSION);
-        $cmp->excluded = true;
+        $cmp->exclude();
         $cmp->share_id = $share_types->id(share_type_shared::GROUP);
         $cmp->protection_id = $protection_types->id(protect_type_shared::USER);
         return $cmp;
@@ -2445,7 +2445,7 @@ class create_test_objects extends test_base
         $lnk->set(1, $this->view(), $this->component(), 1);
         $lnk->set_predicate(component_link_type::EXPRESSION);
         $lnk->set_pos_type(position_type::SIDE);
-        $lnk->excluded = true;
+        $lnk->exclude();
         $lnk->share_id = $share_types->id(share_type_shared::GROUP);
         $lnk->protection_id = $protection_types->id(protect_type_shared::USER);
         return $lnk;

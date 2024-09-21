@@ -150,12 +150,12 @@ class test_api extends create_test_objects
         $class = $usr_obj::class;
         $class = $this->class_to_api($class);
         $test_name = $class . ' excluded returns id only api json';
-        $usr_obj->excluded = true;
+        $usr_obj->exclude();
         $json_excluded = $usr_obj->api_json();
         $result = $this->assert($test_name, $json_excluded, '{"id":1,"excluded":true}');
         if ($result) {
             $test_name = $class . ' reset returns empty api json';
-            $usr_obj->excluded = false;
+            $usr_obj->include();
             // check that the excluded object returns a json with just the id and the excluded flag
             $json_api = $usr_obj->api_json();
             $clone_obj = clone $usr_obj;

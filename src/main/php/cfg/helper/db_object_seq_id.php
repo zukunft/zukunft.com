@@ -94,6 +94,15 @@ class db_object_seq_id extends db_object implements JsonSerializable
     }
 
     /**
+     * reset the vars of this object
+     * used to search for the standard object, because the search is word, value, formula or ... specific
+     */
+    function reset(): void
+    {
+        $this->set_id(0);
+    }
+
+    /**
      * map the database fields to the object fields
      * to be extended by the child functions
      *

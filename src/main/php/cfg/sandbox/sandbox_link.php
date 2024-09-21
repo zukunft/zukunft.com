@@ -348,25 +348,6 @@ class sandbox_link extends sandbox
         return $msg;
     }
 
-    /**
-     * fill a similar object that is extended with display interface functions
-     * @param object $dsp_obj
-     *
-     * @return void
-     */
-    function fill_dsp_obj(object $dsp_obj): void
-    {
-        parent::fill_dsp_obj($dsp_obj);
-
-        if ($this->fob != null) {
-            $dsp_obj->fob = $this->fob->dsp_obj();
-        }
-        if ($this->tob != null) {
-            $dsp_obj->tob = $this->tob->dsp_obj();
-        }
-        $dsp_obj->set_predicate_id($this->predicate_id());
-    }
-
 
     /*
      * load

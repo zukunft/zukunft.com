@@ -127,7 +127,7 @@ class word_tests
         $t->assert_api_json($wrd);
         $wrd = $t->word_filled();
         $t->assert_api_json($wrd);
-        $wrd->excluded = false;
+        $wrd->include();
         $t->assert_api($wrd, 'word_full');
         $wrd = $t->word();
         $t->assert_api($wrd, 'word_body');

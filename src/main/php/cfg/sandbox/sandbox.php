@@ -5,8 +5,6 @@
     cfg/sandbox/sandbox.php - the superclass for handling user specific objects including the database saving
     -----------------------
 
-    TODO should be merged when php allows aggregating extends e.g. sandbox extends db_object, db_user_object
-
     This superclass should be used by the classes words, formula, ... to enable user specific values and links
     similar to sandbox.php but for database objects that have an auto sequence prime id
     For value objects the sandbox_multi object is used as a base because values are based on more than one db table
@@ -63,11 +61,6 @@
     http://zukunft.com
 
 */
-
-// TODO align the function return types with the source (ref) object
-// TODO use the user sandbox also for the word object
-// TODO check if handling of negative ids is correct
-// TODO split into a link and a named user sandbox object to always use the smallest possible object
 
 namespace cfg;
 
@@ -148,25 +141,31 @@ class sandbox extends db_object_seq_id_user
         [self::FLD_PROTECT, self::FLD_PROTECT_SQLTYP, sql_field_default::NULL, '', '', self::FLD_PROTECT_COM],
     );
 
+    // all database field names excluding the id used to identify if there are some user specific changes
     // dummy arrays that should be overwritten by the child object
     const FLD_NAMES = array();
+    // list of the user specific database field names
     const FLD_NAMES_USR = array();
     // database fields that should only be taken from the user sandbox table
     const FLD_NAMES_USR_ONLY = array();
-    // combine FLD_NAMES_NUM_USR_SBX and FLD_NAMES_NUM_USR_ONLY_SBX just for shorter code
+    // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_EXCLUDED,
         self::FLD_SHARE,
         self::FLD_PROTECT
     );
-    // list of all user sandbox database types with a standard ID
+
+    // list of all user sandbox database types with a sequence ID
     // so exclude values and result TODO check missing owner for values and results
     const DB_TYPES = array(
         word::class,
         triple::class,
+        source::class,
+        ref::class,
         formula::class,
         formula_link::class,
         view::class,
+        view_term_link::class,
         component::class,
         component_link::class
     );
@@ -223,16 +222,16 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * reset the search values of this object
-     * needed to search for the standard object, because the search is work, value, formula or ... specific
+     * used to search for the standard object, because the search is word, value, formula or ... specific
      */
     function reset(): void
     {
-        $this->set_id(0);
+        parent::reset();
         $this->usr_cfg_id = null;
         $this->owner_id = null;
         $this->share_id = null;
         $this->protection_id = null;
-        $this->excluded = false;
+        $this->include();
         // TODO move to the objects that actually use the type
         $this->type_id = null;
     }
@@ -256,7 +255,7 @@ class sandbox extends db_object_seq_id_user
      * this row_mapper_sandbox function should be used for all user sandbox objects
      *
      * @param array|null $db_row with the data directly from the database
-     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if the user sandbox object is loaded and valid
@@ -273,19 +272,19 @@ class sandbox extends db_object_seq_id_user
         }
         $result = parent::row_mapper($db_row, $id_fld);
         if ($result) {
-            $this->owner_id = $db_row[user::FLD_ID];
-            // e.g. the list of names does not include the field excluded
-            // TODO instead the excluded rows are filtered out on SQL level
-            if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
-                $this->set_excluded($db_row[self::FLD_EXCLUDED]);
-            }
             if (!$load_std) {
                 $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
             }
+            $this->owner_id = $db_row[user::FLD_ID];
             if ($allow_usr_protect) {
                 $this->row_mapper_usr($db_row);
             } else {
                 $this->row_mapper_std();
+            }
+            // e.g. the list of names does not include the field excluded
+            // TODO instead the excluded rows are filtered out on SQL level
+            if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
+                $this->set_excluded($db_row[self::FLD_EXCLUDED]);
             }
         }
         return $result;
@@ -428,6 +427,7 @@ class sandbox extends db_object_seq_id_user
      */
     function type_name_field(): string
     {
+        log_err('type_name_field is not overwritten for the ' . $this::class . ' object');
         return verb::FLD_NAME;
     }
 
@@ -534,6 +534,7 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
+     * create and fill the related api object
      * overwritten by the child objects with the object specific fields
      * @return sandbox_api any frontend api object e.g. word_api
      */
@@ -563,21 +564,6 @@ class sandbox extends db_object_seq_id_user
         $api_obj->set_id($this->id());
         $api_obj->share = $this->share_id;
         $api_obj->protection = $this->protection_id;
-    }
-
-    /**
-     * TODO deprecate
-     * fill a similar object that is extended with display interface functions
-     *
-     * @param object $dsp_obj the object that should be filled with all user sandbox values
-     */
-    function fill_dsp_obj(object $dsp_obj): void
-    {
-        $dsp_obj->set_id($this->id());
-        $dsp_obj->usr_cfg_id = $this->usr_cfg_id;
-        $dsp_obj->usr = $this->user();
-        $dsp_obj->owner_id = $this->owner_id;
-        $dsp_obj->excluded = $this->is_excluded();
     }
 
     /**
@@ -617,10 +603,7 @@ class sandbox extends db_object_seq_id_user
      */
 
     /*
-     * these functions differ for each object, so they are always in the child class and not this in the superclass
-     *
-     * private function load_standard() {}
-     * function load() {}
+     * load functions differ for each object, so they are mostly in the child class and not this in the superclass
     */
 
     /**
@@ -858,6 +841,7 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
+     * get the user who uses the value that most other users use to reduce the number of user overwrites
      * @param sql_db $db_con
      * @return sql_par sql parameter to get the user id of the most often used link (position) beside the standard (position)
      */
@@ -914,7 +898,6 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * if the user is an admin the user can force to be the owner of this object
-     * TODO add a test
      * TODO review
      */
     function take_ownership(user $usr): bool

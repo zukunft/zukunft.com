@@ -133,7 +133,7 @@ class sandbox_named extends sandbox
      * to be extended by the child object
      *
      * @param array|null $db_row with the data directly from the database
-     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as set in the child class
      * @param string $name_fld the name of the name field as set in the child class
@@ -302,20 +302,6 @@ class sandbox_named extends sandbox
             }
         }
         return $msg;
-    }
-
-    /**
-     * fill a similar object that is extended with display interface functions
-     * TODO base on the api object and deprecate
-     *
-     * @param object $dsp_obj the object that should be filled with all user sandbox value
-     */
-    function fill_dsp_obj(object $dsp_obj): void
-    {
-        parent::fill_dsp_obj($dsp_obj);
-
-        $dsp_obj->set_name($this->name());
-        $dsp_obj->description = $this->description;
     }
 
 

@@ -115,7 +115,7 @@ class formula_tests
         $t->subheader('formula api unit tests');
         $frm = $t->formula_filled();
         $t->assert_api_json($frm);
-        $frm->excluded = false;
+        $frm->include();
         $t->assert_api($frm, 'formula_body');
 
         $t->subheader('formula frontend unit tests');

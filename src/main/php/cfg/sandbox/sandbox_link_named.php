@@ -80,7 +80,7 @@ class sandbox_link_named extends sandbox_link
      * to be extended by the child object
      *
      * @param array|null $db_row with the data directly from the database
-     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as set in the child class
      * @param string $name_fld the name of the name field as set in the child class
@@ -221,16 +221,6 @@ class sandbox_link_named extends sandbox_link
             }
         }
         return $msg;
-    }
-
-    /**
-     * @param object $dsp_obj frontend API objects that should be filled with unique object name
-     */
-    function fill_dsp_obj(object $dsp_obj): void
-    {
-        parent::fill_api_obj($dsp_obj);
-
-        $dsp_obj->set_type_id($this->predicate_id());
     }
 
 
