@@ -1071,6 +1071,7 @@ class sql
             } elseif ($spt->is_text()) {
                 $this->add_par($spt, $fld_val, $name);
             } elseif ($spt == sql_par_type::CONST
+                or $spt == sql_par_type::CONST_OR_NULL
                 or $spt == sql_par_type::CONST_NOT
                 or $spt == sql_par_type::CONST_NOT_IN) {
                 $this->add_par($spt, $fld_val, $name);
@@ -3504,6 +3505,9 @@ class sql
             } elseif ($typ == sql_par_type::CONST) {
                 // $par_offset--;
                 $sql_where .= $tbl . $fld . ' = ' . $par->value;
+            } elseif ($typ == sql_par_type::CONST_OR_NULL) {
+                $sql_where .= ' ( ' . $tbl . $fld . ' <> ' . $par->value
+                    . ' OR ' . $tbl . $fld . ' is NULL )';
             } elseif ($typ == sql_par_type::CONST_NOT) {
                 //$par_offset--;
                 $sql_where .= $tbl . $fld . ' <> ' . $par->value;
@@ -3667,6 +3671,11 @@ class sql
                         } elseif ($typ == sql_par_type::CONST) {
                             $par_offset--;
                             $result .= $tbl_id . $this->par_lst->name($i) . ' = ' . $this->par_value($i + 1);
+                        } elseif ($typ == sql_par_type::CONST_OR_NULL) {
+                            $par_offset--;
+                            $result .= ' ( ' . $tbl_id
+                                . $this->par_lst->name($i) . ' <> ' . $this->par_value($i + 1)
+                                . ' OR ' . $tbl_id . $this->par_lst->name($i) . ' is NULL )';
                         } elseif ($typ == sql_par_type::CONST_NOT) {
                             $par_offset--;
                             $result .= $tbl_id . $this->par_lst->name($i) . ' <> ' . $this->par_value($i + 1);
@@ -3831,6 +3840,7 @@ class sql
         $result = 0;
         foreach ($this->par_lst->types() as $par_type) {
             if ($par_type != sql_par_type::CONST
+                and $par_type != sql_par_type::CONST_OR_NULL
                 and $par_type != sql_par_type::CONST_NOT
                 and $par_type != sql_par_type::CONST_NOT_IN
                 and $par_type != sql_par_type::IS_NULL
@@ -4467,6 +4477,7 @@ class sql
         $used_par_values = [];
         foreach ($this->par_lst->lst as $par_fld) {
             if ($par_fld->type != sql_par_type::CONST
+                and $par_fld->type != sql_par_type::CONST_OR_NULL
                 and $par_fld->type != sql_par_type::CONST_NOT
                 and $par_fld->type != sql_par_type::CONST_NOT_IN
                 and $par_fld->type != sql_par_type::IS_NULL
@@ -5147,6 +5158,7 @@ class sql
                 $result = self::PG_PAR_TEXT;
                 break;
             case sql_par_type::CONST:
+            case sql_par_type::CONST_OR_NULL:
             case sql_par_type::CONST_NOT:
             case sql_par_type::CONST_NOT_IN:
             case sql_par_type::IS_NULL:

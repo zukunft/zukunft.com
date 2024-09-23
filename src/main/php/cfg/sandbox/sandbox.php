@@ -995,30 +995,6 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * create an SQL statement to get all the users that have changed this value
-     * TODO deprecate and base it on the sql creator object
-     * @param sql_db $db_con
-     * @return sql_par
-     */
-    function load_sql_changer_old(sql_db $db_con): sql_par
-    {
-        $qp = new sql_par($this::class);
-        $qp->name .= 'changer';
-        if ($this->owner_id > 0) {
-            $qp->name .= sql::NAME_SEP . sql::NAME_EXT_EX_OWNER;
-        }
-        $db_con->set_class($this::class, true);
-        $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(array(user::FLD_ID));
-        $qp->sql = $db_con->select_by_id_not_owner($this->id(), $this->owner_id);
-
-        $qp->par = $db_con->get_par();
-
-        return $qp;
-    }
-
-    /**
      * if the object has been changed by someone else than the owner the user id is returned
      * but only return the user id if the user has not also excluded it
      * @returns int the user id of someone who has changed the object, but is not owner
@@ -1032,8 +1008,7 @@ class sandbox extends db_object_seq_id_user
         $user_id = 0;
         $db_con->set_class($this::class);
         $db_con->set_usr($this->user()->id());
-        //$qp = $this->load_sql_changer($db_con->sql_creator());
-        $qp = $this->load_sql_changer_old($db_con);
+        $qp = $this->load_sql_changer($db_con->sql_creator());
         $db_row = $db_con->get1($qp);
         if ($db_row) {
             $user_id = $db_row[user::FLD_ID];
@@ -1041,6 +1016,61 @@ class sandbox extends db_object_seq_id_user
 
         log_debug('is ' . $user_id);
         return $user_id;
+    }
+
+    /**
+     * create an SQL statement to get all the users that have changed this value
+     *
+     * @param sql $sc with the target db_type set
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_changer(sql $sc): sql_par
+    {
+        $qp = new sql_par($this::class);
+        $qp->name .= 'changer';
+        if ($this->owner_id > 0) {
+            $qp->name .= sql::NAME_SEP . sql::NAME_EXT_EX_OWNER;
+        }
+        $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(array(user::FLD_ID));
+        $sc->add_where($this->id_field(), $this->id());
+        if ($this->owner_id > 0) {
+            $sc->add_where(user::FLD_ID, $this->owner_id, sql_par_type::INT_NOT);
+        }
+        $sc->add_where(self::FLD_EXCLUDED, 1, sql_par_type::CONST_OR_NULL);
+        $qp->sql = $sc->sql();
+
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * @return user_list a list of all user that have ever changed the object (beside the owner)
+     */
+    function changed_by(): user_list
+    {
+        log_debug($this->dsp_id());
+
+        global $db_con;
+
+        $usr_id_lst = array();
+        $result = new user_list($this->user());
+
+        // add object owner
+        //$usr_id_lst[] = $this->owner_id;
+        $qp = $this->load_sql_of_users_that_changed($db_con->sql_creator());
+        $db_usr_lst = $db_con->get($qp);
+        foreach ($db_usr_lst as $db_usr) {
+            if ($db_usr[user::FLD_ID] > 0) {
+                $usr_id_lst[] = $db_usr[user::FLD_ID];
+            }
+        }
+        $result->load_by_ids($db_con, $usr_id_lst);
+
+        return $result;
     }
 
     /**
@@ -1071,32 +1101,6 @@ class sandbox extends db_object_seq_id_user
         $qp->par = $sc->get_par();
 
         return $qp;
-    }
-
-    /**
-     * @return user_list a list of all user that have ever changed the object (beside the owner)
-     */
-    function changed_by(): user_list
-    {
-        log_debug($this->dsp_id());
-
-        global $db_con;
-
-        $usr_id_lst = array();
-        $result = new user_list($this->user());
-
-        // add object owner
-        //$usr_id_lst[] = $this->owner_id;
-        $qp = $this->load_sql_of_users_that_changed($db_con->sql_creator());
-        $db_usr_lst = $db_con->get($qp);
-        foreach ($db_usr_lst as $db_usr) {
-            if ($db_usr[user::FLD_ID] > 0) {
-                $usr_id_lst[] = $db_usr[user::FLD_ID];
-            }
-        }
-        $result->load_by_ids($db_con, $usr_id_lst);
-
-        return $result;
     }
 
     /**
