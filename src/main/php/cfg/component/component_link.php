@@ -830,49 +830,6 @@ class component_link extends sandbox_link
      * save
      */
 
-    // create a database record to save user specific settings for this component_link
-    protected function add_usr_cfg(string $class = self::class): bool
-    {
-        global $db_con;
-        $result = true;
-
-        if (!$this->has_usr_cfg()) {
-            if ($this->view() != null and $this->component() != null) {
-                log_debug('component_link->add_usr_cfg for "' . $this->view()->name() . '"/"' . $this->component()->name() . '" by user "' . $this->user()->name . '"');
-            } else {
-                log_debug('component_link->add_usr_cfg for "' . $this->id() . '" and user "' . $this->user()->name . '"');
-            }
-
-            // check again if there is not yet a record
-            $db_con->set_class(self::class, true);
-            $qp = new sql_par(self::class);
-            $qp->name = 'component_link_add_usr_cfg';
-            $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id());
-            $db_con->set_where_std($this->id());
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
-            $db_row = $db_con->get1($qp);
-            if ($db_row != null) {
-                $this->usr_cfg_id = $db_row[self::FLD_ID];
-            }
-            if (!$this->has_usr_cfg()) {
-                // create an entry in the user sandbox
-                $db_con->set_class(component_link::class, true);
-                $log_id = $db_con->insert_old(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id()));
-                if ($log_id <= 0) {
-                    log_err('Insert of user_component_link failed.');
-                    $result = false;
-                } else {
-                    $result = true;
-                }
-            }
-        }
-        return $result;
-    }
-
-
-
     // check if the database record for the user specific settings can be removed
 
     /**

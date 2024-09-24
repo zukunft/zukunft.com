@@ -2598,7 +2598,7 @@ class test_base
             $old_description = $lnk->description;
             $new_description = $old_description . self::EXT_RENAME;
             if ($result) {
-                // if user 2 changes the order
+                // if user 2 changes the description
                 $result = $this->write_link_update_description($lnk, $this->usr2, $new_description);
             }
             if ($result) {
@@ -2606,7 +2606,7 @@ class test_base
                 $result = $this->write_link_check_description($lnk, $this->usr1, $old_description);
             }
             if ($result) {
-                // ... but user 2 still see the new
+                // ... but user 2 see the new description
                 $result = $this->write_link_check_description($lnk, $this->usr2, $new_description);
             }
             if ($result) {

@@ -1981,46 +1981,6 @@ class formula extends sandbox_typed
     }
 
     /**
-     * true if a record for a user specific configuration already exists in the database
-     */
-    function has_usr_cfg(): bool
-    {
-        $has_cfg = false;
-        if ($this->usr_cfg_id > 0) {
-            $has_cfg = true;
-        }
-        return $has_cfg;
-    }
-
-    /**
-     * create a database record to save user specific settings for this formula
-     * TODO combine the reread and the adding in a commit transaction; same for all db change transactions
-     */
-    protected function add_usr_cfg(string $class = self::class): bool
-    {
-        global $db_con;
-        $result = true;
-
-        if (!$this->has_usr_cfg()) {
-            log_debug('->add_usr_cfg for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
-
-            // check again if there ist not yet a record
-            if (!$this->check_usr_cfg()) {
-                // create an entry in the user sandbox
-                $db_con->set_class(formula::class, true);
-                $log_id = $db_con->insert_old(array(self::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id()));
-                if ($log_id <= 0) {
-                    log_err('Insert of user_formula failed.');
-                    $result = false;
-                } else {
-                    $result = true;
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
      * create an SQL statement to retrieve all user specific changes of this formula
      * TODO combine with load_sql_user_changes ?
      *
@@ -2066,7 +2026,7 @@ class formula extends sandbox_typed
     }
 
     /**
-     * overwrite of the user sandbox function to
+     * overwrite of the user sandbox function to remove also the related elements
      * simply remove a formula user adjustment without check including the formula elements
      * log a system error if a technical error has occurred
      *
@@ -2107,31 +2067,6 @@ class formula extends sandbox_typed
             } catch (Exception $e) {
                 log_err($action . $msg_failed . ' because ' . $e);
             }
-        }
-
-        return $result;
-    }
-
-    /**
-     * remove user adjustment and log it (used by user.php to undo the user changes)
-     */
-    function del_usr_cfg(): bool
-    {
-
-        global $db_con;
-        $result = '';
-
-        if ($this->id() > 0 and $this->user()->id() > 0) {
-            log_debug('->del_usr_cfg  "' . $this->id() . ' und user ' . $this->user()->name);
-
-            $log = $this->log_del();
-            if ($log->id() > 0) {
-                $db_con->usr_id = $this->user()->id();
-                $result = $this->del_usr_cfg_exe($db_con);
-            }
-
-        } else {
-            log_err("The formula database ID and the user must be set to remove a user specific modification.", "formula->del_usr_cfg");
         }
 
         return $result;

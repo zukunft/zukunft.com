@@ -5,6 +5,8 @@
     cfg/sandbox/sandbox.php - the superclass for handling user specific objects including the database saving
     -----------------------
 
+    TODO check if all function overwrite are really needed
+
     This superclass should be used by the classes words, formula, ... to enable user specific values and links
     similar to sandbox.php but for database objects that have an auto sequence prime id
     For value objects the sandbox_multi object is used as a base because values are based on more than one db table
@@ -1127,23 +1129,29 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
+     * true if the normal (not user table) db row can be changed
+     *
      * @return bool true if the user is the owner and no one else has changed the object
      *              because if another user has changed the object and the original value is changed,
      *              maybe the user object also needs to be updated
      */
     function can_change(): bool
     {
-        $result = false;
+        $can_change = false;
 
         // if the user who wants to change it, is the owner, he can do it
         // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
         log_debug('owner is ' . $this->owner_id . ' and the change is requested by ' . $this->user()->id());
         if ($this->owner_id == $this->user()->id() or $this->owner_id <= 0) {
-            $result = true;
+            $can_change = true;
+            if ($this->owner_id <= 0) {
+                log_warning('owner for ' . $this::class . ' ' . $this->dsp_id() . ' has not been set');
+                // TODO Prio 3 get best owner and set it
+            }
         }
 
-        log_debug($this::class . zu_dsp_bool($result));
-        return $result;
+        log_debug($this::class . zu_dsp_bool($can_change));
+        return $can_change;
     }
 
 
@@ -1204,6 +1212,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * remove user adjustment and log it (used by user.php to undo the user changes)
+     * @return bool true if no error has occured
      */
     function del_usr_cfg(): bool
     {
@@ -1234,47 +1243,33 @@ class sandbox extends db_object_seq_id_user
      * TODO create an overwrite for the link log message to be able to remove the placeholder functions fob and tob
      * @return bool false if the creation has failed and true if it was successful or not needed
      */
-    protected function add_usr_cfg(string $class = self::class): bool
+    protected function add_usr_cfg(): bool
     {
         global $db_con;
-        $result = true;
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
-        $class = $lib->class_to_name($class);
 
+        $result = true;
 
         if (!$this->has_usr_cfg()) {
             if ($this->is_named_obj()) {
                 log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
             } elseif ($this->is_link_obj()) {
                 if ($this->fob() != null and $this->tob() != null) {
-                    log_debug('for "' . $this->from_name() . '"/"' . $this->to_name() . '" by user "' . $this->user()->name . '"');
+                    log_debug('for "' . $this->from_name() . '"/"' . $this->to_name()
+                        . '" by user "' . $this->user()->name . '"');
                 } else {
                     log_debug('for "' . $this->id() . '" and user "' . $this->user()->name . '"');
                 }
             } else {
-                log_err('Unknown user sandbox type ' . $class_name . ' in ' . $this::class, $this::class . '->log_add');
+                log_err('Unknown user sandbox ' . $this::class, $this::class . '->log_add');
             }
 
-            // check again if there ist not yet a record
-            $db_con->set_class($this::class, true);
-            $qp = new sql_par($class);
-            $qp->name = $class . '_add_usr_cfg';
-            $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id());
-            $db_con->set_where_std($this->id());
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
-            $db_row = $db_con->get1($qp);
-            if ($db_row != null) {
-                $this->usr_cfg_id = $db_row[$this->id_field()];
-            }
-            if (!$this->has_usr_cfg()) {
+            if ($this->still_has_no_usr_cfg()) {
                 $log_id = 0;
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
                     $qp = $this->sql_insert($sc, new sql_type_list([sql_type::USER]));
-                    $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id() . ' for user ' . $this->user()->dsp_id());
+                    $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id()
+                        . ' for user ' . $this->user()->dsp_id());
                     if ($usr_msg->is_ok()) {
                         $log_id = $usr_msg->get_row_id();
                     }
@@ -1282,7 +1277,8 @@ class sandbox extends db_object_seq_id_user
                     // create an entry in the user sandbox
                     $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id());
-                    $log_id = $db_con->insert_old(array($this->id_field(), user::FLD_ID), array($this->id(), $this->user()->id()));
+                    $log_id = $db_con->insert_old(
+                        array($this->id_field(), user::FLD_ID), array($this->id(), $this->user()->id()));
                 }
                 if ($log_id <= 0) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $this::class . ' failed.');
@@ -1325,12 +1321,10 @@ class sandbox extends db_object_seq_id_user
      * check again if there ist not yet a record
      * @return bool true if the user has done some personal changes on this object
      */
-    protected function check_usr_cfg(): bool
+    protected function still_has_no_usr_cfg(): bool
     {
         global $db_con;
-        $result = false;
-
-        log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->dsp_id());
+        $result = true;
 
         // check again if there ist not yet a record
         $qp = $this->load_sql_user_changes($db_con->sql_creator());
@@ -1339,7 +1333,7 @@ class sandbox extends db_object_seq_id_user
         if ($db_row != null) {
             $this->usr_cfg_id = $db_row[$this->id_field()];
             if ($this->has_usr_cfg()) {
-                $result = true;
+                $result = false;
             }
         }
         return $result;

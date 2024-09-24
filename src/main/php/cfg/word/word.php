@@ -1531,25 +1531,6 @@ class word extends sandbox_typed
         return $result;
     }
 
-    /**
-     * true if the user is the owner and no one else has changed the word
-     * because if another user has changed the word and the original value is changed, maybe the user word also needs to be updated
-     */
-    function can_change(): bool
-    {
-        log_debug($this->id() . ',u' . $this->user()->id());
-        $can_change = false;
-        if ($this->owner_id == $this->user()->id() or $this->owner_id <= 0) {
-            $wrd_user = $this->changer();
-            if ($wrd_user == $this->user()->id() or $wrd_user <= 0) {
-                $can_change = true;
-            }
-        }
-
-        log_debug(zu_dsp_bool($can_change));
-        return $can_change;
-    }
-
 
     /*
      * log

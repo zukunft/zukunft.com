@@ -517,52 +517,6 @@ class formula_link extends sandbox_link
     }
 
     /**
-     * create a database record to save user specific settings for this formula_link
-     * @return bool true if adding the new formula link has been successful
-     */
-    protected function add_usr_cfg(string $class = self::class): bool
-    {
-        global $db_con;
-        $result = true;
-
-        if (!$this->has_usr_cfg()) {
-            // check again if there ist not yet a record
-            $qp = $this->load_sql_user_changes($db_con->sql_creator());
-            $db_row = $db_con->get1($qp);
-            if ($db_row != null) {
-                $this->usr_cfg_id = $db_row[formula_link::FLD_ID];
-            }
-            if (!$this->has_usr_cfg()) {
-                $log_id = 0;
-                if ($this->sql_write_prepared()) {
-                    $sc = $db_con->sql_creator();
-                    $qp = $this->sql_insert($sc, new sql_type_list([sql_type::USER]));
-                    $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id() . ' for user ' . $this->user()->dsp_id());
-                    if ($usr_msg->is_ok()) {
-                        $log_id = $usr_msg->get_row_id();
-                    }
-                } else {
-                    // create an entry in the user sandbox
-                    $db_con->set_class(formula_link::class, true);
-                    $log_id = $db_con->insert_old(array(formula_link::FLD_ID, user::FLD_ID), array($this->id(), $this->user()->id()));
-                    if ($log_id <= 0) {
-                        log_err('Insert of user_formula_link failed.');
-                        $result = false;
-                    }
-                }
-                if ($log_id <= 0) {
-                    log_err('Insert of user_formula_link failed.');
-                    $result = false;
-                } else {
-                    $result = true;
-                }
-            }
-        }
-        return $result;
-    }
-
-
-    /**
      * set the main log entry parameters for updating one display word link field
      * e.g. that the user can see "moved formula list to position 3 in word view"
      * @return change the change log object with the presets for formula links
