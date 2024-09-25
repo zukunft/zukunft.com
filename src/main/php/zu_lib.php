@@ -302,6 +302,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO create a undo und redo function for a change_log entry
     TODO for behavior that should apply to several types create a property/behavior table with an n:m reration to phrase types e.g. "show preferred as column" for time phrases
     TODO create a user view for contradicting behaviour e.g. if time should be shown in column, but days in rows
+    TODO save time series data in datetime/value tables where the table name contains the group id e.g. TS_....0C+....0e+....12+....13+ for inhabitant of Switzerland in Mio
     TODO add a text table for string and prosa that never should be used for selection
     TODO add a date table to save dates in an efficient way
     TODO create a alternative backend based on Rust for better speed

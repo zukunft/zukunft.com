@@ -60,6 +60,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 
+use api\system\messeges as msg_enum;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
 use shared\types\protection_type as protect_type_shared;
@@ -2112,6 +2113,8 @@ class triple extends sandbox_link_named implements JsonSerializable
 
     /**
      * add or update a triple in the database or create a user triple
+     * overwrite the sandbox save becuse for triple the reverse order should be checked
+     *
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return user_message the message that should be shown to the user in case something went wrong
      */
@@ -2122,16 +2125,19 @@ class triple extends sandbox_link_named implements JsonSerializable
         global $db_con;
 
         // init
-        //$lib = new library();
-        //$class_name = $lib->class_to_name($this::class);
-
-        // check the preserved names
-        $usr_msg = $this->check_save();
+        $mtr = new message_translator();
+        $msg_reload = $mtr->txt(msg_enum::RELOAD);
+        $msg_fail = $mtr->txt(msg_enum::FAILED);
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
 
         // decide which db write method should be used
         if ($use_func === null) {
             $use_func = $this->sql_default_script_usage();
         }
+
+        // check the preserved names
+        $usr_msg = $this->check_save();
 
         if ($usr_msg->is_ok()) {
 
@@ -2198,7 +2204,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 // done first, because it needs to be done for user and general phrases
                 $db_rec = new triple($this->user());
                 if (!$db_rec->load_by_id($this->id())) {
-                    $usr_msg->add_message('Reloading of triple failed');
+                    $usr_msg->add_message($msg_reload . ' ' . $class_name . ' ' . $msg_fail);
                     if (!$usr_msg->is_ok()) {
                         log_err($usr_msg->get_last_message());
                     }
@@ -2207,7 +2213,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 $std_rec = new triple($this->user()); // the user must also be set to allow to take the ownership
                 $std_rec->set_id($this->id());
                 if (!$std_rec->load_standard()) {
-                    $usr_msg->add_message('Reloading of the default values for triple failed');
+                    $usr_msg->add_message($msg_reload . ' ' . $class_name . ' ' . $msg_fail);
                     if (!$usr_msg->is_ok()) {
                         log_err($usr_msg->get_last_message());
                     }

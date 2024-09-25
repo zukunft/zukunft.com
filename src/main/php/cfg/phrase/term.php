@@ -648,10 +648,9 @@ class term extends combine_named
     /**
      * load the main term parameters by id from the database term view
      * @param int $id the id of the term as defined in the database term view
-     * @param string $class not used for this term object just to be compatible with the db base object
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id, string $class = self::class): int
+    function load_by_id(int $id): int
     {
         global $db_con;
 

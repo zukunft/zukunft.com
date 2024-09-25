@@ -121,18 +121,16 @@ class phrase_type extends type_object
      * just set the class name for the type object function
      * 
      * @param int $id the id of the phrase type
-     * @param string $class the phrase type class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id, string $class = self::class): int
+    function load_by_id(int $id): int
     {
         global $db_con;
 
         $lib = new library();
         log_debug($id);
-        $dp_type = $lib->class_to_name($class);
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $dp_type);
-        return $this->load_typ_obj($qp, $class);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $this::class);
+        return $this->load_typ_obj($qp, $this::class);
     }
 
 }

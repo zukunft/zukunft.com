@@ -259,12 +259,11 @@ class value_time_series extends sandbox_value
      * load a reference object by database id
      * TODO load the related time series data
      * @param int|string $id the id of the reference
-     * @param string $class the reference class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int|string $id, string $class = self::class): int
+    function load_by_id(int|string $id): int
     {
-        return parent::load_by_id($id, $class);
+        return parent::load_by_id($id);
     }
 
     /**

@@ -543,10 +543,9 @@ class phrase extends combine_named
      *
      * @param sql $sc with the target db_type set
      * @param int $id the id of the phrase as defined in the database phrase view
-     * @param string $class the name of this class
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int $id): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_ID);
         $sc->add_where(phrase::FLD_ID, $id);
@@ -561,10 +560,9 @@ class phrase extends combine_named
      *
      * @param sql $sc with the target db_type set
      * @param string $name the name of the phrase and the related word, triple, formula or verb
-     * @param string $class the name of this class
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql $sc, string $name, string $class = self::class): sql_par
+    function load_sql_by_name(sql $sc, string $name): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME);
         $sc->add_where(phrase::FLD_NAME, $name);
@@ -618,12 +616,12 @@ class phrase extends combine_named
      *                must be a negative id for triples
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id, string $class = self::class): int
+    function load_by_id(int $id): int
     {
         global $db_con;
 
         log_debug($id);
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
         return $this->load($qp);
     }
 
@@ -637,7 +635,7 @@ class phrase extends combine_named
         global $db_con;
 
         log_debug($name);
-        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $this::class);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
         return $this->load($qp);
     }
 

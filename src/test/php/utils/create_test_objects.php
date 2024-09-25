@@ -476,7 +476,7 @@ class create_test_objects extends test_base
         $wrd->set_type(phrase_type::NORMAL);
         $wrd->plural = word_api::TN_READ_PLURAL;
         $wrd->set_view_id(view_api::TI_READ);
-        $wrd->values = 2;
+        $wrd->set_usage(2);
         $wrd->exclude();
         $wrd->share_id = $share_types->id(share_type_shared::GROUP);
         $wrd->protection_id = $protection_types->id(protect_type_shared::USER);

@@ -606,18 +606,14 @@ class group extends sandbox_multi
      * just set the class name for the user sandbox function
      * load a word object by database id
      * @param int|string $id the id of the group
-     * @param string $class the group class name
      * @return int|string the id of the object found and zero if nothing is found
      */
-    function load_by_id(int|string $id, string $class = self::class): int|string
+    function load_by_id(int|string $id): int|string
     {
         global $db_con;
 
         log_debug($id);
-        if ($class == '') {
-            $class = $this::class;
-        }
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
         return $this->load($qp);
     }
 

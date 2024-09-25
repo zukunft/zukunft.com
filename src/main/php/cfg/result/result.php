@@ -651,10 +651,9 @@ class result extends sandbox_value
      * load (or force reload from database of) a result by the id
      *
      * @param int|string $id the unique database id of the result that should be loaded
-     * @param string $class always the result class just to be compatible with the parent function
      * @return int true if result has been loaded
      */
-    function load_by_id(int|string $id = 0, string $class = self::class): int
+    function load_by_id(int|string $id = 0): int
     {
         global $db_con;
         $result = 0;
@@ -675,7 +674,7 @@ class result extends sandbox_value
                 $this->set_id($id);
             } else {
                 log_err('The result id and the user must be set ' .
-                    'to load a ' . self::class, self::class . '->load_by_id');
+                    'to load a ' . $this::class, $this::class . '->load_by_id');
             }
         }
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);

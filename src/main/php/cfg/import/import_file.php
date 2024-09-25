@@ -92,9 +92,6 @@ class import_file
      */
     function import_config(user $usr): bool
     {
-        global $db_con;
-        global $verbs;
-
         $result = false;
 
         if ($usr->is_admin() or $usr->is_system()) {
@@ -104,10 +101,6 @@ class import_file
                 $result = true;
             }
         }
-
-        // TODO load the config
-        // $verbs = new verb_list($usr);
-        // $verbs->load($db_con);
 
         return $result;
     }

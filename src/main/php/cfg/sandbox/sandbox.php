@@ -1615,6 +1615,7 @@ class sandbox extends db_object_seq_id_user
                     $sc_par_lst->add(sql_type::UPDATE);
                     $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
                     $usr_msg->add($db_con->update($qp, 'update ' . $obj_name . $this->dsp_id()));
+                    // delete the user overwrite db row because it is not needed any more
                     if ($this->has_usr_cfg()) {
                         $sc_par_lst->add(sql_type::USER);
                         $qp = $this->sql_delete($sc, $sc_par_lst);

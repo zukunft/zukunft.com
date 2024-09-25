@@ -316,17 +316,17 @@ class sys_log extends db_object_seq_id
 
     /**
      * load a system error from the database e.g. to be able to display more details
-     * @param string $class the name of the child class from where the call has been triggered
+     * @param int $id the id of the system log entry that should be loaded
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id, string $class = self::class): int
+    function load_by_id(int $id): int
     {
         log_debug();
 
         global $db_con;
 
         // at the moment it is only possible to select the error by the id
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
         return $this->row_mapper($db_con->get1($qp));
     }
 

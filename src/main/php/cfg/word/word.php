@@ -203,6 +203,7 @@ class word extends sandbox_typed
     const IMPORT_TYPE = 'import type';
     const API_WORD = 'API';
     const URL = 'url';
+    // to group the user data and configuration within the system configuration
     const USER_WORD = 'user';
     const PASSWORD = 'password';
     const OPEN_API = 'OpenAPI';
@@ -607,12 +608,11 @@ class word extends sandbox_typed
      *
      * @param sql $sc with the target db_type set
      * @param int $id the id of the user sandbox object
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int $id): sql_par
     {
-        return parent::load_sql_by_id($sc, $id, $class);
+        return parent::load_sql_by_id($sc, $id);
     }
 
     /**
@@ -1023,9 +1023,9 @@ class word extends sandbox_typed
      * children and            parents return the direct parents and children   without the original phrase(s)
      * foaf_children and       foaf_parents return the    all parents and children   without the original phrase(s)
      * are and                 is return the    all parents and children including the original phrase(s) for the specific verb "is a"
-     * contains                        return the    all             children including the original phrase(s) for the specific verb "contains"
-     * is part of return the    all parents                without the original phrase(s) for the specific verb "contains"
-     * next and              prior return the direct parents and children   without the original phrase(s) for the specific verb "follows"
+     * contains                   return the    all             children including the original phrase(s) for the specific verb "contains"
+     * is part of return the                    all parents                without the original phrase(s) for the specific verb "contains"
+     * next and                     prior return the direct parents and children   without the original phrase(s) for the specific verb "follows"
      * followed_by and        follower_of return the    all parents and children   without the original phrase(s) for the specific verb "follows"
      * differentiated_by and differentiator_for return the    all parents and children   without the original phrase(s) for the specific verb "can_contain"
      *
@@ -1688,64 +1688,6 @@ class word extends sandbox_typed
         $result->add($this->save_field_type($db_con, $db_obj, $norm_obj));
         $result->add($this->save_field_view($db_obj));
         $result->add($this->save_field_excluded($db_con, $db_obj, $norm_obj));
-        log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        return $result;
-    }
-
-    /**
-     * save all updated word fields with one sql function
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param word|sandbox $db_obj the database record before the saving
-     * @param word|sandbox $norm_obj the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
-     */
-    function save_fields_func(sql_db $db_con, word|sandbox $db_obj, word|sandbox $norm_obj): string
-    {
-        $sc = $db_con->sql_creator();
-        $sc_par_lst = new sql_type_list([sql_type::LOG]);
-        $all_fields = $this->db_fields_all();
-        // check the diff against standard
-        $usr_fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst);
-        $usr_msg = new user_message();
-        if (!$usr_fvt_lst->is_empty_except_internal_fields()) {
-            // if the user is owner of the standard ...
-            if ($this->user_id() == $norm_obj->user_id()) {
-                // ... update the standard
-                $sc_par_lst->add(sql_type::UPDATE);
-                $qp = parent::sql_update_switch($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
-                $usr_msg = $db_con->update($qp, 'update user word');
-                // TODO maybe check of other user have used the object and if yes keep or inform
-            } else {
-                if (!$this->has_usr_cfg()) {
-                    $sc_par_lst->add(sql_type::INSERT);
-                    $sc_par_lst->add(sql_type::USER);
-                    $sc_par_lst->add(sql_type::NO_ID_RETURN);
-                    // recreate the field list to include the id for the user table
-                    $fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst);
-                    $qp = parent::sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
-                    $usr_msg = $db_con->insert($qp, 'add user word', true);
-                } else {
-                    $sc_par_lst->add(sql_type::UPDATE);
-                    $sc_par_lst->add(sql_type::USER);
-                    $qp = parent::sql_update_switch($sc, $usr_fvt_lst, $all_fields, $sc_par_lst);
-                    $usr_msg = $db_con->update($qp, 'update user word');
-                }
-            }
-        } else {
-            $fvt_lst = $this->db_fields_changed($db_obj, $sc_par_lst);
-            if (!$fvt_lst->is_empty_except_internal_fields()) {
-                $sc_par_lst->add(sql_type::UPDATE);
-                $qp = parent::sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
-                $usr_msg = $db_con->update($qp, 'update word');
-                if ($this->has_usr_cfg()) {
-                    $sc_par_lst_del_usr_cfg = new sql_type_list([sql_type::LOG]);
-                    $sc_par_lst_del_usr_cfg->add(sql_type::USER);
-                    $qp = parent::sql_delete($sc, $sc_par_lst_del_usr_cfg);
-                    $usr_msg = $db_con->delete($qp, 'del user word');
-                }
-            }
-        }
-        $result = $usr_msg->get_last_message();
         log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
     }

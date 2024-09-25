@@ -40,7 +40,6 @@ include_once API_SYSTEM_PATH . 'type_list.php';
 include_once WEB_USER_PATH . 'user_type_list.php';
 
 use api\value\value_list as value_list_api;
-use cfg\db\sql_db;
 use cfg\value\value_list;
 
 class config_numbers extends value_list
@@ -75,7 +74,7 @@ class config_numbers extends value_list
      *
      * @return bool true if the values of the user configuration have been loaded
      */
-    function load_usr_cgf(sql_db $db_con, user $usr): bool
+    function load_usr_cgf(user $usr): bool
     {
         $result = false;
         $root_phr = new phrase($this->user(), word::SYSTEM_CONFIG);
