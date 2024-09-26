@@ -12,6 +12,11 @@
     the values in the config table can only be changed by the system admin
     expose the config class functions as simple functions for simple coding
 
+    application.yaml vs config.yaml:
+    - the application.yaml contains the settings that cannot be changed without code change
+    - the config.yaml contains all settings that the admin can adjust without code change
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it

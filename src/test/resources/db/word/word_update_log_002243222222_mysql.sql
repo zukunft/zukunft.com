@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS word_update_log_00224322222;
-CREATE PROCEDURE word_update_log_00224322222
+DROP PROCEDURE IF EXISTS word_update_log_002243222222;
+CREATE PROCEDURE word_update_log_002243222222
     (_user_id                 bigint,
      _change_action_id        smallint,
      _field_id_word_name      smallint,
@@ -19,6 +19,9 @@ CREATE PROCEDURE word_update_log_00224322222
      _view_id_old             bigint,
      _view_name               text,
      _view_id                 bigint,
+     _field_id_code_id        smallint,
+     _code_id_old             text,
+     _code_id                 text,
      _field_id_plural         smallint,
      _plural_old              text,
      _plural                  text,
@@ -44,6 +47,8 @@ BEGIN
          SELECT          _user_id,_change_action_id,_field_id_phrase_type_id,_phrase_type_name_old,_phrase_type_name,_phrase_type_id_old,_phrase_type_id,_word_id ;
     INSERT INTO changes ( user_id, change_action_id, change_field_id,         old_value,            new_value,        old_id,             new_id,         row_id)
          SELECT          _user_id,_change_action_id,_field_id_view_id,       _view_name_old,       _view_name,       _view_id_old,       _view_id,       _word_id ;
+    INSERT INTO changes (user_id, change_action_id, change_field_id,          old_value,            new_value,                                            row_id)
+         SELECT          _user_id,_change_action_id,_field_id_code_id,         _code_id_old,        _code_id,                                             _word_id ;
     INSERT INTO changes ( user_id, change_action_id, change_field_id,        old_value,             new_value,                                            row_id)
          SELECT          _user_id,_change_action_id,_field_id_plural,       _plural_old,           _plural,                                              _word_id ;
     INSERT INTO changes ( user_id, change_action_id, change_field_id,        old_value,             new_value,                                            row_id)
@@ -60,6 +65,7 @@ BEGIN
            description    = _description,
            phrase_type_id = _phrase_type_id,
            view_id        = _view_id,
+           code_id        = _code_id,
            plural         = _plural,
            `values`       = _values,
            excluded       = _excluded,
@@ -69,10 +75,10 @@ BEGIN
 
 END;
 
-PREPARE word_update_log_00224322222_call FROM
-    'SELECT word_update_log_00224322222 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+PREPARE word_update_log_002243222222_call FROM
+    'SELECT word_update_log_002243222222 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
-SELECT word_update_log_00224322222
+SELECT word_update_log_002243222222
        (1,
         2,
         10,
@@ -91,6 +97,9 @@ SELECT word_update_log_00224322222
         '',
         1,
         null,
+        null,
+        307,
+        'Mathematics',
         null,
         13,
         'Mathematics',

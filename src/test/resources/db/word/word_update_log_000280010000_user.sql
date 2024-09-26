@@ -1,5 +1,4 @@
-DROP PROCEDURE IF EXISTS word_update_log_00028010000_user;
-CREATE PROCEDURE word_update_log_00028010000_user
+CREATE OR REPLACE FUNCTION word_update_log_000280010000_user
     (_user_id                 bigint,
      _change_action_id        smallint,
      _field_id_description    smallint,
@@ -13,7 +12,8 @@ CREATE PROCEDURE word_update_log_00028010000_user
      _phrase_type_id          smallint,
      _field_id_plural         smallint,
      _plural_old              text,
-     _plural                  text)
+     _plural                  text) RETURNS void AS
+$$
 BEGIN
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
@@ -30,23 +30,26 @@ BEGIN
      WHERE word_id = _word_id
        AND user_id = _user_id;
 
-END;
+END
+$$ LANGUAGE plpgsql;
 
-PREPARE word_update_log_00028010000_user_call FROM
-    'SELECT word_update_log_00028010000_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+PREPARE word_update_log_000280010000_user_call
+        (bigint, smallint, smallint, text, text, bigint, smallint, text, smallint, text, smallint, smallint, text, text) AS
+    SELECT word_update_log_000280010000_user
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11, $12,$13,$14);
 
-SELECT word_update_log_00028010000_user
-       (1,
-        2,
-        11,
-        'Mathematics is an area of knowledge that includes the topics of numbers and formulas',
-        'System Test Word Renamed',
-        1,
-        12,
-        'default',
-        1,
-        'time',
-        2,
-        13,
-        null,
-        'System Test Word Renamed');
+SELECT word_update_log_000280010000_user
+        (1::bigint,
+         2::smallint,
+         11::smallint,
+         'Mathematics is an area of knowledge that includes the topics of numbers and formulas'::text,
+         'System Test Word Renamed'::text,
+         1::bigint,
+         12::smallint,
+         'default'::text,
+         1::smallint,
+         'time'::text,
+         2::smallint,
+         13::smallint,
+         null::text,
+         'System Test Word Renamed'::text);

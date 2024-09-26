@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION word_update_log_00224000002
+CREATE OR REPLACE FUNCTION word_update_log_002240000002
     (_user_id                 bigint,
      _change_action_id        smallint,
      _field_id_word_name      smallint,
@@ -38,12 +38,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE word_update_log_00224000002_call
+PREPARE word_update_log_002240000002_call
     (bigint, smallint, smallint, text, text, bigint, smallint, text, text, smallint, text, smallint, text, smallint, smallint, smallint, smallint) AS
-SELECT word_update_log_00224000002
+SELECT word_update_log_002240000002
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);
 
-SELECT word_update_log_00224000002
+SELECT word_update_log_002240000002
        (1::bigint,
         2::smallint,
         10::smallint,

@@ -4,6 +4,7 @@ PREPARE word_list_by_parents (bigint, bigint[]) AS
            u.word_id AS user_word_id,
            s.user_id,
            s.values,
+           s.code_id,
            l.verb_id,
            CASE WHEN (u.word_name <> ''   IS NOT TRUE) THEN s.word_name      ELSE u.word_name      END AS word_name,
            CASE WHEN (u.plural <> ''      IS NOT TRUE) THEN s.plural         ELSE u.plural         END AS plural,

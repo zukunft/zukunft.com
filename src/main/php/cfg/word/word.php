@@ -89,7 +89,6 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\db\sql_type;
 use cfg\export\sandbox_exp;
 use cfg\export\sandbox_exp_named;
 use cfg\export\word_exp;
@@ -159,7 +158,8 @@ class word extends sandbox_typed
 
     // all database field names excluding the id, standard name and user specific fields
     const FLD_NAMES = array(
-        self::FLD_VALUES
+        self::FLD_VALUES,
+        sql::FLD_CODE_ID
     );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
@@ -192,19 +192,69 @@ class word extends sandbox_typed
      * preserved
      */
 
-    // const names of a words used by the system for its own configuration
+    // code_id and name of a words used by the system for its own configuration
     // e.g. the number of decimal places related to the user specific words
     // system configuration that is not related to user sandbox data is using the flat cfg methods
     //included in the preserved word names
+
+    // words used to select parts of the system configuration where the normal name should not be changed
+    // *_COM is the tooltip for the word; to have the comments on one place the yaml is the prefered place
+    const TOOLTIP_COMMENT_COM = 'keyword to read the word or triple description from the config.yaml';
+    const TOOLTIP_COMMENT = 'tooltip-comment';
+    const THIS_SYSTEM = 'zukunft.com';
+    const CONFIGURATION = 'configuration';
+    const SYSTEM = 'system';
+    const JOB = 'job';
+    const POD = 'pod';
+    const USER = 'user';
+
+    // general words used also for the system configuration that have a fixed tooltip
+    const TIME = 'time';
+    const TIME_COM = 'Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future';
+    const YEAR = 'year';
+    const YEAR_COM = 'A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.';
+    const CALCULATION = 'calculation';
+    const CALCULATION_COM = 'A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results';
+    const AVERAGE = 'average';
+    const AVERAGE_COM = 'The arithmetic mean – the sum of the numbers divided by how many numbers are in the list.';
+    const DATABASE = 'database';
+    const DATABASE_COM = 'An organized collection of data stored and accessed electronically.';
+
+    // general words used also for the system configuration where the initial tooltip is in the config.yaml
+    const VERSION = 'version';
+    const RETRY = 'retry';
+    const START = 'start';
+    const DELAY = 'delay';
+    const SEC = 'sec';
+    const MAX = 'max';
+    const BLOCK = 'block';
+    const SIZE = 'size';
+    const INSERT = 'insert';
+    const UPDATE = 'update';
+    const DELETE = 'delete';
+    const VALUE = 'value';
+    const TABLE = 'table';
+    const NAME = 'name';
+    const PHRASE = 'phrase';
+    const MILLISECOND = 'millisecond';
+    const SELECT = 'select';
+    const INITIAL = 'initial';
+    const ENTRY = 'entry';
+    const PRESELECT = 'preselect';
+    const MIN = 'min';
+    const PERCENT = 'percent';
+    const AUTOMATIC = 'automatic';
+    const CREATE = 'create';
+    const VIEW = 'view';
+    const FREEZE = 'freeze';
+    const URL = 'url';
+
     const SYSTEM_CONFIG = 'system configuration';
     // for the configuration of a single job
-    const JOB_CONFIG = 'job configuration';
     // TODO complete the concrete setup
     const IMPORT_TYPE = 'import type';
     const API_WORD = 'API';
-    const URL = 'url';
     // to group the user data and configuration within the system configuration
-    const USER_WORD = 'user';
     const PASSWORD = 'password';
     const OPEN_API = 'OpenAPI';
     const DEFINITION = 'definition';
@@ -215,6 +265,7 @@ class word extends sandbox_typed
      */
 
     // database fields additional to the user sandbox fields
+    private ?string $code_id;  // to select single words used by the system without using the type that can potentially select more than one word
     public ?string $plural;    // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
     public ?int $values;       // the total number of values linked to this word as an indication how common the word is and to sort the words
 
@@ -249,6 +300,7 @@ class word extends sandbox_typed
     function reset(): void
     {
         parent::reset();
+        $this->code_id = null;
         $this->plural = null;
         $this->values = null;
 
@@ -285,6 +337,9 @@ class word extends sandbox_typed
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
+            if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
+                $this->set_code_id($db_row[sql::FLD_CODE_ID]);
+            }
             if (array_key_exists(self::FLD_PLURAL, $db_row)) {
                 $this->plural = $db_row[self::FLD_PLURAL];
             }
@@ -330,6 +385,25 @@ class word extends sandbox_typed
     {
         global $phrase_types;
         $this->type_id = $phrase_types->id($type_code_id);
+    }
+
+    /**
+     * set the unique id to select a single word by the program
+     *r
+     * @param string|null $code_id the unique key to select a word used by the system e.g. for the system configuration
+     * @return void
+     */
+    function set_code_id(?string $code_id): void
+    {
+        $this->code_id = $code_id;
+    }
+
+    /**
+     * @return string|null the unique key or null if the word is not used by the system
+     */
+    function code_id(): ?string
+    {
+        return $this->code_id;
     }
 
     /**
@@ -806,6 +880,13 @@ class word extends sandbox_typed
         foreach ($in_ex_json as $key => $value) {
             if ($key == sandbox_exp::FLD_TYPE) {
                 $this->type_id = $phrase_types->id($value);
+            }
+            if ($key == sql::FLD_CODE_ID) {
+                if ($this->user()->is_admin()) {
+                    if ($value <> '') {
+                        $this->set_code_id($value);
+                    }
+                }
             }
             if ($key == self::FLD_PLURAL) {
                 if ($value <> '') {
@@ -1638,6 +1719,28 @@ class word extends sandbox_typed
     }
 
     /**
+     * set the update parameters for the word code_id
+     * @return user_message the message that should be shown to the user in case something went wrong
+     */
+    private function save_field_code_id(sql_db $db_con, word $db_rec, word $std_rec): user_message
+    {
+        $usr_msg = new user_message();
+        // if the code_id is not set, don't overwrite any db entry
+        if ($this->code_id() <> Null) {
+            if ($this->code_id() <> $db_rec->code_id()) {
+                $log = $this->log_upd();
+                $log->old_value = $db_rec->code_id();
+                $log->new_value = $this->code_id();
+                $log->std_value = $std_rec->code_id();
+                $log->row_id = $this->id();
+                $log->set_field(sql::FLD_CODE_ID);
+                $usr_msg->add($this->save_field_user($db_con, $log));
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
      * set the update parameters for the word plural
      * @return user_message the message that should be shown to the user in case something went wrong
      */
@@ -1683,7 +1786,8 @@ class word extends sandbox_typed
      */
     function save_all_fields(sql_db $db_con, word|sandbox $db_obj, word|sandbox $norm_obj): user_message
     {
-        $result = $this->save_field_plural($db_con, $db_obj, $norm_obj);
+        $result = $this->save_field_code_id($db_con, $db_obj, $norm_obj);
+        $result->add($this->save_field_plural($db_con, $db_obj, $norm_obj));
         $result->add($this->save_field_description($db_con, $db_obj, $norm_obj));
         $result->add($this->save_field_type($db_con, $db_obj, $norm_obj));
         $result->add($this->save_field_view($db_obj));
@@ -1778,6 +1882,7 @@ class word extends sandbox_typed
             [
                 phrase::FLD_TYPE,
                 self::FLD_VIEW,
+                sql::FLD_CODE_ID,
                 self::FLD_PLURAL,
                 self::FLD_VALUES
             ],
@@ -1835,6 +1940,23 @@ class word extends sandbox_typed
                 $this->view,
                 $sbx->view
             );
+        }
+        if (!$sc_par_lst->is_usr_tbl()) {
+            if ($sbx->code_id() <> $this->code_id()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
+                        $change_field_list->id($table_id . sql::FLD_CODE_ID),
+                        change::FLD_FIELD_ID_SQLTYP
+                    );
+                }
+                $lst->add_field(
+                    sql::FLD_CODE_ID,
+                    $this->code_id(),
+                    sql::FLD_CODE_ID_SQLTYP,
+                    $sbx->code_id()
+                );
+            }
         }
         // TODO move to language forms
         if ($sbx->plural <> $this->plural) {

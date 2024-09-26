@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS word_insert_log_11115000001_user;
-CREATE PROCEDURE word_insert_log_11115000001_user
+DROP PROCEDURE IF EXISTS word_insert_log_111150000001_user;
+CREATE PROCEDURE word_insert_log_111150000001_user
     (_user_id                 bigint,
      _change_action_id        smallint,
      _field_id_word_name      smallint,
@@ -29,10 +29,10 @@ BEGIN
 
 END;
 
-PREPARE word_insert_log_11115000001_user_call FROM
-    'SELECT word_insert_log_11115000001_user (?,?,?,?,?,?,?,?,?,?,?,?)';
+PREPARE word_insert_log_111150000001_user_call FROM
+    'SELECT word_insert_log_111150000001_user (?,?,?,?,?,?,?,?,?,?,?,?)';
 
-SELECT word_insert_log_11115000001_user
+SELECT word_insert_log_111150000001_user
         (1,
          1,
          10,

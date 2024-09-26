@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS word_insert_log_01115000001;
-CREATE PROCEDURE word_insert_log_01115000001
+DROP PROCEDURE IF EXISTS word_insert_log_011150000001;
+CREATE PROCEDURE word_insert_log_011150000001
     (_word_name               text,
      _user_id                 bigint,
      _change_action_id        smallint,
@@ -43,10 +43,10 @@ BEGIN
 
 END;
 
-PREPARE word_insert_log_01115000001_call FROM
-    'SELECT word_insert_log_01115000001 (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+PREPARE word_insert_log_011150000001_call FROM
+    'SELECT word_insert_log_011150000001 (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-SELECT word_insert_log_01115000001
+SELECT word_insert_log_011150000001
     ('Mathematics',
      1,
      1,

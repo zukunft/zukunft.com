@@ -39,6 +39,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_DB_PATH . 'sql.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 include_once MODEL_IMPORT_PATH . 'import_file.php';
+include_once MODEL_HELPER_PATH . 'config_numbers.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -48,6 +49,7 @@ use cfg\component\component_type_list;
 use cfg\component\position_type;
 use cfg\component\position_type_list;
 use cfg\config;
+use cfg\config_numbers;
 use cfg\element\element;
 use cfg\element\element_type;
 use cfg\element\element_type_list;
@@ -140,6 +142,7 @@ use mysqli;
 use mysqli_result;
 use PDOException;
 use shared\library;
+use shared\types\protection_type as protect_type_shared;
 use test\all_tests;
 
 class sql_db
@@ -843,6 +846,7 @@ class sql_db
             $import = new import_file();
             $this->import_verbs($usr);
             $import->import_base_config($usr);
+            $this->create_internal_words($usr);
             $import->import_config($usr);
             $this->db_check_missing_owner();
 
@@ -5363,6 +5367,86 @@ class sql_db
         $verbs->load($db_con);
 
         return $result;
+    }
+
+    /**
+     * create the words used for the system configuration
+     * @param user $usr the user how has called this function which mus be and admin of the system itself
+     * @return user_message ok if the words has been created successfully of an error message
+     */
+    function create_internal_words(user $usr): user_message
+    {
+        $usr_msg = new user_message();
+
+        global $protection_types;
+        global $verbs;
+
+        if ($usr->is_admin() or $usr->is_system()) {
+            foreach (config_numbers::ADMIN_KEYWORDS as $name) {
+                $wrd = new word($usr);
+                $wrd->set_name($name);
+                $wrd->set_code_id($name);
+                $wrd->protection_id = $protection_types->id(protect_type_shared::ADMIN);
+                $usr_msg->add($wrd->save());
+            }
+            foreach (config_numbers::HIDDEN_KEYWORDS as $name) {
+                $wrd = new word($usr);
+                $wrd->set_name($name);
+                $wrd->set_code_id($name);
+                $wrd->protection_id = $protection_types->id(protect_type_shared::ADMIN);
+                $wrd->set_type(phrase_type::SYSTEM_HIDDEN);
+                $usr_msg->add($wrd->save());
+            }
+            foreach (config_numbers::INTERNAL_COMMENTS as $com_wrd_lst) {
+                $wrd = new word($usr);
+                $com = $com_wrd_lst[0];
+                $name = $com_wrd_lst[1];
+                if (!$wrd->load_by_name($name)) {
+                    $wrd->set_name($name);
+                }
+                $wrd->protection_id = $protection_types->id(protect_type_shared::ADMIN);
+                $wrd->description = $com;
+                $wrd->set_code_id($name);
+                $usr_msg->add($wrd->save());
+            }
+            foreach (config_numbers::HIDDEN_KEY_TRIPLES as $trp_lst) {
+                $from_name = $trp_lst[0];
+                $to_name = $trp_lst[1];
+                $vrb = $verbs->get_verb(verb::CAN_USE);
+                $trp = new triple($usr);
+                $from = new phrase($usr);
+                $from->load_by_name($from_name);
+                $to = new phrase($usr);
+                $to->load_by_name($to_name);
+                $trp->set_from($from);
+                $trp->set_verb($vrb);
+                $trp->set_to($to);
+                $trp->set_name($from_name . ' ' . $to_name);
+                $trp->protection_id = $protection_types->id(protect_type_shared::ADMIN);
+                $trp->set_type(phrase_type::SYSTEM_HIDDEN);
+                //$trp->set_code_id($from_name . ' ' . $to_name);
+                $usr_msg->add($trp->save());
+            }
+            foreach (config_numbers::ADMIN_KEY_TRIPLES as $trp_lst) {
+                $from_name = $trp_lst[0];
+                $to_name = $trp_lst[1];
+                $vrb = $verbs->get_verb(verb::CAN_USE);
+                $trp = new triple($usr);
+                $from = new phrase($usr);
+                $from->load_by_name($from_name);
+                $to = new phrase($usr);
+                $to->load_by_name($to_name);
+                $trp->set_from($from);
+                $trp->set_verb($vrb);
+                $trp->set_to($to);
+                $trp->set_name($from_name . ' ' . $to_name);
+                $trp->protection_id = $protection_types->id(protect_type_shared::ADMIN);
+                //$trp->set_code_id($from_name . ' ' . $to_name);
+                $usr_msg->add($trp->save());
+            }
+        }
+
+        return $usr_msg;
     }
 
     function import_system_views(user $usr): bool

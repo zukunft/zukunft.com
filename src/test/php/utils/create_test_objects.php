@@ -474,6 +474,7 @@ class create_test_objects extends test_base
         $wrd->set(word_api::TI_MATH, word_api::TN_READ);
         $wrd->description = word_api::TD_READ;
         $wrd->set_type(phrase_type::NORMAL);
+        $wrd->set_code_id(word_api::TN_READ);
         $wrd->plural = word_api::TN_READ_PLURAL;
         $wrd->set_view_id(view_api::TI_READ);
         $wrd->set_usage(2);

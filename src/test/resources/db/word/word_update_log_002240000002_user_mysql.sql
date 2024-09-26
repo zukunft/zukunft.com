@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS word_update_log_00224000002;
-CREATE PROCEDURE word_update_log_00224000002
+DROP PROCEDURE IF EXISTS word_update_log_002240000002_user;
+CREATE PROCEDURE word_update_log_002240000002_user
     (_user_id                 bigint,
      _change_action_id        smallint,
      _field_id_word_name      smallint,
@@ -28,19 +28,20 @@ BEGIN
     INSERT INTO changes (user_id, change_action_id, change_field_id,     old_value,      new_value,  row_id)
          SELECT         _user_id,_change_action_id,_field_id_protect_id,_protect_id_old,_protect_id,_word_id ;
 
-    UPDATE words
+    UPDATE user_words
        SET word_name      = _word_name,
            description    = _description,
            phrase_type_id = _phrase_type_id,
            protect_id     = _protect_id
-     WHERE word_id = _word_id;
+     WHERE word_id = _word_id
+       AND user_id = _user_id;
 
 END;
 
-PREPARE word_update_log_00224000002_call FROM
-    'SELECT word_update_log_00224000002 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+PREPARE word_update_log_002240000002_user_call FROM
+    'SELECT word_update_log_002240000002_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
-SELECT word_update_log_00224000002
+SELECT word_update_log_002240000002_user
        (1,
         2,
         10,

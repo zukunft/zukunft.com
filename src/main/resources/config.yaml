@@ -1,0 +1,49 @@
+zukunft.com:
+  tooltip-comment: "zukunft.com is the keyword to select the global settings for all zukunft.com pods"
+  system configuration:
+    tooltip-comment: "keyword to separate the internal system configuration"
+    database:
+      version: 0.0.3
+      tooltip-comment: "the version of the database of the master pod"
+      retry:
+        start delay:
+          sec: 1
+          tooltip-comment: "initial delay in seconds for the first connection retry"
+        max delay:
+          sec: 3600
+          tooltip-comment: "target delay time for a frontend updates so that the user always knows what the system is doing"
+      block size:
+        tooltip-comment: "group the database statements for faster execution"
+        insert: 200
+        update: 100
+        delete: 500
+      value table:
+        table name:
+          max phrase: 3
+          tooltip-comment: "maximal number of phrases that can be included in the table name for a seperate value table e.g. if the system detects that a seperate table for the inhabitants at the end of the year of a city will increase speed and reduce time the table name can be inhabitants-city-year and each row has the city name and the columns have the year names"
+    calculation:
+      block size:
+        average delay:
+          millisecond: 1000
+          tooltip-comment: "the average time in milliseconds to update the results of one formula use to estimate how many formulas can be combined on one calculation block"
+    select:
+      initial entry: 7
+      tooltip-comment: "the initial number of options shown to the user"
+      phrase:
+        preselect:
+          min percent: 30%
+          tooltip-comment: "used to preselect phrases for the next value: if 30% or more of the phrases of a list are the same, the probability is high that the next phrase is the same"
+    year:
+      automatic create: 10
+      tooltip-comment: "the number of futures year automatically created by the system"
+    view:
+      freeze: 20
+      tooltip-comment: "the number of view by one user to automatically freeze the view for the user"
+    job:
+      tooltip-comment: "keyword to separate the internal system job configuration"
+    pod:
+      url: "zukunft.com"
+      tooltip-comment: "the url name of this pod"
+      database:
+        version: 0.0.3
+        tooltip-comment: "the version of the database of this pod"

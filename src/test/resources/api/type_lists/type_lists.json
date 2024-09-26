@@ -6108,10 +6108,16 @@
         "id": 775
       },
       {
+        "name": "6code_id",
+        "code_id": "6code_id",
+        "description": "",
+        "id": 776
+      },
+      {
         "name": "1NOW() AS db_now",
         "code_id": "1NOW() AS db_now",
         "description": "",
-        "id": 776
+        "id": 777
       }
     ],
     "verbs": [

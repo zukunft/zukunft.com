@@ -413,25 +413,6 @@ class triple_list extends sandbox_list
      * load functions (to deprecate because not based on prepared queries )
      */
 
-    private function load_wrd_fields(sql_db $db_con, $pos): string
-    {
-        return 't' . $pos . '.word_id AS word_id' . $pos . ',
-                t' . $pos . '.user_id AS user_id' . $pos . ',
-                ' . $db_con->get_usr_field(word::FLD_NAME, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, word::FLD_NAME . $pos) . ',
-                ' . $db_con->get_usr_field(word::FLD_PLURAL, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, word::FLD_PLURAL . $pos) . ',
-                ' . $db_con->get_usr_field(sandbox_named::FLD_DESCRIPTION, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_TEXT, sandbox_named::FLD_DESCRIPTION . $pos) . ',
-                ' . $db_con->get_usr_field(phrase::FLD_TYPE, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, phrase::FLD_TYPE . $pos) . ',
-                ' . $db_con->get_usr_field(view::FLD_ID, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, view::FLD_ID . $pos) . ',
-                ' . $db_con->get_usr_field(sandbox::FLD_EXCLUDED, 't' . $pos, 'u' . $pos, sql_db::FLD_FORMAT_VAL, sandbox::FLD_EXCLUDED . $pos) . ',
-                  t' . $pos . '.' . $db_con->get_table_name_esc(value::class) . ' AS values' . $pos;
-    }
-
-    private function load_wrd_from($pos): string
-    {
-        return ' words t' . $pos . ' LEFT JOIN user_words u' . $pos . ' ON u' . $pos . '.word_id = t' . $pos . '.word_id 
-                                                                       AND u' . $pos . '.user_id = ' . $this->user()->id() . ' ';
-    }
-
     /**
      * add one triple to the triple list, but only if it is not yet part of the list
      * @param triple

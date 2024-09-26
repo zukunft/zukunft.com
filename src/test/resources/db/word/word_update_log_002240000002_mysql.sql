@@ -1,4 +1,5 @@
-CREATE OR REPLACE FUNCTION word_update_log_00224000002_user
+DROP PROCEDURE IF EXISTS word_update_log_002240000002;
+CREATE PROCEDURE word_update_log_002240000002
     (_user_id                 bigint,
      _change_action_id        smallint,
      _field_id_word_name      smallint,
@@ -15,8 +16,7 @@ CREATE OR REPLACE FUNCTION word_update_log_00224000002_user
      _phrase_type_id          smallint,
      _field_id_protect_id     smallint,
      _protect_id_old          smallint,
-     _protect_id              smallint) RETURNS void AS
-$$
+     _protect_id              smallint)
 BEGIN
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,    old_value,     new_value, row_id)
@@ -28,37 +28,33 @@ BEGIN
     INSERT INTO changes (user_id, change_action_id, change_field_id,     old_value,      new_value,  row_id)
          SELECT         _user_id,_change_action_id,_field_id_protect_id,_protect_id_old,_protect_id,_word_id ;
 
-    UPDATE user_words
+    UPDATE words
        SET word_name      = _word_name,
            description    = _description,
            phrase_type_id = _phrase_type_id,
            protect_id     = _protect_id
-     WHERE word_id = _word_id
-       AND user_id = _user_id;
+     WHERE word_id = _word_id;
 
-END
-$$ LANGUAGE plpgsql;
+END;
 
-PREPARE word_update_log_00224000002_user_call
-        (bigint, smallint, smallint, text, text, bigint, smallint, text, text, smallint, text, smallint, text, smallint, smallint, smallint, smallint) AS
-SELECT word_update_log_00224000002_user
-        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);
+PREPARE word_update_log_002240000002_call FROM
+    'SELECT word_update_log_002240000002 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
-SELECT word_update_log_00224000002_user
-       (1::bigint,
-        2::smallint,
-        10::smallint,
-        'Mathematics'::text,
-        'System Test Word Renamed'::text,
-        1::bigint,
-        11::smallint,
-        'Mathematics is an area of knowledge that includes the topics of numbers and formulas'::text,
-        null::text,
-        12::smallint,
-        'default'::text,
-        1::smallint,
-        null::text,
-        null::smallint,
-        87::smallint,
-        3::smallint,
-        null::smallint);
+SELECT word_update_log_002240000002
+       (1,
+        2,
+        10,
+        'Mathematics',
+        'System Test Word Renamed',
+        1,
+        11,
+        'Mathematics is an area of knowledge that includes the topics of numbers and formulas',
+        null,
+        12,
+        'default',
+        1,
+        null,
+        null,
+        87,
+        3,
+        null);
