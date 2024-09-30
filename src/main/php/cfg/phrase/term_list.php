@@ -275,7 +275,7 @@ class term_list extends sandbox_list_named
      */
     function add(?term $trm_to_add): bool
     {
-        return parent::add_obj($trm_to_add);
+        return parent::add_named_obj($trm_to_add);
     }
 
     /*

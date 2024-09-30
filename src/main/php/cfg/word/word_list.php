@@ -67,7 +67,7 @@ use html\word\word as word_dsp;
 use html\word\word_list as word_list_dsp;
 use shared\library;
 
-class word_list extends sandbox_list
+class word_list extends sandbox_list_named
 {
     // $lst of base_list is the array of the loaded word objects
     // (key is at the moment the database id, but it looks like this has no advantages,
@@ -831,6 +831,17 @@ class word_list extends sandbox_list
                 $this->add_obj($wrd_to_add);
             }
         }
+    }
+
+    /**
+     * add one word object to the list that does not yet have an id but has a name
+     * e.g. to create a list of words that should be saved with block saving
+     * @param word $wrd_to_add the word object that should be added
+     */
+    function add_by_name(word $wrd_to_add): void
+    {
+        log_debug('->add_by_name ' . $wrd_to_add->dsp_id());
+        $this->add_named_obj($wrd_to_add);
     }
 
     /**
@@ -1605,6 +1616,22 @@ class word_list extends sandbox_list
             log_debug('no time found');
         }
         return $result;
+    }
+
+    /*
+     * save
+     */
+
+    function save(): user_message
+    {
+        $usr_msg = new user_message();
+        // load the words
+        // add the missing words
+        // update the existing words
+        // loop over the words and check if all needed functions exist
+        // create the missing functions
+        // create blocks of update function calls
+        return $usr_msg;
     }
 
 }

@@ -394,6 +394,17 @@ class library
         return $return;
     }
 
+    function array_keys_r($array): array
+    {
+        $keys = array_keys($array);
+
+        foreach ($array as $sub_array)
+            if (is_array($sub_array))
+                $keys = array_merge($keys, $this->array_keys_r($sub_array));
+
+        return $keys;
+    }
+
     /**
      * recursive count of the number of elements in an array but limited to a given level
      * @param array $json_array the array that should be analysed

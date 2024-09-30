@@ -54,7 +54,7 @@ use html\html_base;
 use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;
 
-class triple_list extends sandbox_list
+class triple_list extends sandbox_list_named
 {
 
     public array $lst; // the list of triples
@@ -415,11 +415,12 @@ class triple_list extends sandbox_list
 
     /**
      * add one triple to the triple list, but only if it is not yet part of the list
-     * @param triple
+     *
+     * @param triple $lnk_to_add the triple that should be added to the list
      * @return bool true if the triple has been added to the list
      *              and false if the triple already exists
      */
-    function add($lnk_to_add): bool
+    function add(triple $lnk_to_add): bool
     {
         log_debug($lnk_to_add->dsp_id());
         $result = false;
@@ -432,6 +433,18 @@ class triple_list extends sandbox_list
             }
         }
         return $result;
+    }
+
+    /**
+     * add one triple object to the list that does not yet have an id but has a name
+     * * e.g. to create a list of words that should be saved with block saving
+     *
+     * @param triple $lnk_to_add the triple that should be added to the list
+     */
+    function add_by_name(triple $lnk_to_add): void
+    {
+        log_debug($lnk_to_add->dsp_id());
+        $this->add_named_obj($lnk_to_add);
     }
 
 
@@ -675,6 +688,23 @@ class triple_list extends sandbox_list
             $phr_lst->add($lnk->phrase());
         }
         return $phr_lst;
+    }
+
+    /*
+     * save
+     */
+
+    function save(): user_message
+    {
+        $usr_msg = new user_message();
+        // load the words
+        // report the missing words
+        // load the triples
+        // update the existing triples
+        // loop over the triples and check if all needed functions exist
+        // create the missing functions
+        // create blocks of update function calls
+        return $usr_msg;
     }
 
 }

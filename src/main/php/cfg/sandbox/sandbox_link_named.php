@@ -163,6 +163,34 @@ class sandbox_link_named extends sandbox_link
     }
 
     /**
+     * set the description of this named user sandbox link object which explains the object for the user
+     * set and get of the description is needed to use the same function for phrase or term
+     *
+     * @param string|null $description the name of this named user sandbox object e.g. word set in the related object
+     * @return void
+     */
+    function set_description(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * get the description of the sandbox link object
+     * if the object is excluded null is returned
+     * to check the value before the exclution access the var direkt via $this->description
+     *
+     * @return string|null the description from the object e.g. word using the same function as the phrase and term
+     */
+    function description(): ?string
+    {
+        if ($this->excluded) {
+            return null;
+        } else {
+            return $this->description;
+        }
+    }
+
+    /**
      * set the database id of the type
      *
      * @param int|null $type_id the database id of the type

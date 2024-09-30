@@ -1986,7 +1986,7 @@ class phrase_list extends sandbox_list_named
         $result = clone $this;
         foreach ($join_phr_lst->lst as $phr) {
             if (!in_array($phr, $result->lst())) {
-                $result->add_obj($phr);
+                $result->add_named_obj($phr);
             }
         }
         log_debug($lib->dsp_count($result->lst()));
@@ -2082,10 +2082,10 @@ class phrase_list extends sandbox_list_named
         foreach ($this->lst() as $phr) {
             $db_phr = $db_lst->get_obj_by_name($phr->name());
             if ($db_phr == null) {
-                $add_lst->add_obj($phr);
+                $add_lst->add_named_obj($phr);
             } else {
                 if ($phr->needs_db_update($db_phr)) {
-                    $chg_lst->add_obj($phr);
+                    $chg_lst->add_named_obj($phr);
                 }
             }
         }

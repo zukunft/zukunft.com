@@ -254,6 +254,18 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
+     * add a list of phrase names to the value object
+     * that should be converted to a group id once all words and triples are added to the database
+     *
+     * @param phrase_list $phr_lst a phrase list with the word an triple names but that might not yet have a database id
+     * @return void
+     */
+    function set_phrase_lst(phrase_list $phr_lst): void
+    {
+        $this->grp()->set_phrase_list($phr_lst);
+    }
+
+    /**
      * set the numeric value of the user sandbox object
      *
      * @param float|null $number the numeric value that should be saved in the database

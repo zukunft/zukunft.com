@@ -679,9 +679,10 @@ class value_list extends sandbox_value_list
     /**
      * add one value to the value list, but only if it is not yet part of the list
      * @param value|null $val_to_add the value object to be added to the list
+     * @param bool $allow_duplicates true if e.g. the group id is not yet set but the value should nevertheless be added
      * @returns bool true the value has been added
      */
-    function add(?value $val_to_add): bool
+    function add(?value $val_to_add, bool $allow_duplicates = false): bool
     {
         $result = false;
         // check parameters
@@ -689,15 +690,19 @@ class value_list extends sandbox_value_list
             if (get_class($val_to_add) <> value::class) {
                 log_err("Object to add must be of type value, but it is " . get_class($val_to_add), "value_list->add");
             } else {
-                if ($val_to_add->is_id_set() or $val_to_add->grp->name() != '') {
-                    if (count($this->id_lst()) > 0) {
-                        if (!in_array($val_to_add->id(), $this->id_lst())) {
+                if ($allow_duplicates) {
+                    parent::add_obj($val_to_add, $allow_duplicates);
+                } else {
+                    if ($val_to_add->is_id_set() or $val_to_add->grp->name() != '') {
+                        if (count($this->id_lst()) > 0) {
+                            if (!in_array($val_to_add->id(), $this->id_lst())) {
+                                parent::add_obj($val_to_add);
+                                $result = true;
+                            }
+                        } else {
                             parent::add_obj($val_to_add);
                             $result = true;
                         }
-                    } else {
-                        parent::add_obj($val_to_add);
-                        $result = true;
                     }
                 }
             }
@@ -1289,6 +1294,24 @@ class value_list extends sandbox_value_list
 
     }
     */
+
+    /*
+     * save
+     */
+
+    function save(): user_message
+    {
+        $usr_msg = new user_message();
+        // if the group id is not yet set
+        //    load the phrases
+        //    report the missing phrases
+        //    update the group ids
+        // update the existing values
+        // loop over the values and check if all needed functions exist
+        // create the missing functions
+        // create blocks of update function calls
+        return $usr_msg;
+    }
 
 
     /**

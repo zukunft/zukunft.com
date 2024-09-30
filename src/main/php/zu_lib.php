@@ -482,8 +482,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
         job_list - to forward the batch jobs to the UI
         ip_range_list - list of the ip ranges
         sandbox_list - a user specific paged list
-            word_list - a list of words (TODO move to sandbox_list_named?)
-            triple_list - a list of triples (TODO move to sandbox_list_named?)
             value_list - a list of values
             formula_list - a list of formulas
             element_list - a list of formula elements
@@ -495,6 +493,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
             component_list - a list of components
             component_link_list - a list of component_links
             sandbox_list_named - a paged list of named objects
+                word_list - a list of words
+                triple_list - a list of triples
                 phrase_list - a list of phrases
                 term_list - a list of terms
     type_object - to assign program code to a single object
@@ -1184,6 +1184,7 @@ const SYSTEM_VERB_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'verbs.json';
 const SYSTEM_VIEW_CONFIG_FILE = 'system_views.json';
 const BASE_VIEW_CONFIG_FILE = 'base_views.json';
 const SYSTEM_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'config.json';
+const SYSTEM_CONFIG_FILE_YAML = PATH_BASE_CONFIG_FILES . 'config.yaml';
 const PATH_BASE_CONFIG_MESSAGE_FILES = PATH_BASE_CONFIG_FILES . 'messages/';
 const SYSTEM_VIEW_CONFIG_PATH = PATH_BASE_CONFIG_MESSAGE_FILES . SYSTEM_VIEW_CONFIG_FILE;
 const BASE_CONFIG_FILES = [

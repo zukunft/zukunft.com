@@ -38,6 +38,11 @@ use shared\library;
 
 class base_list
 {
+
+    /*
+     *  object vars
+     */
+
     // the protected main var
     private array $lst;
 
@@ -49,6 +54,7 @@ class base_list
     // memory vs speed optimize vars
     private array $id_pos_lst;
     private bool $lst_dirty;
+
 
     /*
      * construct and map

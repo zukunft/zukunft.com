@@ -209,7 +209,7 @@ class source_list extends sandbox_list_named
      */
     function add(?source $src_to_add): bool
     {
-        return parent::add_obj($src_to_add);
+        return parent::add_named_obj($src_to_add);
     }
 
 

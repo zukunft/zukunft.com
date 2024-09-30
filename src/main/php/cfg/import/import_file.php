@@ -31,6 +31,7 @@ namespace cfg\import;
 include_once MODEL_IMPORT_PATH . 'import.php';
 
 use cfg\user;
+use cfg\user_message;
 use html\html_base;
 
 class import_file
@@ -48,14 +49,14 @@ class import_file
         $msg = '';
 
         $json_str = file_get_contents($filename);
-        if ($json_str == false) {
+        if (!$json_str) {
             log_err('Error reading JSON resource ' . $filename);
         } else {
             if ($json_str == '') {
                 $msg .= ' failed because message file is empty of not found.';
             } else {
                 $import = new import;
-                $import_result = $import->put($json_str, $usr);
+                $import_result = $import->put_json($json_str, $usr);
                 if ($import_result->is_ok()) {
                     $msg .= ' done ('
                         . $import->words_done . ' words, '
@@ -86,6 +87,43 @@ class import_file
     }
 
     /**
+     * import a single yaml file
+     *
+     * @param string $filename
+     * @param user $usr
+     * @return user_message
+     */
+    function yaml_file(string $filename, user $usr): user_message
+    {
+        $usr_msg = new user_message();
+
+        $yaml_str = file_get_contents($filename);
+        if (!$yaml_str) {
+            log_err('Error reading JSON resource ' . $filename);
+        } else {
+            if ($yaml_str == '') {
+                $usr_msg->add_message(' failed because message file is empty of not found.');
+            } else {
+                $import = new import;
+                $import_result = $import->put_yaml($yaml_str, $usr);
+                if ($import_result->is_ok()) {
+                    $usr_msg->add_message(' done (' . $import->status_text()->get_last_message() . ' )');
+                    if ($import->users_done > 0) {
+                        $usr_msg->add_message(' ... and ' . $import->users_done . ' $users');
+                    }
+                    if ($import->system_done > 0) {
+                        $usr_msg->add_message(' ... and ' . $import->system_done . ' $system objects');
+                    }
+                } else {
+                    $usr_msg->add_message(' failed because ' . $import_result->all_message_text() . '.');
+                }
+            }
+        }
+
+        return $usr_msg;
+    }
+
+    /**
      * import the initial system configuration
      * @param user $usr who has triggered the function
      * @return bool true if the configuration has imported
@@ -98,6 +136,26 @@ class import_file
             $imf = new import_file();
             $import_result = $imf->json_file(SYSTEM_CONFIG_FILE, $usr);
             if (str_starts_with($import_result, ' done ')) {
+                $result = true;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * import the initial system configuration
+     * @param user $usr who has triggered the function
+     * @return bool true if the configuration has imported
+     */
+    function import_config_yaml(user $usr): bool
+    {
+        $result = false;
+
+        if ($usr->is_admin() or $usr->is_system()) {
+            $imf = new import_file();
+            $import_result = $imf->yaml_file(SYSTEM_CONFIG_FILE_YAML, $usr);
+            if (str_starts_with($import_result->get_last_message(), ' done ')) {
                 $result = true;
             }
         }
