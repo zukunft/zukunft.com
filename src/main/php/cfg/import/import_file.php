@@ -107,7 +107,7 @@ class import_file
                 $import = new import;
                 $import_result = $import->put_yaml($yaml_str, $usr);
                 if ($import_result->is_ok()) {
-                    $usr_msg->add_message(' done (' . $import->status_text()->get_last_message() . ' )');
+                    $usr_msg->add_info(' done (' . $import->status_text()->get_last_message() . ' )');
                     if ($import->users_done > 0) {
                         $usr_msg->add_message(' ... and ' . $import->users_done . ' $users');
                     }
@@ -125,6 +125,7 @@ class import_file
 
     /**
      * import the initial system configuration
+     * TODO deprecate and replace with import_config_yaml
      * @param user $usr who has triggered the function
      * @return bool true if the configuration has imported
      */

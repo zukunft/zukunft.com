@@ -143,15 +143,16 @@ class import
     function put_yaml(string $yaml_str, user $usr_trigger): user_message
     {
         $usr_msg = new user_message();
-        $json_array = yaml_parse($yaml_str);
-        if ($json_array == null) {
+        $yaml_array = yaml_parse($yaml_str);
+        if ($yaml_array == null) {
             if ($yaml_str != '') {
                 $usr_msg->add_message('YAML decode failed of ' . $yaml_str);
             } else {
                 $usr_msg->add_warning('YAML string is empty');
             }
         } else {
-            $usr_msg = $this->put($json_array, $usr_trigger);
+            $dto = $this->yaml_data_object($yaml_array, $usr_trigger);
+            $usr_msg = $dto->save();
         }
         return $usr_msg;
     }

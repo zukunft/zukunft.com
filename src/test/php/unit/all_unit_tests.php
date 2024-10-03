@@ -91,6 +91,7 @@ use cfg\db\sql_db;
 use cfg\element\element_type_list;
 use cfg\formula_link_type_list;
 use cfg\formula_type_list;
+use cfg\import\import_file;
 use cfg\job_type_list;
 use cfg\language_form_list;
 use cfg\language_list;
@@ -223,6 +224,15 @@ class all_unit_tests extends test_cleanup
         $usr = $this->usr1;
 
         if ($usr->id() > 0) {
+
+            /*
+             * part of system setup testing
+             */
+
+            $sys_usr = new user;
+            $sys_usr->load_by_id(SYSTEM_USER_ID);
+            $import = new import_file();
+            $import->import_config_yaml($sys_usr);
 
             /*
              * db read testing - run

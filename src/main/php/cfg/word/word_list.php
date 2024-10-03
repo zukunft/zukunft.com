@@ -1072,6 +1072,40 @@ class word_list extends sandbox_list_named
     }
 
     /**
+     * filters a word list by names
+     *
+     * e.g. out of "2014", "2015", "2016", "2017"
+     * with the filter "2016", "2017","2018"
+     * the result is "2016", "2017"
+     *
+     * @param array $names with the words that should be removed
+     * @returns word_list with only the remaining words
+     */
+    function filter_by_name(array $names): word_list
+    {
+        log_debug('->filter ' . $this->dsp_id());
+        $result = clone $this;
+
+        // check and adjust the parameters
+        if (count($names) <= 0) {
+            log_err('Phrases to delete are missing.', 'word_list->filter');
+        }
+
+        if (count($result->lst()) > 0) {
+            $wrd_lst = array();
+            foreach ($result->lst() as $wrd) {
+                if (in_array($wrd->name(), $names)) {
+                    $wrd_lst[] = $wrd;
+                }
+            }
+            $result->set_lst($wrd_lst);
+            log_debug($result->dsp_id());
+        }
+
+        return $result;
+    }
+
+    /**
      * filter the time words out of the list of words
      * @return word_list with the time words (all)
      */
@@ -1625,7 +1659,15 @@ class word_list extends sandbox_list_named
     function save(): user_message
     {
         $usr_msg = new user_message();
-        // load the words
+
+        // load the words that are already in the database
+        $db_lst = new word_list($this->user());
+        $db_lst->load_by_names($this->names());
+
+        // get the words that need to be added
+        $db_names = $db_lst->names();
+        $add_lst = clone $this;
+        $add_lst->filter_by_name($db_names);
         // add the missing words
         // update the existing words
         // loop over the words and check if all needed functions exist
