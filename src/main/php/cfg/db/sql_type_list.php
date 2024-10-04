@@ -87,6 +87,14 @@ class sql_type_list
      */
 
     /**
+     * @return bool true if only the sql function name should be created
+     */
+    function is_function_name_only(): bool
+    {
+        return in_array(sql_type::SQL_FUNC_NAME_ONLY, $this->lst);
+    }
+
+    /**
      * @return bool true if an insert sql statement should be created
      */
     function is_insert(): bool

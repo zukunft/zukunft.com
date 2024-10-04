@@ -35,6 +35,7 @@ namespace unit;
 include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_IMPORT_PATH . 'convert_wikipedia_table.php';
 
+use cfg\db\sql;
 use cfg\import\convert_wikipedia_table;
 use cfg\import\import;
 use html\html_base;
@@ -46,7 +47,7 @@ class import_tests
     function run(test_cleanup $t): void
     {
         global $usr;
-        $html = new html_base();
+        $sc = new sql();
 
         $t->subheader('Import unit tests');
 
@@ -60,6 +61,8 @@ class import_tests
         $t->assert($test_name, $dto->triple_list()->count(), 11);
         $test_name = 'YAML import value count';
         $t->assert($test_name, $dto->value_list()->count(), 14);
+        $test_name = 'YAML import sql function count';
+        $t->assert($test_name, count($dto->word_list()->sql_insert_function_names($sc)), 4);
 
 
         $test_name = 'JSON import warning creation';

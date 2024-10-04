@@ -21,7 +21,7 @@
     - im- and export:    create an export object and set the vars from an import object
     - modification:      change this list
     - filter:            filter this list
-    - convert:           more conplex cast
+    - convert:           more complex cast
 
 
     This file is part of zukunft.com - calc with words
@@ -59,6 +59,8 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\value\value;
@@ -391,6 +393,30 @@ class word_list extends sandbox_list_named
         }
 
         return $qp;
+    }
+
+
+    /**
+     * get a list of all sql function names that are needed to add all words of this list to the database
+     * @return array with the sql function names
+     */
+    function sql_insert_function_names(sql $sc): array
+    {
+        $names = [];
+        foreach ($this->lst() as $wrd) {
+            // check always user sandbox and normal name, because reading from database for check would take longer
+            $sc_par_lst =  new sql_type_list([sql_type::SQL_FUNC_NAME_ONLY]);
+            $qp = $wrd->sql_insert($sc, $sc_par_lst);
+            if (!in_array($qp->name, $names)) {
+                $names[] = $qp->name;
+            }
+            $sc_par_lst->add(sql_type::USER);
+            $qp = $wrd->sql_insert($sc, $sc_par_lst);
+            if (!in_array($qp->name, $names)) {
+                $names[] = $qp->name;
+            }
+        }
+        return $names;
     }
 
     /**
@@ -1658,6 +1684,9 @@ class word_list extends sandbox_list_named
 
     function save(): user_message
     {
+        global $db_con;
+
+        $sc = $db_con->sql_creator();
         $usr_msg = new user_message();
 
         // load the words that are already in the database
@@ -1668,6 +1697,9 @@ class word_list extends sandbox_list_named
         $db_names = $db_lst->names();
         $add_lst = clone $this;
         $add_lst->filter_by_name($db_names);
+        $func_names = $this->sql_insert_function_names($sc);
+        //$db_func_lst = $db_con->get_functions();
+        // get the sql functions that have not yet been created
         // add the missing words
         // update the existing words
         // loop over the words and check if all needed functions exist

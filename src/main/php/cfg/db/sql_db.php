@@ -4749,6 +4749,26 @@ class sql_db
     }
 
     /**
+     * @return array with the function that are actually in the database
+     */
+    function get_functions(): array
+    {
+        $names = [];
+        // TODO move db selection to the top e.g. db/postgres/setup instead of db/setup/postgres this way the number of if can be reduced
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql = resource_file('db/setup/postgres/db_create_user.sql');
+        } else {
+            $sql = resource_file('db/setup/mysql/db_create_user.sql');
+        }
+        $db_lst = $this->get_internal($sql);
+        foreach ($db_lst as $row) {
+            $names[] = $row[0];
+        }
+
+        return $names;
+    }
+
+    /**
      * check if a foreign key exists
      * @param string $table_name
      * @param string $key_name

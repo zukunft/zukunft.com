@@ -65,6 +65,7 @@ enum sql_type: string
     case LOG = 'log'; // the created sql statement should include statements for logging the changes
     case NO_ID_RETURN = 'no_id_return'; // the created sql statement does not need to return the id
     case NAMED_PAR = 'named_par'; // to use named parameters in the prepared query e.g. _user_id instead od $1
+    case SQL_FUNC_NAME_ONLY = 'sql_name_only'; // get only the name of the sql function to increase speed
     case VALUE_SELECT = 'value_select'; // use a select statement for the insert values
     case INSERT_PART = 'insert_part'; // the sql statement is part of an insert action which implies that a new db row id is added
     case UPDATE_PART = 'update_part'; // the sql statement is part of an update action which implies that no new db row id is added
