@@ -615,6 +615,7 @@ use cfg\sys_log_status;
 use cfg\sys_log_status_list;
 use cfg\sys_log_type;
 use cfg\system_time;
+use cfg\system_time_list;
 use cfg\system_time_type;
 use cfg\type_lists;
 use cfg\user;
@@ -791,6 +792,7 @@ include_once MODEL_HELPER_PATH . 'type_lists.php';
 include_once MODEL_SYSTEM_PATH . 'BasicEnum.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
+include_once MODEL_SYSTEM_PATH . 'system_time_list.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_profile_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase_types.php';
@@ -1591,11 +1593,14 @@ function log_fatal(string $msg_text,
 function prg_start(string $code_name, string $style = "", $echo_header = true): sql_db
 {
     global $sys_time_start, $sys_script, $errors;
+    global $sys_times;
 
     // resume session (based on cookies)
     session_start();
 
     $sys_time_start = time();
+    $sys_times = new system_time_list();
+    $sys_times->switch(system_time_type::DEFAULT);
     $sys_script = $code_name;
     $errors = 0;
 
@@ -1671,10 +1676,12 @@ function prg_restart(string $code_name): sql_db
 function prg_start_api($code_name): sql_db
 {
     global $sys_time_start, $sys_script, $user_profiles;
+    global $sys_times;
 
     log_debug($code_name . ' ..');
 
     $sys_time_start = time();
+    $sys_times = new system_time_list();
     $sys_script = $code_name;
 
     // resume session (based on cookies)
@@ -1697,10 +1704,12 @@ function prg_start_api($code_name): sql_db
 function prg_start_system($code_name): sql_db
 {
     global $sys_time_start, $sys_script, $user_profiles;
+    global $sys_times;
 
     log_debug($code_name . ' ..');
 
     $sys_time_start = time();
+    $sys_times = new system_time_list();
     $sys_script = $code_name;
 
     // resume session (based on cookies)
@@ -1731,7 +1740,9 @@ function prg_start_system($code_name): sql_db
 function prg_end_write_time($db_con): void
 {
     global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
+    global $sys_times;
 
+    $time_report = $sys_times->report();
     $sys_time_end = time();
     if ($sys_time_end > $sys_time_limit) {
         $db_con->usr_id = SYSTEM_USER_ID;

@@ -41,6 +41,7 @@ use cfg\result\result_two;
 use cfg\sandbox;
 use cfg\sandbox_named;
 use cfg\sys_log_function;
+use cfg\system_time_type;
 use cfg\user;
 use cfg\user\user_profile;
 use cfg\user_message;
@@ -132,8 +133,11 @@ class db_check
 // the version 0.0.3 is the first version, which has a build in upgrade process
     function db_upgrade_0_0_3(sql_db $db_con): string
     {
+        global $sys_times;
+
         $cfg = new config();
         $lib = new library();
+        $sys_times->switch(system_time_type::DB_UPGRADE);
 
         // prepare to remove the time word from the values
         $msg = $this->db_move_time_phrase_to_group();
@@ -400,6 +404,7 @@ class db_check
         if ($db_version != PRG_VERSION) {
             $result = 'Database upgrade to 0.0.3 has failed';
         }
+        $sys_times->switch();
 
         return $result;
     }

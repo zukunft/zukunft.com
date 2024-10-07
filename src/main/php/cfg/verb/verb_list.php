@@ -274,6 +274,7 @@ class verb_list extends type_list
         log_debug('verb_list->calc_usage');
 
         global $db_con;
+        global $sys_times;
 
         $sql = "UPDATE verbs v
                    SET words = ( SELECT COUNT(to_phrase_id) 
@@ -281,7 +282,10 @@ class verb_list extends type_list
                                   WHERE v.verb_id = l.verb_id)
                  WHERE verb_id > 0;";
         $db_con->usr_id = $this->user()->id();
-        return $db_con->exe_try('Calculation of the verb usage', $sql);
+        $sys_times->switch(system_time_type::DB_WRITE);
+        $result = $db_con->exe_try('Calculation of the verb usage', $sql);
+        $sys_times->switch();
+        return $result;
     }
 
     /*

@@ -3439,10 +3439,12 @@ class test_base
     function dsp_result(): void
     {
         global $errors;
+        global $sys_times;
 
         echo "\n";
         $since_start = microtime(true) - $this->start_time;
         echo round($since_start, 4) . ' seconds for testing zukunft.com';
+        echo ' (' . $sys_times->report($since_start) . ')';
         echo "\n";
         echo $this->total_tests . ' test cases';
         echo "\n";
