@@ -71,8 +71,10 @@ class sql_par_list
     function names(): array
     {
         $result = [];
-        foreach ($this->lst as $fld) {
-            $result[] = $fld->name;
+        foreach ($this->lst as $sql_par) {
+            if (!in_array($sql_par->name, $result)) {
+                $result[] = $sql_par->name;
+            }
         }
         return $result;
     }
@@ -90,8 +92,14 @@ class sql_par_list
      */
     function exe(): user_message
     {
-        $lib = new library();
-        return $lib->sql_array($this->names_or_const(), ' ', ' ');
+        global $db_con;
+
+        $usr_msg = new user_message();
+
+        foreach ($this->lst as $qp) {
+            $usr_msg->add($db_con->insert($qp, 'add word from list'));
+        }
+        return $usr_msg;
     }
 
 }

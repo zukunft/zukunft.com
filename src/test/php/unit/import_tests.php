@@ -62,7 +62,7 @@ class import_tests
         $test_name = 'YAML import value count';
         $t->assert($test_name, $dto->value_list()->count(), 14);
         $test_name = 'YAML import sql function count';
-        $t->assert($test_name, count($dto->word_list()->sql_insert_function_names($sc)), 4);
+        $t->assert($test_name, $dto->word_list()->sql_call_with_par($sc)->count(), 2);
 
 
         $test_name = 'JSON import warning creation';

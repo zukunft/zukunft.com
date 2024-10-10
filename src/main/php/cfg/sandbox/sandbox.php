@@ -2281,8 +2281,8 @@ class sandbox extends db_object_seq_id_user
         if ($usr_msg->is_ok()) {
             if ($this->id() == 0) {
 
-                    log_debug('add');
-                    $usr_msg->add($this->add($use_func));
+                log_debug('add');
+                $usr_msg->add($this->add($use_func));
 
             } else {
                 // if the similar object is not the same as $this object, suggest renaming $this object
@@ -3220,6 +3220,9 @@ class sandbox extends db_object_seq_id_user
         sql_type_list      $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
+        // list of parameters actually used in order of the function usage
+        $par_lst_out = new sql_par_field_list();
+
         // set some var names to shorten the code lines
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $id_field = $sc->id_field_name();
@@ -3242,9 +3245,6 @@ class sandbox extends db_object_seq_id_user
                 type_object::FLD_ID_SQLTYP
             );
         }
-
-        // list of parameters actually used in order of the function usage
-        $par_lst_out = new sql_par_field_list();
 
         // init the function body
         $id_fld_new = $sc->var_name_new_id($sc_par_lst);
@@ -3328,46 +3328,49 @@ class sandbox extends db_object_seq_id_user
         $par_lst_out->add_list($qp_log->par_fld_lst);
 
 
-        if ($usr_tbl) {
-            // insert a new row in the user table
-            $fld_lst_ex_log_and_key = array_merge([$this->id_field(), user::FLD_ID], $fld_lst_ex_log);
-            // TODO remove this exception e.g. by adding the $sc_par_lst to the call
-            if ($this::class == triple::class) {
-                $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), verb::FLD_ID, $this->to_field()]);
-            } elseif ($this->is_link_obj()) {
-                $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), $this->to_field()]);
-            }
-            $fvt_lst_ex_log_and_key = $fvt_lst->get_intersect($fld_lst_ex_log_and_key);
-            $sc_insert = clone $sc;
-            $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub);
-            $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
-            $qp_insert->sql = $sc_insert->create_sql_insert($fvt_lst_ex_log_and_key, $sc_par_lst_sub);
-            // add the insert row to the function body and close the with statement with an ";"
-            $sql .= ' ' . $qp_insert->sql . ';';
-        } else {
-            // update the fields excluding the unique id
-            $update_fvt_lst = new sql_par_field_list();
-            foreach ($fld_lst_ex_log as $fld) {
-                $update_fvt_lst->add($fvt_lst->get($fld));
-            }
-            $sc_update = clone $sc;
-            $sc_par_lst_upd = $sc_par_lst;
-            $sc_par_lst_upd->add(sql_type::UPDATE);
-            $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
-            $sc_par_lst_upd_ex_log->add(sql_type::SUB);
-            $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
-            if ($this->is_link_obj()) {
-                $update_fvt_lst->del($this->from_field());
-                $update_fvt_lst->del($this->type_field());
-                $update_fvt_lst->del($this->to_field());
-                if ($this->is_named_obj()) {
-                    $update_fvt_lst->add($fvt_lst->get($this->name_field()));
+        if (!$sc_par_lst->is_call_only()) {
+            if ($usr_tbl) {
+                // insert a new row in the user table
+                $fld_lst_ex_log_and_key = array_merge([$this->id_field(), user::FLD_ID], $fld_lst_ex_log);
+                // TODO remove this exception e.g. by adding the $sc_par_lst to the call
+                if ($this::class == triple::class) {
+                    $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), verb::FLD_ID, $this->to_field()]);
+                } elseif ($this->is_link_obj()) {
+                    $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), $this->to_field()]);
                 }
+                $fvt_lst_ex_log_and_key = $fvt_lst->get_intersect($fld_lst_ex_log_and_key);
+                $sc_insert = clone $sc;
+                $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub);
+                $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+                $qp_insert->sql = $sc_insert->create_sql_insert($fvt_lst_ex_log_and_key, $sc_par_lst_sub);
+                // add the insert row to the function body and close the with statement with an ";"
+                $sql .= ' ' . $qp_insert->sql . ';';
+            } else {
+                // update the fields excluding the unique id
+                $update_fvt_lst = new sql_par_field_list();
+                foreach ($fld_lst_ex_log as $fld) {
+                    $update_fvt_lst->add($fvt_lst->get($fld));
+                }
+                $sc_update = clone $sc;
+                $sc_par_lst_upd = $sc_par_lst;
+                $sc_par_lst_upd->add(sql_type::UPDATE);
+                $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
+                $sc_par_lst_upd_ex_log->add(sql_type::SUB);
+                $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
+                if ($this->is_link_obj()) {
+                    $update_fvt_lst->del($this->from_field());
+                    $update_fvt_lst->del($this->type_field());
+                    $update_fvt_lst->del($this->to_field());
+                    if ($this->is_named_obj()) {
+                        $update_fvt_lst->add($fvt_lst->get($this->name_field()));
+                    }
+                }
+
+                $qp_update->sql = $sc_update->create_sql_update(
+                    $id_field, $var_name_row_id, $update_fvt_lst, [], $sc_par_lst_upd_ex_log);
+                // add the insert row to the function body
+                $sql .= ' ' . $qp_update->sql . ' ';
             }
-            $qp_update->sql = $sc_update->create_sql_update(
-                $id_field, $var_name_row_id, $update_fvt_lst, [], $sc_par_lst_upd_ex_log);
-            // add the insert row to the function body
-            $sql .= ' ' . $qp_update->sql . ' ';
         }
 
         if ($sc->db_type == sql_db::POSTGRES) {
@@ -3376,14 +3379,17 @@ class sandbox extends db_object_seq_id_user
             }
         }
 
-        $sql .= $sc->sql_func_end();
-
         // create the query parameters for the actual change
         $qp_chg = clone $qp;
-        $qp_chg->sql = $sc->create_sql_insert($par_lst_out, $sc_par_lst);
 
-        // merge all together and create the function
-        $qp->sql = $qp_chg->sql . $sql . ';';
+        if (!$sc_par_lst->is_call_only()) {
+            $sql .= $sc->sql_func_end();
+
+            $qp_chg->sql = $sc->create_sql_insert($par_lst_out, $sc_par_lst);
+
+            // merge all together and create the function
+            $qp->sql = $qp_chg->sql . $sql . ';';
+        }
         $qp->par = $par_lst_out->values();
 
         // create the call sql statement

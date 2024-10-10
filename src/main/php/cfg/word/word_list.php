@@ -52,12 +52,14 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'foaf_direction.php';
+include_once MODEL_DB_PATH . 'sql_par_list.php';
 include_once API_WORD_PATH . 'word_list.php';
 
 use api\word\word_list as word_list_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
+use cfg\db\sql_par_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
@@ -84,7 +86,6 @@ class word_list extends sandbox_list_named
     /**
      * fill the word list based on a database records
      * actually just add the single word object to the parent function
-     * TODO check that a similar function is used for all lists
      *
      * @param array $db_rows is an array of an array with the database values
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
@@ -398,25 +399,26 @@ class word_list extends sandbox_list_named
 
     /**
      * get a list of all sql function names that are needed to add all words of this list to the database
-     * @return array with the sql function names
+     * @return sql_par_list with the sql function names
      */
-    function sql_insert_function_names(sql $sc): array
+    function sql_call_with_par(sql $sc): sql_par_list
     {
-        $names = [];
+
+        // decide which db write method should be used
+        $wrd = new word($this->user());
+        $use_func = $wrd->sql_default_script_usage();
+
+        $sql_list = new sql_par_list();
         foreach ($this->lst() as $wrd) {
             // check always user sandbox and normal name, because reading from database for check would take longer
-            $sc_par_lst =  new sql_type_list([sql_type::SQL_FUNC_NAME_ONLY]);
-            $qp = $wrd->sql_insert($sc, $sc_par_lst);
-            if (!in_array($qp->name, $names)) {
-                $names[] = $qp->name;
+            $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
+            if ($use_func) {
+                $sc_par_lst->add(sql_type::LOG);
             }
-            $sc_par_lst->add(sql_type::USER);
             $qp = $wrd->sql_insert($sc, $sc_par_lst);
-            if (!in_array($qp->name, $names)) {
-                $names[] = $qp->name;
-            }
+            $sql_list->add($qp);
         }
-        return $names;
+        return $sql_list;
     }
 
     /**
@@ -602,7 +604,7 @@ class word_list extends sandbox_list_named
     {
         $level = 0;
         $added_wrd_lst = new word_list($this->user()); // list of the added word ids
-        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $vrb, foaf_direction::UP, 0);
+        $added_wrd_lst = $this->foaf_level($level, $added_wrd_lst, $vrb, foaf_direction::UP);
 
         log_debug($added_wrd_lst->dsp_id());
         return $added_wrd_lst;
@@ -1109,23 +1111,19 @@ class word_list extends sandbox_list_named
      */
     function filter_by_name(array $names): word_list
     {
-        log_debug('->filter ' . $this->dsp_id());
+        log_debug('->filter_by_name ' . $this->dsp_id());
         $result = clone $this;
+        $result->reset();
 
         // check and adjust the parameters
         if (count($names) <= 0) {
             log_err('Phrases to delete are missing.', 'word_list->filter');
         }
 
-        if (count($result->lst()) > 0) {
-            $wrd_lst = array();
-            foreach ($result->lst() as $wrd) {
-                if (in_array($wrd->name(), $names)) {
-                    $wrd_lst[] = $wrd;
-                }
+        foreach ($this->lst() as $wrd) {
+            if (!in_array($wrd->name(), $names)) {
+                $result->add_by_name($wrd);
             }
-            $result->set_lst($wrd_lst);
-            log_debug($result->dsp_id());
         }
 
         return $result;
@@ -1660,9 +1658,7 @@ class word_list extends sandbox_list_named
         } else {
             // get the time of the last "real" (reported) value for the word list
             $wrd_max_time = $this->max_val_time($trm_lst);
-            if ($wrd_max_time != null) {
-                $phr = $wrd_max_time->phrase();
-            }
+            $phr = $wrd_max_time?->phrase();
         }
 
         if ($phr != null) {
@@ -1696,11 +1692,14 @@ class word_list extends sandbox_list_named
         // get the words that need to be added
         $db_names = $db_lst->names();
         $add_lst = clone $this;
-        $add_lst->filter_by_name($db_names);
-        $func_names = $this->sql_insert_function_names($sc);
-        //$db_func_lst = $db_con->get_functions();
+        $add_lst = $add_lst->filter_by_name($db_names);
+        // get the sql call to add the missing words
+        $ins_calls = $add_lst->sql_call_with_par($sc);
+        // get the functions that are already in the database
+        $db_func_lst = $db_con->get_functions();
         // get the sql functions that have not yet been created
         // add the missing words
+        //$usr_msg->add($ins_calls->exe());
         // update the existing words
         // loop over the words and check if all needed functions exist
         // create the missing functions

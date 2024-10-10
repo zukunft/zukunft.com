@@ -58,6 +58,22 @@ class group_list extends sandbox_list
 
 
     /*
+     * construct and map
+     */
+
+    /**
+     * fill the grou list based on a database records
+     * @param array $db_rows is an array of an array with the database values
+     * @param bool $load_all force to include also the excluded phrases e.g. for admins
+     * @return bool true if at least one formula link has been added
+     */
+    protected function rows_mapper(array $db_rows, bool $load_all = false): bool
+    {
+        return parent::rows_mapper_obj(new group($this->user()), $db_rows, $load_all);
+    }
+
+
+    /*
      * load
      */
 

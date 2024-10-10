@@ -38,7 +38,6 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\element\element_list;
 use cfg\element\element_type;
-use cfg\sandbox_list;
 use test\test_cleanup;
 
 class element_list_tests

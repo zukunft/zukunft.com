@@ -966,16 +966,14 @@ class sandbox_named extends sandbox
         // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
 
-        if (!$sc_par_lst->is_function_name_only()) {
-            if ($sc_par_lst->incl_log()) {
-                // log functions must always use named parameters
-                $sc_par_lst->add(sql_type::NAMED_PAR);
-                $qp = $this->sql_insert_with_log($sc, $qp, $fvt_lst, $fld_lst_all, $sc_par_lst);
-            } else {
-                // add the child object specific fields and values
-                $qp->sql = $sc->create_sql_insert($fvt_lst);
-                $qp->par = $fvt_lst->db_values();
-            }
+        if ($sc_par_lst->incl_log()) {
+            // log functions must always use named parameters
+            $sc_par_lst->add(sql_type::NAMED_PAR);
+            $qp = $this->sql_insert_with_log($sc, $qp, $fvt_lst, $fld_lst_all, $sc_par_lst);
+        } else {
+            // add the child object specific fields and values
+            $qp->sql = $sc->create_sql_insert($fvt_lst);
+            $qp->par = $fvt_lst->db_values();
         }
 
         return $qp;

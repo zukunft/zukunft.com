@@ -40,6 +40,13 @@ class element_group_list extends sandbox_list
     // array $lst is the list of formula element groups
 
     /*
+     * construct and map
+     */
+
+    // the rows_mapper is not needed, because the element group is not saved in the database
+
+
+    /*
      * debug
      */
 

@@ -238,6 +238,14 @@ class word_list_tests
         $wrd_lst_filtered = $wrd_lst->filter($wrd_lst_filter);
         $t->assert($t->name . '->sorted', $wrd_lst_filtered->name(), '"word3","word2"');
 
+        // filter by name
+        $test_name = 'filtered word list by name does not contain ' . word_api::TN_E . ' any more';
+        $wrd_lst = $t->word_list();
+        $filtered = $wrd_lst->filter_by_name([word_api::TN_E]);
+        $t->assert_contains_not($test_name, $filtered->names(), word_api::TN_E);
+        $test_name = 'filtered word list by name still contains ' . word_api::TN_PI;
+        $t->assert_contains($test_name, $filtered->names(), word_api::TN_PI);
+
         // time list
         $wrd_lst = new word_list($usr);
         $wrd_lst->add($wrd_time);

@@ -4810,9 +4810,9 @@ class sql_db
         $names = [];
         // TODO move db selection to the top e.g. db/postgres/setup instead of db/setup/postgres this way the number of if can be reduced
         if ($this->db_type == sql_db::POSTGRES) {
-            $sql = resource_file('db/setup/postgres/db_create_user.sql');
+            $sql = resource_file('db/select/postgres/routines.sql');
         } else {
-            $sql = resource_file('db/setup/mysql/db_create_user.sql');
+            $sql = resource_file('db/select/mysql/routines.sql');
         }
         $db_lst = $this->get_internal($sql);
         foreach ($db_lst as $row) {
