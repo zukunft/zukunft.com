@@ -80,6 +80,20 @@ class sql_par_list
     }
 
     /**
+     * @return array with the names of the objects that have first requested the sql parameters
+     */
+    function object_names(): array
+    {
+        $result = [];
+        foreach ($this->lst as $sql_par) {
+            if (!in_array($sql_par->obj_name, $result)) {
+                $result[] = $sql_par->obj_name;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @return int get the number of named parameters (excluding the const like Now())
      */
     function count(): int
@@ -102,5 +116,26 @@ class sql_par_list
         return $usr_msg;
     }
 
+
+    /*
+     * filter
+     */
+
+    /**
+     * get the sql parameters that are not yet in the database
+     *
+     * @param array $db_func_names with the function names that are in the database
+     * @return sql_par_list with the missing sql function names
+     */
+    function sql_functions_missing(array $db_func_names): sql_par_list
+    {
+        $result = new sql_par_list();
+        foreach ($this->lst as $qp) {
+            if (!in_array($qp->name, $db_func_names)) {
+                $result->add($qp);
+            }
+        }
+        return $result;
+    }
 }
 

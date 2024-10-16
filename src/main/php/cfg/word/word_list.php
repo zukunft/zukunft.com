@@ -396,6 +396,36 @@ class word_list extends sandbox_list_named
         return $qp;
     }
 
+    /**
+     * get a list of all sql functions that are needed to add all words of this list to the database
+     * @return sql_par_list with the sql function names
+     */
+    function sql(sql $sc): sql_par_list
+    {
+
+        // decide which db write method should be used
+        $wrd = new word($this->user());
+        $use_func = $wrd->sql_default_script_usage();
+
+        $sql_list = new sql_par_list();
+        foreach ($this->lst() as $wrd) {
+            // check always user sandbox and normal name, because reading from database for check would take longer
+            $sc_par_lst = new sql_type_list([]);
+            if ($use_func) {
+                $sc_par_lst->add(sql_type::LOG);
+            }
+            $qp = $wrd->sql_insert($sc, $sc_par_lst);
+            $qp->obj_name = $wrd->name();
+            $sql_list->add($qp);
+        }
+        return $sql_list;
+    }
+
+    function sql_create(): user_message
+    {
+        $usr_msg = new user_message();
+        return $usr_msg;
+    }
 
     /**
      * get a list of all sql function names that are needed to add all words of this list to the database
@@ -416,6 +446,7 @@ class word_list extends sandbox_list_named
                 $sc_par_lst->add(sql_type::LOG);
             }
             $qp = $wrd->sql_insert($sc, $sc_par_lst);
+            $qp->obj_name = $wrd->name();
             $sql_list->add($qp);
         }
         return $sql_list;
@@ -1104,7 +1135,7 @@ class word_list extends sandbox_list_named
      *
      * e.g. out of "2014", "2015", "2016", "2017"
      * with the filter "2016", "2017","2018"
-     * the result is "2016", "2017"
+     * the result is "2014", "2015"
      *
      * @param array $names with the words that should be removed
      * @returns word_list with only the remaining words
@@ -1122,6 +1153,36 @@ class word_list extends sandbox_list_named
 
         foreach ($this->lst() as $wrd) {
             if (!in_array($wrd->name(), $names)) {
+                $result->add_by_name($wrd);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * select a word list by names
+     *
+     * e.g. out of "2014", "2015", "2016", "2017"
+     * with the filter "2016", "2017","2018"
+     * the result is "2016", "2017"
+     *
+     * @param array $names with the words that should be removed
+     * @returns word_list with only the remaining words
+     */
+    function select_by_name(array $names): word_list
+    {
+        log_debug('->filter_by_name ' . $this->dsp_id());
+        $result = clone $this;
+        $result->reset();
+
+        // check and adjust the parameters
+        if (count($names) <= 0) {
+            log_warning('Phrases to delete are missing.', 'word_list->filter');
+        }
+
+        foreach ($this->lst() as $wrd) {
+            if (in_array($wrd->name(), $names)) {
                 $result->add_by_name($wrd);
             }
         }
@@ -1698,6 +1759,14 @@ class word_list extends sandbox_list_named
         // get the functions that are already in the database
         $db_func_lst = $db_con->get_functions();
         // get the sql functions that have not yet been created
+        $func_to_create = $ins_calls->sql_functions_missing($db_func_lst);
+        // get one object that have requested the missing function
+        $func_create_obj = clone $this;
+        $func_create_obj_names = $func_to_create->object_names();
+        $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
+        // create the missing sql functions
+        $func_to_create = $func_create_obj->sql($sc);
+        $func_to_create->exe();
         // add the missing words
         //$usr_msg->add($ins_calls->exe());
         // update the existing words
