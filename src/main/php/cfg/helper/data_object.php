@@ -174,7 +174,7 @@ class data_object
         $usr_msg = new user_message();
         // save the data lists in order of the dependencies
         $usr_msg->add($this->word_list()->save());
-        $usr_msg->add($this->triple_list()->save());
+        $usr_msg->add($this->triple_list()->save($this->word_list()->phrase_lst()));
         $usr_msg->add($this->value_list()->save());
         return $usr_msg;
     }

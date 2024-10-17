@@ -690,13 +690,52 @@ class triple_list extends sandbox_list_named
         return $phr_lst;
     }
 
+
+    /*
+     * parts
+     */
+
+    /**
+     * get a list of the phrase parts
+     * @return phrase_list with all triples of this list as a phrase
+     */
+    function phrase_parts(): phrase_list
+    {
+        $phr_lst = new phrase_list($this->user());
+        foreach ($this->lst() as $lnk) {
+            $phr_lst->add($lnk->from());
+            $phr_lst->add($lnk->to());
+        }
+        return $phr_lst;
+    }
+
     /*
      * save
      */
 
-    function save(): user_message
+    /**
+     * @param phrase_list $cache the cached phrases that does not need to be loaded from the db again
+     * @return user_message
+     */
+    function save(phrase_list $cache): user_message
     {
+        global $db_con;
+
+        $sc = $db_con->sql_creator();
         $usr_msg = new user_message();
+
+        // get names of the used phrases
+        $phr_lst = $this->phrase_parts();
+
+        // get the triple that need to be loaded
+        $cache_names = $cache->names();
+        $load_list = clone $this;
+        $load_list = $load_list->filter_by_name($cache_names);
+
+        // load the triple that are already in the database
+        $db_lst = new triple_list($this->user());
+        //$db_lst->load_by_names($this->names());
+
         // load the words
         // report the missing words
         // load the triples

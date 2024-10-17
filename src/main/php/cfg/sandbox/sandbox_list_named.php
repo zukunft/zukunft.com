@@ -95,9 +95,9 @@ class sandbox_list_named extends sandbox_list
      * should be cast by the child function get_by_name
      *
      * @param string $name the unique name of the object that should be returned
-     * @return term|phrase|null the found user sandbox object or null if no name is found
+     * @return term|phrase|word|null the found user sandbox object or null if no name is found
      */
-    function get_obj_by_name(string $name): term|phrase|null
+    function get_obj_by_name(string $name): term|phrase|word|null
     {
         $key_lst = $this->name_pos_lst();
         $pos = null;
@@ -109,6 +109,66 @@ class sandbox_list_named extends sandbox_list
         } else {
             return null;
         }
+    }
+
+    /**
+     * filters a word list by names
+     *
+     * e.g. out of "2014", "2015", "2016", "2017"
+     * with the filter "2016", "2017","2018"
+     * the result is "2014", "2015"
+     *
+     * @param array $names with the words that should be removed
+     * @returns sandbox_list_named with only the remaining words
+     */
+    function filter_by_name(array $names): sandbox_list_named
+    {
+        log_debug('->filter_by_name ' . $this->dsp_id());
+        $result = clone $this;
+        $result->reset();
+
+        // check and adjust the parameters
+        if (count($names) <= 0) {
+            log_warning('Phrases to delete are missing.', 'word_list->filter');
+        }
+
+        foreach ($this->lst() as $wrd) {
+            if (!in_array($wrd->name(), $names)) {
+                $result->add_named_obj($wrd);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * select a word list by names
+     *
+     * e.g. out of "2014", "2015", "2016", "2017"
+     * with the filter "2016", "2017","2018"
+     * the result is "2016", "2017"
+     *
+     * @param array $names with the words that should be removed
+     * @returns sandbox_list_named with only the remaining words
+     */
+    function select_by_name(array $names): sandbox_list_named
+    {
+        log_debug('->filter_by_name ' . $this->dsp_id());
+        $result = clone $this;
+        $result->reset();
+
+        // check and adjust the parameters
+        if (count($names) <= 0) {
+            log_warning('Phrases to delete are missing.', 'word_list->filter');
+        }
+
+        foreach ($this->lst() as $wrd) {
+            if (in_array($wrd->name(), $names)) {
+                $result->add_named_obj($wrd);
+            }
+        }
+
+        return $result;
     }
 
 
