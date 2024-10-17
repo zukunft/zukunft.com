@@ -1148,7 +1148,7 @@ class word_list extends sandbox_list_named
 
         // check and adjust the parameters
         if (count($names) <= 0) {
-            log_err('Phrases to delete are missing.', 'word_list->filter');
+            log_warning('Phrases to delete are missing.', 'word_list->filter');
         }
 
         foreach ($this->lst() as $wrd) {
@@ -1735,6 +1735,7 @@ class word_list extends sandbox_list_named
         return $result;
     }
 
+
     /*
      * save
      */
@@ -1754,25 +1755,36 @@ class word_list extends sandbox_list_named
         $db_names = $db_lst->names();
         $add_lst = clone $this;
         $add_lst = $add_lst->filter_by_name($db_names);
+
         // get the sql call to add the missing words
         $ins_calls = $add_lst->sql_call_with_par($sc);
+
         // get the functions that are already in the database
         $db_func_lst = $db_con->get_functions();
+
         // get the sql functions that have not yet been created
         $func_to_create = $ins_calls->sql_functions_missing($db_func_lst);
-        // get one object that have requested the missing function
+
+        // get the first object that have requested the missing function
         $func_create_obj = clone $this;
         $func_create_obj_names = $func_to_create->object_names();
         $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
-        // create the missing sql functions
+
+        // create the missing sql functions and add the first missing word
         $func_to_create = $func_create_obj->sql($sc);
         $func_to_create->exe();
-        // add the missing words
-        //$usr_msg->add($ins_calls->exe());
+
+        // add the remaining missing words
+        $add_lst = $add_lst->filter_by_name($func_create_obj_names);
+        $ins_calls = $add_lst->sql_call_with_par($sc);
+        $usr_msg->add($ins_calls->exe());
+
         // update the existing words
+        // TODO create a test that fields not included in the import message are not updated, but e.g. an empty descrption is updated
         // loop over the words and check if all needed functions exist
         // create the missing functions
         // create blocks of update function calls
+
         return $usr_msg;
     }
 
