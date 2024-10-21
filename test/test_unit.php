@@ -2,11 +2,9 @@
 
 /*
 
-    test.php - run all internal code consistency TESTs
-    --------
+    test_unit.php - run the interlal unit tests without db read or write
+    -------------
 
-    these unit and intergration test inlcudes reading must have data from the database
-    and writing of some test data to the database, which are cleand up after the tests
     checks that only developers and local admin can start the tests
 
 
@@ -61,7 +59,7 @@ use test\all_tests;
 global $db_con;
 
 // open database and display header
-$db_con = prg_start("unit and integration testing");
+$db_con = prg_start("unit tests");
 
 // load the session user parameters
 $start_usr = new user;
@@ -71,8 +69,19 @@ $result = $start_usr->get();
 if ($start_usr->id() > 0) {
     if ($start_usr->is_admin()) {
 
-        // run all unit, read and write tests
-        (new all_tests())->run_all_tests();
+        global $errors;
+
+        // init tests
+        $errors = 0;
+        $t = new all_tests();
+        $t->header('Run selected zukunft.com tests');
+
+        // run a list of selected tests
+        (new all_tests())->run_unit();
+
+        // display the test results
+        $t->dsp_result_html();
+        $t->dsp_result();
 
     } else {
         echo 'Only admin users are allowed to start the system testing. Login as an admin for system testing.';

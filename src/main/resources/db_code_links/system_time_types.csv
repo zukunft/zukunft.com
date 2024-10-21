@@ -6,3 +6,4 @@ system_time_type_id, type_name, code_id, description
 5, 'db read tests', 'test_db_read', 'total execution time used for the db read tests'
 6, 'unit and integration testing', 'test_db_write', 'total execution time used for the db write tests'
 7, 'unit testing with database reading', 'test_db_read', 'total execution time used for the db read tests'
+8, 'selected tests', 'test_select', 'total execution time for the selected tests'
