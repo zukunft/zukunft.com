@@ -1019,14 +1019,14 @@ class word_list extends sandbox_list_named
      * @param word_list $lst_with_id a list with the database ids
      * @return user_message
      */
-    function set_id_from_word_list(word_list $lst_with_id): user_message
+    function fill_vars_from_word_list(word_list $lst_with_id): user_message
     {
         $usr_msg = new user_message();
         foreach ($lst_with_id->lst() as $wrd_with_id) {
             if ($wrd_with_id->id() != 0 and $wrd_with_id->name() != '') {
                 $wrd = $this->get_obj_by_name($wrd_with_id->name());
                 if ($wrd != null) {
-                    $wrd->set_id($wrd_with_id->id());
+                    $wrd->fill($wrd_with_id);
                 } else {
                     $this->add($wrd_with_id);
                 }
@@ -1715,7 +1715,7 @@ class word_list extends sandbox_list_named
         $db_lst->load_by_names($this->names());
 
         // get the db id from the loaded words
-        $usr_msg->add($this->set_id_from_word_list($db_lst));
+        $usr_msg->add($this->fill_vars_from_word_list($db_lst));
 
         // get the words that need to be added
         $db_names = $db_lst->names();

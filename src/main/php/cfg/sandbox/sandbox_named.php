@@ -12,6 +12,7 @@
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
     - set and get:       to capsule the vars from unexpected changes
+    - modify:            change potentially all variables of this sandbox object
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
     - load sql:          create the sql statements for loading from the db
@@ -95,11 +96,11 @@ class sandbox_named extends sandbox
      */
 
     // object specific database and JSON object field names
-    // *_SQLTYP is the sql data type used for the field
+    // *_SQL_TYP is the sql data type used for the field
     const FLD_NAME = 'name';
-    const FLD_NAME_SQLTYP = sql_field_type::NAME; // in many cases overwritten by NAME_UNIQUE
+    const FLD_NAME_SQL_TYP = sql_field_type::NAME; // in many cases overwritten by NAME_UNIQUE
     const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
+    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
 
 
     /*
@@ -240,6 +241,31 @@ class sandbox_named extends sandbox
         $obj_cpy->set_id($this->id());
         $obj_cpy->set_name($name);
         return $obj_cpy;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this sandbox object based on the given object
+     * if the given description is not set (null) the description is not removed
+     * if the given description is an empty string (not null) the description is removed
+     *
+     * @param sandbox_named|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(sandbox_named|db_object_seq_id $sbx): user_message
+    {
+        $usr_msg = parent::fill($sbx);
+        if ($sbx->name() != null) {
+            $this->set_name($sbx->name());
+        }
+        if ($sbx->description() != null) {
+            $this->set_description($sbx->description());
+        }
+        return $usr_msg;
     }
 
 
@@ -442,7 +468,7 @@ class sandbox_named extends sandbox
      * check if the named object in the database needs to be updated
      *
      * @param sandbox_named $db_obj the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the datanase
+     * @return bool true if this word has infos that should be saved in the database
      */
     function needs_db_update_named(sandbox_named $db_obj): bool
     {

@@ -71,7 +71,7 @@ class type_list
 
     // database and export JSON object field names
     const FLD_NAME = 'sys_log_function_name';
-    const FLD_NAME_SQLTYP = sql_field_type::NAME;
+    const FLD_NAME_SQL_TYP = sql_field_type::NAME;
 
     // error return codes
     const CODE_ID_NOT_FOUND = -1;

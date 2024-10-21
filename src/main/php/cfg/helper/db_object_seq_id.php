@@ -67,8 +67,8 @@ class db_object_seq_id extends db_object implements JsonSerializable
      */
 
     // database fields and comments
-    // *_SQLTYP is the sql data type used for the field
-    const FLD_ID_SQLTYP = sql_field_type::INT; // this default type is changed e.g. if the id is part of and index
+    // *_SQL_TYP is the sql data type used for the field
+    const FLD_ID_SQL_TYP = sql_field_type::INT; // this default type is changed e.g. if the id is part of and index
 
 
     /*
@@ -150,6 +150,34 @@ class db_object_seq_id extends db_object implements JsonSerializable
 
 
     /*
+     * modify
+     */
+
+    /**
+     * fill this seq id object based on the given object
+     * if the given id is zero the id is never overwritten
+     * if the given id is not zero the id is set if not yet done
+     *
+     * @param db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(db_object_seq_id $sbx): user_message
+    {
+        $usr_msg = new user_message();
+        if ($sbx->id() != 0) {
+            if ($this->id() == 0) {
+                $this->set_id($sbx->id());
+            } elseif ($sbx->id() != $this->id()) {
+                $usr_msg->add_message(
+                    'Unexpected conflict of the database id. '
+                    . $this->dsp_id() . ' != ' . $this->dsp_id());
+            }
+        }
+        return $usr_msg;
+    }
+
+
+    /*
      * cast
      */
 
@@ -176,7 +204,7 @@ class db_object_seq_id extends db_object implements JsonSerializable
 
     /**
      * the sql statement to create the table
-     * is e.g. overwriten for the user sandbox objects
+     * is e.g. overwritten for the user sandbox objects
      *
      * @param sql $sc with the target db_type set
      * @return string the sql statement to create the table
@@ -190,7 +218,7 @@ class db_object_seq_id extends db_object implements JsonSerializable
 
     /**
      * the sql statement to create the database indices
-     * is e.g. overwriten for the user sandbox objects
+     * is e.g. overwritten for the user sandbox objects
      *
      * @param sql $sc with the target db_type set
      * @return string the sql statement to create the indices
@@ -223,7 +251,7 @@ class db_object_seq_id extends db_object implements JsonSerializable
     protected function sql_all_field_par(sql_type_list $sc_par_lst): array
     {
         $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $small_key =  $sc_par_lst->has_key_int_small();
+        $small_key = $sc_par_lst->has_key_int_small();
         $use_sandbox = $sc_par_lst->use_sandbox_fields();
         if (!$usr_tbl) {
             if ($use_sandbox) {

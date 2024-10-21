@@ -82,7 +82,7 @@ class value_ts_data extends db_object
 
     /**
      * the sql statement to create the table
-     * is e.g. overwriten for the user sandbox objects
+     * is e.g. overwritten for the user sandbox objects
      *
      * @param sql $sc with the target db_type set
      * @return string the sql statement to create the table
@@ -96,7 +96,7 @@ class value_ts_data extends db_object
 
     /**
      * the sql statement to create the database indices
-     * is e.g. overwriten for the user sandbox objects
+     * is e.g. overwritten for the user sandbox objects
      *
      * @param sql $sc with the target db_type set
      * @return string the sql statement to create the indices

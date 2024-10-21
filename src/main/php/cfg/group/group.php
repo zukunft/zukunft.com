@@ -96,16 +96,16 @@ class group extends sandbox_multi
 
     // object specific database and JSON object field names
     // *_COM: the description of the field
-    // *_SQLTYP is the sql data type used for the field
+    // *_SQL_TYP is the sql data type used for the field
     const FLD_ID_COM = 'the 64-bit prime index to find the -=class=-';
     const FLD_ID_COM_USER = 'the 64-bit prime index to find the user -=class=-';
     const FLD_ID = 'group_id';
     const FLD_NAME_COM = 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
     const FLD_NAME = 'group_name';
-    const FLD_NAME_SQLTYP = sql_field_type::TEXT;
+    const FLD_NAME_SQL_TYP = sql_field_type::TEXT;
     const FLD_DESCRIPTION_COM = 'the user specific description for mouse over helps';
     const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
+    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
 
     // comments used for the database creation
     const TBL_COMMENT = 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
@@ -123,8 +123,8 @@ class group extends sandbox_multi
         [group::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', self::FLD_ID_COM_USER],
     );
     const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_NAME, self::FLD_NAME_SQLTYP, sql_field_default::NULL, '', '', self::FLD_NAME_COM],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_NAME, self::FLD_NAME_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_NAME_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
     // all database field names excluding the id
@@ -1581,8 +1581,8 @@ class group extends sandbox_multi
         $fld_val_typ_lst = $this->db_changed($db_grp);
         if (count($fld_val_typ_lst) == 0) {
             $fld_val_typ_lst = [
-                [self::FLD_NAME, $this->name, self::FLD_NAME_SQLTYP],
-                [self::FLD_DESCRIPTION, $this->description, self::FLD_DESCRIPTION_SQLTYP]
+                [self::FLD_NAME, $this->name, self::FLD_NAME_SQL_TYP],
+                [self::FLD_DESCRIPTION, $this->description, self::FLD_DESCRIPTION_SQL_TYP]
             ];
         }
         $fields = $sc->get_fields($fld_val_typ_lst);
@@ -1641,14 +1641,14 @@ class group extends sandbox_multi
             $lst[] = [
                 self::FLD_NAME,
                 $this->name(),
-                self::FLD_NAME_SQLTYP
+                self::FLD_NAME_SQL_TYP
             ];
         }
         if ($grp->description <> $this->description) {
             $lst[] = [
                 self::FLD_DESCRIPTION,
                 $this->description,
-                self::FLD_DESCRIPTION_SQLTYP
+                self::FLD_DESCRIPTION_SQL_TYP
             ];
         }
         return $lst;

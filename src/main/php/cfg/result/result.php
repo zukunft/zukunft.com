@@ -1693,7 +1693,7 @@ class result extends sandbox_value
                 $lst->add_field(
                     formula::FLD_ID,
                     $this->frm_id(),
-                    formula::FLD_ID_SQLTYP
+                    formula::FLD_ID_SQL_TYP
                 );
             }
             // if any field has been updated, update the last_update field also

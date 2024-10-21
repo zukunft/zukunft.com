@@ -76,7 +76,7 @@ class change_value extends change_log
 
     // field list to log the actual change of the value with a standard group id
     const FLD_LST_CHANGE = array(
-        [self::FLD_FIELD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
+        [self::FLD_FIELD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
         [self::FLD_OLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
         [self::FLD_NEW_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
     );

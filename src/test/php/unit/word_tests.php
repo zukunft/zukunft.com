@@ -140,6 +140,27 @@ class word_tests
         $json_file = 'unit/word/second.json';
         $t->assert_json_file(new word($usr), $json_file);
 
+        $t->subheader('word sync and fill tests');
+        $test_name = 'check if the word fill function set all database fields';
+        $wrd_imp = $t->word_filled();
+        $wrd_db = $t->word();
+        $wrd_db->fill($wrd_imp);
+        $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp)->names();
+        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, [word::FLD_VIEW, word::FLD_EXCLUDED]);
+        $test_name = 'check if the word id is filled up';
+        $wrd_imp = $t->word();
+        $wrd_imp->set_id(0);
+        $wrd_db = $t->word();
+        $wrd_imp->fill($wrd_db);
+        $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp)->names();
+        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, []);
+        $test_name = 'check if description can be set to an empty string';
+        $wrd_imp = $t->word();
+        $wrd_imp->set_description('');
+        $wrd_db = $t->word();
+        $wrd_db->fill($wrd_imp);
+        $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp)->names();
+        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, [word::FLD_DESCRIPTION]);
 
         $test_name = 'check if database would not be updated if only the name is given in import';
         $in_wrd = $t->word_name_only();

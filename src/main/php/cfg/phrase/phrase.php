@@ -83,13 +83,13 @@ class phrase extends combine_named
      */
 
     // the database and JSON object duplicate field names for combined word and triples mainly to link phrases
-    // *_SQLTYP is the sql data type used for the field
+    // *_SQL_TYP is the sql data type used for the field
     const FLD_ID = 'phrase_id';
-    const FLD_ID_SQLTYP = sql_field_type::INT;
+    const FLD_ID_SQL_TYP = sql_field_type::INT;
     const FLD_NAME = 'phrase_name';
     const FLD_TYPE = 'phrase_type_id';
     const FLD_TYPE_NAME = 'phrase_type_name'; // used for the log parameter only
-    const FLD_TYPE_SQLTYP = sql_field_type::INT_SMALL;
+    const FLD_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
     const FLD_VALUES = 'values';
 
     // the common phrase database field names excluding the id and excluding the user specific fields
@@ -869,7 +869,7 @@ class phrase extends combine_named
      * e.g. for import  if this word has only the name set, the protection should not be updated in the database
      *
      * @param phrase $db_phr the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the datanase
+     * @return bool true if this word has infos that should be saved in the database
      */
     function needs_db_update(phrase $db_phr): bool
     {

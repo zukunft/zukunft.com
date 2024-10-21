@@ -69,7 +69,7 @@ class system_time extends db_object_seq_id
     const FLD_LST_ALL = array(
         [self::FLD_TIME_START, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_START_COM],
         [self::FLD_TIME_END, sql_field_type::TIME, sql_field_default::NULL, sql::INDEX, '', self::FLD_TIME_END_COM],
-        [self::FLD_GROUP, type_object::FLD_ID_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, system_time_type::class, self::FLD_GROUP_COM],
+        [self::FLD_GROUP, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, system_time_type::class, self::FLD_GROUP_COM],
         [self::FLD_MILLISECONDS, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', self::FLD_MILLISECONDS_COM],
     );
 

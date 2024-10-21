@@ -48,11 +48,11 @@ class changes_norm extends change
 
     // field list to log the actual change of the named user sandbox object
     const FLD_LST_CHANGE = array(
-        [self::FLD_FIELD_ID, self::FLD_FIELD_ID_SQLTYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
-        [self::FLD_OLD_VALUE, self::FLD_OLD_VALUE_SQLTYP, sql_field_default::NULL, '', '', ''],
-        [self::FLD_NEW_VALUE, self::FLD_NEW_VALUE_SQLTYP, sql_field_default::NULL, '', '', ''],
-        [self::FLD_OLD_ID, self::FLD_OLD_ID_NORM_SQLTYP, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
-        [self::FLD_NEW_ID, self::FLD_OLD_ID_NORM_SQLTYP, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
+        [self::FLD_FIELD_ID, self::FLD_FIELD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
+        [self::FLD_OLD_VALUE, self::FLD_OLD_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [self::FLD_NEW_VALUE, self::FLD_NEW_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [self::FLD_OLD_ID, self::FLD_OLD_ID_NORM_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
+        [self::FLD_NEW_ID, self::FLD_OLD_ID_NORM_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
     );
 
     // field list to identify the database row in the table that has been changed

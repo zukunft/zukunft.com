@@ -826,10 +826,10 @@ class change_log extends db_object_seq_id_user
     function db_field_values_types(sql $sc, sql_type_list $sc_par_lst): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
-        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQLTYP);
-        $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQLTYP);
+        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQL_TYP);
+        $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQL_TYP);
         if ($this->field_id != null) {
-            $fvt_lst->add_field(change_field::FLD_ID, $this->field_id, type_object::FLD_ID_SQLTYP);
+            $fvt_lst->add_field(change_field::FLD_ID, $this->field_id, type_object::FLD_ID_SQL_TYP);
         }
 
         return $fvt_lst;

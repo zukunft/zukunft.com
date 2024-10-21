@@ -741,9 +741,9 @@ class change_link extends change_log
     ): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
-        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQLTYP);
-        $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQLTYP);
-        $fvt_lst->add_field(change_table::FLD_ID, $this->table_id, type_object::FLD_ID_SQLTYP);
+        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQL_TYP);
+        $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQL_TYP);
+        $fvt_lst->add_field(change_table::FLD_ID, $this->table_id, type_object::FLD_ID_SQL_TYP);
 
         if ($this->old_text_from !== null) {
             $fvt_lst->add_field(self::FLD_OLD_FROM_TEXT, $this->old_text_from, $sc->get_sql_par_type($this->old_text_from));

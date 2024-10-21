@@ -91,18 +91,18 @@ class component extends sandbox_typed
 
     // the database and JSON object field names used only for view components links
     // *_COM: the description of the field
-    // *_SQLTYP: the sql field type used for this field
+    // *_SQL_TYP: the sql field type used for this field
     const FLD_ID = 'component_id';
     const FLD_NAME_COM = 'the unique name used to select a component by the user';
     const FLD_NAME = 'component_name';
     const FLD_DESCRIPTION_COM = 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry';
     const FLD_TYPE_COM = 'to select the predefined functionality';
     const FLD_TYPE = 'component_type_id';
-    const FLD_TYPE_SQLTYP = sql_field_type::INT_SMALL;
+    const FLD_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
     const FLD_CODE_ID_COM = 'used for system components to select the component by the program code';
     const FLD_UI_MSG_ID_COM = 'used for system components the id to select the language specific user interface message e.g. "add word"';
     const FLD_UI_MSG_ID = 'ui_msg_code_id';
-    const FLD_UI_MSG_ID_SQLTYP = sql_field_type::CODE_ID;
+    const FLD_UI_MSG_ID_SQL_TYP = sql_field_type::CODE_ID;
     // TODO move the lined phrases to a component phrase link table for n:m relation with a type for each link
     const FLD_ROW_PHRASE_COM = 'for a tree the related value the start node';
     const FLD_ROW_PHRASE = 'word_id_row';
@@ -117,7 +117,7 @@ class component extends sandbox_typed
     const FLD_LINK_COMP_TYPE = 'component_link_type_id';
     const FLD_LINK_TYPE_COM = 'e.g. for type 4 to select possible terms';
     const FLD_LINK_TYPE = 'link_type_id';
-    const FLD_LINK_TYPE_SQLTYP = sql_field_type::INT_SMALL;
+    const FLD_LINK_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
     const FLD_POSITION = 'position'; // TODO move to component_link
 
     // list of fields that MUST be set by one user
@@ -130,16 +130,16 @@ class component extends sandbox_typed
     );
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [self::FLD_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, component_type::class, self::FLD_TYPE_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, component_type::class, self::FLD_TYPE_COM],
         // TODO link with a foreign key to phrases (or terms?) if link to a view is allowed
         [self::FLD_ROW_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_PHRASE_COM],
         [formula::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
         [self::FLD_COL_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_COL_PHRASE_COM],
         [self::FLD_COL2_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_COL2_PHRASE_COM],
         [self::FLD_LINK_COMP, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_COMP_COM],
-        [self::FLD_LINK_COMP_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_COMP_TYPE_COM],
-        [self::FLD_LINK_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_TYPE_COM],
+        [self::FLD_LINK_COMP_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_COMP_TYPE_COM],
+        [self::FLD_LINK_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_TYPE_COM],
     );
     // list of fields that CANNOT be changed by the user
     const FLD_LST_NON_CHANGEABLE = array(
@@ -1244,7 +1244,7 @@ class component extends sandbox_typed
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE,
                     $change_field_list->id($table_id . self::FLD_TYPE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             global $component_types;
@@ -1261,13 +1261,13 @@ class component extends sandbox_typed
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
                     $change_field_list->id($table_id . sql::FLD_CODE_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 sql::FLD_CODE_ID,
                 $this->code_id,
-                sql::FLD_CODE_ID_SQLTYP,
+                sql::FLD_CODE_ID_SQL_TYP,
                 $sbx->code_id
             );
         }
@@ -1276,13 +1276,13 @@ class component extends sandbox_typed
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_UI_MSG_ID,
                     $change_field_list->id($table_id . self::FLD_UI_MSG_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_UI_MSG_ID,
                 $this->ui_msg_code_id,
-                self::FLD_UI_MSG_ID_SQLTYP,
+                self::FLD_UI_MSG_ID_SQL_TYP,
                 $sbx->ui_msg_code_id
             );
         }
@@ -1291,7 +1291,7 @@ class component extends sandbox_typed
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ROW_PHRASE,
                     $change_field_list->id($table_id . self::FLD_ROW_PHRASE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $old_val = $sbx->row_phrase_id();
@@ -1301,7 +1301,7 @@ class component extends sandbox_typed
             $lst->add_field(
                 self::FLD_ROW_PHRASE,
                 $this->row_phrase_id(),
-                phrase::FLD_ID_SQLTYP,
+                phrase::FLD_ID_SQL_TYP,
                 $old_val
             );
         }
@@ -1310,7 +1310,7 @@ class component extends sandbox_typed
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_COL_PHRASE,
                     $change_field_list->id($table_id . self::FLD_COL_PHRASE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $old_val = $sbx->col_phrase_id();
@@ -1320,7 +1320,7 @@ class component extends sandbox_typed
             $lst->add_field(
                 self::FLD_COL_PHRASE,
                 $this->col_phrase_id(),
-                phrase::FLD_ID_SQLTYP,
+                phrase::FLD_ID_SQL_TYP,
                 $old_val
             );
         }
@@ -1329,7 +1329,7 @@ class component extends sandbox_typed
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_COL2_PHRASE,
                     $change_field_list->id($table_id . self::FLD_COL2_PHRASE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $old_val = $sbx->col_sub_phrase_id();
@@ -1339,7 +1339,7 @@ class component extends sandbox_typed
             $lst->add_field(
                 self::FLD_COL2_PHRASE,
                 $this->col_sub_phrase_id(),
-                phrase::FLD_ID_SQLTYP,
+                phrase::FLD_ID_SQL_TYP,
                 $old_val
             );
         }
@@ -1348,7 +1348,7 @@ class component extends sandbox_typed
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula::FLD_ID,
                     $change_field_list->id($table_id . formula::FLD_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $old_val = $sbx->formula_id();
@@ -1358,7 +1358,7 @@ class component extends sandbox_typed
             $lst->add_field(
                 formula::FLD_ID,
                 $this->formula_id(),
-                formula::FLD_ID_SQLTYP,
+                formula::FLD_ID_SQL_TYP,
                 $old_val
             );
         }
@@ -1368,13 +1368,13 @@ class component extends sandbox_typed
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_LINK_TYPE,
                     $change_field_list->id($table_id . self::FLD_LINK_TYPE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_LINK_TYPE,
                 $this->link_type_id,
-                self::FLD_LINK_TYPE_SQLTYP,
+                self::FLD_LINK_TYPE_SQL_TYP,
                 $sbx->link_type_id
             );
         }

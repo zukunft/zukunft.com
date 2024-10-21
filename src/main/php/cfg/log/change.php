@@ -93,22 +93,22 @@ class change extends change_log
 
     // user log database and JSON object field names for named user sandbox objects
     // *_COM is the description of the field
-    // *_SQLTYP is the sql data type used for the field
+    // *_SQL_TYP is the sql data type used for the field
     const FLD_FIELD_ID = 'change_field_id';
-    const FLD_FIELD_ID_SQLTYP = sql_field_type::INT_SMALL;
+    const FLD_FIELD_ID_SQL_TYP = sql_field_type::INT_SMALL;
     const FLD_ROW_ID = 'row_id';
     const FLD_OLD_VALUE = 'old_value';
-    const FLD_OLD_VALUE_SQLTYP = sql_field_type::TEXT;
+    const FLD_OLD_VALUE_SQL_TYP = sql_field_type::TEXT;
     const FLD_OLD_ID_COM = 'old value id';
     const FLD_OLD_ID = 'old_id';
-    const FLD_OLD_ID_SQLTYP = sql_field_type::INT;
-    const FLD_OLD_ID_NORM_SQLTYP = sql_field_type::REF_512;
-    const FLD_OLD_ID_BIG_SQLTYP = sql_field_type::TEXT;
+    const FLD_OLD_ID_SQL_TYP = sql_field_type::INT;
+    const FLD_OLD_ID_NORM_SQL_TYP = sql_field_type::REF_512;
+    const FLD_OLD_ID_BIG_SQL_TYP = sql_field_type::TEXT;
     const FLD_NEW_VALUE = 'new_value';
-    const FLD_NEW_VALUE_SQLTYP = sql_field_type::TEXT;
+    const FLD_NEW_VALUE_SQL_TYP = sql_field_type::TEXT;
     const FLD_NEW_ID_COM = 'new value id';
     const FLD_NEW_ID = 'new_id';
-    const FLD_NEW_ID_SQLTYP = sql_field_type::INT;
+    const FLD_NEW_ID_SQL_TYP = sql_field_type::INT;
     const FLD_OLD_EXT = '_old';
 
     // all database field names
@@ -126,11 +126,11 @@ class change extends change_log
 
     // field list to log the actual change of the named user sandbox object
     const FLD_LST_CHANGE = array(
-        [self::FLD_FIELD_ID, self::FLD_FIELD_ID_SQLTYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
-        [self::FLD_OLD_VALUE, self::FLD_OLD_VALUE_SQLTYP, sql_field_default::NULL, '', '', ''],
-        [self::FLD_NEW_VALUE, self::FLD_NEW_VALUE_SQLTYP, sql_field_default::NULL, '', '', ''],
-        [self::FLD_OLD_ID, self::FLD_OLD_ID_SQLTYP, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
-        [self::FLD_NEW_ID, self::FLD_NEW_ID_SQLTYP, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
+        [self::FLD_FIELD_ID, self::FLD_FIELD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
+        [self::FLD_OLD_VALUE, self::FLD_OLD_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [self::FLD_NEW_VALUE, self::FLD_NEW_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [self::FLD_OLD_ID, self::FLD_OLD_ID_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
+        [self::FLD_NEW_ID, self::FLD_NEW_ID_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
     );
 
 

@@ -108,18 +108,18 @@ class triple extends sandbox_link_named implements JsonSerializable
     const FLD_NAME = 'triple_name';
     const FLD_NAME_GIVEN_COM = 'the unique name manually set by the user, which can be null if the generated name should be used';
     const FLD_NAME_GIVEN = 'name_given';
-    const FLD_NAME_GIVEN_SQLTYP = sql_field_type::NAME;
+    const FLD_NAME_GIVEN_SQL_TYP = sql_field_type::NAME;
     const FLD_NAME_AUTO_COM = 'the generated name is saved in the database for database base unique check based on the phrases and verb, which can be overwritten by the given name';
     const FLD_NAME_AUTO = 'name_generated';
-    const FLD_NAME_AUTO_SQLTYP = sql_field_type::NAME;
+    const FLD_NAME_AUTO_SQL_TYP = sql_field_type::NAME;
     const FLD_DESCRIPTION_COM = 'text that should be shown to the user in case of mouseover on the triple name';
-    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
+    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
     const FLD_VIEW_COM = 'the default mask for this triple';
     const FLD_VIEW = 'view_id';
-    const FLD_VIEW_SQLTYP = sql_field_type::INT;
+    const FLD_VIEW_SQL_TYP = sql_field_type::INT;
     const FLD_VALUES_COM = 'number of values linked to the word, which gives an indication of the importance';
     const FLD_VALUES = 'values';
-    const FLD_VALUES_SQLTYP = sql_field_type::INT;
+    const FLD_VALUES_SQL_TYP = sql_field_type::INT;
     const FLD_INACTIVE_COM = 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
     const FLD_INACTIVE = 'inactive';
     const FLD_CODE_ID_COM = 'to link coded functionality to a specific triple e.g. to get the values of the system configuration';
@@ -140,11 +140,11 @@ class triple extends sandbox_link_named implements JsonSerializable
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
-        [self::FLD_NAME_GIVEN, self::FLD_NAME_GIVEN_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_GIVEN_COM],
-        [self::FLD_NAME_AUTO, self::FLD_NAME_AUTO_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_AUTO_COM],
-        [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_NAME_GIVEN, self::FLD_NAME_GIVEN_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_GIVEN_COM],
+        [self::FLD_NAME_AUTO, self::FLD_NAME_AUTO_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_AUTO_COM],
+        [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_COND_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_COND_ID_COM],
-        [phrase::FLD_TYPE, phrase::FLD_TYPE_SQLTYP, sql_field_default::NULL, sql::INDEX, phrase_type::class, word::FLD_TYPE_COM],
+        [phrase::FLD_TYPE, phrase::FLD_TYPE_SQL_TYP, sql_field_default::NULL, sql::INDEX, phrase_type::class, word::FLD_TYPE_COM],
         [self::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
         [self::FLD_VALUES, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_VALUES_COM],
     );
@@ -1577,7 +1577,7 @@ class triple extends sandbox_link_named implements JsonSerializable
      * e.g. for import  if this word has only the name set, the protection should not be updated in the database
      *
      * @param triple $db_trp the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the datanase
+     * @return bool true if this word has infos that should be saved in the database
      */
     function needs_db_update(triple $db_trp): bool
     {
@@ -2360,7 +2360,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
                     $change_field_list->id($table_id . phrase::FLD_TYPE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             global $phrase_types;
@@ -2380,7 +2380,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
                         $change_field_list->id($table_id . verb::FLD_ID),
-                        change::FLD_FIELD_ID_SQLTYP
+                        change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 global $verbs;
@@ -2403,7 +2403,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
                             $change_field_list->id($table_id . verb::FLD_ID),
-                            change::FLD_FIELD_ID_SQLTYP
+                            change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
                     global $verbs;
@@ -2419,20 +2419,20 @@ class triple extends sandbox_link_named implements JsonSerializable
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . sandbox::FLD_EXCLUDED,
                             $change_field_list->id($table_id . sandbox::FLD_EXCLUDED),
-                            change::FLD_FIELD_ID_SQLTYP
+                            change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
                     $lst->add_field(
                         sandbox::FLD_EXCLUDED,
                         1,
-                        sandbox::FLD_EXCLUDED_SQLTYP
+                        sandbox::FLD_EXCLUDED_SQL_TYP
                     );
                 } elseif (!$this->is_excluded() and $sbx->is_excluded()) {
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
                             $change_field_list->id($table_id . verb::FLD_ID),
-                            change::FLD_FIELD_ID_SQLTYP
+                            change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
                     global $verbs;
@@ -2452,7 +2452,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sandbox::FLD_EXCLUDED,
                     $change_field_list->id($table_id . sandbox::FLD_EXCLUDED),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             if ($this->is_excluded()) {
@@ -2463,7 +2463,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             $lst->add_field(
                 sandbox::FLD_EXCLUDED,
                 $new_excl,
-                sandbox::FLD_EXCLUDED_SQLTYP
+                sandbox::FLD_EXCLUDED_SQL_TYP
             );
         }
         if ($sbx->name_given() <> $this->name_given()) {
@@ -2471,7 +2471,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_NAME_GIVEN,
                     $change_field_list->id($table_id . self::FLD_NAME_GIVEN),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             if ($sbx->name_given() == '') {
@@ -2482,7 +2482,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             $lst->add_field(
                 self::FLD_NAME_GIVEN,
                 $this->name_given(),
-                self::FLD_NAME_GIVEN_SQLTYP,
+                self::FLD_NAME_GIVEN_SQL_TYP,
                 $old_name
             );
         }
@@ -2491,7 +2491,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_NAME_AUTO,
                     $change_field_list->id($table_id . self::FLD_NAME_AUTO),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             if ($sbx->name_generated() == '') {
@@ -2502,7 +2502,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             $lst->add_field(
                 self::FLD_NAME_AUTO,
                 $this->name_generated(),
-                self::FLD_NAME_AUTO_SQLTYP,
+                self::FLD_NAME_AUTO_SQL_TYP,
                 $old_name
             );
         }
@@ -2512,13 +2512,13 @@ class triple extends sandbox_link_named implements JsonSerializable
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_VALUES,
                     $change_field_list->id($table_id . self::FLD_VALUES),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_VALUES,
                 $this->values,
-                self::FLD_VALUES_SQLTYP,
+                self::FLD_VALUES_SQL_TYP,
                 $sbx->values
             );
         }
@@ -2527,7 +2527,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_VIEW,
                     $change_field_list->id($table_id . self::FLD_VIEW),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_link_field(

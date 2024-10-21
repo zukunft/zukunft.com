@@ -67,18 +67,18 @@ class type_object extends db_object_seq_id implements JsonSerializable
      */
 
     // comments used for the database creation
-    // *_SQLTYP is the sql data type used for the field
+    // *_SQL_TYP is the sql data type used for the field
     const TBL_COMMENT = 'for a type to set the predefined behaviour of an object';
 
     // database and JSON object field names
     const FLD_ID_COM = 'the database id is also used as the array pointer';
-    const FLD_ID_SQLTYP = sql_field_type::INT_SMALL;
+    const FLD_ID_SQL_TYP = sql_field_type::INT_SMALL;
     const FLD_NAME_COM = 'the unique type name as shown to the user and used for the selection';
     const FLD_NAME = 'type_name';
     const FLD_CODE_ID_COM = 'this id text is unique for all code links, is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
     const FLD_DESCRIPTION_COM = 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
     const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
+    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
 
     // type name exceptions
     const FLD_ACTION = 'change_action_name';
@@ -89,7 +89,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
     const FLD_LST_ALL = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
         [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
 

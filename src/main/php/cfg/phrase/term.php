@@ -84,7 +84,7 @@ class term extends combine_named
     // field names of the database view for terms
     // the database view is used e.g. for a fast check of a new term name
     const FLD_ID = 'term_id';
-    const FLD_ID_SQLTYP = sql_field_type::INT;
+    const FLD_ID_SQL_TYP = sql_field_type::INT;
     const FLD_NAME = 'term_name';
     const FLD_USAGE = 'usage'; // included in the database view to be able to show the user the most relevant terms
     const FLD_TYPE = 'term_type_id'; // the term type for word or triple or the formula type for formulas; not used for verbs

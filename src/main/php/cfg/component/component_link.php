@@ -84,7 +84,7 @@ class component_link extends sandbox_link
     const TBL_COMMENT = 'to link components to views with an n:m relation';
     const FLD_ID = 'component_link_id';
     const FLD_ORDER_NBR = 'order_nbr';
-    const FLD_ORDER_NBR_SQLTYP = sql_field_type::INT;
+    const FLD_ORDER_NBR_SQL_TYP = sql_field_type::INT;
     const FLD_POS_COM = 'the position of the component e.g. right or below';
     const FLD_POS_TYPE = 'position_type_id';
     const FLD_POS_TYPE_NAME = 'position'; // for log only
@@ -122,15 +122,15 @@ class component_link extends sandbox_link
     );
     // list of MANDATORY fields that CAN be CHANGED by the user
     const FLD_LST_MUST_BUT_STD_ONLY = array(
-        [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQLTYP, sql_field_default::ONE, '', '', ''],
-        [component_link_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::ONE, sql::INDEX, component_link_type::class, ''],
-        [position_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::TWO, sql::INDEX, position_type::class, self::FLD_POS_COM],
+        [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQL_TYP, sql_field_default::ONE, '', '', ''],
+        [component_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::ONE, sql::INDEX, component_link_type::class, ''],
+        [position_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::TWO, sql::INDEX, position_type::class, self::FLD_POS_COM],
     );
     // list of fields that CAN be CHANGEd by the user
     const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQLTYP, sql_field_default::NULL, '', '', ''],
-        [component_link_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, component_link_type::class, ''],
-        [position_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, position_type::class, self::FLD_POS_COM],
+        [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [component_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, component_link_type::class, ''],
+        [position_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, position_type::class, self::FLD_POS_COM],
     );
 
 
@@ -973,7 +973,7 @@ class component_link extends sandbox_link
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_link_type::FLD_ID,
                     $change_field_list->id($table_id . component_link_type::FLD_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             global $component_link_types;
@@ -990,13 +990,13 @@ class component_link extends sandbox_link
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER_NBR,
                     $change_field_list->id($table_id . self::FLD_ORDER_NBR),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_ORDER_NBR,
                 $this->pos(),
-                self::FLD_ORDER_NBR_SQLTYP,
+                self::FLD_ORDER_NBR_SQL_TYP,
                 $sbx->pos()
             );
         }
@@ -1005,7 +1005,7 @@ class component_link extends sandbox_link
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_POS_TYPE,
                     $change_field_list->id($table_id . self::FLD_POS_TYPE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             global $position_types;

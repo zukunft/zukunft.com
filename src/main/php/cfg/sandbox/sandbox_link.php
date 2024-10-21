@@ -472,7 +472,7 @@ class sandbox_link extends sandbox
      * check if the named object in the database needs to be updated
      *
      * @param sandbox_link $db_obj the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the datanase
+     * @return bool true if this word has infos that should be saved in the database
      */
     function needs_db_update_linked(sandbox_link $db_obj): bool
     {
@@ -1050,7 +1050,7 @@ class sandbox_link extends sandbox
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
                         $change_field_list->id($table_id . $this->from_field()),
-                        change::FLD_FIELD_ID_SQLTYP
+                        change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 // TODO Prio 2: move "from_" to a const and or function
@@ -1066,7 +1066,7 @@ class sandbox_link extends sandbox
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
                         $change_field_list->id($table_id . $this->to_field()),
-                        change::FLD_FIELD_ID_SQLTYP
+                        change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 // e.g. for external references
@@ -1130,7 +1130,7 @@ class sandbox_link extends sandbox
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
                             $change_field_list->id($table_id . $this->from_field()),
-                            change::FLD_FIELD_ID_SQLTYP
+                            change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
                     $lst->add_link_field(
@@ -1143,19 +1143,19 @@ class sandbox_link extends sandbox
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
                             $change_field_list->id($table_id . $this->to_field()),
-                            change::FLD_FIELD_ID_SQLTYP
+                            change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
                     if ($this::class == ref::class) {
                         $lst->add_field(
                             $this->to_field(),
                             null,
-                            sandbox_named::FLD_NAME_SQLTYP,
+                            sandbox_named::FLD_NAME_SQL_TYP,
                             $sbx->to_value(),
                             $to_fld,
                             null,
                             null,
-                            db_object_seq_id::FLD_ID_SQLTYP
+                            db_object_seq_id::FLD_ID_SQL_TYP
                         );
                     } else {
                         $lst->add_link_field(
@@ -1170,7 +1170,7 @@ class sandbox_link extends sandbox
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
                             $change_field_list->id($table_id . $this->from_field()),
-                            change::FLD_FIELD_ID_SQLTYP
+                            change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
                     $lst->add_link_field(
@@ -1183,19 +1183,19 @@ class sandbox_link extends sandbox
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
                             $change_field_list->id($table_id . $this->to_field()),
-                            change::FLD_FIELD_ID_SQLTYP
+                            change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
                     if ($this::class == ref::class) {
                         $lst->add_field(
                             $this->to_field(),
                             $this->tob(),
-                            sandbox_named::FLD_NAME_SQLTYP,
+                            sandbox_named::FLD_NAME_SQL_TYP,
                             null,
                             $to_fld,
                             $this->tob(),
                             null,
-                            db_object_seq_id::FLD_ID_SQLTYP
+                            db_object_seq_id::FLD_ID_SQL_TYP
                         );
                     } else {
                         $lst->add_link_field(

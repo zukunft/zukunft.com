@@ -14,8 +14,9 @@
     The main sections of this object are
     - db const:          const for the database link
     - object vars:       the variables of this sandbox object
-    - construct and map: including the mapping of the db row to this word object
+    - construct and map: including the mapping of the db row to this sandbox object
     - set and get:       to capsule the vars from unexpected changes
+    - modify:            change potentially all variables of this sandbox object
     - preloaded:         select e.g. types from cache
     - placeholder:       function that are overwritten by the child objects (some load related)
     - cast:              create an api object and set the vars from an api json
@@ -37,7 +38,7 @@
     - sql create:        to create the database table, index and foreign keys
     - sql write switch:  select the best db write method
     - internal check:    for testing during development
-    - settings:          internal information aboud this or the child objects e.g. is_named_obj()
+    - settings:          internal information about this or the child objects e.g. is_named_obj()
 
 
     This file is part of zukunft.com - calc with words
@@ -114,21 +115,21 @@ class sandbox extends db_object_seq_id_user
     // the id field is not included here because it is used for the database relations and should be object specific
     // e.g. always "word_id" instead of simply "id
     // *_COM: the description of the field
-    // *_SQLTYP is the sql data type used for the field
+    // *_SQL_TYP is the sql data type used for the field
     const FLD_ID_COM = 'the owner / creator of the -=class=-';
     const FLD_ID_COM_CHANGER = 'the changer of the -=class=-';
     const FLD_ID = ''; // is always overwritten by the child class just added here to prevent polymorph warning
     const FLD_EXCLUDED_COM = 'true if a user, but not all, have removed it';
     const FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
-    const FLD_EXCLUDED_SQLTYP = sql_field_type::BOOL;
+    const FLD_EXCLUDED_SQL_TYP = sql_field_type::BOOL;
     const FLD_CHANGE_USER = 'change_user_id'; // id of the user who wants something the object to be different from most other users
     const FLD_USER_NAME = 'user_name';
     const FLD_SHARE_COM = 'to restrict the access';
     const FLD_SHARE = "share_type_id";  // field name for the share permission
-    const FLD_SHARE_SQLTYP = sql_field_type::INT_SMALL;
+    const FLD_SHARE_SQL_TYP = sql_field_type::INT_SMALL;
     const FLD_PROTECT_COM = 'to protect against unwanted changes';
     const FLD_PROTECT = "protect_id";   // field name for the protection level
-    const FLD_PROTECT_SQLTYP = sql_field_type::INT_SMALL;
+    const FLD_PROTECT_SQL_TYP = sql_field_type::INT_SMALL;
 
     // field lists for the table creation
     const FLD_ALL_OWNER = array(
@@ -138,9 +139,9 @@ class sandbox extends db_object_seq_id_user
         [user::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_ID_COM_CHANGER],
     );
     const FLD_LST_ALL = array(
-        [self::FLD_EXCLUDED, self::FLD_EXCLUDED_SQLTYP, sql_field_default::NULL, '', '', self::FLD_EXCLUDED_COM],
-        [self::FLD_SHARE, self::FLD_SHARE_SQLTYP, sql_field_default::NULL, '', '', self::FLD_SHARE_COM],
-        [self::FLD_PROTECT, self::FLD_PROTECT_SQLTYP, sql_field_default::NULL, '', '', self::FLD_PROTECT_COM],
+        [self::FLD_EXCLUDED, self::FLD_EXCLUDED_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_EXCLUDED_COM],
+        [self::FLD_SHARE, self::FLD_SHARE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_SHARE_COM],
+        [self::FLD_PROTECT, self::FLD_PROTECT_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_PROTECT_COM],
     );
 
     // all database field names excluding the id used to identify if there are some user specific changes
@@ -370,6 +371,34 @@ class sandbox extends db_object_seq_id_user
 
 
     /*
+     * modify
+     */
+
+    /**
+     * fill this sandbox object based on the given object
+     * if the given type is not set (null) the type is not removed
+     * if the given type is zero (not null) the type is removed
+     *
+     * @param sandbox|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(sandbox|db_object_seq_id $sbx): user_message
+    {
+        $usr_msg = parent::fill($sbx);
+        if ($sbx->owner_id != null) {
+            $this->owner_id = $sbx->owner_id;
+        }
+        if ($sbx->share_id != null) {
+            $this->share_id = $sbx->share_id;
+        }
+        if ($sbx->protection_id != null) {
+            $this->protection_id = $sbx->protection_id;
+        }
+        return $usr_msg;
+    }
+
+
+    /*
      * preloaded
      */
 
@@ -468,7 +497,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * only for link objects
-     * the name of the from object
+     * the name of the "from" object
      * to be overwritten by the child object
      * @return string|null
      */
@@ -510,7 +539,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * only for link objects
-     * the from object
+     * the "from" object
      * to be overwritten by the child object
      * @return sandbox_named|combine_named|null
      */
@@ -818,7 +847,7 @@ class sandbox extends db_object_seq_id_user
      * check if the sandbox object in the database needs to be updated
      *
      * @param sandbox $db_obj the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the datanase
+     * @return bool true if this word has infos that should be saved in the database
      */
     function needs_db_update_sandbox(sandbox $db_obj): bool
     {
@@ -1212,7 +1241,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * remove user adjustment and log it (used by user.php to undo the user changes)
-     * @return bool true if no error has occured
+     * @return bool true if no error has occurred
      */
     function del_usr_cfg(): bool
     {
@@ -2064,7 +2093,7 @@ class sandbox extends db_object_seq_id_user
 
         /*
         if ($this::class == word::class and $obj_to_check::class == formula::class) {
-            // special case if word should be created representing the formula it is a kind of same at least the creation of the word should be alloed
+            // special case if word should be created representing the formula it is a kind of same at least the creation of the word should be allowed
             if ($this->name == $obj_to_check->name) {
                 $result = true;
             }
@@ -2685,7 +2714,7 @@ class sandbox extends db_object_seq_id_user
     /**
      * update the sandbox object in the database
      *
-     * @param string $msg the message shown to the user in case of a problem to idemtify the update
+     * @param string $msg the message shown to the user in case of a problem to identify the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return user_message the message and potential solution shown to the user in case of a problem
      */
@@ -2704,7 +2733,7 @@ class sandbox extends db_object_seq_id_user
     /**
      * update the sandbox object in the database
      *
-     * @param string $msg the message shown to the user in case of a problem to idemtify the update
+     * @param string $msg the message shown to the user in case of a problem to identify the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return user_message the message and potential solution shown to the user in case of a problem
      */
@@ -3053,7 +3082,7 @@ class sandbox extends db_object_seq_id_user
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_EXCLUDED,
                     $change_field_list->id($table_id . self::FLD_EXCLUDED),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             // TODO review and remove exception if possible
@@ -3064,7 +3093,7 @@ class sandbox extends db_object_seq_id_user
             $lst->add_field(
                 self::FLD_EXCLUDED,
                 $this->excluded,
-                self::FLD_EXCLUDED_SQLTYP,
+                self::FLD_EXCLUDED_SQL_TYP,
                 $old_val
             );
         }
@@ -3073,13 +3102,13 @@ class sandbox extends db_object_seq_id_user
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_SHARE,
                     $change_field_list->id($table_id . self::FLD_SHARE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_SHARE,
                 $this->share_id,
-                self::FLD_SHARE_SQLTYP,
+                self::FLD_SHARE_SQL_TYP,
                 $sbx->share_id
             );
         }
@@ -3088,13 +3117,13 @@ class sandbox extends db_object_seq_id_user
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_PROTECT,
                     $change_field_list->id($table_id . self::FLD_PROTECT),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_PROTECT,
                 $this->protection_id,
-                self::FLD_PROTECT_SQLTYP,
+                self::FLD_PROTECT_SQL_TYP,
                 $sbx->protection_id
             );
         }
@@ -3233,7 +3262,7 @@ class sandbox extends db_object_seq_id_user
         $fvt_lst->add_field(
             change_action::FLD_ID,
             $change_action_list->id(change_action::ADD),
-            type_object::FLD_ID_SQLTYP
+            type_object::FLD_ID_SQL_TYP
         );
         if ($this->is_link_obj()) {
             // TODO add the linked objects with names to the log entry
@@ -3242,7 +3271,7 @@ class sandbox extends db_object_seq_id_user
             $fvt_lst->add_field(
                 change_table::FLD_ID,
                 $change_table_list->id($lib->class_to_table($this::class)),
-                type_object::FLD_ID_SQLTYP
+                type_object::FLD_ID_SQL_TYP
             );
         }
 
@@ -3488,7 +3517,7 @@ class sandbox extends db_object_seq_id_user
         $fvt_lst->add_field(
             change_action::FLD_ID,
             $change_action_list->id(change_action::UPDATE),
-            type_object::FLD_ID_SQLTYP
+            type_object::FLD_ID_SQL_TYP
         );
 
         // list of parameters actually used in order of the function usage
@@ -3527,7 +3556,7 @@ class sandbox extends db_object_seq_id_user
         $fvt_lst->add_field(
             $sc->id_field_name(),
             $this->id(),
-            db_object_seq_id::FLD_ID_SQLTYP);
+            db_object_seq_id::FLD_ID_SQL_TYP);
 
         // create the query parameters for the log entries for the single fields
         $qp_log = $sc->sql_func_log_update($this::class, $this->user(), $fld_lst_log, $fvt_lst, $sc_par_lst_log, $this->id());
@@ -3543,12 +3572,12 @@ class sandbox extends db_object_seq_id_user
                     $par_lst_out->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
                         $change_field_list->id($table_id . $this->name_field()),
-                        change::FLD_FIELD_ID_SQLTYP
+                        change::FLD_FIELD_ID_SQL_TYP
                     );
                     $par_lst_out->add_field(
                         $this->name_field() . change::FLD_OLD_EXT,
                         $this->name(),
-                        sandbox_named::FLD_NAME_SQLTYP
+                        sandbox_named::FLD_NAME_SQL_TYP
                     );
                 }
             }

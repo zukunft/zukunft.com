@@ -92,7 +92,7 @@ class view extends sandbox_typed
     const FLD_DESCRIPTION_COM = 'to explain the view to the user with a mouse over text; to be replaced by a language form entry';
     const FLD_TYPE_COM = 'to link coded functionality to views e.g. to use a view for the startup page';
     const FLD_TYPE = 'view_type_id';
-    const FLD_TYPE_SQLTYP = sql_field_type::INT_SMALL;
+    const FLD_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
     const FLD_CODE_ID_COM = 'to link coded functionality to a specific view e.g. define the internal system views';
     // the JSON object field names
     const FLD_COMPONENT = 'components';
@@ -108,8 +108,8 @@ class view extends sandbox_typed
     );
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [self::FLD_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, view_type::class, self::FLD_TYPE_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_type::class, self::FLD_TYPE_COM],
     );
     // list of fields that CANNOT be changed by the user
     const FLD_LST_NON_CHANGEABLE = array(
@@ -1085,7 +1085,7 @@ class view extends sandbox_typed
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view::FLD_TYPE,
                     $change_field_list->id($table_id . view::FLD_TYPE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             global $view_types;
@@ -1102,13 +1102,13 @@ class view extends sandbox_typed
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
                     $change_field_list->id($table_id . sql::FLD_CODE_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 sql::FLD_CODE_ID,
                 $this->code_id,
-                sql::FLD_CODE_ID_SQLTYP,
+                sql::FLD_CODE_ID_SQL_TYP,
                 $sbx->code_id
             );
         }

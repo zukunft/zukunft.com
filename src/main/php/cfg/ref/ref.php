@@ -98,17 +98,17 @@ class ref extends sandbox_link
 
     // object specific database and JSON object field names
     // *_COM: the description of the field
-    // *_SQLTYP is the sql data type used for the field
+    // *_SQL_TYP is the sql data type used for the field
     const TBL_COMMENT = 'to link external data to internal for synchronisation';
     const FLD_ID = 'ref_id';
     const FLD_USER_COM = 'the user who has created or adjusted the reference';
     const FLD_EX_KEY_COM = 'the unique external key used in the other system';
     const FLD_EX_KEY = 'external_key';
-    const FLD_EX_KEY_SQLTYP = sql_field_type::NAME;
+    const FLD_EX_KEY_SQL_TYP = sql_field_type::NAME;
     const FLD_TYPE = 'ref_type_id';
     const FLD_URL_COM = 'the concrete url for the entry including the item id';
     const FLD_URL = 'url';
-    const FLD_URL_SQLTYP = sql_field_type::TEXT;
+    const FLD_URL_SQL_TYP = sql_field_type::TEXT;
     const FLD_SOURCE_COM = 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
     const FLD_SOURCE = 'source_id';
     const FLD_PHRASE_COM = 'the phrase for which the external data should be synchronised';
@@ -140,17 +140,17 @@ class ref extends sandbox_link
     );
     // list of fields that must be set
     const FLD_LST_MUST_BUT_STD_ONLY = array(
-        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
+        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
     );
     // list of fields that must be set, but CAN be changed by the user
     const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
+        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
     );
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_URL, self::FLD_URL_SQLTYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
+        [self::FLD_URL, self::FLD_URL_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
         [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
-        [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
+        [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CANNOT be changed by the user
     const FLD_LST_NON_CHANGEABLE = array(
@@ -1188,7 +1188,7 @@ class ref extends sandbox_link
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . ref_type::FLD_ID,
                         $change_field_list->id($table_id . ref_type::FLD_ID),
-                        change::FLD_FIELD_ID_SQLTYP
+                        change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 global $ref_types;
@@ -1207,7 +1207,7 @@ class ref extends sandbox_link
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_ID,
                         $change_field_list->id($table_id . phrase::FLD_ID),
-                        change::FLD_FIELD_ID_SQLTYP
+                        change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 $lst->add_link_field(
@@ -1223,7 +1223,7 @@ class ref extends sandbox_link
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_EX_KEY,
                     $change_field_list->id($table_id . self::FLD_EX_KEY),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $old_key = $sbx->external_key;
@@ -1233,7 +1233,7 @@ class ref extends sandbox_link
             $lst->add_field(
                 self::FLD_EX_KEY,
                 $this->external_key,
-                self::FLD_EX_KEY_SQLTYP,
+                self::FLD_EX_KEY_SQL_TYP,
                 $old_key
             );
         }
@@ -1242,13 +1242,13 @@ class ref extends sandbox_link
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_URL,
                     $change_field_list->id($table_id . self::FLD_URL),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_URL,
                 $this->url,
-                self::FLD_URL_SQLTYP,
+                self::FLD_URL_SQL_TYP,
                 $sbx->url
             );
         }
@@ -1257,7 +1257,7 @@ class ref extends sandbox_link
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
                     $change_field_list->id($table_id . source::FLD_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_link_field(
@@ -1272,13 +1272,13 @@ class ref extends sandbox_link
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
                     $change_field_list->id($table_id . sandbox_named::FLD_DESCRIPTION),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 sandbox_named::FLD_DESCRIPTION,
                 $this->description,
-                sandbox_named::FLD_DESCRIPTION_SQLTYP,
+                sandbox_named::FLD_DESCRIPTION_SQL_TYP,
                 $sbx->description
             );
         }

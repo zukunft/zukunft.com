@@ -1038,7 +1038,7 @@ class sandbox_value extends sandbox_multi
                 $lst->add_field(
                     user::FLD_ID,
                     $this->user()->id(),
-                    user::FLD_ID_SQLTYP
+                    user::FLD_ID_SQL_TYP
                 );
             }
         }
@@ -1523,7 +1523,7 @@ class sandbox_value extends sandbox_multi
         $fvt_lst->add_field(
             change_action::FLD_ID,
             $change_action_list->id(change_action::ADD),
-            type_object::FLD_ID_SQLTYP
+            type_object::FLD_ID_SQL_TYP
         );
 
         // get the fields for the value log entry
@@ -1753,7 +1753,7 @@ class sandbox_value extends sandbox_multi
         $fvt_lst_log->add_field(
             change_action::FLD_ID,
             $change_action_list->id(change_action::DELETE),
-            type_object::FLD_ID_SQLTYP
+            type_object::FLD_ID_SQL_TYP
         );
 
         // get the fields for the value log entry

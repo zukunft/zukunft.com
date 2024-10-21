@@ -90,7 +90,7 @@ class source extends sandbox_typed
 
     // object specific database and JSON object field names
     // *_COM: the description of the field
-    // *_SQLTYP is the sql data type used for the field
+    // *_SQL_TYP is the sql data type used for the field
     const FLD_ID = 'source_id';
     const FLD_NAME_COM = 'the unique name of the source used e.g. as the primary search key';
     const FLD_NAME = 'source_name';
@@ -99,7 +99,7 @@ class source extends sandbox_typed
     const FLD_TYPE = 'source_type_id';
     const FLD_URL_COM = 'the url of the source';
     const FLD_URL = 'url';
-    const FLD_URL_SQLTYP = sql_field_type::TEXT;
+    const FLD_URL_SQL_TYP = sql_field_type::TEXT;
     const FLD_CODE_ID_COM = 'to select sources used by this program';
 
     // list of fields that MUST be set by one user
@@ -108,13 +108,13 @@ class source extends sandbox_typed
     );
     // list of must fields that CAN be changed by the user
     const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [self::FLD_NAME, self::FLD_NAME_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [self::FLD_NAME, self::FLD_NAME_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     // list of fields that can be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [self::FLD_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, source_type::class, self::FLD_TYPE_COM],
-        [self::FLD_URL, self::FLD_URL_SQLTYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, source_type::class, self::FLD_TYPE_COM],
+        [self::FLD_URL, self::FLD_URL_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
         [sql::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
     );
 
@@ -695,13 +695,13 @@ class source extends sandbox_typed
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE,
                     $change_field_list->id($table_id . self::FLD_TYPE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_TYPE,
                 $this->type_id(),
-                type_object::FLD_ID_SQLTYP,
+                type_object::FLD_ID_SQL_TYP,
                 $sbx->type_id()
             );
         }
@@ -710,13 +710,13 @@ class source extends sandbox_typed
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_URL,
                     $change_field_list->id($table_id . self::FLD_URL),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_URL,
                 $this->url,
-                self::FLD_URL_SQLTYP,
+                self::FLD_URL_SQL_TYP,
                 $sbx->url
             );
         }
@@ -725,7 +725,7 @@ class source extends sandbox_typed
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
                     $change_field_list->id($table_id . sql::FLD_CODE_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(

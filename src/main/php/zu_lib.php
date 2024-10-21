@@ -14,6 +14,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO use list of most often used words for the prime word selection
     TODO cleanup set and get functions:
             1. start with set for the core values
             2. group set and get

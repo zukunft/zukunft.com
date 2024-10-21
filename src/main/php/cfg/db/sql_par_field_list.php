@@ -215,12 +215,12 @@ class sql_par_field_list
         $this->add_field(
             $db_fld,
             $chg_sbx?->name(),
-            sandbox_named::FLD_NAME_SQLTYP,
+            sandbox_named::FLD_NAME_SQL_TYP,
             $db_sbx?->name(),
             $usr_fld,
             $chg_sbx?->id(),
             $db_sbx?->id(),
-            db_object_seq_id::FLD_ID_SQLTYP);
+            db_object_seq_id::FLD_ID_SQL_TYP);
     }
 
     /**
@@ -246,12 +246,12 @@ class sql_par_field_list
         $this->add_field(
             $db_fld,
             $typ_lst->name_or_null($chg_id),
-            type_list::FLD_NAME_SQLTYP,
+            type_list::FLD_NAME_SQL_TYP,
             $typ_lst->name_or_null($db_id),
             $usr_fld,
             $chg_id,
             $db_id,
-            type_object::FLD_ID_SQLTYP);
+            type_object::FLD_ID_SQL_TYP);
     }
 
     /**
@@ -265,12 +265,12 @@ class sql_par_field_list
         $this->add_field(
             $sbx::FLD_ID,
             $sbx->id(),
-            db_object_seq_id::FLD_ID_SQLTYP
+            db_object_seq_id::FLD_ID_SQL_TYP
         );
         $this->add_field(
             user::FLD_ID,
             $sbx->user_id(),
-            db_object_seq_id::FLD_ID_SQLTYP
+            db_object_seq_id::FLD_ID_SQL_TYP
         );
 
     }
@@ -298,7 +298,7 @@ class sql_par_field_list
                 $this->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID,
                     $change_field_list->id($table_id . user::FLD_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             if ($sbx_db->user_id() == 0) {
@@ -309,7 +309,7 @@ class sql_par_field_list
             $this->add_field(
                 user::FLD_ID,
                 $sbx_upd->user_id(),
-                db_object_seq_id::FLD_ID_SQLTYP,
+                db_object_seq_id::FLD_ID_SQL_TYP,
                 $old_user_id
             );
         }
@@ -340,7 +340,7 @@ class sql_par_field_list
                 $this->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . $sbx_upd->name_field(),
                     $change_field_list->id($table_id . $sbx_upd->name_field()),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             if ($sbx_db->name() == '') {
@@ -351,7 +351,7 @@ class sql_par_field_list
             $this->add_field(
                 $sbx_upd->name_field(),
                 $sbx_upd->name(),
-                sandbox_named::FLD_NAME_SQLTYP,
+                sandbox_named::FLD_NAME_SQL_TYP,
                 $old_name
             );
         }
@@ -360,13 +360,13 @@ class sql_par_field_list
                 $this->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
                     $change_field_list->id($table_id . sandbox_named::FLD_DESCRIPTION),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $this->add_field(
                 sandbox_named::FLD_DESCRIPTION,
                 $sbx_upd->description,
-                sandbox_named::FLD_DESCRIPTION_SQLTYP,
+                sandbox_named::FLD_DESCRIPTION_SQL_TYP,
                 $sbx_db->description
             );
         }

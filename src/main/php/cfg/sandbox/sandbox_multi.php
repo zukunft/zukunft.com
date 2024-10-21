@@ -92,14 +92,14 @@ class sandbox_multi extends db_object_multi_user
     // database and JSON object field names used in many user sandbox objects
     // the id field is not included here because it is used for the database relations and should be object specific
     // e.g. always "word_id" instead of simply "id"
-    // *_SQLTYP is the sql data type used for the field
+    // *_SQL_TYP is the sql data type used for the field
     const FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
-    const FLD_EXCLUDED_SQLTYP = sql_field_type::BOOL;
+    const FLD_EXCLUDED_SQL_TYP = sql_field_type::BOOL;
     const FLD_USER_NAME = 'user_name';
     const FLD_SHARE = "share_type_id";  // field name for the share permission
-    const FLD_SHARE_SQLTYP = sql_field_type::INT_SMALL;
+    const FLD_SHARE_SQL_TYP = sql_field_type::INT_SMALL;
     const FLD_PROTECT = "protect_id";   // field name for the protection level
-    const FLD_PROTECT_SQLTYP = sql_field_type::INT_SMALL;
+    const FLD_PROTECT_SQL_TYP = sql_field_type::INT_SMALL;
 
     // dummy arrays that should be overwritten by the child object
     const FLD_NAMES = array();
@@ -265,21 +265,21 @@ class sandbox_multi extends db_object_multi_user
             $lst[] = [
                 self::FLD_EXCLUDED,
                 $this->excluded,
-                self::FLD_EXCLUDED_SQLTYP
+                self::FLD_EXCLUDED_SQL_TYP
             ];
         }
         if ($sbx->share_id <> $this->share_id) {
             $lst[] = [
                 self::FLD_SHARE,
                 $this->share_id,
-                self::FLD_SHARE_SQLTYP
+                self::FLD_SHARE_SQL_TYP
             ];
         }
         if ($sbx->protection_id <> $this->protection_id) {
             $lst[] = [
                 self::FLD_PROTECT,
                 $this->protection_id,
-                self::FLD_PROTECT_SQLTYP
+                self::FLD_PROTECT_SQL_TYP
             ];
         }
         return $lst;
@@ -1870,7 +1870,7 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * the common part of the sql_insert, sql_update and sql_delete functions
-     * in moste cases overwriten by the child object
+     * in moste cases overwritten by the child object
      * TODO include the sql statements to log the changes
      *
      * @param sql $sc with the target db_type set
@@ -3048,7 +3048,7 @@ class sandbox_multi extends db_object_multi_user
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_EXCLUDED,
                     $change_field_list->id($table_id . self::FLD_EXCLUDED),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             // TODO review and remove exception if possible
@@ -3059,7 +3059,7 @@ class sandbox_multi extends db_object_multi_user
             $lst->add_field(
                 self::FLD_EXCLUDED,
                 $this->excluded,
-                self::FLD_EXCLUDED_SQLTYP,
+                self::FLD_EXCLUDED_SQL_TYP,
                 $old_val
             );
         }
@@ -3068,13 +3068,13 @@ class sandbox_multi extends db_object_multi_user
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_SHARE,
                     $change_field_list->id($table_id . self::FLD_SHARE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_SHARE,
                 $this->share_id,
-                self::FLD_SHARE_SQLTYP,
+                self::FLD_SHARE_SQL_TYP,
                 $sbx->share_id
             );
         }
@@ -3083,13 +3083,13 @@ class sandbox_multi extends db_object_multi_user
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_PROTECT,
                     $change_field_list->id($table_id . self::FLD_PROTECT),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_PROTECT,
                 $this->protection_id,
-                self::FLD_PROTECT_SQLTYP,
+                self::FLD_PROTECT_SQL_TYP,
                 $sbx->protection_id
             );
         }

@@ -2196,7 +2196,7 @@ class value extends sandbox_value
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
                         $change_field_list->id($table_id . source::FLD_ID),
-                        change::FLD_FIELD_ID_SQLTYP
+                        change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 $lst->add_field(

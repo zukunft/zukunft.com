@@ -72,7 +72,7 @@ class formula_link extends sandbox_link
     const FLD_ID = 'formula_link_id';
     const FLD_TYPE = 'formula_link_type_id';
     const FLD_ORDER = 'order_nbr';
-    const FLD_ORDER_SQLTYP = sql_par_type::INT;
+    const FLD_ORDER_SQL_TYP = sql_par_type::INT;
 
     // all database field names excluding the id
     const FLD_NAMES = array(
@@ -108,7 +108,7 @@ class formula_link extends sandbox_link
     );
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
-        [formula_link_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, formula_link_type::class, '', formula_link_type::FLD_ID],
+        [formula_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, formula_link_type::class, '', formula_link_type::FLD_ID],
         [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CANNOT be changed by the user
@@ -722,7 +722,7 @@ class formula_link extends sandbox_link
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_link_type::FLD_ID,
                     $change_field_list->id($table_id . formula_link_type::FLD_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             global $formula_link_types;
@@ -739,13 +739,13 @@ class formula_link extends sandbox_link
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER,
                     $change_field_list->id($table_id . self::FLD_ORDER),
-                    change::FLD_FIELD_ID_SQLTYP
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_ORDER,
                 $this->pos(),
-                self::FLD_ORDER_SQLTYP,
+                self::FLD_ORDER_SQL_TYP,
                 $sbx->pos()
             );
         }
