@@ -409,44 +409,6 @@ class triple_list extends sandbox_list_named
         return $this->load($qp);
     }
 
-    /*
-     * load functions (to deprecate because not based on prepared queries )
-     */
-
-    /**
-     * add one triple to the triple list, but only if it is not yet part of the list
-     *
-     * @param triple $lnk_to_add the triple that should be added to the list
-     * @return bool true if the triple has been added to the list
-     *              and false if the triple already exists
-     */
-    function add(triple $lnk_to_add): bool
-    {
-        log_debug($lnk_to_add->dsp_id());
-        $result = false;
-
-        if (!in_array($lnk_to_add->id(), $this->ids)) {
-            if ($lnk_to_add->id() > 0) {
-                $this->add_obj($lnk_to_add);
-                $this->ids[] = $lnk_to_add->id();
-                $result = true;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * add one triple object to the list that does not yet have an id but has a name
-     * * e.g. to create a list of words that should be saved with block saving
-     *
-     * @param triple $lnk_to_add the triple that should be added to the list
-     */
-    function add_by_name(triple $lnk_to_add): void
-    {
-        log_debug($lnk_to_add->dsp_id());
-        $this->add_named_obj($lnk_to_add);
-    }
-
 
     /*
      * im- and export
@@ -726,6 +688,16 @@ class triple_list extends sandbox_list_named
 
         // get names of the used phrases
         $phr_lst = $this->phrase_parts();
+
+        // check if any needed phrases have not yet a db id
+        $phr_to_load = $phr_lst->missing_ids();
+        $names_to_load = $phr_to_load->names();
+        $phr_loaded = new phrase_list($this->user());
+        $phr_loaded->load_by_names($names_to_load);
+        $phr_to_load->fill_by_name($phr_loaded);
+        if (!$phr_to_load->is_empty()) {
+            log_err('Unexpected missing phrases ' . $phr_to_load->dsp_id());
+        }
 
         // get the triple that need to be loaded
         $cache_names = $cache->names();

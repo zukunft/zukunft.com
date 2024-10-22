@@ -1148,7 +1148,11 @@ class library
             }
             if ($long_text) {
                 if ($type != self::STR_DIFF_UNCHANGED) {
-                    $msg .= $diff_val[$i];
+                    if (is_array($diff_val[$i])) {
+                        $msg .= implode(',',$diff_val[$i]);
+                    } else {
+                        $msg .= $diff_val[$i];
+                    }
                 }
                 if ($type != self::STR_DIFF_DEL) {
                     $diff_val_used = $diff_val[$i];

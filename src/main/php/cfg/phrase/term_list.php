@@ -265,20 +265,6 @@ class term_list extends sandbox_list_named
 
 
     /*
-     * modification
-     */
-
-    /**
-     * add one term to the term list, but only if it is not yet part of the term list
-     * @param term|null $trm_to_add the term backend object that should be added
-     * @returns bool true the term has been added
-     */
-    function add(?term $trm_to_add): bool
-    {
-        return parent::add_named_obj($trm_to_add);
-    }
-
-    /*
      * get function
      */
 

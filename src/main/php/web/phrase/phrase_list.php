@@ -205,7 +205,7 @@ class phrase_list extends list_dsp
 
 
     /*
-     * modification
+     * modify
      */
 
     /**

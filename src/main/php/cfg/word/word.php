@@ -1103,7 +1103,7 @@ class word extends sandbox_typed
      * if the given description is an empty string the description is removed
      *
      * @param word|db_object_seq_id $sbx word with the values that sould been updated e.g. based on the import
-     * @return user_message
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
     function fill(word|db_object_seq_id $sbx): user_message
     {

@@ -19,7 +19,7 @@
     - load:              database access object (DAO) functions
     - tree building      create foaf trees
     - im- and export:    create an export object and set the vars from an import object
-    - modification:      change this list
+    - modify:            change potentially all object and all variables of this list with one function call
     - filter:            filter this list
     - convert:           more complex cast
 
@@ -875,33 +875,8 @@ class word_list extends sandbox_list_named
 
 
     /*
-     * modification
+     * modify
      */
-
-    /**
-     * add one word to the word list, but only if it is not yet part of the word list
-     * @param word $wrd_to_add the word object that should be added
-     */
-    function add(word $wrd_to_add): void
-    {
-        log_debug('->add ' . $wrd_to_add->dsp_id());
-        if (!in_array($wrd_to_add->id(), $this->ids())) {
-            if ($wrd_to_add->id() > 0) {
-                $this->add_obj($wrd_to_add);
-            }
-        }
-    }
-
-    /**
-     * add one word object to the list that does not yet have an id but has a name
-     * e.g. to create a list of words that should be saved with block saving
-     * @param word $wrd_to_add the word object that should be added
-     */
-    function add_by_name(word $wrd_to_add): void
-    {
-        log_debug('->add_by_name ' . $wrd_to_add->dsp_id());
-        $this->add_named_obj($wrd_to_add);
-    }
 
     /**
      * add one word by the id to the word list, but only if it is not yet part of the word list
@@ -915,7 +890,7 @@ class word_list extends sandbox_list_named
         if (!in_array($wrd_id_to_add, $this->ids())) {
             if ($wrd_id_to_add > 0) {
                 $wrd_to_add = new word($this->user());
-                $wrd_to_add->load_by_id($wrd_id_to_add, word::class);
+                $wrd_to_add->load_by_id($wrd_id_to_add);
 
                 $this->add($wrd_to_add);
                 $result = true;
@@ -1012,29 +987,6 @@ class word_list extends sandbox_list_named
             }
         }
         log_debug($this->dsp_id() . ' (' . $lib->dsp_array($this->ids()));
-    }
-
-    /**
-     * add the ids from the given list and add missing words
-     * @param word_list $lst_with_id a list with the database ids
-     * @return user_message
-     */
-    function fill_vars_from_word_list(word_list $lst_with_id): user_message
-    {
-        $usr_msg = new user_message();
-        foreach ($lst_with_id->lst() as $wrd_with_id) {
-            if ($wrd_with_id->id() != 0 and $wrd_with_id->name() != '') {
-                $wrd = $this->get_obj_by_name($wrd_with_id->name());
-                if ($wrd != null) {
-                    $wrd->fill($wrd_with_id);
-                } else {
-                    $this->add($wrd_with_id);
-                }
-            } else {
-                $usr_msg->add_message('id or name of word ' . $wrd_with_id->dsp_id() . ' missing');
-            }
-        }
-        return $usr_msg;
     }
 
     /**
@@ -1715,7 +1667,7 @@ class word_list extends sandbox_list_named
         $db_lst->load_by_names($this->names());
 
         // get the db id from the loaded words
-        $usr_msg->add($this->fill_vars_from_word_list($db_lst));
+        $usr_msg->add($this->fill_by_name($db_lst));
 
         // get the words that need to be added
         $db_names = $db_lst->names();

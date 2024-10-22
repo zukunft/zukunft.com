@@ -32,9 +32,6 @@
 
 namespace cfg;
 
-use cfg\db\sql;
-use cfg\db\sql_par_type;
-
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
 class sandbox_list_named extends sandbox_list
@@ -87,6 +84,77 @@ class sandbox_list_named extends sandbox_list
 
 
     /*
+     * modify
+     */
+
+    /**
+     * add one named object e.g. a word to the list, but only if it is not yet part of the list
+     * @param sandbox_named|triple|phrase|term|null $to_add the named object e.g. a word object that should be added
+     * @returns bool true the object has been added
+     */
+    function add(sandbox_named|triple|phrase|term|null $to_add): bool
+    {
+        $result = false;
+        if ($to_add != null) {
+            if ($this->is_empty()) {
+                $result = $this->add_obj($to_add);
+            } else {
+                if (!in_array($to_add->id(), $this->ids())) {
+                    if ($to_add->id() != 0) {
+                        $result = $this->add_obj($to_add);
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * add a named object to the list that does not yet have an id but has a name
+     * @param sandbox_named|triple|phrase|term|null $to_add the named user sandbox object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @returns bool true if the object has been added
+     */
+    function add_by_name(sandbox_named|triple|phrase|term|null $to_add, bool $allow_duplicates = false): bool
+    {
+        $result = false;
+        if (!in_array($to_add->name(), array_keys($this->name_pos_lst())) or $allow_duplicates) {
+            // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
+            if ($to_add->id() == null) {
+                $this->set_lst_dirty();
+            }
+            $result = parent::add_obj($to_add, $allow_duplicates);
+        }
+        return $result;
+    }
+
+    /**
+     * add the ids and other variables from the given list and add missing words, triples, ...
+     * select the related object by the name
+     *
+     * @param sandbox_list_named $lst_new a list of sandbox object e.g. that might have more vars set e.g. the db id
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill_by_name(sandbox_list_named $lst_new): user_message
+    {
+        $usr_msg = new user_message();
+        foreach ($lst_new->lst() as $sbx_new) {
+            if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
+                $sbx_old = $this->get_obj_by_name($sbx_new->name());
+                if ($sbx_old != null) {
+                    $sbx_old->fill($sbx_new);
+                } else {
+                    $this->add($sbx_new);
+                }
+            } else {
+                $usr_msg->add_message('id or name of word ' . $sbx_new->dsp_id() . ' missing');
+            }
+        }
+        return $usr_msg;
+    }
+
+
+    /*
      * search functions
      */
 
@@ -134,7 +202,7 @@ class sandbox_list_named extends sandbox_list
 
         foreach ($this->lst() as $wrd) {
             if (!in_array($wrd->name(), $names)) {
-                $result->add_named_obj($wrd);
+                $result->add_by_name($wrd);
             }
         }
 
@@ -164,7 +232,7 @@ class sandbox_list_named extends sandbox_list
 
         foreach ($this->lst() as $wrd) {
             if (in_array($wrd->name(), $names)) {
-                $result->add_named_obj($wrd);
+                $result->add_by_name($wrd);
             }
         }
 
@@ -175,25 +243,6 @@ class sandbox_list_named extends sandbox_list
     /*
      * modify functions
      */
-
-    /**
-     * add a named object to the list
-     * @param object $obj_to_add the named user sandbox object that should be added
-     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @returns bool true if the object has been added
-     */
-    function add_named_obj(object $obj_to_add, bool $allow_duplicates = false): bool
-    {
-        $result = false;
-        if (!in_array($obj_to_add->name(), array_keys( $this->name_pos_lst())) or $allow_duplicates) {
-            // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
-            if ($obj_to_add->id() == null) {
-                $this->set_lst_dirty();
-            }
-            $result = parent::add_obj($obj_to_add, $allow_duplicates);
-        }
-        return $result;
-    }
 
     /**
      * @returns array with all unique names of this list

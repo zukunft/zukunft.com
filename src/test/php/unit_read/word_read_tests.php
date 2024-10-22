@@ -161,8 +161,9 @@ class word_read_tests
 
         // TODO review all tests base on this one
         $test_name = 'The list von cities must contain at least Zurich, Bern ans Geneva';
-        $city_lst = $t->word_city()->are();
-        $t->assert_contains($test_name, $t->phrase_list_cities()->wrd_lst_all()->names(), $city_lst->names());
+        $foaf_lst = $t->word_city()->are()->names();
+        $fixed_lst = $t->phrase_list_cities()->wrd_lst_all()->names();
+        $t->assert_contains($test_name, $foaf_lst, $fixed_lst);
 
 
         $t->header('Unit database tests of the triple class (src/main/php/model/word/triple.php)');

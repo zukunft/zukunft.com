@@ -580,7 +580,7 @@ class formula_list extends sandbox_list
 
 
     /*
-     * modification
+     * modify
      */
 
     /**

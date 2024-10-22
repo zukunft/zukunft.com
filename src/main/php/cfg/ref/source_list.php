@@ -162,10 +162,7 @@ class source_list extends sandbox_list_named
         foreach ($src_lst as $db_row) {
             $src = new source($this->user());
             $src->row_mapper_sandbox($db_row);
-            if ($src->id() != 0) {
-                $this->add($src);
-                $result = true;
-            }
+            $result = $this->add($src);
         }
 
         return $result;
@@ -196,21 +193,5 @@ class source_list extends sandbox_list_named
         $qp = $this->load_sql_like($db_con->sql_creator(), $pattern);
         return $this->load($qp);
     }
-
-
-    /*
-     * modification
-     */
-
-    /**
-     * add one source to the source list, but only if it is not yet part of the source list
-     * @param source|null $src_to_add the source backend object that should be added
-     * @returns bool true the source has been added
-     */
-    function add(?source $src_to_add): bool
-    {
-        return parent::add_named_obj($src_to_add);
-    }
-
 
 }

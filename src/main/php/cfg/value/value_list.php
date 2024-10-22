@@ -673,7 +673,7 @@ class value_list extends sandbox_value_list
 
 
     /*
-     * modification
+     * modify
      */
 
     /**

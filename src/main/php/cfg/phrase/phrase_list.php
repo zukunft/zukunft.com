@@ -22,11 +22,12 @@
     - set and get:       to capsule the vars from unexpected changes
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
+    - sql:               to create sql statments e.g. for load
     - tree building      create foaf trees
     - im- and export:    create an export object and set the vars from an import object
     - information:       functions to make code easier to read
     - check:             validate the list
-    - modification:      change this list
+    - modify:            change potentially all object and all variables of this list with one function call
     - save:              manage to update the database
     - debug:             internal support functions for debugging
     - display:           to be moved to the frontend
@@ -129,24 +130,6 @@ class phrase_list extends sandbox_list_named
         }
 
         return $usr_msg;
-    }
-
-    /**
-     * @return bool if the ids has been set
-     */
-    function set_ids(array $ids): bool
-    {
-        $result = true;
-        $pos = 0;
-        foreach ($this->lst() as $sbx_obj) {
-            if (array_key_exists($pos, $ids)) {
-                $sbx_obj->set_id($ids[$pos]);
-            } else {
-                $result = false;
-            }
-            $pos++;
-        }
-        return $result;
     }
 
 
@@ -266,7 +249,9 @@ class phrase_list extends sandbox_list_named
         return $result;
     }
 
-    // load SQL
+    /*
+     * sql
+     */
 
     /**
      * create an SQL statement to retrieve a list of phrase objects
@@ -896,14 +881,14 @@ class phrase_list extends sandbox_list_named
                 foreach ($json_obj as $word) {
                     $wrd = new word($usr);
                     $import_result = $wrd->import_obj_fill($word);
-                    $this->add($wrd->phrase());
+                    $this->add_by_name($wrd->phrase());
                     $usr_msg->add($import_result);
                 }
             } elseif ($key == export::TRIPLES) {
                 foreach ($json_obj as $triple) {
                     $trp = new triple($usr);
                     $import_result = $trp->import_obj($triple);
-                    $this->add($trp->phrase());
+                    $this->add_by_name($trp->phrase());
                     $usr_msg->add($import_result);
                 }
             }
@@ -960,6 +945,21 @@ class phrase_list extends sandbox_list_named
         }
         return $result;
     }
+
+    /**
+     * @return phrase_list with all phrases that does not yet have a dadabase id
+     */
+    function missing_ids(): phrase_list
+    {
+        $phr_lst = new phrase_list($this->user());
+        foreach ($this->lst() as $phr) {
+            if ($phr->id() == 0) {
+                $phr_lst->add($phr);
+            }
+        }
+        return $phr_lst;
+    }
+
 
     /**
      * @returns bool true if none of the phrase list id needs more than 16 bit
@@ -1212,28 +1212,8 @@ class phrase_list extends sandbox_list_named
 
 
     /*
-     * modification
+     * modify
      */
-
-    /**
-     * add one phrase to the phrase list, but only if it is not yet part of the phrase list
-     * @returns bool true the phrase has been added
-     */
-    function add(?phrase $phr_to_add): bool
-    {
-        $result = false;
-        // check parameters
-        if ($phr_to_add != null) {
-            if (count($this->id_lst()) > 0) {
-                if (!in_array($phr_to_add->id(), $this->id_lst())) {
-                    $result = parent::add_obj($phr_to_add);
-                }
-            } else {
-                $result = parent::add_obj($phr_to_add);
-            }
-        }
-        return $result;
-    }
 
     /**
      * add a list of words to the phrase list, but only if it is not yet part of the phrase list
@@ -1681,7 +1661,7 @@ class phrase_list extends sandbox_list_named
         $lst = new phrase_list($this->user());
         foreach ($this->lst() as $phr) {
             if ($phr->is_type($phr_typ)) {
-                $lst->add($phr);
+                $lst->add_by_name($phr);
             }
         }
         return $lst;
@@ -1986,7 +1966,7 @@ class phrase_list extends sandbox_list_named
         $result = clone $this;
         foreach ($join_phr_lst->lst as $phr) {
             if (!in_array($phr, $result->lst())) {
-                $result->add_named_obj($phr);
+                $result->add_by_name($phr);
             }
         }
         log_debug($lib->dsp_count($result->lst()));
@@ -2082,10 +2062,10 @@ class phrase_list extends sandbox_list_named
         foreach ($this->lst() as $phr) {
             $db_phr = $db_lst->get_obj_by_name($phr->name());
             if ($db_phr == null) {
-                $add_lst->add_named_obj($phr);
+                $add_lst->add_by_name($phr);
             } else {
                 if ($phr->needs_db_update($db_phr)) {
-                    $chg_lst->add_named_obj($phr);
+                    $chg_lst->add_by_name($phr);
                 }
             }
         }

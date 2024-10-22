@@ -14,6 +14,7 @@
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
     - set and get:       to capsule the vars from unexpected changes
+    - modify:            change potentially all variables of this word object
     - preloaded:         select e.g. types from cache
     - fields:            the field names of this object as overwrite functions
     - cast:              create an api object and set the vars from an api json
@@ -641,6 +642,35 @@ class triple extends sandbox_link_named implements JsonSerializable
         $lnk->set_verb($this->verb());
         $lnk->set_tob($this->tob());
         return $lnk;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this triple based on the given triple
+     * if the id is set in the given word loaded from the database but this import word does not yet have the db id, set the id
+     * if the given name is not set (null) the given name is not remove
+     * if the given name is an empty string the given name is removed
+     *
+     * @param triple|db_object_seq_id $sbx word with the values that sould been updated e.g. based on the import
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(triple|db_object_seq_id $sbx): user_message
+    {
+        $usr_msg = parent::fill($sbx);
+        if ($sbx->name_given != null) {
+            $this->name_given = $sbx->name_given;
+        }
+        if ($sbx->name_generated != null) {
+            $this->name_generated = $sbx->name_generated;
+        }
+        if ($sbx->values != null) {
+            $this->values = $sbx->values;
+        }
+        return $usr_msg;
     }
 
 

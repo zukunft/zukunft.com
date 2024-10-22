@@ -50,7 +50,7 @@ class list_value extends list_dsp
 
 
     /*
-     * modification functions
+     * modify
      */
 
     /**

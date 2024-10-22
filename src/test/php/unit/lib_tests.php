@@ -467,7 +467,7 @@ class lib_tests
         $test_result = '{"user_id":2,"sys_log":[{"id":1,"user":"zukunft.com system test"},{"id":2,"user":"zukunft.com system test"}]}';
         $test_target = '{"user_id":3,"sys_log":[{"id":1,"user":"zukunft.com system test"},{"id":2,"user":"zukunft.com system test"}]}';
         $result = $lib->str_diff($test_result, $test_target);
-        $target = '//-2zukunft.com system test////+3Array//';
+        $target = '//-2zukunft.com system test////+3Array,Array//';
         $t->assert("diff_msg, with position in long html string", $result, $target);
 
 

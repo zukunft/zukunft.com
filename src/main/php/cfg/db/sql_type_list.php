@@ -52,7 +52,7 @@ class sql_type_list
 
 
     /*
-     * modification
+     * modify
      */
 
     /**

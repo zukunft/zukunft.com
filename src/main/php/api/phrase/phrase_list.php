@@ -134,7 +134,7 @@ class phrase_list extends list_api implements JsonSerializable
 
 
     /*
-     * modification functions
+     * modify
      */
 
     function remove(phrase_list $del_lst): phrase_list

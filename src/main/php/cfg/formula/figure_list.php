@@ -199,7 +199,7 @@ class figure_list extends sandbox_list
     }
 
     /*
-     * modification function
+     * modify
      */
 
     /**

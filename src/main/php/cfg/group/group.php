@@ -1158,7 +1158,7 @@ class group extends sandbox_multi
 
 
     /*
-     * modification
+     * modify
      */
 
     /**

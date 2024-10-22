@@ -8,7 +8,7 @@
     The main sections of this object are
     - construct and map: including the mapping of the db row to this element object
     - load:              database access object (DAO) functions
-    - modification:      change this list
+    - modify:            change potentially all object and all variables of this list with one function call
 
 
     This file is part of zukunft.com - calc with words
@@ -155,7 +155,7 @@ class element_list extends sandbox_list
 
 
     /*
-     * modification
+     * modify
      */
 
     /**

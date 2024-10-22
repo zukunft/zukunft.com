@@ -281,7 +281,7 @@ class sandbox_list extends base_list
 
 
     /*
-     * modification
+     * modify
      */
 
     /**
@@ -297,6 +297,7 @@ class sandbox_list extends base_list
         // check parameters
         if ($obj_to_add->user() == null) {
             $obj_to_add->set_user($this->user());
+            log_warning('missing user set in ' . $this->dsp_id());
         }
         if ($obj_to_add->user() != $this->user()) {
             if (!$this->user()->is_admin() and !$this->user()->is_system()) {
@@ -310,8 +311,6 @@ class sandbox_list extends base_list
             if ($allow_duplicates) {
                 $result = parent::add_obj($obj_to_add, $allow_duplicates);
             } else {
-                $obj_id = $obj_to_add->id();
-                $ids = $this->ids();
                 if (!in_array($obj_to_add->id(), $this->ids())) {
                     $result = parent::add_obj($obj_to_add);
                 } else {
