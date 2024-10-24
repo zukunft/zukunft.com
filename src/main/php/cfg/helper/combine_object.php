@@ -41,6 +41,8 @@
 namespace cfg;
 
 use cfg\db\sql_db;
+use cfg\result\result;
+use cfg\value\value;
 use shared\library;
 
 class combine_object
@@ -50,7 +52,7 @@ class combine_object
      * object vars
      */
 
-    protected object $obj;
+    protected word|triple|verb|formula|value|result|null $obj;
 
 
     /*
@@ -60,9 +62,9 @@ class combine_object
     /**
      * a combine object always covers an existing object
      * e.g. used to combine word and triple to a phrase
-     * @param object $obj the object that should be covered by a common interface
+     * @param word|triple|verb|formula|value|result|null $obj the object that should be covered by a common interface
      */
-    function __construct(object $obj)
+    function __construct(word|triple|verb|formula|value|result|null $obj)
     {
         $this->set_obj($obj);
     }
@@ -72,7 +74,7 @@ class combine_object
      * set and get
      */
 
-    function set_obj(object $obj): void
+    function set_obj(word|triple|verb|formula|value|result|null $obj): void
     {
         $this->obj = $obj;
     }
@@ -84,7 +86,7 @@ class combine_object
 
     function isset(): bool
     {
-        return $this->obj->isset();
+        return $this->obj()->isset();
     }
 
 

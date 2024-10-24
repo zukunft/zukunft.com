@@ -150,9 +150,11 @@ use unit_read\component_read_tests;
 use unit_read\formula_read_tests;
 use unit_read\source_read_tests;
 use unit_read\triple_read_tests;
+use unit_read\value_read_tests;
 use unit_read\view_read_tests;
 use unit_read\word_read_tests;
 use unit_ui\local_ui_tests;
+use unit_write\graph_tests;
 use unit_write\ref_write_tests;
 use unit_write\view_link_write_tests;
 use unit_write\component_link_write_tests;
@@ -245,6 +247,8 @@ class all_unit_tests extends test_cleanup
             (new formula_read_tests())->run($this);
             (new view_read_tests())->run($this);
             (new component_read_tests())->run($this);
+            (new graph_tests())->run($this);
+            (new value_read_tests())->run($this);
 
 
             /*

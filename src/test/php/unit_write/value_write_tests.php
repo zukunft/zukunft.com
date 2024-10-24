@@ -201,7 +201,7 @@ class value_write_tests
                 $result = 'No value found for ' . $val->dsp_id() . '.';
             } else {
                 if ($val->grp != null) {
-                    if ($val->phr_lst()->wrd_lst() != null) {
+                    if ($val->phr_lst()->words() != null) {
                         $val_lst = $val->phr_lst()->names();
                         $result = array_diff($val_lst, $phr_lst->names());
                     }

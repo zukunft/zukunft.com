@@ -32,12 +32,17 @@
 
 namespace cfg;
 
+use cfg\db\sql;
+use cfg\db\sql_par_list;
+use cfg\db\sql_type;
+use cfg\db\sql_type_list;
+
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
 class sandbox_list_named extends sandbox_list
 {
 
-    // memory vs speed optimize vars
+    // memory vs speed optimize vars for faster finding the list position by the object name
     private array $name_pos_lst;
     private bool $lst_name_dirty;
 
@@ -129,6 +134,31 @@ class sandbox_list_named extends sandbox_list
     }
 
     /**
+     * add the names and other variables from the given list and add missing words, triples, ...
+     * select the related object by the id
+     *
+     * @param sandbox_list_named $lst_new a list of sandbox object e.g. that might have more vars set e.g. the name
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill_by_id(sandbox_list_named $lst_new): user_message
+    {
+        $usr_msg = new user_message();
+        foreach ($lst_new->lst() as $sbx_new) {
+            if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
+                $sbx_old = $this->get_by_id($sbx_new->id());
+                if ($sbx_old != null) {
+                    $sbx_old->fill($sbx_new);
+                } else {
+                    $this->add($sbx_new);
+                }
+            } else {
+                $usr_msg->add_message('id or name of word ' . $sbx_new->dsp_id() . ' missing');
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
      * add the ids and other variables from the given list and add missing words, triples, ...
      * select the related object by the name
      *
@@ -140,7 +170,7 @@ class sandbox_list_named extends sandbox_list
         $usr_msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
-                $sbx_old = $this->get_obj_by_name($sbx_new->name());
+                $sbx_old = $this->get_by_name($sbx_new->name());
                 if ($sbx_old != null) {
                     $sbx_old->fill($sbx_new);
                 } else {
@@ -155,7 +185,7 @@ class sandbox_list_named extends sandbox_list
 
 
     /*
-     * search functions
+     * search
      */
 
     /**
@@ -163,9 +193,9 @@ class sandbox_list_named extends sandbox_list
      * should be cast by the child function get_by_name
      *
      * @param string $name the unique name of the object that should be returned
-     * @return term|phrase|word|null the found user sandbox object or null if no name is found
+     * @return term|phrase|triple|word|null the found user sandbox object or null if no name is found
      */
-    function get_obj_by_name(string $name): term|phrase|word|null
+    function get_by_name(string $name): term|phrase|triple|word|null
     {
         $key_lst = $this->name_pos_lst();
         $pos = null;
@@ -241,21 +271,20 @@ class sandbox_list_named extends sandbox_list
 
 
     /*
-     * modify functions
+     * modify
      */
 
     /**
-     * @returns array with all unique names of this list
+     * TODO add a unit test
+     * @returns array with all unique names of this list with the keys within this list
      */
     protected function name_pos_lst(): array
     {
-        $pos = 0;
         $result = array();
         if ($this->lst_name_dirty) {
-            foreach ($this->lst() as $obj) {
+            foreach ($this->lst() as $key => $obj) {
                 if (!in_array($obj->name(), $result)) {
-                    $result[$obj->name()] = $pos;
-                    $pos++;
+                    $result[$obj->name()] = $key;
                 }
             }
             $this->name_pos_lst = $result;
@@ -264,6 +293,100 @@ class sandbox_list_named extends sandbox_list
             $result = $this->name_pos_lst;
         }
         return $result;
+    }
+
+
+    /*
+     * save
+     */
+
+    /**
+     * create any missing sql functions and queries to save the list objects
+     * @param word_list|triple_list $db_lst filled with the words or triples that are already in the db
+     * @param bool $use_func true if sql function should be used to insert the named user sandbox objects
+     * @return user_message
+     */
+    function insert(word_list|triple_list $db_lst, bool $use_func = true): user_message
+    {
+        global $db_con;
+
+        $sc = $db_con->sql_creator();
+        $usr_msg = new user_message();
+
+        // get the db id from the loaded objects
+        $usr_msg->add($this->fill_by_name($db_lst));
+
+        // get the objects that need to be added
+        $db_names = $db_lst->names();
+        $add_lst = clone $this;
+        $add_lst = $add_lst->filter_by_name($db_names);
+
+        // get the sql call to add the missing objects
+        $ins_calls = $add_lst->sql_call_with_par($sc, $use_func);
+
+        // get the functions that are already in the database
+        $db_func_lst = $db_con->get_functions();
+
+        // get the sql functions that have not yet been created
+        $func_to_create = $ins_calls->sql_functions_missing($db_func_lst);
+
+        // get the first object that have requested the missing function
+        $func_create_obj = clone $this;
+        $func_create_obj_names = $func_to_create->object_names();
+        $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
+
+        // create the missing sql functions and add the first missing word
+        $func_to_create = $func_create_obj->sql($sc);
+        $func_to_create->exe();
+
+        // add the remaining missing words
+        $add_lst = $add_lst->filter_by_name($func_create_obj_names);
+        $ins_calls = $add_lst->sql_call_with_par($sc, $use_func);
+        $usr_msg->add($ins_calls->exe());
+
+
+        return $usr_msg;
+    }
+
+    /**
+     * get a list of all sql functions that are needed to add all triples of this list to the database
+     * @return sql_par_list with the sql function names
+     */
+    function sql(sql $sc, bool $use_func = true): sql_par_list
+    {
+        $sql_list = new sql_par_list();
+        foreach ($this->lst() as $trp) {
+            // check always user sandbox and normal name, because reading from database for check would take longer
+            $sc_par_lst = new sql_type_list([]);
+            if ($use_func) {
+                $sc_par_lst->add(sql_type::LOG);
+            }
+            $qp = $trp->sql_insert($sc, $sc_par_lst);
+            $qp->obj_name = $trp->name();
+            $sql_list->add($qp);
+        }
+        return $sql_list;
+    }
+
+    /**
+     * get a list of all sql function names that are needed to add all loaded of this list to the database
+     * @param bool $use_func true if sql function should be used to write the named user sandbox objects to the database
+     * @return sql_par_list with the sql function names
+     */
+    function sql_call_with_par(sql $sc, bool $use_func = true): sql_par_list
+    {
+        $sql_list = new sql_par_list();
+        foreach ($this->lst() as $trp) {
+            // check always user sandbox and normal name, because reading from database for check would take longer
+            $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
+            if ($use_func) {
+                $sc_par_lst->add(sql_type::LOG);
+            }
+            $qp = $trp->sql_insert($sc, $sc_par_lst);
+            $qp->obj_name = $trp->name();
+            $sql_list->add($qp);
+        }
+        return $sql_list;
     }
 
 }

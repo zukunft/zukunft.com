@@ -182,6 +182,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add simple value list table with the hashed phrase list as key and the value
     TODO add a calculation validation section to the import
     TODO add a text based view validation section to the import
+    TODO by default do not use SQL joins also to be able to move the user overwrites to a seperate database server
+    TODO add a second line of defence e.g. prevent that the web client is using all resources (CPU, memory)
+         or that data objects are synced between the pod too often and are blocking more critical data updates
     TODO for the frontend use three level of objects: normal, full and small
          where the full additional contains the share and protection type
          and the small object contains basically e.g. the id and the name

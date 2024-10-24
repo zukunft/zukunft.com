@@ -289,14 +289,14 @@ class value extends sandbox_value
                     if (array_key_exists($fld_name, $db_row)) {
                         $id = $db_row[$fld_name];
                         if ($id != 0) {
-                            $phr = new phrase($this->user());
-                            $phr->set_obj_id($id);
+                            $phr = new phrase($this->user(), $id);
                             $phr_lst->add($phr);
                         }
                     }
                 }
                 $grp = new group($this->user());
                 $grp->set_id($grp_id->get_id($phr_lst));
+                $grp->set_phrase_list($phr_lst);
                 $this->set_grp($grp);
                 $id_fld = $id_fld[0];
                 $one_id_fld = false;
@@ -468,12 +468,12 @@ class value extends sandbox_value
 
     function wrd_lst(): word_list
     {
-        return $this->phrase_list()->wrd_lst();
+        return $this->phrase_list()->words();
     }
 
     function trp_lst(): triple_list
     {
-        return $this->phrase_list()->trp_lst();
+        return $this->phrase_list()->triples();
     }
 
     /**
@@ -674,13 +674,11 @@ class value extends sandbox_value
         // use the given phrase list
         if ($this->phr_lst()->is_empty() and !$grp->phrase_list()->is_empty()) {
             $this->set_grp($grp);
-            /*
         } else {
-            // ... or reload the phrase list
-            if ($this->phr_lst()->is_empty()) {
-                $this->phr_lst()->load_by_phr();
+            // ... or fill up the missing vars
+            if ($this->phr_lst()->names() != $grp->phrase_list()->names()) {
+                $this->phr_lst()->fill_by_id($grp->phrase_list());
             }
-            */
         }
 
         return $id;
@@ -1210,7 +1208,7 @@ class value extends sandbox_value
         // TODO use the triple export_obj function
         if (!$this->phrase_list()->is_empty()) {
             if (!$this->trp_lst()->is_empty()) {
-                foreach ($this->trp_lst()->lst as $lnk) {
+                foreach ($this->trp_lst()->lst() as $lnk) {
                     $triples_lst[] = $lnk->name();
                 }
                 if (count($triples_lst) > 0) {

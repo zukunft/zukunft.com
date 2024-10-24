@@ -2060,7 +2060,7 @@ class phrase_list extends sandbox_list_named
         $chg_lst = clone $this;
         $chg_lst->reset();
         foreach ($this->lst() as $phr) {
-            $db_phr = $db_lst->get_obj_by_name($phr->name());
+            $db_phr = $db_lst->get_by_name($phr->name());
             if ($db_phr == null) {
                 $add_lst->add_by_name($phr);
             } else {
@@ -2363,14 +2363,12 @@ class phrase_list extends sandbox_list_named
      * get a word list from the phrase list
      * @return word_list list of the words from the phrase list
      */
-    function wrd_lst(): word_list
+    function words(): word_list
     {
         $wrd_lst = new word_list($this->user());
         foreach ($this->lst() as $phr) {
-            if ($phr->id() > 0 or $phr->name() != '') {
-                if ($phr->obj() !== null and $phr->obj()::class == word::class) {
-                    $wrd_lst->add($phr->obj());
-                }
+            if ($phr->is_word()) {
+                $wrd_lst->add($phr->obj());
             }
         }
         return $wrd_lst;
@@ -2380,14 +2378,12 @@ class phrase_list extends sandbox_list_named
      * get a triple list from the phrase list
      * @return triple_list list of the triples from the phrase list
      */
-    function trp_lst(): triple_list
+    function triples(): triple_list
     {
         $trp_lst = new triple_list($this->user());
         foreach ($this->lst() as $phr) {
-            if ($phr->id() < 0 or $phr->name() != '') {
-                if (isset($phr->obj) and $phr->obj()::class == triple::class) {
-                    $trp_lst->add($phr->obj());
-                }
+            if ($phr->is_triple()) {
+                $trp_lst->add($phr->obj());
             }
         }
         return $trp_lst;

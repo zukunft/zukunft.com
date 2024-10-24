@@ -162,8 +162,9 @@ class phrase extends combine_named
     /**
      * always set the user because a phrase is always user specific
      * @param user|word|triple|null $obj the word or triple that should be covered by the phrase
+     * @param int|null $id the database id of the phrase (not the object!)
      */
-    function __construct(user|word|triple|null $obj = null, int|string|null $id_or_name = null)
+    function __construct(user|word|triple|null $obj = null, int|null $id = null)
     {
         if ($obj::class == user::class) {
             // create a dummy word object to remember the user
@@ -171,12 +172,8 @@ class phrase extends combine_named
         } else {
             parent::__construct($obj);
         }
-        if ($id_or_name != null) {
-            if (is_int($id_or_name)) {
-                $this->load_by_id($id_or_name);
-            } else {
-                $this->load_by_name($id_or_name);
-            }
+        if ($id != null) {
+            $this->set_obj_from_id($id);
         }
 
     }
@@ -294,7 +291,7 @@ class phrase extends combine_named
             $trp->set_id($id * -1);
             $this->obj = $trp;
         } else {
-            log_warning('Id of phrase is not expected to be zero');
+            log_warning('id of a phrase is not expected to be zero');
         }
     }
 
@@ -428,6 +425,25 @@ class phrase extends combine_named
 
 
     /*
+     * modify
+     */
+
+    /**
+     * fill this word or triple based on the given phrase
+     *
+     * @param phrase|db_object_seq_id $phr word with the values that sould been updated e.g. based on the import
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(phrase|db_object_seq_id $phr): user_message
+    {
+        if ($this->is_word()) {
+            return $this->obj()->fill($phr->word());
+        } else {
+            return $this->obj()->fill($phr->triple());
+        }
+    }
+
+    /*
      * cast
      */
 
@@ -463,14 +479,26 @@ class phrase extends combine_named
     }
 
     /**
-     * @return object|null
+     * @return word|null
      */
-    function word(): object|null
+    function word(): word|null
     {
         if ($this->is_word()) {
             return $this->obj();
         } else {
             return null;
+        }
+    }
+
+    /**
+     * @return triple|null
+     */
+    function triple(): triple|null
+    {
+        if ($this->is_word()) {
+            return null;
+        } else {
+            return $this->obj();
         }
     }
 
@@ -770,7 +798,6 @@ class phrase extends combine_named
     /**
      * @return bool true if this phrase is a triple or supposed to be a triple
      */
-    private
     function is_triple(): bool
     {
         $result = false;

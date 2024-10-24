@@ -108,7 +108,8 @@ class value_list_read_tests
         $t->assert($test_name, $result, $target);
 
         // load by phrase list
-        $phr = new phrase($t->usr1, word::SYSTEM_CONFIG);
+        $phr = new phrase($t->usr1);
+        $phr->load_by_name(word::SYSTEM_CONFIG);
         $phr_lst = $phr->all_children();
         $val_lst = new value_list($t->usr1);
         // TODO activate Prio 2

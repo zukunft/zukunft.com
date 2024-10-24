@@ -120,6 +120,35 @@ class value_list extends sandbox_value_list
         return $result;
     }
 
+
+    /*
+     * set and get
+     */
+
+    function set_grp_ids(): user_message
+    {
+        $usr_msg = new user_message();
+
+        foreach ($this->lst() as $val) {
+            $phr_lst = $val->phrase_list();
+            $val->set_grp($phr_lst->get_grp_id(false));
+            //$usr_msg->add_message('');
+        }
+        return new user_message();
+
+    }
+
+    function grp_ids(): group_list
+    {
+        $grp_lst = new group_list($this->user());
+
+        foreach ($this->lst() as $val) {
+            $grp_lst->add($val->grp());
+        }
+        return $grp_lst;
+
+    }
+
     /*
      * cast
      */
@@ -1302,14 +1331,30 @@ class value_list extends sandbox_value_list
     function save(): user_message
     {
         $usr_msg = new user_message();
+
         // if the group id is not yet set
-        //    load the phrases
-        //    report the missing phrases
-        //    update the group ids
+        $this->set_grp_ids();
+
+        // load the values already in the database
+        $grp_lst = $this->grp_ids();
+        $db_lst = new value_list($this->user());
+        $db_lst->load_by_ids($grp_lst->ids());
+
+        // insert the new values
+        foreach ($this->lst() as $val) {
+            if ($val->number() == null) {
+                log_warning('numeric value missing fpr ' . $val->dsp_id());
+            } else {
+                $usr_msg->add($val->save());
+            }
+        }
+
         // update the existing values
-        // loop over the values and check if all needed functions exist
-        // create the missing functions
-        // create blocks of update function calls
+
+        // TODO loop over the values and check if all needed functions exist
+        //      create the missing functions
+        //      create blocks of update function calls
+
         return $usr_msg;
     }
 

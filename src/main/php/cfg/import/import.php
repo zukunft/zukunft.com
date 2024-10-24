@@ -649,11 +649,11 @@ class import
             // add the previous set word or triple to the lists
             if ($wrd != null) {
                 $dto->add_word($wrd);
-                $phr_lst->add($wrd->phrase());
+                $phr_lst->add_by_name($wrd->phrase());
             }
             if ($trp != null) {
                 $dto->add_triple($trp);
-                $phr_lst->add($trp->phrase());
+                $phr_lst->add_by_name($trp->phrase());
             }
             if ($val != null) {
                 $dto->add_value($val);

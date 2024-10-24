@@ -430,35 +430,6 @@ class test_cleanup extends test_api
     }
 
     /**
-     * create a dummy phrase list based on the given names
-     * @param array $names the names that should be used to create the phrase list
-     * @return phrase_list
-     */
-    function phrase_list_for_tests(array $names): phrase_list
-    {
-        global $usr;
-
-        $phr_lst = new phrase_list($usr);
-        $pos = 1;
-        foreach ($names as $name) {
-            $class = match ($name) {
-                triple_api::TN_PI_NAME => triple::class,
-                default => word::class,
-            };
-            $phr = new phrase($usr, $pos, $name);
-
-            // set types of some special terms
-            if ($name == word_api::TN_2020) {
-                $phr->obj()->set_type(phrase_type::TIME);
-            }
-
-            $phr_lst->add($phr);
-            $pos++;
-        }
-        return $phr_lst;
-    }
-
-    /**
      * create a dummy term list based on the given names
      * @param array $names the names that should be used to create the term list
      * @return term_list

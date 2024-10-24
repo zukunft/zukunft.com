@@ -124,6 +124,10 @@ class phrase_write_tests
         $is_phr = $phr->is_mainly();
         if ($is_phr != null) {
             $result = $is_phr->name();
+        } else {
+            // TODO activate
+            //log_err('Vestas type test failed');
+            log_warning('Vestas type test failed');
         }
         $target = word_api::TN_COMPANY;
         $t->display('phrase->is_mainly for ' . $phr->name(), $target, $result);

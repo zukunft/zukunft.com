@@ -249,22 +249,6 @@ class term_list extends sandbox_list_named
 
 
     /*
-     * search
-     */
-
-    /**
-     * cast the finding by name for terms
-     *
-     * @param string $name the term name that should be returned
-     * @return term|null the found term or null if no name is found
-     */
-    function get_by_name(string $name): ?term
-    {
-        return parent::get_obj_by_name($name);
-    }
-
-
-    /*
      * get function
      */
 

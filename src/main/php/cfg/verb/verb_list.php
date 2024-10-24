@@ -330,8 +330,8 @@ class verb_list extends type_list
      * get a single verb from this list selected by the code id
      * a kind of replacement for the user_type_list->get() function but for the verb object
      *
-     * @param string $code_id
-     * @return verb the verb object or null if no match is found
+     * @param string $code_id the code id of the requested verb
+     * @return verb|null the verb object or null if no match is found
      */
     function get_verb(string $code_id): ?verb
     {

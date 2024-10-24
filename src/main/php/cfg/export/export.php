@@ -140,7 +140,7 @@ class export
 
                 // 5. export all word relations
                 log_debug('export->get triples');
-                $lnk_lst = $phr_lst->trp_lst();
+                $lnk_lst = $phr_lst->triples();
                 $exp_triples = array();
                 foreach ($lnk_lst->lst() as $lnk) {
                     $exp_lnk = $lnk->export_obj();

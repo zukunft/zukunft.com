@@ -51,7 +51,7 @@ class base_list
     private int $offset; // start to display with this id
     public int $limit;   // if not defined, use the default page size
 
-    // memory vs speed optimize vars
+    // memory vs speed optimize vars for faster finding the list position by the database id
     private array $id_pos_lst;
     private bool $lst_dirty;
 
@@ -226,7 +226,7 @@ class base_list
 
     /**
      * select an item by id
-     * TODO use a hash table to speed up
+     * TODO add unit tests
      *
      * @param int $id the unique database id of the object that should be returned
      * @return sandbox|null the found user sandbox object or null if no id is found
@@ -239,7 +239,7 @@ class base_list
             $pos = $key_lst[$id];
             return $this->lst[$pos];
         } else {
-            log_err($id . ' not found in ' . $lib->dsp_array_keys($key_lst));
+            log_info($id . ' not found in ' . $lib->dsp_array_keys($key_lst));
             return null;
         }
     }
@@ -287,17 +287,15 @@ class base_list
 
     /**
      * TODO add a unit test
-     * @returns array with all unique ids of this list
+     * @returns array with all unique ids of this list with the keys within this list
      */
     protected function id_pos_lst(): array
     {
-        $pos = 0;
         $result = array();
         if ($this->lst_dirty) {
-            foreach ($this->lst as $obj) {
+            foreach ($this->lst as $key => $obj) {
                 if (!array_key_exists($obj->id(), $result)) {
-                    $result[$obj->id()] = $pos;
-                    $pos++;
+                    $result[$obj->id()] = $key;
                 }
             }
             $this->id_pos_lst = $result;

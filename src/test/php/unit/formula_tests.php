@@ -155,7 +155,6 @@ class formula_tests
         */
 
         // test the calculation of one value
-        //$phr_lst = $t->phrase_list_for_tests(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020, word_api::TN_MIO));
         $trm_lst = $t->term_list_for_tests(array(
             word_api::TN_PCT,
             formula_api::TN_READ_THIS,

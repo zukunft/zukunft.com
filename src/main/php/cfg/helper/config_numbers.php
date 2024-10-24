@@ -158,7 +158,8 @@ class config_numbers extends value_list
     function load_usr_cgf(user $usr): bool
     {
         $result = false;
-        $root_phr = new phrase($this->user(), word::SYSTEM_CONFIG);
+        $root_phr = new phrase($this->user());
+        $root_phr->load_by_name(word::SYSTEM_CONFIG);
         $phr_lst = $root_phr->all_children();
         $val_lst = new value_list($usr);
         $val_lst->load_by_phr_lst($phr_lst);

@@ -1005,7 +1005,7 @@ class group extends sandbox_multi
      */
     function get_by_wrd_lst_sql(bool $get_name = false): string
     {
-        $wrd_lst = $this->phrase_list()->wrd_lst();
+        $wrd_lst = $this->phrase_list()->words();
 
         $sql_name = 'group_by_';
         if ($this->id() != 0) {

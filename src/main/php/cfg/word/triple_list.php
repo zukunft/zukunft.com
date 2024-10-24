@@ -15,6 +15,18 @@
     phrase list - load a list of words or triples based on
 
 
+    The main sections of this object are
+    - construct and map: including the mapping of the db row to this triple object
+    - cast:              create an api object and set the vars from an api json
+    - load:              database access object (DAO) functions
+    - sql:               to create sql statments e.g. for load word from the sql database
+    - im- and export:    create an export object and set the vars from an import object
+    - information:       to make the code more readable
+    - convert:           more complex cast
+    - parts:             get a list of the triple parts
+    - save:              block wise insert or update of all triples in the database
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -49,23 +61,17 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\value\value;
-use html\html_base;
-use html\word\triple as triple_dsp;
-use html\word\triple_list as triple_list_dsp;
 
 class triple_list extends sandbox_list_named
 {
 
     public array $lst; // the list of triples
-    private user $usr; // the user object of the person for whom the triple list is loaded, so to say the viewer
 
     // fields to select a part of the graph (TODO deprecated)
     public array $ids = array();  // list of link ids
     public ?word $wrd = null;          // show the graph elements related to this word
     public ?word_list $wrd_lst = null; // show the graph elements related to these words
     public ?verb $vrb = null;     // show the graph elements related to this verb
-    public ?verb_list $vrb_lst = null; // show the graph elements related to these verbs
     public foaf_direction $direction = foaf_direction::DOWN;  // either up, down or both
 
 
@@ -114,7 +120,120 @@ class triple_list extends sandbox_list_named
 
 
     /*
-     * load functions
+     * load
+     */
+
+    /**
+     * load a list of triple names
+     * @param string $pattern the pattern to filter the triples
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return bool true if at least one triple found
+     */
+    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
+    {
+        return parent::load_sbx_names(new triple($this->user()), $pattern, $limit, $offset);
+    }
+
+    /**
+     * load a list of words by the names
+     * @param array $wrd_names a named object used for selection e.g. a word type
+     * @return bool true if at least one word found
+     */
+    function load_by_names(array $wrd_names): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_names($db_con->sql_creator(), $wrd_names);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a list of triples by the ids
+     * @param array $wrd_ids a list of int values with the triple ids
+     * @return bool true if at least one triple found
+     */
+    function load_by_ids(array $wrd_ids): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $wrd_ids);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a list of triples by a phrase, verb and direction
+     * @param phrase $phr the phrase which should be used for selecting the words or triples
+     * @param verb|null $vrb if set to filter the selection
+     * @param foaf_direction $direction to select either the parents, children or all related words ana triples
+     * @return bool true if at least one triple found
+     */
+    function load_by_phr(
+        phrase $phr, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_phr($db_con->sql_creator(), $phr, $vrb, $direction);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a list of triples by a list of phrases, verb and direction
+     * @param phrase_list $phr_lst the phrase which should be used for selecting the words or triples
+     * @param verb|null $vrb if set to filter the selection
+     * @param foaf_direction $direction to select either the parents, children or all related words ana triples
+     * @return bool true if at least one triple found
+     */
+    function load_by_phr_lst(
+        phrase_list $phr_lst, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst, $vrb, $direction);
+        return $this->load($qp);
+    }
+
+    /**
+     * load this list of triples
+     * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @param bool $load_all force to include also the excluded triples e.g. for admins
+     * @return bool true if at least one triple found
+     */
+    protected function load(sql_par $qp, bool $load_all = false): bool
+    {
+        global $db_con;
+
+        $result = false;
+
+        if ($qp->name == '') {
+            log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
+        } else {
+            $this->reset();
+            $db_rows = $db_con->get($qp);
+            if ($db_rows != null) {
+                foreach ($db_rows as $db_row) {
+                    $trp = new triple($this->user());
+                    $trp->row_mapper_sandbox($db_row);
+                    // the simple object row mapper allows mapping excluded objects to remove the exclusion
+                    // but an object list should not have excluded objects
+                    if (!$trp->is_excluded() or $load_all) {
+                        $this->add_obj($trp);
+                        $result = true;
+                        // fill verb
+                        $trp->set_verb_id($db_row[verb::FLD_ID]);
+                        // fill from
+                        $trp->set_fob(new phrase($this->user()));
+                        $trp->fob()->row_mapper_sandbox($db_row, triple::FLD_FROM, '1');
+                        // fill to
+                        $trp->set_tob(new phrase($this->user()));
+                        $trp->tob()->row_mapper_sandbox($db_row, triple::FLD_TO, '2');
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+
+
+    /*
+     * sql
      */
 
     /**
@@ -147,59 +266,21 @@ class triple_list extends sandbox_list_named
     }
 
     /**
-     * set the SQL query parameters to load a list of triples
+     * set the SQL query parameters to load a list of triples by the names
      * @param sql $sc with the target db_type set
+     * @param array $trp_names a list of strings with the word names
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc): sql_par
+    function load_sql_by_names(sql $sc, array $trp_names): sql_par
     {
-        $sc->set_class(triple::class);
-        $qp = new sql_par(self::class);
-        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields(array_merge(triple::FLD_NAMES_LINK, triple::FLD_NAMES));
-        $sc->set_usr_fields(triple::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(triple::FLD_NAMES_NUM_USR);
-        // also load the linked user specific phrase with the same SQL statement (word until now)
-        $sc->set_join_fields(
-            phrase::FLD_NAMES,
-            phrase::class,
-            triple::FLD_FROM,
-            phrase::FLD_ID
-        );
-        $sc->set_join_usr_fields(
-            phrase::FLD_NAMES_USR,
-            phrase::class,
-            triple::FLD_FROM,
-            phrase::FLD_ID
-        );
-        $sc->set_join_usr_num_fields(
-            phrase::FLD_NAMES_NUM_USR,
-            phrase::class,
-            triple::FLD_FROM,
-            phrase::FLD_ID,
-            true
-        );
-        $sc->set_join_fields(
-            phrase::FLD_NAMES,
-            phrase::class,
-            triple::FLD_TO,
-            phrase::FLD_ID
-        );
-        $sc->set_join_usr_fields(
-            phrase::FLD_NAMES_USR,
-            phrase::class,
-            triple::FLD_TO,
-            phrase::FLD_ID
-        );
-        $sc->set_join_usr_num_fields(
-            phrase::FLD_NAMES_NUM_USR,
-            phrase::class,
-            triple::FLD_TO,
-            phrase::FLD_ID,
-            true
-        );
-        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(verb::FLD_ID) . ', ' . triple::FLD_NAME_GIVEN);
+        $qp = $this->load_sql($sc, 'names');
+        if (count($trp_names) > 0) {
+            $sc->add_where(triple::FLD_NAME, $trp_names, sql_par_type::TEXT_LIST);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
         return $qp;
     }
 
@@ -292,7 +373,7 @@ class triple_list extends sandbox_list_named
                 $qp->name .= '_' . $direction->value;
             } elseif ($direction == foaf_direction::DOWN) {
                 $sc->add_where(triple::FLD_TO, $phr_lst->ids());
-                $qp->name .= '_' . $direction->value;;
+                $qp->name .= '_' . $direction->value;
             } elseif ($direction == foaf_direction::BOTH) {
                 $sc->add_where(triple::FLD_FROM, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
                 $sc->add_where(triple::FLD_TO, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
@@ -314,99 +395,64 @@ class triple_list extends sandbox_list_named
     }
 
     /**
-     * load this list of triples
-     * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
-     * @param bool $load_all force to include also the excluded triples e.g. for admins
-     * @return bool true if at least one triple found
+     * set the SQL query parameters to load a list of triples
+     * @param sql $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load(sql_par $qp, bool $load_all = false): bool
+    function load_sql(sql $sc, string $query_name = ''): sql_par
     {
-        global $db_con;
-        global $verbs;
-        $result = false;
-
-        if ($qp->name == '') {
-            log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
-        } else {
-            $this->reset();
-            $db_rows = $db_con->get($qp);
-            if ($db_rows != null) {
-                foreach ($db_rows as $db_row) {
-                    $trp = new triple($this->user());
-                    $trp->row_mapper_sandbox($db_row);
-                    // the simple object row mapper allows mapping excluded objects to remove the exclusion
-                    // but an object list should not have excluded objects
-                    if (!$trp->is_excluded() or $load_all) {
-                        $this->add_obj($trp);
-                        $result = true;
-                        // fill verb
-                        $trp->set_verb_id($db_row[verb::FLD_ID]);
-                        // fill from
-                        $trp->set_fob(new phrase($this->user()));
-                        $trp->fob()->row_mapper_sandbox($db_row, triple::FLD_FROM, '1');
-                        // fill to
-                        $trp->set_tob(new phrase($this->user()));
-                        $trp->tob()->row_mapper_sandbox($db_row, triple::FLD_TO, '2');
-                    }
-                }
-            }
+        $sc->set_class(triple::class);
+        $qp = new sql_par(self::class);
+        if ($query_name != '') {
+            $qp->name .= $query_name;
         }
-
-        return $result;
-    }
-
-    /**
-     * load a list of triple names
-     * @param string $pattern the pattern to filter the triples
-     * @param int $limit the number of rows to return
-     * @param int $offset jump over these number of pages
-     * @return bool true if at least one triple found
-     */
-    function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
-    {
-        return parent::load_sbx_names(new triple($this->user()), $pattern, $limit, $offset);
-    }
-
-    /**
-     * load a list of triples by the ids
-     * @param array $wrd_ids a list of int values with the triple ids
-     * @return bool true if at least one triple found
-     */
-    function load_by_ids(array $wrd_ids): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $wrd_ids);
-        return $this->load($qp);
-    }
-
-    /**
-     * load a list of triples by a phrase, verb and direction
-     * @param phrase $phr the phrase which should be used for selecting the words or triples
-     * @param verb|null $vrb if set to filter the selection
-     * @param foaf_direction $direction to select either the parents, children or all related words ana triples
-     * @return bool true if at least one triple found
-     */
-    function load_by_phr(
-        phrase $phr, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_by_phr($db_con->sql_creator(), $phr, $vrb, $direction);
-        return $this->load($qp);
-    }
-
-    /**
-     * load a list of triples by a list of phrases, verb and direction
-     * @param phrase_list $phr_lst the phrase which should be used for selecting the words or triples
-     * @param verb|null $vrb if set to filter the selection
-     * @param foaf_direction $direction to select either the parents, children or all related words ana triples
-     * @return bool true if at least one triple found
-     */
-    function load_by_phr_lst(
-        phrase_list $phr_lst, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_by_phr_lst($db_con->sql_creator(), $phr_lst, $vrb, $direction);
-        return $this->load($qp);
+        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(array_merge(triple::FLD_NAMES_LINK, triple::FLD_NAMES));
+        $sc->set_usr_fields(triple::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(triple::FLD_NAMES_NUM_USR);
+        // also load the linked user specific phrase with the same SQL statement (word until now)
+        $sc->set_join_fields(
+            phrase::FLD_NAMES,
+            phrase::class,
+            triple::FLD_FROM,
+            phrase::FLD_ID
+        );
+        $sc->set_join_usr_fields(
+            phrase::FLD_NAMES_USR,
+            phrase::class,
+            triple::FLD_FROM,
+            phrase::FLD_ID
+        );
+        $sc->set_join_usr_num_fields(
+            phrase::FLD_NAMES_NUM_USR,
+            phrase::class,
+            triple::FLD_FROM,
+            phrase::FLD_ID,
+            true
+        );
+        $sc->set_join_fields(
+            phrase::FLD_NAMES,
+            phrase::class,
+            triple::FLD_TO,
+            phrase::FLD_ID
+        );
+        $sc->set_join_usr_fields(
+            phrase::FLD_NAMES_USR,
+            phrase::class,
+            triple::FLD_TO,
+            phrase::FLD_ID
+        );
+        $sc->set_join_usr_num_fields(
+            phrase::FLD_NAMES_NUM_USR,
+            phrase::class,
+            triple::FLD_TO,
+            phrase::FLD_ID,
+            true
+        );
+        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(verb::FLD_ID) . ', ' . triple::FLD_NAME_GIVEN);
+        return $qp;
     }
 
 
@@ -451,147 +497,9 @@ class triple_list extends sandbox_list_named
         return $exp_triples;
     }
 
-    /*
-     * display functions
-     */
-
-    /**
-     * TODO move to the frontend
-     * shows all words the link to the given word
-     * returns the html code to select a word that can be edited
-     */
-    function display(string $back = ''): string
-    {
-        global $verbs;
-
-        $html = new html_base();
-        $result = '';
-
-        // check the all minimal input parameters
-        if ($this->user() == null) {
-            log_err("The user id must be set to load a graph.", "triple_list->load");
-        } else {
-            if (isset($this->wrd)) {
-                log_debug('graph->display for ' . $this->wrd->name() . ' ' . $this->direction->value . ' and user ' . $this->user()->name . ' called from ' . $back);
-            }
-            $prev_verb_id = 0;
-
-            // loop over the graph elements
-            foreach (array_keys($this->lst()) as $lnk_id) {
-                // reset the vars
-                $directional_link_type_id = 0;
-
-                $lnk = $this->get($lnk_id);
-                // get the next link to detect if there is more than one word linked with the same link type
-                // TODO check with a unit test if last element is used
-                if ($this->count() - 1 > $lnk_id) {
-                    $next_lnk = $this->get($lnk_id + 1);
-                } else {
-                    $next_lnk = $lnk;
-                }
-
-                // display type header
-                if (!$lnk->has_verb()) {
-                    log_warning('graph->display type is missing');
-                } else {
-                    if ($lnk->verb_id() <> $prev_verb_id) {
-                        log_debug('graph->display type "' . $lnk->verb()->name() . '"');
-
-                        // select the same side of the verb
-                        if ($this->direction == foaf_direction::DOWN) {
-                            $directional_link_type_id = $lnk->verb()->id();
-                        } else {
-                            $directional_link_type_id = $lnk->verb()->id() * -1;
-                        }
-
-                        // display the link type
-                        if ($lnk->verb()->id() == $next_lnk->verb()->id()) {
-                            if ($this->wrd != null) {
-                                $result .= $this->wrd->plural;
-                            }
-                            if ($this->direction == foaf_direction::DOWN) {
-                                $result .= " " . $lnk->verb()->rev_plural;
-                            } else {
-                                $result .= " " . $lnk->verb()->plural;
-                            }
-                        } else {
-                            $result .= $this->wrd->name();
-                            if ($this->direction == foaf_direction::DOWN) {
-                                $result .= " " . $lnk->verb()->reverse;
-                            } else {
-                                $result .= " " . $lnk->verb()->name;
-                            }
-                        }
-                    }
-                    $result .= $html->dsp_tbl_start_half();
-                    $prev_verb_id = $lnk->verb()->id();
-
-                    // display the word
-                    if ($lnk->fob() == null) {
-                        log_warning('graph->display from is missing');
-                    } else {
-                        log_debug('word->dsp_graph display word ' . $lnk->from_name());
-                        $result .= '  <tr>' . "\n";
-                        if ($lnk->tob() != null) {
-                            $dsp_obj = $lnk->tob()->get_dsp_obj();
-                            $result .= $dsp_obj->dsp_tbl_cell(0);
-                        }
-                        $lnk_dsp = new triple_dsp($lnk->api_json());
-                        $result .= $lnk_dsp->btn_edit($lnk->fob()->dsp_obj());
-                        if ($lnk->fob() != null) {
-                            $dsp_obj = $lnk->fob()->get_dsp_obj();
-                            $result .= $dsp_obj->dsp_unlink($lnk->id());
-                        }
-                        $result .= '  </tr>' . "\n";
-                    }
-
-                    // use the last word as a sample for the new word type
-                    $last_linked_word_id = 0;
-                    if ($lnk->verb()->id() == $verbs->id(verb::FOLLOW)) {
-                        $last_linked_word_id = $lnk->to()->id();
-                    }
-
-                    // in case of the verb "following" continue the series after the last element
-                    $start_id = 0;
-                    if ($lnk->verb()->id() == $verbs->id(verb::FOLLOW)) {
-                        $start_id = $last_linked_word_id;
-                        // and link with the same direction (looks like not needed!)
-                        /* if ($directional_link_type_id > 0) {
-                          $directional_link_type_id = $directional_link_type_id * -1;
-                        } */
-                    } else {
-                        if ($lnk->fob() == null) {
-                            log_warning('graph->display from is missing');
-                        } else {
-                            $start_id = $lnk->fob()->id(); // to select a similar word for the verb following
-                        }
-                    }
-
-                    if ($lnk->verb()->id() <> $next_lnk->verb()->id()) {
-                        if ($lnk->fob() == null) {
-                            log_warning('graph->display from is missing');
-                        } else {
-                            $start_id = $lnk->fob()->id();
-                        }
-                        // give the user the possibility to add a similar word
-                        $result .= '  <tr>';
-                        $result .= '    <td>';
-                        $result .= '      ' . \html\btn_add("Add similar word", '/http/word_add.php?verb=' .
-                                $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->tob()->type_id . '&back=' . $start_id);
-                        $result .= '    </td>';
-                        $result .= '  </tr>';
-
-                        $result .= $html->dsp_tbl_end();
-                        $result .= '<br>';
-                    }
-                }
-            }
-        }
-        return $result;
-    }
 
     /*
-     *  information functions
+     *  information
      */
 
     /**
@@ -636,7 +544,7 @@ class triple_list extends sandbox_list_named
 
 
     /*
-     * convert functions
+     * convert
      */
 
     /**
@@ -671,6 +579,7 @@ class triple_list extends sandbox_list_named
         return $phr_lst;
     }
 
+
     /*
      * save
      */
@@ -681,9 +590,6 @@ class triple_list extends sandbox_list_named
      */
     function save(phrase_list $cache): user_message
     {
-        global $db_con;
-
-        $sc = $db_con->sql_creator();
         $usr_msg = new user_message();
 
         // get names of the used phrases
@@ -699,22 +605,23 @@ class triple_list extends sandbox_list_named
             log_err('Unexpected missing phrases ' . $phr_to_load->dsp_id());
         }
 
-        // get the triple that need to be loaded
+        // get the objects that need to be loaded
         $cache_names = $cache->names();
         $load_list = clone $this;
         $load_list = $load_list->filter_by_name($cache_names);
 
-        // load the triple that are already in the database
+        // load the objects that are already in the database
         $db_lst = new triple_list($this->user());
-        //$db_lst->load_by_names($this->names());
+        $db_lst->load_by_names($load_list->names());
 
-        // load the words
-        // report the missing words
-        // load the triples
+        // create any missing sql functions and insert the missing triples
+        $usr_msg->add($this->insert($db_lst));
+
         // update the existing triples
         // loop over the triples and check if all needed functions exist
         // create the missing functions
         // create blocks of update function calls
+
         return $usr_msg;
     }
 

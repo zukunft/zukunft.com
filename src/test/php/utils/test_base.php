@@ -712,7 +712,7 @@ class test_base
         $api_obj = $usr_obj->api_obj();
         if ($api_obj->id() == $usr_obj->id()) {
             $db_obj = $this->db_obj($usr_obj->user(), $api_obj::class);
-            $db_obj->load_by_id($usr_obj->id(), get_class($usr_obj));
+            $db_obj->load_by_id($usr_obj->id());
             $recreated_json = json_decode(json_encode($db_obj->export_obj(false)), true);
         }
         $result = $lib->json_is_similar($original_json, $recreated_json);

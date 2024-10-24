@@ -17,6 +17,7 @@
     - construct and map: including the mapping of the db row to this word object
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
+    - sql:               to create sql statments e.g. for load word from the sql database
     - tree building      create foaf trees
     - im- and export:    create an export object and set the vars from an import object
     - modify:            change potentially all object and all variables of this list with one function call
@@ -220,6 +221,11 @@ class word_list extends sandbox_list_named
         return $this->load($qp);
     }
 
+
+    /*
+     * sql
+     */
+
     /**
      * add formula word filter to
      * the SQL statement to load only the word id and name
@@ -394,62 +400,6 @@ class word_list extends sandbox_list_named
         }
 
         return $qp;
-    }
-
-    /**
-     * get a list of all sql functions that are needed to add all words of this list to the database
-     * @return sql_par_list with the sql function names
-     */
-    function sql(sql $sc): sql_par_list
-    {
-
-        // decide which db write method should be used
-        $wrd = new word($this->user());
-        $use_func = $wrd->sql_default_script_usage();
-
-        $sql_list = new sql_par_list();
-        foreach ($this->lst() as $wrd) {
-            // check always user sandbox and normal name, because reading from database for check would take longer
-            $sc_par_lst = new sql_type_list([]);
-            if ($use_func) {
-                $sc_par_lst->add(sql_type::LOG);
-            }
-            $qp = $wrd->sql_insert($sc, $sc_par_lst);
-            $qp->obj_name = $wrd->name();
-            $sql_list->add($qp);
-        }
-        return $sql_list;
-    }
-
-    function sql_create(): user_message
-    {
-        $usr_msg = new user_message();
-        return $usr_msg;
-    }
-
-    /**
-     * get a list of all sql function names that are needed to add all words of this list to the database
-     * @return sql_par_list with the sql function names
-     */
-    function sql_call_with_par(sql $sc): sql_par_list
-    {
-
-        // decide which db write method should be used
-        $wrd = new word($this->user());
-        $use_func = $wrd->sql_default_script_usage();
-
-        $sql_list = new sql_par_list();
-        foreach ($this->lst() as $wrd) {
-            // check always user sandbox and normal name, because reading from database for check would take longer
-            $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
-            if ($use_func) {
-                $sc_par_lst->add(sql_type::LOG);
-            }
-            $qp = $wrd->sql_insert($sc, $sc_par_lst);
-            $qp->obj_name = $wrd->name();
-            $sql_list->add($qp);
-        }
-        return $sql_list;
     }
 
     /**
@@ -1657,45 +1607,14 @@ class word_list extends sandbox_list_named
 
     function save(): user_message
     {
-        global $db_con;
-
-        $sc = $db_con->sql_creator();
         $usr_msg = new user_message();
 
         // load the words that are already in the database
         $db_lst = new word_list($this->user());
         $db_lst->load_by_names($this->names());
 
-        // get the db id from the loaded words
-        $usr_msg->add($this->fill_by_name($db_lst));
-
-        // get the words that need to be added
-        $db_names = $db_lst->names();
-        $add_lst = clone $this;
-        $add_lst = $add_lst->filter_by_name($db_names);
-
-        // get the sql call to add the missing words
-        $ins_calls = $add_lst->sql_call_with_par($sc);
-
-        // get the functions that are already in the database
-        $db_func_lst = $db_con->get_functions();
-
-        // get the sql functions that have not yet been created
-        $func_to_create = $ins_calls->sql_functions_missing($db_func_lst);
-
-        // get the first object that have requested the missing function
-        $func_create_obj = clone $this;
-        $func_create_obj_names = $func_to_create->object_names();
-        $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
-
-        // create the missing sql functions and add the first missing word
-        $func_to_create = $func_create_obj->sql($sc);
-        $func_to_create->exe();
-
-        // add the remaining missing words
-        $add_lst = $add_lst->filter_by_name($func_create_obj_names);
-        $ins_calls = $add_lst->sql_call_with_par($sc);
-        $usr_msg->add($ins_calls->exe());
+        // create any missing sql functions and insert the missing triples
+        $usr_msg->add($this->insert($db_lst));
 
         // update the existing words
         // TODO create a test that fields not included in the import message are not updated, but e.g. an empty descrption is updated

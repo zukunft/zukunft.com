@@ -83,7 +83,8 @@ class phrase_list_read_tests
         $result = json_encode($result);
         $t->assert_text_contains($test_name, $result, '1');
         $test_name = 'Switzerland is part of the phrase list staring with S';
-        $switzerland = new phrase($t->usr1, word_api::TN_CH);
+        $switzerland = new phrase($t->usr1);
+        $switzerland->load_by_name(word_api::TN_CH);
         $lst->load_like('S');
         $t->assert_contains($test_name, $lst->names(), $switzerland->name());
 
@@ -92,20 +93,24 @@ class phrase_list_read_tests
 
         // direct children
         $test_name = 'Switzerland is a country';
-        $country = new phrase($t->usr1, word_api::TN_COUNTRY);
+        $country = new phrase($t->usr1);
+        $country->load_by_name(word_api::TN_COUNTRY);
         $country_lst = $country->direct_children();
         $t->assert_contains($test_name, $country_lst->names(), $switzerland->name());
         $test_name = 'Zurich is a country (even if it is part of a country)';
-        $zurich = new phrase($t->usr1, word_api::TN_ZH);
+        $zurich = new phrase($t->usr1);
+        $zurich->load_by_name(word_api::TN_ZH);
         $t->assert_contains_not($test_name, $country_lst->names(), $zurich->name());
         $test_name = 'The word country is not part of the country list';
         $t->assert_contains_not($test_name, $country_lst->names(), $country->name());
 
         // all children
         $test_name = 'The default number of forecast years is a system configuration parameter';
-        $sys_cfg_root_phr = new phrase($t->usr1, word::SYSTEM_CONFIG);
+        $sys_cfg_root_phr = new phrase($t->usr1);
+        $sys_cfg_root_phr->load_by_name(word::SYSTEM_CONFIG);
         $sys_cfg_phr_lst = $sys_cfg_root_phr->all_children();
-        $auto_years = new phrase($t->usr1, config::YEARS_AUTO_CREATE_DSP);
+        $auto_years = new phrase($t->usr1);
+        $auto_years->load_by_name(config::YEARS_AUTO_CREATE_DSP);
         $t->assert_contains($test_name, $sys_cfg_phr_lst->names(), $auto_years->name());
 
         // Canton is related to Switzerland and Zurich
