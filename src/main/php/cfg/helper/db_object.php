@@ -272,11 +272,11 @@ class db_object
      *
      * @param sql $sc with the target db_type set
      * @param int|string $id the id of the user sandbox object
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id_str(sql $sc, int|string $id, string $class = self::class): sql_par
+    function load_sql_by_id_str(sql $sc, int|string $id): sql_par
     {
+        $class = $this::class;
         if ($class == group::class
             or $class == value::class
             or $class == result::class) {

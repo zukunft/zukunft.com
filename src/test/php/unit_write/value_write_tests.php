@@ -32,8 +32,6 @@
 
 namespace unit_write;
 
-include_once MODEL_VALUE_PATH . 'value_dsp_old.php';
-
 use api\value\value as value_api;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
@@ -46,7 +44,7 @@ use cfg\log\change_values_prime;
 use cfg\phrase_list;
 use cfg\user;
 use cfg\value\value;
-use cfg\value\value_dsp_old;
+use html\value\value as value_dsp;
 use html\figure\figure as figure_dsp;
 use shared\library;
 use test\test_cleanup;
@@ -235,30 +233,32 @@ class value_write_tests
 
         // test the figure object creation
         $phr_lst = $t->load_phrase_list(array(word_api::TN_CANTON, word_api::TN_ZH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
-        $mio_val = new value_dsp_old($t->usr1);
+        $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
+        $mio_val_dsp = new value_dsp();
+        $mio_val_dsp->set_from_json($mio_val->api_json());
         $fig = $mio_val->figure();
         $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
         $result = $fig_dsp->display_linked('1');
-        $target = '<a href="/http/result_edit.php?id=' . $mio_val->id() . '&back=1" title="1.55">1.55</a>';
+        $target = '<a href="/http/result_edit.php?id=' . $mio_val_dsp->id() . '&back=1" title="1.55">1.55</a>';
         $t->assert(', value->figure->display_linked for word list ' . $phr_lst->dsp_id(), $result, $target);
 
         // test the HTML code creation
-        $result = $mio_val->display();
+        $result = $mio_val_dsp->display_value();
         $target = number_format(value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO, 2, DEFAULT_DEC_POINT, DEFAULT_THOUSAND_SEP);
         $t->display(', value->display', $target, $result);
 
         // test the HTML code creation including the hyperlink
-        $result = $mio_val->display_linked('1');
+        $result = $mio_val_dsp->display_value_linked('1');
         //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1"  >1.55</a>';
+        $target = '<a href="/http/value_edit.php?id=' . $mio_val_dsp->id() . '&back=1"  >1.55</a>';
         $t->assert(', value->display_linked', $result, $target);
 
         // change the number to force using the thousand separator
-        $mio_val->set_number(value_api::TV_INT);
-        $result = $mio_val->display_linked('1');
+        $mio_val_dsp->set_number(value_api::TV_INT);
+        $result = $mio_val_dsp->display_value_linked('1');
         //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1"  >123\'456</a>';
+        $target = '<a href="/http/value_edit.php?id=' . $mio_val_dsp->id() . '&back=1"  >123\'456</a>';
         $t->assert(', value->display_linked', $result, $target);
 
         // convert the user input for the database

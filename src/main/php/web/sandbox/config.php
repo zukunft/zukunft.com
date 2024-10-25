@@ -34,12 +34,38 @@
 
 namespace html\sandbox;
 
+use cfg\user_message;
+
 class config
 {
 
     // default number of rows per page/query if the user has not defined another limit
     const ROW_LIMIT = 20;
 
+    function percent_decimals(): int
+    {
+        return DEFAULT_PERCENT_DECIMALS;
+    }
+
+    function dec_point(): string
+    {
+        return DEFAULT_DEC_POINT;
+    }
+
+    function thousand_sep(): string
+    {
+        return DEFAULT_THOUSAND_SEP;
+    }
+
+    /**
+     * request the user specific frontend configuration from the backend
+     * @return user_message if it fails the reason why
+     */
+    function load(): user_message
+    {
+        $usr_msg = new user_message();
+        return $usr_msg;
+    }
 }
 
 

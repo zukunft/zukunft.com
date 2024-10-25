@@ -319,7 +319,7 @@ class db_object_seq_id extends db_object implements JsonSerializable
      */
     function load_sql_by_id(sql $sc, int $id): sql_par
     {
-        return parent::load_sql_by_id_str($sc, $id, $this::class);
+        return parent::load_sql_by_id_str($sc, $id);
     }
 
     /**

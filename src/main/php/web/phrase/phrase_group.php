@@ -313,4 +313,21 @@ class phrase_group extends sandbox_named_dsp
         return $phr_lst_vars;
     }
 
+
+    /*
+     * info
+     */
+
+    /**
+     * @return bool if the id of the group is valid
+     */
+    function is_id_set(): bool
+    {
+        if ($this->id() != 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

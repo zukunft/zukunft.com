@@ -550,20 +550,6 @@ class result extends sandbox_value
     }
 
     /**
-     * create the SQL to load a results by the id
-     * added to value just to assign the class for the user sandbox object
-     *
-     * @param sql $sc with the target db_type set
-     * @param int|string $id the id of the result
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
-    {
-        return parent::load_sql_by_id($sc, $id, $class);
-    }
-
-    /**
      * create the SQL to load a results by phrase group id
      *
      * @param sql $sc with the target db_type set

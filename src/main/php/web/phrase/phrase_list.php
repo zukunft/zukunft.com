@@ -184,6 +184,15 @@ class phrase_list extends list_dsp
         return $html->text_h2($this->InitCap());
     }
 
+    /**
+     * the old long form to encode
+     */
+    function id_url_long(): string
+    {
+        $lib = new library();
+        return $lib->ids_to_url($this->id_lst(), "phrase");
+    }
+
 
     /*
      * info

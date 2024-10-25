@@ -56,7 +56,6 @@ use cfg\log\change_link;
 use cfg\log\change_value;
 use cfg\result\result;
 use cfg\value\value;
-use cfg\value\value_dsp_old;
 use DateTime;
 use Exception;
 use shared\library;
@@ -320,7 +319,7 @@ class sandbox_value extends sandbox_multi
 
     function table_type(): sql_type
     {
-        if ($this::class == value::class or $this::class == value_dsp_old::class) {
+        if ($this::class == value::class) {
             return $this->grp->table_type();
         } else {
             if ($this->is_main()) {
@@ -333,7 +332,7 @@ class sandbox_value extends sandbox_multi
 
     function table_extension(): string
     {
-        if ($this::class == value::class or $this::class == value_dsp_old::class) {
+        if ($this::class == value::class) {
             return $this->grp->table_extension();
         } else {
             if ($this->is_main()) {
@@ -361,7 +360,7 @@ class sandbox_value extends sandbox_multi
 
     function is_prime(): bool
     {
-        if ($this::class == value::class or $this::class == value_dsp_old::class) {
+        if ($this::class == value::class) {
             return $this->grp()->is_prime();
         } else {
             $grp_id = new group_id();
@@ -376,7 +375,7 @@ class sandbox_value extends sandbox_multi
 
     function is_main(): bool
     {
-        if ($this::class == value::class or $this::class == value_dsp_old::class) {
+        if ($this::class == value::class) {
             return false;
         } else {
             $grp_id = new group_id();
@@ -402,8 +401,7 @@ class sandbox_value extends sandbox_multi
      */
     function id_names(bool $all = false): array
     {
-        // TODO remove value_dsp_old
-        if ($this::class == value::class or $this::class == value_dsp_old::class) {
+        if ($this::class == value::class) {
             return $this->grp()->id_names($all);
         } else {
             if ($this->is_main()) {
@@ -694,13 +692,12 @@ class sandbox_value extends sandbox_multi
      *
      * @param sql $sc with the target db_type set
      * @param int|string $id the id of the value
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql $sc, int|string $id): sql_par
     {
         $this->grp()->set_id($id);
-        return $this->load_sql_by_grp_id($sc, 'id', $class);
+        return $this->load_sql_by_grp_id($sc, 'id');
     }
 
     /**
@@ -708,13 +705,12 @@ class sandbox_value extends sandbox_multi
      *
      * @param sql $sc with the target db_type set
      * @param group $grp the id of the phrase group
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp(sql $sc, group $grp, string $class = self::class): sql_par
+    function load_sql_by_grp(sql $sc, group $grp): sql_par
     {
         $this->set_grp($grp);
-        return $this->load_sql_by_grp_id($sc, 'grp', $class);
+        return $this->load_sql_by_grp_id($sc, 'grp');
     }
 
     /**
@@ -859,14 +855,13 @@ class sandbox_value extends sandbox_multi
      *
      * @param sql $sc with the target db_type set
      * @param string $query_name the unique name of the query e.g. id or name
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql_by_grp_id(sql $sc, string $query_name, string $class = self::class): sql_par
+    protected function load_sql_by_grp_id(sql $sc, string $query_name): sql_par
     {
         $sc_par_lst = new sql_type_list([$this->table_type()]);
         $id_ext = $this->table_extension();
-        $qp = $this->load_sql_multi($sc, $query_name, $class, $sc_par_lst, '', $id_ext);
+        $qp = $this->load_sql_multi($sc, $query_name, $this::class, $sc_par_lst, '', $id_ext);
         return $this->load_sql_set_where($qp, $sc, $id_ext);
     }
 

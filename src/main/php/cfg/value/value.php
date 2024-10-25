@@ -34,6 +34,21 @@
     if the value is used, adding, changing or deleting a word creates a new value or updates an existing value
      and the logging is done according new value (add all words) or existing value (value modified by the user)
 
+    The main sections of this object are
+    - db const:          const for the database link
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - cast:              create an api object and set the vars from an api json
+    - load:              database access object (DAO) functions
+    - sql:               to create sql statments e.g. for load
+    - sql fields:        field names for sql
+    - information:       functions to make code easier to read
+    - check:             functions to check the consistency
+    - im- and export:    create an export object and set the vars from an import object
+    - save:              manage to update the database
+    - sql write fields:  field list for writing to the database
+
 
     This file is part of zukunft.com - calc with words
 
@@ -130,7 +145,7 @@ class value extends sandbox_value
 {
 
     /*
-     * database link
+     * db const
      */
 
     // object specific database and JSON object field names
@@ -314,42 +329,6 @@ class value extends sandbox_value
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return value_api the value frontend api object
-     */
-    function api_obj(): object
-    {
-        $api_obj = new value_api();
-        $this->fill_api_obj($api_obj);
-        $api_obj->set_number($this->number());
-        $api_obj->set_grp($this->grp->api_obj());
-        $api_obj->set_is_std($this->is_std());
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    /**
-     * just to shorten the code
-     * @return value_dsp the value frontend object
-     */
-    function dsp_obj(): value_dsp
-    {
-        $api_json = $this->api_obj()->get_json();
-        return new value_dsp($api_json);
-    }
-
-
-    /*
      * set and get
      */
 
@@ -486,23 +465,141 @@ class value extends sandbox_value
 
 
     /*
+     * cast
+     */
+
+    /**
+     * @return value_api the value frontend api object
+     */
+    function api_obj(): object
+    {
+        $api_obj = new value_api();
+        $this->fill_api_obj($api_obj);
+        $api_obj->set_number($this->number());
+        $api_obj->set_grp($this->grp->api_obj());
+        $api_obj->set_is_std($this->is_std());
+        return $api_obj;
+    }
+
+    /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
+     * just to shorten the code
+     * @return value_dsp the value frontend object
+     */
+    function dsp_obj(): value_dsp
+    {
+        $api_json = $this->api_obj()->get_json();
+        return new value_dsp($api_json);
+    }
+
+
+    /*
      * load
      */
 
     /**
-     * create the SQL to load the single default value always by the id
-     * @param sql $sc with the target db_type set
-     * @param array $fld_lst list of fields either for the value or the result
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * load a value by the phrase group
+     * @param group $grp the id of the phrase group
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int|string the id of the object found and zero if nothing is found
      */
-    function load_standard_sql(sql $sc, array $fld_lst = []): sql_par
+    function load_by_grp(group $grp, string $class = self::class): int|string
     {
-        $fld_lst = array_merge(
-            self::FLD_NAMES,
-            self::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)
-        );
-        return parent::load_standard_sql($sc, $fld_lst);
+        global $db_con;
+
+        log_debug($grp->dsp_id());
+        $qp = $this->load_sql_by_grp($db_con->sql_creator(), $grp, $class);
+        $id = $this->load_non_int_db_key($qp);
+
+        // use the given phrase list
+        if ($this->phr_lst()->is_empty() and !$grp->phrase_list()->is_empty()) {
+            $this->set_grp($grp);
+        } else {
+            // ... or fill up the missing vars
+            if ($this->phr_lst()->names() != $grp->phrase_list()->names()) {
+                $this->phr_lst()->fill_by_id($grp->phrase_list());
+            }
+        }
+
+        return $id;
+    }
+
+    /**
+     * load a value by the phrase ids
+     * @param array $phr_ids with the phrase ids
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_phr_ids(array $phr_ids): int
+    {
+        $phr_lst = new phrase_list($this->user());
+        $phr_lst->load_names_by_ids((new phr_ids($phr_ids)));
+        return $this->load_by_grp($phr_lst->get_grp_id());
+    }
+
+    /**
+     * load one database row e.g. value or result from the database
+     * where the prime key is not necessary and integer
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int|string the id of the object found and zero if nothing is found
+     */
+    protected function load_non_int_db_key(sql_par $qp): int|string
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper_sandbox_multi($db_row, $qp->ext);
+        return $this->id();
+    }
+
+    /**
+     * get the best matching value
+     * 1. try to find a value with simply a different scaling e.g. if the number of share are requested, but this is in millions in the database use and scale it
+     * 2. check if another measure type can be converted      e.g. if the share price in USD is requested, but only in EUR is in the database convert it
+     *    e.g. for "ABB","Sales","2014" the value for "ABB","Sales","2014","million","CHF" will be loaded,
+     *    because most values for "ABB", "Sales" are in ,"million","CHF"
+     *
+     * @param phrase_list $phr_lst with the phrases used for the selection
+     */
+    function load_best(phrase_list $phr_lst): void
+    {
+        log_debug('value->load_best for ' . $this->dsp_id());
+        $grp = $phr_lst->get_grp_id();
+        $this->load_by_grp($grp);
+        // if not found try without scaling
+        if (!$this->is_id_set()) {
+            if (!$phr_lst->is_empty()) {
+                log_err('No phrases found for ' . $this->dsp_id() . '.', 'value->load_best');
+            } else {
+                // try to get a value with another scaling
+                $phr_lst_unscaled = clone $phr_lst;
+                $phr_lst_unscaled->ex_scaling();
+                log_debug('try unscaled with ' . $phr_lst_unscaled->dsp_id());
+                $grp_unscale = $phr_lst_unscaled->get_grp_id();
+                $this->load_by_grp($grp_unscale);
+                // if not found try with converted measure
+                if (!$this->is_id_set()) {
+                    // try to get a value with another measure
+                    $phr_lst_converted = clone $phr_lst_unscaled;
+                    $phr_lst_converted->ex_measure();
+                    log_debug('try converted with ' . $phr_lst_converted->dsp_id());
+                    $grp_unscale = $phr_lst_converted->get_grp_id();
+                    $this->grp->set_id($grp_unscale->id());
+                    $this->load_by_grp($grp_unscale);
+                    // TODO:
+                    // check if there are any matching values at all
+                    // if yes, get the most often used phrase
+                    // repeat adding a phrase utils a number is found
+                }
+            }
+        }
+        log_debug('got ' . $this->number . ' for ' . $this->dsp_id());
     }
 
     /**
@@ -516,6 +613,11 @@ class value extends sandbox_value
         $qp = $this->load_standard_sql($db_con->sql_creator());
         return parent::load_standard($qp);
     }
+
+
+    /*
+     * sql
+     */
 
     /**
      * create the common part of an SQL statement to retrieve the parameters of a value from the database
@@ -551,207 +653,25 @@ class value extends sandbox_value
     }
 
     /**
-     * create the SQL to load a results by the id
-     *
+     * create the SQL to load the single default value always by the id
      * @param sql $sc with the target db_type set
-     * @param int|string $id the id of the result
-     * @param string $class the name of the child class from where the call has been triggered
+     * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
+    function load_standard_sql(sql $sc, array $fld_lst = []): sql_par
     {
-        return parent::load_sql_by_id($sc, $id, $class);
+        $fld_lst = array_merge(
+            self::FLD_NAMES,
+            self::FLD_NAMES_NUM_USR,
+            array(user::FLD_ID)
+        );
+        return parent::load_standard_sql($sc, $fld_lst);
     }
 
-    /**
-     * create an SQL statement to retrieve a value by phrase group from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param group $grp the id of the phrase group
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+
+    /*
+     * sql fields
      */
-    function load_sql_by_grp(sql $sc, group $grp, string $class = self::class): sql_par
-    {
-        return parent::load_sql_by_grp($sc, $grp, $class);
-    }
-
-    /**
-     * create the SQL to load a single user specific value
-     *
-     * @param sql $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_obj_vars(sql $sc, string $class = self::class): sql_par
-    {
-        $ext = $this->grp->table_extension();
-        $qp = parent::load_sql_obj_vars($sc, $class);
-        $sql_where = '';
-        $sql_grp = '';
-
-        $sc->set_class($class, new sql_type_list([]), $ext);
-        if ($this->is_id_set()) {
-            $qp->name .= sql_db::FLD_ID;
-        } elseif ($this->grp->is_id_set()) {
-            $qp->name .= 'group_id';
-        } elseif ($this->phrase_list() != null) {
-            $phr_lst = clone $this->phrase_list();
-            $pos = 1;
-            foreach ($phr_lst->lst() as $phr) {
-                $pos++;
-            }
-            if ($pos > 1) {
-                $qp->name .= $pos;
-            }
-            $qp->name .= phrase::FLD_ID;
-        }
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields(self::FLD_NAMES);
-        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
-        $sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
-
-        if ($this->is_id_set()) {
-            $sql_where = $sc->where_id(self::FLD_ID, $this->id(), true);
-        } elseif ($this->grp->is_id_set()) {
-            $sql_where = $sc->where_par(array(group::FLD_ID), array($this->grp->id()), true);
-        } elseif ($this->phrase_list() != null) {
-            // create the SQL to select a phrase group which needs to inside load_sql for correct parameter counting
-            $phr_lst = clone $this->phrase_list();
-
-            // the phrase groups with the least number of additional words that have at least one result
-            $sql_grp_from = '';
-            $sql_grp_where = '';
-            $pos = 1;
-            foreach ($phr_lst->lst() as $phr) {
-                if ($sql_grp_from <> '') {
-                    $sql_grp_from .= ',';
-                }
-                $sql_grp_from .= 'group_word_links l' . $pos;
-                $pos_prior = $pos - 1;
-                if ($sql_grp_where <> '') {
-                    $sql_grp_where .= ' AND l' . $pos_prior . '.' . group::FLD_ID . ' = l' . $pos . '.' . group::FLD_ID . ' AND ';
-                }
-                $sc->add_where(self::FLD_ID, $phr->id());
-                $sql_grp_where .= ' l' . $pos . '.word_id = ' . $sc->par_name();
-                $pos++;
-            }
-            $sql_avoid_code_check_prefix = "SELECT";
-            $sql_grp = 's.group_id IN (' . $sql_avoid_code_check_prefix . ' l1.' . group::FLD_ID . ' 
-                          FROM ' . $sql_grp_from . ' 
-                         WHERE ' . $sql_grp_where . ')';
-            $sql_where .= $sql_grp;
-
-        } else {
-            log_err('At least the id, phrase group or phrase list must be set to load a value', 'value->load');
-        }
-
-        if ($sql_where != '') {
-
-            $sc->set_where_text($sql_where);
-            $qp->sql = $sc->select_by_set_id();
-            $qp->par = $sc->get_par();
-
-        }
-
-        return $qp;
-    }
-
-    /**
-     * load a value by the phrase group
-     * @param group $grp the id of the phrase group
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int|string the id of the object found and zero if nothing is found
-     */
-    function load_by_grp(group $grp, string $class = self::class): int|string
-    {
-        global $db_con;
-
-        log_debug($grp->dsp_id());
-        $qp = $this->load_sql_by_grp($db_con->sql_creator(), $grp, $class);
-        $id = $this->load_non_int_db_key($qp);
-
-        // use the given phrase list
-        if ($this->phr_lst()->is_empty() and !$grp->phrase_list()->is_empty()) {
-            $this->set_grp($grp);
-        } else {
-            // ... or fill up the missing vars
-            if ($this->phr_lst()->names() != $grp->phrase_list()->names()) {
-                $this->phr_lst()->fill_by_id($grp->phrase_list());
-            }
-        }
-
-        return $id;
-    }
-
-    /**
-     * load one database row e.g. value or result from the database
-     * where the prime key is not necessary and integer
-     * @param sql_par $qp the query parameters created by the calling function
-     * @return int|string the id of the object found and zero if nothing is found
-     */
-    protected function load_non_int_db_key(sql_par $qp): int|string
-    {
-        global $db_con;
-
-        $db_row = $db_con->get1($qp);
-        $this->row_mapper_sandbox_multi($db_row, $qp->ext);
-        return $this->id();
-    }
-
-    /**
-     * load a value by the phrase ids
-     * @param array $phr_ids with the phrase ids
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_phr_ids(array $phr_ids): int
-    {
-        $phr_lst = new phrase_list($this->user());
-        $phr_lst->load_names_by_ids((new phr_ids($phr_ids)));
-        return $this->load_by_grp($phr_lst->get_grp_id());
-    }
-
-    /**
-     * get the best matching value
-     * 1. try to find a value with simply a different scaling e.g. if the number of share are requested, but this is in millions in the database use and scale it
-     * 2. check if another measure type can be converted      e.g. if the share price in USD is requested, but only in EUR is in the database convert it
-     *    e.g. for "ABB","Sales","2014" the value for "ABB","Sales","2014","million","CHF" will be loaded,
-     *    because most values for "ABB", "Sales" are in ,"million","CHF"
-     */
-    function load_best(): void
-    {
-        log_debug('value->load_best for ' . $this->dsp_id());
-        $this->load_by_grp($this->grp);
-        // if not found try without scaling
-        if (!$this->is_id_set()) {
-            $this->load_phrases();
-            if (!$this->phrase_list()->is_empty()) {
-                log_err('No phrases found for ' . $this->dsp_id() . '.', 'value->load_best');
-            } else {
-                // try to get a value with another scaling
-                $phr_lst_unscaled = clone $this->phrase_list();
-                $phr_lst_unscaled->ex_scaling();
-                log_debug('try unscaled with ' . $phr_lst_unscaled->dsp_id());
-                $grp_unscale = $phr_lst_unscaled->get_grp_id();
-                $this->load_by_grp($grp_unscale);
-                // if not found try with converted measure
-                if (!$this->is_id_set()) {
-                    // try to get a value with another measure
-                    $phr_lst_converted = clone $phr_lst_unscaled;
-                    $phr_lst_converted->ex_measure();
-                    log_debug('try converted with ' . $phr_lst_converted->dsp_id());
-                    $grp_unscale = $phr_lst_converted->get_grp_id();
-                    $this->grp->set_id($grp_unscale->id());
-                    $this->load_by_grp($grp_unscale);
-                    // TODO:
-                    // check if there are any matching values at all
-                    // if yes, get the most often used phrase
-                    // repeat adding a phrase utils a number is found
-                }
-            }
-        }
-        log_debug('got ' . $this->number . ' for ' . $this->dsp_id());
-    }
 
     function all_sandbox_fields(): array
     {
@@ -839,8 +759,22 @@ class value extends sandbox_value
 
 
     /*
-     * Interface functions
+     * information
      */
+
+    /**
+     * create and return the description for this value
+     * TODO check if $this->load_phrases() needs to be called before calling this function
+     */
+    function name(): string
+    {
+        $result = '';
+        if (isset($this->grp)) {
+            $result .= $this->grp->name();
+        }
+
+        return $result;
+    }
 
     /**
      * @return int the id of the source or zero if no source is defined
@@ -888,11 +822,6 @@ class value extends sandbox_value
         return $result;
     }
 
-
-    /*
-     * reduce code line length
-     */
-
     /**
      * @return phrase_list the phrase list of this value from the phrase group
      */
@@ -911,7 +840,7 @@ class value extends sandbox_value
 
 
     /*
-     * consistency check functions
+     * check
      */
 
     /**
@@ -1335,24 +1264,6 @@ class value extends sandbox_value
         return $msg;
     }
 
-
-    /*
-     *  display functions
-     */
-
-    /**
-     * create and return the description for this value
-     * TODO check if $this->load_phrases() needs to be called before calling this function
-     */
-    function name(): string
-    {
-        $result = '';
-        if (isset($this->grp)) {
-            $result .= $this->grp->name();
-        }
-
-        return $result;
-    }
 
     /*
      *  get functions that return other linked objects
@@ -1827,70 +1738,6 @@ class value extends sandbox_value
         $result .= $this->save_field_protection($db_con, $db_rec, $std_rec);
         $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
         log_debug('value->save_fields all fields for "' . $this->id() . '" has been saved');
-        return $result;
-    }
-
-    /**
-     * get a list of database fields that have been updated
-     *
-     * @param value $val the compare value to detect the changed fields
-     * @return array list of the database field names that have been updated
-     */
-    function changed_db_fields(value $val): array
-    {
-        $is_updated = false;
-        $result = [];
-        if ($val->number() <> $this->number()) {
-            $result[] = self::FLD_VALUE;
-            $is_updated = true;
-        }
-        if ($val->get_source_id() <> $this->get_source_id()) {
-            $result[] = source::FLD_ID;
-            $is_updated = true;
-        }
-        if ($val->share_id <> $this->share_id) {
-            $result[] = self::FLD_SHARE;
-            $is_updated = true;
-        }
-        if ($val->protection_id <> $this->protection_id) {
-            $result[] = self::FLD_PROTECT;
-            $is_updated = true;
-        }
-        if ($is_updated) {
-            $result[] = self::FLD_LAST_UPDATE;
-        }
-        return $result;
-    }
-
-    /**
-     * get a list of database field values that have been updated
-     *
-     * @param value $val the compare value to detect the changed fields
-     * @return array list of the database field values that have been updated
-     */
-    function changed_db_values(value $val): array
-    {
-        $is_updated = false;
-        $result = [];
-        if ($val->number() <> $this->number()) {
-            $result[] = $this->number();
-            $is_updated = true;
-        }
-        if ($val->get_source_id() <> $this->get_source_id()) {
-            $result[] = $this->get_source_id();
-            $is_updated = true;
-        }
-        if ($val->share_id <> $this->share_id) {
-            $result[] = $this->share_id;
-            $is_updated = true;
-        }
-        if ($val->protection_id <> $this->protection_id) {
-            $result[] = $this->protection_id;
-            $is_updated = true;
-        }
-        if ($is_updated) {
-            $result[] = sql::NOW;
-        }
         return $result;
     }
 

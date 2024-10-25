@@ -214,6 +214,18 @@ class sandbox_value extends sandbox
         }
     }
 
+    /**
+     * @return bool if the id of the group is valid
+     */
+    function is_id_set(): bool
+    {
+        if ($this->id() != 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
 
 

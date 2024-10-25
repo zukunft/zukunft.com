@@ -50,6 +50,12 @@ class formula_trigger_tests
         $t->header('Test the formula calculation triggers');
 
         // prepare the calculation trigger test
+        $phr_names_ch_19 = [word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2019];
+        $phr_ch_19 = new phrase_list($usr);
+        $phr_ch_19->load_by_names($phr_names_ch_19);
+        $phr_names_ch_20 = [word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020];
+        $phr_ch_20 = new phrase_list($usr);
+        $phr_ch_20->load_by_names($phr_names_ch_20);
         $phr_lst1 = new phrase_list($usr);
         $phr_lst1->add_name(word_api::TN_CH);
         $phr_lst1->add_name(word_api::TN_INHABITANTS);
@@ -85,15 +91,13 @@ class formula_trigger_tests
 
         // check if requesting the best number for the first number returns a useful value
         $best_val = new value($usr);
-        $best_val->grp = $phr_lst1->get_grp_id();
-        $best_val->load_best();
+        $best_val->load_best($phr_ch_19);
         $result = $best_val->number();
         $target = value_api::TV_CH_INHABITANTS_2019_IN_MIO;
         $t->display('value->check best value for "' . $phr_lst1->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         // check if requesting the best number for the second number returns a useful value
         $best_val2 = new value($usr);
-        $best_val2->grp = $phr_lst2->get_grp_id();
-        $best_val2->load_best();
+        $best_val2->load_best($phr_ch_20);
         $result = $best_val2->number();
         $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
         $t->display('value->check best value for "' . $phr_lst2->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
