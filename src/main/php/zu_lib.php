@@ -193,6 +193,10 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO use a key-value table without a phrase group if a value is not user specific and none of the default settings has been changed
          for the key-value table without a phrase group encode the key, so that automatically a virtual phrase group can be created
          e.g. convert -12,3,67 to something like 4c48d5685a7e with the possibility to reverse
+    TODO create db id sync tables (with this_pod_db_id, foreign_pod, foreign_db_id)
+         each pod can create its own database id for words, triple, formulas and users
+         if the id request from the master pod takes too long
+         or if the word or triple should be a prefered / prime phrase for the pod
     TODO move all sample SQL statements from the unit test to separate files for auto syntax check
     TODO check that all sample SQL statements are checked for the unique name and for mysql syntax
     TODO cleanup the objects and remove all vars not needed any more e.g. id arrays

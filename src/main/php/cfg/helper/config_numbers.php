@@ -152,18 +152,34 @@ class config_numbers extends value_list
      */
 
     /**
+     * loaf the system configuration from the database to this object
+     *
+     * @return bool true if the values of the system configuration have been loaded
+     */
+    function load_cfg(user $usr): bool
+    {
+        $result = false;
+        $phr_sys_cfg = new phrase($usr);
+        $phr_sys_cfg->load_by_name(word::SYSTEM_CONFIG);
+        $this->load_by_phr($phr_sys_cfg);
+        if (!$this->is_empty()) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
      *
      * @return bool true if the values of the user configuration have been loaded
      */
-    function load_usr_cgf(user $usr): bool
+    function load_usr_cfg(user $usr): bool
     {
         $result = false;
-        $root_phr = new phrase($this->user());
+        $root_phr = new phrase($usr);
         $root_phr->load_by_name(word::SYSTEM_CONFIG);
         $phr_lst = $root_phr->all_children();
-        $val_lst = new value_list($usr);
-        $val_lst->load_by_phr_lst($phr_lst);
-        if (!$val_lst->is_empty()) {
+        $this->load_by_phr_lst($phr_lst);
+        if (!$this->is_empty()) {
             $result = true;
         }
         return $result;
