@@ -2,7 +2,7 @@
 
 /*
 
-    web\html\api_const.php - constants used for the backend to frontend api of zukunft.com
+    web/html/api_const.php - constants used for the backend to frontend api of zukunft.com
     ----------------------
 
 
@@ -53,6 +53,9 @@ class rest_ctrl
 
     // url path to the fixed views
     const PATH_FIXED = '/http/';
+    const URL_MAIN_SCRIPT = 'view';
+    const URL_SYMBOL_OBJECT = 'o';
+    const URL_SYMBOL_VIEW = 'v';
 
     // url extension of the fixed views
     const EXT = '.php';
@@ -78,6 +81,7 @@ class rest_ctrl
     // special api function independent of a class
     const LOGIN_RESET = 'login_reset';
     const ERROR_UPDATE = 'error_update';
+    const URL_ABOUT = 'about';
 
     // view parameter names
     const PAR_VIEW_WORDS = 'words';  // to select the words that should be display

@@ -2,8 +2,8 @@
 
 /*
 
-    /web/value.php - the display extension of the api value object
-    -------------
+    web/value/value.php - create the html code to show a value to the user
+    -------------------
 
     to creat the HTML code to display a formula
 
@@ -60,10 +60,12 @@ class value extends sandbox_value
 
 
     /**
-     * @param phrase_list_dsp $phr_lst_exclude usually the context phrases that does not need to be repeated
+     * create the HTML code to show the value name to the user
+     *
+     * @param phrase_list_dsp|null $phr_lst_exclude usually the context phrases that does not need to be repeated
      * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
      */
-    function name_linked(phrase_list_dsp $phr_lst_exclude): string
+    function name_linked(phrase_list_dsp|null $phr_lst_exclude = null): string
     {
         return $this->grp()->display_linked($phr_lst_exclude);
     }
@@ -71,10 +73,12 @@ class value extends sandbox_value
     /**
      * @return string the formatted value with a link to change this value
      */
-    function ref_edit(string $back): string
+    function ref_edit(string $back = ''): string
     {
         $html = new html_base();
-        return $html->ref($html->url(api_dsp::VALUE_EDIT, $this->id(), $back), $this->val_formatted());
+        $url = $html->url(api_dsp::VALUE_EDIT, $this->id(), $back);
+        $txt = $this->val_formatted();
+        return $html->ref($url, $txt);
     }
 
 

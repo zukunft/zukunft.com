@@ -92,7 +92,9 @@ if ($usr->id() > 0) {
             //header("Location: ../view.php?sid=".SID."");
             exit;
         } else {
-            $msg .= $html->dsp_err('Login failed. ' .  $html->ref($html->url(rest_ctrl::LOGIN_RESET), 'Forgot password?', 'Send a new password via email.'));
+            $url = $html->url(rest_ctrl::LOGIN_RESET);
+            $ref = $html->ref($url, 'Forgot password?', 'Send a new password via email.');
+            $msg .= $html->dsp_err('Login failed. ' . $ref);
         }
     }
 }

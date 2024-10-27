@@ -117,7 +117,7 @@ class html_base
         $result .= '  <meta charset="utf-8">';
         if (self::UI_USE_BOOTSTRAP) {
             // include the bootstrap stylesheets
-            $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . $bs_css_path . api::BS_CSS .'">';
+            $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . $bs_css_path . api::BS_CSS . '">';
             // include the jQuery UI stylesheets
             $result .= '  <link rel="stylesheet" href="' . $server_url . 'lib_external/jQueryUI/1.12.1/jquery-ui.css">';
             // include the jQuery library
@@ -227,7 +227,8 @@ class html_base
         }
         $result .= '<small>';
         if (!$no_about) {
-            $result .= $this->ref($this->url("about"), "About") . ' &middot; ';
+            $url = $this->url(rest_ctrl::URL_ABOUT);
+            $result .= $this->ref($url, "About") . ' &middot; ';
         }
         $result .= '<a href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; ';
         $result .= 'All structured data is available under the <a href="//creativecommons.org/publicdomain/zero/1.0/" title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a> License';
@@ -281,7 +282,7 @@ class html_base
      * build an url for link a zukunft.com element
      *
      * @param string $obj_name the object that is requested e.g. a view
-     * @param int $id the id of the parameter e.g. 1 for math const
+     * @param int|string $id the id of the parameter e.g. 1 for math const
      * @param string|null $back the back trace calls to return to the original url and for undo
      * @param string|array $par either the array with the parameters or the parameter objects e.g. a phrase
      * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
@@ -302,6 +303,61 @@ class html_base
             }
             if ($id_ext != '') {
                 $result .= '&' . $id_ext;
+            }
+        }
+        if ($back != '') {
+            $result .= '&back=' . $back;
+        }
+        return $result;
+    }
+
+    /**
+     * build a zukunft.com internal url based on the html one-page setup
+     * o for the main object that should be shown to the user
+     * v for view which contains the main object type
+     * i for the database id of the main object
+     * r for the related phrase (the phrases used for all components)
+     * c for the related terms (the term used for all components)
+     * other related phrases or term are set in the components
+     *
+     * @param string $obj_name the object that should be shown e.g. a value
+     * @param int|string $id the database id of the object e.g. 1 for the word Mathematics
+     * @param string|null $back the back trace calls to return to the original url and for undo
+     * @param string|array $par either the array with the parameters or the parameter objects e.g. a phrase
+     * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
+     * @return string the created url
+     */
+    function url_new(int|string   $id = 0,
+                     string       $obj_name = '',
+                     ?string      $back = '',
+                     string|array $par = '',
+                     string       $id_ext = ''
+    ): string
+    {
+        if (is_string($id)) {
+            $result = rest_ctrl::PATH_FIXED . $id . rest_ctrl::EXT . '?';
+        } else {
+            $result = rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
+            if (is_string($id)) {
+                if ($par != '') {
+                    $result .= '?' . rest_ctrl::URL_SYMBOL_OBJECT . '=' . $obj_name;
+                } else {
+                    $result .= '?id=' . $id;
+                }
+                if ($id_ext != '') {
+                    $result .= '&' . $id_ext;
+                }
+            }
+            $result .= '?' . rest_ctrl::URL_SYMBOL_OBJECT . '=' . $obj_name;
+            if ($id <> 0) {
+                if ($par != '') {
+                    $result .= '?' . rest_ctrl::URL_SYMBOL_OBJECT . '=' . $obj_name;
+                } else {
+                    $result .= '?id=' . $id;
+                }
+                if ($id_ext != '') {
+                    $result .= '&' . $id_ext;
+                }
             }
         }
         if ($back != '') {
