@@ -102,6 +102,7 @@ class api
     const JSON_LIST_FORMULA_LINK_TYPES = 'formula_link_types';
     const JSON_LIST_ELEMENT_TYPES = 'element_types';
     const JSON_LIST_VIEW_TYPES = 'view_types';
+    const JSON_LIST_VIEW_LINK_TYPES = 'view_link_types';
     const JSON_LIST_COMPONENT_TYPES = 'component_types';
     // const JSON_LIST_COMPONENT_LINK_TYPES = 'component_link_types';
     const JSON_LIST_COMPONENT_POSITION_TYPES = 'position_types';

@@ -64,6 +64,9 @@ class type_list
     function set_obj_from_json_array(array $json_array): void
     {
         foreach ($json_array as $value) {
+            if (!array_key_exists(api::FLD_CODE_ID, $value)) {
+                log_err('code id is missing for ' . implode(',', $value));
+            }
             if (array_key_exists(api::FLD_DESCRIPTION, $value)) {
                 $typ = new type_object_dsp(
                     $value[api::FLD_ID],

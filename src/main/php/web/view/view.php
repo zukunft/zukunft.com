@@ -75,7 +75,6 @@ use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use shared\library;
 use shared\types\view_type;
-use function html\btn_edit;
 
 class view extends sandbox_typed
 {

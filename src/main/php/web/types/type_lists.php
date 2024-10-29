@@ -141,6 +141,12 @@ class type_lists
             $this->log_err('Mandatory view_types missing in API JSON ' . json_encode($json_array));
             $this->set_view_types();
         }
+        if (array_key_exists(api::JSON_LIST_VIEW_LINK_TYPES, $json_array)) {
+            $this->set_view_link_types($json_array[api::JSON_LIST_VIEW_LINK_TYPES]);
+        } else {
+            $this->log_err('Mandatory view_link_types missing in API JSON ' . json_encode($json_array));
+            $this->set_view_link_types();
+        }
         if (array_key_exists(api::JSON_LIST_COMPONENT_TYPES, $json_array)) {
             $this->set_component_types($json_array[api::JSON_LIST_COMPONENT_TYPES]);
         } else {
@@ -274,6 +280,13 @@ class type_lists
         global $html_view_types;
         $html_view_types = new view_type_list();
         $html_view_types->set_obj_from_json_array($json_array);
+    }
+
+    function set_view_link_types(array $json_array = null): void
+    {
+        global $html_view_link_types;
+        $html_view_link_types = new view_link_type_list();
+        $html_view_link_types->set_obj_from_json_array($json_array);
     }
 
     function set_component_types(array $json_array = null): void

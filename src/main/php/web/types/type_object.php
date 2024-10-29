@@ -65,7 +65,13 @@ class type_object
     {
         $this->set_id($id);
         $this->set_name($name);
-        $this->set_code_id($code_id);
+        if ($code_id != null) {
+            $this->set_code_id($code_id);
+        } else {
+            $this->set_code_id('');
+            // TODO create an action e.g. to add a code id to the new verb
+            log_warning('code id is missing for type ' . $name . ' (' . $id . ')');
+        }
         if ($comment != null) {
             if ($comment != '') {
                 $this->set_comment($comment);
