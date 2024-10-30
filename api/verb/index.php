@@ -47,13 +47,14 @@ use controller\controller;
 use cfg\user;
 use cfg\verb;
 use api\verb\verb as verb_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/verb", "", false);
 
 // get the parameters
-$vrb_id = $_GET[controller::URL_VAR_ID] ?? 0;
-$vrb_name = $_GET[controller::URL_VAR_NAME] ?? '';
+$vrb_id = $_GET[api::URL_VAR_ID] ?? 0;
+$vrb_name = $_GET[api::URL_VAR_NAME] ?? '';
 
 $msg = '';
 $result = new verb_api(); // reset the html code var

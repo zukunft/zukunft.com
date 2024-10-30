@@ -30,7 +30,6 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use api\api;
 use cfg\component\component;
 use cfg\user;
 use cfg\view;
@@ -39,14 +38,19 @@ use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
 use html\component\component as component_dsp;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
 
 // open database
 $db_con = prg_start("component_add");
 $html = new html_base();
+
+// get the parameters
+$cmp_id = $_GET[api::URL_VAR_ID] ?? 0;
 
 global $system_views;
 
@@ -72,7 +76,7 @@ if ($usr->id() > 0) {
 
     // create the view component object to apply the user changes to it
     $cmp = new component($usr);
-    $cmp_id = $_GET[controller::URL_VAR_ID];
+    $cmp_id = $_GET[api::URL_VAR_ID] ?? 0;
     $result .= $cmp->load_by_id($cmp_id);
 
     // get the word used as a sample to illustrate the changes
@@ -101,18 +105,18 @@ if ($usr->id() > 0) {
     }
 
     // if the save button has been pressed (an empty view component name should never be saved; instead the view should be deleted)
-    $cmp_name = $_GET[controller::URL_VAR_NAME];
+    $cmp_name = $_GET[api::URL_VAR_NAME] ?? '';
     if ($cmp_name <> '') {
 
         // save the user changes in the database
         $upd_result = '';
 
         // get other field parameters
-        if (isset($_GET[controller::URL_VAR_NAME])) {
-            $cmp->set_name($_GET[controller::URL_VAR_NAME]);
+        if (isset($_GET[api::URL_VAR_NAME])) {
+            $cmp->set_name($_GET[api::URL_VAR_NAME]);
         }
-        if (isset($_GET[controller::URL_VAR_COMMENT])) {
-            $cmp->description = $_GET[controller::URL_VAR_COMMENT];
+        if (isset($_GET[api::URL_VAR_COMMENT])) {
+            $cmp->description = $_GET[api::URL_VAR_COMMENT];
         }
         if (isset($_GET['type'])) {
             $cmp->type_id = $_GET['type'];

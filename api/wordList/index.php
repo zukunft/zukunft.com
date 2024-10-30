@@ -47,13 +47,14 @@ use controller\controller;
 use cfg\user;
 use cfg\word_list;
 use api\word\word_list as word_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/wordList", "", false);
 
 // get the parameters
-$wrd_ids = $_GET[controller::URL_VAR_ID_LST] ?? '';
-$pattern = $_GET[controller::URL_VAR_PATTERN] ?? '';
+$wrd_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
+$pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
 $msg = '';
 $result = new word_list_api(); // reset the html code var

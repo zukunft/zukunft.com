@@ -49,13 +49,14 @@ use cfg\user;
 use cfg\trm_ids;
 use cfg\term_list;
 use api\phrase\term_list as term_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/termList", "", false);
 
 // get the parameters
-$trm_ids = $_GET[controller::URL_VAR_ID_LST] ?? '';
-$pattern = $_GET[controller::URL_VAR_PATTERN] ?? '';
+$trm_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
+$pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
 $msg = '';
 $result = new term_list_api(); // reset the html code var

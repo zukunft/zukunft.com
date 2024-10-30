@@ -47,13 +47,14 @@ use controller\controller;
 use cfg\user;
 use cfg\triple;
 use api\word\triple as triple_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/triple", "", false);
 
 // get the parameters
-$trp_id = $_GET[controller::URL_VAR_ID] ?? 0;
-$trp_name = $_GET[controller::URL_VAR_NAME] ?? '';
+$trp_id = $_GET[api::URL_VAR_ID] ?? 0;
+$trp_name = $_GET[api::URL_VAR_NAME] ?? '';
 
 $msg = '';
 $result = new triple_api();

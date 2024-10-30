@@ -74,6 +74,8 @@ class api
     const URL_VAR_EMAIL = 'email';
     const URL_VAR_VIEW_ID = 'view_id';
     const URL_VAR_CMP_ID = 'component_id';
+    const URL_VAR_USER = 'user';
+    const URL_VAR_BACK = 'back';
 
     // used for the change log
     const URL_VAR_WORD_ID = 'word_id';

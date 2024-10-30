@@ -52,6 +52,7 @@ use cfg\user;
 use cfg\view;
 use html\system\sys_log as sys_log_dsp;
 use html\view\view as view_dsp;
+use shared\api;
 
 $db_con = prg_start("error_log");
 
@@ -59,8 +60,8 @@ global $system_views;
 
 $result = ''; // reset the html code var
 
-$err_id = $_GET[controller::URL_VAR_ID];
-$back = $_GET[controller::API_BACK];
+$err_id = $_GET[api::URL_VAR_ID] ?? 0;
+$back = $_GET[api::URL_VAR_BACK] ?? '';
 
 // load the session user parameters
 $usr = new user;
@@ -78,8 +79,10 @@ if ($usr->id() > 0) {
         $usr->load_usr_data();
 
         // prepare the display to edit the view
+        $view_id = $system_views->id(controller::MC_ERR_LOG);
         $msk = new view($usr);
-        $msk->set_id($system_views->id(controller::MC_ERR_LOG));
+        $msk->load_by_id($view_id);
+        $msk->load_components();
         $msk_dsp = new view_dsp($msk->api_json());
         $result .= $msk_dsp->dsp_navbar($back);
         //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";

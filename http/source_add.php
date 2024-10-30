@@ -39,6 +39,7 @@ use html\ref\source as source_dsp;
 use cfg\source;
 use cfg\user;
 use cfg\view;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -73,14 +74,14 @@ if ($usr->id() > 0) {
     $src = new source($usr);
 
     // load the parameters to the view object to display the user input again in case of an error
-    if (isset($_GET[controller::URL_VAR_NAME])) {
-        $src->set_name($_GET[controller::URL_VAR_NAME]);
+    if (isset($_GET[api::URL_VAR_NAME])) {
+        $src->set_name($_GET[api::URL_VAR_NAME]);
     }    // name of the new source to add
     if (isset($_GET['url'])) {
         $src->url = $_GET['url'];
     }     // url of the new source to add
-    if (isset($_GET[controller::URL_VAR_COMMENT])) {
-        $src->description = $_GET[controller::URL_VAR_COMMENT];
+    if (isset($_GET[api::URL_VAR_COMMENT])) {
+        $src->description = $_GET[api::URL_VAR_COMMENT];
     }
 
     // if the user has pressed save at least once

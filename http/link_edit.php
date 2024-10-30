@@ -36,6 +36,7 @@ use html\word\triple as triple_dsp;
 use cfg\triple;
 use cfg\user;
 use cfg\view;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -64,7 +65,7 @@ if ($usr->id() > 0) {
 
     // create the link object to have a place to update the parameters
     $trp = new triple($usr);
-    $trp->load_by_id($_GET[controller::URL_VAR_ID]);
+    $trp->load_by_id($_GET[api::URL_VAR_ID]);
 
     // edit the link or ask for confirmation
     if ($trp->id() <= 0) {

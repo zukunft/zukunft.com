@@ -36,6 +36,7 @@ use html\view\view as view_dsp;
 use cfg\user;
 use cfg\view;
 use cfg\word;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -51,8 +52,8 @@ $word_id = $back;
 $view_id = 0;
 
 // get the view id used utils now and the word id
-if (isset($_GET[controller::URL_VAR_ID])) {
-    $view_id = $_GET[controller::URL_VAR_ID];
+if (isset($_GET[api::URL_VAR_ID])) {
+    $view_id = $_GET[api::URL_VAR_ID];
 }
 if (isset($_GET['word'])) {
     $word_id = $_GET['word'];

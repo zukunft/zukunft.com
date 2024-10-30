@@ -55,7 +55,7 @@ include_once TYPES_PATH . 'formula_link_type_list.php';
 include_once TYPES_PATH . 'source_type_list.php';
 include_once TYPES_PATH . 'ref_type_list.php';
 include_once TYPES_PATH . 'view_type_list.php';
-include_once MODEL_VIEW_PATH . 'view_link_type_list.php';
+include_once TYPES_PATH . 'view_link_type_list.php';
 include_once TYPES_PATH . 'component_type_list.php';
 include_once TYPES_PATH . 'component_link_type_list.php';
 include_once TYPES_PATH . 'position_type_list.php';

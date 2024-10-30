@@ -47,13 +47,14 @@ use controller\controller;
 use cfg\user;
 use cfg\component\component_list;
 use api\component\component_list as component_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/componentList", "", false);
 
 // get the parameters
-$msk_id = $_GET[controller::URL_VAR_VIEW_ID] ?? '';
-$pattern = $_GET[controller::URL_VAR_PATTERN] ?? '';
+$msk_id = $_GET[api::URL_VAR_VIEW_ID] ?? '';
+$pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
 $msg = '';
 $result = new component_list_api(array());

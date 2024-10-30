@@ -116,6 +116,7 @@ use html\sandbox\db_object as db_object_dsp;
 use html\view\view as view_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
+use shared\api;
 use shared\library;
 
 const HOST_TESTING = 'http://localhost/';
@@ -768,7 +769,7 @@ class test_base
     {
         $lib = new library();
         $test_name = $lib->class_to_name($test_name);
-        $url = HOST_TESTING . controller::URL_API_PATH . 'json';
+        $url = HOST_TESTING . api::URL_API_PATH . 'json';
         $data = array($fld => $id);
         $ctrl = new rest_ctrl();
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);

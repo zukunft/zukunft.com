@@ -38,6 +38,7 @@ use cfg\db\sql_db;
 use cfg\user;
 use controller\controller;
 use JsonSerializable;
+use shared\api;
 
 class sys_log_list extends api_message implements JsonSerializable
 {
@@ -47,7 +48,7 @@ class sys_log_list extends api_message implements JsonSerializable
 
     function __construct(sql_db $db_con, ?user $usr = null)
     {
-        parent::__construct($db_con, controller::API_BODY_SYS_LOG, $usr);
+        parent::__construct($db_con, api::JSON_BODY_SYS_LOG, $usr);
         $this->type = api_message::SYS_LOG;
         $this->sys_log = null;
         if ($usr != null) {

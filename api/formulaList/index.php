@@ -47,12 +47,13 @@ use controller\controller;
 use cfg\user;
 use cfg\formula_list;
 use api\formula\formula_list as formula_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/formulaList", "", false);
 
 // get the parameters
-$frm_ids = $_GET[controller::URL_VAR_ID_LST] ?? 0;
+$frm_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
 
 $msg = '';
 $result = new formula_list_api(); // reset the html code var

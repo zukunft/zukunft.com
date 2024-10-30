@@ -37,6 +37,7 @@ use cfg\word;
 use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -66,7 +67,7 @@ if ($usr->id() > 0) {
 
     // create the view object that the user can change
     $msk_edit = new view($usr);
-    $result .= $msk_edit->load_by_id($_GET[controller::URL_VAR_ID]);
+    $result .= $msk_edit->load_by_id($_GET[api::URL_VAR_ID]);
 
     // get the view id to adjust
     if ($msk_edit->id() <= 0) {
@@ -132,16 +133,16 @@ if ($usr->id() > 0) {
         }
 
         // if the save button has been pressed (an empty view name should never be saved; instead the view should be deleted)
-        $dsp_name = $_GET[controller::URL_VAR_NAME];
+        $dsp_name = $_GET[api::URL_VAR_NAME];
         if ($dsp_name <> '') {
 
 
             // get other field parameters that should be saved
-            if (isset($_GET[controller::URL_VAR_NAME])) {
-                $msk_edit->set_name($_GET[controller::URL_VAR_NAME]);
+            if (isset($_GET[api::URL_VAR_NAME])) {
+                $msk_edit->set_name($_GET[api::URL_VAR_NAME]);
             }
-            if (isset($_GET[controller::URL_VAR_COMMENT])) {
-                $msk_edit->description = $_GET[controller::URL_VAR_COMMENT];
+            if (isset($_GET[api::URL_VAR_COMMENT])) {
+                $msk_edit->description = $_GET[api::URL_VAR_COMMENT];
             }
             if (isset($_GET['type'])) {
                 $msk_edit->type_id = $_GET['type'];

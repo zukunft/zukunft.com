@@ -36,6 +36,7 @@ namespace html\sandbox;
 use controller\controller;
 use html\rest_ctrl as api_dsp;
 use html\html_selector;
+use shared\api;
 use shared\library;
 
 class list_dsp
@@ -177,7 +178,7 @@ class list_dsp
 
         $api = new api_dsp();
         $data = array();
-        $data[controller::URL_VAR_PATTERN] = $pattern;
+        $data[api::URL_VAR_PATTERN] = $pattern;
         $json_body = $api->api_get($this::class, $data);
         $this->set_from_json_array($json_body);
         if (!$this->is_empty()) {

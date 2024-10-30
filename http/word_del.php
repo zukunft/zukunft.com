@@ -36,6 +36,7 @@ use html\view\view as view_dsp;
 use cfg\user;
 use cfg\view;
 use cfg\word;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -63,7 +64,7 @@ if ($usr->id() > 0) {
     $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change if finished
 
     // get the parameters
-    $wrd_id = $_GET[controller::URL_VAR_ID];
+    $wrd_id = $_GET[api::URL_VAR_ID];
     $confirm = $_GET['confirm'];
 
     if ($wrd_id > 0) {

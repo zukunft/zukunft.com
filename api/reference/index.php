@@ -45,12 +45,13 @@ include_once MODEL_REF_PATH . 'reference.php';
 use controller\controller;
 use cfg\user;
 use cfg\ref;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/ref", "", false);
 
 // get the parameters
-$ref_id = $_GET[controller::URL_VAR_ID] ?? 0;
+$ref_id = $_GET[api::URL_VAR_ID] ?? 0;
 
 $msg = '';
 $result = ''; // reset the html code var

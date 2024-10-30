@@ -53,6 +53,7 @@ use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
+use shared\api;
 use shared\library;
 
 class phrase_list extends list_dsp
@@ -126,9 +127,9 @@ class phrase_list extends list_dsp
         // TODO move the
         $api = new api_dsp();
         $data = array();
-        $data[controller::URL_VAR_PHRASE] = $phr->id();
-        $data[controller::URL_VAR_DIRECTION] = $direction;
-        $data[controller::URL_VAR_LEVELS] = 1;
+        $data[api::URL_VAR_PHRASE] = $phr->id();
+        $data[api::URL_VAR_DIRECTION] = $direction;
+        $data[api::URL_VAR_LEVELS] = 1;
         $json_body = $api->api_get(self::class, $data);
         $this->set_from_json_array($json_body);
         if (!$this->is_empty()) {

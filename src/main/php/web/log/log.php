@@ -78,7 +78,7 @@ class log extends db_object_dsp
                     . ' because ' . $e->getMessage());
             }
         } else {
-            log_err('Mandatory time missing in API JSON ' . json_encode($json_array));
+            log_warning('Mandatory time missing in API JSON ' . json_encode($json_array));
         }
         $this->set_time($sys_log_timestamp);
         if (array_key_exists(api::FLD_USER_ID, $json_array)) {
@@ -94,7 +94,7 @@ class log extends db_object_dsp
         if (array_key_exists(api::FLD_STATUS, $json_array)) {
             $this->set_status($json_array[api::FLD_STATUS]);
         } else {
-            $this->set_status('');
+            $this->set_status(0);
         }
     }
 

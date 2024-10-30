@@ -52,56 +52,16 @@ use cfg\combine_object;
 use cfg\sandbox;
 use cfg\source;
 use cfg\word;
+use shared\api;
 
 class controller
 {
-
-    /*
-     * URL
-     */
-
-    // the parameter names used in the url or in the result json
-    const URL_API_PATH = 'api/';
-    const URL_VAR_ID = 'id'; // the internal database id that should never be shown to the user
-    const URL_VAR_ID_LST = 'ids'; // a comma seperated list of internal database ids
-    const URL_VAR_NAME = 'name'; // the unique name of a term, view, component, user, source, language or type
-    const URL_VAR_PATTERN = 'pattern'; // part of a name to select a named object such as word, triple, ...
-    const URL_VAR_COMMENT = 'comment';
-    const URL_VAR_DESCRIPTION = 'description';
-    const URL_VAR_DEBUG = 'debug'; // to force the output of debug messages
-    const URL_VAR_CODE_ID = 'code_id';
-    const URL_VAR_WORD = 'words';
-    const URL_VAR_PHRASE = 'phrase'; // the id (or name?) of one phrase
-    const URL_VAR_DIRECTION = 'dir'; // 'up' to get the parents and 'down' for the children
-    const URL_VAR_LEVELS = 'levels'; // the number of search levels'
-    const URL_VAR_MSG = 'message';
-    const URL_VAR_RESULT = 'result';
-    const URL_VAR_EMAIL = 'email';
-    const URL_VAR_VIEW_ID = 'view_id';
-    const URL_VAR_COMPONENT_ID = 'component_id';
-
-    // used for the change log
-    const URL_VAR_WORD_ID = 'word_id';
-    const URL_VAR_WORD_FLD = 'word_field';
-    const URL_VAR_LINK_PHRASE = 'link_phrase';
-    const URL_VAR_UNLINK_PHRASE = 'unlink_phrase';
-
 
     /*
      * API
      */
 
     // json field names of the api json messages
-
-
-    const API_BODY = 'body';
-    const API_BODY_SYS_LOG = 'sys_log';
-
-    // to include the objects that should be displayed in one api message
-    const API_WORD = 'word';
-    const API_TRIPLE = 'triple';
-
-    //
     const API_TYPE_LISTS = 'type_lists';
     const API_LIST_USER_PROFILES = 'user_profiles';
     const API_LIST_PHRASE_TYPES = 'phrase_types';
@@ -224,7 +184,7 @@ class controller
 
             // tell the user no products found
             echo json_encode(
-                array(self::URL_VAR_MSG => $msg)
+                array(api::URL_VAR_MSG => $msg)
             );
         }
     }
@@ -263,14 +223,14 @@ class controller
                     // set response code - 200 OK
                     http_response_code(200);
                     echo json_encode(
-                        array(self::URL_VAR_ID => $result)
+                        array(api::URL_VAR_ID => $result)
                     );
                 } else {
 
                     // set response code - 400 Bad Request
                     http_response_code(400);
                     echo json_encode(
-                        array(self::URL_VAR_MSG => $result)
+                        array(api::URL_VAR_MSG => $result)
                     );
                 }
                 break;
@@ -291,7 +251,7 @@ class controller
 
                     // tell the user no object found
                     echo json_encode(
-                        array(self::URL_VAR_MSG => $msg)
+                        array(api::URL_VAR_MSG => $msg)
                     );
                 }
                 break;
@@ -310,14 +270,14 @@ class controller
                         // set response code - 200 OK
                         http_response_code(200);
                         echo json_encode(
-                            array(self::URL_VAR_ID => $result)
+                            array(api::URL_VAR_ID => $result)
                         );
                     } else {
 
                         // set response code - 400 Bad Request
                         http_response_code(400);
                         echo json_encode(
-                            array(self::URL_VAR_MSG => $result)
+                            array(api::URL_VAR_MSG => $result)
                         );
                     }
                 }
@@ -336,7 +296,7 @@ class controller
                             http_response_code(409);
 
                             echo json_encode(
-                                array(self::URL_VAR_RESULT => $result->get_last_message())
+                                array(api::URL_VAR_RESULT => $result->get_last_message())
                             );
                         }
                     }
@@ -351,7 +311,7 @@ class controller
 
                     // tell the user no products found
                     echo json_encode(
-                        array(self::URL_VAR_MSG => $msg)
+                        array(api::URL_VAR_MSG => $msg)
                     );
                 }
                 break;
@@ -438,7 +398,7 @@ class controller
      * @param string $body_key to select a body part of the api message
      * @return array the message body if everything has been fine or an empty array
      */
-    function check_api_msg(?array $api_msg, string $body_key = controller::API_BODY): array
+    function check_api_msg(?array $api_msg, string $body_key = api::JSON_BODY): array
     {
         $msg_ok = true;
         $body = array();

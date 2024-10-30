@@ -46,13 +46,14 @@ use api\api_message;
 use controller\controller;
 use cfg\user;
 use cfg\word;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/word", "", false);
 
 // get the parameters
-$wrd_id = $_GET[controller::URL_VAR_ID] ?? 0;
-$wrd_name = $_GET[controller::URL_VAR_NAME] ?? '';
+$wrd_id = $_GET[api::URL_VAR_ID] ?? 0;
+$wrd_name = $_GET[api::URL_VAR_NAME] ?? '';
 
 // load the session user parameters
 $msg = '';

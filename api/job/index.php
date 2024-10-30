@@ -47,12 +47,13 @@ include_once MODEL_SYSTEM_PATH . 'job.php';
 use controller\controller;
 use cfg\user;
 use cfg\job;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/job", "", false);
 
 // get the parameters
-$job_id = $_GET[controller::URL_VAR_ID] ?? 0;
+$job_id = $_GET[api::URL_VAR_ID] ?? 0;
 
 $msg = '';
 $result = ''; // reset the html code var

@@ -14,25 +14,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
-    TODO use list of most often used words for the prime word selection
-    TODO cleanup set and get functions:
-            1. start with set for the core values
-            2. group set and get
-            3. order the functions by importance
-            4. remove unneeded overwrites
-    TODO convert from null e.g. to empty string at the last possible point e.g. to distinguish between not set
-    TODO check the consistency of the object var default values e.g. if == null is used it must be possible that the var is null
-    TODO in api use always field names from the api object
-    TODO reduce the api objects as much as possible and move functionality to the cfg object
-    TODO review unit, read and write tests
-         each test should be with one line e.g. $t->assert_sql_table_create($wrd);
-         3 to 7 tests should be within a block starting with $t->subheader(' ....
-         sort load functions (done in: view
-         group function within a class e.g. by load, save ....
-         use $this::class for load functions
-    TODO make write tests autonomies (no prerequieries, no depenedencies, no left overs)
-    TODO check if MySQL create script is working
-    TODO add unit test for all system views
     TODO Substeps: create insert, update and delete sql create tests for the main objects (TODO activate db write)
                    include the log in the prepared sql write statement
     TODO combine db_row and std_row for with-log use of update word
@@ -132,6 +113,25 @@ use html\phrase\phrase_group as phrase_group_dsp;
          load, im- and export, filter, modify, check, save, del
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO check the consistency of the object var default values e.g. if == null is used it must be possible that the var is null
+    TODO in api use always field names from the api object
+    TODO reduce the api objects as much as possible and move functionality to the cfg object
+    TODO review unit, read and write tests
+         each test should be with one line e.g. $t->assert_sql_table_create($wrd);
+         3 to 7 tests should be within a block starting with $t->subheader(' ....
+         sort load functions (done in: view
+         group function within a class e.g. by load, save ....
+         use $this::class for load functions
+    TODO make write tests autonomies (no prerequieries, no depenedencies, no left overs)
+    TODO check if MySQL create script is working
+    TODO add unit test for all system views
+    TODO convert from null e.g. to empty string at the last possible point e.g. to distinguish between not set
+    TODO cleanup set and get functions:
+            1. start with set for the core values
+            2. group set and get
+            3. order the functions by importance
+            4. remove unneeded overwrites
+    TODO use list of most often used words for the prime word selection
     TODO define a phrase range for global prime phrases (e.g. 5124)
          and a range for pot prime terms
     TODO add a frontend cache e.g. for terms, formulas and view
@@ -1265,9 +1265,9 @@ function log_debug(string $msg_text = '', int $debug_overwrite = null): string
 {
     global $debug;
 
-    $debug_used = $debug;
-
-    if ($debug_overwrite != null) {
+    if ($debug_overwrite == null) {
+        $debug_used = $debug;
+    } else {
         $debug_used = $debug_overwrite;
     }
 
@@ -1275,10 +1275,24 @@ function log_debug(string $msg_text = '', int $debug_overwrite = null): string
     if ($msg_text != '') {
         $msg_text = ': ' . $msg_text;
     }
-    if (array_key_exists('class', debug_backtrace()[1])) {
-        $msg_text = debug_backtrace()[1]['class'] . '->' . debug_backtrace()[1]['function'] . $msg_text;
+
+    // get the last script before this script
+    $backtrace = debug_backtrace();
+    if (array_key_exists(1, $backtrace)) {
+        $last = $backtrace[1];
     } else {
-        $msg_text = debug_backtrace()[1]['function'] . $msg_text;
+        $last = $backtrace[0];
+    }
+
+    // extract the relevant part from backtrace
+    if ($last != null) {
+        if (array_key_exists('class', $last)) {
+            $msg_text = $last['class'] . '->' . $last['function'] . $msg_text;
+        } else {
+            $msg_text = $last['function'] . $msg_text;
+        }
+    } else {
+        $msg_text = $last['function'] . $msg_text;
     }
 
     if ($debug_used > 0) {

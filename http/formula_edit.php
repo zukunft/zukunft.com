@@ -37,6 +37,7 @@ use cfg\formula;
 use cfg\phrase;
 use cfg\user;
 use cfg\view;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -46,7 +47,7 @@ $db_con = prg_start("formula_edit");
 $html = new html_base();
 
 // get the parameters
-$frm_id = $_GET[controller::URL_VAR_ID] ?? 0;
+$frm_id = $_GET[api::URL_VAR_ID] ?? 0;
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -76,8 +77,8 @@ if ($usr->id() > 0) {
     if (isset($_GET['formula_text'])) {
         $frm->usr_text = $_GET['formula_text'];
     } // the new formula text in the user format
-    if (isset($_GET[controller::URL_VAR_DESCRIPTION])) {
-        $frm->description = $_GET[controller::URL_VAR_DESCRIPTION];
+    if (isset($_GET[api::URL_VAR_DESCRIPTION])) {
+        $frm->description = $_GET[api::URL_VAR_DESCRIPTION];
     }
     if (isset($_GET['type'])) {
         $frm->type_id = $_GET['type'];
@@ -97,7 +98,7 @@ if ($usr->id() > 0) {
 
         // do the direct changes initiated by other buttons than the save button
         // to link the formula to another word
-        $link_phr_id = $_GET[controller::URL_VAR_LINK_PHRASE] ?? 0;
+        $link_phr_id = $_GET[api::URL_VAR_LINK_PHRASE] ?? 0;
         if ($link_phr_id != 0) {
             $phr = new phrase($usr);
             $phr->load_by_id($link_phr_id);
@@ -105,7 +106,7 @@ if ($usr->id() > 0) {
         }
 
         // to unlink a word from the formula
-        $unlink_phr_id = $_GET[controller::URL_VAR_UNLINK_PHRASE] ?? 0;
+        $unlink_phr_id = $_GET[api::URL_VAR_UNLINK_PHRASE] ?? 0;
         if ($unlink_phr_id > 0) {
             $phr = new phrase($usr);
             $phr->load_by_id($unlink_phr_id);

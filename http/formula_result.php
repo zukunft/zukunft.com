@@ -31,10 +31,11 @@
 
 // for callable php files the standard zukunft.com header to load all classes and allow debugging
 use controller\controller;
+use html\result\result;
 use html\view\view as view_dsp;
-use cfg\result;
 use cfg\user;
 use cfg\view;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -63,7 +64,7 @@ if ($session_usr->id() > 0) {
     $result .= $msk_dsp->dsp_navbar($back);
 
     // get the parameters
-    $frm_val_id = $_GET[controller::URL_VAR_ID];      // id of the formula result if known already
+    $frm_val_id = $_GET[api::URL_VAR_ID];      // id of the formula result if known already
     $frm_id = $_GET['formula']; // id of the formula which values should be explained
     $phr_id = $_GET['word'];    // id of the leading word used to order the result explaining
     //$wrd_group_id = $_GET['group'];   // id of the word group (excluding and time word)
@@ -71,7 +72,7 @@ if ($session_usr->id() > 0) {
 
     // explain the result
     if ($frm_val_id > 0 or $frm_id > 0) {
-        $res = new result($session_usr);
+        $res = new result();
         $res->load_by_id($frm_val_id);
         if ($res->id() > 0) {
             $result .= $res->explain($phr_id, $back);

@@ -132,7 +132,7 @@ if ($usr->id() > 0) {
             // TODO first create the frontend object and call from the frontend object the api
             // TODO for system views avoid the backend call by using the cache from the frontend
             $msk = new view($usr);
-            $msk->load_by_id($view_id, view::class);
+            $msk->load_by_id($view_id);
             $msk->load_components();
             $msk_dsp = new view_dsp($msk->api_json());
             $dsp_text = $msk_dsp->show($dbo_dsp, $back);
@@ -140,7 +140,7 @@ if ($usr->id() > 0) {
             // use a fallback if the view is empty
             if ($dsp_text == '' or $msk->name() == '') {
                 $view_id = $system_views->id(controller::MC_START);
-                $msk->load_by_id($view_id, view::class);
+                $msk->load_by_id($view_id);
                 $dsp_text = $msk_dsp->display($wrd, $back);
             }
             if ($dsp_text == '') {

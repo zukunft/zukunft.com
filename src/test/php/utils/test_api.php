@@ -85,6 +85,7 @@ use controller\system\sys_log as sys_log_api;
 use DateTime;
 use Exception;
 use html\rest_ctrl;
+use shared\api;
 use shared\library;
 
 class test_api extends create_test_objects
@@ -200,8 +201,8 @@ class test_api extends create_test_objects
             return 0;
         } else {
             $id = 0;
-            if (array_key_exists(controller::URL_VAR_ID, $actual)) {
-                $id = intval($actual[controller::URL_VAR_ID]);
+            if (array_key_exists(api::URL_VAR_ID, $actual)) {
+                $id = intval($actual[api::URL_VAR_ID]);
             } else {
                 log_err('PUT api call is expected to return the id of the added record, but it returns: ' . $actual_text);
             }
@@ -441,7 +442,7 @@ class test_api extends create_test_objects
         $ctrl = new rest_ctrl();
         $class_api = $this->class_to_api($class);
         $url = $this->class_to_url($class_api);
-        $data = array(controller::URL_VAR_ID => $id);
+        $data = array(api::URL_VAR_ID => $id);
         // TODO check why for formula a double call is needed
         if ($class == formula::class) {
             $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
@@ -467,7 +468,7 @@ class test_api extends create_test_objects
      * @param string $field the URL field name of the unique text
      * @return bool true if the json has no relevant differences
      */
-    function assert_api_get_by_text(string $class, string $name = '', string $field = controller::URL_VAR_NAME): bool
+    function assert_api_get_by_text(string $class, string $name = '', string $field = api::URL_VAR_NAME): bool
     {
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
@@ -497,7 +498,7 @@ class test_api extends create_test_objects
     {
         $lib = new library();
         $class = $lib->class_to_name($class);
-        $url = HOST_TESTING . controller::URL_API_PATH . $lib->camelize_ex_1($class);
+        $url = HOST_TESTING . api::URL_API_PATH . $lib->camelize_ex_1($class);
         if (is_array($ids)) {
             $data = array($id_fld => implode(",", $ids));
         } else {
@@ -543,7 +544,7 @@ class test_api extends create_test_objects
     {
         $lib = new library();
         $class = $lib->class_to_name($class);
-        $url = HOST_TESTING . controller::URL_API_PATH . $lib->camelize_ex_1($class);
+        $url = HOST_TESTING . api::URL_API_PATH . $lib->camelize_ex_1($class);
         if ($fld_name != '') {
             $data = array($id_fld => $id, $fld_name => $fld_value);
         } else {
@@ -659,12 +660,12 @@ class test_api extends create_test_objects
      */
     private function class_to_url(string $class): string
     {
-        $url = HOST_TESTING . controller::URL_API_PATH . $class;
+        $url = HOST_TESTING . api::URL_API_PATH . $class;
         if ($class == phrase_type_api::API_NAME) {
-            $url = HOST_TESTING . controller::URL_API_PATH . phrase_type_api::URL_NAME;
+            $url = HOST_TESTING . api::URL_API_PATH . phrase_type_api::URL_NAME;
         }
         if ($class == language_form_api::API_NAME) {
-            $url = HOST_TESTING . controller::URL_API_PATH . language_form_api::URL_NAME;
+            $url = HOST_TESTING . api::URL_API_PATH . language_form_api::URL_NAME;
         }
         return $url;
     }
@@ -777,7 +778,7 @@ class test_api extends create_test_objects
         // but for tests that add and remove data to table that have real data the id field should be ignored
         if ($ignore_id) {
             $json = $this->json_remove_volatile_unset_field($json, sql_db::FLD_ID);
-            $json = $this->json_remove_volatile_unset_field($json, controller::URL_VAR_ID);
+            $json = $this->json_remove_volatile_unset_field($json, api::URL_VAR_ID);
         }
 
         // replace any local test username with the standard test username

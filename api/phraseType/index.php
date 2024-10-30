@@ -55,7 +55,7 @@ use api\phrase\phrase_list as phrase_list_api;
 $db_con = prg_start("api/phraseType", "", false);
 
 // get the parameters
-$phr_typ_id = $_GET[controller::URL_VAR_ID] ?? 0;
+$phr_typ_id = $_GET[api::URL_VAR_ID] ?? 0;
 
 $msg = '';
 $result = new phrase_list_api(); // reset the html code var

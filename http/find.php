@@ -58,7 +58,7 @@ $html = new html_base();
 if (!$db_con->connected()) {
     $result = log_fatal("Cannot connect to " . SQL_DB_TYPE . " database with user " . SQL_DB_USER_MYSQL, "find.php");
 } else {
-    $back = $_GET[controller::API_BACK];
+    $back = $_GET[controller::API_BACK] ?? '';
 
     // load the session user parameters
     $usr = new user;
@@ -70,8 +70,10 @@ if (!$db_con->connected()) {
         $usr->load_usr_data();
 
         // show view header
+        $view_id = $system_views->id(controller::MC_WORD_FIND);
         $msk = new view($usr);
-        $msk->set_id($system_views->id(controller::MC_WORD_FIND));
+        $msk->load_by_id($view_id);
+        $msk->load_components();
         $msk_dsp = new view_dsp($msk->api_json());
         $result .= $msk_dsp->dsp_navbar($back);
 

@@ -49,13 +49,14 @@ use cfg\user;
 use cfg\log\change_log_list;
 use cfg\word;
 use api\phrase\term_list as term_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/log", "", false);
 
 // get the parameters
-$wrd_id = $_GET[controller::URL_VAR_WORD_ID] ?? 0;
-$wrd_fld = $_GET[controller::URL_VAR_WORD_FLD] ?? '';
+$wrd_id = $_GET[api::URL_VAR_WORD_ID] ?? 0;
+$wrd_fld = $_GET[api::URL_VAR_WORD_FLD] ?? '';
 
 $msg = '';
 $result = new term_list_api(); // reset the html code var

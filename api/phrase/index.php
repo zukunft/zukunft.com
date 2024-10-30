@@ -46,13 +46,14 @@ use api\api_message;
 use controller\controller;
 use cfg\user;
 use cfg\phrase;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/phrase", "", false);
 
 // get the parameters
-$phr_id = $_GET[controller::URL_VAR_ID] ?? 0;
-$phr_name = $_GET[controller::URL_VAR_NAME] ?? '';
+$phr_id = $_GET[api::URL_VAR_ID] ?? 0;
+$phr_name = $_GET[api::URL_VAR_NAME] ?? '';
 
 // load the session user parameters
 $msg = '';

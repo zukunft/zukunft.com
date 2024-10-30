@@ -39,6 +39,7 @@ use cfg\term;
 use cfg\user;
 use cfg\verb;
 use cfg\view;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -74,8 +75,8 @@ if ($usr->id() > 0) {
         $vrb->set_user($usr);
 
         // load the parameters to the verb object to display it again in case of an error
-        if (isset($_GET[controller::URL_VAR_NAME])) {
-            $vrb->set_name($_GET[controller::URL_VAR_NAME]);
+        if (isset($_GET[api::URL_VAR_NAME])) {
+            $vrb->set_name($_GET[api::URL_VAR_NAME]);
         }
         if (isset($_GET['plural'])) {
             $vrb->plural = $_GET['plural'];

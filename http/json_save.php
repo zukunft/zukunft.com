@@ -34,6 +34,7 @@ use cfg\phrase_list;
 use cfg\user;
 use controller\controller;
 use im_export\json_io;
+use shared\api;
 use shared\library;
 
 $debug = $_GET['debug'] ?? 0;
@@ -54,7 +55,7 @@ if ($usr->id() > 0) {
     $lib = new library();
 
     // get the words that are supposed to be exported, sample "Nestlé 2 country weight"
-    $phrases = $_GET[controller::URL_VAR_WORD];
+    $phrases = $_GET[api::URL_VAR_WORD];
     log_debug("json_save(" . $phrases . ")");
     $phr_names = $lib->array_trim(explode(",", $phrases));
 

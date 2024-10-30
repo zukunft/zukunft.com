@@ -39,6 +39,7 @@ use html\system\messages;
 use html\view\view as view_dsp;
 use cfg\user;
 use cfg\view;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -67,7 +68,7 @@ if ($usr->id() > 0) {
     $back = $_GET[controller::API_BACK];  // the page from which the value deletion has been called
 
     // get the parameters
-    $val_id = $_GET[controller::URL_VAR_ID];
+    $val_id = $_GET[api::URL_VAR_ID];
     $confirm = $_GET['confirm'];
 
     if ($val_id > 0) {

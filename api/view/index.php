@@ -47,13 +47,14 @@ use controller\controller;
 use cfg\user;
 use cfg\view;
 use api\view\view as view_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/view", "", false);
 
 // get the parameters
-$dsp_id = $_GET[controller::URL_VAR_ID] ?? 0;
-$dsp_name = $_GET[controller::URL_VAR_NAME] ?? '';
+$dsp_id = $_GET[api::URL_VAR_ID] ?? 0;
+$dsp_name = $_GET[api::URL_VAR_NAME] ?? '';
 
 $msg = '';
 $result = new view_api(); // reset the html code var

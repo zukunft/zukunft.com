@@ -36,6 +36,7 @@ use html\view\view as view_dsp;
 use cfg\user;
 use cfg\verb;
 use cfg\view;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -65,18 +66,18 @@ if ($usr->id() > 0) {
     // create the verb object to have an place to update the parameters
     $vrb = new verb;
     $vrb->set_user($usr);
-    $vrb->load_by_id($_GET[controller::URL_VAR_ID]);
+    $vrb->load_by_id($_GET[api::URL_VAR_ID]);
 
     if ($vrb->id() <= 0) {
         $result .= log_err("No verb found to change because the id is missing.", "verb_edit.php");
     } else {
 
         // if the save button has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)
-        if ($_GET[controller::URL_VAR_NAME] <> '') {
+        if ($_GET[api::URL_VAR_NAME] <> '') {
 
             // get the parameters (but if not set, use the database value)
-            if (isset($_GET[controller::URL_VAR_NAME])) {
-                $vrb->set_name($_GET[controller::URL_VAR_NAME]);
+            if (isset($_GET[api::URL_VAR_NAME])) {
+                $vrb->set_name($_GET[api::URL_VAR_NAME]);
             }
             if (isset($_GET['plural'])) {
                 $vrb->plural = $_GET['plural'];

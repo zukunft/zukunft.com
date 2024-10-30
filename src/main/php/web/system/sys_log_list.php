@@ -39,6 +39,7 @@ use controller\controller;
 use html\html_base;
 use html\sandbox\list_dsp;
 use html\system\sys_log as sys_log_dsp;
+use shared\api;
 
 class sys_log_list extends list_dsp
 {
@@ -56,7 +57,7 @@ class sys_log_list extends list_dsp
     function set_from_json_array(array $json_array): void
     {
         $ctrl = new controller();
-        $json_array = $ctrl->check_api_msg($json_array, controller::API_BODY_SYS_LOG);
+        $json_array = $ctrl->check_api_msg($json_array, api::JSON_BODY_SYS_LOG);
         foreach ($json_array as $value) {
             $this->add_obj($this->set_obj_from_json_array($value));
         }

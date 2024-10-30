@@ -40,6 +40,7 @@ use cfg\formula;
 use cfg\user;
 use cfg\view;
 use cfg\word;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -76,8 +77,8 @@ if ($usr->id() > 0) {
     if (isset($_GET['formula_text'])) {
         $frm->set_user_text($_GET['formula_text']);
     } // the new formula text in the user format
-    if (isset($_GET[controller::URL_VAR_DESCRIPTION])) {
-        $frm->description = $_GET[controller::URL_VAR_DESCRIPTION];
+    if (isset($_GET[api::URL_VAR_DESCRIPTION])) {
+        $frm->description = $_GET[api::URL_VAR_DESCRIPTION];
     }
     if (isset($_GET['type'])) {
         $frm->type_id = $_GET['type'];

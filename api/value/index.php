@@ -52,7 +52,7 @@ use api\value\value as value_api;
 $db_con = prg_start("api/value", "", false);
 
 // get the parameters
-$val_id = $_GET[controller::URL_VAR_ID] ?? 0;
+$val_id = $_GET[api::URL_VAR_ID] ?? 0;
 
 $msg = '';
 $result = new value_api(); // reset the html code var

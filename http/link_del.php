@@ -35,6 +35,7 @@ use html\view\view as view_dsp;
 use cfg\triple;
 use cfg\user;
 use cfg\view;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -63,7 +64,7 @@ if ($usr->id() > 0) {
     $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change if finished
 
     // get the parameters
-    $link_id = $_GET[controller::URL_VAR_ID];
+    $link_id = $_GET[api::URL_VAR_ID] ?? 0;
     $confirm = $_GET['confirm'];
 
     // delete the link or ask for confirmation

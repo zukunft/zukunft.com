@@ -36,6 +36,7 @@ use html\view\view as view_dsp;
 use cfg\source;
 use cfg\user;
 use cfg\view;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -67,24 +68,24 @@ if ($usr->id() > 0) {
 
     // create the source object to have an place to update the parameters
     $src = new source($usr);
-    $src->load_by_id($_GET[controller::URL_VAR_ID]);
+    $src->load_by_id($_GET[api::URL_VAR_ID]);
 
     if ($src->id() <= 0) {
         $result .= log_err("No source found to change because the id is missing.", "source_edit.php");
     } else {
 
         // if the save button has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)
-        if ($_GET[controller::URL_VAR_NAME] <> '') {
+        if ($_GET[api::URL_VAR_NAME] <> '') {
 
             // get the parameters (but if not set, use the database value)
-            if (isset($_GET[controller::URL_VAR_NAME])) {
-                $src->set_name($_GET[controller::URL_VAR_NAME]);
+            if (isset($_GET[api::URL_VAR_NAME])) {
+                $src->set_name($_GET[api::URL_VAR_NAME]);
             }
             if (isset($_GET['url'])) {
                 $src->url = $_GET['url'];
             }
-            if (isset($_GET[controller::URL_VAR_COMMENT])) {
-                $src->description = $_GET[controller::URL_VAR_COMMENT];
+            if (isset($_GET[api::URL_VAR_COMMENT])) {
+                $src->description = $_GET[api::URL_VAR_COMMENT];
             }
 
             // save the changes

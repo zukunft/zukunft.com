@@ -50,12 +50,13 @@ use controller\controller;
 use cfg\user;
 use cfg\word;
 use api\phrase\phrase_list as phrase_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/json", "", false);
 
 // get the parameters
-$wrd_id = $_GET[controller::URL_VAR_WORD_ID] ?? 0;
+$wrd_id = $_GET[api::URL_VAR_WORD_ID] ?? 0;
 
 $msg = '';
 $result = new phrase_list_api(); // reset the html code var

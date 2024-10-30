@@ -36,6 +36,7 @@ use html\view\view as view_dsp;
 use cfg\user;
 use cfg\view;
 use cfg\word;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -68,11 +69,11 @@ if ($usr->id() > 0) {
     $msk_add = new view($usr);
 
     // load the parameters to the view object to display the user input again in case of an error
-    if (isset($_GET[controller::URL_VAR_NAME])) {
-        $msk_add->set_name($_GET[controller::URL_VAR_NAME]);
+    if (isset($_GET[api::URL_VAR_NAME])) {
+        $msk_add->set_name($_GET[api::URL_VAR_NAME]);
     }    // name of the new view to add
-    if (isset($_GET[controller::URL_VAR_COMMENT])) {
-        $msk_add->description = $_GET[controller::URL_VAR_COMMENT];
+    if (isset($_GET[api::URL_VAR_COMMENT])) {
+        $msk_add->description = $_GET[api::URL_VAR_COMMENT];
     }
     if (isset($_GET['type'])) {
         $msk_add->type_id = $_GET['type'];
@@ -81,7 +82,7 @@ if ($usr->id() > 0) {
     if ($_GET['confirm'] > 0) {
 
         // check essential parameters
-        if ($_GET[controller::URL_VAR_NAME] == "") {
+        if ($_GET[api::URL_VAR_NAME] == "") {
             $msg .= 'Name missing; Please press back and enter a name for the new view.';
         } else {
 

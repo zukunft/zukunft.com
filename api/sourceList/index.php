@@ -47,13 +47,14 @@ use controller\controller;
 use cfg\user;
 use cfg\source_list;
 use api\ref\source_list as source_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/sourceList", "", false);
 
 // get the parameters
-$src_ids = $_GET[controller::URL_VAR_ID_LST] ?? '';
-$pattern = $_GET[controller::URL_VAR_PATTERN] ?? '';
+$src_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
+$pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
 $msg = '';
 $result = new source_list_api(array());

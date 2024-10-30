@@ -37,26 +37,29 @@ use cfg\formula_list;
 use cfg\result\result_list;
 use cfg\user;
 use controller\controller;
+use shared\api;
 use shared\library;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
 
 // open database
 $db_con = prg_start("calculate");
 
+// get the parameters
+$back = $_GET[api::URL_VAR_BACK] ?? ''; // the original calling page that should be shown after the change if finished
+
 // load the requesting user
 $usr = new user;
-$usr_id = $_GET['user']; // to force another user view for testing the formula calculation
+$usr_id = $_GET[api::URL_VAR_USER] ?? 0; // to force another user view for testing the formula calculation
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
     $usr->load_usr_data();
     $lib = new library();
-
-    $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change if finished
 
     // start displaying while calculating
     $calc_pos = 0;

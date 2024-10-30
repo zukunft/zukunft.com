@@ -47,13 +47,14 @@ use api\component\component as component_api;
 use cfg\component\component;
 use cfg\user;
 use controller\controller;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/component", "", false);
 
 // get the parameters
-$cmp_id = $_GET[controller::URL_VAR_ID] ?? 0;
-$cmp_name = $_GET[controller::URL_VAR_NAME] ?? '';
+$cmp_id = $_GET[api::URL_VAR_ID] ?? 0;
+$cmp_name = $_GET[api::URL_VAR_NAME] ?? '';
 
 $msg = '';
 $result = new component_api(); // reset the html code var

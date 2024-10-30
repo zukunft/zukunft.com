@@ -50,14 +50,15 @@ use cfg\user;
 use cfg\phr_ids;
 use cfg\phrase_list;
 use api\phrase\phrase_list as phrase_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/phraseList", "", false);
 
 // get the parameters
-$phr_ids = $_GET[controller::URL_VAR_ID_LST] ?? '';
-$phr_id = $_GET[controller::URL_VAR_PHRASE] ?? '';
-$pattern = $_GET[controller::URL_VAR_PATTERN] ?? '';
+$phr_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
+$phr_id = $_GET[api::URL_VAR_PHRASE] ?? '';
+$pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
 $msg = '';
 $result = new phrase_list_api(); // reset the html code var

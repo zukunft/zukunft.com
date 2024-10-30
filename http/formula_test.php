@@ -47,6 +47,7 @@ use cfg\view;
 use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
+use shared\api;
 use shared\library;
 
 $debug = $_GET['debug'] ?? 0;
@@ -77,7 +78,7 @@ if ($session_usr->id() > 0) {
     echo $msk_dsp->dsp_navbar($back);
 
     // get all parameters
-    $frm_id = $_GET[controller::URL_VAR_ID];
+    $frm_id = $_GET[api::URL_VAR_ID];
     $phr_ids_txt = $_GET['phrases'];
     $usr_id = $_GET['user'];    // to force another user view for testing the formula calculation
     $refresh = $_GET['refresh']; // delete all results for this formula and calculate the results again

@@ -44,6 +44,7 @@ use cfg\word;
 use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -57,7 +58,7 @@ global $user_profiles;
 $result = ''; // reset the html code var
 
 // get the parameters
-$id = $_GET[controller::URL_VAR_ID];
+$id = $_GET[api::URL_VAR_ID];
 $back = $_GET[controller::API_BACK];
 $undo_val = $_GET['undo_value'];
 $undo_wrd = $_GET['undo_word'];

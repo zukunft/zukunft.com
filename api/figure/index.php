@@ -54,7 +54,7 @@ use cfg\user;
 $db_con = prg_start("api/figure", "", false);
 
 // get the parameters
-$fig_id = $_GET[controller::URL_VAR_ID] ?? 0;
+$fig_id = $_GET[api::URL_VAR_ID] ?? 0;
 
 $msg = '';
 $result = new figure_api(); // reset the html code var

@@ -47,13 +47,14 @@ use controller\controller;
 use cfg\user;
 use cfg\view_list;
 use api\view\view_list as view_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/viewList", "", false);
 
 // get the parameters
-$cmp_id = $_GET[controller::URL_VAR_VIEW_ID] ?? '';
-$pattern = $_GET[controller::URL_VAR_PATTERN] ?? '';
+$cmp_id = $_GET[api::URL_VAR_VIEW_ID] ?? '';
+$pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
 $msg = '';
 $result = new view_list_api(array());

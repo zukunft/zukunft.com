@@ -48,14 +48,15 @@ include_once MODEL_USER_PATH . 'user.php';
 
 use controller\controller;
 use cfg\user;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/user", "", false);
 
 // get the parameters
-$usr_id = $_GET[controller::URL_VAR_ID] ?? 0;
-$usr_name = $_GET[controller::URL_VAR_NAME] ?? '';
-$usr_email = $_GET[controller::URL_VAR_EMAIL] ?? '';
+$usr_id = $_GET[api::URL_VAR_ID] ?? 0;
+$usr_name = $_GET[api::URL_VAR_NAME] ?? '';
+$usr_email = $_GET[api::URL_VAR_EMAIL] ?? '';
 
 $msg = '';
 $result = ''; // reset the html code var

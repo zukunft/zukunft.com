@@ -33,6 +33,7 @@
 namespace html;
 
 use controller\controller;
+use shared\api;
 use shared\library;
 
 class rest_ctrl
@@ -129,7 +130,7 @@ class rest_ctrl
     function api_call_id(string $class, int $id): array
     {
         $data = array();
-        $data[controller::URL_VAR_ID] = $id;
+        $data[api::URL_VAR_ID] = $id;
         return $this->api_get($class, $data);
     }
 
@@ -143,7 +144,7 @@ class rest_ctrl
     function api_call_name(string $class, string $name): array
     {
         $data = array();
-        $data[controller::URL_VAR_NAME] = $name;
+        $data[api::URL_VAR_NAME] = $name;
         return $this->api_get($class, $data);
     }
 

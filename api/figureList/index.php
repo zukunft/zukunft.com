@@ -51,12 +51,13 @@ use controller\controller;
 use cfg\user;
 use cfg\figure_list;
 use api\formula\figure_list as figure_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/figureList", "", false);
 
 // get the parameters
-$frm_ids = $_GET[controller::URL_VAR_ID_LST] ?? 0;
+$frm_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
 
 $msg = '';
 $result = new figure_list_api(); // reset the html code var

@@ -83,6 +83,7 @@ use cfg\word_list;
 use controller\controller;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
+use shared\api;
 use shared\library;
 use test\test_cleanup;
 
@@ -110,9 +111,9 @@ class api_tests
 
         $t->assert_api_get(user::class, user::SYSTEM_TEST_ID);
         $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_NAME);
-        $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_EMAIL, controller::URL_VAR_EMAIL);
+        $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_EMAIL, api::URL_VAR_EMAIL);
         $t->assert_api_get(word::class);
-        $t->assert_api_get_json(word::class, controller::URL_VAR_WORD_ID);
+        $t->assert_api_get_json(word::class, api::URL_VAR_WORD_ID);
         $t->assert_api_get_by_text(word::class, word_api::TN_READ);
         $t->assert_api_get(verb::class);
         $t->assert_api_get_by_text(verb::class, verb_api::TN_READ);
@@ -137,16 +138,16 @@ class api_tests
 
         $t->assert_api_get_list(type_lists::class);
         $t->assert_api_get_list(word_list::class, [1, 2, word_api::TI_PI]);
-        $t->assert_api_get_list(word_list::class, word_api::TN_READ, controller::URL_VAR_PATTERN);
+        $t->assert_api_get_list(word_list::class, word_api::TN_READ, api::URL_VAR_PATTERN);
         $t->assert_api_get_list(phrase_list::class, [1, 2, word_api::TI_PI, -1, -2]);
-        $t->assert_api_get_list(phrase_list::class, word_api::TN_READ, controller::URL_VAR_PATTERN);
+        $t->assert_api_get_list(phrase_list::class, word_api::TN_READ, api::URL_VAR_PATTERN);
         $t->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $t->assert_api_get_list(formula_list::class, [1]);
         $t->assert_api_get_list(component_list::class, 3, 'view_id');
         $t->assert_api_chg_list(
             change_log_list::class,
-            controller::URL_VAR_WORD_ID, 1,
-            controller::URL_VAR_WORD_FLD, change_field_list::FLD_WORD_NAME);
+            api::URL_VAR_WORD_ID, 1,
+            api::URL_VAR_WORD_FLD, change_field_list::FLD_WORD_NAME);
         $t->assert_api_get_list(
             sys_log_list::class,
             [1, 2], 'ids',
