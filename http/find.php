@@ -2,8 +2,8 @@
 
 /*
 
-  find.php - general search for a word or formula by a pattern
-  --------
+    find.php - general search for a word or formula by a pattern
+    --------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -58,7 +58,7 @@ $html = new html_base();
 if (!$db_con->connected()) {
     $result = log_fatal("Cannot connect to " . SQL_DB_TYPE . " database with user " . SQL_DB_USER_MYSQL, "find.php");
 } else {
-    $back = $_GET[controller::API_BACK] ?? '';
+    $back = $_GET[api::URL_VAR_BACK] ?? '';
 
     // load the session user parameters
     $usr = new user;

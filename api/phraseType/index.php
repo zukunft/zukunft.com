@@ -50,6 +50,7 @@ use controller\controller;
 use cfg\user;
 use cfg\phrase_type;
 use api\phrase\phrase_list as phrase_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/phraseType", "", false);
@@ -67,7 +68,7 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    if ($phr_typ_id != '') {
+    if ($phr_typ_id != 0) {
         $phr_typ = new phrase_type(phrase_type::NORMAL);
         $phr_typ->load_by_id($phr_typ_id);
         $result = $phr_typ->api_obj();

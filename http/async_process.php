@@ -37,6 +37,7 @@ use html\html_base;
 use html\view\view as view_dsp;
 use cfg\user;
 use cfg\view;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -54,7 +55,7 @@ $msg = ''; // to collect all messages that should be shown to the user immediate
 // load the session user parameters
 $usr = new user;
 $result .= $usr->get();
-$back = $_GET[controller::API_BACK];     // the word id from which this value change has been called (maybe later any page)
+$back = $_GET[api::URL_VAR_BACK] = '';     // the word id from which this value change has been called (maybe later any page)
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {

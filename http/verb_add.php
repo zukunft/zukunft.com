@@ -64,7 +64,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(controller::MC_VERB_ADD);
-    $back = $_GET[controller::API_BACK]; // the calling word which should be displayed after saving
+    $back = $_GET[api::URL_VAR_BACK] = ''; // the calling word which should be displayed after saving
 
     if (!$usr->is_admin()) {
         $result .= log_err("Only user with the administrator profile can add verbs (triple types).", "verb_add.php");

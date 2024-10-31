@@ -47,7 +47,7 @@ $db_con = prg_start("view_confirm");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$back = $_GET[controller::API_BACK]; // the word id from which this value change has been called (maybe later any page)
+$back = $_GET[api::URL_VAR_BACK] = ''; // the word id from which this value change has been called (maybe later any page)
 $word_id = $back;
 $view_id = 0;
 

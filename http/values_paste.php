@@ -61,7 +61,7 @@ if ($usr->id() > 0) {
         $new_tbl   = $_GET['table'];    // the value table as pasted by the user
         $src_id    = $_GET['source'];   // the source id as changed by the user
         $confirm   = $_GET['confirm'];  // 1 if the user has pressed "save"
-        $back = $_GET[controller::API_BACK];     // the word id from which this value change has been called (maybe later any page)
+        $back = $_GET[api::URL_VAR_BACK] = '';     // the word id from which this value change has been called (maybe later any page)
 
         // get the linked words from url
         $wrd_pos  = 1;

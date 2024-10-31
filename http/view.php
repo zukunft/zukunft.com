@@ -63,15 +63,21 @@ use cfg\view;
 use cfg\word;
 use html\types\type_lists as type_lists_dsp;
 use html\word\word as word_dsp;
+use shared\api;
 
 // open database
 $db_con = prg_start("view");
 
-global $system_views;
+// get the parameters
+$view_id = $_GET[rest_ctrl::PAR_VIEW_ID] ?? '';
+$new_view_id = $_GET[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
+$view_words = $_GET[rest_ctrl::PAR_VIEW_WORDS] ?? '';
+$back = $_GET[api::URL_VAR_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
 
+// init the view
+global $system_views;
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
-$back = $_GET[controller::API_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
 
 // load the session user parameters
 $usr = new user;
@@ -90,13 +96,12 @@ if ($usr->id() > 0) {
     // set the object that should be displayed
     $dbo_dsp = new word_dsp();
 
-    $view_words = $_GET[rest_ctrl::PAR_VIEW_WORDS] ?? '';
 
     // get the word(s) to display
     // TODO replace it with phrase
     $wrd = new word($usr);
     if ($view_words != '') {
-        $wrd->main_wrd_from_txt($_GET[rest_ctrl::PAR_VIEW_WORDS]);
+        $wrd->main_wrd_from_txt($view_words);
     } else {
         // get last word used by the user or a default value
         $wrd = $usr->last_wrd();
@@ -106,13 +111,11 @@ if ($usr->id() > 0) {
     // TODO move as much a possible to backend functions
     if ($wrd->id() > 0) {
         // if the user has changed the view for this word, save it
-        $new_view_id = $_GET[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
         if ($new_view_id != '') {
             $wrd->save_view($new_view_id);
             $view_id = $new_view_id;
         } else {
             // if the user has selected a special view, use it
-            $view_id = $_GET[rest_ctrl::PAR_VIEW_ID] ?? '';
             if ($view_id == '') {
                 // if the user has set a view for this word, use it
                 $view_id = $wrd->view_id();

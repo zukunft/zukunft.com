@@ -91,6 +91,7 @@ use cfg\result\result_list;
 use cfg\sandbox;
 use cfg\sandbox_link;
 use cfg\sandbox_link_named;
+use cfg\sandbox_multi;
 use cfg\sandbox_named;
 use cfg\sandbox_value;
 use cfg\source;
@@ -972,7 +973,7 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $name = $class . '_truncate';
         $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
         $actual_sql = $usr_obj->sql_truncate($sc, $class);
@@ -980,7 +981,7 @@ class test_base
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
             $actual_sql = $usr_obj->sql_truncate($sc, $class);
             $result = $this->assert_sql($name, $actual_sql, $expected_sql);
@@ -1141,13 +1142,13 @@ class test_base
     {
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1168,13 +1169,13 @@ class test_base
     {
         $sc_par_lst = new sql_type_list($sql_type_array);
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1194,13 +1195,13 @@ class test_base
     {
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->sql_delete($sc, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->sql_delete($sc, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1219,13 +1220,13 @@ class test_base
     function assert_sql_by_id(sql $sc, object $usr_obj, array $sc_par_lst_in = []): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_by_id($sc, $usr_obj->id(), $usr_obj::class);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_id($sc, $usr_obj->id(), $usr_obj::class);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1244,13 +1245,13 @@ class test_base
     function assert_sql_by_frm_id(sql $sc, element_list $lst, int $frm_id, string $test_name = ''): void
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $lst->load_sql_by_frm_id($sc, $frm_id);
         $result = $this->assert_qp($qp, $sc->db_type, $test_name);
 
         // check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $lst->load_sql_by_frm_id($sc, $frm_id, $test_name);
             $this->assert_qp($qp, $sc->db_type);
         }
@@ -1261,20 +1262,44 @@ class test_base
      * for all allowed SQL database dialects
      *
      * @param sql $sc a sql creator object that can be empty
-     * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
+     * @param sandbox|sandbox_multi $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_standard(sql $sc, sandbox|sandbox_value $usr_obj): bool
+    function assert_sql_standard(sql $sc, sandbox|sandbox_multi $usr_obj): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_standard_sql($sc);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_standard_sql($sc);
+            $result = $this->assert_qp($qp, $sc->db_type);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statement to load the default object by id
+     * for all allowed SQL database dialects
+     *
+     * @param sql $sc a sql creator object that can be empty
+     * @param group $usr_obj the user sandbox object e.g. a word
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_standard_by_name(sql $sc, group $usr_obj): bool
+    {
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_obj->load_standard_by_name_sql($sc, $usr_obj->name());
+        $result = $this->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $usr_obj->load_standard_by_name_sql($sc, $usr_obj->name());
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -1293,13 +1318,13 @@ class test_base
     {
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_user_changes($sc, $sc_par_lst);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_user_changes($sc, $sc_par_lst);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1318,13 +1343,13 @@ class test_base
     function assert_sql_changer(sql $sc, sandbox|sandbox_value $usr_obj): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_changer($sc);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_changer($sc);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1343,13 +1368,13 @@ class test_base
     function assert_sql_median_user(sql $sc, sandbox|sandbox_value $usr_obj): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_median_user($sc);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_median_user($sc);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1368,13 +1393,13 @@ class test_base
     function assert_sql_changing_users(sql $sc, sandbox $usr_obj): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_of_users_that_changed($sc);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_of_users_that_changed($sc);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1398,13 +1423,13 @@ class test_base
     function assert_sql_by_name(sql $sc, object $usr_obj): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_by_name($sc, 'System test', $usr_obj::class);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_name($sc, 'System test', $usr_obj::class);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1424,13 +1449,13 @@ class test_base
     function assert_sql_like(sql $sc, object $usr_obj, string $pattern = ''): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_like($sc, $pattern);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_like($sc, $pattern);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1448,13 +1473,13 @@ class test_base
     function assert_sql_by_term(sql $sc, sandbox $usr_obj, term $trm): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_by_term($sc, $trm);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_term($sc, $trm);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1478,13 +1503,13 @@ class test_base
     function assert_sql_by_code_id(sql $sc, object $usr_obj): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_by_code_id($sc, 'System test', $usr_obj::class);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_code_id($sc, 'System test', $usr_obj::class);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1507,7 +1532,7 @@ class test_base
     function assert_sql_by_link(sql $sc, sandbox_link $usr_obj): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         if ($usr_obj::class == ref::class) {
             $target_id = 'external key';
         } else {
@@ -1518,7 +1543,7 @@ class test_base
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_link($sc, 1, 1, $target_id, $usr_obj::class);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1564,13 +1589,13 @@ class test_base
     function assert_sql_all(sql $sc, object $usr_obj, string $class = ''): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_all($sc, $class);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_all($sc, $class);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1593,13 +1618,13 @@ class test_base
     function assert_sql_by_user(sql $sc, object $usr_obj): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_by_user($sc, $this->usr1);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_user($sc, $this->usr1);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1625,13 +1650,13 @@ class test_base
         array|phr_ids|trm_ids|fig_ids|null $ids = array(1, 2)): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_by_ids($sc, $ids);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_ids($sc, $ids);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1649,13 +1674,13 @@ class test_base
     function assert_sql_names_by_ids(sql $sc, object $usr_obj, ?array $ids = array(1, 2)): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_names_sql_by_ids($sc, $ids);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_names_sql_by_ids($sc, $ids);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1679,13 +1704,13 @@ class test_base
     ): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $lst_obj->load_sql_names($sc, $sbx, $pattern);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $lst_obj->load_sql_names($sc, $sbx, $pattern);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1704,13 +1729,13 @@ class test_base
     function assert_sql_by_names(sql $sc, object $usr_obj, array $names): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_by_names($sc, $names);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_names($sc, $names);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1728,13 +1753,13 @@ class test_base
     function assert_sql_by_phrase(sql $sc, object $usr_obj, phrase $phr): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_by_phr($sc, $phr);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_phr($sc, $phr);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -1759,13 +1784,13 @@ class test_base
     {
         // check the Postgres query syntax
         $sc = new sql_creator();
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst, false, $or);
         $result = $this->assert_qp($qp, $sc->db_type, $test_name);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst, false, $or);
             $this->assert_qp($qp, $sc->db_type, $test_name);
         }
@@ -1783,7 +1808,7 @@ class test_base
     function assert_sql_by_group(sql $sc, object $usr_obj, group $grp, bool $by_source = false): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         if ($by_source) {
             $qp = $usr_obj->load_sql_by_src_grp($sc, $grp);
         } else {
@@ -1793,7 +1818,7 @@ class test_base
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             if ($by_source) {
                 $qp = $usr_obj->load_sql_by_src_grp($sc, $grp);
             } else {
@@ -1845,13 +1870,13 @@ class test_base
     function assert_sql_list_by_type(sql $sc, object $lst_obj, string $type_code_id): bool
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $lst_obj->load_sql_by_type($sc, $type_code_id, $lst_obj::class);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $lst_obj->load_sql_by_type($sc, $type_code_id, $lst_obj::class);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -2124,7 +2149,7 @@ class test_base
     {
         // check the Postgres query syntax
         $usr_obj->owner_id = 0;
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->not_changed_sql($sc);
         $result = $this->assert_qp($qp, $sc->db_type);
 
@@ -2138,7 +2163,7 @@ class test_base
         // ... and check the MySQL query syntax
         if ($result) {
             $usr_obj->owner_id = 0;
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->not_changed_sql($sc);
             $result = $this->assert_qp($qp, $sc->db_type);
         }

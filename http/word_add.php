@@ -81,7 +81,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(controller::MC_WORD_ADD);
-    $back = $_GET[controller::API_BACK]; // the calling page which should be displayed after saving
+    $back = $_GET[api::URL_VAR_BACK] = ''; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
     $wrd = new word($usr);

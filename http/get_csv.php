@@ -53,7 +53,7 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // sample "Nestlé 2 country weight"
-    $words = $_GET[api::URL_VAR_WORD];
+    $words = $_GET[api::URL_VAR_WORDS];
     log_debug("get_csv(" . $words . ")");
     $word_names = explode(",", $words);
 

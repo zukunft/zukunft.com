@@ -93,13 +93,13 @@ class element_list_tests
         string       $test_name = ''): void
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $lst->load_sql_by_frm_and_type_id($sc, $frm_id, $elm_type_id);
         $result = $t->assert_qp($qp, $sc->db_type, $test_name);
 
         // check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $lst->load_sql_by_frm_and_type_id($sc, $frm_id, $elm_type_id);
             $t->assert_qp($qp, $sc->db_type, $test_name);
         }
@@ -121,13 +121,13 @@ class element_list_tests
         string $test_name = ''): void
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $lst->del_sql_without_log($sc);
         $result = $t->assert_qp($qp, $sc->db_type, $test_name);
 
         // check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $lst->del_sql_without_log($sc);
             $t->assert_qp($qp, $sc->db_type, $test_name);
         }

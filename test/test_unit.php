@@ -77,7 +77,7 @@ if ($start_usr->id() > 0) {
         $t->header('Run selected zukunft.com tests');
 
         // run a list of selected tests
-        (new all_tests())->run_unit();
+        $t->run_unit();
 
         // display the test results
         $t->dsp_result_html();

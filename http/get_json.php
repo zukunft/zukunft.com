@@ -53,7 +53,7 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // get the words that are supposed to be exported, sample "Nestlé 2 country weight"
-    $phrases = $_GET[api::URL_VAR_WORD];
+    $phrases = $_GET[api::URL_VAR_WORDS];
     log_debug("get_json(" . $phrases . ")");
     $word_names = explode(",", $phrases);
 

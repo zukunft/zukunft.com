@@ -116,13 +116,13 @@ class triple_tests
     private function assert_sql_by_name_generated(sql $sc, triple $trp, test_cleanup $t): void
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $trp->load_sql_by_name_generated($sc, 'System test', $trp::class);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $trp->load_sql_by_name_generated($sc, 'System test', $trp::class);
             $t->assert_qp($qp, $sc->db_type);
         }

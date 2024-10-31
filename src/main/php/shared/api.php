@@ -65,7 +65,8 @@ class api
     const URL_VAR_DESCRIPTION = 'description';
     const URL_VAR_DEBUG = 'debug'; // to force the output of debug messages
     const URL_VAR_CODE_ID = 'code_id';
-    const URL_VAR_WORD = 'words';
+    const URL_VAR_WORD = 'word';
+    const URL_VAR_WORDS = 'words';
     const URL_VAR_PHRASE = 'phrase'; // the id (or name?) of one phrase
     const URL_VAR_DIRECTION = 'dir'; // 'up' to get the parents and 'down' for the children
     const URL_VAR_LEVELS = 'levels'; // the number of search levels'
@@ -76,6 +77,11 @@ class api
     const URL_VAR_CMP_ID = 'component_id';
     const URL_VAR_USER = 'user';
     const URL_VAR_BACK = 'back';
+
+    // to be sorted
+    const URL_VAR_LINK_VIEW = 'link_view';
+    const URL_VAR_UNLINK_VIEW = 'unlink_view';
+    const URL_VAR_TYPE = 'type';
 
     // used for the change log
     const URL_VAR_WORD_ID = 'word_id';

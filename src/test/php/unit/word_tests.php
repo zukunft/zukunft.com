@@ -180,13 +180,13 @@ class word_tests
     private function assert_sql_formula_name(test_cleanup $t, sql $sc, word $wrd): void
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $wrd->load_sql_by_formula_name($sc, formula_api::TN_READ);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $wrd->load_sql_by_formula_name($sc, formula_api::TN_READ);
             $t->assert_qp($qp, $sc->db_type);
         }

@@ -12,6 +12,11 @@
       "type": "phrase_name"
     },
     {
+      "name": "Term",
+      "description": "simply show the name of a word, triple, verb or formula",
+      "type": "term_name"
+    },
+    {
       "name": "system form title word add",
       "description": "show the language specific title for the system form to add a new word",
       "type": "system_form_title",
@@ -33,11 +38,172 @@
       "ui_msg_code_id": "form_title_word_del"
     },
     {
+      "name": "system form title verb add",
+      "description": "show the language specific title for the system form to add a new verb",
+      "type": "system_form_title",
+      "code_id": "form_title_verb_add",
+      "ui_msg_code_id": "form_title_verb_add"
+    },
+    {
+      "name": "system form title verb edit",
+      "description": "show the language specific title for the system form to change a verb",
+      "type": "system_form_title",
+      "code_id": "form_title_verb_edit",
+      "ui_msg_code_id": "form_title_verb_edit"
+    },
+    {
+      "name": "system form title verb del",
+      "description": "show the language specific title for the system form to delete or exclude a verb",
+      "type": "system_form_title",
+      "code_id": "form_title_verb_del",
+      "ui_msg_code_id": "form_title_verb_del"
+    },
+    {
       "name": "system form title triple add",
       "description": "show the language specific title for the system form to add a new triple",
       "type": "system_form_title",
       "code_id": "form_title_triple_add",
       "ui_msg_code_id": "form_title_triple_add"
+    },
+    {
+      "name": "system form title triple edit",
+      "description": "show the language specific title for the system form to change a triple",
+      "type": "system_form_title",
+      "code_id": "form_title_triple_edit",
+      "ui_msg_code_id": "form_title_triple_edit"
+    },
+    {
+      "name": "system form title triple del",
+      "description": "show the language specific title for the system form to delete or exclude a triple",
+      "type": "system_form_title",
+      "code_id": "form_title_triple_del",
+      "ui_msg_code_id": "form_title_triple_del"
+    },
+    {
+      "name": "system form title source add",
+      "description": "show the language specific title for the system form to add a new source",
+      "type": "system_form_title",
+      "code_id": "form_title_source_add",
+      "ui_msg_code_id": "form_title_source_add"
+    },
+    {
+      "name": "system form title source edit",
+      "description": "show the language specific title for the system form to change a source",
+      "type": "system_form_title",
+      "code_id": "form_title_source_edit",
+      "ui_msg_code_id": "form_title_source_edit"
+    },
+    {
+      "name": "system form title source del",
+      "description": "show the language specific title for the system form to delete or exclude a source",
+      "type": "system_form_title",
+      "code_id": "form_title_source_del",
+      "ui_msg_code_id": "form_title_source_del"
+    },
+    {
+      "name": "system form title reference add",
+      "description": "show the language specific title for the system form to add a new reference",
+      "type": "system_form_title",
+      "code_id": "form_title_ref_add",
+      "ui_msg_code_id": "form_title_ref_add"
+    },
+    {
+      "name": "system form title reference edit",
+      "description": "show the language specific title for the system form to change a reference",
+      "type": "system_form_title",
+      "code_id": "form_title_ref_edit",
+      "ui_msg_code_id": "form_title_ref_edit"
+    },
+    {
+      "name": "system form title reference del",
+      "description": "show the language specific title for the system form to delete or exclude a reference",
+      "type": "system_form_title",
+      "code_id": "form_title_ref_del",
+      "ui_msg_code_id": "form_title_ref_del"
+    },
+    {
+      "name": "system form title value add",
+      "description": "show the language specific title for the system form to add a new value",
+      "type": "system_form_title",
+      "code_id": "form_title_value_add",
+      "ui_msg_code_id": "form_title_value_add"
+    },
+    {
+      "name": "system form title value edit",
+      "description": "show the language specific title for the system form to change a value",
+      "type": "system_form_title",
+      "code_id": "form_title_value_edit",
+      "ui_msg_code_id": "form_title_value_edit"
+    },
+    {
+      "name": "system form title value del",
+      "description": "show the language specific title for the system form to delete or exclude a value",
+      "type": "system_form_title",
+      "code_id": "form_title_value_del",
+      "ui_msg_code_id": "form_title_value_del"
+    },
+    {
+      "name": "system form title formula add",
+      "description": "show the language specific title for the system form to add a new formula",
+      "type": "system_form_title",
+      "code_id": "form_title_formula_add",
+      "ui_msg_code_id": "form_title_formula_add"
+    },
+    {
+      "name": "system form title formula edit",
+      "description": "show the language specific title for the system form to change a formula",
+      "type": "system_form_title",
+      "code_id": "form_title_formula_edit",
+      "ui_msg_code_id": "form_title_formula_edit"
+    },
+    {
+      "name": "system form title formula del",
+      "description": "show the language specific title for the system form to delete or exclude a formula",
+      "type": "system_form_title",
+      "code_id": "form_title_formula_del",
+      "ui_msg_code_id": "form_title_formula_del"
+    },
+    {
+      "name": "system form title result add",
+      "description": "show the language specific title for the system form to add a new result",
+      "type": "system_form_title",
+      "code_id": "form_title_result_add",
+      "ui_msg_code_id": "form_title_result_add"
+    },
+    {
+      "name": "system form title result edit",
+      "description": "show the language specific title for the system form to change a result",
+      "type": "system_form_title",
+      "code_id": "form_title_result_edit",
+      "ui_msg_code_id": "form_title_result_edit"
+    },
+    {
+      "name": "system form title result del",
+      "description": "show the language specific title for the system form to delete or exclude a result",
+      "type": "system_form_title",
+      "code_id": "form_title_result_del",
+      "ui_msg_code_id": "form_title_result_del"
+    },
+    {
+      "name": "system form title view add",
+      "description": "show the language specific title for the system form to add a new view",
+      "type": "system_form_title",
+      "code_id": "form_title_view_add",
+      "ui_msg_code_id": "form_title_view_add"
+    },
+    {
+      "name": "system form title view edit",
+      "description": "show the language specific title for the system form to change a view",
+      "type": "system_form_title",
+      "code_id": "form_title_view_edit",
+      "ui_msg_code_id": "form_title_view_edit"
+    },
+    {
+      "name": "system form title view del",
+      "description": "show the language specific title for the system form to delete or exclude a view",
+      "type": "system_form_title",
+      "code_id": "form_title_view_del",
+      "ui_msg_code_id": "form_title_view_del"
     },
     {
       "name": "system form title component add",

@@ -225,13 +225,13 @@ class value_tests
         $sc = $db_con->sql_creator();
 
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_by_grp($sc, $grp, $usr_obj::class);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_grp($sc, $grp, $usr_obj::class);
             $t->assert_qp($qp, $sc->db_type);
         }
@@ -253,13 +253,13 @@ class value_tests
         $fields = array(value::FLD_LAST_UPDATE);
         $values = array(sql::NOW);
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $val->sql_update($sc, $db_val);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $val->sql_update($sc, $db_val);
             $result = $t->assert_qp($qp, $sc->db_type);
         }

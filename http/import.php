@@ -50,7 +50,7 @@ $msg = ''; // to collect all messages that should be shown to the user immediate
 // load the session user parameters
 $usr = new user;
 $result .= $usr->get();
-$back = $_GET[controller::API_BACK];     // the word id from which this value change has been called (maybe later any page)
+$back = $_GET[api::URL_VAR_BACK] = '';     // the word id from which this value change has been called (maybe later any page)
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 log_debug('import.php check user ');

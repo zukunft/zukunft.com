@@ -178,11 +178,14 @@ class group_tests
         $t->assert_sql_truncate($sc, $grp);
 
         $t->subheader('SQL statements - read');
-        //$t->assert_sql_by_id($sc, $grp);
-        $t->assert_sql_by_name($sc, $grp);
+        $grp = $t->group();
+        $t->assert_sql_by_name($sc, $grp); // by name is always for all tables: prime, most and big
+        $t->assert_sql_standard($sc, $grp);
+        $t->assert_sql_standard_by_name($sc, $grp);
         $this->assert_sql_by_phrase_list($t, $db_con);
 
         $t->subheader('SQL statements - write');
+        $grp = new group($usr);
         $grp->set_phrase_list($t->phrase_list_prime());
         $t->assert_sql_insert($sc, $grp);
         $t->assert_sql_insert($sc, $grp, [sql_type::USER]);

@@ -268,7 +268,7 @@ class group extends sandbox_multi
         if ($name != '') {
             $this->name = $name;
         } else {
-            if ($this->phrase_list()->count() > 0) {
+            if ($this->has_phrase_list()) {
                 $this->name = implode(',', $this->phr_lst->names());
             } else {
                 log_warning('name of phrase group ' . $this->dsp_id() . ' missing');
@@ -442,6 +442,14 @@ class group extends sandbox_multi
     function name_field(): string
     {
         return self::FLD_NAME;
+    }
+
+    /**
+     * @return group this object to match the related value and result functions
+     */
+    function grp(): group
+    {
+        return $this;
     }
 
 
@@ -678,15 +686,27 @@ class group extends sandbox_multi
     }
 
     /**
-     * load the standard value use by most users for the given phrase group and time
-     * @param sql_par|null $qp placeholder to align the function parameters with the parent
+     * load the standard group use by most users for the given phrase group and time
+     *
      * @return bool true if the standard value has been loaded
      */
-    function load_standard(?sql_par $qp = null): bool
+    function load_standard_by_id(): bool
     {
         global $db_con;
         $qp = $this->load_standard_sql($db_con->sql_creator());
-        return parent::load_standard($qp, $this::class);
+        return parent::load_standard($qp);
+    }
+
+    /**
+     * load the standard group use by most users for the given phrase group and time
+     * @param string $name the name given by the user for the group
+     * @return bool true if the standard value has been loaded
+     */
+    function load_standard_by_name(string $name): bool
+    {
+        global $db_con;
+        $qp = $this->load_standard_by_name_sql($db_con->sql_creator(), $name);
+        return parent::load_standard($qp);
     }
 
     /**
@@ -799,7 +819,41 @@ class group extends sandbox_multi
      */
     function load_standard_sql(sql $sc, array $fld_lst = []): sql_par
     {
-        return parent::load_standard_sql($sc, self::FLD_NAMES);
+        $fld_lst = array_merge(
+            $this::FLD_NAMES,
+            array(user::FLD_ID)
+        );
+        return parent::load_standard_sql($sc, $fld_lst);
+    }
+
+    /**
+     * create the SQL to load the single default value always by the id
+     * @param sql $sc with the target db_type set
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_standard_by_name_sql(sql $sc, string $name): sql_par
+    {
+        $sc_par_lst = new sql_type_list([]);
+        $sc_par_lst->add($this->table_type());
+        $sc_par_lst->add(sql_type::NORM);
+        $qp = new sql_par($this::class, $sc_par_lst);
+        $qp->name .= sql_db::FLD_NAME;
+
+        $fld_lst = array_merge(
+            $this::FLD_NAMES,
+            array(user::FLD_ID)
+        );
+
+        $sc->set_class($this::class, $sc_par_lst);
+        $sc->set_name($qp->name);
+        $sc->set_id_field($this->id_field());
+        $sc->set_fields($fld_lst);
+        $sc->set_usr($this->user()->id());
+        $sc->add_where($this->name_field(), $name);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
     }
 
 
@@ -1218,6 +1272,14 @@ class group extends sandbox_multi
         return $grp_id->is_prime($id);
     }
 
+    /**
+     * @return bool always false because there is no need for main groups
+     */
+    function is_main(): bool
+    {
+        return false;
+    }
+
     function is_big(): bool
     {
         $grp_id = new group_id();
@@ -1229,6 +1291,45 @@ class group extends sandbox_multi
     /*
      * save
      */
+
+    /**
+     * check if a group with the unique key already exists
+     * returns null if no similar group is found
+     * or returns the group with the same unique key that is not the actual object
+     *
+     * @return group a filled object that has the same name
+     *                 or a sandbox object with id() = 0 if nothing similar has been found
+     */
+    function get_similar(): group
+    {
+        $result = new group($this->user());
+
+        // check potential duplicate by name
+        $db_chk = clone $this;
+        $db_chk->reset();
+        $db_chk->set_user($this->user());
+        // check with the standard namespace
+        if ($db_chk->load_standard_by_name($this->name())) {
+            if ($db_chk->id() > 0) {
+                log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the standard namespace');
+                $result = $db_chk;
+            }
+        }
+        // check with the user namespace
+        $db_chk->set_user($this->user());
+        if ($this->name() != '') {
+            if ($db_chk->load_by_name($this->name())) {
+                if ($db_chk->id() > 0) {
+                    log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
+                    $result = $db_chk;
+                }
+            }
+        } else {
+            log_err('The name must be set to check if a similar object exists');
+        }
+
+        return $result;
+    }
 
     /**
      * add a new group to the database

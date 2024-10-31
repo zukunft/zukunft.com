@@ -302,21 +302,6 @@ class sandbox_value extends sandbox_multi
         return $this->last_update;
     }
 
-    /**
-     * TODO review (add ...)
-     * @return bool true if no user has changed the value and no parameter beside the value is set
-     */
-    function is_standard(): bool
-    {
-        if ($this->usr_cfg_id == null
-            and $this->owner_id == null
-            and !$this->excluded) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     function table_type(): sql_type
     {
         if ($this::class == value::class) {
@@ -392,28 +377,6 @@ class sandbox_value extends sandbox_multi
     function is_big(): bool
     {
         return $this->grp()->is_big();
-    }
-
-    /**
-     * TODO create a function max_phrases that is overwritten by the result object
-     * @param bool $all
-     * @return array
-     */
-    function id_names(bool $all = false): array
-    {
-        if ($this::class == value::class) {
-            return $this->grp()->id_names($all);
-        } else {
-            if ($this->is_main()) {
-                if ($this->is_standard()) {
-                    return $this->grp()->id_names($all, group_id::MAIN_PHRASES_STD);
-                } else {
-                    return $this->grp()->id_names($all, result_id::MAIN_PHRASES_ALL);
-                }
-            } else {
-                return $this->grp()->id_names($all);
-            }
-        }
     }
 
     function id_lst(): array
@@ -711,55 +674,6 @@ class sandbox_value extends sandbox_multi
     {
         $this->set_grp($grp);
         return $this->load_sql_by_grp_id($sc, 'grp');
-    }
-
-    /**
-     * set the where condition and the final query parameters
-     * for a value or result query
-     *
-     * @param sql_par $qp the query parameters fully set without the sql, par and ext
-     * @param sql $sc the sql creator with all parameters set
-     * @param string $ext the table extension
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    protected function load_sql_set_where(sql_par $qp, sql $sc, string $ext): sql_par
-    {
-        $this->load_sql_where_id($qp, $sc, true);
-
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-        $qp->ext = $ext;
-
-        return $qp;
-    }
-
-    /**
-     * set the where condition and the final query parameters
-     * for a value or result query
-     *
-     * @param sql_par $qp the query parameters fully set without the sql, par and ext
-     * @param sql $sc the sql creator with all parameters set
-     * @param bool $all true if all id fields should be used independend from the number of ids
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    protected function load_sql_where_id(sql_par $qp, sql $sc, bool $all = false): sql_par
-    {
-        if ($this->is_prime() or $this->is_main()) {
-            $fields = $this->id_names($all);
-            $values = $this->id_lst();
-            $pos = 0;
-            foreach ($fields as $field) {
-                $val_used = 0;
-                if (array_key_exists($pos, $values)) {
-                    $val_used = $values[$pos];
-                }
-                $sc->add_where($field, $val_used);
-                $pos++;
-            }
-        } else {
-            $sc->add_where(group::FLD_ID, $this->grp->id());
-        }
-        return $qp;
     }
 
     /**

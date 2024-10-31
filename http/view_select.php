@@ -62,7 +62,7 @@ if ($usr->id() > 0) {
     // in view edit views the view cannot be changed
     $msk = new view($usr);
     //$dsp->set_id(cl(SQL_VIEW_FORMULA_EXPLAIN));
-    $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change if finished
+    $back = $_GET[api::URL_VAR_BACK] = ''; // the original calling page that should be shown after the change if finished
     $msk_dsp = new view_dsp($msk->api_json());
     $result .= $msk_dsp->dsp_navbar_no_view($back);
     $view_id = 0;

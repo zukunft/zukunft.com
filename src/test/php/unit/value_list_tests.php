@@ -123,13 +123,13 @@ class value_list_tests
     {
         // check the Postgres query syntax
         $sc = $db_con->sql_creator();
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst, false, $or);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst, false, $or);
             $t->assert_qp($qp, $sc->db_type);
         }
@@ -148,13 +148,13 @@ class value_list_tests
     {
         // check the Postgres query syntax
         $sc = $db_con->sql_creator();
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_by_grp_lst($sc, $phr_lst);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_grp_lst($sc, $phr_lst);
             $t->assert_qp($qp, $sc->db_type);
         }
@@ -173,13 +173,13 @@ class value_list_tests
     {
         // check the Postgres query syntax
         $sc = $db_con->sql_creator();
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $val_lst->load_sql_by_phr($sc, $phr);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $val_lst->load_sql_by_phr($sc, $phr);
             $t->assert_qp($qp, $sc->db_type);
         }

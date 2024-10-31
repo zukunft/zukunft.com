@@ -137,12 +137,12 @@ class ref_tests
         ref $ref): void
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $ref->load_sql_by_link_ids($sc, 1, 2);
         $t->assert_qp($qp, $sc->db_type);
 
         // check the MySQL query syntax
-        $sc->db_type = sql_db::MYSQL;
+        $sc->reset(sql_db::MYSQL);
         $qp = $ref->load_sql_by_link_ids($sc, 1, 2);
         $t->assert_qp($qp, $sc->db_type);
     }

@@ -60,7 +60,7 @@ if ($usr->id() > 0) {
     if (isset($_POST[controller::API_BACK])) {
         $back = $_POST[controller::API_BACK];
     } else {
-        $back = $_GET[controller::API_BACK];
+        $back = $_GET[api::URL_VAR_BACK] = '';
     }
 
     if (isset($_POST['submit'])) {

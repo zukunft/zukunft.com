@@ -3,7 +3,7 @@
 /*
 
   component_edit.php - adjust a view element
-  -----------------------
+  ------------------
   
   This file is part of zukunft.com - calc with words
 
@@ -30,6 +30,11 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
 use cfg\component\component;
 use cfg\user;
 use cfg\view;
@@ -39,10 +44,6 @@ use html\html_base;
 use html\view\view as view_dsp;
 use html\component\component as component_dsp;
 use shared\api;
-
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 // open database
 $db_con = prg_start("component_edit");
@@ -81,7 +82,7 @@ if ($usr->id() > 0) {
         }
 
         // the calling stack to move back to page where the user has come from after editing the view component is done
-        $back = $_GET[controller::API_BACK];
+        $back = $_GET[api::URL_VAR_BACK] = '';
 
         // save the direct changes
         // link or unlink a view

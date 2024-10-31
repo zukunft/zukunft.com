@@ -63,7 +63,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_id($system_views->id(controller::MC_VIEW_ADD));
-    $back = $_GET[controller::API_BACK]; //
+    $back = $_GET[api::URL_VAR_BACK] = ''; //
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
     $msk_add = new view($usr);

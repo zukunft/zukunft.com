@@ -66,7 +66,7 @@ if ($usr->id() > 0) {
     $msk_db = new view($usr);
     $msk_db->load_by_code_id(controller::MC_WORD_ADD);
     $msk = new view_dsp($msk_db->api_json());
-    $back = $_GET[controller::API_BACK]; // the calling page which should be displayed after saving
+    $back = $_GET[api::URL_VAR_BACK] = ''; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
     $wrd = new word($usr);

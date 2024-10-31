@@ -41,7 +41,6 @@ class word
 {
     function run(test_cleanup $t): void
     {
-        global $usr;
         $html = new html_base();
 
         $t->subheader('Word tests');

@@ -62,7 +62,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(controller::MC_VALUE_DISPLAY);
-    $back = $_GET[controller::API_BACK]; // the page (or phrase id) from which formula testing has been called
+    $back = $_GET[api::URL_VAR_BACK] = ''; // the page (or phrase id) from which formula testing has been called
 
     $msk_dsp = new view_dsp($msk->api_json());
     $result .= $msk_dsp->dsp_navbar($back);

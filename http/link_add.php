@@ -65,7 +65,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(controller::MC_TRIPLE_ADD);
-    $back = $_GET[controller::API_BACK]; // the calling word which should be displayed after saving
+    $back = $_GET[api::URL_VAR_BACK] = ''; // the calling word which should be displayed after saving
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
     $trp = new triple($usr);

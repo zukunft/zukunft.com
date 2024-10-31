@@ -46,7 +46,7 @@ $db_con = prg_start("triple");
 if (!$db_con->connected()) {
     $result = log_fatal("Cannot connect to " . SQL_DB_TYPE . " database with user " . SQL_DB_USER_MYSQL, "find.php");
 } else {
-    $back = $_GET[controller::API_BACK];
+    $back = $_GET[api::URL_VAR_BACK] = '';
     $id = $_GET['triples'];
 
     // load the session user parameters

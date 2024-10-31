@@ -2,8 +2,8 @@
 
 /*
 
-  error_update.php - to maintain the error list
-  ----------------
+    error_update.php - to maintain the error list
+    ----------------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,12 +23,18 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
+
+// standard zukunft header for callable php files to allow debugging and lib loading
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
 
 use cfg\sys_log;
 use cfg\sys_log_list;
@@ -39,10 +45,6 @@ use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
 use shared\api;
-
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
 
 $db_con = prg_start("error_update");
 $html = new html_base();
@@ -55,7 +57,7 @@ $result = ''; // reset the html code var
 // get the parameters
 $log_id = $_GET[api::URL_VAR_ID];
 $status_id = $_GET['status'];
-$back = $_GET[controller::API_BACK];
+$back = $_GET[api::URL_VAR_BACK] = '';
 
 // load the session user parameters
 $usr = new user;

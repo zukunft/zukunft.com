@@ -56,6 +56,7 @@ use cfg\group\group;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
+use cfg\group\result_id;
 use cfg\log\change_values_big;
 use cfg\log\change_values_norm;
 use cfg\log\change_values_prime;
@@ -233,6 +234,15 @@ class sandbox_multi extends db_object_multi_user
     function is_excluded(): bool
     {
         return $this->excluded;
+    }
+
+    /**
+     * @return group an empty group in this parent object, but overwritten by the child objects
+     */
+    function grp(): group
+    {
+        log_err('dummy grp() function called in sandbox_multi, which should never happen');
+        return new group($this->user());
     }
 
 
@@ -426,6 +436,18 @@ class sandbox_multi extends db_object_multi_user
     }
 
 
+    function table_type(): sql_type
+    {
+        log_err('dummy table_type() function called in sandbox_multi, which should never happen');
+        return sql_type::MAIN;
+    }
+
+    function table_extension(): string
+    {
+        log_err('dummy table_extension() function called in sandbox_multi, which should never happen');
+        return '';
+    }
+
     /*
      * load
      */
@@ -433,19 +455,84 @@ class sandbox_multi extends db_object_multi_user
     /**
      * create the SQL to load the single default value always by the id
      * @param sql $sc with the target db_type set
+     * @param array $fld_lst list of fields for the value, result or group
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc): sql_par
+    function load_standard_sql(
+        sql   $sc,
+        array $fld_lst = []
+    ): sql_par
     {
-        $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
+        $sc_par_lst = new sql_type_list([]);
+        $sc_par_lst->add($this->table_type());
+        $sc_par_lst->add(sql_type::NORM);
+        if ($this::class == group::class) {
+            $id_ext = '';
+        } else {
+            $id_ext = $this->table_extension();
+        }
+        $qp = new sql_par($this::class, $sc_par_lst, '', $id_ext);
         $qp->name .= sql_db::FLD_ID;
 
+        $sc->set_class($this::class, $sc_par_lst);
         $sc->set_name($qp->name);
+        $sc->set_id_field($this->id_field());
+        $sc->set_fields($fld_lst);
         $sc->set_usr($this->user()->id());
         $sc->add_where($this->id_field(), $this->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
+        $qp->ext = $id_ext;
 
+        return $qp;
+    }
+
+    /**
+     * set the where condition and the final query parameters
+     * for a value, result or group query
+     *
+     * @param sql_par $qp the query parameters fully set without the sql, par and ext
+     * @param sql $sc the sql creator with all parameters set
+     * @param string $ext the table extension
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql_set_where(sql_par $qp, sql $sc, string $ext): sql_par
+    {
+        $this->load_sql_where_id($qp, $sc, true);
+
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        $qp->ext = $ext;
+
+        return $qp;
+    }
+
+    /**
+     * set the where condition and the final query parameters
+     * for a value, result or group query
+     *
+     * @param sql_par $qp the query parameters fully set without the sql, par and ext
+     * @param sql $sc the sql creator with all parameters set
+     * @param bool $all true if all id fields should be used independend from the number of ids
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql_where_id(sql_par $qp, sql $sc, bool $all = false): sql_par
+    {
+        if ($this->is_prime() or $this->is_main()) {
+            $fields = $this->id_names($all);
+            $values = $this->id_lst();
+            $pos = 0;
+            foreach ($fields as $field) {
+                $val_used = 0;
+                if (array_key_exists($pos, $values)) {
+                    $val_used = $values[$pos];
+                }
+                $sc->add_where($field, $val_used);
+                $pos++;
+            }
+        } else {
+            $sc->add_where(group::FLD_ID, $this->grp()->id());
+        }
         return $qp;
     }
 
@@ -474,15 +561,9 @@ class sandbox_multi extends db_object_multi_user
     function load_standard(?sql_par $qp = null): bool
     {
         global $db_con;
-        $result = false;
 
-        if ($this->id() <= 0) {
-            log_err('The ' . $this::class . ' id must be set to load ' . $this::class, $this::class . '->load_standard');
-        } else {
-            $db_row = $db_con->get1($qp);
-            $result = $this->row_mapper_sandbox_multi($db_row, $qp->ext, true, false);
-        }
-        return $result;
+        $db_row = $db_con->get1($qp);
+        return $this->row_mapper_sandbox_multi($db_row, $qp->ext, true, false);
     }
 
     /**
@@ -806,6 +887,21 @@ class sandbox_multi extends db_object_multi_user
         }
         log_debug('for ' . $this->dsp_id() . ': ' . $result);
         return $result;
+    }
+
+    /**
+     * TODO review (add ...)
+     * @return bool true if no user has changed the value and no parameter beside the value is set
+     */
+    function is_standard(): bool
+    {
+        if ($this->usr_cfg_id == null
+            and $this->owner_id == null
+            and !$this->excluded) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -2971,6 +3067,18 @@ class sandbox_multi extends db_object_multi_user
      */
     function is_prime(): bool
     {
+        log_err('dummy is_prime() function called in sandbox_multi, which should never happen');
+        return true;
+    }
+
+    /**
+     * overwrittern by the child objects
+     * TODO to be overwritten by the sandbox value function
+     * @return bool true if the db table for up to 4 phrases with a 8bit int key can be used
+     */
+    function is_main(): bool
+    {
+        log_err('dummy is_main() function called in sandbox_multi, which should never happen');
         return true;
     }
 
@@ -2981,7 +3089,35 @@ class sandbox_multi extends db_object_multi_user
      */
     function is_big(): bool
     {
+        log_err('dummy is_big() function called in sandbox_multi, which should never happen');
         return true;
+    }
+
+    /**
+     * TODO create a function max_phrases that is overwritten by the result object
+     * @param bool $all
+     * @return array
+     */
+    function id_names(bool $all = false): array
+    {
+        if ($this::class == value::class) {
+            return $this->grp()->id_names($all);
+        } else {
+            if ($this->is_main()) {
+                if ($this->is_standard()) {
+                    return $this->grp()->id_names($all, group_id::MAIN_PHRASES_STD);
+                } else {
+                    return $this->grp()->id_names($all, result_id::MAIN_PHRASES_ALL);
+                }
+            } else {
+                return $this->grp()->id_names($all);
+            }
+        }
+    }
+
+    function id_lst(): array
+    {
+        return $this->grp()->id_lst();
     }
 
     /**
