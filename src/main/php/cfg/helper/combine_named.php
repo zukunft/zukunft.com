@@ -71,9 +71,11 @@ class combine_named extends combine_object
     function reset(): void
     {
         $this->set_obj_id(0);
-        $this->set_name(null);
+        $this->set_name('');
         $this->set_description(null);
         $this->set_type_id(null);
+        $this->set_share(null);
+        $this->set_protection(null);
     }
 
 
@@ -148,6 +150,24 @@ class combine_named extends combine_object
     }
 
     /**
+     * @param string|null $code_id the code id of the target share txpe or null to remove the parent overwrite
+     * @return void
+     */
+    function set_share(?string $code_id): void
+    {
+        $this->obj()?->set_share($code_id);
+    }
+
+    /**
+     * @param string|null $code_id the code id of the target protection or null to remove the parent overwrite
+     * @return void
+     */
+    function set_protection(?string $code_id): void
+    {
+        $this->obj()?->set_protection($code_id);
+    }
+
+    /**
      * @return int|null the type id of the word, triple, formula or verb
      * if null the type of related phrase or term can be used
      * e.g. if the type of the triple "Pi (math)" is not set
@@ -157,6 +177,33 @@ class combine_named extends combine_object
     {
         return $this->obj()?->type_id();
     }
+
+    /**
+     * set excluded to 'true' to switch off the usage of this named combine object
+     * @return void
+     */
+    function exclude(): void
+    {
+        $this->obj()?->exclude();
+    }
+
+    /**
+     * set excluded to 'false' to switch on the usage of this user sandbox object
+     * @return void
+     */
+    function include(): void
+    {
+        $this->obj()?->include();
+    }
+
+    /**
+     * @return bool true if the user does not want to use this object at all
+     */
+    function is_excluded(): bool
+    {
+        return $this->obj()?->excluded();
+    }
+
 
     /*
      * SQL creation

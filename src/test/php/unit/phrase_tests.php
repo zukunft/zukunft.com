@@ -57,34 +57,29 @@ class phrase_tests
         global $usr;
 
         // init
-        $db_con = new sql_db();
         $sc = new sql();
         $t->name = 'phrase->';
         $t->resource_path = 'db/phrase/';
-        $json_file = 'unit/phrase/second.json';
 
+        $t->header('phrase unit tests');
 
-        $t->header('Unit tests of the phrase class (src/main/php/model/phrase/phrase.php)');
-
-        $t->subheader('Phrase SQL setup statements');
+        $t->subheader('phrase sql setup');
         $phr = $t->phrase();
         $t->assert_sql_view_create($phr);
 
-        $t->subheader('SQL statement tests');
-
+        $t->subheader('phrase sql read');
         $phr = new phrase($usr);
         $t->assert_sql_by_id($sc, $phr);
         $t->assert_sql_by_name($sc, $phr);
 
-        // sql to load the phrase by id
-        $phr = new phrase($usr);
-        $phr->set_id(2);
+        $t->subheader('phrase type api unit tests');
+        $phr = $t->phrase();
+        $t->assert_api_json($phr);
 
         // check the Postgres query syntax
         $wrd_company = new word($usr);
         $wrd_company->set(2, word_api::TN_COMPANY);
         $sql_name = 'phrase_list_related';
-        $db_con->db_type = sql_db::POSTGRES;
         $file_name = $t->resource_path . $sql_name . test_base::FILE_EXT;
         $created_sql = $phr->sql_list($wrd_company);
         $expected_sql = $t->file($file_name);
@@ -101,8 +96,7 @@ class phrase_tests
 
         $t->header('Unit tests of the phrase type class (src/main/php/model/phrase/phrase_type.php)');
 
-        $t->subheader('API unit tests');
-
+        $t->subheader('phrase type api unit tests');
         global $phrase_types;
         $phr_typ = $phrase_types->get_by_code_id(phrase_type::PERCENT);
         $t->assert_api($phr_typ, 'phrase_type');

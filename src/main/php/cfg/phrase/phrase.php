@@ -1039,8 +1039,9 @@ class phrase extends combine_named
         return $result;
     }
 
-    function dsp_tbl_row()
+    function dsp_tbl_row(): string
     {
+        $result = '';
         // the function dsp_tbl_row should exist for words and triples
         if (isset($this->obj)) {
             $result = $this->obj->dsp_tbl_row();
@@ -1357,15 +1358,17 @@ class phrase extends combine_named
      * word replication functions
      */
 
-    function is_time()
+    function is_time(): bool
     {
         return $this->obj()->is_time();
     }
 
-// return true if the word has the type "measure" (e.g. "meter" or "CHF")
-// in case of a division, these words are excluded from the result
-// in case of add, it is checked that the added value does not have a different measure
-    function is_measure()
+    /**
+     * @return bool true if the word has the type "measure" (e.g. "meter" or "CHF")
+     * in case of a division, these words are excluded from the result
+     * in case of add, it is checked that the added value does not have a different measure
+     */
+    function is_measure(): bool
     {
         $wrd = $this->main_word();
         return $wrd->is_measure();

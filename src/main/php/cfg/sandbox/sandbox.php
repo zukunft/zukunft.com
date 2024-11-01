@@ -328,6 +328,35 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
+     * set the share type id based on the code id
+     * null is used to inherit the parent share type
+     * if all parent share types are null, the default is used
+     * TODO add unit test
+     *
+     * @param string|null $code_id of the share type that should be used
+     * @return void
+     */
+    function set_share(?string $code_id): void
+    {
+        if ($code_id == null) {
+            $this->share_id = null;
+        } else {
+            global $share_types;
+            $this->share_id = $share_types->id($code_id);
+        }
+    }
+
+    function set_protection(?string $code_id): void
+    {
+        if ($code_id == null) {
+            $this->protection_id = null;
+        } else {
+            global $protection_types;
+            $this->protection_id = $protection_types->id($code_id);
+        }
+    }
+
+    /**
      * set the excluded field from a database value
      * with postgres and MySQL this is pretty strait forward so more to prevent future issues
      *

@@ -74,7 +74,7 @@ class combine_object
      * set and get
      */
 
-    function set_obj(word|triple|verb|formula|value|result|null $obj): void
+    function set_obj(word|triple|verb|formula|value|result|sandbox_named|null $obj): void
     {
         $this->obj = $obj;
     }

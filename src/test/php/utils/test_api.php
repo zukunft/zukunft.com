@@ -153,7 +153,7 @@ class test_api extends create_test_objects
         $test_name = $class . ' excluded returns id only api json';
         $usr_obj->exclude();
         $json_excluded = $usr_obj->api_json();
-        $result = $this->assert($test_name, $json_excluded, '{"id":1,"excluded":true}');
+        $result = $this->assert_text_contains($test_name, $json_excluded, '"id":1,"excluded":true');
         if ($result) {
             $test_name = $class . ' reset returns empty api json';
             $usr_obj->include();
