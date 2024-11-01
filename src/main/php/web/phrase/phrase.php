@@ -322,4 +322,13 @@ class phrase extends combine_named_dsp
         }
     }
 
+    /**
+     * html code for a button to add a new phrase similar to this phrase
+     **/
+    function btn_add($back): string
+    {
+        $wrd = $this->main_word();
+        return $wrd->btn_add($back);
+    }
+
 }

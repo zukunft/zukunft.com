@@ -75,6 +75,22 @@ class phrase_tests
         $t->subheader('phrase type api unit tests');
         $phr = $t->phrase();
         $t->assert_api_json($phr);
+        $phr = $t->word_filled()->phrase();
+        $t->assert_api_json($phr);
+        $phr = $t->word_filled()->phrase();
+        $phr->include();
+        $t->assert_api($phr, 'phrase_word_full');
+        $phr = $t->triple_filled_add()->phrase();
+        $phr->include();
+        $t->assert_api($phr, 'phrase_triple_full');
+        $phr = $t->phrase();
+        $t->assert_api($phr, 'phrase_body');
+
+        $t->subheader('phrase html frontend unit tests');
+        $phr = $t->word()->phrase();
+        $t->assert_api_to_dsp($phr, new phrase_dsp());
+        $phr = $t->triple_pi()->phrase();
+        $t->assert_api_to_dsp($phr, new phrase_dsp());
 
         // check the Postgres query syntax
         $wrd_company = new word($usr);
@@ -86,12 +102,6 @@ class phrase_tests
         $t->assert_sql($t->name . $sql_name, $created_sql, $expected_sql
         );
 
-        $t->subheader('HTML frontend unit tests');
-
-        $phr = $t->word()->phrase();
-        $t->assert_api_to_dsp($phr, new phrase_dsp());
-        $phr = $t->triple_pi()->phrase();
-        $t->assert_api_to_dsp($phr, new phrase_dsp());
 
 
         $t->header('Unit tests of the phrase type class (src/main/php/model/phrase/phrase_type.php)');

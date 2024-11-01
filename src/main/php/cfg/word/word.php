@@ -464,6 +464,11 @@ class word extends sandbox_typed
         return $this->type_id;
     }
 
+    function set_plural(?string $plural): void
+    {
+        $this->plural = $plural;
+    }
+
 
     /*
      * preloaded

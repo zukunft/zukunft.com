@@ -76,6 +76,8 @@ class combine_named extends combine_object
         $this->set_type_id(null);
         $this->set_share(null);
         $this->set_protection(null);
+        // TODO review
+        $this->set_plural(null);
     }
 
 
@@ -202,6 +204,15 @@ class combine_named extends combine_object
     function is_excluded(): bool
     {
         return $this->obj()?->excluded();
+    }
+
+    /**
+     * @param string|null $plural the code id of the target protection or null to remove the parent overwrite
+     * @return void
+     */
+    function set_plural(?string $plural): void
+    {
+        $this->obj()?->set_plural($plural);
     }
 
 

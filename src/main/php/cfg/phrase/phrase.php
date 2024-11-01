@@ -2,10 +2,10 @@
 
 /*
 
-    model/phrase/phrase.php - either a word or a triple
-    -----------------------
+    cfg/phrase/phrase.php - either a word or a triple
+    ---------------------
 
-    this is not saved in a separate table
+    this object is not stored in the database in a separate table
     e.g. to build a selector the entries are caught either from the words or triples table
 
     If the user wants to overwrite a formula result, there are two possibilities for the technical realisation
@@ -24,6 +24,21 @@
             the probably huge result table needs an extra field to indicate user overwrites which makes the use of key/value databases more complicated
 
     There is a word increase and a formula that calculates the increase, so the solution 1. with formula link words is implemented
+
+    The main sections of this object are
+    - db const:          const for the database link
+    - construct and map: including the mapping of the db row to this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - modify:            change potentially all variables of this word object
+    - cast:              create an api object and set the vars from an api json
+    - load:              database access object (DAO) functions
+    - sql fields:        field names for sql
+    - load related:      load realted objects from the database
+    - data retrieval:    load realted lists from the database
+    - classification:    information what
+    - information:       functions to make code easier to read
+    - save:              manage to update the database
+
 
     This file is part of zukunft.com - calc with words
 
@@ -79,7 +94,7 @@ class phrase extends combine_named
 {
 
     /*
-     * database link
+     * db const
      */
 
     // the database and JSON object duplicate field names for combined word and triples mainly to link phrases
@@ -443,6 +458,7 @@ class phrase extends combine_named
         }
     }
 
+
     /*
      * cast
      */
@@ -539,8 +555,86 @@ class phrase extends combine_named
 
 
     /*
-     * loading / database access object (DAO) functions
+     * load
      */
+
+    /**
+     * test if the name is used already via view table and just load the main parameters
+     * @param string $name the name of the phrase and the related word, triple, formula or verb
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_name(string $name): int
+    {
+        global $db_con;
+
+        log_debug($name);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
+        return $this->load($qp);
+    }
+
+    /**
+     * load the main phrase parameters by id from the database phrase view
+     * @param int $id the id of the phrase as defined in the database phrase view
+     *                must be a negative id for triples
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_id(int $id): int
+    {
+        global $db_con;
+
+        log_debug($id);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
+        return $this->load($qp);
+    }
+
+    /**
+     * load a phrase from the database view
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int the id of the object found and zero if nothing is found
+     */
+    private
+    function load(sql_par $qp): int
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper_sandbox($db_row);
+        return $this->id();
+    }
+
+    /**
+     * create an SQL statement to retrieve a phrase by name from the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param string $name the name of the phrase and the related word, triple, formula or verb
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_name(sql $sc, string $name): sql_par
+    {
+        $qp = $this->load_sql($sc, sql_db::FLD_NAME);
+        $sc->add_where(phrase::FLD_NAME, $name);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a phrase by phrase id (not the object id) from the database
+     *
+     * @param sql $sc with the target db_type set
+     * @param int $id the id of the phrase as defined in the database phrase view
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_id(sql $sc, int $id): sql_par
+    {
+        $qp = $this->load_sql($sc, sql_db::FLD_ID);
+        $sc->add_where(phrase::FLD_ID, $id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
 
     /**
      * create the common part of an SQL statement to retrieve a phrase from the database view
@@ -566,39 +660,20 @@ class phrase extends combine_named
         return $qp;
     }
 
-    /**
-     * create an SQL statement to retrieve a phrase by phrase id (not the object id) from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param int $id the id of the phrase as defined in the database phrase view
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_id(sql $sc, int $id): sql_par
-    {
-        $qp = $this->load_sql($sc, sql_db::FLD_ID);
-        $sc->add_where(phrase::FLD_ID, $id);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
 
-        return $qp;
+    /*
+     * sql fields
+     */
+
+    function name_field(): string
+    {
+        return self::FLD_NAME;
     }
 
-    /**
-     * create an SQL statement to retrieve a phrase by name from the database
-     *
-     * @param sql $sc with the target db_type set
-     * @param string $name the name of the phrase and the related word, triple, formula or verb
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_name(sql $sc, string $name): sql_par
-    {
-        $qp = $this->load_sql($sc, sql_db::FLD_NAME);
-        $sc->add_where(phrase::FLD_NAME, $name);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
 
-        return $qp;
-    }
+    /*
+     * load related
+     */
 
     function load_obj(): bool
     {
@@ -621,55 +696,6 @@ class phrase extends combine_named
         } else {
             return false;
         }
-    }
-
-    /**
-     * load a phrase from the database view
-     * @param sql_par $qp the query parameters created by the calling function
-     * @return int the id of the object found and zero if nothing is found
-     */
-    private
-    function load(sql_par $qp): int
-    {
-        global $db_con;
-
-        $db_row = $db_con->get1($qp);
-        $this->row_mapper_sandbox($db_row);
-        return $this->id();
-    }
-
-    /**
-     * load the main phrase parameters by id from the database phrase view
-     * @param int $id the id of the phrase as defined in the database phrase view
-     *                must be a negative id for triples
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id): int
-    {
-        global $db_con;
-
-        log_debug($id);
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
-        return $this->load($qp);
-    }
-
-    /**
-     * test if the name is used already via view table and just load the main parameters
-     * @param string $name the name of the phrase and the related word, triple, formula or verb
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_name(string $name): int
-    {
-        global $db_con;
-
-        log_debug($name);
-        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
-        return $this->load($qp);
-    }
-
-    function name_field(): string
-    {
-        return self::FLD_NAME;
     }
 
     /**
@@ -772,165 +798,6 @@ class phrase extends combine_named
         return $frm;
     }
 
-
-    /*
-     * classification
-     */
-
-    /**
-     * @return bool true if this phrase is a word or supposed to be a word
-     */
-    function is_word(): bool
-    {
-        $result = false;
-        if ($this->obj() !== null) {
-            if ($this->obj()::class == word::class or $this->obj()::class == word_dsp::class) {
-                $result = true;
-            }
-        } else {
-            if ($this->id() > 0) {
-                $result = true;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * @return bool true if this phrase is a triple or supposed to be a triple
-     */
-    function is_triple(): bool
-    {
-        $result = false;
-        if (isset($this->obj)) {
-            if (get_class($this->obj) == triple::class) {
-                $result = true;
-            }
-        } else {
-            if ($this->id() < 0) {
-                $result = true;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * @return bool true if this phrase is a formula or supposed to be a formula
-     */
-    private
-    function is_formula(): bool
-    {
-        $result = false;
-        if (isset($this->obj)) {
-            if (get_class($this->obj) == formula::class) {
-                $result = true;
-            }
-        } else {
-            if ($this->id() < 0) {
-                $result = true;
-            }
-        }
-        return $result;
-    }
-
-
-    /*
-     * conversion
-     */
-
-    /**
-     * TODO dismiss or base on the api message
-     * @return word_dsp
-     */
-    protected
-    function get_word_dsp(): word_dsp
-    {
-        $wrd_dsp = new word($this->user());
-        if (get_class($this->obj) == word_dsp::class) {
-            $wrd_dsp = $this->obj;
-        } elseif (get_class($this->obj) == word::class) {
-            $wrd_dsp = new word_dsp($this->obj()->api_json());
-        }
-        return $wrd_dsp;
-    }
-
-    /**
-     * TODO dismiss
-     * @return word_dsp
-     */
-    protected
-    function get_triple_dsp(): triple_dsp
-    {
-        $lnk_dsp = new triple_dsp();
-        if (get_class($this->obj) == triple_dsp::class) {
-            $lnk_dsp = $this->obj;
-        } elseif (get_class($this->obj) == triple::class) {
-            $lnk_dsp = $this->obj()->dsp_obj();
-        }
-        return $lnk_dsp;
-    }
-
-    /**
-     * get the related display object
-     * so either the word display object
-     * or the triple display object
-     */
-    function get_dsp_obj(): ?phrase_dsp
-    {
-        if ($this->is_word()) {
-            $wrd = $this->get_word_dsp();
-            return $wrd->phrase();
-        } elseif ($this->is_triple()) {
-            $trp = $this->get_triple_dsp();
-            return $trp->phrase();
-        } else {
-            return null;
-        }
-    }
-
-    /*
-     * information
-     */
-
-    /**
-     * check if the word in the database needs to be updated
-     * e.g. for import  if this word has only the name set, the protection should not be updated in the database
-     *
-     * @param phrase $db_phr the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the database
-     */
-    function needs_db_update(phrase $db_phr): bool
-    {
-        if ($this->is_word() and $db_phr->is_word()) {
-            $wrd = $this->obj();
-            $db_wrd = $this->obj();
-            return $wrd->needs_db_update($db_wrd);
-        } elseif ($this->is_triple() and $db_phr->is_triple()) {
-            $trp = $this->obj();
-            $db_trp = $this->obj();
-            return $trp->needs_db_update($db_trp);
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * @param string $type the ENUM string of the fixed type
-     * @returns bool true if the word has the given type
-     */
-    function is_type(string $type): bool
-    {
-        if ($this->is_word()) {
-            $wrd = $this->obj();
-            return $wrd->is_type($type);
-        } elseif ($this->is_triple()) {
-            $trp = $this->obj();
-            return $trp->is_type($type);
-        } else {
-            return false;
-        }
-    }
-
-
     /*
      * data retrieval
      */
@@ -1004,105 +871,6 @@ class phrase extends combine_named
         return $lst;
     }
 
-
-    /*
-     * display functions
-     */
-
-    // return the name (just because all objects should have a name function)
-    function dsp_name(): string
-    {
-        //$result = $this->name();
-        return '"' . $this->name() . '"';
-    }
-
-    function name_linked(): string
-    {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '">' . $this->name() . '</a>';
-    }
-
-    function dsp_tbl(int $intent = 0): string
-    {
-        $result = '';
-        if ($this != null) {
-            if ($this->obj != null) {
-                // the function dsp_tbl should exist for words and triples
-                if (get_class($this->obj) == word::class) {
-                    $dsp_obj = new word_dsp($this->obj->api_json());
-                    $result = $dsp_obj->td('', '', $intent);
-                } else {
-                    $result = $this->obj->dsp_tbl($intent);
-                }
-            }
-        }
-        log_debug('for ' . $this->dsp_id());
-        return $result;
-    }
-
-    function dsp_tbl_row(): string
-    {
-        $result = '';
-        // the function dsp_tbl_row should exist for words and triples
-        if (isset($this->obj)) {
-            $result = $this->obj->dsp_tbl_row();
-        } else {
-            log_err('The phrase object is missing for ' . $this->dsp_id() . '.', "result->load");
-        }
-        return $result;
-    }
-
-    /**
-     * get the related phrases
-     * @param foaf_direction $direction up to select the parent phrases and dow for the children
-     * @param verb_list|null $link_types to filter predicates on database level
-     * @return phrase_list with the related phrases
-     */
-    function phrases(foaf_direction $direction, ?verb_list $link_types = null): phrase_list
-    {
-        $phr_lst = new phrase_list($this->user());
-        if ($link_types == null) {
-            $link_types = $this->vrb_lst($direction);
-        }
-        if ($link_types != null) {
-            foreach ($link_types->lst() as $vrb) {
-                $add_lst = new phrase_list($this->user());
-                $add_lst->load_by_phr($this, $vrb, $direction);
-                $phr_lst->merge($add_lst);
-            }
-        }
-        return $phr_lst;
-    }
-
-    function dsp_graph(foaf_direction $direction, ?verb_list $link_types = null, string $back = ''): string
-    {
-        $phr_lst = $this->phrases($direction, $link_types);
-        $phr_lst_dsp = new phrase_list_dsp($phr_lst->api_json());
-        $phr_dsp = new phrase_dsp($this->api_json());
-        return $phr_lst_dsp->dsp_graph($phr_dsp, $back);
-    }
-
-    /**
-     * return the html code to display a word
-     */
-    function display(): string
-    {
-        return '<a href="/http/view.php?words=' . $this->id() . '">' . $this->name() . '</a>';
-    }
-
-    /**
-     * simply to display a single word or triple link
-     */
-    function display_linked(): string
-    {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '">' . $this->name() . '</a>';
-    }
-
-// similar to dsp_link
-    function dsp_link_style($style): string
-    {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '" class="' . $style . '">' . $this->name() . '</a>';
-    }
-
     /**
      * helper function that returns a phrase list object just with this phrase object
      * @return phrase_list
@@ -1140,13 +908,119 @@ class phrase extends combine_named
         return $phr_lst;
     }
 
+
+    /*
+     * classification
+     */
+
+    /**
+     * @return bool true if this phrase is a word or supposed to be a word
+     */
+    function is_word(): bool
+    {
+        $result = false;
+        if ($this->obj() !== null) {
+            if ($this->obj()::class == word::class or $this->obj()::class == word_dsp::class) {
+                $result = true;
+            }
+        } else {
+            if ($this->id() > 0) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool true if this phrase is a triple or supposed to be a triple
+     */
+    function is_triple(): bool
+    {
+        $result = false;
+        if (isset($this->obj)) {
+            if (get_class($this->obj) == triple::class) {
+                $result = true;
+            }
+        } else {
+            if ($this->id() < 0) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool true if this phrase is a formula or supposed to be a formula
+     */
+    private
+    function is_formula(): bool
+    {
+        $result = false;
+        if (isset($this->obj)) {
+            if (get_class($this->obj) == formula::class) {
+                $result = true;
+            }
+        } else {
+            if ($this->id() < 0) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+
+    /*
+     * information
+     */
+
+    /**
+     * check if the word in the database needs to be updated
+     * e.g. for import  if this word has only the name set, the protection should not be updated in the database
+     *
+     * @param phrase $db_phr the word as saved in the database
+     * @return bool true if this word has infos that should be saved in the database
+     */
+    function needs_db_update(phrase $db_phr): bool
+    {
+        if ($this->is_word() and $db_phr->is_word()) {
+            $wrd = $this->obj();
+            $db_wrd = $this->obj();
+            return $wrd->needs_db_update($db_wrd);
+        } elseif ($this->is_triple() and $db_phr->is_triple()) {
+            $trp = $this->obj();
+            $db_trp = $this->obj();
+            return $trp->needs_db_update($db_trp);
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * @param string $type the ENUM string of the fixed type
+     * @returns bool true if the word has the given type
+     */
+    function is_type(string $type): bool
+    {
+        if ($this->is_word()) {
+            $wrd = $this->obj();
+            return $wrd->is_type($type);
+        } elseif ($this->is_triple()) {
+            $trp = $this->obj();
+            return $trp->is_type($type);
+        } else {
+            return false;
+        }
+    }
+
+
+
     public
     static function cmp($a, $b): string
     {
         return strcmp($a->name(), $b->name());
     }
 
-// returns a list of words that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
+    // returns a list of words that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
     /*  function is () {
         if ($this->id() > 0) {
           $wrd_lst = $this->parents();
@@ -1157,8 +1031,8 @@ class phrase extends combine_named
         return $wrd_lst;
       } */
 
-// true if the word id has an "is a" relation to the related word
-// e.g.for the given word string
+    // true if the word id has an "is a" relation to the related word
+    // e.g.for the given word string
     function is_a($related_phrase): bool
     {
         log_debug($this->dsp_id() . ',' . $related_phrase->name);
@@ -1295,13 +1169,14 @@ class phrase extends combine_named
         return $sql;
     }
 
+
     /*
      * display functions
      */
 
-// create a selector that contains the words and triples
-// if one form contains more than one selector, $pos is used for identification
-// $type is a word to preselect the list to only those phrases matching this type
+    // create a selector that contains the words and triples
+    // if one form contains more than one selector, $pos is used for identification
+    // $type is a word to preselect the list to only those phrases matching this type
     function dsp_selector(?phrase_dsp $type, $form_name, $pos, string $class, $back): string
     {
         // TODO include pattern in the call
@@ -1335,13 +1210,6 @@ class phrase extends combine_named
         return $phr_lst->selector($field_name, $form_name, $label, '', $this->id());
     }
 
-// button to add a new word similar to this phrase
-    function btn_add($back)
-    {
-        $wrd = $this->main_word();
-        return $wrd->btn_add($back);
-    }
-
 // returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
     function is_mainly()
     {
@@ -1355,7 +1223,7 @@ class phrase extends combine_named
     }
 
     /*
-     * word replication functions
+     * forwards
      */
 
     function is_time(): bool
@@ -1398,17 +1266,6 @@ class phrase extends combine_named
             $result = $wrd->is_percent();
         }
         return $result;
-    }
-
-// create a selector that contains the time words
-// e.g. Q1 can be the first Quarter of a year and in this case the four quarters of a year should be the default selection
-//      if this is the triple "Q1 of 2018" a list of triples of this year should be the default selection
-//      if Q1 is a wikidata qualifier a general time selector should be shown
-    function dsp_time_selector($type, $form_name, $pos, $back)
-    {
-
-        $wrd = $this->main_word();
-        return $wrd->dsp_time_selector($type, $form_name, $pos, $back);
     }
 
     /**
@@ -1580,6 +1437,181 @@ class phrase extends combine_named
         } else {
             return 'phrase with null object';
         }
+    }
+
+    /*
+     * display cast
+     */
+
+    /**
+     * TODO dismiss or base on the api message
+     * @return word_dsp
+     */
+    protected
+    function get_word_dsp(): word_dsp
+    {
+        $wrd_dsp = new word($this->user());
+        if (get_class($this->obj) == word_dsp::class) {
+            $wrd_dsp = $this->obj;
+        } elseif (get_class($this->obj) == word::class) {
+            $wrd_dsp = new word_dsp($this->obj()->api_json());
+        }
+        return $wrd_dsp;
+    }
+
+    /**
+     * TODO dismiss
+     * @return word_dsp
+     */
+    protected
+    function get_triple_dsp(): triple_dsp
+    {
+        $lnk_dsp = new triple_dsp();
+        if (get_class($this->obj) == triple_dsp::class) {
+            $lnk_dsp = $this->obj;
+        } elseif (get_class($this->obj) == triple::class) {
+            $lnk_dsp = $this->obj()->dsp_obj();
+        }
+        return $lnk_dsp;
+    }
+
+    /**
+     * get the related display object
+     * so either the word display object
+     * or the triple display object
+     */
+    function get_dsp_obj(): ?phrase_dsp
+    {
+        if ($this->is_word()) {
+            $wrd = $this->get_word_dsp();
+            return $wrd->phrase();
+        } elseif ($this->is_triple()) {
+            $trp = $this->get_triple_dsp();
+            return $trp->phrase();
+        } else {
+            return null;
+        }
+    }
+
+    /*
+     * display functions
+     */
+
+    // return the name (just because all objects should have a name function)
+    function dsp_name(): string
+    {
+        //$result = $this->name();
+        return '"' . $this->name() . '"';
+    }
+
+    function name_linked(): string
+    {
+        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '">' . $this->name() . '</a>';
+    }
+
+    function dsp_tbl(int $intent = 0): string
+    {
+        $result = '';
+        if ($this != null) {
+            if ($this->obj != null) {
+                // the function dsp_tbl should exist for words and triples
+                if (get_class($this->obj) == word::class) {
+                    $dsp_obj = new word_dsp($this->obj->api_json());
+                    $result = $dsp_obj->td('', '', $intent);
+                } else {
+                    $result = $this->obj->dsp_tbl($intent);
+                }
+            }
+        }
+        log_debug('for ' . $this->dsp_id());
+        return $result;
+    }
+
+    function dsp_tbl_row(): string
+    {
+        $result = '';
+        // the function dsp_tbl_row should exist for words and triples
+        if (isset($this->obj)) {
+            $result = $this->obj->dsp_tbl_row();
+        } else {
+            log_err('The phrase object is missing for ' . $this->dsp_id() . '.', "result->load");
+        }
+        return $result;
+    }
+
+    /**
+     * get the related phrases
+     * @param foaf_direction $direction up to select the parent phrases and dow for the children
+     * @param verb_list|null $link_types to filter predicates on database level
+     * @return phrase_list with the related phrases
+     */
+    function phrases(foaf_direction $direction, ?verb_list $link_types = null): phrase_list
+    {
+        $phr_lst = new phrase_list($this->user());
+        if ($link_types == null) {
+            $link_types = $this->vrb_lst($direction);
+        }
+        if ($link_types != null) {
+            foreach ($link_types->lst() as $vrb) {
+                $add_lst = new phrase_list($this->user());
+                $add_lst->load_by_phr($this, $vrb, $direction);
+                $phr_lst->merge($add_lst);
+            }
+        }
+        return $phr_lst;
+    }
+
+    function dsp_graph(foaf_direction $direction, ?verb_list $link_types = null, string $back = ''): string
+    {
+        $phr_lst = $this->phrases($direction, $link_types);
+        $phr_lst_dsp = new phrase_list_dsp($phr_lst->api_json());
+        $phr_dsp = new phrase_dsp($this->api_json());
+        return $phr_lst_dsp->dsp_graph($phr_dsp, $back);
+    }
+
+    /**
+     * return the html code to display a word
+     */
+    function display(): string
+    {
+        return '<a href="/http/view.php?words=' . $this->id() . '">' . $this->name() . '</a>';
+    }
+
+    /**
+     * simply to display a single word or triple link
+     */
+    function display_linked(): string
+    {
+        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '">' . $this->name() . '</a>';
+    }
+
+    /**
+     * similar to dsp_link
+     *
+     * @param $style
+     * @return string
+     */
+    function dsp_link_style($style): string
+    {
+        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '" class="' . $style . '">' . $this->name() . '</a>';
+    }
+
+    // create a selector that contains the time words
+    // e.g. Q1 can be the first Quarter of a year and in this case the four quarters of a year should be the default selection
+    //      if this is the triple "Q1 of 2018" a list of triples of this year should be the default selection
+    //      if Q1 is a wikidata qualifier a general time selector should be shown
+    function dsp_time_selector($type, $form_name, $pos, $back)
+    {
+
+        $wrd = $this->main_word();
+        return $wrd->dsp_time_selector($type, $form_name, $pos, $back);
+    }
+
+    // button to add a new word similar to this phrase
+    function btn_add($back)
+    {
+        $wrd = $this->main_word();
+        return $wrd->btn_add($back);
     }
 
 }

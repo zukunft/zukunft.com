@@ -1,0 +1,10 @@
+{
+  "id": 1,
+  "share": 3,
+  "protection": 2,
+  "name": "Mathematics",
+  "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
+  "type_id": 1,
+  "plural": "Mathematics",
+  "class": "word"
+}
