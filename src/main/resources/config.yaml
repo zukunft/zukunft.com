@@ -20,7 +20,24 @@ zukunft.com:
       value table:
         table name:
           max phrase: 3
-          tooltip-comment: "maximal number of phrases that can be included in the table name for a seperate value table e.g. if the system detects that a seperate table for the inhabitants at the end of the year of a city will increase speed and reduce time the table name can be inhabitants-city-year and each row has the city name and the columns have the year names"
+          tooltip-comment: "maximal number of phrases that can be included in the table name for a separate value table e.g. if the system detects that a separate table for the inhabitants at the end of the year of a city will increase speed and reduce time the table name can be inhabitants-city-year and each row has the city name and the columns have the year names"
+    user:
+      tooltip-comment: "settings that can each user can can set individually"
+      default:
+        tooltip-comment: "the default settings for normal users"
+        frontend:
+          tooltip-comment: "the setting for the user interface"
+          time:
+            tooltip-comment: "time related user specific settings"
+            min columns:
+              sys-conf-value: 3
+              tooltip-comment: "minimum number of same time type word to display in a table e.g. if at least 3 years exist use a table to display"
+            max columns:
+              sys-conf-value: 10
+              tooltip-comment: "maximum number of same time type word to display in a table e.g. if more the 10 years exist, by default show only the lst 10 years"
+            future percent:
+              sys-conf-value: 20
+              tooltip-comment: "the default number of future outlook e.g. if there are 10 years of hist and 3 years of outlook display 8 years of hist and 2 years outlook"
     calculation:
       block size:
         average delay:

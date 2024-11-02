@@ -202,12 +202,15 @@ class word extends sandbox_typed
     // *_COM is the tooltip for the word; to have the comments on one place the yaml is the prefered place
     const TOOLTIP_COMMENT_COM = 'keyword to read the word or triple description from the config.yaml';
     const TOOLTIP_COMMENT = 'tooltip-comment';
+    const SYS_CONF_VALUE_COM = 'keyword to read the numeric value from the config.yaml';
+    const SYS_CONF_VALUE = 'sys-conf-value';
     const THIS_SYSTEM = 'zukunft.com';
     const CONFIGURATION = 'configuration';
     const SYSTEM = 'system';
     const JOB = 'job';
     const POD = 'pod';
     const USER = 'user';
+    const FRONTEND = 'frontend';
 
     // general words used also for the system configuration that have a fixed tooltip
     const TIME = 'time';
@@ -216,24 +219,29 @@ class word extends sandbox_typed
     const YEAR_COM = 'A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.';
     const CALCULATION = 'calculation';
     const CALCULATION_COM = 'A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results';
+    const MIN = 'min';
+    const MIN_COM = 'The minimal numeric value.';
+    const MAX = 'max';
+    const MAX_COM = 'The maximal numeric value.';
     const AVERAGE = 'average';
     const AVERAGE_COM = 'The arithmetic mean – the sum of the numbers divided by how many numbers are in the list.';
+    const DEFAULT = 'default';
+    const DEFAULT_COM = 'The setting used if nothing else is specified.';
     const DATABASE = 'database';
     const DATABASE_COM = 'An organized collection of data stored and accessed electronically.';
 
     // general words used also for the system configuration where the initial tooltip is in the config.yaml
+    const VALUE = 'value';
     const VERSION = 'version';
     const RETRY = 'retry';
     const START = 'start';
     const DELAY = 'delay';
     const SEC = 'sec';
-    const MAX = 'max';
     const BLOCK = 'block';
     const SIZE = 'size';
     const INSERT = 'insert';
     const UPDATE = 'update';
     const DELETE = 'delete';
-    const VALUE = 'value';
     const TABLE = 'table';
     const NAME = 'name';
     const PHRASE = 'phrase';
@@ -242,8 +250,9 @@ class word extends sandbox_typed
     const INITIAL = 'initial';
     const ENTRY = 'entry';
     const PRESELECT = 'preselect';
-    const MIN = 'min';
     const PERCENT = 'percent';
+    const FUTURE = 'future';
+    const COLUMNS = 'columns';
     const AUTOMATIC = 'automatic';
     const CREATE = 'create';
     const VIEW = 'view';

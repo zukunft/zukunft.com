@@ -32,6 +32,7 @@
 
 namespace unit\html;
 
+use controller\controller;
 use html\html_base;
 use html\word\word as word_dsp;
 use test\test_cleanup;
@@ -53,11 +54,11 @@ class system_views
         $wrd = $t->word_dsp();
 
         // check if the system views have set
-        $msk = $html_system_views->get(word_dsp::FORM_ADD);
+        $msk = $html_system_views->get(controller::MC_WORD_ADD);
         $test_page .= $msk->show($wrd, $back) . '<br>';
 
         // TODO review and combine with read db tests
-        $t->html_view_test($test_page, word_dsp::FORM_ADD, $t);
+        $t->html_view_test($test_page, controller::MC_WORD_ADD, $t);
     }
 
 }

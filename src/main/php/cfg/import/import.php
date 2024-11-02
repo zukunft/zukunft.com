@@ -662,21 +662,22 @@ class import
             $wrd = null;
             $trp = null;
             $val = null;
-            // if the name has a space create the seperate words and use the triple
-            // if the name has a space create the seperate words and use the triple
-            if (str_contains($key, ' ')) {
-                $trp = $this->yaml_data_object_map_triple($key, $dto, $usr_trigger);
-            } else {
-                // set the name for a normal word
-                $wrd = new word($usr_trigger);
-                $wrd->set_name($key);
+            // if the name has a space create the separate words and use the triple
+            if ($key != word::SYS_CONF_VALUE) {
+                if (str_contains($key, ' ')) {
+                    $trp = $this->yaml_data_object_map_triple($key, $dto, $usr_trigger);
+                } else {
+                    // set the name for a normal word
+                    $wrd = new word($usr_trigger);
+                    $wrd->set_name($key);
+                }
             }
             if (is_array($value)) {
                 $sub_phr_lst = clone $phr_lst;
                 $dto = $this->yaml_data_object_loop($dto, $sub_phr_lst, $value, $wrd, $trp, $val, $usr_trigger);
             } else {
                 // add the final phrase
-                // if the name has a space create the seperate words and use the triple
+                // if the name has a space create the separate words and use the triple
                 if (str_contains($key, ' ')) {
                     $trp = $this->yaml_data_object_map_triple($key, $dto, $usr_trigger);
                     $dto->add_triple($trp);
@@ -709,9 +710,9 @@ class import
      * @return triple
      */
     function yaml_data_object_map_triple(
-        string           $key,
-        data_object      $dto,
-        user             $usr_trigger
+        string      $key,
+        data_object $dto,
+        user        $usr_trigger
     ): triple
     {
         $names = explode(' ', $key);

@@ -59,16 +59,6 @@ use html\word\word as word_dsp;
 class word extends sandbox_typed
 {
 
-    // default view settings
-    const TIME_MIN_COLS = 3; // minimum number of same time type word to display in a table e.g. if at least 3 years exist use a table to display
-    const TIME_MAX_COLS = 10; // maximum number of same time type word to display in a table e.g. if more the 10 years exist, by default show only the lst 10 years
-    const TIME_FUT_PCT = 20; // the default number of future outlook e.g. if there are 10 years of hist and 3 years of outlook display 8 years of hist and 2 years outlook
-
-    // the form names to change the word
-    const FORM_ADD = 'word_add';
-    const FORM_EDIT = 'word_edit';
-    const FORM_DEL = 'word_del';
-
     // the json field names in the api json message which is supposed to be the same as the var $id
     const FLD_PLURAL = 'plural';
     const FLD_PARENT = 'parent';
@@ -331,7 +321,7 @@ class word extends sandbox_typed
 
         // TODO complete
 
-        return $header . $html->form(self::FORM_ADD, $hidden_fields . $detail_row);
+        return $header . $html->form(controller::MC_WORD_ADD, $hidden_fields . $detail_row);
     }
 
     /**
@@ -359,7 +349,7 @@ class word extends sandbox_typed
             $detail_fields .= $dsp_type;
             $detail_row = $html->fr($detail_fields) . '<br>';
             $result = $header
-                . $html->form(self::FORM_EDIT, $hidden_fields . $detail_row)
+                . $html->form(controller::MC_WORD_EDIT, $hidden_fields . $detail_row)
                 . '<br>' . $dsp_graph;
         }
 
@@ -385,7 +375,7 @@ class word extends sandbox_typed
 
         // TODO complete
 
-        return $header . $html->form(self::FORM_DEL, $hidden_fields . $detail_row);
+        return $header . $html->form(controller::MC_WORD_DEL, $hidden_fields . $detail_row);
     }
 
 
@@ -653,7 +643,7 @@ class word extends sandbox_typed
             $dsp_graph,
             $dsp_log,
             $this->dsp_formula($back),
-            $this->dsp_type_selector(word_dsp::FORM_EDIT, $back),
+            $this->dsp_type_selector(controller::MC_WORD_EDIT, $back),
             $back);
     }
 

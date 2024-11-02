@@ -614,6 +614,8 @@ class triple_list extends sandbox_list_named
         $db_lst = new triple_list($this->user());
         $db_lst->load_by_names($load_list->names());
 
+        // TODO check and add missing from and to phrases (or at least report)
+
         // create any missing sql functions and insert the missing triples
         $usr_msg->add($this->insert($db_lst));
 

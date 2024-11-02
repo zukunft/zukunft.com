@@ -35,7 +35,7 @@ namespace html\system;
 class messages
 {
 
-    // text to be shon in buttons
+    // text to be shown in buttons
     const SEARCH_MAIN = 'search_main';
     const WORD_ADD = 'word_add';
     const WORD_EDIT = 'word_edit';
