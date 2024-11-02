@@ -320,14 +320,16 @@ class html_base
      * c for the related terms (the term used for all components)
      * other related phrases or term are set in the components
      *
+     * @param int|string $view the code_id or the database id of the view
+     * @param int|string $id the database id or name of the object e.g. 1 for the word Mathematics
      * @param string $obj_name the object that should be shown e.g. a value
-     * @param int|string $id the database id of the object e.g. 1 for the word Mathematics
      * @param string|null $back the back trace calls to return to the original url and for undo
      * @param string|array $par either the array with the parameters or the parameter objects e.g. a phrase
      * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
      * @return string the created url
      */
-    function url_new(int|string   $id = 0,
+    function url_new(int|string   $view,
+                     int|string   $id = 0,
                      string       $obj_name = '',
                      ?string      $back = '',
                      string|array $par = '',
@@ -338,22 +340,23 @@ class html_base
             $result = rest_ctrl::PATH_FIXED . $id . rest_ctrl::EXT . '?';
         } else {
             $result = rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
+            $result .= rest_ctrl::URL_SYMBOL_VIEW . '=' . $view;
             if (is_string($id)) {
                 if ($par != '') {
-                    $result .= '?' . rest_ctrl::URL_SYMBOL_OBJECT . '=' . $obj_name;
+                    $result .= rest_ctrl::URL_SYMBOL_OBJECT . '=' . $obj_name;
                 } else {
-                    $result .= '?id=' . $id;
+                    $result .= '&id=' . $id;
                 }
                 if ($id_ext != '') {
                     $result .= '&' . $id_ext;
                 }
             }
-            $result .= '?' . rest_ctrl::URL_SYMBOL_OBJECT . '=' . $obj_name;
+            $result .= '&' . rest_ctrl::URL_SYMBOL_OBJECT . '=' . $obj_name;
             if ($id <> 0) {
                 if ($par != '') {
-                    $result .= '?' . rest_ctrl::URL_SYMBOL_OBJECT . '=' . $obj_name;
+                    $result .= '&' . rest_ctrl::URL_SYMBOL_OBJECT . '=' . $obj_name;
                 } else {
-                    $result .= '?id=' . $id;
+                    $result .= '&id=' . $id;
                 }
                 if ($id_ext != '') {
                     $result .= '&' . $id_ext;

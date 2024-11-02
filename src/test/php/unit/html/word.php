@@ -50,6 +50,7 @@ class word
         $test_page = $html->text_h2('Word display test');
         $test_page .= 'with tooltip: ' . $wrd->display() . '<br>';
         $test_page .= 'with link: ' . $wrd->display_linked() . '<br>';
+        $test_page .= 'add button: ' . $wrd->btn_add() . '<br>';
         $test_page .= 'del button: ' . $wrd->btn_del() . '<br>';
         $test_page .= 'table<br>';
         $test_page .= $html->tbl($wrd->th() . $wrd_pi->tr());

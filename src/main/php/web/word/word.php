@@ -40,6 +40,7 @@ use cfg\db\sql_db;
 use cfg\foaf_direction;
 use cfg\phrase_type;
 use cfg\verb_list;
+use controller\controller;
 use html\html_selector;
 use html\rest_ctrl;
 use html\button;
@@ -418,6 +419,16 @@ class word extends sandbox_typed
     /*
      * buttons
      */
+
+    /**
+     * @returns string the html code to display a bottom to create anew word for the current user
+     */
+    function btn_add(string $back = ''): string
+    {
+        $html = new html_base();
+        $url = $html->url_new(controller::MC_WORD_ADD, $this->id(), rest_ctrl::WORD, $back);
+        return (new button($url, $back))->del(messages::WORD_ADD);
+    }
 
     /**
      * @returns string the html code to display a bottom to exclude the word for the current user
