@@ -48,6 +48,7 @@ use html\button;
 use html\sandbox\combine_named as combine_named_dsp;
 use html\html_base;
 use html\system\messages;
+use html\user\user_message;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
@@ -62,20 +63,21 @@ class phrase extends combine_named_dsp
     /**
      * set the vars of this phrase html display object bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json(string $json_api_msg): void
+    function set_from_json(string $json_api_msg): user_message
     {
-        $this->set_from_json_array(json_decode($json_api_msg, true));
+        return $this->set_from_json_array(json_decode($json_api_msg, true));
     }
 
     /**
      * set the vars of this phrase frontend object bases on the api json array
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
+        $usr_msg = new user_message();
         if (array_key_exists(combine_object_api::FLD_CLASS, $json_array)) {
             if ($json_array[combine_object_api::FLD_CLASS] == phrase_api::CLASS_WORD) {
                 $wrd_dsp = new word_dsp();
@@ -88,11 +90,12 @@ class phrase extends combine_named_dsp
                 // switch the phrase id to the object id
                 $this->set_id($trp_dsp->id());
             } else {
-                log_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a phrase');
+                $usr_msg->add_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a phrase');
             }
         } else {
-            log_err('Json class missing, but expected for a phrase');
+            $usr_msg->add_err('Json class missing, but expected for a phrase');
         }
+        return $usr_msg;
     }
 
     function set_phrase_obj(word_dsp|triple_dsp|null $obj = null): void

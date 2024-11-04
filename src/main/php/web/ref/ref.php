@@ -37,6 +37,7 @@ namespace html\ref;
 use api\api;
 use html\sandbox\db_object as db_object_dsp;
 use html\phrase\phrase as phrase_dsp;
+use html\user\user_message;
 use html\word\word as word_dsp;
 use html\ref\source as source_dsp;
 
@@ -80,11 +81,11 @@ class ref extends db_object_dsp
      * set the vars of this source frontend object bases on the api json array
      * because called from the constructor the null value must be set if the parameter is missing
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
+        $usr_msg = parent::set_from_json_array($json_array);
         if (array_key_exists(api::FLD_PHRASE, $json_array)) {
             $phr = new phrase_dsp();
             $wrd = new word_dsp();
@@ -121,6 +122,7 @@ class ref extends db_object_dsp
         } else {
             $this->set_description(null);
         }
+        return $usr_msg;
     }
 
     function set_phrase(phrase_dsp $phr = null): void

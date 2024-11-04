@@ -51,13 +51,13 @@ use html\button;
 use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;
-use html\message;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\term as term_dsp;
 use html\result\result as result_dsp;
 use html\sandbox\sandbox_typed;
 use html\system\messages;
+use html\user\user_message;
 use html\word\word as word_dsp;
 use shared\library;
 
@@ -80,25 +80,14 @@ class formula extends sandbox_typed
      */
 
     /**
-     * repeat here the sandbox object function to force to include all formula object fields
-     * @param array $json_array an api single object json message
-     * @return void
-     */
-    function set_obj_from_json_array(array $json_array): void
-    {
-        $wrd = new formula();
-        $wrd->set_from_json_array($json_array);
-    }
-
-    /**
      * set the vars this formula bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
+        $usr_msg = parent::set_from_json_array($json_array);
         if (array_key_exists(api::FLD_USER_TEXT, $json_array)) {
             $this->set_usr_text($json_array[api::FLD_USER_TEXT]);
         } else {
@@ -119,6 +108,7 @@ class formula extends sandbox_typed
         } else {
             $this->name_wrd = null;
         }
+        return $usr_msg;
     }
 
     function set_usr_text(?string $usr_text): void

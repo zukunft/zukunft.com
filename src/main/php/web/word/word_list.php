@@ -34,6 +34,7 @@ namespace html\word;
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 
 use cfg\phrase_type;
+use html\user\user_message;
 use html\word\word as word_dsp;
 use html\html_base;
 use html\sandbox\list_dsp;
@@ -48,13 +49,11 @@ class word_list extends list_dsp
     /**
      * set the vars of a word object based on the given json
      * @param array $json_array an api single object json message
-     * @return object a word set based on the given json
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_obj_from_json_array(array $json_array): object
+    function set_from_json_array(array $json_array): user_message
     {
-        $wrd = new word_dsp();
-        $wrd->set_from_json_array($json_array);
-        return $wrd;
+        return parent::set_list_from_json($json_array, new word_dsp());
     }
 
 

@@ -39,6 +39,7 @@ use cfg\phrase_type;
 use cfg\verb;
 use html\html_base;
 use html\sandbox\list_dsp;
+use html\user\user_message;
 use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
@@ -53,24 +54,11 @@ class triple_list extends list_dsp
     /**
      * set the triples based on the given json
      * @param array $json_array an api single object json message
-     * @return object a triple set based on the given json
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_obj_from_json_array(array $json_array): object
+    function set_from_json_array(array $json_array): user_message
     {
-        if (count($json_array) > 0) {
-            if (is_array($json_array[array_key_first($json_array)])) {
-                foreach ($json_array as $trp_json) {
-                    $trp = new triple_dsp();
-                    $trp->set_from_json_array($trp_json);
-                    $this->add($trp);
-                }
-            } else {
-                $trp = new triple_dsp();
-                $trp->set_from_json_array($json_array);
-                $this->add($trp);
-            }
-        }
-        return $trp;
+        return parent::set_list_from_json($json_array, new triple_dsp());
     }
 
 

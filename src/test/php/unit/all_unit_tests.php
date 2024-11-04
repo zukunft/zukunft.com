@@ -572,7 +572,7 @@ class all_unit_tests extends test_cleanup
         global $formula_types;
 
         $html_formula_types = new formula_type_list_web();
-        $html_formula_types->set_obj_from_json_array(json_decode($formula_types->api_json(), true));
+        $html_formula_types->set_from_json_array(json_decode($formula_types->api_json(), true));
 
     }
 

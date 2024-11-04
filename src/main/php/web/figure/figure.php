@@ -49,6 +49,7 @@ use html\sandbox\combine_named as combine_named_dsp;
 use html\html_base;
 use html\phrase\phrase_group as phrase_group_dsp;
 use html\result\result as result_dsp;
+use html\user\user_message;
 use html\value\value as value_dsp;
 
 class figure extends combine_named_dsp
@@ -60,12 +61,12 @@ class figure extends combine_named_dsp
 
     /**
      * set the vars of this figure html display object bases on the api message
-     * @param string $json_api_msg an api json message as a string
-     * @return void
+     * @param array $json_array an api json message as a string
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json(string $json_api_msg): void
+    function set_from_json_array(array $json_array): user_message
     {
-        $json_array = json_decode($json_api_msg, true);
+        $usr_msg = new user_message();
         if (array_key_exists(combine_object_api::FLD_CLASS, $json_array)) {
             if ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_RESULT) {
                 $res_dsp = new result_dsp();
@@ -76,11 +77,12 @@ class figure extends combine_named_dsp
                 $val->set_from_json_array($json_array);
                 $this->set_obj($val);
             } else {
-                log_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a figure');
+                $usr_msg->add_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a figure');
             }
         } else {
-            log_err('Json class missing, but expected for a figure');
+            $usr_msg->add_err('Json class missing, but expected for a figure');
         }
+        return $usr_msg;
     }
 
     /**

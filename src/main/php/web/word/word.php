@@ -54,7 +54,7 @@ use html\phrase\term as term_dsp;
 use html\sandbox\sandbox_typed;
 use html\system\back_trace;
 use html\system\messages;
-use html\word\word as word_dsp;
+use html\user\user_message;
 
 class word extends sandbox_typed
 {
@@ -80,25 +80,14 @@ class word extends sandbox_typed
      */
 
     /**
-     * create the word object and fill it base on the json message
-     * @param array $json_array an api single object json message
-     * @return void
-     */
-    function set_obj_from_json_array(array $json_array): void
-    {
-        $wrd = new word();
-        $wrd->set_from_json_array($json_array);
-    }
-
-    /**
      * set the vars of this object bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
+        $usr_msg = parent::set_from_json_array($json_array);
         if (array_key_exists(self::FLD_PLURAL, $json_array)) {
             $this->set_plural($json_array[self::FLD_PLURAL]);
         } else {
@@ -109,6 +98,7 @@ class word extends sandbox_typed
         } else {
             $this->set_parent(null);
         }
+        return $usr_msg;
     }
 
     function set_plural(?string $plural): void

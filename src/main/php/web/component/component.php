@@ -41,6 +41,7 @@ include_once HTML_PATH . 'sheet.php';
 use api\api;
 use api\word\word as word_api;
 use html\sheet;
+use html\user\user_message;
 use shared\types\component_type;
 use cfg\db\sql_db;
 use cfg\word;
@@ -466,11 +467,11 @@ class component extends sandbox_typed
      * set the vars this component bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
+        $usr_msg = parent::set_from_json_array($json_array);
         if (array_key_exists(api::FLD_CODE_ID, $json_array)) {
             $this->code_id = $json_array[api::FLD_CODE_ID];
         } else {
@@ -486,17 +487,7 @@ class component extends sandbox_typed
         } else {
             $this->link_id = 0;
         }
-    }
-
-    /**
-     * repeat here the sandbox object function to force to include all component object fields
-     * @param array $json_array an api single object json message
-     * @return void
-     */
-    function set_obj_from_json_array(array $json_array): void
-    {
-        $wrd = new component();
-        $wrd->set_from_json_array($json_array);
+        return $usr_msg;
     }
 
 

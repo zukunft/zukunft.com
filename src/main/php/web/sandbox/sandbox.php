@@ -40,6 +40,7 @@ use api\api;
 use html\sandbox\db_object as db_object_dsp;
 use html\html_base;
 use html\user\user as user_dsp;
+use html\user\user_message;
 
 class sandbox extends db_object_dsp
 {
@@ -60,11 +61,11 @@ class sandbox extends db_object_dsp
      * do not set the default share and protection type to be able to identify forced updates to the default type
      *
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
+        $usr_msg = parent::set_from_json_array($json_array);
 
         if (array_key_exists(api::FLD_SHARE, $json_array)) {
             $this->share_id = $json_array[api::FLD_SHARE];
@@ -76,6 +77,7 @@ class sandbox extends db_object_dsp
         } else {
             $this->protection_id = null;
         }
+        return $usr_msg;
     }
 
 

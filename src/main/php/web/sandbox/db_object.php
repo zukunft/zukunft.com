@@ -41,6 +41,7 @@ use html\rest_ctrl as api_dsp;
 use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\term as term_dsp;
+use html\user\user_message;
 
 class db_object
 {
@@ -72,26 +73,28 @@ class db_object
     /**
      * set the vars of this frontend object bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json(string $json_api_msg): void
+    function set_from_json(string $json_api_msg): user_message
     {
-        $this->set_from_json_array(json_decode($json_api_msg, true));
+        return $this->set_from_json_array(json_decode($json_api_msg, true));
     }
 
     /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
+        $usr_msg = new user_message();
         if (array_key_exists(api::FLD_ID, $json_array)) {
             $this->set_id($json_array[api::FLD_ID]);
         } else {
             $this->set_id(0);
-            log_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
+        return $usr_msg;
     }
 
     function set_id(int|string $id): void

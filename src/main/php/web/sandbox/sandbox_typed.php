@@ -35,6 +35,7 @@ namespace html\sandbox;
 include_once SANDBOX_PATH . 'sandbox_named.php';
 
 use api\api;
+use html\user\user_message;
 
 class sandbox_typed extends sandbox_named
 {
@@ -53,16 +54,17 @@ class sandbox_typed extends sandbox_named
     /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
+        $usr_msg = parent::set_from_json_array($json_array);
         if (array_key_exists(api::FLD_TYPE, $json_array)) {
             $this->set_type_id($json_array[api::FLD_TYPE]);
         } else {
             $this->set_type_id();
         }
+        return $usr_msg;
     }
 
     function set_type_id(?int $type_id = null): void

@@ -39,7 +39,9 @@ include_once SHARED_PATH . 'api.php';
 include_once TYPES_PATH . 'type_object.php';
 include_once TYPES_PATH . 'protection.php';
 include_once HTML_PATH . 'html_selector.php';
+include_once WEB_USER_PATH . 'user_message.php';
 
+use html\user\user_message;
 use shared\api;
 use html\html_selector;
 use html\types\type_object as type_object_dsp;
@@ -59,13 +61,14 @@ class type_list
     /**
      * set the vars of these list display objects bases on the api json array
      * @param array $json_array an api list json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_obj_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
+        $usr_msg = new user_message();
         foreach ($json_array as $value) {
             if (!array_key_exists(api::FLD_CODE_ID, $value)) {
-                log_err('code id is missing for ' . implode(',', $value));
+                $usr_msg->add_err('code id is missing for ' . implode(',', $value));
             }
             if (array_key_exists(api::FLD_DESCRIPTION, $value)) {
                 $typ = new type_object_dsp(
@@ -83,6 +86,7 @@ class type_list
             }
             $this->add_obj($typ);
         }
+        return $usr_msg;
     }
 
     /**

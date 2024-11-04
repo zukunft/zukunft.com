@@ -36,6 +36,7 @@ include_once VIEW_PATH . 'view.php';
 
 use html\rest_ctrl;
 use html\sandbox\list_dsp;
+use html\user\user_message;
 use html\view\view as view_dsp;
 use shared\api;
 
@@ -47,15 +48,13 @@ class view_list extends list_dsp
      */
 
     /**
-     * set the vars of a view object based on the given json
+     * set the vars of the view list based on the given json
      * @param array $json_array an api single object json message
-     * @return object a view set based on the given json
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_obj_from_json_array(array $json_array): object
+    function set_from_json_array(array $json_array): user_message
     {
-        $msk = new view_dsp();
-        $msk->set_from_json_array($json_array);
-        return $msk;
+        return parent::set_list_from_json($json_array, new view_dsp());
     }
 
     function get(string $code_id): view_dsp

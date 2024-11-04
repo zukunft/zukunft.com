@@ -35,10 +35,10 @@ namespace html\system;
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_SYSTEM_PATH . 'job.php';
 
-use controller\controller;
 use html\html_base;
 use html\sandbox\list_dsp;
 use html\system\job as job_dsp;
+use html\user\user_message;
 
 class job_list extends list_dsp
 {
@@ -51,28 +51,14 @@ class job_list extends list_dsp
      * set the vars of these list display objects bases on the api json array
      * TODO can be moved to list_dsp as soon as all list api message include the header
      * @param array $json_array an api list json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
         // TODO activate Prio 3
         //$ctrl = new controller();
         //$json_array = $ctrl->check_api_msg($json_array, controller::API_BODY_SYS_LOG);
-        foreach ($json_array as $value) {
-            $this->add_obj($this->set_obj_from_json_array($value));
-        }
-    }
-
-    /**
-     * set the vars of a batch job object based on the given json
-     * @param array $json_array an api single object json message
-     * @return object a batch job set based on the given json
-     */
-    function set_obj_from_json_array(array $json_array): object
-    {
-        $job = new job_dsp();
-        $job->set_from_json_array($json_array);
-        return $job;
+        return parent::set_list_from_json($json_array, new job());
     }
 
 

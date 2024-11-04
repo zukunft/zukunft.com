@@ -2814,7 +2814,8 @@ class create_test_objects extends test_base
      */
     function dsp_obj(object $model_obj, object $dsp_obj, bool $do_save = true): object
     {
-        $dsp_obj->set_from_json($model_obj->api_obj($do_save)->get_json());
+        $api_json = $model_obj->api_obj($do_save)->get_json();
+        $dsp_obj->set_from_json($api_json);
         return $dsp_obj;
     }
 

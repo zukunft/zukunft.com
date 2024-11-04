@@ -49,6 +49,7 @@ use html\html_base;
 use html\sandbox\list_dsp;
 use html\phrase\phrase_group_list as phrase_group_list_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
+use html\user\user_message;
 use html\value\value as value_dsp;
 use html\word\word as word_dsp;
 use shared\library;
@@ -63,13 +64,11 @@ class value_list extends list_dsp
     /**
      * set the vars of a value object based on the given json
      * @param array $json_array an api single object json message
-     * @return object a value set based on the given json
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_obj_from_json_array(array $json_array): object
+    function set_from_json_array(array $json_array): user_message
     {
-        $wrd = new value_dsp();
-        $wrd->set_from_json_array($json_array);
-        return $wrd;
+        return parent::set_list_from_json($json_array, new value_dsp());
     }
 
 

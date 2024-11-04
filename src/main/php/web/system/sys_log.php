@@ -37,6 +37,7 @@ use api\api;
 use DateTimeInterface;
 use html\html_base;
 use html\log\log as log_dsp;
+use html\user\user_message;
 
 class sys_log extends log_dsp
 {
@@ -60,11 +61,11 @@ class sys_log extends log_dsp
     /**
      * set the vars of this system log html object bases on the api json array
      * @param array $json_array an api json message including the api message header
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
+        $usr_msg = parent::set_from_json_array($json_array);
         if (array_key_exists(api::FLD_TRACE, $json_array)) {
             $this->set_trace($json_array[api::FLD_TRACE]);
         } else {
@@ -89,6 +90,7 @@ class sys_log extends log_dsp
         } else {
             $this->set_owner_id(0);
         }
+        return $usr_msg;
     }
 
     function set_trace(string $trace): void

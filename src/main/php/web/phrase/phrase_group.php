@@ -39,6 +39,7 @@ include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 use api\api;
 use api\phrase\phrase as phrase_api;
 use html\sandbox\sandbox_named as sandbox_named_dsp;
+use html\user\user_message;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
@@ -84,12 +85,12 @@ class phrase_group extends sandbox_named_dsp
     /**
      * set the vars of this phrase list bases on the api json array
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
         if (array_key_exists(api::FLD_ID, $json_array)) {
-            parent::set_from_json_array($json_array);
+            $usr_msg = parent::set_from_json_array($json_array);
             if (array_key_exists(api::FLD_PHRASES, $json_array)) {
                 $phr_lst = $json_array[api::FLD_PHRASES];
                 foreach ($phr_lst as $phr_json) {
@@ -97,11 +98,13 @@ class phrase_group extends sandbox_named_dsp
                 }
             }
         } else {
+            $usr_msg = new user_message();
             // create phrase group based on the phrase list as fallback
             foreach ($json_array as $phr_json) {
                 $this->set_phrase_from_json_array($phr_json);
             }
         }
+        return $usr_msg;
     }
 
     /**

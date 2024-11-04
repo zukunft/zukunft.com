@@ -33,11 +33,10 @@
 
 namespace html\sandbox;
 
-use controller\controller;
 use html\rest_ctrl as api_dsp;
 use html\html_selector;
+use html\user\user_message;
 use shared\api;
-use shared\library;
 
 class list_dsp
 {
@@ -84,25 +83,18 @@ class list_dsp
     /**
      * set the vars of these list display objects bases on the api json array
      * @param array $json_array an api list json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_list_from_json(array $json_array, db_object|combine_object $dbo): user_message
     {
+        $usr_msg = new user_message();
         foreach ($json_array as $value) {
-            $this->add_obj($this->set_obj_from_json_array($value));
+            $new = clone $dbo;
+            $msg = $new->set_from_json_array($value);
+            $usr_msg->add($msg);
+            $this->add_obj($new, true);
         }
-    }
-
-    /**
-     * dummy function to be overwritten by the child object
-     * @param array $json_array an api single object json message
-     * @return object a combine display object with data set based on the given json
-     */
-    function set_obj_from_json_array(array $json_array): object
-    {
-        $lib = new library();
-        log_err('Unexpect use of set_obj_from_json_array ' . $lib->dsp_array($json_array) . ' of list_dsp object');
-        return $lib;
+        return $usr_msg;
     }
 
     /**

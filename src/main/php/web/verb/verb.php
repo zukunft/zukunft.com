@@ -39,6 +39,7 @@ use html\rest_ctrl as api_dsp;
 use html\html_base;
 use html\phrase\term as term_dsp;
 use html\sandbox\sandbox_named as sandbox_named_dsp;
+use html\user\user_message;
 
 class verb extends sandbox_named_dsp
 {
@@ -58,16 +59,17 @@ class verb extends sandbox_named_dsp
      * set the vars of this object bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
+        $usr_msg = parent::set_from_json_array($json_array);
         if (array_key_exists(api::FLD_CODE_ID, $json_array)) {
             $this->set_code_id($json_array[api::FLD_CODE_ID]);
         } else {
             $this->set_code_id('');
         }
+        return $usr_msg;
     }
 
     /**

@@ -31,12 +31,11 @@
 
 namespace html\ref;
 
-use controller\controller;
 use api\api;
 use html\rest_ctrl as api_dsp;
 use html\html_base;
-use html\html_selector;
 use html\sandbox\sandbox_typed;
+use html\user\user_message;
 
 class source extends sandbox_typed
 {
@@ -50,16 +49,17 @@ class source extends sandbox_typed
     /**
      * set the vars of this source frontend object bases on the api json array
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
+        $usr_msg = parent::set_from_json_array($json_array);
         if (array_key_exists(api::FLD_URL, $json_array)) {
             $this->set_url($json_array[api::FLD_URL]);
         } else {
             $this->set_url(null);
         }
+        return $usr_msg;
     }
 
     function set_url(?string $url): void

@@ -38,9 +38,9 @@ include_once API_PATH . 'controller.php';
 use api\api;
 use DateTimeInterface;
 use html\sandbox\db_object as db_object_dsp;
-use controller\controller;
 use DateTime;
 use Exception;
+use html\user\user_message;
 
 class log extends db_object_dsp
 {
@@ -62,11 +62,11 @@ class log extends db_object_dsp
     /**
      * set the vars of this log html object bases on the api json array
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
+        $usr_msg = parent::set_from_json_array($json_array);
         // TODO use empty date instead?
         $sys_log_timestamp = new DateTime();
         if (array_key_exists(api::FLD_TIME, $json_array)) {
@@ -96,6 +96,7 @@ class log extends db_object_dsp
         } else {
             $this->set_status(0);
         }
+        return $usr_msg;
     }
 
     function set_time(DateTime $iso_time_str): void

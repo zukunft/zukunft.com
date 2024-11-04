@@ -89,11 +89,11 @@ class value extends sandbox_value
     /**
      * set the vars of this object bases on the api json string
      * @param string $json_api_msg an api json message as a string
-     * @return void
+     * @return \html\user\user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json(string $json_api_msg): void
+    function set_from_json(string $json_api_msg): \html\user\user_message
     {
-        $this->set_from_json_array(json_decode($json_api_msg, true));
+        return $this->set_from_json_array(json_decode($json_api_msg, true));
     }
 
     /**

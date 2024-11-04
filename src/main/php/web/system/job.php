@@ -35,7 +35,6 @@ include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 
-use controller\controller;
 use DateTime;
 use DateTimeInterface;
 use Exception;
@@ -43,6 +42,7 @@ use api\api;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\db_object as db_object_dsp;
 use html\html_base;
+use html\user\user_message;
 
 class job extends db_object_dsp
 {
@@ -67,19 +67,18 @@ class job extends db_object_dsp
     /**
      * set the vars of this batch job html object bases on the api json array
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
+        $usr_msg = parent::set_from_json_array($json_array);
         // TODO use empty date instead?
         $request_timestamp = new DateTime();
         if (array_key_exists(api::FLD_TIME_REQUEST, $json_array)) {
             try {
                 $request_timestamp = new DateTime($json_array[api::FLD_TIME_REQUEST]);
             } catch (Exception $e) {
-                // TODO avoid loops if date writing in log_err fails ?
-                log_err('Error converting system log timestamp ' . $json_array[api::FLD_TIME_REQUEST]
+                $usr_msg->add_err('Error converting system log timestamp ' . $json_array[api::FLD_TIME_REQUEST]
                     . ' because ' . $e->getMessage());
             }
         } else {
@@ -91,8 +90,7 @@ class job extends db_object_dsp
             try {
                 $request_timestamp = new DateTime($json_array[api::FLD_TIME_START]);
             } catch (Exception $e) {
-                // TODO avoid loops if date writing in log_err fails ?
-                log_err('Error converting system log timestamp ' . $json_array[api::FLD_TIME_START]
+                $usr_msg->add_err('Error converting system log timestamp ' . $json_array[api::FLD_TIME_START]
                     . ' because ' . $e->getMessage());
             }
         }
@@ -102,8 +100,7 @@ class job extends db_object_dsp
             try {
                 $request_timestamp = new DateTime($json_array[api::FLD_TIME_END]);
             } catch (Exception $e) {
-                // TODO avoid loops if date writing in log_err fails ?
-                log_err('Error converting system log timestamp ' . $json_array[api::FLD_TIME_END]
+                $usr_msg->add_err('Error converting system log timestamp ' . $json_array[api::FLD_TIME_END]
                     . ' because ' . $e->getMessage());
             }
         }
@@ -128,6 +125,7 @@ class job extends db_object_dsp
         } else {
             $this->set_priority(0);
         }
+        return $usr_msg;
     }
 
     function set_request_time(DateTime $iso_time_str): void

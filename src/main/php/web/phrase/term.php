@@ -45,6 +45,7 @@ use api\phrase\term as term_api;
 use api\sandbox\combine_object as combine_object_api;
 use html\sandbox\combine_named as combine_named_dsp;
 use html\formula\formula as formula_dsp;
+use html\user\user_message;
 use html\verb\verb as verb_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
@@ -59,12 +60,12 @@ class term extends combine_named_dsp
 
     /**
      * set the vars of this term html display object bases on the api message
-     * @param string $json_api_msg an api json message as a string
-     * @return void
+     * @param array $json_array an api json message as a string
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json(string $json_api_msg): void
+    function set_from_json_array(array $json_array): user_message
     {
-        $json_array = json_decode($json_api_msg, true);
+        $usr_msg = new user_message();
         if ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_WORD) {
             $wrd = new word_dsp();
             $wrd->set_from_json_array($json_array);
@@ -87,8 +88,9 @@ class term extends combine_named_dsp
             $this->set_obj($frm);
             //$this->set_id($frm->id());
         } else {
-            log_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a term');
+            $usr_msg->add_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a term');
         }
+        return $usr_msg;
     }
 
     function set_term_obj(word_dsp|triple_dsp|verb_dsp|formula_dsp|null $obj): void

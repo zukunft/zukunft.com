@@ -57,6 +57,7 @@ include_once WORD_PATH . 'triple.php';
 
 // TODO remove model classes
 use api\api;
+use html\user\user_message;
 use shared\api as api_shared;
 use api\component\component as component_api;
 use html\rest_ctrl as api_dsp;
@@ -110,26 +111,15 @@ class view extends sandbox_typed
      */
 
     /**
-     * repeat here the sandbox object function to force to include all view object fields
-     * @param array $json_array an api single object json message
-     * @return void
-     */
-    function set_obj_from_json_array(array $json_array): void
-    {
-        $wrd = new view();
-        $wrd->set_from_json_array($json_array);
-    }
-
-    /**
      * set the vars this view bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
         // the root view object
-        parent::set_from_json_array($json_array);
+        $usr_msg = parent::set_from_json_array($json_array);
         if (array_key_exists(api::FLD_CODE_ID, $json_array)) {
             $this->code_id = $json_array[api::FLD_CODE_ID];
         } else {
@@ -164,6 +154,7 @@ class view extends sandbox_typed
             }
         }
         $this->cmp_lst = $cmp_lst;
+        return $usr_msg;
     }
 
     function component_list(): component_list_dsp

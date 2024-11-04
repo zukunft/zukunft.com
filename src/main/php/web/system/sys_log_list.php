@@ -39,6 +39,7 @@ use controller\controller;
 use html\html_base;
 use html\sandbox\list_dsp;
 use html\system\sys_log as sys_log_dsp;
+use html\user\user_message;
 use shared\api;
 
 class sys_log_list extends list_dsp
@@ -52,27 +53,13 @@ class sys_log_list extends list_dsp
      * set the vars of these list display objects bases on the api json array
      * TODO can be moved to list_dsp as soon as all list api message include the header
      * @param array $json_array an api list json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
         $ctrl = new controller();
         $json_array = $ctrl->check_api_msg($json_array, api::JSON_BODY_SYS_LOG);
-        foreach ($json_array as $value) {
-            $this->add_obj($this->set_obj_from_json_array($value));
-        }
-    }
-
-    /**
-     * set the vars of a system log object based on the given json
-     * @param array $json_array an api single object json message
-     * @return object a system log set based on the given json
-     */
-    function set_obj_from_json_array(array $json_array): object
-    {
-        $sys_log = new sys_log_dsp();
-        $sys_log->set_from_json_array($json_array);
-        return $sys_log;
+        return parent::set_list_from_json($json_array, new sys_log());
     }
 
 

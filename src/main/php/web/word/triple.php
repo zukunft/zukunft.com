@@ -41,6 +41,7 @@ use html\html_base;
 use html\html_selector;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\system\messages;
+use html\user\user_message;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
@@ -76,11 +77,11 @@ class triple extends sandbox_typed
     /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
+        $usr_msg = parent::set_from_json_array($json_array);
         if (array_key_exists(api::FLD_FROM, $json_array)) {
             $this->set_from_by_id($json_array[api::FLD_FROM]);
         } else {
@@ -96,6 +97,7 @@ class triple extends sandbox_typed
         } else {
             $this->set_to(new phrase_dsp());
         }
+        return $usr_msg;
     }
 
     function set(string $from, string $verb, string $to): void

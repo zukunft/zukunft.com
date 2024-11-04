@@ -64,15 +64,16 @@ class user extends user_api
     /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
+        $usr_msg = new user_message();
         if (array_key_exists(api::FLD_ID, $json_array)) {
             $this->set_id($json_array[api::FLD_ID]);
         } else {
             $this->set_id(0);
-            log_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
+            $usr_msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
         if (array_key_exists(api::FLD_NAME, $json_array)) {
             $this->name = $json_array[api::FLD_NAME];
@@ -104,6 +105,7 @@ class user extends user_api
         } else {
             $this->last_name = null;
         }
+        return $usr_msg;
     }
 
 

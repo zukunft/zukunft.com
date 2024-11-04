@@ -38,6 +38,7 @@ include_once API_SANDBOX_PATH . 'sandbox_named.php';
 
 use api\api;
 use html\rest_ctrl as api_dsp;
+use html\user\user_message;
 
 class sandbox_named extends sandbox
 {
@@ -57,11 +58,11 @@ class sandbox_named extends sandbox
     /**
      * set the vars of this named sandbox object bases on the api json array
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
+        $usr_msg = parent::set_from_json_array($json_array);
         if (array_key_exists(api::FLD_NAME, $json_array)) {
             $this->set_name($json_array[api::FLD_NAME]);
         } else {
@@ -73,6 +74,7 @@ class sandbox_named extends sandbox
         } else {
             $this->set_description(null);
         }
+        return $usr_msg;
     }
 
     function set_name(string $name): void

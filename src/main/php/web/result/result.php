@@ -39,6 +39,7 @@ use controller\controller;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\sandbox\sandbox_value;
 use html\figure\figure as figure_dsp;
+use html\user\user_message;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
 
@@ -50,25 +51,14 @@ class result extends sandbox_value
      */
 
     /**
-     * repeat here the sandbox object function to force to include all result object fields
-     * @param array $json_array an api single object json message
-     * @return void
-     */
-    function set_obj_from_json_array(array $json_array): void
-    {
-        $wrd = new result();
-        $wrd->set_from_json_array($json_array);
-    }
-
-    /**
      * set the vars of this result bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
+        $usr_msg = parent::set_from_json_array($json_array);
         /* TODO add all result fields that are not part of the sandbox value object
         if (array_key_exists(api::FLD_USER_TEXT, $json_array)) {
             $this->set_usr_text($json_array[api::FLD_USER_TEXT]);
@@ -76,6 +66,7 @@ class result extends sandbox_value
             $this->set_usr_text(null);
         }
         */
+        return $usr_msg;
     }
 
 
