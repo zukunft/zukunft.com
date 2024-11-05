@@ -161,7 +161,7 @@ class job extends db_object_seq_id_user
     public ?DateTime $start_time = null;    // start time of the job execution
     public ?DateTime $end_time = null;      // end time of the job execution
     private ?int $type_id;                  // id of the job type e.g. "update value", "add formula", ... because getting the type is fast from the preloaded type list
-    public ?int $row_id = null;             // the id of the related object e.g. if a value has been updated the group_id
+    public int|string|null $row_id = null;             // the id of the related object e.g. if a value has been updated the group_id
     public string $status;
     public string $priority;
 

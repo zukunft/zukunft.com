@@ -288,8 +288,7 @@ class formula extends sandbox_typed
     // display the history of a formula
     private function dsp_hist_log($page, $size, $call, $back): user_log_display
     {
-        global $usr;
-        $log_dsp = new user_log_display($usr);
+        $log_dsp = new user_log_display();
         $log_dsp->id = $this->id();
         $log_dsp->type = formula::class;
         $log_dsp->page = $page;

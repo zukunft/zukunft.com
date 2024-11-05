@@ -877,7 +877,7 @@ class component extends sandbox_typed
         $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display($this->user());
+        $log_dsp = new user_log_display();
         $log_dsp->id = $this->id();
         //$log_dsp->usr = $this->user();
         $log_dsp->type = component::class;
@@ -897,7 +897,7 @@ class component extends sandbox_typed
         $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display($this->user());
+        $log_dsp = new user_log_display();
         $log_dsp->id = $this->id();
         $log_dsp->type = component::class;
         $log_dsp->page = $page;

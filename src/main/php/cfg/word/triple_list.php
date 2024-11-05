@@ -615,6 +615,13 @@ class triple_list extends sandbox_list_named
         $db_lst->load_by_names($load_list->names());
 
         // TODO check and add missing from and to phrases (or at least report)
+        // get missing words (TODO check if all missing triples are already selected)
+        $wrd_lst = $this->missing_words();
+        if (!$wrd_lst->is_empty()) {
+            log_warning('words ' . $wrd_lst->dsp_id() . ' added via list insert');
+        }
+        $wrd_lst->save();
+        $this->fill_missing_verbs();
 
         // create any missing sql functions and insert the missing triples
         $usr_msg->add($this->insert($db_lst));
@@ -624,6 +631,42 @@ class triple_list extends sandbox_list_named
         // create the missing functions
         // create blocks of update function calls
 
+        return $usr_msg;
+    }
+
+    function missing_words(): word_list
+    {
+        $wrd_lst = new word_list($this->user());
+        foreach ($this->lst() as $phr) {
+            if ($phr::class == word::class) {
+                if ($phr->id() == 0) {
+                    $wrd_lst->add_by_name($phr);
+                }
+            } elseif ($phr::class == triple::class) {
+                if ($phr->from()->id() == 0) {
+                    $wrd_lst->add_by_name($phr->from()->obj());
+                }
+                if ($phr->to()->id() == 0) {
+                    $wrd_lst->add_by_name($phr->to()->obj());
+                }
+            } else {
+                log_err('missing words not yet coded for class ' . $phr::class);
+            }
+        }
+        return $wrd_lst;
+    }
+
+    function fill_missing_verbs(): user_message
+    {
+        global $verbs;
+
+        $usr_msg = new user_message();
+        foreach ($this->lst() as $phr) {
+            if ($phr::class == triple::class) {
+                $phr->set_verb($verbs->get_verb(verb::IS));
+                $usr_msg->add_message('verb for triple ' . $phr->dsp_id() . ' set to ' . verb::IS);
+            }
+        }
         return $usr_msg;
     }
 

@@ -63,11 +63,10 @@ class user_log_display
 
     /**
      * define the settings for this log object
-     * @param user $usr the user who requested to see this log
      */
-    function __construct(user $usr)
+    function __construct()
     {
-        $this->usr = $usr;
+        //$this->usr = $usr;
     }
 
     /**
