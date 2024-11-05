@@ -60,6 +60,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'term.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use cfg\db\sql_field_type;
 use shared\types\protection_type as protect_type_shared;
@@ -73,6 +74,7 @@ use cfg\db\sql_type;
 use html\html_base;
 use html\word\word as word_dsp;
 use shared\library;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class term extends combine_named
 {
@@ -722,8 +724,8 @@ class term extends combine_named
         $result = false;
         $wrd = new word($this->user());
         if ($wrd->load_by_id($id)) {
-            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $phrase_types->id(phrase_type::FORMULA_LINK));
-            if ($wrd->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
+            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $phrase_types->id(phrase_type_shared::FORMULA_LINK));
+            if ($wrd->type_id == $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
                 $result = $this->load_formula_by_id($id);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);
@@ -822,8 +824,8 @@ class term extends combine_named
         $result = false;
         $wrd = new word($this->user());
         if ($wrd->load_by_name($name)) {
-            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $phrase_types->id(phrase_type::FORMULA_LINK));
-            if ($wrd->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
+            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $phrase_types->id(phrase_type_shared::FORMULA_LINK));
+            if ($wrd->type_id == $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
                 $result = $this->load_formula_by_name($name);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);

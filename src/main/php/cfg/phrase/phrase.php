@@ -74,6 +74,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\api;
 use api\phrase\phrase as phrase_api;
@@ -88,7 +89,9 @@ use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
+use shared\enum\foaf_direction;
 use shared\library;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class phrase extends combine_named
 {
@@ -1258,7 +1261,7 @@ class phrase extends combine_named
 
         $result = false;
         if ($this->obj != null) {
-            if ($this->obj->type_id == $phrase_types->id(phrase_type::PERCENT)) {
+            if ($this->obj->type_id == $phrase_types->id(phrase_type_shared::PERCENT)) {
                 $result = true;
             }
         } else {

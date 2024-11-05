@@ -34,17 +34,19 @@ namespace unit;
 
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once WEB_WORD_PATH . 'word_list.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
-use cfg\foaf_direction;
 use cfg\phrase_type;
 use cfg\verb;
 use cfg\word;
 use cfg\word_list;
 use html\word\word_list as word_list_dsp;
+use shared\enum\foaf_direction;
 use shared\library;
+use shared\types\phrase_type AS phrase_type_shared;
 use test\test_cleanup;
 
 class word_list_tests
@@ -141,23 +143,23 @@ class word_list_tests
         $wrd_time = new word($usr);
         $wrd_time->set_id(4);
         $wrd_time->set_name('time_word');
-        $wrd_time->type_id = $phrase_types->id(phrase_type::TIME);
+        $wrd_time->type_id = $phrase_types->id(phrase_type_shared::TIME);
         $wrd_time2 = new word($usr);
         $wrd_time2->set_id(5);
         $wrd_time2->set_name('time_word2');
-        $wrd_time2->type_id = $phrase_types->id(phrase_type::TIME);
+        $wrd_time2->type_id = $phrase_types->id(phrase_type_shared::TIME);
         $wrd_scale = new word($usr);
         $wrd_scale->set_id(6);
         $wrd_scale->set_name('scale_word');
-        $wrd_scale->type_id = $phrase_types->id(phrase_type::SCALING);
+        $wrd_scale->type_id = $phrase_types->id(phrase_type_shared::SCALING);
         $wrd_percent = new word($usr);
         $wrd_percent->set_id(7);
         $wrd_percent->set_name('percent_word');
-        $wrd_percent->type_id = $phrase_types->id(phrase_type::PERCENT);
+        $wrd_percent->type_id = $phrase_types->id(phrase_type_shared::PERCENT);
         $wrd_measure = new word($usr);
         $wrd_measure->set_id(8);
         $wrd_measure->set_name('measure_word');
-        $wrd_measure->type_id = $phrase_types->id(phrase_type::MEASURE);
+        $wrd_measure->type_id = $phrase_types->id(phrase_type_shared::MEASURE);
 
         // merge two lists
         $wrd_lst = new word_list($usr);

@@ -61,6 +61,7 @@ use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use shared\enum\foaf_direction;
 
 class triple_list extends sandbox_list_named
 {

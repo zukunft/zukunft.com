@@ -42,11 +42,12 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 
+use api\verb\verb as verb_api;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use api\verb\verb as verb_api;
 use html\html_base;
+use shared\enum\foaf_direction;
 use shared\library;
 
 global $verbs;

@@ -32,6 +32,8 @@
 
 namespace api\word;
 
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+
 use api\api;
 use api\word\word as word_api;
 use api\phrase\phrase as phrase_api;
@@ -40,6 +42,7 @@ use api\sandbox\sandbox_typed as sandbox_typed_api;
 use api\verb\verb as verb_api;
 use cfg\phrase_type;
 use cfg\word as word_cfg;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class triple extends sandbox_typed_api
 {
@@ -236,7 +239,7 @@ class triple extends sandbox_typed_api
      */
     function is_time(): bool
     {
-        return $this->is_type(phrase_type::TIME);
+        return $this->is_type(phrase_type_shared::TIME);
     }
 
     /**
@@ -244,7 +247,7 @@ class triple extends sandbox_typed_api
      */
     function is_time_jump(): bool
     {
-        return $this->is_type(phrase_type::TIME_JUMP);
+        return $this->is_type(phrase_type_shared::TIME_JUMP);
     }
 
     /**
@@ -254,7 +257,7 @@ class triple extends sandbox_typed_api
      */
     function is_measure(): bool
     {
-        return $this->is_type(phrase_type::MEASURE);
+        return $this->is_type(phrase_type_shared::MEASURE);
     }
 
     /**
@@ -263,8 +266,8 @@ class triple extends sandbox_typed_api
     function is_scaling(): bool
     {
         $result = false;
-        if ($this->is_type(phrase_type::SCALING)
-            or $this->is_type(phrase_type::SCALING_HIDDEN)) {
+        if ($this->is_type(phrase_type_shared::SCALING)
+            or $this->is_type(phrase_type_shared::SCALING_HIDDEN)) {
             $result = true;
         }
         return $result;
@@ -275,7 +278,7 @@ class triple extends sandbox_typed_api
      */
     function is_percent(): bool
     {
-        return $this->is_type(phrase_type::PERCENT);
+        return $this->is_type(phrase_type_shared::PERCENT);
     }
 
     /**
@@ -284,7 +287,7 @@ class triple extends sandbox_typed_api
     function is_hidden(): bool
     {
         $result = false;
-        if ($this->is_type(phrase_type::SCALING_HIDDEN)) {
+        if ($this->is_type(phrase_type_shared::SCALING_HIDDEN)) {
             $result = true;
         }
         return $result;

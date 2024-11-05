@@ -37,7 +37,7 @@ include_once API_SYSTEM_PATH . 'type_lists.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once MODEL_PHRASE_PATH . 'phrase_types.php';
 include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';

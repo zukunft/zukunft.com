@@ -77,11 +77,8 @@ include_once API_WORD_PATH . 'word.php';
 include_once MODEL_REF_PATH . 'ref.php';
 include_once SERVICE_EXPORT_PATH . 'word_exp.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_type_list;
-use shared\types\protection_type as protect_type_shared;
-use shared\types\share_type as share_type_shared;
 use api\api;
 use api\word\word as word_api;
 use cfg\db\sql;
@@ -89,14 +86,20 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
+use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
 use cfg\export\sandbox_exp_named;
 use cfg\export\word_exp;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\value\value_list;
+use shared\enum\foaf_direction;
 use shared\library;
+use shared\types\protection_type as protect_type_shared;
+use shared\types\share_type as share_type_shared;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class word extends sandbox_typed
 {
@@ -716,7 +719,7 @@ class word extends sandbox_typed
         global $phrase_types;
         $qp = parent::load_sql_usr_num($sc, $this, formula::FLD_NAME);
         $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
-        $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type::FORMULA_LINK), sql_par_type::CONST);
+        $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -736,7 +739,7 @@ class word extends sandbox_typed
         // TODO check if and where it is needed to exclude the formula words
         // global $phrase_types;
         // $qp = parent::load_sql_usr_num($sc, $this, $query_name);
-        // $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type::FORMULA_LINK), sql_par_type::CONST_NOT);
+        // $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST_NOT);
         // return $qp;
         return parent::load_sql_usr_num($sc, $this, $query_name);
     }
@@ -1040,7 +1043,7 @@ class word extends sandbox_typed
      */
     function is_time(): bool
     {
-        return $this->is_type(phrase_type::TIME);
+        return $this->is_type(phrase_type_shared::TIME);
     }
 
     /**
@@ -1048,7 +1051,7 @@ class word extends sandbox_typed
      */
     function is_time_jump(): bool
     {
-        return $this->is_type(phrase_type::TIME_JUMP);
+        return $this->is_type(phrase_type_shared::TIME_JUMP);
     }
 
     /**
@@ -1058,7 +1061,7 @@ class word extends sandbox_typed
      */
     function is_measure(): bool
     {
-        return $this->is_type(phrase_type::MEASURE);
+        return $this->is_type(phrase_type_shared::MEASURE);
     }
 
     /**
@@ -1067,8 +1070,8 @@ class word extends sandbox_typed
     function is_scaling(): bool
     {
         $result = false;
-        if ($this->is_type(phrase_type::SCALING)
-            or $this->is_type(phrase_type::SCALING_HIDDEN)) {
+        if ($this->is_type(phrase_type_shared::SCALING)
+            or $this->is_type(phrase_type_shared::SCALING_HIDDEN)) {
             $result = true;
         }
         return $result;
@@ -1079,7 +1082,7 @@ class word extends sandbox_typed
      */
     function is_percent(): bool
     {
-        return $this->is_type(phrase_type::PERCENT);
+        return $this->is_type(phrase_type_shared::PERCENT);
     }
 
     /**

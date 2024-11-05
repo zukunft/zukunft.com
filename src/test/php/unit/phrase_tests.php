@@ -33,6 +33,7 @@
 namespace unit;
 
 include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\word\word as word_api;
 use cfg\db\sql;
@@ -47,6 +48,7 @@ use cfg\db\sql_db;
 use cfg\word;
 use test\test_base;
 use test\test_cleanup;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class phrase_tests
 {
@@ -108,7 +110,7 @@ class phrase_tests
 
         $t->subheader('phrase type api unit tests');
         global $phrase_types;
-        $phr_typ = $phrase_types->get_by_code_id(phrase_type::PERCENT);
+        $phr_typ = $phrase_types->get_by_code_id(phrase_type_shared::PERCENT);
         $t->assert_api($phr_typ, 'phrase_type');
 
 

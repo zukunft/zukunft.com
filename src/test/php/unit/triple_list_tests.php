@@ -38,14 +38,13 @@ include_once WEB_WORD_PATH . 'triple_list.php';
 use api\word\triple as triple_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
-use cfg\foaf_direction;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\triple;
 use cfg\triple_list;
 use cfg\verb;
 use html\word\triple_list as triple_list_dsp;
-use shared\library;
+use shared\enum\foaf_direction;
 use test\test_cleanup;
 
 class triple_list_tests

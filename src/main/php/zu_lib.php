@@ -681,6 +681,7 @@ const MODEL_COMPONENT_PATH = MODEL_PATH . 'component' . DIRECTORY_SEPARATOR;
 
 const SHARED_PATH = PHP_PATH_LIB . 'shared' . DIRECTORY_SEPARATOR;
 const SHARED_TYPES_PATH = SHARED_PATH . 'types' . DIRECTORY_SEPARATOR;
+const SHARED_ENUM_PATH = SHARED_PATH . 'enum' . DIRECTORY_SEPARATOR;
 
 const API_PATH = PHP_PATH_LIB . 'api' . DIRECTORY_SEPARATOR; // path of the api objects for the message creation to the frontend
 const API_SANDBOX_PATH = API_PATH . 'sandbox' . DIRECTORY_SEPARATOR;

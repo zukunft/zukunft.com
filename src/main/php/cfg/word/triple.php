@@ -60,6 +60,7 @@ include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\system\messeges as msg_enum;
 use cfg\db\sql_par_field_list;
@@ -85,7 +86,7 @@ use cfg\value\value_list;
 use html\html_base;
 use JsonSerializable;
 use shared\library;
-use html\phrase\phrase as phrase_dsp;
+use shared\types\phrase_type AS phrase_type_shared;
 
 
 class triple extends sandbox_link_named implements JsonSerializable
@@ -709,7 +710,7 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function is_time(): bool
     {
-        if ($this->type_code_id() == phrase_type::TIME) {
+        if ($this->type_code_id() == phrase_type_shared::TIME) {
             return true;
         } else {
             return false;

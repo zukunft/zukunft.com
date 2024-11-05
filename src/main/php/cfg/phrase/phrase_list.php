@@ -61,13 +61,14 @@
 namespace cfg;
 
 include_once DB_PATH . 'sql.php';
-include_once MODEL_HELPER_PATH . 'foaf_direction.php';
+include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once MODEL_PHRASE_PATH . 'trm_ids.php';
 include_once MODEL_PHRASE_PATH . 'term_list.php';
 include_once MODEL_GROUP_PATH . 'group.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\phrase\phrase_list as phrase_list_api;
 use cfg\db\sql;
@@ -80,7 +81,9 @@ use cfg\group\group_id;
 use cfg\value\value;
 use cfg\value\value_list;
 use html\word\word as word_dsp;
+use shared\enum\foaf_direction;
 use shared\library;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class phrase_list extends sandbox_list_named
 {
@@ -1617,7 +1620,7 @@ class phrase_list extends sandbox_list_named
         log_debug($this->dsp_id());
 
         $result = array();
-        $time_type = $phrase_types->id(phrase_type::TIME);
+        $time_type = $phrase_types->id(phrase_type_shared::TIME);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             if ($phr->type_id() == $time_type) {
@@ -1749,7 +1752,7 @@ class phrase_list extends sandbox_list_named
         $lib = new library();
 
         $result = new phrase_list($this->user());
-        $measure_type = $phrase_types->id(phrase_type::MEASURE);
+        $measure_type = $phrase_types->id(phrase_type_shared::MEASURE);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             if (get_class($phr) <> phrase::class and get_class($phr) <> word::class and get_class($phr) <> word_dsp::class) {
@@ -1780,8 +1783,8 @@ class phrase_list extends sandbox_list_named
         $lib = new library();
 
         $result = new phrase_list($this->user());
-        $scale_type = $phrase_types->id(phrase_type::SCALING);
-        $scale_hidden_type = $phrase_types->id(phrase_type::SCALING_HIDDEN);
+        $scale_type = $phrase_types->id(phrase_type_shared::SCALING);
+        $scale_hidden_type = $phrase_types->id(phrase_type_shared::SCALING_HIDDEN);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             if ($phr->type_id() == $scale_type or $phr->type_id() == $scale_hidden_type) {

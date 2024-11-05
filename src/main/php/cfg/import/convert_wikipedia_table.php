@@ -32,6 +32,7 @@
 
 namespace cfg\import;
 
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\verb\verb as verb_api;
 use cfg\export\export;
@@ -41,6 +42,7 @@ use cfg\user;
 use DateTime;
 use DateTimeInterface;
 use shared\library;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class convert_wikipedia_table
 {
@@ -190,9 +192,9 @@ class convert_wikipedia_table
         $phr_lst = new phrase_list($usr);
         if ($context != '') {
             $phr_lst->import_context(json_decode($context, true));
-            $list_of_symbols = $phr_lst->get_names_by_type(phrase_type::SYMBOL);
-            $rank_names = $phr_lst->get_names_by_type(phrase_type::RANK);
-            $ignore_names = $phr_lst->get_names_by_type(phrase_type::IGNORE);
+            $list_of_symbols = $phr_lst->get_names_by_type(phrase_type_shared::SYMBOL);
+            $rank_names = $phr_lst->get_names_by_type(phrase_type_shared::RANK);
+            $ignore_names = $phr_lst->get_names_by_type(phrase_type_shared::IGNORE);
         }
         $exclude_col_names = array_merge($rank_names, $ignore_names);
 

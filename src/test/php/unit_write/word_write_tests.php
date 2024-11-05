@@ -32,6 +32,8 @@
 
 namespace unit_write;
 
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+
 use api\formula\formula as formula_api;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
@@ -49,6 +51,7 @@ use html\word\word as word_dsp;
 use shared\library;
 use test\all_tests;
 use test\test_cleanup;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class word_write_tests
 {
@@ -73,9 +76,9 @@ class word_write_tests
         $t->subheader('word write sandbox tests for ' . word_api::TN_ADD);
         $t->assert_write_named($t->word_filled_add(), word_api::TN_ADD);
 
-        $test_name = 'test saving word type ' . phrase_type::TIME . ' by adding add time word ' . word_api::TN_2021;
-        $wrd_time = $t->test_word(word_api::TN_2021, phrase_type::TIME);
-        $result = $wrd_time->is_type(phrase_type::TIME);
+        $test_name = 'test saving word type ' . phrase_type_shared::TIME . ' by adding add time word ' . word_api::TN_2021;
+        $wrd_time = $t->test_word(word_api::TN_2021, phrase_type_shared::TIME);
+        $result = $wrd_time->is_type(phrase_type_shared::TIME);
         $t->assert($test_name, $result, true);
 
         // is time
@@ -87,7 +90,7 @@ class word_write_tests
         $t->assert('word->is_measure for ' . word_api::TN_2021, $result, false);
 
         // is measure
-        $wrd_measure = $t->test_word(word_api::TWN_CHF, phrase_type::MEASURE);
+        $wrd_measure = $t->test_word(word_api::TWN_CHF, phrase_type_shared::MEASURE);
         $result = $wrd_measure->is_measure();
         $t->assert('word->is_measure for ' . word_api::TWN_CHF, $result, true);
 
@@ -96,7 +99,7 @@ class word_write_tests
         $t->assert('word->is_scaling for ' . word_api::TWN_CHF, $result, false);
 
         // is scaling
-        $wrd_scaling = $t->test_word(word_api::TN_MIO, phrase_type::SCALING);
+        $wrd_scaling = $t->test_word(word_api::TN_MIO, phrase_type_shared::SCALING);
         $result = $wrd_scaling->is_scaling();
         $t->assert('word->is_scaling for ' . word_api::TN_MIO, $result, true);
 
@@ -105,12 +108,12 @@ class word_write_tests
         $t->assert('word->is_percent for ' . word_api::TN_MIO, $result, false);
 
         // is percent
-        $wrd_pct = $t->test_word(word_api::TN_PCT, phrase_type::PERCENT);
+        $wrd_pct = $t->test_word(word_api::TN_PCT, phrase_type_shared::PERCENT);
         $result = $wrd_pct->is_percent();
         $t->assert('word->is_percent for ' . word_api::TN_PCT, $result, true);
 
         // next word
-        $wrd_time_next = $t->test_word(word_api::TN_2022, phrase_type::TIME);
+        $wrd_time_next = $t->test_word(word_api::TN_2022, phrase_type_shared::TIME);
         $t->test_triple(word_api::TN_2022, verb::FOLLOW, word_api::TN_2021);
         $target = $wrd_time_next->name();
         $wrd_next = $wrd_time->next();
@@ -358,7 +361,7 @@ class word_write_tests
         // check if the word parameters can be added
         $wrd_renamed->plural = word_api::TN_RENAMED . 's';
         $wrd_renamed->description = word_api::TN_RENAMED . ' description';
-        $wrd_renamed->type_id = $phrase_types->id(phrase_type::OTHER);
+        $wrd_renamed->type_id = $phrase_types->id(phrase_type_shared::OTHER);
         $result = $wrd_renamed->save()->get_last_message();
         $target = '';
         $t->display('word->save all word fields beside the name for "' . word_api::TN_RENAMED . '"',
@@ -373,7 +376,7 @@ class word_write_tests
         $target = word_api::TN_RENAMED . ' description';
         $t->display('word->load description for "' . word_api::TN_RENAMED . '"', $target, $result);
         $result = $wrd_reloaded->type_id;
-        $target = $phrase_types->id(phrase_type::OTHER);
+        $target = $phrase_types->id(phrase_type_shared::OTHER);
         $t->display('word->load type_id for "' . word_api::TN_RENAMED . '"', $target, $result);
 
         // check if the word parameter adding have been logged
@@ -399,7 +402,7 @@ class word_write_tests
         $wrd_usr2->load_by_name(word_api::TN_RENAMED);
         $wrd_usr2->plural = word_api::TN_RENAMED . 's2';
         $wrd_usr2->description = word_api::TN_RENAMED . ' description2';
-        $wrd_usr2->type_id = $phrase_types->id(phrase_type::TIME);
+        $wrd_usr2->type_id = $phrase_types->id(phrase_type_shared::TIME);
         $result = $wrd_usr2->save()->get_last_message();
         $target = '';
         $t->display('word->save all word fields for user 2 beside the name for "' . word_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -414,7 +417,7 @@ class word_write_tests
         $target = word_api::TN_RENAMED . ' description2';
         $t->display('word->load description for "' . word_api::TN_RENAMED . '"', $target, $result);
         $result = $wrd_usr2_reloaded->type_id;
-        $target = $phrase_types->id(phrase_type::TIME);
+        $target = $phrase_types->id(phrase_type_shared::TIME);
         $t->display('word->load type_id for "' . word_api::TN_RENAMED . '"', $target, $result);
 
         // check the word for the original user remains unchanged
@@ -426,7 +429,7 @@ class word_write_tests
         $target = word_api::TN_RENAMED . ' description';
         $t->display('word->load description for "' . word_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
         $result = $wrd_reloaded->type_id;
-        $target = $phrase_types->id(phrase_type::OTHER);
+        $target = $phrase_types->id(phrase_type_shared::OTHER);
         $t->display('word->load type_id for "' . word_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
 
         // TODO check that the changed word name cannot be used for a verb, triple or formula anymore
@@ -436,7 +439,7 @@ class word_write_tests
         $wrd_usr2->load_by_name(word_api::TN_RENAMED);
         $wrd_usr2->plural = word_api::TN_RENAMED . 's';
         $wrd_usr2->description = word_api::TN_RENAMED . ' description';
-        $wrd_usr2->type_id = $phrase_types->id(phrase_type::OTHER);
+        $wrd_usr2->type_id = $phrase_types->id(phrase_type_shared::OTHER);
         $result = $wrd_usr2->save()->get_last_message();
         $target = '';
         $t->display('word->save undo the user word fields beside the name for "' . word_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -451,7 +454,7 @@ class word_write_tests
         $target = word_api::TN_RENAMED . ' description';
         $t->display('word->load description for "' . word_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
         $result = $wrd_usr2_reloaded->type_id;
-        $target = $phrase_types->id(phrase_type::OTHER);
+        $target = $phrase_types->id(phrase_type_shared::OTHER);
         $t->display('word->load type_id for "' . word_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
 
         // display
@@ -530,21 +533,21 @@ class word_write_tests
             $t->test_word($word_name);
         }
         foreach (word_api::TEST_WORDS_MEASURE as $word_name) {
-            $t->test_word($word_name, phrase_type::MEASURE);
+            $t->test_word($word_name, phrase_type_shared::MEASURE);
         }
         foreach (word_api::TEST_WORDS_SCALING as $word_name) {
-            $t->test_word($word_name, phrase_type::SCALING);
+            $t->test_word($word_name, phrase_type_shared::SCALING);
         }
         foreach (word_api::TEST_WORDS_SCALING_HIDDEN as $word_name) {
-            $t->test_word($word_name, phrase_type::SCALING_HIDDEN);
+            $t->test_word($word_name, phrase_type_shared::SCALING_HIDDEN);
         }
         foreach (word_api::TEST_WORDS_PERCENT as $word_name) {
-            $t->test_word($word_name, phrase_type::PERCENT);
+            $t->test_word($word_name, phrase_type_shared::PERCENT);
         }
         $prev_word_name = null;
         foreach (word_api::TEST_WORDS_TIME_YEAR as $word_name) {
             $t->test_triple($word_name, verb::IS, word_api::TN_YEAR);
-            $t->test_word($word_name, phrase_type::TIME);
+            $t->test_word($word_name, phrase_type_shared::TIME);
             if ($prev_word_name != null) {
                 $t->test_triple($word_name, verb::FOLLOW, $prev_word_name);
             }

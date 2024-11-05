@@ -34,8 +34,8 @@ namespace unit_write;
 
 use api\verb\verb as verb_api;
 use api\word\word as word_api;
-use cfg\foaf_direction;
 use cfg\verb;
+use shared\enum\foaf_direction;
 use test\test_cleanup;
 
 class verb_write_tests

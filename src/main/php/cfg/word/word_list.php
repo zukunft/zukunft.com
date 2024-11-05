@@ -52,24 +52,24 @@
 namespace cfg;
 
 include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_HELPER_PATH . 'foaf_direction.php';
+include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once MODEL_DB_PATH . 'sql_par_list.php';
 include_once API_WORD_PATH . 'word_list.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\word\word_list as word_list_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
-use cfg\db\sql_par_list;
 use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\value\value;
 use cfg\value\value_list;
 use html\word\word as word_dsp;
 use html\word\word_list as word_list_dsp;
+use shared\types\phrase_type AS phrase_type_shared;
+use shared\enum\foaf_direction;
 use shared\library;
 
 class word_list extends sandbox_list_named
@@ -249,7 +249,7 @@ class word_list extends sandbox_list_named
 
         $qp = $this->load_sql_names_pre($sc, $sbx, $pattern, $limit, $offset);
 
-        $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type::FORMULA_LINK), sql_par_type::CONST_NOT);
+        $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST_NOT);
 
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -1066,7 +1066,7 @@ class word_list extends sandbox_list_named
 
         global $phrase_types;
         $result = new word_list($this->user());
-        $time_type = $phrase_types->id(phrase_type::TIME);
+        $time_type = $phrase_types->id(phrase_type_shared::TIME);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if ($wrd->type_id() == $time_type) {
@@ -1126,7 +1126,7 @@ class word_list extends sandbox_list_named
         log_debug($this->dsp_id());
 
         $result = new word_list($this->user());
-        $measure_type = $phrase_types->id(phrase_type::MEASURE);
+        $measure_type = $phrase_types->id(phrase_type_shared::MEASURE);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if ($wrd->type_id == $measure_type) {
@@ -1152,8 +1152,8 @@ class word_list extends sandbox_list_named
         log_debug($this->dsp_id());
 
         $result = new word_list($this->user());
-        $scale_type = $phrase_types->id(phrase_type::SCALING);
-        $scale_hidden_type = $phrase_types->id(phrase_type::SCALING_HIDDEN);
+        $scale_type = $phrase_types->id(phrase_type_shared::SCALING);
+        $scale_hidden_type = $phrase_types->id(phrase_type_shared::SCALING_HIDDEN);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if ($wrd->type_id == $scale_type or $wrd->type_id == $scale_hidden_type) {
@@ -1180,7 +1180,7 @@ class word_list extends sandbox_list_named
         log_debug($this->dsp_id());
 
         $result = new word_list($this->user());
-        $percent_type = $phrase_types->id(phrase_type::PERCENT);
+        $percent_type = $phrase_types->id(phrase_type_shared::PERCENT);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if ($wrd->type_id == $percent_type) {

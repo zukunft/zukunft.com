@@ -33,12 +33,12 @@
 namespace unit;
 
 use cfg\db\sql;
-use cfg\foaf_direction;
+use cfg\db\sql_db;
+use cfg\phrase;
+use cfg\verb;
 use cfg\verb_list;
 use html\verb\verb as verb_dsp;
-use cfg\phrase;
-use cfg\db\sql_db;
-use cfg\verb;
+use shared\enum\foaf_direction;
 use test\test_cleanup;
 
 class verb_tests

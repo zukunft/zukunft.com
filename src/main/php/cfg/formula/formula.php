@@ -71,9 +71,11 @@ include_once MODEL_FORMULA_PATH . 'expression.php';
 include_once MODEL_FORMULA_PATH . 'parameter_type.php';
 include_once MODEL_ELEMENT_PATH . 'element_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once API_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\api;
 use cfg\db\sql_par_field_list;
@@ -101,6 +103,7 @@ use Exception;
 use html\word\word as word_dsp;
 use math;
 use shared\library;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class formula extends sandbox_typed
 {
@@ -644,7 +647,7 @@ class formula extends sandbox_typed
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = new word($this->user());
         $name_wrd->set_name($this->name());
-        $name_wrd->type_id = $phrase_types->id(phrase_type::FORMULA_LINK);
+        $name_wrd->type_id = $phrase_types->id(phrase_type_shared::FORMULA_LINK);
         $name_wrd->save()->get_last_message();
         if ($name_wrd->id() > 0) {
             $this->name_wrd = $name_wrd;
@@ -669,8 +672,8 @@ class formula extends sandbox_typed
         if (!$wrd->is_loaded()) {
             log_err('reloading of the word related to formula ' . $this->dsp_id() . ' failed');
         } else {
-            if ($wrd->type_code_id() != phrase_type::FORMULA_LINK) {
-                log_err('reloading formula word ' . $wrd->dsp_id() . ' ist not of type ' . phrase_type::FORMULA_LINK);
+            if ($wrd->type_code_id() != phrase_type_shared::FORMULA_LINK) {
+                log_err('reloading formula word ' . $wrd->dsp_id() . ' ist not of type ' . phrase_type_shared::FORMULA_LINK);
             } else {
                 $wrd->set_name($this->name());
                 $wrd->save()->get_last_message();
@@ -694,8 +697,8 @@ class formula extends sandbox_typed
         if (!$wrd->is_loaded()) {
             log_warning('reloading of the word related to formula ' . $this->dsp_id() . ' failed');
         } else {
-            if ($wrd->type_code_id() != phrase_type::FORMULA_LINK) {
-                log_err('reloading formula word ' . $wrd->dsp_id() . ' ist not of type ' . phrase_type::FORMULA_LINK);
+            if ($wrd->type_code_id() != phrase_type_shared::FORMULA_LINK) {
+                log_err('reloading formula word ' . $wrd->dsp_id() . ' ist not of type ' . phrase_type_shared::FORMULA_LINK);
             } else {
                 $usr_msg = $wrd->del();
             }
@@ -717,7 +720,7 @@ class formula extends sandbox_typed
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = new word($this->user());
         $name_wrd->name = $this->name();
-        $name_wrd->type_id = $phrase_types->id(phrase_type::FORMULA_LINK);
+        $name_wrd->type_id = $phrase_types->id(phrase_type_shared::FORMULA_LINK);
         $name_wrd->add();
         if ($name_wrd->id() > 0) {
             //zu_info('Word with the formula name "'.$this->name().'" has been missing for id '.$this->id.'.','formula->calc');
@@ -2275,7 +2278,7 @@ class formula extends sandbox_typed
             if ($trm->obj() == null) {
                 log_warning('The object of the term has been expected to be loaded');
             } else {
-                if ($trm->obj()->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
+                if ($trm->obj()->type_id == $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
                     //$result = $trm;
                     $result = true;
                 }
@@ -2415,7 +2418,7 @@ class formula extends sandbox_typed
             // create the related formula word
             // the creation of a formula word should not be needed if on creation a view of word, phrase, verb nad formula is used to check uniqueness
             // the creation of the formula word is switched off because the term loading should be fine now
-            // TODO check and remove the create_wrd function and the phrase_type::FORMULA_LINK
+            // TODO check and remove the create_wrd function and the phrase_type_shared::FORMULA_LINK
             if ($this->wrd_add()) {
 
                 // create an empty db_frm element to force saving of all set fields
@@ -2472,7 +2475,7 @@ class formula extends sandbox_typed
                 if ($trm->id_obj() > 0) {
                     if ($trm->type() <> formula::class) {
                         if ($trm->type() == word::class) {
-                            if ($trm->obj()->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
+                            if ($trm->obj()->type_id == $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
                                 log_debug('adding formula name ' . $this->dsp_id() . ' has just a matching formula word');
                             } else {
                                 $usr_msg->add_message($trm->id_used_msg($this));

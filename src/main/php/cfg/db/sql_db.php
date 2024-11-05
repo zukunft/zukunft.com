@@ -40,6 +40,7 @@ include_once MODEL_DB_PATH . 'sql.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 include_once MODEL_IMPORT_PATH . 'import_file.php';
 include_once MODEL_HELPER_PATH . 'config_numbers.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -143,6 +144,7 @@ use mysqli_result;
 use PDOException;
 use shared\library;
 use shared\types\protection_type as protect_type_shared;
+use shared\types\phrase_type AS phrase_type_shared;
 use test\all_tests;
 
 class sql_db
@@ -5481,7 +5483,7 @@ class sql_db
                 $wrd->set_name($name);
                 $wrd->set_code_id($name);
                 $wrd->protection_id = $protection_types->id(protect_type_shared::ADMIN);
-                $wrd->set_type(phrase_type::SYSTEM_HIDDEN);
+                $wrd->set_type(phrase_type_shared::SYSTEM_HIDDEN);
                 $usr_msg->add($wrd->save());
             }
             foreach (config_numbers::INTERNAL_COMMENTS as $com_wrd_lst) {
@@ -5510,7 +5512,7 @@ class sql_db
                 $trp->set_to($to);
                 $trp->set_name($from_name . ' ' . $to_name);
                 $trp->protection_id = $protection_types->id(protect_type_shared::ADMIN);
-                $trp->set_type(phrase_type::SYSTEM_HIDDEN);
+                $trp->set_type(phrase_type_shared::SYSTEM_HIDDEN);
                 //$trp->set_code_id($from_name . ' ' . $to_name);
                 $usr_msg->add($trp->save());
             }

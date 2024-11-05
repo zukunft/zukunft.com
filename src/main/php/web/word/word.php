@@ -2,7 +2,7 @@
 
 /*
 
-    web/word/word.php - the extension of the word API objects to create word base html code
+    web/word/word.php - create HTML code to display a words based on the api json message
     -----------------
 
     This file is part of the frontend of zukunft.com - calc with words
@@ -35,27 +35,29 @@ include_once SANDBOX_PATH . 'sandbox_typed.php';
 include_once PHRASE_PATH . 'phrase.php';
 include_once HTML_PATH . 'html_base.php';
 include_once API_PHRASE_PATH . 'phrase.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
-use cfg\foaf_direction;
 use cfg\phrase_type;
 use cfg\verb_list;
 use controller\controller;
-use html\html_selector;
-use html\rest_ctrl;
 use html\button;
 use html\formula\formula as formula_dsp;
-use html\log\change_log_named as change_log_named_dsp;
 use html\html_base;
+use html\html_selector;
+use html\log\change_log_named as change_log_named_dsp;
 use html\log\user_log_display;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\term as term_dsp;
+use html\rest_ctrl;
 use html\sandbox\config;
 use html\sandbox\sandbox_typed;
 use html\system\back_trace;
 use html\system\messages;
 use html\user\user_message;
+use shared\enum\foaf_direction;
 use shared\words;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class word extends sandbox_typed
 {
@@ -281,7 +283,7 @@ class word extends sandbox_typed
     {
         global $phrase_types;
         $result = '';
-        if ($phrase_types->code_id($this->type_id()) == phrase_type::FORMULA_LINK) {
+        if ($phrase_types->code_id($this->type_id()) == phrase_type_shared::FORMULA_LINK) {
             $result .= ' type: ' . $phrase_types->name($this->type_id());
         } else {
             $result .= $this->type_selector($script, html_base::COL_SM_4);
@@ -519,7 +521,7 @@ class word extends sandbox_typed
      */
     function is_time(): bool
     {
-        return $this->is_type(phrase_type::TIME);
+        return $this->is_type(phrase_type_shared::TIME);
     }
 
     /**
@@ -527,7 +529,7 @@ class word extends sandbox_typed
      */
     function is_time_jump(): bool
     {
-        return $this->is_type(phrase_type::TIME_JUMP);
+        return $this->is_type(phrase_type_shared::TIME_JUMP);
     }
 
     /**
@@ -537,7 +539,7 @@ class word extends sandbox_typed
      */
     function is_measure(): bool
     {
-        return $this->is_type(phrase_type::MEASURE);
+        return $this->is_type(phrase_type_shared::MEASURE);
     }
 
     /**
@@ -546,8 +548,8 @@ class word extends sandbox_typed
     function is_scaling(): bool
     {
         $result = false;
-        if ($this->is_type(phrase_type::SCALING)
-            or $this->is_type(phrase_type::SCALING_HIDDEN)) {
+        if ($this->is_type(phrase_type_shared::SCALING)
+            or $this->is_type(phrase_type_shared::SCALING_HIDDEN)) {
             $result = true;
         }
         return $result;
@@ -558,7 +560,7 @@ class word extends sandbox_typed
      */
     function is_percent(): bool
     {
-        return $this->is_type(phrase_type::PERCENT);
+        return $this->is_type(phrase_type_shared::PERCENT);
     }
 
     /**
@@ -567,7 +569,7 @@ class word extends sandbox_typed
     function is_hidden(): bool
     {
         $result = false;
-        if ($this->is_type(phrase_type::SCALING_HIDDEN)) {
+        if ($this->is_type(phrase_type_shared::SCALING_HIDDEN)) {
             $result = true;
         }
         return $result;
@@ -824,7 +826,7 @@ class word extends sandbox_typed
         $html = new html_base();
 
         $result = '';
-        if ($this->type_id() == $phrase_types->id(phrase_type::FORMULA_LINK)) {
+        if ($this->type_id() == $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
             $result .= $html->dsp_form_hidden("name", $this->name);
             $result .= '  to change the name of "' . $this->name . '" rename the ';
             $frm = new formula_dsp();

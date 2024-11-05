@@ -74,7 +74,7 @@ include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
@@ -103,6 +103,7 @@ use cfg\log\change_link;
 use cfg\log\change_log;
 use Exception;
 use shared\library;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class sandbox extends db_object_seq_id_user
 {
@@ -2137,11 +2138,11 @@ class sandbox extends db_object_seq_id_user
                         $result = true;
                     } else {
                         if ($obj_to_check::class == formula::class
-                            and $this->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
+                            and $this->type_id == $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
                             // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
                             $result = true;
-                        } elseif ($this->type_id != $phrase_types->id(phrase_type::FORMULA_LINK)
-                            and $obj_to_check->type_id != $phrase_types->id(phrase_type::FORMULA_LINK)) {
+                        } elseif ($this->type_id != $phrase_types->id(phrase_type_shared::FORMULA_LINK)
+                            and $obj_to_check->type_id != $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
                             // if not one of the two words is a formula link and not both, the user should ge no suggestion to combine them
                             // a measure word can be combined with a measure scale word
                             $result = true;

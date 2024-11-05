@@ -32,12 +32,14 @@
 namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use cfg\phrase_type;
 use html\user\user_message;
 use html\word\word as word_dsp;
 use html\html_base;
 use html\sandbox\list_dsp;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class word_list extends list_dsp
 {
@@ -177,7 +179,7 @@ class word_list extends list_dsp
      */
     function time_lst(): word_list
     {
-        return $this->filter(phrase_type::TIME);
+        return $this->filter(phrase_type_shared::TIME);
     }
 
     /**
@@ -185,7 +187,7 @@ class word_list extends list_dsp
      */
     function measure_lst(): word_list
     {
-        return $this->filter(phrase_type::MEASURE);
+        return $this->filter(phrase_type_shared::MEASURE);
     }
 
     /**
@@ -219,7 +221,7 @@ class word_list extends list_dsp
      */
     function percent_lst(): word_list
     {
-        return $this->filter(phrase_type::PERCENT);
+        return $this->filter(phrase_type_shared::PERCENT);
     }
 
     /**

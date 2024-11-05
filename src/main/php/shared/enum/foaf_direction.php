@@ -2,8 +2,8 @@
 
 /*
 
-    /model/helper/foaf_direction.php - enum of the triple search directions to get the friends of a friend (foaf)
-    --------------------------------
+    /shared/enum/foaf_direction.php - enum of the triple search directions to get the friends of a friend (foaf)
+    -------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,7 +29,7 @@
 
 */
 
-namespace cfg;
+namespace shared\enum;
 
 enum foaf_direction: string
 {

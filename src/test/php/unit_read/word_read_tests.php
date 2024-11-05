@@ -32,6 +32,8 @@
 
 namespace unit_read;
 
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+
 use api\word\triple as triple_api;
 use api\word\word as word_api;
 use cfg\phrase;
@@ -40,6 +42,7 @@ use cfg\phrase_types;
 use cfg\verb;
 use cfg\word;
 use cfg\word_list;
+use shared\types\phrase_type AS phrase_type_shared;
 use test\test_cleanup;
 
 class word_read_tests
@@ -73,8 +76,8 @@ class word_read_tests
         $result = $lst->load($db_con);
         $t->assert_true($test_name, $result);
 
-        $test_name = 'check that at least ' . phrase_type::NORMAL . ' is loaded';
-        $result = $phrase_types->id(phrase_type::NORMAL);
+        $test_name = 'check that at least ' . phrase_type_shared::NORMAL . ' is loaded';
+        $result = $phrase_types->id(phrase_type_shared::NORMAL);
         $t->assert($test_name, $result, 1);
 
 
@@ -135,7 +138,7 @@ class word_read_tests
 
         // load a word list by type
         $wrd_lst = new word_list ($t->usr1);
-        $wrd_lst->load_by_type($phrase_types->id(phrase_type::PERCENT));
+        $wrd_lst->load_by_type($phrase_types->id(phrase_type_shared::PERCENT));
         $t->assert('load_by_type', $wrd_lst->name(), '"' . word_api::TN_PCT . '"');
 
         // load a word list by name pattern

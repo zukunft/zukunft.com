@@ -36,6 +36,7 @@ include_once DB_PATH . 'sql_db.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once API_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\formula\formula as formula_api;
 use cfg\db\sql;
@@ -46,6 +47,7 @@ use cfg\word;
 use api\word\word as word_api;
 use html\word\word as word_dsp;
 use test\test_cleanup;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class word_tests
 {
@@ -106,7 +108,7 @@ class word_tests
         $wrd_updated->set_user($usr_sys);
         $wrd_updated->plural = word_api::TN_RENAMED;
         $wrd_updated->description = word_api::TN_RENAMED;
-        $wrd_updated->type_id = $phrase_types->id(phrase_type::TIME);
+        $wrd_updated->type_id = $phrase_types->id(phrase_type_shared::TIME);
         $t->assert_sql_update($sc, $wrd_updated, $wrd, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('word sql write update of all fields changed');

@@ -41,39 +41,6 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 class phrase_type extends type_object
 {
 
-    // list of the phrase types that have a coded functionality
-    // TODO add the missing functionality and unit tests
-    const NORMAL = "default";
-    const MATH_CONST = "constant"; // TODO add usage sample
-    const TIME = "time";
-    const TIME_JUMP = "time_jump";
-    const LATEST = "latest"; // TODO add usage sample
-    const PERCENT = "percent";
-    const MEASURE = "measure";
-    const MEASURE_DIVISOR = "measure_divisor";
-    const SCALING = "scaling";
-    const SCALING_HIDDEN = "scaling_hidden";
-    const SCALING_PCT = "scaling_percent"; // TODO used to define the scaling formula word to scale percentage values ?
-    const SCALED_MEASURE = "scaled_measure"; // TODO add usage sample
-    const FORMULA_LINK = "formula_link"; // special phrase type for functional words that are used to link values to formulas
-    const CALC = "calc"; // TODO add usage sample
-    const LAYER = "view"; // TODO add usage sample
-    const OTHER = "type_other";
-    const KEY = "key";
-    const INFO = "information";
-    const TRIPLE_HIDDEN = "hidden_triple";
-    const SYSTEM_HIDDEN = "hidden_system";
-    const GROUP = "group";
-    const SYMBOL = "symbol"; // is expected to be a symbol e.g. used to preselect columns for table import
-    const RANK = "rank"; // is expected to be a ranking number e.g. used to preselect columns for table import
-    const IGNORE = "ignore"; // e.g. to set column names to be excluded from the import
-    const THIS = "this";
-    const NEXT = "next";
-    const PRIOR = "previous";
-
-    const DEFAULT = self::NORMAL;
-
-
     /*
      * database link
      */

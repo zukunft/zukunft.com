@@ -32,6 +32,7 @@
 namespace html\word;
 
 include_once SANDBOX_PATH . 'sandbox_typed.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\api;
 use cfg\phrase_type;
@@ -48,6 +49,7 @@ use html\phrase\phrase as phrase_dsp;
 use html\sandbox\sandbox_typed;
 use html\phrase\term as term_dsp;
 use html\verb\verb as verb_dsp;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class triple extends sandbox_typed
 {
@@ -409,7 +411,7 @@ class triple extends sandbox_typed
      */
     function is_percent(): bool
     {
-        return $this->is_type(phrase_type::PERCENT);
+        return $this->is_type(phrase_type_shared::PERCENT);
     }
 
 

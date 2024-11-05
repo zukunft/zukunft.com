@@ -32,6 +32,8 @@
 
 namespace unit_write;
 
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+
 use api\word\triple as triple_api;
 use api\word\word as word_api;
 use cfg\phr_ids;
@@ -41,6 +43,7 @@ use cfg\triple;
 use cfg\verb;
 use cfg\word_list;
 use shared\library;
+use shared\types\phrase_type AS phrase_type_shared;
 use test\test_cleanup;
 
 class phrase_list_write_tests
@@ -55,7 +58,7 @@ class phrase_list_write_tests
         $t->header('Test the phrase list class (src/main/php/model/phrase/phrase_list.php)');
 
         // TODO make prepare not needed any more
-        $t->test_word(word_api::TN_CHF, phrase_type::MEASURE);
+        $t->test_word(word_api::TN_CHF, phrase_type_shared::MEASURE);
         $t->test_word(word_api::TN_SALES);
 
         // load the main test word and verb

@@ -32,14 +32,17 @@
 
 namespace unit_write;
 
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+
 use api\value\value as value_api;
 use api\word\word as word_api;
-use cfg\foaf_direction;
 use cfg\group\group;
 use cfg\phrase_type;
 use cfg\verb;
 use cfg\word_list;
+use shared\enum\foaf_direction;
 use shared\library;
+use shared\types\phrase_type AS phrase_type_shared;
 use test\test_cleanup;
 
 class word_list_write_tests
@@ -87,7 +90,7 @@ class word_list_write_tests
         // e.g. ...
         $wrd_cf = $t->test_word(word_api::TWN_CASH_FLOW);
         $wrd_tax = $t->test_word(word_api::TN_TAX_REPORT);
-        $wrd_time = $t->test_word(word_api::TN_2021, phrase_type::TIME);
+        $wrd_time = $t->test_word(word_api::TN_2021, phrase_type_shared::TIME);
         $t->test_triple(word_api::TN_TAX_REPORT, verb::IS_PART_OF, word_api::TWN_CASH_FLOW);
 
         // create the test words and relations many mixed relations
@@ -96,7 +99,7 @@ class word_list_write_tests
         $t->test_triple(word_api::TWN_CASH_FLOW, verb::IS, word_api::TN_FIN_REPORT);
 
         // is measure
-        $wrd_measure = $t->test_word(word_api::TWN_CHF, phrase_type::MEASURE);
+        $wrd_measure = $t->test_word(word_api::TWN_CHF, phrase_type_shared::MEASURE);
         $result = $wrd_measure->is_measure();
         $t->assert('word->is_measure for ' . word_api::TWN_CHF, $result, true);
 

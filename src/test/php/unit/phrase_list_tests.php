@@ -30,20 +30,22 @@ namespace unit;
 
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
 use cfg\db\sql;
-use cfg\foaf_direction;
-use cfg\phrase_type;
-use html\phrase\phrase_list as phrase_list_dsp;
+use cfg\db\sql_db;
 use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
-use cfg\db\sql_db;
+use cfg\phrase_type;
 use cfg\verb;
 use cfg\word;
+use html\phrase\phrase_list as phrase_list_dsp;
+use shared\enum\foaf_direction;
 use test\test_cleanup;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class phrase_list_tests
 {
@@ -207,7 +209,7 @@ class phrase_list_tests
 
         $wrd = new word($usr);
         $wrd->set(2, word_api::TN_RENAMED);
-        $wrd->type_id = $phrase_types->id(phrase_type::TIME);
+        $wrd->type_id = $phrase_types->id(phrase_type_shared::TIME);
         return $wrd->phrase();
     }
 

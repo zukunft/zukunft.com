@@ -44,11 +44,13 @@ include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once API_PHRASE_PATH . 'phrase_list.php';
 
 use controller\controller;
 use cfg\user;
 use cfg\phrase_type;
+use shared\types\phrase_type AS phrase_type_shared;
 use api\phrase\phrase_list as phrase_list_api;
 use shared\api;
 
@@ -69,7 +71,7 @@ $msg .= $usr->get();
 if ($usr->id() > 0) {
 
     if ($phr_typ_id != 0) {
-        $phr_typ = new phrase_type(phrase_type::NORMAL);
+        $phr_typ = new phrase_type(phrase_type_shared::NORMAL);
         $phr_typ->load_by_id($phr_typ_id);
         $result = $phr_typ->api_obj();
     } else {

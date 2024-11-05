@@ -124,6 +124,7 @@ namespace cfg;
 
 include_once MODEL_ELEMENT_PATH . 'element_group.php';
 include_once MODEL_ELEMENT_PATH . 'element_group_list.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use cfg\element\element;
 use cfg\element\element_group;
@@ -131,6 +132,7 @@ use cfg\element\element_group_list;
 use cfg\element\element_list;
 use Exception;
 use shared\library;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class expression
 {
@@ -393,9 +395,9 @@ class expression
                     }
                 }
                 if ($elm->type == word::class or $elm->type == triple::class) {
-                    if ($elm->obj->type_id == $phrase_types->id(phrase_type::THIS)
-                        or $elm->obj->type_id == $phrase_types->id(phrase_type::NEXT)
-                        or $elm->obj->type_id == $phrase_types->id(phrase_type::PRIOR)) {
+                    if ($elm->obj->type_id == $phrase_types->id(phrase_type_shared::THIS)
+                        or $elm->obj->type_id == $phrase_types->id(phrase_type_shared::NEXT)
+                        or $elm->obj->type_id == $phrase_types->id(phrase_type_shared::PRIOR)) {
                         $phr_lst->add($elm->obj->phrase());
                     }
                 }

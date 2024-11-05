@@ -38,18 +38,18 @@ include_once SANDBOX_PATH . 'list_dsp.php';
 include_once PHRASE_PATH . 'phrase.php';
 
 use cfg\config;
-use cfg\foaf_direction;
 use cfg\phrase;
 use cfg\phrase_list as phrase_list_db;
 use cfg\user;
 use cfg\verb_list;
-use html\rest_ctrl as api_dsp;
 use html\html_base;
-use html\sandbox\list_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
+use html\rest_ctrl as api_dsp;
+use html\sandbox\list_dsp;
 use html\user\user_message;
 use shared\api;
+use shared\enum\foaf_direction;
 use shared\library;
 
 class phrase_list extends list_dsp

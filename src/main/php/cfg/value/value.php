@@ -85,6 +85,7 @@ include_once MODEL_FORMULA_PATH . 'figure.php';
 include_once SERVICE_EXPORT_PATH . 'source_exp.php';
 include_once SERVICE_EXPORT_PATH . 'value_exp.php';
 include_once SERVICE_EXPORT_PATH . 'json.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
@@ -124,12 +125,10 @@ use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
 use cfg\phrase_type;
-use cfg\protection_type;
 use cfg\result\result_list;
 use cfg\sandbox;
 use cfg\sandbox_multi;
 use cfg\sandbox_value;
-use cfg\share_type;
 use cfg\source;
 use cfg\triple_list;
 use cfg\user;
@@ -140,6 +139,7 @@ use Exception;
 use html\value\value as value_dsp;
 use math;
 use shared\library;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class value extends sandbox_value
 {
@@ -970,8 +970,8 @@ class value extends sandbox_value
                                             $r_wrd = $wrd_lst->lst()[0];
 
                                             // test if it is a valid scale formula
-                                            if ($res_wrd->is_type(phrase_type::SCALING_HIDDEN)
-                                                and $r_wrd->is_type(phrase_type::SCALING)) {
+                                            if ($res_wrd->is_type(phrase_type_shared::SCALING_HIDDEN)
+                                                and $r_wrd->is_type(phrase_type_shared::SCALING)) {
                                                 $wrd_symbol = expression::WORD_START . $r_wrd->id() . expression::WORD_END;
                                                 log_debug('replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $this->number . ')');
                                                 $r_part = str_replace($wrd_symbol, $this->number, $r_part);

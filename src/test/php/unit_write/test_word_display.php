@@ -36,10 +36,10 @@
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
-use cfg\foaf_direction;
 use cfg\verb;
 use cfg\word;
 use html\word\word as word_dsp;
+use shared\enum\foaf_direction;
 use shared\library;
 use test\all_tests;
 

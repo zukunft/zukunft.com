@@ -53,6 +53,7 @@ include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
 include_once MODEL_VALUE_PATH . 'value_ts_data.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use cfg\component\component_link_type;
 use cfg\component\position_type;
@@ -177,6 +178,7 @@ use unit_write\value_write_tests;
 use unit_write\view_write_tests;
 use unit_write\view_link_write_tests;
 use unit_write\word_write_tests;
+use shared\types\phrase_type AS phrase_type_shared;
 
 class create_test_objects extends test_base
 {
@@ -447,7 +449,7 @@ class create_test_objects extends test_base
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_MATH, word_api::TN_READ);
         $wrd->description = word_api::TD_READ;
-        $wrd->set_type(phrase_type::NORMAL);
+        $wrd->set_type(phrase_type_shared::NORMAL);
         global $protection_types;
         $wrd->protection_id = $protection_types->id(protect_type_shared::ADMIN);
         return $wrd;
@@ -473,7 +475,7 @@ class create_test_objects extends test_base
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_MATH, word_api::TN_READ);
         $wrd->description = word_api::TD_READ;
-        $wrd->set_type(phrase_type::NORMAL);
+        $wrd->set_type(phrase_type_shared::NORMAL);
         $wrd->set_code_id(word_api::TN_READ);
         $wrd->plural = word_api::TN_READ_PLURAL;
         $wrd->set_view_id(view_api::TI_READ);
@@ -545,7 +547,7 @@ class create_test_objects extends test_base
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_CONST, word_api::TN_CONST);
         $wrd->description = word_api::TD_CONST;
-        $wrd->set_type(phrase_type::MATH_CONST);
+        $wrd->set_type(phrase_type_shared::MATH_CONST);
         global $protection_types;
         $wrd->protection_id = $protection_types->id(protect_type_shared::ADMIN);
         return $wrd;
@@ -559,7 +561,7 @@ class create_test_objects extends test_base
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_PI, word_api::TN_PI);
         $wrd->description = word_api::TD_PI;
-        $wrd->set_type(phrase_type::MATH_CONST);
+        $wrd->set_type(phrase_type_shared::MATH_CONST);
         global $protection_types;
         $wrd->protection_id = $protection_types->id(protect_type_shared::ADMIN);
         return $wrd;
@@ -592,7 +594,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_E, word_api::TN_E);
-        $wrd->set_type(phrase_type::MATH_CONST);
+        $wrd->set_type(phrase_type_shared::MATH_CONST);
         return $wrd;
     }
 
@@ -603,7 +605,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_YEAR, word_api::TN_YEAR);
-        $wrd->set_type(phrase_type::TIME);
+        $wrd->set_type(phrase_type_shared::TIME);
         return $wrd;
     }
 
@@ -614,7 +616,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_2019, word_api::TN_2019);
-        $wrd->set_type(phrase_type::TIME);
+        $wrd->set_type(phrase_type_shared::TIME);
         return $wrd;
     }
 
@@ -625,7 +627,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_2020, word_api::TN_2020);
-        $wrd->set_type(phrase_type::TIME);
+        $wrd->set_type(phrase_type_shared::TIME);
         return $wrd;
     }
 
@@ -636,7 +638,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_PCT, word_api::TN_PCT);
-        $wrd->set_type(phrase_type::PERCENT);
+        $wrd->set_type(phrase_type_shared::PERCENT);
         return $wrd;
     }
 
@@ -646,7 +648,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_THIS, word_api::TN_THIS_PRE);
-        $wrd->set_type(phrase_type::THIS);
+        $wrd->set_type(phrase_type_shared::THIS);
         return $wrd;
     }
 
@@ -654,7 +656,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_PRIOR, word_api::TN_PRIOR_PRE);
-        $wrd->set_type(phrase_type::PRIOR);
+        $wrd->set_type(phrase_type_shared::PRIOR);
         return $wrd;
     }
 
@@ -662,7 +664,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_ONE, word_api::TN_ONE);
-        $wrd->set_type(phrase_type::SCALING_HIDDEN);
+        $wrd->set_type(phrase_type_shared::SCALING_HIDDEN);
         return $wrd;
     }
 
@@ -670,7 +672,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_MIO, word_api::TN_MIO_SHORT);
-        $wrd->set_type(phrase_type::SCALING);
+        $wrd->set_type(phrase_type_shared::SCALING);
         return $wrd;
     }
 
@@ -866,7 +868,7 @@ class create_test_objects extends test_base
         $trp->set_from($this->word_const()->phrase());
         $trp->set_verb($this->verb_part());
         $trp->set_to($this->word()->phrase());
-        $trp->set_type(phrase_type::MATH_CONST);
+        $trp->set_type(phrase_type_shared::MATH_CONST);
         global $protection_types;
         $trp->protection_id = $protection_types->id(protect_type_shared::ADMIN);
         return $trp;
@@ -919,7 +921,7 @@ class create_test_objects extends test_base
         $trp->set_from($this->word_pi()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->triple()->phrase());
-        $trp->set_type(phrase_type::TRIPLE_HIDDEN);
+        $trp->set_type(phrase_type_shared::TRIPLE_HIDDEN);
         return $trp;
     }
 
@@ -934,7 +936,7 @@ class create_test_objects extends test_base
         $trp->set_from($this->word_e()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->triple()->phrase());
-        $trp->set_type(phrase_type::TRIPLE_HIDDEN);
+        $trp->set_type(phrase_type_shared::TRIPLE_HIDDEN);
         return $trp;
     }
 
@@ -1918,7 +1920,7 @@ class create_test_objects extends test_base
     function result_pct(): result
     {
         $res = new result($this->usr1);
-        $wrd_pct = $this->new_word(word_api::TN_PCT, 2, phrase_type::PERCENT);
+        $wrd_pct = $this->new_word(word_api::TN_PCT, 2, phrase_type_shared::PERCENT);
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd_pct->phrase());
         $res->grp->set_phrase_list($phr_lst);
@@ -2554,8 +2556,8 @@ class create_test_objects extends test_base
         global $phrase_types;
         $chg = $this->change_log_named();
         $chg->set_field(change_field_list::FLD_PHRASE_TYPE);
-        $chg->new_value = phrase_type::TIME;
-        $chg->new_id = $phrase_types->id(phrase_type::TIME);
+        $chg->new_value = phrase_type_shared::TIME;
+        $chg->new_id = $phrase_types->id(phrase_type_shared::TIME);
         return $chg;
     }
 
@@ -2566,8 +2568,8 @@ class create_test_objects extends test_base
     {
         global $phrase_types;
         $chg = $this->change_log_ref();
-        $chg->old_value = phrase_type::MEASURE;
-        $chg->old_id = $phrase_types->id(phrase_type::MEASURE);
+        $chg->old_value = phrase_type_shared::MEASURE;
+        $chg->old_id = $phrase_types->id(phrase_type_shared::MEASURE);
         return $chg;
     }
 
@@ -3673,7 +3675,7 @@ class create_test_objects extends test_base
         $wrd = new word_api();
         $wrd->name = word_api::TN_ADD_API;
         $wrd->description = word_api::TD_ADD_API;
-        $wrd->type_id = $phrase_types->id(phrase_type::NORMAL);
+        $wrd->type_id = $phrase_types->id(phrase_type_shared::NORMAL);
         $msg->add_body($wrd);
         return $msg->get_json_array();
     }

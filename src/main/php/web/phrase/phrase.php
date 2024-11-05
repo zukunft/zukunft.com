@@ -38,20 +38,20 @@ include_once API_PHRASE_PATH . 'phrase.php';
 include_once WORD_PATH . 'word.php';
 include_once WORD_PATH . 'triple.php';
 
+use api\api;
 use api\phrase\phrase as phrase_api;
 use api\sandbox\combine_object as combine_object_api;
-use api\api;
-use cfg\foaf_direction;
 use cfg\verb_list;
-use html\rest_ctrl as api_dsp;
 use html\button;
-use html\sandbox\combine_named as combine_named_dsp;
 use html\html_base;
+use html\phrase\phrase_list as phrase_list_dsp;
+use html\rest_ctrl as api_dsp;
+use html\sandbox\combine_named as combine_named_dsp;
 use html\system\messages;
 use html\user\user_message;
-use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
+use html\word\word as word_dsp;
+use shared\enum\foaf_direction;
 
 class phrase extends combine_named_dsp
 {
