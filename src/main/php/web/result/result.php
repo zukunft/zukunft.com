@@ -35,7 +35,6 @@
 namespace html\result;
 
 use api\api;
-use controller\controller;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\sandbox\sandbox_value;
 use html\figure\figure as figure_dsp;

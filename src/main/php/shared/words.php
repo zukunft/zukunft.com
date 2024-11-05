@@ -39,7 +39,7 @@ class words
      * config
      */
 
-    // words used for database loading
+    // words used in the frontend and backend for the system configuration
     const ROW = 'row';
     const LIMIT = 'limit';
     const WORD = 'word';

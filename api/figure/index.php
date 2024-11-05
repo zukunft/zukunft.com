@@ -49,6 +49,7 @@ use cfg\value\value;
 use controller\controller;
 use cfg\result\result;
 use cfg\user;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/figure", "", false);

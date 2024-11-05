@@ -53,8 +53,8 @@ include_once WEB_VIEW_PATH . 'view.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_PATH . 'views.php';
 
-use controller\controller;
 use html\frontend;
 use html\rest_ctrl;
 use html\view\view as view_dsp;
@@ -64,6 +64,7 @@ use cfg\word;
 use html\types\type_lists as type_lists_dsp;
 use html\word\word as word_dsp;
 use shared\api;
+use shared\views as view_shared;
 
 // open database
 $db_con = prg_start("view");
@@ -124,7 +125,7 @@ if ($usr->id() > 0) {
                     $view_id = $wrd->calc_view_id();
                     if ($view_id <= 0) {
                         // if no one has set a view for this word, use the fallback view
-                        $view_id = $system_views->id(controller::MC_WORD);
+                        $view_id = $system_views->id(view_shared::MC_WORD);
                     }
                 }
             }
@@ -142,7 +143,7 @@ if ($usr->id() > 0) {
 
             // use a fallback if the view is empty
             if ($dsp_text == '' or $msk->name() == '') {
-                $view_id = $system_views->id(controller::MC_START);
+                $view_id = $system_views->id(view_shared::MC_START);
                 $msk->load_by_id($view_id);
                 $dsp_text = $msk_dsp->display($wrd, $back);
             }

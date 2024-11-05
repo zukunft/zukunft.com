@@ -32,7 +32,7 @@
 
 use cfg\triple;
 use cfg\user;
-use controller\controller;
+use shared\api;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;

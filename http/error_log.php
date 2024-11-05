@@ -45,8 +45,8 @@ include_once WEB_VIEW_PATH . 'view.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_PATH . 'views.php';
 
-use controller\controller;
 use cfg\sys_log;
 use cfg\user;
 use cfg\view;
@@ -79,7 +79,7 @@ if ($usr->id() > 0) {
         $usr->load_usr_data();
 
         // prepare the display to edit the view
-        $view_id = $system_views->id(controller::MC_ERR_LOG);
+        $view_id = $system_views->id(view_shared::MC_ERR_LOG);
         $msk = new view($usr);
         $msk->load_by_id($view_id);
         $msk->load_components();

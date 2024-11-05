@@ -30,11 +30,9 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
 use cfg\user;
-use cfg\view;
 use cfg\word;
 use shared\api;
 

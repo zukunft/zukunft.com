@@ -33,6 +33,7 @@
 namespace unit;
 
 include_once SHARED_TYPES_PATH . 'component_type.php';
+include_once SHARED_PATH . 'views.php';
 include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_RESULT_PATH . 'result_list.php';
@@ -46,10 +47,8 @@ use api\result\result as result_api;
 use api\value\value as value_api;
 use api\word\word as word_api;
 use cfg\component\component;
-use cfg\component\component_type;
 use cfg\verb;
 use cfg\verb_list;
-use controller\controller;
 use html\button;
 use html\component\component as component_dsp;
 use html\html_base;
@@ -57,6 +56,7 @@ use html\result\result as result_dsp;
 use html\result\result_list as result_list_dsp;
 use html\system\messages;
 use shared\library;
+use shared\views as view_shared;
 use test\test_cleanup;
 
 class html_tests
@@ -104,7 +104,7 @@ class html_tests
         //$t->assert_sql_name_unique($log_dsp->dsp_hist_links_sql($db_con, true));
 
         // button add
-        $url = $html->url(controller::MC_WORD_ADD);
+        $url = $html->url(view_shared::MC_WORD_ADD);
         $t->html_test((new button($url))->add(messages::WORD_ADD), 'button_add', $t);
 
 

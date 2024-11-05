@@ -31,18 +31,18 @@
 */
 
 include_once SHARED_TYPES_PATH . 'component_type.php';
+include_once SHARED_PATH . 'views.php';
 
 use shared\types\component_type as comp_type_shared;
 use api\view\view as view_api;
 use api\word\word as word_api;
 use cfg\component\component;
-use cfg\component\component_type;
 use cfg\view;
 use html\component\component as component_dsp;
-use controller\controller;
 use html\button;
 use html\html_base;
 use html\system\messages;
+use shared\views as view_shared;
 use test\all_tests;
 
 function run_display_test(all_tests $t): void
@@ -80,50 +80,50 @@ function run_display_test(all_tests $t): void
 
     $t->header('Test the display button class (src/main/php/web/html/button.php )');
 
-    $url = $html->url(controller::MC_WORD_ADD);
+    $url = $html->url(view_shared::MC_WORD_ADD);
     $back = '1';
     $target = '<a href="/http/word_add.php" title="Add test"><img src="/src/main/resources/images/button_add.svg" alt="Add test"></a>';
     $target = '<a href="/http/word_add.php" title="add new word">';
     $result = (new button($url, $back))->add(messages::WORD_ADD);
     $t->dsp_contains(", btn_add", $target, $result);
 
-    $url = $html->url(controller::MC_WORD_EDIT);
+    $url = $html->url(view_shared::MC_WORD_EDIT);
     $target = '<a href="/http/view.php" title="Edit test"><img src="/src/main/resources/images/button_edit.svg" alt="Edit test"></a>';
     $target = '<a href="/http/word_edit.php" title="rename word"><i class="far fa-edit"></i></a>';
     $result = (new button($url, $back))->edit(messages::WORD_EDIT);
     $t->dsp_contains(", btn_edit", $target, $result);
 
-    $url = $html->url(controller::MC_WORD_DEL);
+    $url = $html->url(view_shared::MC_WORD_DEL);
     $target = '<a href="/http/view.php" title="Del test"><img src="/src/main/resources/images/button_del.svg" alt="Del test"></a>';
     $target = '<a href="/http/word_del.php" title="Delete word"><i class="far fa-times-circle"></i></a>';
     $result = (new button($url, $back))->del(messages::WORD_DEL);
     $t->dsp_contains(", btn_del", $target, $result);
 
-    $url = $html->url(controller::MC_WORD);
+    $url = $html->url(view_shared::MC_WORD);
     $target = '<a href="/http/view.php" title="Undo test"><img src="/src/main/resources/images/button_undo.svg" alt="Undo test"></a>';
     $target = '<a href="/http/word.php" title="undo"><img src="/src/main/resources/images/button_undo.svg" alt="undo"></a>';
     $result = (new button($url, $back))->undo(messages::UNDO);
     $t->display(", btn_undo", $target, $result);
 
-    $url = $html->url(controller::MC_WORD_ADD);
+    $url = $html->url(view_shared::MC_WORD_ADD);
     $target = '<a href="/http/view.php" title="Find test"><img src="/src/main/resources/images/button_find.svg" alt="Find test"></a>';
     $target = '<a href="/http/word_add.php" title=""><img src="/src/main/resources/images/button_find.svg" alt=""></a>';
     $result = (new button($url, $back))->find();
     $t->display(", btn_find", $target, $result);
 
-    $url = $html->url(controller::MC_WORD_ADD);
+    $url = $html->url(view_shared::MC_WORD_ADD);
     $target = '<a href="/http/view.php" title="Show all test"><img src="/src/main/resources/images/button_filter_off.svg" alt="Show all test"></a>';
     $target = '<a href="/http/word_add.php" title=""><img src="/src/main/resources/images/button_filter_off.svg" alt=""></a>';
     $result = (new button($url, $back))->unfilter();
     $t->display(", btn_unfilter", $target, $result);
 
-    $url = $html->url(controller::MC_WORD_ADD);
+    $url = $html->url(view_shared::MC_WORD_ADD);
     $target = '<h6>YesNo test</h6><a href="/http/view.php&confirm=1" title="Yes">Yes</a>/<a href="/http/view.php&confirm=-1" title="No">No</a>';
     $target = '<h6></h6><a href="/http/word_add.php&confirm=1" title="Yes">Yes</a>/<a href="/http/word_add.php&confirm=-1" title="No">No</a>';
     $result = (new button($url, $back))->yesno();
     $t->display(", btn_yesno", $target, $result);
 
-    $url = $html->url(controller::MC_WORD_ADD);
+    $url = $html->url(view_shared::MC_WORD_ADD);
     $target = '<a href="/http/view.php?words=1" title="back"><img src="/src/main/resources/images/button_back.svg" alt="back"></a>';
     $result = (new button($url, $back))->back();
     $t->display(", btn_back", $target, $result);

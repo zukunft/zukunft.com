@@ -49,6 +49,7 @@ include_once API_SYSTEM_PATH . 'type_object.php';
 include_once API_PHRASE_PATH . 'phrase_type.php';
 include_once API_LANGUAGE_PATH . 'language.php';
 include_once API_LANGUAGE_PATH . 'language_form.php';
+include_once SHARED_PATH . 'views.php';
 
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
@@ -80,11 +81,11 @@ use cfg\verb;
 use cfg\view;
 use cfg\word;
 use cfg\word_list;
-use controller\controller;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use shared\api;
 use shared\library;
+use shared\views as view_shared;
 use test\test_cleanup;
 
 class api_tests
@@ -180,12 +181,12 @@ class api_tests
      */
     function run_ui_test(test_cleanup $t): void
     {
-        $t->assert_view(controller::MC_WORD, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(controller::MC_WORD_ADD, $t->usr1, new word($t->usr1));
-        $t->assert_view(controller::MC_WORD_EDIT, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(controller::MC_WORD_DEL, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(controller::MC_TRIPLE_ADD, $t->usr1, new triple($t->usr1));
-        //$t->assert_view(controller::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1);
+        $t->assert_view(view_shared::MC_WORD, $t->usr1, new word($t->usr1), 1);
+        $t->assert_view(view_shared::MC_WORD_ADD, $t->usr1, new word($t->usr1));
+        $t->assert_view(view_shared::MC_WORD_EDIT, $t->usr1, new word($t->usr1), 1);
+        $t->assert_view(view_shared::MC_WORD_DEL, $t->usr1, new word($t->usr1), 1);
+        $t->assert_view(view_shared::MC_TRIPLE_ADD, $t->usr1, new triple($t->usr1));
+        //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1);
         // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
     }
 

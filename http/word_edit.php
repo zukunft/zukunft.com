@@ -30,7 +30,13 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use controller\controller;
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once SHARED_PATH . 'views.php';
+
 use html\html_base;
 use html\view\view as view_dsp;
 use html\word\word as word_dsp;
@@ -38,11 +44,7 @@ use cfg\user;
 use cfg\view;
 use cfg\word;
 use shared\api;
-
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+use shared\views as view_shared;
 
 // open database
 $db_con = prg_start("word_edit");
@@ -62,7 +64,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::MC_WORD_EDIT);
+    $msk->load_by_code_id(view_shared::MC_WORD_EDIT);
     $back = $_GET[api::URL_VAR_BACK] = ''; // the word id from which this value change has been called (maybe later any page)
 
     // create the word object to have a place to update the parameters

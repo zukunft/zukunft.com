@@ -37,6 +37,7 @@ namespace html\component;
 include_once SANDBOX_PATH . 'sandbox_typed.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once HTML_PATH . 'sheet.php';
+include_once SHARED_PATH . 'views.php';
 
 use api\api;
 use api\word\word as word_api;
@@ -45,7 +46,6 @@ use html\user\user_message;
 use shared\types\component_type;
 use cfg\db\sql_db;
 use cfg\word;
-use controller\controller;
 use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;
@@ -55,6 +55,7 @@ use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
 use html\view\view_list;
 use shared\library;
+use shared\views as view_shared;
 
 class component extends sandbox_typed
 {
@@ -551,11 +552,11 @@ class component extends sandbox_typed
 
         $hidden_fields = '';
         if ($this->id() <= 0) {
-            $script = controller::MC_COMPONENT_ADD;
+            $script = view_shared::MC_COMPONENT_ADD;
             $fld_ext = '_add';
             $header = $html->text_h2('Create a view element');
         } else {
-            $script = controller::MC_COMPONENT_EDIT;
+            $script = view_shared::MC_COMPONENT_EDIT;
             $fld_ext = '';
             $header = $html->text_h2('Change "' . $this->name . '"');
             $hidden_fields .= $html->form_hidden("id", $this->id());

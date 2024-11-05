@@ -36,11 +36,12 @@ include_once DB_PATH . 'sql_par.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
+include_once SHARED_PATH . 'views.php';
 
 use api\view\view_list as view_list_api;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
-use controller\controller;
+use shared\views as view_shared;
 
 global $system_views;
 
@@ -165,8 +166,8 @@ class view_sys_list extends type_list
         parent::load_dummy();
         $msk = new view($this->usr);
         $msk->set_id(2);
-        $msk->set_name(controller::MC_WORD);
-        $msk->code_id = controller::MC_WORD;
+        $msk->set_name(view_shared::MC_WORD);
+        $msk->code_id = view_shared::MC_WORD;
         $this->add($msk);
     }
 
@@ -175,7 +176,7 @@ class view_sys_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(controller::MC_WORD);
+        return parent::id(view_shared::MC_WORD);
     }
 
 }

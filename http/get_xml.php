@@ -32,7 +32,6 @@
 
 use cfg\phrase_list;
 use cfg\user;
-use controller\controller;
 use shared\api;
 use shared\library;
 

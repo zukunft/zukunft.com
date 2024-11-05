@@ -42,6 +42,7 @@ include_once API_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_PATH . 'views.php';
 
 use api\api_message;
 use api\sandbox\combine_object as combine_object_api;
@@ -53,6 +54,7 @@ use cfg\sandbox;
 use cfg\source;
 use cfg\word;
 use shared\api;
+use shared\views as view_shared;
 
 class controller
 {
@@ -97,56 +99,12 @@ class controller
      * VIEWS
      */
 
-    // list of the view used by the program that are never supposed to be changed
-    // also the list of the view code_id
-    // MC_* is the Mask Code id that is expected never to change
-    // MI_* is the Mask ID that is expected never to change
-    const MC_START = 'start';
-    const MI_START = 2;
-    const MC_WORD = 'word';
-    const MC_WORD_ADD = 'word_add';
-    const MC_WORD_EDIT = 'word_edit';
-    const MC_WORD_DEL = 'word_del';
-    const MC_WORD_FIND = 'word_find';
-    const MC_TRIPLE_ADD = 'triple_add';
-    const MC_TRIPLE_EDIT = 'triple_edit';
-    const MC_TRIPLE_DEL = 'triple_del';
-    const MC_VALUE_DISPLAY = 'value';
-    const MC_VALUE_ADD = 'value_add';
-    const MC_VALUE_EDIT = 'value_edit';
-    const MC_VALUE_DEL = 'value_del';
-    const MC_FORMULA_ADD = 'formula_add';
-    const MC_FORMULA_EDIT = 'formula_edit';
-    const MC_FORMULA_DEL = 'formula_del';
-    const MC_FORMULA_EXPLAIN = 'formula_explain';
-    const MC_FORMULA_TEST = 'formula_test';
-    const MC_SOURCE_ADD = 'source_add';
-    const MC_SOURCE_EDIT = 'source_edit';
-    const MC_SOURCE_DEL = 'source_del';
-    const MC_VERBS = 'verbs';
-    const MC_VERB_ADD = 'verb_add';
-    const MC_VERB_EDIT = 'verb_edit';
-    const MC_VERB_DEL = 'verb_del';
-    const MC_USER = 'user';
-    const MC_ERR_LOG = 'error_log';
-    const MC_ERR_UPD = 'error_update';
-    const MC_IMPORT = 'import';
-    // views to edit views
-    const MC_VIEW_ADD = 'view_add';
-    const MC_VIEW_EDIT = 'view_edit';
-    const MC_VIEW_DEL = 'view_del';
-    const MC_COMPONENT_ADD = 'component_add';
-    const MC_COMPONENT_EDIT = 'component_edit';
-    const MC_COMPONENT_DEL = 'component_del';
-    const MC_COMPONENT_LINK = 'component_link';
-    const MC_COMPONENT_UNLINK = 'component_unlink';
-
     // list of add system views which don't need an object
     const DSP_SYS_ADD = array(
-        self::MC_WORD_ADD,
-        self::MC_TRIPLE_ADD,
-        self::MC_VALUE_ADD,
-        self::MC_COMPONENT_ADD
+        view_shared::MC_WORD_ADD,
+        view_shared::MC_TRIPLE_ADD,
+        view_shared::MC_VALUE_ADD,
+        view_shared::MC_COMPONENT_ADD
     );
 
 

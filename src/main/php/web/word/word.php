@@ -36,10 +36,9 @@ include_once PHRASE_PATH . 'phrase.php';
 include_once HTML_PATH . 'html_base.php';
 include_once API_PHRASE_PATH . 'phrase.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'views.php';
 
-use cfg\phrase_type;
 use cfg\verb_list;
-use controller\controller;
 use html\button;
 use html\formula\formula as formula_dsp;
 use html\html_base;
@@ -58,6 +57,7 @@ use html\user\user_message;
 use shared\enum\foaf_direction;
 use shared\words;
 use shared\types\phrase_type AS phrase_type_shared;
+use shared\views as view_shared;
 
 class word extends sandbox_typed
 {
@@ -314,7 +314,7 @@ class word extends sandbox_typed
 
         // TODO complete
 
-        return $header . $html->form(controller::MC_WORD_ADD, $hidden_fields . $detail_row);
+        return $header . $html->form(view_shared::MC_WORD_ADD, $hidden_fields . $detail_row);
     }
 
     /**
@@ -342,7 +342,7 @@ class word extends sandbox_typed
             $detail_fields .= $dsp_type;
             $detail_row = $html->fr($detail_fields) . '<br>';
             $result = $header
-                . $html->form(controller::MC_WORD_EDIT, $hidden_fields . $detail_row)
+                . $html->form(view_shared::MC_WORD_EDIT, $hidden_fields . $detail_row)
                 . '<br>' . $dsp_graph;
         }
 
@@ -368,7 +368,7 @@ class word extends sandbox_typed
 
         // TODO complete
 
-        return $header . $html->form(controller::MC_WORD_DEL, $hidden_fields . $detail_row);
+        return $header . $html->form(view_shared::MC_WORD_DEL, $hidden_fields . $detail_row);
     }
 
 
@@ -409,7 +409,7 @@ class word extends sandbox_typed
     function btn_add(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(controller::MC_WORD_ADD, $this->id(), rest_ctrl::WORD, $back);
+        $url = $html->url_new(view_shared::MC_WORD_ADD, $this->id(), rest_ctrl::WORD, $back);
         return (new button($url, $back))->del(messages::WORD_ADD);
     }
 
@@ -638,7 +638,7 @@ class word extends sandbox_typed
             $dsp_graph,
             $dsp_log,
             $this->dsp_formula($back),
-            $this->dsp_type_selector(controller::MC_WORD_EDIT, $back),
+            $this->dsp_type_selector(view_shared::MC_WORD_EDIT, $back),
             $back);
     }
 

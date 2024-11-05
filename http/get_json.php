@@ -30,7 +30,6 @@
 
 */
 
-use controller\controller;
 use im_export\json_io;
 use cfg\phrase_list;
 use cfg\user;

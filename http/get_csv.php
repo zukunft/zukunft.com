@@ -30,7 +30,6 @@
 
 */
 
-use controller\controller;
 use cfg\formula_list;
 use cfg\user;
 use cfg\word_list;

@@ -31,15 +31,19 @@
 // Zukunft.com verb list
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once SHARED_PATH . 'views.php';
+
 use cfg\verb_list;
-use controller\controller;
 use html\view\view as view_dsp;
 use cfg\user;
 use cfg\view;
-
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+use shared\api;
+use shared\views as view_shared;
 
 // open database
 $db_con = prg_start("verbs");
@@ -60,7 +64,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::MC_VERBS);
+    $msk->load_by_code_id(view_shared::MC_VERBS);
 
     // show the header
     $msk_dsp = new view_dsp($msk->api_json());

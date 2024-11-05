@@ -35,13 +35,15 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
+include_once SHARED_PATH . 'views.php';
+
 use cfg\component\component;
 use cfg\user;
 use cfg\view;
-use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
 use shared\api;
+use shared\views as view_shared;
 
 // open database
 $db_con = prg_start("component_del");
@@ -61,7 +63,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::MC_VIEW_DEL);
+    $msk->load_by_code_id(view_shared::MC_VIEW_DEL);
     $back = $_GET[api::URL_VAR_BACK] = ''; // the original calling page that should be shown after the change if finished
 
     // get the parameters

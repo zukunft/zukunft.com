@@ -34,6 +34,7 @@ namespace unit_read;
 
 include_once SHARED_TYPES_PATH . 'view_type.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
+include_once SHARED_PATH . 'views.php';
 
 use cfg\view_link_type;
 use cfg\view_link_type_list;
@@ -46,7 +47,7 @@ use cfg\component\component_type_list;
 use cfg\view;
 use cfg\view_sys_list;
 use cfg\view_type_list;
-use controller\controller;
+use shared\views as view_shared;
 use test\test_cleanup;
 
 class view_read_tests
@@ -76,18 +77,18 @@ class view_read_tests
         $msk->load_components();
         $t->assert_contains($test_name, $msk->component_link_list()->names(), component_api::TN_READ);
 
-        $test_name = 'load view by code id "' . controller::MC_WORD_ADD . '"';
+        $test_name = 'load view by code id "' . view_shared::MC_WORD_ADD . '"';
         $msk = new view($t->usr1);
-        $msk->load_by_code_id(controller::MC_WORD_ADD);
+        $msk->load_by_code_id(view_shared::MC_WORD_ADD);
         $t->assert($test_name, $msk->name(), view_api::TN_FORM_NEW);
 
-        $test_name = 'load view by phrase "' . controller::MC_WORD_ADD . '"';
+        $test_name = 'load view by phrase "' . view_shared::MC_WORD_ADD . '"';
         $msk = new view($t->usr1);
         // TODO activate
         //$msk->load_by_phrase($t->phrase_pi());
         //$t->assert($test_name, $msk->name(), view_api::TN_FORM_NEW);
 
-        $test_name = 'load view by term "' . controller::MC_WORD_ADD . '"';
+        $test_name = 'load view by term "' . view_shared::MC_WORD_ADD . '"';
         $msk = new view($t->usr1);
         // TODO activate
         //$msk->load_by_term($t->formula()->term());
@@ -130,18 +131,18 @@ class view_read_tests
         $t->assert('load', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $system_views->id(controller::MC_WORD);
+        $result = $system_views->id(view_shared::MC_WORD);
         $target = 0;
         if ($result > 0) {
             $target = $result; // just check if the id is found
         }
-        $t->assert('check' . controller::MC_WORD, $result, $target);
+        $t->assert('check' . view_shared::MC_WORD, $result, $target);
 
         // check all system views
         // TODO activate Prio 2
-        //$t->assert_view(controller::DSP_COMPONENT_ADD, $t->usr1);
-        //$t->assert_view(controller::DSP_COMPONENT_EDIT, $t->usr1);
-        //$t->assert_view(controller::DSP_COMPONENT_DEL, $t->usr1);
+        //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1);
+        //$t->assert_view(view_shared::DSP_COMPONENT_EDIT, $t->usr1);
+        //$t->assert_view(view_shared::DSP_COMPONENT_DEL, $t->usr1);
 
 
 

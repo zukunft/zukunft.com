@@ -30,6 +30,14 @@
 
 */
 
+// standard zukunft header for callable php files to allow debugging and lib loading
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once SHARED_PATH . 'views.php';
+
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\db\sql_db;
@@ -41,14 +49,10 @@ use cfg\user_profile;
 use cfg\value\value;
 use cfg\view;
 use cfg\word;
-use controller\controller;
 use html\html_base;
 use html\view\view as view_dsp;
 use shared\api;
-
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+use shared\views as view_shared;
 
 $db_con = prg_start("user");
 $html = new html_base();
@@ -84,7 +88,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::MC_USER);
+    $msk->load_by_code_id(view_shared::MC_USER);
 
     // do user change
     $result .= $usr->upd_pars($_GET);

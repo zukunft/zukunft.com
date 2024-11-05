@@ -109,7 +109,6 @@ use cfg\view_list;
 use cfg\view_term_link;
 use cfg\word;
 use cfg\word_list;
-use controller\controller;
 use Exception;
 use html\html_base;
 use html\rest_ctrl;
