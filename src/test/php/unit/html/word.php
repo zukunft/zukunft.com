@@ -35,6 +35,7 @@ namespace unit\html;
 use api\word\word as word_api;
 use html\html_base;
 use html\word\word as word_dsp;
+use shared\views as view_shared;
 use test\test_cleanup;
 
 class word
@@ -47,24 +48,32 @@ class word
 
         $wrd = new word_dsp($t->word()->api_json());
         $wrd_pi = new word_dsp($t->word_pi()->api_json());
-        $test_page = $html->text_h2('Word display test');
-        $test_page .= 'with tooltip: ' . $wrd->display() . '<br>';
+        $test_page = $html->text_h1('Word display test');
+        $test_page .= $html->text_h2('names');
+        $test_page .= 'pur: ' . $wrd->display() . '<br>';
         $test_page .= 'with link: ' . $wrd->display_linked() . '<br>';
+        $test_page .= $html->text_h2('buttons');
         $test_page .= 'add button: ' . $wrd->btn_add() . '<br>';
+        $test_page .= 'edit button: ' . $wrd->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $wrd->btn_del() . '<br>';
-        $test_page .= 'table<br>';
+        $test_page .= 'unlink button: ' . $wrd->btn_unlink(1) . '<br>';
+        $test_page .= $html->text_h2('select');
+        $test_page .= 'type: ' . $wrd->dsp_type_selector(view_shared::MC_WORD_EDIT) . '<br>';
+        $test_page .= $html->text_h2('table');
         $test_page .= $html->tbl($wrd->th() . $wrd_pi->tr());
         $test_page .= 'del in columns: ' . $wrd->dsp_del() . '<br>';
         $test_page .= 'unlink in columns: ' . $wrd_pi->dsp_unlink($wrd->id()) . '<br>';
-        $test_page .= 'view header<br>';
+        $test_page .= $html->text_h2('view header');
         $test_page .= $wrd->header() . '<br>';
-        $test_page .= 'add mask<br>';
+        $test_page .= $html->text_h2('add mask');
         $test_page .= $wrd->form_add('') . '<br>';
-        $test_page .= 'edit mask<br>';
+        $test_page .= $html->text_h2('edit mask');
         $test_page .= $wrd->form_edit('', '', '', '') . '<br>';
-        $test_page .= 'del mask<br>';
+        $test_page .= $html->text_h2('del mask');
         $test_page .= $wrd->form_del('') . '<br>';
         $t->html_test($test_page, 'word', $t);
+
+        // TODO check the
     }
 
 }

@@ -43,8 +43,11 @@ class views
     const MI_START = 2;
     const MC_WORD = 'word';
     const MC_WORD_ADD = 'word_add';
+    const MI_WORD_ADD = 3;
     const MC_WORD_EDIT = 'word_edit';
+    const MI_WORD_EDIT = 4;
     const MC_WORD_DEL = 'word_del';
+    const MI_WORD_DEL = 5;
     const MC_WORD_FIND = 'word_find';
     const MC_TRIPLE_ADD = 'triple_add';
     const MC_TRIPLE_EDIT = 'triple_edit';
@@ -59,8 +62,11 @@ class views
     const MC_FORMULA_EXPLAIN = 'formula_explain';
     const MC_FORMULA_TEST = 'formula_test';
     const MC_SOURCE_ADD = 'source_add';
+    const MI_SOURCE_ADD = 17;
     const MC_SOURCE_EDIT = 'source_edit';
+    const MI_SOURCE_EDIT = 18;
     const MC_SOURCE_DEL = 'source_del';
+    const MI_SOURCE_DEL = 19;
     const MC_VERBS = 'verbs';
     const MC_VERB_ADD = 'verb_add';
     const MC_VERB_EDIT = 'verb_edit';
@@ -78,5 +84,25 @@ class views
     const MC_COMPONENT_DEL = 'component_del';
     const MC_COMPONENT_LINK = 'component_link';
     const MC_COMPONENT_UNLINK = 'component_unlink';
+
+    // system masks that have a word as the main object
+    const WORD_MASKS_IDS = [
+        self::MI_WORD_ADD,
+        self::MI_WORD_EDIT,
+        self::MI_WORD_DEL
+    ];
+
+    // system masks that have a word as the main object
+    const SOURCE_MAsKS_IDS = [
+        self::MI_SOURCE_ADD,
+        self::MI_SOURCE_EDIT,
+        self::MI_SOURCE_DEL
+    ];
+
+    // system masks that have a word as the main object
+    const ADD_MAsKS_IDS = [
+        self::MI_WORD_ADD,
+        self::MI_SOURCE_ADD,
+    ];
 
 }

@@ -2223,7 +2223,7 @@ class create_test_objects extends test_base
     function view_word_add(): view
     {
         $msk = new view($this->usr1);
-        $msk->set(3, view_api::TN_FORM);
+        $msk->set(view_api::TI_FORM, view_api::TN_FORM);
         $msk->description = view_api::TD_FORM;
         $msk->code_id = view_api::TC_FORM;
         $msk->cmp_lnk_lst = $this->components_word_add($msk);

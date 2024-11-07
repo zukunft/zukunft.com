@@ -14,6 +14,10 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO test the single html frontend function like $wrd->btn_edit() with the html_tests e.g. word_html_tests
+    TODO create an test the html frontend masks using run_ui_test in unit/api_tests
+    TODO remove all other frontend tests
+
     TODO Substeps: create insert, update and delete sql create tests for the main objects (TODO activate db write)
                    include the log in the prepared sql write statement
     TODO combine db_row and std_row for with-log use of update word
@@ -638,6 +642,7 @@ use html\html_base;
 use html\view\view as view_dsp;
 use shared\library;
 use test\test_cleanup;
+use unit\html\word as word_html_tests;
 
 // the fixed system user
 const SYSTEM_USER_ID = 1; //

@@ -50,6 +50,8 @@ class sandbox_named extends sandbox
     // the mouse over tooltip for the named object e.g. word, triple, formula, verb, view or component
     public ?string $description = null;
 
+    // the id of the default view for this object
+    private ?int $view_id = null;
 
     /*
      * set and get
@@ -104,6 +106,11 @@ class sandbox_named extends sandbox
         }
     }
 
+    function view_id(): ?int
+    {
+        return $this->view_id;
+    }
+
 
     /*
      * load
@@ -147,6 +154,11 @@ class sandbox_named extends sandbox
         return $vars;
     }
 
+    function calc_view_id(): int
+    {
+        return 0;
+    }
+
 
     /*
      * logging
@@ -167,6 +179,16 @@ class sandbox_named extends sandbox
             $result .= $this->id();
         }
         return $result;
+    }
+
+    /*
+     * save
+     */
+
+    function save_view(): user_message
+    {
+        $usr_msg = new user_message();
+        return $usr_msg;
     }
 
 }

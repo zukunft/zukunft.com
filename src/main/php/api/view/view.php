@@ -71,6 +71,7 @@ class view extends sandbox_typed_api
     const TN_FORM_NEW = 'Add New Word';
     const TD_FORM = 'system form to add a word';
     const TC_FORM = 'word_add';
+    const TI_FORM = 3;
 
     const TN_READ_RATIO = 'Company ratios';
     const TN_READ_NESN_2016 = 'Nestlé Financial Statement 2016';

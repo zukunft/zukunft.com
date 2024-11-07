@@ -405,10 +405,18 @@ class type_lists
     }
 
     // TODO add similar functions for all cache types
-    function get_view(int $id): string
+    function get_view_by_id(int $id): string
     {
         global $html_system_views;
         $msk = $html_system_views->get_by_id($id);
+        $wrd = new word_dsp();
+        return $msk->show($wrd);
+    }
+
+    function get_view(string $code_id): string
+    {
+        global $html_system_views;
+        $msk = $html_system_views->get_by_id($code_id);
         $wrd = new word_dsp();
         return $msk->show($wrd);
     }

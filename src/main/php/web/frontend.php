@@ -225,7 +225,7 @@ class frontend
 
     function show_view(int $id): string
     {
-        return $this->typ_lst_cache->get_view($id);
+        return $this->typ_lst_cache->get_view_by_id($id);
     }
 
 

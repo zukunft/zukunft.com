@@ -79,7 +79,7 @@ class word extends sandbox_typed
 
 
     /*
-     * set and get
+     * api
      */
 
     /**
@@ -103,6 +103,27 @@ class word extends sandbox_typed
         }
         return $usr_msg;
     }
+
+    /**
+     * create an api json array for the backend based on this frontend object
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars = parent::api_array();
+
+        $vars[self::FLD_PLURAL] = $this->plural();
+        if ($this->has_parent()) {
+            $vars[self::FLD_PARENT] = $this->parent()->api_array();
+        }
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+
+    /*
+     * set and get
+     */
 
     function set_plural(?string $plural): void
     {
@@ -139,41 +160,7 @@ class word extends sandbox_typed
 
 
     /*
-     * interface
-     */
-
-    /**
-     * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
-     */
-    function api_array(): array
-    {
-        $vars = parent::api_array();
-
-        $vars[self::FLD_PLURAL] = $this->plural();
-        if ($this->has_parent()) {
-            $vars[self::FLD_PARENT] = $this->parent()->api_array();
-        }
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
-    }
-
-
-    /*
-     * info
-     */
-
-    function has_parent(): bool
-    {
-        if ($this->parent() == null) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-
-    /*
-     * base elements
+     * names
      */
 
     /**
@@ -197,16 +184,86 @@ class word extends sandbox_typed
         return $html->ref($url, $this->name(), $this->description(), $style);
     }
 
-    /**
-     * @param string $back the back trace url for the undo functionality
-     * @param string $style the CSS style that should be used
-     * @returns string the word as a table cell
+
+    /*
+     * buttons
      */
-    function td(string $back = '', string $style = '', int $intent = 0): string
+
+    /**
+     * @returns string the html code to display a bottom to create anew word for the current user
+     */
+    function btn_add(string $back = ''): string
     {
-        $cell_text = $this->display_linked($back, $style);
-        return (new html_base)->td($cell_text, $intent);
+        $html = new html_base();
+        $url = $html->url_new(view_shared::MC_WORD_ADD, $this->id(), rest_ctrl::WORD, $back);
+        $btn = new button($url, $back);
+        return $btn->add(messages::WORD_ADD);
     }
+
+    /**
+     * @returns string the html code to display a bottom to create anew word for the current user
+     */
+    function btn_edit(string $back = ''): string
+    {
+        $html = new html_base();
+        $url = $html->url_new(view_shared::MC_WORD_EDIT, $this->id(), rest_ctrl::WORD, $back);
+        $btn = new button($url, $back);
+        return $btn->edit(messages::WORD_EDIT);
+    }
+
+    /**
+     * @returns string the html code to display a bottom to exclude the word for the current user
+     *                 or if no one uses the word delete the complete word
+     */
+    function btn_del(string $back = ''): string
+    {
+        $html = new html_base();
+        $url = $html->url_new(view_shared::MC_WORD_DEL, $this->id(), rest_ctrl::WORD, $back);
+        $btn = new button($url, $back);
+        return $btn->del(messages::WORD_DEL);
+    }
+
+    /**
+     * @returns string the html code to display a bottom to edit the word link in a table cell
+     */
+    function btn_unlink(int $link_id, string $back = ''): string
+    {
+        $url = (new html_base())->url(rest_ctrl::LINK . rest_ctrl::REMOVE, $link_id, $this->id());
+        return (new button($url, $back))->del(messages::WORD_UNLINK);
+    }
+
+
+    /*
+     * select
+     */
+
+    function dsp_type_selector(string $script, string $back = ''): string
+    {
+        global $phrase_types;
+        $result = '';
+        if ($phrase_types->code_id($this->type_id()) == phrase_type_shared::FORMULA_LINK) {
+            $result .= ' type: ' . $phrase_types->name($this->type_id());
+        } else {
+            $result .= $this->type_selector($script, html_base::COL_SM_4);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $form_name the name of the html form
+     * @param string $bs_class e.g. to define the size of the select field
+     * @return string the html code to select the phrase type
+     */
+    private function type_selector(string $form_name, string $bs_class): string
+    {
+        global $html_phrase_types;
+        return $html_phrase_types->selector($form_name);
+    }
+
+
+    /*
+     * table
+     */
 
     /**
      * @param string $back the back trace url for the undo functionality
@@ -225,6 +282,22 @@ class word extends sandbox_typed
     {
         return (new html_base())->tr($this->td());
     }
+
+    /**
+     * @param string $back the back trace url for the undo functionality
+     * @param string $style the CSS style that should be used
+     * @returns string the word as a table cell
+     */
+    function td(string $back = '', string $style = '', int $intent = 0): string
+    {
+        $cell_text = $this->display_linked($back, $style);
+        return (new html_base)->td($cell_text, $intent);
+    }
+
+
+    /*
+     * views
+     */
 
     /**
      * display a word as the view header
@@ -262,39 +335,6 @@ class word extends sandbox_typed
 
         return $result;
     }
-
-
-    /*
-     * select
-     */
-
-    /**
-     * @param string $form_name the name of the html form
-     * @param string $bs_class e.g. to define the size of the select field
-     * @return string the html code to select the phrase type
-     */
-    private function type_selector(string $form_name, string $bs_class): string
-    {
-        global $html_phrase_types;
-        return $html_phrase_types->selector($form_name);
-    }
-
-    function dsp_type_selector(string $script, string $back = ''): string
-    {
-        global $phrase_types;
-        $result = '';
-        if ($phrase_types->code_id($this->type_id()) == phrase_type_shared::FORMULA_LINK) {
-            $result .= ' type: ' . $phrase_types->name($this->type_id());
-        } else {
-            $result .= $this->type_selector($script, html_base::COL_SM_4);
-        }
-        return $result;
-    }
-
-
-    /*
-     * change forms
-     */
 
     /**
      * HTML code to add a word with all fields
@@ -398,39 +438,6 @@ class word extends sandbox_typed
         return $html->tr($name . $btn);
     }
 
-
-    /*
-     * buttons
-     */
-
-    /**
-     * @returns string the html code to display a bottom to create anew word for the current user
-     */
-    function btn_add(string $back = ''): string
-    {
-        $html = new html_base();
-        $url = $html->url_new(view_shared::MC_WORD_ADD, $this->id(), rest_ctrl::WORD, $back);
-        return (new button($url, $back))->del(messages::WORD_ADD);
-    }
-
-    /**
-     * @returns string the html code to display a bottom to exclude the word for the current user
-     *                 or if no one uses the word delete the complete word
-     */
-    function btn_del(string $back = ''): string
-    {
-        $url = (new html_base())->url(rest_ctrl::WORD . rest_ctrl::REMOVE, $this->id(), $this->id());
-        return (new button($url, $back))->del(messages::WORD_DEL);
-    }
-
-    /**
-     * @returns string the html code to display a bottom to edit the word link in a table cell
-     */
-    function btn_unlink(int $link_id, string $back = ''): string
-    {
-        $url = (new html_base())->url(rest_ctrl::LINK . rest_ctrl::REMOVE, $link_id, $this->id());
-        return (new button($url, $back))->del(messages::WORD_UNLINK);
-    }
 
     /*
      * change log
@@ -837,6 +844,20 @@ class word extends sandbox_typed
             $result .= $html->dsp_form_text("name", $this->name, "Name:", html_base::COL_SM_4);
         }
         return $result;
+    }
+
+
+    /*
+     * internal
+     */
+
+    private function has_parent(): bool
+    {
+        if ($this->parent() == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 }

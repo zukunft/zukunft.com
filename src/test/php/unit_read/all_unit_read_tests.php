@@ -34,6 +34,8 @@
 
 namespace unit_read;
 
+include_once WEB_PATH . 'frontend.php';
+
 use api\phrase\group as group_api;
 use api\value\value as value_api;
 use api\word\triple as triple_api;
@@ -109,7 +111,10 @@ class all_unit_read_tests extends all_unit_tests
 
         $api_test = new api_tests();
         $api_test->run_api_test($this);
+
+        // test all system views
         $api_test->run_ui_test($this);
+
         (new export_read_tests())->run($this);
 
         // cleanup also before testing to remove any leftovers

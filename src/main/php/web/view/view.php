@@ -35,6 +35,7 @@
 namespace html\view;
 
 include_once SANDBOX_PATH . 'config.php';
+include_once SANDBOX_PATH . 'db_object.php';
 include_once SANDBOX_PATH . 'sandbox_typed.php';
 include_once API_PATH . 'api.php';
 include_once API_COMPONENT_PATH . 'component.php';
@@ -49,8 +50,6 @@ include_once HTML_PATH . 'rest_ctrl.php';
 include_once HTML_PATH . 'button.php';
 include_once SYSTEM_PATH . 'messages.php';
 include_once LOG_PATH . 'user_log_display.php';
-include_once SANDBOX_PATH . 'db_object.php';
-include_once SANDBOX_PATH . 'sandbox_typed.php';
 include_once VIEW_PATH . 'view_list.php';
 include_once WORD_PATH . 'word.php';
 include_once WORD_PATH . 'triple.php';

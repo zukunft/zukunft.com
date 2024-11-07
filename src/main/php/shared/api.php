@@ -57,6 +57,7 @@ class api
     // TODO always use these const instead e.g. of the controller const
     // the parameter names used in the url or in the result json
     const URL_API_PATH = 'api/';
+    const URL_VAR_VIEW = 'view'; // the internal database id of the view used
     const URL_VAR_ID = 'id'; // the internal database id that should never be shown to the user
     const URL_VAR_ID_LST = 'ids'; // a comma seperated list of internal database ids
     const URL_VAR_NAME = 'name'; // the unique name of a term, view, component, user, source, language or type
@@ -73,7 +74,7 @@ class api
     const URL_VAR_MSG = 'message';
     const URL_VAR_RESULT = 'result';
     const URL_VAR_EMAIL = 'email';
-    const URL_VAR_VIEW_ID = 'view_id';
+    const URL_VAR_VIEW_ID = 'view_id'; //
     const URL_VAR_CMP_ID = 'component_id';
     const URL_VAR_USER = 'user';
     const URL_VAR_BACK = 'back';

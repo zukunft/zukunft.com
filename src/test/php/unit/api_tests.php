@@ -174,7 +174,7 @@ class api_tests
 
     /**
      * get the api message and forward it to the ui
-     * TODO move all other HTML frontend tests to this
+     * TODO move all other HTML frontend tests here
      *
      * @param test_cleanup $t
      * @return void

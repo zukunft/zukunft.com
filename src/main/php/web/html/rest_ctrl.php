@@ -45,10 +45,6 @@ class rest_ctrl
     const PUT = 'PUT';
     const DELETE = 'DELETE';
 
-    // TODO to be move to the environment variables as defined in appication.yaml
-    // the url of the backend
-    const HOST_BACKEND = 'http://localhost/';
-
     // url path of the api
     const PATH = 'api/';
 

@@ -87,11 +87,7 @@ function run_display_test(all_tests $t): void
     $result = (new button($url, $back))->add(messages::WORD_ADD);
     $t->dsp_contains(", btn_add", $target, $result);
 
-    $url = $html->url(view_shared::MC_WORD_EDIT);
-    $target = '<a href="/http/view.php" title="Edit test"><img src="/src/main/resources/images/button_edit.svg" alt="Edit test"></a>';
-    $target = '<a href="/http/word_edit.php" title="rename word"><i class="far fa-edit"></i></a>';
-    $result = (new button($url, $back))->edit(messages::WORD_EDIT);
-    $t->dsp_contains(", btn_edit", $target, $result);
+    // TODO move e.g. because the edit word button is tested already in the unit tests of the object
 
     $url = $html->url(view_shared::MC_WORD_DEL);
     $target = '<a href="/http/view.php" title="Del test"><img src="/src/main/resources/images/button_del.svg" alt="Del test"></a>';

@@ -58,6 +58,7 @@ include_once SHARED_PATH . 'views.php';
 use html\frontend;
 use html\rest_ctrl;
 use html\view\view as view_dsp;
+use html\ref\source as source_dsp;
 use cfg\user;
 use cfg\view;
 use cfg\word;
@@ -70,7 +71,8 @@ use shared\views as view_shared;
 $db_con = prg_start("view");
 
 // get the parameters
-$view_id = $_GET[rest_ctrl::PAR_VIEW_ID] ?? '';
+$view_id = $_GET[api::URL_VAR_VIEW] ?? 0; // the database id of the view to display
+$id = $_GET[api::URL_VAR_ID] ?? 0; // the database id of the prime object to display
 $new_view_id = $_GET[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
 $view_words = $_GET[rest_ctrl::PAR_VIEW_WORDS] ?? '';
 $back = $_GET[api::URL_VAR_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
@@ -88,21 +90,26 @@ $result .= $usr->get();
 if ($usr->id() > 0) {
 
     // TODO move to the frontend __construct
+    // get the fixed frontend config
     $main = new frontend('view');
     $api_msg = $main->api_get(type_lists_dsp::class);
     $frontend_cache = new type_lists_dsp($api_msg);
 
     $usr->load_usr_data();
 
-    // set the object that should be displayed
-    $dbo_dsp = new word_dsp();
+    // select the main object to display
+    // TODO get the system view from the preloaded cache
+    if (in_array($view_id, view_shared::WORD_MASKS_IDS)) {
+        $dbo_dsp = new word_dsp();
+    } elseif (in_array($view_id, view_shared::SOURCE_MAsKS_IDS)) {
+        $dbo_dsp = new source_dsp();
+    } else {
+        $dbo_dsp = new word_dsp();
+    }
 
-
-    // get the word(s) to display
-    // TODO replace it with phrase
-    $wrd = new word($usr);
-    if ($view_words != '') {
-        $wrd->main_wrd_from_txt($view_words);
+    // get the main object to display
+    if ($id != 0) {
+        $dbo_dsp->load_by_id($id);
     } else {
         // get last word used by the user or a default value
         $wrd = $usr->last_wrd();
@@ -110,19 +117,19 @@ if ($usr->id() > 0) {
 
     // select the view
     // TODO move as much a possible to backend functions
-    if ($wrd->id() > 0) {
+    if ($dbo_dsp->id() > 0) {
         // if the user has changed the view for this word, save it
         if ($new_view_id != '') {
-            $wrd->save_view($new_view_id);
+            $dbo_dsp->save_view($new_view_id);
             $view_id = $new_view_id;
         } else {
             // if the user has selected a special view, use it
-            if ($view_id == '') {
+            if ($view_id == 0) {
                 // if the user has set a view for this word, use it
-                $view_id = $wrd->view_id();
+                $view_id = $dbo_dsp->view_id();
                 if ($view_id <= 0) {
                     // if any user has set a view for this word, use the common view
-                    $view_id = $wrd->calc_view_id();
+                    $view_id = $dbo_dsp->calc_view_id();
                     if ($view_id <= 0) {
                         // if no one has set a view for this word, use the fallback view
                         $view_id = $system_views->id(view_shared::MC_WORD);
@@ -130,35 +137,39 @@ if ($usr->id() > 0) {
                 }
             }
         }
-
-        // create a display object, select and load the view and display the word according to the view
-        if ($view_id > 0) {
-            // TODO first create the frontend object and call from the frontend object the api
-            // TODO for system views avoid the backend call by using the cache from the frontend
-            $msk = new view($usr);
-            $msk->load_by_id($view_id);
-            $msk->load_components();
-            $msk_dsp = new view_dsp($msk->api_json());
-            $dsp_text = $msk_dsp->show($dbo_dsp, $back);
-
-            // use a fallback if the view is empty
-            if ($dsp_text == '' or $msk->name() == '') {
-                $view_id = $system_views->id(view_shared::MC_START);
-                $msk->load_by_id($view_id);
-                $dsp_text = $msk_dsp->display($wrd, $back);
-            }
-            if ($dsp_text == '') {
-                $result .= 'Please add a component to the view by clicking on Edit on the top right.';
-            } else {
-                $result .= $dsp_text;
-            }
-        } else {
-            $result .= log_err('No view for "' . $wrd->name() . '" found.', "view.php", '', (new Exception)->getTraceAsString(), $usr);
-        }
-
     } else {
-        $result .= log_err("No word selected.", "view.php", '', (new Exception)->getTraceAsString(), $usr);
+        if (in_array($view_id, view_shared::ADD_MAsKS_IDS)) {
+            $result .= log_info("No word selected.", "view.php", '', (new Exception)->getTraceAsString(), $usr);
+        } else {
+            $result .= log_err("No word selected.", "view.php", '', (new Exception)->getTraceAsString(), $usr);
+        }
     }
+
+    // create a display object, select and load the view and display the word according to the view
+    if ($view_id > 0) {
+        // TODO first create the frontend object and call from the frontend object the api
+        // TODO for system views avoid the backend call by using the cache from the frontend
+        $msk = new view($usr);
+        $msk->load_by_id($view_id);
+        $msk->load_components();
+        $msk_dsp = new view_dsp($msk->api_json());
+        $dsp_text = $msk_dsp->show($dbo_dsp, $back);
+
+        // use a fallback if the view is empty
+        if ($dsp_text == '' or $msk->name() == '') {
+            $view_id = $system_views->id(view_shared::MC_START);
+            $msk->load_by_id($view_id);
+            $dsp_text = $msk_dsp->display($dbo_dsp, $back);
+        }
+        if ($dsp_text == '') {
+            $result .= 'Please add a component to the view by clicking on Edit on the top right.';
+        } else {
+            $result .= $dsp_text;
+        }
+    } else {
+        $result .= log_err('No view for "' . $dbo_dsp->name() . '" found.', "view.php", '', (new Exception)->getTraceAsString(), $usr);
+    }
+
 }
 
 echo $result;

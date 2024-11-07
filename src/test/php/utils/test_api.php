@@ -140,7 +140,8 @@ class test_api extends create_test_objects
     }
 
     /**
-     * create the api message json body, recreate the object based on the json and check if it matches
+     * create the api message json body from the backend to the frontend
+     * and recreate the object based on the json from the frontend and check if it matches
      * without using the real curl api
      *
      * @param object $usr_obj the user sandbox object that should be tested

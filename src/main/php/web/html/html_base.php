@@ -381,11 +381,12 @@ class html_base
     }
 
     /**
+     * TODO change based on the environment
      * @return string the host name of the api
      */
     private function host(): string
     {
-        return HOST_TESTING;
+        return frontend::HOST_DEV;
     }
 
     /*
