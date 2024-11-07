@@ -56,8 +56,8 @@ include_once WORD_PATH . 'triple.php';
 
 // TODO remove model classes
 use api\api;
-use html\user\user_message;
 use shared\api as api_shared;
+use html\user\user_message;
 use api\component\component as component_api;
 use html\rest_ctrl as api_dsp;
 use html\button as button_dsp;
@@ -164,6 +164,23 @@ class view extends sandbox_typed
     function code_id(): ?string
     {
         return $this->code_id;
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load the user sandbox object e.g. word by id via api
+     * @param int $id
+     * @return bool
+     */
+    function load_by_id_with(int $id): bool
+    {
+        $data = [];
+        $data[api_shared::URL_VAR_CHILDREN] = 1;
+        return parent::load_by_id($id, $data);
     }
 
 

@@ -432,17 +432,23 @@ class test_api extends create_test_objects
      *
      * @param string $class the class name of the object to test
      * @param int $id the database id of the db row that should be used for testing
+     * @param int $levels the number of children levels that should be included
      * @param ?array $expected if not null, the expected result
      * @param bool $ignore_id true if the ids should be ignored e.g. because test records have been created
      * @return bool true if the json has no relevant differences
      */
-    function assert_api_get(string $class, int $id = 1, ?array $expected = null, bool $ignore_id = false): bool
+    function assert_api_get(string $class, int $id = 1, int $levels = 0, ?array $expected = null, bool $ignore_id = false): bool
     {
         // naming exception (to be removed?)
         $lib = new library();
         $ctrl = new rest_ctrl();
         $class_api = $this->class_to_api($class);
         $url = $this->class_to_url($class_api);
+        if ($levels > 0) {
+            $url .= '?' . api::URL_VAR_ID . '=' . $id;
+            $url .= '&' . api::URL_VAR_CHILDREN . '=' . $levels;
+        }
+        // Check if backend is reading the id
         $data = array(api::URL_VAR_ID => $id);
         // TODO check why for formula a double call is needed
         if ($class == formula::class) {
@@ -456,6 +462,9 @@ class test_api extends create_test_objects
         $filename = '';
         if ($class == value::class) {
             $filename = 'value_non_std';
+        }
+        if ($levels > 0) {
+            $filename = $class_api . '_with_components';
         }
         return $this->assert_api_compare($class_api, $actual, $expected, $filename, false, $ignore_id);
     }

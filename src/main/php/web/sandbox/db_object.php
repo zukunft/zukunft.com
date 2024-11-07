@@ -115,14 +115,15 @@ class db_object
     /**
      * load the user sandbox object e.g. word by id via api
      * @param int $id
+     * @param array $data additional data that should be included in the get request
      * @return bool
      */
-    function load_by_id(int $id): bool
+    function load_by_id(int $id, array $data = []): bool
     {
         $result = false;
 
         $api = new api_dsp();
-        $json_body = $api->api_call_id($this::class, $id);
+        $json_body = $api->api_call_id($this::class, $id, $data);
         if ($json_body) {
             $this->set_from_json_array($json_body);
             if ($this->name() != '') {

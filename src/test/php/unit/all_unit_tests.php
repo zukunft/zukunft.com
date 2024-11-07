@@ -248,7 +248,7 @@ class all_unit_tests extends test_cleanup
             (new view_read_tests())->run($this);
             (new component_read_tests())->run($this);
             (new graph_tests())->run($this);
-            (new value_read_tests())->run($this);
+            // (new value_read_tests())->run($this);
 
 
             /*

@@ -180,7 +180,7 @@ class word extends sandbox_typed
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(rest_ctrl::VIEW, $this->id(), $back, rest_ctrl::PAR_VIEW_WORDS);
+        $url = $html->url_new(view_shared::MI_WORD, $this->id(), rest_ctrl::PAR_VIEW_WORDS, $back);
         return $html->ref($url, $this->name(), $this->description(), $style);
     }
 
@@ -195,7 +195,7 @@ class word extends sandbox_typed
     function btn_add(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(view_shared::MC_WORD_ADD, $this->id(), rest_ctrl::WORD, $back);
+        $url = $html->url_new(view_shared::MI_WORD_ADD, $this->id(), rest_ctrl::WORD, $back);
         $btn = new button($url, $back);
         return $btn->add(messages::WORD_ADD);
     }
@@ -206,7 +206,7 @@ class word extends sandbox_typed
     function btn_edit(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(view_shared::MC_WORD_EDIT, $this->id(), rest_ctrl::WORD, $back);
+        $url = $html->url_new(view_shared::MI_WORD_EDIT, $this->id(), rest_ctrl::WORD, $back);
         $btn = new button($url, $back);
         return $btn->edit(messages::WORD_EDIT);
     }
@@ -218,7 +218,7 @@ class word extends sandbox_typed
     function btn_del(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(view_shared::MC_WORD_DEL, $this->id(), rest_ctrl::WORD, $back);
+        $url = $html->url_new(view_shared::MI_WORD_DEL, $this->id(), rest_ctrl::WORD, $back);
         $btn = new button($url, $back);
         return $btn->del(messages::WORD_DEL);
     }

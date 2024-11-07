@@ -77,7 +77,7 @@ class phrase_write_tests
         $t->assert('phrase->load word by id ' . $company_id, $result, $target);
 
         $result = $lib->trim_html($phr->dsp_tbl());
-        $target = $lib->trim_html('<td><a href="/http/view.php?words=' . $company_id . '" title="' .
+        $target = $lib->trim_html('<td><a href="/http/view.php?v=1&id=' . $company_id . '&o=words" title="' .
             word_api::TN_COMPANY . '">' . word_api::TN_COMPANY . '</a></td> ');
         $t->assert('phrase->dsp_tbl word for ' . word_api::TN_COMPANY, $result, $target);
 

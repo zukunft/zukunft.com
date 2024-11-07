@@ -126,6 +126,7 @@ class api_tests
         $t->assert_api_get(formula::class);
         $t->assert_api_get_by_text(formula::class, formula_api::TN_READ);
         $t->assert_api_get(view::class);
+        $t->assert_api_get(view::class, 1, 1);
         $t->assert_api_get_by_text(view::class, view_api::TN_READ);
         $t->assert_api_get(component::class);
         $t->assert_api_get_by_text(component::class, component_api::TN_READ);
@@ -223,7 +224,7 @@ class api_tests
         $id = $t->assert_api_put_no_rest($class, $add_data);
         // check if the object has been created
         // the id is ignored in the compare because it depends on the number of rows in the database that cannot be controlled by the test
-        $t->assert_api_get($class, $id, $add_data, true);
+        $t->assert_api_get($class, $id, 0, $add_data, true);
         // update the previous created test object
         $id = $t->assert_api_post_no_rest($class, $id, $upd_data);
         // remove the previous created test object
@@ -246,7 +247,7 @@ class api_tests
         $id = $t->assert_api_put($class, $add_data, true);
         if ($id != 0) {
             // check if the source has been created
-            $t->assert_api_get($class, $id, $add_data, true);
+            $t->assert_api_get($class, $id, 0, $add_data, true);
             //$t->assert_api_post(source::class);
             $t->assert_api_del($class, $id);
         } else {

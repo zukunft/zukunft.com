@@ -121,11 +121,11 @@ class rest_ctrl
      * by id
      * @param string $class the frontend class name that should be loaded
      * @param int $id the id of the database object that should be loaded
+     * @param array $data additional data that should be included in the get request
      * @return array with the body json message from the backend
      */
-    function api_call_id(string $class, int $id): array
+    function api_call_id(string $class, int $id, array $data = []): array
     {
-        $data = array();
         $data[api::URL_VAR_ID] = $id;
         return $this->api_get($class, $data);
     }

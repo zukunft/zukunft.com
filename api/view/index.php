@@ -55,6 +55,7 @@ $db_con = prg_start("api/view", "", false);
 // get the parameters
 $dsp_id = $_GET[api::URL_VAR_ID] ?? 0;
 $dsp_name = $_GET[api::URL_VAR_NAME] ?? '';
+$cmp_lvl = $_GET[api::URL_VAR_CHILDREN] ?? 0;
 
 $msg = '';
 $result = new view_api(); // reset the html code var
@@ -69,9 +70,15 @@ if ($usr->id() > 0) {
     $msk = new view($usr);
     if ($dsp_id > 0) {
         $msk->load_by_id($dsp_id);
+        if ($cmp_lvl > 0) {
+            $msk->load_components();
+        }
         $result = $msk->api_obj();
     } elseif ($dsp_name != '') {
         $msk->load_by_name($dsp_name);
+        if ($cmp_lvl > 0) {
+            $msk->load_components();
+        }
         $result = $msk->api_obj();
     } else {
         $msg = 'view id or name is missing';

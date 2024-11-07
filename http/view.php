@@ -60,8 +60,6 @@ use html\rest_ctrl;
 use html\view\view as view_dsp;
 use html\ref\source as source_dsp;
 use cfg\user;
-use cfg\view;
-use cfg\word;
 use html\types\type_lists as type_lists_dsp;
 use html\word\word as word_dsp;
 use shared\api;
@@ -97,11 +95,15 @@ if ($usr->id() > 0) {
 
     $usr->load_usr_data();
 
+    // use default view if nothing is set
+    if ($view_id == 0 and $id == 0) {
+        $view_id = view_shared::MI_START;
+    }
+
     // select the main object to display
-    // TODO get the system view from the preloaded cache
     if (in_array($view_id, view_shared::WORD_MASKS_IDS)) {
         $dbo_dsp = new word_dsp();
-    } elseif (in_array($view_id, view_shared::SOURCE_MAsKS_IDS)) {
+    } elseif (in_array($view_id, view_shared::SOURCE_MASKS_IDS)) {
         $dbo_dsp = new source_dsp();
     } else {
         $dbo_dsp = new word_dsp();
@@ -116,49 +118,46 @@ if ($usr->id() > 0) {
     }
 
     // select the view
-    // TODO move as much a possible to backend functions
-    if ($dbo_dsp->id() > 0) {
-        // if the user has changed the view for this word, save it
-        if ($new_view_id != '') {
-            $dbo_dsp->save_view($new_view_id);
-            $view_id = $new_view_id;
-        } else {
-            // if the user has selected a special view, use it
-            if ($view_id == 0) {
-                // if the user has set a view for this word, use it
-                $view_id = $dbo_dsp->view_id();
-                if ($view_id <= 0) {
-                    // if any user has set a view for this word, use the common view
-                    $view_id = $dbo_dsp->calc_view_id();
+    if (in_array($view_id, view_shared::EDIT_DEL_MASKS_IDS)) {
+        // TODO move as much a possible to backend functions
+        if ($dbo_dsp->id() > 0) {
+            // if the user has changed the view for this word, save it
+            if ($new_view_id != '') {
+                $dbo_dsp->save_view($new_view_id);
+                $view_id = $new_view_id;
+            } else {
+                // if the user has selected a special view, use it
+                if ($view_id == 0) {
+                    // if the user has set a view for this word, use it
+                    $view_id = $dbo_dsp->view_id();
                     if ($view_id <= 0) {
-                        // if no one has set a view for this word, use the fallback view
-                        $view_id = $system_views->id(view_shared::MC_WORD);
+                        // if any user has set a view for this word, use the common view
+                        $view_id = $dbo_dsp->calc_view_id();
+                        if ($view_id <= 0) {
+                            // if no one has set a view for this word, use the fallback view
+                            $view_id = $system_views->id(view_shared::MC_WORD);
+                        }
                     }
                 }
             }
-        }
-    } else {
-        if (in_array($view_id, view_shared::ADD_MAsKS_IDS)) {
-            $result .= log_info("No word selected.", "view.php", '', (new Exception)->getTraceAsString(), $usr);
         } else {
             $result .= log_err("No word selected.", "view.php", '', (new Exception)->getTraceAsString(), $usr);
         }
     }
 
     // create a display object, select and load the view and display the word according to the view
-    if ($view_id > 0) {
+    if ($view_id != 0) {
         // TODO first create the frontend object and call from the frontend object the api
         // TODO for system views avoid the backend call by using the cache from the frontend
-        $msk = new view($usr);
-        $msk->load_by_id($view_id);
-        $msk->load_components();
-        $msk_dsp = new view_dsp($msk->api_json());
+        // TODO get the system view from the preloaded cache
+        $msk_dsp = new view_dsp();
+        $msk_dsp->load_by_id_with($view_id);
         $dsp_text = $msk_dsp->show($dbo_dsp, $back);
 
         // use a fallback if the view is empty
-        if ($dsp_text == '' or $msk->name() == '') {
+        if ($dsp_text == '' or $msk_dsp->name() == '') {
             $view_id = $system_views->id(view_shared::MC_START);
-            $msk->load_by_id($view_id);
+            $msk_dsp->load_by_id($view_id);
             $dsp_text = $msk_dsp->display($dbo_dsp, $back);
         }
         if ($dsp_text == '') {

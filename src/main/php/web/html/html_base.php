@@ -342,25 +342,15 @@ class html_base
             $result = rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
             $result .= rest_ctrl::URL_SYMBOL_VIEW . '=' . $view;
             if (is_string($id)) {
-                if ($par != '') {
-                    $result .= rest_ctrl::URL_SYMBOL_OBJECT . '=' . $obj_name;
-                } else {
-                    $result .= '&id=' . $id;
-                }
-                if ($id_ext != '') {
-                    $result .= '&' . $id_ext;
-                }
+                $result .= '&id=' . $id;
+            } elseif ($id <> 0) {
+                $result .= '&id=' . $id;
             }
-            $result .= '&' . rest_ctrl::URL_SYMBOL_OBJECT . '=' . $obj_name;
-            if ($id <> 0) {
-                if ($par != '') {
-                    $result .= '&' . rest_ctrl::URL_SYMBOL_OBJECT . '=' . $obj_name;
-                } else {
-                    $result .= '&id=' . $id;
-                }
-                if ($id_ext != '') {
-                    $result .= '&' . $id_ext;
-                }
+            if ($obj_name != '') {
+                $result .= '&' . rest_ctrl::URL_SYMBOL_OBJECT . '=' . $obj_name;
+            }
+            if ($id_ext != '') {
+                $result .= '&' . $id_ext;
             }
         }
         if ($back != '') {

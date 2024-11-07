@@ -42,6 +42,7 @@ class views
     const MC_START = 'start';
     const MI_START = 2;
     const MC_WORD = 'word';
+    const MI_WORD = 1;
     const MC_WORD_ADD = 'word_add';
     const MI_WORD_ADD = 3;
     const MC_WORD_EDIT = 'word_edit';
@@ -93,16 +94,18 @@ class views
     ];
 
     // system masks that have a word as the main object
-    const SOURCE_MAsKS_IDS = [
+    const SOURCE_MASKS_IDS = [
         self::MI_SOURCE_ADD,
         self::MI_SOURCE_EDIT,
         self::MI_SOURCE_DEL
     ];
 
     // system masks that have a word as the main object
-    const ADD_MAsKS_IDS = [
-        self::MI_WORD_ADD,
-        self::MI_SOURCE_ADD,
+    const EDIT_DEL_MASKS_IDS = [
+        self::MI_WORD_EDIT,
+        self::MI_WORD_DEL,
+        self::MI_SOURCE_EDIT,
+        self::MI_SOURCE_DEL,
     ];
 
 }
