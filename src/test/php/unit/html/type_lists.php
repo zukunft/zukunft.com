@@ -124,7 +124,7 @@ class type_lists
 
         $test_page .= $html->form_end_with_submit($form_name, '');
 
-        $t->html_test($test_page, 'types', $t);
+        $t->html_test($test_page, 'types', 'types', $t);
     }
 
 }

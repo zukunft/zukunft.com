@@ -44,11 +44,11 @@ class views
 
     // curl views
     const MC_WORD_ADD = 'word_add';
-    const MI_WORD_ADD = 3;
+    const MI_WORD_ADD = 2;
     const MC_WORD_EDIT = 'word_edit';
-    const MI_WORD_EDIT = 4;
+    const MI_WORD_EDIT = 3;
     const MC_WORD_DEL = 'word_del';
-    const MI_WORD_DEL = 5;
+    const MI_WORD_DEL = 4;
     const MC_VERB_ADD = 'verb_add';
     const MC_VERB_EDIT = 'verb_edit';
     const MC_VERB_DEL = 'verb_del';
@@ -65,11 +65,11 @@ class views
     const MC_FORMULA_EXPLAIN = 'formula_explain';
     const MC_FORMULA_TEST = 'formula_test';
     const MC_SOURCE_ADD = 'source_add';
-    const MI_SOURCE_ADD = 17;
+    const MI_SOURCE_ADD = 11;
     const MC_SOURCE_EDIT = 'source_edit';
-    const MI_SOURCE_EDIT = 18;
+    const MI_SOURCE_EDIT = 12;
     const MC_SOURCE_DEL = 'source_del';
-    const MI_SOURCE_DEL = 19;
+    const MI_SOURCE_DEL = 13;
     const MC_VERBS = 'verbs';
     const MC_USER = 'user';
     const MC_ERR_LOG = 'error_log';
@@ -87,7 +87,7 @@ class views
 
     // default views
     const MC_WORD = 'word';
-    const MI_WORD = 20;
+    const MI_WORD = 41;
 
     // functional views
     const MC_WORD_FIND = 'word_find';

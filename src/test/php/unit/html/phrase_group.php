@@ -49,7 +49,7 @@ class phrase_group
         $test_page = $html->text_h2('Phrase group display test');
         $test_page .= 'phrase group with tooltip: ' . $grp->display() . '<br>';
         $test_page .= 'phrase group with link: ' . $grp->display_linked() . '<br>';
-        $t->html_test($test_page, 'phrase_group', $t);
+        $t->html_test($test_page, 'phrase_group', 'phrase_group', $t);
     }
 
 }

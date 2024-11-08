@@ -511,24 +511,29 @@ class test_cleanup extends test_api
         return $result;
     }
 
-    function html_test(string $body, string $filename, test_cleanup $t): void
+    function html_test(string $body, string $title, string $filename, test_cleanup $t): void
     {
         $lib = new library();
 
-        $created_html = $this->html_page($body);
+        if ($title == '') {
+            $title = 'test';
+        } else {
+            $title = 'test ' . $title;
+        }
+        $created_html = $this->html_page($body, $title);
         $expected_html = $t->file('web/html/' . $filename . '.html');
         $t->display($filename, $lib->trim_html($expected_html), $lib->trim_html($created_html));
     }
 
     function html_view_test(string $body, string $filename, test_cleanup $t): void
     {
-        $this->html_test($body, 'views/' . $filename, $t);
+        $this->html_test($body, 'view', 'views/' . $filename, $t);
     }
 
-    private function html_page(string $body): string
+    private function html_page(string $body, string $title): string
     {
         $html = new html_base();
-        return $html->header_test('test') . $body . $html->footer();
+        return $html->header_test($title) . $body . $html->footer();
     }
 
 }

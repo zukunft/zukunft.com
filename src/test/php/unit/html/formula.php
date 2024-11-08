@@ -49,7 +49,7 @@ class formula
         $test_page = $html->text_h2('formula display test');
         $test_page .= 'with tooltip: ' . $frm->display() . '<br>';
         $test_page .= 'with link: ' . $frm->display_linked() . '<br>';
-        $t->html_test($test_page, 'formula', $t);
+        $t->html_test($test_page, 'formula', 'formula', $t);
     }
 
 }

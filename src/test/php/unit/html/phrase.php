@@ -52,7 +52,7 @@ class phrase
         $test_page .= 'word phrase with link: ' . $wrd->display_linked() . '<br>';
         $test_page .= 'triple phrase with tooltip: ' . $trp->display() . '<br>';
         $test_page .= 'triple phrase with link: ' . $trp->display_linked() . '<br>';
-        $t->html_test($test_page, 'phrase', $t);
+        $t->html_test($test_page, 'phrase', 'phrase', $t);
     }
 
 }

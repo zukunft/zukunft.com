@@ -199,11 +199,9 @@ class html_base
             $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style.css" />';
         }
         $result .= '</head>';
+        $result .= '<body>';
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= '<body>';
             $result .= '  <div class="container">';
-        } else {
-            $result .= '<body>';
         }
 
         return $result;
@@ -340,14 +338,11 @@ class html_base
             $result = rest_ctrl::PATH_FIXED . $id . rest_ctrl::EXT . '?';
         } else {
             $result = rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
-            $result .= rest_ctrl::URL_SYMBOL_VIEW . '=' . $view;
+            $result .= api::URL_VAR_MASK . '=' . $view;
             if (is_string($id)) {
                 $result .= '&id=' . $id;
             } elseif ($id <> 0) {
                 $result .= '&id=' . $id;
-            }
-            if ($obj_name != '') {
-                $result .= '&' . rest_ctrl::URL_SYMBOL_OBJECT . '=' . $obj_name;
             }
             if ($id_ext != '') {
                 $result .= '&' . $id_ext;
@@ -672,7 +667,7 @@ class html_base
      */
     function about(): string
     {
-        $result = $this->header("", "center_form"); // reset the html code var
+        $result = $this->header('about', "center_form"); // reset the html code var
 
         $result .= $this->dsp_form_center();
         $result .= $this->logo_big();

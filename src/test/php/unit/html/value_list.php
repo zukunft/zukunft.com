@@ -130,7 +130,7 @@ class value_list
         $header_html = $phr_lst_context_dsp->headline();
         $table_html = $lst_dsp->table($phr_lst_context_dsp);
         $test_page .= 'with context: ' . $header_html . $table_html . '<br>';
-        $t->html_test($test_page, 'value_list', $t);
+        $t->html_test($test_page, 'value_list', 'value_list', $t);
 
         // TODO add a test that if a view contains beside the "2023 (year)"
         //      no other phrase that contains the word "2023"

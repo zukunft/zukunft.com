@@ -48,7 +48,7 @@ class value
         $test_page = $html->text_h2('value display test');
         $test_page .= 'with tooltip: ' . $val->display() . '<br>';
         $test_page .= 'with link: ' . $val->display_linked() . '<br>';
-        $t->html_test($test_page, 'value', $t);
+        $t->html_test($test_page, 'value', 'value', $t);
     }
 
 }

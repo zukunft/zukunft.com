@@ -58,7 +58,7 @@ class term
         $test_page .= 'verb term with link: ' . $vrb->display_linked() . '<br>';
         $test_page .= 'formula term with tooltip: ' . $frm->display() . '<br>';
         $test_page .= 'formula term with link: ' . $frm->display_linked() . '<br>';
-        $t->html_test($test_page, 'term', $t);
+        $t->html_test($test_page, 'term', 'term', $t);
     }
 
 }

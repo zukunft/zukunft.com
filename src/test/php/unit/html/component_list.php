@@ -56,7 +56,7 @@ class component_list
         $test_page .= '<br>' . $html->text_h2('Selector tests');
         $test_page .= $lst->selector('test_selector', '', 'No component selected') . '<br>';
 
-        $t->html_test($test_page, 'component_list', $t);
+        $t->html_test($test_page, 'component_list', 'component_list', $t);
     }
 
 }

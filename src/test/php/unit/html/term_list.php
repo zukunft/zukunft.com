@@ -57,7 +57,7 @@ class term_list
         $test_page .= '<br>' . $html->text_h2('Selector tests');
         $test_page .= $lst->selector('test_selector', '', 'No term selected') . '<br>';
 
-        $t->html_test($test_page, 'term_list', $t);
+        $t->html_test($test_page, 'term_list', 'term_list', $t);
     }
 
 }

@@ -48,7 +48,7 @@ class view
         $test_page = $html->text_h2('view display test');
         $test_page .= 'with tooltip: ' . $vrb->display() . '<br>';
         $test_page .= 'with link: ' . $vrb->display_linked() . '<br>';
-        $t->html_test($test_page, 'view', $t);
+        $t->html_test($test_page, 'view', 'view', $t);
     }
 
 }

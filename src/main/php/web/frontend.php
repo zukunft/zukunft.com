@@ -170,7 +170,7 @@ class frontend
      * session
      */
 
-    function start(): string
+    function start(string $title): string
     {
         $result = '';
 
@@ -185,7 +185,7 @@ class frontend
 
         // html header
         $html = new html_base();
-        echo $html->header('', '', api::HOST_DEV, api::BS_PATH_DEV, api::BS_CSS_PATH_DEV);
+        echo $html->header($title, '', api::HOST_DEV, api::BS_PATH_DEV, api::BS_CSS_PATH_DEV);
 
         if (self::HOST_SYS_LOG != '') {
             $result .= $this->log_info('start ' . $this->code_name);

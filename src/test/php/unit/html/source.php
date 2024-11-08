@@ -49,7 +49,7 @@ class source
         $test_page = $html->text_h2('source display test');
         $test_page .= 'with tooltip: ' . $src->display() . '<br>';
         $test_page .= 'with link: ' . $src->display_linked() . '<br>';
-        $t->html_test($test_page, 'source', $t);
+        $t->html_test($test_page, 'source', 'source', $t);
     }
 
 }

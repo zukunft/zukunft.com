@@ -35,6 +35,8 @@ namespace unit_write;
 use api\formula\formula as formula_api;
 use api\word\word as word_api;
 use cfg\verb;
+use shared\api;
+use shared\views;
 use test\test_cleanup;
 
 class element_write_tests
@@ -97,14 +99,15 @@ class element_write_tests
                 $t->display('element->dsp_id', $target, $result);
 
                 $result = $elm->name_linked($back);
+                $url = '<a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::MI_WORD . '&' . api::URL_VAR_ID . '=';
                 if ($pos == 0) {
-                    $target = '<a href="/http/view.php?v=20&id=' . $wrd_country->id() . '&o=words&back=0" title="Country">Country</a>';
+                    $target = $url . $wrd_country->id() . '&back=0" title="Country">Country</a>';
                 } elseif ($pos == 1) {
                     $target = 'can be used as a differentiator for';
                 } elseif ($pos == 2) {
-                    $target = '<a href="/http/view.php?v=20&id=' . $wrd_canton->id() . '&o=words&back=0" title="Canton">Canton</a>';
+                    $target = $url . $wrd_canton->id() . '&back=0" title="Canton">Canton</a>';
                 } elseif ($pos == 3) {
-                    $target = '<a href="/http/view.php?v=20&id=' . $wrd_total->id() . '&o=words&back=0" title="System Test Word Total">System Test Word Total</a>';
+                    $target = $url . $wrd_total->id() . '&back=0" title="System Test Word Total">System Test Word Total</a>';
                 }
                 $t->display('element->dsp_id', $target, $result);
 

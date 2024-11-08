@@ -48,7 +48,7 @@ class figure
         $test_page = $html->text_h2('Figure display test');
         $test_page .= 'with tooltip: ' . $fig->display() . '<br>';
         $test_page .= 'with link: ' . $fig->display_linked() . '<br>';
-        $t->html_test($test_page, 'figure', $t);
+        $t->html_test($test_page, 'figure', 'figure', $t);
     }
 
 }

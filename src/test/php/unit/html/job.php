@@ -52,7 +52,7 @@ class job
         $test_page .= 'user view of a table with batch job entries<br>';
         $test_page .= $log_lst->display() . '<br>';
 
-        $t->html_test($test_page, 'job', $t);
+        $t->html_test($test_page, 'job', 'job', $t);
     }
 
 }

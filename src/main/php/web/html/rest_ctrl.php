@@ -51,8 +51,6 @@ class rest_ctrl
     // url path to the fixed views
     const PATH_FIXED = '/http/';
     const URL_MAIN_SCRIPT = 'view';
-    const URL_SYMBOL_OBJECT = 'o';
-    const URL_SYMBOL_VIEW = 'v';
 
     // url extension of the fixed views
     const EXT = '.php';

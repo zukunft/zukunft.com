@@ -65,13 +65,7 @@ class word
         $test_page .= 'unlink in columns: ' . $wrd_pi->dsp_unlink($wrd->id()) . '<br>';
         $test_page .= $html->text_h2('view header');
         $test_page .= $wrd->header() . '<br>';
-        $test_page .= $html->text_h2('add mask');
-        $test_page .= $wrd->form_add('') . '<br>';
-        $test_page .= $html->text_h2('edit mask');
-        $test_page .= $wrd->form_edit('', '', '', '') . '<br>';
-        $test_page .= $html->text_h2('del mask');
-        $test_page .= $wrd->form_del('') . '<br>';
-        $t->html_test($test_page, 'word', $t);
+        $t->html_test($test_page, 'word html components', 'word', $t);
 
         // TODO check the
     }

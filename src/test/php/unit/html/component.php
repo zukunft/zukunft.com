@@ -69,7 +69,7 @@ class component
         $cmp->description = component_api::TD_READ;
         $test_page .= 'edit mask<br>';
         $test_page .= $cmp->form_edit('', '', '', '', '') . '<br>';
-        $t->html_test($test_page, 'component', $t);
+        $t->html_test($test_page, 'component', 'component', $t);
     }
 
 }

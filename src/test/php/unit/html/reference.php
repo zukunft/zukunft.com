@@ -49,7 +49,7 @@ class reference
         $test_page = $html->text_h2('reference display test');
         $test_page .= 'with tooltip: ' . $ref->display() . '<br>';
         $test_page .= 'with link: ' . $ref->display_linked() . '<br>';
-        $t->html_test($test_page, 'reference', $t);
+        $t->html_test($test_page, 'reference', 'reference', $t);
     }
 
 }

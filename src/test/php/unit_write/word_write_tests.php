@@ -49,6 +49,7 @@ use cfg\verb;
 use cfg\word;
 use html\word\word as word_dsp;
 use shared\library;
+use shared\views;
 use test\all_tests;
 use test\test_cleanup;
 use shared\types\phrase_type AS phrase_type_shared;
@@ -459,7 +460,7 @@ class word_write_tests
 
         // display
         $back = 1;
-        $target = '<a href="/http/view.php?v=20&id=' . $wrd_read->id() . '&o=words&back=1" title="' . word_api::TD_READ . '">' . word_api::TN_READ . '</a>';
+        $target = '<a href="/http/view.php?m=' . views::MI_WORD . '&id=' . $wrd_read->id() . '&back=1" title="' . word_api::TD_READ . '">' . word_api::TN_READ . '</a>';
         $wrd_read_dsp = new word_dsp($wrd_read->api_json());
         $result = $wrd_read_dsp->display_linked($back);
         $t->display('word->display "' . word_api::TN_READ . '"', $target, $result);

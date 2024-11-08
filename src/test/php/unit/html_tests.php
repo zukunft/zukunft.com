@@ -75,7 +75,7 @@ class html_tests
 
         $created_html = $html->about();
         $expected_html = $t->file('web/html/about.html');
-        $t->display('html_selector', $lib->trim_html($expected_html), $lib->trim_html($created_html));
+        $t->display('about', $lib->trim_html($expected_html), $lib->trim_html($created_html));
 
 
         $t->subheader('Selector tests');
@@ -97,7 +97,7 @@ class html_tests
         $body = $html->form_start($sel->form);
         $body .= $sel->display_old();
         $body .= $html->form_end_with_submit($sel->name, '');
-        $t->html_test($body, 'selector', $t);
+        $t->html_test($body, '', 'selector', $t);
         */
 
         // ... and check if the prepared sql name is unique
@@ -105,7 +105,7 @@ class html_tests
 
         // button add
         $url = $html->url(view_shared::MC_WORD_ADD);
-        $t->html_test((new button($url))->add(messages::WORD_ADD), 'button_add', $t);
+        $t->html_test((new button($url))->add(messages::WORD_ADD), '', 'button_add', $t);
 
 
         $t->subheader('HTML list tests');
@@ -118,7 +118,7 @@ class html_tests
         $lst->add_verb(new verb(1, verb::IS));
         $lst->add_verb(new verb(2, verb::IS_PART_OF));
         // TODO use set_from_json to set the display object
-        $t->html_test($lst->dsp_obj()->list(verb::class, 'Verbs'), 'list_verbs', $t);
+        $t->html_test($lst->dsp_obj()->list(verb::class, 'Verbs'), '', 'list_verbs', $t);
 
 
         $t->subheader('HTML table tests');
@@ -199,10 +199,10 @@ class html_tests
         $res_lst = new result_list_dsp();
         $res_lst->add(new result_dsp($res_city->get_json()));
         $res_lst->add(new result_dsp($res_canton->get_json()));
-        $t->html_test($res_lst->table(), 'table_result', $t);
+        $t->html_test($res_lst->table(), '', 'table_result', $t);
 
         // create the same table as above, but within a context
-        $t->html_test($res_lst->table($phr_lst_context->dsp_obj()), 'table_result_context', $t);
+        $t->html_test($res_lst->table($phr_lst_context->dsp_obj()), '', 'table_result_context', $t);
 
 
         $t->subheader('View component tests');
@@ -210,7 +210,7 @@ class html_tests
         $cmp = new component($usr);
         $cmp->set(1, component_api::TN_ADD, comp_type_shared::TEXT);
         $cmp_dsp = new component_dsp($cmp->api_json());
-        $t->html_test($cmp_dsp->html(), 'component_text', $t);
+        $t->html_test($cmp_dsp->html(), '', 'component_text', $t);
 
         $wrd = new word_api();
         $wrd->set_name(word_api::TN_ADD);

@@ -52,7 +52,7 @@ class triple
         $test_page = $html->text_h2('Triple display test');
         $test_page .= 'with tooltip: ' . $trp->display() . '<br>';
         $test_page .= 'edit button: ' . $trp->btn_edit($wrd->phrase()) . '<br>';
-        $t->html_test($test_page, 'triple', $t);
+        $t->html_test($test_page, 'triple', 'triple', $t);
     }
 
 }

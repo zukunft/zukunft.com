@@ -181,7 +181,7 @@ class word extends sandbox_typed
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(view_shared::MI_WORD, $this->id(), api::URL_VAR_WORDS, $back);
+        $url = $html->url_new(view_shared::MI_WORD, $this->id(), '', $back);
         return $html->ref($url, $this->name(), $this->description(), $style);
     }
 
@@ -196,7 +196,7 @@ class word extends sandbox_typed
     function btn_add(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(view_shared::MI_WORD_ADD, $this->id(), rest_ctrl::WORD, $back);
+        $url = $html->url_new(view_shared::MI_WORD_ADD, $this->id(), '', $back);
         $btn = new button($url, $back);
         return $btn->add(messages::WORD_ADD);
     }
@@ -207,7 +207,7 @@ class word extends sandbox_typed
     function btn_edit(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(view_shared::MI_WORD_EDIT, $this->id(), rest_ctrl::WORD, $back);
+        $url = $html->url_new(view_shared::MI_WORD_EDIT, $this->id(), '', $back);
         $btn = new button($url, $back);
         return $btn->edit(messages::WORD_EDIT);
     }
@@ -219,7 +219,7 @@ class word extends sandbox_typed
     function btn_del(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(view_shared::MI_WORD_DEL, $this->id(), rest_ctrl::WORD, $back);
+        $url = $html->url_new(view_shared::MI_WORD_DEL, $this->id(), '', $back);
         $btn = new button($url, $back);
         return $btn->del(messages::WORD_DEL);
     }
@@ -338,27 +338,6 @@ class word extends sandbox_typed
     }
 
     /**
-     * HTML code to add a word with all fields
-     * @param string $back the html code to be opened in case of a back action
-     * @return string the html code to display the add page
-     */
-    function form_add(string $back = ''): string
-    {
-        $html = new html_base();
-        $ui_msg = new messages();
-
-        $header = $html->text_h2($ui_msg->txt(messages::FORM_WORD_ADD_TITLE));
-        $hidden_fields = $html->form_hidden("back", $back);
-        $hidden_fields .= $html->form_hidden("confirm", '1');
-        $detail_fields = $html->form_text("word_name", $this->plural(), $ui_msg->txt(messages::FORM_WORD_FLD_NAME));
-        $detail_row = $html->fr($detail_fields) . '<br>';
-
-        // TODO complete
-
-        return $header . $html->form(view_shared::MC_WORD_ADD, $hidden_fields . $detail_row);
-    }
-
-    /**
      * HTML code to edit all word fields
      * @param string $dsp_graph the html code of the related phrases
      * @param string $dsp_log the html code of the change log
@@ -390,26 +369,6 @@ class word extends sandbox_typed
         $result .= $dsp_log;
 
         return $result;
-    }
-
-    /**
-     * HTML code to delete or exclude a word
-     * @param string $back the html code to be opened in case of a back action
-     * @return string the html code to display the delete page
-     */
-    function form_del(string $back = ''): string
-    {
-        $html = new html_base();
-
-        $header = $html->text_h2('Delete "' . $this->name . '"');
-        $hidden_fields = $html->form_hidden("id", $this->id());
-        $hidden_fields .= $html->form_hidden("back", $back);
-        $hidden_fields .= $html->form_hidden("confirm", '1');
-        $detail_row = $this->btn_del() . '<br>';
-
-        // TODO complete
-
-        return $header . $html->form(view_shared::MC_WORD_DEL, $hidden_fields . $detail_row);
     }
 
 

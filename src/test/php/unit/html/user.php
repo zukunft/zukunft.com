@@ -54,7 +54,7 @@ class user
         $usr_dsp->first_name = 'Heang';
         $usr_dsp->last_name = 'Lor';
         $test_page = $usr_dsp->form_edit(1) . '<br>';
-        $t->html_test($test_page, 'user', $t);
+        $t->html_test($test_page, 'user', 'user', $t);
     }
 
 }

@@ -204,6 +204,11 @@ class view extends sandbox_typed
         return $this->name();
     }
 
+    function title(db_object_dsp $dbo): string
+    {
+        return $this->name() . ' ' . $dbo->name();
+    }
+
     /**
      * create the html code to view a sandbox object
      * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user

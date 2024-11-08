@@ -39,7 +39,9 @@ use cfg\triple;
 use cfg\verb;
 use cfg\word;
 use html\phrase\phrase as phrase_dsp;
+use shared\api;
 use shared\library;
+use shared\views;
 use test\test_cleanup;
 
 class phrase_write_tests
@@ -77,7 +79,8 @@ class phrase_write_tests
         $t->assert('phrase->load word by id ' . $company_id, $result, $target);
 
         $result = $lib->trim_html($phr->dsp_tbl());
-        $target = $lib->trim_html('<td><a href="/http/view.php?v=20&id=' . $company_id . '&o=words" title="' .
+        $url = '<td><a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::MI_WORD . '&' . api::URL_VAR_ID . '=';
+        $target = $lib->trim_html($url . $company_id . '" title="' .
             word_api::TN_COMPANY . '">' . word_api::TN_COMPANY . '</a></td> ');
         $t->assert('phrase->dsp_tbl word for ' . word_api::TN_COMPANY, $result, $target);
 

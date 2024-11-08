@@ -56,7 +56,7 @@ class language
         $test_page = $html->text_h2('language display test');
         $test_page .= 'with tooltip: ' . $src->display() . '<br>';
         $test_page .= 'with link: ' . $src->display_linked() . '<br>';
-        $t->html_test($test_page, 'language', $t);
+        $t->html_test($test_page, 'language', 'language', $t);
     }
 
 }

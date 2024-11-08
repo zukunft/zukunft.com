@@ -56,6 +56,7 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_PATH . 'views.php';
 
 use html\frontend;
+use html\html_base;
 use html\rest_ctrl;
 use html\view\view as view_dsp;
 use html\ref\source as source_dsp;
@@ -66,7 +67,7 @@ use shared\api;
 use shared\views as view_shared;
 
 // open database
-$db_con = prg_start("view");
+$db_con = prg_start("view", '', false);
 
 // get the parameters
 $view_id = $_GET[api::URL_VAR_MASK] ?? 0; // the database id of the view to display
@@ -141,7 +142,8 @@ if ($usr->id() > 0) {
                 }
             }
         } else {
-            $result .= log_err("No word selected.", "view.php", '', (new Exception)->getTraceAsString(), $usr);
+            $result .= log_err("No word selected.", "view.php", '',
+                (new Exception)->getTraceAsString(), $usr);
         }
     }
 
@@ -152,6 +154,7 @@ if ($usr->id() > 0) {
         // TODO get the system view from the preloaded cache
         $msk_dsp = new view_dsp();
         $msk_dsp->load_by_id_with($view_id);
+        $title = $msk_dsp->title($dbo_dsp);
         $dsp_text = $msk_dsp->show($dbo_dsp, $back);
 
         // use a fallback if the view is empty
@@ -163,10 +166,13 @@ if ($usr->id() > 0) {
         if ($dsp_text == '') {
             $result .= 'Please add a component to the view by clicking on Edit on the top right.';
         } else {
+            $html = new html_base();
+            $result .= $html->header($title, '');
             $result .= $dsp_text;
         }
     } else {
-        $result .= log_err('No view for "' . $dbo_dsp->name() . '" found.', "view.php", '', (new Exception)->getTraceAsString(), $usr);
+        $result .= log_err('No view for "' . $dbo_dsp->name() . '" found.',
+            "view.php", '', (new Exception)->getTraceAsString(), $usr);
     }
 
 }

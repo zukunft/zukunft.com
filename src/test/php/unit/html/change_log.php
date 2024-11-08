@@ -64,7 +64,7 @@ class change_log
         $back = new back_trace();
         $test_page .= $log_dsp->tbl($back, true, true);
 
-        $t->html_test($test_page, 'change_log', $t);
+        $t->html_test($test_page, 'change_log', 'change_log', $t);
     }
 
 }

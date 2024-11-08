@@ -54,7 +54,7 @@ class formula_list
         $test_page .= '<br>' . $html->text_h2('Selector tests');
         $test_page .= $lst->selector('test_selector', '', 'No formula selected') . '<br>';
 
-        $t->html_test($test_page, 'formula_list', $t);
+        $t->html_test($test_page, 'formula_list', 'formula_list', $t);
     }
 
 }
