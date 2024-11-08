@@ -87,6 +87,9 @@ class component extends sandbox_typed_api
     const TN_FORM_DESCRIPTION = 'system form field description';
     const TC_FORM_DESCRIPTION = 'form_field_description';
     const TD_FORM_DESCRIPTION = 'the description field in a form';
+    const TN_FORM_PHRASE_TYPE = 'form field phrase type';
+    const TC_FORM_PHRASE_TYPE = 'form_field_phrase_type';
+    const TD_FORM_PHRASE_TYPE = 'the phrase type field in a form';
     const TN_FORM_SHARE_TYPE = 'form field share type';
     const TC_FORM_SHARE_TYPE = 'form_field_share_type';
     const TD_FORM_SHARE_TYPE = 'the share type field in a form';
@@ -104,7 +107,7 @@ class component extends sandbox_typed_api
     const TD_FORM_END = 'just to indicate the end of the form';
     const TN_MATRIX = 'spreadsheet';
     const TD_MATRIX = 's sheet with words, number and formulas';
-    const TI_MATRIX = 48;
+    const TI_MATRIX = 49;
 
     // array of component names that used for testing and remove them after the test
     const RESERVED_COMPONENTS = array(

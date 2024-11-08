@@ -36,36 +36,43 @@
   },
   {
     "id": 39,
-    "name": "system form select share type",
-    "description": "selector for the share type",
+    "name": "system form select phrase type",
+    "description": "selector for the phrase type",
     "type_id": 24,
-    "code_id": "form_field_share_type"
+    "code_id": "form_field_phrase_type"
   },
   {
     "id": 40,
-    "name": "system form select protection type",
-    "description": "selector for the protection type",
+    "name": "system form select share type",
+    "description": "selector for the share type",
     "type_id": 25,
-    "code_id": "form_field_protection_type"
+    "code_id": "form_field_share_type"
   },
   {
     "id": 41,
-    "name": "system form button cancel",
-    "description": "button to cancel the form action and go back to the previous view",
+    "name": "system form select protection type",
+    "description": "selector for the protection type",
     "type_id": 26,
-    "code_id": "form_cancel_button"
+    "code_id": "form_field_protection_type"
   },
   {
     "id": 42,
+    "name": "system form button cancel",
+    "description": "button to cancel the form action and go back to the previous view",
+    "type_id": 27,
+    "code_id": "form_cancel_button"
+  },
+  {
+    "id": 43,
     "name": "system form button save",
     "description": "button to save the form field into the database",
-    "type_id": 27,
+    "type_id": 28,
     "code_id": "form_button_save"
   },
   {
-    "id": 44,
+    "id": 45,
     "name": "system form end",
-    "type_id": 29,
+    "type_id": 30,
     "code_id": "form_end"
   }
 ]

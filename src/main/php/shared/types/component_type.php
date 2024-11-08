@@ -75,6 +75,7 @@ class component_type
     const FORM_DESCRIPTION = "system_form_field_description";
     const FORM_PHRASE = "system_form_select_phrase";
     const FORM_VERB_SELECTOR = "system_form_select_verb";
+    const FORM_PHRASE_TYPE = "system_form_select_phrase_type";
     const FORM_SHARE_TYPE = "system_form_select_share";
     const FORM_PROTECTION_TYPE = "system_form_select_protection";
     const FORM_CANCEL = "system_button_cancel";
@@ -103,6 +104,7 @@ class component_type
         self::FORM_DESCRIPTION,
         self::FORM_PHRASE,
         self::FORM_VERB_SELECTOR,
+        self::FORM_PHRASE_TYPE,
         self::FORM_SHARE_TYPE,
         self::FORM_PROTECTION_TYPE,
         self::FORM_CANCEL,
@@ -126,16 +128,17 @@ class component_type
         [self::FORM_DESCRIPTION, 21],
         [self::FORM_PHRASE, 22],
         [self::FORM_VERB_SELECTOR, 23],
-        [self::FORM_SHARE_TYPE, 24],
-        [self::FORM_PROTECTION_TYPE, 25],
-        [self::FORM_CANCEL, 26],
-        [self::FORM_SAVE, 27],
-        [self::FORM_DEL, 28],
-        [self::FORM_END, 29],
-        [self::ROW_START, 30],
-        [self::ROW_RIGHT, 31],
-        [self::ROW_END, 32],
-        [self::CALC_SHEET, 33]
+        [self::FORM_PHRASE_TYPE, 24],
+        [self::FORM_SHARE_TYPE, 25],
+        [self::FORM_PROTECTION_TYPE, 26],
+        [self::FORM_CANCEL, 27],
+        [self::FORM_SAVE, 28],
+        [self::FORM_DEL, 29],
+        [self::FORM_END, 30],
+        [self::ROW_START, 31],
+        [self::ROW_RIGHT, 32],
+        [self::ROW_END, 33],
+        [self::CALC_SHEET, 34]
     );
 
 }

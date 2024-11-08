@@ -6,9 +6,9 @@
     "type_id": 8
   },
   {
-    "id": 48,
+    "id": 49,
     "name": "spreadsheet",
     "description": "s sheet with words, number and formulas",
-    "type_id": 33
+    "type_id": 34
   }
 ]

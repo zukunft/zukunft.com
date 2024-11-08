@@ -57,7 +57,7 @@ use html\user\user_message;
 use shared\api;
 use shared\enum\foaf_direction;
 use shared\words;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 use shared\views as view_shared;
 
 class word extends sandbox_typed
@@ -237,6 +237,20 @@ class word extends sandbox_typed
     /*
      * select
      */
+
+    /**
+     * @param string $form_name the name of the html form
+     * @return string the html code to select the phrase type
+     */
+    protected function phrase_type_selector(string $form_name): string
+    {
+        global $html_phrase_types;
+        $used_phrase_id = $this->type_id();
+        if ($used_phrase_id == null) {
+            $used_phrase_id = $html_phrase_types->default_id();
+        }
+        return $html_phrase_types->selector($form_name, $used_phrase_id, 'phrase', html_base::COL_SM_4, 'phrase:');
+    }
 
     function dsp_type_selector(string $script, string $back = ''): string
     {
@@ -706,12 +720,12 @@ class word extends sandbox_typed
      * @return string the html code to select a phrase
      */
     protected function phrase_selector(
-        string $name,
-        string $form_name,
-        string $label = '',
-        string $col_class = '',
-        int $selected = 0,
-        string $pattern = '',
+        string      $name,
+        string      $form_name,
+        string      $label = '',
+        string      $col_class = '',
+        int         $selected = 0,
+        string      $pattern = '',
         ?phrase_dsp $phr = null
     ): string
     {

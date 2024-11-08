@@ -33,6 +33,7 @@
 namespace html\types;
 
 use html\html_selector;
+use shared\types\phrase_type;
 
 class phrase_types extends type_list
 {
@@ -46,6 +47,15 @@ class phrase_types extends type_list
     {
         global $html_phrase_types;
         return parent::type_selector($html_phrase_types->lst_key(), $name, $form, $selected);
+    }
+
+    /*
+     * set and get
+     */
+
+    function default_id(): int
+    {
+        return parent::id(phrase_type::NORMAL);
     }
 
 }

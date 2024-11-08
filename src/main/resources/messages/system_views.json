@@ -269,6 +269,13 @@
       "ui_msg_code_id": "form_triple_verb"
     },
     {
+      "name": "system form select phrase type",
+      "description": "selector for the phrase type",
+      "type": "system_form_select_phrase_type",
+      "code_id": "form_field_phrase_type",
+      "ui_msg_code_id": "form_select_phrase"
+    },
+    {
       "name": "system form select share type",
       "description": "selector for the share type",
       "type": "system_form_select_share",
@@ -376,22 +383,26 @@
         },
         {
           "position": "6",
-          "name": "system form select share type"
+          "name": "system form select phrase type"
         },
         {
           "position": "7",
-          "name": "system form select protection type"
+          "name": "system form select share type"
         },
         {
           "position": "8",
-          "name": "system form button cancel"
+          "name": "system form select protection type"
         },
         {
           "position": "9",
-          "name": "system form button save"
+          "name": "system form button cancel"
         },
         {
           "position": "10",
+          "name": "system form button save"
+        },
+        {
+          "position": "11",
           "name": "system form end"
         }
       ]
@@ -425,14 +436,26 @@
         },
         {
           "position": "6",
-          "name": "system form button cancel"
+          "name": "system form select phrase type"
         },
         {
           "position": "7",
-          "name": "system form button save"
+          "name": "system form select share type"
         },
         {
           "position": "8",
+          "name": "system form select protection type"
+        },
+        {
+          "position": "9",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "10",
+          "name": "system form button save"
+        },
+        {
+          "position": "11",
           "name": "system form end"
         }
       ]
@@ -458,14 +481,18 @@
         },
         {
           "position": "4",
-          "name": "system form button cancel"
+          "name": "Word"
         },
         {
           "position": "5",
-          "name": "system form button del"
+          "name": "system form button cancel"
         },
         {
           "position": "6",
+          "name": "system form button del"
+        },
+        {
+          "position": "7",
           "name": "system form end"
         }
       ]

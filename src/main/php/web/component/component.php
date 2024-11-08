@@ -125,6 +125,7 @@ class component extends sandbox_typed
             component_type::FORM_DESCRIPTION => $this->form_description($dbo, $back),
             component_type::FORM_PHRASE => $this->form_phrase($dbo, $test_mode),
             component_type::FORM_VERB_SELECTOR => $this->form_verb($dbo),
+            component_type::FORM_PHRASE_TYPE => $this->form_phrase_type($dbo),
             component_type::FORM_SHARE_TYPE => $this->form_share_type($dbo),
             component_type::FORM_PROTECTION_TYPE => $this->form_protection_type($dbo),
             component_type::FORM_CANCEL => $this->form_cancel($dbo, $back),
@@ -355,6 +356,14 @@ class component extends sandbox_typed
         $lib = new library();
         $form_name = $lib->class_to_name($dbo::class) . '_add';
         return $dbo->verb_selector('verb', $form_name);
+    }
+
+    /**
+     * @return string the html code to select the share type
+     */
+    function form_phrase_type(db_object_dsp $dbo): string
+    {
+        return $dbo->phrase_type_selector('phrase', 0, 'phrase');
     }
 
     // TODO probably add the form name
