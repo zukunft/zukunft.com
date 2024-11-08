@@ -37,7 +37,7 @@ namespace html\formula;
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once SHARED_PATH . 'views.php';
 
-use api\api;
+use shared\api;
 use cfg\db\sql_db;
 use cfg\expression;
 use cfg\formula_link_list;
@@ -187,8 +187,11 @@ class formula extends sandbox_typed
      */
     function display_linked(?string $back = '', string $style = ''): string
     {
+        //$html = new html_base();
+        //$url = $html->url_new(view_shared::MI_WORD, $this->id(), api_shared::URL_VAR_FORMULAS, $back);
+        //return $html->ref($url, $this->name(), $this->description(), $style);
         $html = new html_base();
-        $url = $html->url(api_dsp::FORMULA, $this->id(), $back, api_dsp::PAR_VIEW_FORMULAS);
+        $url = $html->url(api_dsp::FORMULA, $this->id(), $back, api::URL_VAR_FORMULAS);
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 

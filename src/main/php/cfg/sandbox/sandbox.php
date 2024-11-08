@@ -78,7 +78,7 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
-use api\api;
+use shared\api;
 use api\system\messeges as msg_enum;
 use api\sandbox\sandbox as sandbox_api;
 use cfg\component\component_link_type;

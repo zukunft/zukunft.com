@@ -32,10 +32,10 @@
 namespace html\log;
 
 include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 
-use api\api;
+use shared\api;
 use DateTimeInterface;
 use html\sandbox\db_object as db_object_dsp;
 use DateTime;

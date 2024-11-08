@@ -38,7 +38,7 @@ include_once WORD_PATH . 'word.php';
 include_once WORD_PATH . 'triple.php';
 include_once PHRASE_PATH . 'phrase.php';
 
-use api\api;
+use shared\api;
 use api\sandbox\combine_named as combine_named_api;
 use api\sandbox\combine_object as combine_object_api;
 use api\word\triple as triple_api;

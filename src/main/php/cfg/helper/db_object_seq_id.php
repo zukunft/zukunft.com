@@ -50,7 +50,7 @@ namespace cfg;
 
 include_once MODEL_HELPER_PATH . 'db_object.php';
 
-use api\api;
+use shared\api;
 use api\system\db_object as db_object_api;
 use cfg\db\sql;
 use cfg\db\sql_field_default;

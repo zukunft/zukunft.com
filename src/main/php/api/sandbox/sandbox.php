@@ -34,7 +34,7 @@
 
 namespace api\sandbox;
 
-use api\api;
+use shared\api;
 use JsonSerializable;
 use shared\types\protection_type;
 

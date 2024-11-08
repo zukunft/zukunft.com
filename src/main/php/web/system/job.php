@@ -32,14 +32,13 @@
 namespace html\system;
 
 include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 
 use DateTime;
 use DateTimeInterface;
 use Exception;
-use api\api;
-use html\rest_ctrl as api_dsp;
+use shared\api;
 use html\sandbox\db_object as db_object_dsp;
 use html\html_base;
 use html\user\user_message;
@@ -284,7 +283,7 @@ class job extends db_object_dsp
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(\html\rest_ctrl::VIEW, $this->id(), $back, api_dsp::PAR_VIEW_WORDS);
+        $url = $html->url(\html\rest_ctrl::VIEW, $this->id(), $back, api::URL_VAR_WORDS);
         return $html->ref($url, $this->name(), $this->description(), $style);
     }
 

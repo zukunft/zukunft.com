@@ -34,7 +34,7 @@
 
 namespace html\ref;
 
-use api\api;
+use shared\api;
 use html\sandbox\db_object as db_object_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\user\user_message;

@@ -36,7 +36,7 @@ namespace html\phrase;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 
-use api\api;
+use shared\api;
 use api\phrase\phrase as phrase_api;
 use html\sandbox\sandbox_named as sandbox_named_dsp;
 use html\user\user_message;

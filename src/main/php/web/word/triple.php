@@ -34,7 +34,7 @@ namespace html\word;
 include_once SANDBOX_PATH . 'sandbox_typed.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
-use api\api;
+use shared\api;
 use cfg\phrase_type;
 use html\rest_ctrl;
 use html\button;
@@ -49,6 +49,7 @@ use html\phrase\phrase as phrase_dsp;
 use html\sandbox\sandbox_typed;
 use html\phrase\term as term_dsp;
 use html\verb\verb as verb_dsp;
+use shared\api AS api_shared;
 use shared\types\phrase_type AS phrase_type_shared;
 
 class triple extends sandbox_typed
@@ -233,7 +234,7 @@ class triple extends sandbox_typed
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(rest_ctrl::TRIPLE, $this->id(), $back, rest_ctrl::PAR_VIEW_TRIPLES);
+        $url = $html->url(rest_ctrl::TRIPLE, $this->id(), $back, api_shared::URL_VAR_TRIPLES);
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 

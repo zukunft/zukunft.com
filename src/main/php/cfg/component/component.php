@@ -54,7 +54,7 @@ namespace cfg\component;
 
 include_once DB_PATH . 'sql_par_type.php';
 
-use api\api;
+use shared\api;
 use api\component\component as component_api;
 use cfg\db\sql;
 use cfg\db\sql_db;

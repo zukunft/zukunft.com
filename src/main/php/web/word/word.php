@@ -54,6 +54,7 @@ use html\sandbox\sandbox_typed;
 use html\system\back_trace;
 use html\system\messages;
 use html\user\user_message;
+use shared\api;
 use shared\enum\foaf_direction;
 use shared\words;
 use shared\types\phrase_type AS phrase_type_shared;
@@ -180,7 +181,7 @@ class word extends sandbox_typed
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(view_shared::MI_WORD, $this->id(), rest_ctrl::PAR_VIEW_WORDS, $back);
+        $url = $html->url_new(view_shared::MI_WORD, $this->id(), api::URL_VAR_WORDS, $back);
         return $html->ref($url, $this->name(), $this->description(), $style);
     }
 
@@ -324,7 +325,7 @@ class word extends sandbox_typed
             $title = '';
             if ($is_part_of != null) {
                 if ($is_part_of->name() <> '' and $is_part_of->name() <> 'not set') {
-                    $url = $html->url(rest_ctrl::VIEW, $is_part_of->id(), '', rest_ctrl::PAR_VIEW_WORDS);
+                    $url = $html->url(rest_ctrl::VIEW, $is_part_of->id(), '', api::URL_VAR_WORDS);
                     $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
                 }
             }

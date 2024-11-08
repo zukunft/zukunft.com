@@ -32,7 +32,7 @@
 namespace cfg;
 
 
-use api\api;
+use shared\api;
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;

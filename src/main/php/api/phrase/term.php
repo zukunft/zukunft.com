@@ -42,7 +42,7 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 
-use api\api;
+use shared\api;
 use api\formula\formula as formula_api;
 use api\sandbox\combine_named as combine_named_api;
 use api\sandbox\combine_object as combine_object_api;

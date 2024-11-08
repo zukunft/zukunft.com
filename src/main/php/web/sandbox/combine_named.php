@@ -36,7 +36,7 @@ namespace html\sandbox;
 
 include_once SANDBOX_PATH . 'combine_object.php';
 
-use api\api;
+use shared\api;
 use html\rest_ctrl as api_dsp;
 
 class combine_named extends combine_object

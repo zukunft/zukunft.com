@@ -32,7 +32,7 @@
 
 namespace shared;
 
-use api\api;
+use shared\api;
 use api\sandbox\combine_object as combine_object_api;
 use cfg\component\component;
 use cfg\component\component_link;

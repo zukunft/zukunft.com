@@ -55,10 +55,24 @@ class api
     const HOST_SYS_LOG = '';
 
     // TODO always use these const instead e.g. of the controller const
+    // TODO allow to use the object names instead of the id for human readable urls
     // the parameter names used in the url or in the result json
     const URL_API_PATH = 'api/';
-    const URL_VAR_VIEW = 'v'; // the internal database id of the view used
-    const URL_VAR_ID = 'id'; // the internal database id that should never be shown to the user
+    const URL_VAR_MASK = 'm'; // the internal database id of the view used to format the object
+    const URL_VAR_ID = 'id'; // the internal database id of the main view object
+    const URL_VAR_WORD = 'w';
+    const URL_VAR_VERB = 'b';
+    const URL_VAR_TRIPLE = 't';
+    const URL_VAR_PHRASE = 'p'; // the id or name of one phrase
+    const URL_VAR_SOURCE = 's';
+    const URL_VAR_REF = 'l'; // l for data link to external
+    const URL_VAR_VALUE = 'v';
+    const URL_VAR_FORMULA = 'f';
+    const URL_VAR_TERM = 'e';
+    const URL_VAR_RESULT = 'r';
+    const URL_VAR_VIEW = 'v';
+    const URL_VAR_COMPONENT = 'c';
+    const URL_VAR_GROUP = 'g';
     const URL_VAR_ID_LST = 'ids'; // a comma seperated list of internal database ids
     const URL_VAR_NAME = 'name'; // the unique name of a term, view, component, user, source, language or type
     const URL_VAR_PATTERN = 'pattern'; // part of a name to select a named object such as word, triple, ...
@@ -66,13 +80,13 @@ class api
     const URL_VAR_DESCRIPTION = 'description';
     const URL_VAR_DEBUG = 'debug'; // to force the output of debug messages
     const URL_VAR_CODE_ID = 'code_id';
-    const URL_VAR_WORD = 'word';
-    const URL_VAR_WORDS = 'words';
-    const URL_VAR_PHRASE = 'phrase'; // the id (or name?) of one phrase
+    const URL_VAR_WORDS = 'words'; // to select the words that should be displayed
+    const URL_VAR_VERBS = 'verbs';  // to select the verbs that should be displayed
+    const URL_VAR_TRIPLES = 'triples'; // to select the triples that should be displayed
+    const URL_VAR_FORMULAS = 'formulas';  // to select the formulas that should be displayed
     const URL_VAR_DIRECTION = 'dir'; // 'up' to get the parents and 'down' for the children
     const URL_VAR_LEVELS = 'levels'; // the number of search levels'
     const URL_VAR_MSG = 'message';
-    const URL_VAR_RESULT = 'result';
     const URL_VAR_EMAIL = 'email';
     const URL_VAR_VIEW_ID = 'view_id'; //
     const URL_VAR_CMP_ID = 'component_id';
@@ -138,6 +152,8 @@ class api
     // json field names of the api json messages
     // which is supposed to be the same as the corresponding var of the api object
     // so that no additional mapping is needed
+    // and used in the backend to create the json for the frontend
+    // and used in the frontend for the field selection
     const FLD_ID = 'id'; // the unique database id used to save the changes
     const FLD_NAME = 'name'; // the unique name of the object which is also a database index
     const FLD_DESCRIPTION = 'description';
@@ -207,6 +223,17 @@ class api
     const DSP_COMPONENT_DEL = "component_del";
     const DSP_COMPONENT_LINK = "component_link";
     const DSP_COMPONENT_UNLINK = "component_unlink";
+
+    // for link api objects the id of the preloaded link type
+    const FLD_PREDICATE = 'predicate_id';
+    const FLD_FROM = 'from_id';
+    const FLD_TO = 'to_id';
+    const FLD_VERB = 'verb_id';
+    const FLD_PLURAL = 'plural';
+    const FLD_USR_TEXT = 'user_text'; // the formula expression in the user readable format
+    const FLD_SHARE = 'share'; //
+    const FLD_PROTECTION = 'protection'; //
+
 
 
     /**

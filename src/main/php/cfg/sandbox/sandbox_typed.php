@@ -45,7 +45,7 @@ namespace cfg;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 
-use api\api;
+use shared\api;
 use cfg\db\sql_db;
 
 class sandbox_typed extends sandbox_named

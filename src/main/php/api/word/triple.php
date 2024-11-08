@@ -34,7 +34,7 @@ namespace api\word;
 
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
-use api\api;
+use shared\api;
 use api\word\word as word_api;
 use api\phrase\phrase as phrase_api;
 use api\phrase\term as term_api;

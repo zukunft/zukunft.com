@@ -76,7 +76,7 @@ include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
-use api\api;
+use shared\api;
 use api\phrase\phrase as phrase_api;
 use cfg\db\sql;
 use cfg\db\sql_db;

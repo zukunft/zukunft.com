@@ -35,14 +35,14 @@ namespace html\figure;
 include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once API_FORMULA_PATH . 'figure.php';
 include_once API_PHRASE_PATH . 'phrase_list.php';
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once WEB_VALUE_PATH . 'value.php';
 
 use api\formula\figure as figure_api;
 use api\phrase\phrase_list as phrase_list_api;
 use api\sandbox\combine_object as combine_object_api;
-use api\api;
+use shared\api;
 use api\sandbox\sandbox_value as sandbox_value_api;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\combine_named as combine_named_dsp;

@@ -36,7 +36,7 @@ include_once SANDBOX_PATH . 'db_object.php';
 include_once HTML_PATH . 'html_base.php';
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
 
-use api\api;
+use shared\api;
 use html\sandbox\db_object as db_object_dsp;
 use html\html_base;
 use html\user\user as user_dsp;

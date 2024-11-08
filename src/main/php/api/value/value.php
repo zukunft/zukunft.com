@@ -33,11 +33,11 @@
 namespace api\value;
 
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once WEB_VALUE_PATH . 'value.php';
 
-use api\api;
+use shared\api;
 use api\sandbox\sandbox_value as sandbox_value_api;
 use html\value\value as value_dsp;
 use JsonSerializable;

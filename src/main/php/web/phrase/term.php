@@ -40,7 +40,7 @@ include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_VERB_PATH . 'verb.php';
 
-use api\api;
+use shared\api;
 use api\phrase\term as term_api;
 use api\sandbox\combine_object as combine_object_api;
 use html\sandbox\combine_named as combine_named_dsp;

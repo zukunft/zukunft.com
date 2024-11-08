@@ -34,7 +34,7 @@ namespace html\sandbox;
 
 include_once SANDBOX_PATH . 'sandbox_named.php';
 
-use api\api;
+use shared\api;
 use html\user\user_message;
 
 class sandbox_typed extends sandbox_named

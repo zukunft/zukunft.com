@@ -34,7 +34,7 @@ namespace api\word;
 
 include_once API_SANDBOX_PATH . 'sandbox_typed.php';
 
-use api\api;
+use shared\api;
 use api\phrase\phrase as phrase_api;
 use api\phrase\term as term_api;
 use api\sandbox\combine_object as combine_object_api;

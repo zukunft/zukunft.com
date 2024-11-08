@@ -36,7 +36,7 @@ namespace html\sandbox;
 
 include_once API_SANDBOX_PATH . 'sandbox.php';
 
-use api\api;
+use shared\api;
 use html\rest_ctrl as api_dsp;
 use html\html_base;
 use html\phrase\phrase as phrase_dsp;

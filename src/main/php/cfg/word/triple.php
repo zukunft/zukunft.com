@@ -67,7 +67,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
-use api\api;
+use shared\api;
 use api\word\triple as triple_api;
 use cfg\db\sql;
 use cfg\db\sql_db;

@@ -70,7 +70,7 @@ include_once API_COMPONENT_PATH . 'component.php';
 include_once API_WORD_PATH . 'word.php';
 include_once API_SYSTEM_PATH . 'messeges.php';
 
-use api\api;
+use shared\api;
 use api\system\messeges as msg_enum;
 use cfg\db\sql;
 use cfg\db\sql_db;

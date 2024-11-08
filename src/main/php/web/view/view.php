@@ -37,10 +37,9 @@ namespace html\view;
 include_once SANDBOX_PATH . 'config.php';
 include_once SANDBOX_PATH . 'db_object.php';
 include_once SANDBOX_PATH . 'sandbox_typed.php';
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_COMPONENT_PATH . 'component.php';
 include_once SHARED_PATH . 'library.php';
-include_once SHARED_PATH . 'api.php';
 include_once SHARED_TYPES_PATH . 'view_type.php';
 include_once HTML_PATH . 'display_list.php';
 include_once COMPONENT_PATH . 'component.php';
@@ -55,8 +54,7 @@ include_once WORD_PATH . 'word.php';
 include_once WORD_PATH . 'triple.php';
 
 // TODO remove model classes
-use api\api;
-use shared\api as api_shared;
+use shared\api;
 use html\user\user_message;
 use api\component\component as component_api;
 use html\rest_ctrl as api_dsp;
@@ -130,9 +128,9 @@ class view extends sandbox_typed
             $cmp_lst->set_from_json_array($json_array[api::FLD_COMPONENTS]);
         }
         // set the objects (e.g. word)
-        if (array_key_exists(api_shared::API_WORD, $json_array)) {
+        if (array_key_exists(api::API_WORD, $json_array)) {
             $this->dbo = new word_dsp();
-            $dbo_json = $json_array[api_shared::API_WORD];
+            $dbo_json = $json_array[api::API_WORD];
             $id = 0;
             if (array_key_exists(api::FLD_ID, $json_array)) {
                 $id = $dbo_json[api::FLD_ID];
@@ -141,9 +139,9 @@ class view extends sandbox_typed
                 $this->dbo->set_from_json_array($dbo_json);
             }
         }
-        if (array_key_exists(api_shared::API_TRIPLE, $json_array)) {
+        if (array_key_exists(api::API_TRIPLE, $json_array)) {
             $this->dbo = new triple_dsp();
-            $dbo_json = $json_array[api_shared::API_TRIPLE];
+            $dbo_json = $json_array[api::API_TRIPLE];
             $id = 0;
             if (array_key_exists(api::FLD_ID, $json_array)) {
                 $id = $dbo_json[api::FLD_ID];
@@ -179,7 +177,7 @@ class view extends sandbox_typed
     function load_by_id_with(int $id): bool
     {
         $data = [];
-        $data[api_shared::URL_VAR_CHILDREN] = 1;
+        $data[api::URL_VAR_CHILDREN] = 1;
         return parent::load_by_id($id, $data);
     }
 
@@ -439,9 +437,9 @@ class view extends sandbox_typed
             $url = '/http/find.php?word=' . $back;
             $result .= (new button_dsp($url, $back))->find(messages::SEARCH_MAIN) . ' - ';
             $result .= $this->dsp_view_name($back);
-            $url = $html->url(api_shared::DSP_VIEW_EDIT, $this->id());
+            $url = $html->url(api::DSP_VIEW_EDIT, $this->id());
             $result .= (new button_dsp($url, $back))->edit(messages::VIEW_EDIT, $this->name) . ' ';
-            $url = $html->url(api_shared::DSP_VIEW_ADD);
+            $url = $html->url(api::DSP_VIEW_ADD);
             $result .= (new button_dsp($url, $back))->add(messages::VIEW_ADD);
         }
         $result .= ' - ';
@@ -557,18 +555,18 @@ class view extends sandbox_typed
     {
         $result = '';
         switch ($this->code_id) {
-            case api_shared::DSP_COMPONENT_ADD:
+            case api::DSP_COMPONENT_ADD:
                 $cmp = new component_dsp();
                 $cmp->set_id(0);
                 $result = $cmp->form_edit_new('', '', '', '', '');
                 break;
-            case api_shared::DSP_COMPONENT_EDIT:
+            case api::DSP_COMPONENT_EDIT:
                 $cmp = new component_dsp();
                 $cmp->set_id(1);
                 $cmp->set_name(component_api::TN_READ);
                 $result = $cmp->form_edit_new('', '', '', '', '');
                 break;
-            case api_shared::DSP_COMPONENT_DEL:
+            case api::DSP_COMPONENT_DEL:
                 // TODO fill
                 $result = 'del';
                 break;
@@ -790,7 +788,7 @@ class view extends sandbox_typed
             // check if the add button has been pressed and ask the user what to add
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
-                $url = $html->url(api_shared::DSP_VIEW_ADD, $this->id(), $back, '', word_dsp::class . '=' . $wrd->id() . '&add_entry=-1&');
+                $url = $html->url(api::DSP_VIEW_ADD, $this->id(), $back, '', word_dsp::class . '=' . $wrd->id() . '&add_entry=-1&');
                 $result .= (new button_dsp($url, $back))->add(messages::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $this->component_selector($script, '', $id_selected);
@@ -803,7 +801,7 @@ class view extends sandbox_typed
                 $result .= $this->component_selector($script, '', $this->type_id());
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
             } else {
-                $url = $html->url(api_shared::DSP_COMPONENT_LINK, $this->id(), $back, '', word_dsp::class . '=' . $wrd->id() . '&add_entry=1');
+                $url = $html->url(api::DSP_COMPONENT_LINK, $this->id(), $back, '', word_dsp::class . '=' . $wrd->id() . '&add_entry=1');
                 $result .= (new button_dsp($url, $back))->add(messages::COMPONENT_ADD);
             }
         }

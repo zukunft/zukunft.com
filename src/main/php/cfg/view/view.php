@@ -53,7 +53,7 @@ include_once SERVICE_EXPORT_PATH . 'view_exp.php';
 include_once SERVICE_EXPORT_PATH . 'component_exp.php';
 include_once WEB_VIEW_PATH . 'view.php';
 
-use api\api;
+use shared\api;
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_link;

@@ -97,7 +97,7 @@ use cfg\log\changes_big;
 use cfg\log\changes_norm;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
-use api\api;
+use shared\api;
 use api\value\value as value_api;
 use cfg\db\sql;
 use cfg\db\sql_db;

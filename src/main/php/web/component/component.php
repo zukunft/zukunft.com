@@ -39,7 +39,7 @@ include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once HTML_PATH . 'sheet.php';
 include_once SHARED_PATH . 'views.php';
 
-use api\api;
+use shared\api;
 use api\word\word as word_api;
 use html\sheet;
 use html\user\user_message;

@@ -79,7 +79,7 @@ include_once SERVICE_EXPORT_PATH . 'word_exp.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
-use api\api;
+use shared\api;
 use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_db;

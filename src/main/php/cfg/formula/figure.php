@@ -41,7 +41,7 @@ include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_USER_PATH . 'user.php';
 
-use api\api;
+use shared\api;
 use api\formula\figure as figure_api;
 use cfg\group\group;
 use cfg\result\result;

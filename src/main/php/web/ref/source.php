@@ -31,7 +31,7 @@
 
 namespace html\ref;
 
-use api\api;
+use shared\api;
 use html\rest_ctrl as api_dsp;
 use html\html_base;
 use html\sandbox\sandbox_typed;

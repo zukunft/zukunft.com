@@ -77,7 +77,7 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
-use api\api;
+use shared\api;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
 use cfg\element\element;

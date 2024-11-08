@@ -69,10 +69,10 @@ use shared\views as view_shared;
 $db_con = prg_start("view");
 
 // get the parameters
-$view_id = $_GET[api::URL_VAR_VIEW] ?? 0; // the database id of the view to display
+$view_id = $_GET[api::URL_VAR_MASK] ?? 0; // the database id of the view to display
 $id = $_GET[api::URL_VAR_ID] ?? 0; // the database id of the prime object to display
 $new_view_id = $_GET[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
-$view_words = $_GET[rest_ctrl::PAR_VIEW_WORDS] ?? '';
+$view_words = $_GET[api::URL_VAR_WORDS] ?? '';
 $back = $_GET[api::URL_VAR_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
 
 // init the view
@@ -157,7 +157,7 @@ if ($usr->id() > 0) {
         // use a fallback if the view is empty
         if ($dsp_text == '' or $msk_dsp->name() == '') {
             $view_id = $system_views->id(view_shared::MC_START);
-            $msk_dsp->load_by_id($view_id);
+            $msk_dsp->load_by_id_with($view_id);
             $dsp_text = $msk_dsp->display($dbo_dsp, $back);
         }
         if ($dsp_text == '') {

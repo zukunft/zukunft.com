@@ -32,7 +32,7 @@
 
 namespace api\phrase;
 
-use api\api;
+use shared\api;
 use api\word\word as word_api;
 use api\phrase\phrase_list as phrase_list_api;
 use api\sandbox\sandbox_named as sandbox_named_api;

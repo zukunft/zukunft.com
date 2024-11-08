@@ -31,7 +31,7 @@
 
 namespace cfg;
 
-use api\api;
+use shared\api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;

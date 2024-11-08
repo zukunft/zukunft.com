@@ -37,7 +37,7 @@ include_once API_VIEW_PATH . 'view.php';
 include_once API_SANDBOX_PATH . 'list_object.php';
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 
-use api\api;
+use shared\api;
 use api\sandbox\list_object as list_api;
 use api\sandbox\type_object as type_api;
 use cfg\verb;

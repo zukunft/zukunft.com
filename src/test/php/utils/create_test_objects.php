@@ -71,7 +71,7 @@ use cfg\view_link_type_list;
 use cfg\view_term_link;
 use html\system\messages;
 use shared\types\component_type as comp_type_shared;
-use api\api;
+use shared\api;
 use api\api_message;
 use api\component\component as component_api;
 use api\formula\formula as formula_api;

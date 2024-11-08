@@ -41,7 +41,7 @@ include_once API_SANDBOX_PATH . 'sandbox_value.php';
 use cfg\db\sql_db;
 use cfg\phrase;
 use cfg\user_message;
-use api\api;
+use shared\api;
 use html\sandbox\config as config_html;
 use html\log\user_log_display;
 use html\ref\source as source_dsp;
