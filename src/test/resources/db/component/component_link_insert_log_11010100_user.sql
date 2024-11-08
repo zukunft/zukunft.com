@@ -46,7 +46,7 @@ SELECT component_link_insert_log_11010100_user
     (1::bigint,
      1::smallint,
      16::smallint,
-     'Word'::text,
+     'Start view'::text,
      null::text,
      'Word'::text,
      null::text,

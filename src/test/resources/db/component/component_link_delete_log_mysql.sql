@@ -29,7 +29,7 @@ SELECT component_link_delete_log
        (1,
         3,
         16,
-        'Word',
+        'Start view',
         null,
         'Word',
         1,

@@ -33,9 +33,9 @@ SELECT view_update_log_002200000
        (1::bigint,
         2::smallint,
         42::smallint,
-        'Word'::text,
+        'Start view'::text,
         'System Test View Renamed'::text,
         1::bigint,
         43::smallint,
-        'the default view for words'::text,
+        'A dynamic entry mask that initially shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.'::text,
         null::text);

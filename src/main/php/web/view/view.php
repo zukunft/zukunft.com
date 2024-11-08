@@ -562,7 +562,7 @@ class view extends sandbox_typed
                 break;
             case api::DSP_COMPONENT_EDIT:
                 $cmp = new component_dsp();
-                $cmp->set_id(1);
+                $cmp->set_id(component_api::TI_READ);
                 $cmp->set_name(component_api::TN_READ);
                 $result = $cmp->form_edit_new('', '', '', '', '');
                 break;

@@ -101,6 +101,9 @@ class component extends sandbox_typed
 
         // list of all possible view components
         $type_code_id = $this->type_code_id();
+        if ($type_code_id == '') {
+            $type_code_id = 'type id ' . $this->type_id();
+        }
         $result .= match ($type_code_id) {
             component_type::TEXT => $this->text(),
             component_type::PHRASE => $this->display_name(),
@@ -132,7 +135,7 @@ class component extends sandbox_typed
             component_type::ROW_RIGHT => $this->row_right(),
             component_type::ROW_END => $this->row_end(),
             component_type::CALC_SHEET => $this->calc_sheet(),
-            default => 'program code for component type ' . $type_code_id . ' missing<br>'
+            default => ' program code for component type "' . $type_code_id . '" missing<br>'
         };
         $this->log_debug($this->dsp_id() . ' created');
 

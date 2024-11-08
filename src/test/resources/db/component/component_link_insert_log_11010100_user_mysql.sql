@@ -43,7 +43,7 @@ SELECT component_link_insert_log_11010100_user
        (1,
         1,
         16,
-        'Word',
+        'Start view',
         null,
         'Word',
         null,

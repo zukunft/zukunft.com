@@ -31,9 +31,9 @@ SELECT view_update_log_002200000_user
        (1,
         2,
         42,
-        'Word',
+        'Start view',
         'System Test View Renamed',
         1,
         43,
-        'the default view for words',
+        'A dynamic entry mask that initially shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.',
         null);

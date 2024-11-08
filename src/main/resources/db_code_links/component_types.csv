@@ -33,3 +33,5 @@ component_type_id, type_name, description, code_id
 32, 'row end', 'just to indicate that a row ends', 'row_end'
 33, 'spreadsheet', 'spreadsheet that allows calculations by adding formulas to cells', 'calc_sheet'
 34, 'term name', 'show the name of a word, triple, verb or formula and give the user the possibility to change the name', 'term_name'
+35, 'verb name', 'show the name of a verb and give the admin user the possibility to change the name', 'verb_name'
+36, 'main value', 'show the main values related to the given term', 'main_value'

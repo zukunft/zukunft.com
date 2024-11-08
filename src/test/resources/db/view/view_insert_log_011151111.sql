@@ -70,18 +70,18 @@ SELECT view_insert_log_011151111
     ($1,$2, $3, $4, $5, $6, $7, $8, $9,$10,$11,$12,$13,$14,$15,$16,$17,$18);
 
 SELECT view_insert_log_011151111 (
-               'Word'::text,
+               'Start view'::text,
                1::bigint,
                1::smallint,
                42::smallint,
                278::smallint,
                43::smallint,
-               'the default view for words'::text,
+               'A dynamic entry mask that initially shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.'::text,
                45::smallint,
                'details'::text,
                6::smallint,
                44::smallint,
-               'word'::text,
+               'entry_view'::text,
                72::smallint,
                1::smallint,
                131::smallint,

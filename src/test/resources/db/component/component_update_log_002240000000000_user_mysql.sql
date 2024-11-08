@@ -43,7 +43,7 @@ SELECT component_update_log_002240000000000_user
         'System Test View Component Renamed',
         1,
         52,
-        'simply show the word name',
+        'simply show the word or tiple name',
         null,
         53,
         'phrase_name',

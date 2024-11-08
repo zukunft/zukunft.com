@@ -98,13 +98,13 @@ class element_write_tests
 
                 $result = $elm->name_linked($back);
                 if ($pos == 0) {
-                    $target = '<a href="/http/view.php?v=1&id=' . $wrd_country->id() . '&o=words&back=0" title="Country">Country</a>';
+                    $target = '<a href="/http/view.php?v=20&id=' . $wrd_country->id() . '&o=words&back=0" title="Country">Country</a>';
                 } elseif ($pos == 1) {
                     $target = 'can be used as a differentiator for';
                 } elseif ($pos == 2) {
-                    $target = '<a href="/http/view.php?v=1&id=' . $wrd_canton->id() . '&o=words&back=0" title="Canton">Canton</a>';
+                    $target = '<a href="/http/view.php?v=20&id=' . $wrd_canton->id() . '&o=words&back=0" title="Canton">Canton</a>';
                 } elseif ($pos == 3) {
-                    $target = '<a href="/http/view.php?v=1&id=' . $wrd_total->id() . '&o=words&back=0" title="System Test Word Total">System Test Word Total</a>';
+                    $target = '<a href="/http/view.php?v=20&id=' . $wrd_total->id() . '&o=words&back=0" title="System Test Word Total">System Test Word Total</a>';
                 }
                 $t->display('element->dsp_id', $target, $result);
 

@@ -40,7 +40,7 @@ SELECT view_term_link_insert_log_015505 (
                1,
                1,
                89,
-               'Word',
+               'Start view',
                'default',
                'Mathematics',
                725);

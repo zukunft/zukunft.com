@@ -2144,10 +2144,23 @@ class create_test_objects extends test_base
 
     function view(): view
     {
+        global $protection_types;
         $msk = new view($this->usr1);
         $msk->set(1, view_api::TN_READ);
         $msk->description = view_api::TD_READ;
         $msk->code_id = view_api::TC_READ;
+        return $msk;
+    }
+
+    function view_protected(): view
+    {
+        global $protection_types;
+        $msk = new view($this->usr1);
+        $msk->set(1, view_api::TN_READ);
+        $msk->description = view_api::TD_READ;
+        $msk->code_id = view_api::TC_READ;
+        $msk->set_type(view_type::ENTRY);
+        $msk->protection_id = $protection_types->id(protect_type_shared::ADMIN);
         return $msk;
     }
 
@@ -2215,7 +2228,7 @@ class create_test_objects extends test_base
 
     function view_with_components(): view
     {
-        $msk = $this->view();
+        $msk = $this->view_protected();
         $msk->cmp_lnk_lst = $this->component_link_list();
         return $msk;
     }
@@ -2272,8 +2285,16 @@ class create_test_objects extends test_base
     function component(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(1, component_api::TN_READ, comp_type_shared::PHRASE_NAME);
+        $cmp->set(component_api::TI_READ, component_api::TN_READ, comp_type_shared::PHRASE_NAME);
         $cmp->description = component_api::TD_READ;
+        return $cmp;
+    }
+
+    function component_matrix(): component
+    {
+        $cmp = new component($this->usr1);
+        $cmp->set(component_api::TI_MATRIX, component_api::TN_MATRIX, comp_type_shared::CALC_SHEET);
+        $cmp->description = component_api::TD_MATRIX;
         return $cmp;
     }
 
@@ -2288,7 +2309,7 @@ class create_test_objects extends test_base
         $cmp->set(1, component_api::TN_READ, comp_type_shared::PHRASE_NAME);
         $cmp->description = component_api::TD_READ;
         $cmp->set_type(comp_type_shared::TEXT);
-        $cmp->code_id = component_api::TI_FORM_TITLE;
+        $cmp->code_id = component_api::TC_FORM_TITLE;
         $cmp->ui_msg_code_id = messages::PLEASE_SELECT;
         $cmp->set_row_phrase($this->year());
         $cmp->set_col_phrase($this->canton());
@@ -2340,7 +2361,7 @@ class create_test_objects extends test_base
         $cmp = new component($this->usr1);
         $cmp->set(1, component_api::TN_FORM_TITLE, comp_type_shared::FORM_TITLE);
         $cmp->description = component_api::TD_FORM_TITLE;
-        $cmp->code_id = component_api::TI_FORM_TITLE;
+        $cmp->code_id = component_api::TC_FORM_TITLE;
         return $cmp;
     }
 
@@ -2349,7 +2370,7 @@ class create_test_objects extends test_base
         $cmp = new component($this->usr1);
         $cmp->set(2, component_api::TN_FORM_BACK, comp_type_shared::FORM_BACK);
         $cmp->description = component_api::TD_FORM_BACK;
-        $cmp->code_id = component_api::TI_FORM_BACK;
+        $cmp->code_id = component_api::TC_FORM_BACK;
         return $cmp;
     }
 
@@ -2358,7 +2379,7 @@ class create_test_objects extends test_base
         $cmp = new component($this->usr1);
         $cmp->set(3, component_api::TN_FORM_CONFIRM, comp_type_shared::FORM_CONFIRM);
         $cmp->description = component_api::TD_FORM_CONFIRM;
-        $cmp->code_id = component_api::TI_FORM_CONFIRM;
+        $cmp->code_id = component_api::TC_FORM_CONFIRM;
         return $cmp;
     }
 
@@ -2367,7 +2388,7 @@ class create_test_objects extends test_base
         $cmp = new component($this->usr1);
         $cmp->set(4, component_api::TN_FORM_NAME, comp_type_shared::FORM_NAME);
         $cmp->description = component_api::TD_FORM_NAME;
-        $cmp->code_id = component_api::TI_FORM_NAME;
+        $cmp->code_id = component_api::TC_FORM_NAME;
         return $cmp;
     }
 
@@ -2376,7 +2397,7 @@ class create_test_objects extends test_base
         $cmp = new component($this->usr1);
         $cmp->set(5, component_api::TN_FORM_DESCRIPTION, comp_type_shared::FORM_DESCRIPTION);
         $cmp->description = component_api::TD_FORM_DESCRIPTION;
-        $cmp->code_id = component_api::TI_FORM_DESCRIPTION;
+        $cmp->code_id = component_api::TC_FORM_DESCRIPTION;
         return $cmp;
     }
 
@@ -2385,7 +2406,7 @@ class create_test_objects extends test_base
         $cmp = new component($this->usr1);
         $cmp->set(6, component_api::TN_FORM_SHARE_TYPE, comp_type_shared::FORM_SHARE_TYPE);
         $cmp->description = component_api::TD_FORM_SHARE_TYPE;
-        $cmp->code_id = component_api::TI_FORM_SHARE_TYPE;
+        $cmp->code_id = component_api::TC_FORM_SHARE_TYPE;
         return $cmp;
     }
 
@@ -2394,7 +2415,7 @@ class create_test_objects extends test_base
         $cmp = new component($this->usr1);
         $cmp->set(7, component_api::TN_FORM_PROTECTION_TYPE, comp_type_shared::FORM_PROTECTION_TYPE);
         $cmp->description = component_api::TD_FORM_PROTECTION_TYPE;
-        $cmp->code_id = component_api::TI_FORM_PROTECTION_TYPE;
+        $cmp->code_id = component_api::TC_FORM_PROTECTION_TYPE;
         return $cmp;
     }
 
@@ -2403,7 +2424,7 @@ class create_test_objects extends test_base
         $cmp = new component($this->usr1);
         $cmp->set(8, component_api::TN_FORM_CANCEL, comp_type_shared::FORM_CANCEL);
         $cmp->description = component_api::TD_FORM_CANCEL;
-        $cmp->code_id = component_api::TI_FORM_CANCEL;
+        $cmp->code_id = component_api::TC_FORM_CANCEL;
         return $cmp;
     }
 
@@ -2412,7 +2433,7 @@ class create_test_objects extends test_base
         $cmp = new component($this->usr1);
         $cmp->set(9, component_api::TN_FORM_SAVE, comp_type_shared::FORM_SAVE);
         $cmp->description = component_api::TD_FORM_SAVE;
-        $cmp->code_id = component_api::TI_FORM_SAVE;
+        $cmp->code_id = component_api::TC_FORM_SAVE;
         return $cmp;
     }
 
@@ -2421,7 +2442,7 @@ class create_test_objects extends test_base
         $cmp = new component($this->usr1);
         $cmp->set(10, component_api::TN_FORM_END, comp_type_shared::FORM_END);
         $cmp->description = component_api::TD_FORM_END;
-        $cmp->code_id = component_api::TI_FORM_END;
+        $cmp->code_id = component_api::TC_FORM_END;
         return $cmp;
     }
 
@@ -2439,6 +2460,14 @@ class create_test_objects extends test_base
         $lnk->set(1, $this->view(), $this->component(), 1);
         return $lnk;
     }
+
+    function component_matrix_link(): component_link
+    {
+        $lnk = new component_link($this->usr1);
+        $lnk->set(2, $this->view(), $this->component_matrix(), 2);
+        return $lnk;
+    }
+
 
     function component_link_filled(): component_link
     {
@@ -2468,6 +2497,7 @@ class create_test_objects extends test_base
     {
         $lst = new component_link_list($this->usr1);
         $lst->add_link($this->component_link());
+        $lst->add_link($this->component_matrix_link());
         return $lst;
     }
 

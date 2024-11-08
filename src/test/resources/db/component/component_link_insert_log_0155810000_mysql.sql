@@ -45,7 +45,7 @@ SELECT component_link_insert_log_0155810000
         1,
         1,
         16,
-        'Word',
+        'Start view',
         'always',
         'Word',
         757,

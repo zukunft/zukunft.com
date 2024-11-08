@@ -8,13 +8,8 @@
   "components": [
     {
       "name": "Word",
-      "description": "simply show the word name",
+      "description": "simply show the word or tiple name",
       "type": "phrase_name"
-    },
-    {
-      "name": "Term",
-      "description": "simply show the name of a word, triple, verb or formula",
-      "type": "term_name"
     },
     {
       "name": "system form title word add",
@@ -213,6 +208,20 @@
       "ui_msg_code_id": "form_title_component_add"
     },
     {
+      "name": "system form title component edit",
+      "description": "show the language specific title for the system form to change component",
+      "type": "system_form_title",
+      "code_id": "form_title_component_edit",
+      "ui_msg_code_id": "form_title_component_edit"
+    },
+    {
+      "name": "system form title component del",
+      "description": "show the language specific title for the system form to delete or exclude a component",
+      "type": "system_form_title",
+      "code_id": "form_title_component_del",
+      "ui_msg_code_id": "form_title_component_del"
+    },
+    {
       "name": "system form hidden back stack",
       "description": "field that contains the stack for the undo actions",
       "type": "system_form_back_stack",
@@ -322,32 +331,28 @@
   ],
   "views": [
     {
-      "name": "Word",
-      "description": "the default view for words",
-      "code_id": "word",
+      "name": "Start view",
+      "description": "A dynamic entry mask that initially shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.",
+      "code_id": "entry_view",
+      "type": "entry",
+      "protection": "admin_protection",
       "components": [
         {
           "position": "1",
           "name": "Word"
-        }
-      ]
-    },
-    {
-      "name": "Start view",
-      "description": "A dynamic start mask that shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems",
-      "type": "entry",
-      "code_id": "entry_view",
-      "components": [
+        },
         {
-          "position": "1",
+          "position": "2",
           "name": "spreadsheet"
         }
       ]
     },
     {
-      "name": "Add New Word",
+      "name": "Add new word",
+      "description": "Create a new word with all parameters e.g. the phrase type",
       "code_id": "word_add",
       "type": "system",
+      "protection": "admin_protection",
       "components": [
         {
           "position": "1",
@@ -392,10 +397,11 @@
       ]
     },
     {
-      "name": "Change Word",
+      "name": "Change word",
       "description": "Change name, description or settings of a word",
-      "type": "system",
       "code_id": "word_edit",
+      "type": "system",
+      "protection": "admin_protection",
       "components": [
         {
           "position": "1",
@@ -432,10 +438,11 @@
       ]
     },
     {
-      "name": "Delete Word",
+      "name": "Delete word",
       "description": "Exclude or delete a word",
       "code_id": "word_del",
       "type": "system",
+      "protection": "admin_protection",
       "components": [
         {
           "position": "1",
@@ -464,9 +471,32 @@
       ]
     },
     {
-      "name": "System View Add Triple",
+      "name": "Add new verb",
+      "description": "Request to add a new verb/predicate",
+      "code_id": "verb_add",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Change verb",
+      "description": "Rename a verb/predicate",
+      "code_id": "verb_edit",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Delete verb",
+      "description": "Exclude or delete a verb",
+      "code_id": "verb_del",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Add new triple",
+      "description": "Create a new triple with all parameters",
       "code_id": "triple_add",
       "type": "system",
+      "protection": "admin_protection",
       "components": [
         {
           "position": "1",
@@ -547,128 +577,144 @@
       ]
     },
     {
-      "name": "Search",
-      "description": "The search page for all words and formulas",
-      "code_id": "word_find"
-    },
-    {
-      "name": "Display Number",
-      "code_id": "value"
-    },
-    {
-      "name": "Add New Number",
-      "code_id": "value_add"
-    },
-    {
-      "name": "Change Number",
-      "code_id": "value_edit"
-    },
-    {
-      "name": "Delete Number",
-      "code_id": "value_del"
-    },
-    {
-      "name": "Add New Formula",
-      "code_id": "formula_add"
-    },
-    {
-      "name": "Change Formula",
-      "code_id": "formula_edit"
-    },
-    {
-      "name": "Delete Formula",
-      "description": "To confirm the exclusion or deleting of a formula",
-      "code_id": "formula_del"
-    },
-    {
-      "name": "Explain Formula Result",
-      "description": "Explain the formula result",
-      "code_id": "formula_explain"
-    },
-    {
-      "name": "Formula test",
-      "description": "To debug the formula",
-      "code_id": "formula_test"
-    },
-    {
-      "name": "Add New Source",
-      "code_id": "source_add"
-    },
-    {
-      "name": "Change Source",
-      "code_id": "source_edit"
-    },
-    {
-      "name": "Delete Source",
-      "description": "Delete an external data source",
-      "code_id": "source_del"
-    },
-    {
-      "name": "Verb List",
-      "description": "List all available ways how to link two words",
-      "code_id": "verbs"
-    },
-    {
-      "name": "Add New Verb",
-      "code_id": "verb_add"
-    },
-    {
-      "name": "Change Verb",
-      "description": "Rename a tern link type",
-      "code_id": "verb_edit"
-    },
-    {
-      "name": "Delete verb",
-      "description": "Exclude or delete a verb",
-      "code_id": "verb_del"
-    },
-    {
-      "name": "Change Triple",
+      "name": "Change triple",
       "description": "Rename a triple",
-      "code_id": "triple_edit"
+      "code_id": "triple_edit",
+      "type": "system",
+      "protection": "admin_protection"
     },
     {
       "name": "Delete triple",
       "description": "Exclude or delete a triple",
-      "code_id": "triple_del"
+      "code_id": "triple_del",
+      "type": "system",
+      "protection": "admin_protection"
     },
     {
-      "name": "User Settings",
-      "description": "to change the user settings",
-      "code_id": "user"
+      "name": "Add new source",
+      "description": "Create a new source with all parameters e.g. the type",
+      "code_id": "source_add",
+      "type": "system",
+      "protection": "admin_protection"
     },
     {
-      "name": "Error Log",
-      "description": "simple confirm page for a new error that has been logged in the database",
-      "code_id": "error_log"
+      "name": "Change source",
+      "description": "Rename a triple or change the type",
+      "code_id": "source_edit",
+      "type": "system",
+      "protection": "admin_protection"
     },
     {
-      "name": "System Error List",
-      "description": "List the system errors and allow the user to change the status",
-      "code_id": "error_update"
+      "name": "Delete source",
+      "description": "To confirm the exclusion or deleting of an external source",
+      "code_id": "source_del",
+      "type": "system",
+      "protection": "admin_protection"
     },
     {
-      "name": "Import",
-      "description": "Select a file to import data",
-      "code_id": "import"
+      "name": "Add new reference",
+      "description": "Create a new data link to external systems",
+      "code_id": "ref_add",
+      "type": "system",
+      "protection": "admin_protection"
     },
     {
-      "name": "Add View",
-      "code_id": "view_add"
+      "name": "Change reference",
+      "description": "Change then link to external system",
+      "code_id": "ref_edit",
+      "type": "system",
+      "protection": "admin_protection"
     },
     {
-      "name": "Change View",
+      "name": "Delete reference",
+      "description": "To confirm the exclusion or deleting of a reference",
+      "code_id": "ref_del",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Add new number",
+      "description": "Create a new value",
+      "code_id": "value_add",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Change number",
+      "description": "Change a number",
+      "code_id": "value_edit",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Delete number",
+      "description": "Exclude or delete a number",
+      "code_id": "value_del",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Add new formula",
+      "description": "Create a new formula with all parameters e.g. the type",
+      "code_id": "formula_add",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Change formula",
+      "description": "Chnage a formula, the name or the type",
+      "code_id": "formula_edit",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Delete formula",
+      "description": "To confirm the exclusion or deleting of a formula",
+      "code_id": "formula_del",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Change result",
+      "description": "Overwrite a result",
+      "code_id": "result_edit",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Delete result",
+      "description": "Exclude or delete a result",
+      "code_id": "result_del",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Add view",
+      "description": "Create a new view and set the type",
+      "code_id": "view_add",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Change view",
       "description": "Rename a view",
-      "code_id": "view_edit"
+      "code_id": "view_edit",
+      "type": "system",
+      "protection": "admin_protection"
     },
     {
-      "name": "Delete View",
+      "name": "Delete view",
       "description": "Exclude or delete a view",
-      "code_id": "view_del"
+      "code_id": "view_del",
+      "type": "system",
+      "protection": "admin_protection"
     },
     {
-      "name": "Add View Component",
+      "name": "Add new view component",
+      "description": "Create a new view and set the type",
       "code_id": "component_add",
+      "type": "system",
+      "protection": "admin_protection",
       "components": [
         {
           "position": "1",
@@ -701,14 +747,58 @@
       ]
     },
     {
-      "name": "Change View Component",
+      "name": "Change view component",
       "description": "Adjust a view component",
-      "code_id": "component_edit"
+      "code_id": "component_edit",
+      "type": "system",
+      "protection": "admin_protection"
     },
     {
-      "name": "Delete View Component",
+      "name": "Delete view component",
       "description": "Exclude or delete a view component",
-      "code_id": "component_del"
+      "code_id": "component_del",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Search",
+      "description": "The search page for all words and formulas",
+      "code_id": "word_find"
+    },
+    {
+      "name": "Explain Formula Result",
+      "description": "Explain the formula result",
+      "code_id": "formula_explain"
+    },
+    {
+      "name": "Formula test",
+      "description": "To debug the formula",
+      "code_id": "formula_test"
+    },
+    {
+      "name": "Verb List",
+      "description": "List all available ways how to link two words",
+      "code_id": "verbs"
+    },
+    {
+      "name": "User Settings",
+      "description": "to change the user settings",
+      "code_id": "user"
+    },
+    {
+      "name": "Error Log",
+      "description": "simple confirm page for a new error that has been logged in the database",
+      "code_id": "error_log"
+    },
+    {
+      "name": "System Error List",
+      "description": "List the system errors and allow the user to change the status",
+      "code_id": "error_update"
+    },
+    {
+      "name": "Import",
+      "description": "Select a file to import data",
+      "code_id": "import"
     },
     {
       "name": "complete",

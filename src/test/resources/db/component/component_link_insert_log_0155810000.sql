@@ -50,7 +50,7 @@ SELECT component_link_insert_log_0155810000
      1::bigint,
      1::smallint,
      16::smallint,
-     'Word'::text,
+     'Start view'::text,
      'always'::text,
      'Word'::text,
      757::smallint,

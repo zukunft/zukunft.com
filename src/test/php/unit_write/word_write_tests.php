@@ -459,7 +459,7 @@ class word_write_tests
 
         // display
         $back = 1;
-        $target = '<a href="/http/view.php?v=1&id=' . $wrd_read->id() . '&o=words&back=1" title="' . word_api::TD_READ . '">' . word_api::TN_READ . '</a>';
+        $target = '<a href="/http/view.php?v=20&id=' . $wrd_read->id() . '&o=words&back=1" title="' . word_api::TD_READ . '">' . word_api::TN_READ . '</a>';
         $wrd_read_dsp = new word_dsp($wrd_read->api_json());
         $result = $wrd_read_dsp->display_linked($back);
         $t->display('word->display "' . word_api::TN_READ . '"', $target, $result);

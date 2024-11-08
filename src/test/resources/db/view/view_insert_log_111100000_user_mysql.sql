@@ -27,7 +27,7 @@ SELECT view_insert_log_111100000_user (
                1,
                1,
                42,
-               'Word',
+               'Start view',
                1,
                43,
-               'the default view for words');
+               'A dynamic entry mask that initially shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.');

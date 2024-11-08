@@ -26,5 +26,5 @@ SELECT view_delete_log
        (1,
         3,
         42,
-        'Word',
+        'Start view',
         1);

@@ -5,28 +5,123 @@
   "selection": [
     "base views"
   ],
+  "components": [
+    {
+      "name": "Word",
+      "description": "simply show the word or tiple name",
+      "type": "phrase_name"
+    },
+    {
+      "name": "Verb",
+      "description": "simply show the verb name",
+      "type": "verb_name"
+    },
+    {
+      "name": "Term",
+      "description": "simply show the name of a word, triple, verb or formula",
+      "type": "term_name"
+    },
+    {
+      "name": "related words",
+      "description": "show the most relevant and related words or triples",
+      "type": "word_list_down"
+    },
+    {
+      "name": "main value",
+      "description": "show one most relevant value",
+      "type": "main_value"
+    },
+    {
+      "name": "related values",
+      "description": "show the most relevant and related values",
+      "type": "values_related"
+    }
+  ],
   "views": [
     {
-      "name": "math const",
-      "description": "Show a mathatical constance and the related words and formulas",
+      "name": "Word",
+      "description": "the default view for words",
+      "code_id": "word",
       "components": [
         {
           "position": "1",
-          "name": "Name",
-          "type": "phrase_name"
+          "name": "Word"
         },
         {
           "position": "2",
-          "name": "Words related"
+          "name": "related values"
+        }
+      ]
+    },
+    {
+      "name": "Verb",
+      "description": "the default view for verbs",
+      "code_id": "verb",
+      "components": [
+        {
+          "position": "1",
+          "name": "Verb"
         },
         {
-          "position": "3",
-          "name": "Formulas"
+          "position": "2",
+          "name": "related words"
         }
-      ],
-      "assigned": [
-        "Pi",
-        "Euler's constant"
+      ]
+    },
+    {
+      "name": "Triple",
+      "description": "the default view for triples",
+      "code_id": "triple",
+      "components": [
+        {
+          "position": "1",
+          "name": "Triple"
+        },
+        {
+          "position": "2",
+          "name": "related values"
+        }
+      ]
+    },
+    {
+      "name": "Source",
+      "description": "the default view for sources",
+      "code_id": "source",
+      "components": [
+        {
+          "position": "1",
+          "name": "Source"
+        },
+        {
+          "position": "2",
+          "name": "related values"
+        }
+      ]
+    },
+    {
+      "name": "Reference",
+      "description": "the default view for references",
+      "code_id": "ref",
+      "components": [
+        {
+          "position": "1",
+          "name": "Reference"
+        },
+        {
+          "position": "2",
+          "name": "related values"
+        }
+      ]
+    },
+    {
+      "name": "Display Number",
+      "description": "the default view for values",
+      "code_id": "value",
+      "components": [
+        {
+          "position": "1",
+          "name": "Value"
+        }
       ]
     },
     {
@@ -50,6 +145,40 @@
       "assigned": [
         "scale minute to sec",
         "increase"
+      ]
+    },
+    {
+      "name": "Result",
+      "description": "the default view for results",
+      "code_id": "result",
+      "components": [
+        {
+          "position": "1",
+          "name": "Result"
+        }
+      ]
+    },
+    {
+      "name": "math const",
+      "description": "Show a mathatical constance and the related words and formulas",
+      "components": [
+        {
+          "position": "1",
+          "name": "Name",
+          "type": "phrase_name"
+        },
+        {
+          "position": "2",
+          "name": "Words related"
+        },
+        {
+          "position": "3",
+          "name": "Formulas"
+        }
+      ],
+      "assigned": [
+        "Pi",
+        "Euler's constant"
       ]
     }
   ]

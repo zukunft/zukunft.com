@@ -112,7 +112,7 @@ SELECT component_insert_log_011151111111111 (
                51::smallint,
                743::smallint,
                52::smallint,
-               'simply show the word name'::text,
+               'simply show the word or tiple name'::text,
                53::smallint,
                'text'::text,
                2::smallint,

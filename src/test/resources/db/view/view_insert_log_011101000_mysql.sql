@@ -40,12 +40,12 @@ PREPARE view_insert_log_011101000_call FROM
     'SELECT view_insert_log_011101000 (?,?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT view_insert_log_011101000 (
-               'Word',
+               'Start view',
                1,
                1,
                42,
                278,
                43,
-               'the default view for words',
+               'A dynamic entry mask that initially shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.',
                44,
-               'word');
+               'entry_view');

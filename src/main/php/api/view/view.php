@@ -52,9 +52,9 @@ class view extends sandbox_typed_api
     // TD_* means 'test description'
     // TC_* means 'test code id'
     // TI_* means 'test id'
-    const TN_READ = 'Word';
-    const TD_READ = 'the default view for words';
-    const TC_READ = 'word';
+    const TN_READ = 'Start view';
+    const TD_READ = 'A dynamic entry mask that initially shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.';
+    const TC_READ = 'entry_view';
     const TI_READ = 1;
     const TN_ADD = 'System Test View';
     const TN_ADD_VIA_FUNC = 'System Test View added via sql function';
@@ -68,7 +68,7 @@ class view extends sandbox_typed_api
 
     // to test a system view (add word) as unit test without database
     const TN_FORM = 'Add word';
-    const TN_FORM_NEW = 'Add New Word';
+    const TN_FORM_NEW = 'Add new word';
     const TD_FORM = 'system form to add a word';
     const TC_FORM = 'word_add';
     const TI_FORM = 3;

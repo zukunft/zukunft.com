@@ -118,6 +118,7 @@ class component_type
     const TEST_TYPES = array(
         [self::TEXT, 2],
         [self::PHRASE_NAME, 8],
+        [self::VALUES_RELATED, 11],
         [self::FORM_TITLE, 17],
         [self::FORM_BACK, 18],
         [self::FORM_CONFIRM, 19],
@@ -133,7 +134,8 @@ class component_type
         [self::FORM_END, 29],
         [self::ROW_START, 30],
         [self::ROW_RIGHT, 31],
-        [self::ROW_END, 32]
+        [self::ROW_END, 32],
+        [self::CALC_SHEET, 33]
     );
 
 }

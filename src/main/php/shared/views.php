@@ -40,16 +40,18 @@ class views
     // MC_* is the Mask Code id that is expected never to change
     // MI_* is the Mask ID that is expected never to change
     const MC_START = 'start';
-    const MI_START = 2;
-    const MC_WORD = 'word';
-    const MI_WORD = 1;
+    const MI_START = 1;
+
+    // curl views
     const MC_WORD_ADD = 'word_add';
     const MI_WORD_ADD = 3;
     const MC_WORD_EDIT = 'word_edit';
     const MI_WORD_EDIT = 4;
     const MC_WORD_DEL = 'word_del';
     const MI_WORD_DEL = 5;
-    const MC_WORD_FIND = 'word_find';
+    const MC_VERB_ADD = 'verb_add';
+    const MC_VERB_EDIT = 'verb_edit';
+    const MC_VERB_DEL = 'verb_del';
     const MC_TRIPLE_ADD = 'triple_add';
     const MC_TRIPLE_EDIT = 'triple_edit';
     const MC_TRIPLE_DEL = 'triple_del';
@@ -69,9 +71,6 @@ class views
     const MC_SOURCE_DEL = 'source_del';
     const MI_SOURCE_DEL = 19;
     const MC_VERBS = 'verbs';
-    const MC_VERB_ADD = 'verb_add';
-    const MC_VERB_EDIT = 'verb_edit';
-    const MC_VERB_DEL = 'verb_del';
     const MC_USER = 'user';
     const MC_ERR_LOG = 'error_log';
     const MC_ERR_UPD = 'error_update';
@@ -85,6 +84,13 @@ class views
     const MC_COMPONENT_DEL = 'component_del';
     const MC_COMPONENT_LINK = 'component_link';
     const MC_COMPONENT_UNLINK = 'component_unlink';
+
+    // default views
+    const MC_WORD = 'word';
+    const MI_WORD = 20;
+
+    // functional views
+    const MC_WORD_FIND = 'word_find';
 
     // system masks that have a word as the main object
     const WORD_MASKS_IDS = [

@@ -60,6 +60,7 @@ class api
     const URL_API_PATH = 'api/';
     const URL_VAR_MASK = 'm'; // the internal database id of the view used to format the object
     const URL_VAR_ID = 'id'; // the internal database id of the main view object
+    const URL_VAR_CONTEXT = 'x'; // list of terms to describe the context used for the view
     const URL_VAR_WORD = 'w';
     const URL_VAR_VERB = 'b';
     const URL_VAR_TRIPLE = 't';
@@ -70,9 +71,19 @@ class api
     const URL_VAR_FORMULA = 'f';
     const URL_VAR_TERM = 'e';
     const URL_VAR_RESULT = 'r';
+    const URL_VAR_FIGURE = 'i';
     const URL_VAR_VIEW = 'v';
     const URL_VAR_COMPONENT = 'c';
     const URL_VAR_GROUP = 'g';
+    const URL_VAR_FORMULA_LINK = 'fl'; // to link a formula to a phrase
+    const URL_VAR_VIEW_TERM_LINK = 'vl'; // to link a view to a term
+    const URL_VAR_COMPONENT_LINK = 'cl'; // to link a component to a view
+    const URL_VAR_VALUE_TIME_SERIES = 'ts';
+    const URL_VAR_LOG = 'h'; // h for history of the object
+    const URL_VAR_LOG_LINK = 'hl'; // history of a link object
+    const URL_VAR_SYS_LOG = 'hs'; // history of a system event
+    const URL_VAR_JOB = 'j'; // for system batch jobs
+    const URL_VAR_IP = 'ip'; // for ip ranges (for admin only)
     const URL_VAR_ID_LST = 'ids'; // a comma seperated list of internal database ids
     const URL_VAR_NAME = 'name'; // the unique name of a term, view, component, user, source, language or type
     const URL_VAR_PATTERN = 'pattern'; // part of a name to select a named object such as word, triple, ...

@@ -38,7 +38,7 @@ SELECT component_insert_log_111150000000000_user (
                'Word'::text,
                1::bigint,
                52::smallint,
-               'simply show the word name'::text,
+               'simply show the word or tiple name'::text,
                53::smallint,
                'phrase_name'::text,
                8::smallint);

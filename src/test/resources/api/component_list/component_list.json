@@ -2,7 +2,13 @@
   {
     "id": 1,
     "name": "Word",
-    "description": "simply show the word name",
+    "description": "simply show the word or tiple name",
     "type_id": 8
+  },
+  {
+    "id": 48,
+    "name": "spreadsheet",
+    "description": "s sheet with words, number and formulas",
+    "type_id": 33
   }
 ]

@@ -1,7 +1,7 @@
 {
   "pod": "zukunft.com",
   "type": "type_lists",
-  "user_id": 2,
+  "user_id": 3,
   "user": "zukunft.com system test",
   "version": "0.0.3",
   "type_lists": {
@@ -541,6 +541,18 @@
         "code_id": "term_name",
         "description": "show the name of a word, triple, verb or formula and give the user the possibility to change the name",
         "id": 34
+      },
+      {
+        "name": "verb name",
+        "code_id": "verb_name",
+        "description": "show the name of a verb and give the admin user the possibility to change the name",
+        "id": 35
+      },
+      {
+        "name": "main value",
+        "code_id": "main_value",
+        "description": "show the main values related to the given term",
+        "id": 36
       }
     ],
     "position_types": [
@@ -6395,45 +6407,40 @@
     "system_views": [
       {
         "id": 1,
-        "name": "Word",
-        "description": "the default view for words",
-        "code_id": "word",
+        "protection": 3,
+        "name": "Start view",
+        "description": "A dynamic entry mask that initially shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.",
+        "type_id": 2,
+        "code_id": "entry_view",
         "components": [
           {
             "id": 1,
             "name": "Word",
-            "description": "simply show the word name",
+            "description": "simply show the word or tiple name",
             "type_id": 8,
             "link_id": 1,
             "position": 1
+          },
+          {
+            "id": 48,
+            "name": "spreadsheet",
+            "description": "s sheet with words, number and formulas",
+            "type_id": 33,
+            "link_id": 2,
+            "position": 2
           }
         ]
       },
       {
         "id": 2,
-        "name": "Start view",
-        "description": "A dynamic start mask that shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems",
-        "type_id": 2,
-        "code_id": "entry_view",
-        "components": [
-          {
-            "id": 47,
-            "name": "spreadsheet",
-            "description": "s sheet with words, number and formulas",
-            "type_id": 33,
-            "link_id": 2,
-            "position": 1
-          }
-        ]
-      },
-      {
-        "id": 3,
-        "name": "Add New Word",
+        "protection": 3,
+        "name": "Add new word",
+        "description": "Create a new word with all parameters e.g. the phrase type",
         "type_id": 7,
         "code_id": "word_add",
         "components": [
           {
-            "id": 3,
+            "id": 2,
             "name": "system form title word add",
             "description": "show the language specific title for the system form to add a new word",
             "type_id": 17,
@@ -6442,7 +6449,7 @@
             "position": 1
           },
           {
-            "id": 31,
+            "id": 32,
             "name": "system form hidden back stack",
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
@@ -6451,7 +6458,7 @@
             "position": 2
           },
           {
-            "id": 32,
+            "id": 33,
             "name": "system form hidden confirm status",
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
@@ -6460,7 +6467,7 @@
             "position": 3
           },
           {
-            "id": 33,
+            "id": 34,
             "name": "system form field name",
             "description": "the name field in a form",
             "type_id": 20,
@@ -6469,7 +6476,7 @@
             "position": 4
           },
           {
-            "id": 34,
+            "id": 35,
             "name": "system form field description",
             "description": "the description field in a form",
             "type_id": 21,
@@ -6478,7 +6485,7 @@
             "position": 5
           },
           {
-            "id": 38,
+            "id": 39,
             "name": "system form select share type",
             "description": "selector for the share type",
             "type_id": 24,
@@ -6487,7 +6494,7 @@
             "position": 6
           },
           {
-            "id": 39,
+            "id": 40,
             "name": "system form select protection type",
             "description": "selector for the protection type",
             "type_id": 25,
@@ -6496,7 +6503,7 @@
             "position": 7
           },
           {
-            "id": 40,
+            "id": 41,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 26,
@@ -6505,7 +6512,7 @@
             "position": 8
           },
           {
-            "id": 41,
+            "id": 42,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 27,
@@ -6514,7 +6521,7 @@
             "position": 9
           },
           {
-            "id": 43,
+            "id": 44,
             "name": "system form end",
             "type_id": 29,
             "code_id": "form_end",
@@ -6524,14 +6531,15 @@
         ]
       },
       {
-        "id": 4,
-        "name": "Change Word",
+        "id": 3,
+        "protection": 3,
+        "name": "Change word",
         "description": "Change name, description or settings of a word",
         "type_id": 7,
         "code_id": "word_edit",
         "components": [
           {
-            "id": 4,
+            "id": 3,
             "name": "system form title word edit",
             "description": "show the language specific title for the system form to change a word",
             "type_id": 17,
@@ -6540,7 +6548,7 @@
             "position": 1
           },
           {
-            "id": 31,
+            "id": 32,
             "name": "system form hidden back stack",
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
@@ -6549,7 +6557,7 @@
             "position": 2
           },
           {
-            "id": 32,
+            "id": 33,
             "name": "system form hidden confirm status",
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
@@ -6558,7 +6566,7 @@
             "position": 3
           },
           {
-            "id": 33,
+            "id": 34,
             "name": "system form field name",
             "description": "the name field in a form",
             "type_id": 20,
@@ -6567,7 +6575,7 @@
             "position": 4
           },
           {
-            "id": 34,
+            "id": 35,
             "name": "system form field description",
             "description": "the description field in a form",
             "type_id": 21,
@@ -6576,7 +6584,7 @@
             "position": 5
           },
           {
-            "id": 40,
+            "id": 41,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 26,
@@ -6585,7 +6593,7 @@
             "position": 6
           },
           {
-            "id": 41,
+            "id": 42,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 27,
@@ -6594,7 +6602,7 @@
             "position": 7
           },
           {
-            "id": 43,
+            "id": 44,
             "name": "system form end",
             "type_id": 29,
             "code_id": "form_end",
@@ -6604,14 +6612,15 @@
         ]
       },
       {
-        "id": 5,
-        "name": "Delete Word",
+        "id": 4,
+        "protection": 3,
+        "name": "Delete word",
         "description": "Exclude or delete a word",
         "type_id": 7,
         "code_id": "word_del",
         "components": [
           {
-            "id": 5,
+            "id": 4,
             "name": "system form title word del",
             "description": "show the language specific title for the system form to delete or exclude a word",
             "type_id": 17,
@@ -6620,7 +6629,7 @@
             "position": 1
           },
           {
-            "id": 31,
+            "id": 32,
             "name": "system form hidden back stack",
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
@@ -6629,7 +6638,7 @@
             "position": 2
           },
           {
-            "id": 32,
+            "id": 33,
             "name": "system form hidden confirm status",
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
@@ -6638,7 +6647,7 @@
             "position": 3
           },
           {
-            "id": 40,
+            "id": 41,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 26,
@@ -6647,7 +6656,7 @@
             "position": 4
           },
           {
-            "id": 42,
+            "id": 43,
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 28,
@@ -6656,7 +6665,7 @@
             "position": 5
           },
           {
-            "id": 43,
+            "id": 44,
             "name": "system form end",
             "type_id": 29,
             "code_id": "form_end",
@@ -6666,13 +6675,42 @@
         ]
       },
       {
+        "id": 5,
+        "protection": 3,
+        "name": "Add new verb",
+        "description": "Request to add a new verb\/predicate",
+        "type_id": 7,
+        "code_id": "verb_add",
+        "components": []
+      },
+      {
         "id": 6,
-        "name": "System View Add Triple",
+        "protection": 3,
+        "name": "Change verb",
+        "description": "Rename a verb\/predicate",
+        "type_id": 7,
+        "code_id": "verb_edit",
+        "components": []
+      },
+      {
+        "id": 7,
+        "protection": 3,
+        "name": "Delete verb",
+        "description": "Exclude or delete a verb",
+        "type_id": 7,
+        "code_id": "verb_del",
+        "components": []
+      },
+      {
+        "id": 8,
+        "protection": 3,
+        "name": "Add new triple",
+        "description": "Create a new triple with all parameters",
         "type_id": 7,
         "code_id": "triple_add",
         "components": [
           {
-            "id": 9,
+            "id": 8,
             "name": "system form title triple add",
             "description": "show the language specific title for the system form to add a new triple",
             "type_id": 17,
@@ -6681,7 +6719,7 @@
             "position": 1
           },
           {
-            "id": 31,
+            "id": 32,
             "name": "system form hidden back stack",
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
@@ -6690,7 +6728,7 @@
             "position": 2
           },
           {
-            "id": 32,
+            "id": 33,
             "name": "system form hidden confirm status",
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
@@ -6699,7 +6737,7 @@
             "position": 3
           },
           {
-            "id": 33,
+            "id": 34,
             "name": "system form field name",
             "description": "the name field in a form",
             "type_id": 20,
@@ -6708,7 +6746,7 @@
             "position": 4
           },
           {
-            "id": 34,
+            "id": 35,
             "name": "system form field description",
             "description": "the description field in a form",
             "type_id": 21,
@@ -6717,7 +6755,7 @@
             "position": 5
           },
           {
-            "id": 44,
+            "id": 45,
             "name": "system formatter row start",
             "type_id": 30,
             "code_id": "row_start",
@@ -6725,7 +6763,7 @@
             "position": 6
           },
           {
-            "id": 35,
+            "id": 36,
             "name": "system form triple phrase from",
             "description": "selector for the from phrase of a triple",
             "type_id": 22,
@@ -6734,7 +6772,7 @@
             "position": 7
           },
           {
-            "id": 37,
+            "id": 38,
             "name": "system form triple verb",
             "description": "selector for the verb of a triple",
             "type_id": 23,
@@ -6743,7 +6781,7 @@
             "position": 8
           },
           {
-            "id": 36,
+            "id": 37,
             "name": "system form triple phrase to",
             "description": "selector for the to phrase of a triple",
             "type_id": 22,
@@ -6752,7 +6790,7 @@
             "position": 9
           },
           {
-            "id": 46,
+            "id": 47,
             "name": "system formatter row end",
             "type_id": 32,
             "code_id": "row_end",
@@ -6760,7 +6798,7 @@
             "position": 10
           },
           {
-            "id": 44,
+            "id": 45,
             "name": "system formatter row start",
             "type_id": 30,
             "code_id": "row_start",
@@ -6768,7 +6806,7 @@
             "position": 11
           },
           {
-            "id": 38,
+            "id": 39,
             "name": "system form select share type",
             "description": "selector for the share type",
             "type_id": 24,
@@ -6777,7 +6815,7 @@
             "position": 12
           },
           {
-            "id": 39,
+            "id": 40,
             "name": "system form select protection type",
             "description": "selector for the protection type",
             "type_id": 25,
@@ -6786,7 +6824,7 @@
             "position": 13
           },
           {
-            "id": 46,
+            "id": 47,
             "name": "system formatter row end",
             "type_id": 32,
             "code_id": "row_end",
@@ -6794,7 +6832,7 @@
             "position": 14
           },
           {
-            "id": 45,
+            "id": 46,
             "name": "system formatter row right",
             "type_id": 31,
             "code_id": "row_right",
@@ -6802,7 +6840,7 @@
             "position": 15
           },
           {
-            "id": 40,
+            "id": 41,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 26,
@@ -6811,7 +6849,7 @@
             "position": 16
           },
           {
-            "id": 41,
+            "id": 42,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 27,
@@ -6820,7 +6858,7 @@
             "position": 17
           },
           {
-            "id": 46,
+            "id": 47,
             "name": "system formatter row end",
             "type_id": 32,
             "code_id": "row_end",
@@ -6828,7 +6866,7 @@
             "position": 18
           },
           {
-            "id": 43,
+            "id": 44,
             "name": "system form end",
             "type_id": 29,
             "code_id": "form_end",
@@ -6838,184 +6876,186 @@
         ]
       },
       {
-        "id": 7,
-        "name": "Search",
-        "description": "The search page for all words and formulas",
-        "code_id": "word_find",
-        "components": []
-      },
-      {
-        "id": 8,
-        "name": "Display Number",
-        "code_id": "value",
-        "components": []
-      },
-      {
         "id": 9,
-        "name": "Add New Number",
-        "code_id": "value_add",
-        "components": []
-      },
-      {
-        "id": 10,
-        "name": "Change Number",
-        "code_id": "value_edit",
-        "components": []
-      },
-      {
-        "id": 11,
-        "name": "Delete Number",
-        "code_id": "value_del",
-        "components": []
-      },
-      {
-        "id": 12,
-        "name": "Add New Formula",
-        "code_id": "formula_add",
-        "components": []
-      },
-      {
-        "id": 13,
-        "name": "Change Formula",
-        "code_id": "formula_edit",
-        "components": []
-      },
-      {
-        "id": 14,
-        "name": "Delete Formula",
-        "description": "To confirm the exclusion or deleting of a formula",
-        "code_id": "formula_del",
-        "components": []
-      },
-      {
-        "id": 15,
-        "name": "Explain Formula Result",
-        "description": "Explain the formula result",
-        "code_id": "formula_explain",
-        "components": []
-      },
-      {
-        "id": 16,
-        "name": "Formula test",
-        "description": "To debug the formula",
-        "code_id": "formula_test",
-        "components": []
-      },
-      {
-        "id": 17,
-        "name": "Add New Source",
-        "code_id": "source_add",
-        "components": []
-      },
-      {
-        "id": 18,
-        "name": "Change Source",
-        "code_id": "source_edit",
-        "components": []
-      },
-      {
-        "id": 19,
-        "name": "Delete Source",
-        "description": "Delete an external data source",
-        "code_id": "source_del",
-        "components": []
-      },
-      {
-        "id": 20,
-        "name": "Verb List",
-        "description": "List all available ways how to link two words",
-        "code_id": "verbs",
-        "components": []
-      },
-      {
-        "id": 21,
-        "name": "Add New Verb",
-        "code_id": "verb_add",
-        "components": []
-      },
-      {
-        "id": 22,
-        "name": "Change Verb",
-        "description": "Rename a tern link type",
-        "code_id": "verb_edit",
-        "components": []
-      },
-      {
-        "id": 23,
-        "name": "Delete verb",
-        "description": "Exclude or delete a verb",
-        "code_id": "verb_del",
-        "components": []
-      },
-      {
-        "id": 24,
-        "name": "Change Triple",
+        "protection": 3,
+        "name": "Change triple",
         "description": "Rename a triple",
+        "type_id": 7,
         "code_id": "triple_edit",
         "components": []
       },
       {
-        "id": 25,
+        "id": 10,
+        "protection": 3,
         "name": "Delete triple",
         "description": "Exclude or delete a triple",
+        "type_id": 7,
         "code_id": "triple_del",
         "components": []
       },
       {
-        "id": 26,
-        "name": "User Settings",
-        "description": "to change the user settings",
-        "code_id": "user",
+        "id": 11,
+        "protection": 3,
+        "name": "Add new source",
+        "description": "Create a new source with all parameters e.g. the type",
+        "type_id": 7,
+        "code_id": "source_add",
         "components": []
       },
       {
-        "id": 27,
-        "name": "Error Log",
-        "description": "simple confirm page for a new error that has been logged in the database",
-        "code_id": "error_log",
+        "id": 12,
+        "protection": 3,
+        "name": "Change source",
+        "description": "Rename a triple or change the type",
+        "type_id": 7,
+        "code_id": "source_edit",
         "components": []
       },
       {
-        "id": 28,
-        "name": "System Error List",
-        "description": "List the system errors and allow the user to change the status",
-        "code_id": "error_update",
+        "id": 13,
+        "protection": 3,
+        "name": "Delete source",
+        "description": "To confirm the exclusion or deleting of an external source",
+        "type_id": 7,
+        "code_id": "source_del",
         "components": []
       },
       {
-        "id": 29,
-        "name": "Import",
-        "description": "Select a file to import data",
-        "code_id": "import",
+        "id": 14,
+        "protection": 3,
+        "name": "Add new reference",
+        "description": "Create a new data link to external systems",
+        "type_id": 7,
+        "code_id": "ref_add",
         "components": []
       },
       {
-        "id": 30,
-        "name": "Add View",
+        "id": 15,
+        "protection": 3,
+        "name": "Change reference",
+        "description": "Change then link to external system",
+        "type_id": 7,
+        "code_id": "ref_edit",
+        "components": []
+      },
+      {
+        "id": 16,
+        "protection": 3,
+        "name": "Delete reference",
+        "description": "To confirm the exclusion or deleting of a reference",
+        "type_id": 7,
+        "code_id": "ref_del",
+        "components": []
+      },
+      {
+        "id": 17,
+        "protection": 3,
+        "name": "Add new number",
+        "description": "Create a new value",
+        "type_id": 7,
+        "code_id": "value_add",
+        "components": []
+      },
+      {
+        "id": 18,
+        "protection": 3,
+        "name": "Change number",
+        "description": "Change a number",
+        "type_id": 7,
+        "code_id": "value_edit",
+        "components": []
+      },
+      {
+        "id": 19,
+        "protection": 3,
+        "name": "Delete number",
+        "description": "Exclude or delete a number",
+        "type_id": 7,
+        "code_id": "value_del",
+        "components": []
+      },
+      {
+        "id": 20,
+        "protection": 3,
+        "name": "Add new formula",
+        "description": "Create a new formula with all parameters e.g. the type",
+        "type_id": 7,
+        "code_id": "formula_add",
+        "components": []
+      },
+      {
+        "id": 21,
+        "protection": 3,
+        "name": "Change formula",
+        "description": "Chnage a formula, the name or the type",
+        "type_id": 7,
+        "code_id": "formula_edit",
+        "components": []
+      },
+      {
+        "id": 22,
+        "protection": 3,
+        "name": "Delete formula",
+        "description": "To confirm the exclusion or deleting of a formula",
+        "type_id": 7,
+        "code_id": "formula_del",
+        "components": []
+      },
+      {
+        "id": 23,
+        "protection": 3,
+        "name": "Change result",
+        "description": "Overwrite a result",
+        "type_id": 7,
+        "code_id": "result_edit",
+        "components": []
+      },
+      {
+        "id": 24,
+        "protection": 3,
+        "name": "Delete result",
+        "description": "Exclude or delete a result",
+        "type_id": 7,
+        "code_id": "result_del",
+        "components": []
+      },
+      {
+        "id": 25,
+        "protection": 3,
+        "name": "Add view",
+        "description": "Create a new view and set the type",
+        "type_id": 7,
         "code_id": "view_add",
         "components": []
       },
       {
-        "id": 31,
-        "name": "Change View",
+        "id": 26,
+        "protection": 3,
+        "name": "Change view",
         "description": "Rename a view",
+        "type_id": 7,
         "code_id": "view_edit",
         "components": []
       },
       {
-        "id": 32,
-        "name": "Delete View",
+        "id": 27,
+        "protection": 3,
+        "name": "Delete view",
         "description": "Exclude or delete a view",
+        "type_id": 7,
         "code_id": "view_del",
         "components": []
       },
       {
-        "id": 33,
-        "name": "Add View Component",
+        "id": 28,
+        "protection": 3,
+        "name": "Add new view component",
+        "description": "Create a new view and set the type",
+        "type_id": 7,
         "code_id": "component_add",
         "components": [
           {
-            "id": 30,
+            "id": 29,
             "name": "system form title component add",
             "description": "show the language specific title for the system form to add a new component",
             "type_id": 17,
@@ -7024,7 +7064,7 @@
             "position": 1
           },
           {
-            "id": 31,
+            "id": 32,
             "name": "system form hidden back stack",
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
@@ -7033,7 +7073,7 @@
             "position": 2
           },
           {
-            "id": 32,
+            "id": 33,
             "name": "system form hidden confirm status",
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
@@ -7042,7 +7082,7 @@
             "position": 3
           },
           {
-            "id": 33,
+            "id": 34,
             "name": "system form field name",
             "description": "the name field in a form",
             "type_id": 20,
@@ -7051,7 +7091,7 @@
             "position": 4
           },
           {
-            "id": 34,
+            "id": 35,
             "name": "system form field description",
             "description": "the description field in a form",
             "type_id": 21,
@@ -7060,7 +7100,7 @@
             "position": 5
           },
           {
-            "id": 40,
+            "id": 41,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 26,
@@ -7069,7 +7109,7 @@
             "position": 6
           },
           {
-            "id": 41,
+            "id": 42,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 27,
@@ -7080,18 +7120,220 @@
         ]
       },
       {
-        "id": 34,
-        "name": "Change View Component",
+        "id": 29,
+        "protection": 3,
+        "name": "Change view component",
         "description": "Adjust a view component",
+        "type_id": 7,
         "code_id": "component_edit",
         "components": []
       },
       {
-        "id": 35,
-        "name": "Delete View Component",
+        "id": 30,
+        "protection": 3,
+        "name": "Delete view component",
         "description": "Exclude or delete a view component",
+        "type_id": 7,
         "code_id": "component_del",
         "components": []
+      },
+      {
+        "id": 31,
+        "name": "Search",
+        "description": "The search page for all words and formulas",
+        "code_id": "word_find",
+        "components": []
+      },
+      {
+        "id": 32,
+        "name": "Explain Formula Result",
+        "description": "Explain the formula result",
+        "code_id": "formula_explain",
+        "components": []
+      },
+      {
+        "id": 33,
+        "name": "Formula test",
+        "description": "To debug the formula",
+        "code_id": "formula_test",
+        "components": []
+      },
+      {
+        "id": 34,
+        "name": "Verb List",
+        "description": "List all available ways how to link two words",
+        "code_id": "verbs",
+        "components": []
+      },
+      {
+        "id": 35,
+        "name": "User Settings",
+        "description": "to change the user settings",
+        "code_id": "user",
+        "components": []
+      },
+      {
+        "id": 36,
+        "name": "Error Log",
+        "description": "simple confirm page for a new error that has been logged in the database",
+        "code_id": "error_log",
+        "components": []
+      },
+      {
+        "id": 37,
+        "name": "System Error List",
+        "description": "List the system errors and allow the user to change the status",
+        "code_id": "error_update",
+        "components": []
+      },
+      {
+        "id": 38,
+        "name": "Import",
+        "description": "Select a file to import data",
+        "code_id": "import",
+        "components": []
+      },
+      {
+        "id": 41,
+        "name": "Word",
+        "description": "the default view for words",
+        "code_id": "word",
+        "components": [
+          {
+            "id": 1,
+            "name": "Word",
+            "description": "simply show the word or tiple name",
+            "type_id": 8,
+            "link_id": 60,
+            "position": 1
+          },
+          {
+            "id": 59,
+            "name": "related values",
+            "description": "show the most relevant and related values",
+            "type_id": 11,
+            "link_id": 61,
+            "position": 2
+          }
+        ]
+      },
+      {
+        "id": 42,
+        "name": "Verb",
+        "description": "the default view for verbs",
+        "code_id": "verb",
+        "components": [
+          {
+            "id": 55,
+            "name": "Verb",
+            "description": "simply show the verb name",
+            "type_id": 35,
+            "link_id": 62,
+            "position": 1
+          },
+          {
+            "id": 57,
+            "name": "related words",
+            "description": "show the most relevant and related words or triples",
+            "type_id": 9,
+            "link_id": 63,
+            "position": 2
+          }
+        ]
+      },
+      {
+        "id": 43,
+        "name": "Triple",
+        "description": "the default view for triples",
+        "code_id": "triple",
+        "components": [
+          {
+            "id": 60,
+            "name": "Triple",
+            "link_id": 64,
+            "position": 1
+          },
+          {
+            "id": 59,
+            "name": "related values",
+            "description": "show the most relevant and related values",
+            "type_id": 11,
+            "link_id": 65,
+            "position": 2
+          }
+        ]
+      },
+      {
+        "id": 44,
+        "name": "Source",
+        "description": "the default view for sources",
+        "code_id": "source",
+        "components": [
+          {
+            "id": 61,
+            "name": "Source",
+            "link_id": 66,
+            "position": 1
+          },
+          {
+            "id": 59,
+            "name": "related values",
+            "description": "show the most relevant and related values",
+            "type_id": 11,
+            "link_id": 67,
+            "position": 2
+          }
+        ]
+      },
+      {
+        "id": 45,
+        "name": "Reference",
+        "description": "the default view for references",
+        "code_id": "ref",
+        "components": [
+          {
+            "id": 62,
+            "name": "Reference",
+            "link_id": 68,
+            "position": 1
+          },
+          {
+            "id": 59,
+            "name": "related values",
+            "description": "show the most relevant and related values",
+            "type_id": 11,
+            "link_id": 69,
+            "position": 2
+          }
+        ]
+      },
+      {
+        "id": 46,
+        "name": "Display Number",
+        "description": "the default view for values",
+        "code_id": "value",
+        "components": [
+          {
+            "id": 63,
+            "name": "Value",
+            "link_id": 70,
+            "position": 1
+          }
+        ]
+      },
+      {
+        "id": 48,
+        "name": "Result",
+        "description": "the default view for results",
+        "code_id": "result",
+        "components": [
+          {
+            "id": 66,
+            "name": "Result",
+            "link_id": 74,
+            "position": 1
+          }
+        ]
       }
     ]
   }

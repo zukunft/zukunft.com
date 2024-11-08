@@ -145,7 +145,7 @@ class api_tests
         $t->assert_api_get_list(phrase_list::class, word_api::TN_READ, api::URL_VAR_PATTERN);
         $t->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $t->assert_api_get_list(formula_list::class, [1]);
-        $t->assert_api_get_list(component_list::class, 3, 'view_id');
+        $t->assert_api_get_list(component_list::class, 2, 'view_id');
         $t->assert_api_chg_list(
             change_log_list::class,
             api::URL_VAR_WORD_ID, 1,

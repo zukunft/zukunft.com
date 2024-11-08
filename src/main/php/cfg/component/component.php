@@ -1248,6 +1248,9 @@ class component extends sandbox_typed
                 );
             }
             global $component_types;
+            if ($this->type_id() < 0) {
+                log_err('component type for ' . $this->dsp_id() . ' not found');
+            }
             $lst->add_type_field(
                 self::FLD_TYPE,
                 type_object::FLD_NAME,

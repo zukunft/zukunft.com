@@ -122,12 +122,12 @@ class system_tests
         $t->assert_dsp_id($t->result_list(), '"Mathematics" 123456 / "percent" 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / 2,,,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->figure_value(), 'value figure "Pi (math)" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test) 2022-12-26 18:23:45');
         $t->assert_dsp_id($t->figure_list(), ' 3.1415926535898 Pi (math)  123456 "Mathematics"  (32770,-1)');
-        $t->assert_dsp_id($t->view(), '"Word" (view_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->view_list(), '"Word","Add word" (view_id 1,3) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->view(), '"Start view" (view_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->view_list(), '"Start view","Add word" (view_id 1,3) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->component(), '"Word" (component_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->component_list(), '"Word","form field share type" (component_id 1,6) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->component_link(), 'from "Word" (view_id 1) to "Word" (component_id 1) as (component_link_id 1) at pos 1');
-        $t->assert_dsp_id($t->component_link_list(), '"Word" (component_link_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->component_link(), 'from "Start view" (view_id 1) to "Word" (component_id 1) as (component_link_id 1) at pos 1');
+        $t->assert_dsp_id($t->component_link_list(), '"Word","spreadsheet" (component_link_id 1,2) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->language(), 'English/english (language_id 1)');
         $t->assert_dsp_id($t->change_log_named(), 'log add words,word_name Mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t->change_log_norm(), 'log add words,word_name Mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');

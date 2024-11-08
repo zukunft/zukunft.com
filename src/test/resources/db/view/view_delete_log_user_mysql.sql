@@ -22,5 +22,5 @@ SELECT view_delete_log_user
        (1,
         3,
         42,
-        'Word',
+        'Start view',
         1);

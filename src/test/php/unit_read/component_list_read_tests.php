@@ -68,7 +68,7 @@ class component_list_read_tests
         $cmp_lst->load_by_view_id(1);
         $result = $cmp_lst->name();
         $target = '"' . component_api::TN_READ . '"';
-        $t->assert($test_name . '1', $result, $target);
+        $t->assert_text_contains($test_name . '1', $result, $target);
 
         $test_name = 'loading the api message creation of the api index file for ';
         // TODO add this to all db read tests for all API call functions

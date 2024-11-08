@@ -111,7 +111,7 @@ class view_tests
         $t->subheader('view api unit tests');
         $msk = $t->view_filled();
         $t->assert_api_json($msk);
-        $msk = $t->view();
+        $msk = $t->view_protected();
         $t->assert_api($msk);
         $t->assert_api_to_dsp($msk, new view_dsp());
 

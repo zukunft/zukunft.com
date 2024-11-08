@@ -22,5 +22,5 @@ SELECT view_delete_log_user
        (1::bigint,
         3::smallint,
         42::smallint,
-        'Word'::text,
+        'Start view'::text,
         1::bigint);

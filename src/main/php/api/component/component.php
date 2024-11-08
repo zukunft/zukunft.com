@@ -53,9 +53,11 @@ class component extends sandbox_typed_api
     // view components used for unit tests
     // TN_* is the name of the view component used for testing
     // TD_* is the tooltip/description of the view component
-    // TI_* is the code_id of the view component
+    // TC_* is the code_id of the view component
+    // TI_* is the database id of the view component
     const TN_READ = 'Word';
-    const TD_READ = 'simply show the word name';
+    const TD_READ = 'simply show the word or tiple name';
+    const TI_READ = 1;
 
     // persevered view component names for unit and integration tests
     const TN_ADD = 'System Test View Component';
@@ -71,35 +73,38 @@ class component extends sandbox_typed_api
 
     // to test a system view
     const TN_FORM_TITLE = 'form title';
-    const TI_FORM_TITLE = 'form_title';
+    const TC_FORM_TITLE = 'form_title';
     const TD_FORM_TITLE = 'show the language specific title of a add, change or delete form';
     const TN_FORM_BACK = 'system form hidden back stack';
-    const TI_FORM_BACK = 'form_back_stack';
+    const TC_FORM_BACK = 'form_back_stack';
     const TD_FORM_BACK = 'field that contains the stack for the undo actions';
     const TN_FORM_CONFIRM = 'confirm button';
-    const TI_FORM_CONFIRM = 'form_confirm_button';
+    const TC_FORM_CONFIRM = 'form_confirm_button';
     const TD_FORM_CONFIRM = 'switch on that the form saving needs an extra confirm by the user';
     const TN_FORM_NAME = 'system form field name';
-    const TI_FORM_NAME = 'form_field_name';
+    const TC_FORM_NAME = 'form_field_name';
     const TD_FORM_NAME = 'the name field in a form';
     const TN_FORM_DESCRIPTION = 'system form field description';
-    const TI_FORM_DESCRIPTION = 'form_field_description';
+    const TC_FORM_DESCRIPTION = 'form_field_description';
     const TD_FORM_DESCRIPTION = 'the description field in a form';
     const TN_FORM_SHARE_TYPE = 'form field share type';
-    const TI_FORM_SHARE_TYPE = 'form_field_share_type';
+    const TC_FORM_SHARE_TYPE = 'form_field_share_type';
     const TD_FORM_SHARE_TYPE = 'the share type field in a form';
     const TN_FORM_PROTECTION_TYPE = 'form field protection type';
-    const TI_FORM_PROTECTION_TYPE = 'form_field_protection_type';
+    const TC_FORM_PROTECTION_TYPE = 'form_field_protection_type';
     const TD_FORM_PROTECTION_TYPE = 'the protection type field in a form';
     const TN_FORM_CANCEL = '"system form button cancel"';
-    const TI_FORM_CANCEL = 'form_cancel_button';
+    const TC_FORM_CANCEL = 'form_cancel_button';
     const TD_FORM_CANCEL = 'button to cancel the form action and go back to the previous view';
     const TN_FORM_SAVE = 'save button';
-    const TI_FORM_SAVE = 'form_save_button';
+    const TC_FORM_SAVE = 'form_save_button';
     const TD_FORM_SAVE = 'button to save the form field into the database';
     const TN_FORM_END = 'form end';
-    const TI_FORM_END = 'form_end';
+    const TC_FORM_END = 'form_end';
     const TD_FORM_END = 'just to indicate the end of the form';
+    const TN_MATRIX = 'spreadsheet';
+    const TD_MATRIX = 's sheet with words, number and formulas';
+    const TI_MATRIX = 48;
 
     // array of component names that used for testing and remove them after the test
     const RESERVED_COMPONENTS = array(

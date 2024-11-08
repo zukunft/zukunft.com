@@ -42,7 +42,7 @@ SELECT view_term_link_insert_log_015505
      1::bigint,
      1::smallint,
      89::smallint,
-     'Word'::text,
+     'Start view'::text,
      'default'::text,
      'Mathematics'::text,
      725::smallint);
