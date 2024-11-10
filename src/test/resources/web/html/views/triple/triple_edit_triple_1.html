@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>test (zukunft.com)</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="http://localhost/lib_external/bootstrap-5.3.3-dist/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css"/>
+    <link rel="stylesheet" href="http://localhost/lib_external/fontawesome/css/all.css">
+</head>
+<body>
+<div class="container">
+    <nav class="navbar bg-light fixed-top"><a class="navbar-brand" href="/http/view.php" title="zukunft.com"><img
+            src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
+        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="pattern"></label><input
+                class="form-control mr-sm-2" type="search" name="pattern" id="pattern" placeholder="word or formula">
+            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>
+        </form>
+        <div class="col-sm-2">
+            <ul class="nav navbar-nav">
+                <li class="active"></li>
+                <li class="active"></li>
+                <li class="active"><a href="/http/view_edit.php?id=9" title="adjust the view"><i
+                        class="far fa-edit"></i></a><a href="/http/view_add.php" title="create a new view"><i
+                        class="far fa-plus-square"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+    <br><br><br><br><br>
+    <form action="/http/triple_add.php" id="triple_add"><input class="form-control" type="hidden" name="back" id="back"><input
+            class="form-control" type="hidden" name="confirm" id="confirm" value="1">
+        <div class="form-group col-sm-4"><label for="name">Name</label><input class="form-control" type="text"
+                                                                              name="Name" id="name"
+                                                                              value="Mathematical constant"></div>
+        <div class="form-group col-sm-12"><label for="description">Description</label><input class="form-control"
+                                                                                             type="text"
+                                                                                             name="Description"
+                                                                                             id="description"
+                                                                                             value="A mathematical constant that never changes e.g. Pi">
+        </div>
+        <div class="row col-sm-12">
+            <div class="form-group col-sm-4"><label for="from">from:</label><input type="text" list="from_list"
+                                                                                   class="form-control" name="from"
+                                                                                   form="triple_add" id="from">
+                <datalist id="from_list">
+                    <option data-value="1" selected>Mathematics</option>
+                </datalist>
+            </div>
+            <div class="form-group col-sm-4"><label for="verb">verb:</label><select class="form-control" name="verb"
+                                                                                    form="triple_add" id="verb">
+                <option value="1">not_set</option>
+                <option value="2">is a</option>
+                <option value="3" selected>is part of</option>
+                <option value="4">with</option>
+                <option value="9">follow</option>
+            </select></div>
+            <div class="form-group col-sm-4"><label for="to">to:</label><input type="text" list="to_list"
+                                                                               class="form-control" name="to"
+                                                                               form="triple_add" id="to">
+                <datalist id="to_list">
+                    <option data-value="1" selected>Mathematics</option>
+                </datalist>
+            </div>
+        </div>
+        <div class="row col-sm-12">
+            <div class="form-group col-sm-4"><label for="share">share:</label><select class="form-control" name="share"
+                                                                                      form="share" id="share">
+                <option value="1" selected>public</option>
+                <option value="2">personal</option>
+                <option value="3">group</option>
+                <option value="4">private</option>
+            </select></div>
+            <div class="form-group col-sm-4"><label for="protection">protection:</label><select class="form-control"
+                                                                                                name="protection"
+                                                                                                form="protection"
+                                                                                                id="protection">
+                <option value="1">no protection</option>
+                <option value="2">user</option>
+                <option value="3" selected>admin</option>
+                <option value="4">no change</option>
+            </select></div>
+        </div>
+        <div class="text-right">
+            <button class="btn btn-space btn-outline-secondary" type="submit">Cancel</button>
+            <button class="btn btn-space btn-outline-success" type="submit">Save</button>
+        </div>
+    </form>
+</div>
+<footer>
+    <div class="text-center"><small><a href="/http/about.php" title="About">About</a> &middot;<a
+            href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; All structured data is
+        available under the<a href="//creativecommons.org/publicdomain/zero/1.0/"
+                              title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a> License
+        and the<a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under the<a
+                href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> License</small></div>
+</footer>
+</body>
+</html>
