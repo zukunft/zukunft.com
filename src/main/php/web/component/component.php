@@ -121,6 +121,7 @@ class component extends sandbox_typed
             component_type::FORM_TITLE => $this->form_tile($dbo, $back),
             component_type::FORM_BACK => $this->form_back($dbo, $back),
             component_type::FORM_CONFIRM => $this->form_confirm($dbo, $back),
+            component_type::SHOW_NAME => $this->show_name($dbo, $back),
             component_type::FORM_NAME => $this->form_name($dbo, $back),
             component_type::FORM_DESCRIPTION => $this->form_description($dbo, $back),
             component_type::FORM_PHRASE => $this->form_phrase($dbo, $test_mode),
@@ -296,6 +297,15 @@ class component extends sandbox_typed
     {
         $html = new html_base();
         return $html->input('confirm', '1', html_base::INPUT_HIDDEN);
+    }
+
+    /**
+     * @param db_object_dsp $dbo the object
+     * @return string the html code to show the object name to the user
+     */
+    function show_name(db_object_dsp $dbo): string
+    {
+        return $dbo->name();
     }
 
     /**

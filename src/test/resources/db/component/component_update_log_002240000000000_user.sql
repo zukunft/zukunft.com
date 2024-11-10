@@ -46,7 +46,7 @@ SELECT component_update_log_002240000000000_user
         'System Test View Component Renamed'::text,
         1::bigint,
         52::smallint,
-        'simply show the word or tiple name'::text,
+        'simply show the word or triple name'::text,
         null::text,
         53::smallint,
         'phrase_name'::text,

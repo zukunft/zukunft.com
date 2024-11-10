@@ -116,6 +116,15 @@ use html\sandbox\db_object as db_object_dsp;
 use html\view\view as view_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
+use html\verb\verb as verb_dsp;
+use html\ref\source as source_dsp;
+use html\ref\ref as ref_dsp;
+use html\value\value as value_dsp;
+// TODO activate
+//use html\group\group as group_dsp;
+use html\formula\formula as formula_dsp;
+use html\result\result as result_dsp;
+use html\component\component as component_dsp;
 use shared\api;
 use shared\library;
 
@@ -865,14 +874,24 @@ class test_base
     }
 
     /**
+     * the frontend object related to the given backend object
      * @param db_object_seq_id $dbo the given backend object
      * @return false|db_object_dsp the corresponding frontend object
      */
-    private function frontend_obj_from_backend_object(db_object_seq_id $dbo): false|db_object_dsp
+    private function frontend_obj_from_backend_object(db_object_seq_id|sandbox_value $dbo): false|db_object_dsp
     {
         return match ($dbo::class) {
             word::class => new word_dsp(),
+            verb::class => new verb_dsp(),
             triple::class => new triple_dsp(),
+            source::class => new source_dsp(),
+            ref::class => new ref_dsp(),
+            value::class => new value_dsp(),
+            //group::class => new group_dsp(),
+            formula::class => new formula_dsp(),
+            result::class => new result_dsp(),
+            view::class => new view_dsp(),
+            component::class => new component_dsp(),
             default => false,
         };
     }

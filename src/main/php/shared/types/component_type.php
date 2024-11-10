@@ -71,6 +71,7 @@ class component_type
     const FORM_TITLE = "system_form_title";
     const FORM_BACK = "system_form_back_stack";
     const FORM_CONFIRM = "system_form_confirm_status";
+    const SHOW_NAME = "system_show_field_name";
     const FORM_NAME = "system_form_field_name";
     const FORM_DESCRIPTION = "system_form_field_description";
     const FORM_PHRASE = "system_form_select_phrase";
@@ -100,6 +101,7 @@ class component_type
         self::FORM_TITLE,
         self::FORM_BACK,
         self::FORM_CONFIRM,
+        self::SHOW_NAME,
         self::FORM_NAME,
         self::FORM_DESCRIPTION,
         self::FORM_PHRASE,
@@ -124,21 +126,22 @@ class component_type
         [self::FORM_TITLE, 17],
         [self::FORM_BACK, 18],
         [self::FORM_CONFIRM, 19],
-        [self::FORM_NAME, 20],
-        [self::FORM_DESCRIPTION, 21],
-        [self::FORM_PHRASE, 22],
-        [self::FORM_VERB_SELECTOR, 23],
-        [self::FORM_PHRASE_TYPE, 24],
-        [self::FORM_SHARE_TYPE, 25],
-        [self::FORM_PROTECTION_TYPE, 26],
-        [self::FORM_CANCEL, 27],
-        [self::FORM_SAVE, 28],
-        [self::FORM_DEL, 29],
-        [self::FORM_END, 30],
-        [self::ROW_START, 31],
-        [self::ROW_RIGHT, 32],
-        [self::ROW_END, 33],
-        [self::CALC_SHEET, 34]
+        [self::SHOW_NAME, 20],
+        [self::FORM_NAME, 21],
+        [self::FORM_DESCRIPTION, 22],
+        [self::FORM_PHRASE, 23],
+        [self::FORM_VERB_SELECTOR, 24],
+        [self::FORM_PHRASE_TYPE, 25],
+        [self::FORM_SHARE_TYPE, 26],
+        [self::FORM_PROTECTION_TYPE, 27],
+        [self::FORM_CANCEL, 28],
+        [self::FORM_SAVE, 29],
+        [self::FORM_DEL, 30],
+        [self::FORM_END, 31],
+        [self::ROW_START, 32],
+        [self::ROW_RIGHT, 33],
+        [self::ROW_END, 34],
+        [self::CALC_SHEET, 35]
     );
 
 }

@@ -8,7 +8,7 @@
   "components": [
     {
       "name": "Word",
-      "description": "simply show the word or tiple name",
+      "description": "simply show the word or triple name",
       "type": "phrase_name"
     },
     {

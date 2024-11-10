@@ -108,7 +108,7 @@ SELECT component_insert_log_011151111111111 (
                51,
                743,
                52,
-               'simply show the word or tiple name',
+               'simply show the word or triple name',
                53,
                'text',
                2,

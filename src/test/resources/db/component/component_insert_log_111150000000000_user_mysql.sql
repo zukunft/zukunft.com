@@ -35,7 +35,7 @@ SELECT component_insert_log_111150000000000_user (
                'Word',
                1,
                52,
-               'simply show the word or tiple name',
+               'simply show the word or triple name',
                53,
                'phrase_name',
                8);

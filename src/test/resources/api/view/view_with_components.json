@@ -9,16 +9,16 @@
     {
       "id": 1,
       "name": "Word",
-      "description": "simply show the word or tiple name",
+      "description": "simply show the word or triple name",
       "type_id": 8,
       "link_id": 1,
       "position": 1
     },
     {
-      "id": 49,
+      "id": 50,
       "name": "spreadsheet",
       "description": "s sheet with words, number and formulas",
-      "type_id": 34,
+      "type_id": 35,
       "link_id": 2,
       "position": 2
     }

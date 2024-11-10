@@ -52,12 +52,5 @@ class local_ui_tests
         $target = 'zukunft.com AG';
         $t->assert_text_contains($test_name, $result, $target);
 
-        $api_json = file_get_contents(TEST_RES_UI_PATH . 'word_add.json');
-        $msk_dsp = new view_dsp($api_json);
-        $wrd = new word_dsp();
-        $result = $msk_dsp->show($wrd, '');
-        $target = 'word';
-        $t->assert_text_contains($test_name, $result, $target);
-
     }
 }

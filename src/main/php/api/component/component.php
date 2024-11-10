@@ -56,7 +56,7 @@ class component extends sandbox_typed_api
     // TC_* is the code_id of the view component
     // TI_* is the database id of the view component
     const TN_READ = 'Word';
-    const TD_READ = 'simply show the word or tiple name';
+    const TD_READ = 'simply show the word or triple name';
     const TI_READ = 1;
 
     // persevered view component names for unit and integration tests
@@ -107,7 +107,8 @@ class component extends sandbox_typed_api
     const TD_FORM_END = 'just to indicate the end of the form';
     const TN_MATRIX = 'spreadsheet';
     const TD_MATRIX = 's sheet with words, number and formulas';
-    const TI_MATRIX = 49;
+    const TI_MATRIX = 50;
+    const TN_SHOW_NAME = 'system show field name';
 
     // array of component names that used for testing and remove them after the test
     const RESERVED_COMPONENTS = array(

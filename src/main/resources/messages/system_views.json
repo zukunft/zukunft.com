@@ -8,7 +8,7 @@
   "components": [
     {
       "name": "Word",
-      "description": "simply show the word or tiple name",
+      "description": "simply show the word or triple name",
       "type": "phrase_name"
     },
     {
@@ -232,6 +232,12 @@
       "description": "switch on that the form saving needs an extra confirm by the user",
       "type": "system_form_confirm_status",
       "code_id": "form_confirm_status"
+    },
+    {
+      "name": "system show field name",
+      "description": "the object name as read only",
+      "type": "system_show_field_name",
+      "code_id": "show_field_name"
     },
     {
       "name": "system form field name",
@@ -481,7 +487,7 @@
         },
         {
           "position": "4",
-          "name": "Word"
+          "name": "system show field name"
         },
         {
           "position": "5",
@@ -502,21 +508,119 @@
       "description": "Request to add a new verb/predicate",
       "code_id": "verb_add",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title verb add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "system form field description"
+        },
+        {
+          "position": "6",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "7",
+          "name": "system form button save"
+        },
+        {
+          "position": "8",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Change verb",
       "description": "Rename a verb/predicate",
       "code_id": "verb_edit",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title verb edit"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "system form field description"
+        },
+        {
+          "position": "6",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "7",
+          "name": "system form button save"
+        },
+        {
+          "position": "8",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Delete verb",
       "description": "Exclude or delete a verb",
       "code_id": "verb_del",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title verb del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system show field name"
+        },
+        {
+          "position": "5",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "6",
+          "name": "system form button del"
+        },
+        {
+          "position": "7",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Add new triple",
@@ -608,14 +712,122 @@
       "description": "Rename a triple",
       "code_id": "triple_edit",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title triple add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "system form field description"
+        },
+        {
+          "position": "6",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "7",
+          "name": "system form triple phrase from"
+        },
+        {
+          "position": "8",
+          "name": "system form triple verb"
+        },
+        {
+          "position": "9",
+          "name": "system form triple phrase to"
+        },
+        {
+          "position": "10",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "11",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "12",
+          "name": "system form select share type"
+        },
+        {
+          "position": "13",
+          "name": "system form select protection type"
+        },
+        {
+          "position": "14",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "15",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "16",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "17",
+          "name": "system form button save"
+        },
+        {
+          "position": "18",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "19",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Delete triple",
       "description": "Exclude or delete a triple",
       "code_id": "triple_del",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title triple del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system show field name"
+        },
+        {
+          "position": "5",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "6",
+          "name": "system form button del"
+        },
+        {
+          "position": "7",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Add new source",

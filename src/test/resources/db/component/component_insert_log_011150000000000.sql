@@ -52,7 +52,7 @@ SELECT component_insert_log_011150000000000 (
                51::smallint,
                743::smallint,
                52::smallint,
-               'simply show the word or tiple name'::text,
+               'simply show the word or triple name'::text,
                53::smallint,
                'phrase_name'::text,
                8::smallint);

@@ -21,58 +21,58 @@
     "code_id": "form_confirm_status"
   },
   {
-    "id": 34,
+    "id": 35,
     "name": "system form field name",
     "description": "the name field in a form",
-    "type_id": 20,
+    "type_id": 21,
     "code_id": "form_field_name"
   },
   {
-    "id": 35,
+    "id": 36,
     "name": "system form field description",
     "description": "the description field in a form",
-    "type_id": 21,
+    "type_id": 22,
     "code_id": "form_field_description"
   },
   {
-    "id": 39,
+    "id": 40,
     "name": "system form select phrase type",
     "description": "selector for the phrase type",
-    "type_id": 24,
+    "type_id": 25,
     "code_id": "form_field_phrase_type"
   },
   {
-    "id": 40,
+    "id": 41,
     "name": "system form select share type",
     "description": "selector for the share type",
-    "type_id": 25,
+    "type_id": 26,
     "code_id": "form_field_share_type"
   },
   {
-    "id": 41,
+    "id": 42,
     "name": "system form select protection type",
     "description": "selector for the protection type",
-    "type_id": 26,
+    "type_id": 27,
     "code_id": "form_field_protection_type"
   },
   {
-    "id": 42,
+    "id": 43,
     "name": "system form button cancel",
     "description": "button to cancel the form action and go back to the previous view",
-    "type_id": 27,
+    "type_id": 28,
     "code_id": "form_cancel_button"
   },
   {
-    "id": 43,
+    "id": 44,
     "name": "system form button save",
     "description": "button to save the form field into the database",
-    "type_id": 28,
+    "type_id": 29,
     "code_id": "form_button_save"
   },
   {
-    "id": 45,
+    "id": 46,
     "name": "system form end",
-    "type_id": 30,
+    "type_id": 31,
     "code_id": "form_end"
   }
 ]
