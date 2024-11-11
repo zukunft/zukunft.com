@@ -192,4 +192,14 @@ class source extends sandbox_typed
         return $result;
     }
 
+    protected function source_type_selector(string $form_name): string
+    {
+        global $html_source_types;
+        $used_source_type_id = $this->type_id();
+        if ($used_source_type_id == null) {
+            $used_source_type_id = $html_source_types->default_id();
+        }
+        return $html_source_types->selector($form_name, $used_source_type_id, 'type', html_base::COL_SM_4, 'type:');
+    }
+
 }

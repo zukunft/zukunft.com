@@ -77,6 +77,7 @@ class component_type
     const FORM_PHRASE = "system_form_select_phrase";
     const FORM_VERB_SELECTOR = "system_form_select_verb";
     const FORM_PHRASE_TYPE = "system_form_select_phrase_type";
+    const FORM_SOURCE_TYPE = "system_form_select_source_type";
     const FORM_SHARE_TYPE = "system_form_select_share";
     const FORM_PROTECTION_TYPE = "system_form_select_protection";
     const FORM_CANCEL = "system_button_cancel";
@@ -107,6 +108,7 @@ class component_type
         self::FORM_PHRASE,
         self::FORM_VERB_SELECTOR,
         self::FORM_PHRASE_TYPE,
+        self::FORM_SOURCE_TYPE,
         self::FORM_SHARE_TYPE,
         self::FORM_PROTECTION_TYPE,
         self::FORM_CANCEL,
@@ -141,7 +143,8 @@ class component_type
         [self::ROW_START, 32],
         [self::ROW_RIGHT, 33],
         [self::ROW_END, 34],
-        [self::CALC_SHEET, 35]
+        [self::CALC_SHEET, 35],
+        [self::FORM_SOURCE_TYPE, 39]
     );
 
 }

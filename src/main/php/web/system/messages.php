@@ -82,6 +82,8 @@ class messages
     const UNDO_EDIT = 'undo_edit';
     const UNDO_DEL = 'undo_del';
 
+    // other text to be shown to users
+
     // language elements to create a text
     CONST FOR = 'for'; // e.g. to indicate which phrases a value is assigned to
     CONST OF = 'of';   // e.g. to indicate which word would be deleted
@@ -137,7 +139,7 @@ class messages
             default => $message_id . ' (translation missing)',
         };
         if ($msg_text == $message_id . ' (translation missing)') {
-            //log_warning('translation missing for ' . $message_id);
+            log_warning('translation missing for ' . $message_id);
         }
         return $msg_text;
     }

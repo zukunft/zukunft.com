@@ -75,7 +75,7 @@ class component_list_read_tests
         $result = json_decode(json_encode($cmp_lst->api_obj()), true);
         $class_for_file = $t->class_without_namespace(component_list::class);
         $target = json_decode($t->api_json_expected($class_for_file), true);
-        $t->assert($test_name . $cmp_lst->dsp_id(), $lib->json_is_similar($target, $result), true);
+        $t->assert_json($test_name . $cmp_lst->dsp_id(), $result, $target);
 
         $test_name = 'loading by component list by pattern ';
         $cmp_lst = new component_list($t->usr1);

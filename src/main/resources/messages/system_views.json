@@ -282,6 +282,13 @@
       "ui_msg_code_id": "form_select_phrase"
     },
     {
+      "name": "system form select source type",
+      "description": "selector for the source type",
+      "type": "system_form_select_source_type",
+      "code_id": "form_field_source_type",
+      "ui_msg_code_id": "form_select_source"
+    },
+    {
       "name": "system form select share type",
       "description": "selector for the share type",
       "type": "system_form_select_share",
@@ -834,21 +841,143 @@
       "description": "Create a new source with all parameters e.g. the type",
       "code_id": "source_add",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title source add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "system form field description"
+        },
+        {
+          "position": "6",
+          "name": "system form select source type"
+        },
+        {
+          "position": "7",
+          "name": "system form select share type"
+        },
+        {
+          "position": "8",
+          "name": "system form select protection type"
+        },
+        {
+          "position": "9",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "10",
+          "name": "system form button save"
+        },
+        {
+          "position": "11",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Change source",
       "description": "Rename a triple or change the type",
       "code_id": "source_edit",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title source edit"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "system form field description"
+        },
+        {
+          "position": "6",
+          "name": "system form select source type"
+        },
+        {
+          "position": "7",
+          "name": "system form select share type"
+        },
+        {
+          "position": "8",
+          "name": "system form select protection type"
+        },
+        {
+          "position": "9",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "10",
+          "name": "system form button save"
+        },
+        {
+          "position": "11",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Delete source",
       "description": "To confirm the exclusion or deleting of an external source",
       "code_id": "source_del",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title source del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system show field name"
+        },
+        {
+          "position": "5",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "6",
+          "name": "system form button del"
+        },
+        {
+          "position": "7",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Add new reference",

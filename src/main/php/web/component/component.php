@@ -85,10 +85,11 @@ class component extends sandbox_typed
 
     /**
      * @param db_object_dsp|null $dbo the word, triple or formula object that should be shown to the user
+     * @param string $form_name the name of the view which is also used for the HMTL form name
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code of all view components
      */
-    function dsp_entries(?db_object_dsp $dbo, string $back, bool $test_mode = false): string
+    function dsp_entries(?db_object_dsp $dbo, string $form_name, string $back, bool $test_mode = false): string
     {
         if ($dbo == null) {
             // the $dbo check and the message creation has already been done in the view level
@@ -118,7 +119,7 @@ class component extends sandbox_typed
             component_type::XML_EXPORT => $this->xml_export($dbo, $back),
             component_type::CSV_EXPORT => $this->csv_export($dbo, $back),
             component_type::VALUES_ALL => $this->all($dbo, $back),
-            component_type::FORM_TITLE => $this->form_tile($dbo, $back),
+            component_type::FORM_TITLE => $this->form_tile($form_name),
             component_type::FORM_BACK => $this->form_back($dbo, $back),
             component_type::FORM_CONFIRM => $this->form_confirm($dbo, $back),
             component_type::SHOW_NAME => $this->show_name($dbo, $back),
@@ -127,6 +128,7 @@ class component extends sandbox_typed
             component_type::FORM_PHRASE => $this->form_phrase($dbo, $test_mode),
             component_type::FORM_VERB_SELECTOR => $this->form_verb($dbo),
             component_type::FORM_PHRASE_TYPE => $this->form_phrase_type($dbo),
+            component_type::FORM_SOURCE_TYPE => $this->form_source_type($dbo, $form_name),
             component_type::FORM_SHARE_TYPE => $this->form_share_type($dbo),
             component_type::FORM_PROTECTION_TYPE => $this->form_protection_type($dbo),
             component_type::FORM_CANCEL => $this->form_cancel($dbo, $back),
@@ -269,15 +271,13 @@ class component extends sandbox_typed
     }
 
     /**
-     * @param db_object_dsp|null $dbo
+     * start an HTML form, show the title and set and set the unique form name
+     * @param string $form_name the name of the view which is also used for the HMTL form name
      * @return string the html code to start a new form and display the tile
-     * TODO replace _add with a parameter value
      */
-    function form_tile(?db_object_dsp $dbo): string
+    function form_tile(string $form_name): string
     {
-        $lib = new library();
         $html = new html_base();
-        $form_name = $lib->class_to_name($dbo::class) . '_add';
         return $html->form_start($form_name);
     }
 
@@ -376,7 +376,17 @@ class component extends sandbox_typed
         return $dbo->phrase_type_selector('phrase', 0, 'phrase');
     }
 
+    /**
+     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @return string the html code to select the share type
+     */
+    function form_source_type(db_object_dsp $dbo, string $form_name): string
+    {
+        return $dbo->source_type_selector($form_name, 0, 'source');
+    }
+
     // TODO probably add the form name
+
     /**
      * @return string the html code to select the share type
      */
@@ -807,12 +817,12 @@ class component extends sandbox_typed
      * @return string with the HTML code to show the phrase selector
      */
     protected function phrase_selector(
-        string $name,
-        string $form_name,
-        string $label = '',
-        string $col_class = '',
-        int $selected = 0,
-        string $pattern = '',
+        string      $name,
+        string      $form_name,
+        string      $label = '',
+        string      $col_class = '',
+        int         $selected = 0,
+        string      $pattern = '',
         ?phrase_dsp $phr = null): string
     {
         $phr_lst = new phrase_list();
@@ -835,7 +845,7 @@ class component extends sandbox_typed
         string $form_name,
         string $label = '',
         string $col_class = '',
-        int $selected = 0,
+        int    $selected = 0,
         string $pattern = ''
     ): string
     {

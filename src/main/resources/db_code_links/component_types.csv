@@ -37,3 +37,4 @@ component_type_id, type_name, description, code_id
 36, 'term name', 'show the name of a word, triple, verb or formula and give the user the possibility to change the name', 'term_name'
 37, 'verb name', 'show the name of a verb and give the admin user the possibility to change the name', 'verb_name'
 38, 'main value', 'show the main values related to the given term', 'main_value'
+39, 'system form select source type', 'the source type field in a form', 'system_form_select_source_type'

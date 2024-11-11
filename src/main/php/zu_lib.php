@@ -453,6 +453,20 @@ use html\phrase\phrase_group as phrase_group_dsp;
        10. capsule object vars
         done:
 
+    the logical order of the main objects is
+        word
+        verb
+        triple
+        source
+        ref
+        value
+        group
+        formula
+        result
+        view
+        component
+
+
     the target model object structure is:
 
     db_object - all database objects with the sql_table_create function

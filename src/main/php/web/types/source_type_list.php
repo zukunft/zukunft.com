@@ -32,6 +32,7 @@
 
 namespace html\types;
 
+use cfg\source_type;
 use html\html_selector;
 
 class source_type_list extends type_list
@@ -52,6 +53,16 @@ class source_type_list extends type_list
     {
         global $html_source_types;
         return parent::type_selector($html_source_types->lst_key(), $name, $form, $selected, $bs_class, $label);
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function default_id(): int
+    {
+        return parent::id(source_type::CSV);
     }
 
 }

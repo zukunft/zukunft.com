@@ -107,7 +107,7 @@ class component extends sandbox_typed_api
     const TD_FORM_END = 'just to indicate the end of the form';
     const TN_MATRIX = 'spreadsheet';
     const TD_MATRIX = 's sheet with words, number and formulas';
-    const TI_MATRIX = 50;
+    const TI_MATRIX = 51;
     const TN_SHOW_NAME = 'system show field name';
 
     // array of component names that used for testing and remove them after the test

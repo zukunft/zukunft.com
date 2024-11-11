@@ -192,6 +192,9 @@ class api_tests
         $t->assert_view(view_shared::MC_TRIPLE_ADD, $t->usr1, new triple($t->usr1));
         $t->assert_view(view_shared::MC_TRIPLE_EDIT, $t->usr1, new triple($t->usr1), 1);
         $t->assert_view(view_shared::MC_TRIPLE_DEL, $t->usr1, new triple($t->usr1), 1);
+        $t->assert_view(view_shared::MC_SOURCE_ADD, $t->usr1, new source($t->usr1));
+        $t->assert_view(view_shared::MC_SOURCE_EDIT, $t->usr1, new source($t->usr1), 1);
+        $t->assert_view(view_shared::MC_SOURCE_DEL, $t->usr1, new source($t->usr1), 1);
         //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1);
         // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
     }

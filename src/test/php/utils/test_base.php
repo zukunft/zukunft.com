@@ -875,7 +875,7 @@ class test_base
 
     /**
      * the frontend object related to the given backend object
-     * @param db_object_seq_id $dbo the given backend object
+     * @param db_object_seq_id|sandbox_value $dbo the given backend object
      * @return false|db_object_dsp the corresponding frontend object
      */
     private function frontend_obj_from_backend_object(db_object_seq_id|sandbox_value $dbo): false|db_object_dsp
