@@ -32,7 +32,10 @@
 
 namespace html\types;
 
-use html\html_selector;
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
+use html\html_base;
+use shared\types\verbs as verbs_shared;
 
 class verbs extends type_list
 {
@@ -40,19 +43,34 @@ class verbs extends type_list
     const NAME = 'verb';
 
     /**
-     * @param string $label the text show to the user
+     * create the HTML code to select a verb
+     * * @param string $form the name of the html form
+     * * @param int $selected the database id of the
+     * * @param string $label the text show to the user
+     * * @param string $bs_class e.g. to define the size of the select field
+     * * @param string $name the unique name inside the form for this selector
      * @returns string the html code to select a type from this list
      */
     function selector(
         string $form = '',
-        int $selected = 0,
-        string $name = self::NAME,
-        string $bs_class = '',
-        string $label = ''
+        int    $selected = 1,
+        string $label = 'verb:',
+        string $bs_class = html_base::COL_SM_4,
+        string $name = self::NAME
     ): string
     {
         global $html_verbs;
         return parent::type_selector($html_verbs->lst_key(), $name, $form, $selected, $bs_class, $label);
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function default_id(): int
+    {
+        return parent::id(verbs_shared::IS);
     }
 
 }

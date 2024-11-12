@@ -198,26 +198,27 @@ class type_list
      */
 
     /**
+     * create the HTML code to select a type
      * @param array $key_lst the key value list for the selector
      * @param string $name the unique name inside the form for this selector
-     * @param string $form_name the name of the html form
+     * @param string $form the unique name of the html form
      * @param int $selected the id of the preselected phrase
      * @param string $col_class the formatting code to adjust the formatting
      * @param string $label the text show to the user
      * @returns string the html code to select a type from this list
      */
     function type_selector(
-        array $key_lst,
+        array  $key_lst,
         string $name = '',
-        string $form_name = '',
-        int $selected = 0,
+        string $form = '',
+        int    $selected = 0,
         string $col_class = '',
         string $label = ''
     ): string
     {
         $sel = new html_selector();
         $sel->name = $name;
-        $sel->form = $form_name;
+        $sel->form = $form;
         $sel->label = $label;
         $sel->lst = $key_lst;
         $sel->selected = $selected;

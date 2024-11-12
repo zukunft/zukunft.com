@@ -3,7 +3,7 @@
 /*
 
     web/types/share.php - the preloaded data share types used for the html frontend
-    ------------------------
+    -------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -42,6 +42,11 @@ class share extends type_list
     const NAME = 'share';
 
     /**
+     * create the HTML code to select a shate type
+     * @param string $form the name of the html form
+     * @param int $selected the database id of the
+     * @param string $name the unique name inside the form for this selector
+     * @param string $bs_class e.g. to define the size of the select field
      * @returns string the html code to select a type from this list
      */
     function selector(

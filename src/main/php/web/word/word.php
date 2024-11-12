@@ -239,40 +239,31 @@ class word extends sandbox_typed
      */
 
     /**
-     * @param string $form_name the name of the html form
+     * create the HTML code to select a phrase type
+     * and select the phrase type of this word
+     * @param string $form the name of the html form
      * @return string the html code to select the phrase type
      */
-    protected function phrase_type_selector(string $form_name): string
+    protected function phrase_type_selector(string $form): string
     {
         global $html_phrase_types;
         $used_phrase_id = $this->type_id();
         if ($used_phrase_id == null) {
             $used_phrase_id = $html_phrase_types->default_id();
         }
-        return $html_phrase_types->selector($form_name, $used_phrase_id, 'phrase', html_base::COL_SM_4, 'phrase:');
+        return $html_phrase_types->selector($form, $used_phrase_id);
     }
 
-    function dsp_type_selector(string $script, string $back = ''): string
+    function dsp_type_selector(string $form): string
     {
         global $phrase_types;
         $result = '';
         if ($phrase_types->code_id($this->type_id()) == phrase_type_shared::FORMULA_LINK) {
             $result .= ' type: ' . $phrase_types->name($this->type_id());
         } else {
-            $result .= $this->type_selector($script, html_base::COL_SM_4);
+            $result .= $this->phrase_type_selector($form);
         }
         return $result;
-    }
-
-    /**
-     * @param string $form_name the name of the html form
-     * @param string $bs_class e.g. to define the size of the select field
-     * @return string the html code to select the phrase type
-     */
-    private function type_selector(string $form_name, string $bs_class): string
-    {
-        global $html_phrase_types;
-        return $html_phrase_types->selector($form_name);
     }
 
 

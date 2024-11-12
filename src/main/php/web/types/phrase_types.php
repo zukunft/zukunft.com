@@ -3,7 +3,7 @@
 /*
 
     web/types/phrase_types.php - the preloaded data phrase types used for the html frontend
-    ------------------------------
+    --------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -32,7 +32,9 @@
 
 namespace html\types;
 
-use html\html_selector;
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+
+use html\html_base;
 use shared\types\phrase_type;
 
 class phrase_types extends type_list
@@ -41,12 +43,24 @@ class phrase_types extends type_list
     const NAME = 'phrase type';
 
     /**
+     * create the HTML code to select a phrase type
+     * @param string $form the name of the html form
+     * @param int $selected the database id of the
+     * @param string $label the text show to the user
+     * @param string $bs_class e.g. to define the size of the select field
+     * @param string $name the unique name inside the form for this selector
      * @returns string the html code to select a type from this list
      */
-    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
+    function selector(
+        string $form,
+        int    $selected = 1,
+        string $label = 'type:',
+        string $bs_class = html_base::COL_SM_4,
+        string $name = self::NAME
+    ): string
     {
         global $html_phrase_types;
-        return parent::type_selector($html_phrase_types->lst_key(), $name, $form, $selected);
+        return parent::type_selector($html_phrase_types->lst_key(), $name, $form, $selected, $bs_class, $label);
     }
 
 

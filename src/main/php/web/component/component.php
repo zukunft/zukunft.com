@@ -126,11 +126,11 @@ class component extends sandbox_typed
             component_type::FORM_NAME => $this->form_name($dbo, $back),
             component_type::FORM_DESCRIPTION => $this->form_description($dbo, $back),
             component_type::FORM_PHRASE => $this->form_phrase($dbo, $test_mode),
-            component_type::FORM_VERB_SELECTOR => $this->form_verb($dbo),
-            component_type::FORM_PHRASE_TYPE => $this->form_phrase_type($dbo),
+            component_type::FORM_VERB_SELECTOR => $this->form_verb($dbo, $form_name),
+            component_type::FORM_PHRASE_TYPE => $this->form_phrase_type($dbo, $form_name),
             component_type::FORM_SOURCE_TYPE => $this->form_source_type($dbo, $form_name),
-            component_type::FORM_SHARE_TYPE => $this->form_share_type($dbo),
-            component_type::FORM_PROTECTION_TYPE => $this->form_protection_type($dbo),
+            component_type::FORM_SHARE_TYPE => $this->form_share_type($dbo, $form_name),
+            component_type::FORM_PROTECTION_TYPE => $this->form_protection_type($dbo, $form_name),
             component_type::FORM_CANCEL => $this->form_cancel($dbo, $back),
             component_type::FORM_SAVE => $this->form_save($dbo, $back),
             component_type::FORM_DEL => $this->form_del($dbo, $back),
@@ -358,49 +358,58 @@ class component extends sandbox_typed
     }
 
     /**
-     * TODO replace _add with a parameter value
-     * @return string the html code to request the description from the user
-     */
-    function form_verb(db_object_dsp $dbo): string
-    {
-        $lib = new library();
-        $form_name = $lib->class_to_name($dbo::class) . '_add';
-        return $dbo->verb_selector('verb', $form_name);
-    }
-
-    /**
-     * @return string the html code to select the share type
-     */
-    function form_phrase_type(db_object_dsp $dbo): string
-    {
-        return $dbo->phrase_type_selector('phrase', 0, 'phrase');
-    }
-
-    /**
+     * create the html code for the form element to select the phrase type
+     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the HMTL form name
-     * @return string the html code to select the share type
+     * @return string the html code to select the verb
+     */
+    function form_verb(db_object_dsp $dbo, string $form_name): string
+    {
+        return $dbo->verb_selector($form_name);
+    }
+
+    /**
+     * create the html code for the form element to select the phrase type
+     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
+     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @return string the html code to select the phrase type
+     */
+    function form_phrase_type(db_object_dsp $dbo, string $form_name): string
+    {
+        return $dbo->phrase_type_selector($form_name);
+    }
+
+    /**
+     * create the html code for the form element to select the source type
+     * @param db_object_dsp $dbo the frontend source object with the type used until now
+     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @return string the html code to select the source type
      */
     function form_source_type(db_object_dsp $dbo, string $form_name): string
     {
-        return $dbo->source_type_selector($form_name, 0, 'source');
+        return $dbo->source_type_selector($form_name);
     }
 
-    // TODO probably add the form name
-
     /**
+     * create the html code for the form element to select the share type
+     * @param db_object_dsp $dbo the frontend object with the type used until now
+     * @param string $form_name the name of the view which is also used for the HMTL form name
      * @return string the html code to select the share type
      */
-    function form_share_type(db_object_dsp $dbo): string
+    function form_share_type(db_object_dsp $dbo, string $form_name): string
     {
-        return $dbo->share_type_selector('share', 0, 'share');
+        return $dbo->share_type_selector($form_name);
     }
 
     /**
+     * create the html code for the form element to select the protection type
+     * @param db_object_dsp $dbo the frontend object with the type used until now
+     * @param string $form_name the name of the view which is also used for the HMTL form name
      * @return string the html code to select the protection type
      */
-    function form_protection_type(db_object_dsp $dbo): string
+    function form_protection_type(db_object_dsp $dbo, string $form_name): string
     {
-        return $dbo->protection_type_selector('protection');
+        return $dbo->protection_type_selector($form_name);
     }
 
     /**
