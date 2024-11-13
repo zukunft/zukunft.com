@@ -2,7 +2,7 @@
 
 /*
 
-    model/sandbox/verbs.php - to use the same verb code_ids in frontend and backend
+    model/sandbox/verbs.php - to use the same verb code_id in frontend and backend
     -----------------------
 
     This file is part of zukunft.com - calc with words
@@ -42,7 +42,6 @@ class verbs
 
     // the unique id of predicates or verbs
     // to link a db row to predefined program code
-    // TODO add an easy way to get the name from the code id
     // TODO add a check if all verbs have a const und linked functionalities
     const NOT_SET = "not_set";
     const IS = "is";

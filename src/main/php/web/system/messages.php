@@ -128,6 +128,7 @@ class messages
             self::IP_BLOCK_SOLUTION => '. If you think, this should not be the case, ' .
                 'please request the unblocking with an email to admin@zukunft.com.',
             self::FORM_WORD_ADD_TITLE => 'Add a new word',
+            self::FORM_WORD_EDIT_TITLE => 'Change word',
             self::FORM_COMPONENT_ADD_TITLE => 'Add a view element',
             self::FORM_WORD_FLD_NAME => 'Word name',
             self::UNDO => 'undo',

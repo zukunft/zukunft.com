@@ -31,6 +31,7 @@ namespace unit;
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
@@ -46,6 +47,7 @@ use html\phrase\phrase_list as phrase_list_dsp;
 use shared\enum\foaf_direction;
 use test\test_cleanup;
 use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\verbs;
 
 class phrase_list_tests
 {
@@ -106,7 +108,7 @@ class phrase_list_tests
         $wrd = new word($usr);
         $wrd->set(1, word_api::TN_CH);
         $phr_lst->add($wrd->phrase());
-        $vrb = $verbs->get_verb(verb::IS_PART_OF);
+        $vrb = $verbs->get_verb(verbs::IS_PART_OF);
         $this->assert_sql_linked_phrases($db_con->sql_creator(), $t, $phr_lst, $vrb, foaf_direction::UP);
         // TODO activate Prio 1
         //$this->assert_sql_by_phr_lst($db_con, $t, $phr_lst, $vrb, foaf_direction::UP);

@@ -54,6 +54,7 @@ include_once MODEL_COMPONENT_PATH . 'component_list.php';
 include_once MODEL_VALUE_PATH . 'value_ts_data.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use cfg\component\component_link_type;
 use cfg\component\position_type;
@@ -179,6 +180,7 @@ use unit_write\view_write_tests;
 use unit_write\view_link_write_tests;
 use unit_write\word_write_tests;
 use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\verbs;
 
 class create_test_objects extends test_base
 {
@@ -826,7 +828,7 @@ class create_test_objects extends test_base
      */
     function verb(): verb
     {
-        $vrb = new verb(verb_api::TI_READ, verb_api::TN_READ, verb::NOT_SET);
+        $vrb = new verb(verb_api::TI_READ, verb_api::TN_READ, verbs::NOT_SET);
         $vrb->set_user($this->usr1);
         return $vrb;
     }
@@ -836,7 +838,7 @@ class create_test_objects extends test_base
      */
     function verb_is(): verb
     {
-        return new verb(verb_api::TI_IS, verb_api::TN_IS, verb::IS);
+        return new verb(verb_api::TI_IS, verb_api::TN_IS, verbs::IS);
     }
 
     /**
@@ -844,7 +846,7 @@ class create_test_objects extends test_base
      */
     function verb_part(): verb
     {
-        return new verb(verb_api::TI_PART, verb_api::TN_PART, verb::IS_PART_OF);
+        return new verb(verb_api::TI_PART, verb_api::TN_PART, verbs::IS_PART_OF);
     }
 
     /**
@@ -852,7 +854,7 @@ class create_test_objects extends test_base
      */
     function verb_of(): verb
     {
-        $vrb = new verb(verb_api::TI_OF, verb_api::TN_OF, verb::CAN_CONTAIN_NAME_REVERSE);
+        $vrb = new verb(verb_api::TI_OF, verb_api::TN_OF, verbs::CAN_CONTAIN_NAME_REVERSE);
         $vrb->set_user($this->usr1);
         return $vrb;
     }

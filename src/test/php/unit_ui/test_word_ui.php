@@ -34,10 +34,13 @@
 // start testing the system functionality 
 // --------------------------------------
 
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\word\word as word_api;
 use api\verb\verb as verb_api;
 use cfg\verb;
 use cfg\word;
+use shared\types\verbs;
 use test\test_cleanup;
 
 function run_word_ui_test(test_cleanup $t): void
@@ -52,7 +55,7 @@ function run_word_ui_test(test_cleanup $t): void
     // call the add word page and check if at least some keywords are returned
     $wrd = new word($usr);
     $wrd->load_by_name(word_api::TN_READ);
-    $vrb_is = $verbs->id(verb::IS);
+    $vrb_is = $verbs->id(verbs::IS);
     $wrd_type = $phrase_types->default_id();
     $result = file_get_contents('https://zukunft.com/http/word_add.php?verb=' . $vrb_is . '&word=' . $wrd->id() . '&type=1&back=' . $wrd->id());
     $target = word_api::TN_READ;

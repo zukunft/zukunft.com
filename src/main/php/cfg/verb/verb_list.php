@@ -35,12 +35,14 @@ include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once SHARED_PATH . 'library.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once SHARED_ENUM_PATH . 'foaf_direction.php';
+include_once SHARED_PATH . 'library.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\verb\verb as verb_api;
 use cfg\db\sql_db;
@@ -49,6 +51,7 @@ use cfg\db\sql_par_type;
 use html\html_base;
 use shared\enum\foaf_direction;
 use shared\library;
+use shared\types\verbs;
 
 global $verbs;
 
@@ -226,28 +229,28 @@ class verb_list extends type_list
     {
         $vrb = new verb();
         $vrb->set_id(1);
-        $vrb->set_name(verb::NOT_SET);
-        $vrb->code_id = verb::NOT_SET;
+        $vrb->set_name(verbs::NOT_SET);
+        $vrb->code_id = verbs::NOT_SET;
         $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(2);
         $vrb->set_name(verb_api::TN_IS);
-        $vrb->code_id = verb::IS;
+        $vrb->code_id = verbs::IS;
         $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(3);
-        $vrb->set_name(verb::IS_PART_OF);
-        $vrb->code_id = verb::IS_PART_OF;
+        $vrb->set_name(verbs::IS_PART_OF);
+        $vrb->code_id = verbs::IS_PART_OF;
         $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(4);
-        $vrb->set_name(verb::IS_WITH);
-        $vrb->code_id = verb::IS_WITH;
+        $vrb->set_name(verbs::IS_WITH);
+        $vrb->code_id = verbs::IS_WITH;
         $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(9);
-        $vrb->set_name(verb::FOLLOW);
-        $vrb->code_id = verb::FOLLOW;
+        $vrb->set_name(verbs::FOLLOW);
+        $vrb->code_id = verbs::FOLLOW;
         $this->add_verb($vrb);
     }
 

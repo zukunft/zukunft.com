@@ -53,6 +53,7 @@ namespace test;
 
 include_once MODEL_USER_PATH . 'user.php';
 include_once DB_PATH . 'sql_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\ref\source as source_api;
 use api\sandbox\sandbox as sandbox_api;
@@ -127,6 +128,7 @@ use html\result\result as result_dsp;
 use html\component\component as component_dsp;
 use shared\api;
 use shared\library;
+use shared\types\verbs;
 
 const HOST_TESTING = 'http://localhost/';
 
@@ -3675,10 +3677,10 @@ function zu_test_time_setup(test_cleanup $t): string
         for ($year = $start_year; $year <= $end_year; $year++) {
             $this_year = $year;
             $t->test_word(strval($this_year));
-            $wrd_lnk = $t->test_triple(word_api::TN_YEAR, verb::IS, $this_year);
+            $wrd_lnk = $t->test_triple(word_api::TN_YEAR, verbs::IS, $this_year);
             $result = $wrd_lnk->name();
             if ($prev_year <> '') {
-                $t->test_triple($prev_year, verb::FOLLOW, $this_year);
+                $t->test_triple($prev_year, verbs::FOLLOW, $this_year);
             }
             $prev_year = $this_year;
         }

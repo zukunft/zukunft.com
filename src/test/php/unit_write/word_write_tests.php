@@ -33,6 +33,7 @@
 namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\formula\formula as formula_api;
 use api\word\triple as triple_api;
@@ -53,6 +54,7 @@ use shared\views;
 use test\all_tests;
 use test\test_cleanup;
 use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\verbs;
 
 class word_write_tests
 {
@@ -115,7 +117,7 @@ class word_write_tests
 
         // next word
         $wrd_time_next = $t->test_word(word_api::TN_2022, phrase_type_shared::TIME);
-        $t->test_triple(word_api::TN_2022, verb::FOLLOW, word_api::TN_2021);
+        $t->test_triple(word_api::TN_2022, verbs::FOLLOW, word_api::TN_2021);
         $target = $wrd_time_next->name();
         $wrd_next = $wrd_time->next();
         $result = $wrd_next->name();
@@ -205,8 +207,8 @@ class word_write_tests
         $wrd_canton = $t->test_word(word_api::TN_CANTON);
         $wrd_city = $t->test_word(word_api::TN_CITY);
         $wrd_ZH = $t->test_word(word_api::TN_ZH);
-        $t->test_triple(word_api::TN_ZH, verb::IS, word_api::TN_CANTON);
-        $t->test_triple(word_api::TN_ZH, verb::IS, word_api::TN_CITY);
+        $t->test_triple(word_api::TN_ZH, verbs::IS, word_api::TN_CANTON);
+        $t->test_triple(word_api::TN_ZH, verbs::IS, word_api::TN_CITY);
 
         // word is e.g. Zurich as a Canton ...
         $target = $wrd_canton->name();
@@ -241,28 +243,28 @@ class word_write_tests
         // e.g. ...
         $wrd_cf = $t->test_word(word_api::TWN_CASH_FLOW);
         $wrd_tax = $t->test_word(word_api::TN_TAX_REPORT);
-        $t->test_triple(word_api::TN_TAX_REPORT, verb::IS_PART_OF, word_api::TWN_CASH_FLOW);
+        $t->test_triple(word_api::TN_TAX_REPORT, verbs::IS_PART_OF, word_api::TWN_CASH_FLOW);
 
         // create the test words and relations many mixed relations
         // e.g. a financial report
         $t->test_word(word_api::TN_FIN_REPORT);
-        $t->test_triple(word_api::TWN_CASH_FLOW, verb::IS, word_api::TN_FIN_REPORT);
+        $t->test_triple(word_api::TWN_CASH_FLOW, verbs::IS, word_api::TN_FIN_REPORT);
 
         // create the test words and relations for multi level contains
         // e.g. assets contain current assets which contains cash
         $t->test_word(word_api::TN_ASSETS);
         $t->test_word(word_api::TN_ASSETS_CURRENT);
         $t->test_word(word_api::TN_CASH);
-        $t->test_triple(word_api::TN_CASH, verb::IS_PART_OF, word_api::TN_ASSETS_CURRENT);
-        $t->test_triple(word_api::TN_ASSETS_CURRENT, verb::IS_PART_OF, word_api::TN_ASSETS);
+        $t->test_triple(word_api::TN_CASH, verbs::IS_PART_OF, word_api::TN_ASSETS_CURRENT);
+        $t->test_triple(word_api::TN_ASSETS_CURRENT, verbs::IS_PART_OF, word_api::TN_ASSETS);
 
         // create the test words and relations for differentiators
         // e.g. energy can be a sector
         $t->test_word(word_api::TN_SECTOR);
         $t->test_word(word_api::TN_ENERGY);
         $t->test_word(word_api::TN_WIND_ENERGY);
-        $t->test_triple(word_api::TN_SECTOR, verb::CAN_CONTAIN, word_api::TN_ENERGY);
-        $t->test_triple(word_api::TN_ENERGY, verb::CAN_CONTAIN, word_api::TN_WIND_ENERGY);
+        $t->test_triple(word_api::TN_SECTOR, verbs::CAN_CONTAIN, word_api::TN_ENERGY);
+        $t->test_triple(word_api::TN_ENERGY, verbs::CAN_CONTAIN, word_api::TN_WIND_ENERGY);
 
         // word is part
         $target = $wrd_cf->name();
@@ -547,10 +549,10 @@ class word_write_tests
         }
         $prev_word_name = null;
         foreach (word_api::TEST_WORDS_TIME_YEAR as $word_name) {
-            $t->test_triple($word_name, verb::IS, word_api::TN_YEAR);
+            $t->test_triple($word_name, verbs::IS, word_api::TN_YEAR);
             $t->test_word($word_name, phrase_type_shared::TIME);
             if ($prev_word_name != null) {
-                $t->test_triple($word_name, verb::FOLLOW, $prev_word_name);
+                $t->test_triple($word_name, verbs::FOLLOW, $prev_word_name);
             }
             $prev_word_name = $word_name;
         }

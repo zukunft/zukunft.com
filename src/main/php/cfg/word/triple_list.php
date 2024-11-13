@@ -55,6 +55,7 @@ namespace cfg;
 
 include_once API_WORD_PATH . 'triple_list.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\word\triple_list as triple_list_api;
 use cfg\db\sql;
@@ -62,6 +63,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use shared\enum\foaf_direction;
+use shared\types\verbs;
 
 class triple_list extends sandbox_list_named
 {
@@ -664,8 +666,8 @@ class triple_list extends sandbox_list_named
         $usr_msg = new user_message();
         foreach ($this->lst() as $phr) {
             if ($phr::class == triple::class) {
-                $phr->set_verb($verbs->get_verb(verb::IS));
-                $usr_msg->add_message('verb for triple ' . $phr->dsp_id() . ' set to ' . verb::IS);
+                $phr->set_verb($verbs->get_verb(verbs::IS));
+                $usr_msg->add_message('verb for triple ' . $phr->dsp_id() . ' set to ' . verbs::IS);
             }
         }
         return $usr_msg;

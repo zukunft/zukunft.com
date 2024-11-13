@@ -75,6 +75,7 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use shared\api;
 use api\phrase\phrase as phrase_api;
@@ -92,6 +93,7 @@ use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
 use shared\library;
 use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\verbs;
 
 class phrase extends combine_named
 {
@@ -1091,7 +1093,7 @@ class phrase extends combine_named
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id = ' . $type->id() . ' 
-                                           AND l.verb_id = ' . $verbs->id(verb::IS) . ' ) AS a 
+                                           AND l.verb_id = ' . $verbs->id(verbs::IS) . ' ) AS a 
                                          WHERE ' . $sql_where_exclude . ' ';
 
                 // ... out of all those get the phrase ids that have also other types e.g. Zurich (Canton)
@@ -1103,7 +1105,7 @@ class phrase extends combine_named
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id <> ' . $type->id() . ' 
-                                           AND l.verb_id = ' . $verbs->id(verb::IS) . '
+                                           AND l.verb_id = ' . $verbs->id(verbs::IS) . '
                                            AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
                                          WHERE ' . $sql_where_exclude . ' ';
 
@@ -1130,7 +1132,7 @@ class phrase extends combine_named
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                 AND u.user_id = ' . $this->user()->id() . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
-                           AND l.verb_id = ' . $verbs->id(verb::IS) . '
+                           AND l.verb_id = ' . $verbs->id(verbs::IS) . '
                            AND l.to_phrase_id = ' . $type->id() . ' ) AS t 
                          WHERE ' . $sql_where_exclude . ' ';
                 /*
@@ -1286,8 +1288,8 @@ class phrase extends combine_named
 
         $result = new phrase($this->user());
 
-        $link_id = $verbs->id(verb::FOLLOW);
-        //$link_id = cl(db_cl::VERB, verb::FOLLOW);
+        $link_id = $verbs->id(verbs::FOLLOW);
+        //$link_id = cl(db_cl::VERB, verbs::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
@@ -1315,8 +1317,8 @@ class phrase extends combine_named
 
         $result = new word($this->user());
 
-        $link_id = $verbs->id(verb::FOLLOW);
-        //$link_id = cl(db_cl::VERB, verb::FOLLOW);
+        $link_id = $verbs->id(verbs::FOLLOW);
+        //$link_id = cl(db_cl::VERB, verbs::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);

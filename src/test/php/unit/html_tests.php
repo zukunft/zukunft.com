@@ -37,6 +37,7 @@ include_once SHARED_PATH . 'views.php';
 include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_RESULT_PATH . 'result_list.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
@@ -56,6 +57,7 @@ use html\result\result as result_dsp;
 use html\result\result_list as result_list_dsp;
 use html\system\messages;
 use shared\library;
+use shared\types\verbs;
 use shared\views as view_shared;
 use test\test_cleanup;
 
@@ -115,8 +117,8 @@ class html_tests
         //      create and set the dsp object based on the api json
 
         $lst = new verb_list($usr);
-        $lst->add_verb(new verb(1, verb::IS));
-        $lst->add_verb(new verb(2, verb::IS_PART_OF));
+        $lst->add_verb(new verb(1, verbs::IS));
+        $lst->add_verb(new verb(2, verbs::IS_PART_OF));
         // TODO use set_from_json to set the display object
         $t->html_test($lst->dsp_obj()->list(verb::class, 'Verbs'), '', 'list_verbs', $t);
 

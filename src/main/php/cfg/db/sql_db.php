@@ -41,6 +41,7 @@ include_once MODEL_SYSTEM_PATH . 'log.php';
 include_once MODEL_IMPORT_PATH . 'import_file.php';
 include_once MODEL_HELPER_PATH . 'config_numbers.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -146,6 +147,7 @@ use shared\library;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\phrase_type AS phrase_type_shared;
 use test\all_tests;
+use shared\types\verbs;
 
 class sql_db
 {
@@ -5501,7 +5503,7 @@ class sql_db
             foreach (config_numbers::HIDDEN_KEY_TRIPLES as $trp_lst) {
                 $from_name = $trp_lst[0];
                 $to_name = $trp_lst[1];
-                $vrb = $verbs->get_verb(verb::CAN_USE);
+                $vrb = $verbs->get_verb(verbs::CAN_USE);
                 $trp = new triple($usr);
                 $from = new phrase($usr);
                 $from->load_by_name($from_name);
@@ -5519,7 +5521,7 @@ class sql_db
             foreach (config_numbers::ADMIN_KEY_TRIPLES as $trp_lst) {
                 $from_name = $trp_lst[0];
                 $to_name = $trp_lst[1];
-                $vrb = $verbs->get_verb(verb::CAN_USE);
+                $vrb = $verbs->get_verb(verbs::CAN_USE);
                 $trp = new triple($usr);
                 $from = new phrase($usr);
                 $from->load_by_name($from_name);

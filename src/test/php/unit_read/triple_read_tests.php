@@ -32,6 +32,8 @@
 
 namespace unit_read;
 
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\word\triple as triple_api;
 use api\word\word as word_api;
 use cfg\phrase;
@@ -40,6 +42,7 @@ use cfg\phrase_types;
 use cfg\verb;
 use cfg\triple;
 use cfg\triple_list;
+use shared\types\verbs;
 use test\test_cleanup;
 
 class triple_read_tests
@@ -61,7 +64,7 @@ class triple_read_tests
 
         $t->subheader('triple prepare read tests');
         // load the verb used for testing
-        $is_id = $verbs->id(verb::IS);
+        $is_id = $verbs->id(verbs::IS);
         // load the words used for testing the triples (Zurich (City) and Zurich (Canton)
         $wrd_zh = $t->load_word(word_api::TN_ZH);
         $wrd_canton = $t->load_word(word_api::TN_CANTON);

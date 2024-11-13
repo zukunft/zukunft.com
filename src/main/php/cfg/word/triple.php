@@ -61,6 +61,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\system\messeges as msg_enum;
 use cfg\db\sql_par_field_list;
@@ -87,6 +88,7 @@ use html\html_base;
 use JsonSerializable;
 use shared\library;
 use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\verbs;
 
 
 class triple extends sandbox_link_named implements JsonSerializable
@@ -1642,7 +1644,7 @@ class triple extends sandbox_link_named implements JsonSerializable
     function generate_name(): string
     {
         global $verbs;
-        if ($this->verb_id() == $verbs->id(verb::IS) and $this->from()->name() != '' and $this->to()->name() != '') {
+        if ($this->verb_id() == $verbs->id(verbs::IS) and $this->from()->name() != '' and $this->to()->name() != '') {
             // use the user defined description
             return $this->from()->name() . ' (' . $this->to()->name() . ')';
         } elseif ($this->from()->name() != '' and $this->verb_name() != '' and $this->to()->name() != '') {

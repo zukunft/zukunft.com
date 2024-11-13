@@ -32,12 +32,15 @@
 
 namespace unit_write;
 
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\formula\formula as formula_api;
 use api\word\word as word_api;
 use cfg\verb;
 use shared\api;
 use shared\views;
 use test\test_cleanup;
+use shared\types\verbs;
 
 class element_write_tests
 {
@@ -62,7 +65,7 @@ class element_write_tests
         // get the test word ids
         $wrd_country = $t->load_word(word_api::TN_COUNTRY);
         $wrd_canton = $t->load_word(word_api::TN_CANTON);
-        $vrb_id = $verbs->id(verb::CAN_CONTAIN);
+        $vrb_id = $verbs->id(verbs::CAN_CONTAIN);
 
         if (isset($elm_lst)) {
             $pos = 0;

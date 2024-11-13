@@ -32,6 +32,8 @@
 
 namespace test;
 
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
 use api\phrase\phrase as phrase_api;
@@ -60,6 +62,7 @@ use cfg\view;
 use cfg\word;
 use html\html_base;
 use shared\library;
+use shared\types\verbs;
 
 class test_cleanup extends test_api
 {
@@ -342,19 +345,19 @@ class test_cleanup extends test_api
         }
 
         // request to delete some triples not yet covered by the other cleanup jobs
-        $this->del_triple(word_api::TN_2019, verb::IS, word_api::TN_YEAR);
-        $this->del_triple(word_api::TN_2020, verb::IS, word_api::TN_YEAR);
-        $this->del_triple(word_api::TN_2021, verb::IS, word_api::TN_YEAR);
-        $this->del_triple(word_api::TN_2022, verb::IS, word_api::TN_YEAR);
-        $this->del_triple(word_api::TN_2020, verb::FOLLOW, word_api::TN_2019);
-        $this->del_triple(word_api::TN_2021, verb::FOLLOW, word_api::TN_2020);
-        $this->del_triple(word_api::TN_2022, verb::FOLLOW, word_api::TN_2021);
-        $this->del_triple(word_api::TWN_CASH_FLOW, verb::IS, word_api::TN_FIN_REPORT);
-        $this->del_triple(word_api::TN_TAX_REPORT, verb::IS_PART_OF, word_api::TWN_CASH_FLOW);
-        $this->del_triple(word_api::TN_CASH, verb::IS_PART_OF, word_api::TN_ASSETS_CURRENT);
-        $this->del_triple(word_api::TN_ASSETS_CURRENT, verb::IS_PART_OF, word_api::TN_ASSETS);
-        $this->del_triple(word_api::TN_SECTOR, verb::CAN_CONTAIN, word_api::TN_ENERGY);
-        $this->del_triple(word_api::TN_ENERGY, verb::CAN_CONTAIN, word_api::TN_WIND_ENERGY);
+        $this->del_triple(word_api::TN_2019, verbs::IS, word_api::TN_YEAR);
+        $this->del_triple(word_api::TN_2020, verbs::IS, word_api::TN_YEAR);
+        $this->del_triple(word_api::TN_2021, verbs::IS, word_api::TN_YEAR);
+        $this->del_triple(word_api::TN_2022, verbs::IS, word_api::TN_YEAR);
+        $this->del_triple(word_api::TN_2020, verbs::FOLLOW, word_api::TN_2019);
+        $this->del_triple(word_api::TN_2021, verbs::FOLLOW, word_api::TN_2020);
+        $this->del_triple(word_api::TN_2022, verbs::FOLLOW, word_api::TN_2021);
+        $this->del_triple(word_api::TWN_CASH_FLOW, verbs::IS, word_api::TN_FIN_REPORT);
+        $this->del_triple(word_api::TN_TAX_REPORT, verbs::IS_PART_OF, word_api::TWN_CASH_FLOW);
+        $this->del_triple(word_api::TN_CASH, verbs::IS_PART_OF, word_api::TN_ASSETS_CURRENT);
+        $this->del_triple(word_api::TN_ASSETS_CURRENT, verbs::IS_PART_OF, word_api::TN_ASSETS);
+        $this->del_triple(word_api::TN_SECTOR, verbs::CAN_CONTAIN, word_api::TN_ENERGY);
+        $this->del_triple(word_api::TN_ENERGY, verbs::CAN_CONTAIN, word_api::TN_WIND_ENERGY);
 
         // request to delete the added test word
         // TODO: if a user has changed the word during the test, delete also the user words
@@ -444,7 +447,7 @@ class test_cleanup extends test_api
             $class = match ($name) {
                 triple_api::TN_PI_NAME => triple::class,
                 formula_api::TN_READ, formula_api::TN_READ_THIS, formula_api::TN_READ_PRIOR => formula::class,
-                verb_api::TN_READ, verb::CAN_CONTAIN_NAME, verb::CAN_CONTAIN_NAME_REVERSE => verb::class,
+                verb_api::TN_READ, verbs::CAN_CONTAIN_NAME, verbs::CAN_CONTAIN_NAME_REVERSE => verb::class,
                 default => word::class,
             };
             $trm = new term($usr);

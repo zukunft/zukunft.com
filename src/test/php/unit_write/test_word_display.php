@@ -34,6 +34,8 @@
 // start testing the system functionality 
 // --------------------------------------
 
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\word\triple as triple_api;
 use api\word\word as word_api;
 use cfg\verb;
@@ -42,6 +44,7 @@ use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
 use shared\library;
 use test\all_tests;
+use shared\types\verbs;
 
 function run_word_display_test(all_tests $t): void
 {
@@ -82,8 +85,8 @@ function run_word_display_test(all_tests $t): void
     $direction = foaf_direction::DOWN;
     $wrd_2021 = new word($usr);
     $wrd_2021->load_by_name(word_api::TN_2021);
-    $lnk_20_to_21 = $t->load_triple(word_api::TN_2021, verb::FOLLOW, word_api::TN_2020);
-    $target_part_is_followed = verb::FOLLOWER_OF;
+    $lnk_20_to_21 = $t->load_triple(word_api::TN_2021, verbs::FOLLOW, word_api::TN_2020);
+    $target_part_is_followed = verbs::FOLLOWER_OF;
     $link_types = $wrd_2020->link_types($direction);
     $wrd_2020_dsp = new word_dsp($wrd_2020->api_json());
     $result = $wrd_2020_dsp->dsp_graph($direction, $link_types, 0);
@@ -102,8 +105,8 @@ function run_word_display_test(all_tests $t): void
     $direction = foaf_direction::UP;
     $wrd_2019 = $t->load_word(word_api::TN_2019);
     $wrd_year = $t->load_word(word_api::TN_YEAR);
-    $lnk_20_is_year = $t->load_triple(word_api::TN_2020, verb::IS, word_api::TN_YEAR);
-    $lnk_19_to_20 = $t->load_triple(word_api::TN_2020, verb::FOLLOW, word_api::TN_2019);
+    $lnk_20_is_year = $t->load_triple(word_api::TN_2020, verbs::IS, word_api::TN_YEAR);
+    $lnk_19_to_20 = $t->load_triple(word_api::TN_2020, verbs::FOLLOW, word_api::TN_2019);
     $link_types = $wrd_2020->link_types($direction);
     $wrd_2020_dsp = new word_dsp($wrd_2020->api_json());
     $result = $wrd_2020_dsp->dsp_graph($direction, $link_types, 0);

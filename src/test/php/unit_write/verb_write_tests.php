@@ -32,10 +32,13 @@
 
 namespace unit_write;
 
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\verb\verb as verb_api;
 use api\word\word as word_api;
 use cfg\verb;
 use shared\enum\foaf_direction;
+use shared\types\verbs;
 use test\test_cleanup;
 
 class verb_write_tests
@@ -51,7 +54,7 @@ class verb_write_tests
         // check the loading of the "is a" verb
         $vrb = new verb;
         $vrb->set_user($t->usr1);
-        $vrb->load_by_id($verbs->id(verb::IS));
+        $vrb->load_by_id($verbs->id(verbs::IS));
         $t->assert('verb->load ', $vrb->name(), verb_api::TN_IS);
 
         // test the creation of a new verb

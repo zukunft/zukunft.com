@@ -69,6 +69,7 @@ include_once MODEL_PHRASE_PATH . 'trm_ids.php';
 include_once MODEL_PHRASE_PATH . 'term_list.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\phrase\phrase_list as phrase_list_api;
 use cfg\db\sql;
@@ -84,6 +85,7 @@ use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
 use shared\library;
 use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\verbs;
 
 class phrase_list extends sandbox_list_named
 {
@@ -746,7 +748,7 @@ class phrase_list extends sandbox_list_named
     function is(): phrase_list
     {
         global $verbs;
-        $phr_lst = $this->foaf_parents($verbs->get_verb(verb::IS));
+        $phr_lst = $this->foaf_parents($verbs->get_verb(verbs::IS));
         log_debug($this->dsp_id() . ' is ' . $phr_lst->dsp_name());
         return $phr_lst;
     }
@@ -761,7 +763,7 @@ class phrase_list extends sandbox_list_named
     {
         global $verbs;
         log_debug($this->dsp_id());
-        $phr_lst = $this->all_children($verbs->get_verb(verb::IS));
+        $phr_lst = $this->all_children($verbs->get_verb(verbs::IS));
         log_debug($this->dsp_id() . ' are ' . $phr_lst->dsp_id());
         $phr_lst->merge($this);
         log_debug($this->dsp_id() . ' merged into ' . $phr_lst->dsp_id());
@@ -774,7 +776,7 @@ class phrase_list extends sandbox_list_named
     function contains(): phrase_list
     {
         global $verbs;
-        $phr_lst = $this->all_children($verbs->get_verb(verb::IS_PART_OF));
+        $phr_lst = $this->all_children($verbs->get_verb(verbs::IS_PART_OF));
         $phr_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $phr_lst->name());
         return $phr_lst;
@@ -1145,7 +1147,7 @@ class phrase_list extends sandbox_list_named
     {
         global $verbs;
         log_debug('for ' . $this->dsp_id());
-        $phr_lst = $this->all_children($verbs->get_verb(verb::CAN_CONTAIN));
+        $phr_lst = $this->all_children($verbs->get_verb(verbs::CAN_CONTAIN));
         log_debug('merge ' . $this->dsp_id());
         $this->merge($phr_lst);
         log_debug($phr_lst->dsp_id() . ' for ' . $this->dsp_id());
@@ -1160,7 +1162,7 @@ class phrase_list extends sandbox_list_named
         global $verbs;
         log_debug('for ' . $this->dsp_id());
         // this first time get all related items
-        $phr_lst = $this->all_children($verbs->get_verb(verb::CAN_CONTAIN));
+        $phr_lst = $this->all_children($verbs->get_verb(verbs::CAN_CONTAIN));
         $phr_lst = $phr_lst->are();
         $added_lst = $phr_lst->contains();
         $added_lst->diff($this);
@@ -1169,7 +1171,7 @@ class phrase_list extends sandbox_list_named
             $loops = 0;
             log_debug('added ' . $added_lst->dsp_id() . ' to ' . $phr_lst->name());
             do {
-                $next_lst = $added_lst->all_children($verbs->get_verb(verb::CAN_CONTAIN));
+                $next_lst = $added_lst->all_children($verbs->get_verb(verbs::CAN_CONTAIN));
                 $next_lst = $next_lst->are();
                 $added_lst = $next_lst->contains();
                 $added_lst->diff($phr_lst);
@@ -2234,7 +2236,7 @@ class phrase_list extends sandbox_list_named
         if ($type->id() > 0) {
             $sql_from = "triples l, words w";
             $sql_where_and = "AND w.word_id = l.from_phrase_id
-                        AND l.verb_id = " . $verbs->id(verb::IS_A) . "
+                        AND l.verb_id = " . $verbs->id(verbs::IS_A) . "
                         AND l.to_phrase_id = " . $type->id();
         } else {
             $sql_from = "words w";

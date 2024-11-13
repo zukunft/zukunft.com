@@ -56,6 +56,7 @@ include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once MODEL_DB_PATH . 'sql_par_list.php';
 include_once API_WORD_PATH . 'word_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\word\word_list as word_list_api;
 use cfg\db\sql;
@@ -71,6 +72,7 @@ use html\word\word_list as word_list_dsp;
 use shared\types\phrase_type AS phrase_type_shared;
 use shared\enum\foaf_direction;
 use shared\library;
+use shared\types\verbs;
 
 class word_list extends sandbox_list_named
 {
@@ -648,7 +650,7 @@ class word_list extends sandbox_list_named
     function is(): word_list
     {
         global $verbs;
-        $wrd_lst = $this->foaf_parents($verbs->get_verb(verb::IS));
+        $wrd_lst = $this->foaf_parents($verbs->get_verb(verbs::IS));
         log_debug($this->dsp_id() . ' is ' . $wrd_lst->name());
         return $wrd_lst;
     }
@@ -663,7 +665,7 @@ class word_list extends sandbox_list_named
     {
         global $verbs;
         log_debug('for ' . $this->dsp_id());
-        $wrd_lst = $this->children($verbs->get_verb(verb::IS));
+        $wrd_lst = $this->children($verbs->get_verb(verbs::IS));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' are ' . $wrd_lst->name());
         return $wrd_lst;
@@ -676,7 +678,7 @@ class word_list extends sandbox_list_named
     function contains(): word_list
     {
         global $verbs;
-        $wrd_lst = $this->children($verbs->get_verb(verb::IS_PART_OF));
+        $wrd_lst = $this->children($verbs->get_verb(verbs::IS_PART_OF));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $wrd_lst->name());
         return $wrd_lst;
@@ -729,7 +731,7 @@ class word_list extends sandbox_list_named
     function differentiators(): word_list
     {
         global $verbs;
-        $wrd_lst = $this->foaf_parents($verbs->get_verb(verb::CAN_CONTAIN));
+        $wrd_lst = $this->foaf_parents($verbs->get_verb(verbs::CAN_CONTAIN));
         $wrd_lst->merge($this);
         return $wrd_lst;
     }
@@ -744,7 +746,7 @@ class word_list extends sandbox_list_named
         global $verbs;
         // this first time get all related items
         // parents and not children because the verb is "can contain", but here the question is for "can be split by"
-        $wrd_lst = $this->foaf_parents($verbs->get_verb(verb::CAN_CONTAIN));
+        $wrd_lst = $this->foaf_parents($verbs->get_verb(verbs::CAN_CONTAIN));
         return $wrd_lst->are_and_contains();
     }
 

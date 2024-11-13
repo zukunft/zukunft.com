@@ -34,6 +34,7 @@ namespace unit_read;
 
 include_once API_WORD_PATH . 'word.php';
 include_once API_WORD_PATH . 'triple.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\verb\verb as verb_api;
 use api\word\word as word_api;
@@ -42,6 +43,7 @@ use cfg\word;
 use cfg\verb;
 use cfg\verb_list;
 use test\test_cleanup;
+use shared\types\verbs;
 
 class verb_read_tests
 {
@@ -61,10 +63,10 @@ class verb_read_tests
 
         // test if loading by code id and id result in the same name
         $vrb = new verb();
-        $vrb->load_by_code_id(verb::IS);
+        $vrb->load_by_code_id(verbs::IS);
         $vrb_id = new verb();
         $vrb_id->load_by_id($vrb->id());
-        $t->assert('load' . verb::IS, $vrb->name(), $vrb_id->name());
+        $t->assert('load' . verbs::IS, $vrb->name(), $vrb_id->name());
 
         // prepare the words for testing
         $country = new word($t->usr1);
@@ -114,13 +116,13 @@ class verb_read_tests
         $t->assert('load', $result, true);
 
         // ... and check if at least the most critical verb is loaded
-        $result = $verbs->id(verb::IS);
+        $result = $verbs->id(verbs::IS);
         // just check if the verb is around, because the position may vary depending on the historic creation of the database
         $target = 0;
         if ($result > 0) {
             $target = $result;
         }
-        $t->assert('check ' . verb::IS, $result, $target);
+        $t->assert('check ' . verbs::IS, $result, $target);
 
         $select_list = $lst->selector_list();
         $top_verb = $select_list[0]; // the most often verb should be on the top
@@ -137,7 +139,7 @@ class verb_read_tests
         } else {
             $target = 'not set';
         }
-        $t->assert('selector list ' . verb::IS, $result, $target);
+        $t->assert('selector list ' . verbs::IS, $result, $target);
     }
 
 }

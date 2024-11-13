@@ -32,6 +32,8 @@
 
 namespace unit\html;
 
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\word\triple as triple_api;
 use api\word\word as word_api;
 use html\html_base;
@@ -40,6 +42,7 @@ use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use cfg\verb;
+use shared\types\verbs;
 use test\test_cleanup;
 
 class phrase_list
@@ -59,9 +62,9 @@ class phrase_list
         // create the phrase list test set
         $lst = new phrase_list_dsp();
         $phr_city = $this->phrase_api_triple(1,  triple_api::TN_ZH_CITY_NAME,
-            word_api::TN_ZH, verb::IS, word_api::TN_CITY);
+            word_api::TN_ZH, verbs::IS, word_api::TN_CITY);
         $phr_canton = $this->phrase_api_triple(2,  triple_api::TN_ZH_CANTON_NAME,
-            word_api::TN_ZH, verb::IS, word_api::TN_CANTON);
+            word_api::TN_ZH, verbs::IS, word_api::TN_CANTON);
         $phr_ch = $this->phrase_api_word(1, word_api::TN_CH);
         $lst->add_phrase($phr_city);
         $lst->add_phrase($phr_canton);

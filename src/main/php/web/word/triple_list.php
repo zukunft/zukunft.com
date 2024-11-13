@@ -33,6 +33,7 @@ namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use cfg\phrase_type;
 use cfg\verb;
@@ -44,6 +45,7 @@ use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;
 use shared\enum\foaf_direction;
 use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\verbs;
 
 class triple_list extends list_dsp
 {
@@ -221,13 +223,13 @@ class triple_list extends list_dsp
 
                 // use the last word as a sample for the new word type
                 $last_linked_word_id = 0;
-                if ($lnk->verb()->id() == $verbs->id(verb::FOLLOW)) {
+                if ($lnk->verb()->id() == $verbs->id(verbs::FOLLOW)) {
                     $last_linked_word_id = $lnk->to()->id();
                 }
 
                 // in case of the verb "following" continue the series after the last element
                 $start_id = 0;
-                if ($lnk->verb()->id() == $verbs->id(verb::FOLLOW)) {
+                if ($lnk->verb()->id() == $verbs->id(verbs::FOLLOW)) {
                     $start_id = $last_linked_word_id;
                     // and link with the same direction (looks like not needed!)
                     /* if ($directional_link_type_id > 0) {

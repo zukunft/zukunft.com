@@ -61,37 +61,7 @@ use shared\library;
 class verb extends type_object
 {
 
-    /*
-     * code links
-     */
-
-    // the unique id of predicates or verbs
-    // to link a db row to predefined program code
     // TODO add an easy way to get the name from the code id
-    // TODO add a check if all verbs have a const und linked functionalities
-    const NOT_SET = "not_set";
-    const IS = "is";
-    const IS_PART_OF = "is part of";
-    const IS_PART_OF_REVERSE = "contains";
-    const IS_WITH = "with";
-    const FOLLOW = "follow";
-    const CAN_CONTAIN = "can_contain";
-    const CAN_CONTAIN_NAME = "differentiator";
-    const CAN_CONTAIN_NAME_REVERSE = "of";
-    const CAN_BE = "can_be";
-    const CAN_USE = "can_use";
-    const SELECTOR = "selector"; // the from_phrase of a selector can be used more than once so the description of the to_phrase should be shown to the user
-    const TO = 'to'; // to define a time period e.g. "12:00 to 13:00" or "1. March 2024 to 3. March 2024"
-
-    // directional forms of verbs (maybe move to verb_api or test if only used for testing)
-    const FOLLOWED_BY = "is followed by";
-    const FOLLOWER_OF = "is follower of";
-    const SYMBOL = "symbol";
-
-    // search directions to get related words (phrases)
-    const DIRECTION_NO = '';
-    const DIRECTION_DOWN = 'down';    // or forward  to get a list of 'to' phrases
-    const DIRECTION_UP = 'up';        // or backward to get a list of 'from' phrases based on a given to phrase
 
 
     /*

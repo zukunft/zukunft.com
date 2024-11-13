@@ -33,6 +33,7 @@
 namespace unit_read;
 
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
@@ -43,6 +44,7 @@ use cfg\verb;
 use cfg\word;
 use cfg\word_list;
 use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\verbs;
 use test\test_cleanup;
 
 class word_read_tests
@@ -174,7 +176,7 @@ class word_read_tests
 
         $t->subheader('Frontend API tests');
 
-        $trp = $t->load_triple(triple_api::TN_PI, verb::IS, word_api::TN_READ);
+        $trp = $t->load_triple(triple_api::TN_PI, verbs::IS, word_api::TN_READ);
         $t->assert_api_obj($trp);
     }
 

@@ -32,6 +32,8 @@
 
 namespace unit_write;
 
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\word\triple as triple_api;
 use api\word\word as word_api;
 use cfg\phrase;
@@ -42,6 +44,7 @@ use html\phrase\phrase as phrase_dsp;
 use shared\api;
 use shared\library;
 use shared\views;
+use shared\types\verbs;
 use test\test_cleanup;
 
 class phrase_write_tests
@@ -63,7 +66,7 @@ class phrase_write_tests
         // load or create a word that can be parts of a group e.g. Zurich
         $wrd = $t->test_word(word_api::TN_ZH);
         $zh_id = $wrd->id();
-        $is_id = $verbs->id(verb::IS);
+        $is_id = $verbs->id(verbs::IS);
         // load a triple that is parts of a group e.g. Zurich Insurance
         $trp = new triple($usr);
         $trp->load_by_link_id($zh_id, $is_id, $company_id);
