@@ -57,9 +57,11 @@ class change_field extends type_object
     const FLD_CODE_ID_COM = 'to display the change with some linked information';
 
     // field lists for the field creation
-    const FLD_LST_ALL = array(
+    const FLD_LST_NAME = array(
         [self::FLD_TABLE, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, change_table::class, self::FLD_TABLE_COM, change_table::FLD_ID],
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    const FLD_LST_ALL = array(
         [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );

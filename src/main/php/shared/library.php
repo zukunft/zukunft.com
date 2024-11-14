@@ -32,6 +32,7 @@
 
 namespace shared;
 
+use cfg\component\view_style;
 use shared\api;
 use api\sandbox\combine_object as combine_object_api;
 use cfg\component\component;
@@ -1802,6 +1803,7 @@ class library
             case $this->class_to_name(ref_type::class):
             case $this->class_to_name(formula_type::class):
             case $this->class_to_name(view_type::class):
+            case $this->class_to_name(view_style::class):
             case $this->class_to_name(view_link_type::class):
                 $result = 'type';
                 break;

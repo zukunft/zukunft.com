@@ -7,6 +7,7 @@ PREPARE view_by_name (bigint,text) AS
                 CASE WHEN (u.view_name <> ''   IS NOT TRUE) THEN s.view_name     ELSE u.view_name     END AS view_name,
                 CASE WHEN (u.description <> '' IS NOT TRUE) THEN s.description   ELSE u.description   END AS description,
                 CASE WHEN (u.view_type_id      IS     NULL) THEN s.view_type_id  ELSE u.view_type_id  END AS view_type_id,
+                CASE WHEN (u.view_style_id     IS     NULL) THEN s.view_style_id ELSE u.view_style_id END AS view_style_id,
                 CASE WHEN (u.excluded          IS     NULL) THEN s.excluded      ELSE u.excluded      END AS excluded,
                 CASE WHEN (u.share_type_id     IS     NULL) THEN s.share_type_id ELSE u.share_type_id END AS share_type_id,
                 CASE WHEN (u.protect_id        IS     NULL) THEN s.protect_id    ELSE u.protect_id    END AS protect_id

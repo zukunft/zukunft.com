@@ -323,6 +323,14 @@
         "id": 7
       }
     ],
+    "view_styles": [
+      {
+        "name": "sm-col-4",
+        "code_id": "sm-col-4",
+        "description": "use 1\/3 of the width",
+        "id": 1
+      }
+    ],
     "view_link_types": [
       {
         "name": "main word",
@@ -1496,6 +1504,12 @@
         "code_id": "change_values_prime",
         "description": "",
         "id": 97
+      },
+      {
+        "name": "view_styles",
+        "code_id": "view_styles",
+        "description": "",
+        "id": 98
       }
     ],
     "change_field_list": [
@@ -6150,10 +6164,70 @@
         "id": 776
       },
       {
+        "name": "14view_style_id",
+        "code_id": "14view_style_id",
+        "description": "",
+        "id": 777
+      },
+      {
+        "name": "15view_style_id",
+        "code_id": "15view_style_id",
+        "description": "",
+        "id": 778
+      },
+      {
+        "name": "18view_style_id",
+        "code_id": "18view_style_id",
+        "description": "",
+        "id": 779
+      },
+      {
+        "name": "19view_style_id",
+        "code_id": "19view_style_id",
+        "description": "",
+        "id": 780
+      },
+      {
+        "name": "16view_style_id",
+        "code_id": "16view_style_id",
+        "description": "",
+        "id": 781
+      },
+      {
+        "name": "17view_style_id",
+        "code_id": "17view_style_id",
+        "description": "",
+        "id": 782
+      },
+      {
+        "name": "98description",
+        "code_id": "98description",
+        "description": "",
+        "id": 783
+      },
+      {
+        "name": "98view_style_id",
+        "code_id": "98view_style_id",
+        "description": "",
+        "id": 784
+      },
+      {
+        "name": "98view_style_name",
+        "code_id": "98view_style_name",
+        "description": "",
+        "id": 785
+      },
+      {
+        "name": "98code_id",
+        "code_id": "98code_id",
+        "description": "",
+        "id": 786
+      },
+      {
         "name": "1NOW() AS db_now",
         "code_id": "1NOW() AS db_now",
         "description": "",
-        "id": 777
+        "id": 787
       }
     ],
     "verbs": [
@@ -6602,20 +6676,20 @@
             "position": 4
           },
           {
-            "id": 36,
-            "name": "system form field description",
-            "description": "the description field in a form",
-            "type_id": 22,
-            "code_id": "form_field_description",
-            "link_id": 18,
-            "position": 5
-          },
-          {
             "id": 40,
             "name": "system form select phrase type",
             "description": "selector for the phrase type",
             "type_id": 25,
             "code_id": "form_field_phrase_type",
+            "link_id": 18,
+            "position": 5
+          },
+          {
+            "id": 36,
+            "name": "system form field description",
+            "description": "the description field in a form",
+            "type_id": 22,
+            "code_id": "form_field_description",
             "link_id": 19,
             "position": 6
           },

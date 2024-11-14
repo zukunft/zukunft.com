@@ -59,9 +59,12 @@ class sys_log_function extends type_object
     const FLD_NAME = 'sys_log_function_name';
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
+    const FLD_LST_NAME = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    const FLD_LST_ALL = array(
         [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
+
 }

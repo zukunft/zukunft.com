@@ -49,6 +49,7 @@
 
 namespace cfg\component;
 
+// TODO easy include all used classes
 include_once DB_PATH . 'sql_par_type.php';
 include_once API_VIEW_PATH . 'component_link.php';
 
@@ -88,6 +89,8 @@ class component_link extends sandbox_link
     const FLD_POS_COM = 'the position of the component e.g. right or below';
     const FLD_POS_TYPE = 'position_type_id';
     const FLD_POS_TYPE_NAME = 'position'; // for log only
+    const FLD_STYLE_COM = 'the display style for this component link';
+    const FLD_STYLE = 'view_style_id';
 
     // all database field names excluding the user specific fields and the id
     const FLD_NAMES = array(
@@ -103,6 +106,7 @@ class component_link extends sandbox_link
     const FLD_NAMES_NUM_USR = array(
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
+        self::FLD_STYLE,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
@@ -111,6 +115,7 @@ class component_link extends sandbox_link
     const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
+        self::FLD_STYLE,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
@@ -125,22 +130,37 @@ class component_link extends sandbox_link
         [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQL_TYP, sql_field_default::ONE, '', '', ''],
         [component_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::ONE, sql::INDEX, component_link_type::class, ''],
         [position_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::TWO, sql::INDEX, position_type::class, self::FLD_POS_COM],
+        [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
     );
     // list of fields that CAN be CHANGEd by the user
     const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
         [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [component_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, component_link_type::class, ''],
         [position_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, position_type::class, self::FLD_POS_COM],
+        [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
     );
+
+    // JSON fields
+    // TODO easy move JSON fields to a shared object
+    const FLD_JSON_POSITION_TYPE = 'position_type';
+    const FLD_JSON_STYLE = 'style';
 
 
     /*
      * object vars
      */
 
-    public ?int $order_nbr = null;          // to sort the display item
-    public ?int $pos_type_id = null;        // defines the position of the view component relative to the previous item (1 = below, 2= side, )
+    // to sort the display item
+    public ?int $order_nbr = null;
 
+    // defines the position of the view component relative to the previous item (1 = below, 2= side, )
+    public ?int $pos_type_id = null;
+
+    // the position type in the linked view
+    public ?string $style_id = null;
+
+    // the default display style for this component which can be overwritten by the link
+    private ?type_object $style = null;
 
     /*
      * construct and map
@@ -168,6 +188,7 @@ class component_link extends sandbox_link
 
         $this->set_predicate(component_link_type::ALWAYS);
         $this->set_pos_type(position_type::BELOW);
+        $this->set_style(null);
 
         $this->order_nbr = null;
     }
@@ -207,6 +228,7 @@ class component_link extends sandbox_link
             $this->component()->set_id($db_row[component::FLD_ID]);
             $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
             $this->pos_type_id = $db_row[self::FLD_POS_TYPE];
+            $this->set_style_by_id($db_row[self::FLD_STYLE]);
         }
         return $result;
     }
@@ -282,6 +304,47 @@ class component_link extends sandbox_link
     {
         global $position_types;
         $this->pos_type_id = $position_types->id($type_code_id);
+    }
+
+    /**
+     * set the style for this component link that overwrites the view and component style
+     *
+     * @param string|null $code_id the code id that should be added to this view component link
+     * @return void
+     */
+    function set_style(?string $code_id): void
+    {
+        global $view_style_cache;
+        if ($code_id == null) {
+            $this->style = null;
+        } else {
+            $this->style = $view_style_cache->get_by_code_id($code_id);
+        }
+    }
+
+    /**
+     * set the style for this component link by the database id
+     *
+     * @param int|null $style_id the database id of the display style
+     * @return void
+     */
+    function set_style_by_id(?int $style_id): void
+    {
+        // TODO easy rename all global type vars to _cache
+        global $view_style_cache;
+        if ($style_id == null) {
+            $this->style = null;
+        } else {
+            $this->style = $view_style_cache->get($style_id);
+        }
+    }
+
+    /**
+     * @return int|null the database id of the view style or null
+     */
+    function style_id(): ?int
+    {
+        return $this->style?->id();
     }
 
     /**
@@ -941,7 +1004,8 @@ class component_link extends sandbox_link
             [
                 component_link_type::FLD_ID,
                 self::FLD_ORDER_NBR,
-                self::FLD_POS_TYPE
+                self::FLD_POS_TYPE,
+                self::FLD_STYLE
             ],
             parent::db_fields_all_sandbox()
         );
@@ -1015,6 +1079,27 @@ class component_link extends sandbox_link
                 $this->pos_type_id,
                 $sbx->pos_type_id,
                 $position_types
+            );
+        }
+        if ($sbx->style_id() <> $this->style_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_STYLE,
+                    $change_field_list->id($table_id . self::FLD_STYLE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            global $view_style_cache;
+            // TODO easy move to id function of type list
+            if ($this->style_id() < 0) {
+                log_err('component link style for ' . $this->dsp_id() . ' not found');
+            }
+            $lst->add_type_field(
+                self::FLD_STYLE,
+                view_style::FLD_NAME,
+                $this->style_id(),
+                $sbx->style_id(),
+                $view_style_cache
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));

@@ -441,15 +441,17 @@
         },
         {
           "position": "4",
-          "name": "system form field name"
+          "name": "system form field name",
+          "style": "col-sm-8"
         },
         {
           "position": "5",
-          "name": "system form field description"
+          "name": "system form select phrase type",
+          "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system form select phrase type"
+          "name": "system form field description"
         },
         {
           "position": "7",
@@ -457,7 +459,8 @@
         },
         {
           "position": "8",
-          "name": "system form select protection type"
+          "name": "system form select protection type",
+          "position_type": "side"
         },
         {
           "position": "9",

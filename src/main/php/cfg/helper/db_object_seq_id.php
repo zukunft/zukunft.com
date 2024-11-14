@@ -258,7 +258,7 @@ class db_object_seq_id extends db_object implements JsonSerializable
                 $fields = array_merge($this->sql_id_field_par(false, $small_key), sandbox::FLD_ALL_OWNER);
                 $fields = array_merge($fields, $this::FLD_LST_MUST_BE_IN_STD);
             } else {
-                $fields = array_merge($this->sql_id_field_par(false, $small_key), $this::FLD_LST_ALL);
+                $fields = array_merge($this->sql_id_field_par(false, $small_key), $this::FLD_LST_NAME, $this::FLD_LST_ALL);
                 $fields = array_merge($fields, $this::FLD_LST_EXTRA);
             }
         } else {

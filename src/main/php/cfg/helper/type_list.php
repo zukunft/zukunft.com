@@ -46,6 +46,8 @@ use cfg\component\component_type;
 use cfg\component\component_type_list;
 use cfg\component\position_type;
 use cfg\component\position_type_list;
+use cfg\component\view_style;
+use cfg\component\view_style_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_type;
@@ -298,6 +300,7 @@ class type_list
             formula_link_type_list::class => formula_link_type::class,
             element_type_list::class => element_type::class,
             view_type_list::class => view_type::class,
+            view_style_list::class => view_style::class,
             view_link_type_list::class => view_link_type::class,
             component_type_list::class => component_type::class,
             component_link_type_list::class => component_link_type::class,
@@ -322,7 +325,6 @@ class type_list
                 $type_id = $db_row[$db_con->get_id_field_name($class)];
                 $type_code_id = strval($db_row[sql::FLD_CODE_ID]);
                 // database field name exceptions
-                $type_name = '';
                 if ($class == change_action::class) {
                     $type_name = strval($db_row[type_object::FLD_ACTION]);
                 } elseif ($class == change_table::class) {
@@ -333,7 +335,10 @@ class type_list
                     $type_name = strval($db_row[language_form::FLD_NAME]);
                 } elseif ($class == language::class) {
                     $type_name = strval($db_row[language::FLD_NAME]);
+                } elseif ($class == view_style::class) {
+                    $type_name = strval($db_row[$db_con->get_name_field($class)]);
                 } else {
+                    // TODO use a unique type name for each type
                     $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
                 }
                 $type_comment = strval($db_row[sandbox_named::FLD_DESCRIPTION]);

@@ -53,6 +53,7 @@
 namespace cfg\component;
 
 include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_COMPONENT_PATH . 'view_style.php';
 
 use shared\api;
 use api\component\component as component_api;
@@ -98,7 +99,8 @@ class component extends sandbox_typed
     const FLD_DESCRIPTION_COM = 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry';
     const FLD_TYPE_COM = 'to select the predefined functionality';
     const FLD_TYPE = 'component_type_id';
-    const FLD_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
+    const FLD_STYLE_COM = 'the default display style for this component';
+    const FLD_STYLE = 'view_style_id';
     const FLD_CODE_ID_COM = 'used for system components to select the component by the program code';
     const FLD_UI_MSG_ID_COM = 'used for system components the id to select the language specific user interface message e.g. "add word"';
     const FLD_UI_MSG_ID = 'ui_msg_code_id';
@@ -132,6 +134,7 @@ class component extends sandbox_typed
     const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, component_type::class, self::FLD_TYPE_COM],
+        [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
         // TODO link with a foreign key to phrases (or terms?) if link to a view is allowed
         [self::FLD_ROW_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_PHRASE_COM],
         [formula::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
@@ -159,6 +162,7 @@ class component extends sandbox_typed
     // list of the user specific database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
+        self::FLD_STYLE,
         self::FLD_ROW_PHRASE,
         self::FLD_LINK_TYPE,
         formula::FLD_ID,
@@ -173,6 +177,7 @@ class component extends sandbox_typed
         self::FLD_NAME,
         sandbox_named::FLD_DESCRIPTION,
         self::FLD_TYPE,
+        self::FLD_STYLE,
         self::FLD_ROW_PHRASE,
         self::FLD_LINK_TYPE,
         formula::FLD_ID,
@@ -205,7 +210,8 @@ class component extends sandbox_typed
 
     // database fields repeated from the component link for a easy to use in memory view object
     // TODO create a component_phrase_link table with a type fields where the type can be at least row, row_right, col and sub_col
-    public ?int $pos_type = null;           // the position in the linked view
+    // TODO easy use the position type object similar to the style
+    public ?int $pos_type_id = null;           // the position type in the linked view
 
     // linked fields
     public ?object $obj = null;             // the object that should be shown to the user
@@ -213,6 +219,7 @@ class component extends sandbox_typed
     public ?phrase $col_phrase = null;           // for a table to defined which columns should be used (if not defined by the calling word)
     public ?phrase $col_sub_phrase = null;          // the word object for $word_id_col2
     public ?formula $frm = null;            // the formula object for $formula_id
+    private ?type_object $style = null; // the default display style for this component which can be overwritten by the link
 
 
     /*
@@ -240,6 +247,7 @@ class component extends sandbox_typed
 
         $this->order_nbr = null;
         $this->type_id = null;
+        $this->style = null;
         $this->link_type_id = null;
         $this->formula_id = null;
         $this->word_id_col2 = null;
@@ -269,6 +277,7 @@ class component extends sandbox_typed
         string $name_fld = self::FLD_NAME
     ): bool
     {
+        global $view_style_cache;
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
             if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
@@ -277,8 +286,12 @@ class component extends sandbox_typed
             if (array_key_exists(self::FLD_UI_MSG_ID, $db_row)) {
                 $this->ui_msg_code_id = $db_row[self::FLD_UI_MSG_ID];
             }
+            // TODO easy use set_type_by_id function
             if (array_key_exists(self::FLD_TYPE, $db_row)) {
                 $this->type_id = $db_row[self::FLD_TYPE];
+            }
+            if (array_key_exists(self::FLD_STYLE, $db_row)) {
+                $this->set_style_by_id($db_row[self::FLD_STYLE]);
             }
             if (array_key_exists(self::FLD_ROW_PHRASE, $db_row)) {
                 $this->load_row_phrase($db_row[self::FLD_ROW_PHRASE]);
@@ -329,6 +342,55 @@ class component extends sandbox_typed
     {
         global $component_types;
         $this->type_id = $component_types->id($type_code_id);
+    }
+
+    /**
+     * set the default style for this component by the code id
+     *
+     * @param string|null $code_id the code id of the display style use for im and export
+     * @return void
+     */
+    function set_style(?string $code_id): void
+    {
+        global $view_style_cache;
+        if ($code_id == null) {
+            $this->style = null;
+        } else {
+            $this->style = $view_style_cache->get_by_code_id($code_id);
+        }
+    }
+
+    /**
+     * set the default style for this component by the database id
+     *
+     * @param int|null $style_id the database id of the display style
+     * @return void
+     */
+    function set_style_by_id(?int $style_id): void
+    {
+        // TODO easy rename all global type vars to _cache
+        global $view_style_cache;
+        if ($style_id == null) {
+            $this->style = null;
+        } else {
+            $this->style = $view_style_cache->get($style_id);
+        }
+    }
+
+    /**
+     * @return view_style|null the view style for this component or null if the parent style should be used
+     */
+    function style(): ?view_style
+    {
+        return $this->style;
+    }
+
+    /**
+     * @return int|null the database id of the view style or null
+     */
+    function style_id(): ?int
+    {
+        return $this->style?->id();
     }
 
     /**
@@ -792,6 +854,11 @@ class component extends sandbox_typed
                     }
                 }
             }
+            if ($key == sandbox_exp::FLD_STYLE) {
+                if ($value != '') {
+                    $this->set_style($value);
+                }
+            }
             if ($key == sandbox_exp::FLD_CODE_ID) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
@@ -1206,6 +1273,7 @@ class component extends sandbox_typed
             parent::db_fields_all(),
             [
                 self::FLD_TYPE,
+                self::FLD_STYLE,
                 sql::FLD_CODE_ID,
                 self::FLD_UI_MSG_ID,
                 self::FLD_ROW_PHRASE,
@@ -1257,6 +1325,27 @@ class component extends sandbox_typed
                 $this->type_id(),
                 $sbx->type_id(),
                 $component_types
+            );
+        }
+        if ($sbx->style_id() <> $this->style_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_STYLE,
+                    $change_field_list->id($table_id . self::FLD_STYLE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            global $view_style_cache;
+            // TODO easy move to id function of type list
+            if ($this->style_id() < 0) {
+                log_err('component style for ' . $this->dsp_id() . ' not found');
+            }
+            $lst->add_type_field(
+                self::FLD_STYLE,
+                view_style::FLD_NAME,
+                $this->style_id(),
+                $sbx->style_id(),
+                $view_style_cache
             );
         }
         if ($sbx->code_id <> $this->code_id) {

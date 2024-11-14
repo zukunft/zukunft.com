@@ -4995,7 +4995,7 @@ class sql
             $type = $lib->str_right_of($type, sql_db::TBL_USER_PREFIX);
         }
         $result = $type . '_name';
-        // exceptions to be adjusted
+        // TODO remove these exceptions for a unique name in the "with_log" undate queries
         if ($result == 'link_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }

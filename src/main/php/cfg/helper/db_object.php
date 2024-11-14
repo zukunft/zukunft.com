@@ -53,6 +53,7 @@ class db_object
 
     // field lists for the table creation overwritten by the child object or grand child for extra fields
     const FLD_LST_ALL = array();
+    const FLD_LST_NAME = array();
     const FLD_LST_EXTRA = array();
     // list of fields that MUST be set by one user
     const FLD_LST_MUST_BE_IN_STD = array();
@@ -196,7 +197,7 @@ class db_object
                 $fields = array_merge($fields, sandbox::FLD_ALL_OWNER);
                 $fields = array_merge($fields, $this::FLD_LST_MUST_BE_IN_STD);
             } else {
-                $fields = array_merge($fields, $this::FLD_LST_ALL);
+                $fields = array_merge($fields, $this::FLD_LST_NAME, $this::FLD_LST_ALL);
                 $fields = array_merge($fields, $this::FLD_LST_EXTRA);
             }
         } else {

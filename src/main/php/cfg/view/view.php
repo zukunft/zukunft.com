@@ -53,6 +53,7 @@ include_once SERVICE_EXPORT_PATH . 'view_exp.php';
 include_once SERVICE_EXPORT_PATH . 'component_exp.php';
 include_once WEB_VIEW_PATH . 'view.php';
 
+use cfg\component\view_style;
 use shared\api;
 use api\view\view as view_api;
 use cfg\component\component;
@@ -92,7 +93,8 @@ class view extends sandbox_typed
     const FLD_DESCRIPTION_COM = 'to explain the view to the user with a mouse over text; to be replaced by a language form entry';
     const FLD_TYPE_COM = 'to link coded functionality to views e.g. to use a view for the startup page';
     const FLD_TYPE = 'view_type_id';
-    const FLD_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
+    const FLD_STYLE_COM = 'the default display style for this view';
+    const FLD_STYLE = 'view_style_id';
     const FLD_CODE_ID_COM = 'to link coded functionality to a specific view e.g. define the internal system views';
     // the JSON object field names
     const FLD_COMPONENT = 'components';
@@ -110,6 +112,7 @@ class view extends sandbox_typed
     const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_type::class, self::FLD_TYPE_COM],
+        [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
     );
     // list of fields that CANNOT be changed by the user
     const FLD_LST_NON_CHANGEABLE = array(
@@ -127,6 +130,7 @@ class view extends sandbox_typed
     // list of the user specific database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
+        self::FLD_STYLE,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
@@ -135,6 +139,7 @@ class view extends sandbox_typed
     const ALL_SANDBOX_FLD_NAMES = array(
         sandbox_named::FLD_DESCRIPTION,
         self::FLD_TYPE,
+        self::FLD_STYLE,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
@@ -146,10 +151,15 @@ class view extends sandbox_typed
      */
 
     // database fields additional to the user sandbox fields for the view component
-    public ?string $code_id = null;   // to select internal predefined views
+    // to select internal predefined views
+    public ?string $code_id = null;
 
     // in memory only fields
-    public ?component_link_list $cmp_lnk_lst;  // all links to the component objects in correct order
+    // all links to the component objects in correct order
+    public ?component_link_list $cmp_lnk_lst;
+
+    // the default display style for this component which can be overwritten by the link
+    private ?type_object $style = null;
 
 
     /*
@@ -173,6 +183,7 @@ class view extends sandbox_typed
         parent::reset();
 
         $this->type_id = null;
+        $this->style = null;
         $this->code_id = null;
 
         $this->cmp_lnk_lst = null;
@@ -202,6 +213,9 @@ class view extends sandbox_typed
         if ($result) {
             if (array_key_exists(self::FLD_TYPE, $db_row)) {
                 $this->type_id = $db_row[self::FLD_TYPE];
+            }
+            if (array_key_exists(self::FLD_STYLE, $db_row)) {
+                $this->set_style_by_id($db_row[self::FLD_STYLE]);
             }
             if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
                 $this->code_id = $db_row[sql::FLD_CODE_ID];
@@ -240,6 +254,55 @@ class view extends sandbox_typed
     {
         global $view_types;
         $this->type_id = $view_types->id($type_code_id);
+    }
+
+    /**
+     * set the default style for this view by the code id
+     *
+     * @param string|null $code_id the code id of the display style use for im and export
+     * @return void
+     */
+    function set_style(?string $code_id): void
+    {
+        global $view_style_cache;
+        if ($code_id == null) {
+            $this->style = null;
+        } else {
+            $this->style = $view_style_cache->get_by_code_id($code_id);
+        }
+    }
+
+    /**
+     * set the default style for this view by the database id
+     *
+     * @param int|null $style_id the database id of the display style
+     * @return void
+     */
+    function set_style_by_id(?int $style_id): void
+    {
+        // TODO rename all global type vars to _cache
+        global $view_style_cache;
+        if ($style_id == null) {
+            $this->style = null;
+        } else {
+            $this->style = $view_style_cache->get($style_id);
+        }
+    }
+
+    /**
+     * @return view_style|null the view style for this component or null if the parent style should be used
+     */
+    function style(): ?view_style
+    {
+        return $this->style;
+    }
+
+    /**
+     * @return int|null the database id of the view style or null
+     */
+    function style_id(): ?int
+    {
+        return $this->style?->id();
     }
 
     /**
@@ -830,9 +893,22 @@ class view extends sandbox_typed
                     // if for the component only the position and name is defined
                     // do not overwrite an existing component
                     // instead just add the existing component
-                    if (count($json_cmp) == 2
-                        and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
-                        and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp)) {
+                    if ((count($json_cmp) == 2
+                            and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
+                            and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp))
+                        or (count($json_cmp) == 3
+                            and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
+                            and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp)
+                            and array_key_exists(component_link::FLD_JSON_POSITION_TYPE, $json_cmp))
+                        or (count($json_cmp) == 3
+                            and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
+                            and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp)
+                            and array_key_exists(component_link::FLD_JSON_STYLE, $json_cmp))
+                        or (count($json_cmp) == 4
+                            and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
+                            and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp)
+                            and array_key_exists(component_link::FLD_JSON_POSITION_TYPE, $json_cmp)
+                            and array_key_exists(component_link::FLD_JSON_STYLE, $json_cmp))) {
                         $cmp->load_by_name($json_cmp[sandbox_exp::FLD_NAME]);
                         // if the component does not jet exist
                         // nevertheless create the component
@@ -844,9 +920,11 @@ class view extends sandbox_typed
                             $cmp->import_obj($json_cmp, $test_obj);
                         }
                     } else {
+                        log_warning('overwriting the component by the view');
                         $cmp->import_obj($json_cmp, $test_obj);
                     }
                     // on import first add all view components to the view object and save them all at once
+                    // TODO overwrite the style or position type
                     $result->add_message($this->add_cmp($cmp, $cmp_pos, $test_obj));
                     $cmp_pos++;
                 }
@@ -1055,6 +1133,7 @@ class view extends sandbox_typed
             parent::db_fields_all(),
             [
                 view::FLD_TYPE,
+                view::FLD_STYLE,
                 sql::FLD_CODE_ID
             ],
             parent::db_fields_all_sandbox()
@@ -1095,6 +1174,27 @@ class view extends sandbox_typed
                 $this->type_id(),
                 $sbx->type_id(),
                 $view_types
+            );
+        }
+        if ($sbx->style_id() <> $this->style_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_STYLE,
+                    $change_field_list->id($table_id . self::FLD_STYLE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            global $view_style_cache;
+            // TODO move to id function of type list
+            if ($this->style_id() < 0) {
+                log_err('view style for ' . $this->dsp_id() . ' not found');
+            }
+            $lst->add_type_field(
+                self::FLD_STYLE,
+                view_style::FLD_NAME,
+                $this->style_id(),
+                $sbx->style_id(),
+                $view_style_cache
             );
         }
         if ($sbx->code_id <> $this->code_id) {

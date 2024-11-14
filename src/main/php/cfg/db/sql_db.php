@@ -50,6 +50,8 @@ use cfg\component\component_type;
 use cfg\component\component_type_list;
 use cfg\component\position_type;
 use cfg\component\position_type_list;
+use cfg\component\view_style;
+use cfg\component\view_style_list;
 use cfg\config;
 use cfg\config_numbers;
 use cfg\element\element;
@@ -257,6 +259,7 @@ class sql_db
         formula_link::class,
         result::class,
         view_type::class,
+        view_style::class,
         view::class,
         view_link_type::class,
         view_term_link::class,
@@ -268,6 +271,7 @@ class sql_db
     ];
 
     // classes that have a database table in order of least depending first to avoid the usage of CASCADE on truncate
+    // array with true for the table with user overwrites
     const DB_TABLE_CLASSES_DESC_DEPENDING = [
         [value::class, true],
         value::class,
@@ -288,6 +292,7 @@ class sql_db
         [view::class, true],
         view::class,
         view_type::class,
+        view_style::class,
         [group::class, true],
         group::class,
         verb::class,
@@ -977,6 +982,7 @@ class sql_db
         global $formula_link_types;
         global $element_types;
         global $view_types;
+        global $view_style_cache;
         global $view_link_types;
         global $component_types;
         global $component_link_types;
@@ -1003,6 +1009,7 @@ class sql_db
         $formula_link_types = new formula_link_type_list();
         $element_types = new element_type_list();
         $view_types = new view_type_list();
+        $view_style_cache = new view_style_list();
         $view_link_types = new view_link_type_list();
         $component_types = new component_type_list();
         // not yet needed?
@@ -2095,11 +2102,12 @@ class sql_db
         }
     }
 
-    function get_name_field(string $type): string
+    function get_name_field(string $class): string
     {
         global $debug;
 
         $lib = new library();
+        $type = $lib->class_to_name($class);
 
         // exceptions for user overwrite tables
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)) {

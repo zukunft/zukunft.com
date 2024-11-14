@@ -14,6 +14,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO used different name for each type e.g. view_style_name instead of type_name to be able to log the name of the change
     TODO test the single html frontend function like $wrd->btn_edit() with the html_tests e.g. word_html_tests
     TODO create an test the html frontend masks using run_ui_test in unit/api_tests
     TODO remove all other frontend tests
@@ -453,19 +454,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
        10. capsule object vars
         done:
 
-    the logical order of the main objects is
-        word
-        verb
-        triple
-        source
-        ref
-        value
-        group
-        formula
-        result
-        view
-        component
-
 
     the target model object structure is:
 
@@ -610,6 +598,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
 use cfg\component\component_link_type;
 use cfg\component\component_type;
 use cfg\component\position_type;
+use cfg\component\view_style;
 use cfg\db\db_check;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -965,6 +954,7 @@ const BASE_CODE_LINK_FILES = [
     component_type::class,
     view_link_type::class,
     view_type::class,
+    view_style::class,
     phrase_types::class
 ];
 
@@ -1191,6 +1181,7 @@ const DB_TABLE_LIST = [
     'user_types',
     'user_profiles',
     'view_types',
+    'view_styles',
     'component_types',
     'view_link_types',
     'view_term_links',

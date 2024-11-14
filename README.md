@@ -94,7 +94,7 @@ Coding team suggestions
 Decisions
 - use this program for a mind map with all arguments where each has a weight and value and all changes are logged
 
-Naming conventions for vars:
+naming conventions for vars:
 ---------------------------
 
 backend - main
@@ -168,6 +168,37 @@ to be deprecated:
 - ulst (User LiST)         - an array of objects that should be shown to the user, so like lst, but without the objects exclude by the user
   the list should only be used to display something and never for checking if an item exists
   this is the short for the sbx_lst
+
+main objects
+------------
+
+the logical order of the main objects is
+- word - use single words for better assignments
+- verb - a predicate to connect two words
+- triple - combine two words or triples with a verb
+- source - import only data source
+- ref - im- and export to external systems
+- value - a number for calculation 
+- group - list of words or triples
+- formula - expression for calculation
+- result - numeric result of a formula
+- view - named display mask
+- component - parts of a display mask
+
+object sections
+---------------
+
+most objects have these sections
+- db const - const for the database like field names
+- object vars - the variables of the object in order of the db const
+- construct and map - including the mapping of the db row to the object
+- set and get - interface for the object vars grouped by first set in order of db fields
+- preloaded - select e.g. types from cache
+- cast - create an api object and set the vars from an api json
+- load - database access object (DAO) functions
+- save - manage to update the database
+- sql write fields - field list for writing to the database
+- debug - internal support functions for debugging that must include dsp_id()
 
 
 database change setup

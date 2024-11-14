@@ -34,8 +34,6 @@ namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'component_type.php';
 
-use api\formula\formula as formula_api;
-use api\view\view as view_api;
 use cfg\user;
 use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
@@ -43,7 +41,6 @@ use cfg\component\component;
 use cfg\log\change_field_list;
 use cfg\log\change;
 use cfg\log\change_table_list;
-use cfg\component\component_type;
 use cfg\sandbox_named;
 use test\test_cleanup;
 

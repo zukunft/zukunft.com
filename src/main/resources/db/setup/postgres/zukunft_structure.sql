@@ -4133,6 +4133,26 @@ COMMENT ON COLUMN view_types.description IS 'text to explain the type to the use
 -- --------------------------------------------------------
 
 --
+-- table structure the display style for a view or component e.g. number of columns to use
+--
+
+CREATE TABLE IF NOT EXISTS view_styles
+(
+    view_style_id SERIAL PRIMARY KEY,
+    view_style_name varchar(255)     NOT NULL,
+    code_id         varchar(255) DEFAULT NULL,
+    description     text         DEFAULT NULL
+);
+
+COMMENT ON TABLE view_styles IS 'the display style for a view or component e.g. number of columns to use';
+COMMENT ON COLUMN view_styles.view_style_id IS 'the internal unique primary index';
+COMMENT ON COLUMN view_styles.view_style_name IS 'the unique type name as shown to the user and used for the selection';
+COMMENT ON COLUMN view_styles.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
+COMMENT ON COLUMN view_styles.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
+
+-- --------------------------------------------------------
+
+--
 -- table structure to store all user interfaces entry points
 --
 
@@ -4143,6 +4163,7 @@ CREATE TABLE IF NOT EXISTS views
     view_name     varchar(255)     NOT NULL,
     description   text         DEFAULT NULL,
     view_type_id  smallint     DEFAULT NULL,
+    view_style_id smallint     DEFAULT NULL,
     code_id       varchar(255) DEFAULT NULL,
     excluded      smallint     DEFAULT NULL,
     share_type_id smallint     DEFAULT NULL,
@@ -4155,6 +4176,7 @@ COMMENT ON COLUMN views.user_id IS 'the owner / creator of the view';
 COMMENT ON COLUMN views.view_name IS 'the name of the view used for searching';
 COMMENT ON COLUMN views.description IS 'to explain the view to the user with a mouse over text; to be replaced by a language form entry';
 COMMENT ON COLUMN views.view_type_id IS 'to link coded functionality to views e.g. to use a view for the startup page';
+COMMENT ON COLUMN views.view_style_id IS 'the default display style for this view';
 COMMENT ON COLUMN views.code_id IS 'to link coded functionality to a specific view e.g. define the internal system views';
 COMMENT ON COLUMN views.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN views.share_type_id IS 'to restrict the access';
@@ -4172,6 +4194,7 @@ CREATE TABLE IF NOT EXISTS user_views
     view_name     varchar(255)      DEFAULT NULL,
     description   text              DEFAULT NULL,
     view_type_id  smallint          DEFAULT NULL,
+    view_style_id smallint          DEFAULT NULL,
     excluded      smallint          DEFAULT NULL,
     share_type_id smallint          DEFAULT NULL,
     protect_id    smallint          DEFAULT NULL
@@ -4184,6 +4207,7 @@ COMMENT ON COLUMN user_views.language_id IS 'the name of the view used for searc
 COMMENT ON COLUMN user_views.view_name IS 'the name of the view used for searching';
 COMMENT ON COLUMN user_views.description IS 'to explain the view to the user with a mouse over text; to be replaced by a language form entry';
 COMMENT ON COLUMN user_views.view_type_id IS 'to link coded functionality to views e.g. to use a view for the startup page';
+COMMENT ON COLUMN user_views.view_style_id IS 'the default display style for this view';
 COMMENT ON COLUMN user_views.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN user_views.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_views.protect_id IS 'to protect against unwanted changes';
@@ -4330,6 +4354,7 @@ CREATE TABLE IF NOT EXISTS components
     component_name              varchar(255)     NOT NULL,
     description                 text         DEFAULT NULL,
     component_type_id           smallint     DEFAULT NULL,
+    view_style_id               smallint     DEFAULT NULL,
     word_id_row                 bigint       DEFAULT NULL,
     formula_id                  bigint       DEFAULT NULL,
     word_id_col                 bigint       DEFAULT NULL,
@@ -4350,6 +4375,7 @@ COMMENT ON COLUMN components.user_id IS 'the owner / creator of the component';
 COMMENT ON COLUMN components.component_name IS 'the unique name used to select a component by the user';
 COMMENT ON COLUMN components.description IS 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry';
 COMMENT ON COLUMN components.component_type_id IS 'to select the predefined functionality';
+COMMENT ON COLUMN components.view_style_id IS 'the default display style for this component';
 COMMENT ON COLUMN components.word_id_row IS 'for a tree the related value the start node';
 COMMENT ON COLUMN components.formula_id IS 'used for type 6';
 COMMENT ON COLUMN components.word_id_col IS 'to define the type for the table columns';
@@ -4374,6 +4400,7 @@ CREATE TABLE IF NOT EXISTS user_components
     component_name         varchar(255) DEFAULT NULL,
     description            text         DEFAULT NULL,
     component_type_id      smallint     DEFAULT NULL,
+    view_style_id          smallint     DEFAULT NULL,
     word_id_row            bigint       DEFAULT NULL,
     formula_id             bigint       DEFAULT NULL,
     word_id_col            bigint       DEFAULT NULL,
@@ -4392,6 +4419,7 @@ COMMENT ON COLUMN user_components.user_id IS 'the changer of the component';
 COMMENT ON COLUMN user_components.component_name IS 'the unique name used to select a component by the user';
 COMMENT ON COLUMN user_components.description IS 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry';
 COMMENT ON COLUMN user_components.component_type_id IS 'to select the predefined functionality';
+COMMENT ON COLUMN user_components.view_style_id IS 'the default display style for this component';
 COMMENT ON COLUMN user_components.word_id_row IS 'for a tree the related value the start node';
 COMMENT ON COLUMN user_components.formula_id IS 'used for type 6';
 COMMENT ON COLUMN user_components.word_id_col IS 'to define the type for the table columns';
@@ -4412,21 +4440,23 @@ COMMENT ON COLUMN user_components.protect_id IS 'to protect against unwanted cha
 CREATE TABLE IF NOT EXISTS component_links
 (
     component_link_id BIGSERIAL PRIMARY KEY,
-    view_id                    bigint   NOT NULL,
-    component_id               bigint   NOT NULL,
-    user_id                    bigint            DEFAULT NULL,
-    order_nbr                  bigint   NOT NULL DEFAULT 1,
-    component_link_type_id     smallint NOT NULL DEFAULT 1,
-    position_type_id           smallint NOT NULL DEFAULT 2,
-    excluded                   smallint          DEFAULT NULL,
-    share_type_id              smallint          DEFAULT NULL,
-    protect_id                 smallint          DEFAULT NULL
+    view_id                bigint   NOT NULL,
+    component_id           bigint   NOT NULL,
+    user_id                bigint            DEFAULT NULL,
+    order_nbr              bigint   NOT NULL DEFAULT 1,
+    component_link_type_id smallint NOT NULL DEFAULT 1,
+    position_type_id       smallint NOT NULL DEFAULT 2,
+    view_style_id          smallint          DEFAULT NULL,
+    excluded               smallint          DEFAULT NULL,
+    share_type_id          smallint          DEFAULT NULL,
+    protect_id             smallint          DEFAULT NULL
 );
 
 COMMENT ON TABLE component_links IS 'to link components to views with an n:m relation';
 COMMENT ON COLUMN component_links.component_link_id IS 'the internal unique primary index';
 COMMENT ON COLUMN component_links.user_id IS 'the owner / creator of the component_link';
 COMMENT ON COLUMN component_links.position_type_id IS 'the position of the component e.g. right or below';
+COMMENT ON COLUMN component_links.view_style_id IS 'the display style for this component link';
 COMMENT ON COLUMN component_links.excluded IS 'true if a user, but not all, have removed it';
 COMMENT ON COLUMN component_links.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN component_links.protect_id IS 'to protect against unwanted changes';
@@ -4437,11 +4467,12 @@ COMMENT ON COLUMN component_links.protect_id IS 'to protect against unwanted cha
 
 CREATE TABLE IF NOT EXISTS user_component_links
 (
-    component_link_id      bigint       NOT NULL,
+    component_link_id      bigint        NOT NULL,
     user_id                bigint       NOT NULL,
     order_nbr              bigint   DEFAULT NULL,
     component_link_type_id smallint DEFAULT NULL,
     position_type_id       smallint DEFAULT NULL,
+    view_style_id          smallint DEFAULT NULL,
     excluded               smallint DEFAULT NULL,
     share_type_id          smallint DEFAULT NULL,
     protect_id             smallint DEFAULT NULL
@@ -4451,6 +4482,7 @@ COMMENT ON TABLE user_component_links IS 'to link components to views with an n:
 COMMENT ON COLUMN user_component_links.component_link_id IS 'with the user_id the internal unique primary index';
 COMMENT ON COLUMN user_component_links.user_id IS 'the changer of the component_link';
 COMMENT ON COLUMN user_component_links.position_type_id IS 'the position of the component e.g. right or below';
+COMMENT ON COLUMN user_component_links.view_style_id IS 'the display style for this component link';
 COMMENT ON COLUMN user_component_links.excluded IS 'true if a user,but not all,have removed it';
 COMMENT ON COLUMN user_component_links.share_type_id IS 'to restrict the access';
 COMMENT ON COLUMN user_component_links.protect_id IS 'to protect against unwanted changes';
@@ -6278,12 +6310,21 @@ CREATE INDEX view_types_type_name_idx ON view_types (type_name);
 -- --------------------------------------------------------
 
 --
+-- indexes for table view_styles
+--
+
+CREATE INDEX view_styles_view_style_name_idx ON view_styles (view_style_name);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table views
 --
 
 CREATE INDEX views_user_idx ON views (user_id);
 CREATE INDEX views_view_name_idx ON views (view_name);
 CREATE INDEX views_view_type_idx ON views (view_type_id);
+CREATE INDEX views_view_style_idx ON views (view_style_id);
 
 --
 -- indexes for table user_views
@@ -6296,6 +6337,7 @@ CREATE INDEX user_views_user_idx ON user_views (user_id);
 CREATE INDEX user_views_language_idx ON user_views (language_id);
 CREATE INDEX user_views_view_name_idx ON user_views (view_name);
 CREATE INDEX user_views_view_type_idx ON user_views (view_type_id);
+CREATE INDEX user_views_view_style_idx ON user_views (view_style_id);
 
 -- --------------------------------------------------------
 
@@ -6359,6 +6401,7 @@ CREATE INDEX component_types_type_name_idx ON component_types (type_name);
 CREATE INDEX components_user_idx ON components (user_id);
 CREATE INDEX components_component_name_idx ON components (component_name);
 CREATE INDEX components_component_type_idx ON components (component_type_id);
+CREATE INDEX components_view_style_idx ON components (view_style_id);
 CREATE INDEX components_word_id_row_idx ON components (word_id_row);
 CREATE INDEX components_formula_idx ON components (formula_id);
 CREATE INDEX components_word_id_col_idx ON components (word_id_col);
@@ -6376,6 +6419,7 @@ CREATE INDEX user_components_component_idx ON user_components (component_id);
 CREATE INDEX user_components_user_idx ON user_components (user_id);
 CREATE INDEX user_components_component_name_idx ON user_components (component_name);
 CREATE INDEX user_components_component_type_idx ON user_components (component_type_id);
+CREATE INDEX user_components_view_style_idx ON user_components (view_style_id);
 CREATE INDEX user_components_word_id_row_idx ON user_components (word_id_row);
 CREATE INDEX user_components_formula_idx ON user_components (formula_id);
 CREATE INDEX user_components_word_id_col_idx ON user_components (word_id_col);
@@ -6395,6 +6439,7 @@ CREATE INDEX component_links_component_idx ON component_links (component_id);
 CREATE INDEX component_links_user_idx ON component_links (user_id);
 CREATE INDEX component_links_component_link_type_idx ON component_links (component_link_type_id);
 CREATE INDEX component_links_position_type_idx ON component_links (position_type_id);
+CREATE INDEX component_links_view_style_idx ON component_links (view_style_id);
 
 --
 -- indexes for table user_component_links
@@ -6406,6 +6451,7 @@ CREATE INDEX user_component_links_component_link_idx ON user_component_links (co
 CREATE INDEX user_component_links_user_idx ON user_component_links (user_id);
 CREATE INDEX user_component_links_component_link_type_idx ON user_component_links (component_link_type_id);
 CREATE INDEX user_component_links_position_type_idx ON user_component_links (position_type_id);
+CREATE INDEX user_component_links_view_style_idx ON user_component_links (view_style_id);
 
 -- --------------------------------------------------------
 --
@@ -7302,7 +7348,8 @@ ALTER TABLE views
     ADD CONSTRAINT views_view_name_uk UNIQUE (view_name),
     ADD CONSTRAINT views_code_id_uk UNIQUE (code_id),
     ADD CONSTRAINT views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT views_view_type_fk FOREIGN KEY (view_type_id) REFERENCES view_types (view_type_id);
+    ADD CONSTRAINT views_view_type_fk FOREIGN KEY (view_type_id) REFERENCES view_types (view_type_id),
+    ADD CONSTRAINT views_view_style_fk FOREIGN KEY (view_style_id) REFERENCES view_styles (view_style_id);
 
 --
 -- constraints for table user_views
@@ -7312,7 +7359,8 @@ ALTER TABLE user_views
     ADD CONSTRAINT user_views_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
     ADD CONSTRAINT user_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_views_language_fk FOREIGN KEY (language_id) REFERENCES languages (language_id),
-    ADD CONSTRAINT user_views_view_type_fk FOREIGN KEY (view_type_id) REFERENCES view_types (view_type_id);
+    ADD CONSTRAINT user_views_view_type_fk FOREIGN KEY (view_type_id) REFERENCES view_types (view_type_id),
+    ADD CONSTRAINT user_views_view_style_fk FOREIGN KEY (view_style_id) REFERENCES view_styles (view_style_id);
 
 -- --------------------------------------------------------
 
@@ -7346,6 +7394,7 @@ ALTER TABLE components
     ADD CONSTRAINT components_ui_msg_code_id_uk UNIQUE (ui_msg_code_id),
     ADD CONSTRAINT components_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT components_component_type_fk FOREIGN KEY (component_type_id) REFERENCES component_types (component_type_id),
+    ADD CONSTRAINT components_view_style_fk FOREIGN KEY (view_style_id) REFERENCES view_styles (view_style_id),
     ADD CONSTRAINT components_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 --
@@ -7356,6 +7405,7 @@ ALTER TABLE user_components
     ADD CONSTRAINT user_components_component_fk FOREIGN KEY (component_id) REFERENCES components (component_id),
     ADD CONSTRAINT user_components_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_components_component_type_fk FOREIGN KEY (component_type_id) REFERENCES component_types (component_type_id),
+    ADD CONSTRAINT user_components_view_style_fk FOREIGN KEY (view_style_id) REFERENCES view_styles (view_style_id),
     ADD CONSTRAINT user_components_formula_fk FOREIGN KEY (formula_id) REFERENCES formulas (formula_id);
 
 -- --------------------------------------------------------
@@ -7369,7 +7419,8 @@ ALTER TABLE component_links
     ADD CONSTRAINT component_links_component_fk FOREIGN KEY (component_id) REFERENCES components (component_id),
     ADD CONSTRAINT component_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT component_links_component_link_type_fk FOREIGN KEY (component_link_type_id) REFERENCES component_link_types (component_link_type_id),
-    ADD CONSTRAINT component_links_position_type_fk FOREIGN KEY (position_type_id) REFERENCES position_types (position_type_id);
+    ADD CONSTRAINT component_links_position_type_fk FOREIGN KEY (position_type_id) REFERENCES position_types (position_type_id),
+    ADD CONSTRAINT component_links_view_style_fk FOREIGN KEY (view_style_id) REFERENCES view_styles (view_style_id);
 
 --
 -- constraints for table user_component_links
@@ -7379,4 +7430,5 @@ ALTER TABLE user_component_links
     ADD CONSTRAINT user_component_links_component_link_fk FOREIGN KEY (component_link_id) REFERENCES component_links (component_link_id),
     ADD CONSTRAINT user_component_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT user_component_links_component_link_type_fk FOREIGN KEY (component_link_type_id) REFERENCES component_link_types (component_link_type_id),
-    ADD CONSTRAINT user_component_links_position_type_fk FOREIGN KEY (position_type_id) REFERENCES position_types (position_type_id);
+    ADD CONSTRAINT user_component_links_position_type_fk FOREIGN KEY (position_type_id) REFERENCES position_types (position_type_id),
+    ADD CONSTRAINT user_component_links_view_style_fk FOREIGN KEY (view_style_id) REFERENCES view_styles (view_style_id);

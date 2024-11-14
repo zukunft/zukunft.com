@@ -33,6 +33,7 @@
 namespace unit;
 
 use api\view\view as view_api;
+use cfg\component\view_style;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_type;

@@ -2,6 +2,7 @@ PREPARE component_link_by_usr_cfg FROM
    'SELECT component_link_id,
            order_nbr,
            position_type_id,
+           view_style_id,
            excluded,
            share_type_id,
            protect_id

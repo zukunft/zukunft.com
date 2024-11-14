@@ -49,8 +49,10 @@ class language_form extends type_object
     const FLD_NAME = 'language_form_name';
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
+    const FLD_LST_NAME = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    const FLD_LST_ALL = array(
         [sql::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
         [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [language::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, language::class, ''],

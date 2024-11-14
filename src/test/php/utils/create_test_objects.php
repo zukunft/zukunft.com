@@ -55,9 +55,11 @@ include_once MODEL_VALUE_PATH . 'value_ts_data.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_TYPES_PATH . 'view_styles.php';
 
 use cfg\component\component_link_type;
 use cfg\component\position_type;
+use cfg\component\view_style_list;
 use cfg\db\sql_db;
 use cfg\formula_link_type;
 use cfg\language_form;
@@ -90,7 +92,6 @@ use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_list;
 use cfg\component\component_list;
-use cfg\component\component_type;
 use cfg\component\component_type_list;
 use cfg\component\position_type_list;
 use cfg\element\element;
@@ -167,6 +168,7 @@ use html\word\word as word_dsp;
 use shared\library;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
+use shared\types\view_styles;
 use shared\types\view_type;
 use unit_write\component_link_write_tests;
 use unit_write\component_write_tests;
@@ -204,6 +206,7 @@ class create_test_objects extends test_base
         $formula_link_types = new formula_link_type_list();
         $element_types = new element_type_list();
         $view_types = new view_type_list();
+        $view_style_cache = new view_style_list();
         $view_link_types = new view_link_type_list();
         $component_types = new component_type_list();
         //$component_link_types = new component_link_type_list();
@@ -227,6 +230,7 @@ class create_test_objects extends test_base
         $formula_link_types->load_dummy();
         $element_types->load_dummy();
         $view_types->load_dummy();
+        $view_style_cache->load_dummy();
         $view_link_types->load_dummy();
         $component_types->load_dummy();
         //$component_link_types->load_dummy();
@@ -254,6 +258,7 @@ class create_test_objects extends test_base
         $lst->add($formula_link_types->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
         $lst->add($element_types->api_obj(), controller::API_LIST_ELEMENT_TYPES);
         $lst->add($view_types->api_obj(), controller::API_LIST_VIEW_TYPES);
+        $lst->add($view_style_cache->api_obj(), controller::API_LIST_VIEW_STYLES);
         $lst->add($view_link_types->api_obj(), controller::API_LIST_VIEW_LINK_TYPES);
         $lst->add($component_types->api_obj(), controller::API_LIST_COMPONENT_TYPES);
         //$lst->add($component_link_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
@@ -401,7 +406,11 @@ class create_test_objects extends test_base
                         if ($code_id_col > 0) {
                             $typ_obj->set_code_id($data[$code_id_col]);
                         }
-                        $typ_obj->set_description($data[$desc_col]);
+                        if (array_key_exists($desc_col, $data)) {
+                            $typ_obj->set_description($data[$desc_col]);
+                        } else {
+                            log_err($desc_col . ' is missing in ' . $lib->dsp_array($data));
+                        }
                         $list->add($typ_obj);
                     }
                     $row++;
@@ -2189,6 +2198,7 @@ class create_test_objects extends test_base
         $msk->description = view_api::TD_READ;
         $msk->code_id = view_api::TC_READ;
         $msk->set_type(view_type::DETAIL);
+        $msk->set_style(view_styles::SM_COL_4);
         $msk->exclude();
         $msk->share_id = $share_types->id(share_type_shared::GROUP);
         $msk->protection_id = $protection_types->id(protect_type_shared::USER);
@@ -2311,6 +2321,7 @@ class create_test_objects extends test_base
         $cmp->set(1, component_api::TN_READ, comp_type_shared::PHRASE_NAME);
         $cmp->description = component_api::TD_READ;
         $cmp->set_type(comp_type_shared::TEXT);
+        $cmp->set_style(view_styles::SM_COL_4);
         $cmp->code_id = component_api::TC_FORM_TITLE;
         $cmp->ui_msg_code_id = messages::PLEASE_SELECT;
         $cmp->set_row_phrase($this->year());
@@ -2488,6 +2499,7 @@ class create_test_objects extends test_base
         $lnk->set(1, $this->view(), $this->component(), 1);
         $lnk->set_predicate(component_link_type::EXPRESSION);
         $lnk->set_pos_type(position_type::SIDE);
+        $lnk->set_style(view_styles::SM_COL_4);
         $lnk->exclude();
         $lnk->share_id = $share_types->id(share_type_shared::GROUP);
         $lnk->protection_id = $protection_types->id(protect_type_shared::USER);
