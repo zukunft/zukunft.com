@@ -36,6 +36,7 @@ include_once TYPES_PATH . 'type_list.php';
 include_once TYPES_PATH . 'type_lists.php';
 include_once TYPES_PATH . 'formula_type_list.php';
 include_once TYPES_PATH . 'phrase_types.php';
+include_once TYPES_PATH . 'view_style_list.php';
 include_once TYPES_PATH . 'protection.php';
 
 use api\view\view as view_api;
@@ -50,6 +51,7 @@ use html\types\share;
 use html\types\source_type_list;
 use html\types\type_lists as type_list_dsp;
 use html\types\user_profiles;
+use html\types\view_style_list;
 use html\types\view_type_list;
 use html\types\verbs;
 use test\test_cleanup;
@@ -101,6 +103,10 @@ class type_lists
         global $html_view_types;
         $test_page .= $html->label(view_type_list::NAME, view_type_list::NAME);
         $test_page .= $html_view_types->selector($form_name) . '<br>';
+
+        global $html_view_styles;
+        $test_page .= $html->label(view_style_list::NAME, view_style_list::NAME);
+        $test_page .= $html_view_styles->selector($form_name) . '<br>';
 
         global $html_component_types;
         $test_page .= $html->label(component_type_list::NAME, component_type_list::NAME);

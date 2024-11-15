@@ -388,15 +388,17 @@
         },
         {
           "position": "4",
-          "name": "system form field name"
+          "name": "system form field name",
+          "style": "col-md-8"
         },
         {
           "position": "5",
-          "name": "system form field description"
+          "name": "system form select phrase type",
+          "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system form select phrase type"
+          "name": "system form field description"
         },
         {
           "position": "7",
@@ -404,7 +406,8 @@
         },
         {
           "position": "8",
-          "name": "system form select protection type"
+          "name": "system form select protection type",
+          "position_type": "side"
         },
         {
           "position": "9",
@@ -653,15 +656,17 @@
         },
         {
           "position": "4",
-          "name": "system form field name"
+          "name": "system form field name",
+          "style": "col-md-8"
         },
         {
           "position": "5",
-          "name": "system form field description"
+          "name": "system form select phrase type",
+          "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system formatter row start"
+          "name": "system form field description"
         },
         {
           "position": "7",
@@ -669,50 +674,41 @@
         },
         {
           "position": "8",
-          "name": "system form triple verb"
+          "name": "system form triple verb",
+          "position_type": "side"
         },
         {
           "position": "9",
-          "name": "system form triple phrase to"
+          "name": "system form triple phrase to",
+          "position_type": "side"
         },
         {
           "position": "10",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "11",
-          "name": "system formatter row start"
-        },
-        {
-          "position": "12",
           "name": "system form select share type"
         },
         {
-          "position": "13",
-          "name": "system form select protection type"
+          "position": "11",
+          "name": "system form select protection type",
+          "position_type": "side"
         },
         {
-          "position": "14",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "15",
+          "position": "12",
           "name": "system formatter row right"
         },
         {
-          "position": "16",
+          "position": "13",
           "name": "system form button cancel"
         },
         {
-          "position": "17",
+          "position": "14",
           "name": "system form button save"
         },
         {
-          "position": "18",
+          "position": "15",
           "name": "system formatter row end"
         },
         {
-          "position": "19",
+          "position": "16",
           "name": "system form end"
         }
       ]

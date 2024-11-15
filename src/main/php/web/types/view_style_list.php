@@ -2,8 +2,9 @@
 
 /*
 
-    cfg/component/view_styles.php - db based ENUM of the view and component styles
+    web/types/view_style_list.php - the preloaded view styles used for the html frontend
     -----------------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -22,30 +23,29 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
   
 */
 
-namespace shared\types;
+namespace html\types;
 
-class view_styles
+include_once TYPES_PATH . 'type_list.php';
+
+class view_style_list extends type_list
 {
 
-    // list of the view and component styles that have a coded functionality
-    // where *_COM is the description for the tooltip
+    const NAME = 'view style';
 
-    // just to display a fixed text
-    const SM_COL_4_COM = 'use 1/3 of the width';
-    const SM_COL_4 = 'col-md-4';
-    const SM_COL_8 = 'col-md-8';
-
-    // list of the styles used for unit testing
-    const TEST_TYPES = array(
-        [self::SM_COL_4, 1],
-        [self::SM_COL_8, 2],
-    );
+    /**
+     * @returns string the html code to select a type from this list
+     */
+    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
+    {
+        global $html_view_styles;
+        return parent::type_selector($html_view_styles->lst_key(), $name, $form, $selected);
+    }
 
 }

@@ -55,6 +55,7 @@ include_once TYPES_PATH . 'formula_link_type_list.php';
 include_once TYPES_PATH . 'source_type_list.php';
 include_once TYPES_PATH . 'ref_type_list.php';
 include_once TYPES_PATH . 'view_type_list.php';
+include_once TYPES_PATH . 'view_style_list.php';
 include_once TYPES_PATH . 'view_link_type_list.php';
 include_once TYPES_PATH . 'component_type_list.php';
 include_once TYPES_PATH . 'component_link_type_list.php';
@@ -68,6 +69,7 @@ use html\user\user_message;
 use html\view\view_list as view_list_dsp;
 use html\word\word as word_dsp;
 use shared\api;
+use shared\types\view_styles;
 
 class type_lists
 {
@@ -142,6 +144,12 @@ class type_lists
         } else {
             $usr_msg->add_err('Mandatory view_types missing in API JSON ' . json_encode($json_array));
             $this->set_view_types();
+        }
+        if (array_key_exists(api::JSON_LIST_VIEW_STYLES, $json_array)) {
+            $this->set_view_styles($json_array[api::JSON_LIST_VIEW_STYLES]);
+        } else {
+            $usr_msg->add_err('Mandatory view_styles missing in API JSON ' . json_encode($json_array));
+            $this->set_view_styles();
         }
         if (array_key_exists(api::JSON_LIST_VIEW_LINK_TYPES, $json_array)) {
             $this->set_view_link_types($json_array[api::JSON_LIST_VIEW_LINK_TYPES]);
@@ -283,6 +291,13 @@ class type_lists
         global $html_view_types;
         $html_view_types = new view_type_list();
         $html_view_types->set_from_json_array($json_array);
+    }
+
+    function set_view_styles(array $json_array = null): void
+    {
+        global $html_view_styles;
+        $html_view_styles = new view_style_list();
+        $html_view_styles->set_from_json_array($json_array);
     }
 
     function set_view_link_types(array $json_array = null): void

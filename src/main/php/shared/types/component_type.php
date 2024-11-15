@@ -120,6 +120,25 @@ class component_type
         self::ROW_END
     );
 
+    // list of component types that are a button
+    const BUTTON_TYPES = array(
+        self::FORM_CANCEL,
+        self::FORM_SAVE,
+        self::FORM_DEL
+    );
+
+    // list of component types that are a button
+    const HIDDEN_TYPES = array(
+        self::ROW_START,
+        self::FORM_TITLE,
+        self::FORM_BACK,
+        self::FORM_CONFIRM,
+        self::FORM_END,
+        self::ROW_START,
+        self::ROW_RIGHT,
+        self::ROW_END
+    );
+
     // list of the component types used for unit testing
     const TEST_TYPES = array(
         [self::TEXT, 2],

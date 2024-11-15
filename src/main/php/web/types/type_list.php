@@ -136,6 +136,16 @@ class type_list
         return $result;
     }
 
+    function name(int $id): string
+    {
+        $result = '';
+        $type = $this->get($id);
+        if ($type != null) {
+            $result = $type->name;
+        }
+        return $result;
+    }
+
     /**
      * pick a type from the preloaded object list
      * @param int $id the database id of the expected type

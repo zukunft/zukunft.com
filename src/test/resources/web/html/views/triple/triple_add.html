@@ -27,12 +27,48 @@
     <br><br><br><br><br>
     <form action="/http/triple_add.php" id="triple_add"><input class="form-control" type="hidden" name="back" id="back"><input
             class="form-control" type="hidden" name="confirm" id="confirm" value="1">
-        <div class="form-group col-md-4"><label for="name">Name</label><input class="form-control" type="text"
-                                                                              name="Name" id="name"></div>
-        <div class="form-group col-md-12"><label for="description">Description</label><input class="form-control"
-                                                                                             type="text"
-                                                                                             name="Description"
-                                                                                             id="description"></div>
+        <div class="row col-md-12">
+            <div class="form-group col-md-8"><label for="name">Name</label><input class="form-control" type="text"
+                                                                                  name="Name" id="name"></div>
+            <div class="form-group col-md-4"><label for="phrase type">type:</label><select class="form-control"
+                                                                                           name="phrase type"
+                                                                                           form="triple_add"
+                                                                                           id="phrase type">
+                <option value="1" selected>standard</option>
+                <option value="2">time</option>
+                <option value="3">measure type</option>
+                <option value="4">time jump</option>
+                <option value="5">calc</option>
+                <option value="6">format percent</option>
+                <option value="7">scaling</option>
+                <option value="8">hidden scaling</option>
+                <option value="9">view / layer</option>
+                <option value="10">formula link</option>
+                <option value="11">differentiator filler</option>
+                <option value="12">this</option>
+                <option value="13">next</option>
+                <option value="14">prior</option>
+                <option value="15">scaling word percent</option>
+                <option value="16">scaled measure</option>
+                <option value="17">math constant</option>
+                <option value="18">measure divisor</option>
+                <option value="19">latest</option>
+                <option value="20">key</option>
+                <option value="21">information</option>
+                <option value="22">hidden triple</option>
+                <option value="23">hidden system</option>
+                <option value="24">group and select</option>
+                <option value="25">symbol</option>
+                <option value="26">rank</option>
+                <option value="27">ignore</option>
+            </select></div>
+        </div>
+        <div class="row col-md-12">
+            <div class="form-group col-md-12"><label for="description">Description</label><input class="form-control"
+                                                                                                 type="text"
+                                                                                                 name="Description"
+                                                                                                 id="description"></div>
+        </div>
         <div class="row col-md-12">
             <div class="form-group col-md-4"><label for="from">from:</label><input type="text" list="from_list"
                                                                                    class="form-control" name="from"

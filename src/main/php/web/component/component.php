@@ -37,8 +37,10 @@ namespace html\component;
 include_once SANDBOX_PATH . 'sandbox_typed.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once HTML_PATH . 'sheet.php';
+include_once TYPES_PATH . 'view_style_list.php';
 include_once SHARED_PATH . 'views.php';
 
+use html\button;
 use shared\api;
 use api\word\word as word_api;
 use html\sheet;
@@ -321,7 +323,7 @@ class component extends sandbox_typed
     function form_name(db_object_dsp $dbo): string
     {
         $html = new html_base();
-        return $html->form_field('Name', $dbo->name(), html_base::INPUT_TEXT);
+        return $html->form_field('Name', $dbo->name(), html_base::INPUT_TEXT, '', $this->style_text());
     }
 
     /**
@@ -499,17 +501,39 @@ class component extends sandbox_typed
     {
         global $html_component_types;
         if ($this->type_id() == null) {
-            $this->log_err('Code id for ' . $this->dsp_id() . ' missing');
+            $this->log_err('Component type code id for ' . $this->dsp_id() . ' missing');
             return '';
         } else {
             return $html_component_types->code_id($this->type_id());
         }
     }
 
+    function pos_type_code_id(): string
+    {
+        global $html_position_types;
+        if ($this->pos_type_id == null) {
+            $this->log_err('Position type code id for ' . $this->dsp_id() . ' missing');
+            return '';
+        } else {
+            return $html_position_types->code_id($this->pos_type_id);
+        }
+    }
 
-    /*
-     * set and get
-     */
+    function style_text(): string
+    {
+        global $html_view_styles;
+        if ($this->style_id != null) {
+            return $html_view_styles->name($this->style_id);
+        } else {
+            return '';
+        }
+    }
+
+
+
+/*
+ * set and get
+ */
 
     /**
      * set the vars this component bases on the api json array
@@ -570,6 +594,47 @@ class component extends sandbox_typed
             $vars[json_fields::STYLE] = $this->style_id;
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * @return bool true if the component is a system form button
+     */
+    function is_button(): bool
+    {
+        if (in_array($this->type_code_id(), component_type::BUTTON_TYPES)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if the component is a hidden system form element
+     */
+    function is_hidden(): bool
+    {
+        if (in_array($this->type_code_id(), component_type::HIDDEN_TYPES)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if the component is a system form button or a hidden form element
+     */
+    function is_button_or_hidden(): bool
+    {
+        if ($this->is_button() or $this->is_hidden()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

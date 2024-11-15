@@ -54,6 +54,7 @@ include_once WORD_PATH . 'word.php';
 include_once WORD_PATH . 'triple.php';
 
 // TODO remove model classes
+use cfg\component\position_type;
 use shared\api;
 use html\user\user_message;
 use api\component\component as component_api;
@@ -262,8 +263,29 @@ class view extends sandbox_typed
         if ($this->cmp_lst->is_empty()) {
             $this->log_debug('no components for ' . $this->dsp_id());
         } else {
+            $row = '';
+            $button_only = true;
             foreach ($this->cmp_lst->lst() as $cmp) {
-                $result .= $cmp->dsp_entries($dbo, $form_name, $back, $test_mode);
+                // add previous collected components to the final result
+                if ($row != '') {
+                    if ($cmp->pos_type_code_id() == position_type::BELOW) {
+                        if ($button_only) {
+                            $result .= $row;
+                        } else {
+                            // TODO easy move code to HTML class
+                            $result .= '<div class="row col-md-12">' . $row . ' </div>';
+                        }
+                        $row = '';
+                        $button_only = true;
+                    }
+                }
+                if (!$cmp->is_button_or_hidden()) {
+                    $button_only = false;
+                }
+                $row .= $cmp->dsp_entries($dbo, $form_name, $back, $test_mode);
+            }
+            if ($row != '') {
+                $result .= $row;
             }
         }
 

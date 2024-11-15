@@ -244,6 +244,22 @@ class triple extends sandbox_typed
      */
 
     /**
+     * create the HTML code to select a phrase type
+     * and select the phrase type of this word
+     * @param string $form the name of the html form
+     * @return string the html code to select the phrase type
+     */
+    protected function phrase_type_selector(string $form): string
+    {
+        global $html_phrase_types;
+        $used_phrase_id = $this->type_id();
+        if ($used_phrase_id == null) {
+            $used_phrase_id = $html_phrase_types->default_id();
+        }
+        return $html_phrase_types->selector($form, $used_phrase_id);
+    }
+
+    /**
      * TODO review
      *
      * select a phrase based on a given context
