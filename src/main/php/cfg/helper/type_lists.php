@@ -103,7 +103,7 @@ class type_lists
         global $view_link_types;
         global $component_types;
         global $component_link_types;
-        global $position_types;
+        global $position_type_cache;
         global $ref_types;
         global $source_types;
         global $share_types;
@@ -130,7 +130,7 @@ class type_lists
         $lst->add($view_link_types->api_obj(), controller::API_LIST_VIEW_LINK_TYPES);
         $lst->add($component_types->api_obj(), controller::API_LIST_COMPONENT_TYPES);
         //$lst->add($component_link_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
-        $lst->add($position_types->api_obj(), controller::API_LIST_COMPONENT_POSITION_TYPES);
+        $lst->add($position_type_cache->api_obj(), controller::API_LIST_COMPONENT_POSITION_TYPES);
         $lst->add($ref_types->api_obj(), controller::API_LIST_REF_TYPES);
         $lst->add($source_types->api_obj(), controller::API_LIST_SOURCE_TYPES);
         $lst->add($share_types->api_obj(), controller::API_LIST_SHARE_TYPES);
@@ -168,7 +168,7 @@ class type_lists
         global $view_link_types;
         global $component_types;
         global $component_link_types;
-        global $position_types;
+        global $position_type_cache;
         global $ref_types;
         global $source_types;
         global $share_types;
@@ -214,8 +214,8 @@ class type_lists
         // TODO review: not yet needed?
         //$component_link_types = new component_link_type_list();
         //$component_link_types->load($db_con);
-        $position_types = new position_type_list();
-        $position_types->load($db_con);
+        $position_type_cache = new position_type_list();
+        $position_type_cache->load($db_con);
         $ref_types = new ref_type_list();
         $ref_types->load($db_con);
         $source_types = new source_type_list();

@@ -83,7 +83,7 @@ SELECT view_insert_log_0111551111 (
                'details',
                6,
                777,
-               'sm-col-4',
+               'col-md-4',
                1,
                44,
                'entry_view',

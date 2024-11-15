@@ -12,7 +12,8 @@
       "description": "simply show the word or triple name",
       "type_id": 8,
       "link_id": 1,
-      "position": 1
+      "position": 1,
+      "position_type": 1
     },
     {
       "id": 51,
@@ -20,7 +21,8 @@
       "description": "s sheet with words, number and formulas",
       "type_id": 35,
       "link_id": 2,
-      "position": 2
+      "position": 2,
+      "position_type": 1
     }
   ]
 }

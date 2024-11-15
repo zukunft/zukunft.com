@@ -39,7 +39,7 @@ class view_styles
 
     // just to display a fixed text
     const SM_COL_4_COM = 'use 1/3 of the width';
-    const SM_COL_4 = 'sm-col-4';
+    const SM_COL_4 = 'col-md-4';
 
     // list of the styles used for unit testing
     const TEST_TYPES = array(

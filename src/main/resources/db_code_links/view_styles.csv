@@ -1,2 +1,3 @@
 view_style_id, view_style_name, description, code_id
-1, 'sm-col-4', 'use 1/3 of the width', 'sm-col-4'
+1, 'col-md-4', 'use 1/3 of the width', 'col-md-4'
+2, 'col-md-8', 'use 2/3 of the width', 'col-md-8'

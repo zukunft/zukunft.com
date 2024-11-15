@@ -43,6 +43,7 @@ use shared\api;
 use api\word\word as word_api;
 use html\sheet;
 use html\user\user_message;
+use shared\json_fields;
 use shared\types\component_type;
 use cfg\db\sql_db;
 use cfg\word;
@@ -78,6 +79,11 @@ class component extends sandbox_typed
     public ?phrase_dsp $phr_row = null;     // the main phrase to select the table rows
     public ?phrase_dsp $phr_col = null;     // the phrase to select the main table columns
     public ?phrase_dsp $wrd_col2 = null;    // the phrase to select the sub table columns
+
+    // vars from the link
+    // TODO move these vars to the frontend component link object
+    public int $pos_type_id = 0;
+    public ?int $style_id = null;
 
     /*
      * display
@@ -529,6 +535,16 @@ class component extends sandbox_typed
         } else {
             $this->link_id = 0;
         }
+        if (array_key_exists(json_fields::POS_TYPE, $json_array)) {
+            $this->pos_type_id = $json_array[json_fields::POS_TYPE];
+        } else {
+            $this->pos_type_id = 0;
+        }
+        if (array_key_exists(json_fields::STYLE, $json_array)) {
+            $this->style_id = $json_array[json_fields::STYLE];
+        } else {
+            $this->style_id = null;
+        }
         return $usr_msg;
     }
 
@@ -547,6 +563,12 @@ class component extends sandbox_typed
         $vars[api::FLD_CODE_ID] = $this->code_id;
         $vars[api::FLD_POSITION] = $this->position;
         $vars[api::FLD_LINK_ID] = $this->link_id;
+        if ($this->pos_type_id != 0) {
+            $vars[json_fields::POS_TYPE] = $this->pos_type_id;
+        }
+        if ($this->style_id != 0) {
+            $vars[json_fields::STYLE] = $this->style_id;
+        }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

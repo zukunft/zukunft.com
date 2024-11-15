@@ -428,11 +428,11 @@ class type_list
                         $result = $this->name_hash[$code_id];
                     } else {
                         $result = self::CODE_ID_NOT_FOUND;
-                        log_debug('Type id not found for name "' . $code_id . '" in ' . $lib->dsp_array_keys($this->name_hash));
+                        log_err('Type id not found for name "' . $code_id . '" in ' . $lib->dsp_array_keys($this->name_hash));
                     }
                 } else {
                     $result = self::CODE_ID_NOT_FOUND;
-                    log_debug('Type id not found for "' . $code_id . '" in ' . $lib->dsp_array_keys($this->hash));
+                    log_warning('Type id not found for "' . $code_id . '" in ' . $lib->dsp_array_keys($this->hash));
                 }
             }
         } else {
@@ -500,7 +500,7 @@ class type_list
     /**
      * TODO to rename to get and rename get to get_by_id
      */
-    function get_by_code_id(string $code_id): type_object
+    function get_by_code_id(string $code_id): ?type_object
     {
         return $this->get($this->id($code_id));
     }

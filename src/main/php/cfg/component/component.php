@@ -1001,7 +1001,7 @@ class component extends sandbox_typed
     // link a view component to a view
     function link($dsp, $order_nbr): string
     {
-        global $position_types;
+        global $position_type_cache;
 
         log_debug($this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
 
@@ -1010,7 +1010,7 @@ class component extends sandbox_typed
         $dsp_lnk->set_view($dsp);
         $dsp_lnk->set_component($this);
         $dsp_lnk->order_nbr = $order_nbr;
-        $dsp_lnk->pos_type_id = $position_types->id(position_type::BELOW);
+        $dsp_lnk->set_pos_type(position_type::BELOW);
         return $dsp_lnk->save()->get_last_message();
     }
 

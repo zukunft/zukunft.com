@@ -32,24 +32,28 @@
 
 namespace api\view;
 
+include_once SHARED_PATH . 'json_fields.php';
+
 use api\sandbox\sandbox as sandbox_api;
 use api\view\view as view_api;
 use api\component\component as component_api;
+use shared\json_fields;
 use JsonSerializable;
 
 class component_link extends sandbox_api implements JsonSerializable
 {
-    const FLD_LINK_ID = 'link_id';
-    const FLD_POS = 'position';
 
     /*
      * object vars
      */
 
     // the triple components
+    // TODO api object vars can be public!
     private view_api $msk;
     private component_api $cmp;
     private int $pos;
+    private int $pos_type;
+    private ?int $style;
 
 
     /*
@@ -62,6 +66,8 @@ class component_link extends sandbox_api implements JsonSerializable
         $this->msk = new view_api();
         $this->cmp = new component_api();
         $this->pos = 0;
+        $this->pos_type = 0;
+        $this->style = 0;
     }
 
 
@@ -97,6 +103,16 @@ class component_link extends sandbox_api implements JsonSerializable
         $this->pos = $pos;
     }
 
+    function set_pos_type(int $pos_type): void
+    {
+        $this->pos_type = $pos_type;
+    }
+
+    function set_style(int $style): void
+    {
+        $this->style = $style;
+    }
+
     function view(): view_api
     {
         return $this->msk;
@@ -110,6 +126,16 @@ class component_link extends sandbox_api implements JsonSerializable
     function pos(): int
     {
         return $this->pos;
+    }
+
+    function pos_type(): int
+    {
+        return $this->pos_type;
+    }
+
+    function style(): int
+    {
+        return $this->style;
     }
 
 
@@ -132,8 +158,12 @@ class component_link extends sandbox_api implements JsonSerializable
     {
         $vars = parent::jsonSerialize();
         $vars = array_merge($vars, get_object_vars($this->component()));
-        $vars[self::FLD_LINK_ID] = $this->id();
-        $vars[self::FLD_POS] = $this->pos();
+        $vars[json_fields::LINK_ID] = $this->id();
+        $vars[json_fields::POS] = $this->pos();
+        $vars[json_fields::POS_TYPE] = $this->pos_type();
+        if ($this->style() != 0) {
+            $vars[json_fields::STYLE] = $this->style();
+        }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

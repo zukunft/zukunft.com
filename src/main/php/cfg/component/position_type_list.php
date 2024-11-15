@@ -39,7 +39,7 @@ use test\create_test_objects;
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_COMPONENT_PATH . 'position_type.php';
 
-global $position_types;
+global $position_type_cache;
 
 class position_type_list extends type_list
 {

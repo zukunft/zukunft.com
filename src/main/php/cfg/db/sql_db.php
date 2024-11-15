@@ -986,7 +986,7 @@ class sql_db
         global $view_link_types;
         global $component_types;
         global $component_link_types;
-        global $position_types;
+        global $position_type_cache;
         global $ref_types;
         global $source_types;
         global $share_types;
@@ -1014,7 +1014,7 @@ class sql_db
         $component_types = new component_type_list();
         // not yet needed?
         //$component_link_types = new component_link_type_list();
-        $position_types = new position_type_list();
+        $position_type_cache = new position_type_list();
         $ref_types = new ref_type_list();
         $source_types = new source_type_list();
         $share_types = new share_type_list();

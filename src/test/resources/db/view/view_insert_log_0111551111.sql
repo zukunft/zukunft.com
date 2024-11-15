@@ -88,7 +88,7 @@ SELECT view_insert_log_0111551111 (
                'details'::text,
                6::smallint,
                777::smallint,
-               'sm-col-4'::text,
+               'col-md-4'::text,
                1::smallint,
                44::smallint,
                'entry_view'::text,

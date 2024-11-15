@@ -4445,7 +4445,7 @@ CREATE TABLE IF NOT EXISTS component_links
     user_id                bigint            DEFAULT NULL,
     order_nbr              bigint   NOT NULL DEFAULT 1,
     component_link_type_id smallint NOT NULL DEFAULT 1,
-    position_type_id       smallint NOT NULL DEFAULT 2,
+    position_type_id       smallint NOT NULL DEFAULT 1,
     view_style_id          smallint          DEFAULT NULL,
     excluded               smallint          DEFAULT NULL,
     share_type_id          smallint          DEFAULT NULL,

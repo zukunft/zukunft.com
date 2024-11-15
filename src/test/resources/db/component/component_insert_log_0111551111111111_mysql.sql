@@ -120,7 +120,7 @@ SELECT component_insert_log_0111551111111111 (
                'text',
                2,
                779,
-               'sm-col-4',
+               'col-md-4',
                1,
                63,
                'form_title',

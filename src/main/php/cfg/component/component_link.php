@@ -129,7 +129,7 @@ class component_link extends sandbox_link
     const FLD_LST_MUST_BUT_STD_ONLY = array(
         [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQL_TYP, sql_field_default::ONE, '', '', ''],
         [component_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::ONE, sql::INDEX, component_link_type::class, ''],
-        [position_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::TWO, sql::INDEX, position_type::class, self::FLD_POS_COM],
+        [position_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::ONE, sql::INDEX, position_type::class, self::FLD_POS_COM],
         [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
     );
     // list of fields that CAN be CHANGEd by the user
@@ -154,10 +154,7 @@ class component_link extends sandbox_link
     public ?int $order_nbr = null;
 
     // defines the position of the view component relative to the previous item (1 = below, 2= side, )
-    public ?int $pos_type_id = null;
-
-    // the position type in the linked view
-    public ?string $style_id = null;
+    private ?type_object $pos_type = null;
 
     // the default display style for this component which can be overwritten by the link
     private ?type_object $style = null;
@@ -227,7 +224,7 @@ class component_link extends sandbox_link
             $this->set_component(new component($this->user()));
             $this->component()->set_id($db_row[component::FLD_ID]);
             $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
-            $this->pos_type_id = $db_row[self::FLD_POS_TYPE];
+            $this->set_pos_type_by_id($db_row[self::FLD_POS_TYPE]);
             $this->set_style_by_id($db_row[self::FLD_STYLE]);
         }
         return $result;
@@ -297,13 +294,49 @@ class component_link extends sandbox_link
     /**
      * set the position type for the component in the linked view
      *
-     * @param string $type_code_id the code id that should be added to this view component link
+     * @param string $code_id the code id that should be added to this view component link
      * @return void
      */
-    function set_pos_type(string $type_code_id): void
+    function set_pos_type(string $code_id): void
     {
-        global $position_types;
-        $this->pos_type_id = $position_types->id($type_code_id);
+        global $position_type_cache;
+        if ($code_id == null) {
+            $this->pos_type = null;
+        } else {
+            $this->pos_type = $position_type_cache->get_by_code_id($code_id);
+        }
+    }
+
+    /**
+     * set the position type for the component in the linked view by the database id
+     *
+     * @param int|null $pos_type_id the database id of the position type
+     * @return void
+     */
+    function set_pos_type_by_id(?int $pos_type_id): void
+    {
+        global $position_type_cache;
+        if ($pos_type_id == null) {
+            $this->pos_type = null;
+        } else {
+            $this->pos_type = $position_type_cache->get($pos_type_id);
+        }
+    }
+
+    /**
+     * @return int|null the database id of the component position type
+     */
+    function pos_type_id(): ?int
+    {
+        return $this->pos_type->id();
+    }
+
+    /**
+     * @return type_object the position type for the component in the linked view by the database id
+     */
+    function pos_type(): type_object
+    {
+        return $this->pos_type;
     }
 
     /**
@@ -336,6 +369,22 @@ class component_link extends sandbox_link
             $this->style = null;
         } else {
             $this->style = $view_style_cache->get($style_id);
+        }
+    }
+
+    /**
+     * @return type_object|null the view style or null
+     */
+    function style(): ?type_object
+    {
+        if ($this->style == null) {
+            if ($this->component()->style() == null) {
+                return $this->view()->style();
+            } else {
+                return $this->component()->style();
+            }
+        } else {
+            return $this->style;
         }
     }
 
@@ -403,15 +452,6 @@ class component_link extends sandbox_link
         return $component_link_types->name($this->predicate_id);
     }
 
-    /**
-     * @return string the name of the preloaded view component position type
-     */
-    private function pos_type_name(): string
-    {
-        global $position_types;
-        return $position_types->name($this->pos_type_id);
-    }
-
 
     /*
      * cast
@@ -427,8 +467,11 @@ class component_link extends sandbox_link
             $api_obj->set_component($this->tob()->api_obj());
         }
         $api_obj->set_pos($this->order_nbr);
-
         //$api_obj->set_type_id($this->type_id());
+        $api_obj->set_pos_type($this->pos_type_id());
+        if ($this->style != null) {
+            $api_obj->set_style($this->style_id());
+        }
     }
 
     /**
@@ -1064,7 +1107,7 @@ class component_link extends sandbox_link
                 $sbx->pos()
             );
         }
-        if ($sbx->pos_type_id <> $this->pos_type_id) {
+        if ($sbx->pos_type_id() <> $this->pos_type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_POS_TYPE,
@@ -1072,13 +1115,13 @@ class component_link extends sandbox_link
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $position_types;
+            global $position_type_cache;
             $lst->add_type_field(
                 self::FLD_POS_TYPE,
                 self::FLD_POS_TYPE_NAME,
-                $this->pos_type_id,
-                $sbx->pos_type_id,
-                $position_types
+                $this->pos_type_id(),
+                $sbx->pos_type_id(),
+                $position_type_cache
             );
         }
         if ($sbx->style_id() <> $this->style_id()) {

@@ -54,15 +54,16 @@ class html_base
     const BS_BTN_SUCCESS = 'btn-outline-success';
     const BS_BTN_CANCEL = 'btn-outline-secondary';
     const BS_BTN_DEL = 'btn-outline-secondary';
+    // TODO easy move to view_style table
     const BS_SM_2 = 'mr-sm-2';
-    const COL_SM_2 = 'col-sm-2';
-    const COL_SM_4 = 'col-sm-4';
-    const COL_SM_5 = 'col-sm-5';
-    const COL_SM_6 = 'col-sm-6';
-    const COL_SM_7 = 'col-sm-7';
-    const COL_SM_8 = 'col-sm-8';
-    const COL_SM_10 = 'col-sm-10';
-    const COL_SM_12 = 'col-sm-12';
+    const COL_SM_2 = 'col-md-2';
+    const COL_SM_4 = 'col-md-4';
+    const COL_SM_5 = 'col-md-5';
+    const COL_SM_6 = 'col-md-6';
+    const COL_SM_7 = 'col-md-7';
+    const COL_SM_8 = 'col-md-8';
+    const COL_SM_10 = 'col-md-10';
+    const COL_SM_12 = 'col-md-12';
 
     // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
     const UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
@@ -1343,7 +1344,7 @@ class html_base
      */
     function row_start(): string
     {
-        return '<div class="row col-sm-12">';
+        return '<div class="row col-md-12">';
     }
 
     /**

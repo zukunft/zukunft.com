@@ -653,10 +653,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_component_pos_types(): void
     {
-        global $position_types;
+        global $position_type_cache;
 
-        $position_types = new position_type_list();
-        $position_types->load_dummy();
+        $position_type_cache = new position_type_list();
+        $position_type_cache->load_dummy();
 
     }
 

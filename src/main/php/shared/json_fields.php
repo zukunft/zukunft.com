@@ -39,7 +39,16 @@ class json_fields
 
     // TODO easy move all fields used for the json im- and export messages to this object
 
+    // the database id e.g. of a component_link
+    const LINK_ID = 'link_id';
+
     // the code id of the view style of a view, component or component_link
     const STYLE = 'style';
+
+    // e.g. the order of the components within a view
+    const POS = 'position';
+
+    // the position rules for a component relative to the previous component
+    const POS_TYPE = 'position_type';
 
 }

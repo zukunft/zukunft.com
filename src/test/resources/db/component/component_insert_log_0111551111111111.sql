@@ -124,7 +124,7 @@ SELECT component_insert_log_0111551111111111 (
                'text'::text,
                2::smallint,
                779::smallint,
-               'sm-col-4'::text,
+               'col-md-4'::text,
                1::smallint,
                63::smallint,
                'form_title'::text,

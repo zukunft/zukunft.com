@@ -136,8 +136,8 @@ class db_cl
 
     function component_pos_type_id(string $code_id): int
     {
-        global $position_types;
-        return $position_types->id($code_id);
+        global $position_type_cache;
+        return $position_type_cache->id($code_id);
     }
 
     function ref_type_id(string $code_id): int
@@ -256,8 +256,8 @@ class db_cl
 
     function component_pos_type(int $id)
     {
-        global $position_types;
-        return $position_types->get_by_id($id);
+        global $position_type_cache;
+        return $position_type_cache->get_by_id($id);
     }
 
     function share_type(int $id)
@@ -382,8 +382,8 @@ class db_cl
 
     function component_pos_type_name(int $id): string
     {
-        global $position_types;
-        return $position_types->name($id);
+        global $position_type_cache;
+        return $position_type_cache->name($id);
     }
 
     function ref_type_name(int $id): string
