@@ -41,6 +41,7 @@ include_once TYPES_PATH . 'view_style_list.php';
 include_once SHARED_PATH . 'views.php';
 
 use html\button;
+use html\system\messages;
 use shared\api;
 use api\word\word as word_api;
 use html\sheet;
@@ -76,6 +77,9 @@ class component extends sandbox_typed
     public ?string $code_id = null;         // the entry type code id
     public ?int $position = 0;              // for the frontend the position of the link is included in the component object
     public ?int $link_id = 0;               // ??
+
+    // the code_id for the message that should be shown to the user and that should be translated to the frontend language
+    public ?string $ui_msg_code_id = null;
 
     // mainly for table components
     public ?phrase_dsp $phr_row = null;     // the main phrase to select the table rows
@@ -286,7 +290,13 @@ class component extends sandbox_typed
     function form_tile(string $form_name): string
     {
         $html = new html_base();
-        return $html->form_start($form_name);
+        $ui_msg = new messages();
+        $result = '';
+        if ($this->ui_msg_code_id != null) {
+            $result .= $html->text_h2($ui_msg->txt($this->ui_msg_code_id));
+        }
+        $result .= $html->form_start($form_name);
+        return $result;
     }
 
     /**
@@ -531,9 +541,9 @@ class component extends sandbox_typed
 
 
 
-/*
- * set and get
- */
+    /*
+     * set and get
+     */
 
     /**
      * set the vars this component bases on the api json array
@@ -544,10 +554,15 @@ class component extends sandbox_typed
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_CODE_ID, $json_array)) {
+        if (array_key_exists(json_fields::CODE_ID, $json_array)) {
             $this->code_id = $json_array[api::FLD_CODE_ID];
         } else {
             $this->code_id = null;
+        }
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID, $json_array)) {
+            $this->ui_msg_code_id = $json_array[json_fields::UI_MSG_CODE_ID];
+        } else {
+            $this->ui_msg_code_id = null;
         }
         if (array_key_exists(api::FLD_POSITION, $json_array)) {
             $this->position = $json_array[api::FLD_POSITION];
@@ -584,7 +599,8 @@ class component extends sandbox_typed
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_CODE_ID] = $this->code_id;
+        $vars[json_fields::CODE_ID] = $this->code_id;
+        $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
         $vars[api::FLD_POSITION] = $this->position;
         $vars[api::FLD_LINK_ID] = $this->link_id;
         if ($this->pos_type_id != 0) {

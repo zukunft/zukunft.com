@@ -50,7 +50,7 @@ class html_base
 
     // bootstrap const used in zukunft.com
     const BS_FORM = 'form-control';
-    const BS_BTN = 'btn btn-space';
+    const BS_BTN = 'btn btn-space col-1';
     const BS_BTN_SUCCESS = 'btn-outline-success';
     const BS_BTN_CANCEL = 'btn-outline-secondary';
     const BS_BTN_DEL = 'btn-outline-secondary';
@@ -1352,7 +1352,7 @@ class html_base
      */
     function row_right(): string
     {
-        return '<div class="text-right">';
+        return '<div class="row col-md-12 justify-content-end">';
     }
 
     /**

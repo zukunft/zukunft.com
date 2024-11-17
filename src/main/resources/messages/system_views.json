@@ -411,14 +411,22 @@
         },
         {
           "position": "9",
-          "name": "system form button cancel"
+          "name": "system formatter row right"
         },
         {
           "position": "10",
-          "name": "system form button save"
+          "name": "system form button cancel"
         },
         {
           "position": "11",
+          "name": "system form button save"
+        },
+        {
+          "position": "12",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "13",
           "name": "system form end"
         }
       ]

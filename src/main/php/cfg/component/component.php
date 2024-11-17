@@ -79,6 +79,7 @@ use cfg\type_object;
 use cfg\user;
 use cfg\user_message;
 use cfg\word;
+use shared\json_fields;
 
 class component extends sandbox_typed
 {
@@ -576,6 +577,7 @@ class component extends sandbox_typed
         } else {
             parent::fill_api_obj($api_obj);
             $api_obj->code_id = $this->code_id;
+            $api_obj->ui_msg_code_id = $this->ui_msg_code_id;
         }
         return $api_obj;
     }
@@ -593,6 +595,9 @@ class component extends sandbox_typed
             // TODO the code id might be not be mapped because this can nover be changed by the user
             if ($key == api::FLD_CODE_ID) {
                 $this->code_id = $value;
+            }
+            if ($key == json_fields::UI_MSG_CODE_ID) {
+                $this->ui_msg_code_id = $value;
             }
         }
 
@@ -904,8 +909,12 @@ class component extends sandbox_typed
         if ($this->type_name() <> '') {
             $result->type = $this->type_name();
         }
-        $result->code_id = $this->code_id;
-        $result->ui_msg_code_id = $this->ui_msg_code_id;
+        if ($this->code_id != null) {
+            $result->code_id = $this->code_id;
+        }
+        if ($this->ui_msg_code_id != null) {
+            $result->ui_msg_code_id = $this->ui_msg_code_id;
+        }
         if (isset($this->row_phrase)) {
             $result->row = $this->row_phrase->name();
         }

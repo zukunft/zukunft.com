@@ -6545,6 +6545,7 @@
             "description": "show the language specific title for the system form to add a new word",
             "type_id": 17,
             "code_id": "form_title_word_add",
+            "ui_msg_code_id": "form_title_word_add",
             "link_id": 3,
             "position": 1,
             "position_type": 1
@@ -6575,6 +6576,7 @@
             "description": "the name field in a form",
             "type_id": 21,
             "code_id": "form_field_name",
+            "ui_msg_code_id": "form_field_name",
             "link_id": 6,
             "position": 4,
             "position_type": 1,
@@ -6586,6 +6588,7 @@
             "description": "selector for the phrase type",
             "type_id": 25,
             "code_id": "form_field_phrase_type",
+            "ui_msg_code_id": "form_select_phrase",
             "link_id": 7,
             "position": 5,
             "position_type": 2
@@ -6596,6 +6599,7 @@
             "description": "the description field in a form",
             "type_id": 22,
             "code_id": "form_field_description",
+            "ui_msg_code_id": "form_field_description",
             "link_id": 8,
             "position": 6,
             "position_type": 1
@@ -6606,6 +6610,7 @@
             "description": "selector for the share type",
             "type_id": 26,
             "code_id": "form_field_share_type",
+            "ui_msg_code_id": "form_select_share",
             "link_id": 9,
             "position": 7,
             "position_type": 1
@@ -6616,9 +6621,19 @@
             "description": "selector for the protection type",
             "type_id": 27,
             "code_id": "form_field_protection_type",
+            "ui_msg_code_id": "form_select_protection",
             "link_id": 10,
             "position": 8,
             "position_type": 2
+          },
+          {
+            "id": 49,
+            "name": "system formatter row right",
+            "type_id": 33,
+            "code_id": "row_right",
+            "link_id": 11,
+            "position": 9,
+            "position_type": 1
           },
           {
             "id": 44,
@@ -6626,8 +6641,9 @@
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
             "code_id": "form_cancel_button",
-            "link_id": 11,
-            "position": 9,
+            "ui_msg_code_id": "form_button_cancel",
+            "link_id": 12,
+            "position": 10,
             "position_type": 1
           },
           {
@@ -6636,8 +6652,18 @@
             "description": "button to save the form field into the database",
             "type_id": 29,
             "code_id": "form_button_save",
-            "link_id": 12,
-            "position": 10,
+            "ui_msg_code_id": "form_button_save",
+            "link_id": 13,
+            "position": 11,
+            "position_type": 1
+          },
+          {
+            "id": 50,
+            "name": "system formatter row end",
+            "type_id": 34,
+            "code_id": "row_end",
+            "link_id": 14,
+            "position": 12,
             "position_type": 1
           },
           {
@@ -6645,8 +6671,8 @@
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
-            "link_id": 13,
-            "position": 11,
+            "link_id": 15,
+            "position": 13,
             "position_type": 1
           }
         ]
@@ -6665,7 +6691,8 @@
             "description": "show the language specific title for the system form to change a word",
             "type_id": 17,
             "code_id": "form_title_word_edit",
-            "link_id": 14,
+            "ui_msg_code_id": "form_title_word_edit",
+            "link_id": 16,
             "position": 1,
             "position_type": 1
           },
@@ -6675,7 +6702,7 @@
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
             "code_id": "form_back_stack",
-            "link_id": 15,
+            "link_id": 17,
             "position": 2,
             "position_type": 1
           },
@@ -6685,7 +6712,7 @@
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
             "code_id": "form_confirm_status",
-            "link_id": 16,
+            "link_id": 18,
             "position": 3,
             "position_type": 1
           },
@@ -6695,7 +6722,8 @@
             "description": "the name field in a form",
             "type_id": 21,
             "code_id": "form_field_name",
-            "link_id": 17,
+            "ui_msg_code_id": "form_field_name",
+            "link_id": 19,
             "position": 4,
             "position_type": 1,
             "style": 2
@@ -6706,7 +6734,8 @@
             "description": "selector for the phrase type",
             "type_id": 25,
             "code_id": "form_field_phrase_type",
-            "link_id": 18,
+            "ui_msg_code_id": "form_select_phrase",
+            "link_id": 20,
             "position": 5,
             "position_type": 2
           },
@@ -6716,7 +6745,8 @@
             "description": "the description field in a form",
             "type_id": 22,
             "code_id": "form_field_description",
-            "link_id": 19,
+            "ui_msg_code_id": "form_field_description",
+            "link_id": 21,
             "position": 6,
             "position_type": 1
           },
@@ -6726,7 +6756,8 @@
             "description": "selector for the share type",
             "type_id": 26,
             "code_id": "form_field_share_type",
-            "link_id": 20,
+            "ui_msg_code_id": "form_select_share",
+            "link_id": 22,
             "position": 7,
             "position_type": 1
           },
@@ -6736,7 +6767,8 @@
             "description": "selector for the protection type",
             "type_id": 27,
             "code_id": "form_field_protection_type",
-            "link_id": 21,
+            "ui_msg_code_id": "form_select_protection",
+            "link_id": 23,
             "position": 8,
             "position_type": 2
           },
@@ -6746,7 +6778,8 @@
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
             "code_id": "form_cancel_button",
-            "link_id": 22,
+            "ui_msg_code_id": "form_button_cancel",
+            "link_id": 24,
             "position": 9,
             "position_type": 1
           },
@@ -6756,7 +6789,8 @@
             "description": "button to save the form field into the database",
             "type_id": 29,
             "code_id": "form_button_save",
-            "link_id": 23,
+            "ui_msg_code_id": "form_button_save",
+            "link_id": 25,
             "position": 10,
             "position_type": 1
           },
@@ -6765,7 +6799,7 @@
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
-            "link_id": 24,
+            "link_id": 26,
             "position": 11,
             "position_type": 1
           }
@@ -6785,7 +6819,8 @@
             "description": "show the language specific title for the system form to delete or exclude a word",
             "type_id": 17,
             "code_id": "form_title_word_del",
-            "link_id": 25,
+            "ui_msg_code_id": "form_title_word_del",
+            "link_id": 27,
             "position": 1,
             "position_type": 1
           },
@@ -6795,7 +6830,7 @@
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
             "code_id": "form_back_stack",
-            "link_id": 26,
+            "link_id": 28,
             "position": 2,
             "position_type": 1
           },
@@ -6805,7 +6840,7 @@
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
             "code_id": "form_confirm_status",
-            "link_id": 27,
+            "link_id": 29,
             "position": 3,
             "position_type": 1
           },
@@ -6815,7 +6850,7 @@
             "description": "the object name as read only",
             "type_id": 20,
             "code_id": "show_field_name",
-            "link_id": 28,
+            "link_id": 30,
             "position": 4,
             "position_type": 1
           },
@@ -6825,7 +6860,8 @@
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
             "code_id": "form_cancel_button",
-            "link_id": 29,
+            "ui_msg_code_id": "form_button_cancel",
+            "link_id": 31,
             "position": 5,
             "position_type": 1
           },
@@ -6835,7 +6871,8 @@
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
             "code_id": "form_button_del",
-            "link_id": 30,
+            "ui_msg_code_id": "form_button_del",
+            "link_id": 32,
             "position": 6,
             "position_type": 1
           },
@@ -6844,7 +6881,7 @@
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
-            "link_id": 31,
+            "link_id": 33,
             "position": 7,
             "position_type": 1
           }
@@ -6864,7 +6901,8 @@
             "description": "show the language specific title for the system form to add a new verb",
             "type_id": 17,
             "code_id": "form_title_verb_add",
-            "link_id": 32,
+            "ui_msg_code_id": "form_title_verb_add",
+            "link_id": 34,
             "position": 1,
             "position_type": 1
           },
@@ -6874,7 +6912,7 @@
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
             "code_id": "form_back_stack",
-            "link_id": 33,
+            "link_id": 35,
             "position": 2,
             "position_type": 1
           },
@@ -6884,7 +6922,7 @@
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
             "code_id": "form_confirm_status",
-            "link_id": 34,
+            "link_id": 36,
             "position": 3,
             "position_type": 1
           },
@@ -6894,7 +6932,8 @@
             "description": "the name field in a form",
             "type_id": 21,
             "code_id": "form_field_name",
-            "link_id": 35,
+            "ui_msg_code_id": "form_field_name",
+            "link_id": 37,
             "position": 4,
             "position_type": 1
           },
@@ -6904,7 +6943,8 @@
             "description": "the description field in a form",
             "type_id": 22,
             "code_id": "form_field_description",
-            "link_id": 36,
+            "ui_msg_code_id": "form_field_description",
+            "link_id": 38,
             "position": 5,
             "position_type": 1
           },
@@ -6914,7 +6954,8 @@
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
             "code_id": "form_cancel_button",
-            "link_id": 37,
+            "ui_msg_code_id": "form_button_cancel",
+            "link_id": 39,
             "position": 6,
             "position_type": 1
           },
@@ -6924,7 +6965,8 @@
             "description": "button to save the form field into the database",
             "type_id": 29,
             "code_id": "form_button_save",
-            "link_id": 38,
+            "ui_msg_code_id": "form_button_save",
+            "link_id": 40,
             "position": 7,
             "position_type": 1
           },
@@ -6933,7 +6975,7 @@
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
-            "link_id": 39,
+            "link_id": 41,
             "position": 8,
             "position_type": 1
           }
@@ -6953,7 +6995,8 @@
             "description": "show the language specific title for the system form to change a verb",
             "type_id": 17,
             "code_id": "form_title_verb_edit",
-            "link_id": 40,
+            "ui_msg_code_id": "form_title_verb_edit",
+            "link_id": 42,
             "position": 1,
             "position_type": 1
           },
@@ -6963,7 +7006,7 @@
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
             "code_id": "form_back_stack",
-            "link_id": 41,
+            "link_id": 43,
             "position": 2,
             "position_type": 1
           },
@@ -6973,7 +7016,7 @@
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
             "code_id": "form_confirm_status",
-            "link_id": 42,
+            "link_id": 44,
             "position": 3,
             "position_type": 1
           },
@@ -6983,7 +7026,8 @@
             "description": "the name field in a form",
             "type_id": 21,
             "code_id": "form_field_name",
-            "link_id": 43,
+            "ui_msg_code_id": "form_field_name",
+            "link_id": 45,
             "position": 4,
             "position_type": 1
           },
@@ -6993,7 +7037,8 @@
             "description": "the description field in a form",
             "type_id": 22,
             "code_id": "form_field_description",
-            "link_id": 44,
+            "ui_msg_code_id": "form_field_description",
+            "link_id": 46,
             "position": 5,
             "position_type": 1
           },
@@ -7003,7 +7048,8 @@
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
             "code_id": "form_cancel_button",
-            "link_id": 45,
+            "ui_msg_code_id": "form_button_cancel",
+            "link_id": 47,
             "position": 6,
             "position_type": 1
           },
@@ -7013,7 +7059,8 @@
             "description": "button to save the form field into the database",
             "type_id": 29,
             "code_id": "form_button_save",
-            "link_id": 46,
+            "ui_msg_code_id": "form_button_save",
+            "link_id": 48,
             "position": 7,
             "position_type": 1
           },
@@ -7022,7 +7069,7 @@
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
-            "link_id": 47,
+            "link_id": 49,
             "position": 8,
             "position_type": 1
           }
@@ -7042,7 +7089,8 @@
             "description": "show the language specific title for the system form to delete or exclude a verb",
             "type_id": 17,
             "code_id": "form_title_verb_del",
-            "link_id": 48,
+            "ui_msg_code_id": "form_title_verb_del",
+            "link_id": 50,
             "position": 1,
             "position_type": 1
           },
@@ -7052,7 +7100,7 @@
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
             "code_id": "form_back_stack",
-            "link_id": 49,
+            "link_id": 51,
             "position": 2,
             "position_type": 1
           },
@@ -7062,7 +7110,7 @@
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
             "code_id": "form_confirm_status",
-            "link_id": 50,
+            "link_id": 52,
             "position": 3,
             "position_type": 1
           },
@@ -7072,7 +7120,7 @@
             "description": "the object name as read only",
             "type_id": 20,
             "code_id": "show_field_name",
-            "link_id": 51,
+            "link_id": 53,
             "position": 4,
             "position_type": 1
           },
@@ -7082,7 +7130,8 @@
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
             "code_id": "form_cancel_button",
-            "link_id": 52,
+            "ui_msg_code_id": "form_button_cancel",
+            "link_id": 54,
             "position": 5,
             "position_type": 1
           },
@@ -7092,7 +7141,8 @@
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
             "code_id": "form_button_del",
-            "link_id": 53,
+            "ui_msg_code_id": "form_button_del",
+            "link_id": 55,
             "position": 6,
             "position_type": 1
           },
@@ -7101,7 +7151,7 @@
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
-            "link_id": 54,
+            "link_id": 56,
             "position": 7,
             "position_type": 1
           }
@@ -7121,7 +7171,8 @@
             "description": "show the language specific title for the system form to add a new triple",
             "type_id": 17,
             "code_id": "form_title_triple_add",
-            "link_id": 55,
+            "ui_msg_code_id": "form_title_triple_add",
+            "link_id": 57,
             "position": 1,
             "position_type": 1
           },
@@ -7131,7 +7182,7 @@
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
             "code_id": "form_back_stack",
-            "link_id": 56,
+            "link_id": 58,
             "position": 2,
             "position_type": 1
           },
@@ -7141,7 +7192,7 @@
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
             "code_id": "form_confirm_status",
-            "link_id": 57,
+            "link_id": 59,
             "position": 3,
             "position_type": 1
           },
@@ -7151,7 +7202,8 @@
             "description": "the name field in a form",
             "type_id": 21,
             "code_id": "form_field_name",
-            "link_id": 58,
+            "ui_msg_code_id": "form_field_name",
+            "link_id": 60,
             "position": 4,
             "position_type": 1,
             "style": 2
@@ -7162,7 +7214,8 @@
             "description": "selector for the phrase type",
             "type_id": 25,
             "code_id": "form_field_phrase_type",
-            "link_id": 59,
+            "ui_msg_code_id": "form_select_phrase",
+            "link_id": 61,
             "position": 5,
             "position_type": 2
           },
@@ -7172,7 +7225,8 @@
             "description": "the description field in a form",
             "type_id": 22,
             "code_id": "form_field_description",
-            "link_id": 60,
+            "ui_msg_code_id": "form_field_description",
+            "link_id": 62,
             "position": 6,
             "position_type": 1
           },
@@ -7182,7 +7236,8 @@
             "description": "selector for the from phrase of a triple",
             "type_id": 23,
             "code_id": "form_field_triple_phrase_from",
-            "link_id": 61,
+            "ui_msg_code_id": "form_triple_phrase_from",
+            "link_id": 63,
             "position": 7,
             "position_type": 1
           },
@@ -7192,7 +7247,8 @@
             "description": "selector for the verb of a triple",
             "type_id": 24,
             "code_id": "form_field_triple_verb",
-            "link_id": 62,
+            "ui_msg_code_id": "form_triple_verb",
+            "link_id": 64,
             "position": 8,
             "position_type": 2
           },
@@ -7202,7 +7258,8 @@
             "description": "selector for the to phrase of a triple",
             "type_id": 23,
             "code_id": "form_field_triple_phrase_to",
-            "link_id": 63,
+            "ui_msg_code_id": "form_triple_phrase_to",
+            "link_id": 65,
             "position": 9,
             "position_type": 2
           },
@@ -7212,7 +7269,8 @@
             "description": "selector for the share type",
             "type_id": 26,
             "code_id": "form_field_share_type",
-            "link_id": 64,
+            "ui_msg_code_id": "form_select_share",
+            "link_id": 66,
             "position": 10,
             "position_type": 1
           },
@@ -7222,7 +7280,8 @@
             "description": "selector for the protection type",
             "type_id": 27,
             "code_id": "form_field_protection_type",
-            "link_id": 65,
+            "ui_msg_code_id": "form_select_protection",
+            "link_id": 67,
             "position": 11,
             "position_type": 2
           },
@@ -7231,7 +7290,7 @@
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
-            "link_id": 66,
+            "link_id": 68,
             "position": 12,
             "position_type": 1
           },
@@ -7241,7 +7300,8 @@
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
             "code_id": "form_cancel_button",
-            "link_id": 67,
+            "ui_msg_code_id": "form_button_cancel",
+            "link_id": 69,
             "position": 13,
             "position_type": 1
           },
@@ -7251,7 +7311,8 @@
             "description": "button to save the form field into the database",
             "type_id": 29,
             "code_id": "form_button_save",
-            "link_id": 68,
+            "ui_msg_code_id": "form_button_save",
+            "link_id": 70,
             "position": 14,
             "position_type": 1
           },
@@ -7260,7 +7321,7 @@
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
-            "link_id": 69,
+            "link_id": 71,
             "position": 15,
             "position_type": 1
           },
@@ -7269,7 +7330,7 @@
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
-            "link_id": 70,
+            "link_id": 72,
             "position": 16,
             "position_type": 1
           }
@@ -7289,7 +7350,8 @@
             "description": "show the language specific title for the system form to add a new triple",
             "type_id": 17,
             "code_id": "form_title_triple_add",
-            "link_id": 71,
+            "ui_msg_code_id": "form_title_triple_add",
+            "link_id": 73,
             "position": 1,
             "position_type": 1
           },
@@ -7299,7 +7361,7 @@
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
             "code_id": "form_back_stack",
-            "link_id": 72,
+            "link_id": 74,
             "position": 2,
             "position_type": 1
           },
@@ -7309,7 +7371,7 @@
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
             "code_id": "form_confirm_status",
-            "link_id": 73,
+            "link_id": 75,
             "position": 3,
             "position_type": 1
           },
@@ -7319,7 +7381,8 @@
             "description": "the name field in a form",
             "type_id": 21,
             "code_id": "form_field_name",
-            "link_id": 74,
+            "ui_msg_code_id": "form_field_name",
+            "link_id": 76,
             "position": 4,
             "position_type": 1
           },
@@ -7329,7 +7392,8 @@
             "description": "the description field in a form",
             "type_id": 22,
             "code_id": "form_field_description",
-            "link_id": 75,
+            "ui_msg_code_id": "form_field_description",
+            "link_id": 77,
             "position": 5,
             "position_type": 1
           },
@@ -7338,7 +7402,7 @@
             "name": "system formatter row start",
             "type_id": 32,
             "code_id": "row_start",
-            "link_id": 76,
+            "link_id": 78,
             "position": 6,
             "position_type": 1
           },
@@ -7348,7 +7412,8 @@
             "description": "selector for the from phrase of a triple",
             "type_id": 23,
             "code_id": "form_field_triple_phrase_from",
-            "link_id": 77,
+            "ui_msg_code_id": "form_triple_phrase_from",
+            "link_id": 79,
             "position": 7,
             "position_type": 1
           },
@@ -7358,7 +7423,8 @@
             "description": "selector for the verb of a triple",
             "type_id": 24,
             "code_id": "form_field_triple_verb",
-            "link_id": 78,
+            "ui_msg_code_id": "form_triple_verb",
+            "link_id": 80,
             "position": 8,
             "position_type": 1
           },
@@ -7368,7 +7434,8 @@
             "description": "selector for the to phrase of a triple",
             "type_id": 23,
             "code_id": "form_field_triple_phrase_to",
-            "link_id": 79,
+            "ui_msg_code_id": "form_triple_phrase_to",
+            "link_id": 81,
             "position": 9,
             "position_type": 1
           },
@@ -7377,7 +7444,7 @@
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
-            "link_id": 80,
+            "link_id": 82,
             "position": 10,
             "position_type": 1
           },
@@ -7386,7 +7453,7 @@
             "name": "system formatter row start",
             "type_id": 32,
             "code_id": "row_start",
-            "link_id": 81,
+            "link_id": 83,
             "position": 11,
             "position_type": 1
           },
@@ -7396,7 +7463,8 @@
             "description": "selector for the share type",
             "type_id": 26,
             "code_id": "form_field_share_type",
-            "link_id": 82,
+            "ui_msg_code_id": "form_select_share",
+            "link_id": 84,
             "position": 12,
             "position_type": 1
           },
@@ -7406,7 +7474,8 @@
             "description": "selector for the protection type",
             "type_id": 27,
             "code_id": "form_field_protection_type",
-            "link_id": 83,
+            "ui_msg_code_id": "form_select_protection",
+            "link_id": 85,
             "position": 13,
             "position_type": 1
           },
@@ -7415,7 +7484,7 @@
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
-            "link_id": 84,
+            "link_id": 86,
             "position": 14,
             "position_type": 1
           },
@@ -7424,7 +7493,7 @@
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
-            "link_id": 85,
+            "link_id": 87,
             "position": 15,
             "position_type": 1
           },
@@ -7434,7 +7503,8 @@
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
             "code_id": "form_cancel_button",
-            "link_id": 86,
+            "ui_msg_code_id": "form_button_cancel",
+            "link_id": 88,
             "position": 16,
             "position_type": 1
           },
@@ -7444,7 +7514,8 @@
             "description": "button to save the form field into the database",
             "type_id": 29,
             "code_id": "form_button_save",
-            "link_id": 87,
+            "ui_msg_code_id": "form_button_save",
+            "link_id": 89,
             "position": 17,
             "position_type": 1
           },
@@ -7453,7 +7524,7 @@
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
-            "link_id": 88,
+            "link_id": 90,
             "position": 18,
             "position_type": 1
           },
@@ -7462,7 +7533,7 @@
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
-            "link_id": 89,
+            "link_id": 91,
             "position": 19,
             "position_type": 1
           }
@@ -7482,7 +7553,8 @@
             "description": "show the language specific title for the system form to delete or exclude a triple",
             "type_id": 17,
             "code_id": "form_title_triple_del",
-            "link_id": 90,
+            "ui_msg_code_id": "form_title_triple_del",
+            "link_id": 92,
             "position": 1,
             "position_type": 1
           },
@@ -7492,7 +7564,7 @@
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
             "code_id": "form_back_stack",
-            "link_id": 91,
+            "link_id": 93,
             "position": 2,
             "position_type": 1
           },
@@ -7502,7 +7574,7 @@
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
             "code_id": "form_confirm_status",
-            "link_id": 92,
+            "link_id": 94,
             "position": 3,
             "position_type": 1
           },
@@ -7512,7 +7584,7 @@
             "description": "the object name as read only",
             "type_id": 20,
             "code_id": "show_field_name",
-            "link_id": 93,
+            "link_id": 95,
             "position": 4,
             "position_type": 1
           },
@@ -7522,7 +7594,8 @@
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
             "code_id": "form_cancel_button",
-            "link_id": 94,
+            "ui_msg_code_id": "form_button_cancel",
+            "link_id": 96,
             "position": 5,
             "position_type": 1
           },
@@ -7532,7 +7605,8 @@
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
             "code_id": "form_button_del",
-            "link_id": 95,
+            "ui_msg_code_id": "form_button_del",
+            "link_id": 97,
             "position": 6,
             "position_type": 1
           },
@@ -7541,7 +7615,7 @@
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
-            "link_id": 96,
+            "link_id": 98,
             "position": 7,
             "position_type": 1
           }
@@ -7561,7 +7635,8 @@
             "description": "show the language specific title for the system form to add a new source",
             "type_id": 17,
             "code_id": "form_title_source_add",
-            "link_id": 97,
+            "ui_msg_code_id": "form_title_source_add",
+            "link_id": 99,
             "position": 1,
             "position_type": 1
           },
@@ -7571,7 +7646,7 @@
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
             "code_id": "form_back_stack",
-            "link_id": 98,
+            "link_id": 100,
             "position": 2,
             "position_type": 1
           },
@@ -7581,7 +7656,7 @@
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
             "code_id": "form_confirm_status",
-            "link_id": 99,
+            "link_id": 101,
             "position": 3,
             "position_type": 1
           },
@@ -7591,7 +7666,8 @@
             "description": "the name field in a form",
             "type_id": 21,
             "code_id": "form_field_name",
-            "link_id": 100,
+            "ui_msg_code_id": "form_field_name",
+            "link_id": 102,
             "position": 4,
             "position_type": 1
           },
@@ -7601,7 +7677,8 @@
             "description": "the description field in a form",
             "type_id": 22,
             "code_id": "form_field_description",
-            "link_id": 101,
+            "ui_msg_code_id": "form_field_description",
+            "link_id": 103,
             "position": 5,
             "position_type": 1
           },
@@ -7611,7 +7688,8 @@
             "description": "selector for the source type",
             "type_id": 39,
             "code_id": "form_field_source_type",
-            "link_id": 102,
+            "ui_msg_code_id": "form_select_source",
+            "link_id": 104,
             "position": 6,
             "position_type": 1
           },
@@ -7621,7 +7699,8 @@
             "description": "selector for the share type",
             "type_id": 26,
             "code_id": "form_field_share_type",
-            "link_id": 103,
+            "ui_msg_code_id": "form_select_share",
+            "link_id": 105,
             "position": 7,
             "position_type": 1
           },
@@ -7631,7 +7710,8 @@
             "description": "selector for the protection type",
             "type_id": 27,
             "code_id": "form_field_protection_type",
-            "link_id": 104,
+            "ui_msg_code_id": "form_select_protection",
+            "link_id": 106,
             "position": 8,
             "position_type": 1
           },
@@ -7641,7 +7721,8 @@
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
             "code_id": "form_cancel_button",
-            "link_id": 105,
+            "ui_msg_code_id": "form_button_cancel",
+            "link_id": 107,
             "position": 9,
             "position_type": 1
           },
@@ -7651,7 +7732,8 @@
             "description": "button to save the form field into the database",
             "type_id": 29,
             "code_id": "form_button_save",
-            "link_id": 106,
+            "ui_msg_code_id": "form_button_save",
+            "link_id": 108,
             "position": 10,
             "position_type": 1
           },
@@ -7660,7 +7742,7 @@
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
-            "link_id": 107,
+            "link_id": 109,
             "position": 11,
             "position_type": 1
           }
@@ -7680,7 +7762,8 @@
             "description": "show the language specific title for the system form to change a source",
             "type_id": 17,
             "code_id": "form_title_source_edit",
-            "link_id": 108,
+            "ui_msg_code_id": "form_title_source_edit",
+            "link_id": 110,
             "position": 1,
             "position_type": 1
           },
@@ -7690,7 +7773,7 @@
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
             "code_id": "form_back_stack",
-            "link_id": 109,
+            "link_id": 111,
             "position": 2,
             "position_type": 1
           },
@@ -7700,7 +7783,7 @@
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
             "code_id": "form_confirm_status",
-            "link_id": 110,
+            "link_id": 112,
             "position": 3,
             "position_type": 1
           },
@@ -7710,7 +7793,8 @@
             "description": "the name field in a form",
             "type_id": 21,
             "code_id": "form_field_name",
-            "link_id": 111,
+            "ui_msg_code_id": "form_field_name",
+            "link_id": 113,
             "position": 4,
             "position_type": 1
           },
@@ -7720,7 +7804,8 @@
             "description": "the description field in a form",
             "type_id": 22,
             "code_id": "form_field_description",
-            "link_id": 112,
+            "ui_msg_code_id": "form_field_description",
+            "link_id": 114,
             "position": 5,
             "position_type": 1
           },
@@ -7730,7 +7815,8 @@
             "description": "selector for the source type",
             "type_id": 39,
             "code_id": "form_field_source_type",
-            "link_id": 113,
+            "ui_msg_code_id": "form_select_source",
+            "link_id": 115,
             "position": 6,
             "position_type": 1
           },
@@ -7740,7 +7826,8 @@
             "description": "selector for the share type",
             "type_id": 26,
             "code_id": "form_field_share_type",
-            "link_id": 114,
+            "ui_msg_code_id": "form_select_share",
+            "link_id": 116,
             "position": 7,
             "position_type": 1
           },
@@ -7750,7 +7837,8 @@
             "description": "selector for the protection type",
             "type_id": 27,
             "code_id": "form_field_protection_type",
-            "link_id": 115,
+            "ui_msg_code_id": "form_select_protection",
+            "link_id": 117,
             "position": 8,
             "position_type": 1
           },
@@ -7760,7 +7848,8 @@
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
             "code_id": "form_cancel_button",
-            "link_id": 116,
+            "ui_msg_code_id": "form_button_cancel",
+            "link_id": 118,
             "position": 9,
             "position_type": 1
           },
@@ -7770,7 +7859,8 @@
             "description": "button to save the form field into the database",
             "type_id": 29,
             "code_id": "form_button_save",
-            "link_id": 117,
+            "ui_msg_code_id": "form_button_save",
+            "link_id": 119,
             "position": 10,
             "position_type": 1
           },
@@ -7779,7 +7869,7 @@
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
-            "link_id": 118,
+            "link_id": 120,
             "position": 11,
             "position_type": 1
           }
@@ -7799,7 +7889,8 @@
             "description": "show the language specific title for the system form to delete or exclude a source",
             "type_id": 17,
             "code_id": "form_title_source_del",
-            "link_id": 119,
+            "ui_msg_code_id": "form_title_source_del",
+            "link_id": 121,
             "position": 1,
             "position_type": 1
           },
@@ -7809,7 +7900,7 @@
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
             "code_id": "form_back_stack",
-            "link_id": 120,
+            "link_id": 122,
             "position": 2,
             "position_type": 1
           },
@@ -7819,7 +7910,7 @@
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
             "code_id": "form_confirm_status",
-            "link_id": 121,
+            "link_id": 123,
             "position": 3,
             "position_type": 1
           },
@@ -7829,7 +7920,7 @@
             "description": "the object name as read only",
             "type_id": 20,
             "code_id": "show_field_name",
-            "link_id": 122,
+            "link_id": 124,
             "position": 4,
             "position_type": 1
           },
@@ -7839,7 +7930,8 @@
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
             "code_id": "form_cancel_button",
-            "link_id": 123,
+            "ui_msg_code_id": "form_button_cancel",
+            "link_id": 125,
             "position": 5,
             "position_type": 1
           },
@@ -7849,7 +7941,8 @@
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
             "code_id": "form_button_del",
-            "link_id": 124,
+            "ui_msg_code_id": "form_button_del",
+            "link_id": 126,
             "position": 6,
             "position_type": 1
           },
@@ -7858,7 +7951,7 @@
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
-            "link_id": 125,
+            "link_id": 127,
             "position": 7,
             "position_type": 1
           }
@@ -8004,7 +8097,8 @@
             "description": "show the language specific title for the system form to add a new component",
             "type_id": 17,
             "code_id": "form_title_component_add",
-            "link_id": 126,
+            "ui_msg_code_id": "form_title_component_add",
+            "link_id": 128,
             "position": 1,
             "position_type": 1
           },
@@ -8014,7 +8108,7 @@
             "description": "field that contains the stack for the undo actions",
             "type_id": 18,
             "code_id": "form_back_stack",
-            "link_id": 127,
+            "link_id": 129,
             "position": 2,
             "position_type": 1
           },
@@ -8024,7 +8118,7 @@
             "description": "switch on that the form saving needs an extra confirm by the user",
             "type_id": 19,
             "code_id": "form_confirm_status",
-            "link_id": 128,
+            "link_id": 130,
             "position": 3,
             "position_type": 1
           },
@@ -8034,7 +8128,8 @@
             "description": "the name field in a form",
             "type_id": 21,
             "code_id": "form_field_name",
-            "link_id": 129,
+            "ui_msg_code_id": "form_field_name",
+            "link_id": 131,
             "position": 4,
             "position_type": 1
           },
@@ -8044,7 +8139,8 @@
             "description": "the description field in a form",
             "type_id": 22,
             "code_id": "form_field_description",
-            "link_id": 130,
+            "ui_msg_code_id": "form_field_description",
+            "link_id": 132,
             "position": 5,
             "position_type": 1
           },
@@ -8054,7 +8150,8 @@
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
             "code_id": "form_cancel_button",
-            "link_id": 131,
+            "ui_msg_code_id": "form_button_cancel",
+            "link_id": 133,
             "position": 6,
             "position_type": 1
           },
@@ -8064,7 +8161,8 @@
             "description": "button to save the form field into the database",
             "type_id": 29,
             "code_id": "form_button_save",
-            "link_id": 132,
+            "ui_msg_code_id": "form_button_save",
+            "link_id": 134,
             "position": 7,
             "position_type": 1
           }
@@ -8155,7 +8253,7 @@
             "name": "Word",
             "description": "simply show the word or triple name",
             "type_id": 8,
-            "link_id": 140,
+            "link_id": 142,
             "position": 1,
             "position_type": 1
           },
@@ -8164,7 +8262,7 @@
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
-            "link_id": 141,
+            "link_id": 143,
             "position": 2,
             "position_type": 1
           }
@@ -8181,7 +8279,7 @@
             "name": "Verb",
             "description": "simply show the verb name",
             "type_id": 37,
-            "link_id": 142,
+            "link_id": 144,
             "position": 1,
             "position_type": 1
           },
@@ -8190,7 +8288,7 @@
             "name": "related words",
             "description": "show the most relevant and related words or triples",
             "type_id": 9,
-            "link_id": 143,
+            "link_id": 145,
             "position": 2,
             "position_type": 1
           }
@@ -8205,30 +8303,6 @@
           {
             "id": 63,
             "name": "Triple",
-            "link_id": 144,
-            "position": 1,
-            "position_type": 1
-          },
-          {
-            "id": 62,
-            "name": "related values",
-            "description": "show the most relevant and related values",
-            "type_id": 11,
-            "link_id": 145,
-            "position": 2,
-            "position_type": 1
-          }
-        ]
-      },
-      {
-        "id": 44,
-        "name": "Source",
-        "description": "the default view for sources",
-        "code_id": "source",
-        "components": [
-          {
-            "id": 64,
-            "name": "Source",
             "link_id": 146,
             "position": 1,
             "position_type": 1
@@ -8245,14 +8319,14 @@
         ]
       },
       {
-        "id": 45,
-        "name": "Reference",
-        "description": "the default view for references",
-        "code_id": "ref",
+        "id": 44,
+        "name": "Source",
+        "description": "the default view for sources",
+        "code_id": "source",
         "components": [
           {
-            "id": 65,
-            "name": "Reference",
+            "id": 64,
+            "name": "Source",
             "link_id": 148,
             "position": 1,
             "position_type": 1
@@ -8269,6 +8343,30 @@
         ]
       },
       {
+        "id": 45,
+        "name": "Reference",
+        "description": "the default view for references",
+        "code_id": "ref",
+        "components": [
+          {
+            "id": 65,
+            "name": "Reference",
+            "link_id": 150,
+            "position": 1,
+            "position_type": 1
+          },
+          {
+            "id": 62,
+            "name": "related values",
+            "description": "show the most relevant and related values",
+            "type_id": 11,
+            "link_id": 151,
+            "position": 2,
+            "position_type": 1
+          }
+        ]
+      },
+      {
         "id": 46,
         "name": "Display Number",
         "description": "the default view for values",
@@ -8277,7 +8375,7 @@
           {
             "id": 66,
             "name": "Value",
-            "link_id": 150,
+            "link_id": 152,
             "position": 1,
             "position_type": 1
           }
@@ -8292,7 +8390,7 @@
           {
             "id": 69,
             "name": "Result",
-            "link_id": 154,
+            "link_id": 156,
             "position": 1,
             "position_type": 1
           }

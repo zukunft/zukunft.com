@@ -51,4 +51,10 @@ class json_fields
     // the position rules for a component relative to the previous component
     const POS_TYPE = 'position_type';
 
+    // to link predefind functionality to a row e.g. to select a system view
+    const CODE_ID = 'code_id';
+
+    // to link predefind functionality to a row e.g. to select a system view
+    const UI_MSG_CODE_ID = 'ui_msg_code_id';
+
 }

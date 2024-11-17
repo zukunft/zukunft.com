@@ -91,7 +91,7 @@ function run_display_test(all_tests $t): void
 
     $url = $html->url(view_shared::MC_WORD_DEL);
     $target = '<a href="/http/view.php" title="Del test"><img src="/src/main/resources/images/button_del.svg" alt="Del test"></a>';
-    $target = '<a href="/http/word_del.php" title="Delete word"><i class="far fa-times-circle"></i></a>';
+    $target = '<a href="/http/word_del.php" title="delete word"><i class="far fa-times-circle"></i></a>';
     $result = (new button($url, $back))->del(messages::WORD_DEL);
     $t->dsp_contains(", btn_del", $target, $result);
 

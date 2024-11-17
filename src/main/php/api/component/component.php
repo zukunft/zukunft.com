@@ -149,6 +149,9 @@ class component extends sandbox_typed_api
     // the code id of the view component type because all types should be loaded in the frontend at startup
     public ?string $code_id = null;
 
+    // the code_id for the message that should be shown to the user and that should be translated to the frontend language
+    public ?string $ui_msg_code_id = null;
+
     // public int $pos_type_id = position_type::BELOW;
     // TODO use for default position ?
     // public int $pos_type_id = 1;
