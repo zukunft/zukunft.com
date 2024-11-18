@@ -98,10 +98,18 @@ class component extends sandbox_typed
     /**
      * @param db_object_dsp|null $dbo the word, triple or formula object that should be shown to the user
      * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param int $msk_id the database id of the calling view
+     * @param string $back the backtrace for undo actions
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code of all view components
      */
-    function dsp_entries(?db_object_dsp $dbo, string $form_name, string $back, bool $test_mode = false): string
+    function dsp_entries(
+        ?db_object_dsp $dbo,
+        string $form_name,
+        int $msk_id,
+        string $back,
+        bool $test_mode = false
+    ): string
     {
         if ($dbo == null) {
             // the $dbo check and the message creation has already been done in the view level
@@ -132,7 +140,7 @@ class component extends sandbox_typed
             component_type::CSV_EXPORT => $this->csv_export($dbo, $back),
             component_type::VALUES_ALL => $this->all($dbo, $back),
             component_type::FORM_TITLE => $this->form_tile($form_name),
-            component_type::FORM_BACK => $this->form_back($dbo, $back),
+            component_type::FORM_BACK => $this->form_back($msk_id, $dbo->id(), $back),
             component_type::FORM_CONFIRM => $this->form_confirm($dbo, $back),
             component_type::SHOW_NAME => $this->show_name($dbo, $back),
             component_type::FORM_NAME => $this->form_name($dbo, $back),
@@ -300,12 +308,21 @@ class component extends sandbox_typed
     }
 
     /**
+     * create the HTML code to select this and the previous views
+     *
+     * @param int $msk_id the database id of the view that should be shown
+     * @param int|null $id the database id of the object that should be shown in the view
+     * @param string $back the history of the views and actions for the back und undo function
      * @return string the html code to include the back trace into the form result
      */
-    function form_back(): string
+    function form_back(int $msk_id, ?int $id, string $back): string
     {
+        $result = '';
         $html = new html_base();
-        return $html->input('back', '', html_base::INPUT_HIDDEN);
+        $result .= $html->input(api::URL_VAR_MASK, $msk_id, html_base::INPUT_HIDDEN);
+        $result .= $html->input(api::URL_VAR_ID, $id, html_base::INPUT_HIDDEN);
+        $result .= $html->input(api::URL_VAR_BACK, $back, html_base::INPUT_HIDDEN);
+        return $result;
     }
 
     /**

@@ -25,9 +25,13 @@
         </div>
     </nav>
     <br><br><br><br><br><h4>Add a new verb</h4>
-    <form action="/http/verb_add.php" id="verb_add"><input class="form-control" type="hidden" name="back"
-                                                           id="back"><input class="form-control" type="hidden"
-                                                                            name="confirm" id="confirm" value="1">
+    <form action="/http/view.php" id="verb_add"><input class="form-control" type="hidden" name="m" id="m"
+                                                       value="5"><input class="form-control" type="hidden" name="id"
+                                                                        id="id" value="0"><input class="form-control"
+                                                                                                 type="hidden"
+                                                                                                 name="back" id="back"
+                                                                                                 value="0"><input
+            class="form-control" type="hidden" name="confirm" id="confirm" value="1">
         <div class="row col-md-12">
             <div class="form-group col-md-4"><label for="name">Name</label><input class="form-control" type="text"
                                                                                   name="Name" id="name"></div>

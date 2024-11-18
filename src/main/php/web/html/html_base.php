@@ -1298,13 +1298,7 @@ class html_base
     function form_start(string $form_name): string
     {
         // switch on post forms for private values
-        // return '<form action="'.$form_name.'.php" method="post" id="'.$form_name.'">';
-        if ($form_name == 'user_edit') {
-            $script_name = 'user';
-        } else {
-            $script_name = $form_name;
-        }
-        $action = ' action="/http/' . $script_name . '.php"';
+        $action = ' action="' . api::HOST_SAME . api::MAIN_SCRIPT . '"';
         $id = ' id="' . $form_name . '"';
 
         return '<form' . $action . $id . '>';

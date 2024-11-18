@@ -256,7 +256,12 @@ class view extends sandbox_typed
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code of all view components
      */
-    private function dsp_entries(db_object_dsp $dbo, string $form_name, string $back, bool $test_mode = false): string
+    private function dsp_entries(
+        db_object_dsp $dbo,
+        string $form_name,
+        string $back,
+        bool $test_mode = false
+    ): string
     {
         $this->log_debug($this->dsp_id());
         $result = '';
@@ -282,7 +287,7 @@ class view extends sandbox_typed
                 if (!$cmp->is_button_or_hidden()) {
                     $button_only = false;
                 }
-                $row .= $cmp->dsp_entries($dbo, $form_name, $back, $test_mode);
+                $row .= $cmp->dsp_entries($dbo, $form_name, $this->id(), $back, $test_mode);
             }
             if ($row != '') {
                 $result .= $row;

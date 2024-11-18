@@ -8,8 +8,9 @@
 </head>
 <body>
 <div class="container"><h4>Component display test</h4>add mask<br><h4>Create a view element</h4>
-    <form action="/http/component_add.php" id="component_add"><input type="hidden" name="back" value=""><input
-            type="hidden" name="confirm" value="1">
+    <form action="/http/view.php" id="component_add"><input type="hidden" name="back" value=""><input type="hidden"
+                                                                                                      name="confirm"
+                                                                                                      value="1">
         <div class="form-row">
             <div class="form-group col-md-4"><label for="name_add">Name</label><input class="form-control"
                                                                                       name="name_add" id="name_add"
@@ -23,8 +24,10 @@
         <button type="submit" class="btn btn-outline-success btn-space">Save</button>
     </form>
     <br><br>edit mask<br><h4>Change "Word"</h4>
-    <form action="/http/component_edit.php" id="component_edit"><input type="hidden" name="id" value="1"><input
-            type="hidden" name="back" value=""><input type="hidden" name="confirm" value="1">
+    <form action="/http/view.php" id="component_edit"><input type="hidden" name="id" value="1"><input type="hidden"
+                                                                                                      name="back"
+                                                                                                      value=""><input
+            type="hidden" name="confirm" value="1">
         <div class="form-row">
             <div class="form-group col-md-4"><label for="name">Name</label><input class="form-control" name="name"
                                                                                   id="name" value="Word"></div>

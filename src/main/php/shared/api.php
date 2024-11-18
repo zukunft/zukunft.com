@@ -43,6 +43,7 @@ class api
     const HOST_DEV = 'http://localhost/';
     const HOST_UAT = 'https://test.zukunft.com/';
     const HOST_PROD = 'https://www.zukunft.com/';
+    const HOST_SAME = '/';
     const BS_PATH_DEV = 'bootstrap-5.3.3-dist/';
     const BS_PATH_UAT = 'bootstrap/4.1.3/';
     const BS_PATH_PROD = 'bootstrap/4.1.3/';
@@ -53,6 +54,9 @@ class api
     const BS_CSS = 'css' . DIRECTORY_SEPARATOR . 'bootstrap.css';
     const EXT_LIB_PATH = 'lib_external' . DIRECTORY_SEPARATOR;
     const HOST_SYS_LOG = '';
+
+    // the url name of the main script that is used in combination with the host url
+    const MAIN_SCRIPT = 'http/view.php';
 
     // TODO always use these const instead e.g. of the controller const
     // TODO allow to use the object names instead of the id for human readable urls
