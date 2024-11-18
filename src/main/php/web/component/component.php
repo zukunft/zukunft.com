@@ -59,6 +59,7 @@ use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
 use html\view\view_list;
 use shared\library;
+use shared\views;
 use shared\views as view_shared;
 
 class component extends sandbox_typed
@@ -151,7 +152,7 @@ class component extends sandbox_typed
             component_type::FORM_SOURCE_TYPE => $this->form_source_type($dbo, $form_name),
             component_type::FORM_SHARE_TYPE => $this->form_share_type($dbo, $form_name),
             component_type::FORM_PROTECTION_TYPE => $this->form_protection_type($dbo, $form_name),
-            component_type::FORM_CANCEL => $this->form_cancel($dbo, $back),
+            component_type::FORM_CANCEL => $this->form_cancel($msk_id, $dbo->id()),
             component_type::FORM_SAVE => $this->form_save($dbo, $back),
             component_type::FORM_DEL => $this->form_del($dbo, $back),
             component_type::FORM_END => $this->form_end(),
@@ -350,7 +351,12 @@ class component extends sandbox_typed
     function form_name(db_object_dsp $dbo): string
     {
         $html = new html_base();
-        return $html->form_field('Name', $dbo->name(), html_base::INPUT_TEXT, '', $this->style_text());
+        return $html->form_field(
+            api::URL_VAR_NAME,
+            $dbo->name(),
+            html_base::INPUT_TEXT,
+            '', $this->style_text()
+        );
     }
 
     /**
@@ -360,7 +366,7 @@ class component extends sandbox_typed
     {
         $html = new html_base();
         return $html->form_field(
-            'Description',
+            api::URL_VAR_DESCRIPTION,
             $dbo->description(),
             html_base::INPUT_TEXT,
             '',
@@ -450,10 +456,21 @@ class component extends sandbox_typed
     /**
      * @return string the html code for a form cancel button
      */
-    function form_cancel(): string
+    function form_cancel(int $msk_id, ?int $id): string
     {
         $html = new html_base();
-        return $html->button('Cancel', html_base::BS_BTN_CANCEL);
+        $views = new views();
+        $msk_ci = $views->id_to_code_id($msk_id);
+        $base_ci = $views->system_to_base($msk_ci);
+        $base_id = $views->code_id_to_id($base_ci);
+        $result = '';
+        $url = api::HOST_SAME . api::MAIN_SCRIPT
+            . api::URL_PAR . api::URL_VAR_MASK . api::URL_EQ . $base_id;
+        if ($id != 0) {
+            $url .= api::URL_ADD . api::URL_VAR_ID . api::URL_EQ . $id;
+        }
+        $result .= $html->ref($url, 'Cancel', '', html_base::BS_BTN . ' ' . html_base::BS_BTN_CANCEL);
+        return $result;
     }
 
     /**

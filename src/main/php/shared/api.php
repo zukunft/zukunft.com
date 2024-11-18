@@ -61,6 +61,9 @@ class api
     // TODO always use these const instead e.g. of the controller const
     // TODO allow to use the object names instead of the id for human readable urls
     // the parameter names used in the url or in the result json
+    const URL_PAR = '?';
+    const URL_ADD = '&';
+    const URL_EQ = '=';
     const URL_API_PATH = 'api/';
     const URL_VAR_MASK = 'm'; // the internal database id of the view used to format the object
     const URL_VAR_ID = 'id'; // the internal database id of the main view object
@@ -113,6 +116,9 @@ class api
     const URL_VAR_LINK_VIEW = 'link_view';
     const URL_VAR_UNLINK_VIEW = 'unlink_view';
     const URL_VAR_TYPE = 'type';
+    const URL_VAR_SHARE = 'share';
+    const URL_VAR_PROTECTION = 'protection';
+    const URL_VAR_CONFIRM = 'confirm';
 
     // used for the change log
     const URL_VAR_WORD_ID = 'word_id';

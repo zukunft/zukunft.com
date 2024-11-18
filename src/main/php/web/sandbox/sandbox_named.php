@@ -53,6 +53,7 @@ class sandbox_named extends sandbox
     // the id of the default view for this object
     private ?int $view_id = null;
 
+
     /*
      * set and get
      */
@@ -75,6 +76,24 @@ class sandbox_named extends sandbox
             $this->set_description($json_array[api::FLD_DESCRIPTION]);
         } else {
             $this->set_description(null);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * set the vars of this object bases on the url array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_from_url_array(array $url_array): user_message
+    {
+        $usr_msg = parent::set_from_url_array($url_array);
+        if (array_key_exists(api::URL_VAR_NAME, $url_array)) {
+            $this->set_name($url_array[api::URL_VAR_NAME]);
+        } else {
+            $this->set_name('');
+            log_err('Mandatory field name missing in form array ' . json_encode($url_array));
         }
         return $usr_msg;
     }

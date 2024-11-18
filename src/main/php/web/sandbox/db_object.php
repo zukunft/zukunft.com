@@ -97,6 +97,24 @@ class db_object
         return $usr_msg;
     }
 
+    /**
+     * set the vars of this object bases on the url array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_from_url_array(array $url_array): user_message
+    {
+        $usr_msg = new user_message();
+        if (array_key_exists(api::URL_VAR_ID, $url_array)) {
+            $this->set_id($url_array[api::URL_VAR_ID]);
+        } else {
+            $this->set_id(0);
+            $usr_msg->add_err('Mandatory field id missing in form url array ' . json_encode($url_array));
+        }
+        return $usr_msg;
+    }
+
     function set_id(int|string $id): void
     {
         $this->id = $id;

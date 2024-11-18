@@ -55,6 +55,8 @@ include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_PATH . 'views.php';
 
+use cfg\source;
+use cfg\word;
 use html\frontend;
 use html\html_base;
 use html\rest_ctrl;
@@ -72,6 +74,8 @@ $db_con = prg_start("view", '', false);
 // get the parameters
 $view_id = $_GET[api::URL_VAR_MASK] ?? 0; // the database id of the view to display
 $id = $_GET[api::URL_VAR_ID] ?? 0; // the database id of the prime object to display
+$confirm = $_GET[api::URL_VAR_CONFIRM] ?? 0; // the database id of the prime object to display
+
 $new_view_id = $_GET[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
 $view_words = $_GET[api::URL_VAR_WORDS] ?? '';
 $back = $_GET[api::URL_VAR_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
@@ -104,10 +108,33 @@ if ($usr->id() > 0) {
     // select the main object to display
     if (in_array($view_id, view_shared::WORD_MASKS_IDS)) {
         $dbo_dsp = new word_dsp();
+        $dbo = new word($usr);
     } elseif (in_array($view_id, view_shared::SOURCE_MASKS_IDS)) {
         $dbo_dsp = new source_dsp();
+        $dbo = new source($usr);
     } else {
         $dbo_dsp = new word_dsp();
+        $dbo = new word($usr);
+    }
+
+    // save form action
+    // if the save bottom has been pressed
+    if ($confirm > 0) {
+        $dbo_dsp->set_from_url_array($_GET);
+        $dbo->set_by_api_json($dbo_dsp->api_array());
+
+        // save the changes
+        $upd_result = $dbo->save()->get_last_message();
+
+        // if update was fine ...
+        if (str_replace('1', '', $upd_result) == '') {
+            // ... display the calling page is switched off to keep the user on the edit view and see the implications of the change
+            // switched off because maybe staying on the edit page is the expected behaviour
+            //$result .= dsp_go_back($back, $usr);
+        } else {
+            // ... or in case of a problem prepare to show the message
+            $msg .= $upd_result;
+        }
     }
 
     // get the main object to display

@@ -37,6 +37,8 @@ include_once HTML_PATH . 'html_base.php';
 include_once API_PHRASE_PATH . 'phrase.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_PATH . 'views.php';
+include_once SHARED_PATH . 'api.php';
+include_once WEB_USER_PATH . 'user_message.php';
 
 use cfg\verb_list;
 use html\button;
@@ -76,7 +78,7 @@ class word extends sandbox_typed
     private ?string $plural = null;
 
     // the main parent phrase
-    private ?phrase_dsp $parent;
+    private ?phrase_dsp $parent = null;
 
 
     /*
@@ -119,6 +121,23 @@ class word extends sandbox_typed
             $vars[self::FLD_PARENT] = $this->parent()->api_array();
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+    /**
+     * set the vars of this object bases on the url array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_from_url_array(array $url_array): user_message
+    {
+        $usr_msg = parent::set_from_json_array($url_array);
+        if (array_key_exists(api::FLD_PLURAL, $url_array)) {
+            $this->set_plural($url_array[api::FLD_PLURAL]);
+        } else {
+            $this->set_plural(null);
+        }
+        return $usr_msg;
     }
 
 

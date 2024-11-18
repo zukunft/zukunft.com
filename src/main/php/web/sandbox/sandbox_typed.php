@@ -33,6 +33,8 @@
 namespace html\sandbox;
 
 include_once SANDBOX_PATH . 'sandbox_named.php';
+include_once SHARED_PATH . 'api.php';
+include_once WEB_USER_PATH . 'user_message.php';
 
 use shared\api;
 use html\user\user_message;
@@ -75,6 +77,22 @@ class sandbox_typed extends sandbox_named
     function type_id(): ?int
     {
         return $this->type_id;
+    }
+
+    /**
+     * set the vars of this object bases on the url array
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_from_url_array(array $url_array): user_message
+    {
+        $usr_msg = parent::set_from_url_array($url_array);
+        if (array_key_exists(api::URL_VAR_TYPE, $url_array)) {
+            $this->set_type_id($url_array[api::URL_VAR_TYPE]);
+        } else {
+            $this->set_type_id();
+        }
+        return $usr_msg;
     }
 
 
