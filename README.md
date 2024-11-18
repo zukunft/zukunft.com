@@ -30,7 +30,8 @@ Additional for development
 
 on debian systems
 
-
+sudo apt-get install php-pgsql
+apt-get install php-yaml
 
 Planned changes
 ---------------
