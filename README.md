@@ -31,7 +31,8 @@ Additional for development
 on debian systems
 
 sudo apt-get install php-pgsql
-apt-get install php-yaml
+sudo apt-get install php-yaml
+sudo apt-get install php-curl
 
 Planned changes
 ---------------

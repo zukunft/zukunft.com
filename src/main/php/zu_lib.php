@@ -1375,7 +1375,7 @@ function log_msg(string  $msg_text,
         }
         if ($function_name == '' or $function_name == null) {
             $function_name = (new Exception)->getTraceAsString();
-            $function_name = $lib->str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
+            $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
             $function_name = $lib->str_left_of($function_name, ': log_');
         }
         if ($function_trace == '') {
@@ -1549,7 +1549,7 @@ function log_fatal_db(
     $lib = new library();
     if ($function_name == '' or $function_name == null) {
         $function_name = (new Exception)->getTraceAsString();
-        $function_name = $lib->str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
+        $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
         $function_name = $lib->str_left_of($function_name, ': log_');
     }
     if ($function_trace == '') {
@@ -1597,7 +1597,7 @@ function log_fatal(string $msg_text,
     $lib = new library();
     if ($function_name == '' or $function_name == null) {
         $function_name = (new Exception)->getTraceAsString();
-        $function_name = $lib->str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
+        $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
         $function_name = $lib->str_left_of($function_name, ': log_');
         $write_with_more_info = true;
     }
