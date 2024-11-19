@@ -91,8 +91,6 @@ use test\test_cleanup;
 class api_tests
 {
     // path
-    const TEST_ROOT_PATH = '/home/timon/git/zukunft.com/';
-    const TEST_ROOT_PATH2 = '/home/timon/PhpstormProjects/zukunft.com/';
     const OPEN_API_PATH = 'src/main/resources/openapi/zukunft_com_api.yaml';
 
     const API_PATH = 'api/';
@@ -310,10 +308,7 @@ class api_tests
 
         $test_name = 'check if a controller for each api tag exists';
         $result = '';
-        $open_api_filename = self::TEST_ROOT_PATH . self::OPEN_API_PATH;
-        if (!file_exists($open_api_filename)) {
-            $open_api_filename = self::TEST_ROOT_PATH2 . self::OPEN_API_PATH;
-        }
+        $open_api_filename = ROOT_PATH . self::OPEN_API_PATH;
         $api_def = yaml_parse_file($open_api_filename);
         if ($api_def == null) {
             log_err('OpenAPI file ' . $open_api_filename . ' missing');
@@ -323,10 +318,7 @@ class api_tests
                 $paths = $t->get_paths_of_tag($tag['name'], $api_def);
                 foreach ($paths as $path) {
                     // check if at least some controller code exists for each tag
-                    $filename = self::TEST_ROOT_PATH . self::API_PATH . $path . '/' . self::PHP_DEFAULT_FILENAME;
-                    if (!file_exists($filename)) {
-                        $filename = self::TEST_ROOT_PATH2 . self::API_PATH . $path . '/' . self::PHP_DEFAULT_FILENAME;
-                    }
+                    $filename = ROOT_PATH . self::API_PATH . $path . '/' . self::PHP_DEFAULT_FILENAME;
                     $ctrl_code = file_get_contents($filename);
                     if ($ctrl_code == null or $ctrl_code == '') {
                         if ($result != '') {
