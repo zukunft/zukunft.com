@@ -34,6 +34,7 @@ namespace html\system;
 include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use DateTime;
 use DateTimeInterface;
@@ -42,6 +43,7 @@ use shared\api;
 use html\sandbox\db_object as db_object_dsp;
 use html\html_base;
 use html\user\user_message;
+use shared\json_fields;
 
 class job extends db_object_dsp
 {
@@ -109,8 +111,8 @@ class job extends db_object_dsp
         } else {
             $this->set_user_id(0);
         }
-        if (array_key_exists(api::FLD_TYPE, $json_array)) {
-            $this->set_type($json_array[api::FLD_TYPE]);
+        if (array_key_exists(json_fields::TYPE, $json_array)) {
+            $this->set_type($json_array[json_fields::TYPE]);
         } else {
             $this->set_type(0);
         }
@@ -264,7 +266,7 @@ class job extends db_object_dsp
         $vars[api::FLD_TIME_START] = $this->start_time()->format(DateTimeInterface::ATOM);
         $vars[api::FLD_TIME_END] = $this->end_time()->format(DateTimeInterface::ATOM);
         $vars[api::FLD_USER_ID] = $this->user_id();
-        $vars[api::FLD_TYPE] = $this->type();
+        $vars[json_fields::TYPE] = $this->type();
         $vars[api::FLD_STATUS] = $this->status();
         $vars[api::FLD_PRIORITY] = $this->priority();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');

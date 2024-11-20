@@ -32,7 +32,7 @@
     - im- and export:    create an export object and set the vars from an import object
     - information:       functions to make code easier to read
     - foaf:              get related words and triples based on the friend of a friend (foaf) concept
-    - ui sort:           user interface optimazation e.g. show the user to most relevant words
+    - ui sort:           user interface optimization e.g. show the user to most relevant words
     - related:           functions that create and fill related objects
     - sandbox:           manage the user sandbox
     - log:               write the changes to the log
@@ -79,6 +79,7 @@ include_once SERVICE_EXPORT_PATH . 'word_exp.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
 use api\word\word as word_api;
@@ -204,7 +205,7 @@ class word extends sandbox_typed
     //included in the preserved word names
 
     // words used to select parts of the system configuration where the normal name should not be changed
-    // *_COM is the tooltip for the word; to have the comments on one place the yaml is the prefered place
+    // *_COM is the tooltip for the word; to have the comments on one place the yaml is the preferred place
     const TOOLTIP_COMMENT_COM = 'keyword to read the word or triple description from the config.yaml';
     const TOOLTIP_COMMENT = 'tooltip-comment';
     const SYS_CONF_VALUE_COM = 'keyword to read the numeric value from the config.yaml';
@@ -566,7 +567,7 @@ class word extends sandbox_typed
                 if ($do_save) {
                     $wrd_view->load_by_name($value);
                     if ($wrd_view->id() == 0) {
-                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
+                        $result->add_message('Cannot find view >' . $value . '< when importing ' . $this->dsp_id());
                     } else {
                         $this->view_id = $wrd_view->id();
                     }
@@ -1121,7 +1122,7 @@ class word extends sandbox_typed
      * if the given description is not set (null) the description is not remove
      * if the given description is an empty string the description is removed
      *
-     * @param word|db_object_seq_id $sbx word with the values that sould been updated e.g. based on the import
+     * @param word|db_object_seq_id $sbx word with the values that should have been updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
     function fill(word|db_object_seq_id $sbx): user_message

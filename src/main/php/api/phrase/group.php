@@ -69,7 +69,7 @@ class group extends sandbox_named_api implements JsonSerializable
         self::TN_CH_2019
     ];
 
-    // list of group names and the realted phrases that are used for system testing
+    // list of group names and the related phrases that are used for system testing
     // and that should be created before the system test starts
     const TEST_GROUPS_CREATE = [
         [self::TN_READ,

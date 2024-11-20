@@ -77,14 +77,15 @@ include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
-use api\system\messeges as msg_enum;
+use api\system\messages as msg_enum;
 use api\sandbox\sandbox as sandbox_api;
 use cfg\component\component_link_type;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
 use cfg\log\change_table;
+use shared\json_fields;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use cfg\component\component;
@@ -643,7 +644,7 @@ class sandbox extends db_object_seq_id_user
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_ID) {
+            if ($key == json_fields::ID) {
                 $this->set_id($value);
             }
             if ($key == share_type_shared::JSON_FLD) {

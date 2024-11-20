@@ -35,9 +35,11 @@ namespace html\sandbox;
 include_once SANDBOX_PATH . 'sandbox_named.php';
 include_once SHARED_PATH . 'api.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
 use html\user\user_message;
+use shared\json_fields;
 
 class sandbox_typed extends sandbox_named
 {
@@ -61,8 +63,8 @@ class sandbox_typed extends sandbox_named
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_TYPE, $json_array)) {
-            $this->set_type_id($json_array[api::FLD_TYPE]);
+        if (array_key_exists(json_fields::TYPE, $json_array)) {
+            $this->set_type_id($json_array[json_fields::TYPE]);
         } else {
             $this->set_type_id();
         }
@@ -107,7 +109,7 @@ class sandbox_typed extends sandbox_named
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_TYPE] = $this->type_id();
+        $vars[json_fields::TYPE] = $this->type_id();
         return $vars;
     }
 

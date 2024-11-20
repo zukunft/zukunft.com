@@ -35,6 +35,7 @@
 namespace html\phrase;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
 use api\phrase\phrase as phrase_api;
@@ -44,6 +45,7 @@ use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
+use shared\json_fields;
 
 class phrase_group extends sandbox_named_dsp
 {
@@ -89,7 +91,7 @@ class phrase_group extends sandbox_named_dsp
      */
     function set_from_json_array(array $json_array): user_message
     {
-        if (array_key_exists(api::FLD_ID, $json_array)) {
+        if (array_key_exists(json_fields::ID, $json_array)) {
             $usr_msg = parent::set_from_json_array($json_array);
             if (array_key_exists(api::FLD_PHRASES, $json_array)) {
                 $phr_lst = $json_array[api::FLD_PHRASES];
@@ -308,7 +310,7 @@ class phrase_group extends sandbox_named_dsp
     {
         //$vars = array();
         $phr_lst_vars = array();
-        //$vars[api::FLD_ID] = $this->id();
+        //$vars[json_fields::ID] = $this->id();
         foreach ($this->lst as $phr) {
             $phr_lst_vars[] = $phr->api_array();
         }

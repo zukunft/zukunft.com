@@ -40,13 +40,14 @@ include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
 use api\formula\figure as figure_api;
 use cfg\group\group;
 use cfg\result\result;
 use cfg\value\value;
 use DateTime;
+use shared\json_fields;
 
 class figure extends combine_object
 {
@@ -256,7 +257,7 @@ class figure extends combine_object
     {
         $usr_msg = new user_message();
 
-        if ($api_json[api::FLD_ID] > 0) {
+        if ($api_json[json_fields::ID] > 0) {
             $val = new value($this->user());
             $usr_msg->add($val->set_by_api_json($api_json));
             if ($usr_msg->is_ok()) {
@@ -264,7 +265,7 @@ class figure extends combine_object
             }
         } else {
             $res = new result($this->user());
-            $api_json[api::FLD_ID] = $api_json[api::FLD_ID] * -1;
+            $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
             $usr_msg->add($res->set_by_api_json($api_json));
             if ($usr_msg->is_ok()) {
                 $this->obj = $res;

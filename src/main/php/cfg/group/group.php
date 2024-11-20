@@ -62,7 +62,7 @@ include_once MODEL_GROUP_PATH . 'group_link.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once API_PHRASE_PATH . 'group.php';
 
-use api\system\messeges as msg_enum;
+use api\system\messages as msg_enum;
 use api\phrase\group as group_api;
 use cfg\db\sql;
 use cfg\db\sql_db;

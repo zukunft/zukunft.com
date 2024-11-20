@@ -37,6 +37,8 @@ include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once API_PHRASE_PATH . 'phrase.php';
 include_once WORD_PATH . 'word.php';
 include_once WORD_PATH . 'triple.php';
+include_once SHARED_PATH . 'json_fields.php';
+
 
 use shared\api;
 use api\phrase\phrase as phrase_api;
@@ -52,6 +54,7 @@ use html\user\user_message;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
+use shared\json_fields;
 
 class phrase extends combine_named_dsp
 {
@@ -156,10 +159,10 @@ class phrase extends combine_named_dsp
             $vars[api::FLD_VERB] = $trp->verb()->id();
             $vars[api::FLD_TO] = $trp->to()->id();
         }
-        $vars[api::FLD_ID] = $this->obj_id();
-        $vars[api::FLD_NAME] = $this->name();
-        $vars[api::FLD_DESCRIPTION] = $this->description();
-        $vars[api::FLD_TYPE] = $this->type_id();
+        $vars[json_fields::ID] = $this->obj_id();
+        $vars[json_fields::NAME] = $this->name();
+        $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::TYPE] = $this->type_id();
         $vars[api::FLD_PLURAL] = $this->plural();
         // TODO add exclude field and move to a parent object?
         if ($this->obj()?->share_id != null) {
@@ -322,6 +325,18 @@ class phrase extends combine_named_dsp
             return $phr_lst->dsp_graph($this, $back);
         } else {
             return '';
+        }
+    }
+
+    /**
+     * @return word_dsp the most relevant
+     */
+    function main_word(): word_dsp
+    {
+        if ($this->is_word()) {
+            return $this->obj()->word();
+        } else {
+            return $this->obj()->main_word();
         }
     }
 

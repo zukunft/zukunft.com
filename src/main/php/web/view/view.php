@@ -52,6 +52,7 @@ include_once LOG_PATH . 'user_log_display.php';
 include_once VIEW_PATH . 'view_list.php';
 include_once WORD_PATH . 'word.php';
 include_once WORD_PATH . 'triple.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 // TODO remove model classes
 use cfg\component\position_type;
@@ -72,6 +73,7 @@ use html\system\messages;
 use html\view\view_list as view_list_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
+use shared\json_fields;
 use shared\library;
 use shared\types\view_type;
 
@@ -133,8 +135,8 @@ class view extends sandbox_typed
             $this->dbo = new word_dsp();
             $dbo_json = $json_array[api::API_WORD];
             $id = 0;
-            if (array_key_exists(api::FLD_ID, $json_array)) {
-                $id = $dbo_json[api::FLD_ID];
+            if (array_key_exists(json_fields::ID, $json_array)) {
+                $id = $dbo_json[json_fields::ID];
             }
             if ($id != 0) {
                 $this->dbo->set_from_json_array($dbo_json);
@@ -144,8 +146,8 @@ class view extends sandbox_typed
             $this->dbo = new triple_dsp();
             $dbo_json = $json_array[api::API_TRIPLE];
             $id = 0;
-            if (array_key_exists(api::FLD_ID, $json_array)) {
-                $id = $dbo_json[api::FLD_ID];
+            if (array_key_exists(json_fields::ID, $json_array)) {
+                $id = $dbo_json[json_fields::ID];
             }
             if ($id != 0) {
                 $this->dbo->set_from_json_array($dbo_json);

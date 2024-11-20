@@ -86,6 +86,7 @@ include_once SERVICE_EXPORT_PATH . 'source_exp.php';
 include_once SERVICE_EXPORT_PATH . 'value_exp.php';
 include_once SERVICE_EXPORT_PATH . 'json.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
@@ -95,6 +96,7 @@ use cfg\log\change_values_norm;
 use cfg\log\change_values_prime;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
+use shared\json_fields;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use shared\api;
@@ -387,7 +389,7 @@ class value extends sandbox_value
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_ID) {
+            if ($key == json_fields::ID) {
                 $this->set_id($value);
             }
 

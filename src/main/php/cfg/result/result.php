@@ -80,6 +80,7 @@ use cfg\value\value;
 use DateTime;
 use html\formula\formula as formula_dsp;
 use html\html_base;
+use shared\json_fields;
 use shared\library;
 
 class result extends sandbox_value
@@ -447,7 +448,7 @@ class result extends sandbox_value
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_ID) {
+            if ($key == json_fields::ID) {
                 $this->set_id($value);
             }
 

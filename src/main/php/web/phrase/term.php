@@ -39,6 +39,7 @@ include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_VERB_PATH . 'verb.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
 use api\phrase\term as term_api;
@@ -49,6 +50,7 @@ use html\user\user_message;
 use html\verb\verb as verb_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
+use shared\json_fields;
 
 class term extends combine_named_dsp
 {
@@ -170,11 +172,11 @@ class term extends combine_named_dsp
         } else {
             log_err('cannot create api message for term ' . $this->dsp_id() . ' because class is unknown');
         }
-        $vars[api::FLD_ID] = $this->obj_id();
-        $vars[api::FLD_NAME] = $this->name();
-        $vars[api::FLD_DESCRIPTION] = $this->description();
+        $vars[json_fields::ID] = $this->obj_id();
+        $vars[json_fields::NAME] = $this->name();
+        $vars[json_fields::DESCRIPTION] = $this->description();
         if (!$this->is_verb()) {
-            $vars[api::FLD_TYPE] = $this->type_id();
+            $vars[json_fields::TYPE] = $this->type_id();
         }
         if ($this->is_formula()) {
             $vars[api::FLD_USER_TEXT] = $this->obj()->usr_text();

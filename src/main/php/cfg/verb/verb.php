@@ -42,7 +42,7 @@ include_once API_VERB_PATH . 'verb.php';
 include_once SERVICE_EXPORT_PATH . 'verb_exp.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
 
-use api\system\messeges as msg_enum;
+use api\system\messages as msg_enum;
 use api\verb\verb as verb_api;
 use cfg\db\sql;
 use cfg\db\sql_db;

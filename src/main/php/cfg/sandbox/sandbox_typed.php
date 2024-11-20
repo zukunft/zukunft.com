@@ -44,9 +44,10 @@
 namespace cfg;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
 use cfg\db\sql_db;
+use shared\json_fields;
 
 class sandbox_typed extends sandbox_named
 {
@@ -133,7 +134,7 @@ class sandbox_typed extends sandbox_named
         $msg = parent::set_by_api_json($api_json);
 
         foreach ($api_json as $key => $value) {
-            if ($key == api::FLD_TYPE) {
+            if ($key == json_fields::TYPE) {
                 $this->set_type_id($value);
             }
         }

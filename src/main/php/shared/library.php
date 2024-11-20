@@ -871,7 +871,7 @@ class library
     private
     static function sort_array_by_id($a, $b): int
     {
-        return $a[api::FLD_ID] - $b[api::FLD_ID];
+        return $a[json_fields::ID] - $b[json_fields::ID];
     }
 
     private
@@ -884,7 +884,7 @@ class library
                         if (array_key_exists(combine_object_api::FLD_CLASS, $a[0])) {
                             usort($a, array('shared\library', 'sort_array_by_class'));
                         }
-                        if (array_key_exists(api::FLD_ID, $a[0])) {
+                        if (array_key_exists(json_fields::ID, $a[0])) {
                             usort($a, array('shared\library', 'sort_array_by_id'));
                         }
                     }

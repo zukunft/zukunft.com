@@ -31,7 +31,8 @@
 
 namespace cfg;
 
-use shared\api;
+include_once SHARED_PATH . 'json_fields.php';
+
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
@@ -40,6 +41,7 @@ use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
 use cfg\log\change_log_list;
+use shared\json_fields;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 
@@ -177,7 +179,7 @@ class sandbox_link_named extends sandbox_link
     /**
      * get the description of the sandbox link object
      * if the object is excluded null is returned
-     * to check the value before the exclution access the var direkt via $this->description
+     * to check the value before the exclusion access the var direct via $this->description
      *
      * @return string|null the description from the object e.g. word using the same function as the phrase and term
      */
@@ -215,7 +217,7 @@ class sandbox_link_named extends sandbox_link
      */
 
     /**
-     * same as in cfg/sandbox/sanbox_named, but php does not yet allow multi extends
+     * same as in cfg/sandbox/sandbox_named, but php does not yet allow multi extends
      * @param object $api_obj frontend API objects that should be filled with unique object name
      */
     function fill_api_obj(object $api_obj): void
@@ -236,15 +238,15 @@ class sandbox_link_named extends sandbox_link
         $msg = parent::set_by_api_json($api_json);
 
         foreach ($api_json as $key => $value) {
-            if ($key == api::FLD_NAME) {
+            if ($key == json_fields::NAME) {
                 $this->set_name($value);
             }
-            if ($key == api::FLD_DESCRIPTION) {
+            if ($key == json_fields::DESCRIPTION) {
                 if ($value <> '') {
                     $this->description = $value;
                 }
             }
-            if ($key == api::FLD_TYPE) {
+            if ($key == json_fields::TYPE) {
                 $this->set_type_id($value);
             }
         }
@@ -319,7 +321,7 @@ class sandbox_link_named extends sandbox_link
 
     /**
      * get the description of the latest change related to this object
-     * @param user $usr who has requeted to see the change
+     * @param user $usr who has requested to see the change
      * @return string the description of the latest change
      */
     function log_last_msg(user $usr): string
@@ -331,7 +333,7 @@ class sandbox_link_named extends sandbox_link
 
     /**
      * get the description of the latest change related to this object and the given field
-     * @param user $usr who has requeted to see the change
+     * @param user $usr who has requested to see the change
      * @param string $fld the field name to filter the changes
      * @return string the description of the latest change
      */
@@ -410,7 +412,7 @@ class sandbox_link_named extends sandbox_link
         $fvt_insert_list = new sql_par_field_list();
         $fvt_insert_list->add($fvt_insert);
         $sc_insert = clone $sc;
-        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);;
+        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
         $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
         if ($sc->db_type == sql_db::MYSQL) {
             $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);

@@ -56,6 +56,7 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\component\component_link_type;
 use cfg\component\position_type;
@@ -73,6 +74,7 @@ use cfg\view_link_type;
 use cfg\view_link_type_list;
 use cfg\view_term_link;
 use html\system\messages;
+use shared\json_fields;
 use shared\types\component_type as comp_type_shared;
 use shared\api;
 use api\api_message;
@@ -313,8 +315,8 @@ class create_test_objects extends test_base
                         if (in_array(type_object::FLD_NAME, $col_names)) {
                             $name_col = array_search(type_object::FLD_NAME, $col_names);
                         }
-                        if (in_array(api::FLD_DESCRIPTION, $col_names)) {
-                            $desc_col = array_search(api::FLD_DESCRIPTION, $col_names);
+                        if (in_array(json_fields::DESCRIPTION, $col_names)) {
+                            $desc_col = array_search(json_fields::DESCRIPTION, $col_names);
                         }
                     } else {
                         $typ_obj = null;
@@ -369,8 +371,8 @@ class create_test_objects extends test_base
                 while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
                     if ($row == 1) {
                         $col_names = $lib->array_trim($data);
-                        if (in_array(api::FLD_ID, $col_names)) {
-                            $id_col = array_search(api::FLD_ID, $col_names);
+                        if (in_array(json_fields::ID, $col_names)) {
+                            $id_col = array_search(json_fields::ID, $col_names);
                         } elseif (in_array(change_table::FLD_ID, $col_names)) {
                             $id_col = array_search(change_table::FLD_ID, $col_names);
                         } elseif (in_array(change_field::FLD_ID, $col_names)) {
@@ -392,8 +394,8 @@ class create_test_objects extends test_base
                         if (in_array(change_field::FLD_TABLE, $col_names)) {
                             $table_col = array_search(change_field::FLD_TABLE, $col_names);
                         }
-                        if (in_array(api::FLD_DESCRIPTION, $col_names)) {
-                            $desc_col = array_search(api::FLD_DESCRIPTION, $col_names);
+                        if (in_array(json_fields::DESCRIPTION, $col_names)) {
+                            $desc_col = array_search(json_fields::DESCRIPTION, $col_names);
                         }
                     } else {
                         if ($table_col > 0) {

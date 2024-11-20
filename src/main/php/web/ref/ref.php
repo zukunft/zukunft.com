@@ -5,7 +5,7 @@
     /web/ref/ref.php - the extension of the reference API objects to create ref base html code
     ----------------
 
-    extends db_object_dsp because this is the only display object that does not have a explicit name but has a type
+    extends db_object_dsp because this is the only display object that does not have an explicit name but has a type
 
 
     This file is part of the frontend of zukunft.com - calc with words
@@ -34,12 +34,15 @@
 
 namespace html\ref;
 
+include_once SHARED_PATH . 'json_fields.php';
+
 use shared\api;
 use html\sandbox\db_object as db_object_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\user\user_message;
 use html\word\word as word_dsp;
 use html\ref\source as source_dsp;
+use shared\json_fields;
 
 class ref extends db_object_dsp
 {
@@ -117,8 +120,8 @@ class ref extends db_object_dsp
         } else {
             $this->set_predicate_id();
         }
-        if (array_key_exists(api::FLD_DESCRIPTION, $json_array)) {
-            $this->set_description($json_array[api::FLD_DESCRIPTION]);
+        if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
+            $this->set_description($json_array[json_fields::DESCRIPTION]);
         } else {
             $this->set_description(null);
         }
@@ -238,7 +241,7 @@ class ref extends db_object_dsp
         $vars[api::FLD_PHRASE] = $this->phr->id();
         $vars[api::FLD_SOURCE] = $this->source?->id();
         $vars[api::FLD_PREDICATE] = $this->predicate_id();
-        $vars[api::FLD_DESCRIPTION] = $this->description();
+        $vars[json_fields::DESCRIPTION] = $this->description();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

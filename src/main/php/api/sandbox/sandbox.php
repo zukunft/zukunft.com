@@ -34,8 +34,11 @@
 
 namespace api\sandbox;
 
+include_once SHARED_PATH . 'json_fields.php';
+
 use shared\api;
 use JsonSerializable;
+use shared\json_fields;
 use shared\types\protection_type;
 
 class sandbox implements JsonSerializable
@@ -104,7 +107,7 @@ class sandbox implements JsonSerializable
     function api_array(): array
     {
         $vars = array();
-        $vars[api::FLD_ID] = $this->id();
+        $vars[json_fields::ID] = $this->id();
         return $vars;
     }
 

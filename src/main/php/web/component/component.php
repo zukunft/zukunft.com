@@ -39,6 +39,7 @@ include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once HTML_PATH . 'sheet.php';
 include_once TYPES_PATH . 'view_style_list.php';
 include_once SHARED_PATH . 'views.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use html\button;
 use html\system\messages;
@@ -580,6 +581,7 @@ class component extends sandbox_typed
      */
 
     /**
+     * TODO all set_from_json_array functions should only use json_fields not api::FLD
      * set the vars this component bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
@@ -589,7 +591,7 @@ class component extends sandbox_typed
     {
         $usr_msg = parent::set_from_json_array($json_array);
         if (array_key_exists(json_fields::CODE_ID, $json_array)) {
-            $this->code_id = $json_array[api::FLD_CODE_ID];
+            $this->code_id = $json_array[json_fields::CODE_ID];
         } else {
             $this->code_id = null;
         }
@@ -598,13 +600,13 @@ class component extends sandbox_typed
         } else {
             $this->ui_msg_code_id = null;
         }
-        if (array_key_exists(api::FLD_POSITION, $json_array)) {
-            $this->position = $json_array[api::FLD_POSITION];
+        if (array_key_exists(json_fields::POSITION, $json_array)) {
+            $this->position = $json_array[json_fields::POSITION];
         } else {
             $this->position = 0;
         }
-        if (array_key_exists(api::FLD_LINK_ID, $json_array)) {
-            $this->link_id = $json_array[api::FLD_LINK_ID];
+        if (array_key_exists(json_fields::LINK_ID, $json_array)) {
+            $this->link_id = $json_array[json_fields::LINK_ID];
         } else {
             $this->link_id = 0;
         }
@@ -627,6 +629,9 @@ class component extends sandbox_typed
      */
 
     /**
+     * TODO all set_from_json_array functions should only use json_fields not api::FLD
+     * create an array for the json api message
+     * an array is used (instead of a string) to enable combinations of api_array() calls
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array() calls
      */
@@ -635,8 +640,8 @@ class component extends sandbox_typed
         $vars = parent::api_array();
         $vars[json_fields::CODE_ID] = $this->code_id;
         $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
-        $vars[api::FLD_POSITION] = $this->position;
-        $vars[api::FLD_LINK_ID] = $this->link_id;
+        $vars[json_fields::POSITION] = $this->position;
+        $vars[json_fields::LINK_ID] = $this->link_id;
         if ($this->pos_type_id != 0) {
             $vars[json_fields::POS_TYPE] = $this->pos_type_id;
         }

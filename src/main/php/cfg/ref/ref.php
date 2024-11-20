@@ -71,6 +71,8 @@ include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
+include_once SHARED_PATH . 'json_fields.php';
+
 
 use shared\api;
 use api\ref\ref as ref_api;
@@ -88,6 +90,7 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
 use cfg\log\change_table_list;
+use shared\json_fields;
 
 class ref extends sandbox_link
 {
@@ -505,7 +508,7 @@ class ref extends sandbox_link
                     $this->url = $value;
                 }
             }
-            if ($key == api::FLD_DESCRIPTION) {
+            if ($key == json_fields::DESCRIPTION) {
                 if ($value <> '') {
                     $this->description = $value;
                 }

@@ -32,12 +32,14 @@
 namespace html\system;
 
 include_once WEB_LOG_PATH . 'log.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
 use DateTimeInterface;
 use html\html_base;
 use html\log\log as log_dsp;
 use html\user\user_message;
+use shared\json_fields;
 
 class sys_log extends log_dsp
 {
@@ -71,8 +73,8 @@ class sys_log extends log_dsp
         } else {
             $this->set_trace('');
         }
-        if (array_key_exists(api::FLD_DESCRIPTION, $json_array)) {
-            $this->description = $json_array[api::FLD_DESCRIPTION];
+        if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
+            $this->description = $json_array[json_fields::DESCRIPTION];
         } else {
             $this->description = '';
         }

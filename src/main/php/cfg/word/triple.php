@@ -63,7 +63,7 @@ include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
-use api\system\messeges as msg_enum;
+use api\system\messages as msg_enum;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
 use shared\types\protection_type as protect_type_shared;
@@ -658,7 +658,7 @@ class triple extends sandbox_link_named implements JsonSerializable
      * if the given name is not set (null) the given name is not remove
      * if the given name is an empty string the given name is removed
      *
-     * @param triple|db_object_seq_id $sbx word with the values that sould been updated e.g. based on the import
+     * @param triple|db_object_seq_id $sbx word with the values that should been updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
     function fill(triple|db_object_seq_id $sbx): user_message

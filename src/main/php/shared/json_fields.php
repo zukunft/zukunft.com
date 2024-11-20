@@ -2,7 +2,7 @@
 
 /*
 
-    shared/json_fields.php - list of json field names used for im- and export
+    shared/json_fields.php - list of json field names used for the api and im- and export
     ----------------------
 
     ths json fields for the api messages are in the shared api object
@@ -39,6 +39,28 @@ class json_fields
 
     // TODO easy move all fields used for the json im- and export messages to this object
 
+    /*
+     * api
+     */
+
+    // json field names of the api json messages
+    // which is supposed to be the same as the corresponding var of the api object
+    // so that no additional mapping is needed
+    // TODO check if api objects can be deprecated
+    // and used in the backend to create the json for the frontend
+    // and used in the frontend for the field selection
+    const ID = 'id'; // the unique database id used to save the changes
+    const NAME = 'name'; // the unique name of the object which is also a database index
+    const DESCRIPTION = 'description';
+
+    // the json field name in the api json message which is supposed to contain
+    // the database id (or in some cases still the code id) of an object type
+    // e.g. for the word api message it contains the id of the phrase type
+    const TYPE = 'type_id';
+
+    // the order number e.g. of the component within the view
+    const POSITION = 'position';
+
     // the database id e.g. of a component_link
     const LINK_ID = 'link_id';
 
@@ -51,10 +73,10 @@ class json_fields
     // the position rules for a component relative to the previous component
     const POS_TYPE = 'position_type';
 
-    // to link predefind functionality to a row e.g. to select a system view
+    // to link predefined functionality to a row e.g. to select a system view
     const CODE_ID = 'code_id';
 
-    // to link predefind functionality to a row e.g. to select a system view
+    // to link predefined functionality to a row e.g. to select a system view
     const UI_MSG_CODE_ID = 'ui_msg_code_id';
 
 }
