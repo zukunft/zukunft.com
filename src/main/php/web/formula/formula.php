@@ -36,6 +36,7 @@ namespace html\formula;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once SHARED_PATH . 'views.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
 use cfg\db\sql_db;
@@ -59,6 +60,7 @@ use html\sandbox\sandbox_typed;
 use html\system\messages;
 use html\user\user_message;
 use html\word\word as word_dsp;
+use shared\json_fields;
 use shared\library;
 use shared\views as view_shared;
 
@@ -89,23 +91,23 @@ class formula extends sandbox_typed
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_USER_TEXT, $json_array)) {
-            $this->set_usr_text($json_array[api::FLD_USER_TEXT]);
+        if (array_key_exists(json_fields::USER_TEXT, $json_array)) {
+            $this->set_usr_text($json_array[json_fields::USER_TEXT]);
         } else {
             $this->set_usr_text(null);
         }
-        if (array_key_exists(api::FLD_REF_TEXT, $json_array)) {
-            $this->set_ref_text($json_array[api::FLD_REF_TEXT]);
+        if (array_key_exists(json_fields::REF_TEXT, $json_array)) {
+            $this->set_ref_text($json_array[json_fields::REF_TEXT]);
         } else {
             $this->set_ref_text(null);
         }
-        if (array_key_exists(api::FLD_NEED_ALL_VAL, $json_array)) {
-            $this->need_all_val = $json_array[api::FLD_NEED_ALL_VAL];
+        if (array_key_exists(json_fields::NEED_ALL_VAL, $json_array)) {
+            $this->need_all_val = $json_array[json_fields::NEED_ALL_VAL];
         } else {
             $this->need_all_val = false;
         }
-        if (array_key_exists(api::FLD_FORMULA_NAME_PHRASE, $json_array)) {
-            $this->name_wrd = new phrase_dsp($json_array[api::FLD_FORMULA_NAME_PHRASE]);
+        if (array_key_exists(json_fields::FORMULA_NAME_PHRASE, $json_array)) {
+            $this->name_wrd = new phrase_dsp($json_array[json_fields::FORMULA_NAME_PHRASE]);
         } else {
             $this->name_wrd = null;
         }
@@ -149,7 +151,7 @@ class formula extends sandbox_typed
     {
         $vars = parent::api_array();
 
-        $vars[api::FLD_USER_TEXT] = $this->usr_text();
+        $vars[json_fields::USER_TEXT] = $this->usr_text();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

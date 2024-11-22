@@ -149,7 +149,9 @@ class list_dsp
     {
         $result = array();
         foreach ($this->lst as $obj) {
-            $result[] = $obj->api_array();
+            if ($obj != null) {
+                $result[] = $obj->api_array();
+            }
         }
         return $result;
     }

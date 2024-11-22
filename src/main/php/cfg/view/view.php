@@ -52,6 +52,7 @@ include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once SERVICE_EXPORT_PATH . 'view_exp.php';
 include_once SERVICE_EXPORT_PATH . 'component_exp.php';
 include_once WEB_VIEW_PATH . 'view.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\component\view_style;
 use shared\api;
@@ -73,6 +74,7 @@ use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
 use cfg\export\view_exp;
 use cfg\log\change;
+use shared\json_fields;
 use shared\library;
 
 class view extends sandbox_typed
@@ -430,7 +432,7 @@ class view extends sandbox_typed
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_CODE_ID) {
+            if ($key == json_fields::CODE_ID) {
                 if ($value <> '') {
                     $this->code_id = $value;
                 }

@@ -39,6 +39,7 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_PATH . 'views.php';
 include_once SHARED_PATH . 'api.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\verb_list;
 use html\button;
@@ -58,17 +59,13 @@ use html\system\messages;
 use html\user\user_message;
 use shared\api;
 use shared\enum\foaf_direction;
+use shared\json_fields;
 use shared\words;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\views as view_shared;
 
 class word extends sandbox_typed
 {
-
-    // the json field names in the api json message which is supposed to be the same as the var $id
-    const FLD_PLURAL = 'plural';
-    const FLD_PARENT = 'parent';
-
 
     /*
      * object vars
@@ -94,13 +91,13 @@ class word extends sandbox_typed
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(self::FLD_PLURAL, $json_array)) {
-            $this->set_plural($json_array[self::FLD_PLURAL]);
+        if (array_key_exists(json_fields::PLURAL, $json_array)) {
+            $this->set_plural($json_array[json_fields::PLURAL]);
         } else {
             $this->set_plural(null);
         }
-        if (array_key_exists(self::FLD_PARENT, $json_array)) {
-            $this->set_parent($json_array[self::FLD_PARENT]);
+        if (array_key_exists(json_fields::PARENT, $json_array)) {
+            $this->set_parent($json_array[json_fields::PARENT]);
         } else {
             $this->set_parent(null);
         }
@@ -116,9 +113,9 @@ class word extends sandbox_typed
     {
         $vars = parent::api_array();
 
-        $vars[self::FLD_PLURAL] = $this->plural();
+        $vars[json_fields::PLURAL] = $this->plural();
         if ($this->has_parent()) {
-            $vars[self::FLD_PARENT] = $this->parent()->api_array();
+            $vars[json_fields::PARENT] = $this->parent()->api_array();
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -132,8 +129,8 @@ class word extends sandbox_typed
     function set_from_url_array(array $url_array): user_message
     {
         $usr_msg = parent::set_from_json_array($url_array);
-        if (array_key_exists(api::FLD_PLURAL, $url_array)) {
-            $this->set_plural($url_array[api::FLD_PLURAL]);
+        if (array_key_exists(json_fields::PLURAL, $url_array)) {
+            $this->set_plural($url_array[json_fields::PLURAL]);
         } else {
             $this->set_plural(null);
         }

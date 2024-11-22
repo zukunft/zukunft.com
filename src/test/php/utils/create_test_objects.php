@@ -309,8 +309,8 @@ class create_test_objects extends test_base
                 while (($data = fgetcsv($handle, 0, ",", "'")) !== FALSE) {
                     if ($row == 1) {
                         $col_names = $lib->array_trim($data);
-                        if (in_array(api::FLD_CODE_ID, $col_names)) {
-                            $code_id_col = array_search(api::FLD_CODE_ID, $col_names);
+                        if (in_array(json_fields::CODE_ID, $col_names)) {
+                            $code_id_col = array_search(json_fields::CODE_ID, $col_names);
                         }
                         if (in_array(type_object::FLD_NAME, $col_names)) {
                             $name_col = array_search(type_object::FLD_NAME, $col_names);
@@ -378,8 +378,8 @@ class create_test_objects extends test_base
                         } elseif (in_array(change_field::FLD_ID, $col_names)) {
                             $id_col = array_search(change_field::FLD_ID, $col_names);
                         }
-                        if (in_array(api::FLD_CODE_ID, $col_names)) {
-                            $code_id_col = array_search(api::FLD_CODE_ID, $col_names);
+                        if (in_array(json_fields::CODE_ID, $col_names)) {
+                            $code_id_col = array_search(json_fields::CODE_ID, $col_names);
                         }
                         if (in_array(type_object::FLD_NAME, $col_names)) {
                             $name_col = array_search(type_object::FLD_NAME, $col_names);

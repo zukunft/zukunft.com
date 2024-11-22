@@ -46,10 +46,12 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once API_VALUE_PATH . 'value_list.php';
 include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
 include_once MODEL_GROUP_PATH . 'group_id_list.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql_field_list;
 use cfg\db\sql_type_list;
 use cfg\user;
+use shared\json_fields;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use api\value\value_list as value_list_api;
@@ -777,7 +779,7 @@ class value_list extends sandbox_value_list
                 $val->grp = $phr_lst->get_grp_id($do_save);
             }
 
-            if ($key == sandbox_exp::FLD_TIMESTAMP) {
+            if ($key == json_fields::TIMESTAMP) {
                 if (strtotime($value)) {
                     $val->time_stamp = $lib->get_datetime($value, $val->dsp_id(), 'JSON import');
                 } else {
@@ -785,11 +787,11 @@ class value_list extends sandbox_value_list
                 }
             }
 
-            if ($key == share_type_shared::JSON_FLD) {
+            if ($key == json_fields::SHARE) {
                 $val->share_id = $share_types->id($value);
             }
 
-            if ($key == protect_type_shared::JSON_FLD) {
+            if ($key == json_fields::PROTECTION) {
                 $val->protection_id = $protection_types->id($value);
             }
 

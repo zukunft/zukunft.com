@@ -37,6 +37,7 @@ namespace html\value;
 include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
 include_once API_SANDBOX_PATH . 'sandbox.php';
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql_db;
 use cfg\phrase;
@@ -52,6 +53,7 @@ use html\phrase\phrase_list as phrase_list_dsp;
 use html\figure\figure as figure_dsp;
 use html\sandbox\sandbox_value;
 use html\word\word as word_dsp;
+use shared\json_fields;
 use shared\library;
 
 class value extends sandbox_value
@@ -161,8 +163,8 @@ class value extends sandbox_value
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_PHRASES] = $this->grp()->phr_lst()->api_array();
-        $vars[api::FLD_NUMBER] = $this->number();
+        $vars[json_fields::PHRASES] = $this->grp()->phr_lst()->api_array();
+        $vars[json_fields::NUMBER] = $this->number();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

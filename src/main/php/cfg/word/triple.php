@@ -62,13 +62,14 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use api\system\messages as msg_enum;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
+use shared\json_fields;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
-use shared\api;
 use api\word\triple as triple_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -803,7 +804,7 @@ class triple extends sandbox_link_named implements JsonSerializable
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_FROM) {
+            if ($key == json_fields::FROM) {
                 if ($value != 0) {
                     // TODO use phrase cache
                     $phr = new phrase($this->user());
@@ -811,7 +812,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                     $this->set_from($phr);
                 }
             }
-            if ($key == api::FLD_TO) {
+            if ($key == json_fields::TO) {
                 if ($value != 0) {
                     // TODO use phrase cache
                     $phr = new phrase($this->user());
@@ -819,7 +820,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                     $this->set_to($phr);
                 }
             }
-            if ($key == api::FLD_VERB) {
+            if ($key == json_fields::VERB) {
                 if ($value != 0) {
                     global $verbs;
                     $vrb = $verbs->get($value);
@@ -833,10 +834,10 @@ class triple extends sandbox_link_named implements JsonSerializable
                     $this->plural = $value;
                 }
             }
-            if ($key == share_type_shared::JSON_FLD) {
+            if ($key == json_fields::SHARE) {
                 $this->share_id = $share_types->id($value);
             }
-            if ($key == protect_type_shared::JSON_FLD) {
+            if ($key == json_fields::PROTECTION) {
                 $this->protection_id = $protection_types->id($value);
             }
             if ($key == exp_obj::FLD_VIEW) {
@@ -854,7 +855,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 $this->view = $wrd_view;
             }
 
-            if ($key == api::FLD_PHRASES) {
+            if ($key == json_fields::PHRASES) {
                 $phr_lst = new phrase_list($this->user());
                 $msg->add($phr_lst->db_obj($value));
                 if ($msg->is_ok()) {
@@ -1382,10 +1383,10 @@ class triple extends sandbox_link_named implements JsonSerializable
         $vars = parent::jsonSerialize();
         $vars = array_merge($vars, get_object_vars($this));
         if ($this->from()->obj() != null) {
-            $vars[self::FLD_EX_FROM] = $this->from()->obj()->name_dsp();
+            $vars[json_fields::EX_FROM] = $this->from()->obj()->name_dsp();
         }
         if ($this->to()->obj() != null) {
-            $vars[self::FLD_EX_TO] = $this->to()->obj()->name_dsp();
+            $vars[json_fields::EX_TO] = $this->to()->obj()->name_dsp();
         }
         return $vars;
     }
@@ -1488,7 +1489,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             if ($key == sandbox_exp::FLD_TYPE) {
                 $this->type_id = $phrase_types->id($value);
             }
-            if ($key == self::FLD_EX_FROM) {
+            if ($key == json_fields::EX_FROM) {
                 if ($value == "") {
                     $lib = new library();
                     $result->add_message('from name should not be empty at ' . $lib->dsp_array($in_ex_json));
@@ -1500,7 +1501,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                     }
                 }
             }
-            if ($key == self::FLD_EX_TO) {
+            if ($key == json_fields::EX_TO) {
                 if ($value == "") {
                     $lib = new library();
                     $result->add_message('to name should not be empty at ' . $lib->dsp_array($in_ex_json));
@@ -1508,7 +1509,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                     $this->set_to($this->import_phrase($value, $test_obj));
                 }
             }
-            if ($key == self::FLD_EX_VERB) {
+            if ($key == json_fields::EX_VERB) {
                 $vrb = new verb;
                 $vrb->set_user($this->user());
                 if (!$test_obj) {

@@ -32,13 +32,15 @@
 
 namespace api\phrase;
 
-use shared\api;
+include_once SHARED_PATH . 'json_fields.php';
+
 use api\word\word as word_api;
 use api\phrase\phrase_list as phrase_list_api;
 use api\sandbox\sandbox_named as sandbox_named_api;
 use html\phrase\phrase_group as phrase_group_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use JsonSerializable;
+use shared\json_fields;
 
 class group extends sandbox_named_api implements JsonSerializable
 {
@@ -250,7 +252,7 @@ class group extends sandbox_named_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = parent::jsonSerialize();
-        $vars[api::FLD_PHRASES] = json_decode(json_encode($this->phr_lst()));
+        $vars[json_fields::PHRASES] = json_decode(json_encode($this->phr_lst()));
         return $vars;
     }
 

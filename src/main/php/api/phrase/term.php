@@ -227,13 +227,13 @@ class term extends combine_named_api implements JsonSerializable
         $vars = parent::jsonSerialize();
         $vars[json_fields::ID] = $this->obj_id();
         if ($this->is_word()) {
-            $vars[combine_object_api::FLD_CLASS] = self::CLASS_WORD;
+            $vars[json_fields::OBJECT_CLASS] = self::CLASS_WORD;
         } elseif ($this->is_triple()) {
-            $vars[combine_object_api::FLD_CLASS] = self::CLASS_TRIPLE;
+            $vars[json_fields::OBJECT_CLASS] = self::CLASS_TRIPLE;
         } elseif ($this->is_formula()) {
-            $vars[combine_object_api::FLD_CLASS] = self::CLASS_FORMULA;
+            $vars[json_fields::OBJECT_CLASS] = self::CLASS_FORMULA;
         } elseif ($this->is_verb()) {
-            $vars[combine_object_api::FLD_CLASS] = self::CLASS_VERB;
+            $vars[json_fields::OBJECT_CLASS] = self::CLASS_VERB;
         } else {
             log_err('class ' . $this->obj()::class . ' of term ' . $this->name() . ' not expected');
         }

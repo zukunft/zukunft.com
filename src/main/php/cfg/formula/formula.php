@@ -76,6 +76,7 @@ include_once API_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
 use cfg\db\sql_par_field_list;
@@ -83,6 +84,7 @@ use cfg\db\sql_type_list;
 use cfg\element\element;
 use cfg\element\element_list;
 use cfg\log\change;
+use shared\json_fields;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use api\formula\formula as formula_api;
@@ -513,7 +515,7 @@ class formula extends sandbox_typed
         $msg = parent::set_by_api_json($api_json);
 
         foreach ($api_json as $key => $value) {
-            if ($key == api::FLD_USR_TEXT) {
+            if ($key == json_fields::USR_TEXT) {
                 if ($value <> '') {
                     $this->set_user_text($value);
                 }

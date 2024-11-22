@@ -647,10 +647,10 @@ class sandbox extends db_object_seq_id_user
             if ($key == json_fields::ID) {
                 $this->set_id($value);
             }
-            if ($key == share_type_shared::JSON_FLD) {
+            if ($key == json_fields::SHARE) {
                 $this->share_id = $value;
             }
-            if ($key == protect_type_shared::JSON_FLD) {
+            if ($key == json_fields::PROTECTION) {
                 $this->protection_id = $value;
             }
 
@@ -839,14 +839,14 @@ class sandbox extends db_object_seq_id_user
 
         $usr_msg = parent::import_db_obj($this, $test_obj);
         foreach ($in_ex_json as $key => $value) {
-            if ($key == share_type_shared::JSON_FLD) {
+            if ($key == json_fields::SHARE) {
                 $this->share_id = $share_types->id($value);
                 if ($this->share_id < 0) {
                     $lib = new library();
                     $usr_msg->add_message('share type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
                 }
             }
-            if ($key == protect_type_shared::JSON_FLD) {
+            if ($key == json_fields::PROTECTION) {
                 $this->protection_id = $protection_types->id($value);
                 if ($this->protection_id < 0) {
                     $lib = new library();

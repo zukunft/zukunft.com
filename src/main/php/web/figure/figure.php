@@ -42,8 +42,6 @@ include_once SHARED_PATH . 'json_fields.php';
 
 use api\formula\figure as figure_api;
 use api\phrase\phrase_list as phrase_list_api;
-use api\sandbox\combine_object as combine_object_api;
-use shared\api;
 use api\sandbox\sandbox_value as sandbox_value_api;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\combine_named as combine_named_dsp;
@@ -69,17 +67,17 @@ class figure extends combine_named_dsp
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = new user_message();
-        if (array_key_exists(combine_object_api::FLD_CLASS, $json_array)) {
-            if ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_RESULT) {
+        if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
+            if ($json_array[json_fields::OBJECT_CLASS] == figure_api::CLASS_RESULT) {
                 $res_dsp = new result_dsp();
                 $res_dsp->set_from_json_array($json_array);
                 $this->set_obj($res_dsp);
-            } elseif ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_VALUE) {
+            } elseif ($json_array[json_fields::OBJECT_CLASS] == figure_api::CLASS_VALUE) {
                 $val = new value_dsp();
                 $val->set_from_json_array($json_array);
                 $this->set_obj($val);
             } else {
-                $usr_msg->add_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a figure');
+                $usr_msg->add_err('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a figure');
             }
         } else {
             $usr_msg->add_err('Json class missing, but expected for a figure');
@@ -140,13 +138,13 @@ class figure extends combine_named_dsp
     {
         $vars = array();
         if ($this->is_result()) {
-            $vars[combine_object_api::FLD_CLASS] = figure_api::CLASS_RESULT;
+            $vars[json_fields::OBJECT_CLASS] = figure_api::CLASS_RESULT;
         } else {
-            $vars[combine_object_api::FLD_CLASS] = figure_api::CLASS_VALUE;
+            $vars[json_fields::OBJECT_CLASS] = figure_api::CLASS_VALUE;
         }
         $vars[json_fields::ID] = $this->obj_id();
-        $vars[sandbox_value_api::FLD_NUMBER] = $this->number();
-        $vars[api::FLD_PHRASES] = $this->obj->grp()->api_array();
+        $vars[json_fields::NUMBER] = $this->number();
+        $vars[json_fields::PHRASES] = $this->obj->grp()->api_array();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

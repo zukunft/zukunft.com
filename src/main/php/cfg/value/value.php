@@ -393,7 +393,7 @@ class value extends sandbox_value
                 $this->set_id($value);
             }
 
-            if ($key == api::FLD_PHRASES) {
+            if ($key == json_fields::PHRASES) {
                 $phr_lst = new phrase_list($this->user());
                 $usr_msg->add($phr_lst->set_by_api_json($value));
                 if ($usr_msg->is_ok()) {
@@ -401,7 +401,7 @@ class value extends sandbox_value
                 }
             }
 
-            if ($key == sandbox_exp::FLD_TIMESTAMP) {
+            if ($key == json_fields::TIMESTAMP) {
                 if (strtotime($value)) {
                     $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
                 } else {
@@ -409,7 +409,7 @@ class value extends sandbox_value
                 }
             }
 
-            if ($key == sandbox_exp::FLD_NUMBER) {
+            if ($key == json_fields::NUMBER) {
                 if (is_numeric($value)) {
                     $this->number = $value;
                 } else {
@@ -417,11 +417,11 @@ class value extends sandbox_value
                 }
             }
 
-            if ($key == share_type_shared::JSON_FLD) {
+            if ($key == json_fields::SHARE) {
                 $this->share_id = $share_types->id($value);
             }
 
-            if ($key == protect_type_shared::JSON_FLD) {
+            if ($key == json_fields::PROTECTION) {
                 $this->protection_id = $protection_types->id($value);
                 if ($value <> protect_type_shared::NO_PROTECT) {
                     $get_ownership = true;
@@ -1224,7 +1224,7 @@ class value extends sandbox_value
         global $protection_types;
         $lib = new library();
 
-        if ($key == sandbox_exp::FLD_TIMESTAMP) {
+        if ($key == json_fields::TIMESTAMP) {
             if (strtotime($value)) {
                 $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
             } else {
@@ -1232,7 +1232,7 @@ class value extends sandbox_value
             }
         }
 
-        if ($key == sandbox_exp::FLD_NUMBER) {
+        if ($key == json_fields::NUMBER) {
             if (is_numeric($value)) {
                 $this->number = $value;
             } else {
@@ -1240,11 +1240,11 @@ class value extends sandbox_value
             }
         }
 
-        if ($key == share_type_shared::JSON_FLD) {
+        if ($key == json_fields::SHARE) {
             $this->share_id = $share_types->id($value);
         }
 
-        if ($key == protect_type_shared::JSON_FLD) {
+        if ($key == json_fields::PROTECTION) {
             $this->protection_id = $protection_types->id($value);
             if ($value <> protect_type_shared::NO_PROTECT) {
                 $get_ownership = true;

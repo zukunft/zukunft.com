@@ -138,14 +138,14 @@ class sandbox implements JsonSerializable
         $vars = get_object_vars($this);
 
         // remove vars from the json that have the default value
-        if (array_key_exists(api::FLD_SHARE, $vars)) {
-            if ($vars[api::FLD_SHARE] == $share_types->default_id()) {
-                unset($vars[api::FLD_SHARE]);
+        if (array_key_exists(json_fields::SHARE, $vars)) {
+            if ($vars[json_fields::SHARE] == $share_types->default_id()) {
+                unset($vars[json_fields::SHARE]);
             }
         }
-        if (array_key_exists(api::FLD_PROTECTION, $vars)) {
-            if ($vars[api::FLD_PROTECTION] == $protection_types->default_id()) {
-                unset($vars[api::FLD_PROTECTION]);
+        if (array_key_exists(json_fields::PROTECTION, $vars)) {
+            if ($vars[json_fields::PROTECTION] == $protection_types->default_id()) {
+                unset($vars[json_fields::PROTECTION]);
             }
         }
 

@@ -36,6 +36,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'views.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\component\component;
 use cfg\user;
@@ -45,6 +46,7 @@ use html\html_base;
 use html\view\view as view_dsp;
 use html\component\component as component_dsp;
 use shared\api;
+use shared\json_fields;
 use shared\views as view_shared;
 
 // open database
@@ -123,11 +125,11 @@ if ($usr->id() > 0) {
         if ($cmp_type != 0) {
             $cmp->type_id = $cmp_type;
         } //
-        if (isset($_GET[api::FLD_PHRASE_ROW])) {
-            $cmp->load_row_phrase($_GET[api::FLD_PHRASE_ROW]);
+        if (isset($_GET[json_fields::PHRASE_ROW])) {
+            $cmp->load_row_phrase($_GET[json_fields::PHRASE_ROW]);
         } //
-        if (isset($_GET[api::FLD_PHRASE_COL])) {
-            $cmp->load_col_phrase($_GET[api::FLD_PHRASE_ROW]);
+        if (isset($_GET[json_fields::PHRASE_COL])) {
+            $cmp->load_col_phrase($_GET[json_fields::PHRASE_ROW]);
         } //
 
         // save the changes

@@ -75,11 +75,11 @@ class job extends db_object_dsp
         $usr_msg = parent::set_from_json_array($json_array);
         // TODO use empty date instead?
         $request_timestamp = new DateTime();
-        if (array_key_exists(api::FLD_TIME_REQUEST, $json_array)) {
+        if (array_key_exists(json_fields::TIME_REQUEST, $json_array)) {
             try {
-                $request_timestamp = new DateTime($json_array[api::FLD_TIME_REQUEST]);
+                $request_timestamp = new DateTime($json_array[json_fields::TIME_REQUEST]);
             } catch (Exception $e) {
-                $usr_msg->add_err('Error converting system log timestamp ' . $json_array[api::FLD_TIME_REQUEST]
+                $usr_msg->add_err('Error converting system log timestamp ' . $json_array[json_fields::TIME_REQUEST]
                     . ' because ' . $e->getMessage());
             }
         } else {
@@ -87,27 +87,27 @@ class job extends db_object_dsp
         }
         $this->set_request_time($request_timestamp);
         $start_time = null;
-        if (array_key_exists(api::FLD_TIME_START, $json_array)) {
+        if (array_key_exists(json_fields::TIME_START, $json_array)) {
             try {
-                $request_timestamp = new DateTime($json_array[api::FLD_TIME_START]);
+                $request_timestamp = new DateTime($json_array[json_fields::TIME_START]);
             } catch (Exception $e) {
-                $usr_msg->add_err('Error converting system log timestamp ' . $json_array[api::FLD_TIME_START]
+                $usr_msg->add_err('Error converting system log timestamp ' . $json_array[json_fields::TIME_START]
                     . ' because ' . $e->getMessage());
             }
         }
         $this->set_start_time($start_time);
         $end_time = null;
-        if (array_key_exists(api::FLD_TIME_END, $json_array)) {
+        if (array_key_exists(json_fields::TIME_END, $json_array)) {
             try {
-                $request_timestamp = new DateTime($json_array[api::FLD_TIME_END]);
+                $request_timestamp = new DateTime($json_array[json_fields::TIME_END]);
             } catch (Exception $e) {
-                $usr_msg->add_err('Error converting system log timestamp ' . $json_array[api::FLD_TIME_END]
+                $usr_msg->add_err('Error converting system log timestamp ' . $json_array[json_fields::TIME_END]
                     . ' because ' . $e->getMessage());
             }
         }
         $this->set_end_time($end_time);
-        if (array_key_exists(api::FLD_USER_ID, $json_array)) {
-            $this->set_user_id($json_array[api::FLD_USER_ID]);
+        if (array_key_exists(json_fields::USER_ID, $json_array)) {
+            $this->set_user_id($json_array[json_fields::USER_ID]);
         } else {
             $this->set_user_id(0);
         }
@@ -116,13 +116,13 @@ class job extends db_object_dsp
         } else {
             $this->set_type(0);
         }
-        if (array_key_exists(api::FLD_STATUS, $json_array)) {
-            $this->set_status($json_array[api::FLD_STATUS]);
+        if (array_key_exists(json_fields::STATUS, $json_array)) {
+            $this->set_status($json_array[json_fields::STATUS]);
         } else {
             $this->set_status('');
         }
-        if (array_key_exists(api::FLD_PRIORITY, $json_array)) {
-            $this->set_priority($json_array[api::FLD_PRIORITY]);
+        if (array_key_exists(json_fields::PRIORITY, $json_array)) {
+            $this->set_priority($json_array[json_fields::PRIORITY]);
         } else {
             $this->set_priority(0);
         }
@@ -262,13 +262,13 @@ class job extends db_object_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_TIME_REQUEST] = $this->request_time()->format(DateTimeInterface::ATOM);
-        $vars[api::FLD_TIME_START] = $this->start_time()->format(DateTimeInterface::ATOM);
-        $vars[api::FLD_TIME_END] = $this->end_time()->format(DateTimeInterface::ATOM);
-        $vars[api::FLD_USER_ID] = $this->user_id();
+        $vars[json_fields::TIME_REQUEST] = $this->request_time()->format(DateTimeInterface::ATOM);
+        $vars[json_fields::TIME_START] = $this->start_time()->format(DateTimeInterface::ATOM);
+        $vars[json_fields::TIME_END] = $this->end_time()->format(DateTimeInterface::ATOM);
+        $vars[json_fields::USER_ID] = $this->user_id();
         $vars[json_fields::TYPE] = $this->type();
-        $vars[api::FLD_STATUS] = $this->status();
-        $vars[api::FLD_PRIORITY] = $this->priority();
+        $vars[json_fields::STATUS] = $this->status();
+        $vars[json_fields::PRIORITY] = $this->priority();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

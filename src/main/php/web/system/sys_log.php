@@ -68,8 +68,8 @@ class sys_log extends log_dsp
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_TRACE, $json_array)) {
-            $this->set_trace($json_array[api::FLD_TRACE]);
+        if (array_key_exists(json_fields::TRACE, $json_array)) {
+            $this->set_trace($json_array[json_fields::TRACE]);
         } else {
             $this->set_trace('');
         }
@@ -78,14 +78,14 @@ class sys_log extends log_dsp
         } else {
             $this->description = '';
         }
-        if (array_key_exists(api::FLD_PRG_PART, $json_array)) {
-            $this->set_prg_part($json_array[api::FLD_PRG_PART]);
+        if (array_key_exists(json_fields::PRG_PART, $json_array)) {
+            $this->set_prg_part($json_array[json_fields::PRG_PART]);
         } else {
             $this->set_prg_part('');
         }
-        if (array_key_exists(api::FLD_OWNER, $json_array)) {
-            if (is_numeric($json_array[api::FLD_OWNER])) {
-                $this->set_owner_id($json_array[api::FLD_OWNER]);
+        if (array_key_exists(json_fields::OWNER, $json_array)) {
+            if (is_numeric($json_array[json_fields::OWNER])) {
+                $this->set_owner_id($json_array[json_fields::OWNER]);
             } else {
                 $this->set_owner_id(0);
             }
@@ -243,9 +243,9 @@ class sys_log extends log_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_TRACE] = $this->trace();
-        $vars[api::FLD_PRG_PART] = $this->prg_part();
-        $vars[api::FLD_OWNER] = $this->owner_id();
+        $vars[json_fields::TRACE] = $this->trace();
+        $vars[json_fields::PRG_PART] = $this->prg_part();
+        $vars[json_fields::OWNER] = $this->owner_id();
         return $vars;
     }
 

@@ -33,6 +33,7 @@
 namespace api\word;
 
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
 use api\word\word as word_api;
@@ -42,6 +43,7 @@ use api\sandbox\sandbox_typed as sandbox_typed_api;
 use api\verb\verb as verb_api;
 use cfg\phrase_type;
 use cfg\word as word_cfg;
+use shared\json_fields;
 use shared\types\phrase_type AS phrase_type_shared;
 
 class triple extends sandbox_typed_api
@@ -308,13 +310,13 @@ class triple extends sandbox_typed_api
     {
         $vars = parent::jsonSerialize();
         if ($this->from()->id() != 0) {
-            $vars[api::FLD_FROM] = $this->from()->id();
+            $vars[json_fields::FROM] = $this->from()->id();
         }
         if ($this->verb()->id() != 0) {
-            $vars[api::FLD_VERB] = $this->verb()->id();
+            $vars[json_fields::VERB] = $this->verb()->id();
         }
         if ($this->to()->id() != 0) {
-            $vars[api::FLD_TO] = $this->to()->id();
+            $vars[json_fields::TO] = $this->to()->id();
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

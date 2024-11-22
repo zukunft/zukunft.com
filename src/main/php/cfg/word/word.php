@@ -81,7 +81,6 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
 use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -98,6 +97,7 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\value\value_list;
 use shared\enum\foaf_direction;
+use shared\json_fields;
 use shared\library;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
@@ -556,7 +556,7 @@ class word extends sandbox_typed
         foreach ($api_json as $key => $value) {
 
             // TODO move plural to language forms
-            if ($key == api::FLD_PLURAL) {
+            if ($key == json_fields::PLURAL) {
                 if ($value <> '') {
                     $this->plural = $value;
                 }
@@ -577,7 +577,7 @@ class word extends sandbox_typed
                 $this->view = $wrd_view;
             }
 
-            if ($key == api::FLD_PHRASES) {
+            if ($key == json_fields::PHRASES) {
                 $phr_lst = new phrase_list($this->user());
                 $msg->add($phr_lst->db_obj($value));
                 if ($msg->is_ok()) {

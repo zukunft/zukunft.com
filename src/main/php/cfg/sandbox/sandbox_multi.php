@@ -51,6 +51,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\element\element;
 use cfg\group\group;
@@ -63,6 +64,7 @@ use cfg\log\change_values_norm;
 use cfg\log\change_values_prime;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
+use shared\json_fields;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use cfg\component\component;
@@ -803,14 +805,14 @@ class sandbox_multi extends db_object_multi_user
 
         $result = parent::import_db_obj($this, $test_obj);
         foreach ($in_ex_json as $key => $value) {
-            if ($key == share_type_shared::JSON_FLD) {
+            if ($key == json_fields::SHARE) {
                 $this->share_id = $share_types->id($value);
                 if ($this->share_id < 0) {
                     $lib = new library();
                     $result->add_message('share type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
                 }
             }
-            if ($key == protect_type_shared::JSON_FLD) {
+            if ($key == json_fields::PROTECTION) {
                 $this->protection_id = $protection_types->id($value);
                 if ($this->protection_id < 0) {
                     $lib = new library();

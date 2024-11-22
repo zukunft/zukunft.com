@@ -89,34 +89,34 @@ class ref extends db_object_dsp
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_PHRASE, $json_array)) {
+        if (array_key_exists(json_fields::PHRASE, $json_array)) {
             $phr = new phrase_dsp();
             $wrd = new word_dsp();
             $phr->set_obj($wrd);
-            $phr->set_id($json_array[api::FLD_PHRASE]);
+            $phr->set_id($json_array[json_fields::PHRASE]);
             $this->phr = $phr;
         } else {
             $this->phr = null;
         }
-        if (array_key_exists(api::FLD_SOURCE, $json_array)) {
+        if (array_key_exists(json_fields::SOURCE, $json_array)) {
             $src = new source_dsp();
-            $src->set_id($json_array[api::FLD_SOURCE]);
+            $src->set_id($json_array[json_fields::SOURCE]);
             $this->source = $src;
         } else {
             $this->source = null;
         }
-        if (array_key_exists(api::FLD_EXTERNAL_KEY, $json_array)) {
-            $this->set_external_key($json_array[api::FLD_EXTERNAL_KEY]);
+        if (array_key_exists(json_fields::EXTERNAL_KEY, $json_array)) {
+            $this->set_external_key($json_array[json_fields::EXTERNAL_KEY]);
         } else {
             $this->set_external_key(null);
         }
-        if (array_key_exists(api::FLD_URL, $json_array)) {
-            $this->set_url($json_array[api::FLD_URL]);
+        if (array_key_exists(json_fields::URL, $json_array)) {
+            $this->set_url($json_array[json_fields::URL]);
         } else {
             $this->set_url(null);
         }
-        if (array_key_exists(api::FLD_PREDICATE, $json_array)) {
-            $this->set_predicate_id($json_array[api::FLD_PREDICATE]);
+        if (array_key_exists(json_fields::PREDICATE, $json_array)) {
+            $this->set_predicate_id($json_array[json_fields::PREDICATE]);
         } else {
             $this->set_predicate_id();
         }
@@ -236,11 +236,11 @@ class ref extends db_object_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_URL] = $this->url();
-        $vars[api::FLD_EXTERNAL_KEY] = $this->external_key();
-        $vars[api::FLD_PHRASE] = $this->phr->id();
-        $vars[api::FLD_SOURCE] = $this->source?->id();
-        $vars[api::FLD_PREDICATE] = $this->predicate_id();
+        $vars[json_fields::URL] = $this->url();
+        $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
+        $vars[json_fields::PHRASE] = $this->phr->id();
+        $vars[json_fields::SOURCE] = $this->source?->id();
+        $vars[json_fields::PREDICATE] = $this->predicate_id();
         $vars[json_fields::DESCRIPTION] = $this->description();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

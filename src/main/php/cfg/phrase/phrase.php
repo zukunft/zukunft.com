@@ -542,18 +542,22 @@ class phrase extends combine_named
     {
         $usr_msg = new user_message();
 
-        if ($api_json[json_fields::ID] > 0) {
-            $wrd = new word($this->user());
-            $usr_msg->add($wrd->set_by_api_json($api_json));
-            if ($usr_msg->is_ok()) {
-                $this->obj = $wrd;
-            }
+        if (!array_key_exists(json_fields::ID, $api_json)) {
+            log_warning('Missing id in api_json');
         } else {
-            $trp = new triple($this->user());
-            $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
-            $usr_msg->add($trp->set_by_api_json($api_json));
-            if ($usr_msg->is_ok()) {
-                $this->obj = $trp;
+            if ($api_json[json_fields::ID] > 0) {
+                $wrd = new word($this->user());
+                $usr_msg->add($wrd->set_by_api_json($api_json));
+                if ($usr_msg->is_ok()) {
+                    $this->obj = $wrd;
+                }
+            } else {
+                $trp = new triple($this->user());
+                $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
+                $usr_msg->add($trp->set_by_api_json($api_json));
+                if ($usr_msg->is_ok()) {
+                    $this->obj = $trp;
+                }
             }
         }
         return $usr_msg;

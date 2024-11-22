@@ -51,7 +51,8 @@
 
 namespace cfg;
 
-use shared\api;
+include_once SHARED_PATH . 'json_fields.php';
+
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_type;
@@ -63,6 +64,7 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
 use Exception;
+use shared\json_fields;
 use shared\library;
 
 class sandbox_link extends sandbox
@@ -339,7 +341,7 @@ class sandbox_link extends sandbox
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_PREDICATE) {
+            if ($key == json_fields::PREDICATE) {
                 $this->predicate_id = $value;
             }
 

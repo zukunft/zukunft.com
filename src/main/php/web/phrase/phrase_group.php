@@ -93,8 +93,8 @@ class phrase_group extends sandbox_named_dsp
     {
         if (array_key_exists(json_fields::ID, $json_array)) {
             $usr_msg = parent::set_from_json_array($json_array);
-            if (array_key_exists(api::FLD_PHRASES, $json_array)) {
-                $phr_lst = $json_array[api::FLD_PHRASES];
+            if (array_key_exists(json_fields::PHRASES, $json_array)) {
+                $phr_lst = $json_array[json_fields::PHRASES];
                 foreach ($phr_lst as $phr_json) {
                     $this->set_phrase_from_json_array($phr_json);
                 }
@@ -116,8 +116,8 @@ class phrase_group extends sandbox_named_dsp
     private function set_phrase_from_json_array(array $phr_json): void
     {
         $wrd_or_trp = new word_dsp();
-        if (array_key_exists(api::FLD_PHRASE_CLASS, $phr_json)) {
-            if ($phr_json[api::FLD_PHRASE_CLASS] == phrase_api::CLASS_TRIPLE) {
+        if (array_key_exists(json_fields::OBJECT_CLASS, $phr_json)) {
+            if ($phr_json[json_fields::OBJECT_CLASS] == phrase_api::CLASS_TRIPLE) {
                 $wrd_or_trp = new triple_dsp();
             }
         }
@@ -314,7 +314,7 @@ class phrase_group extends sandbox_named_dsp
         foreach ($this->lst as $phr) {
             $phr_lst_vars[] = $phr->api_array();
         }
-        //$vars[api::FLD_PHRASES] = $phr_lst_vars;
+        //$vars[json_fields::PHRASES] = $phr_lst_vars;
         return $phr_lst_vars;
     }
 

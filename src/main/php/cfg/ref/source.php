@@ -63,8 +63,8 @@ include_once API_REF_PATH . 'source.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once SERVICE_EXPORT_PATH . 'source_exp.php';
 include_once WEB_REF_PATH . 'source.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
 use api\ref\source as source_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -77,6 +77,7 @@ use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
 use cfg\export\source_exp;
 use cfg\log\change;
+use shared\json_fields;
 
 class source extends sandbox_typed
 {
@@ -294,7 +295,7 @@ class source extends sandbox_typed
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_URL) {
+            if ($key == json_fields::URL) {
                 if ($value <> '') {
                     $this->url = $value;
                 }

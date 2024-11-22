@@ -491,19 +491,19 @@ class ref extends sandbox_link
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_PHRASE) {
+            if ($key == json_fields::PHRASE) {
                 if ($value != '' and $value != 0) {
                     $phr = new phrase($this->user());
                     $phr->set_id($value);
                     $this->set_phrase($phr);
                 }
             }
-            if ($key == api::FLD_EXTERNAL_KEY) {
+            if ($key == json_fields::EXTERNAL_KEY) {
                 if ($value <> '') {
                     $this->external_key = $value;
                 }
             }
-            if ($key == api::FLD_URL) {
+            if ($key == json_fields::URL) {
                 if ($value <> '') {
                     $this->url = $value;
                 }

@@ -345,6 +345,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO creat a pod prime phrase mapping table, so that each pod can have its own prime phrases without losing the connection to other pod
     TODO create an id range for all pod prime phrases e.g. 1 to 16'384 and a range for this pod only prime phrases e.g. 16'385 to 32'768 and reserve an temp id range used during the relocation process
     TODO because MySQL does not keep the interface stable (e.g. https://dev.mysql.com/doc/refman/8.4/en/charset-unicode-utf8.html) switch to postgres and MariaDB
+    TODO use th principles of compression for database optimisation e.g. to sort phrases by usage to increase the number of prime value keys
+    TODO use a universal type to create the value tables, so instead of prime, main and big use value 1,2 and 3
 
     TODO message handling
         in dought return a user message to the highest level, so that it can be shown to the user

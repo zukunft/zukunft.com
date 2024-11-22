@@ -31,11 +31,13 @@
 
 namespace html\system;
 
-use shared\api;
+include_once SHARED_PATH . 'json_fields.php';
+
 use html\rest_ctrl as api_dsp;
 use html\html_base;
 use html\sandbox\sandbox_typed;
 use html\user\user_message;
+use shared\json_fields;
 
 class language extends sandbox_typed
 {
@@ -54,8 +56,8 @@ class language extends sandbox_typed
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_URL, $json_array)) {
-            $this->set_url($json_array[api::FLD_URL]);
+        if (array_key_exists(json_fields::URL, $json_array)) {
+            $this->set_url($json_array[json_fields::URL]);
         } else {
             $this->set_url(null);
         }
@@ -84,7 +86,7 @@ class language extends sandbox_typed
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_URL] = $this->url();
+        $vars[json_fields::URL] = $this->url();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

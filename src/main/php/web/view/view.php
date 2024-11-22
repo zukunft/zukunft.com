@@ -120,15 +120,15 @@ class view extends sandbox_typed
     {
         // the root view object
         $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_CODE_ID, $json_array)) {
-            $this->code_id = $json_array[api::FLD_CODE_ID];
+        if (array_key_exists(json_fields::CODE_ID, $json_array)) {
+            $this->code_id = $json_array[json_fields::CODE_ID];
         } else {
             $this->code_id = null;
         }
         // set the components
         $cmp_lst = new component_list_dsp();
-        if (array_key_exists(api::FLD_COMPONENTS, $json_array)) {
-            $cmp_lst->set_from_json_array($json_array[api::FLD_COMPONENTS]);
+        if (array_key_exists(json_fields::COMPONENTS, $json_array)) {
+            $cmp_lst->set_from_json_array($json_array[json_fields::COMPONENTS]);
         }
         // set the objects (e.g. word)
         if (array_key_exists(api::API_WORD, $json_array)) {
@@ -582,8 +582,8 @@ class view extends sandbox_typed
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_CODE_ID] = $this->code_id;
-        $vars[api::FLD_COMPONENTS] = $this->cmp_lst->api_array();
+        $vars[json_fields::CODE_ID] = $this->code_id;
+        $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_array();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

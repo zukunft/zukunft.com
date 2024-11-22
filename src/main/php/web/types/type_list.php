@@ -69,20 +69,20 @@ class type_list
     {
         $usr_msg = new user_message();
         foreach ($json_array as $value) {
-            if (!array_key_exists(api::FLD_CODE_ID, $value)) {
+            if (!array_key_exists(json_fields::CODE_ID, $value)) {
                 $usr_msg->add_err('code id is missing for ' . implode(',', $value));
             }
             if (array_key_exists(json_fields::DESCRIPTION, $value)) {
                 $typ = new type_object_dsp(
                     $value[json_fields::ID],
-                    $value[api::FLD_CODE_ID],
+                    $value[json_fields::CODE_ID],
                     $value[json_fields::NAME],
                     $value[json_fields::DESCRIPTION]
                 );
             } else {
                 $typ = new type_object_dsp(
                     $value[json_fields::ID],
-                    $value[api::FLD_CODE_ID],
+                    $value[json_fields::CODE_ID],
                     $value[json_fields::NAME]
                 );
             }

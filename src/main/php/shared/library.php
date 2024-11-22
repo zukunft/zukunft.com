@@ -865,7 +865,7 @@ class library
     private
     static function sort_array_by_class($a, $b): int
     {
-        return strcmp($a[combine_object_api::FLD_CLASS], $b[combine_object_api::FLD_CLASS]);
+        return strcmp($a[json_fields::OBJECT_CLASS], $b[json_fields::OBJECT_CLASS]);
     }
 
     private
@@ -881,7 +881,7 @@ class library
             if (count($a) > 0) {
                 if (array_key_exists(0, $a)) {
                     if (is_array($a[0])) {
-                        if (array_key_exists(combine_object_api::FLD_CLASS, $a[0])) {
+                        if (array_key_exists(json_fields::OBJECT_CLASS, $a[0])) {
                             usort($a, array('shared\library', 'sort_array_by_class'));
                         }
                         if (array_key_exists(json_fields::ID, $a[0])) {

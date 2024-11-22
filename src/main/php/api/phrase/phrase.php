@@ -172,9 +172,9 @@ class phrase extends combine_named_api implements JsonSerializable
         $vars[json_fields::ID] = $this->obj_id();
         if ($id != 0) {
             if ($this->is_word()) {
-                $vars[combine_object_api::FLD_CLASS] = self::CLASS_WORD;
+                $vars[json_fields::OBJECT_CLASS] = self::CLASS_WORD;
             } else {
-                $vars[combine_object_api::FLD_CLASS] = self::CLASS_TRIPLE;
+                $vars[json_fields::OBJECT_CLASS] = self::CLASS_TRIPLE;
             }
         }
         return $vars;
