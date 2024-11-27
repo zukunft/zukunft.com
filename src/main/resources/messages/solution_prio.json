@@ -82,7 +82,7 @@
       "protection": "admin_protection"
     },
     {
-      "name": "Climate",
+      "name": "climate",
       "refs": [
         {
           "name": "Climate",
@@ -95,7 +95,7 @@
       ]
     },
     {
-      "name": "warm",
+      "name": "warming",
       "refs": [
         {
           "name": "heating",

@@ -34,6 +34,7 @@ namespace html;
 
 use cfg\component\sheet\position_list;
 use cfg\data_object;
+use html\word\word;
 
 class sheet
 {
@@ -46,7 +47,8 @@ class sheet
     function calc_sheet(?data_object $data = null, ?position_list $pos_lst = null): string
     {
         // loop over the position list and get the related object
-        return '<table>
+
+        $result = '<table>
   <tr>
     <th>Priority</th>
     <th>Problem</th>
@@ -56,14 +58,29 @@ class sheet
   </tr>
   <tr>
     <td>1</td>
-    <td>Climate warming</td>
+    <td>';
+        // temp code
+        $wrd = new word();
+        $wrd->load_by_name('climate');
+        $result .= $wrd->display_linked();
+        $result .= ' ';
+        // temp code
+        $wrd = new word();
+        $wrd->load_by_name('warming');
+        $result .= $wrd->display_linked();
+        $result .= '</td>
     <td>reduce climate gas emissions</td>
     <td>2.4</td>
     <td>b htp</td>
   </tr>
   <tr>
     <td>2</td>
-    <td>Populism</td>
+    <td>';
+        // temp code
+        $wrd = new word();
+        $wrd->load_by_name('populism');
+        $result .= $wrd->display_linked();
+        $result .= '</td>
     <td>avoid wrong decisions</td>
     <td>1.5</td>
     <td>b htp</td>
@@ -90,6 +107,7 @@ class sheet
     <td>m htp</td>
   </tr>
 </table>';
+        return $result;
     }
 
 }
