@@ -641,7 +641,7 @@ class formula extends sandbox_typed
      */
     function wrd_add(): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         log_debug('formula wrd_add for ' . $this->dsp_id());
         $result = false;
@@ -649,7 +649,7 @@ class formula extends sandbox_typed
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = new word($this->user());
         $name_wrd->set_name($this->name());
-        $name_wrd->type_id = $phrase_types->id(phrase_type_shared::FORMULA_LINK);
+        $name_wrd->type_id = $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK);
         $name_wrd->save()->get_last_message();
         if ($name_wrd->id() > 0) {
             $this->name_wrd = $name_wrd;
@@ -714,7 +714,7 @@ class formula extends sandbox_typed
      */
     function wrd_add_fix(): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         log_err('The formula word for ' . $this->dsp_id() . ' needs to be recreated to fix an internal error');
         $result = false;
@@ -722,7 +722,7 @@ class formula extends sandbox_typed
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = new word($this->user());
         $name_wrd->name = $this->name();
-        $name_wrd->type_id = $phrase_types->id(phrase_type_shared::FORMULA_LINK);
+        $name_wrd->type_id = $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK);
         $name_wrd->add();
         if ($name_wrd->id() > 0) {
             //zu_info('Word with the formula name "'.$this->name().'" has been missing for id '.$this->id.'.','formula->calc');
@@ -2270,7 +2270,7 @@ class formula extends sandbox_typed
     private
     function is_term_the_same(term $trm): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $result = false;
         if ($trm->type() == formula::class) {
@@ -2280,7 +2280,7 @@ class formula extends sandbox_typed
             if ($trm->obj() == null) {
                 log_warning('The object of the term has been expected to be loaded');
             } else {
-                if ($trm->obj()->type_id == $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
+                if ($trm->obj()->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
                     //$result = $trm;
                     $result = true;
                 }
@@ -2453,7 +2453,7 @@ class formula extends sandbox_typed
         log_debug($this->dsp_id());
 
         global $db_con;
-        global $phrase_types;
+        global $phr_typ_cac;
 
         // decide which db write method should be used
         if ($use_func === null) {
@@ -2477,7 +2477,7 @@ class formula extends sandbox_typed
                 if ($trm->id_obj() > 0) {
                     if ($trm->type() <> formula::class) {
                         if ($trm->type() == word::class) {
-                            if ($trm->obj()->type_id == $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
+                            if ($trm->obj()->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
                                 log_debug('adding formula name ' . $this->dsp_id() . ' has just a matching formula word');
                             } else {
                                 $usr_msg->add_message($trm->id_used_msg($this));
@@ -2589,7 +2589,7 @@ class formula extends sandbox_typed
     function del_links(): user_message
     {
         global $db_con;
-        global $phrase_types;
+        global $phr_typ_cac;
         $usr_msg = new user_message();
 
         $frm_lnk_lst = new formula_link_list($this->user());

@@ -474,14 +474,13 @@ class view_term_link extends sandbox_link
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $phrase_types;
+            global $phr_typ_cac;
             $lst->add_type_field(
                 view_link_type::FLD_ID,
                 type_object::FLD_NAME,
                 $this->predicate_id(),
                 $sbx->predicate_id(),
-                $phrase_types
-            );
+                $phr_typ_cac            );
         }
         return $lst;
     }

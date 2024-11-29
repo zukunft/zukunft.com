@@ -94,7 +94,7 @@ class type_lists
     {
         global $db_con;
         global $user_profiles;
-        global $phrase_types;
+        global $phr_typ_cac;
         global $formula_types;
         global $formula_link_types;
         global $element_types;
@@ -121,7 +121,7 @@ class type_lists
         log_debug();
         $lst = new type_lists_api($db_con, $usr);
         $lst->add($user_profiles->api_obj(), controller::API_LIST_USER_PROFILES);
-        $lst->add($phrase_types->api_obj(), controller::API_LIST_PHRASE_TYPES);
+        $lst->add($phr_typ_cac->api_obj(), controller::API_LIST_PHRASE_TYPES);
         $lst->add($formula_types->api_obj(), controller::API_LIST_FORMULA_TYPES);
         $lst->add($formula_link_types->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
         $lst->add($element_types->api_obj(), controller::API_LIST_ELEMENT_TYPES);
@@ -159,7 +159,7 @@ class type_lists
         global $sys_log_stati;
         global $system_users;
         global $user_profiles;
-        global $phrase_types;
+        global $phr_typ_cac;
         global $formula_types;
         global $formula_link_types;
         global $element_types;
@@ -195,8 +195,8 @@ class type_lists
         // these tables are expected to be so small that it is more efficient to load all database records once at start
         $user_profiles = new user_profile_list();
         $user_profiles->load($db_con);
-        $phrase_types = new phrase_types();
-        $phrase_types->load($db_con);
+        $phr_typ_cac = new phrase_types();
+        $phr_typ_cac->load($db_con);
         $formula_types = new formula_type_list();
         $formula_types->load($db_con);
         $formula_link_types = new formula_link_type_list();

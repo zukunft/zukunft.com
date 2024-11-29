@@ -485,8 +485,8 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function set_type(string $type_code_id): void
     {
-        global $phrase_types;
-        $this->type_id = $phrase_types->id($type_code_id);
+        global $phr_typ_cac;
+        $this->type_id = $phr_typ_cac->id($type_code_id);
     }
 
     /**
@@ -688,8 +688,8 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function type_name(): string
     {
-        global $phrase_types;
-        return $phrase_types->name($this->type_id);
+        global $phr_typ_cac;
+        return $phr_typ_cac->name($this->type_id);
     }
 
     /**
@@ -698,11 +698,11 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function type_code_id(): string
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         if ($this->type_id == null) {
             return '';
         } else {
-            return $phrase_types->code_id($this->type_id);
+            return $phr_typ_cac->code_id($this->type_id);
         }
     }
 
@@ -725,10 +725,10 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function is_type(string $typ): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $result = false;
-        if ($this->type_id == $phrase_types->id($typ)) {
+        if ($this->type_id == $phr_typ_cac->id($typ)) {
             $result = true;
         }
         return $result;
@@ -1429,7 +1429,7 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         log_debug();
 
@@ -1481,13 +1481,13 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function import_obj_fill(array $in_ex_json, object $test_obj = null): user_message
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $result = parent::import_obj($in_ex_json, $test_obj);
 
         foreach ($in_ex_json as $key => $value) {
             if ($key == sandbox_exp::FLD_TYPE) {
-                $this->type_id = $phrase_types->id($value);
+                $this->type_id = $phr_typ_cac->id($value);
             }
             if ($key == json_fields::EX_FROM) {
                 if ($value == "") {
@@ -1550,7 +1550,7 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function export_obj(bool $do_load = true): sandbox_exp
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         global $share_types;
         global $protection_types;
 
@@ -1564,7 +1564,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             $result->description = $this->description;
         }
         if ($this->type_id > 0) {
-            if ($this->type_id <> $phrase_types->default_id()) {
+            if ($this->type_id <> $phr_typ_cac->default_id()) {
                 $result->type = $this->type_code_id();
             }
         }
@@ -2397,14 +2397,13 @@ class triple extends sandbox_link_named implements JsonSerializable
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $phrase_types;
+            global $phr_typ_cac;
             $lst->add_type_field(
                 phrase::FLD_TYPE,
                 phrase::FLD_TYPE_NAME,
                 $this->type_id(),
                 $sbx->type_id(),
-                $phrase_types
-            );
+                $phr_typ_cac            );
         }
 
         // the link type cannot be changed by the user, because this would be another link

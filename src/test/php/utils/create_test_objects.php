@@ -203,7 +203,7 @@ class create_test_objects extends test_base
         $is_ok = true;
 
         $user_profiles = new user_profile_list();
-        $phrase_types = new phrase_types();
+        $phr_typ_cac = new phrase_types();
         $formula_types = new formula_type_list();
         $formula_link_types = new formula_link_type_list();
         $element_types = new element_type_list();
@@ -227,7 +227,7 @@ class create_test_objects extends test_base
         $verbs = new verb_list();
 
         $user_profiles->load_dummy();
-        $phrase_types->load_dummy();
+        $phr_typ_cac->load_dummy();
         $formula_types->load_dummy();
         $formula_link_types->load_dummy();
         $element_types->load_dummy();
@@ -251,11 +251,11 @@ class create_test_objects extends test_base
         $verbs->load_dummy();
 
         // read the corresponding names and description from the internal config csv files
-        $this->read_all_names_from_config_csv($phrase_types);
+        $this->read_all_names_from_config_csv($phr_typ_cac);
 
         $lst = new type_lists_api($db_con, $usr);
         $lst->add($user_profiles->api_obj(), controller::API_LIST_USER_PROFILES);
-        $lst->add($phrase_types->api_obj(), controller::API_LIST_PHRASE_TYPES);
+        $lst->add($phr_typ_cac->api_obj(), controller::API_LIST_PHRASE_TYPES);
         $lst->add($formula_types->api_obj(), controller::API_LIST_FORMULA_TYPES);
         $lst->add($formula_link_types->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
         $lst->add($element_types->api_obj(), controller::API_LIST_ELEMENT_TYPES);
@@ -2610,11 +2610,11 @@ class create_test_objects extends test_base
      */
     function change_log_ref(): change
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $chg = $this->change_log_named();
         $chg->set_field(change_field_list::FLD_PHRASE_TYPE);
         $chg->new_value = phrase_type_shared::TIME;
-        $chg->new_id = $phrase_types->id(phrase_type_shared::TIME);
+        $chg->new_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         return $chg;
     }
 
@@ -2623,10 +2623,10 @@ class create_test_objects extends test_base
      */
     function change_log_ref_update(): change
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $chg = $this->change_log_ref();
         $chg->old_value = phrase_type_shared::MEASURE;
-        $chg->old_id = $phrase_types->id(phrase_type_shared::MEASURE);
+        $chg->old_id = $phr_typ_cac->id(phrase_type_shared::MEASURE);
         return $chg;
     }
 
@@ -2955,7 +2955,7 @@ class create_test_objects extends test_base
      */
     function add_word(string $wrd_name, ?string $wrd_type_code_id = null, ?user $test_usr = null): word
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $wrd = $this->load_word($wrd_name, $test_usr);
         if ($wrd->id() == 0) {
             $wrd->set_name($wrd_name);
@@ -2968,7 +2968,7 @@ class create_test_objects extends test_base
             log_err('Cannot create word ' . $wrd_name);
         }
         if ($wrd_type_code_id != null) {
-            $wrd->type_id = $phrase_types->id($wrd_type_code_id);
+            $wrd->type_id = $phr_typ_cac->id($wrd_type_code_id);
             $result = $wrd->save()->get_last_message();
             if ($result != '') {
                 log_err('add formula failed due to: ' . $result);
@@ -3061,7 +3061,7 @@ class create_test_objects extends test_base
                         ?user   $test_usr = null): triple
     {
         global $verbs;
-        global $phrase_types;
+        global $phr_typ_cac;
 
         if ($id == null) {
             $id = $this->next_seq_nbr();
@@ -3078,7 +3078,7 @@ class create_test_objects extends test_base
         $trp->set_name($wrd_name);
 
         if ($wrd_type_code_id != null) {
-            $trp->type_id = $phrase_types->id($wrd_type_code_id);
+            $trp->type_id = $phr_typ_cac->id($wrd_type_code_id);
         }
         return $trp;
     }
@@ -3727,12 +3727,12 @@ class create_test_objects extends test_base
     function word_put_json(): array
     {
         global $db_con;
-        global $phrase_types;
+        global $phr_typ_cac;
         $msg = new api_message($db_con, word::class, $this->usr1);
         $wrd = new word_api();
         $wrd->name = word_api::TN_ADD_API;
         $wrd->description = word_api::TD_ADD_API;
-        $wrd->type_id = $phrase_types->id(phrase_type_shared::NORMAL);
+        $wrd->type_id = $phr_typ_cac->id(phrase_type_shared::NORMAL);
         $msg->add_body($wrd);
         return $msg->get_json_array();
     }

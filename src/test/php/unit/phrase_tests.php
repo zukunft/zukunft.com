@@ -109,8 +109,8 @@ class phrase_tests
         $t->header('Unit tests of the phrase type class (src/main/php/model/phrase/phrase_type.php)');
 
         $t->subheader('phrase type api unit tests');
-        global $phrase_types;
-        $phr_typ = $phrase_types->get_by_code_id(phrase_type_shared::PERCENT);
+        global $phr_typ_cac;
+        $phr_typ = $phr_typ_cac->get_by_code_id(phrase_type_shared::PERCENT);
         $t->assert_api($phr_typ, 'phrase_type');
 
 

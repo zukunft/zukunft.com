@@ -449,11 +449,11 @@ class word extends sandbox_typed_api implements JsonSerializable
      */
     function set_type(?string $code_id): void
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         if ($code_id == null) {
             $this->set_type_id(null);
         } else {
-            $this->set_type_id($phrase_types->id($code_id));
+            $this->set_type_id($phr_typ_cac->id($code_id));
         }
     }
 
@@ -463,11 +463,11 @@ class word extends sandbox_typed_api implements JsonSerializable
      */
     function type(): ?object
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         if ($this->type_id == null) {
             return null;
         } else {
-            return $phrase_types->get_by_id($this->type_id);
+            return $phr_typ_cac->get_by_id($this->type_id);
         }
     }
 

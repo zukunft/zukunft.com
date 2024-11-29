@@ -2362,7 +2362,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function is_same($obj_to_check): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $result = false;
 
@@ -2383,11 +2383,11 @@ class sandbox_multi extends db_object_multi_user
                         $result = true;
                     } else {
                         if ($obj_to_check::class == formula::class
-                            and $this->type_id == $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
+                            and $this->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
                             // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
                             $result = true;
-                        } elseif ($this->type_id == $phrase_types->id(phrase_type_shared::FORMULA_LINK)
-                            or $obj_to_check->type_id == $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
+                        } elseif ($this->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)
+                            or $obj_to_check->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
                             // if one of the two words is a formula link and not both, the user should ge no suggestion to combine them
                             $result = false;
                         } else {
@@ -2646,7 +2646,7 @@ class sandbox_multi extends db_object_multi_user
         $class_name = $lib->class_to_name($this::class);
 
         global $db_con;
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $msg = '';
         $usr_msg = new user_message();
@@ -2697,7 +2697,7 @@ class sandbox_multi extends db_object_multi_user
                 if ($usr_msg->is_ok()) {
                     $wrd = new word($this->user());
                     $wrd->load_by_name($this->name());
-                    $wrd->type_id = $phrase_types->id(phrase_type_shared::FORMULA_LINK);
+                    $wrd->type_id = $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK);
                     $msg = $wrd->del();
                     $usr_msg->add($msg);
                 }

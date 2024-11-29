@@ -49,7 +49,7 @@ class ref_read_tests
     {
 
         global $db_con;
-        global $phrase_types;
+        global $phr_typ_cac;
 
         // init
         $lib = new library();
@@ -66,7 +66,7 @@ class ref_read_tests
 
         // ... and check if at least the most critical is loaded
         // TODO check
-        $result = $phrase_types->id(phrase_type_shared::NORMAL);
+        $result = $phr_typ_cac->id(phrase_type_shared::NORMAL);
         $t->assert('check ' . phrase_type_shared::NORMAL, $result, 1);
 
         $t->subheader('API unit db tests');

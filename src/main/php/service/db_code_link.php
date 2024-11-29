@@ -88,8 +88,8 @@ class db_cl
 
     function phrase_type_id(string $code_id): int
     {
-        global $phrase_types;
-        return $phrase_types->id($code_id);
+        global $phr_typ_cac;
+        return $phr_typ_cac->id($code_id);
     }
 
     function verb_id(string $code_id): int
@@ -220,8 +220,8 @@ class db_cl
 
     function phrase_type(int $id)
     {
-        global $phrase_types;
-        return $phrase_types->get_by_id($id);
+        global $phr_typ_cac;
+        return $phr_typ_cac->get_by_id($id);
     }
 
     function formula_type(int $id)
@@ -334,8 +334,8 @@ class db_cl
 
     function phrase_type_name(int $id): string
     {
-        global $phrase_types;
-        return $phrase_types->name($id);
+        global $phr_typ_cac;
+        return $phr_typ_cac->name($id);
     }
 
     function verb_name(int $id): string

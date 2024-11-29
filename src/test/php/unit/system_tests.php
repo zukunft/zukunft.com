@@ -216,8 +216,8 @@ class system_tests
         $t->assert_sql_all($db_con, $system_users);
         $user_profiles = new user_profile_list();
         $t->assert_sql_all($db_con, $user_profiles);
-        $phrase_types = new phrase_types(true);
-        $t->assert_sql_all($db_con, $phrase_types);
+        $phr_typ_cac = new phrase_types(true);
+        $t->assert_sql_all($db_con, $phr_typ_cac);
         $formula_types = new formula_type_list();
         $t->assert_sql_all($db_con, $formula_types);
         $formula_link_types = new formula_link_type_list();

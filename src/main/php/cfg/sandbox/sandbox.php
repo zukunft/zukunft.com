@@ -2118,7 +2118,7 @@ class sandbox extends db_object_seq_id_user
      */
     function is_same($obj_to_check): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $result = false;
 
@@ -2139,11 +2139,11 @@ class sandbox extends db_object_seq_id_user
                         $result = true;
                     } else {
                         if ($obj_to_check::class == formula::class
-                            and $this->type_id == $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
+                            and $this->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
                             // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
                             $result = true;
-                        } elseif ($this->type_id != $phrase_types->id(phrase_type_shared::FORMULA_LINK)
-                            and $obj_to_check->type_id != $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
+                        } elseif ($this->type_id != $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)
+                            and $obj_to_check->type_id != $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
                             // if not one of the two words is a formula link and not both, the user should ge no suggestion to combine them
                             // a measure word can be combined with a measure scale word
                             $result = true;

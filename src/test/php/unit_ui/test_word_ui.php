@@ -47,7 +47,7 @@ function run_word_ui_test(test_cleanup $t): void
 {
 
     global $usr;
-    global $phrase_types;
+    global $phr_typ_cac;
     global $verbs;
 
     $t->header('Test the word frontend scripts (e.g. /word_add.php)');
@@ -56,7 +56,7 @@ function run_word_ui_test(test_cleanup $t): void
     $wrd = new word($usr);
     $wrd->load_by_name(word_api::TN_READ);
     $vrb_is = $verbs->id(verbs::IS);
-    $wrd_type = $phrase_types->default_id();
+    $wrd_type = $phr_typ_cac->default_id();
     $result = file_get_contents('https://zukunft.com/http/word_add.php?verb=' . $vrb_is . '&word=' . $wrd->id() . '&type=1&back=' . $wrd->id());
     $target = word_api::TN_READ;
     $t->dsp_contains(', frontend word_add.php ' . $result . ' contains at least ' . $wrd->name(), $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);

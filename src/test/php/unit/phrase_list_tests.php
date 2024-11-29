@@ -207,11 +207,11 @@ class phrase_list_tests
     private function get_time_phrase(): phrase
     {
         global $usr;
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $wrd = new word($usr);
         $wrd->set(2, word_api::TN_RENAMED);
-        $wrd->type_id = $phrase_types->id(phrase_type_shared::TIME);
+        $wrd->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         return $wrd->phrase();
     }
 

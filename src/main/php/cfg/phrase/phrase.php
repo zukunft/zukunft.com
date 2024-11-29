@@ -1264,11 +1264,11 @@ class phrase extends combine_named
      */
     function is_percent(): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $result = false;
         if ($this->obj != null) {
-            if ($this->obj->type_id == $phrase_types->id(phrase_type_shared::PERCENT)) {
+            if ($this->obj->type_id == $phr_typ_cac->id(phrase_type_shared::PERCENT)) {
                 $result = true;
             }
         } else {
@@ -1347,7 +1347,7 @@ class phrase extends combine_named
      */
     function save(): user_message
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $usr_msg = new user_message();
 
@@ -1372,7 +1372,7 @@ class phrase extends combine_named
                 // create a word if neither the word nor the triple exists
                 $wrd = new word($this->user());
                 $wrd->set_name($this->name());
-                $wrd->type_id = $phrase_types->default_id();
+                $wrd->type_id = $phr_typ_cac->default_id();
                 $usr_msg->add($wrd->save());
                 if ($wrd->id() == 0) {
                     log_err('Cannot add from word ' . $this->dsp_id(), 'phrase->save');

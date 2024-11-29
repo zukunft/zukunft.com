@@ -399,8 +399,8 @@ class word extends sandbox_typed
      */
     function set_type(string $type_code_id): void
     {
-        global $phrase_types;
-        $this->type_id = $phrase_types->id($type_code_id);
+        global $phr_typ_cac;
+        $this->type_id = $phr_typ_cac->id($type_code_id);
     }
 
     /**
@@ -495,8 +495,8 @@ class word extends sandbox_typed
      */
     function type_name(): string
     {
-        global $phrase_types;
-        return $phrase_types->name($this->type_id);
+        global $phr_typ_cac;
+        return $phr_typ_cac->name($this->type_id);
     }
 
     /**
@@ -505,8 +505,8 @@ class word extends sandbox_typed
      */
     function type_name_or_null(): ?string
     {
-        global $phrase_types;
-        return $phrase_types->name_or_null($this->type_id);
+        global $phr_typ_cac;
+        return $phr_typ_cac->name_or_null($this->type_id);
     }
 
     /**
@@ -515,8 +515,8 @@ class word extends sandbox_typed
      */
     function type_code_id(): string
     {
-        global $phrase_types;
-        return $phrase_types->code_id($this->type_id);
+        global $phr_typ_cac;
+        return $phr_typ_cac->code_id($this->type_id);
     }
 
 
@@ -719,10 +719,10 @@ class word extends sandbox_typed
      */
     function load_sql_by_formula_name(sql $sc, string $name): sql_par
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $qp = parent::load_sql_usr_num($sc, $this, formula::FLD_NAME);
         $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
-        $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST);
+        $sc->add_where(phrase::FLD_TYPE, $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -740,9 +740,9 @@ class word extends sandbox_typed
     function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         // TODO check if and where it is needed to exclude the formula words
-        // global $phrase_types;
+        // global $phr_typ_cac;
         // $qp = parent::load_sql_usr_num($sc, $this, $query_name);
-        // $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST_NOT);
+        // $sc->add_where(phrase::FLD_TYPE, $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST_NOT);
         // return $qp;
         return parent::load_sql_usr_num($sc, $this, $query_name);
     }
@@ -889,7 +889,7 @@ class word extends sandbox_typed
      */
     function import_obj_fill(array $in_ex_json, object $test_obj = null): user_message
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         // reset all parameters for the word object but keep the user
         $usr = $this->user();
@@ -900,7 +900,7 @@ class word extends sandbox_typed
         $result = parent::import_obj($in_ex_json, $test_obj);
         foreach ($in_ex_json as $key => $value) {
             if ($key == sandbox_exp::FLD_TYPE) {
-                $this->type_id = $phrase_types->id($value);
+                $this->type_id = $phr_typ_cac->id($value);
             }
             if ($key == sql::FLD_CODE_ID) {
                 if ($this->user()->is_admin()) {
@@ -933,7 +933,7 @@ class word extends sandbox_typed
 
         // set the default type if no type is specified
         if ($this->type_id <= 0) {
-            $this->type_id = $phrase_types->default_id();
+            $this->type_id = $phr_typ_cac->default_id();
         }
 
         return $result;
@@ -946,7 +946,7 @@ class word extends sandbox_typed
      */
     function export_obj(bool $do_load = true): sandbox_exp_named
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         global $share_types;
         global $protection_types;
 
@@ -963,7 +963,7 @@ class word extends sandbox_typed
             $result->description = $this->description;
         }
         if ($this->type_id > 0) {
-            if ($this->type_id <> $phrase_types->default_id()) {
+            if ($this->type_id <> $phr_typ_cac->default_id()) {
                 $result->type = $this->type_code_id();
             }
         }
@@ -1031,10 +1031,10 @@ class word extends sandbox_typed
      */
     function is_type(string $type): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $result = false;
-        if ($this->type_id == $phrase_types->id($type)) {
+        if ($this->type_id == $phr_typ_cac->id($type)) {
             $result = true;
             log_debug($this->dsp_id() . ' is ' . $type);
         }
@@ -1575,7 +1575,7 @@ class word extends sandbox_typed
      */
     function has_cfg(): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $has_cfg = false;
         if (isset($this->plural)) {
@@ -1589,7 +1589,7 @@ class word extends sandbox_typed
             }
         }
         if (isset($this->type_id)) {
-            if ($this->type_id <> $phrase_types->default_id()) {
+            if ($this->type_id <> $phr_typ_cac->default_id()) {
                 $has_cfg = true;
             }
         }
@@ -1967,14 +1967,13 @@ class word extends sandbox_typed
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $phrase_types;
+            global $phr_typ_cac;
             $lst->add_type_field(
                 phrase::FLD_TYPE,
                 phrase::FLD_TYPE_NAME,
                 $this->type_id(),
                 $sbx->type_id(),
-                $phrase_types
-            );
+                $phr_typ_cac            );
         }
         if ($sbx->view_id() <> $this->view_id()) {
             if ($do_log) {

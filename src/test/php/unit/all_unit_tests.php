@@ -532,10 +532,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_phrase_types(): void
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
-        $phrase_types = new phrase_types();
-        $phrase_types->load_dummy();
+        $phr_typ_cac = new phrase_types();
+        $phr_typ_cac->load_dummy();
 
     }
 

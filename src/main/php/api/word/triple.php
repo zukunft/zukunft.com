@@ -226,10 +226,10 @@ class triple extends sandbox_typed_api
      */
     function is_type(string $type): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $result = false;
         if ($this->type_id() != Null) {
-            if ($this->type_id() == $phrase_types->id($type)) {
+            if ($this->type_id() == $phr_typ_cac->id($type)) {
                 $result = true;
             }
         }

@@ -975,9 +975,10 @@ class sql_db
 
     function run_preloaded_truncate(): void
     {
+        // TODO use system user cache
         global $system_users;
         global $user_profiles;
-        global $phrase_types;
+        global $phr_typ_cac;
         global $formula_types;
         global $formula_link_types;
         global $element_types;
@@ -1004,7 +1005,7 @@ class sql_db
         // TODO activate or remove
         //$system_users =[];
         //$user_profiles =[];
-        $phrase_types = new phrase_types();
+        $phr_typ_cac = new phrase_types();
         $formula_types = new formula_type_list();
         $formula_link_types = new formula_link_type_list();
         $element_types = new element_type_list();

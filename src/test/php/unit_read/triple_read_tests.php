@@ -54,7 +54,7 @@ class triple_read_tests
         global $verbs;
         global $db_con;
         global $usr;
-        global $phrase_types;
+        global $phr_typ_cac;
 
         // init
         $t->name = 'triple read db->';

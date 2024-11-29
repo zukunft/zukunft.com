@@ -167,11 +167,11 @@ class word extends sandbox_typed
      */
     function set_type(?string $code_id): void
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         if ($code_id == null) {
             $this->set_type_id();
         } else {
-            $this->set_type_id($phrase_types->id($code_id));
+            $this->set_type_id($phr_typ_cac->id($code_id));
         }
     }
 
@@ -272,10 +272,10 @@ class word extends sandbox_typed
 
     function dsp_type_selector(string $form): string
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $result = '';
-        if ($phrase_types->code_id($this->type_id()) == phrase_type_shared::FORMULA_LINK) {
-            $result .= ' type: ' . $phrase_types->name($this->type_id());
+        if ($phr_typ_cac->code_id($this->type_id()) == phrase_type_shared::FORMULA_LINK) {
+            $result .= ' type: ' . $phr_typ_cac->name($this->type_id());
         } else {
             $result .= $this->phrase_type_selector($form);
         }
@@ -494,10 +494,10 @@ class word extends sandbox_typed
      */
     function is_type(string $type): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $result = false;
         if ($this->type_id() != Null) {
-            if ($this->type_id() == $phrase_types->id($type)) {
+            if ($this->type_id() == $phr_typ_cac->id($type)) {
                 $result = true;
             }
         }
@@ -810,11 +810,11 @@ class word extends sandbox_typed
 
     function dsp_formula(string $back = ''): string
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $html = new html_base();
 
         $result = '';
-        if ($this->type_id() == $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
+        if ($this->type_id() == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
             $result .= $html->dsp_form_hidden("name", $this->name);
             $result .= '  to change the name of "' . $this->name . '" rename the ';
             $frm = new formula_dsp();

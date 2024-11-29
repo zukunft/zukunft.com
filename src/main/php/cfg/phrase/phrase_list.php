@@ -796,7 +796,7 @@ class phrase_list extends sandbox_list_named
      */
     function import_lst(array $json_obj, object $test_obj = null): user_message
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $usr_msg = new user_message();
         foreach ($json_obj as $phr_name) {
@@ -823,7 +823,7 @@ class phrase_list extends sandbox_list_named
                                 $wrd->load_by_name($phr_name);
                                 if ($wrd->id() == 0) {
                                     $wrd->set_name($phr_name);
-                                    $wrd->type_id = $phrase_types->default_id();
+                                    $wrd->type_id = $phr_typ_cac->default_id();
                                     $usr_msg->add($wrd->save());
                                 }
                                 if ($wrd->id() == 0) {
@@ -1617,12 +1617,12 @@ class phrase_list extends sandbox_list_named
      */
     function time_lst_old(): array
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         log_debug($this->dsp_id());
 
         $result = array();
-        $time_type = $phrase_types->id(phrase_type_shared::TIME);
+        $time_type = $phr_typ_cac->id(phrase_type_shared::TIME);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             if ($phr->type_id() == $time_type) {
@@ -1749,12 +1749,12 @@ class phrase_list extends sandbox_list_named
      */
     function measure_lst(): phrase_list
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         log_debug('phrase_list->measure_lst(' . $this->dsp_id());
         $lib = new library();
 
         $result = new phrase_list($this->user());
-        $measure_type = $phrase_types->id(phrase_type_shared::MEASURE);
+        $measure_type = $phr_typ_cac->id(phrase_type_shared::MEASURE);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             if (get_class($phr) <> phrase::class and get_class($phr) <> word::class and get_class($phr) <> word_dsp::class) {
@@ -1779,14 +1779,14 @@ class phrase_list extends sandbox_list_named
      */
     function scaling_lst(): phrase_list
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         log_debug('phrase_list->scaling_lst(' . $this->dsp_id());
         $lib = new library();
 
         $result = new phrase_list($this->user());
-        $scale_type = $phrase_types->id(phrase_type_shared::SCALING);
-        $scale_hidden_type = $phrase_types->id(phrase_type_shared::SCALING_HIDDEN);
+        $scale_type = $phr_typ_cac->id(phrase_type_shared::SCALING);
+        $scale_hidden_type = $phr_typ_cac->id(phrase_type_shared::SCALING_HIDDEN);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
             if ($phr->type_id() == $scale_type or $phr->type_id() == $scale_hidden_type) {
