@@ -140,11 +140,6 @@ class component_link extends sandbox_link
         [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
     );
 
-    // JSON fields
-    // TODO easy move JSON fields to a shared object
-    const FLD_JSON_POSITION_TYPE = 'position_type';
-    const FLD_JSON_STYLE = 'style';
-
 
     /*
      * object vars

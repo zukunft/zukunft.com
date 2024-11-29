@@ -911,22 +911,26 @@ class view extends sandbox_typed
                         or (count($json_cmp) == 3
                             and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
                             and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp)
-                            and array_key_exists(component_link::FLD_JSON_POSITION_TYPE, $json_cmp))
+                            and array_key_exists(json_fields::POS_TYPE, $json_cmp))
                         or (count($json_cmp) == 3
                             and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
                             and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp)
-                            and array_key_exists(component_link::FLD_JSON_STYLE, $json_cmp))
+                            and array_key_exists(json_fields::STYLE
+, $json_cmp))
                         or (count($json_cmp) == 4
                             and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
                             and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp)
-                            and array_key_exists(component_link::FLD_JSON_POSITION_TYPE, $json_cmp)
-                            and array_key_exists(component_link::FLD_JSON_STYLE, $json_cmp))) {
+                            and array_key_exists(json_fields::POS_TYPE, $json_cmp)
+                            and array_key_exists(json_fields::STYLE
+, $json_cmp))) {
                         $cmp->load_by_name($json_cmp[sandbox_exp::FLD_NAME]);
-                        if (array_key_exists(component_link::FLD_JSON_POSITION_TYPE, $json_cmp)) {
-                            $pos_type_code_id = $json_cmp[component_link::FLD_JSON_POSITION_TYPE];
+                        if (array_key_exists(json_fields::POS_TYPE, $json_cmp)) {
+                            $pos_type_code_id = $json_cmp[json_fields::POS_TYPE];
                         }
-                        if (array_key_exists(component_link::FLD_JSON_STYLE, $json_cmp)) {
-                            $style_code_id = $json_cmp[component_link::FLD_JSON_STYLE];
+                        if (array_key_exists(json_fields::STYLE
+, $json_cmp)) {
+                            $style_code_id = $json_cmp[json_fields::STYLE
+];
                         }
                         // if the component does not jet exist
                         // nevertheless create the component
