@@ -977,19 +977,21 @@ class sql_db
     {
         // TODO use system user cache
         global $system_users;
+        // TODO use user profile cache
         global $user_profiles;
         global $phr_typ_cac;
-        global $formula_types;
-        global $formula_link_types;
-        global $element_types;
-        global $view_types;
+        global $frm_typ_cac;
+        global $frm_lnk_typ_cac;
+        global $elm_typ_cac;
+        global $msk_typ_cac;
         global $view_style_cache;
-        global $view_link_types;
-        global $component_types;
+        global $msk_lnk_typ_cac;
+        global $cmp_typ_cac;
+        // TODO use component link type cache
         global $component_link_types;
-        global $position_type_cache;
-        global $ref_types;
-        global $source_types;
+        global $pos_typ_cac;
+        global $ref_typ_cac;
+        global $src_typ_cac;
         global $share_types;
         global $protection_types;
         global $languages;
@@ -1006,18 +1008,18 @@ class sql_db
         //$system_users =[];
         //$user_profiles =[];
         $phr_typ_cac = new phrase_types();
-        $formula_types = new formula_type_list();
-        $formula_link_types = new formula_link_type_list();
-        $element_types = new element_type_list();
-        $view_types = new view_type_list();
+        $frm_typ_cac = new formula_type_list();
+        $frm_lnk_typ_cac = new formula_link_type_list();
+        $elm_typ_cac = new element_type_list();
+        $msk_typ_cac = new view_type_list();
         $view_style_cache = new view_style_list();
-        $view_link_types = new view_link_type_list();
-        $component_types = new component_type_list();
+        $msk_lnk_typ_cac = new view_link_type_list();
+        $cmp_typ_cac = new component_type_list();
         // not yet needed?
         //$component_link_types = new component_link_type_list();
-        $position_type_cache = new position_type_list();
-        $ref_types = new ref_type_list();
-        $source_types = new source_type_list();
+        $pos_typ_cac = new position_type_list();
+        $ref_typ_cac = new ref_type_list();
+        $src_typ_cac = new source_type_list();
         $share_types = new share_type_list();
         $protection_types = new protection_type_list();
         $languages = new language_list();

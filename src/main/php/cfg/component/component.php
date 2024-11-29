@@ -341,8 +341,8 @@ class component extends sandbox_typed
      */
     function set_type(string $type_code_id): void
     {
-        global $component_types;
-        $this->type_id = $component_types->id($type_code_id);
+        global $cmp_typ_cac;
+        $this->type_id = $cmp_typ_cac->id($type_code_id);
     }
 
     /**
@@ -535,8 +535,8 @@ class component extends sandbox_typed
      */
     function type_name(): string
     {
-        global $component_types;
-        return $component_types->name($this->type_id);
+        global $cmp_typ_cac;
+        return $cmp_typ_cac->name($this->type_id);
     }
 
     /**
@@ -545,8 +545,8 @@ class component extends sandbox_typed
      */
     function type_name_or_null(): ?string
     {
-        global $component_types;
-        return $component_types->name_or_null($this->type_id);
+        global $cmp_typ_cac;
+        return $cmp_typ_cac->name_or_null($this->type_id);
     }
 
     /**
@@ -556,8 +556,8 @@ class component extends sandbox_typed
      */
     private function type_id_by_code_id(string $code_id): int
     {
-        global $component_types;
-        return $component_types->id($code_id);
+        global $cmp_typ_cac;
+        return $cmp_typ_cac->id($code_id);
     }
 
 
@@ -1010,7 +1010,7 @@ class component extends sandbox_typed
     // link a view component to a view
     function link($dsp, $order_nbr): string
     {
-        global $position_type_cache;
+        global $pos_typ_cac;
 
         log_debug($this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
 
@@ -1324,7 +1324,7 @@ class component extends sandbox_typed
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $component_types;
+            global $cmp_typ_cac;
             if ($this->type_id() < 0) {
                 log_err('component type for ' . $this->dsp_id() . ' not found');
             }
@@ -1333,7 +1333,7 @@ class component extends sandbox_typed
                 type_object::FLD_NAME,
                 $this->type_id(),
                 $sbx->type_id(),
-                $component_types
+                $cmp_typ_cac
             );
         }
         if ($sbx->style_id() <> $this->style_id()) {

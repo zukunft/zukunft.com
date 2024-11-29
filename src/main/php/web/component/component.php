@@ -901,8 +901,8 @@ class component extends sandbox_typed
      */
     function html(?phrase_dsp $phr = null): string
     {
-        global $component_types;
-        return match ($component_types->code_id($this->type_id())) {
+        global $cmp_typ_cac;
+        return match ($cmp_typ_cac->code_id($this->type_id())) {
             component_type::TEXT => $this->text(),
             component_type::PHRASE_NAME => $this->word_name($phr),
             component_type::VALUES_RELATED => $this->table(),
@@ -915,8 +915,8 @@ class component extends sandbox_typed
      */
     function word_name(phrase_dsp $phr): string
     {
-        global $component_types;
-        if ($component_types->code_id($this->type_id()) == component_type::PHRASE_NAME) {
+        global $cmp_typ_cac;
+        if ($cmp_typ_cac->code_id($this->type_id()) == component_type::PHRASE_NAME) {
             return $phr->name();
         } else {
             return '';

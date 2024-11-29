@@ -229,8 +229,8 @@ class source extends sandbox_typed
      */
     function set_type(string $type_code_id): void
     {
-        global $source_types;
-        $this->type_id = $source_types->id($type_code_id);
+        global $src_typ_cac;
+        $this->type_id = $src_typ_cac->id($type_code_id);
     }
 
 
@@ -243,11 +243,11 @@ class source extends sandbox_typed
      */
     function type_name(): string
     {
-        global $source_types;
+        global $src_typ_cac;
 
         $type_name = '';
         if ($this->type_id > 0) {
-            $type_name = $source_types->name($this->type_id);
+            $type_name = $src_typ_cac->name($this->type_id);
         }
         return $type_name;
     }
@@ -258,8 +258,8 @@ class source extends sandbox_typed
      */
     function type_code_id(): string
     {
-        global $source_types;
-        return $source_types->code_id($this->type_id);
+        global $src_typ_cac;
+        return $src_typ_cac->code_id($this->type_id);
     }
 
 
@@ -425,7 +425,7 @@ class source extends sandbox_typed
      */
     function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
-        global $source_types;
+        global $src_typ_cac;
 
         log_debug();
         $result = parent::import_obj($in_ex_json, $test_obj);
@@ -440,7 +440,7 @@ class source extends sandbox_typed
                 }
             }
             if ($key == sandbox_exp::FLD_TYPE) {
-                $this->type_id = $source_types->id($value);
+                $this->type_id = $src_typ_cac->id($value);
             }
         }
 

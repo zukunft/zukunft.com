@@ -556,10 +556,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_formula_types(): void
     {
-        global $formula_types;
+        global $frm_typ_cac;
 
-        $formula_types = new formula_type_list();
-        $formula_types->load_dummy();
+        $frm_typ_cac = new formula_type_list();
+        $frm_typ_cac->load_dummy();
 
     }
 
@@ -569,10 +569,10 @@ class all_unit_tests extends test_cleanup
     private function init_formula_html_types(): void
     {
         global $html_formula_types;
-        global $formula_types;
+        global $frm_typ_cac;
 
         $html_formula_types = new formula_type_list_web();
-        $html_formula_types->set_from_json_array(json_decode($formula_types->api_json(), true));
+        $html_formula_types->set_from_json_array(json_decode($frm_typ_cac->api_json(), true));
 
     }
 
@@ -581,10 +581,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_formula_link_types(): void
     {
-        global $formula_link_types;
+        global $frm_lnk_typ_cac;
 
-        $formula_link_types = new formula_link_type_list();
-        $formula_link_types->load_dummy();
+        $frm_lnk_typ_cac = new formula_link_type_list();
+        $frm_lnk_typ_cac->load_dummy();
 
     }
 
@@ -593,10 +593,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_element_types(): void
     {
-        global $element_types;
+        global $elm_typ_cac;
 
-        $element_types = new element_type_list();
-        $element_types->load_dummy();
+        $elm_typ_cac = new element_type_list();
+        $elm_typ_cac->load_dummy();
 
     }
 
@@ -617,10 +617,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_view_types(): void
     {
-        global $view_types;
+        global $msk_typ_cac;
 
-        $view_types = new view_type_list();
-        $view_types->load_dummy();
+        $msk_typ_cac = new view_type_list();
+        $msk_typ_cac->load_dummy();
 
     }
 
@@ -629,10 +629,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_view_link_types(): void
     {
-        global $view_link_types;
+        global $msk_lnk_typ_cac;
 
-        $view_link_types = new view_link_type_list();
-        $view_link_types->load_dummy();
+        $msk_lnk_typ_cac = new view_link_type_list();
+        $msk_lnk_typ_cac->load_dummy();
 
     }
 
@@ -641,10 +641,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_component_types(): void
     {
-        global $component_types;
+        global $cmp_typ_cac;
 
-        $component_types = new component_type_list();
-        $component_types->load_dummy();
+        $cmp_typ_cac = new component_type_list();
+        $cmp_typ_cac->load_dummy();
 
     }
 
@@ -653,10 +653,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_component_pos_types(): void
     {
-        global $position_type_cache;
+        global $pos_typ_cac;
 
-        $position_type_cache = new position_type_list();
-        $position_type_cache->load_dummy();
+        $pos_typ_cac = new position_type_list();
+        $pos_typ_cac->load_dummy();
 
     }
 
@@ -677,10 +677,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_ref_types(): void
     {
-        global $ref_types;
+        global $ref_typ_cac;
 
-        $ref_types = new ref_type_list();
-        $ref_types->load_dummy();
+        $ref_typ_cac = new ref_type_list();
+        $ref_typ_cac->load_dummy();
 
     }
 
@@ -689,10 +689,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_source_types(): void
     {
-        global $source_types;
+        global $src_typ_cac;
 
-        $source_types = new source_type_list();
-        $source_types->load_dummy();
+        $src_typ_cac = new source_type_list();
+        $src_typ_cac->load_dummy();
 
     }
 

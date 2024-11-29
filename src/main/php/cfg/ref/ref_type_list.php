@@ -41,7 +41,7 @@ include_once DB_PATH . 'sql_par.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_REF_PATH . 'ref_type.php';
 
-global $ref_types;
+global $ref_typ_cac;
 
 class ref_type_list extends type_list
 {

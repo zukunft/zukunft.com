@@ -36,7 +36,7 @@ use test\create_test_objects;
 
 include_once DB_PATH . 'sql_db.php';
 
-global $formula_types;
+global $frm_typ_cac;
 
 class formula_type_list extends type_list
 {

@@ -100,20 +100,20 @@ class db_cl
 
     function formula_type_id(string $code_id): int
     {
-        global $formula_types;
-        return $formula_types->id($code_id);
+        global $frm_typ_cac;
+        return $frm_typ_cac->id($code_id);
     }
 
     function formula_link_type_id(string $code_id): int
     {
-        global $formula_link_types;
-        return $formula_link_types->id($code_id);
+        global $frm_lnk_typ_cac;
+        return $frm_lnk_typ_cac->id($code_id);
     }
 
     function element_type_id(string $code_id): int
     {
-        global $element_types;
-        return $element_types->id($code_id);
+        global $elm_typ_cac;
+        return $elm_typ_cac->id($code_id);
     }
 
     function view_id(string $code_id): int
@@ -124,32 +124,32 @@ class db_cl
 
     function view_type_id(string $code_id): int
     {
-        global $view_types;
-        return $view_types->id($code_id);
+        global $msk_typ_cac;
+        return $msk_typ_cac->id($code_id);
     }
 
     function component_type_id(string $code_id): int
     {
-        global $component_types;
-        return $component_types->id($code_id);
+        global $cmp_typ_cac;
+        return $cmp_typ_cac->id($code_id);
     }
 
     function component_pos_type_id(string $code_id): int
     {
-        global $position_type_cache;
-        return $position_type_cache->id($code_id);
+        global $pos_typ_cac;
+        return $pos_typ_cac->id($code_id);
     }
 
     function ref_type_id(string $code_id): int
     {
-        global $ref_types;
-        return $ref_types->id($code_id);
+        global $ref_typ_cac;
+        return $ref_typ_cac->id($code_id);
     }
 
     function source_type_id(string $code_id): int
     {
-        global $source_types;
-        return $source_types->id($code_id);
+        global $src_typ_cac;
+        return $src_typ_cac->id($code_id);
     }
 
     function share_type_id(string $code_id): int
@@ -226,38 +226,38 @@ class db_cl
 
     function formula_type(int $id)
     {
-        global $formula_types;
-        return $formula_types->get_by_id($id);
+        global $frm_typ_cac;
+        return $frm_typ_cac->get_by_id($id);
     }
 
     function formula_link_type(int $id)
     {
-        global $formula_link_types;
-        return $formula_link_types->get_by_id($id);
+        global $frm_lnk_typ_cac;
+        return $frm_lnk_typ_cac->get_by_id($id);
     }
 
     function element_type(int $id)
     {
-        global $element_types;
-        return $element_types->get_by_id($id);
+        global $elm_typ_cac;
+        return $elm_typ_cac->get_by_id($id);
     }
 
     function view_type(int $id)
     {
-        global $view_types;
-        return $view_types->get_by_id($id);
+        global $msk_typ_cac;
+        return $msk_typ_cac->get_by_id($id);
     }
 
     function component_type(int $id)
     {
-        global $component_types;
-        return $component_types->get_by_id($id);
+        global $cmp_typ_cac;
+        return $cmp_typ_cac->get_by_id($id);
     }
 
     function component_pos_type(int $id)
     {
-        global $position_type_cache;
-        return $position_type_cache->get_by_id($id);
+        global $pos_typ_cac;
+        return $pos_typ_cac->get_by_id($id);
     }
 
     function share_type(int $id)
@@ -346,20 +346,20 @@ class db_cl
 
     function formula_type_name(int $id): string
     {
-        global $formula_types;
-        return $formula_types->name($id);
+        global $frm_typ_cac;
+        return $frm_typ_cac->name($id);
     }
 
     function formula_link_type_name(int $id): string
     {
-        global $formula_link_types;
-        return $formula_link_types->name($id);
+        global $frm_lnk_typ_cac;
+        return $frm_lnk_typ_cac->name($id);
     }
 
     function element_type_name(int $id): string
     {
-        global $element_types;
-        return $element_types->name($id);
+        global $elm_typ_cac;
+        return $elm_typ_cac->name($id);
     }
 
     function view_name(int $id): string
@@ -370,32 +370,32 @@ class db_cl
 
     function view_type_name(int $id): string
     {
-        global $view_types;
-        return $view_types->name($id);
+        global $msk_typ_cac;
+        return $msk_typ_cac->name($id);
     }
 
     function component_type_name(int $id): string
     {
-        global $component_types;
-        return $component_types->name($id);
+        global $cmp_typ_cac;
+        return $cmp_typ_cac->name($id);
     }
 
     function component_pos_type_name(int $id): string
     {
-        global $position_type_cache;
-        return $position_type_cache->name($id);
+        global $pos_typ_cac;
+        return $pos_typ_cac->name($id);
     }
 
     function ref_type_name(int $id): string
     {
-        global $ref_types;
-        return $ref_types->name($id);
+        global $ref_typ_cac;
+        return $ref_typ_cac->name($id);
     }
 
     function source_type_name(int $id): string
     {
-        global $source_types;
-        return $source_types->name($id);
+        global $src_typ_cac;
+        return $src_typ_cac->name($id);
     }
 
     function share_type_name(int $id): string

@@ -54,7 +54,7 @@ class formula_write_tests
     function run(test_cleanup $t): void
     {
 
-        global $formula_types;
+        global $frm_typ_cac;
 
         // init
         $t->name = 'formula->';
@@ -382,7 +382,7 @@ class formula_write_tests
         // check if the formula parameters can be added
         $frm_renamed->usr_text = '= "this"';
         $frm_renamed->description = formula_api::TN_RENAMED . ' description';
-        $frm_renamed->type_id = $formula_types->id(formula_type::THIS);
+        $frm_renamed->type_id = $frm_typ_cac->id(formula_type::THIS);
         $frm_renamed->need_all_val = True;
         $result = $frm_renamed->save()->get_last_message();
         $target = '';
@@ -400,7 +400,7 @@ class formula_write_tests
         $target = formula_api::TN_RENAMED . ' description';
         $t->display('formula->load description for "' . formula_api::TN_RENAMED . '"', $target, $result);
         $result = $frm_reloaded->type_id;
-        $target = $formula_types->id(formula_type::THIS);
+        $target = $frm_typ_cac->id(formula_type::THIS);
         $t->display('formula->load type_id for "' . formula_api::TN_RENAMED . '"', $target, $result);
         $result = $frm_reloaded->need_all_val;
         $target = True;
@@ -443,7 +443,7 @@ class formula_write_tests
         $frm_usr2->load_by_name(formula_api::TN_RENAMED, formula::class);
         $frm_usr2->usr_text = '"percent" = ( "this" - "prior" ) / "prior"';
         $frm_usr2->description = formula_api::TN_RENAMED . ' description2';
-        $frm_usr2->type_id = $formula_types->id(formula_type::NEXT);
+        $frm_usr2->type_id = $frm_typ_cac->id(formula_type::NEXT);
         $frm_usr2->need_all_val = False;
         $result = $frm_usr2->save()->get_last_message();
         $target = '';
@@ -462,7 +462,7 @@ class formula_write_tests
         $target = formula_api::TN_RENAMED . ' description2';
         $t->display('formula->load description for "' . formula_api::TN_RENAMED . '"', $target, $result);
         $result = $frm_usr2_reloaded->type_id;
-        $target = $formula_types->id(formula_type::NEXT);
+        $target = $frm_typ_cac->id(formula_type::NEXT);
         $t->display('formula->load type_id for "' . formula_api::TN_RENAMED . '"', $target, $result);
         $result = $frm_usr2_reloaded->need_all_val;
         $target = False;
@@ -480,7 +480,7 @@ class formula_write_tests
         $target = formula_api::TN_RENAMED . ' description';
         $t->display('formula->load description for "' . formula_api::TN_RENAMED . '"', $target, $result);
         $result = $frm_reloaded->type_id;
-        $target = $formula_types->id(formula_type::THIS);
+        $target = $frm_typ_cac->id(formula_type::THIS);
         $t->display('formula->load type_id for "' . formula_api::TN_RENAMED . '"', $target, $result);
         $result = $frm_reloaded->need_all_val;
         $target = True;
@@ -491,7 +491,7 @@ class formula_write_tests
         $frm_usr2->load_by_name(formula_api::TN_RENAMED, formula::class);
         $frm_usr2->usr_text = '= "this"';
         $frm_usr2->description = formula_api::TN_RENAMED . ' description';
-        $frm_usr2->type_id = $formula_types->id(formula_type::THIS);
+        $frm_usr2->type_id = $frm_typ_cac->id(formula_type::THIS);
         $frm_usr2->need_all_val = True;
         $result = $frm_usr2->save()->get_last_message();
         $target = '';
@@ -510,7 +510,7 @@ class formula_write_tests
         $target = formula_api::TN_RENAMED . ' description';
         $t->display('formula->load description for "' . formula_api::TN_RENAMED . '"', $target, $result);
         $result = $frm_usr2_reloaded->type_id;
-        $target = $formula_types->id(formula_type::THIS);
+        $target = $frm_typ_cac->id(formula_type::THIS);
         $t->display('formula->load type_id for "' . formula_api::TN_RENAMED . '"', $target, $result);
         $result = $frm_usr2_reloaded->need_all_val;
         $target = True;

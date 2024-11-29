@@ -297,7 +297,7 @@ class formula extends sandbox_typed
         string $name_fld = self::FLD_NAME,
         string $type_fld = self::FLD_TYPE): bool
     {
-        global $formula_types;
+        global $frm_typ_cac;
         $lib = new library();
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
@@ -326,7 +326,7 @@ class formula extends sandbox_typed
             }
 
             if ($this->type_id > 0) {
-                $this->type_cl = $formula_types->code_id($this->type_id);
+                $this->type_cl = $frm_typ_cac->code_id($this->type_id);
             }
             /*
             if ($this->id() > 0) {
@@ -376,8 +376,8 @@ class formula extends sandbox_typed
      */
     function set_type(string $type_code_id): void
     {
-        global $formula_types;
-        $this->type_id = $formula_types->id($type_code_id);
+        global $frm_typ_cac;
+        $this->type_id = $frm_typ_cac->id($type_code_id);
     }
 
     /**
@@ -469,8 +469,8 @@ class formula extends sandbox_typed
      */
     function type_name(): string
     {
-        global $formula_types;
-        return $formula_types->name($this->type_id);
+        global $frm_typ_cac;
+        return $frm_typ_cac->name($this->type_id);
     }
 
 
@@ -1438,7 +1438,7 @@ class formula extends sandbox_typed
      */
     function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
-        global $formula_types;
+        global $frm_typ_cac;
         global $share_types;
         global $protection_types;
 
@@ -1451,7 +1451,7 @@ class formula extends sandbox_typed
         $result = parent::import_obj($in_ex_json, $test_obj);
         foreach ($in_ex_json as $key => $value) {
             if ($key == sandbox_exp::FLD_TYPE) {
-                $this->type_id = $formula_types->id($value);
+                $this->type_id = $frm_typ_cac->id($value);
             }
             if ($key == self::FLD_EXPRESSION) {
                 if ($value <> '') {
@@ -1462,7 +1462,7 @@ class formula extends sandbox_typed
 
         // set the default type if no type is specified
         if ($this->type_id == 0) {
-            $this->type_id = $formula_types->default_id();
+            $this->type_id = $frm_typ_cac->default_id();
         }
 
         // save the formula in the database
@@ -1529,7 +1529,7 @@ class formula extends sandbox_typed
      */
     function export_obj(bool $do_load = true): sandbox_exp
     {
-        global $formula_types;
+        global $frm_typ_cac;
         global $share_types;
         global $protection_types;
 
@@ -1540,8 +1540,8 @@ class formula extends sandbox_typed
             $result->name = $this->name();
         }
         if (isset($this->type_id)) {
-            if ($this->type_id <> $formula_types->default_id()) {
-                $result->type = $formula_types->code_id($this->type_id);
+            if ($this->type_id <> $frm_typ_cac->default_id()) {
+                $result->type = $frm_typ_cac->code_id($this->type_id);
             }
         }
         if ($this->usr_text <> '') {

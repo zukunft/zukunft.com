@@ -204,17 +204,17 @@ class create_test_objects extends test_base
 
         $user_profiles = new user_profile_list();
         $phr_typ_cac = new phrase_types();
-        $formula_types = new formula_type_list();
-        $formula_link_types = new formula_link_type_list();
-        $element_types = new element_type_list();
-        $view_types = new view_type_list();
+        $frm_typ_cac = new formula_type_list();
+        $frm_lnk_typ_cac = new formula_link_type_list();
+        $elm_typ_cac = new element_type_list();
+        $msk_typ_cac = new view_type_list();
         $view_style_cache = new view_style_list();
-        $view_link_types = new view_link_type_list();
-        $component_types = new component_type_list();
+        $msk_lnk_typ_cac = new view_link_type_list();
+        $cmp_typ_cac = new component_type_list();
         //$component_link_types = new component_link_type_list();
         $position_types = new position_type_list();
-        $ref_types = new ref_type_list();
-        $source_types = new source_type_list();
+        $ref_typ_cac = new ref_type_list();
+        $src_typ_cac = new source_type_list();
         $share_types = new share_type_list();
         $protection_types = new protection_type_list();
         $languages = new language_list();
@@ -228,17 +228,17 @@ class create_test_objects extends test_base
 
         $user_profiles->load_dummy();
         $phr_typ_cac->load_dummy();
-        $formula_types->load_dummy();
-        $formula_link_types->load_dummy();
-        $element_types->load_dummy();
-        $view_types->load_dummy();
+        $frm_typ_cac->load_dummy();
+        $frm_lnk_typ_cac->load_dummy();
+        $elm_typ_cac->load_dummy();
+        $msk_typ_cac->load_dummy();
         $view_style_cache->load_dummy();
-        $view_link_types->load_dummy();
-        $component_types->load_dummy();
+        $msk_lnk_typ_cac->load_dummy();
+        $cmp_typ_cac->load_dummy();
         //$component_link_types->load_dummy();
         $position_types->load_dummy();
-        $ref_types->load_dummy();
-        $source_types->load_dummy();
+        $ref_typ_cac->load_dummy();
+        $src_typ_cac->load_dummy();
         $share_types->load_dummy();
         $protection_types->load_dummy();
         $languages->load_dummy();
@@ -256,17 +256,17 @@ class create_test_objects extends test_base
         $lst = new type_lists_api($db_con, $usr);
         $lst->add($user_profiles->api_obj(), controller::API_LIST_USER_PROFILES);
         $lst->add($phr_typ_cac->api_obj(), controller::API_LIST_PHRASE_TYPES);
-        $lst->add($formula_types->api_obj(), controller::API_LIST_FORMULA_TYPES);
-        $lst->add($formula_link_types->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
-        $lst->add($element_types->api_obj(), controller::API_LIST_ELEMENT_TYPES);
-        $lst->add($view_types->api_obj(), controller::API_LIST_VIEW_TYPES);
+        $lst->add($frm_typ_cac->api_obj(), controller::API_LIST_FORMULA_TYPES);
+        $lst->add($frm_lnk_typ_cac->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
+        $lst->add($elm_typ_cac->api_obj(), controller::API_LIST_ELEMENT_TYPES);
+        $lst->add($msk_typ_cac->api_obj(), controller::API_LIST_VIEW_TYPES);
         $lst->add($view_style_cache->api_obj(), controller::API_LIST_VIEW_STYLES);
-        $lst->add($view_link_types->api_obj(), controller::API_LIST_VIEW_LINK_TYPES);
-        $lst->add($component_types->api_obj(), controller::API_LIST_COMPONENT_TYPES);
+        $lst->add($msk_lnk_typ_cac->api_obj(), controller::API_LIST_VIEW_LINK_TYPES);
+        $lst->add($cmp_typ_cac->api_obj(), controller::API_LIST_COMPONENT_TYPES);
         //$lst->add($component_link_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
         $lst->add($position_types->api_obj(), controller::API_LIST_COMPONENT_POSITION_TYPES);
-        $lst->add($ref_types->api_obj(), controller::API_LIST_REF_TYPES);
-        $lst->add($source_types->api_obj(), controller::API_LIST_SOURCE_TYPES);
+        $lst->add($ref_typ_cac->api_obj(), controller::API_LIST_REF_TYPES);
+        $lst->add($src_typ_cac->api_obj(), controller::API_LIST_SOURCE_TYPES);
         $lst->add($share_types->api_obj(), controller::API_LIST_SHARE_TYPES);
         $lst->add($protection_types->api_obj(), controller::API_LIST_PROTECTION_TYPES);
         $lst->add($languages->api_obj(), controller::API_LIST_LANGUAGES);
@@ -1778,10 +1778,10 @@ class create_test_objects extends test_base
 
     function formula_link(): formula_link
     {
-        global $formula_link_types;
+        global $frm_lnk_typ_cac;
         $lnk = new formula_link($this->usr1);
         $lnk->set(1, $this->formula(), $this->word()->phrase());
-        $lnk->set_predicate_id($formula_link_types->id(formula_link_type::TIME_PERIOD));
+        $lnk->set_predicate_id($frm_lnk_typ_cac->id(formula_link_type::TIME_PERIOD));
         $lnk->order_nbr = 2;
         return $lnk;
     }
@@ -2056,10 +2056,10 @@ class create_test_objects extends test_base
      */
     function reference(): ref
     {
-        global $ref_types;
+        global $ref_typ_cac;
         $ref = new ref($this->usr1);
         $ref->set(ref_api::TI_PI,
-            $this->word_pi()->phrase(), $ref_types->id(ref_type::WIKIDATA), ref_api::TK_READ);
+            $this->word_pi()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), ref_api::TK_READ);
         $ref->description = ref_api::TD_READ;
         return $ref;
     }
@@ -2069,10 +2069,10 @@ class create_test_objects extends test_base
      */
     function reference1(): ref
     {
-        global $ref_types;
+        global $ref_typ_cac;
         $ref = new ref($this->usr1);
         $ref->set(1,
-            $this->word()->phrase(), $ref_types->id(ref_type::WIKIDATA), ref_api::TK_READ);
+            $this->word()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), ref_api::TK_READ);
         $ref->description = ref_api::TD_READ;
         return $ref;
     }
@@ -2104,10 +2104,10 @@ class create_test_objects extends test_base
      */
     function reference_change(): ref
     {
-        global $ref_types;
+        global $ref_typ_cac;
         $ref = new ref($this->usr1);
         $ref->set(12,
-            $this->word_gwp()->phrase(), $ref_types->id(ref_type::WIKIDATA), ref_api::TK_CHANGED);
+            $this->word_gwp()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), ref_api::TK_CHANGED);
         $ref->description = ref_api::TD_CHANGE;
         return $ref;
     }
@@ -2267,10 +2267,10 @@ class create_test_objects extends test_base
 
     function view_link(): view_term_link
     {
-        global $view_link_types;
+        global $msk_lnk_typ_cac;
         $lnk = new view_term_link($this->usr1);
         $lnk->set(1, $this->view(), $this->word()->term());
-        $lnk->set_predicate_id($view_link_types->id(view_link_type::DEFAULT));
+        $lnk->set_predicate_id($msk_lnk_typ_cac->id(view_link_type::DEFAULT));
         $lnk->description = 2;
         return $lnk;
     }
@@ -3360,7 +3360,7 @@ class create_test_objects extends test_base
      */
     function new_formula(string $frm_name, int $id = 0, ?string $frm_type_code_id = null, ?user $test_usr = null): formula
     {
-        global $formula_types;
+        global $frm_typ_cac;
 
         if ($id == null) {
             $id = $this->next_seq_nbr();
@@ -3374,7 +3374,7 @@ class create_test_objects extends test_base
         $frm->set_name($frm_name);
 
         if ($frm_type_code_id != null) {
-            $frm->type_id = $formula_types->id($frm_type_code_id);
+            $frm->type_id = $frm_typ_cac->id($frm_type_code_id);
         }
         return $frm;
     }
@@ -3423,25 +3423,25 @@ class create_test_objects extends test_base
         $wrd = $this->load_word($wrd_name);
         $phr = $wrd->phrase();
 
-        global $ref_types;
+        global $ref_typ_cac;
         $ref = new ref($this->usr1);
         if ($phr->id() != 0) {
             // TODO check if type name is the code id or really the name
-            $ref->load_by_link_ids($phr->id(), $ref_types->id($type_name));
+            $ref->load_by_link_ids($phr->id(), $ref_typ_cac->id($type_name));
         }
         return $ref;
     }
 
     function add_ref(string $wrd_name, string $external_key, string $type_name): ref
     {
-        global $ref_types;
+        global $ref_typ_cac;
         $wrd = $this->test_word($wrd_name);
         $phr = $wrd->phrase();
         $ref = $this->load_ref($wrd->name(), $type_name);
         if ($ref->id() == 0) {
             $ref->set_phrase($phr);
             // TODO check if type name is the code id or really the name
-            $ref->set_predicate_id($ref_types->id($type_name));
+            $ref->set_predicate_id($ref_typ_cac->id($type_name));
             $ref->external_key = $external_key;
             $result = $ref->save()->get_last_message();
             if ($result != '') {
@@ -3757,13 +3757,13 @@ class create_test_objects extends test_base
     function source_put_json(): array
     {
         global $db_con;
-        global $source_types;
+        global $src_typ_cac;
         $msg = new api_message($db_con, source::class, $this->usr1);
         $src = new source_api();
         $src->name = source_api::TN_ADD_API;
         $src->description = source_api::TD_ADD_API;
         $src->url = source_api::TU_ADD_API;
-        $src->type_id = $source_types->id(source_type::PDF);
+        $src->type_id = $src_typ_cac->id(source_type::PDF);
         $msg->add_body($src);
         return $msg->get_json_array();
     }
@@ -3875,14 +3875,14 @@ class create_test_objects extends test_base
 
     function add_component(string $cmp_name, user $test_usr, string $type_code_id = ''): component
     {
-        global $component_types;
+        global $cmp_typ_cac;
 
         $cmp = $this->load_component($cmp_name, $test_usr);
         if ($cmp->id() == 0 or $cmp->id() == Null) {
             $cmp->set_user($test_usr);
             $cmp->set_name($cmp_name);
             if ($type_code_id != '') {
-                $cmp->type_id = $component_types->id($type_code_id);
+                $cmp->type_id = $cmp_typ_cac->id($type_code_id);
             }
             $result = $cmp->save()->get_last_message();
             if ($result != '') {

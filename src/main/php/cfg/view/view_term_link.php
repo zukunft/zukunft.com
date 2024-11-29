@@ -203,8 +203,8 @@ class view_term_link extends sandbox_link
      */
     function set_predicate(string $type_code_id): void
     {
-        global $view_link_types;
-        $this->set_predicate_id($view_link_types->id($type_code_id));
+        global $msk_lnk_typ_cac;
+        $this->set_predicate_id($msk_lnk_typ_cac->id($type_code_id));
     }
 
     /**
@@ -296,8 +296,8 @@ class view_term_link extends sandbox_link
      */
     function predicate_name(): string
     {
-        global $view_link_types;
-        return $view_link_types->name($this->predicate_id);
+        global $msk_lnk_typ_cac;
+        return $msk_lnk_typ_cac->name($this->predicate_id);
     }
 
 

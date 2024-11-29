@@ -205,7 +205,7 @@ class ref extends sandbox_link
 
     private function create_objects(user $usr): void
     {
-        global $ref_types;
+        global $ref_typ_cac;
         $this->set_phrase(new phrase($usr));
     }
 
@@ -225,7 +225,7 @@ class ref extends sandbox_link
         string $id_fld = ''
     ): bool
     {
-        global $ref_types;
+        global $ref_typ_cac;
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_phrase_by_id($db_row[phrase::FLD_ID]);
@@ -427,8 +427,8 @@ class ref extends sandbox_link
      */
     function predicate_name(): ?string
     {
-        global $ref_types;
-        return $ref_types->name($this->predicate_id());
+        global $ref_typ_cac;
+        return $ref_typ_cac->name($this->predicate_id());
     }
 
     /**
@@ -437,8 +437,8 @@ class ref extends sandbox_link
      */
     function predicate_code_id(): string
     {
-        global $ref_types;
-        return $ref_types->code_id($this->predicate_id);
+        global $ref_typ_cac;
+        return $ref_typ_cac->code_id($this->predicate_id);
     }
 
     /**
@@ -446,8 +446,8 @@ class ref extends sandbox_link
      */
     function type(): ?type_object
     {
-        global $ref_types;
-        return $ref_types->get($this->predicate_id);
+        global $ref_typ_cac;
+        return $ref_typ_cac->get($this->predicate_id);
     }
 
 
@@ -727,7 +727,7 @@ class ref extends sandbox_link
     {
         $result = parent::import_obj($in_ex_json, $test_obj);
 
-        global $ref_types;
+        global $ref_typ_cac;
         // reset of object not needed, because the calling function has just created the object
         foreach ($in_ex_json as $key => $value) {
             if ($key == sandbox_exp::FLD_SOURCE) {
@@ -743,7 +743,7 @@ class ref extends sandbox_link
                 $this->source = $src;
             }
             if ($key == sandbox_exp::FLD_TYPE) {
-                $this->set_predicate_id($ref_types->id($value));
+                $this->set_predicate_id($ref_typ_cac->id($value));
 
                 if ($this->predicate_id() == null or $this->predicate_id() <= 0) {
                     $result->add_message('Reference type for ' . $value . ' not found');
@@ -777,7 +777,7 @@ class ref extends sandbox_link
      */
     function export_obj(bool $do_load = true): sandbox_exp
     {
-        global $ref_types;
+        global $ref_typ_cac;
         $result = new ref_exp();
 
         if ($this->source != null) {
@@ -1194,13 +1194,13 @@ class ref extends sandbox_link
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
-                global $ref_types;
+                global $ref_typ_cac;
                 $lst->add_type_field(
                     ref_type::FLD_ID,
                     type_object::FLD_NAME,
                     $this->predicate_id(),
                     $sbx->predicate_id(),
-                    $ref_types
+                    $ref_typ_cac
                 );
             }
         }

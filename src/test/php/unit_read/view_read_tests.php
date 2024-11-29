@@ -57,10 +57,10 @@ class view_read_tests
     {
 
         global $db_con;
-        global $view_types;
-        global $view_link_types;
+        global $msk_typ_cac;
+        global $msk_lnk_typ_cac;
         global $system_views;
-        global $component_types;
+        global $cmp_typ_cac;
 
         // init
         $t->name = 'view read->';
@@ -102,7 +102,7 @@ class view_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $view_types->id(view_type_shared::DEFAULT);
+        $result = $msk_typ_cac->id(view_type_shared::DEFAULT);
         $t->assert('check type' . view_type_shared::DEFAULT, $result, 1);
 
         // load the view link types
@@ -111,7 +111,7 @@ class view_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $view_link_types->id(view_link_type::DEFAULT);
+        $result = $msk_lnk_typ_cac->id(view_link_type::DEFAULT);
         $t->assert('check type' . view_link_type::DEFAULT, $result, 1);
 
 
@@ -166,7 +166,7 @@ class view_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $component_types->id(comp_type_shared::TEXT);
+        $result = $cmp_typ_cac->id(comp_type_shared::TEXT);
         $t->assert('check type' . comp_type_shared::TEXT, $result, 3);
     }
 

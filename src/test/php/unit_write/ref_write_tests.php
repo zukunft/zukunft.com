@@ -57,10 +57,10 @@ class ref_write_tests
         $t->test_ref(word_api::TN_ADD, ref::TEST_REF_NAME, ref_type::WIKIDATA);
 
         // load by phrase and type
-        global $ref_types;
+        global $ref_typ_cac;
         $ref = new ref($usr);
         $ref->set_phrase($wrd->phrase());
-        $ref->set_predicate_id($ref_types->id(ref_type::WIKIDATA));
+        $ref->set_predicate_id($ref_typ_cac->id(ref_type::WIKIDATA));
         $ref->load_by_link_ids($wrd->phrase()->id(), $ref->predicate_id());
         $result = $ref->external_key;
         $target = ref::TEST_REF_NAME;

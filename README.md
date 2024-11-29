@@ -135,6 +135,8 @@ backend - admin
 
 backend - internal
 - sbx (SandBoX)            - the user sandbox tables where the adjustments of the users are saved
+- shr (SHaRe)              - the sharing settings
+- ptc (ProTeCt)            - the protection settings
 - lst (LiST)               - an array of objects
 - typ (TYPe)               - field name to connect predefind functionality to a core object
 - pdi (PreDIcate)          - define the connection type between two core objects (verb is a spcial form of predicate for triples)
@@ -148,6 +150,7 @@ backend - internal
 (useless?)
 - cl (Code Link)           - a text used to identify one predefined database entry that triggers to use of some program code
 - sf (Sql Format)          - to convert a text for the database
+- cac (CAChe)              - preload lists
 
 object extensions
 - _min (MINimal)           - the minimal object used for the frontend API and only valid for the session user

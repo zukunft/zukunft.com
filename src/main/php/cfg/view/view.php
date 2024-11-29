@@ -254,8 +254,8 @@ class view extends sandbox_typed
      */
     function set_type(string $type_code_id): void
     {
-        global $view_types;
-        $this->type_id = $view_types->id($type_code_id);
+        global $msk_typ_cac;
+        $this->type_id = $msk_typ_cac->id($type_code_id);
     }
 
     /**
@@ -368,8 +368,8 @@ class view extends sandbox_typed
      */
     function type_name(): string
     {
-        global $view_types;
-        return $view_types->name($this->type_id);
+        global $msk_typ_cac;
+        return $msk_typ_cac->name($this->type_id);
     }
 
     /**
@@ -378,8 +378,8 @@ class view extends sandbox_typed
      */
     private function type_code_id(): string
     {
-        global $view_types;
-        return $view_types->code_id($this->type_id);
+        global $msk_typ_cac;
+        return $msk_typ_cac->code_id($this->type_id);
     }
 
     /**
@@ -389,8 +389,8 @@ class view extends sandbox_typed
      */
     private function type_id_by_code_id(string $code_id): int
     {
-        global $view_types;
-        return $view_types->id($code_id);
+        global $msk_typ_cac;
+        return $msk_typ_cac->id($code_id);
     }
 
 
@@ -1189,13 +1189,13 @@ class view extends sandbox_typed
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $view_types;
+            global $msk_typ_cac;
             $lst->add_type_field(
                 view::FLD_TYPE,
                 type_object::FLD_NAME,
                 $this->type_id(),
                 $sbx->type_id(),
-                $view_types
+                $msk_typ_cac
             );
         }
         if ($sbx->style_id() <> $this->style_id()) {

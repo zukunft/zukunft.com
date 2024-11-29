@@ -294,11 +294,11 @@ class component_link extends sandbox_link
      */
     function set_pos_type(string $code_id): void
     {
-        global $position_type_cache;
+        global $pos_typ_cac;
         if ($code_id == null) {
             $this->pos_type = null;
         } else {
-            $this->pos_type = $position_type_cache->get_by_code_id($code_id);
+            $this->pos_type = $pos_typ_cac->get_by_code_id($code_id);
         }
     }
 
@@ -310,11 +310,11 @@ class component_link extends sandbox_link
      */
     function set_pos_type_by_id(?int $pos_type_id): void
     {
-        global $position_type_cache;
+        global $pos_typ_cac;
         if ($pos_type_id == null) {
             $this->pos_type = null;
         } else {
-            $this->pos_type = $position_type_cache->get($pos_type_id);
+            $this->pos_type = $pos_typ_cac->get($pos_type_id);
         }
     }
 
@@ -1110,13 +1110,13 @@ class component_link extends sandbox_link
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $position_type_cache;
+            global $pos_typ_cac;
             $lst->add_type_field(
                 self::FLD_POS_TYPE,
                 self::FLD_POS_TYPE_NAME,
                 $this->pos_type_id(),
                 $sbx->pos_type_id(),
-                $position_type_cache
+                $pos_typ_cac
             );
         }
         if ($sbx->style_id() <> $this->style_id()) {

@@ -153,8 +153,8 @@ class ref extends db_object_dsp
      */
     function type_name(): string
     {
-        global $ref_types;
-        return $ref_types->name($this->predicate_id());
+        global $ref_typ_cac;
+        return $ref_typ_cac->name($this->predicate_id());
     }
 
     function set_external_key(?string $external_key): void

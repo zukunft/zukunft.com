@@ -49,7 +49,7 @@ class component_write_tests
 
     function run(test_cleanup $t): void
     {
-        global $component_types;
+        global $cmp_typ_cac;
 
         $t->header('component db write tests');
 
@@ -159,7 +159,7 @@ class component_write_tests
         $cmp_renamed = new component($t->usr1);
         $cmp_renamed->load_by_name(component_api::TN_RENAMED);
         $cmp_renamed->description = 'Just added for testing the user sandbox';
-        $cmp_renamed->type_id = $component_types->id(comp_type_shared::PHRASE_NAME);
+        $cmp_renamed->type_id = $cmp_typ_cac->id(comp_type_shared::PHRASE_NAME);
         $result = $cmp_renamed->save()->get_last_message();
         $target = '';
         $t->display('component->save all component fields beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_LONG);
@@ -171,7 +171,7 @@ class component_write_tests
         $target = 'Just added for testing the user sandbox';
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '"', $target, $result);
         $result = $cmp_reloaded->type_id;
-        $target = $component_types->id(comp_type_shared::PHRASE_NAME);
+        $target = $cmp_typ_cac->id(comp_type_shared::PHRASE_NAME);
         $t->display('component->load type_id for "' . component_api::TN_RENAMED . '"', $target, $result);
 
         // check if the component parameter adding have been logged
@@ -199,7 +199,7 @@ class component_write_tests
         $cmp_usr2 = new component($t->usr2);
         $cmp_usr2->load_by_name(component_api::TN_RENAMED);
         $cmp_usr2->description = 'Just changed for testing the user sandbox';
-        $cmp_usr2->type_id = $component_types->id(comp_type_shared::FORMULAS);
+        $cmp_usr2->type_id = $cmp_typ_cac->id(comp_type_shared::FORMULAS);
         $result = $cmp_usr2->save()->get_last_message();
         $target = '';
         $t->display('component->save all component fields for user 2 beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -211,7 +211,7 @@ class component_write_tests
         $target = 'Just changed for testing the user sandbox';
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '"', $target, $result);
         $result = $cmp_usr2_reloaded->type_id;
-        $target = $component_types->id(comp_type_shared::FORMULAS);
+        $target = $cmp_typ_cac->id(comp_type_shared::FORMULAS);
         $t->display('component->load type_id for "' . component_api::TN_RENAMED . '"', $target, $result);
 
         // check the component for the original user remains unchanged
@@ -221,14 +221,14 @@ class component_write_tests
         $target = 'Just added for testing the user sandbox';
         $t->display('component->load comment for "' . component_api::TN_RENAMED . '"', $target, $result);
         $result = $cmp_reloaded->type_id;
-        $target = $component_types->id(comp_type_shared::PHRASE_NAME);
+        $target = $cmp_typ_cac->id(comp_type_shared::PHRASE_NAME);
         $t->display('component->load type_id for "' . component_api::TN_RENAMED . '"', $target, $result);
 
         // check if undo all specific changes removes the user component
         $cmp_usr2 = new component($t->usr2);
         $cmp_usr2->load_by_name(component_api::TN_RENAMED);
         $cmp_usr2->description = 'Just added for testing the user sandbox';
-        $cmp_usr2->type_id = $component_types->id(comp_type_shared::PHRASE_NAME);
+        $cmp_usr2->type_id = $cmp_typ_cac->id(comp_type_shared::PHRASE_NAME);
         $result = $cmp_usr2->save()->get_last_message();
         $target = '';
         $t->display('component->save undo the user component fields beside the name for "' . component_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
