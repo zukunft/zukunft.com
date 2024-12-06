@@ -947,8 +947,8 @@ class word extends sandbox_typed
     function export_obj(bool $do_load = true): sandbox_exp_named
     {
         global $phr_typ_cac;
-        global $share_types;
-        global $protection_types;
+        global $share_typ_cac;
+        global $protect_typ_cac;
 
         log_debug();
         $result = new word_exp();
@@ -969,12 +969,12 @@ class word extends sandbox_typed
         }
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type_shared::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $share_typ_cac->id(share_type_shared::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
         // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protect_type_shared::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $protect_typ_cac->id(protect_type_shared::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 
@@ -1952,7 +1952,7 @@ class word extends sandbox_typed
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -1963,7 +1963,7 @@ class word extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
-                    $change_field_list->id($table_id . phrase::FLD_TYPE),
+                    $cng_fld_cac->id($table_id . phrase::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1979,7 +1979,7 @@ class word extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_VIEW,
-                    $change_field_list->id($table_id . self::FLD_VIEW),
+                    $cng_fld_cac->id($table_id . self::FLD_VIEW),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1995,7 +1995,7 @@ class word extends sandbox_typed
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
-                        $change_field_list->id($table_id . sql::FLD_CODE_ID),
+                        $cng_fld_cac->id($table_id . sql::FLD_CODE_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -2012,7 +2012,7 @@ class word extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_PLURAL,
-                    $change_field_list->id($table_id . self::FLD_PLURAL),
+                    $cng_fld_cac->id($table_id . self::FLD_PLURAL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2028,7 +2028,7 @@ class word extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_VALUES,
-                    $change_field_list->id($table_id . self::FLD_VALUES),
+                    $cng_fld_cac->id($table_id . self::FLD_VALUES),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

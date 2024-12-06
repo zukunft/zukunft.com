@@ -374,8 +374,8 @@ class value extends sandbox_value
      */
     function set_by_api_json(array $api_json): user_message
     {
-        global $share_types;
-        global $protection_types;
+        global $share_typ_cac;
+        global $protect_typ_cac;
 
         $usr_msg = new user_message();
         $lib = new library();
@@ -418,11 +418,11 @@ class value extends sandbox_value
             }
 
             if ($key == json_fields::SHARE) {
-                $this->share_id = $share_types->id($value);
+                $this->share_id = $share_typ_cac->id($value);
             }
 
             if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $protection_types->id($value);
+                $this->protection_id = $protect_typ_cac->id($value);
                 if ($value <> protect_type_shared::NO_PROTECT) {
                     $get_ownership = true;
                 }
@@ -1107,8 +1107,8 @@ class value extends sandbox_value
      */
     function export_obj(bool $do_load = true): sandbox_exp
     {
-        global $share_types;
-        global $protection_types;
+        global $share_typ_cac;
+        global $protect_typ_cac;
         log_debug();
         $result = new value_exp();
 
@@ -1152,12 +1152,12 @@ class value extends sandbox_value
         $result->number = $this->number;
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type_shared::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $share_typ_cac->id(share_type_shared::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
         // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protect_type_shared::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $protect_typ_cac->id(protect_type_shared::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 
@@ -1220,8 +1220,8 @@ class value extends sandbox_value
         user_message $msg,
         bool         $do_save = true): user_message
     {
-        global $share_types;
-        global $protection_types;
+        global $share_typ_cac;
+        global $protect_typ_cac;
         $lib = new library();
 
         if ($key == json_fields::TIMESTAMP) {
@@ -1241,11 +1241,11 @@ class value extends sandbox_value
         }
 
         if ($key == json_fields::SHARE) {
-            $this->share_id = $share_types->id($value);
+            $this->share_id = $share_typ_cac->id($value);
         }
 
         if ($key == json_fields::PROTECTION) {
-            $this->protection_id = $protection_types->id($value);
+            $this->protection_id = $protect_typ_cac->id($value);
             if ($value <> protect_type_shared::NO_PROTECT) {
                 $get_ownership = true;
             }
@@ -2031,7 +2031,7 @@ class value extends sandbox_value
         sql_type_list                     $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
         $sc = new sql();
         $table_id = $sc->table_id($this::class);
 
@@ -2042,7 +2042,7 @@ class value extends sandbox_value
                 if ($sc_par_lst->incl_log()) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
-                        $change_field_list->id($table_id . source::FLD_ID),
+                        $cng_fld_cac->id($table_id . source::FLD_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }

@@ -835,10 +835,10 @@ class triple extends sandbox_link_named implements JsonSerializable
                 }
             }
             if ($key == json_fields::SHARE) {
-                $this->share_id = $share_types->id($value);
+                $this->share_id = $share_typ_cac->id($value);
             }
             if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $protection_types->id($value);
+                $this->protection_id = $protect_typ_cac->id($value);
             }
             if ($key == exp_obj::FLD_VIEW) {
                 $wrd_view = new view($this->user());
@@ -1551,8 +1551,8 @@ class triple extends sandbox_link_named implements JsonSerializable
     function export_obj(bool $do_load = true): sandbox_exp
     {
         global $phr_typ_cac;
-        global $share_types;
-        global $protection_types;
+        global $share_typ_cac;
+        global $protect_typ_cac;
 
         log_debug();
         $result = new triple_exp();
@@ -1579,12 +1579,12 @@ class triple extends sandbox_link_named implements JsonSerializable
         }
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type_shared::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $share_typ_cac->id(share_type_shared::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
         // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protect_type_shared::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $protect_typ_cac->id(protect_type_shared::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 
@@ -2376,7 +2376,7 @@ class triple extends sandbox_link_named implements JsonSerializable
         sql_type_list  $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -2393,7 +2393,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
-                    $change_field_list->id($table_id . phrase::FLD_TYPE),
+                    $cng_fld_cac->id($table_id . phrase::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2412,7 +2412,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
-                        $change_field_list->id($table_id . verb::FLD_ID),
+                        $cng_fld_cac->id($table_id . verb::FLD_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -2435,7 +2435,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
-                            $change_field_list->id($table_id . verb::FLD_ID),
+                            $cng_fld_cac->id($table_id . verb::FLD_ID),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
@@ -2451,7 +2451,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . sandbox::FLD_EXCLUDED,
-                            $change_field_list->id($table_id . sandbox::FLD_EXCLUDED),
+                            $cng_fld_cac->id($table_id . sandbox::FLD_EXCLUDED),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
@@ -2464,7 +2464,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
-                            $change_field_list->id($table_id . verb::FLD_ID),
+                            $cng_fld_cac->id($table_id . verb::FLD_ID),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
@@ -2484,7 +2484,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sandbox::FLD_EXCLUDED,
-                    $change_field_list->id($table_id . sandbox::FLD_EXCLUDED),
+                    $cng_fld_cac->id($table_id . sandbox::FLD_EXCLUDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2503,7 +2503,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_NAME_GIVEN,
-                    $change_field_list->id($table_id . self::FLD_NAME_GIVEN),
+                    $cng_fld_cac->id($table_id . self::FLD_NAME_GIVEN),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2523,7 +2523,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_NAME_AUTO,
-                    $change_field_list->id($table_id . self::FLD_NAME_AUTO),
+                    $cng_fld_cac->id($table_id . self::FLD_NAME_AUTO),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2544,7 +2544,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_VALUES,
-                    $change_field_list->id($table_id . self::FLD_VALUES),
+                    $cng_fld_cac->id($table_id . self::FLD_VALUES),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2559,7 +2559,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_VIEW,
-                    $change_field_list->id($table_id . self::FLD_VIEW),
+                    $cng_fld_cac->id($table_id . self::FLD_VIEW),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

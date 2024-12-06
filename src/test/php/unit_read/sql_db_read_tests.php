@@ -70,25 +70,25 @@ class sql_db_read_tests
 
     private function assert_table_field_preload(string $test_name, test_cleanup $t, sql_db $db_con): void
     {
-        global $change_table_list;
-        global $change_field_list;
+        global $cng_tbl_cac;
+        global $cng_fld_cac;
 
         $tbl_msg = new user_message();
         $fld_msg = new user_message();
-        $next_tbl_id = $change_table_list->count() + 1;
-        $next_fld_id = $change_field_list->count() + 1;
+        $next_tbl_id = $cng_tbl_cac->count() + 1;
+        $next_fld_id = $cng_fld_cac->count() + 1;
 
         $tbl_lst = $db_con->get_tables();
         foreach ($tbl_lst as $tbl) {
             if (!$this->table_no_change_log($tbl)) {
-                $tbl_id = $change_table_list->id($tbl);
+                $tbl_id = $cng_tbl_cac->id($tbl);
                 if ($tbl_id == -1) {
                     $tbl_msg->add_message($next_tbl_id . ",'" . $tbl . "',,'" . $tbl . "'");
                     $next_tbl_id++;
                 } else {
                     $fld_lst = $db_con->get_fields($tbl);
                     foreach ($fld_lst as $fld) {
-                        $fld_id = $change_field_list->id($tbl_id . $fld);
+                        $fld_id = $cng_fld_cac->id($tbl_id . $fld);
                         if ($fld_id == -1) {
                             $fld_msg->add_message($next_fld_id . "," . $fld . "," . $tbl_id . ",,");
                             $next_fld_id++;

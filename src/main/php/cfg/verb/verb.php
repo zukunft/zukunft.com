@@ -504,8 +504,8 @@ class verb extends type_object
      */
     function export_obj(): verb_exp
     {
-        global $share_types;
-        global $protection_types;
+        global $share_typ_cac;
+        global $protect_typ_cac;
 
         log_debug();
         $result = new verb_exp();
@@ -531,7 +531,7 @@ class verb extends type_object
 
         // TODO add the protection type
         /*
-        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protection_type::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $protect_typ_cac->id(protection_type::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
         */

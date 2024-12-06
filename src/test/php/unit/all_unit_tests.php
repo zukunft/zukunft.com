@@ -701,10 +701,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_share_types(): void
     {
-        global $share_types;
+        global $share_typ_cac;
 
-        $share_types = new share_type_list();
-        $share_types->load_dummy();
+        $share_typ_cac = new share_type_list();
+        $share_typ_cac->load_dummy();
 
     }
 
@@ -713,10 +713,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_protection_types(): void
     {
-        global $protection_types;
+        global $protect_typ_cac;
 
-        $protection_types = new protection_type_list();
-        $protection_types->load_dummy();
+        $protect_typ_cac = new protection_type_list();
+        $protect_typ_cac->load_dummy();
 
     }
 
@@ -761,10 +761,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_log_actions(): void
     {
-        global $change_action_list;
+        global $cng_act_cac;
 
-        $change_action_list = new change_action_list();
-        $change_action_list->load_dummy();
+        $cng_act_cac = new change_action_list();
+        $cng_act_cac->load_dummy();
 
     }
 
@@ -773,10 +773,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_log_tables(): void
     {
-        global $change_table_list;
+        global $cng_tbl_cac;
 
-        $change_table_list = new change_table_list();
-        $change_table_list->load_dummy();
+        $cng_tbl_cac = new change_table_list();
+        $cng_tbl_cac->load_dummy();
 
     }
 
@@ -785,10 +785,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_log_fields(): void
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
-        $change_field_list = new change_field_list();
-        $change_field_list->load_dummy();
+        $cng_fld_cac = new change_field_list();
+        $cng_fld_cac->load_dummy();
 
     }
 

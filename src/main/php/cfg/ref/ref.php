@@ -1174,7 +1174,7 @@ class ref extends sandbox_link
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -1190,7 +1190,7 @@ class ref extends sandbox_link
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . ref_type::FLD_ID,
-                        $change_field_list->id($table_id . ref_type::FLD_ID),
+                        $cng_fld_cac->id($table_id . ref_type::FLD_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -1209,7 +1209,7 @@ class ref extends sandbox_link
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_ID,
-                        $change_field_list->id($table_id . phrase::FLD_ID),
+                        $cng_fld_cac->id($table_id . phrase::FLD_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -1225,7 +1225,7 @@ class ref extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_EX_KEY,
-                    $change_field_list->id($table_id . self::FLD_EX_KEY),
+                    $cng_fld_cac->id($table_id . self::FLD_EX_KEY),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1244,7 +1244,7 @@ class ref extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_URL,
-                    $change_field_list->id($table_id . self::FLD_URL),
+                    $cng_fld_cac->id($table_id . self::FLD_URL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1259,7 +1259,7 @@ class ref extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
-                    $change_field_list->id($table_id . source::FLD_ID),
+                    $cng_fld_cac->id($table_id . source::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1274,7 +1274,7 @@ class ref extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $change_field_list->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

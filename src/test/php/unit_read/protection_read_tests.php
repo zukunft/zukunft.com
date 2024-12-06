@@ -46,7 +46,7 @@ class protection_read_tests
     {
 
         global $db_con;
-        global $protection_types;
+        global $protect_typ_cac;
 
         // init
         $t->name = 'protection read db->';
@@ -61,7 +61,7 @@ class protection_read_tests
         $t->assert('load types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $protection_types->id(protect_type_shared::NO_PROTECT);
+        $result = $protect_typ_cac->id(protect_type_shared::NO_PROTECT);
         $t->assert('check ' . protect_type_shared::NO_PROTECT, $result, 1);
     }
 

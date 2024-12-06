@@ -414,15 +414,15 @@ class change_log_list extends base_list
         string|int $id,
         user       $usr): sql_par
     {
-        global $change_table_list;
-        global $change_field_list;
+        global $cng_tbl_cac;
+        global $cng_fld_cac;
 
         // prepare sql to get the view changes of a user sandbox object e.g. word
         $lib = new library();
         $table_name = $lib->class_to_table($class);
-        $table_id = $change_table_list->id($table_name);
+        $table_id = $cng_tbl_cac->id($table_name);
         $table_field_name = $table_id . $field_name;
-        $field_id = $change_field_list->id($table_field_name);
+        $field_id = $cng_fld_cac->id($table_field_name);
         $log_named = new change($usr);
         $query_ext = $this->table_field_to_query_name($class, $field_name);
         if ($class == value::class) {
@@ -480,8 +480,8 @@ class change_log_list extends base_list
         string|int $id,
         user       $usr): sql_par
     {
-        global $change_table_list;
-        global $change_field_list;
+        global $cng_tbl_cac;
+        global $cng_fld_cac;
 
         // prepare sql to get the view changes of a user sandbox object e.g. word
         $log_named = new change($usr);

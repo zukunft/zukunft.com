@@ -154,14 +154,14 @@ class db_cl
 
     function share_type_id(string $code_id): int
     {
-        global $share_types;
-        return $share_types->id($code_id);
+        global $share_typ_cac;
+        return $share_typ_cac->id($code_id);
     }
 
     function protection_type_id(string $code_id): int
     {
-        global $protection_types;
-        return $protection_types->id($code_id);
+        global $protect_typ_cac;
+        return $protect_typ_cac->id($code_id);
     }
 
     function language_id(string $code_id): int
@@ -184,20 +184,20 @@ class db_cl
 
     function log_action_id(string $code_id): int
     {
-        global $change_action_list;
-        return $change_action_list->id($code_id);
+        global $cng_act_cac;
+        return $cng_act_cac->id($code_id);
     }
 
     function log_table_id(string $code_id): int
     {
-        global $change_table_list;
-        return $change_table_list->id($code_id);
+        global $cng_tbl_cac;
+        return $cng_tbl_cac->id($code_id);
     }
 
     function log_field_id(string $code_id): int
     {
-        global $change_field_list;
-        return $change_field_list->id($code_id);
+        global $cng_fld_cac;
+        return $cng_fld_cac->id($code_id);
     }
 
     /**
@@ -262,14 +262,14 @@ class db_cl
 
     function share_type(int $id)
     {
-        global $share_types;
-        return $share_types->get_by_id($id);
+        global $share_typ_cac;
+        return $share_typ_cac->get_by_id($id);
     }
 
     function protection_type(int $id)
     {
-        global $protection_types;
-        return $protection_types->get_by_id($id);
+        global $protect_typ_cac;
+        return $protect_typ_cac->get_by_id($id);
     }
 
     function language(int $id)
@@ -292,20 +292,20 @@ class db_cl
 
     function log_action(int $id)
     {
-        global $change_action_list;
-        return $change_action_list->get($id);
+        global $cng_act_cac;
+        return $cng_act_cac->get($id);
     }
 
     function log_table(int $id)
     {
-        global $change_table_list;
-        return $change_table_list->get($id);
+        global $cng_tbl_cac;
+        return $cng_tbl_cac->get($id);
     }
 
     function log_field(int $id)
     {
-        global $change_field_list;
-        return $change_field_list->get($id);
+        global $cng_fld_cac;
+        return $cng_fld_cac->get($id);
     }
 
     /**
@@ -400,14 +400,14 @@ class db_cl
 
     function share_type_name(int $id): string
     {
-        global $share_types;
-        return $share_types->name($id);
+        global $share_typ_cac;
+        return $share_typ_cac->name($id);
     }
 
     function protection_type_name(int $id): string
     {
-        global $protection_types;
-        return $protection_types->name($id);
+        global $protect_typ_cac;
+        return $protect_typ_cac->name($id);
     }
 
     function language_name(int $id): string
@@ -430,20 +430,20 @@ class db_cl
 
     function log_action_name(int $id): string
     {
-        global $change_action_list;
-        return $change_action_list->name($id);
+        global $cng_act_cac;
+        return $cng_act_cac->name($id);
     }
 
     function log_table_name(int $id): string
     {
-        global $change_table_list;
-        return $change_table_list->name($id);
+        global $cng_tbl_cac;
+        return $cng_tbl_cac->name($id);
     }
 
     function log_field_name(int $id): string
     {
-        global $change_field_list;
-        return $change_field_list->name($id);
+        global $cng_fld_cac;
+        return $cng_fld_cac->name($id);
     }
 
 }

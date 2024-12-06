@@ -992,17 +992,17 @@ class sql_db
         global $pos_typ_cac;
         global $ref_typ_cac;
         global $src_typ_cac;
-        global $share_types;
-        global $protection_types;
+        global $share_typ_cac;
+        global $protect_typ_cac;
         global $languages;
         global $language_forms;
         global $verbs;
         global $system_views;
         global $sys_log_stati;
         global $job_types;
-        global $change_action_list;
-        global $change_table_list;
-        global $change_field_list;
+        global $cng_act_cac;
+        global $cng_tbl_cac;
+        global $cng_fld_cac;
 
         // TODO activate or remove
         //$system_users =[];
@@ -1020,14 +1020,14 @@ class sql_db
         $pos_typ_cac = new position_type_list();
         $ref_typ_cac = new ref_type_list();
         $src_typ_cac = new source_type_list();
-        $share_types = new share_type_list();
-        $protection_types = new protection_type_list();
+        $share_typ_cac = new share_type_list();
+        $protect_typ_cac = new protection_type_list();
         $languages = new language_list();
         $language_forms = new language_form_list();
         $job_types = new job_type_list();
-        $change_action_list = new change_action_list();
-        $change_table_list = new change_table_list();
-        $change_field_list = new change_field_list();
+        $cng_act_cac = new change_action_list();
+        $cng_tbl_cac = new change_table_list();
+        $cng_fld_cac = new change_field_list();
     }
 
     /**
@@ -5480,7 +5480,7 @@ class sql_db
     {
         $usr_msg = new user_message();
 
-        global $protection_types;
+        global $protect_typ_cac;
         global $verbs;
 
         if ($usr->is_admin() or $usr->is_system()) {
@@ -5488,14 +5488,14 @@ class sql_db
                 $wrd = new word($usr);
                 $wrd->set_name($name);
                 $wrd->set_code_id($name);
-                $wrd->protection_id = $protection_types->id(protect_type_shared::ADMIN);
+                $wrd->protection_id = $protect_typ_cac->id(protect_type_shared::ADMIN);
                 $usr_msg->add($wrd->save());
             }
             foreach (config_numbers::HIDDEN_KEYWORDS as $name) {
                 $wrd = new word($usr);
                 $wrd->set_name($name);
                 $wrd->set_code_id($name);
-                $wrd->protection_id = $protection_types->id(protect_type_shared::ADMIN);
+                $wrd->protection_id = $protect_typ_cac->id(protect_type_shared::ADMIN);
                 $wrd->set_type(phrase_type_shared::SYSTEM_HIDDEN);
                 $usr_msg->add($wrd->save());
             }
@@ -5506,7 +5506,7 @@ class sql_db
                 if (!$wrd->load_by_name($name)) {
                     $wrd->set_name($name);
                 }
-                $wrd->protection_id = $protection_types->id(protect_type_shared::ADMIN);
+                $wrd->protection_id = $protect_typ_cac->id(protect_type_shared::ADMIN);
                 $wrd->description = $com;
                 $wrd->set_code_id($name);
                 $usr_msg->add($wrd->save());
@@ -5524,7 +5524,7 @@ class sql_db
                 $trp->set_verb($vrb);
                 $trp->set_to($to);
                 $trp->set_name($from_name . ' ' . $to_name);
-                $trp->protection_id = $protection_types->id(protect_type_shared::ADMIN);
+                $trp->protection_id = $protect_typ_cac->id(protect_type_shared::ADMIN);
                 $trp->set_type(phrase_type_shared::SYSTEM_HIDDEN);
                 //$trp->set_code_id($from_name . ' ' . $to_name);
                 $usr_msg->add($trp->save());
@@ -5542,7 +5542,7 @@ class sql_db
                 $trp->set_verb($vrb);
                 $trp->set_to($to);
                 $trp->set_name($from_name . ' ' . $to_name);
-                $trp->protection_id = $protection_types->id(protect_type_shared::ADMIN);
+                $trp->protection_id = $protect_typ_cac->id(protect_type_shared::ADMIN);
                 //$trp->set_code_id($from_name . ' ' . $to_name);
                 $usr_msg->add($trp->save());
             }

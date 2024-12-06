@@ -1174,7 +1174,7 @@ class view extends sandbox_typed
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -1185,7 +1185,7 @@ class view extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view::FLD_TYPE,
-                    $change_field_list->id($table_id . view::FLD_TYPE),
+                    $cng_fld_cac->id($table_id . view::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1202,7 +1202,7 @@ class view extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_STYLE,
-                    $change_field_list->id($table_id . self::FLD_STYLE),
+                    $cng_fld_cac->id($table_id . self::FLD_STYLE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1223,7 +1223,7 @@ class view extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
-                    $change_field_list->id($table_id . sql::FLD_CODE_ID),
+                    $cng_fld_cac->id($table_id . sql::FLD_CODE_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

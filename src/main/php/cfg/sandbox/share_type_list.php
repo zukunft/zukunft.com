@@ -40,7 +40,7 @@ use shared\types\share_type as share_type_shared;
 use cfg\db\sql_db;
 use test\create_test_objects;
 
-global $share_types;
+global $share_typ_cac;
 
 class share_type_list extends type_list
 {

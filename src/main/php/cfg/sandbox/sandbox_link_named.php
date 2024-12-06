@@ -472,7 +472,7 @@ class sandbox_link_named extends sandbox_link
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();

@@ -1061,7 +1061,7 @@ class component_link extends sandbox_link
         sql_type_list          $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -1074,7 +1074,7 @@ class component_link extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_link_type::FLD_ID,
-                    $change_field_list->id($table_id . component_link_type::FLD_ID),
+                    $cng_fld_cac->id($table_id . component_link_type::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1091,7 +1091,7 @@ class component_link extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER_NBR,
-                    $change_field_list->id($table_id . self::FLD_ORDER_NBR),
+                    $cng_fld_cac->id($table_id . self::FLD_ORDER_NBR),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1106,7 +1106,7 @@ class component_link extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_POS_TYPE,
-                    $change_field_list->id($table_id . self::FLD_POS_TYPE),
+                    $cng_fld_cac->id($table_id . self::FLD_POS_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1123,7 +1123,7 @@ class component_link extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_STYLE,
-                    $change_field_list->id($table_id . self::FLD_STYLE),
+                    $cng_fld_cac->id($table_id . self::FLD_STYLE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

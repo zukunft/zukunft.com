@@ -291,13 +291,13 @@ class sql_par_field_list
         int                   $table_id
     ): void
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         if ($sbx_db->user_id() <> $sbx_upd->user_id()) {
             if ($do_log) {
                 $this->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID,
-                    $change_field_list->id($table_id . user::FLD_ID),
+                    $cng_fld_cac->id($table_id . user::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -332,14 +332,14 @@ class sql_par_field_list
         int                                      $table_id
     ): void
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         // include the name field for the log also if the object is only excluded
         if ($sbx_db->name() <> $sbx_upd->name()) {
             if ($do_log) {
                 $this->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . $sbx_upd->name_field(),
-                    $change_field_list->id($table_id . $sbx_upd->name_field()),
+                    $cng_fld_cac->id($table_id . $sbx_upd->name_field()),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -359,7 +359,7 @@ class sql_par_field_list
             if ($do_log) {
                 $this->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $change_field_list->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

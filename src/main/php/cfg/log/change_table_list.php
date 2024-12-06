@@ -42,7 +42,7 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_LOG_PATH . 'change_table.php';
 include_once MODEL_LOG_PATH . 'change_table_list.php';
 
-global $change_table_list;
+global $cng_tbl_cac;
 
 class change_table_list extends type_list
 {

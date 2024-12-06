@@ -31,7 +31,7 @@
 
 // list of all share type
 // this can always be in memory because this will change almost never and if it changes it it still shows the old display name it is fine
-$share_types = array();
+$share_typ_cac = array();
 
 class share_type_old {
 

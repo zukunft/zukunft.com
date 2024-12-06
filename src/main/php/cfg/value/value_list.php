@@ -755,8 +755,8 @@ class value_list extends sandbox_value_list
      */
     function import_obj(array $json_obj, object $test_obj = null): user_message
     {
-        global $share_types;
-        global $protection_types;
+        global $share_typ_cac;
+        global $protect_typ_cac;
 
         log_debug();
         $usr_msg = new user_message();
@@ -788,11 +788,11 @@ class value_list extends sandbox_value_list
             }
 
             if ($key == json_fields::SHARE) {
-                $val->share_id = $share_types->id($value);
+                $val->share_id = $share_typ_cac->id($value);
             }
 
             if ($key == json_fields::PROTECTION) {
-                $val->protection_id = $protection_types->id($value);
+                $val->protection_id = $protect_typ_cac->id($value);
             }
 
             if ($key == source_exp::FLD_REF) {
@@ -879,8 +879,8 @@ class value_list extends sandbox_value_list
     {
         log_debug();
         $result = new value_list_exp();
-        global $share_types;
-        global $protection_types;
+        global $share_typ_cac;
+        global $protect_typ_cac;
 
         // reload the value parameters
         if ($do_load) {
@@ -912,13 +912,13 @@ class value_list extends sandbox_value_list
 
             // add the share type
             log_debug('get share');
-            if ($val0->share_id > 0 and $val0->share_id <> $share_types->id(share_type_shared::PUBLIC)) {
+            if ($val0->share_id > 0 and $val0->share_id <> $share_typ_cac->id(share_type_shared::PUBLIC)) {
                 $result->share = $val0->share_type_code_id();
             }
 
             // add the protection type
             log_debug('get protection');
-            if ($val0->protection_id > 0 and $val0->protection_id <> $protection_types->id(protect_type_shared::NO_PROTECT)) {
+            if ($val0->protection_id > 0 and $val0->protection_id <> $protect_typ_cac->id(protect_type_shared::NO_PROTECT)) {
                 $result->protection = $val0->protection_type_code_id();
             }
 

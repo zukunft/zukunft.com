@@ -442,7 +442,7 @@ class view_term_link extends sandbox_link
         sql_type_list          $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -454,7 +454,7 @@ class view_term_link extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $change_field_list->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -470,7 +470,7 @@ class view_term_link extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_link_type::FLD_ID,
-                    $change_field_list->id($table_id . view_link_type::FLD_ID),
+                    $cng_fld_cac->id($table_id . view_link_type::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

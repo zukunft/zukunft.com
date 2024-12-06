@@ -708,7 +708,7 @@ class formula_link extends sandbox_link
         sql_type_list        $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -721,7 +721,7 @@ class formula_link extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_link_type::FLD_ID,
-                    $change_field_list->id($table_id . formula_link_type::FLD_ID),
+                    $cng_fld_cac->id($table_id . formula_link_type::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -738,7 +738,7 @@ class formula_link extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER,
-                    $change_field_list->id($table_id . self::FLD_ORDER),
+                    $cng_fld_cac->id($table_id . self::FLD_ORDER),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

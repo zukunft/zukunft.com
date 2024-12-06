@@ -31,7 +31,7 @@
 
 namespace cfg\log;
 
-global $change_action_list;
+global $cng_act_cac;
 
 use cfg\db\sql_db;
 use cfg\type_list;

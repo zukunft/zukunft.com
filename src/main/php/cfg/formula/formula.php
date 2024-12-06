@@ -1439,8 +1439,8 @@ class formula extends sandbox_typed
     function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
         global $frm_typ_cac;
-        global $share_types;
-        global $protection_types;
+        global $share_typ_cac;
+        global $protect_typ_cac;
 
         log_debug();
 
@@ -1530,8 +1530,8 @@ class formula extends sandbox_typed
     function export_obj(bool $do_load = true): sandbox_exp
     {
         global $frm_typ_cac;
-        global $share_types;
-        global $protection_types;
+        global $share_typ_cac;
+        global $protect_typ_cac;
 
         log_debug('->export_obj');
         $result = new formula_exp();
@@ -1552,12 +1552,12 @@ class formula extends sandbox_typed
         }
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type_shared::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $share_typ_cac->id(share_type_shared::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
         // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protect_type_shared::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $protect_typ_cac->id(protect_type_shared::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 
@@ -2670,7 +2670,7 @@ class formula extends sandbox_typed
         sql_type_list   $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -2681,7 +2681,7 @@ class formula extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE,
-                    $change_field_list->id($table_id . self::FLD_TYPE),
+                    $cng_fld_cac->id($table_id . self::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2696,7 +2696,7 @@ class formula extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_FORMULA_TEXT,
-                    $change_field_list->id($table_id . self::FLD_FORMULA_TEXT),
+                    $cng_fld_cac->id($table_id . self::FLD_FORMULA_TEXT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2711,7 +2711,7 @@ class formula extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_FORMULA_USER_TEXT,
-                    $change_field_list->id($table_id . self::FLD_FORMULA_USER_TEXT),
+                    $cng_fld_cac->id($table_id . self::FLD_FORMULA_USER_TEXT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2726,7 +2726,7 @@ class formula extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ALL_NEEDED,
-                    $change_field_list->id($table_id . self::FLD_ALL_NEEDED),
+                    $cng_fld_cac->id($table_id . self::FLD_ALL_NEEDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2751,7 +2751,7 @@ class formula extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_VIEW,
-                    $change_field_list->id($table_id . self::FLD_VIEW),
+                    $cng_fld_cac->id($table_id . self::FLD_VIEW),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2766,7 +2766,7 @@ class formula extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_USAGE,
-                    $change_field_list->id($table_id . self::FLD_USAGE),
+                    $cng_fld_cac->id($table_id . self::FLD_USAGE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

@@ -1309,7 +1309,7 @@ class component extends sandbox_typed
         sql_type_list     $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -1320,7 +1320,7 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE,
-                    $change_field_list->id($table_id . self::FLD_TYPE),
+                    $cng_fld_cac->id($table_id . self::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1340,7 +1340,7 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_STYLE,
-                    $change_field_list->id($table_id . self::FLD_STYLE),
+                    $cng_fld_cac->id($table_id . self::FLD_STYLE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1361,7 +1361,7 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
-                    $change_field_list->id($table_id . sql::FLD_CODE_ID),
+                    $cng_fld_cac->id($table_id . sql::FLD_CODE_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1376,7 +1376,7 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_UI_MSG_ID,
-                    $change_field_list->id($table_id . self::FLD_UI_MSG_ID),
+                    $cng_fld_cac->id($table_id . self::FLD_UI_MSG_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1391,7 +1391,7 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ROW_PHRASE,
-                    $change_field_list->id($table_id . self::FLD_ROW_PHRASE),
+                    $cng_fld_cac->id($table_id . self::FLD_ROW_PHRASE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1410,7 +1410,7 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_COL_PHRASE,
-                    $change_field_list->id($table_id . self::FLD_COL_PHRASE),
+                    $cng_fld_cac->id($table_id . self::FLD_COL_PHRASE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1429,7 +1429,7 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_COL2_PHRASE,
-                    $change_field_list->id($table_id . self::FLD_COL2_PHRASE),
+                    $cng_fld_cac->id($table_id . self::FLD_COL2_PHRASE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1448,7 +1448,7 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula::FLD_ID,
-                    $change_field_list->id($table_id . formula::FLD_ID),
+                    $cng_fld_cac->id($table_id . formula::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1468,7 +1468,7 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_LINK_TYPE,
-                    $change_field_list->id($table_id . self::FLD_LINK_TYPE),
+                    $cng_fld_cac->id($table_id . self::FLD_LINK_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

@@ -230,16 +230,16 @@ class system_tests
         $t->assert_sql_all($db_con, $cmp_typ_cac);
         $ref_typ_cac = new ref_type_list();
         $t->assert_sql_all($db_con, $ref_typ_cac);
-        $share_types = new share_type_list();
-        $t->assert_sql_all($db_con, $share_types);
-        $protection_types = new protection_type_list();
-        $t->assert_sql_all($db_con, $protection_types);
+        $share_typ_cac = new share_type_list();
+        $t->assert_sql_all($db_con, $share_typ_cac);
+        $protect_typ_cac = new protection_type_list();
+        $t->assert_sql_all($db_con, $protect_typ_cac);
         $job_types = new job_type_list();
         $t->assert_sql_all($db_con, $job_types);
-        $change_table_list = new change_table_list();
-        $t->assert_sql_all($db_con, $change_table_list);
-        $change_field_list = new change_field_list();
-        $t->assert_sql_all($db_con, $change_field_list);
+        $cng_tbl_cac = new change_table_list();
+        $t->assert_sql_all($db_con, $cng_tbl_cac);
+        $cng_fld_cac = new change_field_list();
+        $t->assert_sql_all($db_con, $cng_fld_cac);
          */
 
         /*

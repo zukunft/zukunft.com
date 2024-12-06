@@ -106,17 +106,17 @@ class type_lists
         global $pos_typ_cac;
         global $ref_typ_cac;
         global $src_typ_cac;
-        global $share_types;
-        global $protection_types;
+        global $share_typ_cac;
+        global $protect_typ_cac;
         global $languages;
         global $language_forms;
         global $verbs;
         global $system_views;
         global $sys_log_stati;
         global $job_types;
-        global $change_action_list;
-        global $change_table_list;
-        global $change_field_list;
+        global $cng_act_cac;
+        global $cng_tbl_cac;
+        global $cng_fld_cac;
 
         log_debug();
         $lst = new type_lists_api($db_con, $usr);
@@ -133,15 +133,15 @@ class type_lists
         $lst->add($pos_typ_cac->api_obj(), controller::API_LIST_COMPONENT_POSITION_TYPES);
         $lst->add($ref_typ_cac->api_obj(), controller::API_LIST_REF_TYPES);
         $lst->add($src_typ_cac->api_obj(), controller::API_LIST_SOURCE_TYPES);
-        $lst->add($share_types->api_obj(), controller::API_LIST_SHARE_TYPES);
-        $lst->add($protection_types->api_obj(), controller::API_LIST_PROTECTION_TYPES);
+        $lst->add($share_typ_cac->api_obj(), controller::API_LIST_SHARE_TYPES);
+        $lst->add($protect_typ_cac->api_obj(), controller::API_LIST_PROTECTION_TYPES);
         $lst->add($languages->api_obj(), controller::API_LIST_LANGUAGES);
         $lst->add($language_forms->api_obj(), controller::API_LIST_LANGUAGE_FORMS);
         $lst->add($sys_log_stati->api_obj(), controller::API_LIST_SYS_LOG_STATI);
         $lst->add($job_types->api_obj(), controller::API_LIST_JOB_TYPES);
-        $lst->add($change_action_list->api_obj(), controller::API_LIST_CHANGE_LOG_ACTIONS);
-        $lst->add($change_table_list->api_obj(), controller::API_LIST_CHANGE_LOG_TABLES);
-        $lst->add($change_field_list->api_obj(), controller::API_LIST_CHANGE_LOG_FIELDS);
+        $lst->add($cng_act_cac->api_obj(), controller::API_LIST_CHANGE_LOG_ACTIONS);
+        $lst->add($cng_tbl_cac->api_obj(), controller::API_LIST_CHANGE_LOG_TABLES);
+        $lst->add($cng_fld_cac->api_obj(), controller::API_LIST_CHANGE_LOG_FIELDS);
         $lst->add($verbs->api_obj(), controller::API_LIST_VERBS);
         if ($system_views != null) {
             $lst->add($system_views->api_obj(), controller::API_LIST_SYSTEM_VIEWS);
@@ -171,15 +171,15 @@ class type_lists
         global $pos_typ_cac;
         global $ref_typ_cac;
         global $src_typ_cac;
-        global $share_types;
-        global $protection_types;
+        global $share_typ_cac;
+        global $protect_typ_cac;
         global $languages;
         global $language_forms;
         global $sys_log_stati;
         global $job_types;
-        global $change_action_list;
-        global $change_table_list;
-        global $change_field_list;
+        global $cng_act_cac;
+        global $cng_tbl_cac;
+        global $cng_fld_cac;
         global $verbs;
         global $system_views;
 
@@ -220,22 +220,22 @@ class type_lists
         $ref_typ_cac->load($db_con);
         $src_typ_cac = new source_type_list();
         $src_typ_cac->load($db_con);
-        $share_types = new share_type_list();
-        $share_types->load($db_con);
-        $protection_types = new protection_type_list();
-        $protection_types->load($db_con);
+        $share_typ_cac = new share_type_list();
+        $share_typ_cac->load($db_con);
+        $protect_typ_cac = new protection_type_list();
+        $protect_typ_cac->load($db_con);
         $languages = new language_list();
         $languages->load($db_con);
         $language_forms = new language_form_list();
         $language_forms->load($db_con);
         $job_types = new job_type_list();
         $job_types->load($db_con);
-        $change_action_list = new change_action_list();
-        $change_action_list->load($db_con);
-        $change_table_list = new change_table_list();
-        $change_table_list->load($db_con);
-        $change_field_list = new change_field_list();
-        $change_field_list->load($db_con);
+        $cng_act_cac = new change_action_list();
+        $cng_act_cac->load($db_con);
+        $cng_tbl_cac = new change_table_list();
+        $cng_tbl_cac->load($db_con);
+        $cng_fld_cac = new change_field_list();
+        $cng_fld_cac->load($db_con);
 
         // preload the little more complex objects
         $verbs = new verb_list();
