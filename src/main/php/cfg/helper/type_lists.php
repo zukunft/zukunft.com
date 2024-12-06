@@ -99,10 +99,10 @@ class type_lists
         global $frm_lnk_typ_cac;
         global $elm_typ_cac;
         global $msk_typ_cac;
-        global $view_style_cache;
+        global $msk_style_cac;
         global $msk_lnk_typ_cac;
         global $cmp_typ_cac;
-        global $component_link_types;
+        global $cmp_lnk_typ_cac;
         global $pos_typ_cac;
         global $ref_typ_cac;
         global $src_typ_cac;
@@ -126,10 +126,10 @@ class type_lists
         $lst->add($frm_lnk_typ_cac->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
         $lst->add($elm_typ_cac->api_obj(), controller::API_LIST_ELEMENT_TYPES);
         $lst->add($msk_typ_cac->api_obj(), controller::API_LIST_VIEW_TYPES);
-        $lst->add($view_style_cache->api_obj(), controller::API_LIST_VIEW_STYLES);
+        $lst->add($msk_style_cac->api_obj(), controller::API_LIST_VIEW_STYLES);
         $lst->add($msk_lnk_typ_cac->api_obj(), controller::API_LIST_VIEW_LINK_TYPES);
         $lst->add($cmp_typ_cac->api_obj(), controller::API_LIST_COMPONENT_TYPES);
-        //$lst->add($component_link_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
+        //$lst->add($cmp_lnk_typ_cac->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
         $lst->add($pos_typ_cac->api_obj(), controller::API_LIST_COMPONENT_POSITION_TYPES);
         $lst->add($ref_typ_cac->api_obj(), controller::API_LIST_REF_TYPES);
         $lst->add($src_typ_cac->api_obj(), controller::API_LIST_SOURCE_TYPES);
@@ -164,10 +164,10 @@ class type_lists
         global $frm_lnk_typ_cac;
         global $elm_typ_cac;
         global $msk_typ_cac;
-        global $view_style_cache;
+        global $msk_style_cac;
         global $msk_lnk_typ_cac;
         global $cmp_typ_cac;
-        global $component_link_types;
+        global $cmp_lnk_typ_cac;
         global $pos_typ_cac;
         global $ref_typ_cac;
         global $src_typ_cac;
@@ -205,15 +205,15 @@ class type_lists
         $elm_typ_cac->load($db_con);
         $msk_typ_cac = new view_type_list();
         $msk_typ_cac->load($db_con);
-        $view_style_cache = new view_style_list();
-        $view_style_cache->load($db_con);
+        $msk_style_cac = new view_style_list();
+        $msk_style_cac->load($db_con);
         $msk_lnk_typ_cac = new view_link_type_list();
         $msk_lnk_typ_cac->load($db_con);
         $cmp_typ_cac = new component_type_list();
         $cmp_typ_cac->load($db_con);
         // TODO review: not yet needed?
-        //$component_link_types = new component_link_type_list();
-        //$component_link_types->load($db_con);
+        //$cmp_lnk_typ_cac = new component_link_type_list();
+        //$cmp_lnk_typ_cac->load($db_con);
         $pos_typ_cac = new position_type_list();
         $pos_typ_cac->load($db_con);
         $ref_typ_cac = new ref_type_list();

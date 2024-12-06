@@ -208,10 +208,10 @@ class create_test_objects extends test_base
         $frm_lnk_typ_cac = new formula_link_type_list();
         $elm_typ_cac = new element_type_list();
         $msk_typ_cac = new view_type_list();
-        $view_style_cache = new view_style_list();
+        $msk_style_cac = new view_style_list();
         $msk_lnk_typ_cac = new view_link_type_list();
         $cmp_typ_cac = new component_type_list();
-        //$component_link_types = new component_link_type_list();
+        //$cmp_lnk_typ_cac = new component_link_type_list();
         $position_types = new position_type_list();
         $ref_typ_cac = new ref_type_list();
         $src_typ_cac = new source_type_list();
@@ -232,10 +232,10 @@ class create_test_objects extends test_base
         $frm_lnk_typ_cac->load_dummy();
         $elm_typ_cac->load_dummy();
         $msk_typ_cac->load_dummy();
-        $view_style_cache->load_dummy();
+        $msk_style_cac->load_dummy();
         $msk_lnk_typ_cac->load_dummy();
         $cmp_typ_cac->load_dummy();
-        //$component_link_types->load_dummy();
+        //$cmp_lnk_typ_cac->load_dummy();
         $position_types->load_dummy();
         $ref_typ_cac->load_dummy();
         $src_typ_cac->load_dummy();
@@ -260,10 +260,10 @@ class create_test_objects extends test_base
         $lst->add($frm_lnk_typ_cac->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
         $lst->add($elm_typ_cac->api_obj(), controller::API_LIST_ELEMENT_TYPES);
         $lst->add($msk_typ_cac->api_obj(), controller::API_LIST_VIEW_TYPES);
-        $lst->add($view_style_cache->api_obj(), controller::API_LIST_VIEW_STYLES);
+        $lst->add($msk_style_cac->api_obj(), controller::API_LIST_VIEW_STYLES);
         $lst->add($msk_lnk_typ_cac->api_obj(), controller::API_LIST_VIEW_LINK_TYPES);
         $lst->add($cmp_typ_cac->api_obj(), controller::API_LIST_COMPONENT_TYPES);
-        //$lst->add($component_link_types->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
+        //$lst->add($cmp_lnk_typ_cac->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
         $lst->add($position_types->api_obj(), controller::API_LIST_COMPONENT_POSITION_TYPES);
         $lst->add($ref_typ_cac->api_obj(), controller::API_LIST_REF_TYPES);
         $lst->add($src_typ_cac->api_obj(), controller::API_LIST_SOURCE_TYPES);

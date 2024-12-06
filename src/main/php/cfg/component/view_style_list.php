@@ -41,7 +41,7 @@ use shared\types\view_styles;
 use cfg\type_list;
 use cfg\type_object;
 
-global $view_style_cache;
+global $msk_style_cac;
 
 class view_style_list extends type_list
 {

@@ -665,10 +665,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_component_link_types(): void
     {
-        global $component_link_types;
+        global $cmp_lnk_typ_cac;
 
-        $component_link_types = new component_link_type_list();
-        $component_link_types->load_dummy();
+        $cmp_lnk_typ_cac = new component_link_type_list();
+        $cmp_lnk_typ_cac->load_dummy();
 
     }
 

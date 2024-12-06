@@ -984,11 +984,11 @@ class sql_db
         global $frm_lnk_typ_cac;
         global $elm_typ_cac;
         global $msk_typ_cac;
-        global $view_style_cache;
+        global $msk_style_cac;
         global $msk_lnk_typ_cac;
         global $cmp_typ_cac;
         // TODO use component link type cache
-        global $component_link_types;
+        global $cmp_lnk_typ_cac;
         global $pos_typ_cac;
         global $ref_typ_cac;
         global $src_typ_cac;
@@ -1012,11 +1012,11 @@ class sql_db
         $frm_lnk_typ_cac = new formula_link_type_list();
         $elm_typ_cac = new element_type_list();
         $msk_typ_cac = new view_type_list();
-        $view_style_cache = new view_style_list();
+        $msk_style_cac = new view_style_list();
         $msk_lnk_typ_cac = new view_link_type_list();
         $cmp_typ_cac = new component_type_list();
         // not yet needed?
-        //$component_link_types = new component_link_type_list();
+        //$cmp_lnk_typ_cac = new component_link_type_list();
         $pos_typ_cac = new position_type_list();
         $ref_typ_cac = new ref_type_list();
         $src_typ_cac = new source_type_list();

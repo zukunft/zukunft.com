@@ -255,8 +255,8 @@ class component_link extends sandbox_link
      */
     function set_predicate(string $type_code_id): void
     {
-        global $component_link_types;
-        $this->predicate_id = $component_link_types->id($type_code_id);
+        global $cmp_lnk_typ_cac;
+        $this->predicate_id = $cmp_lnk_typ_cac->id($type_code_id);
     }
 
     /**
@@ -342,11 +342,11 @@ class component_link extends sandbox_link
      */
     function set_style(?string $code_id): void
     {
-        global $view_style_cache;
+        global $msk_style_cac;
         if ($code_id == null) {
             $this->style = null;
         } else {
-            $this->style = $view_style_cache->get_by_code_id($code_id);
+            $this->style = $msk_style_cac->get_by_code_id($code_id);
         }
     }
 
@@ -359,11 +359,11 @@ class component_link extends sandbox_link
     function set_style_by_id(?int $style_id): void
     {
         // TODO easy rename all global type vars to _cache
-        global $view_style_cache;
+        global $msk_style_cac;
         if ($style_id == null) {
             $this->style = null;
         } else {
-            $this->style = $view_style_cache->get($style_id);
+            $this->style = $msk_style_cac->get($style_id);
         }
     }
 
@@ -443,8 +443,8 @@ class component_link extends sandbox_link
      */
     function predicate_name(): string
     {
-        global $component_link_types;
-        return $component_link_types->name($this->predicate_id);
+        global $cmp_lnk_typ_cac;
+        return $cmp_lnk_typ_cac->name($this->predicate_id);
     }
 
 
@@ -1078,13 +1078,13 @@ class component_link extends sandbox_link
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $component_link_types;
+            global $cmp_lnk_typ_cac;
             $lst->add_type_field(
                 component_link_type::FLD_ID,
                 type_object::FLD_NAME,
                 $this->predicate_id(),
                 $sbx->predicate_id(),
-                $component_link_types
+                $cmp_lnk_typ_cac
             );
         }
         if ($sbx->pos() <> $this->pos()) {
@@ -1127,7 +1127,7 @@ class component_link extends sandbox_link
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $view_style_cache;
+            global $msk_style_cac;
             // TODO easy move to id function of type list
             if ($this->style_id() < 0) {
                 log_err('component link style for ' . $this->dsp_id() . ' not found');
@@ -1137,7 +1137,7 @@ class component_link extends sandbox_link
                 view_style::FLD_NAME,
                 $this->style_id(),
                 $sbx->style_id(),
-                $view_style_cache
+                $msk_style_cac
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
