@@ -60,6 +60,7 @@ use html\user\user_message;
 use shared\api;
 use shared\enum\foaf_direction;
 use shared\json_fields;
+use shared\types\view_styles;
 use shared\words;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\views as view_shared;
@@ -582,8 +583,8 @@ class word extends sandbox_typed
         $result .= $html->dsp_form_hidden("back", $back);
         $result .= $html->dsp_form_hidden("confirm", '1');
         $result .= '<div class="form-row">';
-        $result .= $html->dsp_form_text("word_name", $this->name, "Name:", html_base::COL_SM_4);
-        $result .= $this->dsp_type_selector($form, html_base::COL_SM_4);
+        $result .= $html->dsp_form_text("word_name", $this->name, "Name:", view_styles::COL_SM_4);
+        $result .= $this->dsp_type_selector($form, view_styles::COL_SM_4);
         $result .= $this->selector_add($wrd_id, $form, "form-row") . ' ';
         $result .= '</div>';
         $result .= 'which ';
@@ -740,7 +741,7 @@ class word extends sandbox_typed
         $phr_lst = new phrase_list_dsp();
         if ($pattern != '') {
             $phr_lst->load_like($pattern);
-            $result = $phr_lst->selector($name, $form_name, $label, html_base::COL_SM_4, $selected, html_selector::TYPE_DATALIST);
+            $result = $phr_lst->selector($name, $form_name, $label, view_styles::COL_SM_4, $selected, html_selector::TYPE_DATALIST);
         } else {
             $result = $this->name();
         }
@@ -822,7 +823,7 @@ class word extends sandbox_typed
             $result .= $frm->display_linked($back);
             $result .= '.<br> ';
         } else {
-            $result .= $html->dsp_form_text("name", $this->name, "Name:", html_base::COL_SM_4);
+            $result .= $html->dsp_form_text("name", $this->name, "Name:", view_styles::COL_SM_4);
         }
         return $result;
     }

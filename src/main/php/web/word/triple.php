@@ -53,6 +53,7 @@ use html\verb\verb as verb_dsp;
 use shared\api AS api_shared;
 use shared\json_fields;
 use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\view_styles;
 
 class triple extends sandbox_typed
 {
@@ -287,7 +288,7 @@ class triple extends sandbox_typed
     {
         $phr_lst = new phrase_list_dsp();
         $phr_lst->load_like($pattern);
-        return $phr_lst->selector($name, $form_name, $label, html_base::COL_SM_4, $selected, html_selector::TYPE_DATALIST);
+        return $phr_lst->selector($name, $form_name, $label, view_styles::COL_SM_4, $selected, html_selector::TYPE_DATALIST);
     }
 
     /**
@@ -302,7 +303,7 @@ class triple extends sandbox_typed
         } else {
             $id = 0;
         }
-        return $html_verbs->selector($form_name, $id, 'verb', html_base::COL_SM_4, 'verb:');
+        return $html_verbs->selector($form_name, $id, 'verb', view_styles::COL_SM_4, 'verb:');
     }
 
 
@@ -330,7 +331,7 @@ class triple extends sandbox_typed
                 'from', self::FORM_EDIT, 'from:', '', $this->from()->id(), '', $this->from());
             /* TODO
             if (isset($this->verb)) {
-                $result .= $this->verb->dsp_selector('forward', $form_name, html_base::COL_SM_4, $back);
+                $result .= $this->verb->dsp_selector('forward', $form_name, view_styles::COL_SM_4, $back);
             }
             */
             $detail_fields .= 'to: ' . $this->phrase_selector(

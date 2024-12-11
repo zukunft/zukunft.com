@@ -36,6 +36,7 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use html\html_base;
 use shared\types\verbs as verbs_shared;
+use shared\types\view_styles;
 
 class verbs extends type_list
 {
@@ -55,7 +56,7 @@ class verbs extends type_list
         string $form = '',
         int    $selected = 1,
         string $label = 'verb:',
-        string $bs_class = html_base::COL_SM_4,
+        string $bs_class = view_styles::COL_SM_4,
         string $name = self::NAME
     ): string
     {

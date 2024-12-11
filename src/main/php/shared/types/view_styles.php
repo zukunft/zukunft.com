@@ -31,21 +31,29 @@
 
 namespace shared\types;
 
+use html\html_base;
+
 class view_styles
 {
 
     // list of the view and component styles that have a coded functionality
     // where *_COM is the description for the tooltip
 
+    const COL_SM_2 = 'col-md-2';
     // just to display a fixed text
-    const SM_COL_4_COM = 'use 1/3 of the width';
-    const SM_COL_4 = 'col-md-4';
-    const SM_COL_8 = 'col-md-8';
+    const COL_SM_4_COM = 'use 1/3 of the width';
+    const COL_SM_4 = 'col-md-4';
+    const COL_SM_5 = 'col-md-5';
+    const COL_SM_6 = 'col-md-6';
+    const COL_SM_7 = 'col-md-7';
+    const COL_SM_8 = 'col-md-8';
+    const COL_SM_10 = 'col-md-10';
+    const COL_SM_12 = 'col-md-12';
 
     // list of the styles used for unit testing
     const TEST_TYPES = array(
-        [self::SM_COL_4, 1],
-        [self::SM_COL_8, 2],
+        [view_styles::COL_SM_4, 1],
+        [view_styles::COL_SM_8, 2],
     );
 
 }

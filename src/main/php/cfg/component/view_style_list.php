@@ -64,7 +64,7 @@ class view_style_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(view_styles::SM_COL_4);
+        return parent::id(view_styles::COL_SM_4);
     }
 
 }

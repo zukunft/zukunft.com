@@ -60,6 +60,7 @@ use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
 use html\view\view_list;
 use shared\library;
+use shared\types\view_styles;
 use shared\views;
 use shared\views as view_shared;
 
@@ -371,7 +372,7 @@ class component extends sandbox_typed
             $dbo->description(),
             html_base::INPUT_TEXT,
             '',
-            html_base::COL_SM_12
+            view_styles::COL_SM_12
         );
     }
 
@@ -793,7 +794,7 @@ class component extends sandbox_typed
 
         // when changing a view component show the fields only on the left side
         if ($this->id() > 0) {
-            $result .= '<div class="' . html_base::COL_SM_7 . '">';
+            $result .= '<div class="' . view_styles::COL_SM_7 . '">';
         }
 
         $result .= $html->dsp_form_start($script);
@@ -804,12 +805,12 @@ class component extends sandbox_typed
         $result .= $html->dsp_form_hidden("back", $back);
         $result .= $html->dsp_form_hidden("confirm", 1);
         $result .= '<div class="form-row">';
-        $result .= $html->dsp_form_fld("name", $this->name, "Component name:", html_base::COL_SM_8);
+        $result .= $html->dsp_form_fld("name", $this->name, "Component name:", view_styles::COL_SM_8);
         $result .= $this->dsp_type_selector($script); // allow to change the type
         $result .= '</div>';
         $result .= '<div class="form-row">';
-        $result .= $this->dsp_word_row_selector($script, html_base::COL_SM_6); // allow to change the word_row word
-        $result .= $this->dsp_word_col_selector($script, html_base::COL_SM_6); // allow to change the word col word
+        $result .= $this->dsp_word_row_selector($script, view_styles::COL_SM_6); // allow to change the word_row word
+        $result .= $this->dsp_word_col_selector($script, view_styles::COL_SM_6); // allow to change the word col word
         $result .= '</div>';
         $result .= $html->dsp_form_fld("comment", $this->description, "Comment:");
         if ($add_link <= 0) {
@@ -978,7 +979,7 @@ class component extends sandbox_typed
     {
         $phr_lst = new phrase_list();
         $phr_lst->load_like($pattern);
-        return $phr_lst->selector($name, $form_name, $label, $selected, html_base::COL_SM_4, html_selector::TYPE_DATALIST);
+        return $phr_lst->selector($name, $form_name, $label, $selected, view_styles::COL_SM_4, html_selector::TYPE_DATALIST);
     }
 
     /**
@@ -1002,7 +1003,7 @@ class component extends sandbox_typed
     {
         $msk_lst = new view_list();
         $msk_lst->load_like($pattern);
-        return $msk_lst->selector($name, $form_name, $label, html_base::COL_SM_4, $selected);
+        return $msk_lst->selector($name, $form_name, $label, view_styles::COL_SM_4, $selected);
     }
 
     /**

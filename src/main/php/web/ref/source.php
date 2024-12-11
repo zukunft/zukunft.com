@@ -38,6 +38,7 @@ use html\html_base;
 use html\sandbox\sandbox_typed;
 use html\user\user_message;
 use shared\json_fields;
+use shared\types\view_styles;
 
 class source extends sandbox_typed
 {
@@ -201,7 +202,7 @@ class source extends sandbox_typed
         if ($used_source_type_id == null) {
             $used_source_type_id = $html_source_types->default_id();
         }
-        return $html_source_types->selector($form_name, $used_source_type_id, 'type', html_base::COL_SM_4, 'type:');
+        return $html_source_types->selector($form_name, $used_source_type_id, 'type', view_styles::COL_SM_4, 'type:');
     }
 
 }

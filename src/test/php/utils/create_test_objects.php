@@ -2200,7 +2200,7 @@ class create_test_objects extends test_base
         $msk->description = view_api::TD_READ;
         $msk->code_id = view_api::TC_READ;
         $msk->set_type(view_type::DETAIL);
-        $msk->set_style(view_styles::SM_COL_4);
+        $msk->set_style(view_styles::COL_SM_4);
         $msk->exclude();
         $msk->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
         $msk->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
@@ -2323,7 +2323,7 @@ class create_test_objects extends test_base
         $cmp->set(1, component_api::TN_READ, comp_type_shared::PHRASE_NAME);
         $cmp->description = component_api::TD_READ;
         $cmp->set_type(comp_type_shared::TEXT);
-        $cmp->set_style(view_styles::SM_COL_4);
+        $cmp->set_style(view_styles::COL_SM_4);
         $cmp->code_id = component_api::TC_FORM_TITLE;
         $cmp->ui_msg_code_id = messages::PLEASE_SELECT;
         $cmp->set_row_phrase($this->year());
@@ -2501,7 +2501,7 @@ class create_test_objects extends test_base
         $lnk->set(1, $this->view(), $this->component(), 1);
         $lnk->set_predicate(component_link_type::EXPRESSION);
         $lnk->set_pos_type(position_type::SIDE);
-        $lnk->set_style(view_styles::SM_COL_4);
+        $lnk->set_style(view_styles::COL_SM_4);
         $lnk->exclude();
         $lnk->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
         $lnk->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);

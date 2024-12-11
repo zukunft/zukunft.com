@@ -90,6 +90,7 @@ use JsonSerializable;
 use shared\library;
 use shared\types\phrase_type AS phrase_type_shared;
 use shared\types\verbs;
+use shared\types\view_styles;
 
 
 class triple extends sandbox_link_named implements JsonSerializable
@@ -2698,12 +2699,12 @@ class triple extends sandbox_link_named implements JsonSerializable
         $result .= $html->input("from", $this->from_id());
         $result .= '<div class="form-row">';
         if ($this->has_verb()) {
-            $result .= $this->verb()->dsp_selector('both', $form_name, html_base::COL_SM_6, $back);
+            $result .= $this->verb()->dsp_selector('both', $form_name, view_styles::COL_SM_6, $back);
         }
         if ($this->to() != null) {
             $type_phr = new phrase($this->user());
             $type_phr->load_by_id(0);
-            $result .= $this->to()->dsp_selector($type_phr->dsp_obj(), $form_name, 0, html_base::COL_SM_6, $back);
+            $result .= $this->to()->dsp_selector($type_phr->dsp_obj(), $form_name, 0, view_styles::COL_SM_6, $back);
         }
         $result .= '</div>';
         $result .= '<br>';

@@ -43,6 +43,7 @@ use html\html_base;
 use html\user\user as user_dsp;
 use html\user\user_message;
 use shared\json_fields;
+use shared\types\view_styles;
 
 class sandbox extends db_object_dsp
 {
@@ -144,7 +145,7 @@ class sandbox extends db_object_dsp
             $used_share_id = $html_share_types->default_id();
         }
         if ($usr == $this->owner or $this->owner == null) {
-            return $html_share_types->selector($form_name, $used_share_id, 'share', html_base::COL_SM_4, 'share:');
+            return $html_share_types->selector($form_name, $used_share_id, 'share', view_styles::COL_SM_4, 'share:');
         } else {
             return '';
         }
@@ -163,7 +164,7 @@ class sandbox extends db_object_dsp
             $used_protection_id = $html_protection_types->default_id();
         }
         if ($usr == $this->owner or $this->owner == null) {
-            return $html_protection_types->selector($form_name, $used_protection_id, 'protection', html_base::COL_SM_4, 'protection:');
+            return $html_protection_types->selector($form_name, $used_protection_id, 'protection', view_styles::COL_SM_4, 'protection:');
         } else {
             return '';
         }

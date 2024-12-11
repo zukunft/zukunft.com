@@ -75,6 +75,7 @@ use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use shared\json_fields;
 use shared\library;
+use shared\types\view_styles;
 use shared\types\view_type;
 
 class view extends sandbox_typed
@@ -280,7 +281,9 @@ class view extends sandbox_typed
                             $result .= $row;
                         } else {
                             // TODO easy move code to HTML class
-                            $result .= '<div class="row col-md-12">' . $row . ' </div>';
+                            $result .= '<div class="row ';
+                            $result .= view_styles::COL_SM_12;
+                            $result .= '">' . $row . ' </div>';
                         }
                         $row = '';
                         $button_only = true;
@@ -355,7 +358,7 @@ class view extends sandbox_typed
         $result .= $this->input_search_pattern();
         $result .= '    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>';
         $result .= '  </form>';
-        $result .= '  <div class="' . html_base::COL_SM_2 . '">';
+        $result .= '  <div class="' . view_styles::COL_SM_2 . '">';
         $result .= '    <ul class="nav navbar-nav">';
         $result .= '      <li class="active">';
         $result .= $this->dsp_user($back);
@@ -723,7 +726,7 @@ class view extends sandbox_typed
 
         // when changing a view show the fields only on the left side
         if ($this->id() > 0) {
-            $result .= '<div class="' . html_base::COL_SM_7 . '">';
+            $result .= '<div class="' . view_styles::COL_SM_7 . '">';
         }
 
         // show the edit fields
@@ -735,14 +738,14 @@ class view extends sandbox_typed
         $result .= '<div class="form-row">';
         if ($add_cmp < 0 or $add_cmp > 0) {
             // show the fields inactive, because the assign fields are active
-            $result .= $html->dsp_form_text("name", $this->name, "Name:", html_base::COL_SM_8, "disabled");
-            $result .= $this->dsp_type_selector($script, html_base::COL_SM_4, "disabled");
+            $result .= $html->dsp_form_text("name", $this->name, "Name:", view_styles::COL_SM_8, "disabled");
+            $result .= $this->dsp_type_selector($script, view_styles::COL_SM_4, "disabled");
             $result .= '</div>';
             $result .= $html->dsp_form_text_big("description", $this->description, "Comment:", "", "disabled");
         } else {
             // show the fields inactive, because the assign fields are active
-            $result .= $html->dsp_form_text("name", $this->name, "Name:", html_base::COL_SM_8);
-            $result .= $this->dsp_type_selector($script, html_base::COL_SM_4, "");
+            $result .= $html->dsp_form_text("name", $this->name, "Name:", view_styles::COL_SM_8);
+            $result .= $this->dsp_type_selector($script, view_styles::COL_SM_4, "");
             $result .= '</div>';
             $result .= $html->dsp_form_text_big("description", $this->description, "Comment:");
             $result .= $html->dsp_form_end('', $back, "/http/view_del.php?id=" . $this->id() . "&back=" . $back);
