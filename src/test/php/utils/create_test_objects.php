@@ -202,84 +202,84 @@ class create_test_objects extends test_base
 
         $is_ok = true;
 
-        $user_profiles = new user_profile_list();
+        $usr_pro_cac = new user_profile_list();
         $phr_typ_cac = new phrase_types();
         $frm_typ_cac = new formula_type_list();
         $frm_lnk_typ_cac = new formula_link_type_list();
         $elm_typ_cac = new element_type_list();
         $msk_typ_cac = new view_type_list();
-        $msk_style_cac = new view_style_list();
+        $msk_sty_cac = new view_style_list();
         $msk_lnk_typ_cac = new view_link_type_list();
         $cmp_typ_cac = new component_type_list();
         //$cmp_lnk_typ_cac = new component_link_type_list();
         $position_types = new position_type_list();
         $ref_typ_cac = new ref_type_list();
         $src_typ_cac = new source_type_list();
-        $share_typ_cac = new share_type_list();
-        $protect_typ_cac = new protection_type_list();
-        $languages = new language_list();
-        $language_forms = new language_form_list();
-        $sys_log_stati = new sys_log_status_list();
-        $job_types = new job_type_list();
+        $shr_typ_cac = new share_type_list();
+        $ptc_typ_cac = new protection_type_list();
+        $lan_cac = new language_list();
+        $lan_for_cac = new language_form_list();
+        $sys_log_sta_cac = new sys_log_status_list();
+        $job_typ_cac = new job_type_list();
         $cng_act_cac = new change_action_list();
         $cng_tbl_cac = new change_table_list();
         $cng_fld_cac = new change_field_list();
-        $verbs = new verb_list();
+        $vrb_cac = new verb_list();
 
-        $user_profiles->load_dummy();
+        $usr_pro_cac->load_dummy();
         $phr_typ_cac->load_dummy();
         $frm_typ_cac->load_dummy();
         $frm_lnk_typ_cac->load_dummy();
         $elm_typ_cac->load_dummy();
         $msk_typ_cac->load_dummy();
-        $msk_style_cac->load_dummy();
+        $msk_sty_cac->load_dummy();
         $msk_lnk_typ_cac->load_dummy();
         $cmp_typ_cac->load_dummy();
         //$cmp_lnk_typ_cac->load_dummy();
         $position_types->load_dummy();
         $ref_typ_cac->load_dummy();
         $src_typ_cac->load_dummy();
-        $share_typ_cac->load_dummy();
-        $protect_typ_cac->load_dummy();
-        $languages->load_dummy();
-        $language_forms->load_dummy();
-        $sys_log_stati->load_dummy();
-        $job_types->load_dummy();
+        $shr_typ_cac->load_dummy();
+        $ptc_typ_cac->load_dummy();
+        $lan_cac->load_dummy();
+        $lan_for_cac->load_dummy();
+        $sys_log_sta_cac->load_dummy();
+        $job_typ_cac->load_dummy();
         $cng_act_cac->load_dummy();
         $cng_tbl_cac->load_dummy();
         $cng_fld_cac->load_dummy();
-        $verbs->load_dummy();
+        $vrb_cac->load_dummy();
 
         // read the corresponding names and description from the internal config csv files
         $this->read_all_names_from_config_csv($phr_typ_cac);
 
         $lst = new type_lists_api($db_con, $usr);
-        $lst->add($user_profiles->api_obj(), controller::API_LIST_USER_PROFILES);
+        $lst->add($usr_pro_cac->api_obj(), controller::API_LIST_USER_PROFILES);
         $lst->add($phr_typ_cac->api_obj(), controller::API_LIST_PHRASE_TYPES);
         $lst->add($frm_typ_cac->api_obj(), controller::API_LIST_FORMULA_TYPES);
         $lst->add($frm_lnk_typ_cac->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
         $lst->add($elm_typ_cac->api_obj(), controller::API_LIST_ELEMENT_TYPES);
         $lst->add($msk_typ_cac->api_obj(), controller::API_LIST_VIEW_TYPES);
-        $lst->add($msk_style_cac->api_obj(), controller::API_LIST_VIEW_STYLES);
+        $lst->add($msk_sty_cac->api_obj(), controller::API_LIST_VIEW_STYLES);
         $lst->add($msk_lnk_typ_cac->api_obj(), controller::API_LIST_VIEW_LINK_TYPES);
         $lst->add($cmp_typ_cac->api_obj(), controller::API_LIST_COMPONENT_TYPES);
         //$lst->add($cmp_lnk_typ_cac->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
         $lst->add($position_types->api_obj(), controller::API_LIST_COMPONENT_POSITION_TYPES);
         $lst->add($ref_typ_cac->api_obj(), controller::API_LIST_REF_TYPES);
         $lst->add($src_typ_cac->api_obj(), controller::API_LIST_SOURCE_TYPES);
-        $lst->add($share_typ_cac->api_obj(), controller::API_LIST_SHARE_TYPES);
-        $lst->add($protect_typ_cac->api_obj(), controller::API_LIST_PROTECTION_TYPES);
-        $lst->add($languages->api_obj(), controller::API_LIST_LANGUAGES);
-        $lst->add($language_forms->api_obj(), controller::API_LIST_LANGUAGE_FORMS);
-        $lst->add($sys_log_stati->api_obj(), controller::API_LIST_SYS_LOG_STATI);
-        $lst->add($job_types->api_obj(), controller::API_LIST_JOB_TYPES);
+        $lst->add($shr_typ_cac->api_obj(), controller::API_LIST_SHARE_TYPES);
+        $lst->add($ptc_typ_cac->api_obj(), controller::API_LIST_PROTECTION_TYPES);
+        $lst->add($lan_cac->api_obj(), controller::API_LIST_LANGUAGES);
+        $lst->add($lan_for_cac->api_obj(), controller::API_LIST_LANGUAGE_FORMS);
+        $lst->add($sys_log_sta_cac->api_obj(), controller::API_LIST_SYS_LOG_STATI);
+        $lst->add($job_typ_cac->api_obj(), controller::API_LIST_JOB_TYPES);
         $lst->add($cng_act_cac->api_obj(), controller::API_LIST_CHANGE_LOG_ACTIONS);
         $lst->add($cng_tbl_cac->api_obj(), controller::API_LIST_CHANGE_LOG_TABLES);
         $lst->add($cng_fld_cac->api_obj(), controller::API_LIST_CHANGE_LOG_FIELDS);
-        $lst->add($verbs->api_obj(), controller::API_LIST_VERBS);
+        $lst->add($vrb_cac->api_obj(), controller::API_LIST_VERBS);
 
-        $system_views = $this->view_list();
-        $lst->add($system_views->api_obj(), controller::API_LIST_SYSTEM_VIEWS);
+        $sys_msk_cac = $this->view_list();
+        $lst->add($sys_msk_cac->api_obj(), controller::API_LIST_SYSTEM_VIEWS);
 
         return $lst;
     }
@@ -463,8 +463,8 @@ class create_test_objects extends test_base
         $wrd->set(word_api::TI_MATH, word_api::TN_READ);
         $wrd->description = word_api::TD_READ;
         $wrd->set_type(phrase_type_shared::NORMAL);
-        global $protect_typ_cac;
-        $wrd->protection_id = $protect_typ_cac->id(protect_type_shared::ADMIN);
+        global $ptc_typ_cac;
+        $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
         return $wrd;
     }
 
@@ -483,8 +483,8 @@ class create_test_objects extends test_base
      */
     function word_filled(): word
     {
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_MATH, word_api::TN_READ);
         $wrd->description = word_api::TD_READ;
@@ -494,8 +494,8 @@ class create_test_objects extends test_base
         $wrd->set_view_id(view_api::TI_READ);
         $wrd->set_usage(2);
         $wrd->exclude();
-        $wrd->share_id = $share_typ_cac->id(share_type_shared::GROUP);
-        $wrd->protection_id = $protect_typ_cac->id(protect_type_shared::USER);
+        $wrd->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
+        $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
         return $wrd;
     }
 
@@ -561,8 +561,8 @@ class create_test_objects extends test_base
         $wrd->set(word_api::TI_CONST, word_api::TN_CONST);
         $wrd->description = word_api::TD_CONST;
         $wrd->set_type(phrase_type_shared::MATH_CONST);
-        global $protect_typ_cac;
-        $wrd->protection_id = $protect_typ_cac->id(protect_type_shared::ADMIN);
+        global $ptc_typ_cac;
+        $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
         return $wrd;
     }
 
@@ -575,8 +575,8 @@ class create_test_objects extends test_base
         $wrd->set(word_api::TI_PI, word_api::TN_PI);
         $wrd->description = word_api::TD_PI;
         $wrd->set_type(phrase_type_shared::MATH_CONST);
-        global $protect_typ_cac;
-        $wrd->protection_id = $protect_typ_cac->id(protect_type_shared::ADMIN);
+        global $ptc_typ_cac;
+        $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
         return $wrd;
     }
 
@@ -882,8 +882,8 @@ class create_test_objects extends test_base
         $trp->set_verb($this->verb_part());
         $trp->set_to($this->word()->phrase());
         $trp->set_type(phrase_type_shared::MATH_CONST);
-        global $protect_typ_cac;
-        $trp->protection_id = $protect_typ_cac->id(protect_type_shared::ADMIN);
+        global $ptc_typ_cac;
+        $trp->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
         return $trp;
     }
 
@@ -1650,14 +1650,14 @@ class create_test_objects extends test_base
 
     function value_16_filled(): value
     {
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
         $grp = $this->group_16();
         $val = new value($this->usr1, round(value_api::TV_READ, 13), $grp);
         $val->set_source_id($this->source()->id());
         $val->exclude();
-        $val->share_id = $share_typ_cac->id(share_type_shared::GROUP);
-        $val->protection_id = $protect_typ_cac->id(protect_type_shared::USER);
+        $val->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
+        $val->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
         return $val;
     }
 
@@ -1728,8 +1728,8 @@ class create_test_objects extends test_base
      */
     function formula_filled(): formula
     {
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
         $frm = new formula($this->usr1);
         $frm->set(1, formula_api::TN_READ);
         $frm->set_user_text(formula_api::TF_READ, $this->term_list_time());
@@ -1740,8 +1740,8 @@ class create_test_objects extends test_base
         $frm->set_view_id(view_api::TI_READ);
         $frm->set_usage(2);
         $frm->exclude();
-        $frm->share_id = $share_typ_cac->id(share_type_shared::GROUP);
-        $frm->protection_id = $protect_typ_cac->id(protect_type_shared::USER);
+        $frm->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
+        $frm->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
         return $frm;
     }
 
@@ -1788,12 +1788,12 @@ class create_test_objects extends test_base
 
     function formula_link_filled(): formula_link
     {
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
         $lnk = $this->formula_link();
         $lnk->exclude();
-        $lnk->share_id = $share_typ_cac->id(share_type_shared::GROUP);
-        $lnk->protection_id = $protect_typ_cac->id(protect_type_shared::USER);
+        $lnk->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
+        $lnk->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
         return $lnk;
     }
 
@@ -1904,12 +1904,12 @@ class create_test_objects extends test_base
      */
     function result_main_filled(): result
     {
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
         $res = $this->result_main_max();
         $res->exclude();
-        $res->share_id = $share_typ_cac->id(share_type_shared::GROUP);
-        $res->protection_id = $protect_typ_cac->id(protect_type_shared::USER);
+        $res->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
+        $res->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
         return $res;
     }
 
@@ -1990,12 +1990,12 @@ class create_test_objects extends test_base
      */
     function source_filled(): source
     {
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
         $src = $this->source();
         $src->exclude();
-        $src->share_id = $share_typ_cac->id(share_type_shared::GROUP);
-        $src->protection_id = $protect_typ_cac->id(protect_type_shared::USER);
+        $src->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
+        $src->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
         return $src;
     }
 
@@ -2117,14 +2117,14 @@ class create_test_objects extends test_base
      */
     function ref_filled(): ref
     {
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
         $ref = $this->reference();
         $ref->source = $this->source();
         $ref->url = ref_api::TU_READ;
         $ref->include();
-        $ref->share_id = $share_typ_cac->id(share_type_shared::GROUP);
-        $ref->protection_id = $protect_typ_cac->id(protect_type_shared::USER);
+        $ref->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
+        $ref->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
         return $ref;
     }
 
@@ -2133,16 +2133,16 @@ class create_test_objects extends test_base
      */
     function ref_filled_user(): ref
     {
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
         $ref = $this->reference_user();
         $ref->external_key = ref_api::TK_READ;
         $ref->url = ref_api::TU_READ;
         $ref->source = $this->source();
         $ref->description = ref_api::TD_READ;
         $ref->exclude();
-        $ref->share_id = $share_typ_cac->id(share_type_shared::GROUP);
-        $ref->protection_id = $protect_typ_cac->id(protect_type_shared::USER);
+        $ref->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
+        $ref->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
         return $ref;
     }
 
@@ -2157,7 +2157,7 @@ class create_test_objects extends test_base
 
     function view(): view
     {
-        global $protect_typ_cac;
+        global $ptc_typ_cac;
         $msk = new view($this->usr1);
         $msk->set(1, view_api::TN_READ);
         $msk->description = view_api::TD_READ;
@@ -2167,13 +2167,13 @@ class create_test_objects extends test_base
 
     function view_protected(): view
     {
-        global $protect_typ_cac;
+        global $ptc_typ_cac;
         $msk = new view($this->usr1);
         $msk->set(1, view_api::TN_READ);
         $msk->description = view_api::TD_READ;
         $msk->code_id = view_api::TC_READ;
         $msk->set_type(view_type::ENTRY);
-        $msk->protection_id = $protect_typ_cac->id(protect_type_shared::ADMIN);
+        $msk->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
         return $msk;
     }
 
@@ -2193,8 +2193,8 @@ class create_test_objects extends test_base
      */
     function view_filled(): view
     {
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
         $msk = new view($this->usr1);
         $msk->set(1, view_api::TN_READ);
         $msk->description = view_api::TD_READ;
@@ -2202,8 +2202,8 @@ class create_test_objects extends test_base
         $msk->set_type(view_type::DETAIL);
         $msk->set_style(view_styles::SM_COL_4);
         $msk->exclude();
-        $msk->share_id = $share_typ_cac->id(share_type_shared::GROUP);
-        $msk->protection_id = $protect_typ_cac->id(protect_type_shared::USER);
+        $msk->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
+        $msk->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
         return $msk;
     }
 
@@ -2277,12 +2277,12 @@ class create_test_objects extends test_base
 
     function view_link_filled(): view_term_link
     {
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
         $lnk = $this->view_link();
         $lnk->exclude();
-        $lnk->share_id = $share_typ_cac->id(share_type_shared::GROUP);
-        $lnk->protection_id = $protect_typ_cac->id(protect_type_shared::USER);
+        $lnk->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
+        $lnk->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
         return $lnk;
     }
 
@@ -2317,8 +2317,8 @@ class create_test_objects extends test_base
      */
     function component_filled(): component
     {
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
         $cmp = new component($this->usr1);
         $cmp->set(1, component_api::TN_READ, comp_type_shared::PHRASE_NAME);
         $cmp->description = component_api::TD_READ;
@@ -2332,8 +2332,8 @@ class create_test_objects extends test_base
         $cmp->set_formula($this->formula());
         $cmp->set_link_type(component_link_type::EXPRESSION);
         $cmp->exclude();
-        $cmp->share_id = $share_typ_cac->id(share_type_shared::GROUP);
-        $cmp->protection_id = $protect_typ_cac->id(protect_type_shared::USER);
+        $cmp->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
+        $cmp->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
         return $cmp;
     }
 
@@ -2495,16 +2495,16 @@ class create_test_objects extends test_base
 
     function component_link_filled(): component_link
     {
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
         $lnk = new component_link($this->usr1);
         $lnk->set(1, $this->view(), $this->component(), 1);
         $lnk->set_predicate(component_link_type::EXPRESSION);
         $lnk->set_pos_type(position_type::SIDE);
         $lnk->set_style(view_styles::SM_COL_4);
         $lnk->exclude();
-        $lnk->share_id = $share_typ_cac->id(share_type_shared::GROUP);
-        $lnk->protection_id = $protect_typ_cac->id(protect_type_shared::USER);
+        $lnk->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
+        $lnk->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
         return $lnk;
     }
 
@@ -2770,7 +2770,7 @@ class create_test_objects extends test_base
      */
     function sys_log(): sys_log
     {
-        global $sys_log_stati;
+        global $sys_log_sta_cac;
         $sys = new sys_log();
         $sys->set_id(1);
         $sys->log_time = new DateTime(sys_log_api::TV_TIME);
@@ -2779,7 +2779,7 @@ class create_test_objects extends test_base
         $sys->log_trace = sys_log_api::TV_LOG_TRACE;
         $sys->function_name = sys_log_api::TV_FUNC_NAME;
         $sys->solver_name = sys_log_api::TV_SOLVE_ID;
-        $sys->status_name = $sys_log_stati->id(sys_log_status::OPEN);
+        $sys->status_name = $sys_log_sta_cac->id(sys_log_status::OPEN);
         return $sys;
     }
 
@@ -2788,7 +2788,7 @@ class create_test_objects extends test_base
      */
     function sys_log2(): sys_log
     {
-        global $sys_log_stati;
+        global $sys_log_sta_cac;
         $sys = new sys_log();
         $sys->set_id(2);
         $sys->log_time = new DateTime(sys_log_api::TV_TIME);
@@ -2797,7 +2797,7 @@ class create_test_objects extends test_base
         $sys->log_trace = sys_log_api::T2_LOG_TRACE;
         $sys->function_name = sys_log_api::T2_FUNC_NAME;
         $sys->solver_name = sys_log_api::TV_SOLVE_ID;
-        $sys->status_name = $sys_log_stati->id(sys_log_status::CLOSED);
+        $sys->status_name = $sys_log_sta_cac->id(sys_log_status::CLOSED);
         return $sys;
     }
 
@@ -3060,7 +3060,7 @@ class create_test_objects extends test_base
                         ?string $wrd_type_code_id = null,
                         ?user   $test_usr = null): triple
     {
-        global $verbs;
+        global $vrb_cac;
         global $phr_typ_cac;
 
         if ($id == null) {
@@ -3073,7 +3073,7 @@ class create_test_objects extends test_base
         $trp = new triple($test_usr);
         $trp->set_id($id);
         $trp->set_from($this->new_word($from_name)->phrase());
-        $trp->set_verb_id($verbs->id($verb_code_id));
+        $trp->set_verb_id($vrb_cac->id($verb_code_id));
         $trp->set_to($this->new_word($to_name)->phrase());
         $trp->set_name($wrd_name);
 
@@ -3094,14 +3094,14 @@ class create_test_objects extends test_base
                          string $verb_code_id,
                          string $to_name): triple
     {
-        global $verbs;
+        global $vrb_cac;
 
         $wrd_from = $this->load_word($from_name, $this->usr1);
         $wrd_to = $this->load_word($to_name, $this->usr1);
         $from = $wrd_from->phrase();
         $to = $wrd_to->phrase();
 
-        $vrb = $verbs->get_verb($verb_code_id);
+        $vrb = $vrb_cac->get_verb($verb_code_id);
 
         $lnk_test = new triple($this->usr1);
         if ($from->id() > 0 and $to->id() > 0) {
@@ -3117,7 +3117,7 @@ class create_test_objects extends test_base
         string $to_name,
         ?user  $test_usr = null): triple
     {
-        global $verbs;
+        global $vrb_cac;
 
         if ($test_usr == null) {
             $test_usr = $this->usr1;
@@ -3128,7 +3128,7 @@ class create_test_objects extends test_base
         $from = $wrd_from->phrase();
         $to = $wrd_to->phrase();
 
-        $vrb = $verbs->get_verb($verb_code_id);
+        $vrb = $vrb_cac->get_verb($verb_code_id);
 
         $lnk_test = new triple($test_usr);
         $lnk_test->set_from($from);
@@ -3153,7 +3153,7 @@ class create_test_objects extends test_base
                          string $name_given = '',
                          bool   $auto_create = true): triple
     {
-        global $verbs;
+        global $vrb_cac;
 
         $result = new triple($this->usr1);
 
@@ -3174,7 +3174,7 @@ class create_test_objects extends test_base
         }
 
         // load the verb
-        $vrb = $verbs->get_verb($verb_code_id);
+        $vrb = $vrb_cac->get_verb($verb_code_id);
 
         // check if the triple exists or create a new if needed
         $trp = new triple($this->usr1);

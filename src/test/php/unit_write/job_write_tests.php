@@ -49,7 +49,7 @@ class job_write_tests
     {
 
         global $usr;
-        global $job_types;
+        global $job_typ_cac;
 
         $t->header('Test the batch job class (classes/job.php)');
 

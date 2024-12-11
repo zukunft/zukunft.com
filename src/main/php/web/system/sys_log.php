@@ -256,8 +256,8 @@ class sys_log extends log_dsp
 
     private function status_text(): string
     {
-        global $sys_log_stati;
-        return $sys_log_stati->name($this->status());
+        global $sys_log_sta_cac;
+        return $sys_log_sta_cac->name($this->status());
     }
 
 }

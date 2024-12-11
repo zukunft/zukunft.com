@@ -278,7 +278,7 @@ class component extends sandbox_typed
         string $name_fld = self::FLD_NAME
     ): bool
     {
-        global $msk_style_cac;
+        global $msk_sty_cac;
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
             if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
@@ -353,11 +353,11 @@ class component extends sandbox_typed
      */
     function set_style(?string $code_id): void
     {
-        global $msk_style_cac;
+        global $msk_sty_cac;
         if ($code_id == null) {
             $this->style = null;
         } else {
-            $this->style = $msk_style_cac->get_by_code_id($code_id);
+            $this->style = $msk_sty_cac->get_by_code_id($code_id);
         }
     }
 
@@ -369,12 +369,11 @@ class component extends sandbox_typed
      */
     function set_style_by_id(?int $style_id): void
     {
-        // TODO easy rename all global type vars to _cache
-        global $msk_style_cac;
+        global $msk_sty_cac;
         if ($style_id == null) {
             $this->style = null;
         } else {
-            $this->style = $msk_style_cac->get($style_id);
+            $this->style = $msk_sty_cac->get($style_id);
         }
     }
 
@@ -1344,7 +1343,7 @@ class component extends sandbox_typed
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $msk_style_cac;
+            global $msk_sty_cac;
             // TODO easy move to id function of type list
             if ($this->style_id() < 0) {
                 log_err('component style for ' . $this->dsp_id() . ' not found');
@@ -1354,7 +1353,7 @@ class component extends sandbox_typed
                 view_style::FLD_NAME,
                 $this->style_id(),
                 $sbx->style_id(),
-                $msk_style_cac
+                $msk_sty_cac
             );
         }
         if ($sbx->code_id <> $this->code_id) {

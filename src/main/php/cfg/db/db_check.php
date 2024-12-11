@@ -344,9 +344,9 @@ class db_check
 
         if ($db_con->db_type == sql_db::MYSQL) {
 
-            global $user_profiles;
-            $user_profiles = new user_profile_list();
-            $user_profiles->load($db_con);
+            global $usr_pro_cac;
+            $usr_pro_cac = new user_profile_list();
+            $usr_pro_cac->load($db_con);
 
             // add missing system users if needed
             $sys_usr = new user();

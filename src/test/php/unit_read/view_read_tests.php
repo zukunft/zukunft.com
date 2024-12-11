@@ -59,7 +59,7 @@ class view_read_tests
         global $db_con;
         global $msk_typ_cac;
         global $msk_lnk_typ_cac;
-        global $system_views;
+        global $sys_msk_cac;
         global $cmp_typ_cac;
 
         // init
@@ -131,7 +131,7 @@ class view_read_tests
         $t->assert('load', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $system_views->id(view_shared::MC_WORD);
+        $result = $sys_msk_cac->id(view_shared::MC_WORD);
         $target = 0;
         if ($result > 0) {
             $target = $result; // just check if the id is found

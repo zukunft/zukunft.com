@@ -36,7 +36,7 @@ use cfg\db\sql_db;
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 
-global $job_types;
+global $job_typ_cac;
 
 class job_type_list extends type_list
 {

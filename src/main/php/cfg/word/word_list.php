@@ -649,8 +649,8 @@ class word_list extends sandbox_list_named
      */
     function is(): word_list
     {
-        global $verbs;
-        $wrd_lst = $this->foaf_parents($verbs->get_verb(verbs::IS));
+        global $vrb_cac;
+        $wrd_lst = $this->foaf_parents($vrb_cac->get_verb(verbs::IS));
         log_debug($this->dsp_id() . ' is ' . $wrd_lst->name());
         return $wrd_lst;
     }
@@ -663,9 +663,9 @@ class word_list extends sandbox_list_named
      */
     function are(): word_list
     {
-        global $verbs;
+        global $vrb_cac;
         log_debug('for ' . $this->dsp_id());
-        $wrd_lst = $this->children($verbs->get_verb(verbs::IS));
+        $wrd_lst = $this->children($vrb_cac->get_verb(verbs::IS));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' are ' . $wrd_lst->name());
         return $wrd_lst;
@@ -677,8 +677,8 @@ class word_list extends sandbox_list_named
      */
     function contains(): word_list
     {
-        global $verbs;
-        $wrd_lst = $this->children($verbs->get_verb(verbs::IS_PART_OF));
+        global $vrb_cac;
+        $wrd_lst = $this->children($vrb_cac->get_verb(verbs::IS_PART_OF));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $wrd_lst->name());
         return $wrd_lst;
@@ -730,8 +730,8 @@ class word_list extends sandbox_list_named
      */
     function differentiators(): word_list
     {
-        global $verbs;
-        $wrd_lst = $this->foaf_parents($verbs->get_verb(verbs::CAN_CONTAIN));
+        global $vrb_cac;
+        $wrd_lst = $this->foaf_parents($vrb_cac->get_verb(verbs::CAN_CONTAIN));
         $wrd_lst->merge($this);
         return $wrd_lst;
     }
@@ -743,10 +743,10 @@ class word_list extends sandbox_list_named
      */
     function differentiators_all(): word_list
     {
-        global $verbs;
+        global $vrb_cac;
         // this first time get all related items
         // parents and not children because the verb is "can contain", but here the question is for "can be split by"
-        $wrd_lst = $this->foaf_parents($verbs->get_verb(verbs::CAN_CONTAIN));
+        $wrd_lst = $this->foaf_parents($vrb_cac->get_verb(verbs::CAN_CONTAIN));
         return $wrd_lst->are_and_contains();
     }
 

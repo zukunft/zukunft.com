@@ -131,21 +131,28 @@ verbs are also named as triples
 
 backend - admin
 - usr (USeR)               - the person who is logged in
+- pro (PROfile)            - a group of user rights
 - log                      - to save all changes in a user readable format
+- sta (STAtus)             - the status of a lod entry e.g. solved
+- cng (ChaNGe)             - parts of the change log
+- act (ACTion)             - the change log actions
+- tbl (TaBLe)              - the change log tables
+- fld (FieLD)              - the change log fields of a table
 
 backend - internal
 - sbx (SandBoX)            - the user sandbox tables where the adjustments of the users are saved
 - shr (SHaRe)              - the sharing settings
 - ptc (ProTeCt)            - the protection settings
 - lst (LiST)               - an array of objects
-- typ (TYPe)               - field name to connect predefind functionality to a core object
-- pdi (PreDIcate)          - define the connection type between two core objects (verb is a spcial form of predicate for triples)
+- typ (TYPe)               - field name to connect predefined functionality to a core object
+- pdi (PreDIcate)          - define the connection type between two core objects (verb is a special form of predicate for triples)
 - id (IDentifier)          - internal prime key of a database row
-- ids (IDentifierS)        - an simple array of database table IDs (ids_txt is the text / imploded version of the ids array)
+- ids (IDentifierS)        - a simple array of database table IDs (ids_txt is the text / imploded version of the ids array)
 - sc (Sql Creator)         - for writing SQL statements
 - std (STanDard)           - a value that have not been changed and is public (for results additional "main" is used)
 - nrm (NoRMal)             - data that is used by most users
 - dsl (DSp cmp Link)       - link of a view component to a view
+- sty (STYle)              - the HTML style class used for a view
 - uso (User Sbx Object)    - an object (word, value, formula, ...) that uses the user sandbox
 (useless?)
 - cl (Code Link)           - a text used to identify one predefined database entry that triggers to use of some program code
@@ -167,6 +174,8 @@ a view object or a function that return HTML code that can be displayed
 - dtx (DiSPlay TeXt)       - functions for the text interface implementation mainly for debugging
 - btn (BuTtoN)             - button
 - tbl (TaBLe)              - HTML code for a table
+- lan (LANguage)           - the language used for the frontend
+- for (FORm)               - the language form of a word e.g. plural
 
 to be deprecated:
 - glst (Get LiST)          - is used to name the private internal functions that can also create the user list

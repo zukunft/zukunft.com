@@ -132,19 +132,19 @@ class sandbox implements JsonSerializable
      */
     function jsonSerialize(): array
     {
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
 
         $vars = get_object_vars($this);
 
         // remove vars from the json that have the default value
         if (array_key_exists(json_fields::SHARE, $vars)) {
-            if ($vars[json_fields::SHARE] == $share_typ_cac->default_id()) {
+            if ($vars[json_fields::SHARE] == $shr_typ_cac->default_id()) {
                 unset($vars[json_fields::SHARE]);
             }
         }
         if (array_key_exists(json_fields::PROTECTION, $vars)) {
-            if ($vars[json_fields::PROTECTION] == $protect_typ_cac->default_id()) {
+            if ($vars[json_fields::PROTECTION] == $ptc_typ_cac->default_id()) {
                 unset($vars[json_fields::PROTECTION]);
             }
         }

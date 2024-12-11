@@ -37,7 +37,7 @@ use cfg\db\sql_db;
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_LANGUAGE_PATH . 'language.php';
 
-global $languages;
+global $lan_cac;
 
 class language_list extends type_list
 {

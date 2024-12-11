@@ -43,7 +43,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use shared\views as view_shared;
 
-global $system_views;
+global $sys_msk_cac;
 
 class view_sys_list extends type_list
 {

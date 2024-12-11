@@ -38,7 +38,7 @@ include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once DB_PATH . 'sql_db.php';
 
-global $sys_log_stati;
+global $sys_log_sta_cac;
 
 class sys_log_function_list extends type_list
 {

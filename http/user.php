@@ -57,7 +57,7 @@ use shared\views as view_shared;
 $db_con = prg_start("user");
 $html = new html_base();
 
-global $user_profiles;
+global $usr_pro_cac;
 
 $result = ''; // reset the html code var
 
@@ -194,7 +194,7 @@ if ($usr->id() > 0) {
     }
 
     // display all program issues if the user is an admin
-    if ($usr->profile_id == $user_profiles->id(user_profile::ADMIN)) {
+    if ($usr->profile_id == $usr_pro_cac->id(user_profile::ADMIN)) {
         $errors_all = $dsp_usr_old->dsp_errors("other", sql_db::ROW_LIMIT, 1, $back);
         if (trim($errors_all) <> "") {
             $result .= $html->dsp_text_h2("Program issues that other user have found, that have not yet been solved.");

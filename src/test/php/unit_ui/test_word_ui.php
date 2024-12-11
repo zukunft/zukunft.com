@@ -48,14 +48,14 @@ function run_word_ui_test(test_cleanup $t): void
 
     global $usr;
     global $phr_typ_cac;
-    global $verbs;
+    global $vrb_cac;
 
     $t->header('Test the word frontend scripts (e.g. /word_add.php)');
 
     // call the add word page and check if at least some keywords are returned
     $wrd = new word($usr);
     $wrd->load_by_name(word_api::TN_READ);
-    $vrb_is = $verbs->id(verbs::IS);
+    $vrb_is = $vrb_cac->id(verbs::IS);
     $wrd_type = $phr_typ_cac->default_id();
     $result = file_get_contents('https://zukunft.com/http/word_add.php?verb=' . $vrb_is . '&word=' . $wrd->id() . '&type=1&back=' . $wrd->id());
     $target = word_api::TN_READ;

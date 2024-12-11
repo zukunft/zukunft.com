@@ -141,7 +141,7 @@ class triple_list extends list_dsp
      */
     function graph(string $back = ''): string
     {
-        global $verbs;
+        global $vrb_cac;
 
         $html = new html_base();
         $result = '';
@@ -223,13 +223,13 @@ class triple_list extends list_dsp
 
                 // use the last word as a sample for the new word type
                 $last_linked_word_id = 0;
-                if ($lnk->verb()->id() == $verbs->id(verbs::FOLLOW)) {
+                if ($lnk->verb()->id() == $vrb_cac->id(verbs::FOLLOW)) {
                     $last_linked_word_id = $lnk->to()->id();
                 }
 
                 // in case of the verb "following" continue the series after the last element
                 $start_id = 0;
-                if ($lnk->verb()->id() == $verbs->id(verbs::FOLLOW)) {
+                if ($lnk->verb()->id() == $vrb_cac->id(verbs::FOLLOW)) {
                     $start_id = $last_linked_word_id;
                     // and link with the same direction (looks like not needed!)
                     /* if ($directional_link_type_id > 0) {

@@ -38,7 +38,7 @@ use test\create_test_objects;
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_LANGUAGE_PATH . 'language_form.php';
 
-global $language_forms;
+global $lan_for_cac;
 
 class language_form_list extends type_list
 {

@@ -70,8 +70,8 @@ class db_cl
      */
     function sys_log_status_id(string $code_id): int
     {
-        global $sys_log_stati;
-        return $sys_log_stati->id($code_id);
+        global $sys_log_sta_cac;
+        return $sys_log_sta_cac->id($code_id);
     }
 
     function sys_usr_id(string $code_id): int
@@ -82,8 +82,8 @@ class db_cl
 
     function user_profile_id(string $code_id): int
     {
-        global $user_profiles;
-        return $user_profiles->id($code_id);
+        global $usr_pro_cac;
+        return $usr_pro_cac->id($code_id);
     }
 
     function phrase_type_id(string $code_id): int
@@ -94,8 +94,8 @@ class db_cl
 
     function verb_id(string $code_id): int
     {
-        global $verbs;
-        return $verbs->id($code_id);
+        global $vrb_cac;
+        return $vrb_cac->id($code_id);
     }
 
     function formula_type_id(string $code_id): int
@@ -118,8 +118,8 @@ class db_cl
 
     function view_id(string $code_id): int
     {
-        global $system_views;
-        return $system_views->id($code_id);
+        global $sys_msk_cac;
+        return $sys_msk_cac->id($code_id);
     }
 
     function view_type_id(string $code_id): int
@@ -154,32 +154,32 @@ class db_cl
 
     function share_type_id(string $code_id): int
     {
-        global $share_typ_cac;
-        return $share_typ_cac->id($code_id);
+        global $shr_typ_cac;
+        return $shr_typ_cac->id($code_id);
     }
 
     function protection_type_id(string $code_id): int
     {
-        global $protect_typ_cac;
-        return $protect_typ_cac->id($code_id);
+        global $ptc_typ_cac;
+        return $ptc_typ_cac->id($code_id);
     }
 
     function language_id(string $code_id): int
     {
-        global $languages;
-        return $languages->id($code_id);
+        global $lan_cac;
+        return $lan_cac->id($code_id);
     }
 
     function language_form_id(string $code_id): int
     {
-        global $language_forms;
-        return $language_forms->id($code_id);
+        global $lan_for_cac;
+        return $lan_for_cac->id($code_id);
     }
 
     function job_type_id(string $code_id): int
     {
-        global $job_types;
-        return $job_types->id($code_id);
+        global $job_typ_cac;
+        return $job_typ_cac->id($code_id);
     }
 
     function log_action_id(string $code_id): int
@@ -208,14 +208,14 @@ class db_cl
      */
     function sys_log_status(int $id)
     {
-        global $sys_log_stati;
-        return $sys_log_stati->get($id);
+        global $sys_log_sta_cac;
+        return $sys_log_sta_cac->get($id);
     }
 
     function user_profile(int $id)
     {
-        global $user_profiles;
-        return $user_profiles->get($id);
+        global $usr_pro_cac;
+        return $usr_pro_cac->get($id);
     }
 
     function phrase_type(int $id)
@@ -262,32 +262,32 @@ class db_cl
 
     function share_type(int $id)
     {
-        global $share_typ_cac;
-        return $share_typ_cac->get_by_id($id);
+        global $shr_typ_cac;
+        return $shr_typ_cac->get_by_id($id);
     }
 
     function protection_type(int $id)
     {
-        global $protect_typ_cac;
-        return $protect_typ_cac->get_by_id($id);
+        global $ptc_typ_cac;
+        return $ptc_typ_cac->get_by_id($id);
     }
 
     function language(int $id)
     {
-        global $languages;
-        return $languages->get_by_id($id);
+        global $lan_cac;
+        return $lan_cac->get_by_id($id);
     }
 
     function language_form(int $id)
     {
-        global $language_forms;
-        return $language_forms->get_by_id($id);
+        global $lan_for_cac;
+        return $lan_for_cac->get_by_id($id);
     }
 
     function job_type(int $id)
     {
-        global $job_types;
-        return $job_types->get_by_id($id);
+        global $job_typ_cac;
+        return $job_typ_cac->get_by_id($id);
     }
 
     function log_action(int $id)
@@ -316,8 +316,8 @@ class db_cl
      */
     function sys_log_status_name(int $id): string
     {
-        global $sys_log_stati;
-        return $sys_log_stati->name($id);
+        global $sys_log_sta_cac;
+        return $sys_log_sta_cac->name($id);
     }
 
     function sys_usr_name(int $id): string
@@ -328,8 +328,8 @@ class db_cl
 
     function user_profile_name(int $id): string
     {
-        global $user_profiles;
-        return $user_profiles->name($id);
+        global $usr_pro_cac;
+        return $usr_pro_cac->name($id);
     }
 
     function phrase_type_name(int $id): string
@@ -340,8 +340,8 @@ class db_cl
 
     function verb_name(int $id): string
     {
-        global $verbs;
-        return $verbs->name($id);
+        global $vrb_cac;
+        return $vrb_cac->name($id);
     }
 
     function formula_type_name(int $id): string
@@ -364,8 +364,8 @@ class db_cl
 
     function view_name(int $id): string
     {
-        global $system_views;
-        return $system_views->name($id);
+        global $sys_msk_cac;
+        return $sys_msk_cac->name($id);
     }
 
     function view_type_name(int $id): string
@@ -400,32 +400,32 @@ class db_cl
 
     function share_type_name(int $id): string
     {
-        global $share_typ_cac;
-        return $share_typ_cac->name($id);
+        global $shr_typ_cac;
+        return $shr_typ_cac->name($id);
     }
 
     function protection_type_name(int $id): string
     {
-        global $protect_typ_cac;
-        return $protect_typ_cac->name($id);
+        global $ptc_typ_cac;
+        return $ptc_typ_cac->name($id);
     }
 
     function language_name(int $id): string
     {
-        global $languages;
-        return $languages->name($id);
+        global $lan_cac;
+        return $lan_cac->name($id);
     }
 
     function language_form_name(int $id): string
     {
-        global $language_forms;
-        return $language_forms->name($id);
+        global $lan_for_cac;
+        return $lan_for_cac->name($id);
     }
 
     function job_type_name(int $id): string
     {
-        global $job_types;
-        return $job_types->name($id);
+        global $job_typ_cac;
+        return $job_typ_cac->name($id);
     }
 
     function log_action_name(int $id): string

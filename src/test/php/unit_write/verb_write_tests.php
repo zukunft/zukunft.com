@@ -47,14 +47,14 @@ class verb_write_tests
     function run(test_cleanup $t): void
     {
 
-        global $verbs;
+        global $vrb_cac;
 
         $t->header('Test the verb class (classes/verb.php)');
 
         // check the loading of the "is a" verb
         $vrb = new verb;
         $vrb->set_user($t->usr1);
-        $vrb->load_by_id($verbs->id(verbs::IS));
+        $vrb->load_by_id($vrb_cac->id(verbs::IS));
         $t->assert('verb->load ', $vrb->name(), verb_api::TN_IS);
 
         // test the creation of a new verb

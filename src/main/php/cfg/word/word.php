@@ -947,8 +947,8 @@ class word extends sandbox_typed
     function export_obj(bool $do_load = true): sandbox_exp_named
     {
         global $phr_typ_cac;
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
 
         log_debug();
         $result = new word_exp();
@@ -969,12 +969,12 @@ class word extends sandbox_typed
         }
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $share_typ_cac->id(share_type_shared::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
         // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> $protect_typ_cac->id(protect_type_shared::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 
@@ -1200,10 +1200,10 @@ class word extends sandbox_typed
      */
     function parents(): phrase_list
     {
-        global $verbs;
+        global $vrb_cac;
         log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
         $phr_lst = $this->lst();
-        $parent_phr_lst = $phr_lst->foaf_parents($verbs->get_verb(verbs::IS));
+        $parent_phr_lst = $phr_lst->foaf_parents($vrb_cac->get_verb(verbs::IS));
         log_debug('are ' . $parent_phr_lst->dsp_name() . ' for ' . $this->dsp_id());
         return $parent_phr_lst;
     }
@@ -1244,14 +1244,14 @@ class word extends sandbox_typed
      */
     function add_child(word $child): bool
     {
-        global $verbs;
+        global $vrb_cac;
 
         $result = false;
         $wrd_lst = $this->children();
         if (!$wrd_lst->does_contain($child)) {
             $wrd_lnk = new triple($this->user());
             $wrd_lnk->set_from($child->phrase());
-            $wrd_lnk->set_verb($verbs->get_verb(verbs::IS));
+            $wrd_lnk->set_verb($vrb_cac->get_verb(verbs::IS));
             $wrd_lnk->set_to($this->phrase());
             if ($wrd_lnk->save() == '') {
                 $result = true;
@@ -1268,10 +1268,10 @@ class word extends sandbox_typed
      */
     function children(): phrase_list
     {
-        global $verbs;
+        global $vrb_cac;
         log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
         $phr_lst = $this->lst();
-        $child_phr_lst = $phr_lst->all_children($verbs->get_verb(verbs::IS));
+        $child_phr_lst = $phr_lst->all_children($vrb_cac->get_verb(verbs::IS));
         log_debug('are ' . $child_phr_lst->name() . ' for ' . $this->dsp_id());
         return $child_phr_lst;
     }
@@ -1296,9 +1296,9 @@ class word extends sandbox_typed
      */
     function parts(): phrase_list
     {
-        global $verbs;
+        global $vrb_cac;
         $phr_lst = $this->lst();
-        return $phr_lst->foaf_children($verbs->get_verb(verbs::IS_PART_OF));
+        return $phr_lst->foaf_children($vrb_cac->get_verb(verbs::IS_PART_OF));
     }
 
     /**
@@ -1307,9 +1307,9 @@ class word extends sandbox_typed
      */
     function direct_parts(): phrase_list
     {
-        global $verbs;
+        global $vrb_cac;
         $phr_lst = $this->lst();
-        return $phr_lst->foaf_children($verbs->get_verb(verbs::IS_PART_OF), 1);
+        return $phr_lst->foaf_children($vrb_cac->get_verb(verbs::IS_PART_OF), 1);
     }
 
     /**
@@ -1354,11 +1354,11 @@ class word extends sandbox_typed
         log_debug($this->dsp_id());
 
         global $db_con;
-        global $verbs;
+        global $vrb_cac;
 
         $result = new word($this->user());
 
-        $link_id = $verbs->id(verbs::FOLLOW);
+        $link_id = $vrb_cac->id(verbs::FOLLOW);
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
         $key_result = $db_con->get_value_2key(triple::FLD_FROM, triple::FLD_TO, $this->id(), verb::FLD_ID, $link_id);
@@ -1380,11 +1380,11 @@ class word extends sandbox_typed
         log_debug($this->dsp_id());
 
         global $db_con;
-        global $verbs;
+        global $vrb_cac;
 
         $result = new word($this->user());
 
-        $link_id = $verbs->id(verbs::FOLLOW);
+        $link_id = $vrb_cac->id(verbs::FOLLOW);
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
         $key_result = $db_con->get_value_2key(triple::FLD_TO, triple::FLD_FROM, $this->id(), verb::FLD_ID, $link_id);
@@ -1507,10 +1507,10 @@ class word extends sandbox_typed
      */
     function is_part(): phrase_list
     {
-        global $verbs;
+        global $vrb_cac;
         log_debug($this->dsp_id() . ', user ' . $this->user()->id());
         $phr_lst = $this->lst();
-        $is_phr_lst = $phr_lst->foaf_parents($verbs->get_verb(verbs::IS_PART_OF));
+        $is_phr_lst = $phr_lst->foaf_parents($vrb_cac->get_verb(verbs::IS_PART_OF));
 
         log_debug($this->dsp_id() . ' is a ' . $is_phr_lst->dsp_name());
         return $is_phr_lst;

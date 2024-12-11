@@ -383,8 +383,8 @@ class triple extends sandbox_link_named implements JsonSerializable
             $this->set_predicate_id($vrb->id());
         } else {
             if ($vrb->name() != '') {
-                global $verbs;
-                $vrb_selected = $verbs->get_by_name($vrb->name());
+                global $vrb_cac;
+                $vrb_selected = $vrb_cac->get_by_name($vrb->name());
                 $this->set_predicate_id($vrb_selected->id());
             }
         }
@@ -403,12 +403,12 @@ class triple extends sandbox_link_named implements JsonSerializable
 
     function verb(): verb|null
     {
-        global $verbs;
+        global $vrb_cac;
         $id = $this->predicate_id();
         if ($id == 0) {
             return null;
         } else {
-            return $verbs->get($id);
+            return $vrb_cac->get($id);
         }
     }
 
@@ -437,13 +437,13 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function verb_name(): string
     {
-        global $verbs;
+        global $vrb_cac;
         $id = $this->predicate_id();
         if ($id > 0) {
-            $vrb = $verbs->get($this->predicate_id());
+            $vrb = $vrb_cac->get($this->predicate_id());
             return $vrb->name();
         } elseif ($id < 0) {
-            $vrb = $verbs->get($this->predicate_id() * -1);
+            $vrb = $vrb_cac->get($this->predicate_id() * -1);
             return $vrb->reverse();
         } else {
             return '';
@@ -822,8 +822,8 @@ class triple extends sandbox_link_named implements JsonSerializable
             }
             if ($key == json_fields::VERB) {
                 if ($value != 0) {
-                    global $verbs;
-                    $vrb = $verbs->get($value);
+                    global $vrb_cac;
+                    $vrb = $vrb_cac->get($value);
                     $this->set_verb($vrb);
                 }
             }
@@ -835,10 +835,10 @@ class triple extends sandbox_link_named implements JsonSerializable
                 }
             }
             if ($key == json_fields::SHARE) {
-                $this->share_id = $share_typ_cac->id($value);
+                $this->share_id = $shr_typ_cac->id($value);
             }
             if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $protect_typ_cac->id($value);
+                $this->protection_id = $ptc_typ_cac->id($value);
             }
             if ($key == exp_obj::FLD_VIEW) {
                 $wrd_view = new view($this->user());
@@ -1551,8 +1551,8 @@ class triple extends sandbox_link_named implements JsonSerializable
     function export_obj(bool $do_load = true): sandbox_exp
     {
         global $phr_typ_cac;
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
 
         log_debug();
         $result = new triple_exp();
@@ -1579,12 +1579,12 @@ class triple extends sandbox_link_named implements JsonSerializable
         }
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $share_typ_cac->id(share_type_shared::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
         // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> $protect_typ_cac->id(protect_type_shared::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 
@@ -1644,8 +1644,8 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function generate_name(): string
     {
-        global $verbs;
-        if ($this->verb_id() == $verbs->id(verbs::IS) and $this->from()->name() != '' and $this->to()->name() != '') {
+        global $vrb_cac;
+        if ($this->verb_id() == $vrb_cac->id(verbs::IS) and $this->from()->name() != '' and $this->to()->name() != '') {
             // use the user defined description
             return $this->from()->name() . ' (' . $this->to()->name() . ')';
         } elseif ($this->from()->name() != '' and $this->verb_name() != '' and $this->to()->name() != '') {
@@ -2416,13 +2416,13 @@ class triple extends sandbox_link_named implements JsonSerializable
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
-                global $verbs;
+                global $vrb_cac;
                 $lst->add_type_field(
                     verb::FLD_ID,
                     verb::FLD_NAME,
                     $this->verb_id(),
                     $sbx->verb_id(),
-                    $verbs
+                    $vrb_cac
                 );
             }
         } else {
@@ -2439,13 +2439,13 @@ class triple extends sandbox_link_named implements JsonSerializable
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
-                    global $verbs;
+                    global $vrb_cac;
                     $lst->add_type_field(
                         verb::FLD_ID,
                         verb::FLD_NAME,
                         null,
                         $sbx->verb_id(),
-                        $verbs
+                        $vrb_cac
                     );
                     // TODO check if the excluded field is not already added by the sandbox function
                     if ($do_log) {
@@ -2468,13 +2468,13 @@ class triple extends sandbox_link_named implements JsonSerializable
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
-                    global $verbs;
+                    global $vrb_cac;
                     $lst->add_type_field(
                         verb::FLD_ID,
                         verb::FLD_NAME,
                         $this->verb_id(),
                         null,
-                        $verbs
+                        $vrb_cac
                     );
                 }
             }

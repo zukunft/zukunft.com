@@ -430,10 +430,10 @@ class sandbox_multi extends db_object_multi_user
      */
     function row_mapper_std(): void
     {
-        global $share_typ_cac;
-        global $protect_typ_cac;
-        $this->share_id = $share_typ_cac->id(share_type_shared::PUBLIC);
-        $this->protection_id = $protect_typ_cac->id(protect_type_shared::NO_PROTECT);
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+        $this->share_id = $shr_typ_cac->id(share_type_shared::PUBLIC);
+        $this->protection_id = $ptc_typ_cac->id(protect_type_shared::NO_PROTECT);
     }
 
 
@@ -741,8 +741,8 @@ class sandbox_multi extends db_object_multi_user
      */
     function share_type_code_id(): string
     {
-        global $share_typ_cac;
-        return $share_typ_cac->code_id($this->share_id);
+        global $shr_typ_cac;
+        return $shr_typ_cac->code_id($this->share_id);
     }
 
     /**
@@ -750,15 +750,15 @@ class sandbox_multi extends db_object_multi_user
      */
     function share_type_name(): string
     {
-        global $share_typ_cac;
+        global $shr_typ_cac;
 
         // use the default share type if not set
         if ($this->share_id <= 0) {
-            $this->share_id = $share_typ_cac->id(share_type_shared::PUBLIC);
+            $this->share_id = $shr_typ_cac->id(share_type_shared::PUBLIC);
         }
 
-        global $share_typ_cac;
-        return $share_typ_cac->name($this->share_id);
+        global $shr_typ_cac;
+        return $shr_typ_cac->name($this->share_id);
     }
 
     /**
@@ -766,8 +766,8 @@ class sandbox_multi extends db_object_multi_user
      */
     function protection_type_code_id(): string
     {
-        global $protect_typ_cac;
-        return $protect_typ_cac->code_id($this->protection_id);
+        global $ptc_typ_cac;
+        return $ptc_typ_cac->code_id($this->protection_id);
     }
 
     /**
@@ -775,14 +775,14 @@ class sandbox_multi extends db_object_multi_user
      */
     function protection_type_name(): string
     {
-        global $protect_typ_cac;
+        global $ptc_typ_cac;
 
         // use the default share type if not set
         if ($this->protection_id <= 0) {
-            $this->protection_id = $protect_typ_cac->id(protect_type_shared::NO_PROTECT);
+            $this->protection_id = $ptc_typ_cac->id(protect_type_shared::NO_PROTECT);
         }
 
-        return $protect_typ_cac->name($this->protection_id);
+        return $ptc_typ_cac->name($this->protection_id);
     }
 
 
@@ -800,20 +800,20 @@ class sandbox_multi extends db_object_multi_user
      */
     function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
 
         $result = parent::import_db_obj($this, $test_obj);
         foreach ($in_ex_json as $key => $value) {
             if ($key == json_fields::SHARE) {
-                $this->share_id = $share_typ_cac->id($value);
+                $this->share_id = $shr_typ_cac->id($value);
                 if ($this->share_id < 0) {
                     $lib = new library();
                     $result->add_message('share type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
                 }
             }
             if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $protect_typ_cac->id($value);
+                $this->protection_id = $ptc_typ_cac->id($value);
                 if ($this->protection_id < 0) {
                     $lib = new library();
                     $result->add_message('protection type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));

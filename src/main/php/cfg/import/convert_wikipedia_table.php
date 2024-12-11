@@ -183,7 +183,7 @@ class convert_wikipedia_table
         string $col_name_out = ''
     ): string
     {
-        global $verbs;
+        global $vrb_cac;
 
         // create context for assumptions
         $list_of_symbols = []; // if a row contains a symbol and a name they are usually linked

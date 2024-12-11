@@ -323,8 +323,8 @@ class user extends db_object_seq_id
             $this->email = $email;
         }
 
-        //global $user_profiles;
-        //$this->profile = $user_profiles->get_by_code_id(user_profile::NORMAL);
+        //global $usr_pro_cac;
+        //$this->profile = $usr_pro_cac->get_by_code_id(user_profile::NORMAL);
         //$this->profile = cl(db_cl::USER_PROFILE, user_profile::NORMAL);
 
     }
@@ -743,8 +743,8 @@ class user extends db_object_seq_id
 
     function load_by_profile_code(string $profile_code_id): bool
     {
-        global $user_profiles;
-        return $this->load_by_profile($user_profiles->id($profile_code_id));
+        global $usr_pro_cac;
+        return $this->load_by_profile($usr_pro_cac->id($profile_code_id));
     }
 
     /**
@@ -754,14 +754,14 @@ class user extends db_object_seq_id
     function load_usr_data(): void
     {
         global $db_con;
-        global $verbs;
-        global $system_views;
+        global $vrb_cac;
+        global $sys_msk_cac;
 
-        $verbs = new verb_list($this);
-        $verbs->load($db_con);
+        $vrb_cac = new verb_list($this);
+        $vrb_cac->load($db_con);
 
-        $system_views = new view_sys_list($this);
-        $system_views->load($db_con);
+        $sys_msk_cac = new view_sys_list($this);
+        $sys_msk_cac->load($db_con);
 
     }
 
@@ -840,7 +840,7 @@ class user extends db_object_seq_id
                 }
             } else {
                 // else use the IP address (for testing don't overwrite any testing ip)
-                global $user_profiles;
+                global $usr_pro_cac;
                 global $db_con;
 
                 $this->load_by_ip($this->get_ip());
@@ -896,7 +896,7 @@ class user extends db_object_seq_id
      */
     function import_obj(array $json_obj, int $profile_id, object $test_obj = null): user_message
     {
-        global $user_profiles;
+        global $usr_pro_cac;
 
         log_debug();
         $usr_msg = parent::import_db_obj($this, $test_obj);
@@ -923,11 +923,11 @@ class user extends db_object_seq_id
                 $this->code_id = $value;
             }
             if ($key == self::FLD_EX_PROFILE) {
-                $this->profile_id = $user_profiles->id($value);
+                $this->profile_id = $usr_pro_cac->id($value);
             }
             if ($key == sandbox_exp::FLD_CODE_ID) {
-                if ($profile_id == $user_profiles->id(user_profile::ADMIN)
-                    or $profile_id == $user_profiles->id(user_profile::SYSTEM)) {
+                if ($profile_id == $usr_pro_cac->id(user_profile::ADMIN)
+                    or $profile_id == $usr_pro_cac->id(user_profile::SYSTEM)) {
                     $this->code_id = $value;
                 }
             }
@@ -1007,12 +1007,12 @@ class user extends db_object_seq_id
      */
     function is_admin(): bool
     {
-        global $user_profiles;
+        global $usr_pro_cac;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $user_profiles->id(user_profile::ADMIN)) {
+            if ($this->profile_id == $usr_pro_cac->id(user_profile::ADMIN)) {
                 $result = true;
             }
         }
@@ -1024,13 +1024,13 @@ class user extends db_object_seq_id
      */
     function is_system(): bool
     {
-        global $user_profiles;
+        global $usr_pro_cac;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $user_profiles->id(user_profile::TEST)
-                or $this->profile_id == $user_profiles->id(user_profile::SYSTEM)) {
+            if ($this->profile_id == $usr_pro_cac->id(user_profile::TEST)
+                or $this->profile_id == $usr_pro_cac->id(user_profile::SYSTEM)) {
                 $result = true;
             }
         }
@@ -1052,13 +1052,13 @@ class user extends db_object_seq_id
     // true if the user has the right to import data
     function can_import(): bool
     {
-        global $user_profiles;
+        global $usr_pro_cac;
         log_debug();
         $result = false;
 
-        if ($this->profile_id == $user_profiles->id(user_profile::ADMIN)
-            or $this->profile_id == $user_profiles->id(user_profile::TEST)
-            or $this->profile_id == $user_profiles->id(user_profile::SYSTEM)) {
+        if ($this->profile_id == $usr_pro_cac->id(user_profile::ADMIN)
+            or $this->profile_id == $usr_pro_cac->id(user_profile::TEST)
+            or $this->profile_id == $usr_pro_cac->id(user_profile::SYSTEM)) {
             $result = true;
         }
         return $result;
@@ -1129,9 +1129,9 @@ class user extends db_object_seq_id
 
     function set_profile(string $profile_code_id): void
     {
-        global $user_profiles;
-        $this->profile_id = $user_profiles->id($profile_code_id);
-        //$this->profile = $user_profiles->lst[$this->profile_id];
+        global $usr_pro_cac;
+        $this->profile_id = $usr_pro_cac->id($profile_code_id);
+        //$this->profile = $usr_pro_cac->lst[$this->profile_id];
     }
 
     // set the main log entry parameters for updating one word field
@@ -1213,7 +1213,7 @@ class user extends db_object_seq_id
      */
     function save(sql_db $db_con): string
     {
-        global $user_profiles;
+        global $usr_pro_cac;
 
         $result = '';
 
@@ -1255,8 +1255,8 @@ class user extends db_object_seq_id
                     $result = 'Saving of user profile ' . $this->id() . ' failed.';
                 }
                 // add the ip address to the user, but never for system users
-                if ($this->profile_id != $user_profiles->id(user_profile::SYSTEM)
-                    and $this->profile_id != $user_profiles->id(user_profile::TEST)) {
+                if ($this->profile_id != $usr_pro_cac->id(user_profile::SYSTEM)
+                    and $this->profile_id != $usr_pro_cac->id(user_profile::TEST)) {
                     if (!$db_con->update_old($this->id(), self::FLD_IP_ADDR, $this->get_ip())) {
                         $result = 'Saving of user ' . $this->id() . ' failed.';
                     }

@@ -978,13 +978,13 @@ class sql_db
         // TODO use system user cache
         global $system_users;
         // TODO use user profile cache
-        global $user_profiles;
+        global $usr_pro_cac;
         global $phr_typ_cac;
         global $frm_typ_cac;
         global $frm_lnk_typ_cac;
         global $elm_typ_cac;
         global $msk_typ_cac;
-        global $msk_style_cac;
+        global $msk_sty_cac;
         global $msk_lnk_typ_cac;
         global $cmp_typ_cac;
         // TODO use component link type cache
@@ -992,27 +992,27 @@ class sql_db
         global $pos_typ_cac;
         global $ref_typ_cac;
         global $src_typ_cac;
-        global $share_typ_cac;
-        global $protect_typ_cac;
-        global $languages;
-        global $language_forms;
-        global $verbs;
-        global $system_views;
-        global $sys_log_stati;
-        global $job_types;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+        global $lan_cac;
+        global $lan_for_cac;
+        global $vrb_cac;
+        global $sys_msk_cac;
+        global $sys_log_sta_cac;
+        global $job_typ_cac;
         global $cng_act_cac;
         global $cng_tbl_cac;
         global $cng_fld_cac;
 
         // TODO activate or remove
         //$system_users =[];
-        //$user_profiles =[];
+        //$usr_pro_cac =[];
         $phr_typ_cac = new phrase_types();
         $frm_typ_cac = new formula_type_list();
         $frm_lnk_typ_cac = new formula_link_type_list();
         $elm_typ_cac = new element_type_list();
         $msk_typ_cac = new view_type_list();
-        $msk_style_cac = new view_style_list();
+        $msk_sty_cac = new view_style_list();
         $msk_lnk_typ_cac = new view_link_type_list();
         $cmp_typ_cac = new component_type_list();
         // not yet needed?
@@ -1020,11 +1020,11 @@ class sql_db
         $pos_typ_cac = new position_type_list();
         $ref_typ_cac = new ref_type_list();
         $src_typ_cac = new source_type_list();
-        $share_typ_cac = new share_type_list();
-        $protect_typ_cac = new protection_type_list();
-        $languages = new language_list();
-        $language_forms = new language_form_list();
-        $job_types = new job_type_list();
+        $shr_typ_cac = new share_type_list();
+        $ptc_typ_cac = new protection_type_list();
+        $lan_cac = new language_list();
+        $lan_for_cac = new language_form_list();
+        $job_typ_cac = new job_type_list();
         $cng_act_cac = new change_action_list();
         $cng_tbl_cac = new change_table_list();
         $cng_fld_cac = new change_field_list();
@@ -5405,9 +5405,9 @@ class sql_db
         foreach (USER_CODE_LINK_FILES as $csv_file_name) {
             $this->load_db_code_link_file($csv_file_name, $this);
         }
-        global $user_profiles;
-        $user_profiles = new user_profile_list();
-        $user_profiles->load($this);
+        global $usr_pro_cac;
+        $usr_pro_cac = new user_profile_list();
+        $usr_pro_cac->load($this);
     }
 
     /**
@@ -5453,7 +5453,7 @@ class sql_db
     function import_verbs(user $usr): bool
     {
         global $db_con;
-        global $verbs;
+        global $vrb_cac;
 
         $result = false;
 
@@ -5465,8 +5465,8 @@ class sql_db
             }
         }
 
-        $verbs = new verb_list($usr);
-        $verbs->load($db_con);
+        $vrb_cac = new verb_list($usr);
+        $vrb_cac->load($db_con);
 
         return $result;
     }
@@ -5480,22 +5480,22 @@ class sql_db
     {
         $usr_msg = new user_message();
 
-        global $protect_typ_cac;
-        global $verbs;
+        global $ptc_typ_cac;
+        global $vrb_cac;
 
         if ($usr->is_admin() or $usr->is_system()) {
             foreach (config_numbers::ADMIN_KEYWORDS as $name) {
                 $wrd = new word($usr);
                 $wrd->set_name($name);
                 $wrd->set_code_id($name);
-                $wrd->protection_id = $protect_typ_cac->id(protect_type_shared::ADMIN);
+                $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
                 $usr_msg->add($wrd->save());
             }
             foreach (config_numbers::HIDDEN_KEYWORDS as $name) {
                 $wrd = new word($usr);
                 $wrd->set_name($name);
                 $wrd->set_code_id($name);
-                $wrd->protection_id = $protect_typ_cac->id(protect_type_shared::ADMIN);
+                $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
                 $wrd->set_type(phrase_type_shared::SYSTEM_HIDDEN);
                 $usr_msg->add($wrd->save());
             }
@@ -5506,7 +5506,7 @@ class sql_db
                 if (!$wrd->load_by_name($name)) {
                     $wrd->set_name($name);
                 }
-                $wrd->protection_id = $protect_typ_cac->id(protect_type_shared::ADMIN);
+                $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
                 $wrd->description = $com;
                 $wrd->set_code_id($name);
                 $usr_msg->add($wrd->save());
@@ -5514,7 +5514,7 @@ class sql_db
             foreach (config_numbers::HIDDEN_KEY_TRIPLES as $trp_lst) {
                 $from_name = $trp_lst[0];
                 $to_name = $trp_lst[1];
-                $vrb = $verbs->get_verb(verbs::CAN_USE);
+                $vrb = $vrb_cac->get_verb(verbs::CAN_USE);
                 $trp = new triple($usr);
                 $from = new phrase($usr);
                 $from->load_by_name($from_name);
@@ -5524,7 +5524,7 @@ class sql_db
                 $trp->set_verb($vrb);
                 $trp->set_to($to);
                 $trp->set_name($from_name . ' ' . $to_name);
-                $trp->protection_id = $protect_typ_cac->id(protect_type_shared::ADMIN);
+                $trp->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
                 $trp->set_type(phrase_type_shared::SYSTEM_HIDDEN);
                 //$trp->set_code_id($from_name . ' ' . $to_name);
                 $usr_msg->add($trp->save());
@@ -5532,7 +5532,7 @@ class sql_db
             foreach (config_numbers::ADMIN_KEY_TRIPLES as $trp_lst) {
                 $from_name = $trp_lst[0];
                 $to_name = $trp_lst[1];
-                $vrb = $verbs->get_verb(verbs::CAN_USE);
+                $vrb = $vrb_cac->get_verb(verbs::CAN_USE);
                 $trp = new triple($usr);
                 $from = new phrase($usr);
                 $from->load_by_name($from_name);
@@ -5542,7 +5542,7 @@ class sql_db
                 $trp->set_verb($vrb);
                 $trp->set_to($to);
                 $trp->set_name($from_name . ' ' . $to_name);
-                $trp->protection_id = $protect_typ_cac->id(protect_type_shared::ADMIN);
+                $trp->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
                 //$trp->set_code_id($from_name . ' ' . $to_name);
                 $usr_msg->add($trp->save());
             }
@@ -5554,7 +5554,7 @@ class sql_db
     function import_system_views(user $usr): bool
     {
         global $db_con;
-        global $system_views;
+        global $sys_msk_cac;
 
         $result = false;
 
@@ -5566,8 +5566,8 @@ class sql_db
             }
         }
 
-        $system_views = new view_sys_list($usr);
-        $system_views->load($db_con);
+        $sys_msk_cac = new view_sys_list($usr);
+        $sys_msk_cac->load($db_con);
 
         return $result;
     }

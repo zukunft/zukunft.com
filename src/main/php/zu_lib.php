@@ -1711,7 +1711,7 @@ function prg_restart(string $code_name): sql_db
 
 function prg_start_api($code_name): sql_db
 {
-    global $sys_time_start, $sys_script, $user_profiles;
+    global $sys_time_start, $sys_script, $usr_pro_cac;
     global $sys_times;
 
     log_debug($code_name . ' ..');
@@ -1739,7 +1739,7 @@ function prg_start_api($code_name): sql_db
  */
 function prg_start_system($code_name): sql_db
 {
-    global $sys_time_start, $sys_script, $user_profiles;
+    global $sys_time_start, $sys_script, $usr_pro_cac;
     global $sys_times;
 
     log_debug($code_name . ' ..');
@@ -1758,13 +1758,13 @@ function prg_start_system($code_name): sql_db
     log_debug($code_name . ' ... database link open');
 
     // load user profiles
-    $user_profiles = new user_profile_list();
+    $usr_pro_cac = new user_profile_list();
     $lib = new library();
     $tbl_name = $lib->class_to_name(user_profile::class);
     if ($db_con->has_table($tbl_name)) {
-        $user_profiles->load($db_con);
+        $usr_pro_cac->load($db_con);
     } else {
-        $user_profiles->load_dummy();
+        $usr_pro_cac->load_dummy();
     }
 
     return $db_con;

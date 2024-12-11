@@ -64,7 +64,7 @@ class system_tests
         global $usr;
         global $usr_sys;
         global $sql_names;
-        global $sys_log_stati;
+        global $sys_log_sta_cac;
 
         // init
         $lib = new library();
@@ -214,8 +214,8 @@ class system_tests
          * activate if nevertheless an issue occurs
         $system_users = new user_list();
         $t->assert_sql_all($db_con, $system_users);
-        $user_profiles = new user_profile_list();
-        $t->assert_sql_all($db_con, $user_profiles);
+        $usr_pro_cac = new user_profile_list();
+        $t->assert_sql_all($db_con, $usr_pro_cac);
         $phr_typ_cac = new phrase_types(true);
         $t->assert_sql_all($db_con, $phr_typ_cac);
         $frm_typ_cac = new formula_type_list();
@@ -230,12 +230,12 @@ class system_tests
         $t->assert_sql_all($db_con, $cmp_typ_cac);
         $ref_typ_cac = new ref_type_list();
         $t->assert_sql_all($db_con, $ref_typ_cac);
-        $share_typ_cac = new share_type_list();
-        $t->assert_sql_all($db_con, $share_typ_cac);
-        $protect_typ_cac = new protection_type_list();
-        $t->assert_sql_all($db_con, $protect_typ_cac);
-        $job_types = new job_type_list();
-        $t->assert_sql_all($db_con, $job_types);
+        $shr_typ_cac = new share_type_list();
+        $t->assert_sql_all($db_con, $shr_typ_cac);
+        $ptc_typ_cac = new protection_type_list();
+        $t->assert_sql_all($db_con, $ptc_typ_cac);
+        $job_typ_cac = new job_type_list();
+        $t->assert_sql_all($db_con, $job_typ_cac);
         $cng_tbl_cac = new change_table_list();
         $t->assert_sql_all($db_con, $cng_tbl_cac);
         $cng_fld_cac = new change_field_list();
@@ -379,7 +379,7 @@ class system_tests
         $log->log_trace = sys_log_api::TV_LOG_TRACE;
         $log->function_name = sys_log_api::TV_FUNC_NAME;
         $log->solver_name = sys_log_api::TV_SOLVE_ID;
-        $log->status_name = $sys_log_stati->id(sys_log_status::OPEN);
+        $log->status_name = $sys_log_sta_cac->id(sys_log_status::OPEN);
         $log_dsp = $log->get_api_obj();
         $created = $log_dsp->get_json();
         $expected = file_get_contents(PATH_TEST_FILES . 'api/system/sys_log.json');
@@ -405,7 +405,7 @@ class system_tests
         $log2->log_trace = sys_log_api::T2_LOG_TRACE;
         $log2->function_name = sys_log_api::T2_FUNC_NAME;
         $log2->solver_name = sys_log_api::TV_SOLVE_ID;
-        $log2->status_name = $sys_log_stati->id(sys_log_status::CLOSED);
+        $log2->status_name = $sys_log_sta_cac->id(sys_log_status::CLOSED);
 
         $log_lst = new sys_log_list();
         $log_lst->add($log);

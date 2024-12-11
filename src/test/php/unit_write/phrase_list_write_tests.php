@@ -55,7 +55,7 @@ class phrase_list_write_tests
     {
 
         global $usr;
-        global $verbs;
+        global $vrb_cac;
 
         $t->header('Test the phrase list class (src/main/php/model/phrase/phrase_list.php)');
 
@@ -65,7 +65,7 @@ class phrase_list_write_tests
 
         // load the main test word and verb
         $wrd_company = $t->test_word(word_api::TN_READ);
-        $is_id = $verbs->id(verbs::IS);
+        $is_id = $vrb_cac->id(verbs::IS);
 
         // prepare test by loading Insurance Zurich
         $wrd_zh = $t->load_word(word_api::TN_ZH);
@@ -98,7 +98,7 @@ class phrase_list_write_tests
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_ABB));
         $phr_lst = $wrd_lst->phrase_lst();
-        $lst_parents = $phr_lst->foaf_parents($verbs->get_verb(verbs::IS));
+        $lst_parents = $phr_lst->foaf_parents($vrb_cac->get_verb(verbs::IS));
         $result = $lib->dsp_array($lst_parents->names());
         $target = word_api::TN_COMPANY; // order adjusted based on the number of usage
         $t->display('phrase_list->foaf_parents for ' . $phr_lst->dsp_name() . ' up', $target, $result);

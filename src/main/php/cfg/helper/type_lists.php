@@ -93,58 +93,58 @@ class type_lists
     function api_obj(user $usr): type_lists_api
     {
         global $db_con;
-        global $user_profiles;
+        global $usr_pro_cac;
         global $phr_typ_cac;
         global $frm_typ_cac;
         global $frm_lnk_typ_cac;
         global $elm_typ_cac;
         global $msk_typ_cac;
-        global $msk_style_cac;
+        global $msk_sty_cac;
         global $msk_lnk_typ_cac;
         global $cmp_typ_cac;
         global $cmp_lnk_typ_cac;
         global $pos_typ_cac;
         global $ref_typ_cac;
         global $src_typ_cac;
-        global $share_typ_cac;
-        global $protect_typ_cac;
-        global $languages;
-        global $language_forms;
-        global $verbs;
-        global $system_views;
-        global $sys_log_stati;
-        global $job_types;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+        global $lan_cac;
+        global $lan_for_cac;
+        global $vrb_cac;
+        global $sys_msk_cac;
+        global $sys_log_sta_cac;
+        global $job_typ_cac;
         global $cng_act_cac;
         global $cng_tbl_cac;
         global $cng_fld_cac;
 
         log_debug();
         $lst = new type_lists_api($db_con, $usr);
-        $lst->add($user_profiles->api_obj(), controller::API_LIST_USER_PROFILES);
+        $lst->add($usr_pro_cac->api_obj(), controller::API_LIST_USER_PROFILES);
         $lst->add($phr_typ_cac->api_obj(), controller::API_LIST_PHRASE_TYPES);
         $lst->add($frm_typ_cac->api_obj(), controller::API_LIST_FORMULA_TYPES);
         $lst->add($frm_lnk_typ_cac->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
         $lst->add($elm_typ_cac->api_obj(), controller::API_LIST_ELEMENT_TYPES);
         $lst->add($msk_typ_cac->api_obj(), controller::API_LIST_VIEW_TYPES);
-        $lst->add($msk_style_cac->api_obj(), controller::API_LIST_VIEW_STYLES);
+        $lst->add($msk_sty_cac->api_obj(), controller::API_LIST_VIEW_STYLES);
         $lst->add($msk_lnk_typ_cac->api_obj(), controller::API_LIST_VIEW_LINK_TYPES);
         $lst->add($cmp_typ_cac->api_obj(), controller::API_LIST_COMPONENT_TYPES);
         //$lst->add($cmp_lnk_typ_cac->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
         $lst->add($pos_typ_cac->api_obj(), controller::API_LIST_COMPONENT_POSITION_TYPES);
         $lst->add($ref_typ_cac->api_obj(), controller::API_LIST_REF_TYPES);
         $lst->add($src_typ_cac->api_obj(), controller::API_LIST_SOURCE_TYPES);
-        $lst->add($share_typ_cac->api_obj(), controller::API_LIST_SHARE_TYPES);
-        $lst->add($protect_typ_cac->api_obj(), controller::API_LIST_PROTECTION_TYPES);
-        $lst->add($languages->api_obj(), controller::API_LIST_LANGUAGES);
-        $lst->add($language_forms->api_obj(), controller::API_LIST_LANGUAGE_FORMS);
-        $lst->add($sys_log_stati->api_obj(), controller::API_LIST_SYS_LOG_STATI);
-        $lst->add($job_types->api_obj(), controller::API_LIST_JOB_TYPES);
+        $lst->add($shr_typ_cac->api_obj(), controller::API_LIST_SHARE_TYPES);
+        $lst->add($ptc_typ_cac->api_obj(), controller::API_LIST_PROTECTION_TYPES);
+        $lst->add($lan_cac->api_obj(), controller::API_LIST_LANGUAGES);
+        $lst->add($lan_for_cac->api_obj(), controller::API_LIST_LANGUAGE_FORMS);
+        $lst->add($sys_log_sta_cac->api_obj(), controller::API_LIST_SYS_LOG_STATI);
+        $lst->add($job_typ_cac->api_obj(), controller::API_LIST_JOB_TYPES);
         $lst->add($cng_act_cac->api_obj(), controller::API_LIST_CHANGE_LOG_ACTIONS);
         $lst->add($cng_tbl_cac->api_obj(), controller::API_LIST_CHANGE_LOG_TABLES);
         $lst->add($cng_fld_cac->api_obj(), controller::API_LIST_CHANGE_LOG_FIELDS);
-        $lst->add($verbs->api_obj(), controller::API_LIST_VERBS);
-        if ($system_views != null) {
-            $lst->add($system_views->api_obj(), controller::API_LIST_SYSTEM_VIEWS);
+        $lst->add($vrb_cac->api_obj(), controller::API_LIST_VERBS);
+        if ($sys_msk_cac != null) {
+            $lst->add($sys_msk_cac->api_obj(), controller::API_LIST_SYSTEM_VIEWS);
         }
         log_debug('done');
         return $lst;
@@ -156,45 +156,45 @@ class type_lists
 
     function load(sql_db $db_con, ?user $usr): bool
     {
-        global $sys_log_stati;
+        global $sys_log_sta_cac;
         global $system_users;
-        global $user_profiles;
+        global $usr_pro_cac;
         global $phr_typ_cac;
         global $frm_typ_cac;
         global $frm_lnk_typ_cac;
         global $elm_typ_cac;
         global $msk_typ_cac;
-        global $msk_style_cac;
+        global $msk_sty_cac;
         global $msk_lnk_typ_cac;
         global $cmp_typ_cac;
         global $cmp_lnk_typ_cac;
         global $pos_typ_cac;
         global $ref_typ_cac;
         global $src_typ_cac;
-        global $share_typ_cac;
-        global $protect_typ_cac;
-        global $languages;
-        global $language_forms;
-        global $sys_log_stati;
-        global $job_types;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+        global $lan_cac;
+        global $lan_for_cac;
+        global $sys_log_sta_cac;
+        global $job_typ_cac;
         global $cng_act_cac;
         global $cng_tbl_cac;
         global $cng_fld_cac;
-        global $verbs;
-        global $system_views;
+        global $vrb_cac;
+        global $sys_msk_cac;
 
         $result = true;
 
         // load backend only default records
-        $sys_log_stati = new sys_log_status_list();
-        $sys_log_stati->load($db_con);
+        $sys_log_sta_cac = new sys_log_status_list();
+        $sys_log_sta_cac->load($db_con);
         $system_users = new user_list($usr);
         $system_users->load_system($db_con);
 
         // load the type database enum
         // these tables are expected to be so small that it is more efficient to load all database records once at start
-        $user_profiles = new user_profile_list();
-        $user_profiles->load($db_con);
+        $usr_pro_cac = new user_profile_list();
+        $usr_pro_cac->load($db_con);
         $phr_typ_cac = new phrase_types();
         $phr_typ_cac->load($db_con);
         $frm_typ_cac = new formula_type_list();
@@ -205,8 +205,8 @@ class type_lists
         $elm_typ_cac->load($db_con);
         $msk_typ_cac = new view_type_list();
         $msk_typ_cac->load($db_con);
-        $msk_style_cac = new view_style_list();
-        $msk_style_cac->load($db_con);
+        $msk_sty_cac = new view_style_list();
+        $msk_sty_cac->load($db_con);
         $msk_lnk_typ_cac = new view_link_type_list();
         $msk_lnk_typ_cac->load($db_con);
         $cmp_typ_cac = new component_type_list();
@@ -220,16 +220,16 @@ class type_lists
         $ref_typ_cac->load($db_con);
         $src_typ_cac = new source_type_list();
         $src_typ_cac->load($db_con);
-        $share_typ_cac = new share_type_list();
-        $share_typ_cac->load($db_con);
-        $protect_typ_cac = new protection_type_list();
-        $protect_typ_cac->load($db_con);
-        $languages = new language_list();
-        $languages->load($db_con);
-        $language_forms = new language_form_list();
-        $language_forms->load($db_con);
-        $job_types = new job_type_list();
-        $job_types->load($db_con);
+        $shr_typ_cac = new share_type_list();
+        $shr_typ_cac->load($db_con);
+        $ptc_typ_cac = new protection_type_list();
+        $ptc_typ_cac->load($db_con);
+        $lan_cac = new language_list();
+        $lan_cac->load($db_con);
+        $lan_for_cac = new language_form_list();
+        $lan_for_cac->load($db_con);
+        $job_typ_cac = new job_type_list();
+        $job_typ_cac->load($db_con);
         $cng_act_cac = new change_action_list();
         $cng_act_cac->load($db_con);
         $cng_tbl_cac = new change_table_list();
@@ -238,11 +238,11 @@ class type_lists
         $cng_fld_cac->load($db_con);
 
         // preload the little more complex objects
-        $verbs = new verb_list();
-        $verbs->load($db_con);
+        $vrb_cac = new verb_list();
+        $vrb_cac->load($db_con);
         if ($usr != null) {
-            $system_views = new view_sys_list($usr);
-            $system_views->load($db_con);
+            $sys_msk_cac = new view_sys_list($usr);
+            $sys_msk_cac->load($db_con);
         }
 
         return $result;

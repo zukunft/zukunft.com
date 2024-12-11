@@ -1439,8 +1439,8 @@ class formula extends sandbox_typed
     function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
         global $frm_typ_cac;
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
 
         log_debug();
 
@@ -1530,8 +1530,8 @@ class formula extends sandbox_typed
     function export_obj(bool $do_load = true): sandbox_exp
     {
         global $frm_typ_cac;
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
 
         log_debug('->export_obj');
         $result = new formula_exp();
@@ -1552,12 +1552,12 @@ class formula extends sandbox_typed
         }
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $share_typ_cac->id(share_type_shared::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
         // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> $protect_typ_cac->id(protect_type_shared::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 

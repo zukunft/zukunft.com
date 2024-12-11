@@ -51,8 +51,8 @@ use shared\views as view_shared;
 $db_con = prg_start("error_update");
 $html = new html_base();
 
-global $system_views;
-global $user_profiles;
+global $sys_msk_cac;
+global $usr_pro_cac;
 
 $result = ''; // reset the html code var
 
@@ -71,11 +71,11 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     $msk = new view($usr);
-    $msk->set_id($system_views->id(view_shared::MC_ERR_UPD));
+    $msk->set_id($sys_msk_cac->id(view_shared::MC_ERR_UPD));
     $msk_dsp = new view_dsp($msk->api_json());
     $result .= $msk_dsp->dsp_navbar($back);
 
-    if ($usr->id() > 0 and $usr->profile_id == $user_profiles->id(user_profile::ADMIN)) {
+    if ($usr->id() > 0 and $usr->profile_id == $usr_pro_cac->id(user_profile::ADMIN)) {
         // update the error if requested
         if ($log_id > 0 and $status_id > 0) {
             $err_entry = new sys_log;

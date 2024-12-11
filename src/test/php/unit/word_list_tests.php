@@ -58,7 +58,7 @@ class word_list_tests
 
         global $usr;
         global $phr_typ_cac;
-        global $verbs;
+        global $vrb_cac;
 
         // init
         $db_con = new sql_db();
@@ -109,7 +109,7 @@ class word_list_tests
         $wrd = new word($usr);
         $wrd->set_id(7);
         $wrd_lst->add($wrd);
-        $vrb = $verbs->get_verb(verbs::IS);
+        $vrb = $vrb_cac->get_verb(verbs::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         // the child words
@@ -126,7 +126,7 @@ class word_list_tests
         $wrd = new word($usr);
         $wrd->set_id(9);
         $wrd_lst->add($wrd);
-        $vrb = $verbs->get_verb(verbs::IS);
+        $vrb = $vrb_cac->get_verb(verbs::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         $t->subheader('Modify and filter word lists');

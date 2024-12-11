@@ -451,7 +451,7 @@ class verb extends type_object
      */
     function import_obj(array $json_obj, object $test_obj = null): user_message
     {
-        global $verbs;
+        global $vrb_cac;
 
         log_debug();
         $usr_msg = parent::import_db_obj($this, $test_obj);
@@ -504,8 +504,8 @@ class verb extends type_object
      */
     function export_obj(): verb_exp
     {
-        global $share_typ_cac;
-        global $protect_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
 
         log_debug();
         $result = new verb_exp();
@@ -531,7 +531,7 @@ class verb extends type_object
 
         // TODO add the protection type
         /*
-        if ($this->protection_id > 0 and $this->protection_id <> $protect_typ_cac->id(protection_type::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protection_type::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
         */

@@ -79,8 +79,8 @@ class user_read_tests
         $t->assert('user profile load types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        global $user_profiles;
-        $result = $user_profiles->id(user_profile::NORMAL);
+        global $usr_pro_cac;
+        $result = $usr_pro_cac->id(user_profile::NORMAL);
         $t->assert('user profile check ' . user_profile::NORMAL, $result, 1);
     }
 
