@@ -623,7 +623,7 @@ class value extends sandbox_value
                     $used_url = $this_url . $lib->ids_to_url($this->ids(), "phrase") .
                         $lib->ids_to_url($type_ids_adj, "type");
                     $result .= $phr->dsp_name_del($used_url);
-                    $result .= '  <input type="hidden" name="phrase' . $url_pos . '" value="' . $phr->id . '">';
+                    $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="phrase' . $url_pos . '" value="' . $phr->id . '">';
                     $url_pos++;
                 }
             }
@@ -679,7 +679,7 @@ class value extends sandbox_value
                             $result .= '    <td>';
                             $result .= $phr->is_wrd->name . ':';
                             $result .= '    </td>';
-                            //$result .= '    <input type="hidden" name="db'.$url_pos.'" value="'.$phr->dsp_lnk_id.'">';
+                            //$result .= '    <input type="' . html_base::INPUT_HIDDEN . '" name="db'.$url_pos.'" value="'.$phr->dsp_lnk_id.'">';
                             $result .= '    <td>';
                             /*if (!empty($phr_lst_sel->lst)) {
                 $result .= '      '.$phr_lst_sel->dsp_selector("phrase".$url_pos, $script, $phr->id);
@@ -701,7 +701,7 @@ class value extends sandbox_value
                             if (!isset($main_wrd)) {
                                 $main_wrd = $phr;
                             }
-                            //$result .= '    <input type="hidden" name="db'.$url_pos.'" value="'.$phr->dsp_lnk_id.'">';
+                            //$result .= '    <input type="' . html_base::INPUT_HIDDEN . '" name="db'.$url_pos.'" value="'.$phr->dsp_lnk_id.'">';
                             $result .= '    <td colspan="2">';
                             $result .= '      ' . $phr->dsp_selector(0, $script, $url_pos, '', $back);
                             $url_pos++;
@@ -781,11 +781,11 @@ class value extends sandbox_value
             $lib->ids_to_url($type_ids_new, "type");
         $result .= '  ' . \html\btn_add("Add another phrase", $used_url);
         $result .= '  <br><br>';
-        $result .= '  <input type="hidden" name="back" value="' . $back . '">';
+        $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="back" value="' . $back . '">';
         if ($this->id() > 0) {
-            $result .= '  to <input type="text" name="value" value="' . $this->number() . '">';
+            $result .= '  to <input type="' . html_base::INPUT_TEXT . '" name="value" value="' . $this->number() . '">';
         } else {
-            $result .= '  is <input type="text" name="value">';
+            $result .= '  is <input type="' . html_base::INPUT_TEXT . '" name="value">';
         }
         $result .= $html->dsp_form_end("Save", $back);
         $result .= '<br><br>';

@@ -598,7 +598,7 @@ class verb extends type_object
         $result .= '      verb name:';
         $result .= '    </td>';
         $result .= '    <td>';
-        $result .= '      <input type="text" name="name" value="' . $this->name . '">';
+        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="name" value="' . $this->name . '">';
         $result .= '    </td>';
         $result .= '  </tr>';
         $result .= '  <tr>';
@@ -606,7 +606,7 @@ class verb extends type_object
         $result .= '      verb plural:';
         $result .= '    </td>';
         $result .= '    <td>';
-        $result .= '      <input type="text" name="plural" value="' . $this->plural . '">';
+        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="plural" value="' . $this->plural . '">';
         $result .= '    </td>';
         $result .= '  </tr>';
         $result .= '  <tr>';
@@ -614,7 +614,7 @@ class verb extends type_object
         $result .= '      reverse:';
         $result .= '    </td>';
         $result .= '    <td>';
-        $result .= '      <input type="text" name="reverse" value="' . $this->reverse . '">';
+        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="reverse" value="' . $this->reverse . '">';
         $result .= '    </td>';
         $result .= '  </tr>';
         $result .= '  <tr>';
@@ -622,11 +622,11 @@ class verb extends type_object
         $result .= '      plural_reverse:';
         $result .= '    </td>';
         $result .= '    <td>';
-        $result .= '      <input type="text" name="plural_reverse" value="' . $this->rev_plural . '">';
+        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="plural_reverse" value="' . $this->rev_plural . '">';
         $result .= '    </td>';
         $result .= '  </tr>';
-        $result .= '  <input type="hidden" name="back" value="' . $back . '">';
-        $result .= '  <input type="hidden" name="confirm" value="1">';
+        $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="back" value="' . $back . '">';
+        $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="confirm" value="1">';
         $result .= $html->dsp_tbl_end();
         $result .= $html->dsp_form_end('', $back);
 

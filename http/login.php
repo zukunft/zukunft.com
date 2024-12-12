@@ -106,12 +106,12 @@ if (!$_SESSION['logged']) {
     $result .= '<br><br>';
     $result .= '<form action="login.php" method="post">';
     $result .= '  User Name:<br> ';
-    $result .= '  <input type="text" name="username"><br><br> ';
+    $result .= '  <input type="' . html_base::INPUT_TEXT . '" name="username"><br><br> ';
     $result .= '  password:<br> ';
-    $result .= '  <input type="password" name="password"><br><br> ';
-    $result .= '  <input type="hidden" name="back" value="' . $back . '"> ';
+    $result .= '  <input type="' . html_base::INPUT_PASSWORD . '" name="password"><br><br> ';
+    $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="back" value="' . $back . '"> ';
     $result .= $msg;
-    $result .= '  <input type="submit" name="submit" value="Login"> ';
+    $result .= '  <input type="' . html_base::INPUT_SUBMIT . '" name="submit" value="Login"> ';
     $result .= '</form>   ';
     $result .= '</div>   ';
 }

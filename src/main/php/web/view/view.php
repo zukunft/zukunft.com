@@ -457,7 +457,7 @@ class view extends sandbox_typed
         return $html->input(
             'pattern', '',
             html_base::INPUT_SEARCH,
-            html_base::BS_SM_2,
+            view_styles::BS_SM_2,
             'word or formula');
     }
 

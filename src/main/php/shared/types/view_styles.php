@@ -49,6 +49,8 @@ class view_styles
     const COL_SM_8 = 'col-md-8';
     const COL_SM_10 = 'col-md-10';
     const COL_SM_12 = 'col-md-12';
+    const BS_SM_2 = 'mr-sm-2';
+
 
     // list of the styles used for unit testing
     const TEST_TYPES = array(

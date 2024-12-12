@@ -142,25 +142,25 @@ if (!$_SESSION['logged']) {
         $result .= $html->logo_big();
         $result .= '<br><br>';
         $result .= '<form action="login_activate.php" method="post">';
-        $result .= '<input type="hidden" name="id" value="' . $usr_id . '">';
+        $result .= '<input type="' . html_base::INPUT_HIDDEN . '" name="id" value="' . $usr_id . '">';
         if ($debug > 0) {
-            $result .= '<input type="hidden" name="debug" value="' . $debug . '">';
+            $result .= '<input type="' . html_base::INPUT_HIDDEN . '" name="debug" value="' . $debug . '">';
         }
         $result .= $html->dsp_text_h2('Change password<br>');
 
         $key = $_GET['key'];
         if ($key <> '') {
-            $result .= '<input type="hidden" name="key" value="' . $key . '">';
+            $result .= '<input type="' . html_base::INPUT_HIDDEN . '" name="key" value="' . $key . '">';
         } else {
             $result .= 'Please enter the activation key sent via email or open the link in the email:<br><br> ';
-            $result .= '<p>Activation key:<br><input type="text" name="key"></p>  ';
+            $result .= '<p>Activation key:<br><input type="' . html_base::INPUT_TEXT . '" name="key"></p>  ';
         }
 
         $result .= 'Please enter a new password:<br><br> ';
-        $result .= '<p>password:<br><input type="password" name="password"></p>  ';
-        $result .= '<p>Re-Type password:<br><input type="password" name="re_password"></p>  ';
+        $result .= '<p>password:<br><input type="' . html_base::INPUT_PASSWORD . '" name="password"></p>  ';
+        $result .= '<p>Re-Type password:<br><input type="' . html_base::INPUT_PASSWORD . '" name="re_password"></p>  ';
         $result .= $msg;
-        $result .= '  <input type="submit" name="submit" value="Change password"> ';
+        $result .= '  <input type="' . html_base::INPUT_SUBMIT . '" name="submit" value="Change password"> ';
         $result .= '</form>   ';
         $result .= '</div>   ';
     } else {

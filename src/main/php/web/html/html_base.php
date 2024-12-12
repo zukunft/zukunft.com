@@ -44,10 +44,16 @@ class html_base
 {
 
     // html const used in zukunft.com
+
+    // the html input types used
     const INPUT_TEXT = 'text';
     const INPUT_SUBMIT = 'submit';
     const INPUT_SEARCH = 'search';
+    const INPUT_CHECKBOX = 'checkbox';
+    const INPUT_FILE = 'file';
     const INPUT_HIDDEN = 'hidden';
+    const INPUT_PASSWORD = 'password';
+    const INPUT_EMAIL = 'email';
 
     // bootstrap const used in zukunft.com
     const BS_FORM = 'form-control';
@@ -55,8 +61,6 @@ class html_base
     const BS_BTN_SUCCESS = 'btn-outline-success';
     const BS_BTN_CANCEL = 'btn-outline-secondary';
     const BS_BTN_DEL = 'btn-outline-secondary';
-    // TODO easy move to view_style table
-    const BS_SM_2 = 'mr-sm-2';
 
     // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
     const UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
@@ -601,7 +605,10 @@ class html_base
         if (self::UI_USE_BOOTSTRAP) {
             $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
         } else {
-            $result .= $field . ': <input type="text" name="' . $field . '" value="' . $txt_value . '">';
+            $result .= $field .
+                ': <input type="' . html_base::INPUT_TEXT .
+                '" name="' . $field .
+                '" value="' . $txt_value . '">';
         }
         return $result;
     }
@@ -614,7 +621,9 @@ class html_base
      */
     function form_hidden(string $name, string $value): string
     {
-        return '<input type="hidden" name="' . $name . '" value="' . $value . '">';
+        return '<input type="' . html_base::INPUT_HIDDEN .
+            '" name="' . $name .
+            '" value="' . $value . '">';
     }
 
     /**
@@ -641,9 +650,11 @@ class html_base
             }
         } else {
             if ($submit_name == "") {
-                $result .= '<input type="submit">';
+                $result .= '<input type="' . html_base::INPUT_SUBMIT .
+                    '">';
             } else {
-                $result .= '<input type="submit" value="' . $submit_name . '">';
+                $result .= '<input type="' . html_base::INPUT_SUBMIT .
+                    '" value="' . $submit_name . '">';
             }
             if ($back <> "") {
                 $result .= \html\btn_back($back);
@@ -1069,9 +1080,11 @@ class html_base
             }
         } else {
             if ($submit_name == "") {
-                $result .= '<input type="submit">';
+                $result .= '<input type="' . html_base::INPUT_SUBMIT .
+                    '">';
             } else {
-                $result .= '<input type="submit" value="' . $submit_name . '">';
+                $result .= '<input type="' . html_base::INPUT_SUBMIT .
+                    '" value="' . $submit_name . '">';
             }
             if ($back <> "") {
                 $result .= \html\btn_back($back);
@@ -1096,13 +1109,21 @@ class html_base
 // add the element id, which should always be using the field "id"
     function dsp_form_id($id): string
     {
-        return '<input type="hidden" name="id" value="' . $id . '">';
+        return '<input type="' . html_base::INPUT_HIDDEN .
+            '" name="id" value="' . $id . '">';
     }
 
-// add the hidden field
-    function dsp_form_hidden($field, $id): string
+    /**
+     * html hidden field
+     * @param string $field the name of the hidden
+     * @param int $id
+     * @return string the html code for a hidden form field
+     */
+    function dsp_form_hidden(string $field, int $id): string
     {
-        return '<input type="hidden" name="' . $field . '" value="' . $id . '">';
+        return '<input type="' . html_base::INPUT_HIDDEN .
+            '" name="' . $field .
+            '" value="' . $id . '">';
     }
 
 // add the text field to a form
@@ -1112,7 +1133,10 @@ class html_base
         if (self::UI_USE_BOOTSTRAP) {
             $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
         } else {
-            $result .= '' . $field . ': <input type="text" name="' . $field . '" value="' . $txt_value . '">';
+            $result .= '' . $field .
+                ': <input type="' . html_base::INPUT_TEXT .
+                '" name="' . $field .
+                '" value="' . $txt_value . '">';
         }
         return $result;
     }
@@ -1124,7 +1148,10 @@ class html_base
         if (self::UI_USE_BOOTSTRAP) {
             $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
         } else {
-            $result .= '' . $field . ': <input type="text" name="' . $field . '" class="resizedTextbox" value="' . $txt_value . '">';
+            $result .= '' . $field .
+                ': <input type="' . html_base::INPUT_TEXT .
+                '" name="' . $field .
+                '" class="resizedTextbox" value="' . $txt_value . '">';
         }
         return $result;
     }
@@ -1164,7 +1191,8 @@ class html_base
             $result .= '>' . $label . '</label>';
             $result .= '</div>';
         } else {
-            $result .= '  <input type="checkbox" name="' . $field . '"';
+            $result .= '  <input type="' . html_base::INPUT_CHECKBOX .
+                '" name="' . $field . '"';
             if ($is_checked) {
                 $result .= ' checked';
             }
@@ -1184,7 +1212,8 @@ class html_base
         if (self::UI_USE_BOOTSTRAP) {
           $result .= ' <form>';
           $result .= '  <div class="custom-file">';
-          $result .= '    <input type="file" class="custom-file-input" id="fileToUpload">';
+          $result .= '    <input type="' . html_base::INPUT_FILE .
+                '" class="custom-file-input" id="fileToUpload">';
           $result .= '    <label class="custom-file-label" for="fileToUpload">Choose file</label>';
           $result .= '  </div>';
           //$result .= '  <button type="submit" id="submit" name="import" class="btn-submit">Import</button>';
@@ -1200,8 +1229,10 @@ class html_base
         */
         $result .= ' <form action="import.php" method="post" enctype="multipart/form-data">';
         $result .= '   Select JSON to upload:';
-        $result .= '   <input type="file" name="fileToUpload" id="fileToUpload">';
-        $result .= '   <input type="submit" value="Upload JSON" name="submit">';
+        $result .= '   <input type="' . html_base::INPUT_FILE .
+            '" name="fileToUpload" id="fileToUpload">';
+        $result .= '   <input type="' . html_base::INPUT_SUBMIT .
+            '" value="Upload JSON" name="submit">';
         $result .= ' </form>';
         //}
         return $result;
