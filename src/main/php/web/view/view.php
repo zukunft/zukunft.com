@@ -254,7 +254,7 @@ class view extends sandbox_typed
      * create the html code for all components of this view
      *
      * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
-     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param string $form_name the name of the view which is also used for the html form name
      * @param string $back the backtrace for undo actions
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code of all view components

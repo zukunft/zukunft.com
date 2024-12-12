@@ -591,7 +591,7 @@ class component extends sandbox_typed
         $msg = parent::set_by_api_json($api_json);
 
         foreach ($api_json as $key => $value) {
-            // TODO the code id might be not be mapped because this can nover be changed by the user
+            // TODO the code id might be not be mapped because this can never be changed by the user
             if ($key == json_fields::CODE_ID) {
                 $this->code_id = $value;
             }

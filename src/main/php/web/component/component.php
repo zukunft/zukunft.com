@@ -100,7 +100,7 @@ class component extends sandbox_typed
 
     /**
      * @param db_object_dsp|null $dbo the word, triple or formula object that should be shown to the user
-     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param string $form_name the name of the view which is also used for the html form name
      * @param int $msk_id the database id of the calling view
      * @param string $back the backtrace for undo actions
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
@@ -295,7 +295,7 @@ class component extends sandbox_typed
 
     /**
      * start an HTML form, show the title and set and set the unique form name
-     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to start a new form and display the tile
      */
     function form_tile(string $form_name): string
@@ -403,7 +403,7 @@ class component extends sandbox_typed
     /**
      * create the html code for the form element to select the phrase type
      * @param db_object_dsp $dbo the frontend phrase object with the type used until now
-     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to select the verb
      */
     function form_verb(db_object_dsp $dbo, string $form_name): string
@@ -414,7 +414,7 @@ class component extends sandbox_typed
     /**
      * create the html code for the form element to select the phrase type
      * @param db_object_dsp $dbo the frontend phrase object with the type used until now
-     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to select the phrase type
      */
     function form_phrase_type(db_object_dsp $dbo, string $form_name): string
@@ -425,7 +425,7 @@ class component extends sandbox_typed
     /**
      * create the html code for the form element to select the source type
      * @param db_object_dsp $dbo the frontend source object with the type used until now
-     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to select the source type
      */
     function form_source_type(db_object_dsp $dbo, string $form_name): string
@@ -436,7 +436,7 @@ class component extends sandbox_typed
     /**
      * create the html code for the form element to select the share type
      * @param db_object_dsp $dbo the frontend object with the type used until now
-     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to select the share type
      */
     function form_share_type(db_object_dsp $dbo, string $form_name): string
@@ -447,7 +447,7 @@ class component extends sandbox_typed
     /**
      * create the html code for the form element to select the protection type
      * @param db_object_dsp $dbo the frontend object with the type used until now
-     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to select the protection type
      */
     function form_protection_type(db_object_dsp $dbo, string $form_name): string

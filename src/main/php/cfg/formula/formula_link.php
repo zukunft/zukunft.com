@@ -716,7 +716,7 @@ class formula_link extends sandbox_link
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);
-        // for the standard table the type field should always be included because it is part of the prime indey
+        // for the standard table the type field should always be included because it is part of the prime index
         if ($sbx->predicate_id() <> $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
                 $lst->add_field(

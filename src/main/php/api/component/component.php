@@ -145,7 +145,7 @@ class component extends sandbox_typed_api
     );
 
 
-    // to link predefined behavier in the frontend
+    // to link predefined behavior in the frontend
     // the code id of the view component type because all types should be loaded in the frontend at startup
     public ?string $code_id = null;
 
