@@ -203,8 +203,8 @@ class view_term_link extends sandbox_link
      */
     function set_predicate(string $type_code_id): void
     {
-        global $view_link_types;
-        $this->set_predicate_id($view_link_types->id($type_code_id));
+        global $msk_lnk_typ_cac;
+        $this->set_predicate_id($msk_lnk_typ_cac->id($type_code_id));
     }
 
     /**
@@ -296,8 +296,8 @@ class view_term_link extends sandbox_link
      */
     function predicate_name(): string
     {
-        global $view_link_types;
-        return $view_link_types->name($this->predicate_id);
+        global $msk_lnk_typ_cac;
+        return $msk_lnk_typ_cac->name($this->predicate_id);
     }
 
 
@@ -442,7 +442,7 @@ class view_term_link extends sandbox_link
         sql_type_list          $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -454,7 +454,7 @@ class view_term_link extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $change_field_list->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -470,18 +470,17 @@ class view_term_link extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_link_type::FLD_ID,
-                    $change_field_list->id($table_id . view_link_type::FLD_ID),
+                    $cng_fld_cac->id($table_id . view_link_type::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $phrase_types;
+            global $phr_typ_cac;
             $lst->add_type_field(
                 view_link_type::FLD_ID,
                 type_object::FLD_NAME,
                 $this->predicate_id(),
                 $sbx->predicate_id(),
-                $phrase_types
-            );
+                $phr_typ_cac            );
         }
         return $lst;
     }

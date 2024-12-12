@@ -561,8 +561,8 @@ class sql
     function table_id(string $class): int
     {
         $lib = new library();
-        global $change_table_list;
-        return $change_table_list->id($this->get_table_name($class));
+        global $cng_tbl_cac;
+        return $cng_tbl_cac->id($this->get_table_name($class));
     }
 
 
@@ -2092,11 +2092,11 @@ class sql
     ): sql_par
     {
         // get the change table id
-        global $change_table_list;
-        global $change_field_list;
+        global $cng_tbl_cac;
+        global $cng_fld_cac;
         $lib = new library();
         $table_name = $lib->class_to_table($sbx::class);
-        $table_id = $change_table_list->id($table_name);
+        $table_id = $cng_tbl_cac->id($table_name);
 
         // select which log to use and set the parameters
         if ($sc_par_lst->is_prime()) {
@@ -2143,7 +2143,7 @@ class sql
             sql_par_type::INT_SMALL);
         $par_lst_out->add_field(
             sql::FLD_LOG_FIELD_PREFIX . sandbox_value::FLD_VALUE,
-            $change_field_list->id($table_id . sandbox_value::FLD_VALUE),
+            $cng_fld_cac->id($table_id . sandbox_value::FLD_VALUE),
             change::FLD_FIELD_ID_SQL_TYP
         );
         if ($sc_par_lst->is_update()) {

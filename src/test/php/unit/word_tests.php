@@ -57,7 +57,7 @@ class word_tests
 
         global $usr;
         global $usr_sys;
-        global $phrase_types;
+        global $phr_typ_cac;
 
         // init
         $sc = new sql();
@@ -108,7 +108,7 @@ class word_tests
         $wrd_updated->set_user($usr_sys);
         $wrd_updated->plural = word_api::TN_RENAMED;
         $wrd_updated->description = word_api::TN_RENAMED;
-        $wrd_updated->type_id = $phrase_types->id(phrase_type_shared::TIME);
+        $wrd_updated->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         $t->assert_sql_update($sc, $wrd_updated, $wrd, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('word sql write update of all fields changed');

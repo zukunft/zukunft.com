@@ -47,7 +47,7 @@ use shared\views as view_shared;
 
 $db_con = prg_start("formula_del");
 
-global $system_views;
+global $sys_msk_cac;
 
 $result = ''; // reset the html code var
 
@@ -64,7 +64,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($system_views->id(view_shared::MC_FORMULA_DEL));
+    $msk->load_by_id($sys_msk_cac->id(view_shared::MC_FORMULA_DEL));
     $back = $_GET[api::URL_VAR_BACK] = '';
 
     // get the parameters

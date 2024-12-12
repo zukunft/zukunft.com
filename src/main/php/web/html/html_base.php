@@ -37,16 +37,23 @@ namespace html;
 include_once SHARED_PATH . 'api.php';
 
 use shared\api;
+use shared\types\view_styles;
 use const test\HOST_TESTING;
 
 class html_base
 {
 
     // html const used in zukunft.com
+
+    // the html input types used
     const INPUT_TEXT = 'text';
     const INPUT_SUBMIT = 'submit';
     const INPUT_SEARCH = 'search';
+    const INPUT_CHECKBOX = 'checkbox';
+    const INPUT_FILE = 'file';
     const INPUT_HIDDEN = 'hidden';
+    const INPUT_PASSWORD = 'password';
+    const INPUT_EMAIL = 'email';
 
     // bootstrap const used in zukunft.com
     const BS_FORM = 'form-control';
@@ -54,16 +61,6 @@ class html_base
     const BS_BTN_SUCCESS = 'btn-outline-success';
     const BS_BTN_CANCEL = 'btn-outline-secondary';
     const BS_BTN_DEL = 'btn-outline-secondary';
-    // TODO easy move to view_style table
-    const BS_SM_2 = 'mr-sm-2';
-    const COL_SM_2 = 'col-md-2';
-    const COL_SM_4 = 'col-md-4';
-    const COL_SM_5 = 'col-md-5';
-    const COL_SM_6 = 'col-md-6';
-    const COL_SM_7 = 'col-md-7';
-    const COL_SM_8 = 'col-md-8';
-    const COL_SM_10 = 'col-md-10';
-    const COL_SM_12 = 'col-md-12';
 
     // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
     const UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
@@ -525,7 +522,7 @@ class html_base
     function tbl_start_half(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            $result = '<table class="table ' . html_base::COL_SM_5 . ' table-striped table-bordered">';
+            $result = '<table class="table ' . view_styles::COL_SM_5 . ' table-striped table-bordered">';
         } else {
             $result = '<table style="width:' . $this->tbl_width_half() . '">';
         }
@@ -548,7 +545,7 @@ class html_base
     function tbl_start_select(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            $result = '<table class="table ' . html_base::COL_SM_10 . ' table-borderless">' . "\n";
+            $result = '<table class="table ' . view_styles::COL_SM_10 . ' table-borderless">' . "\n";
         } else {
             $result = '<table style="width:' . $this->tbl_width_half() . '">' . "\n";
         }
@@ -598,7 +595,7 @@ class html_base
     function form_text(string  $field,
                        ?string $txt_value = '',
                        string  $label = '',
-                       string  $class = html_base::COL_SM_4,
+                       string  $class = view_styles::COL_SM_4,
                        string  $attribute = ''): string
     {
         $result = '';
@@ -608,7 +605,10 @@ class html_base
         if (self::UI_USE_BOOTSTRAP) {
             $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
         } else {
-            $result .= $field . ': <input type="text" name="' . $field . '" value="' . $txt_value . '">';
+            $result .= $field .
+                ': <input type="' . html_base::INPUT_TEXT .
+                '" name="' . $field .
+                '" value="' . $txt_value . '">';
         }
         return $result;
     }
@@ -621,7 +621,9 @@ class html_base
      */
     function form_hidden(string $name, string $value): string
     {
-        return '<input type="hidden" name="' . $name . '" value="' . $value . '">';
+        return '<input type="' . html_base::INPUT_HIDDEN .
+            '" name="' . $name .
+            '" value="' . $value . '">';
     }
 
     /**
@@ -648,9 +650,11 @@ class html_base
             }
         } else {
             if ($submit_name == "") {
-                $result .= '<input type="submit">';
+                $result .= '<input type="' . html_base::INPUT_SUBMIT .
+                    '">';
             } else {
-                $result .= '<input type="submit" value="' . $submit_name . '">';
+                $result .= '<input type="' . html_base::INPUT_SUBMIT .
+                    '" value="' . $submit_name . '">';
             }
             if ($back <> "") {
                 $result .= \html\btn_back($back);
@@ -946,7 +950,7 @@ class html_base
         $hist_id = str_replace(' ', '_', strtolower($hist_name));
         $link_id = str_replace(' ', '_', strtolower($link_name));
 
-        $result .= '<div class="' . html_base::COL_SM_5 . '">';
+        $result .= '<div class="' . view_styles::COL_SM_5 . '">';
         $result .= '<ul class="nav nav-tabs">';
         $result .= '  <li class="nav-item">';
         $result .= '    <a class="nav-link active" id="' . $comp_id . '-tab" data-toggle="tab" href="#' . $comp_id . '" role="tab" aria-controls="' . $comp_id . '" aria-selected="true">' . $comp_name . '</a>';
@@ -1008,7 +1012,7 @@ class html_base
     function dsp_tbl_start_half(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            $result = '<table class="table ' . html_base::COL_SM_5 . ' table-borderless">' . "\n";
+            $result = '<table class="table ' . view_styles::COL_SM_5 . ' table-borderless">' . "\n";
         } else {
             $result = '<table style="width:' . $this->dsp_tbl_width_half() . '">' . "\n";
         }
@@ -1029,7 +1033,7 @@ class html_base
     function dsp_tbl_start_select(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            $result = '<table class="table ' . html_base::COL_SM_10 . ' table-borderless">' . "\n";
+            $result = '<table class="table ' . view_styles::COL_SM_10 . ' table-borderless">' . "\n";
         } else {
             $result = '<table style="width:' . $this->dsp_tbl_width_half() . '">' . "\n";
         }
@@ -1076,9 +1080,11 @@ class html_base
             }
         } else {
             if ($submit_name == "") {
-                $result .= '<input type="submit">';
+                $result .= '<input type="' . html_base::INPUT_SUBMIT .
+                    '">';
             } else {
-                $result .= '<input type="submit" value="' . $submit_name . '">';
+                $result .= '<input type="' . html_base::INPUT_SUBMIT .
+                    '" value="' . $submit_name . '">';
             }
             if ($back <> "") {
                 $result .= \html\btn_back($back);
@@ -1103,41 +1109,55 @@ class html_base
 // add the element id, which should always be using the field "id"
     function dsp_form_id($id): string
     {
-        return '<input type="hidden" name="id" value="' . $id . '">';
+        return '<input type="' . html_base::INPUT_HIDDEN .
+            '" name="id" value="' . $id . '">';
     }
 
-// add the hidden field
-    function dsp_form_hidden($field, $id): string
+    /**
+     * html hidden field
+     * @param string $field the name of the hidden
+     * @param int $id
+     * @return string the html code for a hidden form field
+     */
+    function dsp_form_hidden(string $field, int $id): string
     {
-        return '<input type="hidden" name="' . $field . '" value="' . $id . '">';
+        return '<input type="' . html_base::INPUT_HIDDEN .
+            '" name="' . $field .
+            '" value="' . $id . '">';
     }
 
 // add the text field to a form
-    function dsp_form_text($field, $txt_value, $label, $class = self::COL_SM_4, $attribute = ''): string
+    function dsp_form_text($field, $txt_value, $label, $class = view_styles::COL_SM_4, $attribute = ''): string
     {
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
             $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
         } else {
-            $result .= '' . $field . ': <input type="text" name="' . $field . '" value="' . $txt_value . '">';
+            $result .= '' . $field .
+                ': <input type="' . html_base::INPUT_TEXT .
+                '" name="' . $field .
+                '" value="' . $txt_value . '">';
         }
         return $result;
     }
 
 // add the text big field to a form
-    function dsp_form_text_big($field, $txt_value, $label, $class = self::COL_SM_4, $attribute = ''): string
+    function dsp_form_text_big($field, $txt_value, $label, $class = view_styles::COL_SM_4, $attribute = ''): string
     {
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
             $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
         } else {
-            $result .= '' . $field . ': <input type="text" name="' . $field . '" class="resizedTextbox" value="' . $txt_value . '">';
+            $result .= '' . $field .
+                ': <input type="' . html_base::INPUT_TEXT .
+                '" name="' . $field .
+                '" class="resizedTextbox" value="' . $txt_value . '">';
         }
         return $result;
     }
 
 // add the field to a form
-    function dsp_form_fld($field, $txt_value, $label, $class = self::COL_SM_4, $attribute = ''): string
+    function dsp_form_fld($field, $txt_value, $label, $class = view_styles::COL_SM_4, $attribute = ''): string
     {
         $result = '';
         if ($label == '') {
@@ -1171,7 +1191,8 @@ class html_base
             $result .= '>' . $label . '</label>';
             $result .= '</div>';
         } else {
-            $result .= '  <input type="checkbox" name="' . $field . '"';
+            $result .= '  <input type="' . html_base::INPUT_CHECKBOX .
+                '" name="' . $field . '"';
             if ($is_checked) {
                 $result .= ' checked';
             }
@@ -1191,7 +1212,8 @@ class html_base
         if (self::UI_USE_BOOTSTRAP) {
           $result .= ' <form>';
           $result .= '  <div class="custom-file">';
-          $result .= '    <input type="file" class="custom-file-input" id="fileToUpload">';
+          $result .= '    <input type="' . html_base::INPUT_FILE .
+                '" class="custom-file-input" id="fileToUpload">';
           $result .= '    <label class="custom-file-label" for="fileToUpload">Choose file</label>';
           $result .= '  </div>';
           //$result .= '  <button type="submit" id="submit" name="import" class="btn-submit">Import</button>';
@@ -1207,8 +1229,10 @@ class html_base
         */
         $result .= ' <form action="import.php" method="post" enctype="multipart/form-data">';
         $result .= '   Select JSON to upload:';
-        $result .= '   <input type="file" name="fileToUpload" id="fileToUpload">';
-        $result .= '   <input type="submit" value="Upload JSON" name="submit">';
+        $result .= '   <input type="' . html_base::INPUT_FILE .
+            '" name="fileToUpload" id="fileToUpload">';
+        $result .= '   <input type="' . html_base::INPUT_SUBMIT .
+            '" value="Upload JSON" name="submit">';
         $result .= ' </form>';
         //}
         return $result;
@@ -1283,7 +1307,7 @@ class html_base
     function div(string $text, string $class = ''): string
     {
         if ($class == '') {
-            $class = 'form-group ' . self::COL_SM_4;
+            $class = 'form-group ' . view_styles::COL_SM_4;
         } else {
             $class = 'form-group ' . $class;
         }
@@ -1338,7 +1362,10 @@ class html_base
      */
     function row_start(): string
     {
-        return '<div class="row col-md-12">';
+        $result = '<div class="row ';
+        $result .= view_styles::COL_SM_12;
+        $result .= '">';
+        return $result;
     }
 
     /**
@@ -1346,7 +1373,10 @@ class html_base
      */
     function row_right(): string
     {
-        return '<div class="row col-md-12 justify-content-end">';
+        $result = '<div class="row ';
+        $result .= view_styles::COL_SM_12;
+        $result .= ' justify-content-end">';
+        return $result;
     }
 
     /**

@@ -199,7 +199,7 @@ class job extends db_object_seq_id_user
      */
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
-        global $job_types;
+        global $job_typ_cac;
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             //$this->request_time = $db_row[self::FLD_TIME_REQUEST];
@@ -230,16 +230,16 @@ class job extends db_object_seq_id_user
 
     function set_type(string $code_id): void
     {
-        global $job_types;
-        $this->set_type_id($job_types->id($code_id));
+        global $job_typ_cac;
+        $this->set_type_id($job_typ_cac->id($code_id));
     }
 
     function type_code_id(): string
     {
-        global $job_types;
+        global $job_typ_cac;
         $result = '';
         if ($this->type_id != 0) {
-            $type = $job_types->get($this->type_id);
+            $type = $job_typ_cac->get($this->type_id);
             if ($type != null) {
                 $result = $type->code_id();
             }

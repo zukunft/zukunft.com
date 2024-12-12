@@ -34,6 +34,7 @@ $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\component\component;
 use cfg\user;
@@ -43,6 +44,7 @@ use html\html_base;
 use html\view\view as view_dsp;
 use html\component\component as component_dsp;
 use shared\api;
+use shared\json_fields;
 
 // open database
 $db_con = prg_start("component_edit");
@@ -117,11 +119,11 @@ if ($usr->id() > 0) {
             if (isset($_GET['type'])) {
                 $cmp->type_id = $_GET['type'];
             } //
-            if (isset($_GET[api::FLD_PHRASE_ROW])) {
-                $cmp->load_row_phrase($_GET[api::FLD_PHRASE_ROW]);
+            if (isset($_GET[json_fields::PHRASE_ROW])) {
+                $cmp->load_row_phrase($_GET[json_fields::PHRASE_ROW]);
             } //
-            if (isset($_GET[api::FLD_PHRASE_COL])) {
-                $cmp->load_col_phrase($_GET[api::FLD_PHRASE_ROW]);
+            if (isset($_GET[json_fields::PHRASE_COL])) {
+                $cmp->load_col_phrase($_GET[json_fields::PHRASE_ROW]);
             } //
 
             // save the changes

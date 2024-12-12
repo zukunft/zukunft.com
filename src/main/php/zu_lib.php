@@ -64,7 +64,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO use the $load_all parameter for all load functions to include excluded rows for admins
     TODO add a unit and db test
     TODO check which arrays cam be converted to a class
-    TODO add system parameter to include the log write into the curl sql statements or use seperate statements for log
+    TODO add system parameter to include the log write into the curl sql statements or use separate statements for log
     TODO combine phrase_group_word_links and phrase_group_triple_links to group_phrase_links
     TODO add a simple value format where the json key is used as the phrase name e.g "system config target number of selection entries": 7
     TODO add system and user config parameter that are e.g. 100 views a view is automatically frozen for the user
@@ -127,7 +127,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
          sort load functions (done in: view
          group function within a class e.g. by load, save ....
          use $this::class for load functions
-    TODO make write tests autonomies (no prerequieries, no depenedencies, no left overs)
+    TODO make write tests autonomies (no prerequieries, no dependencies, no left overs)
     TODO check if MySQL create script is working
     TODO add unit test for all system views
     TODO convert from null e.g. to empty string at the last possible point e.g. to distinguish between not set
@@ -345,6 +345,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO creat a pod prime phrase mapping table, so that each pod can have its own prime phrases without losing the connection to other pod
     TODO create an id range for all pod prime phrases e.g. 1 to 16'384 and a range for this pod only prime phrases e.g. 16'385 to 32'768 and reserve an temp id range used during the relocation process
     TODO because MySQL does not keep the interface stable (e.g. https://dev.mysql.com/doc/refman/8.4/en/charset-unicode-utf8.html) switch to postgres and MariaDB
+    TODO use th principles of compression for database optimisation e.g. to sort phrases by usage to increase the number of prime value keys
+    TODO use a universal type to create the value tables, so instead of prime, main and big use value 1,2 and 3
 
     TODO message handling
         in dought return a user message to the highest level, so that it can be shown to the user
@@ -1709,7 +1711,7 @@ function prg_restart(string $code_name): sql_db
 
 function prg_start_api($code_name): sql_db
 {
-    global $sys_time_start, $sys_script, $user_profiles;
+    global $sys_time_start, $sys_script, $usr_pro_cac;
     global $sys_times;
 
     log_debug($code_name . ' ..');
@@ -1737,7 +1739,7 @@ function prg_start_api($code_name): sql_db
  */
 function prg_start_system($code_name): sql_db
 {
-    global $sys_time_start, $sys_script, $user_profiles;
+    global $sys_time_start, $sys_script, $usr_pro_cac;
     global $sys_times;
 
     log_debug($code_name . ' ..');
@@ -1756,13 +1758,13 @@ function prg_start_system($code_name): sql_db
     log_debug($code_name . ' ... database link open');
 
     // load user profiles
-    $user_profiles = new user_profile_list();
+    $usr_pro_cac = new user_profile_list();
     $lib = new library();
     $tbl_name = $lib->class_to_name(user_profile::class);
     if ($db_con->has_table($tbl_name)) {
-        $user_profiles->load($db_con);
+        $usr_pro_cac->load($db_con);
     } else {
-        $user_profiles->load_dummy();
+        $usr_pro_cac->load_dummy();
     }
 
     return $db_con;

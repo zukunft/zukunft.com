@@ -53,7 +53,7 @@ use shared\enum\foaf_direction;
 use shared\library;
 use shared\types\verbs;
 
-global $verbs;
+global $vrb_cac;
 
 class verb_list extends type_list
 {

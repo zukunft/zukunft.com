@@ -278,7 +278,7 @@ class component extends sandbox_typed
         string $name_fld = self::FLD_NAME
     ): bool
     {
-        global $view_style_cache;
+        global $msk_sty_cac;
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
             if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
@@ -341,8 +341,8 @@ class component extends sandbox_typed
      */
     function set_type(string $type_code_id): void
     {
-        global $component_types;
-        $this->type_id = $component_types->id($type_code_id);
+        global $cmp_typ_cac;
+        $this->type_id = $cmp_typ_cac->id($type_code_id);
     }
 
     /**
@@ -353,11 +353,11 @@ class component extends sandbox_typed
      */
     function set_style(?string $code_id): void
     {
-        global $view_style_cache;
+        global $msk_sty_cac;
         if ($code_id == null) {
             $this->style = null;
         } else {
-            $this->style = $view_style_cache->get_by_code_id($code_id);
+            $this->style = $msk_sty_cac->get_by_code_id($code_id);
         }
     }
 
@@ -369,12 +369,11 @@ class component extends sandbox_typed
      */
     function set_style_by_id(?int $style_id): void
     {
-        // TODO easy rename all global type vars to _cache
-        global $view_style_cache;
+        global $msk_sty_cac;
         if ($style_id == null) {
             $this->style = null;
         } else {
-            $this->style = $view_style_cache->get($style_id);
+            $this->style = $msk_sty_cac->get($style_id);
         }
     }
 
@@ -508,8 +507,8 @@ class component extends sandbox_typed
      */
     function set_link_type(string $type_code_id): void
     {
-        global $component_link_types;
-        $this->link_type_id = $component_link_types->id($type_code_id);
+        global $cmp_lnk_typ_cac;
+        $this->link_type_id = $cmp_lnk_typ_cac->id($type_code_id);
     }
 
     /**
@@ -535,8 +534,8 @@ class component extends sandbox_typed
      */
     function type_name(): string
     {
-        global $component_types;
-        return $component_types->name($this->type_id);
+        global $cmp_typ_cac;
+        return $cmp_typ_cac->name($this->type_id);
     }
 
     /**
@@ -545,8 +544,8 @@ class component extends sandbox_typed
      */
     function type_name_or_null(): ?string
     {
-        global $component_types;
-        return $component_types->name_or_null($this->type_id);
+        global $cmp_typ_cac;
+        return $cmp_typ_cac->name_or_null($this->type_id);
     }
 
     /**
@@ -556,8 +555,8 @@ class component extends sandbox_typed
      */
     private function type_id_by_code_id(string $code_id): int
     {
-        global $component_types;
-        return $component_types->id($code_id);
+        global $cmp_typ_cac;
+        return $cmp_typ_cac->id($code_id);
     }
 
 
@@ -592,8 +591,8 @@ class component extends sandbox_typed
         $msg = parent::set_by_api_json($api_json);
 
         foreach ($api_json as $key => $value) {
-            // TODO the code id might be not be mapped because this can nover be changed by the user
-            if ($key == api::FLD_CODE_ID) {
+            // TODO the code id might be not be mapped because this can never be changed by the user
+            if ($key == json_fields::CODE_ID) {
                 $this->code_id = $value;
             }
             if ($key == json_fields::UI_MSG_CODE_ID) {
@@ -1010,7 +1009,7 @@ class component extends sandbox_typed
     // link a view component to a view
     function link($dsp, $order_nbr): string
     {
-        global $position_type_cache;
+        global $pos_typ_cac;
 
         log_debug($this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
 
@@ -1309,7 +1308,7 @@ class component extends sandbox_typed
         sql_type_list     $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -1320,11 +1319,11 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE,
-                    $change_field_list->id($table_id . self::FLD_TYPE),
+                    $cng_fld_cac->id($table_id . self::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $component_types;
+            global $cmp_typ_cac;
             if ($this->type_id() < 0) {
                 log_err('component type for ' . $this->dsp_id() . ' not found');
             }
@@ -1333,18 +1332,18 @@ class component extends sandbox_typed
                 type_object::FLD_NAME,
                 $this->type_id(),
                 $sbx->type_id(),
-                $component_types
+                $cmp_typ_cac
             );
         }
         if ($sbx->style_id() <> $this->style_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_STYLE,
-                    $change_field_list->id($table_id . self::FLD_STYLE),
+                    $cng_fld_cac->id($table_id . self::FLD_STYLE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $view_style_cache;
+            global $msk_sty_cac;
             // TODO easy move to id function of type list
             if ($this->style_id() < 0) {
                 log_err('component style for ' . $this->dsp_id() . ' not found');
@@ -1354,14 +1353,14 @@ class component extends sandbox_typed
                 view_style::FLD_NAME,
                 $this->style_id(),
                 $sbx->style_id(),
-                $view_style_cache
+                $msk_sty_cac
             );
         }
         if ($sbx->code_id <> $this->code_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
-                    $change_field_list->id($table_id . sql::FLD_CODE_ID),
+                    $cng_fld_cac->id($table_id . sql::FLD_CODE_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1376,7 +1375,7 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_UI_MSG_ID,
-                    $change_field_list->id($table_id . self::FLD_UI_MSG_ID),
+                    $cng_fld_cac->id($table_id . self::FLD_UI_MSG_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1391,7 +1390,7 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ROW_PHRASE,
-                    $change_field_list->id($table_id . self::FLD_ROW_PHRASE),
+                    $cng_fld_cac->id($table_id . self::FLD_ROW_PHRASE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1410,7 +1409,7 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_COL_PHRASE,
-                    $change_field_list->id($table_id . self::FLD_COL_PHRASE),
+                    $cng_fld_cac->id($table_id . self::FLD_COL_PHRASE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1429,7 +1428,7 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_COL2_PHRASE,
-                    $change_field_list->id($table_id . self::FLD_COL2_PHRASE),
+                    $cng_fld_cac->id($table_id . self::FLD_COL2_PHRASE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1448,7 +1447,7 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula::FLD_ID,
-                    $change_field_list->id($table_id . formula::FLD_ID),
+                    $cng_fld_cac->id($table_id . formula::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1468,7 +1467,7 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_LINK_TYPE,
-                    $change_field_list->id($table_id . self::FLD_LINK_TYPE),
+                    $cng_fld_cac->id($table_id . self::FLD_LINK_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

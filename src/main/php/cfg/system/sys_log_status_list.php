@@ -39,7 +39,7 @@ include_once MODEL_SYSTEM_PATH . 'sys_log_type.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
 include_once DB_PATH . 'sql_db.php';
 
-global $sys_log_stati;
+global $sys_log_sta_cac;
 
 class sys_log_status_list extends type_list
 {

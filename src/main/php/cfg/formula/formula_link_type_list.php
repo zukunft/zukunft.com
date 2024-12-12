@@ -37,7 +37,7 @@ include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_FORMULA_PATH . 'formula_link.php';
 
-global $formula_link_types;
+global $frm_lnk_typ_cac;
 
 class formula_link_type_list extends type_list
 {

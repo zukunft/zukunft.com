@@ -33,8 +33,8 @@
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
     - sql fields:        field names for sql
-    - load related:      load realted objects from the database
-    - data retrieval:    load realted lists from the database
+    - load related:      load related objects from the database
+    - data retrieval:    load related lists from the database
     - classification:    information what
     - information:       functions to make code easier to read
     - save:              manage to update the database
@@ -76,8 +76,8 @@ include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
 use api\phrase\phrase as phrase_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -91,6 +91,7 @@ use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
+use shared\json_fields;
 use shared\library;
 use shared\types\phrase_type AS phrase_type_shared;
 use shared\types\verbs;
@@ -451,7 +452,7 @@ class phrase extends combine_named
     /**
      * fill this word or triple based on the given phrase
      *
-     * @param phrase|db_object_seq_id $phr word with the values that sould been updated e.g. based on the import
+     * @param phrase|db_object_seq_id $phr word with the values that should been updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
     function fill(phrase|db_object_seq_id $phr): user_message
@@ -541,18 +542,22 @@ class phrase extends combine_named
     {
         $usr_msg = new user_message();
 
-        if ($api_json[api::FLD_ID] > 0) {
-            $wrd = new word($this->user());
-            $usr_msg->add($wrd->set_by_api_json($api_json));
-            if ($usr_msg->is_ok()) {
-                $this->obj = $wrd;
-            }
+        if (!array_key_exists(json_fields::ID, $api_json)) {
+            log_warning('Missing id in api_json');
         } else {
-            $trp = new triple($this->user());
-            $api_json[api::FLD_ID] = $api_json[api::FLD_ID] * -1;
-            $usr_msg->add($trp->set_by_api_json($api_json));
-            if ($usr_msg->is_ok()) {
-                $this->obj = $trp;
+            if ($api_json[json_fields::ID] > 0) {
+                $wrd = new word($this->user());
+                $usr_msg->add($wrd->set_by_api_json($api_json));
+                if ($usr_msg->is_ok()) {
+                    $this->obj = $wrd;
+                }
+            } else {
+                $trp = new triple($this->user());
+                $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
+                $usr_msg->add($trp->set_by_api_json($api_json));
+                if ($usr_msg->is_ok()) {
+                    $this->obj = $trp;
+                }
             }
         }
         return $usr_msg;
@@ -736,7 +741,7 @@ class phrase extends combine_named
 
     /**
      * to enable the recursive function in work_link
-     * TODO add a list of triple already splitted to detect endless loops
+     * TODO add a list of triple already split to detect endless loops
      */
     function wrd_lst(): word_list
     {
@@ -1058,7 +1063,7 @@ class phrase extends combine_named
     {
         log_debug();
         global $db_con;
-        global $verbs;
+        global $vrb_cac;
 
         $sql_type_from = '';
         $sql_type_where = '';
@@ -1093,7 +1098,7 @@ class phrase extends combine_named
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id = ' . $type->id() . ' 
-                                           AND l.verb_id = ' . $verbs->id(verbs::IS) . ' ) AS a 
+                                           AND l.verb_id = ' . $vrb_cac->id(verbs::IS) . ' ) AS a 
                                          WHERE ' . $sql_where_exclude . ' ';
 
                 // ... out of all those get the phrase ids that have also other types e.g. Zurich (Canton)
@@ -1105,7 +1110,7 @@ class phrase extends combine_named
                                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                                 AND u.user_id = ' . $this->user()->id() . '
                                          WHERE l.to_phrase_id <> ' . $type->id() . ' 
-                                           AND l.verb_id = ' . $verbs->id(verbs::IS) . '
+                                           AND l.verb_id = ' . $vrb_cac->id(verbs::IS) . '
                                            AND l.from_phrase_id IN (' . $sql_wrd_all . ') ) AS o 
                                          WHERE ' . $sql_where_exclude . ' ';
 
@@ -1132,7 +1137,7 @@ class phrase extends combine_named
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
                                                 AND u.user_id = ' . $this->user()->id() . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
-                           AND l.verb_id = ' . $verbs->id(verbs::IS) . '
+                           AND l.verb_id = ' . $vrb_cac->id(verbs::IS) . '
                            AND l.to_phrase_id = ' . $type->id() . ' ) AS t 
                          WHERE ' . $sql_where_exclude . ' ';
                 /*
@@ -1259,11 +1264,11 @@ class phrase extends combine_named
      */
     function is_percent(): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $result = false;
         if ($this->obj != null) {
-            if ($this->obj->type_id == $phrase_types->id(phrase_type_shared::PERCENT)) {
+            if ($this->obj->type_id == $phr_typ_cac->id(phrase_type_shared::PERCENT)) {
                 $result = true;
             }
         } else {
@@ -1284,11 +1289,11 @@ class phrase extends combine_named
         log_debug($this->dsp_id());
 
         global $db_con;
-        global $verbs;
+        global $vrb_cac;
 
         $result = new phrase($this->user());
 
-        $link_id = $verbs->id(verbs::FOLLOW);
+        $link_id = $vrb_cac->id(verbs::FOLLOW);
         //$link_id = cl(db_cl::VERB, verbs::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
@@ -1313,11 +1318,11 @@ class phrase extends combine_named
         log_debug($this->dsp_id());
 
         global $db_con;
-        global $verbs;
+        global $vrb_cac;
 
         $result = new word($this->user());
 
-        $link_id = $verbs->id(verbs::FOLLOW);
+        $link_id = $vrb_cac->id(verbs::FOLLOW);
         //$link_id = cl(db_cl::VERB, verbs::FOLLOW);
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
@@ -1342,7 +1347,7 @@ class phrase extends combine_named
      */
     function save(): user_message
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $usr_msg = new user_message();
 
@@ -1367,7 +1372,7 @@ class phrase extends combine_named
                 // create a word if neither the word nor the triple exists
                 $wrd = new word($this->user());
                 $wrd->set_name($this->name());
-                $wrd->type_id = $phrase_types->default_id();
+                $wrd->type_id = $phr_typ_cac->default_id();
                 $usr_msg->add($wrd->save());
                 if ($wrd->id() == 0) {
                     log_err('Cannot add from word ' . $this->dsp_id(), 'phrase->save');

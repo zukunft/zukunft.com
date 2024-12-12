@@ -40,7 +40,7 @@ use test\create_test_objects;
 
 include_once DB_PATH . 'sql_db.php';
 
-global $component_link_types;
+global $cmp_lnk_typ_cac;
 
 class component_link_type_list extends type_list
 {

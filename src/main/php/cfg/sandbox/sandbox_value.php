@@ -1428,10 +1428,10 @@ class sandbox_value extends sandbox_multi
         $sc_par_lst_log = $sc_par_lst_sub->remove(sql_type::STANDARD);
 
         // add the change action field to the field list for the log entries
-        global $change_action_list;
+        global $cng_act_cac;
         $fvt_lst->add_field(
             change_action::FLD_ID,
-            $change_action_list->id(change_action::ADD),
+            $cng_act_cac->id(change_action::ADD),
             type_object::FLD_ID_SQL_TYP
         );
 
@@ -1658,10 +1658,10 @@ class sandbox_value extends sandbox_multi
         $fvt_lst_log = new sql_par_field_list();
 
         // add the change action field to the field list for the log entries
-        global $change_action_list;
+        global $cng_act_cac;
         $fvt_lst_log->add_field(
             change_action::FLD_ID,
-            $change_action_list->id(change_action::DELETE),
+            $cng_act_cac->id(change_action::DELETE),
             type_object::FLD_ID_SQL_TYP
         );
 

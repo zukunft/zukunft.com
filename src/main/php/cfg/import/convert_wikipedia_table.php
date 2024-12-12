@@ -75,7 +75,7 @@ class convert_wikipedia_table
      * TODO review and move the parameters to a more general context
      *
      * @param string $wiki_tbl wth the wikipedia table
-     * @param user $usr the user how has initiated the convertion
+     * @param user $usr the user how has initiated the conversion
      * @param string $timestamp
      * @param array $context a list of phrases that describes the context of the table
      * @param string $row_name_in
@@ -155,12 +155,12 @@ class convert_wikipedia_table
      * based on wikitable2json
      * TODO use it to compare wikipedia table with wikidata and report the differences
      * TODO base all assumptions on the given context
-     * TODO add a word splitter to seperate e.g. "Growth rate (2019–2022)" to "Growth rate", "2019" and "2022"
+     * TODO add a word splitter to separate e.g. "Growth rate (2019–2022)" to "Growth rate", "2019" and "2022"
      *
      * @param string $wiki_json wth the wikipedia table
-     * @param user $usr the user how has initiated the convertion
+     * @param user $usr the user how has initiated the conversion
      * @param string $timestamp the timestamp of the import
-     * @param int $table_nbr position of the tbale that should be converted
+     * @param int $table_nbr position of the table that should be converted
      * @param string $context a json string with a phrase list for the import context
      * @param array $context_array a list of phrases that describes the context of the table
      * @param string $row_name_wiki column name used to select the row name
@@ -183,7 +183,7 @@ class convert_wikipedia_table
         string $col_name_out = ''
     ): string
     {
-        global $verbs;
+        global $vrb_cac;
 
         // create context for assumptions
         $list_of_symbols = []; // if a row contains a symbol and a name they are usually linked
@@ -315,7 +315,7 @@ class convert_wikipedia_table
                             }
                             $triples[] = $trp;
 
-                            // create other assumend relations
+                            // create other assumed relations
                             if (in_array($col_names[$i], $list_of_symbols)) {
                                 $trp = [];
                                 $trp[export::FROM] = $phr_name;

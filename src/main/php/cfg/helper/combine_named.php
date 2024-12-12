@@ -152,7 +152,7 @@ class combine_named extends combine_object
     }
 
     /**
-     * @param string|null $code_id the code id of the target share txpe or null to remove the parent overwrite
+     * @param string|null $code_id the code id of the target share type or null to remove the parent overwrite
      * @return void
      */
     function set_share(?string $code_id): void

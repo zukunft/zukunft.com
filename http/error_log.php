@@ -56,7 +56,7 @@ use shared\api;
 
 $db_con = prg_start("error_log");
 
-global $system_views;
+global $sys_msk_cac;
 
 $result = ''; // reset the html code var
 
@@ -79,7 +79,7 @@ if ($usr->id() > 0) {
         $usr->load_usr_data();
 
         // prepare the display to edit the view
-        $view_id = $system_views->id(view_shared::MC_ERR_LOG);
+        $view_id = $sys_msk_cac->id(view_shared::MC_ERR_LOG);
         $msk = new view($usr);
         $msk->load_by_id($view_id);
         $msk->load_components();

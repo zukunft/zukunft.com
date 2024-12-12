@@ -39,7 +39,7 @@ include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once MODEL_REF_PATH . 'source_type.php';
 
-global $source_types;
+global $src_typ_cac;
 
 class source_type_list extends type_list
 {
@@ -110,15 +110,15 @@ class source_type_list extends type_list
      */
     function get_by_id(int $id): ?source_type
     {
-        global $source_types;
+        global $src_typ_cac;
 
         $lib = new library();
         $result = null;
         if ($id > 0) {
-            if (array_key_exists($id, $source_types->lst())) {
-                $result = $source_types->get($id);
+            if (array_key_exists($id, $src_typ_cac->lst())) {
+                $result = $src_typ_cac->get($id);
             } else {
-                log_err('Source type with is ' . $id . ' not found in ' . $lib->dsp_array($source_types->lst()));
+                log_err('Source type with is ' . $id . ' not found in ' . $lib->dsp_array($src_typ_cac->lst()));
             }
         } else {
             log_debug('Source type id not not set');
@@ -134,19 +134,19 @@ class source_type_list extends type_list
  */
 function get_source_type(string $code_id): ?source_type
 {
-    global $source_types;
-    $id = $source_types->id($code_id);
-    return $source_types->get_by_id($id);
+    global $src_typ_cac;
+    $id = $src_typ_cac->id($code_id);
+    return $src_typ_cac->get_by_id($id);
 }
 
 function get_source_type_id(string $code_id): int
 {
-    global $source_types;
-    return $source_types->id($code_id);
+    global $src_typ_cac;
+    return $src_typ_cac->id($code_id);
 }
 
 function get_source_type_by_id(string $id): source_type
 {
-    global $source_types;
-    return $source_types->get_by_id($id);
+    global $src_typ_cac;
+    return $src_typ_cac->get_by_id($id);
 }

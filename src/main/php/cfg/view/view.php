@@ -52,6 +52,7 @@ include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once SERVICE_EXPORT_PATH . 'view_exp.php';
 include_once SERVICE_EXPORT_PATH . 'component_exp.php';
 include_once WEB_VIEW_PATH . 'view.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\component\view_style;
 use shared\api;
@@ -73,6 +74,7 @@ use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
 use cfg\export\view_exp;
 use cfg\log\change;
+use shared\json_fields;
 use shared\library;
 
 class view extends sandbox_typed
@@ -252,8 +254,8 @@ class view extends sandbox_typed
      */
     function set_type(string $type_code_id): void
     {
-        global $view_types;
-        $this->type_id = $view_types->id($type_code_id);
+        global $msk_typ_cac;
+        $this->type_id = $msk_typ_cac->id($type_code_id);
     }
 
     /**
@@ -264,11 +266,11 @@ class view extends sandbox_typed
      */
     function set_style(?string $code_id): void
     {
-        global $view_style_cache;
+        global $msk_sty_cac;
         if ($code_id == null) {
             $this->style = null;
         } else {
-            $this->style = $view_style_cache->get_by_code_id($code_id);
+            $this->style = $msk_sty_cac->get_by_code_id($code_id);
         }
     }
 
@@ -280,12 +282,11 @@ class view extends sandbox_typed
      */
     function set_style_by_id(?int $style_id): void
     {
-        // TODO rename all global type vars to _cache
-        global $view_style_cache;
+        global $msk_sty_cac;
         if ($style_id == null) {
             $this->style = null;
         } else {
-            $this->style = $view_style_cache->get($style_id);
+            $this->style = $msk_sty_cac->get($style_id);
         }
     }
 
@@ -366,8 +367,8 @@ class view extends sandbox_typed
      */
     function type_name(): string
     {
-        global $view_types;
-        return $view_types->name($this->type_id);
+        global $msk_typ_cac;
+        return $msk_typ_cac->name($this->type_id);
     }
 
     /**
@@ -376,8 +377,8 @@ class view extends sandbox_typed
      */
     private function type_code_id(): string
     {
-        global $view_types;
-        return $view_types->code_id($this->type_id);
+        global $msk_typ_cac;
+        return $msk_typ_cac->code_id($this->type_id);
     }
 
     /**
@@ -387,8 +388,8 @@ class view extends sandbox_typed
      */
     private function type_id_by_code_id(string $code_id): int
     {
-        global $view_types;
-        return $view_types->id($code_id);
+        global $msk_typ_cac;
+        return $msk_typ_cac->id($code_id);
     }
 
 
@@ -430,7 +431,7 @@ class view extends sandbox_typed
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_CODE_ID) {
+            if ($key == json_fields::CODE_ID) {
                 if ($value <> '') {
                     $this->code_id = $value;
                 }
@@ -909,22 +910,26 @@ class view extends sandbox_typed
                         or (count($json_cmp) == 3
                             and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
                             and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp)
-                            and array_key_exists(component_link::FLD_JSON_POSITION_TYPE, $json_cmp))
+                            and array_key_exists(json_fields::POS_TYPE, $json_cmp))
                         or (count($json_cmp) == 3
                             and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
                             and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp)
-                            and array_key_exists(component_link::FLD_JSON_STYLE, $json_cmp))
+                            and array_key_exists(json_fields::STYLE
+, $json_cmp))
                         or (count($json_cmp) == 4
                             and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
                             and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp)
-                            and array_key_exists(component_link::FLD_JSON_POSITION_TYPE, $json_cmp)
-                            and array_key_exists(component_link::FLD_JSON_STYLE, $json_cmp))) {
+                            and array_key_exists(json_fields::POS_TYPE, $json_cmp)
+                            and array_key_exists(json_fields::STYLE
+, $json_cmp))) {
                         $cmp->load_by_name($json_cmp[sandbox_exp::FLD_NAME]);
-                        if (array_key_exists(component_link::FLD_JSON_POSITION_TYPE, $json_cmp)) {
-                            $pos_type_code_id = $json_cmp[component_link::FLD_JSON_POSITION_TYPE];
+                        if (array_key_exists(json_fields::POS_TYPE, $json_cmp)) {
+                            $pos_type_code_id = $json_cmp[json_fields::POS_TYPE];
                         }
-                        if (array_key_exists(component_link::FLD_JSON_STYLE, $json_cmp)) {
-                            $style_code_id = $json_cmp[component_link::FLD_JSON_STYLE];
+                        if (array_key_exists(json_fields::STYLE
+, $json_cmp)) {
+                            $style_code_id = $json_cmp[json_fields::STYLE
+];
                         }
                         // if the component does not jet exist
                         // nevertheless create the component
@@ -1168,7 +1173,7 @@ class view extends sandbox_typed
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -1179,28 +1184,28 @@ class view extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view::FLD_TYPE,
-                    $change_field_list->id($table_id . view::FLD_TYPE),
+                    $cng_fld_cac->id($table_id . view::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $view_types;
+            global $msk_typ_cac;
             $lst->add_type_field(
                 view::FLD_TYPE,
                 type_object::FLD_NAME,
                 $this->type_id(),
                 $sbx->type_id(),
-                $view_types
+                $msk_typ_cac
             );
         }
         if ($sbx->style_id() <> $this->style_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_STYLE,
-                    $change_field_list->id($table_id . self::FLD_STYLE),
+                    $cng_fld_cac->id($table_id . self::FLD_STYLE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $view_style_cache;
+            global $msk_sty_cac;
             // TODO move to id function of type list
             if ($this->style_id() < 0) {
                 log_err('view style for ' . $this->dsp_id() . ' not found');
@@ -1210,14 +1215,14 @@ class view extends sandbox_typed
                 view_style::FLD_NAME,
                 $this->style_id(),
                 $sbx->style_id(),
-                $view_style_cache
+                $msk_sty_cac
             );
         }
         if ($sbx->code_id <> $this->code_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
-                    $change_field_list->id($table_id . sql::FLD_CODE_ID),
+                    $cng_fld_cac->id($table_id . sql::FLD_CODE_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

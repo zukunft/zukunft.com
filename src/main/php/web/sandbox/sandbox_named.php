@@ -35,10 +35,12 @@ namespace html\sandbox;
 include_once SANDBOX_PATH . 'db_object.php';
 include_once SANDBOX_PATH . 'sandbox.php';
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
 use html\rest_ctrl as api_dsp;
 use html\user\user_message;
+use shared\json_fields;
 
 class sandbox_named extends sandbox
 {
@@ -66,14 +68,14 @@ class sandbox_named extends sandbox
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_NAME, $json_array)) {
-            $this->set_name($json_array[api::FLD_NAME]);
+        if (array_key_exists(json_fields::NAME, $json_array)) {
+            $this->set_name($json_array[json_fields::NAME]);
         } else {
             $this->set_name('');
             log_err('Mandatory field name missing in API JSON ' . json_encode($json_array));
         }
-        if (array_key_exists(api::FLD_DESCRIPTION, $json_array)) {
-            $this->set_description($json_array[api::FLD_DESCRIPTION]);
+        if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
+            $this->set_description($json_array[json_fields::DESCRIPTION]);
         } else {
             $this->set_description(null);
         }
@@ -168,8 +170,8 @@ class sandbox_named extends sandbox
     {
         $vars = parent::api_array();
 
-        $vars[api::FLD_NAME] = $this->name();
-        $vars[api::FLD_DESCRIPTION] = $this->description();
+        $vars[json_fields::NAME] = $this->name();
+        $vars[json_fields::DESCRIPTION] = $this->description();
         return $vars;
     }
 
@@ -206,8 +208,7 @@ class sandbox_named extends sandbox
 
     function save_view(): user_message
     {
-        $usr_msg = new user_message();
-        return $usr_msg;
+        return new user_message();
     }
 
 }

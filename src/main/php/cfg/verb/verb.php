@@ -42,7 +42,7 @@ include_once API_VERB_PATH . 'verb.php';
 include_once SERVICE_EXPORT_PATH . 'verb_exp.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
 
-use api\system\messeges as msg_enum;
+use api\system\messages as msg_enum;
 use api\verb\verb as verb_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -451,7 +451,7 @@ class verb extends type_object
      */
     function import_obj(array $json_obj, object $test_obj = null): user_message
     {
-        global $verbs;
+        global $vrb_cac;
 
         log_debug();
         $usr_msg = parent::import_db_obj($this, $test_obj);
@@ -504,8 +504,8 @@ class verb extends type_object
      */
     function export_obj(): verb_exp
     {
-        global $share_types;
-        global $protection_types;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
 
         log_debug();
         $result = new verb_exp();
@@ -531,7 +531,7 @@ class verb extends type_object
 
         // TODO add the protection type
         /*
-        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protection_type::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protection_type::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
         */
@@ -598,7 +598,7 @@ class verb extends type_object
         $result .= '      verb name:';
         $result .= '    </td>';
         $result .= '    <td>';
-        $result .= '      <input type="text" name="name" value="' . $this->name . '">';
+        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="name" value="' . $this->name . '">';
         $result .= '    </td>';
         $result .= '  </tr>';
         $result .= '  <tr>';
@@ -606,7 +606,7 @@ class verb extends type_object
         $result .= '      verb plural:';
         $result .= '    </td>';
         $result .= '    <td>';
-        $result .= '      <input type="text" name="plural" value="' . $this->plural . '">';
+        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="plural" value="' . $this->plural . '">';
         $result .= '    </td>';
         $result .= '  </tr>';
         $result .= '  <tr>';
@@ -614,7 +614,7 @@ class verb extends type_object
         $result .= '      reverse:';
         $result .= '    </td>';
         $result .= '    <td>';
-        $result .= '      <input type="text" name="reverse" value="' . $this->reverse . '">';
+        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="reverse" value="' . $this->reverse . '">';
         $result .= '    </td>';
         $result .= '  </tr>';
         $result .= '  <tr>';
@@ -622,11 +622,11 @@ class verb extends type_object
         $result .= '      plural_reverse:';
         $result .= '    </td>';
         $result .= '    <td>';
-        $result .= '      <input type="text" name="plural_reverse" value="' . $this->rev_plural . '">';
+        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="plural_reverse" value="' . $this->rev_plural . '">';
         $result .= '    </td>';
         $result .= '  </tr>';
-        $result .= '  <input type="hidden" name="back" value="' . $back . '">';
-        $result .= '  <input type="hidden" name="confirm" value="1">';
+        $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="back" value="' . $back . '">';
+        $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="confirm" value="1">';
         $result .= $html->dsp_tbl_end();
         $result .= $html->dsp_form_end('', $back);
 

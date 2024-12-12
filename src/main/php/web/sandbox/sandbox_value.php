@@ -36,12 +36,14 @@ namespace html\sandbox;
 
 include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once WEB_SANDBOX_PATH . 'sandbox.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
 use api\sandbox\sandbox_value as sandbox_value_api;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\phrase_group as phrase_group_dsp;
 use html\user\user_message;
+use shared\json_fields;
 
 class sandbox_value extends sandbox
 {
@@ -122,25 +124,25 @@ class sandbox_value extends sandbox
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = new user_message();
-        if (array_key_exists(api::FLD_ID, $json_array)) {
-            $this->set_id($json_array[api::FLD_ID]);
+        if (array_key_exists(json_fields::ID, $json_array)) {
+            $this->set_id($json_array[json_fields::ID]);
         } else {
             $this->set_id(0);
             $usr_msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
-        if (array_key_exists(sandbox_value_api::FLD_NUMBER, $json_array)) {
-            $this->set_number($json_array[sandbox_value_api::FLD_NUMBER]);
+        if (array_key_exists(json_fields::NUMBER, $json_array)) {
+            $this->set_number($json_array[json_fields::NUMBER]);
         } else {
             $this->set_number(null);
         }
-        if (array_key_exists(api::FLD_IS_STD, $json_array)) {
-            $this->set_is_std($json_array[api::FLD_IS_STD]);
+        if (array_key_exists(json_fields::IS_STD, $json_array)) {
+            $this->set_is_std($json_array[json_fields::IS_STD]);
         } else {
             $this->set_is_std();
         }
         $this->set_grp(new phrase_group_dsp());
-        if (array_key_exists(api::FLD_PHRASES, $json_array)) {
-            $this->grp()->set_from_json_array($json_array[api::FLD_PHRASES]);
+        if (array_key_exists(json_fields::PHRASES, $json_array)) {
+            $this->grp()->set_from_json_array($json_array[json_fields::PHRASES]);
         } else {
             $usr_msg->add_err('Mandatory field phrase group missing in API JSON ' . json_encode($json_array));
         }

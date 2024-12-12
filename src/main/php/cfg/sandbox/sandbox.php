@@ -77,14 +77,15 @@ include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
-use api\system\messeges as msg_enum;
+use api\system\messages as msg_enum;
 use api\sandbox\sandbox as sandbox_api;
 use cfg\component\component_link_type;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
 use cfg\log\change_table;
+use shared\json_fields;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use cfg\component\component;
@@ -317,10 +318,10 @@ class sandbox extends db_object_seq_id_user
      */
     function row_mapper_std(): void
     {
-        global $share_types;
-        global $protection_types;
-        $this->share_id = $share_types->id(share_type_shared::PUBLIC);
-        $this->protection_id = $protection_types->id(protect_type_shared::NO_PROTECT);
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+        $this->share_id = $shr_typ_cac->id(share_type_shared::PUBLIC);
+        $this->protection_id = $ptc_typ_cac->id(protect_type_shared::NO_PROTECT);
     }
 
 
@@ -342,8 +343,8 @@ class sandbox extends db_object_seq_id_user
         if ($code_id == null) {
             $this->share_id = null;
         } else {
-            global $share_types;
-            $this->share_id = $share_types->id($code_id);
+            global $shr_typ_cac;
+            $this->share_id = $shr_typ_cac->id($code_id);
         }
     }
 
@@ -352,8 +353,8 @@ class sandbox extends db_object_seq_id_user
         if ($code_id == null) {
             $this->protection_id = null;
         } else {
-            global $protection_types;
-            $this->protection_id = $protection_types->id($code_id);
+            global $ptc_typ_cac;
+            $this->protection_id = $ptc_typ_cac->id($code_id);
         }
     }
 
@@ -437,8 +438,8 @@ class sandbox extends db_object_seq_id_user
      */
     function share_type_code_id(): string
     {
-        global $share_types;
-        return $share_types->code_id($this->share_id);
+        global $shr_typ_cac;
+        return $shr_typ_cac->code_id($this->share_id);
     }
 
     /**
@@ -446,15 +447,15 @@ class sandbox extends db_object_seq_id_user
      */
     function share_type_name(): string
     {
-        global $share_types;
+        global $shr_typ_cac;
 
         // use the default share type if not set
         if ($this->share_id <= 0) {
-            $this->share_id = $share_types->id(share_type_shared::PUBLIC);
+            $this->share_id = $shr_typ_cac->id(share_type_shared::PUBLIC);
         }
 
-        global $share_types;
-        return $share_types->name($this->share_id);
+        global $shr_typ_cac;
+        return $shr_typ_cac->name($this->share_id);
     }
 
     /**
@@ -462,8 +463,8 @@ class sandbox extends db_object_seq_id_user
      */
     function protection_type_code_id(): string
     {
-        global $protection_types;
-        return $protection_types->code_id($this->protection_id);
+        global $ptc_typ_cac;
+        return $ptc_typ_cac->code_id($this->protection_id);
     }
 
     /**
@@ -471,14 +472,14 @@ class sandbox extends db_object_seq_id_user
      */
     function protection_type_name(): string
     {
-        global $protection_types;
+        global $ptc_typ_cac;
 
         // use the default share type if not set
         if ($this->protection_id <= 0) {
-            $this->protection_id = $protection_types->id(protect_type_shared::NO_PROTECT);
+            $this->protection_id = $ptc_typ_cac->id(protect_type_shared::NO_PROTECT);
         }
 
-        return $protection_types->name($this->protection_id);
+        return $ptc_typ_cac->name($this->protection_id);
     }
 
     /**
@@ -643,13 +644,13 @@ class sandbox extends db_object_seq_id_user
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_ID) {
+            if ($key == json_fields::ID) {
                 $this->set_id($value);
             }
-            if ($key == share_type_shared::JSON_FLD) {
+            if ($key == json_fields::SHARE) {
                 $this->share_id = $value;
             }
-            if ($key == protect_type_shared::JSON_FLD) {
+            if ($key == json_fields::PROTECTION) {
                 $this->protection_id = $value;
             }
 
@@ -833,20 +834,20 @@ class sandbox extends db_object_seq_id_user
      */
     function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
-        global $share_types;
-        global $protection_types;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
 
         $usr_msg = parent::import_db_obj($this, $test_obj);
         foreach ($in_ex_json as $key => $value) {
-            if ($key == share_type_shared::JSON_FLD) {
-                $this->share_id = $share_types->id($value);
+            if ($key == json_fields::SHARE) {
+                $this->share_id = $shr_typ_cac->id($value);
                 if ($this->share_id < 0) {
                     $lib = new library();
                     $usr_msg->add_message('share type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
                 }
             }
-            if ($key == protect_type_shared::JSON_FLD) {
-                $this->protection_id = $protection_types->id($value);
+            if ($key == json_fields::PROTECTION) {
+                $this->protection_id = $ptc_typ_cac->id($value);
                 if ($this->protection_id < 0) {
                     $lib = new library();
                     $usr_msg->add_message('protection type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
@@ -2117,7 +2118,7 @@ class sandbox extends db_object_seq_id_user
      */
     function is_same($obj_to_check): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $result = false;
 
@@ -2138,11 +2139,11 @@ class sandbox extends db_object_seq_id_user
                         $result = true;
                     } else {
                         if ($obj_to_check::class == formula::class
-                            and $this->type_id == $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
+                            and $this->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
                             // if one is a formula and the other is a formula link word, the two objects are representing the same formula object (but the calling function should use the formula to update)
                             $result = true;
-                        } elseif ($this->type_id != $phrase_types->id(phrase_type_shared::FORMULA_LINK)
-                            and $obj_to_check->type_id != $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
+                        } elseif ($this->type_id != $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)
+                            and $obj_to_check->type_id != $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
                             // if not one of the two words is a formula link and not both, the user should ge no suggestion to combine them
                             // a measure word can be combined with a measure scale word
                             $result = true;
@@ -2908,8 +2909,8 @@ class sandbox extends db_object_seq_id_user
         sql_type_list      $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
-        global $change_action_list;
-        global $change_field_list;
+        global $cng_act_cac;
+        global $cng_fld_cac;
         $table_id = $sc->table_id($this::class);
 
         // set some var names to shorten the code lines
@@ -2944,14 +2945,14 @@ class sandbox extends db_object_seq_id_user
         // add the change_action_id if needed
         $fvt_lst_out->add_field(
             change_action::FLD_ID,
-            $change_action_list->id(change_action::DELETE),
+            $cng_act_cac->id(change_action::DELETE),
             sql_par_type::INT_SMALL);
 
         if ($this->is_named_obj()) {
             // add the field_id of the field actually changed if needed
             $fvt_lst_out->add_field(
                 sql::FLD_LOG_FIELD_PREFIX . $name_fld,
-                $change_field_list->id($table_id . $name_fld),
+                $cng_fld_cac->id($table_id . $name_fld),
                 sql_par_type::INT_SMALL);
 
             // add the db field value of the field actually changed if needed
@@ -3101,7 +3102,7 @@ class sandbox extends db_object_seq_id_user
      */
     function db_changed_sandbox_list(sandbox $sbx, sql_type_list $sc_par_lst): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $lst = new sql_par_field_list();
         $sc = new sql();
@@ -3111,7 +3112,7 @@ class sandbox extends db_object_seq_id_user
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_EXCLUDED,
-                    $change_field_list->id($table_id . self::FLD_EXCLUDED),
+                    $cng_fld_cac->id($table_id . self::FLD_EXCLUDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -3131,7 +3132,7 @@ class sandbox extends db_object_seq_id_user
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_SHARE,
-                    $change_field_list->id($table_id . self::FLD_SHARE),
+                    $cng_fld_cac->id($table_id . self::FLD_SHARE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -3146,7 +3147,7 @@ class sandbox extends db_object_seq_id_user
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_PROTECT,
-                    $change_field_list->id($table_id . self::FLD_PROTECT),
+                    $cng_fld_cac->id($table_id . self::FLD_PROTECT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -3288,19 +3289,19 @@ class sandbox extends db_object_seq_id_user
         $var_name_row_id = $sc->var_name_row_id($sc_par_lst);
 
         // add the change action field to the field list for the log entries
-        global $change_action_list;
+        global $cng_act_cac;
         $fvt_lst->add_field(
             change_action::FLD_ID,
-            $change_action_list->id(change_action::ADD),
+            $cng_act_cac->id(change_action::ADD),
             type_object::FLD_ID_SQL_TYP
         );
         if ($this->is_link_obj()) {
             // TODO add the linked objects with names to the log entry
-            global $change_table_list;
+            global $cng_tbl_cac;
             $lib = new library();
             $fvt_lst->add_field(
                 change_table::FLD_ID,
-                $change_table_list->id($lib->class_to_table($this::class)),
+                $cng_tbl_cac->id($lib->class_to_table($this::class)),
                 type_object::FLD_ID_SQL_TYP
             );
         }
@@ -3543,10 +3544,10 @@ class sandbox extends db_object_seq_id_user
         $id_val = '_' . $id_fld;
 
         // add the change action field to the list for the log entries
-        global $change_action_list;
+        global $cng_act_cac;
         $fvt_lst->add_field(
             change_action::FLD_ID,
-            $change_action_list->id(change_action::UPDATE),
+            $cng_act_cac->id(change_action::UPDATE),
             type_object::FLD_ID_SQL_TYP
         );
 
@@ -3597,11 +3598,11 @@ class sandbox extends db_object_seq_id_user
         if ($this->excluded and $sc_par_lst->is_update()) {
             if ($this->is_named_obj()) {
                 if (!$par_lst_out->has_name($this->name_field())) {
-                    global $change_field_list;
+                    global $cng_fld_cac;
                     $table_id = $sc->table_id($this::class);
                     $par_lst_out->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->name_field(),
-                        $change_field_list->id($table_id . $this->name_field()),
+                        $cng_fld_cac->id($table_id . $this->name_field()),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                     $par_lst_out->add_field(

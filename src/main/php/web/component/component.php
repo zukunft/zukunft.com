@@ -39,6 +39,7 @@ include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once HTML_PATH . 'sheet.php';
 include_once TYPES_PATH . 'view_style_list.php';
 include_once SHARED_PATH . 'views.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use html\button;
 use html\system\messages;
@@ -59,6 +60,7 @@ use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
 use html\view\view_list;
 use shared\library;
+use shared\types\view_styles;
 use shared\views;
 use shared\views as view_shared;
 
@@ -98,7 +100,7 @@ class component extends sandbox_typed
 
     /**
      * @param db_object_dsp|null $dbo the word, triple or formula object that should be shown to the user
-     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param string $form_name the name of the view which is also used for the html form name
      * @param int $msk_id the database id of the calling view
      * @param string $back the backtrace for undo actions
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
@@ -293,7 +295,7 @@ class component extends sandbox_typed
 
     /**
      * start an HTML form, show the title and set and set the unique form name
-     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to start a new form and display the tile
      */
     function form_tile(string $form_name): string
@@ -370,7 +372,7 @@ class component extends sandbox_typed
             $dbo->description(),
             html_base::INPUT_TEXT,
             '',
-            html_base::COL_SM_12
+            view_styles::COL_SM_12
         );
     }
 
@@ -401,7 +403,7 @@ class component extends sandbox_typed
     /**
      * create the html code for the form element to select the phrase type
      * @param db_object_dsp $dbo the frontend phrase object with the type used until now
-     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to select the verb
      */
     function form_verb(db_object_dsp $dbo, string $form_name): string
@@ -412,7 +414,7 @@ class component extends sandbox_typed
     /**
      * create the html code for the form element to select the phrase type
      * @param db_object_dsp $dbo the frontend phrase object with the type used until now
-     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to select the phrase type
      */
     function form_phrase_type(db_object_dsp $dbo, string $form_name): string
@@ -423,7 +425,7 @@ class component extends sandbox_typed
     /**
      * create the html code for the form element to select the source type
      * @param db_object_dsp $dbo the frontend source object with the type used until now
-     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to select the source type
      */
     function form_source_type(db_object_dsp $dbo, string $form_name): string
@@ -434,7 +436,7 @@ class component extends sandbox_typed
     /**
      * create the html code for the form element to select the share type
      * @param db_object_dsp $dbo the frontend object with the type used until now
-     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to select the share type
      */
     function form_share_type(db_object_dsp $dbo, string $form_name): string
@@ -445,7 +447,7 @@ class component extends sandbox_typed
     /**
      * create the html code for the form element to select the protection type
      * @param db_object_dsp $dbo the frontend object with the type used until now
-     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to select the protection type
      */
     function form_protection_type(db_object_dsp $dbo, string $form_name): string
@@ -580,6 +582,7 @@ class component extends sandbox_typed
      */
 
     /**
+     * TODO all set_from_json_array functions should only use json_fields not api::FLD
      * set the vars this component bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
@@ -589,7 +592,7 @@ class component extends sandbox_typed
     {
         $usr_msg = parent::set_from_json_array($json_array);
         if (array_key_exists(json_fields::CODE_ID, $json_array)) {
-            $this->code_id = $json_array[api::FLD_CODE_ID];
+            $this->code_id = $json_array[json_fields::CODE_ID];
         } else {
             $this->code_id = null;
         }
@@ -598,13 +601,13 @@ class component extends sandbox_typed
         } else {
             $this->ui_msg_code_id = null;
         }
-        if (array_key_exists(api::FLD_POSITION, $json_array)) {
-            $this->position = $json_array[api::FLD_POSITION];
+        if (array_key_exists(json_fields::POSITION, $json_array)) {
+            $this->position = $json_array[json_fields::POSITION];
         } else {
             $this->position = 0;
         }
-        if (array_key_exists(api::FLD_LINK_ID, $json_array)) {
-            $this->link_id = $json_array[api::FLD_LINK_ID];
+        if (array_key_exists(json_fields::LINK_ID, $json_array)) {
+            $this->link_id = $json_array[json_fields::LINK_ID];
         } else {
             $this->link_id = 0;
         }
@@ -627,6 +630,9 @@ class component extends sandbox_typed
      */
 
     /**
+     * TODO all set_from_json_array functions should only use json_fields not api::FLD
+     * create an array for the json api message
+     * an array is used (instead of a string) to enable combinations of api_array() calls
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array() calls
      */
@@ -635,8 +641,8 @@ class component extends sandbox_typed
         $vars = parent::api_array();
         $vars[json_fields::CODE_ID] = $this->code_id;
         $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
-        $vars[api::FLD_POSITION] = $this->position;
-        $vars[api::FLD_LINK_ID] = $this->link_id;
+        $vars[json_fields::POSITION] = $this->position;
+        $vars[json_fields::LINK_ID] = $this->link_id;
         if ($this->pos_type_id != 0) {
             $vars[json_fields::POS_TYPE] = $this->pos_type_id;
         }
@@ -788,7 +794,7 @@ class component extends sandbox_typed
 
         // when changing a view component show the fields only on the left side
         if ($this->id() > 0) {
-            $result .= '<div class="' . html_base::COL_SM_7 . '">';
+            $result .= '<div class="' . view_styles::COL_SM_7 . '">';
         }
 
         $result .= $html->dsp_form_start($script);
@@ -799,12 +805,12 @@ class component extends sandbox_typed
         $result .= $html->dsp_form_hidden("back", $back);
         $result .= $html->dsp_form_hidden("confirm", 1);
         $result .= '<div class="form-row">';
-        $result .= $html->dsp_form_fld("name", $this->name, "Component name:", html_base::COL_SM_8);
+        $result .= $html->dsp_form_fld("name", $this->name, "Component name:", view_styles::COL_SM_8);
         $result .= $this->dsp_type_selector($script); // allow to change the type
         $result .= '</div>';
         $result .= '<div class="form-row">';
-        $result .= $this->dsp_word_row_selector($script, html_base::COL_SM_6); // allow to change the word_row word
-        $result .= $this->dsp_word_col_selector($script, html_base::COL_SM_6); // allow to change the word col word
+        $result .= $this->dsp_word_row_selector($script, view_styles::COL_SM_6); // allow to change the word_row word
+        $result .= $this->dsp_word_col_selector($script, view_styles::COL_SM_6); // allow to change the word col word
         $result .= '</div>';
         $result .= $html->dsp_form_fld("comment", $this->description, "Comment:");
         if ($add_link <= 0) {
@@ -896,8 +902,8 @@ class component extends sandbox_typed
      */
     function html(?phrase_dsp $phr = null): string
     {
-        global $component_types;
-        return match ($component_types->code_id($this->type_id())) {
+        global $cmp_typ_cac;
+        return match ($cmp_typ_cac->code_id($this->type_id())) {
             component_type::TEXT => $this->text(),
             component_type::PHRASE_NAME => $this->word_name($phr),
             component_type::VALUES_RELATED => $this->table(),
@@ -910,8 +916,8 @@ class component extends sandbox_typed
      */
     function word_name(phrase_dsp $phr): string
     {
-        global $component_types;
-        if ($component_types->code_id($this->type_id()) == component_type::PHRASE_NAME) {
+        global $cmp_typ_cac;
+        if ($cmp_typ_cac->code_id($this->type_id()) == component_type::PHRASE_NAME) {
             return $phr->name();
         } else {
             return '';
@@ -973,7 +979,7 @@ class component extends sandbox_typed
     {
         $phr_lst = new phrase_list();
         $phr_lst->load_like($pattern);
-        return $phr_lst->selector($name, $form_name, $label, $selected, html_base::COL_SM_4, html_selector::TYPE_DATALIST);
+        return $phr_lst->selector($name, $form_name, $label, $selected, view_styles::COL_SM_4, html_selector::TYPE_DATALIST);
     }
 
     /**
@@ -997,7 +1003,7 @@ class component extends sandbox_typed
     {
         $msk_lst = new view_list();
         $msk_lst->load_like($pattern);
-        return $msk_lst->selector($name, $form_name, $label, html_base::COL_SM_4, $selected);
+        return $msk_lst->selector($name, $form_name, $label, view_styles::COL_SM_4, $selected);
     }
 
     /**

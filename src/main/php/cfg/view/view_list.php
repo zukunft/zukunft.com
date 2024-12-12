@@ -42,7 +42,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 
-global $system_views;
+global $sys_msk_cac;
 
 class view_list extends sandbox_list
 {

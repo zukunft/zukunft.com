@@ -39,6 +39,7 @@ include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_VERB_PATH . 'verb.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
 use api\phrase\term as term_api;
@@ -49,6 +50,7 @@ use html\user\user_message;
 use html\verb\verb as verb_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
+use shared\json_fields;
 
 class term extends combine_named_dsp
 {
@@ -66,29 +68,29 @@ class term extends combine_named_dsp
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = new user_message();
-        if ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_WORD) {
+        if ($json_array[json_fields::OBJECT_CLASS] == term_api::CLASS_WORD) {
             $wrd = new word_dsp();
             $wrd->set_from_json_array($json_array);
             $this->set_obj($wrd);
             // unlike the cases below the switch of the term id to the object id not needed for words
-        } elseif ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_TRIPLE) {
+        } elseif ($json_array[json_fields::OBJECT_CLASS] == term_api::CLASS_TRIPLE) {
             $trp = new triple_dsp();
             $trp->set_from_json_array($json_array);
             $this->set_obj($trp);
             // TODO check if needed
             //$this->set_id($trp->id());
-        } elseif ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_VERB) {
+        } elseif ($json_array[json_fields::OBJECT_CLASS] == term_api::CLASS_VERB) {
             $vrb = new verb_dsp();
             $vrb->set_from_json_array($json_array);
             $this->set_obj($vrb);
             //$this->set_id($vrb->id());
-        } elseif ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_FORMULA) {
+        } elseif ($json_array[json_fields::OBJECT_CLASS] == term_api::CLASS_FORMULA) {
             $frm = new formula_dsp();
             $frm->set_from_json_array($json_array);
             $this->set_obj($frm);
             //$this->set_id($frm->id());
         } else {
-            $usr_msg->add_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a term');
+            $usr_msg->add_err('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a term');
         }
         return $usr_msg;
     }
@@ -156,35 +158,35 @@ class term extends combine_named_dsp
     {
         $vars = array();
         if ($this->is_word()) {
-            $vars[combine_object_api::FLD_CLASS] = term_api::CLASS_WORD;
+            $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_WORD;
         } elseif ($this->is_triple()) {
-            $vars[combine_object_api::FLD_CLASS] = term_api::CLASS_TRIPLE;
+            $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_TRIPLE;
             $trp = $this->obj();
-            $vars[api::FLD_FROM] = $trp->from()->id();
-            $vars[api::FLD_VERB] = $trp->verb()->id();
-            $vars[api::FLD_TO] = $trp->to()->id();
+            $vars[json_fields::FROM] = $trp->from()->id();
+            $vars[json_fields::VERB] = $trp->verb()->id();
+            $vars[json_fields::TO] = $trp->to()->id();
         } elseif ($this->is_formula()) {
-            $vars[combine_object_api::FLD_CLASS] = term_api::CLASS_FORMULA;
+            $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_FORMULA;
         } elseif ($this->is_verb()) {
-            $vars[combine_object_api::FLD_CLASS] = term_api::CLASS_VERB;
+            $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_VERB;
         } else {
             log_err('cannot create api message for term ' . $this->dsp_id() . ' because class is unknown');
         }
-        $vars[api::FLD_ID] = $this->obj_id();
-        $vars[api::FLD_NAME] = $this->name();
-        $vars[api::FLD_DESCRIPTION] = $this->description();
+        $vars[json_fields::ID] = $this->obj_id();
+        $vars[json_fields::NAME] = $this->name();
+        $vars[json_fields::DESCRIPTION] = $this->description();
         if (!$this->is_verb()) {
-            $vars[api::FLD_TYPE] = $this->type_id();
+            $vars[json_fields::TYPE] = $this->type_id();
         }
         if ($this->is_formula()) {
-            $vars[api::FLD_USER_TEXT] = $this->obj()->usr_text();
+            $vars[json_fields::USER_TEXT] = $this->obj()->usr_text();
         }
         // TODO add exclude field and move to a parent object?
         if ($this->obj()?->share_id != null) {
-            $vars[api::FLD_SHARE] = $this->obj()?->share_id;
+            $vars[json_fields::SHARE] = $this->obj()?->share_id;
         }
         if ($this->obj()?->protection_id != null) {
-            $vars[api::FLD_PROTECTION] = $this->obj()?->protection_id;
+            $vars[json_fields::PROTECTION] = $this->obj()?->protection_id;
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

@@ -36,6 +36,7 @@ namespace html\formula;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once SHARED_PATH . 'views.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
 use cfg\db\sql_db;
@@ -59,7 +60,9 @@ use html\sandbox\sandbox_typed;
 use html\system\messages;
 use html\user\user_message;
 use html\word\word as word_dsp;
+use shared\json_fields;
 use shared\library;
+use shared\types\view_styles;
 use shared\views as view_shared;
 
 class formula extends sandbox_typed
@@ -89,23 +92,23 @@ class formula extends sandbox_typed
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_USER_TEXT, $json_array)) {
-            $this->set_usr_text($json_array[api::FLD_USER_TEXT]);
+        if (array_key_exists(json_fields::USER_TEXT, $json_array)) {
+            $this->set_usr_text($json_array[json_fields::USER_TEXT]);
         } else {
             $this->set_usr_text(null);
         }
-        if (array_key_exists(api::FLD_REF_TEXT, $json_array)) {
-            $this->set_ref_text($json_array[api::FLD_REF_TEXT]);
+        if (array_key_exists(json_fields::REF_TEXT, $json_array)) {
+            $this->set_ref_text($json_array[json_fields::REF_TEXT]);
         } else {
             $this->set_ref_text(null);
         }
-        if (array_key_exists(api::FLD_NEED_ALL_VAL, $json_array)) {
-            $this->need_all_val = $json_array[api::FLD_NEED_ALL_VAL];
+        if (array_key_exists(json_fields::NEED_ALL_VAL, $json_array)) {
+            $this->need_all_val = $json_array[json_fields::NEED_ALL_VAL];
         } else {
             $this->need_all_val = false;
         }
-        if (array_key_exists(api::FLD_FORMULA_NAME_PHRASE, $json_array)) {
-            $this->name_wrd = new phrase_dsp($json_array[api::FLD_FORMULA_NAME_PHRASE]);
+        if (array_key_exists(json_fields::FORMULA_NAME_PHRASE, $json_array)) {
+            $this->name_wrd = new phrase_dsp($json_array[json_fields::FORMULA_NAME_PHRASE]);
         } else {
             $this->name_wrd = null;
         }
@@ -149,7 +152,7 @@ class formula extends sandbox_typed
     {
         $vars = parent::api_array();
 
-        $vars[api::FLD_USER_TEXT] = $this->usr_text();
+        $vars[json_fields::USER_TEXT] = $this->usr_text();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -340,7 +343,7 @@ class formula extends sandbox_typed
 
         // when changing a view show the fields only on the left side
         if ($this->id() > 0) {
-            $result .= '<div class="' . html_base::COL_SM_7 . '">';
+            $result .= '<div class="' . view_styles::COL_SM_7 . '">';
         }
 
         // formula fields
@@ -352,14 +355,14 @@ class formula extends sandbox_typed
             $result .= $html->dsp_form_hidden("back", $back);
         }
         $result .= '<div class="form-row">';
-        $result .= $html->dsp_form_fld("formula_name", $this->name, "Formula name:", html_base::COL_SM_8);
+        $result .= $html->dsp_form_fld("formula_name", $this->name, "Formula name:", view_styles::COL_SM_8);
         $result .= $this->dsp_type_selector($script);
         $result .= '</div>';
-        $result .= $html->dsp_form_fld("description", $this->description, "Description:", html_base::COL_SM_8);
+        $result .= $html->dsp_form_fld("description", $this->description, "Description:", view_styles::COL_SM_8);
         // predefined formulas like "this" or "next" should only be changed by an admin
         // TODO check if formula user or login user should be used
         if (!$this->is_special() or $usr->is_admin()) {
-            $result .= $html->dsp_form_fld("formula_text", $resolved_text, "Expression:", html_base::COL_SM_12);
+            $result .= $html->dsp_form_fld("formula_text", $resolved_text, "Expression:", view_styles::COL_SM_12);
         }
         $result .= $html->dsp_form_fld_checkbox("need_all_val", $this->need_all_val, "calculate only if all values used in the formula exist");
         $result .= '<br><br>';

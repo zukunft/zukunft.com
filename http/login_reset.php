@@ -115,9 +115,9 @@ if (!$_SESSION['logged']) {
     $result .= 'Username:<br> ';
     $result .= '<input name="username"><br><br> ';
     $result .= 'Email address:<br> ';
-    $result .= '<input type="email" name="email"><br><br> ';
+    $result .= '<input type="' . html_base::INPUT_EMAIL . '" name="email"><br><br> ';
     $result .= $msg;
-    $result .= '  <input type="submit" name="submit" value="Reset password"> ';
+    $result .= '  <input type="' . html_base::INPUT_SUBMIT . '" name="submit" value="Reset password"> ';
     $result .= '</form>   ';
     $result .= '</div>   ';
 }

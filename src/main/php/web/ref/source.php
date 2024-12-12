@@ -31,11 +31,14 @@
 
 namespace html\ref;
 
-use shared\api;
+include_once SHARED_PATH . 'json_fields.php';
+
 use html\rest_ctrl as api_dsp;
 use html\html_base;
 use html\sandbox\sandbox_typed;
 use html\user\user_message;
+use shared\json_fields;
+use shared\types\view_styles;
 
 class source extends sandbox_typed
 {
@@ -54,8 +57,8 @@ class source extends sandbox_typed
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_URL, $json_array)) {
-            $this->set_url($json_array[api::FLD_URL]);
+        if (array_key_exists(json_fields::URL, $json_array)) {
+            $this->set_url($json_array[json_fields::URL]);
         } else {
             $this->set_url(null);
         }
@@ -84,7 +87,7 @@ class source extends sandbox_typed
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_URL] = $this->url();
+        $vars[json_fields::URL] = $this->url();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -199,7 +202,7 @@ class source extends sandbox_typed
         if ($used_source_type_id == null) {
             $used_source_type_id = $html_source_types->default_id();
         }
-        return $html_source_types->selector($form_name, $used_source_type_id, 'type', html_base::COL_SM_4, 'type:');
+        return $html_source_types->selector($form_name, $used_source_type_id, 'type', view_styles::COL_SM_4, 'type:');
     }
 
 }

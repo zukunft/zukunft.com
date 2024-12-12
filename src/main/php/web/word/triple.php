@@ -33,6 +33,7 @@ namespace html\word;
 
 include_once SANDBOX_PATH . 'sandbox_typed.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
 use cfg\phrase_type;
@@ -50,7 +51,9 @@ use html\sandbox\sandbox_typed;
 use html\phrase\term as term_dsp;
 use html\verb\verb as verb_dsp;
 use shared\api AS api_shared;
+use shared\json_fields;
 use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\view_styles;
 
 class triple extends sandbox_typed
 {
@@ -85,18 +88,18 @@ class triple extends sandbox_typed
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_FROM, $json_array)) {
-            $this->set_from_by_id($json_array[api::FLD_FROM]);
+        if (array_key_exists(json_fields::FROM, $json_array)) {
+            $this->set_from_by_id($json_array[json_fields::FROM]);
         } else {
             $this->set_from(new phrase_dsp());
         }
-        if (array_key_exists(api::FLD_VERB, $json_array)) {
-            $this->set_verb_by_id($json_array[api::FLD_VERB]);
+        if (array_key_exists(json_fields::VERB, $json_array)) {
+            $this->set_verb_by_id($json_array[json_fields::VERB]);
         } else {
             $this->set_verb(new verb_dsp());
         }
-        if (array_key_exists(api::FLD_TO, $json_array)) {
-            $this->set_to_by_id($json_array[api::FLD_TO]);
+        if (array_key_exists(json_fields::TO, $json_array)) {
+            $this->set_to_by_id($json_array[json_fields::TO]);
         } else {
             $this->set_to(new phrase_dsp());
         }
@@ -190,11 +193,11 @@ class triple extends sandbox_typed
      */
     function set_type(?string $code_id): void
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         if ($code_id == null) {
             $this->set_type_id();
         } else {
-            $this->set_type_id($phrase_types->id($code_id));
+            $this->set_type_id($phr_typ_cac->id($code_id));
         }
     }
 
@@ -204,11 +207,11 @@ class triple extends sandbox_typed
      */
     function type(): ?object
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         if ($this->type_id() == null) {
             return null;
         } else {
-            return $phrase_types->get($this->type_id());
+            return $phr_typ_cac->get($this->type_id());
         }
     }
 
@@ -285,7 +288,7 @@ class triple extends sandbox_typed
     {
         $phr_lst = new phrase_list_dsp();
         $phr_lst->load_like($pattern);
-        return $phr_lst->selector($name, $form_name, $label, html_base::COL_SM_4, $selected, html_selector::TYPE_DATALIST);
+        return $phr_lst->selector($name, $form_name, $label, view_styles::COL_SM_4, $selected, html_selector::TYPE_DATALIST);
     }
 
     /**
@@ -300,7 +303,7 @@ class triple extends sandbox_typed
         } else {
             $id = 0;
         }
-        return $html_verbs->selector($form_name, $id, 'verb', html_base::COL_SM_4, 'verb:');
+        return $html_verbs->selector($form_name, $id, 'verb', view_styles::COL_SM_4, 'verb:');
     }
 
 
@@ -328,7 +331,7 @@ class triple extends sandbox_typed
                 'from', self::FORM_EDIT, 'from:', '', $this->from()->id(), '', $this->from());
             /* TODO
             if (isset($this->verb)) {
-                $result .= $this->verb->dsp_selector('forward', $form_name, html_base::COL_SM_4, $back);
+                $result .= $this->verb->dsp_selector('forward', $form_name, view_styles::COL_SM_4, $back);
             }
             */
             $detail_fields .= 'to: ' . $this->phrase_selector(
@@ -443,9 +446,9 @@ class triple extends sandbox_typed
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_FROM] = $this->from()->id();
-        $vars[api::FLD_VERB] = $this->verb()->id();
-        $vars[api::FLD_TO] = $this->to()->id();
+        $vars[json_fields::FROM] = $this->from()->id();
+        $vars[json_fields::VERB] = $this->verb()->id();
+        $vars[json_fields::TO] = $this->to()->id();
         return $vars;
     }
 

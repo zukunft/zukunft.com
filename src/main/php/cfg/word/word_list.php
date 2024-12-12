@@ -247,11 +247,11 @@ class word_list extends sandbox_list_named
         int                                            $offset = 0
     ): sql_par
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $qp = $this->load_sql_names_pre($sc, $sbx, $pattern, $limit, $offset);
 
-        $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST_NOT);
+        $sc->add_where(phrase::FLD_TYPE, $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST_NOT);
 
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -649,8 +649,8 @@ class word_list extends sandbox_list_named
      */
     function is(): word_list
     {
-        global $verbs;
-        $wrd_lst = $this->foaf_parents($verbs->get_verb(verbs::IS));
+        global $vrb_cac;
+        $wrd_lst = $this->foaf_parents($vrb_cac->get_verb(verbs::IS));
         log_debug($this->dsp_id() . ' is ' . $wrd_lst->name());
         return $wrd_lst;
     }
@@ -663,9 +663,9 @@ class word_list extends sandbox_list_named
      */
     function are(): word_list
     {
-        global $verbs;
+        global $vrb_cac;
         log_debug('for ' . $this->dsp_id());
-        $wrd_lst = $this->children($verbs->get_verb(verbs::IS));
+        $wrd_lst = $this->children($vrb_cac->get_verb(verbs::IS));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' are ' . $wrd_lst->name());
         return $wrd_lst;
@@ -677,8 +677,8 @@ class word_list extends sandbox_list_named
      */
     function contains(): word_list
     {
-        global $verbs;
-        $wrd_lst = $this->children($verbs->get_verb(verbs::IS_PART_OF));
+        global $vrb_cac;
+        $wrd_lst = $this->children($vrb_cac->get_verb(verbs::IS_PART_OF));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $wrd_lst->name());
         return $wrd_lst;
@@ -730,8 +730,8 @@ class word_list extends sandbox_list_named
      */
     function differentiators(): word_list
     {
-        global $verbs;
-        $wrd_lst = $this->foaf_parents($verbs->get_verb(verbs::CAN_CONTAIN));
+        global $vrb_cac;
+        $wrd_lst = $this->foaf_parents($vrb_cac->get_verb(verbs::CAN_CONTAIN));
         $wrd_lst->merge($this);
         return $wrd_lst;
     }
@@ -743,10 +743,10 @@ class word_list extends sandbox_list_named
      */
     function differentiators_all(): word_list
     {
-        global $verbs;
+        global $vrb_cac;
         // this first time get all related items
         // parents and not children because the verb is "can contain", but here the question is for "can be split by"
-        $wrd_lst = $this->foaf_parents($verbs->get_verb(verbs::CAN_CONTAIN));
+        $wrd_lst = $this->foaf_parents($vrb_cac->get_verb(verbs::CAN_CONTAIN));
         return $wrd_lst->are_and_contains();
     }
 
@@ -1066,9 +1066,9 @@ class word_list extends sandbox_list_named
         log_debug('for words "' . $this->dsp_id() . '"');
         $lib = new library();
 
-        global $phrase_types;
+        global $phr_typ_cac;
         $result = new word_list($this->user());
-        $time_type = $phrase_types->id(phrase_type_shared::TIME);
+        $time_type = $phr_typ_cac->id(phrase_type_shared::TIME);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if ($wrd->type_id() == $time_type) {
@@ -1122,13 +1122,13 @@ class word_list extends sandbox_list_named
      */
     function measure_lst(): word_list
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $lib = new library();
 
         log_debug($this->dsp_id());
 
         $result = new word_list($this->user());
-        $measure_type = $phrase_types->id(phrase_type_shared::MEASURE);
+        $measure_type = $phr_typ_cac->id(phrase_type_shared::MEASURE);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if ($wrd->type_id == $measure_type) {
@@ -1148,14 +1148,14 @@ class word_list extends sandbox_list_named
      */
     function scaling_lst(): word_list
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $lib = new library();
 
         log_debug($this->dsp_id());
 
         $result = new word_list($this->user());
-        $scale_type = $phrase_types->id(phrase_type_shared::SCALING);
-        $scale_hidden_type = $phrase_types->id(phrase_type_shared::SCALING_HIDDEN);
+        $scale_type = $phr_typ_cac->id(phrase_type_shared::SCALING);
+        $scale_hidden_type = $phr_typ_cac->id(phrase_type_shared::SCALING_HIDDEN);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if ($wrd->type_id == $scale_type or $wrd->type_id == $scale_hidden_type) {
@@ -1176,13 +1176,13 @@ class word_list extends sandbox_list_named
      */
     function percent_lst(): word_list
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $lib = new library();
 
         log_debug($this->dsp_id());
 
         $result = new word_list($this->user());
-        $percent_type = $phrase_types->id(phrase_type_shared::PERCENT);
+        $percent_type = $phr_typ_cac->id(phrase_type_shared::PERCENT);
         // loop over the word ids and add only the time ids to the result array
         foreach ($this->lst() as $wrd) {
             if ($wrd->type_id == $percent_type) {

@@ -46,10 +46,12 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once API_VALUE_PATH . 'value_list.php';
 include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
 include_once MODEL_GROUP_PATH . 'group_id_list.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql_field_list;
 use cfg\db\sql_type_list;
 use cfg\user;
+use shared\json_fields;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use api\value\value_list as value_list_api;
@@ -753,8 +755,8 @@ class value_list extends sandbox_value_list
      */
     function import_obj(array $json_obj, object $test_obj = null): user_message
     {
-        global $share_types;
-        global $protection_types;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
 
         log_debug();
         $usr_msg = new user_message();
@@ -777,7 +779,7 @@ class value_list extends sandbox_value_list
                 $val->grp = $phr_lst->get_grp_id($do_save);
             }
 
-            if ($key == sandbox_exp::FLD_TIMESTAMP) {
+            if ($key == json_fields::TIMESTAMP) {
                 if (strtotime($value)) {
                     $val->time_stamp = $lib->get_datetime($value, $val->dsp_id(), 'JSON import');
                 } else {
@@ -785,12 +787,12 @@ class value_list extends sandbox_value_list
                 }
             }
 
-            if ($key == share_type_shared::JSON_FLD) {
-                $val->share_id = $share_types->id($value);
+            if ($key == json_fields::SHARE) {
+                $val->share_id = $shr_typ_cac->id($value);
             }
 
-            if ($key == protect_type_shared::JSON_FLD) {
-                $val->protection_id = $protection_types->id($value);
+            if ($key == json_fields::PROTECTION) {
+                $val->protection_id = $ptc_typ_cac->id($value);
             }
 
             if ($key == source_exp::FLD_REF) {
@@ -877,8 +879,8 @@ class value_list extends sandbox_value_list
     {
         log_debug();
         $result = new value_list_exp();
-        global $share_types;
-        global $protection_types;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
 
         // reload the value parameters
         if ($do_load) {
@@ -910,13 +912,13 @@ class value_list extends sandbox_value_list
 
             // add the share type
             log_debug('get share');
-            if ($val0->share_id > 0 and $val0->share_id <> $share_types->id(share_type_shared::PUBLIC)) {
+            if ($val0->share_id > 0 and $val0->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
                 $result->share = $val0->share_type_code_id();
             }
 
             // add the protection type
             log_debug('get protection');
-            if ($val0->protection_id > 0 and $val0->protection_id <> $protection_types->id(protect_type_shared::NO_PROTECT)) {
+            if ($val0->protection_id > 0 and $val0->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
                 $result->protection = $val0->protection_type_code_id();
             }
 

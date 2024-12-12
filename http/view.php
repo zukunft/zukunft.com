@@ -81,7 +81,7 @@ $view_words = $_GET[api::URL_VAR_WORDS] ?? '';
 $back = $_GET[api::URL_VAR_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
 
 // init the view
-global $system_views;
+global $sys_msk_cac;
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
 
@@ -163,7 +163,7 @@ if ($usr->id() > 0) {
                         $view_id = $dbo_dsp->calc_view_id();
                         if ($view_id <= 0) {
                             // if no one has set a view for this word, use the fallback view
-                            $view_id = $system_views->id(view_shared::MC_WORD);
+                            $view_id = $sys_msk_cac->id(view_shared::MC_WORD);
                         }
                     }
                 }
@@ -186,7 +186,7 @@ if ($usr->id() > 0) {
 
         // use a fallback if the view is empty
         if ($dsp_text == '' or $msk_dsp->name() == '') {
-            $view_id = $system_views->id(view_shared::MC_START);
+            $view_id = $sys_msk_cac->id(view_shared::MC_START);
             $msk_dsp->load_by_id_with($view_id);
             $dsp_text = $msk_dsp->display($dbo_dsp, $back);
         }

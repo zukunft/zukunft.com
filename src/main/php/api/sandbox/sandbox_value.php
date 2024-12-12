@@ -47,9 +47,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
 class sandbox_value extends sandbox_api
 {
 
-    // the json field name in the api json message which is supposed to be the same as the var $number
-    const FLD_NUMBER = 'number';
-
     private group_api $grp; // the phrase group with the list of words and triples (not the source words and triples)
     private ?float $number; // the number calculated by the system
 

@@ -90,7 +90,7 @@ class sys_log
 
     function get_html(user $usr = null, string $back = ''): string
     {
-        global $sys_log_stati;
+        global $sys_log_sta_cac;
 
         $html = new html_base();
         $row_text = $html->td($this->time);
@@ -103,7 +103,7 @@ class sys_log
         $row_text .= $html->td($this->status);
         if ($usr != null) {
             if ($usr->is_admin() or $usr->is_system()) {
-                $par_status = rest_ctrl::PAR_LOG_STATUS. '=' . $sys_log_stati->id(sys_log_status::CLOSED);
+                $par_status = rest_ctrl::PAR_LOG_STATUS. '=' . $sys_log_sta_cac->id(sys_log_status::CLOSED);
                 $url = $html->url(rest_ctrl::ERROR_UPDATE, $this->id, $back, '', $par_status);
                 $row_text .= $html->td($html->ref($url, 'close'));
             }

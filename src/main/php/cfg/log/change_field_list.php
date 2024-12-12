@@ -87,7 +87,7 @@ class change_field_list extends type_list
      */
     function load_dummy(): void
     {
-        global $change_table_list;
+        global $cng_tbl_cac;
 
         parent::load_dummy();
 
@@ -95,7 +95,7 @@ class change_field_list extends type_list
         $t = new create_test_objects();
         $t->read_from_config_csv($this);
         // TODO Prio 3 load from csv
-        $table_id = $change_table_list->id(change_table_list::WORD);
+        $table_id = $cng_tbl_cac->id(change_table_list::WORD);
         $table_field_name = $table_id . change_field_list::FLD_WORD_NAME;
         $type = new type_object(
             $table_field_name,
@@ -111,8 +111,8 @@ class change_field_list extends type_list
      */
     function default_id(): int
     {
-        global $change_table_list;
-        $table_id = $change_table_list->id(change_table_list::WORD);
+        global $cng_tbl_cac;
+        $table_id = $cng_tbl_cac->id(change_table_list::WORD);
         $table_field_name = $table_id . change_field_list::FLD_WORD_NAME;
         return parent::id($table_field_name);
     }

@@ -39,6 +39,7 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_PATH . 'views.php';
 include_once SHARED_PATH . 'api.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\verb_list;
 use html\button;
@@ -58,17 +59,14 @@ use html\system\messages;
 use html\user\user_message;
 use shared\api;
 use shared\enum\foaf_direction;
+use shared\json_fields;
+use shared\types\view_styles;
 use shared\words;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\views as view_shared;
 
 class word extends sandbox_typed
 {
-
-    // the json field names in the api json message which is supposed to be the same as the var $id
-    const FLD_PLURAL = 'plural';
-    const FLD_PARENT = 'parent';
-
 
     /*
      * object vars
@@ -94,13 +92,13 @@ class word extends sandbox_typed
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(self::FLD_PLURAL, $json_array)) {
-            $this->set_plural($json_array[self::FLD_PLURAL]);
+        if (array_key_exists(json_fields::PLURAL, $json_array)) {
+            $this->set_plural($json_array[json_fields::PLURAL]);
         } else {
             $this->set_plural(null);
         }
-        if (array_key_exists(self::FLD_PARENT, $json_array)) {
-            $this->set_parent($json_array[self::FLD_PARENT]);
+        if (array_key_exists(json_fields::PARENT, $json_array)) {
+            $this->set_parent($json_array[json_fields::PARENT]);
         } else {
             $this->set_parent(null);
         }
@@ -116,9 +114,9 @@ class word extends sandbox_typed
     {
         $vars = parent::api_array();
 
-        $vars[self::FLD_PLURAL] = $this->plural();
+        $vars[json_fields::PLURAL] = $this->plural();
         if ($this->has_parent()) {
-            $vars[self::FLD_PARENT] = $this->parent()->api_array();
+            $vars[json_fields::PARENT] = $this->parent()->api_array();
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -132,8 +130,8 @@ class word extends sandbox_typed
     function set_from_url_array(array $url_array): user_message
     {
         $usr_msg = parent::set_from_json_array($url_array);
-        if (array_key_exists(api::FLD_PLURAL, $url_array)) {
-            $this->set_plural($url_array[api::FLD_PLURAL]);
+        if (array_key_exists(json_fields::PLURAL, $url_array)) {
+            $this->set_plural($url_array[json_fields::PLURAL]);
         } else {
             $this->set_plural(null);
         }
@@ -170,11 +168,11 @@ class word extends sandbox_typed
      */
     function set_type(?string $code_id): void
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         if ($code_id == null) {
             $this->set_type_id();
         } else {
-            $this->set_type_id($phrase_types->id($code_id));
+            $this->set_type_id($phr_typ_cac->id($code_id));
         }
     }
 
@@ -275,10 +273,10 @@ class word extends sandbox_typed
 
     function dsp_type_selector(string $form): string
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $result = '';
-        if ($phrase_types->code_id($this->type_id()) == phrase_type_shared::FORMULA_LINK) {
-            $result .= ' type: ' . $phrase_types->name($this->type_id());
+        if ($phr_typ_cac->code_id($this->type_id()) == phrase_type_shared::FORMULA_LINK) {
+            $result .= ' type: ' . $phr_typ_cac->name($this->type_id());
         } else {
             $result .= $this->phrase_type_selector($form);
         }
@@ -497,10 +495,10 @@ class word extends sandbox_typed
      */
     function is_type(string $type): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $result = false;
         if ($this->type_id() != Null) {
-            if ($this->type_id() == $phrase_types->id($type)) {
+            if ($this->type_id() == $phr_typ_cac->id($type)) {
                 $result = true;
             }
         }
@@ -585,8 +583,8 @@ class word extends sandbox_typed
         $result .= $html->dsp_form_hidden("back", $back);
         $result .= $html->dsp_form_hidden("confirm", '1');
         $result .= '<div class="form-row">';
-        $result .= $html->dsp_form_text("word_name", $this->name, "Name:", html_base::COL_SM_4);
-        $result .= $this->dsp_type_selector($form, html_base::COL_SM_4);
+        $result .= $html->dsp_form_text("word_name", $this->name, "Name:", view_styles::COL_SM_4);
+        $result .= $this->dsp_type_selector($form, view_styles::COL_SM_4);
         $result .= $this->selector_add($wrd_id, $form, "form-row") . ' ';
         $result .= '</div>';
         $result .= 'which ';
@@ -743,7 +741,7 @@ class word extends sandbox_typed
         $phr_lst = new phrase_list_dsp();
         if ($pattern != '') {
             $phr_lst->load_like($pattern);
-            $result = $phr_lst->selector($name, $form_name, $label, html_base::COL_SM_4, $selected, html_selector::TYPE_DATALIST);
+            $result = $phr_lst->selector($name, $form_name, $label, view_styles::COL_SM_4, $selected, html_selector::TYPE_DATALIST);
         } else {
             $result = $this->name();
         }
@@ -813,11 +811,11 @@ class word extends sandbox_typed
 
     function dsp_formula(string $back = ''): string
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $html = new html_base();
 
         $result = '';
-        if ($this->type_id() == $phrase_types->id(phrase_type_shared::FORMULA_LINK)) {
+        if ($this->type_id() == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
             $result .= $html->dsp_form_hidden("name", $this->name);
             $result .= '  to change the name of "' . $this->name . '" rename the ';
             $frm = new formula_dsp();
@@ -825,7 +823,7 @@ class word extends sandbox_typed
             $result .= $frm->display_linked($back);
             $result .= '.<br> ';
         } else {
-            $result .= $html->dsp_form_text("name", $this->name, "Name:", html_base::COL_SM_4);
+            $result .= $html->dsp_form_text("name", $this->name, "Name:", view_styles::COL_SM_4);
         }
         return $result;
     }

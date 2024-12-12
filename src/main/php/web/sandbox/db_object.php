@@ -35,6 +35,7 @@
 namespace html\sandbox;
 
 include_once API_SANDBOX_PATH . 'sandbox.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
 use html\rest_ctrl as api_dsp;
@@ -42,6 +43,7 @@ use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\term as term_dsp;
 use html\user\user_message;
+use shared\json_fields;
 
 class db_object
 {
@@ -88,8 +90,8 @@ class db_object
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = new user_message();
-        if (array_key_exists(api::FLD_ID, $json_array)) {
-            $this->set_id($json_array[api::FLD_ID]);
+        if (array_key_exists(json_fields::ID, $json_array)) {
+            $this->set_id($json_array[json_fields::ID]);
         } else {
             $this->set_id(0);
             $usr_msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
@@ -163,7 +165,7 @@ class db_object
     function api_array(): array
     {
         $vars = array();
-        $vars[api::FLD_ID] = $this->id();
+        $vars[json_fields::ID] = $this->id();
         return $vars;
     }
 

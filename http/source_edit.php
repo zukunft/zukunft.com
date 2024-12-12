@@ -48,7 +48,7 @@ use shared\views as view_shared;
 // open database
 $db_con = prg_start("source_edit");
 
-global $system_views;
+global $sys_msk_cac;
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -66,7 +66,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($system_views->id(view_shared::MC_SOURCE_EDIT));
+    $msk->load_by_id($sys_msk_cac->id(view_shared::MC_SOURCE_EDIT));
     $back = $_GET[api::URL_VAR_BACK] = ''; // the original calling page that should be shown after the change if finished
 
     // create the source object to have an place to update the parameters

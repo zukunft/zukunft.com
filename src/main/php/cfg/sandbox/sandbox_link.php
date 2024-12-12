@@ -51,7 +51,8 @@
 
 namespace cfg;
 
-use shared\api;
+include_once SHARED_PATH . 'json_fields.php';
+
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_type;
@@ -63,6 +64,7 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
 use Exception;
+use shared\json_fields;
 use shared\library;
 
 class sandbox_link extends sandbox
@@ -339,7 +341,7 @@ class sandbox_link extends sandbox
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_PREDICATE) {
+            if ($key == json_fields::PREDICATE) {
                 $this->predicate_id = $value;
             }
 
@@ -1027,7 +1029,7 @@ class sandbox_link extends sandbox
         sql_type_list        $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $lst = new sql_par_field_list();
         $sc = new sql();
@@ -1049,7 +1051,7 @@ class sandbox_link extends sandbox
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
-                        $change_field_list->id($table_id . $this->from_field()),
+                        $cng_fld_cac->id($table_id . $this->from_field()),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -1065,7 +1067,7 @@ class sandbox_link extends sandbox
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
-                        $change_field_list->id($table_id . $this->to_field()),
+                        $cng_fld_cac->id($table_id . $this->to_field()),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -1129,7 +1131,7 @@ class sandbox_link extends sandbox
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
-                            $change_field_list->id($table_id . $this->from_field()),
+                            $cng_fld_cac->id($table_id . $this->from_field()),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
@@ -1142,7 +1144,7 @@ class sandbox_link extends sandbox
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
-                            $change_field_list->id($table_id . $this->to_field()),
+                            $cng_fld_cac->id($table_id . $this->to_field()),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
@@ -1169,7 +1171,7 @@ class sandbox_link extends sandbox
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
-                            $change_field_list->id($table_id . $this->from_field()),
+                            $cng_fld_cac->id($table_id . $this->from_field()),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
@@ -1182,7 +1184,7 @@ class sandbox_link extends sandbox
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),
-                            $change_field_list->id($table_id . $this->to_field()),
+                            $cng_fld_cac->id($table_id . $this->to_field()),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }

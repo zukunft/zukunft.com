@@ -31,7 +31,7 @@
 
 namespace api\system;
 
-enum messeges: string
+enum messages: string
 {
 
     // unique message key

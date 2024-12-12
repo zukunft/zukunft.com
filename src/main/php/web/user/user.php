@@ -2,7 +2,7 @@
 
 /*
 
-    user_dsp.php - functions to create the HTML code to display a the user setup and log information
+    user_dsp.php - functions to create the HTML code to display the user setup and log information
     ------------
 
     This file is part of zukunft.com - calc with words
@@ -36,10 +36,11 @@ include_once SHARED_PATH . 'api.php';
 // get the pure html frontend objects
 include_once HTML_PATH . 'html_base.php';
 include_once API_USER_PATH . 'user.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
 use api\user\user as user_api;
 use html\html_base;
+use shared\json_fields;
 
 class user extends user_api
 {
@@ -69,39 +70,39 @@ class user extends user_api
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = new user_message();
-        if (array_key_exists(api::FLD_ID, $json_array)) {
-            $this->set_id($json_array[api::FLD_ID]);
+        if (array_key_exists(json_fields::ID, $json_array)) {
+            $this->set_id($json_array[json_fields::ID]);
         } else {
             $this->set_id(0);
             $usr_msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
-        if (array_key_exists(api::FLD_NAME, $json_array)) {
-            $this->name = $json_array[api::FLD_NAME];
+        if (array_key_exists(json_fields::NAME, $json_array)) {
+            $this->name = $json_array[json_fields::NAME];
         } else {
             $this->name = null;
         }
-        if (array_key_exists(api::FLD_NAME, $json_array)) {
-            $this->description = $json_array[api::FLD_NAME];
+        if (array_key_exists(json_fields::NAME, $json_array)) {
+            $this->description = $json_array[json_fields::NAME];
         } else {
             $this->description = null;
         }
-        if (array_key_exists(api::FLD_NAME, $json_array)) {
-            $this->profile = $json_array[api::FLD_NAME];
+        if (array_key_exists(json_fields::NAME, $json_array)) {
+            $this->profile = $json_array[json_fields::NAME];
         } else {
             $this->profile = null;
         }
-        if (array_key_exists(api::FLD_NAME, $json_array)) {
-            $this->email = $json_array[api::FLD_NAME];
+        if (array_key_exists(json_fields::NAME, $json_array)) {
+            $this->email = $json_array[json_fields::NAME];
         } else {
             $this->email = null;
         }
-        if (array_key_exists(api::FLD_NAME, $json_array)) {
-            $this->first_name = $json_array[api::FLD_NAME];
+        if (array_key_exists(json_fields::NAME, $json_array)) {
+            $this->first_name = $json_array[json_fields::NAME];
         } else {
             $this->first_name = null;
         }
-        if (array_key_exists(api::FLD_NAME, $json_array)) {
-            $this->last_name = $json_array[api::FLD_NAME];
+        if (array_key_exists(json_fields::NAME, $json_array)) {
+            $this->last_name = $json_array[json_fields::NAME];
         } else {
             $this->last_name = null;
         }
@@ -119,8 +120,8 @@ class user extends user_api
      */
     function api_array(): array
     {
-        $vars[api::FLD_NAME] = $this->name;
-        $vars[api::FLD_DESCRIPTION] = $this->description;
+        $vars[json_fields::NAME] = $this->name;
+        $vars[json_fields::DESCRIPTION] = $this->description;
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

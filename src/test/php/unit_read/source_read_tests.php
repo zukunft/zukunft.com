@@ -47,7 +47,7 @@ class source_read_tests
     {
 
         global $db_con;
-        global $source_types;
+        global $src_typ_cac;
 
         // init
         $lib = new library();
@@ -67,7 +67,7 @@ class source_read_tests
         $result = $lst->load($db_con);
         $t->assert('load_source_types', $result, true);
         $test_name = '... and check if at least ' . source_type::XBRL . ' is loaded';
-        $t->assert($test_name, $source_types->id(source_type::XBRL), source_type::XBRL_ID);
+        $t->assert($test_name, $src_typ_cac->id(source_type::XBRL), source_type::XBRL_ID);
 
         $t->subheader('source list tests');
         $test_name = 'loading by source list by ids ';

@@ -150,7 +150,7 @@ class button
         return $this->html(self::IMG_FIND);
     } // a find button to search for a word
 
-    function unfilter(string $ui_msg_id = '', string $explain = ''): string
+    function un_filter(string $ui_msg_id = '', string $explain = ''): string
     {
         $this->set_ui_msg($ui_msg_id, $explain);
         return $this->html(self::IMG_UN_FILTER);
@@ -201,10 +201,10 @@ class button
     /**
      * the old zuh_btn_confirm without description, replace with zuh_btn_confirm
      */
-    function yesno(string $ui_msg_id = '', string $explain = ''): string
+    function yes_no(string $ui_msg_id = '', string $explain = ''): string
     {
         $html = new html_base();
-        //zu_debug("button->yesno ".$this->title.".", 10);
+        //zu_debug("button->yes_no ".$this->title.".", 10);
 
         if ($ui_msg_id != '') {
             // TODO review
@@ -221,7 +221,7 @@ class button
         //$result = $this->title.'<a href="'.$this->call.'&confirm=1" title="Yes">Yes</a>/<a href="'.$this->call.'&confirm=-1" title="No">No</a>';
         //$result = '<a href="'.$this->call.'" onclick="return confirm(\''.$this->title.'\')">'.$this->title.'</a>';
         //$result = "<a onClick=\"javascript: return confirm('".$this->title."');\" href='".$this->call."'>x</a>";
-        //zu_debug("button->yesno ".$this->title." done.", 10);
+        //zu_debug("button->yes_no ".$this->title." done.", 10);
         return $result;
     }
 
@@ -392,12 +392,12 @@ function btn_find(string $text, string $url): string
 function btn_unfilter(string $text, string $url): string
 {
     $b = new button($url);
-    return $b->unfilter('', $text);
+    return $b->un_filter('', $text);
 } // button to remove a filter
 function btn_yesno(string $text, string $url): string
 {
     $b = new button($url);
-    return $b->yesno('', $text);
+    return $b->yes_no('', $text);
 }    // button to get the user confirmation
 function btn_back($back_link): string
 {

@@ -566,11 +566,11 @@ class type_list
      */
     function view_id_list(array $code_id_list): array
     {
-        global $view_types;
+        global $msk_typ_cac;
 
         $result = [];
         foreach ($code_id_list as $code_id) {
-            $result[] = $view_types->id($code_id);
+            $result[] = $msk_typ_cac->id($code_id);
         }
         return $result;
     }
@@ -581,11 +581,11 @@ class type_list
      */
     function component_id_list(array $code_id_list): array
     {
-        global $component_types;
+        global $cmp_typ_cac;
 
         $result = [];
         foreach ($code_id_list as $code_id) {
-            $result[] = $component_types->id($code_id);
+            $result[] = $cmp_typ_cac->id($code_id);
         }
         return $result;
     }

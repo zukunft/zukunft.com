@@ -5,7 +5,7 @@
     /web/ref/ref.php - the extension of the reference API objects to create ref base html code
     ----------------
 
-    extends db_object_dsp because this is the only display object that does not have a explicit name but has a type
+    extends db_object_dsp because this is the only display object that does not have an explicit name but has a type
 
 
     This file is part of the frontend of zukunft.com - calc with words
@@ -34,12 +34,15 @@
 
 namespace html\ref;
 
+include_once SHARED_PATH . 'json_fields.php';
+
 use shared\api;
 use html\sandbox\db_object as db_object_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\user\user_message;
 use html\word\word as word_dsp;
 use html\ref\source as source_dsp;
+use shared\json_fields;
 
 class ref extends db_object_dsp
 {
@@ -86,39 +89,39 @@ class ref extends db_object_dsp
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_PHRASE, $json_array)) {
+        if (array_key_exists(json_fields::PHRASE, $json_array)) {
             $phr = new phrase_dsp();
             $wrd = new word_dsp();
             $phr->set_obj($wrd);
-            $phr->set_id($json_array[api::FLD_PHRASE]);
+            $phr->set_id($json_array[json_fields::PHRASE]);
             $this->phr = $phr;
         } else {
             $this->phr = null;
         }
-        if (array_key_exists(api::FLD_SOURCE, $json_array)) {
+        if (array_key_exists(json_fields::SOURCE, $json_array)) {
             $src = new source_dsp();
-            $src->set_id($json_array[api::FLD_SOURCE]);
+            $src->set_id($json_array[json_fields::SOURCE]);
             $this->source = $src;
         } else {
             $this->source = null;
         }
-        if (array_key_exists(api::FLD_EXTERNAL_KEY, $json_array)) {
-            $this->set_external_key($json_array[api::FLD_EXTERNAL_KEY]);
+        if (array_key_exists(json_fields::EXTERNAL_KEY, $json_array)) {
+            $this->set_external_key($json_array[json_fields::EXTERNAL_KEY]);
         } else {
             $this->set_external_key(null);
         }
-        if (array_key_exists(api::FLD_URL, $json_array)) {
-            $this->set_url($json_array[api::FLD_URL]);
+        if (array_key_exists(json_fields::URL, $json_array)) {
+            $this->set_url($json_array[json_fields::URL]);
         } else {
             $this->set_url(null);
         }
-        if (array_key_exists(api::FLD_PREDICATE, $json_array)) {
-            $this->set_predicate_id($json_array[api::FLD_PREDICATE]);
+        if (array_key_exists(json_fields::PREDICATE, $json_array)) {
+            $this->set_predicate_id($json_array[json_fields::PREDICATE]);
         } else {
             $this->set_predicate_id();
         }
-        if (array_key_exists(api::FLD_DESCRIPTION, $json_array)) {
-            $this->set_description($json_array[api::FLD_DESCRIPTION]);
+        if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
+            $this->set_description($json_array[json_fields::DESCRIPTION]);
         } else {
             $this->set_description(null);
         }
@@ -150,8 +153,8 @@ class ref extends db_object_dsp
      */
     function type_name(): string
     {
-        global $ref_types;
-        return $ref_types->name($this->predicate_id());
+        global $ref_typ_cac;
+        return $ref_typ_cac->name($this->predicate_id());
     }
 
     function set_external_key(?string $external_key): void
@@ -233,12 +236,12 @@ class ref extends db_object_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_URL] = $this->url();
-        $vars[api::FLD_EXTERNAL_KEY] = $this->external_key();
-        $vars[api::FLD_PHRASE] = $this->phr->id();
-        $vars[api::FLD_SOURCE] = $this->source?->id();
-        $vars[api::FLD_PREDICATE] = $this->predicate_id();
-        $vars[api::FLD_DESCRIPTION] = $this->description();
+        $vars[json_fields::URL] = $this->url();
+        $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
+        $vars[json_fields::PHRASE] = $this->phr->id();
+        $vars[json_fields::SOURCE] = $this->source?->id();
+        $vars[json_fields::PREDICATE] = $this->predicate_id();
+        $vars[json_fields::DESCRIPTION] = $this->description();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

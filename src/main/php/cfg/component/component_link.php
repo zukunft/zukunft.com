@@ -140,11 +140,6 @@ class component_link extends sandbox_link
         [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
     );
 
-    // JSON fields
-    // TODO easy move JSON fields to a shared object
-    const FLD_JSON_POSITION_TYPE = 'position_type';
-    const FLD_JSON_STYLE = 'style';
-
 
     /*
      * object vars
@@ -260,8 +255,8 @@ class component_link extends sandbox_link
      */
     function set_predicate(string $type_code_id): void
     {
-        global $component_link_types;
-        $this->predicate_id = $component_link_types->id($type_code_id);
+        global $cmp_lnk_typ_cac;
+        $this->predicate_id = $cmp_lnk_typ_cac->id($type_code_id);
     }
 
     /**
@@ -299,11 +294,11 @@ class component_link extends sandbox_link
      */
     function set_pos_type(string $code_id): void
     {
-        global $position_type_cache;
+        global $pos_typ_cac;
         if ($code_id == null) {
             $this->pos_type = null;
         } else {
-            $this->pos_type = $position_type_cache->get_by_code_id($code_id);
+            $this->pos_type = $pos_typ_cac->get_by_code_id($code_id);
         }
     }
 
@@ -315,11 +310,11 @@ class component_link extends sandbox_link
      */
     function set_pos_type_by_id(?int $pos_type_id): void
     {
-        global $position_type_cache;
+        global $pos_typ_cac;
         if ($pos_type_id == null) {
             $this->pos_type = null;
         } else {
-            $this->pos_type = $position_type_cache->get($pos_type_id);
+            $this->pos_type = $pos_typ_cac->get($pos_type_id);
         }
     }
 
@@ -347,11 +342,11 @@ class component_link extends sandbox_link
      */
     function set_style(?string $code_id): void
     {
-        global $view_style_cache;
+        global $msk_sty_cac;
         if ($code_id == null) {
             $this->style = null;
         } else {
-            $this->style = $view_style_cache->get_by_code_id($code_id);
+            $this->style = $msk_sty_cac->get_by_code_id($code_id);
         }
     }
 
@@ -363,12 +358,11 @@ class component_link extends sandbox_link
      */
     function set_style_by_id(?int $style_id): void
     {
-        // TODO easy rename all global type vars to _cache
-        global $view_style_cache;
+        global $msk_sty_cac;
         if ($style_id == null) {
             $this->style = null;
         } else {
-            $this->style = $view_style_cache->get($style_id);
+            $this->style = $msk_sty_cac->get($style_id);
         }
     }
 
@@ -448,8 +442,8 @@ class component_link extends sandbox_link
      */
     function predicate_name(): string
     {
-        global $component_link_types;
-        return $component_link_types->name($this->predicate_id);
+        global $cmp_lnk_typ_cac;
+        return $cmp_lnk_typ_cac->name($this->predicate_id);
     }
 
 
@@ -1066,7 +1060,7 @@ class component_link extends sandbox_link
         sql_type_list          $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -1074,29 +1068,29 @@ class component_link extends sandbox_link
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);
-        // for the standard table the type field should always be included because it is part of the prime indey
+        // for the standard table the type field should always be included because it is part of the prime index
         if ($sbx->predicate_id() <> $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_link_type::FLD_ID,
-                    $change_field_list->id($table_id . component_link_type::FLD_ID),
+                    $cng_fld_cac->id($table_id . component_link_type::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $component_link_types;
+            global $cmp_lnk_typ_cac;
             $lst->add_type_field(
                 component_link_type::FLD_ID,
                 type_object::FLD_NAME,
                 $this->predicate_id(),
                 $sbx->predicate_id(),
-                $component_link_types
+                $cmp_lnk_typ_cac
             );
         }
         if ($sbx->pos() <> $this->pos()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER_NBR,
-                    $change_field_list->id($table_id . self::FLD_ORDER_NBR),
+                    $cng_fld_cac->id($table_id . self::FLD_ORDER_NBR),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1111,28 +1105,28 @@ class component_link extends sandbox_link
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_POS_TYPE,
-                    $change_field_list->id($table_id . self::FLD_POS_TYPE),
+                    $cng_fld_cac->id($table_id . self::FLD_POS_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $position_type_cache;
+            global $pos_typ_cac;
             $lst->add_type_field(
                 self::FLD_POS_TYPE,
                 self::FLD_POS_TYPE_NAME,
                 $this->pos_type_id(),
                 $sbx->pos_type_id(),
-                $position_type_cache
+                $pos_typ_cac
             );
         }
         if ($sbx->style_id() <> $this->style_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_STYLE,
-                    $change_field_list->id($table_id . self::FLD_STYLE),
+                    $cng_fld_cac->id($table_id . self::FLD_STYLE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $view_style_cache;
+            global $msk_sty_cac;
             // TODO easy move to id function of type list
             if ($this->style_id() < 0) {
                 log_err('component link style for ' . $this->dsp_id() . ' not found');
@@ -1142,7 +1136,7 @@ class component_link extends sandbox_link
                 view_style::FLD_NAME,
                 $this->style_id(),
                 $sbx->style_id(),
-                $view_style_cache
+                $msk_sty_cac
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));

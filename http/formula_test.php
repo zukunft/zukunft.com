@@ -62,7 +62,7 @@ use shared\views as view_shared;
 $db_con = prg_start("start formula_test.php");
 $html = new html_base();
 
-global $system_views;
+global $sys_msk_cac;
 
 // load the session user parameters
 $session_usr = new user;
@@ -76,7 +76,7 @@ if ($session_usr->id() > 0) {
 
     // show the header even if all parameters are wrong
     $msk = new view($session_usr);
-    $msk->set_id($system_views->id(view_shared::MC_FORMULA_TEST));
+    $msk->set_id($sys_msk_cac->id(view_shared::MC_FORMULA_TEST));
     $back = $_GET[api::URL_VAR_BACK] = ''; // the page (or phrase id) from which formula testing has been called
     $msk_dsp = new view_dsp($msk->api_json());
     echo $msk_dsp->dsp_navbar($back);

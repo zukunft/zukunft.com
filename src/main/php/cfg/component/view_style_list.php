@@ -41,7 +41,7 @@ use shared\types\view_styles;
 use cfg\type_list;
 use cfg\type_object;
 
-global $view_style_cache;
+global $msk_sty_cac;
 
 class view_style_list extends type_list
 {
@@ -64,7 +64,7 @@ class view_style_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(view_styles::SM_COL_4);
+        return parent::id(view_styles::COL_SM_4);
     }
 
 }

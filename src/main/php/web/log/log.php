@@ -34,13 +34,14 @@ namespace html\log;
 include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
 use DateTimeInterface;
 use html\sandbox\db_object as db_object_dsp;
 use DateTime;
 use Exception;
 use html\user\user_message;
+use shared\json_fields;
 
 class log extends db_object_dsp
 {
@@ -69,30 +70,30 @@ class log extends db_object_dsp
         $usr_msg = parent::set_from_json_array($json_array);
         // TODO use empty date instead?
         $sys_log_timestamp = new DateTime();
-        if (array_key_exists(api::FLD_TIME, $json_array)) {
+        if (array_key_exists(json_fields::TIME, $json_array)) {
             try {
-                $sys_log_timestamp = new DateTime($json_array[api::FLD_TIME]);
+                $sys_log_timestamp = new DateTime($json_array[json_fields::TIME]);
             } catch (Exception $e) {
                 // TODO avoid loops if date writing in log_err fails ?
-                log_err('Error converting system log timestamp ' . $json_array[api::FLD_TIME]
+                log_err('Error converting system log timestamp ' . $json_array[json_fields::TIME]
                     . ' because ' . $e->getMessage());
             }
         } else {
             log_warning('Mandatory time missing in API JSON ' . json_encode($json_array));
         }
         $this->set_time($sys_log_timestamp);
-        if (array_key_exists(api::FLD_USER_ID, $json_array)) {
-            $this->set_user_id($json_array[api::FLD_USER_ID]);
+        if (array_key_exists(json_fields::USER_ID, $json_array)) {
+            $this->set_user_id($json_array[json_fields::USER_ID]);
         } else {
             $this->set_user_id(0);
         }
-        if (array_key_exists(api::FLD_TEXT, $json_array)) {
-            $this->set_text($json_array[api::FLD_TEXT]);
+        if (array_key_exists(json_fields::TEXT, $json_array)) {
+            $this->set_text($json_array[json_fields::TEXT]);
         } else {
             $this->set_text('');
         }
-        if (array_key_exists(api::FLD_STATUS, $json_array)) {
-            $this->set_status($json_array[api::FLD_STATUS]);
+        if (array_key_exists(json_fields::STATUS, $json_array)) {
+            $this->set_status($json_array[json_fields::STATUS]);
         } else {
             $this->set_status(0);
         }
@@ -151,10 +152,10 @@ class log extends db_object_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_TIME] = $this->time()->format(DateTimeInterface::ATOM);
-        $vars[api::FLD_USER_ID] = $this->user_id();
-        $vars[api::FLD_TEXT] = $this->text();
-        $vars[api::FLD_STATUS] = $this->status();
+        $vars[json_fields::TIME] = $this->time()->format(DateTimeInterface::ATOM);
+        $vars[json_fields::USER_ID] = $this->user_id();
+        $vars[json_fields::TEXT] = $this->text();
+        $vars[json_fields::STATUS] = $this->status();
         return $vars;
     }
 

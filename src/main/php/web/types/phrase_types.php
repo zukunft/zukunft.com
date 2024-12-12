@@ -36,6 +36,7 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use html\html_base;
 use shared\types\phrase_type;
+use shared\types\view_styles;
 
 class phrase_types extends type_list
 {
@@ -55,7 +56,7 @@ class phrase_types extends type_list
         string $form,
         int    $selected = 1,
         string $label = 'type:',
-        string $bs_class = html_base::COL_SM_4,
+        string $bs_class = view_styles::COL_SM_4,
         string $name = self::NAME
     ): string
     {

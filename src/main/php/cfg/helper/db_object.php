@@ -244,7 +244,7 @@ class db_object
         $sc->set_class($class, $sc_par_lst, $sc_par_lst->ext_ex_user());
         $sc->set_name($qp->name);
         $sc->set_fields($this::FLD_NAMES);
-        // TODO generalisie this exception
+        // TODO generalise this exception
         if ($class == group::class
             and $sc_par_lst->is_prime()
             and $query_name == 'name'

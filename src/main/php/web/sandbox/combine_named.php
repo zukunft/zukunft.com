@@ -35,9 +35,10 @@
 namespace html\sandbox;
 
 include_once SANDBOX_PATH . 'combine_object.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
 use html\rest_ctrl as api_dsp;
+use shared\json_fields;
 
 class combine_named extends combine_object
 {
@@ -167,10 +168,10 @@ class combine_named extends combine_object
     function api_array(): array
     {
         $vars = array();
-        $vars[api::FLD_ID] = $this->obj()?->id();
-        $vars[api::FLD_NAME] = $this->name();
-        $vars[api::FLD_DESCRIPTION] = $this->description();
-        $vars[api::FLD_TYPE] = $this->type_id();
+        $vars[json_fields::ID] = $this->obj()?->id();
+        $vars[json_fields::NAME] = $this->name();
+        $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::TYPE] = $this->type_id();
         return $vars;
     }
 

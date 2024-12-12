@@ -52,7 +52,7 @@ class verb_read_tests
     {
 
         global $db_con;
-        global $verbs;
+        global $vrb_cac;
 
         // init
         $t->name = 'verb read db->';
@@ -116,7 +116,7 @@ class verb_read_tests
         $t->assert('load', $result, true);
 
         // ... and check if at least the most critical verb is loaded
-        $result = $verbs->id(verbs::IS);
+        $result = $vrb_cac->id(verbs::IS);
         // just check if the verb is around, because the position may vary depending on the historic creation of the database
         $target = 0;
         if ($result > 0) {

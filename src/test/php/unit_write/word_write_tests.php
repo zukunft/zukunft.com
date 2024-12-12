@@ -61,7 +61,7 @@ class word_write_tests
 
     function run(test_cleanup $t): void
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         // init
         $lib = new library();
@@ -364,7 +364,7 @@ class word_write_tests
         // check if the word parameters can be added
         $wrd_renamed->plural = word_api::TN_RENAMED . 's';
         $wrd_renamed->description = word_api::TN_RENAMED . ' description';
-        $wrd_renamed->type_id = $phrase_types->id(phrase_type_shared::OTHER);
+        $wrd_renamed->type_id = $phr_typ_cac->id(phrase_type_shared::OTHER);
         $result = $wrd_renamed->save()->get_last_message();
         $target = '';
         $t->display('word->save all word fields beside the name for "' . word_api::TN_RENAMED . '"',
@@ -379,7 +379,7 @@ class word_write_tests
         $target = word_api::TN_RENAMED . ' description';
         $t->display('word->load description for "' . word_api::TN_RENAMED . '"', $target, $result);
         $result = $wrd_reloaded->type_id;
-        $target = $phrase_types->id(phrase_type_shared::OTHER);
+        $target = $phr_typ_cac->id(phrase_type_shared::OTHER);
         $t->display('word->load type_id for "' . word_api::TN_RENAMED . '"', $target, $result);
 
         // check if the word parameter adding have been logged
@@ -405,7 +405,7 @@ class word_write_tests
         $wrd_usr2->load_by_name(word_api::TN_RENAMED);
         $wrd_usr2->plural = word_api::TN_RENAMED . 's2';
         $wrd_usr2->description = word_api::TN_RENAMED . ' description2';
-        $wrd_usr2->type_id = $phrase_types->id(phrase_type_shared::TIME);
+        $wrd_usr2->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         $result = $wrd_usr2->save()->get_last_message();
         $target = '';
         $t->display('word->save all word fields for user 2 beside the name for "' . word_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -420,7 +420,7 @@ class word_write_tests
         $target = word_api::TN_RENAMED . ' description2';
         $t->display('word->load description for "' . word_api::TN_RENAMED . '"', $target, $result);
         $result = $wrd_usr2_reloaded->type_id;
-        $target = $phrase_types->id(phrase_type_shared::TIME);
+        $target = $phr_typ_cac->id(phrase_type_shared::TIME);
         $t->display('word->load type_id for "' . word_api::TN_RENAMED . '"', $target, $result);
 
         // check the word for the original user remains unchanged
@@ -432,7 +432,7 @@ class word_write_tests
         $target = word_api::TN_RENAMED . ' description';
         $t->display('word->load description for "' . word_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
         $result = $wrd_reloaded->type_id;
-        $target = $phrase_types->id(phrase_type_shared::OTHER);
+        $target = $phr_typ_cac->id(phrase_type_shared::OTHER);
         $t->display('word->load type_id for "' . word_api::TN_RENAMED . '" unchanged for user 1', $target, $result);
 
         // TODO check that the changed word name cannot be used for a verb, triple or formula anymore
@@ -442,7 +442,7 @@ class word_write_tests
         $wrd_usr2->load_by_name(word_api::TN_RENAMED);
         $wrd_usr2->plural = word_api::TN_RENAMED . 's';
         $wrd_usr2->description = word_api::TN_RENAMED . ' description';
-        $wrd_usr2->type_id = $phrase_types->id(phrase_type_shared::OTHER);
+        $wrd_usr2->type_id = $phr_typ_cac->id(phrase_type_shared::OTHER);
         $result = $wrd_usr2->save()->get_last_message();
         $target = '';
         $t->display('word->save undo the user word fields beside the name for "' . word_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -457,7 +457,7 @@ class word_write_tests
         $target = word_api::TN_RENAMED . ' description';
         $t->display('word->load description for "' . word_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
         $result = $wrd_usr2_reloaded->type_id;
-        $target = $phrase_types->id(phrase_type_shared::OTHER);
+        $target = $phr_typ_cac->id(phrase_type_shared::OTHER);
         $t->display('word->load type_id for "' . word_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
 
         // display

@@ -47,7 +47,7 @@ use cfg\word_list;
 use shared\api;
 use shared\views as view_shared;
 
-global $system_views;
+global $sys_msk_cac;
 
 $result = ''; // reset the html code var
 
@@ -73,7 +73,7 @@ if (!$db_con->connected()) {
         $usr->load_usr_data();
 
         // show view header
-        $view_id = $system_views->id(view_shared::MC_WORD_FIND);
+        $view_id = $sys_msk_cac->id(view_shared::MC_WORD_FIND);
         $msk = new view($usr);
         $msk->load_by_id($view_id);
         $msk->load_components();

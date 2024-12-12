@@ -31,12 +31,13 @@
 
 namespace cfg;
 
+include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use JsonSerializable;
+use shared\json_fields;
 use shared\library;
 
 class language extends type_object implements JsonSerializable
@@ -103,7 +104,7 @@ class language extends type_object implements JsonSerializable
     {
         $vars = parent::jsonSerialize();
         $vars = array_merge($vars, get_object_vars($this));
-        $vars[api::FLD_ID] = $this->id();
+        $vars[json_fields::ID] = $this->id();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

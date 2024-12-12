@@ -39,7 +39,7 @@ include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 use shared\types\protection_type as protect_type_shared;
 use test\create_test_objects;
 
-global $protection_types;
+global $ptc_typ_cac;
 
 class protection_type_list extends type_list
 {

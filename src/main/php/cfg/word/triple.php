@@ -62,13 +62,14 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 include_once SERVICE_EXPORT_PATH . 'triple_exp.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use api\system\messeges as msg_enum;
+use api\system\messages as msg_enum;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
+use shared\json_fields;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
-use shared\api;
 use api\word\triple as triple_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -89,6 +90,7 @@ use JsonSerializable;
 use shared\library;
 use shared\types\phrase_type AS phrase_type_shared;
 use shared\types\verbs;
+use shared\types\view_styles;
 
 
 class triple extends sandbox_link_named implements JsonSerializable
@@ -382,8 +384,8 @@ class triple extends sandbox_link_named implements JsonSerializable
             $this->set_predicate_id($vrb->id());
         } else {
             if ($vrb->name() != '') {
-                global $verbs;
-                $vrb_selected = $verbs->get_by_name($vrb->name());
+                global $vrb_cac;
+                $vrb_selected = $vrb_cac->get_by_name($vrb->name());
                 $this->set_predicate_id($vrb_selected->id());
             }
         }
@@ -402,12 +404,12 @@ class triple extends sandbox_link_named implements JsonSerializable
 
     function verb(): verb|null
     {
-        global $verbs;
+        global $vrb_cac;
         $id = $this->predicate_id();
         if ($id == 0) {
             return null;
         } else {
-            return $verbs->get($id);
+            return $vrb_cac->get($id);
         }
     }
 
@@ -436,13 +438,13 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function verb_name(): string
     {
-        global $verbs;
+        global $vrb_cac;
         $id = $this->predicate_id();
         if ($id > 0) {
-            $vrb = $verbs->get($this->predicate_id());
+            $vrb = $vrb_cac->get($this->predicate_id());
             return $vrb->name();
         } elseif ($id < 0) {
-            $vrb = $verbs->get($this->predicate_id() * -1);
+            $vrb = $vrb_cac->get($this->predicate_id() * -1);
             return $vrb->reverse();
         } else {
             return '';
@@ -484,8 +486,8 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function set_type(string $type_code_id): void
     {
-        global $phrase_types;
-        $this->type_id = $phrase_types->id($type_code_id);
+        global $phr_typ_cac;
+        $this->type_id = $phr_typ_cac->id($type_code_id);
     }
 
     /**
@@ -658,7 +660,7 @@ class triple extends sandbox_link_named implements JsonSerializable
      * if the given name is not set (null) the given name is not remove
      * if the given name is an empty string the given name is removed
      *
-     * @param triple|db_object_seq_id $sbx word with the values that sould been updated e.g. based on the import
+     * @param triple|db_object_seq_id $sbx word with the values that should been updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
     function fill(triple|db_object_seq_id $sbx): user_message
@@ -687,8 +689,8 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function type_name(): string
     {
-        global $phrase_types;
-        return $phrase_types->name($this->type_id);
+        global $phr_typ_cac;
+        return $phr_typ_cac->name($this->type_id);
     }
 
     /**
@@ -697,11 +699,11 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function type_code_id(): string
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         if ($this->type_id == null) {
             return '';
         } else {
-            return $phrase_types->code_id($this->type_id);
+            return $phr_typ_cac->code_id($this->type_id);
         }
     }
 
@@ -724,10 +726,10 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function is_type(string $typ): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $result = false;
-        if ($this->type_id == $phrase_types->id($typ)) {
+        if ($this->type_id == $phr_typ_cac->id($typ)) {
             $result = true;
         }
         return $result;
@@ -803,7 +805,7 @@ class triple extends sandbox_link_named implements JsonSerializable
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_FROM) {
+            if ($key == json_fields::FROM) {
                 if ($value != 0) {
                     // TODO use phrase cache
                     $phr = new phrase($this->user());
@@ -811,7 +813,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                     $this->set_from($phr);
                 }
             }
-            if ($key == api::FLD_TO) {
+            if ($key == json_fields::TO) {
                 if ($value != 0) {
                     // TODO use phrase cache
                     $phr = new phrase($this->user());
@@ -819,10 +821,10 @@ class triple extends sandbox_link_named implements JsonSerializable
                     $this->set_to($phr);
                 }
             }
-            if ($key == api::FLD_VERB) {
+            if ($key == json_fields::VERB) {
                 if ($value != 0) {
-                    global $verbs;
-                    $vrb = $verbs->get($value);
+                    global $vrb_cac;
+                    $vrb = $vrb_cac->get($value);
                     $this->set_verb($vrb);
                 }
             }
@@ -833,11 +835,11 @@ class triple extends sandbox_link_named implements JsonSerializable
                     $this->plural = $value;
                 }
             }
-            if ($key == share_type_shared::JSON_FLD) {
-                $this->share_id = $share_types->id($value);
+            if ($key == json_fields::SHARE) {
+                $this->share_id = $shr_typ_cac->id($value);
             }
-            if ($key == protect_type_shared::JSON_FLD) {
-                $this->protection_id = $protection_types->id($value);
+            if ($key == json_fields::PROTECTION) {
+                $this->protection_id = $ptc_typ_cac->id($value);
             }
             if ($key == exp_obj::FLD_VIEW) {
                 $wrd_view = new view($this->user());
@@ -854,7 +856,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 $this->view = $wrd_view;
             }
 
-            if ($key == api::FLD_PHRASES) {
+            if ($key == json_fields::PHRASES) {
                 $phr_lst = new phrase_list($this->user());
                 $msg->add($phr_lst->db_obj($value));
                 if ($msg->is_ok()) {
@@ -1382,10 +1384,10 @@ class triple extends sandbox_link_named implements JsonSerializable
         $vars = parent::jsonSerialize();
         $vars = array_merge($vars, get_object_vars($this));
         if ($this->from()->obj() != null) {
-            $vars[self::FLD_EX_FROM] = $this->from()->obj()->name_dsp();
+            $vars[json_fields::EX_FROM] = $this->from()->obj()->name_dsp();
         }
         if ($this->to()->obj() != null) {
-            $vars[self::FLD_EX_TO] = $this->to()->obj()->name_dsp();
+            $vars[json_fields::EX_TO] = $this->to()->obj()->name_dsp();
         }
         return $vars;
     }
@@ -1428,7 +1430,7 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         log_debug();
 
@@ -1480,15 +1482,15 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function import_obj_fill(array $in_ex_json, object $test_obj = null): user_message
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $result = parent::import_obj($in_ex_json, $test_obj);
 
         foreach ($in_ex_json as $key => $value) {
             if ($key == sandbox_exp::FLD_TYPE) {
-                $this->type_id = $phrase_types->id($value);
+                $this->type_id = $phr_typ_cac->id($value);
             }
-            if ($key == self::FLD_EX_FROM) {
+            if ($key == json_fields::EX_FROM) {
                 if ($value == "") {
                     $lib = new library();
                     $result->add_message('from name should not be empty at ' . $lib->dsp_array($in_ex_json));
@@ -1500,7 +1502,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                     }
                 }
             }
-            if ($key == self::FLD_EX_TO) {
+            if ($key == json_fields::EX_TO) {
                 if ($value == "") {
                     $lib = new library();
                     $result->add_message('to name should not be empty at ' . $lib->dsp_array($in_ex_json));
@@ -1508,7 +1510,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                     $this->set_to($this->import_phrase($value, $test_obj));
                 }
             }
-            if ($key == self::FLD_EX_VERB) {
+            if ($key == json_fields::EX_VERB) {
                 $vrb = new verb;
                 $vrb->set_user($this->user());
                 if (!$test_obj) {
@@ -1549,9 +1551,9 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function export_obj(bool $do_load = true): sandbox_exp
     {
-        global $phrase_types;
-        global $share_types;
-        global $protection_types;
+        global $phr_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
 
         log_debug();
         $result = new triple_exp();
@@ -1563,7 +1565,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             $result->description = $this->description;
         }
         if ($this->type_id > 0) {
-            if ($this->type_id <> $phrase_types->default_id()) {
+            if ($this->type_id <> $phr_typ_cac->default_id()) {
                 $result->type = $this->type_code_id();
             }
         }
@@ -1578,12 +1580,12 @@ class triple extends sandbox_link_named implements JsonSerializable
         }
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type_shared::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
         // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protect_type_shared::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 
@@ -1643,8 +1645,8 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function generate_name(): string
     {
-        global $verbs;
-        if ($this->verb_id() == $verbs->id(verbs::IS) and $this->from()->name() != '' and $this->to()->name() != '') {
+        global $vrb_cac;
+        if ($this->verb_id() == $vrb_cac->id(verbs::IS) and $this->from()->name() != '' and $this->to()->name() != '') {
             // use the user defined description
             return $this->from()->name() . ' (' . $this->to()->name() . ')';
         } elseif ($this->from()->name() != '' and $this->verb_name() != '' and $this->to()->name() != '') {
@@ -2375,7 +2377,7 @@ class triple extends sandbox_link_named implements JsonSerializable
         sql_type_list  $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -2392,18 +2394,17 @@ class triple extends sandbox_link_named implements JsonSerializable
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
-                    $change_field_list->id($table_id . phrase::FLD_TYPE),
+                    $cng_fld_cac->id($table_id . phrase::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $phrase_types;
+            global $phr_typ_cac;
             $lst->add_type_field(
                 phrase::FLD_TYPE,
                 phrase::FLD_TYPE_NAME,
                 $this->type_id(),
                 $sbx->type_id(),
-                $phrase_types
-            );
+                $phr_typ_cac            );
         }
 
         // the link type cannot be changed by the user, because this would be another link
@@ -2412,17 +2413,17 @@ class triple extends sandbox_link_named implements JsonSerializable
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
-                        $change_field_list->id($table_id . verb::FLD_ID),
+                        $cng_fld_cac->id($table_id . verb::FLD_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
-                global $verbs;
+                global $vrb_cac;
                 $lst->add_type_field(
                     verb::FLD_ID,
                     verb::FLD_NAME,
                     $this->verb_id(),
                     $sbx->verb_id(),
-                    $verbs
+                    $vrb_cac
                 );
             }
         } else {
@@ -2435,23 +2436,23 @@ class triple extends sandbox_link_named implements JsonSerializable
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
-                            $change_field_list->id($table_id . verb::FLD_ID),
+                            $cng_fld_cac->id($table_id . verb::FLD_ID),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
-                    global $verbs;
+                    global $vrb_cac;
                     $lst->add_type_field(
                         verb::FLD_ID,
                         verb::FLD_NAME,
                         null,
                         $sbx->verb_id(),
-                        $verbs
+                        $vrb_cac
                     );
                     // TODO check if the excluded field is not already added by the sandbox function
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . sandbox::FLD_EXCLUDED,
-                            $change_field_list->id($table_id . sandbox::FLD_EXCLUDED),
+                            $cng_fld_cac->id($table_id . sandbox::FLD_EXCLUDED),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
@@ -2464,17 +2465,17 @@ class triple extends sandbox_link_named implements JsonSerializable
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
-                            $change_field_list->id($table_id . verb::FLD_ID),
+                            $cng_fld_cac->id($table_id . verb::FLD_ID),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
-                    global $verbs;
+                    global $vrb_cac;
                     $lst->add_type_field(
                         verb::FLD_ID,
                         verb::FLD_NAME,
                         $this->verb_id(),
                         null,
-                        $verbs
+                        $vrb_cac
                     );
                 }
             }
@@ -2484,7 +2485,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sandbox::FLD_EXCLUDED,
-                    $change_field_list->id($table_id . sandbox::FLD_EXCLUDED),
+                    $cng_fld_cac->id($table_id . sandbox::FLD_EXCLUDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2503,7 +2504,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_NAME_GIVEN,
-                    $change_field_list->id($table_id . self::FLD_NAME_GIVEN),
+                    $cng_fld_cac->id($table_id . self::FLD_NAME_GIVEN),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2523,7 +2524,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_NAME_AUTO,
-                    $change_field_list->id($table_id . self::FLD_NAME_AUTO),
+                    $cng_fld_cac->id($table_id . self::FLD_NAME_AUTO),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2544,7 +2545,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_VALUES,
-                    $change_field_list->id($table_id . self::FLD_VALUES),
+                    $cng_fld_cac->id($table_id . self::FLD_VALUES),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2559,7 +2560,7 @@ class triple extends sandbox_link_named implements JsonSerializable
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_VIEW,
-                    $change_field_list->id($table_id . self::FLD_VIEW),
+                    $cng_fld_cac->id($table_id . self::FLD_VIEW),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2698,12 +2699,12 @@ class triple extends sandbox_link_named implements JsonSerializable
         $result .= $html->input("from", $this->from_id());
         $result .= '<div class="form-row">';
         if ($this->has_verb()) {
-            $result .= $this->verb()->dsp_selector('both', $form_name, html_base::COL_SM_6, $back);
+            $result .= $this->verb()->dsp_selector('both', $form_name, view_styles::COL_SM_6, $back);
         }
         if ($this->to() != null) {
             $type_phr = new phrase($this->user());
             $type_phr->load_by_id(0);
-            $result .= $this->to()->dsp_selector($type_phr->dsp_obj(), $form_name, 0, html_base::COL_SM_6, $back);
+            $result .= $this->to()->dsp_selector($type_phr->dsp_obj(), $form_name, 0, view_styles::COL_SM_6, $back);
         }
         $result .= '</div>';
         $result .= '<br>';

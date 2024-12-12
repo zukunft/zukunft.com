@@ -34,11 +34,14 @@
 
 namespace html\result;
 
+include_once SHARED_PATH . 'json_fields.php';
+
 use shared\api;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\sandbox\sandbox_value;
 use html\figure\figure as figure_dsp;
 use html\user\user_message;
+use shared\json_fields;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
 
@@ -59,8 +62,8 @@ class result extends sandbox_value
     {
         $usr_msg = parent::set_from_json_array($json_array);
         /* TODO add all result fields that are not part of the sandbox value object
-        if (array_key_exists(api::FLD_USER_TEXT, $json_array)) {
-            $this->set_usr_text($json_array[api::FLD_USER_TEXT]);
+        if (array_key_exists(json_fields::USER_TEXT, $json_array)) {
+            $this->set_usr_text($json_array[json_fields::USER_TEXT]);
         } else {
             $this->set_usr_text(null);
         }
@@ -119,8 +122,8 @@ class result extends sandbox_value
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_PHRASES] = $this->grp()->phr_lst()->api_array();
-        $vars[api::FLD_NUMBER] = $this->number();
+        $vars[json_fields::PHRASES] = $this->grp()->phr_lst()->api_array();
+        $vars[json_fields::NUMBER] = $this->number();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

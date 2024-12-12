@@ -907,12 +907,12 @@ class test_base
      */
     function assert_json_file(object $usr_obj, string $json_file_name): bool
     {
-        global $user_profiles;
+        global $usr_pro_cac;
         $lib = new library();
         $file_text = $this->file($json_file_name);
         $json_in = json_decode($file_text, true);
         if ($usr_obj::class == user::class) {
-            $usr_obj->import_obj($json_in, $user_profiles->id(user_profile::ADMIN), $this);
+            $usr_obj->import_obj($json_in, $usr_pro_cac->id(user_profile::ADMIN), $this);
         } else {
             $usr_obj->import_obj($json_in, $this);
         }
@@ -3185,8 +3185,8 @@ class test_base
 
     function assert_verb_id(string $code_id, int $id, string $test_name): int
     {
-        global $verbs;
-        $vrb_is_id = $verbs->id($code_id);
+        global $vrb_cac;
+        $vrb_is_id = $vrb_cac->id($code_id);
         if ($this->assert($test_name, $vrb_is_id, $id)) {
             return $vrb_is_id;
         } else {

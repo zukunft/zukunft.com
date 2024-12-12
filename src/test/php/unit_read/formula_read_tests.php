@@ -46,7 +46,7 @@ class formula_read_tests
     {
 
         global $db_con;
-        global $formula_types;
+        global $frm_typ_cac;
 
         // init
         $t->name = 'formula read db->';
@@ -82,7 +82,7 @@ class formula_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $formula_types->id(formula_type::CALC);
+        $result = $frm_typ_cac->id(formula_type::CALC);
         $target = 1;
         $t->assert('check ' . formula_type::CALC, $result, 1);
 

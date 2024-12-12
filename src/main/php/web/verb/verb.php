@@ -32,6 +32,7 @@
 namespace html\verb;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
 use api\verb\verb as verb_api;
@@ -40,6 +41,7 @@ use html\html_base;
 use html\phrase\term as term_dsp;
 use html\sandbox\sandbox_named as sandbox_named_dsp;
 use html\user\user_message;
+use shared\json_fields;
 
 class verb extends sandbox_named_dsp
 {
@@ -64,8 +66,8 @@ class verb extends sandbox_named_dsp
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_CODE_ID, $json_array)) {
-            $this->set_code_id($json_array[api::FLD_CODE_ID]);
+        if (array_key_exists(json_fields::CODE_ID, $json_array)) {
+            $this->set_code_id($json_array[json_fields::CODE_ID]);
         } else {
             $this->set_code_id('');
         }
@@ -147,7 +149,7 @@ class verb extends sandbox_named_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_CODE_ID] = $this->code_id();
+        $vars[json_fields::CODE_ID] = $this->code_id();
         return $vars;
     }
 

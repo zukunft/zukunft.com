@@ -121,8 +121,8 @@ class ref extends sandbox_api
      */
     function predicate_name(): string
     {
-        global $ref_types;
-        return $ref_types->name($this->predicate_id);
+        global $ref_typ_cac;
+        return $ref_typ_cac->name($this->predicate_id);
     }
 
 }

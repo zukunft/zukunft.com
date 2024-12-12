@@ -52,6 +52,7 @@ include_once LOG_PATH . 'user_log_display.php';
 include_once VIEW_PATH . 'view_list.php';
 include_once WORD_PATH . 'word.php';
 include_once WORD_PATH . 'triple.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 // TODO remove model classes
 use cfg\component\position_type;
@@ -72,7 +73,9 @@ use html\system\messages;
 use html\view\view_list as view_list_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
+use shared\json_fields;
 use shared\library;
+use shared\types\view_styles;
 use shared\types\view_type;
 
 class view extends sandbox_typed
@@ -118,23 +121,23 @@ class view extends sandbox_typed
     {
         // the root view object
         $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_CODE_ID, $json_array)) {
-            $this->code_id = $json_array[api::FLD_CODE_ID];
+        if (array_key_exists(json_fields::CODE_ID, $json_array)) {
+            $this->code_id = $json_array[json_fields::CODE_ID];
         } else {
             $this->code_id = null;
         }
         // set the components
         $cmp_lst = new component_list_dsp();
-        if (array_key_exists(api::FLD_COMPONENTS, $json_array)) {
-            $cmp_lst->set_from_json_array($json_array[api::FLD_COMPONENTS]);
+        if (array_key_exists(json_fields::COMPONENTS, $json_array)) {
+            $cmp_lst->set_from_json_array($json_array[json_fields::COMPONENTS]);
         }
         // set the objects (e.g. word)
         if (array_key_exists(api::API_WORD, $json_array)) {
             $this->dbo = new word_dsp();
             $dbo_json = $json_array[api::API_WORD];
             $id = 0;
-            if (array_key_exists(api::FLD_ID, $json_array)) {
-                $id = $dbo_json[api::FLD_ID];
+            if (array_key_exists(json_fields::ID, $json_array)) {
+                $id = $dbo_json[json_fields::ID];
             }
             if ($id != 0) {
                 $this->dbo->set_from_json_array($dbo_json);
@@ -144,8 +147,8 @@ class view extends sandbox_typed
             $this->dbo = new triple_dsp();
             $dbo_json = $json_array[api::API_TRIPLE];
             $id = 0;
-            if (array_key_exists(api::FLD_ID, $json_array)) {
-                $id = $dbo_json[api::FLD_ID];
+            if (array_key_exists(json_fields::ID, $json_array)) {
+                $id = $dbo_json[json_fields::ID];
             }
             if ($id != 0) {
                 $this->dbo->set_from_json_array($dbo_json);
@@ -251,7 +254,7 @@ class view extends sandbox_typed
      * create the html code for all components of this view
      *
      * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
-     * @param string $form_name the name of the view which is also used for the HMTL form name
+     * @param string $form_name the name of the view which is also used for the html form name
      * @param string $back the backtrace for undo actions
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code of all view components
@@ -278,7 +281,9 @@ class view extends sandbox_typed
                             $result .= $row;
                         } else {
                             // TODO easy move code to HTML class
-                            $result .= '<div class="row col-md-12">' . $row . ' </div>';
+                            $result .= '<div class="row ';
+                            $result .= view_styles::COL_SM_12;
+                            $result .= '">' . $row . ' </div>';
                         }
                         $row = '';
                         $button_only = true;
@@ -353,7 +358,7 @@ class view extends sandbox_typed
         $result .= $this->input_search_pattern();
         $result .= '    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>';
         $result .= '  </form>';
-        $result .= '  <div class="' . html_base::COL_SM_2 . '">';
+        $result .= '  <div class="' . view_styles::COL_SM_2 . '">';
         $result .= '    <ul class="nav navbar-nav">';
         $result .= '      <li class="active">';
         $result .= $this->dsp_user($back);
@@ -452,7 +457,7 @@ class view extends sandbox_typed
         return $html->input(
             'pattern', '',
             html_base::INPUT_SEARCH,
-            html_base::BS_SM_2,
+            view_styles::BS_SM_2,
             'word or formula');
     }
 
@@ -580,8 +585,8 @@ class view extends sandbox_typed
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_CODE_ID] = $this->code_id;
-        $vars[api::FLD_COMPONENTS] = $this->cmp_lst->api_array();
+        $vars[json_fields::CODE_ID] = $this->code_id;
+        $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_array();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -697,14 +702,14 @@ class view extends sandbox_typed
     function dsp_edit($add_cmp, $wrd, $back): string
     {
         global $usr;
-        global $view_types;
+        global $msk_typ_cac;
 
         $result = '';
         $html = new html_base();
 
         // use the default settings if needed
         if ($this->type_id() <= 0) {
-            $this->set_type_id($view_types->id(view_type::DEFAULT));
+            $this->set_type_id($msk_typ_cac->id(view_type::DEFAULT));
         }
 
         // the header to add or change a view
@@ -721,7 +726,7 @@ class view extends sandbox_typed
 
         // when changing a view show the fields only on the left side
         if ($this->id() > 0) {
-            $result .= '<div class="' . html_base::COL_SM_7 . '">';
+            $result .= '<div class="' . view_styles::COL_SM_7 . '">';
         }
 
         // show the edit fields
@@ -733,14 +738,14 @@ class view extends sandbox_typed
         $result .= '<div class="form-row">';
         if ($add_cmp < 0 or $add_cmp > 0) {
             // show the fields inactive, because the assign fields are active
-            $result .= $html->dsp_form_text("name", $this->name, "Name:", html_base::COL_SM_8, "disabled");
-            $result .= $this->dsp_type_selector($script, html_base::COL_SM_4, "disabled");
+            $result .= $html->dsp_form_text("name", $this->name, "Name:", view_styles::COL_SM_8, "disabled");
+            $result .= $this->dsp_type_selector($script, view_styles::COL_SM_4, "disabled");
             $result .= '</div>';
             $result .= $html->dsp_form_text_big("description", $this->description, "Comment:", "", "disabled");
         } else {
             // show the fields inactive, because the assign fields are active
-            $result .= $html->dsp_form_text("name", $this->name, "Name:", html_base::COL_SM_8);
-            $result .= $this->dsp_type_selector($script, html_base::COL_SM_4, "");
+            $result .= $html->dsp_form_text("name", $this->name, "Name:", view_styles::COL_SM_8);
+            $result .= $this->dsp_type_selector($script, view_styles::COL_SM_4, "");
             $result .= '</div>';
             $result .= $html->dsp_form_text_big("description", $this->description, "Comment:");
             $result .= $html->dsp_form_end('', $back, "/http/view_del.php?id=" . $this->id() . "&back=" . $back);

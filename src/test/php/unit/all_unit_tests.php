@@ -453,7 +453,7 @@ class all_unit_tests extends test_cleanup
     {
         global $usr;
         global $usr_sys;
-        global $user_profiles;
+        global $usr_pro_cac;
 
         // prepare the unit tests
         $this->init_sys_log_status();
@@ -462,8 +462,8 @@ class all_unit_tests extends test_cleanup
         $this->init_job_types();
 
         // set the profile of the test users
-        $usr->profile_id = $user_profiles->id(user_profile::NORMAL);
-        $usr_sys->profile_id = $user_profiles->id(user_profile::SYSTEM);
+        $usr->profile_id = $usr_pro_cac->id(user_profile::NORMAL);
+        $usr_sys->profile_id = $usr_pro_cac->id(user_profile::SYSTEM);
         $usr->set_id(1);
 
         // continue with preparing unit tests
@@ -497,10 +497,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_sys_log_status(): void
     {
-        global $sys_log_stati;
+        global $sys_log_sta_cac;
 
-        $sys_log_stati = new sys_log_status_list();
-        $sys_log_stati->load_dummy();
+        $sys_log_sta_cac = new sys_log_status_list();
+        $sys_log_sta_cac->load_dummy();
     }
 
     /**
@@ -520,10 +520,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_user_profiles(): void
     {
-        global $user_profiles;
+        global $usr_pro_cac;
 
-        $user_profiles = new user_profile_list();
-        $user_profiles->load_dummy();
+        $usr_pro_cac = new user_profile_list();
+        $usr_pro_cac->load_dummy();
 
     }
 
@@ -532,10 +532,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_phrase_types(): void
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
-        $phrase_types = new phrase_types();
-        $phrase_types->load_dummy();
+        $phr_typ_cac = new phrase_types();
+        $phr_typ_cac->load_dummy();
 
     }
 
@@ -544,10 +544,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_verbs(): void
     {
-        global $verbs;
+        global $vrb_cac;
 
-        $verbs = new verb_list();
-        $verbs->load_dummy();
+        $vrb_cac = new verb_list();
+        $vrb_cac->load_dummy();
 
     }
 
@@ -556,10 +556,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_formula_types(): void
     {
-        global $formula_types;
+        global $frm_typ_cac;
 
-        $formula_types = new formula_type_list();
-        $formula_types->load_dummy();
+        $frm_typ_cac = new formula_type_list();
+        $frm_typ_cac->load_dummy();
 
     }
 
@@ -569,10 +569,10 @@ class all_unit_tests extends test_cleanup
     private function init_formula_html_types(): void
     {
         global $html_formula_types;
-        global $formula_types;
+        global $frm_typ_cac;
 
         $html_formula_types = new formula_type_list_web();
-        $html_formula_types->set_from_json_array(json_decode($formula_types->api_json(), true));
+        $html_formula_types->set_from_json_array(json_decode($frm_typ_cac->api_json(), true));
 
     }
 
@@ -581,10 +581,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_formula_link_types(): void
     {
-        global $formula_link_types;
+        global $frm_lnk_typ_cac;
 
-        $formula_link_types = new formula_link_type_list();
-        $formula_link_types->load_dummy();
+        $frm_lnk_typ_cac = new formula_link_type_list();
+        $frm_lnk_typ_cac->load_dummy();
 
     }
 
@@ -593,10 +593,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_element_types(): void
     {
-        global $element_types;
+        global $elm_typ_cac;
 
-        $element_types = new element_type_list();
-        $element_types->load_dummy();
+        $elm_typ_cac = new element_type_list();
+        $elm_typ_cac->load_dummy();
 
     }
 
@@ -605,10 +605,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_views(user $usr): void
     {
-        global $system_views;
+        global $sys_msk_cac;
 
-        $system_views = new view_sys_list($usr);
-        $system_views->load_dummy();
+        $sys_msk_cac = new view_sys_list($usr);
+        $sys_msk_cac->load_dummy();
 
     }
 
@@ -617,10 +617,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_view_types(): void
     {
-        global $view_types;
+        global $msk_typ_cac;
 
-        $view_types = new view_type_list();
-        $view_types->load_dummy();
+        $msk_typ_cac = new view_type_list();
+        $msk_typ_cac->load_dummy();
 
     }
 
@@ -629,10 +629,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_view_link_types(): void
     {
-        global $view_link_types;
+        global $msk_lnk_typ_cac;
 
-        $view_link_types = new view_link_type_list();
-        $view_link_types->load_dummy();
+        $msk_lnk_typ_cac = new view_link_type_list();
+        $msk_lnk_typ_cac->load_dummy();
 
     }
 
@@ -641,10 +641,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_component_types(): void
     {
-        global $component_types;
+        global $cmp_typ_cac;
 
-        $component_types = new component_type_list();
-        $component_types->load_dummy();
+        $cmp_typ_cac = new component_type_list();
+        $cmp_typ_cac->load_dummy();
 
     }
 
@@ -653,10 +653,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_component_pos_types(): void
     {
-        global $position_type_cache;
+        global $pos_typ_cac;
 
-        $position_type_cache = new position_type_list();
-        $position_type_cache->load_dummy();
+        $pos_typ_cac = new position_type_list();
+        $pos_typ_cac->load_dummy();
 
     }
 
@@ -665,10 +665,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_component_link_types(): void
     {
-        global $component_link_types;
+        global $cmp_lnk_typ_cac;
 
-        $component_link_types = new component_link_type_list();
-        $component_link_types->load_dummy();
+        $cmp_lnk_typ_cac = new component_link_type_list();
+        $cmp_lnk_typ_cac->load_dummy();
 
     }
 
@@ -677,10 +677,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_ref_types(): void
     {
-        global $ref_types;
+        global $ref_typ_cac;
 
-        $ref_types = new ref_type_list();
-        $ref_types->load_dummy();
+        $ref_typ_cac = new ref_type_list();
+        $ref_typ_cac->load_dummy();
 
     }
 
@@ -689,10 +689,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_source_types(): void
     {
-        global $source_types;
+        global $src_typ_cac;
 
-        $source_types = new source_type_list();
-        $source_types->load_dummy();
+        $src_typ_cac = new source_type_list();
+        $src_typ_cac->load_dummy();
 
     }
 
@@ -701,10 +701,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_share_types(): void
     {
-        global $share_types;
+        global $shr_typ_cac;
 
-        $share_types = new share_type_list();
-        $share_types->load_dummy();
+        $shr_typ_cac = new share_type_list();
+        $shr_typ_cac->load_dummy();
 
     }
 
@@ -713,10 +713,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_protection_types(): void
     {
-        global $protection_types;
+        global $ptc_typ_cac;
 
-        $protection_types = new protection_type_list();
-        $protection_types->load_dummy();
+        $ptc_typ_cac = new protection_type_list();
+        $ptc_typ_cac->load_dummy();
 
     }
 
@@ -725,10 +725,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_languages(): void
     {
-        global $languages;
+        global $lan_cac;
 
-        $languages = new language_list();
-        $languages->load_dummy();
+        $lan_cac = new language_list();
+        $lan_cac->load_dummy();
 
     }
 
@@ -737,10 +737,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_language_forms(): void
     {
-        global $language_forms;
+        global $lan_for_cac;
 
-        $language_forms = new language_form_list();
-        $language_forms->load_dummy();
+        $lan_for_cac = new language_form_list();
+        $lan_for_cac->load_dummy();
 
     }
 
@@ -749,10 +749,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_job_types(): void
     {
-        global $job_types;
+        global $job_typ_cac;
 
-        $job_types = new job_type_list();
-        $job_types->load_dummy();
+        $job_typ_cac = new job_type_list();
+        $job_typ_cac->load_dummy();
 
     }
 
@@ -761,10 +761,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_log_actions(): void
     {
-        global $change_action_list;
+        global $cng_act_cac;
 
-        $change_action_list = new change_action_list();
-        $change_action_list->load_dummy();
+        $cng_act_cac = new change_action_list();
+        $cng_act_cac->load_dummy();
 
     }
 
@@ -773,10 +773,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_log_tables(): void
     {
-        global $change_table_list;
+        global $cng_tbl_cac;
 
-        $change_table_list = new change_table_list();
-        $change_table_list->load_dummy();
+        $cng_tbl_cac = new change_table_list();
+        $cng_tbl_cac->load_dummy();
 
     }
 
@@ -785,10 +785,10 @@ class all_unit_tests extends test_cleanup
      */
     private function init_log_fields(): void
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
-        $change_field_list = new change_field_list();
-        $change_field_list->load_dummy();
+        $cng_fld_cac = new change_field_list();
+        $cng_fld_cac->load_dummy();
 
     }
 

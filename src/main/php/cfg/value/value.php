@@ -86,6 +86,7 @@ include_once SERVICE_EXPORT_PATH . 'source_exp.php';
 include_once SERVICE_EXPORT_PATH . 'value_exp.php';
 include_once SERVICE_EXPORT_PATH . 'json.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
@@ -95,6 +96,7 @@ use cfg\log\change_values_norm;
 use cfg\log\change_values_prime;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
+use shared\json_fields;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use shared\api;
@@ -372,8 +374,8 @@ class value extends sandbox_value
      */
     function set_by_api_json(array $api_json): user_message
     {
-        global $share_types;
-        global $protection_types;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
 
         $usr_msg = new user_message();
         $lib = new library();
@@ -387,11 +389,11 @@ class value extends sandbox_value
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_ID) {
+            if ($key == json_fields::ID) {
                 $this->set_id($value);
             }
 
-            if ($key == api::FLD_PHRASES) {
+            if ($key == json_fields::PHRASES) {
                 $phr_lst = new phrase_list($this->user());
                 $usr_msg->add($phr_lst->set_by_api_json($value));
                 if ($usr_msg->is_ok()) {
@@ -399,7 +401,7 @@ class value extends sandbox_value
                 }
             }
 
-            if ($key == sandbox_exp::FLD_TIMESTAMP) {
+            if ($key == json_fields::TIMESTAMP) {
                 if (strtotime($value)) {
                     $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
                 } else {
@@ -407,7 +409,7 @@ class value extends sandbox_value
                 }
             }
 
-            if ($key == sandbox_exp::FLD_NUMBER) {
+            if ($key == json_fields::NUMBER) {
                 if (is_numeric($value)) {
                     $this->number = $value;
                 } else {
@@ -415,12 +417,12 @@ class value extends sandbox_value
                 }
             }
 
-            if ($key == share_type_shared::JSON_FLD) {
-                $this->share_id = $share_types->id($value);
+            if ($key == json_fields::SHARE) {
+                $this->share_id = $shr_typ_cac->id($value);
             }
 
-            if ($key == protect_type_shared::JSON_FLD) {
-                $this->protection_id = $protection_types->id($value);
+            if ($key == json_fields::PROTECTION) {
+                $this->protection_id = $ptc_typ_cac->id($value);
                 if ($value <> protect_type_shared::NO_PROTECT) {
                     $get_ownership = true;
                 }
@@ -1105,8 +1107,8 @@ class value extends sandbox_value
      */
     function export_obj(bool $do_load = true): sandbox_exp
     {
-        global $share_types;
-        global $protection_types;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
         log_debug();
         $result = new value_exp();
 
@@ -1150,12 +1152,12 @@ class value extends sandbox_value
         $result->number = $this->number;
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type_shared::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
         // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protect_type_shared::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 
@@ -1218,11 +1220,11 @@ class value extends sandbox_value
         user_message $msg,
         bool         $do_save = true): user_message
     {
-        global $share_types;
-        global $protection_types;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
         $lib = new library();
 
-        if ($key == sandbox_exp::FLD_TIMESTAMP) {
+        if ($key == json_fields::TIMESTAMP) {
             if (strtotime($value)) {
                 $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
             } else {
@@ -1230,7 +1232,7 @@ class value extends sandbox_value
             }
         }
 
-        if ($key == sandbox_exp::FLD_NUMBER) {
+        if ($key == json_fields::NUMBER) {
             if (is_numeric($value)) {
                 $this->number = $value;
             } else {
@@ -1238,12 +1240,12 @@ class value extends sandbox_value
             }
         }
 
-        if ($key == share_type_shared::JSON_FLD) {
-            $this->share_id = $share_types->id($value);
+        if ($key == json_fields::SHARE) {
+            $this->share_id = $shr_typ_cac->id($value);
         }
 
-        if ($key == protect_type_shared::JSON_FLD) {
-            $this->protection_id = $protection_types->id($value);
+        if ($key == json_fields::PROTECTION) {
+            $this->protection_id = $ptc_typ_cac->id($value);
             if ($value <> protect_type_shared::NO_PROTECT) {
                 $get_ownership = true;
             }
@@ -1631,7 +1633,7 @@ class value extends sandbox_value
      */
     function save_field_trigger_update($db_con): string
     {
-        global $job_types;
+        global $job_typ_cac;
 
         $result = '';
 
@@ -2029,7 +2031,7 @@ class value extends sandbox_value
         sql_type_list                     $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
         $sc = new sql();
         $table_id = $sc->table_id($this::class);
 
@@ -2040,7 +2042,7 @@ class value extends sandbox_value
                 if ($sc_par_lst->incl_log()) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
-                        $change_field_list->id($table_id . source::FLD_ID),
+                        $cng_fld_cac->id($table_id . source::FLD_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }

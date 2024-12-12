@@ -46,7 +46,7 @@ use shared\views as view_shared;
 
 $db_con = prg_start("formula_result");
 
-global $system_views;
+global $sys_msk_cac;
 
 $result = ''; // reset the html code var
 
@@ -61,7 +61,7 @@ if ($session_usr->id() > 0) {
 
     // show the header
     $msk = new view($session_usr);
-    $msk->set_id($system_views->id(view_shared::MC_FORMULA_EXPLAIN));
+    $msk->set_id($sys_msk_cac->id(view_shared::MC_FORMULA_EXPLAIN));
     $back = $_GET[api::URL_VAR_BACK] = ''; // the page (or phrase id) from which formula testing has been called
     $msk_dsp = new view_dsp($msk->api_json());
     $result .= $msk_dsp->dsp_navbar($back);

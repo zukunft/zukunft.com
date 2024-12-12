@@ -32,7 +32,7 @@
 
 namespace cfg;
 
-use api\system\messeges as msg_enum;
+use api\system\messages as msg_enum;
 
 class message_translator
 {

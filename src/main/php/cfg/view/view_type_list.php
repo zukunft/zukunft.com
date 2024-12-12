@@ -40,7 +40,7 @@ use shared\types\view_type as view_type_shared;
 use cfg\db\sql_db;
 use test\create_test_objects;
 
-global $view_types;
+global $msk_typ_cac;
 
 class view_type_list extends type_list
 {

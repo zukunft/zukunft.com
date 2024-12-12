@@ -49,8 +49,8 @@
 namespace cfg;
 
 include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
 use api\system\db_object as db_object_api;
 use cfg\db\sql;
 use cfg\db\sql_field_default;
@@ -58,6 +58,7 @@ use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type_list;
 use JsonSerializable;
+use shared\json_fields;
 
 class db_object_seq_id extends db_object implements JsonSerializable
 {
@@ -427,7 +428,7 @@ class db_object_seq_id extends db_object implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = [];
-        $vars[api::FLD_ID] = $this->id();
+        $vars[json_fields::ID] = $this->id();
         return $vars;
     }
 

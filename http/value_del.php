@@ -93,7 +93,7 @@ if ($usr->id() > 0) {
             $val->load_phrases();
             $url = $html->url(rest_ctrl::VALUE . rest_ctrl::REMOVE, $val_id, $back);
             $ui_msg = new messages();
-            $result .= (new button($url, $back))->yesno(
+            $result .= (new button($url, $back))->yes_no(
                 messages::VALUE_DEL, $val->number() . $ui_msg->txt(messages::FOR) . $val->phr_lst()->dsp_name() . '?');
         }
     } else {

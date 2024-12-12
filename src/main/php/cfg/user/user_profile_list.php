@@ -32,7 +32,7 @@
 
 namespace cfg;
 
-global $user_profiles;
+global $usr_pro_cac;
 
 use cfg\db\sql_db;
 use cfg\user\user_profile;

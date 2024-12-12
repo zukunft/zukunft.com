@@ -77,8 +77,8 @@ class phrase_read_tests
         // test reading a phrase type via API that is not yet included in the preloaded phrase type
         // e.g. because it has been just added by the user to request e new phrase type
         $test_name = 'load phrase type ' . phrase_type_shared::NORMAL . ' by id';
-        global $phrase_types;
-        $phr_typ_id = $phrase_types->id(phrase_type_shared::NORMAL);
+        global $phr_typ_cac;
+        $phr_typ_id = $phr_typ_cac->id(phrase_type_shared::NORMAL);
         $phr_typ = new phrase_type(phrase_type_shared::NORMAL);
         $phr_typ->load_by_id($phr_typ_id);
         $t->assert($test_name, $phr_typ->code_id(), phrase_type_shared::NORMAL);

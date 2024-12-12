@@ -150,8 +150,8 @@ class formula_link extends sandbox_link
         $this->reset_objects($this->user());
 
         $this->order_nbr = null;
-        global $formula_link_types;
-        $this->set_predicate_id($formula_link_types->id(formula_link_type::DEFAULT));
+        global $frm_lnk_typ_cac;
+        $this->set_predicate_id($frm_lnk_typ_cac->id(formula_link_type::DEFAULT));
     }
 
     /**
@@ -290,8 +290,8 @@ class formula_link extends sandbox_link
      */
     function predicate_name(): string
     {
-        global $formula_link_types;
-        return $formula_link_types->name($this->predicate_id);
+        global $frm_lnk_typ_cac;
+        return $frm_lnk_typ_cac->name($this->predicate_id);
     }
 
 
@@ -413,8 +413,8 @@ class formula_link extends sandbox_link
      */
     function load_by_link(formula $frm, phrase $phr, string $class = self::class): int
     {
-        global $formula_link_types;
-        $id = parent::load_by_link_id($frm->id(), $formula_link_types->default_id(), $phr->id(), $class);
+        global $frm_lnk_typ_cac;
+        $id = parent::load_by_link_id($frm->id(), $frm_lnk_typ_cac->default_id(), $phr->id(), $class);
         // no need to reload the linked objects, just assign it
         if ($id != 0) {
             $this->set_formula($frm);
@@ -708,7 +708,7 @@ class formula_link extends sandbox_link
         sql_type_list        $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -716,29 +716,29 @@ class formula_link extends sandbox_link
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);
-        // for the standard table the type field should always be included because it is part of the prime indey
+        // for the standard table the type field should always be included because it is part of the prime index
         if ($sbx->predicate_id() <> $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_link_type::FLD_ID,
-                    $change_field_list->id($table_id . formula_link_type::FLD_ID),
+                    $cng_fld_cac->id($table_id . formula_link_type::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $formula_link_types;
+            global $frm_lnk_typ_cac;
             $lst->add_type_field(
                 formula_link_type::FLD_ID,
                 type_object::FLD_NAME,
                 $this->predicate_id(),
                 $sbx->predicate_id(),
-                $formula_link_types
+                $frm_lnk_typ_cac
             );
         }
         if ($sbx->pos() <> $this->pos()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER,
-                    $change_field_list->id($table_id . self::FLD_ORDER),
+                    $cng_fld_cac->id($table_id . self::FLD_ORDER),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

@@ -35,12 +35,15 @@ namespace html\sandbox;
 include_once SANDBOX_PATH . 'db_object.php';
 include_once HTML_PATH . 'html_base.php';
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
 use html\sandbox\db_object as db_object_dsp;
 use html\html_base;
 use html\user\user as user_dsp;
 use html\user\user_message;
+use shared\json_fields;
+use shared\types\view_styles;
 
 class sandbox extends db_object_dsp
 {
@@ -67,13 +70,13 @@ class sandbox extends db_object_dsp
     {
         $usr_msg = parent::set_from_json_array($json_array);
 
-        if (array_key_exists(api::FLD_SHARE, $json_array)) {
-            $this->share_id = $json_array[api::FLD_SHARE];
+        if (array_key_exists(json_fields::SHARE, $json_array)) {
+            $this->share_id = $json_array[json_fields::SHARE];
         } else {
             $this->share_id = null;
         }
-        if (array_key_exists(api::FLD_PROTECTION, $json_array)) {
-            $this->protection_id = $json_array[api::FLD_PROTECTION];
+        if (array_key_exists(json_fields::PROTECTION, $json_array)) {
+            $this->protection_id = $json_array[json_fields::PROTECTION];
         } else {
             $this->protection_id = null;
         }
@@ -116,10 +119,10 @@ class sandbox extends db_object_dsp
         $vars = parent::api_array();
 
         if ($this->share_id != null) {
-            $vars[api::FLD_SHARE] = $this->share_id;
+            $vars[json_fields::SHARE] = $this->share_id;
         }
         if ($this->protection_id != null) {
-            $vars[api::FLD_PROTECTION] = $this->protection_id;
+            $vars[json_fields::PROTECTION] = $this->protection_id;
         }
         return $vars;
     }
@@ -142,7 +145,7 @@ class sandbox extends db_object_dsp
             $used_share_id = $html_share_types->default_id();
         }
         if ($usr == $this->owner or $this->owner == null) {
-            return $html_share_types->selector($form_name, $used_share_id, 'share', html_base::COL_SM_4, 'share:');
+            return $html_share_types->selector($form_name, $used_share_id, 'share', view_styles::COL_SM_4, 'share:');
         } else {
             return '';
         }
@@ -161,7 +164,7 @@ class sandbox extends db_object_dsp
             $used_protection_id = $html_protection_types->default_id();
         }
         if ($usr == $this->owner or $this->owner == null) {
-            return $html_protection_types->selector($form_name, $used_protection_id, 'protection', html_base::COL_SM_4, 'protection:');
+            return $html_protection_types->selector($form_name, $used_protection_id, 'protection', view_styles::COL_SM_4, 'protection:');
         } else {
             return '';
         }

@@ -80,6 +80,7 @@ use cfg\value\value;
 use DateTime;
 use html\formula\formula as formula_dsp;
 use html\html_base;
+use shared\json_fields;
 use shared\library;
 
 class result extends sandbox_value
@@ -447,11 +448,11 @@ class result extends sandbox_value
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_ID) {
+            if ($key == json_fields::ID) {
                 $this->set_id($value);
             }
 
-            if ($key == api::FLD_PHRASES) {
+            if ($key == json_fields::PHRASES) {
                 $phr_lst = new phrase_list($this->user());
                 $usr_msg->add($phr_lst->set_by_api_json($value));
                 if ($usr_msg->is_ok()) {
@@ -459,7 +460,7 @@ class result extends sandbox_value
                 }
             }
 
-            if ($key == sandbox_exp::FLD_NUMBER) {
+            if ($key == json_fields::NUMBER) {
                 if (is_numeric($value)) {
                     $this->number = $value;
                 } else {
@@ -993,7 +994,7 @@ class result extends sandbox_value
             }
             */
 
-            if ($key == sandbox_exp::FLD_NUMBER) {
+            if ($key == json_fields::NUMBER) {
                 $this->set_number($res);
             }
 

@@ -32,7 +32,7 @@
     - im- and export:    create an export object and set the vars from an import object
     - information:       functions to make code easier to read
     - foaf:              get related words and triples based on the friend of a friend (foaf) concept
-    - ui sort:           user interface optimazation e.g. show the user to most relevant words
+    - ui sort:           user interface optimization e.g. show the user to most relevant words
     - related:           functions that create and fill related objects
     - sandbox:           manage the user sandbox
     - log:               write the changes to the log
@@ -79,8 +79,8 @@ include_once SERVICE_EXPORT_PATH . 'word_exp.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
 use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -97,6 +97,7 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\value\value_list;
 use shared\enum\foaf_direction;
+use shared\json_fields;
 use shared\library;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
@@ -204,7 +205,7 @@ class word extends sandbox_typed
     //included in the preserved word names
 
     // words used to select parts of the system configuration where the normal name should not be changed
-    // *_COM is the tooltip for the word; to have the comments on one place the yaml is the prefered place
+    // *_COM is the tooltip for the word; to have the comments on one place the yaml is the preferred place
     const TOOLTIP_COMMENT_COM = 'keyword to read the word or triple description from the config.yaml';
     const TOOLTIP_COMMENT = 'tooltip-comment';
     const SYS_CONF_VALUE_COM = 'keyword to read the numeric value from the config.yaml';
@@ -398,8 +399,8 @@ class word extends sandbox_typed
      */
     function set_type(string $type_code_id): void
     {
-        global $phrase_types;
-        $this->type_id = $phrase_types->id($type_code_id);
+        global $phr_typ_cac;
+        $this->type_id = $phr_typ_cac->id($type_code_id);
     }
 
     /**
@@ -494,8 +495,8 @@ class word extends sandbox_typed
      */
     function type_name(): string
     {
-        global $phrase_types;
-        return $phrase_types->name($this->type_id);
+        global $phr_typ_cac;
+        return $phr_typ_cac->name($this->type_id);
     }
 
     /**
@@ -504,8 +505,8 @@ class word extends sandbox_typed
      */
     function type_name_or_null(): ?string
     {
-        global $phrase_types;
-        return $phrase_types->name_or_null($this->type_id);
+        global $phr_typ_cac;
+        return $phr_typ_cac->name_or_null($this->type_id);
     }
 
     /**
@@ -514,8 +515,8 @@ class word extends sandbox_typed
      */
     function type_code_id(): string
     {
-        global $phrase_types;
-        return $phrase_types->code_id($this->type_id);
+        global $phr_typ_cac;
+        return $phr_typ_cac->code_id($this->type_id);
     }
 
 
@@ -555,7 +556,7 @@ class word extends sandbox_typed
         foreach ($api_json as $key => $value) {
 
             // TODO move plural to language forms
-            if ($key == api::FLD_PLURAL) {
+            if ($key == json_fields::PLURAL) {
                 if ($value <> '') {
                     $this->plural = $value;
                 }
@@ -566,7 +567,7 @@ class word extends sandbox_typed
                 if ($do_save) {
                     $wrd_view->load_by_name($value);
                     if ($wrd_view->id() == 0) {
-                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
+                        $result->add_message('Cannot find view >' . $value . '< when importing ' . $this->dsp_id());
                     } else {
                         $this->view_id = $wrd_view->id();
                     }
@@ -576,7 +577,7 @@ class word extends sandbox_typed
                 $this->view = $wrd_view;
             }
 
-            if ($key == api::FLD_PHRASES) {
+            if ($key == json_fields::PHRASES) {
                 $phr_lst = new phrase_list($this->user());
                 $msg->add($phr_lst->db_obj($value));
                 if ($msg->is_ok()) {
@@ -718,10 +719,10 @@ class word extends sandbox_typed
      */
     function load_sql_by_formula_name(sql $sc, string $name): sql_par
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $qp = parent::load_sql_usr_num($sc, $this, formula::FLD_NAME);
         $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
-        $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST);
+        $sc->add_where(phrase::FLD_TYPE, $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -739,9 +740,9 @@ class word extends sandbox_typed
     function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
     {
         // TODO check if and where it is needed to exclude the formula words
-        // global $phrase_types;
+        // global $phr_typ_cac;
         // $qp = parent::load_sql_usr_num($sc, $this, $query_name);
-        // $sc->add_where(phrase::FLD_TYPE, $phrase_types->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST_NOT);
+        // $sc->add_where(phrase::FLD_TYPE, $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST_NOT);
         // return $qp;
         return parent::load_sql_usr_num($sc, $this, $query_name);
     }
@@ -888,7 +889,7 @@ class word extends sandbox_typed
      */
     function import_obj_fill(array $in_ex_json, object $test_obj = null): user_message
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         // reset all parameters for the word object but keep the user
         $usr = $this->user();
@@ -899,7 +900,7 @@ class word extends sandbox_typed
         $result = parent::import_obj($in_ex_json, $test_obj);
         foreach ($in_ex_json as $key => $value) {
             if ($key == sandbox_exp::FLD_TYPE) {
-                $this->type_id = $phrase_types->id($value);
+                $this->type_id = $phr_typ_cac->id($value);
             }
             if ($key == sql::FLD_CODE_ID) {
                 if ($this->user()->is_admin()) {
@@ -932,7 +933,7 @@ class word extends sandbox_typed
 
         // set the default type if no type is specified
         if ($this->type_id <= 0) {
-            $this->type_id = $phrase_types->default_id();
+            $this->type_id = $phr_typ_cac->default_id();
         }
 
         return $result;
@@ -945,9 +946,9 @@ class word extends sandbox_typed
      */
     function export_obj(bool $do_load = true): sandbox_exp_named
     {
-        global $phrase_types;
-        global $share_types;
-        global $protection_types;
+        global $phr_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
 
         log_debug();
         $result = new word_exp();
@@ -962,18 +963,18 @@ class word extends sandbox_typed
             $result->description = $this->description;
         }
         if ($this->type_id > 0) {
-            if ($this->type_id <> $phrase_types->default_id()) {
+            if ($this->type_id <> $phr_typ_cac->default_id()) {
                 $result->type = $this->type_code_id();
             }
         }
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $share_types->id(share_type_shared::PUBLIC)) {
+        if ($this->share_id > 0 and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
             $result->share = $this->share_type_code_id();
         }
 
         // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> $protection_types->id(protect_type_shared::NO_PROTECT)) {
+        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
             $result->protection = $this->protection_type_code_id();
         }
 
@@ -1030,10 +1031,10 @@ class word extends sandbox_typed
      */
     function is_type(string $type): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $result = false;
-        if ($this->type_id == $phrase_types->id($type)) {
+        if ($this->type_id == $phr_typ_cac->id($type)) {
             $result = true;
             log_debug($this->dsp_id() . ' is ' . $type);
         }
@@ -1121,7 +1122,7 @@ class word extends sandbox_typed
      * if the given description is not set (null) the description is not remove
      * if the given description is an empty string the description is removed
      *
-     * @param word|db_object_seq_id $sbx word with the values that sould been updated e.g. based on the import
+     * @param word|db_object_seq_id $sbx word with the values that should have been updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
     function fill(word|db_object_seq_id $sbx): user_message
@@ -1199,10 +1200,10 @@ class word extends sandbox_typed
      */
     function parents(): phrase_list
     {
-        global $verbs;
+        global $vrb_cac;
         log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
         $phr_lst = $this->lst();
-        $parent_phr_lst = $phr_lst->foaf_parents($verbs->get_verb(verbs::IS));
+        $parent_phr_lst = $phr_lst->foaf_parents($vrb_cac->get_verb(verbs::IS));
         log_debug('are ' . $parent_phr_lst->dsp_name() . ' for ' . $this->dsp_id());
         return $parent_phr_lst;
     }
@@ -1243,14 +1244,14 @@ class word extends sandbox_typed
      */
     function add_child(word $child): bool
     {
-        global $verbs;
+        global $vrb_cac;
 
         $result = false;
         $wrd_lst = $this->children();
         if (!$wrd_lst->does_contain($child)) {
             $wrd_lnk = new triple($this->user());
             $wrd_lnk->set_from($child->phrase());
-            $wrd_lnk->set_verb($verbs->get_verb(verbs::IS));
+            $wrd_lnk->set_verb($vrb_cac->get_verb(verbs::IS));
             $wrd_lnk->set_to($this->phrase());
             if ($wrd_lnk->save() == '') {
                 $result = true;
@@ -1267,10 +1268,10 @@ class word extends sandbox_typed
      */
     function children(): phrase_list
     {
-        global $verbs;
+        global $vrb_cac;
         log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
         $phr_lst = $this->lst();
-        $child_phr_lst = $phr_lst->all_children($verbs->get_verb(verbs::IS));
+        $child_phr_lst = $phr_lst->all_children($vrb_cac->get_verb(verbs::IS));
         log_debug('are ' . $child_phr_lst->name() . ' for ' . $this->dsp_id());
         return $child_phr_lst;
     }
@@ -1295,9 +1296,9 @@ class word extends sandbox_typed
      */
     function parts(): phrase_list
     {
-        global $verbs;
+        global $vrb_cac;
         $phr_lst = $this->lst();
-        return $phr_lst->foaf_children($verbs->get_verb(verbs::IS_PART_OF));
+        return $phr_lst->foaf_children($vrb_cac->get_verb(verbs::IS_PART_OF));
     }
 
     /**
@@ -1306,9 +1307,9 @@ class word extends sandbox_typed
      */
     function direct_parts(): phrase_list
     {
-        global $verbs;
+        global $vrb_cac;
         $phr_lst = $this->lst();
-        return $phr_lst->foaf_children($verbs->get_verb(verbs::IS_PART_OF), 1);
+        return $phr_lst->foaf_children($vrb_cac->get_verb(verbs::IS_PART_OF), 1);
     }
 
     /**
@@ -1353,11 +1354,11 @@ class word extends sandbox_typed
         log_debug($this->dsp_id());
 
         global $db_con;
-        global $verbs;
+        global $vrb_cac;
 
         $result = new word($this->user());
 
-        $link_id = $verbs->id(verbs::FOLLOW);
+        $link_id = $vrb_cac->id(verbs::FOLLOW);
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
         $key_result = $db_con->get_value_2key(triple::FLD_FROM, triple::FLD_TO, $this->id(), verb::FLD_ID, $link_id);
@@ -1379,11 +1380,11 @@ class word extends sandbox_typed
         log_debug($this->dsp_id());
 
         global $db_con;
-        global $verbs;
+        global $vrb_cac;
 
         $result = new word($this->user());
 
-        $link_id = $verbs->id(verbs::FOLLOW);
+        $link_id = $vrb_cac->id(verbs::FOLLOW);
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
         $key_result = $db_con->get_value_2key(triple::FLD_TO, triple::FLD_FROM, $this->id(), verb::FLD_ID, $link_id);
@@ -1506,10 +1507,10 @@ class word extends sandbox_typed
      */
     function is_part(): phrase_list
     {
-        global $verbs;
+        global $vrb_cac;
         log_debug($this->dsp_id() . ', user ' . $this->user()->id());
         $phr_lst = $this->lst();
-        $is_phr_lst = $phr_lst->foaf_parents($verbs->get_verb(verbs::IS_PART_OF));
+        $is_phr_lst = $phr_lst->foaf_parents($vrb_cac->get_verb(verbs::IS_PART_OF));
 
         log_debug($this->dsp_id() . ' is a ' . $is_phr_lst->dsp_name());
         return $is_phr_lst;
@@ -1574,7 +1575,7 @@ class word extends sandbox_typed
      */
     function has_cfg(): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $has_cfg = false;
         if (isset($this->plural)) {
@@ -1588,7 +1589,7 @@ class word extends sandbox_typed
             }
         }
         if (isset($this->type_id)) {
-            if ($this->type_id <> $phrase_types->default_id()) {
+            if ($this->type_id <> $phr_typ_cac->default_id()) {
                 $has_cfg = true;
             }
         }
@@ -1951,7 +1952,7 @@ class word extends sandbox_typed
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -1962,24 +1963,23 @@ class word extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
-                    $change_field_list->id($table_id . phrase::FLD_TYPE),
+                    $cng_fld_cac->id($table_id . phrase::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $phrase_types;
+            global $phr_typ_cac;
             $lst->add_type_field(
                 phrase::FLD_TYPE,
                 phrase::FLD_TYPE_NAME,
                 $this->type_id(),
                 $sbx->type_id(),
-                $phrase_types
-            );
+                $phr_typ_cac            );
         }
         if ($sbx->view_id() <> $this->view_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_VIEW,
-                    $change_field_list->id($table_id . self::FLD_VIEW),
+                    $cng_fld_cac->id($table_id . self::FLD_VIEW),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1995,7 +1995,7 @@ class word extends sandbox_typed
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
-                        $change_field_list->id($table_id . sql::FLD_CODE_ID),
+                        $cng_fld_cac->id($table_id . sql::FLD_CODE_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
@@ -2012,7 +2012,7 @@ class word extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_PLURAL,
-                    $change_field_list->id($table_id . self::FLD_PLURAL),
+                    $cng_fld_cac->id($table_id . self::FLD_PLURAL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2028,7 +2028,7 @@ class word extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_VALUES,
-                    $change_field_list->id($table_id . self::FLD_VALUES),
+                    $cng_fld_cac->id($table_id . self::FLD_VALUES),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

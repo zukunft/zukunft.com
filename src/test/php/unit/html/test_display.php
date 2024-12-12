@@ -49,7 +49,7 @@ function run_display_test(all_tests $t): void
 {
 
     global $usr;
-    global $component_types;
+    global $cmp_typ_cac;
     $html = new html_base();
 
     $is_connected = true; // assumes that the test is done with an internet connection, but if not connected, just show the warning once
@@ -69,7 +69,7 @@ function run_display_test(all_tests $t): void
 
     // test if a simple text component can be created
     $cmp = new component($usr);
-    $cmp->type_id = $component_types->id(comp_type_shared::TEXT);
+    $cmp->type_id = $cmp_typ_cac->id(comp_type_shared::TEXT);
     $cmp->set_id(1);
     $cmp->set_name(view_api::TN_READ_NESN_2016);
     $cmp_dsp = new component_dsp($cmp->api_json());
@@ -110,13 +110,13 @@ function run_display_test(all_tests $t): void
     $url = $html->url(view_shared::MC_WORD_ADD);
     $target = '<a href="/http/view.php" title="Show all test"><img src="/src/main/resources/images/button_filter_off.svg" alt="Show all test"></a>';
     $target = '<a href="/http/word_add.php" title=""><img src="/src/main/resources/images/button_filter_off.svg" alt=""></a>';
-    $result = (new button($url, $back))->unfilter();
+    $result = (new button($url, $back))->un_filter();
     $t->display(", btn_unfilter", $target, $result);
 
     $url = $html->url(view_shared::MC_WORD_ADD);
     $target = '<h6>YesNo test</h6><a href="/http/view.php&confirm=1" title="Yes">Yes</a>/<a href="/http/view.php&confirm=-1" title="No">No</a>';
     $target = '<h6></h6><a href="/http/word_add.php&confirm=1" title="Yes">Yes</a>/<a href="/http/word_add.php&confirm=-1" title="No">No</a>';
-    $result = (new button($url, $back))->yesno();
+    $result = (new button($url, $back))->yes_no();
     $t->display(", btn_yesno", $target, $result);
 
     $url = $html->url(view_shared::MC_WORD_ADD);

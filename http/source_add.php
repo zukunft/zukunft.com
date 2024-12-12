@@ -51,7 +51,7 @@ use shared\views as view_shared;
 $db_con = prg_start("source_add");
 $html = new html_base();
 
-global $system_views;
+global $sys_msk_cac;
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -69,7 +69,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($system_views->id(view_shared::MC_SOURCE_ADD));
+    $msk->load_by_id($sys_msk_cac->id(view_shared::MC_SOURCE_ADD));
     $back = $_GET[api::URL_VAR_BACK] = '';      // the calling word which should be displayed after saving
 
     // create the object to store the parameters so that if the add form is shown again it is already filled

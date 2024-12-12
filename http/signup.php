@@ -137,11 +137,11 @@ $result .= '<br><br>';
 $result .= '<p>Please signup for <b>alpha testing</b> of zukunft.com.</p>';
 $result .= '<p>' . $html->dsp_err('Be aware that during this phase your <b>data may get lost</b> or is changed due to program errors or updates.') . '</p>';
 $result .= '<form action="' . $_SERVER['PHP_SELF'] . '" method="post"> ';
-$result .= '<p>User Name:<br><input type="text" name="user_name" value="' . $_POST['user_name'] . '"></p> ';
-$result .= '<p>Email:<br><input type="text" name="email" value="' . $_POST['email'] . '"></p>  ';
-$result .= '<p>password:<br><input type="password" name="password"></p>  ';
-$result .= '<p>Re-Type password:<br><input type="password" name="re_password"></p>  ';
-$result .= '<p><input type="submit" name="submit" value="Sign Up"></p>  ';
+$result .= '<p>User Name:<br><input type="' . html_base::INPUT_TEXT . '" name="user_name" value="' . $_POST['user_name'] . '"></p> ';
+$result .= '<p>Email:<br><input type="' . html_base::INPUT_TEXT . '" name="email" value="' . $_POST['email'] . '"></p>  ';
+$result .= '<p>password:<br><input type="' . html_base::INPUT_PASSWORD . '" name="password"></p>  ';
+$result .= '<p>Re-Type password:<br><input type="' . html_base::INPUT_PASSWORD . '" name="re_password"></p>  ';
+$result .= '<p><input type="' . html_base::INPUT_SUBMIT . '" name="submit" value="Sign Up"></p>  ';
 $result .= '</form>  ';
 $result .= '</div>   ';
 

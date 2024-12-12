@@ -64,7 +64,7 @@ class system_tests
         global $usr;
         global $usr_sys;
         global $sql_names;
-        global $sys_log_stati;
+        global $sys_log_sta_cac;
 
         // init
         $lib = new library();
@@ -214,32 +214,32 @@ class system_tests
          * activate if nevertheless an issue occurs
         $system_users = new user_list();
         $t->assert_sql_all($db_con, $system_users);
-        $user_profiles = new user_profile_list();
-        $t->assert_sql_all($db_con, $user_profiles);
-        $phrase_types = new phrase_types(true);
-        $t->assert_sql_all($db_con, $phrase_types);
-        $formula_types = new formula_type_list();
-        $t->assert_sql_all($db_con, $formula_types);
-        $formula_link_types = new formula_link_type_list();
-        $t->assert_sql_all($db_con, $formula_link_types);
-        $element_types = new element_type_list();
-        $t->assert_sql_all($db_con, $element_types);
-        $view_types = new view_type_list();
-        $t->assert_sql_all($db_con, $view_types);
-        $component_types = new component_type_list();
-        $t->assert_sql_all($db_con, $component_types);
-        $ref_types = new ref_type_list();
-        $t->assert_sql_all($db_con, $ref_types);
-        $share_types = new share_type_list();
-        $t->assert_sql_all($db_con, $share_types);
-        $protection_types = new protection_type_list();
-        $t->assert_sql_all($db_con, $protection_types);
-        $job_types = new job_type_list();
-        $t->assert_sql_all($db_con, $job_types);
-        $change_table_list = new change_table_list();
-        $t->assert_sql_all($db_con, $change_table_list);
-        $change_field_list = new change_field_list();
-        $t->assert_sql_all($db_con, $change_field_list);
+        $usr_pro_cac = new user_profile_list();
+        $t->assert_sql_all($db_con, $usr_pro_cac);
+        $phr_typ_cac = new phrase_types(true);
+        $t->assert_sql_all($db_con, $phr_typ_cac);
+        $frm_typ_cac = new formula_type_list();
+        $t->assert_sql_all($db_con, $frm_typ_cac);
+        $frm_lnk_typ_cac = new formula_link_type_list();
+        $t->assert_sql_all($db_con, $frm_lnk_typ_cac);
+        $elm_typ_cac = new element_type_list();
+        $t->assert_sql_all($db_con, $elm_typ_cac);
+        $msk_typ_cac = new view_type_list();
+        $t->assert_sql_all($db_con, $msk_typ_cac);
+        $cmp_typ_cac = new component_type_list();
+        $t->assert_sql_all($db_con, $cmp_typ_cac);
+        $ref_typ_cac = new ref_type_list();
+        $t->assert_sql_all($db_con, $ref_typ_cac);
+        $shr_typ_cac = new share_type_list();
+        $t->assert_sql_all($db_con, $shr_typ_cac);
+        $ptc_typ_cac = new protection_type_list();
+        $t->assert_sql_all($db_con, $ptc_typ_cac);
+        $job_typ_cac = new job_type_list();
+        $t->assert_sql_all($db_con, $job_typ_cac);
+        $cng_tbl_cac = new change_table_list();
+        $t->assert_sql_all($db_con, $cng_tbl_cac);
+        $cng_fld_cac = new change_field_list();
+        $t->assert_sql_all($db_con, $cng_fld_cac);
          */
 
         /*
@@ -379,7 +379,7 @@ class system_tests
         $log->log_trace = sys_log_api::TV_LOG_TRACE;
         $log->function_name = sys_log_api::TV_FUNC_NAME;
         $log->solver_name = sys_log_api::TV_SOLVE_ID;
-        $log->status_name = $sys_log_stati->id(sys_log_status::OPEN);
+        $log->status_name = $sys_log_sta_cac->id(sys_log_status::OPEN);
         $log_dsp = $log->get_api_obj();
         $created = $log_dsp->get_json();
         $expected = file_get_contents(PATH_TEST_FILES . 'api/system/sys_log.json');
@@ -405,7 +405,7 @@ class system_tests
         $log2->log_trace = sys_log_api::T2_LOG_TRACE;
         $log2->function_name = sys_log_api::T2_FUNC_NAME;
         $log2->solver_name = sys_log_api::TV_SOLVE_ID;
-        $log2->status_name = $sys_log_stati->id(sys_log_status::CLOSED);
+        $log2->status_name = $sys_log_sta_cac->id(sys_log_status::CLOSED);
 
         $log_lst = new sys_log_list();
         $log_lst->add($log);

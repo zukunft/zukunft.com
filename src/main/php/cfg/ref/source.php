@@ -63,8 +63,8 @@ include_once API_REF_PATH . 'source.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once SERVICE_EXPORT_PATH . 'source_exp.php';
 include_once WEB_REF_PATH . 'source.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
 use api\ref\source as source_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -77,6 +77,7 @@ use cfg\db\sql_type_list;
 use cfg\export\sandbox_exp;
 use cfg\export\source_exp;
 use cfg\log\change;
+use shared\json_fields;
 
 class source extends sandbox_typed
 {
@@ -228,8 +229,8 @@ class source extends sandbox_typed
      */
     function set_type(string $type_code_id): void
     {
-        global $source_types;
-        $this->type_id = $source_types->id($type_code_id);
+        global $src_typ_cac;
+        $this->type_id = $src_typ_cac->id($type_code_id);
     }
 
 
@@ -242,11 +243,11 @@ class source extends sandbox_typed
      */
     function type_name(): string
     {
-        global $source_types;
+        global $src_typ_cac;
 
         $type_name = '';
         if ($this->type_id > 0) {
-            $type_name = $source_types->name($this->type_id);
+            $type_name = $src_typ_cac->name($this->type_id);
         }
         return $type_name;
     }
@@ -257,8 +258,8 @@ class source extends sandbox_typed
      */
     function type_code_id(): string
     {
-        global $source_types;
-        return $source_types->code_id($this->type_id);
+        global $src_typ_cac;
+        return $src_typ_cac->code_id($this->type_id);
     }
 
 
@@ -294,7 +295,7 @@ class source extends sandbox_typed
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_URL) {
+            if ($key == json_fields::URL) {
                 if ($value <> '') {
                     $this->url = $value;
                 }
@@ -424,7 +425,7 @@ class source extends sandbox_typed
      */
     function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
-        global $source_types;
+        global $src_typ_cac;
 
         log_debug();
         $result = parent::import_obj($in_ex_json, $test_obj);
@@ -439,7 +440,7 @@ class source extends sandbox_typed
                 }
             }
             if ($key == sandbox_exp::FLD_TYPE) {
-                $this->type_id = $source_types->id($value);
+                $this->type_id = $src_typ_cac->id($value);
             }
         }
 
@@ -683,7 +684,7 @@ class source extends sandbox_typed
         sql_type_list  $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         $sc = new sql();
         $do_log = $sc_par_lst->incl_log();
@@ -694,7 +695,7 @@ class source extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE,
-                    $change_field_list->id($table_id . self::FLD_TYPE),
+                    $cng_fld_cac->id($table_id . self::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -709,7 +710,7 @@ class source extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_URL,
-                    $change_field_list->id($table_id . self::FLD_URL),
+                    $cng_fld_cac->id($table_id . self::FLD_URL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -724,7 +725,7 @@ class source extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
-                    $change_field_list->id($table_id . sql::FLD_CODE_ID),
+                    $cng_fld_cac->id($table_id . sql::FLD_CODE_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }

@@ -68,10 +68,10 @@ include_once API_REF_PATH . 'source.php';
 include_once API_VIEW_PATH . 'view.php';
 include_once API_COMPONENT_PATH . 'component.php';
 include_once API_WORD_PATH . 'word.php';
-include_once API_SYSTEM_PATH . 'messeges.php';
+include_once API_SYSTEM_PATH . 'messages.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
-use api\system\messeges as msg_enum;
+use api\system\messages as msg_enum;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_field_type;
@@ -86,6 +86,7 @@ use cfg\log\change_action;
 use cfg\log\change_link;
 use cfg\log\change_log_list;
 use Exception;
+use shared\json_fields;
 use shared\library;
 
 class sandbox_named extends sandbox
@@ -215,7 +216,7 @@ class sandbox_named extends sandbox
     /**
      * get the description of the sandbox object
      * if the object is excluded null is returned
-     * to check the value before the exclution access the var direkt via $this->description
+     * to check the value before the exclusion access the var direct via $this->description
      *
      * @return string|null the description from the object e.g. word using the same function as the phrase and term
      */
@@ -318,10 +319,10 @@ class sandbox_named extends sandbox
         $msg = parent::set_by_api_json($api_json);
 
         foreach ($api_json as $key => $value) {
-            if ($key == api::FLD_NAME) {
+            if ($key == json_fields::NAME) {
                 $this->set_name($value);
             }
-            if ($key == api::FLD_DESCRIPTION) {
+            if ($key == json_fields::DESCRIPTION) {
                 if ($value <> '') {
                     $this->description = $value;
                 }
@@ -350,7 +351,7 @@ class sandbox_named extends sandbox
     }
 
     /**
-     * only to suppress the polymorthic warning and to be overwritten by the child objects
+     * only to suppress the polymorphic warning and to be overwritten by the child objects
      * @param string $code_id
      * @return int zero if not overwritten by the child object to indicate the internal error
      */
@@ -493,7 +494,7 @@ class sandbox_named extends sandbox
 
     /**
      * get the description of the latest change related to this object
-     * @param user $usr who has requeted to see the change
+     * @param user $usr who has requested to see the change
      * @return string the description of the latest change
      */
     function log_last_msg(user $usr): string
@@ -505,7 +506,7 @@ class sandbox_named extends sandbox
 
     /**
      * get the description of the latest change related to this object and the given field
-     * @param user $usr who has requeted to see the change
+     * @param user $usr who has requested to see the change
      * @param string $fld the field name to filter the changes
      * @return string the description of the latest change
      */
@@ -547,7 +548,7 @@ class sandbox_named extends sandbox
     }
 
     /**
-     * set the log entry parameter to delete a object
+     * set the log entry parameter to delete an object
      * @returns change_link with the object presets e.g. th object name
      */
     function log_del(): change
@@ -637,7 +638,7 @@ class sandbox_named extends sandbox
                     } else {
                         //$usr_msg->add_message($this->set_owner($new_owner_id));
 
-                        // TODO all all objects to the pontential used of the prepared sql function with log
+                        // TODO all all objects to the potential used of the prepared sql function with log
                         if (!$this->sql_write_prepared()) {
                             // create an empty db_rec element to force saving of all set fields
                             $db_rec = clone $this;
