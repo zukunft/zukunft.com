@@ -730,7 +730,7 @@ class ref extends sandbox_link
         global $ref_typ_cac;
         // reset of object not needed, because the calling function has just created the object
         foreach ($in_ex_json as $key => $value) {
-            if ($key == sandbox_exp::FLD_SOURCE) {
+            if ($key == json_fields::SOURCE_NAME) {
                 $src = new source($this->user());
                 if (!$test_obj) {
                     $src->load_by_name($value);
@@ -742,17 +742,17 @@ class ref extends sandbox_link
                 }
                 $this->source = $src;
             }
-            if ($key == sandbox_exp::FLD_TYPE) {
+            if ($key == json_fields::TYPE_NAME) {
                 $this->set_predicate_id($ref_typ_cac->id($value));
 
                 if ($this->predicate_id() == null or $this->predicate_id() <= 0) {
                     $result->add_message('Reference type for ' . $value . ' not found');
                 }
             }
-            if ($key == sandbox_exp::FLD_NAME) {
+            if ($key == json_fields::NAME) {
                 $this->external_key = $value;
             }
-            if ($key == sandbox_exp::FLD_DESCRIPTION) {
+            if ($key == json_fields::DESCRIPTION) {
                 $this->description = $value;
             }
             if ($key == self::FLD_URL) {

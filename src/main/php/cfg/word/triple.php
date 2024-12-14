@@ -1487,7 +1487,7 @@ class triple extends sandbox_link_named implements JsonSerializable
         $result = parent::import_obj($in_ex_json, $test_obj);
 
         foreach ($in_ex_json as $key => $value) {
-            if ($key == sandbox_exp::FLD_TYPE) {
+            if ($key == json_fields::TYPE_NAME) {
                 $this->type_id = $phr_typ_cac->id($value);
             }
             if ($key == json_fields::EX_FROM) {
@@ -1528,7 +1528,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 }
                 $this->set_verb($vrb);
             }
-            if ($key == sandbox_exp::FLD_VIEW) {
+            if ($key == json_fields::VIEW) {
                 $trp_view = new view($this->user());
                 if (!$test_obj) {
                     $trp_view->load_by_name($value);

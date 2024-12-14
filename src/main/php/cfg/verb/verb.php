@@ -56,6 +56,7 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_table_list;
 use html\html_base;
+use shared\json_fields;
 use shared\library;
 
 class verb extends type_object
@@ -461,17 +462,17 @@ class verb extends type_object
         $this->reset();
         $this->set_user($usr);
         foreach ($json_obj as $key => $value) {
-            if ($key == sandbox_exp::FLD_NAME) {
+            if ($key == json_fields::NAME) {
                 $this->name = $value;
             }
-            if ($key == sandbox_exp::FLD_CODE_ID) {
+            if ($key == json_fields::CODE_ID) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->code_id = $value;
                     }
                 }
             }
-            if ($key == sandbox_exp::FLD_DESCRIPTION) {
+            if ($key == json_fields::DESCRIPTION) {
                 $this->description = $value;
             }
             if ($key == self::FLD_REVERSE) {

@@ -73,6 +73,7 @@ use cfg\user\user_profile;
 use cfg\user\user_type;
 use Exception;
 use html\user\user as user_dsp;
+use shared\json_fields;
 
 class user extends db_object_seq_id
 {
@@ -904,10 +905,10 @@ class user extends db_object_seq_id
         // reset all parameters of this user object
         $this->reset();
         foreach ($json_obj as $key => $value) {
-            if ($key == sandbox_exp::FLD_NAME) {
+            if ($key == json_fields::NAME) {
                 $this->name = $value;
             }
-            if ($key == sandbox_exp::FLD_DESCRIPTION) {
+            if ($key == json_fields::DESCRIPTION) {
                 $this->description = $value;
             }
             if ($key == self::FLD_EMAIL) {
@@ -925,7 +926,7 @@ class user extends db_object_seq_id
             if ($key == self::FLD_EX_PROFILE) {
                 $this->profile_id = $usr_pro_cac->id($value);
             }
-            if ($key == sandbox_exp::FLD_CODE_ID) {
+            if ($key == json_fields::CODE_ID) {
                 if ($profile_id == $usr_pro_cac->id(user_profile::ADMIN)
                     or $profile_id == $usr_pro_cac->id(user_profile::SYSTEM)) {
                     $this->code_id = $value;

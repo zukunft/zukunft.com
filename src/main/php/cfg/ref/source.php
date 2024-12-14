@@ -435,11 +435,11 @@ class source extends sandbox_typed
                 $this->url = $value;
             }
             if ($this->user()->is_system() or $this->user()->is_admin()) {
-                if ($key == sandbox_exp::FLD_CODE_ID) {
+                if ($key == json_fields::CODE_ID) {
                     $this->code_id = $value;
                 }
             }
-            if ($key == sandbox_exp::FLD_TYPE) {
+            if ($key == json_fields::TYPE_NAME) {
                 $this->type_id = $src_typ_cac->id($value);
             }
         }
@@ -496,16 +496,16 @@ class source extends sandbox_typed
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == sandbox_exp::FLD_NAME) {
+            if ($key == json_fields::NAME) {
                 $this->name = $value;
             }
             if ($key == self::FLD_URL) {
                 $this->url = $value;
             }
-            if ($key == sandbox_exp::FLD_DESCRIPTION) {
+            if ($key == json_fields::DESCRIPTION) {
                 $this->description = $value;
             }
-            if ($key == sandbox_exp::FLD_TYPE_ID) {
+            if ($key == json_fields::TYPE) {
                 $this->type_id = $value;
             }
         }

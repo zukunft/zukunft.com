@@ -899,7 +899,7 @@ class word extends sandbox_typed
         // set the object vars based on the json
         $result = parent::import_obj($in_ex_json, $test_obj);
         foreach ($in_ex_json as $key => $value) {
-            if ($key == sandbox_exp::FLD_TYPE) {
+            if ($key == json_fields::TYPE_NAME) {
                 $this->type_id = $phr_typ_cac->id($value);
             }
             if ($key == sql::FLD_CODE_ID) {
@@ -915,7 +915,7 @@ class word extends sandbox_typed
                 }
             }
             // TODO change to view object like in triple
-            if ($key == sandbox_exp::FLD_VIEW) {
+            if ($key == json_fields::VIEW) {
                 $wrd_view = new view($this->user());
                 if (!$test_obj) {
                     $wrd_view->load_by_name($value);
@@ -1718,13 +1718,13 @@ class word extends sandbox_typed
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == sandbox_exp::FLD_NAME) {
+            if ($key == json_fields::NAME) {
                 $this->name = $value;
             }
-            if ($key == sandbox_exp::FLD_DESCRIPTION) {
+            if ($key == json_fields::DESCRIPTION) {
                 $this->description = $value;
             }
-            if ($key == sandbox_exp::FLD_TYPE_ID) {
+            if ($key == json_fields::TYPE) {
                 $this->type_id = $value;
             }
         }

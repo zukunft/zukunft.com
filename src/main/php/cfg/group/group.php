@@ -85,6 +85,7 @@ use cfg\user;
 use cfg\user_message;
 use cfg\value\value;
 use cfg\word;
+use shared\json_fields;
 use shared\library;
 
 class group extends sandbox_multi
@@ -1550,7 +1551,7 @@ class group extends sandbox_multi
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == sandbox_exp::FLD_NAME) {
+            if ($key == json_fields::NAME) {
                 $this->name = $value;
             }
         }

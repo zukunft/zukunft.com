@@ -859,7 +859,7 @@ class view extends sandbox_typed
         // first save the parameters of the view itself
         foreach ($in_ex_json as $key => $value) {
 
-            if ($key == sandbox_exp::FLD_TYPE) {
+            if ($key == json_fields::TYPE_NAME) {
                 if ($value != '') {
                     $type_id = $this->type_id_by_code_id($value);
                     if ($type_id == type_list::CODE_ID_NOT_FOUND) {
@@ -869,7 +869,7 @@ class view extends sandbox_typed
                     }
                 }
             }
-            if ($key == sandbox_exp::FLD_CODE_ID) {
+            if ($key == json_fields::CODE_ID) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->code_id = $value;
@@ -905,24 +905,24 @@ class view extends sandbox_typed
                     // do not overwrite an existing component
                     // instead just add the existing component
                     if ((count($json_cmp) == 2
-                            and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
-                            and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp))
+                            and array_key_exists(json_fields::POSITION, $json_cmp)
+                            and array_key_exists(json_fields::NAME, $json_cmp))
                         or (count($json_cmp) == 3
-                            and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
-                            and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp)
+                            and array_key_exists(json_fields::POSITION, $json_cmp)
+                            and array_key_exists(json_fields::NAME, $json_cmp)
                             and array_key_exists(json_fields::POS_TYPE, $json_cmp))
                         or (count($json_cmp) == 3
-                            and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
-                            and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp)
+                            and array_key_exists(json_fields::POSITION, $json_cmp)
+                            and array_key_exists(json_fields::NAME, $json_cmp)
                             and array_key_exists(json_fields::STYLE
 , $json_cmp))
                         or (count($json_cmp) == 4
-                            and array_key_exists(sandbox_exp::FLD_POSITION, $json_cmp)
-                            and array_key_exists(sandbox_exp::FLD_NAME, $json_cmp)
+                            and array_key_exists(json_fields::POSITION, $json_cmp)
+                            and array_key_exists(json_fields::NAME, $json_cmp)
                             and array_key_exists(json_fields::POS_TYPE, $json_cmp)
                             and array_key_exists(json_fields::STYLE
 , $json_cmp))) {
-                        $cmp->load_by_name($json_cmp[sandbox_exp::FLD_NAME]);
+                        $cmp->load_by_name($json_cmp[json_fields::NAME]);
                         if (array_key_exists(json_fields::POS_TYPE, $json_cmp)) {
                             $pos_type_code_id = $json_cmp[json_fields::POS_TYPE];
                         }
@@ -935,9 +935,9 @@ class view extends sandbox_typed
                         // nevertheless create the component
                         // but send a warning message
                         if ($cmp->id() <= 0) {
-                            log_warning('Component ' . $json_cmp[sandbox_exp::FLD_NAME]
+                            log_warning('Component ' . $json_cmp[json_fields::NAME]
                                 . ' has not yet been created, but is supposed to be at position '
-                                . $json_cmp[sandbox_exp::FLD_POSITION] . ' of a view ');
+                                . $json_cmp[json_fields::POSITION] . ' of a view ');
                             $cmp->import_obj($json_cmp, $test_obj);
                         }
                     } else {
@@ -955,7 +955,7 @@ class view extends sandbox_typed
         // TODO add the assigned terms
         // after the view has it's components assign the view to the terms
         foreach ($in_ex_json as $key => $value) {
-            if ($key == sandbox_exp::FLD_ASSIGN) {
+            if ($key == json_fields::ASSIGNED) {
                 foreach ($value as $trm_name) {
                     $trm = new term($this->user());
                     $trm->load_by_name($trm_name);

@@ -851,26 +851,26 @@ class component extends sandbox_typed
             if ($key == self::FLD_POSITION) {
                 $this->order_nbr = $value;
             }
-            if ($key == sandbox_exp::FLD_TYPE) {
+            if ($key == json_fields::TYPE_NAME) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->type_id = $this->type_id_by_code_id($value);
                     }
                 }
             }
-            if ($key == sandbox_exp::FLD_STYLE) {
+            if ($key == json_fields::STYLE) {
                 if ($value != '') {
                     $this->set_style($value);
                 }
             }
-            if ($key == sandbox_exp::FLD_CODE_ID) {
+            if ($key == json_fields::CODE_ID) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->code_id = $value;
                     }
                 }
             }
-            if ($key == sandbox_exp::FLD_UI_MSG_ID) {
+            if ($key == json_fields::UI_MSG_CODE_ID) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->ui_msg_code_id = $value;

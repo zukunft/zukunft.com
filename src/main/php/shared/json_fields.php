@@ -5,7 +5,7 @@
     shared/json_fields.php - list of json field names used for the api and im- and export
     ----------------------
 
-    ths json fields for the api messages are in the shared api object
+    the json or yaml fields for the api messages are in the shared api object
 
 
     This file is part of zukunft.com - calc with words
@@ -40,17 +40,13 @@ class json_fields
     // TODO easy move all fields used for the json im- and export messages to this object
 
     /*
-     * api
+     * shared - fields used for api and im- and export json messages
      */
 
-    // json field names of the api json messages
-    // which is supposed to be the same as the corresponding var of the api object
-    // so that no additional mapping is needed
-    // TODO check if api objects can be deprecated
-    // and used in the backend to create the json for the frontend
-    // and used in the frontend for the field selection
-    const ID = 'id'; // the unique database id used to save the changes
-    const NAME = 'name'; // the unique name of the object which is also a database index
+    // the unique name of the object which is also a database index
+    const NAME = 'name';
+
+    // a short description of concrete object used e.g. for the tooltip in the frontend
     const DESCRIPTION = 'description';
 
     // the json field name for code id to select a single object
@@ -62,6 +58,23 @@ class json_fields
     // the database id (or in some cases still the code id) of an object type
     // e.g. for the word api message it contains the id of the phrase type
     const TYPE = 'type_id';
+    const TYPE_NAME = 'type';
+
+    // the code id of the view style of a view, component or component_link
+    const STYLE = 'style';
+
+
+    /*
+     * api - fields used only for the api json messages
+     */
+
+    // json field names of the api json messages
+    // which is supposed to be the same as the corresponding var of the api object
+    // so that no additional mapping is needed
+    // TODO check if api objects can be deprecated
+    // and used in the backend to create the json for the frontend
+    // and used in the frontend for the field selection
+    const ID = 'id'; // the unique database id used to save the changes
 
     // reference fields e.g. to link a phrase to an external reference
     const PHRASE = 'phrase_id';
@@ -123,9 +136,6 @@ class json_fields
     // the database id e.g. of a component_link
     const LINK_ID = 'link_id';
 
-    // the code id of the view style of a view, component or component_link
-    const STYLE = 'style';
-
     // e.g. the order of the components within a view
     const POS = 'position';
 
@@ -144,9 +154,20 @@ class json_fields
     // the json field name in the api json message to identify if the term is a word, triple, verb or formula
     const OBJECT_CLASS = 'class';
 
+
     /*
-     * im- and export
+     * im- and export - fields used only for the im- and export json messages
      */
+
     const TIMESTAMP = 'timestamp';
+
+    // name of the view to show a word, triple or formula
+    const VIEW = 'view';
+
+    // the name of the value source
+    const SOURCE_NAME = 'source';
+
+    // to assign e.g. words, triples or formulas to a view
+    const ASSIGNED = 'assigned';
 
 }
