@@ -44,6 +44,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\log\change;
 use cfg\log\change_action;
+use shared\json_fields;
 use shared\library;
 
 class ip_range extends db_object_seq_id
@@ -290,6 +291,24 @@ class ip_range extends db_object_seq_id
         $result->is_active = $this->active;
 
         return $result;
+    }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = [];
+
+        // in this case simply map the fields
+        $vars[json_fields::IP_FROM] = $this->from;
+        $vars[json_fields::IP_TO] = $this->to;
+        $vars[json_fields::REASON] = $this->reason;
+        $vars[json_fields::IS_ACTIVE] = $this->active;
+
+        return $vars;
     }
 
 

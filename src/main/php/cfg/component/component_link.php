@@ -72,6 +72,7 @@ use cfg\type_object;
 use cfg\user;
 use cfg\user_message;
 use cfg\view;
+use shared\json_fields;
 use shared\library;
 
 class component_link extends sandbox_link
@@ -776,6 +777,22 @@ class component_link extends sandbox_link
             $result->position = $this->order_nbr;
         }
         return $result;
+    }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = $this->component()->export_json($do_load);
+
+        if ($this->order_nbr >= 0) {
+            $vars[json_fields::POSITION] = $this->order_nbr;
+        }
+
+        return $vars;
     }
 
 

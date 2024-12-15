@@ -69,7 +69,7 @@ use cfg\value\value;
 use cfg\value\value_list;
 use html\word\word as word_dsp;
 use html\word\word_list as word_list_dsp;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 use shared\enum\foaf_direction;
 use shared\library;
 use shared\types\verbs;
@@ -823,6 +823,26 @@ class word_list extends sandbox_list_named
             }
         }
         return $exp_words;
+    }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $wrd_lst = [];
+        foreach ($this->lst() as $wrd) {
+            if (get_class($wrd) == word::class) {
+                if ($wrd->has_cfg()) {
+                    $wrd_lst[] = $wrd->export_json($do_load);
+                }
+            } else {
+                log_err('The function wrd_lst->export_obj returns ' . $wrd->dsp_id() . ', which is ' . get_class($wrd) . ', but not a word.', 'export->get');
+            }
+        }
+        return $wrd_lst;
     }
 
 

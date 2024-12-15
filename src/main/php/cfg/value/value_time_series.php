@@ -270,9 +270,9 @@ class value_time_series extends sandbox_value
      * load a row from the database selected by id
      * TODO load the related time series data
      * @param group $grp the phrase group to which the time series should be loaded
-     * @return int the id of the object found and zero if nothing is found
+     * @return bool true if time series has been loaded
      */
-    function load_by_grp(group $grp): int
+    function load_by_grp(group $grp, bool $by_source = false): bool
     {
         global $db_con;
 

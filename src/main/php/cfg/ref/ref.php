@@ -799,6 +799,33 @@ class ref extends sandbox_link
         return $result;
     }
 
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = [];
+
+        if ($this->source != null) {
+            $vars[json_fields::SOURCE_NAME] = $this->source->name();
+        }
+        if ($this->predicate_id > 0) {
+            $vars[json_fields::TYPE_NAME] = $this->predicate_code_id();
+        }
+        if ($this->external_key <> '') {
+            $vars[json_fields::NAME] = $this->external_key;
+        }
+        if ($this->description <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        if ($this->url <> '') {
+            $vars[json_fields::URL] = $this->url;
+        }
+        return $vars;
+    }
+
 
     /*
      * log

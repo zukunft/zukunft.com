@@ -6,7 +6,23 @@
     -----------------
 
     The main sections of this object are
+    - db const:          const for the database link
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - preloaded:         select e.g. types from cache
+    - cast:              create an api object and set the vars from an api json
+    - load:              database access object (DAO) functions
+    - load related:      load e.g. the related components from the database
+    - load helper:       the field names of this object as overwrite functions
+    - components:        modify interface functions
+    - assign:            interface functions to assign the view to word, triples, verbs or formulas
+    - im- and export:    create an export object and set the vars from an import object
+    - information:       functions to make code easier to read
+    - save:              manage to update the database
     - save helper:       helpers for updating the database
+    - sql write fields:  field list for writing to the database
+    - display:           to be moved to the frontend object
 
 
     This file is part of zukunft.com - calc with words
@@ -55,7 +71,6 @@ include_once WEB_VIEW_PATH . 'view.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\component\view_style;
-use shared\api;
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_link;
@@ -81,7 +96,7 @@ class view extends sandbox_typed
 {
 
     /*
-     * database link
+     * db const
      */
 
     // comments used for the database creation
@@ -291,9 +306,9 @@ class view extends sandbox_typed
     }
 
     /**
-     * @return view_style|null the view style for this component or null if the parent style should be used
+     * @return view_style|type_object|null the view style for this component or null if the parent style should be used
      */
-    function style(): ?view_style
+    function style(): view_style|type_object|null
     {
         return $this->style;
     }
@@ -359,7 +374,7 @@ class view extends sandbox_typed
 
 
     /*
-     * get preloaded information
+     * preloaded
      */
 
     /**
@@ -721,10 +736,10 @@ class view extends sandbox_typed
      */
     function add_cmp(
         component $cmp,
-        ?int $pos = null,
-        ?string $pos_type_code_id = null,
-        ?string $style_code_id = null,
-        object $test_obj = null
+        ?int      $pos = null,
+        ?string   $pos_type_code_id = null,
+        ?string   $style_code_id = null,
+        object    $test_obj = null
     ): string
     {
         $result = '';
@@ -914,22 +929,19 @@ class view extends sandbox_typed
                         or (count($json_cmp) == 3
                             and array_key_exists(json_fields::POSITION, $json_cmp)
                             and array_key_exists(json_fields::NAME, $json_cmp)
-                            and array_key_exists(json_fields::STYLE
-, $json_cmp))
+                            and array_key_exists(json_fields::STYLE, $json_cmp))
                         or (count($json_cmp) == 4
                             and array_key_exists(json_fields::POSITION, $json_cmp)
                             and array_key_exists(json_fields::NAME, $json_cmp)
                             and array_key_exists(json_fields::POS_TYPE, $json_cmp)
-                            and array_key_exists(json_fields::STYLE
-, $json_cmp))) {
+                            and array_key_exists(json_fields::STYLE, $json_cmp))) {
                         $cmp->load_by_name($json_cmp[json_fields::NAME]);
                         if (array_key_exists(json_fields::POS_TYPE, $json_cmp)) {
                             $pos_type_code_id = $json_cmp[json_fields::POS_TYPE];
                         }
                         if (array_key_exists(json_fields::STYLE
-, $json_cmp)) {
-                            $style_code_id = $json_cmp[json_fields::STYLE
-];
+                            , $json_cmp)) {
+                            $style_code_id = $json_cmp[json_fields::STYLE];
                         }
                         // if the component does not jet exist
                         // nevertheless create the component
@@ -1006,9 +1018,28 @@ class view extends sandbox_typed
         return $result;
     }
 
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = parent::export_json($do_load);
+
+        // add the view components used
+        if ($do_load) {
+            $this->load_components();
+        }
+        if ($this->cmp_lnk_lst != null) {
+            $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->export_json();
+        }
+        return $vars;
+    }
+
 
     /*
-     * logic functions
+     * information
      */
 
     /**
@@ -1239,6 +1270,7 @@ class view extends sandbox_typed
 
     /*
      * display
+     * TODO to be moved to the frontend object
      */
 
     /**

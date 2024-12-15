@@ -5,9 +5,16 @@
     model/sandbox/sandbox_multi.php - the superclass for handling user specific objects including the database saving
     -------------------------------
 
-    This superclass should be used by the classes words, formula, ... to enable user specific values and links
+    This superclass is used by the classes values and results to enable user specific changes
     similar to sandbox.php but for database objects that have custom prime id
     TODO should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
+
+    The main sections of this object are
+    - db const:          const for the database link
+    - object vars:       the variables of this multi table sandbox object
+    - construct and map: including the mapping of the db row to this formula object
+    - set and get:       to capsule the vars from unexpected changes
+    - sql write fields:  field list for writing to the database
 
 
     This file is part of zukunft.com - calc with words
@@ -91,7 +98,7 @@ class sandbox_multi extends db_object_multi_user
 {
 
     /*
-     * database link
+     * db const
      */
 
     // database and JSON object field names used in many user sandbox objects
@@ -833,6 +840,31 @@ class sandbox_multi extends db_object_multi_user
     {
         log_warning($this::class . ' does not have an expected instance of the export_obj function');
         return (new sandbox_exp());
+    }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+
+        $vars = [];
+
+        // add the share type
+        if ($this->share_id > 0 and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
+            $vars[json_fields::SHARE] = $this->share_type_code_id();
+        }
+
+        // add the protection type
+        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
+            $vars[json_fields::PROTECTION] = $this->protection_type_code_id();
+        }
+
+        return $vars;
     }
 
 

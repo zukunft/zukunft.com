@@ -484,6 +484,25 @@ class source extends sandbox_typed
     }
 
     /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = parent::export_json($do_load);
+
+        if ($this->url <> '') {
+            $vars[json_fields::URL] = $this->url;
+        }
+        if ($this->code_id <> '') {
+            $vars[json_fields::CODE_ID] = $this->code_id;
+        }
+
+        return $vars;
+    }
+
+    /**
      * set the source object vars based on an api json array
      * similar to import_obj but using the database id instead of the names and code id
      * @param array $api_json the api array

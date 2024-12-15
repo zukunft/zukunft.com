@@ -578,6 +578,25 @@ class formula_list extends sandbox_list
         return $exp_formulas;
     }
 
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $frm_lst = [];
+        foreach ($this->lst() as $frm) {
+            if (get_class($frm) == formula::class) {
+                $frm_lst[] = $frm->export_json($do_load);
+            } else {
+                log_err('The function formula_list->export_json returns ' . $frm->dsp_id()
+                    . ', which is ' . get_class($frm) . ', but not a formula.', 'export->get');
+            }
+        }
+        return $frm_lst;
+    }
+
 
     /*
      * modify

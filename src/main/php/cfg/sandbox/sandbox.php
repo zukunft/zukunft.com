@@ -869,6 +869,31 @@ class sandbox extends db_object_seq_id_user
         return (new sandbox_exp());
     }
 
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+
+        $vars = [];
+
+        // add the share type
+        if ($this->share_id > 0 and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
+            $vars[json_fields::SHARE] = $this->share_type_code_id();
+        }
+
+        // add the protection type
+        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
+            $vars[json_fields::PROTECTION] = $this->protection_type_code_id();
+        }
+
+        return $vars;
+    }
+
 
     /*
      * information

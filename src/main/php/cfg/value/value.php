@@ -447,16 +447,6 @@ class value extends sandbox_value
         return $this->grp->phrase_list();
     }
 
-    function wrd_lst(): word_list
-    {
-        return $this->phrase_list()->words();
-    }
-
-    function trp_lst(): triple_list
-    {
-        return $this->phrase_list()->triples();
-    }
-
     /**
      * @return array with the ids of the phrases
      */
@@ -509,15 +499,15 @@ class value extends sandbox_value
     /**
      * load a value by the phrase group
      * @param group $grp the id of the phrase group
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int|string the id of the object found and zero if nothing is found
+     * @param bool $by_source set to true to force the selection e.g. by source phrase group id for results only
+     * @return bool true if value has been found
      */
-    function load_by_grp(group $grp, string $class = self::class): int|string
+    function load_by_grp(group $grp, bool $by_source = false): bool
     {
         global $db_con;
 
         log_debug($grp->dsp_id());
-        $qp = $this->load_sql_by_grp($db_con->sql_creator(), $grp, $class);
+        $qp = $this->load_sql_by_grp($db_con->sql_creator(), $grp);
         $id = $this->load_non_int_db_key($qp);
 
         // use the given phrase list
@@ -530,7 +520,11 @@ class value extends sandbox_value
             }
         }
 
-        return $id;
+        if ($id != 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -1168,6 +1162,23 @@ class value extends sandbox_value
 
         log_debug(json_encode($result));
         return $result;
+    }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = parent::export_json($do_load);
+
+        // add the source
+        if ($this->source != null) {
+            $vars[json_fields::SOURCE_NAME] = $this->source->name();
+        }
+
+        return $vars;
     }
 
     /**

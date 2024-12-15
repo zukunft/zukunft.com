@@ -82,15 +82,6 @@ class value_list extends sandbox_value_list
 {
 
     /*
-     * im- and export link
-     */
-
-    // the field names used for the im- and export in the json or yaml format
-    const FLD_EX_CONTEXT = 'context';
-    const FLD_EX_VALUES = 'values';
-
-
-    /*
      * construct and map
      */
 
@@ -773,7 +764,7 @@ class value_list extends sandbox_value_list
 
         foreach ($json_obj as $key => $value) {
 
-            if ($key == self::FLD_EX_CONTEXT) {
+            if ($key == json_fields::CONTEXT) {
                 $phr_lst = new phrase_list($this->user());
                 $usr_msg->add($phr_lst->import_lst($value, $test_obj));
                 $val->grp = $phr_lst->get_grp_id($do_save);
@@ -811,7 +802,7 @@ class value_list extends sandbox_value_list
                 $val->source = $src;
             }
 
-            if ($key == self::FLD_EX_VALUES) {
+            if ($key == json_fields::VALUES) {
                 foreach ($value as $val_entry_key => $val_entry) {
                     if (is_array($val_entry)) {
                         foreach ($val_entry as $val_key => $val_number) {
@@ -842,13 +833,13 @@ class value_list extends sandbox_value_list
     }
 
     private function add_value(
-                     $val_key,
-                     $val_number,
-        value        $val,
-        phrase_list  $phr_lst,
-        bool         $do_save,
+        $val_key,
+        $val_number,
+        value $val,
+        phrase_list $phr_lst,
+        bool $do_save,
         user_message $usr_msg,
-        object       $test_obj = null
+        object $test_obj = null
     ): user_message
     {
         $val_to_add = clone $val;
@@ -940,6 +931,76 @@ class value_list extends sandbox_value_list
 
         log_debug(json_encode($result));
         return $result;
+    }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+
+        $vars = [];
+
+        // reload the value parameters
+        if ($do_load) {
+            log_debug();
+            $this->load_by_ids($this->id_lst());
+        }
+
+        if ($this->count() > 1) {
+
+            // use the first value to get the context parameter
+            $val0 = $this->get(0);
+            // use the second value to detect the context phrases
+            $val1 = $this->get(1);
+
+            // get phrase names of the first value
+            $phr_lst1 = $val0->phr_names();
+            // get phrase names of the second value
+            $phr_lst2 = $val1->phr_names();
+            // add common phrase of the first and second value
+            $phr_lst = array();
+            if (count($phr_lst1) > 0 and count($phr_lst2) > 0) {
+                $phr_lst = array_intersect($phr_lst1, $phr_lst2);
+                ksort($phr_lst);
+                $vars[json_fields::CONTEXT] = $phr_lst;
+            }
+
+            // add the share type
+            if ($val0->share_id > 0 and $val0->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
+                $vars[json_fields::SHARE] = $val0->share_type_code_id();
+            }
+
+            // add the protection type
+            if ($val0->protection_id > 0 and $val0->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
+                $vars[json_fields::PROTECTION] = $val0->protection_type_code_id();
+            }
+
+            // add the source
+            if ($val0->source() != null) {
+                $vars[json_fields::SOURCE] = $val0->source()->name();
+            }
+
+            if (count($this->lst()) > 0) {
+                foreach ($this->lst() as $val) {
+                    $phr_name = array_diff($val->phr_names(), $phr_lst);
+                    $val_lst = [];
+                    if (count($phr_name) > 0) {
+                        $val_entry = array();
+                        $key_name = array_values($phr_name)[0];
+                        $val_entry[$key_name] = $val->number();
+                        $val_lst[] = $val_entry;
+                    }
+                    $vars[json_fields::VALUES] = $val_lst;
+                }
+            }
+        }
+
+        return $vars;
     }
 
 

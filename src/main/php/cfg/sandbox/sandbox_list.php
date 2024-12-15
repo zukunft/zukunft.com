@@ -5,6 +5,15 @@
     model/sandbox/sandbox_list.php - a base object for a list of user sandbox objects
     ------------------------------
 
+    The main sections of this object are
+    - object vars:       the variables of this list object
+    - construct and map: including the mapping of the db rows to this list
+    - set and get:       to capsule the vars from unexpected changes
+    - load:              database access object (DAO) functions
+    - im- and export:    create an export object and set the vars from an import object
+    - modify:            change potentially all items of this list object
+    - debug:             internal support functions for debugging
+
 
     This file is part of zukunft.com - calc with words
 
@@ -158,8 +167,6 @@ class sandbox_list extends base_list
         int                                            $offset = 0
     ): sql_par
     {
-        $lib = new library();
-
         $qp = new sql_par($sbx::class, new sql_type_list([sql_type::COMPLETE]));
         $qp->name .= 'names';
 
@@ -281,6 +288,25 @@ class sandbox_list extends base_list
 
 
     /*
+     * im- and export
+     */
+
+    /**
+     * create an array with one export json array for each list item
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array of export json arrays
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $exp_lst = [];
+        foreach ($this->lst() as $sbx) {
+            $exp_lst[] = $sbx->export_json($do_load);
+        }
+        return $exp_lst;
+    }
+
+
+    /*
      * modify
      */
 
@@ -384,7 +410,7 @@ class sandbox_list extends base_list
      * @param int $pos the first list id that has not yet been shown
      * @return string a short summary of the remaining ids
      */
-    protected function dsp_id_remaining(int $pos,): string
+    protected function dsp_id_remaining(int $pos): string
     {
         global $debug;
         $lib = new library();

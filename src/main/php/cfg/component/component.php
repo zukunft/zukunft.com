@@ -378,9 +378,9 @@ class component extends sandbox_typed
     }
 
     /**
-     * @return view_style|null the view style for this component or null if the parent style should be used
+     * @return view_style|type_object|null the view style for this component or null if the parent style should be used
      */
-    function style(): ?view_style
+    function style(): view_style|type_object|null
     {
         return $this->style;
     }
@@ -929,6 +929,42 @@ class component extends sandbox_typed
 
         log_debug(json_encode($result));
         return $result;
+    }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = parent::export_json($do_load);
+
+        if ($this->order_nbr >= 0) {
+            $vars[json_fields::POSITION] = $this->order_nbr;
+        }
+        if ($this->code_id != null) {
+            $vars[json_fields::CODE_ID] = $this->code_id;
+        }
+        if ($this->ui_msg_code_id != null) {
+            $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
+        }
+
+        // add the phrases used
+        if ($do_load) {
+            $this->load_phrases();
+        }
+        if ($this->row_phrase->name() != '') {
+            $vars[json_fields::ROW] = $this->row_phrase->name();
+        }
+        if ($this->col_phrase->name() != '') {
+            $vars[json_fields::COLUMN] = $this->col_phrase->name();
+        }
+        if ($this->col_sub_phrase->name() != '') {
+            $vars[json_fields::COLUMN2] = $this->col_sub_phrase->name();
+        }
+
+        return $vars;
     }
 
 

@@ -285,11 +285,25 @@ class component_list extends sandbox_list
      */
     function export_obj(bool $do_load = true): array
     {
-        $exp_components = array();
+        $exp_components = [];
         foreach ($this->lst() as $dsp) {
             $exp_components[] = $dsp->export_obj($do_load);
         }
         return $exp_components;
+    }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $cmp_lst = [];
+        foreach ($this->lst() as $cmp) {
+            $cmp_lst[] = $cmp->export_json($do_load);
+        }
+        return $cmp_lst;
     }
 
 }

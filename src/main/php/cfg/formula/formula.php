@@ -1575,6 +1575,42 @@ class formula extends sandbox_typed
         return $result;
     }
 
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = parent::export_json($do_load);
+
+        global $frm_typ_cac;
+
+        // TODO avoid the var overwrite be overwriting the type_name() function
+        if (isset($this->type_id)) {
+            if ($this->type_id <> $frm_typ_cac->default_id()) {
+                $vars[json_fields::TYPE_NAME] = $frm_typ_cac->code_id($this->type_id);
+            }
+        }
+        if ($this->usr_text <> '') {
+            $vars[json_fields::EXPRESSION] = $this->usr_text;
+        }
+
+        if ($do_load) {
+            $exp_lst = [];
+            $phr_lst = $this->assign_phr_lst_direct();
+            if ($phr_lst != null) {
+                foreach ($phr_lst->lst() as $phr) {
+                    $exp_lst[] = $phr->export_json();
+                }
+                $vars[json_fields::ASSIGNED_WORD] = $exp_lst;
+            }
+        }
+
+        return $vars;
+    }
+
+
     /*
      * expression
      * TODO probably to be replaced with expression functions

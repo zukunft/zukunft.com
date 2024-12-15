@@ -51,13 +51,13 @@ use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
-use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\log\change_action;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
 use JsonSerializable;
+use shared\json_fields;
 
 class type_object extends db_object_seq_id implements JsonSerializable
 {
@@ -214,6 +214,33 @@ class type_object extends db_object_seq_id implements JsonSerializable
         $api_obj->name = $this->name;
         $api_obj->code_id = $this->code_id;
         return $api_obj;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = [];
+
+        if ($this->name() <> '') {
+            $vars[json_fields::NAME] = $this->name();
+        }
+        if ($this->code_id <> '') {
+            $vars[json_fields::CODE_ID] = $this->code_id;
+        }
+        if ($this->description <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+
+        return $vars;
     }
 
 

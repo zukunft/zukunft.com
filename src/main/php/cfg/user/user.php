@@ -986,6 +986,38 @@ class user extends db_object_seq_id
         return $result;
     }
 
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = [];
+
+        $vars[json_fields::NAME] = $this->name;
+        if ($this->description <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        if ($this->email <> '') {
+            $vars[json_fields::EMAIL] = $this->email;
+        }
+        if ($this->first_name <> '') {
+            $vars[json_fields::FIRST_NAME] = $this->first_name;
+        }
+        if ($this->last_name <> '') {
+            $vars[json_fields::LAST_NAME] = $this->last_name;
+        }
+        if ($this->code_id <> '') {
+            $vars[json_fields::CODE_ID] = $this->code_id;
+        }
+        if ($this->profile <> '') {
+            $vars[json_fields::PROFILE] = $this->profile;
+        }
+
+        return $vars;
+    }
+
 
     /*
      * information

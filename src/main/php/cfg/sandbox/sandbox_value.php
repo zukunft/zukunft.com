@@ -58,6 +58,7 @@ use cfg\result\result;
 use cfg\value\value;
 use DateTime;
 use Exception;
+use shared\json_fields;
 use shared\library;
 
 class sandbox_value extends sandbox_multi
@@ -1070,6 +1071,42 @@ class sandbox_value extends sandbox_multi
         }
     }
 
+    function phrase_list(): phrase_list
+    {
+        return $this->grp->phrase_list();
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * dummy function to be overwritten by the child value or result objects
+     * @param group $grp
+     * @param bool $by_source set to true to force the selection e.g. by source phrase group id
+     * @return bool true if the vlaue or result has been loaded
+     */
+    function load_by_grp(group $grp, bool $by_source = false): bool
+    {
+        return true;
+    }
+
+    function load_phrases(): void
+    {
+        log_err('the load_phrases function is expected to be overwritten by the child class');
+    }
+
+    function wrd_lst(): word_list
+    {
+        return $this->phrase_list()->words();
+    }
+
+    function trp_lst(): triple_list
+    {
+        return $this->phrase_list()->triples();
+    }
+
 
     /*
      * cast
@@ -1086,6 +1123,58 @@ class sandbox_value extends sandbox_multi
         $api_phr_lst = $phr_lst->api_obj();
         $api_obj->phrases = $api_phr_lst;
         $api_obj->set_number($this->number);
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = parent::export_json($do_load);
+
+        // reload the value parameters
+        if ($do_load) {
+            $this->load_by_grp($this->grp());
+            $this->load_phrases();
+        }
+
+        // add the words
+        $wrd_lst = array();
+        if (!$this->phrase_list()->is_empty()) {
+            if (!$this->wrd_lst()->is_empty()) {
+                foreach ($this->wrd_lst()->lst() as $wrd) {
+                    $wrd_lst[] = $wrd->export_json();
+                }
+                if (count($wrd_lst) > 0) {
+                    $vars[json_fields::WORDS] = $wrd_lst;
+                }
+            }
+        }
+
+        // add the triples
+        $triples_lst = array();
+        if (!$this->phrase_list()->is_empty()) {
+            if (!$this->trp_lst()->is_empty()) {
+                foreach ($this->trp_lst()->lst() as $trp) {
+                    $triples_lst[] = $trp->export_json();
+                }
+                if (count($triples_lst) > 0) {
+                    $vars[json_fields::TRIPLES] = $triples_lst;
+                }
+            }
+        }
+
+        // add the value itself
+        $vars[json_fields::NUMBER] = $this->number;
+
+        return $vars;
     }
 
 

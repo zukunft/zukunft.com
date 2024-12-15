@@ -1314,6 +1314,28 @@ class triple extends sandbox_link_named implements JsonSerializable
     }
 
     /**
+     * get the view object for this word
+     */
+    function load_view(): ?view
+    {
+        $result = null;
+
+        if ($this->view != null) {
+            $result = $this->view;
+        } else {
+            if ($this->view_id() > 0) {
+                $result = new view($this->user());
+                if ($result->load_by_id($this->view_id())) {
+                    $this->view = $result;
+                    log_debug('for ' . $this->dsp_id() . ' is ' . $result->dsp_id());
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * @return true if no link objects is missing
      */
     private function has_objects(): bool
@@ -1600,6 +1622,57 @@ class triple extends sandbox_link_named implements JsonSerializable
 
         log_debug(json_encode($result));
         return $result;
+    }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        global $phr_typ_cac;
+
+        $vars = parent::export_json($do_load);
+
+        if ($this->name() <> '') {
+            $vars[json_fields::NAME] = $this->name();
+        }
+        if ($this->description <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        if ($this->type_name() <> '') {
+            if ($this->type_id != $phr_typ_cac->default_id()) {
+                $vars[json_fields::TYPE_NAME] = $this->type_name();
+            }
+        }
+        if ($this->from()->name() <> '') {
+            $vars[json_fields::EX_FROM] = $this->from()->name();
+        }
+        if ($this->verb_name() <> '') {
+            $vars[json_fields::EX_VERB] = $this->verb_name();
+        }
+        if ($this->to()->name() <> '') {
+            $vars[json_fields::EX_TO] = $this->to()->name();
+        }
+
+        if ($this->view_id() > 0) {
+            if ($do_load) {
+                $this->load_view();
+            }
+            if ($this->view->name() != '') {
+                $vars[json_fields::VIEW] = $this->view->name();
+            }
+        }
+        if (count($this->ref_lst) > 0) {
+            $ref_lst = [];
+            foreach ($this->ref_lst as $ref) {
+                $ref_lst[] = $ref->export_json();
+            }
+            $vars[json_fields::REFS] = $ref_lst;
+        }
+
+        return $vars;
     }
 
 
@@ -2630,6 +2703,7 @@ class triple extends sandbox_link_named implements JsonSerializable
 
     /*
      * display
+     * TODO to be moved to the frontend object
      */
 
     /**

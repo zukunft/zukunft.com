@@ -60,8 +60,31 @@ class json_fields
     const TYPE = 'type_id';
     const TYPE_NAME = 'type';
 
+    // object lists
+    const PHRASES = 'phrases';
+    const COMPONENTS = 'components';
+
+    // object specific fields
+    const NUMBER = 'number'; // a float number used for values and results
+
     // the code id of the view style of a view, component or component_link
     const STYLE = 'style';
+
+    // the field names used for the im- and export in the json or yaml format
+    const EX_FROM = 'from';
+    const EX_TO = 'to';
+    const EX_VERB = 'verb';
+
+    // the external link of a source or a reference
+    const URL = 'url';
+
+    // the order number e.g. of the component within the view
+    const POSITION = 'position';
+
+    // languange forms
+    const PLURAL = 'plural';
+    const REVERSE = 'reverse';
+    const NAME_PLURAL_REVERSE = 'name_plural_reverse';
 
 
     /*
@@ -86,11 +109,6 @@ class json_fields
     const FROM = 'from_id';
     const TO = 'to_id';
     const VERB = 'verb_id';
-    // the field names used for the im- and export in the json or yaml format
-    const EX_FROM = 'from';
-    const EX_TO = 'to';
-    const EX_VERB = 'verb';
-    const PLURAL = 'plural';
     // the json field names in the api json message which is supposed to be the same as the var $id
     const PARENT = 'parent';
 
@@ -98,16 +116,10 @@ class json_fields
     const SHARE = 'share'; // the field name used for the JSON im- and export
     const PROTECTION = 'protection'; // the field name used for the JSON im- and export
 
-    // object list
-    const PHRASES = 'phrases';
-    const COMPONENTS = 'components';
-
     // fields for external ref
-    const URL = 'url'; // the external link of a source or a reference
     const EXTERNAL_KEY = 'external_key'; // the unique key of the reference
 
     // object specific fields
-    const NUMBER = 'number'; // a float number used for values and results
     const IS_STD = 'is_std'; // flag if a value or result is user specific or the default value for all users
     const USER_TEXT = 'user_text'; // the formula expression in a human-readable format
     const REF_TEXT = 'ref_text'; // the formula expression in a database reference format
@@ -129,9 +141,6 @@ class json_fields
     const TRACE = 'trace'; // what has lead to the issue
     const PRG_PART = 'prg_part'; // which part has caused the issue
     const OWNER = 'owner'; // the developer which wants to fix the problem
-
-    // the order number e.g. of the component within the view
-    const POSITION = 'position';
 
     // the database id e.g. of a component_link
     const LINK_ID = 'link_id';
@@ -169,5 +178,37 @@ class json_fields
 
     // to assign e.g. words, triples or formulas to a view
     const ASSIGNED = 'assigned';
+
+    // for the user object
+    const EMAIL = 'email';
+    const FIRST_NAME = 'first_name';
+    const LAST_NAME = 'last_name';
+    const PROFILE = 'profile';
+
+    // the phrase to select the row name of a view component
+    const ROW = 'row';
+    const COLUMN = 'column';
+    const COLUMN2 = 'column2';
+
+    // list of references e.g. of words
+    const REFS = 'refs';
+
+    // for value lists
+    const CONTEXT = 'context';
+    const VALUES = 'values';
+
+    // for formulas
+    const EXPRESSION = 'expression';
+    const ASSIGNED_WORD = 'assigned_word';
+
+    // for results
+    const WORDS = 'words';
+    const TRIPLES = 'triples';
+
+    // for ip ranges
+    const IP_FROM = 'ip_from';
+    const IP_TO = 'ip_to';
+    const REASON = 'reason';
+    const IS_ACTIVE = 'is_active';
 
 }

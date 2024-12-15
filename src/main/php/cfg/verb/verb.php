@@ -541,6 +541,38 @@ class verb extends type_object
         return $result;
     }
 
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = parent::export_json($do_load);
+
+        if ($this->description <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        if ($this->plural <> '') {
+            $vars[json_fields::PLURAL] = $this->plural;
+        }
+        if ($this->reverse <> '') {
+            $vars[json_fields::REVERSE] = $this->reverse;
+        }
+        if ($this->rev_plural <> '') {
+            $vars[json_fields::NAME_PLURAL_REVERSE] = $this->rev_plural;
+        }
+
+        // TODO add the protection type
+        /*
+        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protection_type::NO_PROTECT)) {
+            $vars[json_fields::PROTECTION] = $this->protection_type_code_id();
+        }
+        */
+
+        return $vars;
+    }
+
 
     /*
      * display

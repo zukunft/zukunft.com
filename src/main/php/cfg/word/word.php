@@ -996,6 +996,45 @@ class word extends sandbox_typed
         return $result;
     }
 
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        global $phr_typ_cac;
+
+        $vars = parent::export_json($do_load);
+
+        if ($this->plural <> '') {
+            $vars[json_fields::PLURAL] = $this->plural;
+        }
+        if ($this->type_id > 0) {
+            if ($this->type_id == $phr_typ_cac->default_id()) {
+                unset($vars[json_fields::TYPE_NAME]);
+            }
+        }
+
+        if ($this->view_id() > 0) {
+            if ($do_load) {
+                $this->load_view();
+            }
+            if ($this->view->name() != '') {
+                $vars[json_fields::VIEW] = $this->view->name();
+            }
+        }
+        if (count($this->ref_lst) > 0) {
+            $ref_lst = [];
+            foreach ($this->ref_lst as $ref) {
+                $ref_lst[] = $ref->export_json();
+            }
+            $vars[json_fields::REFS] = $ref_lst;
+        }
+
+        return $vars;
+    }
+
     /*
      * TODO review
     // offer the user to export the word and the relations as a xml file

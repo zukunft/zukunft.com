@@ -11,6 +11,7 @@
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
     - set and get:       to capsule the variables from unexpected changes
+    - preloaded:         get preloaded information such as the type code id
     - modify:            change potentially all variables of this sandbox object
     - cast:              create an api object and set the vars from an api json
     - information:       functions to make code easier to read
@@ -112,6 +113,21 @@ class sandbox_typed extends sandbox_named
 
 
     /*
+     * preloaded
+     */
+
+    /**
+     * the code id of the type for the export json
+     * must be overwritten by the child objects
+     * @return string with the code id of the type
+     */
+    private function type_code_id(): string
+    {
+        return 'type_code_id() function not overwritten by the ' . $this::class . ' object';
+    }
+
+
+    /*
      * cast
      */
 
@@ -139,6 +155,27 @@ class sandbox_typed extends sandbox_named
             }
         }
         return $msg;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = parent::export_json($do_load);
+
+        // TODO check for which object the code id should be used and why
+        if ($this->type_name() <> '') {
+            $vars[json_fields::TYPE_NAME] = $this->type_name();
+        }
+        return $vars;
     }
 
 

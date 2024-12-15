@@ -500,6 +500,26 @@ class triple_list extends sandbox_list_named
         return $exp_triples;
     }
 
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $trp_lst = [];
+
+        foreach ($this->lst() as $trp) {
+            if (get_class($trp) == triple::class) {
+                $trp_lst[] = $trp->export_json($do_load);
+            } else {
+                log_err('The function triple_list->export_obj returns ' . $trp->dsp_id() . ', which is ' . get_class($trp) . ', but not a word.', 'export->get');
+            }
+        }
+
+        return $trp_lst;
+    }
+
 
     /*
      *  information

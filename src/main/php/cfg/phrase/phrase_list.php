@@ -920,6 +920,25 @@ class phrase_list extends sandbox_list_named
         return $exp_phrases;
     }
 
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $phr_lst = [];
+
+        foreach ($this->lst() as $phr) {
+            if (get_class($phr) == word::class or get_class($phr) == triple::class) {
+                $phr_lst[] = $phr->export_obj($do_load);
+            } else {
+                log_err('The function phrase_list->export_obj returns ' . $phr->dsp_id() . ', which is ' . get_class($phr) . ', but not a word.', 'export->get');
+            }
+        }
+        return $phr_lst;
+    }
+
 
     /*
      * information

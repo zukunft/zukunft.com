@@ -678,9 +678,10 @@ class result extends sandbox_value
      * load all a result by the phrase group id and time phrase
      *
      * @param group $grp to select the result
+     * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return bool true if result has been loaded
      */
-    function load_by_grp(group $grp, ?int $time_phr_id = null): bool
+    function load_by_grp(group $grp, bool $by_source = false): bool
     {
         global $db_con;
         $result = false;
@@ -797,7 +798,7 @@ class result extends sandbox_value
      *
      * @return bool true if result has been loaded
      */
-    function load_by_phr_lst(phrase_list $phr_lst, ?int $time_phr_id = null): bool
+    function load_by_phr_lst(phrase_list $phr_lst): bool
     {
         $result = false;
 
@@ -806,7 +807,7 @@ class result extends sandbox_value
             $this->reset();
             $this->set_user($res_usr);
             $grp = $phr_lst->get_grp_id();
-            $result = $this->load_by_grp($grp, $time_phr_id);
+            $result = $this->load_by_grp($grp);
         } else {
             log_err('The result phrase list and the user must be set ' .
                 'to load a ' . self::class, self::class . '->load_by_phr_lst');
@@ -1054,6 +1055,42 @@ class result extends sandbox_value
         log_debug(json_encode($result));
         return $result;
     }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = [];
+
+        // reload the value parameters
+        if ($do_load) {
+            $this->load_by_id();
+            $this->load_phrases();
+        }
+
+        // add the phrases
+        $phr_lst = array();
+        // TODO use either word and triple export_obj function or phrase
+        if ($this->grp->phrase_list() != null) {
+            if (!$this->grp->phrase_list()->is_empty()) {
+                foreach ($this->grp->phrase_list()->lst() as $phr) {
+                    $phr_lst[] = $phr->name();
+                }
+                if (count($phr_lst) > 0) {
+                    $vars[json_fields::WORDS] = $phr_lst;
+                }
+            }
+        }
+
+        // add the value itself
+        $vars[json_fields::NUMBER] = $this->number();
+
+        return $vars;
+    }
+
 
     /*
        methods to prepare the words for saving into the database

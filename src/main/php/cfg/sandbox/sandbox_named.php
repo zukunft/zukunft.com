@@ -460,6 +460,21 @@ class sandbox_named extends sandbox
         return $usr_msg;
     }
 
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = parent::export_json($do_load);
+        $vars[json_fields::NAME] = $this->name();
+        if ($this->description <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        return $vars;
+    }
+
 
     /*
      * information
