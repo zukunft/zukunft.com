@@ -52,7 +52,6 @@ class user_tests
         $sc = new sql();
         $t->name = 'user->';
         $t->resource_path = 'db/user/';
-        $json_file = 'unit/user/user_import.json';
 
         $t->header('Unit tests of the user class (src/main/php/model/user/user.php)');
 
@@ -86,7 +85,7 @@ class user_tests
 
 
         $t->subheader('Im- and Export tests');
-
+        $json_file = 'unit/user/user_import.json';
         $t->assert_json_file(new user(), $json_file);
 
     }

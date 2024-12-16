@@ -65,7 +65,6 @@ class word_list_tests
         $sc = new sql();
         $t->name = 'word_list->';
         $t->resource_path = 'db/word/';
-        $json_file = 'unit/word/word_list.json';
 
         $t->header('Unit tests of the word list class (src/main/php/model/word/word_list.php)');
 
@@ -294,7 +293,7 @@ class word_list_tests
 
 
         $t->subheader('Im- and Export tests');
-
+        $json_file = 'unit/word/word_list.json';
         $t->assert_json_file(new word_list($usr), $json_file);
 
 

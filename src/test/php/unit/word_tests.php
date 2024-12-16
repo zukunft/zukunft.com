@@ -139,6 +139,9 @@ class word_tests
         $t->assert_api_to_dsp($wrd, new word_dsp());
 
         $t->subheader('word im- and export unit tests');
+        // TODO check that all objects have a im and export test
+        $t->assert_ex_and_import($t->word());
+        $t->assert_ex_and_import($t->word_filled());
         $json_file = 'unit/word/second.json';
         $t->assert_json_file(new word($usr), $json_file);
 

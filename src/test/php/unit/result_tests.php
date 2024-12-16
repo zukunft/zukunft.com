@@ -60,7 +60,6 @@ class result_tests
         $sc = new sql();
         $t->name = 'result->';
         $t->resource_path = 'db/result/';
-        $json_file = 'unit/result/result_import_part.json';
 
 
         $t->header('Unit tests of the result class (src/main/php/model/formula/result.php)');
@@ -161,7 +160,9 @@ class result_tests
 
 
         $t->subheader('Im- and Export tests');
-
+        $t->assert_ex_and_import($t->result());
+        $t->assert_ex_and_import($t->result_main_filled());
+        $json_file = 'unit/result/result_import_part.json';
         $t->assert_json_file(new result($usr), $json_file);
 
 

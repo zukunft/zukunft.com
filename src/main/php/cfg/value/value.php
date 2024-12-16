@@ -349,7 +349,12 @@ class value extends sandbox_value
         return $this->grp()->id();
     }
 
-    function src_id(): int
+    function source(): source
+    {
+        return $this->source;
+    }
+
+    function source_id(): int
     {
         if ($this->source == null) {
             return 0;
@@ -2049,7 +2054,7 @@ class value extends sandbox_value
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);
 
         if (!$sc_par_lst->is_standard()) {
-            if ($sbx->src_id() <> $this->src_id()) {
+            if ($sbx->source_id() <> $this->source_id()) {
                 if ($sc_par_lst->incl_log()) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
@@ -2059,7 +2064,7 @@ class value extends sandbox_value
                 }
                 $lst->add_field(
                     source::FLD_ID,
-                    $this->src_id(),
+                    $this->source_id(),
                     sql_field_type::INT
                 );
             }

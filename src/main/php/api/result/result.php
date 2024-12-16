@@ -66,7 +66,7 @@ class result extends sandbox_value_api implements JsonSerializable
      * construct and map
      */
 
-    function __construct(int $id = 0)
+    function __construct(int|string $id = 0)
     {
         parent::__construct($id);
         $this->is_std = true;

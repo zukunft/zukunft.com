@@ -55,7 +55,6 @@ class triple_old
         $sc = new sql();
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
-        $json_file = 'unit/triple/pi.json';
 
         $t->header('Unit tests of the word class (src/main/php/model/word/triple.php)');
 
@@ -94,7 +93,7 @@ class triple_old
         // sql to check the usage of a triple
 
         $t->subheader('Im- and Export tests');
-
+        $json_file = 'unit/triple/pi.json';
         $t->assert_json_file(new triple($usr), $json_file);
     }
 

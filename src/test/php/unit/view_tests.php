@@ -121,7 +121,9 @@ class view_tests
         $t->assert_api($msk, 'view_with_components');
         $t->assert_api_to_dsp($msk, new view_dsp());
 
-        $t->subheader('view html frontend unit tests');
+        $t->subheader('view im- and export unit tests');
+        $t->assert_ex_and_import($t->view());
+        $t->assert_ex_and_import($t->view_filled());
         $json_file = 'unit/view/car_costs.json';
         $t->assert_json_file(new view($usr), $json_file);
 

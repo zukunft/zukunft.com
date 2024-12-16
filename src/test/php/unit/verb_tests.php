@@ -54,7 +54,6 @@ class verb_tests
         $sc = new sql();
         $t->name = 'verb->';
         $t->resource_path = 'db/verb/';
-        $json_file = 'unit/verb/is_a.json';
 
 
         $t->header('verb unit tests');
@@ -83,6 +82,7 @@ class verb_tests
         $vrb = new verb();
         // set the admin user if this is needed for the import e.g. for verbs
         $vrb->set_user($usr_sys);
+        $json_file = 'unit/verb/is_a.json';
         $t->assert_json_file($vrb, $json_file);
 
 

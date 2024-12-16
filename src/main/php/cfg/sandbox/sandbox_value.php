@@ -1150,7 +1150,7 @@ class sandbox_value extends sandbox_multi
         if (!$this->phrase_list()->is_empty()) {
             if (!$this->wrd_lst()->is_empty()) {
                 foreach ($this->wrd_lst()->lst() as $wrd) {
-                    $wrd_lst[] = $wrd->export_json();
+                    $wrd_lst[] = $wrd->name();
                 }
                 if (count($wrd_lst) > 0) {
                     $vars[json_fields::WORDS] = $wrd_lst;
@@ -1163,7 +1163,7 @@ class sandbox_value extends sandbox_multi
         if (!$this->phrase_list()->is_empty()) {
             if (!$this->trp_lst()->is_empty()) {
                 foreach ($this->trp_lst()->lst() as $trp) {
-                    $triples_lst[] = $trp->export_json();
+                    $triples_lst[] = $trp->name();
                 }
                 if (count($triples_lst) > 0) {
                     $vars[json_fields::TRIPLES] = $triples_lst;

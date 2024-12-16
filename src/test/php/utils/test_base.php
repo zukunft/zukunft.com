@@ -899,7 +899,8 @@ class test_base
     }
 
     /**
-     * check if an object json file can be recreated by importing the object and recreating the json with the export function
+     * check if an object json sample export file can be recreated by
+     * importing the object and recreating the json with the export function
      *
      * @param object $usr_obj the object which json im- and export functions should be tested
      * @param string $json_file_name the resource path name to the json sample file
@@ -917,12 +918,31 @@ class test_base
             $usr_obj->import_obj($json_in, $this);
         }
         $this->set_id_for_unit_tests($usr_obj);
-        $json_ex = json_decode(json_encode($usr_obj->export_obj(false)), true);
+        $json_ex = $usr_obj->export_json(false);
         $result = $lib->json_is_similar($json_in, $json_ex);
         // TODO remove, for faster debugging only
         $json_in_txt = json_encode($json_in);
         $json_ex_txt = json_encode($json_ex);
         return $this->assert($this->name . 'import check name', $result, true);
+    }
+
+    /**
+     * check if an object can be recreated by exporting the object and
+     * recreating the object based on the export json
+     *
+     * @param object $usr_obj the object which json im- and export functions should be tested
+     * @return bool true if the object has no relevant differences
+     */
+    function assert_ex_and_import(object $usr_obj): bool
+    {
+        $json_before = $usr_obj->api_json(false);
+        $json_ex = $usr_obj->export_json(false);
+        $new_obj = clone $usr_obj;
+        $new_obj->reset();
+        $new_obj->import_obj($json_ex, $this);
+        $json_after = $usr_obj->api_json(false);
+        return $this->assert_json_string(
+            'ex- and import test for ' . $usr_obj::class, $json_after, $json_before);
     }
 
     /**

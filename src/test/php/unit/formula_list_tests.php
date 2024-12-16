@@ -59,7 +59,6 @@ class formula_list_tests
         $sc = new sql();
         $t->name = 'formula_list->';
         $t->resource_path = 'db/formula/';
-        $json_file = 'unit/formula/formula_list.json';
 
         $t->header('Unit tests of the formula list class (src/main/php/model/formula/formula_list.php)');
 
@@ -93,7 +92,7 @@ class formula_list_tests
 
 
         $t->subheader('Im- and Export tests');
-
+        $json_file = 'unit/formula/formula_list.json';
         $t->assert_json_file(new formula_list($usr), $json_file);
 
 

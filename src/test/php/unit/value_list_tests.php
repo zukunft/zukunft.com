@@ -61,7 +61,6 @@ class value_list_tests
         $sc = new sql();
         $t->name = 'value_list->';
         $t->resource_path = 'db/value/';
-        $json_file = 'unit/value/travel_scoring_value_list.json';
 
         $t->header('Unit tests of the value list class (src/main/php/model/value/value_list.php)');
 
@@ -92,7 +91,7 @@ class value_list_tests
 
 
         $t->subheader('Im- and Export tests');
-
+        $json_file = 'unit/value/travel_scoring_value_list.json';
         $t->assert_json_file(new value_list($usr), $json_file);
 
 

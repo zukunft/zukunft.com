@@ -66,7 +66,7 @@ class sandbox implements JsonSerializable
      * construct and map
      */
 
-    function __construct(int $id = 0)
+    function __construct(int|string $id = 0)
     {
         $this->set_id(0);
 

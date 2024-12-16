@@ -119,6 +119,8 @@ class source_tests
         $t->assert_api_to_dsp($src, new source_dsp());
 
         $t->subheader('source import and export tests');
+        $t->assert_ex_and_import($t->source());
+        $t->assert_ex_and_import($t->source_filled());
         $json_file = 'unit/ref/bipm.json';
         $t->assert_json_file(new source($usr), $json_file);
 

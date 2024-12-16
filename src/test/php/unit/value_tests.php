@@ -58,7 +58,6 @@ class value_tests
         $sc = new sql();
         $t->name = 'value->';
         $t->resource_path = 'db/value/';
-        $json_file = 'unit/value/speed_of_light.json';
 
 
         $t->header('value unit tests');
@@ -155,8 +154,10 @@ class value_tests
         $val->grp->set_id(2);
         //$t->assert_load_sql_obj_vars($db_con, $val);
 
-        $t->subheader('Im- and Export tests');
-
+        $t->subheader('value im- and export tests');
+        $t->assert_ex_and_import($t->value());
+        $t->assert_ex_and_import($t->value_16_filled());
+        $json_file = 'unit/value/speed_of_light.json';
         $t->assert_json_file(new value($usr), $json_file);
 
 

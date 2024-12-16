@@ -59,7 +59,6 @@ class triple_list_tests
         $sc = new sql();
         $t->name = 'triple_list->';
         $t->resource_path = 'db/triple/';
-        $json_file = 'unit/triple/triple_list.json';
 
         $t->header('Unit tests of the word link list class (src/main/php/model/word/triple_list.php)');
 
@@ -102,7 +101,7 @@ class triple_list_tests
 
 
         $t->subheader('Im- and Export tests');
-
+        $json_file = 'unit/triple/triple_list.json';
         $t->assert_json_file(new triple_list($usr), $json_file);
 
 

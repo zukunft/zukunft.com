@@ -101,7 +101,7 @@ use shared\json_fields;
 use shared\library;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
 
 class word extends sandbox_typed
@@ -850,7 +850,7 @@ class word extends sandbox_typed
         $result = $this->import_obj_fill($in_ex_json, $test_obj);
 
         // save the word in the database
-        if (!$test_obj) {
+        if ($test_obj == null) {
             if ($result->is_ok()) {
                 $result->add($this->save());
             }
@@ -1016,9 +1016,11 @@ class word extends sandbox_typed
             }
         }
 
-        if ($this->view_id() > 0) {
-            if ($do_load) {
-                $this->load_view();
+        if ($this->view != null) {
+            if ($this->view_id() > 0 and $this->view->name() == '') {
+                if ($do_load) {
+                    $this->load_view();
+                }
             }
             if ($this->view->name() != '') {
                 $vars[json_fields::VIEW] = $this->view->name();
@@ -2012,7 +2014,7 @@ class word extends sandbox_typed
                 phrase::FLD_TYPE_NAME,
                 $this->type_id(),
                 $sbx->type_id(),
-                $phr_typ_cac            );
+                $phr_typ_cac);
         }
         if ($sbx->view_id() <> $this->view_id()) {
             if ($do_log) {

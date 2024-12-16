@@ -123,6 +123,8 @@ class formula_tests
         $t->assert_api_to_dsp($frm, new formula_dsp());
 
         $t->subheader('formula im- and export unit tests');
+        $t->assert_ex_and_import($t->formula());
+        $t->assert_ex_and_import($t->formula_filled());
         $json_file = 'unit/formula/scale_second_to_minute.json';
         $t->assert_json_file(new formula($usr), $json_file);
 

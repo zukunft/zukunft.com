@@ -117,6 +117,8 @@ class ref_tests
         $t->assert_api_to_dsp($ref, new ref_dsp());
 
         $t->subheader('reference import and export tests');
+        $t->assert_ex_and_import($t->reference());
+        $t->assert_ex_and_import($t->ref_filled());
         $json_file = 'unit/ref/wikipedia.json';
         $t->assert_json_file(new ref($usr), $json_file);
 

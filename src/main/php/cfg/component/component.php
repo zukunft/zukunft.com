@@ -954,14 +954,20 @@ class component extends sandbox_typed
         if ($do_load) {
             $this->load_phrases();
         }
-        if ($this->row_phrase->name() != '') {
-            $vars[json_fields::ROW] = $this->row_phrase->name();
+        if ($this->row_phrase != null) {
+            if ($this->row_phrase->name() != '') {
+                $vars[json_fields::ROW] = $this->row_phrase->name();
+            }
         }
-        if ($this->col_phrase->name() != '') {
-            $vars[json_fields::COLUMN] = $this->col_phrase->name();
+        if ($this->col_phrase != null) {
+            if ($this->col_phrase->name() != '') {
+                $vars[json_fields::COLUMN] = $this->col_phrase->name();
+            }
         }
-        if ($this->col_sub_phrase->name() != '') {
-            $vars[json_fields::COLUMN2] = $this->col_sub_phrase->name();
+        if ($this->col_sub_phrase != null) {
+            if ($this->col_sub_phrase->name() != '') {
+                $vars[json_fields::COLUMN2] = $this->col_sub_phrase->name();
+            }
         }
 
         return $vars;

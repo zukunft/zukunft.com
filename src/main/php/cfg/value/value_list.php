@@ -982,21 +982,21 @@ class value_list extends sandbox_value_list
 
             // add the source
             if ($val0->source() != null) {
-                $vars[json_fields::SOURCE] = $val0->source()->name();
+                $vars[json_fields::SOURCE_NAME] = $val0->source()->name();
             }
 
             if (count($this->lst()) > 0) {
+                $val_lst = [];
                 foreach ($this->lst() as $val) {
                     $phr_name = array_diff($val->phr_names(), $phr_lst);
-                    $val_lst = [];
                     if (count($phr_name) > 0) {
                         $val_entry = array();
                         $key_name = array_values($phr_name)[0];
                         $val_entry[$key_name] = $val->number();
                         $val_lst[] = $val_entry;
                     }
-                    $vars[json_fields::VALUES] = $val_lst;
                 }
+                $vars[json_fields::VALUES] = $val_lst;
             }
         }
 

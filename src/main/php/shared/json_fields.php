@@ -5,7 +5,7 @@
     shared/json_fields.php - list of json field names used for the api and im- and export
     ----------------------
 
-    the json or yaml fields for the api messages are in the shared api object
+    the json or yaml fields for the api, im- and export messages are in the shared api object
 
 
     This file is part of zukunft.com - calc with words
@@ -83,7 +83,8 @@ class json_fields
 
     // languange forms
     const PLURAL = 'plural';
-    const REVERSE = 'reverse';
+    const NAME_PLURAL = 'name_plural';
+    const NAME_REVERSE = 'name_reverse';
     const NAME_PLURAL_REVERSE = 'name_plural_reverse';
 
 

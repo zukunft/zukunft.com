@@ -91,6 +91,8 @@ class triple_tests
         $t->assert_api_to_dsp($trp, new triple_dsp());
 
         $t->subheader('triple import and export tests');
+        $t->assert_ex_and_import($t->triple());
+        $t->assert_ex_and_import($t->triple_filled_add());
         $json_file = 'unit/triple/pi.json';
         $t->assert_json_file(new triple($usr), $json_file);
 

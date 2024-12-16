@@ -88,7 +88,7 @@ use cfg\value\value_list;
 use html\html_base;
 use JsonSerializable;
 use shared\library;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
 use shared\types\view_styles;
 
@@ -1656,9 +1656,11 @@ class triple extends sandbox_link_named implements JsonSerializable
             $vars[json_fields::EX_TO] = $this->to()->name();
         }
 
-        if ($this->view_id() > 0) {
-            if ($do_load) {
-                $this->load_view();
+        if ($this->view != null) {
+            if ($this->view_id() > 0 and $this->view->name() == '') {
+                if ($do_load) {
+                    $this->load_view();
+                }
             }
             if ($this->view->name() != '') {
                 $vars[json_fields::VIEW] = $this->view->name();
@@ -2477,7 +2479,7 @@ class triple extends sandbox_link_named implements JsonSerializable
                 phrase::FLD_TYPE_NAME,
                 $this->type_id(),
                 $sbx->type_id(),
-                $phr_typ_cac            );
+                $phr_typ_cac);
         }
 
         // the link type cannot be changed by the user, because this would be another link

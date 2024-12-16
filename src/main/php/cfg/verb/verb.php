@@ -554,10 +554,10 @@ class verb extends type_object
             $vars[json_fields::DESCRIPTION] = $this->description;
         }
         if ($this->plural <> '') {
-            $vars[json_fields::PLURAL] = $this->plural;
+            $vars[json_fields::NAME_PLURAL] = $this->plural;
         }
         if ($this->reverse <> '') {
-            $vars[json_fields::REVERSE] = $this->reverse;
+            $vars[json_fields::NAME_REVERSE] = $this->reverse;
         }
         if ($this->rev_plural <> '') {
             $vars[json_fields::NAME_PLURAL_REVERSE] = $this->rev_plural;
