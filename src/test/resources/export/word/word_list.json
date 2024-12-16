@@ -1,26 +1,14 @@
 [
   {
     "name": "time_word",
-    "plural": "",
-    "description": "",
-    "type": "time",
-    "view": "",
-    "refs": []
+    "type": "time"
   },
   {
     "name": "measure_word",
-    "plural": "",
-    "description": "",
-    "type": "measure",
-    "view": "",
-    "refs": []
+    "type": "measure"
   },
   {
     "name": "scale_word",
-    "plural": "",
-    "description": "",
-    "type": "scaling",
-    "view": "",
-    "refs": []
+    "type": "scaling"
   }
 ]

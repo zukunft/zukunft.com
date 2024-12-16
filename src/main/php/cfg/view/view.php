@@ -992,33 +992,6 @@ class view extends sandbox_typed
     }
 
     /**
-     * export mapper: create an object for the export
-     */
-    function export_obj(bool $do_load = true): sandbox_exp
-    {
-        log_debug($this->dsp_id());
-        $result = new view_exp();
-
-        // add the view parameters
-        $result->name = $this->name();
-        $result->description = $this->description;
-        $result->type = $this->type_code_id();
-
-        // add the view components used
-        if ($do_load) {
-            $this->load_components();
-        }
-        if ($this->cmp_lnk_lst != null) {
-            foreach ($this->cmp_lnk_lst->lst() as $lnk) {
-                $result->components[] = $lnk->export_obj();
-            }
-        }
-
-        log_debug(json_encode($result));
-        return $result;
-    }
-
-    /**
      * create an array with the export json fields
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields

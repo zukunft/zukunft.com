@@ -483,25 +483,7 @@ class triple_list extends sandbox_list_named
     }
 
     /**
-     * create a list of word objects for the export
-     * @param bool $do_load to switch off the database load for unit tests
-     * @return array with the reduced triple objects that can be used to create a JSON message
-     */
-    function export_obj(bool $do_load = true): array
-    {
-        $exp_triples = array();
-        foreach ($this->lst() as $trp) {
-            if (get_class($trp) == triple::class) {
-                $exp_triples[] = $trp->export_obj($do_load);
-            } else {
-                log_err('The function triple_list->export_obj returns ' . $trp->dsp_id() . ', which is ' . get_class($trp) . ', but not a word.', 'export->get');
-            }
-        }
-        return $exp_triples;
-    }
-
-    /**
-     * create an array with the export json fields
+     * create an array with the export json triples
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */
@@ -513,7 +495,7 @@ class triple_list extends sandbox_list_named
             if (get_class($trp) == triple::class) {
                 $trp_lst[] = $trp->export_json($do_load);
             } else {
-                log_err('The function triple_list->export_obj returns ' . $trp->dsp_id() . ', which is ' . get_class($trp) . ', but not a word.', 'export->get');
+                log_err('The function triple_list->export_json returns ' . $trp->dsp_id() . ', which is ' . get_class($trp) . ', but not a word.', 'export->get');
             }
         }
 

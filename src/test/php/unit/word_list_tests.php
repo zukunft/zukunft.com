@@ -283,7 +283,7 @@ class word_list_tests
         $wrd_lst->add($wrd_time);
         $wrd_lst->add($wrd_measure);
         $wrd_lst->add($wrd_scale);
-        $json = json_decode(json_encode($wrd_lst->export_obj()));
+        $json = $wrd_lst->export_json();
         $json_expected = json_decode(file_get_contents(PATH_TEST_FILES . 'export/word/word_list.json'));
         $result = $lib->json_is_similar($json, $json_expected);
         // TODO remove, for faster debugging only

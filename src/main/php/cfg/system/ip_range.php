@@ -278,22 +278,6 @@ class ip_range extends db_object_seq_id
     }
 
     /**
-     * create an object for the export
-     */
-    function export_obj(): ip_range_exp
-    {
-        $result = new ip_range_exp();
-
-        // in this case simply map the fields
-        $result->ip_from = $this->from;
-        $result->ip_to = $this->to;
-        $result->reason = $this->reason;
-        $result->is_active = $this->active;
-
-        return $result;
-    }
-
-    /**
      * create an array with the export json fields
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json

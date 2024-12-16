@@ -891,47 +891,6 @@ class component extends sandbox_typed
     }
 
     /**
-     * fill the component export object to create a json
-     * which does not include the internal database id
-     */
-    function export_obj(bool $do_load = true): sandbox_exp
-    {
-        log_debug('component->export_obj ' . $this->dsp_id());
-        $result = new component_exp();
-
-        // add the component parameters
-        $this->load_phrases();
-        if ($this->order_nbr >= 0) {
-            $result->position = $this->order_nbr;
-        }
-        $result->name = $this->name();
-        if ($this->type_name() <> '') {
-            $result->type = $this->type_name();
-        }
-        if ($this->code_id != null) {
-            $result->code_id = $this->code_id;
-        }
-        if ($this->ui_msg_code_id != null) {
-            $result->ui_msg_code_id = $this->ui_msg_code_id;
-        }
-        if (isset($this->row_phrase)) {
-            $result->row = $this->row_phrase->name();
-        }
-        if (isset($this->col_phrase)) {
-            $result->column = $this->col_phrase->name();
-        }
-        if (isset($this->col_sub_phrase)) {
-            $result->column2 = $this->col_sub_phrase->name();
-        }
-        if ($this->description <> '') {
-            $result->description = $this->description;
-        }
-
-        log_debug(json_encode($result));
-        return $result;
-    }
-
-    /**
      * create an array with the export json fields
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields

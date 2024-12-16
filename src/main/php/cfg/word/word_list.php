@@ -806,26 +806,6 @@ class word_list extends sandbox_list_named
     }
 
     /**
-     * create a list of word objects for the export
-     * @param bool $do_load to switch off the database load for unit tests
-     * @return array with the reduced word objects that can be used to create a JSON message
-     */
-    function export_obj(bool $do_load = true): array
-    {
-        $exp_words = array();
-        foreach ($this->lst() as $wrd) {
-            if (get_class($wrd) == word::class or get_class($wrd) == word_dsp::class) {
-                if ($wrd->has_cfg()) {
-                    $exp_words[] = $wrd->export_obj($do_load);
-                }
-            } else {
-                log_err('The function wrd_lst->export_obj returns ' . $wrd->dsp_id() . ', which is ' . get_class($wrd) . ', but not a word.', 'export->get');
-            }
-        }
-        return $exp_words;
-    }
-
-    /**
      * create an array with the export json fields
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
@@ -839,7 +819,7 @@ class word_list extends sandbox_list_named
                     $wrd_lst[] = $wrd->export_json($do_load);
                 }
             } else {
-                log_err('The function wrd_lst->export_obj returns ' . $wrd->dsp_id() . ', which is ' . get_class($wrd) . ', but not a word.', 'export->get');
+                log_err('The function wrd_lst->export_json returns ' . $wrd->dsp_id() . ', which is ' . get_class($wrd) . ', but not a word.', 'export->get');
             }
         }
         return $wrd_lst;

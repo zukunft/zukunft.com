@@ -71,7 +71,7 @@ if ($usr->id() > 0) {
     if ($wrd_id != 0) {
         $wrd = new word($usr);
         $wrd->load_by_id($wrd_id);
-        $result = json_decode(json_encode($wrd->export_obj()));
+        $result = $wrd->export_json();
     } else {
         $msg = 'word id missing';
     }

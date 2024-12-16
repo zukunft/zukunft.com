@@ -87,7 +87,7 @@ class element_tests
         $wrd_lst->add($wrd_time);
         $wrd_lst->add($wrd_measure);
         $wrd_lst->add($wrd_scale);
-        $json = json_encode($wrd_lst->export_obj());
+        $json = json_encode($wrd_lst->export_json());
         $t->assert($t->name . '->measure list', $json, '[{"plural":"","description":"","type":"time","view":"","refs":[],"name":"time_word","share":"","protection":""},{"plural":"","description":"","type":"measure","view":"","refs":[],"name":"measure_word","share":"","protection":""},{"plural":"","description":"","type":"scaling","view":"","refs":[],"name":"scale_word","share":"","protection":""}]');
         */
 

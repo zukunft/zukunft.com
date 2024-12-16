@@ -455,35 +455,6 @@ class source extends sandbox_typed
     }
 
     /**
-     * create an object for the export
-     * @param bool $do_load to switch off the database load for unit tests
-     * @return sandbox_exp the filled object used to create the json
-     */
-    function export_obj(bool $do_load = true): sandbox_exp
-    {
-        log_debug();
-        $result = new source_exp();
-
-        // add the source parameters
-        $result->name = $this->name();
-        if ($this->url <> '') {
-            $result->url = $this->url;
-        }
-        if ($this->description <> '') {
-            $result->description = $this->description;
-        }
-        if ($this->type_name() <> '') {
-            $result->type = $this->type_name();
-        }
-        if ($this->code_id <> '') {
-            $result->code_id = $this->code_id;
-        }
-
-        log_debug(json_encode($result));
-        return $result;
-    }
-
-    /**
      * create an array with the export json fields
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields

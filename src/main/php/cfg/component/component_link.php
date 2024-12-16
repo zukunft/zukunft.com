@@ -767,20 +767,8 @@ class component_link extends sandbox_link
      */
 
     /**
-     * fill the component export object to create a json
+     * create an array with the export json fields of this component
      * which does not include the internal database id
-     */
-    function export_obj(bool $do_load = true): sandbox_exp
-    {
-        $result = $this->component()->export_obj($do_load);
-        if ($this->order_nbr >= 0) {
-            $result->position = $this->order_nbr;
-        }
-        return $result;
-    }
-
-    /**
-     * create an array with the export json fields
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */

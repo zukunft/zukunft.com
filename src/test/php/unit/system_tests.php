@@ -252,7 +252,7 @@ class system_tests
         $ip_range = new ip_range();
         $ip_range->set_user($usr);
         $ip_range->import_obj($json_in, $t);
-        $json_ex = json_decode(json_encode($ip_range->export_obj()), true);
+        $json_ex = $ip_range->export_json();
         $result = $lib->json_is_similar($json_in, $json_ex);
         $t->assert_true('ip_range->import check', $result);
 

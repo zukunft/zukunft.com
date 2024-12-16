@@ -858,18 +858,6 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * create an object for the export which does not include the internal references
-     * to be overwritten by the child object
-     *
-     * @return sandbox_exp a reduced export object that can be used to create a JSON message
-     */
-    function export_obj(): sandbox_exp
-    {
-        log_warning($this::class . ' does not have an expected instance of the export_obj function');
-        return (new sandbox_exp());
-    }
-
-    /**
      * create an array with the export json fields
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the export json

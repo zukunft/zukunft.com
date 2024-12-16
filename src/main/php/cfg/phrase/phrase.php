@@ -565,6 +565,16 @@ class phrase extends combine_named
 
 
     /*
+     * im- and export
+     */
+
+    function export_json(): array
+    {
+        return $this->obj->export_json();
+    }
+
+
+    /*
      * load
      */
 

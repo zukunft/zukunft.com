@@ -114,7 +114,7 @@ class formula_link_tests
         $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/formula/scale_second_to_minute.json'), true);
         $lnk = new formula($usr);
         $lnk->import_obj($json_in, $t);
-        $json_ex = json_decode(json_encode($lnk->export_obj(false)), true);
+        $json_ex = json_decode(json_encode($lnk->export_json(false)), true);
         $result = json_is_similar($json_in, $json_ex);
         $target = true;
         $t->display('formula_link->import check name', $target, $result);

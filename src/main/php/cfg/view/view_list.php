@@ -261,18 +261,5 @@ class view_list extends sandbox_list
         return $usr_msg;
     }
 
-    /**
-     * create a list of views for the export
-     * @return array with the reduced results that can be used to create a JSON message
-     */
-    function export_obj(bool $do_load = true): array
-    {
-        $exp_views = array();
-        foreach ($this->lst() as $dsp) {
-            $exp_views[] = $dsp->export_obj($do_load);
-        }
-        return $exp_views;
-    }
-
 }
 

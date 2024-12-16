@@ -952,41 +952,6 @@ class user extends db_object_seq_id
     }
 
     /**
-     * create a user object for the export
-     * @param bool $do_load to switch off the database load for unit tests
-     * @return sandbox_exp the filled object used to create the json
-     */
-    function export_obj(bool $do_load = true): sandbox_exp
-    {
-        log_debug();
-        $result = new user_exp();
-
-        // add the source parameters
-        $result->name = $this->name;
-        if ($this->description <> '') {
-            $result->description = $this->description;
-        }
-        if ($this->email <> '') {
-            $result->email = $this->email;
-        }
-        if ($this->first_name <> '') {
-            $result->first_name = $this->first_name;
-        }
-        if ($this->last_name <> '') {
-            $result->last_name = $this->last_name;
-        }
-        if ($this->code_id <> '') {
-            $result->code_id = $this->code_id;
-        }
-        if ($this->profile <> '') {
-            $result->profile = $this->profile;
-        }
-
-        log_debug(json_encode($result));
-        return $result;
-    }
-
-    /**
      * create an array with the export json fields
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json

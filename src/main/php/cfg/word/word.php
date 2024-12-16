@@ -940,63 +940,6 @@ class word extends sandbox_typed
     }
 
     /**
-     * create a word object for the export
-     * @param bool $do_load can be set to false for unit testing
-     * @return sandbox_exp_named a reduced word object that can be used to create a JSON message
-     */
-    function export_obj(bool $do_load = true): sandbox_exp_named
-    {
-        global $phr_typ_cac;
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
-
-        log_debug();
-        $result = new word_exp();
-
-        if ($this->name <> '') {
-            $result->name = $this->name();
-        }
-        if ($this->plural <> '') {
-            $result->plural = $this->plural;
-        }
-        if ($this->description <> '') {
-            $result->description = $this->description;
-        }
-        if ($this->type_id > 0) {
-            if ($this->type_id <> $phr_typ_cac->default_id()) {
-                $result->type = $this->type_code_id();
-            }
-        }
-
-        // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
-            $result->share = $this->share_type_code_id();
-        }
-
-        // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
-            $result->protection = $this->protection_type_code_id();
-        }
-
-        if ($this->view_id() > 0) {
-            if ($do_load) {
-                $this->view = $this->load_view();
-            }
-        }
-        if (isset($this->view)) {
-            $result->view = $this->view->name();
-        }
-        if (isset($this->ref_lst)) {
-            foreach ($this->ref_lst as $ref) {
-                $result->refs[] = $ref->export_obj();
-            }
-        }
-
-        log_debug(json_encode($result));
-        return $result;
-    }
-
-    /**
      * create an array with the export json fields
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json

@@ -1519,65 +1519,10 @@ class formula extends sandbox_typed
         return $result;
     }
 
-
-    /**
-     * create an object for the export
-     * @param bool $do_load true if the result should be validated again before export
-     *                      use false for a faster export and unit tests
-     * TODO check where if the exp_obj can be replaced with a simple array or the other way round
-     * @return sandbox_exp with the reduced formula object that can be used to create a JSON message
-     */
-    function export_obj(bool $do_load = true): sandbox_exp
-    {
-        global $frm_typ_cac;
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
-
-        log_debug('->export_obj');
-        $result = new formula_exp();
-
-        if ($this->name() <> '') {
-            $result->name = $this->name();
-        }
-        if (isset($this->type_id)) {
-            if ($this->type_id <> $frm_typ_cac->default_id()) {
-                $result->type = $frm_typ_cac->code_id($this->type_id);
-            }
-        }
-        if ($this->usr_text <> '') {
-            $result->expression = $this->usr_text;
-        }
-        if ($this->description <> '') {
-            $result->description = $this->description;
-        }
-
-        // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
-            $result->share = $this->share_type_code_id();
-        }
-
-        // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
-            $result->protection = $this->protection_type_code_id();
-        }
-
-        if ($do_load) {
-            $phr_lst = $this->assign_phr_lst_direct();
-            if ($phr_lst != null) {
-                foreach ($phr_lst->lst() as $phr) {
-                    // TODO add the link type
-                    $result->assigned_word = $phr->name();
-                }
-            }
-        }
-
-        log_debug(json_encode($result));
-        return $result;
-    }
-
     /**
      * create an array with the export json fields
-     * @param bool $do_load to switch off the database load for unit tests
+     * @param bool $do_load true if the result should be validated again before export
+     * *                    use false for a faster export and unit tests
      * @return array the filled array used to create the user export json
      */
     function export_json(bool $do_load = true): array

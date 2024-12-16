@@ -719,13 +719,13 @@ class test_base
     function assert_api_obj(object $usr_obj): bool
     {
         $lib = new library();
-        $original_json = json_decode(json_encode($usr_obj->export_obj(false)), true);
+        $original_json = $usr_obj->export_json();
         $recreated_json = json_decode("{}", true);
         $api_obj = $usr_obj->api_obj();
         if ($api_obj->id() == $usr_obj->id()) {
             $db_obj = $this->db_obj($usr_obj->user(), $api_obj::class);
             $db_obj->load_by_id($usr_obj->id());
-            $recreated_json = json_decode(json_encode($db_obj->export_obj(false)), true);
+            $recreated_json = $db_obj->export_json();
         }
         $result = $lib->json_is_similar($original_json, $recreated_json);
         // TODO remove, for faster debugging only
@@ -808,7 +808,7 @@ class test_base
         $api_obj = $usr_obj->api_obj();
         if ($api_obj->id == $usr_obj->id) {
             $db_obj = $this->db_obj($usr_obj->usr, $api_obj::class);
-            $recreated_json = json_decode(json_encode($db_obj->export_obj(false)), true);
+            $recreated_json = $db_obj->export_json();
         }
         $result = $lib->json_is_similar($original_json, $recreated_json);
         return $this->assert($this->name . 'REST check', $result, true);

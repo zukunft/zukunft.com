@@ -1014,49 +1014,8 @@ class result extends sandbox_value
     }
 
     /**
-     * create an JSON result object for the export
+     * create an array with the export json fields of the result
      * to enable the validation of the results during import
-     *
-     * @param bool $do_load true if the result should be validated again before export
-     *                      use false for a faster export
-     * @return result_exp the filled formula validation object used for JSON creation
-     */
-    function export_obj(bool $do_load = true): result_exp
-    {
-        log_debug();
-        $result = new result_exp();
-
-        // reload the value parameters
-        if ($do_load) {
-            $this->load_by_id();
-            log_debug(result::class . '->export_obj load phrases');
-            $this->load_phrases();
-        }
-
-        // add the phrases
-        log_debug(result::class . '->export_obj get phrases');
-        $phr_lst = array();
-        // TODO use either word and triple export_obj function or phrase
-        if ($this->grp->phrase_list() != null) {
-            if (!$this->grp->phrase_list()->is_empty()) {
-                foreach ($this->grp->phrase_list()->lst() as $phr) {
-                    $phr_lst[] = $phr->name();
-                }
-                if (count($phr_lst) > 0) {
-                    $result->words = $phr_lst;
-                }
-            }
-        }
-
-        // add the value itself
-        $result->number = $this->number();
-
-        log_debug(json_encode($result));
-        return $result;
-    }
-
-    /**
-     * create an array with the export json fields
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
      */

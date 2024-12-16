@@ -279,20 +279,6 @@ class component_list extends sandbox_list
     }
 
     /**
-     * create a list of components for the export
-     * @param bool $do_load
-     * @return array with the reduced results that can be used to create a JSON message
-     */
-    function export_obj(bool $do_load = true): array
-    {
-        $exp_components = [];
-        foreach ($this->lst() as $dsp) {
-            $exp_components[] = $dsp->export_obj($do_load);
-        }
-        return $exp_components;
-    }
-
-    /**
      * create an array with the export json fields
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields

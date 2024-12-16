@@ -633,21 +633,6 @@ class result_list extends sandbox_value_list
         return $usr_msg;
     }
 
-    /**
-     * create a list of results for the export
-     * @param bool $do_load true if the result should be validated again before export
-     *                      use false for a faster export and unit tests
-     * @return array with the reduced results that can be used to create a JSON message
-     */
-    function export_obj(bool $do_load = true): array
-    {
-        $exp_results = array();
-        foreach ($this->lst() as $res) {
-            $exp_results[] = $res->export_obj($do_load);
-        }
-        return $exp_results;
-    }
-
 
     /*
      * display

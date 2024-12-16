@@ -772,35 +772,7 @@ class ref extends sandbox_link
     }
 
     /**
-     * create a reference object for export (so excluding e.g. the database id)
-     * @return ref_exp a reduced reference object for the JSON message creation
-     */
-    function export_obj(bool $do_load = true): sandbox_exp
-    {
-        global $ref_typ_cac;
-        $result = new ref_exp();
-
-        if ($this->source != null) {
-            $result->source = $this->source->name();
-        }
-        if ($this->predicate_id > 0) {
-            $result->type = $this->predicate_code_id();
-        }
-        if ($this->external_key <> '') {
-            $result->name = $this->external_key;
-        }
-        if ($this->description <> '') {
-            $result->description = $this->description;
-        }
-        if ($this->url <> '') {
-            $result->url = $this->url;
-        }
-
-        return $result;
-    }
-
-    /**
-     * create an array with the export json fields
+     * create an array with the export json fields of this reference excluding e.g. the database id
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
      */

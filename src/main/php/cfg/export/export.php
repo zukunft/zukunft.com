@@ -132,7 +132,7 @@ class export
                 // 4. export all words that have a special type or any other non default setting (standard words are created automatically on import with just the name)
                 log_debug('export->get typed words');
                 if ($wrd_lst != null) {
-                    $exp_words = $wrd_lst->export_obj();
+                    $exp_words = $wrd_lst->export_json();
                     if (count($exp_words) > 0) {
                         $export_obj->words = $exp_words;
                     }
@@ -143,7 +143,7 @@ class export
                 $lnk_lst = $phr_lst->triples();
                 $exp_triples = array();
                 foreach ($lnk_lst->lst() as $lnk) {
-                    $exp_lnk = $lnk->export_obj();
+                    $exp_lnk = $lnk->export_json();
                     if (isset($exp_lnk)) {
                         $exp_triples[] = $exp_lnk;
                     }
@@ -158,7 +158,7 @@ class export
                 $exp_formulas = array();
                 if (!$frm_lst->is_empty()) {
                     foreach ($frm_lst->lst() as $frm) {
-                        $exp_frm = $frm->export_obj();
+                        $exp_frm = $frm->export_json();
                         if (isset($exp_frm)) {
                             $exp_formulas[] = $exp_frm;
                         }
@@ -174,7 +174,7 @@ class export
                 if ($source_lst != null) {
                     foreach ($source_lst as $src) {
                         if (isset($src)) {
-                            $exp_src = $src->export_obj();
+                            $exp_src = $src->export_json();
                             if (isset($exp_src)) {
                                 $exp_sources[] = $exp_src;
                             }
@@ -190,7 +190,7 @@ class export
                 $exp_values = array();
                 foreach ($val_lst->lst() as $val) {
                     if (isset($val)) {
-                        $exp_val = $val->export_obj();
+                        $exp_val = $val->export_json();
                         if (isset($exp_val)) {
                             $exp_values[] = $exp_val;
                         }
@@ -205,7 +205,7 @@ class export
                 $view_lst = $wrd_lst->view_lst();
                 $exp_view_lst = array();
                 foreach ($view_lst as $view) {
-                    $exp_view_lst[] = $view->export_obj();
+                    $exp_view_lst[] = $view->export_json();
                 }
                 $export_obj->views = $exp_view_lst;
 
@@ -218,7 +218,7 @@ class export
                         $res_lst = $frm->get_res_lst();
                         if ($res_lst->lst() != null) {
                             foreach ($res_lst->lst() as $res) {
-                                $exp_res = $res->export_obj();
+                                $exp_res = $res->export_json();
                                 if (isset($exp_res)) {
                                     $exp_results[] = $exp_res;
                                 }
