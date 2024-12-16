@@ -59,7 +59,7 @@ $db_con = prg_start("api/json", "", false);
 $wrd_id = $_GET[api::URL_VAR_WORD_ID] ?? 0;
 
 $msg = '';
-$result = new phrase_list_api(); // reset the html code var
+$result = ''; // reset the json string
 
 // load the session user parameters
 $usr = new user;
@@ -71,14 +71,14 @@ if ($usr->id() > 0) {
     if ($wrd_id != 0) {
         $wrd = new word($usr);
         $wrd->load_by_id($wrd_id);
-        $result = $wrd->export_json();
+        $result = json_encode($wrd->export_json());
     } else {
         $msg = 'word id missing';
     }
 }
 
 $ctrl = new controller();
-$ctrl->get_export($result, $msg);
+$ctrl->get_export_json($result, $msg);
 
 
 prg_end_api($db_con);

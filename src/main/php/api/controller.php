@@ -351,6 +351,17 @@ class controller
         }
     }
 
+    function get_export_json(string $json, string $msg): void
+    {
+        // return the api json or the error message
+        if ($msg == '') {
+            $this->get_response($json, $msg);
+        } else {
+            // tell the user e.g. that no products found
+            $this->get_response('', $msg);
+        }
+    }
+
     /**
      * check if an api message is fine
      * @param array|null $api_msg the complete api message including the header and in some cases several body parts
