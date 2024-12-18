@@ -58,6 +58,9 @@ class component extends sandbox_typed_api
     const TN_READ = 'Word';
     const TD_READ = 'simply show the word or triple name';
     const TI_READ = 1;
+    const TN_MATRIX = 'spreadsheet';
+    const TD_MATRIX = 's sheet with words, number and formulas';
+    const TI_MATRIX = 2;
 
     // persevered view component names for unit and integration tests
     const TN_ADD = 'System Test View Component';
@@ -105,9 +108,6 @@ class component extends sandbox_typed_api
     const TN_FORM_END = 'form end';
     const TC_FORM_END = 'form_end';
     const TD_FORM_END = 'just to indicate the end of the form';
-    const TN_MATRIX = 'spreadsheet';
-    const TD_MATRIX = 's sheet with words, number and formulas';
-    const TI_MATRIX = 51;
     const TN_SHOW_NAME = 'system show field name';
 
     // array of component names that used for testing and remove them after the test

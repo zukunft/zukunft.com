@@ -5,6 +5,11 @@
     cfg/component/component_type.php - db based ENUM of the component types
     --------------------------------
 
+    list of the view component types that have a coded functionality
+    where *_COM is the description for the tooltip
+    until the initial import csv is not yet created based on these const the resources/db_code_links/component_types needs to be inline
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -34,13 +39,61 @@ namespace shared\types;
 class component_type
 {
 
-    // list of the view component types that have a coded functionality
-    // where *_COM is the description for the tooltip
-    // until the initial import csv is not yet created based on these const the resources/db_code_links/component_types needs to be inline
+    /*
+     * start page
+     */
 
     // just to display a fixed text
     const TEXT_COM = "simply to display a variable text";
     const TEXT = "text";
+    // show a spreadsheet that allow changes
+    const CALC_SHEET_COM = "changeable sheet with words, number and formulas";
+    const CALC_SHEET = "calc_sheet";
+
+
+    /*
+     * system form
+     */
+
+    const FORM_TITLE = "system_form_title";
+    const FORM_BACK = "system_form_back_stack";
+    const FORM_CONFIRM = "system_form_confirm_status";
+    const SHOW_NAME = "system_show_field_name";
+    const FORM_NAME = "system_form_field_name";
+    const FORM_DESCRIPTION = "system_form_field_description";
+    const FORM_PHRASE = "system_form_select_phrase";
+    const FORM_VERB_SELECTOR = "system_form_select_verb";
+    const FORM_PHRASE_TYPE = "system_form_select_phrase_type";
+    const FORM_SOURCE_TYPE = "system_form_select_source_type";
+    const FORM_SHARE_TYPE = "system_form_select_share";
+    const FORM_PROTECTION_TYPE = "system_form_select_protection";
+    const FORM_CANCEL = "system_button_cancel";
+    const FORM_SAVE = "system_button_save";
+    const FORM_DEL = "system_button_del";
+    // simple close the form section
+    const FORM_END = "form_end";
+
+    /*
+     * hidden
+     */
+
+    // internal components used for formatting
+    const ROW_START = "row_start";
+    const ROW_RIGHT = "row_right";
+    const ROW_END = "row_end";
+
+    /*
+     * system components
+     */
+
+    // select a view
+    const VIEW_SELECT = "view_select";
+    // show a list of external references
+    const REF_LIST_WORD = "ref_list";
+    const LINK_LIST_WORD = "link_list";
+    const USAGE_WORD = "usage";
+    const SYSTEM_CHANGE_LOG = "change_log";
+
     // show the user specific name of a word or triple with the description on mouseover without allowing to change it
     const PHRASE = "phrase";
     // show the word or triple name and give the user the possibility to change the name
@@ -59,43 +112,22 @@ class component_type
     // display all formulas related to the given word
     const FORMULAS = "formula_list";
     // show a list of formula results related to a word
-    const FORMULA_RESULTS = "formula_results"; // TODO add to csv
+    const FORMULA_RESULTS = "formula_results";
     // offer to configure and create an JSON file
     const JSON_EXPORT = "json_export";
     // offer to configure and create an XML file
     const XML_EXPORT = "xml_export";
     // offer to configure and create an CSV file
     const CSV_EXPORT = "csv_export";
-    const VIEW_SELECT = "view_select"; // TODO add to csv
+    // show a list of words and triples with a link type selector
     const LINK = "link";
-    const FORM_TITLE = "system_form_title";
-    const FORM_BACK = "system_form_back_stack";
-    const FORM_CONFIRM = "system_form_confirm_status";
-    const SHOW_NAME = "system_show_field_name";
-    const FORM_NAME = "system_form_field_name";
-    const FORM_DESCRIPTION = "system_form_field_description";
-    const FORM_PHRASE = "system_form_select_phrase";
-    const FORM_VERB_SELECTOR = "system_form_select_verb";
-    const FORM_PHRASE_TYPE = "system_form_select_phrase_type";
-    const FORM_SOURCE_TYPE = "system_form_select_source_type";
-    const FORM_SHARE_TYPE = "system_form_select_share";
-    const FORM_PROTECTION_TYPE = "system_form_select_protection";
-    const FORM_CANCEL = "system_button_cancel";
-    const FORM_SAVE = "system_button_save";
-    const FORM_DEL = "system_button_del";
-    // simple close the form section
-    const FORM_END = "form_end";
-    // internal components used for formatting
-    const ROW_START = "row_start";
-    const ROW_RIGHT = "row_right";
-    const ROW_END = "row_end";
-    const CALC_SHEET = "calc_sheet";
+
 
     // a list with all types for the initial load with name, code_id and description
     const ALL_TYPES = [
-        self::TEXT,self::TEXT,self::TEXT_COM
+        self::TEXT,self::TEXT_COM,
+        self::CALC_SHEET,self::CALC_SHEET_COM
     ];
-
 
     // list of component types that should not be used for non system views
     const SYSTEM_TYPES = array(

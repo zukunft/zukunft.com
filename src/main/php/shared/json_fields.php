@@ -37,8 +37,6 @@ namespace shared;
 class json_fields
 {
 
-    // TODO easy move all fields used for the json im- and export messages to this object
-
     /*
      * shared - fields used for api and im- and export json messages
      */

@@ -283,6 +283,21 @@ class word extends sandbox_typed
         return $result;
     }
 
+    /**
+     * create the HTML code to select a view
+     * @param string $form the name of the html form
+     * @return string the html code to select the phrase type
+     */
+    protected function view_selector(string $form): string
+    {
+        global $html_views;
+        $used_phrase_id = $this->type_id();
+        if ($used_phrase_id == null) {
+            $used_phrase_id = $html_views->default_id();
+        }
+        return $html_views->selector($form, $used_phrase_id);
+    }
+
 
     /*
      * table

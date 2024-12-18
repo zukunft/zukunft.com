@@ -66,6 +66,15 @@ zukunft.com:
     view:
       freeze: 20
       tooltip-comment: "the number of view by one user to automatically freeze the view for the user"
+    component:
+      list:
+        entries:
+          top:
+            sys-conf-value: 20
+            tooltip-comment: "the number of phrases shown in a list by default"
+          bottom:
+            sys-conf-value: 4
+            tooltip-comment: "the number of phrases shown in a ranked list with the lowest ranking for an indication of the range"
     job:
       tooltip-comment: "keyword to separate the internal system job configuration"
     pod:

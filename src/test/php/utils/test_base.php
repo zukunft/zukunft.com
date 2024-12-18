@@ -213,40 +213,7 @@ include_once TEST_UNIT_PATH . 'db_setup_tests.php';
 include_once TEST_UNIT_PATH . 'api_tests.php';
 
 // load the testing functions for creating HTML code
-include_once TEST_UNIT_PATH . 'html_tests.php';
-include_once TEST_UNIT_DSP_PATH . 'test_display.php';
-include_once TEST_UNIT_DSP_PATH . 'type_lists.php';
-include_once TEST_UNIT_DSP_PATH . 'user.php';
-include_once TEST_UNIT_DSP_PATH . 'word.php';
-include_once TEST_UNIT_DSP_PATH . 'word_list.php';
-include_once TEST_UNIT_DSP_PATH . 'verb.php';
-include_once TEST_UNIT_DSP_PATH . 'triple.php';
-include_once TEST_UNIT_DSP_PATH . 'triple_list.php';
-include_once TEST_UNIT_DSP_PATH . 'phrase.php';
-include_once TEST_UNIT_DSP_PATH . 'phrase_list.php';
-include_once TEST_UNIT_DSP_PATH . 'phrase_group.php';
-include_once TEST_UNIT_DSP_PATH . 'term.php';
-include_once TEST_UNIT_DSP_PATH . 'term_list.php';
-include_once TEST_UNIT_DSP_PATH . 'value.php';
-include_once TEST_UNIT_DSP_PATH . 'value_list.php';
-include_once TEST_UNIT_DSP_PATH . 'formula.php';
-include_once TEST_UNIT_DSP_PATH . 'formula_list.php';
-include_once TEST_UNIT_DSP_PATH . 'result.php';
-include_once TEST_UNIT_DSP_PATH . 'result_list.php';
-include_once TEST_UNIT_DSP_PATH . 'figure.php';
-include_once TEST_UNIT_DSP_PATH . 'figure_list.php';
-include_once TEST_UNIT_DSP_PATH . 'view.php';
-include_once TEST_UNIT_DSP_PATH . 'view_list.php';
-include_once TEST_UNIT_DSP_PATH . 'component.php';
-include_once TEST_UNIT_DSP_PATH . 'component_list.php';
-include_once TEST_UNIT_DSP_PATH . 'source.php';
-include_once TEST_UNIT_DSP_PATH . 'reference.php';
-include_once TEST_UNIT_DSP_PATH . 'language.php';
-include_once TEST_UNIT_DSP_PATH . 'change_log.php';
-include_once TEST_UNIT_DSP_PATH . 'sys_log.php';
-include_once TEST_UNIT_DSP_PATH . 'job.php';
-include_once TEST_UNIT_DSP_PATH . 'system_views.php';
-
+include_once TEST_UNIT_UI_PATH . 'all_ui_tests.php';
 
 // load the unit testing modules with database read only
 include_once TEST_UNIT_READ_PATH . 'all_unit_read_tests.php';
@@ -282,13 +249,6 @@ include_once TEST_UNIT_READ_PATH . 'share_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'protection_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'language_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'export_read_tests.php';
-
-
-// load the testing functions for creating JSON messages for the frontend code
-include_once TEST_UNIT_UI_PATH . 'local_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'test_formula_ui.php';
-include_once TEST_UNIT_UI_PATH . 'test_word_ui.php';
-include_once TEST_UNIT_UI_PATH . 'value_test_ui.php';
 
 // load the testing functions that save data to the database
 include_once TEST_UNIT_WRITE_PATH . 'all_unit_write_tests.php';

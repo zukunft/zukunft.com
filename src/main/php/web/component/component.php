@@ -94,6 +94,7 @@ class component extends sandbox_typed
     public int $pos_type_id = 0;
     public ?int $style_id = null;
 
+
     /*
      * display
      */
@@ -129,19 +130,11 @@ class component extends sandbox_typed
             $type_code_id = 'type id ' . $this->type_id();
         }
         $result .= match ($type_code_id) {
+            // start page
             component_type::TEXT => $this->text(),
-            component_type::PHRASE => $this->display_name(),
-            component_type::PHRASE_NAME => $this->phrase_name($dbo),
-            component_type::VALUES_RELATED => $this->table($dbo),
-            component_type::NUMERIC_VALUE => $this->num_list($dbo, $back),
-            component_type::FORMULAS => $this->formulas($dbo),
-            component_type::FORMULA_RESULTS => $this->results($dbo),
-            component_type::WORDS_DOWN => $this->word_children($dbo),
-            component_type::WORDS_UP => $this->word_parents($dbo),
-            component_type::JSON_EXPORT => $this->json_export($dbo, $back),
-            component_type::XML_EXPORT => $this->xml_export($dbo, $back),
-            component_type::CSV_EXPORT => $this->csv_export($dbo, $back),
-            component_type::VALUES_ALL => $this->all($dbo, $back),
+            component_type::CALC_SHEET => $this->calc_sheet(),
+
+            // system form
             component_type::FORM_TITLE => $this->form_tile($form_name),
             component_type::FORM_BACK => $this->form_back($msk_id, $dbo->id(), $back),
             component_type::FORM_CONFIRM => $this->form_confirm($dbo, $back),
@@ -158,11 +151,35 @@ class component extends sandbox_typed
             component_type::FORM_SAVE => $this->form_save($dbo, $back),
             component_type::FORM_DEL => $this->form_del($dbo, $back),
             component_type::FORM_END => $this->form_end(),
+
+            // hidden
             component_type::ROW_START => $this->row_start(),
             component_type::ROW_RIGHT => $this->row_right(),
             component_type::ROW_END => $this->row_end(),
-            component_type::CALC_SHEET => $this->calc_sheet(),
-            default => ' program code for component type "' . $type_code_id . '" missing<br>'
+
+            // system components
+            component_type::VIEW_SELECT => $this->view_select($dbo, $form_name),
+            component_type::REF_LIST_WORD => $this->ref_list_word($dbo, $form_name),
+            component_type::LINK_LIST_WORD => $this->link_list_word($dbo, $form_name),
+            component_type::USAGE_WORD => $this->usage_word($dbo, $form_name),
+            component_type::SYSTEM_CHANGE_LOG => $this->system_change_log($dbo, $form_name),
+
+            component_type::PHRASE => $this->display_name(),
+            component_type::PHRASE_NAME => $this->phrase_name($dbo),
+            component_type::PHRASE_SELECT => $this->phrase_select($dbo, $form_name),
+            component_type::LINK => $this->phrase_link($dbo, $form_name),
+            component_type::VALUES_RELATED => $this->table($dbo),
+            component_type::NUMERIC_VALUE => $this->num_list($dbo, $back),
+            component_type::FORMULAS => $this->formulas($dbo),
+            component_type::FORMULA_RESULTS => $this->results($dbo),
+            component_type::WORDS_DOWN => $this->word_children($dbo),
+            component_type::WORDS_UP => $this->word_parents($dbo),
+            component_type::JSON_EXPORT => $this->json_export($dbo, $back),
+            component_type::XML_EXPORT => $this->xml_export($dbo, $back),
+            component_type::CSV_EXPORT => $this->csv_export($dbo, $back),
+            component_type::VALUES_ALL => $this->all($dbo, $back),
+
+            default => ' program code for component ' . $this->dsp_id() . ' missing<br>'
         };
         $this->log_debug($this->dsp_id() . ' created');
 
@@ -201,6 +218,67 @@ class component extends sandbox_typed
     function phrase_name(db_object_dsp $phr): string
     {
         return $phr->name();
+    }
+
+    /**
+     * @return string the name of a phrase and give the user the possibility to change the phrase name
+     */
+    function phrase_select(db_object_dsp $phr, string $form_name): string
+    {
+        return $phr->phrase_selector('phrase', $form_name, 'word:', '', $phr->id());
+    }
+
+    /**
+     * @return string show a list of phrases with a suggested link type that might be linked to the object
+     */
+    function phrase_link(db_object_dsp $phr, string $form_name): string
+    {
+        return $phr->phrase_selector('phrase', $form_name, 'word:', '', $phr->id());
+    }
+
+    /**
+     * @return string with the html code to select a view
+     */
+    function view_select(db_object_dsp $phr, string $form_name): string
+    {
+        // TODO review
+        return $phr->phrase_selector('phrase', $form_name, 'word:', '', $phr->id());
+    }
+
+    /**
+     * @return string with the html code of the external references
+     */
+    function ref_list_word(db_object_dsp $phr, string $form_name): string
+    {
+        // TODO review
+        return $phr->phrase_selector('phrase', $form_name, 'word:', '', $phr->id());
+    }
+
+    /**
+     * @return string with the html code of links that can be changes
+     */
+    function link_list_word(db_object_dsp $phr, string $form_name): string
+    {
+        // TODO review
+        return $phr->phrase_selector('phrase', $form_name, 'word:', '', $phr->id());
+    }
+
+    /**
+     * @return string with the html code that shows the usage of this word
+     */
+    function usage_word(db_object_dsp $phr, string $form_name): string
+    {
+        // TODO review
+        return $phr->phrase_selector('phrase', $form_name, 'word:', '', $phr->id());
+    }
+
+    /**
+     * @return string with the html code that shows the recend changes of this object
+     */
+    function system_change_log(db_object_dsp $phr, string $form_name): string
+    {
+        // TODO review
+        return $phr->phrase_selector('phrase', $form_name, 'word:', '', $phr->id());
     }
 
     /**

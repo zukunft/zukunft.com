@@ -191,7 +191,6 @@ class all_unit_write_tests extends all_unit_read_tests
                 (new component_write_tests)->run($t);
                 (new component_link_write_tests)->run($t);
 
-                run_display_test($t);
                 // TODO activate Prio 2
                 // run_export_test($t);
                 // run_permission_test ($t);

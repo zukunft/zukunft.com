@@ -1,0 +1,51 @@
+{
+  "version": "0.0.3",
+  "time": "2024-07-28 16:31:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "predefined views"
+  ],
+  "components": [
+    {
+      "name": "phrase",
+      "description": "simply show the name of a word or triple",
+      "type": "phrase_name"
+    },
+    {
+      "name": "ranking parameters",
+      "description": "the parameters used to calculate a ranking",
+      "type": "ranking_parameters"
+    },
+    {
+      "name": "ranking list",
+      "description": "list sorted by the calculated ranking",
+      "type": "ranking_list"
+    }
+  ],
+  "views": [
+    {
+      "name": "Ranking",
+      "description": "the default view for all phrases where a better could be selected",
+      "code_id": "ranking",
+      "components": [
+        {
+          "position": "1",
+          "name": "phrase"
+        },
+        {
+          "position": "2",
+          "name": "ranking parameters"
+        },
+        {
+          "position": "3",
+          "name": "ranking list"
+        }
+      ],
+      "assigned": [
+        "car",
+        "country",
+        "printer"
+      ]
+    }
+  ]
+}

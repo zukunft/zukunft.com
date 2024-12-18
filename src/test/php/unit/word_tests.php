@@ -42,7 +42,8 @@ use api\formula\formula as formula_api;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
-use cfg\phrase_type;
+use cfg\sandbox;
+use cfg\sandbox_named;
 use cfg\word;
 use api\word\word as word_api;
 use html\word\word as word_dsp;
@@ -151,7 +152,7 @@ class word_tests
         $wrd_db = $t->word();
         $wrd_db->fill($wrd_imp);
         $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp)->names();
-        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, [word::FLD_VIEW, word::FLD_EXCLUDED]);
+        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, [word::FLD_VIEW, sandbox::FLD_EXCLUDED]);
         $test_name = 'check if the word id is filled up';
         $wrd_imp = $t->word();
         $wrd_imp->set_id(0);
@@ -165,7 +166,7 @@ class word_tests
         $wrd_db = $t->word();
         $wrd_db->fill($wrd_imp);
         $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp)->names();
-        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, [word::FLD_DESCRIPTION]);
+        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, [sandbox_named::FLD_DESCRIPTION]);
 
         $test_name = 'check if database would not be updated if only the name is given in import';
         $in_wrd = $t->word_name_only();

@@ -12,6 +12,11 @@
       "type": "phrase_name"
     },
     {
+      "name": "spreadsheet",
+      "description": "s sheet with words, number and formulas",
+      "type": "calc_sheet"
+    },
+    {
       "name": "Verb",
       "description": "simply show the verb name",
       "type": "verb_name"

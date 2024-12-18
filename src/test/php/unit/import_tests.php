@@ -56,11 +56,11 @@ class import_tests
         $json_array = yaml_parse($yaml_str);
         $imp = new import;
         $dto = $imp->yaml_data_object($json_array, $usr);
-        $t->assert($test_name, $dto->word_list()->count(), 49);
+        $t->assert($test_name, $dto->word_list()->count(), 54);
         $test_name = 'YAML import triple count';
         $t->assert($test_name, $dto->triple_list()->count(), 18);
         $test_name = 'YAML import value count';
-        $t->assert($test_name, $dto->value_list()->count(), 20);
+        $t->assert($test_name, $dto->value_list()->count(), 22);
         $test_name = 'YAML import sql function count';
         $t->assert($test_name, $dto->word_list()->sql_call_with_par($sc)->count(), 2);
 

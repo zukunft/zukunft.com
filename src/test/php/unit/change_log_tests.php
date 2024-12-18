@@ -65,7 +65,7 @@ use html\log\user_log_display;
 use html\value\value AS value_dsp;
 use shared\library;
 use test\test_cleanup;
-use unit\html\verb;
+use unit_ui\verb_ui_tests;
 
 class change_log_tests
 {

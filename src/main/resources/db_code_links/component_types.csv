@@ -38,3 +38,8 @@ component_type_id, type_name, description, code_id
 37, 'verb name', 'show the name of a verb and give the admin user the possibility to change the name', 'verb_name'
 38, 'main value', 'show the main values related to the given term', 'main_value'
 39, 'system form select source type', 'the source type field in a form', 'system_form_select_source_type'
+40, 'system form select view', 'select the default view', 'view_select'
+41, 'system form ref list', 'changeable list of reference', 'ref_list'
+42, 'system form link list', 'changeable list of links', 'link_list'
+43, 'system usage', 'show where this object has been used', 'usage'
+44, 'system change log', 'show the change log of this object', 'change_log'

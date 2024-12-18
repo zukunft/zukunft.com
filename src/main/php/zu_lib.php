@@ -50,6 +50,10 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO Step 16: deprecate the get_old in ???
     TODO review the remaining db write tests
     TODO activate the tests and create a unit and read test if possible
+
+    TODO set the vars of the backend objects to private e.g. to make sure that missing db updates can be detected
+    TODO set vars in the frontend object to public and reduce the set and get function because frontend objects never save directly to the database
+
     TODO for user_values allow a source 0=not set or exclude the source_id from the prime index?
     TODO test if a table with 1, 2, 4, 8, 16, 32 or 64 smallint key is faster and more efficient than a table with one bigger index
     TODO create an use the figure database view

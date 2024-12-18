@@ -41,6 +41,7 @@ include_once SHARED_PATH . 'api.php';
 include_once API_COMPONENT_PATH . 'component.php';
 include_once SHARED_PATH . 'library.php';
 include_once SHARED_TYPES_PATH . 'view_type.php';
+include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once HTML_PATH . 'display_list.php';
 include_once COMPONENT_PATH . 'component.php';
 include_once COMPONENT_PATH . 'component_list.php';
