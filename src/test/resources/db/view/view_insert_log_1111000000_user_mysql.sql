@@ -30,4 +30,4 @@ SELECT view_insert_log_1111000000_user (
                'Start view',
                1,
                43,
-               'A dynamic entry mask that initially shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.');
+               'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.');

@@ -349,31 +349,38 @@
       "code_id": "row_end"
     },
     {
-      "name": "system form default word view",
+      "name": "system select default view word",
       "description": "select the default view for this word",
       "type": "view_select",
-      "code_id": "view_select_word"
+      "code_id": "select_view_word",
+      "ui_msg_code_id": "select_view"
     },
     {
-      "name": "system form ref list word",
-      "description": "changeable list of reference of this word",
-      "type": "ref_list",
-      "code_id": "ref_list_word"
-    },
-    {
-      "name": "system form link list word",
+      "name": "link list word",
       "description": "changeable list of links of this word",
       "type": "link_list",
       "code_id": "link_list_word"
     },
     {
-      "name": "system usage word",
+      "name": "value list word",
+      "description": "list of values related to this word",
+      "type": "values_related",
+      "code_id": "value_list_word"
+    },
+    {
+      "name": "ref list word",
+      "description": "changeable list of reference of this word",
+      "type": "ref_list",
+      "code_id": "ref_list_word"
+    },
+    {
+      "name": "usage word",
       "description": "show where this word has been used e.g. how many values are related",
       "type": "usage",
       "code_id": "usage_word"
     },
     {
-      "name": "system change log word",
+      "name": "change log word",
       "description": "show the change log of this word",
       "type": "change_log",
       "code_id": "change_log_word"
@@ -382,7 +389,7 @@
   "views": [
     {
       "name": "Start view",
-      "description": "A dynamic entry mask that initially shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.",
+      "description": "A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.",
       "code_id": "entry_view",
       "type": "entry",
       "protection": "admin_protection",
@@ -496,28 +503,29 @@
         },
         {
           "position": "7",
-          "name": "system view default"
+          "name": "system select default view word"
         },
         {
           "position": "8",
-          "name": "system ref list word"
+          "name": "system form select share type",
+          "position_type": "side"
         },
         {
           "position": "9",
-          "name": "system ref list word"
-        },
-        {
-          "position": "10",
-          "name": "system form select share type"
-        },
-        {
-          "position": "11",
           "name": "system form select protection type",
           "position_type": "side"
         },
         {
+          "position": "10",
+          "name": "link list word"
+        },
+        {
+          "position": "11",
+          "name": "value list word"
+        },
+        {
           "position": "12",
-          "name": "system link list word"
+          "name": "ref list word"
         },
         {
           "position": "13",
@@ -533,11 +541,11 @@
         },
         {
           "position": "16",
-          "name": "system usage word"
+          "name": "usage word"
         },
         {
           "position": "17",
-          "name": "system change log word"
+          "name": "change log word"
         }
       ]
     },
@@ -1091,7 +1099,7 @@
     },
     {
       "name": "Change formula",
-      "description": "Chnage a formula, the name or the type",
+      "description": "Change a formula, the name or the type",
       "code_id": "formula_edit",
       "type": "system",
       "protection": "admin_protection"

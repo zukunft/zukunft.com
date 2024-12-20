@@ -37,6 +37,7 @@ use html\rest_ctrl as api_dsp;
 use html\html_selector;
 use html\user\user_message;
 use shared\api;
+use shared\types\view_styles;
 
 class list_dsp
 {
@@ -263,21 +264,27 @@ class list_dsp
 
     /**
      * create a selector for this list
-     * used for words, triples, phrases, formulas, terms, view and components
+     * used for words, triples, phrases, formulas, terms, views and components
      *
-     * @param string $name the name of this selector which must be unique within the form
+     * the calling function hierarchy is
+     * 1. msk_lst->selector: adding the default parameters to select a view
+     * 2. sbx->view_selector: adding the sandbox related parameters e.g. the default view of the object
+     * 3. cmp->view_selector: adding the component specific parameters e.g. the phrase context to sort the views
+     * 4. cmp->view_select: add the component and view parameters e.g. the form name and the unique name within the form
+     *
      * @param string $form the html form name which must be unique within the html page
+     * @param int $selected the unique database id of the object that has been selected
+     * @param string $name the name of this selector which must be unique within the form
      * @param string $label the text show to the user
      * @param string $col_class the formatting code to adjust the formatting
-     * @param int $selected the unique database id of the object that has been selected
      * @returns string the html code to select a word from this list
      */
     function selector(
-        string $name = '',
         string $form = '',
-        string $label = '',
-        string $col_class = '',
         int $selected = 0,
+        string $name = '',
+        string $label = '',
+        string $col_class = view_styles::COL_SM_4,
         string $type = html_selector::TYPE_SELECT
     ): string
     {

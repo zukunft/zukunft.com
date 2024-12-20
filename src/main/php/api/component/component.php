@@ -75,6 +75,7 @@ class component extends sandbox_typed_api
     const TN_TABLE = 'System Test View Component Table';
 
     // to test a system view
+    // TODO move the code_id to a shared class
     const TN_FORM_TITLE = 'form title';
     const TC_FORM_TITLE = 'form_title';
     const TD_FORM_TITLE = 'show the language specific title of a add, change or delete form';

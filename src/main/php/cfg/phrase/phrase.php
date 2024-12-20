@@ -1227,7 +1227,7 @@ class phrase extends combine_named
         // TODO activate Prio 3
         // $sel->bs_class = $class;
         // $sel->dummy_text = '... please select';
-        return $phr_lst->selector($field_name, $form_name, $label, '', $this->id());
+        return $phr_lst->selector($form_name, $this->id(), $field_name, $label, '');
     }
 
 // returns the best guess category for a word  e.g. for "ABB" it will return only "Company"

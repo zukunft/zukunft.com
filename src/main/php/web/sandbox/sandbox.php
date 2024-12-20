@@ -37,6 +37,7 @@ include_once HTML_PATH . 'html_base.php';
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
 include_once SHARED_PATH . 'json_fields.php';
 
+use html\view\view_list;
 use shared\api;
 use html\sandbox\db_object as db_object_dsp;
 use html\html_base;
@@ -53,6 +54,9 @@ class sandbox extends db_object_dsp
     public ?int $protection_id = null; // id for no, user, admin or full protection
 
     protected ?user_dsp $owner = null;
+
+    // the id of the default view for this object
+    private ?int $view_id = null;
 
 
     /*
@@ -105,6 +109,11 @@ class sandbox extends db_object_dsp
         return $usr_msg;
     }
 
+    function view_id(): ?int
+    {
+        return $this->view_id;
+    }
+
 
     /*
      * interface
@@ -133,6 +142,21 @@ class sandbox extends db_object_dsp
      */
 
     /**
+     * create the HTML code to select a view
+     * @param string $form the name of the html form
+     * @param view_list $msk_lst with the suggested views
+     * @return string the html code to select a view
+     */
+    public function view_selector(string $form, view_list $msk_lst): string
+    {
+        $view_id = $this->view_id();
+        if ($view_id == null) {
+            $view_id = $msk_lst->default_id($this);
+        }
+        return $msk_lst->selector($form, $view_id);
+    }
+
+    /**
      * @param string $form_name the name of the html form
      * @return string the html code to select the share type
      */
@@ -144,7 +168,7 @@ class sandbox extends db_object_dsp
         if ($used_share_id == null) {
             $used_share_id = $html_share_types->default_id();
         }
-        if ($usr == $this->owner or $this->owner == null) {
+        if ($usr === $this->owner or $this->owner == null) {
             return $html_share_types->selector($form_name, $used_share_id, 'share', view_styles::COL_SM_4, 'share:');
         } else {
             return '';
@@ -163,7 +187,7 @@ class sandbox extends db_object_dsp
         if ($used_protection_id == null) {
             $used_protection_id = $html_protection_types->default_id();
         }
-        if ($usr == $this->owner or $this->owner == null) {
+        if ($usr === $this->owner or $this->owner == null) {
             return $html_protection_types->selector($form_name, $used_protection_id, 'protection', view_styles::COL_SM_4, 'protection:');
         } else {
             return '';

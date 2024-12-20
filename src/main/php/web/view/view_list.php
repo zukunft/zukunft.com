@@ -44,6 +44,7 @@ use html\view\view as view_dsp;
 use html\word\triple;
 use html\word\word;
 use shared\api;
+use shared\types\view_styles;
 use shared\views;
 
 class view_list extends list_dsp
@@ -168,7 +169,7 @@ class view_list extends list_dsp
 
     /**
      * get the default view
-     * TODO if a phrase is rankable use the ranking view
+     * TODO if a phrase can be ranked use the ranking view
      * @param sandbox $sbx the object to which the default view should be found
      * @return int the view id if no view has been selected until now
      */
@@ -183,6 +184,31 @@ class view_list extends list_dsp
         };
     }
 
+
+    /**
+     * HTML code of a view selector
+     * @param string $form the name of the html form
+     * @param int $selected the id of the preselected item
+     * @param string $name the unique name inside the form for this selector
+     * @param string $label the label name (TODO remove from the selector?
+     * @param string $col_class the formatting code to adjust the formatting
+     * @param string $pattern the pattern to filter the views
+     * @return string with the HTML code to show the view selector
+     */
+    function selector(
+        string    $form = '',
+        int       $selected = 0,
+        string    $name = 'view',
+        string    $label = 'view: ',
+        string    $col_class = view_styles::COL_SM_4,
+        string    $pattern = ''
+    ): string
+    {
+        if ($pattern != '') {
+            $this->load_like($pattern);
+        }
+        return parent::selector($form, $selected, $name, $label, $col_class);
+    }
 
     /**
      * create a selection page where the user can select a view that should be used for a view

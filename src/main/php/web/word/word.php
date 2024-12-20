@@ -179,6 +179,17 @@ class word extends sandbox_typed
 
 
     /*
+     * load
+     */
+
+    function view_list(): view_list
+    {
+        $msk_lst = new view_list();
+        return $msk_lst;
+    }
+
+
+    /*
      * names
      */
 
@@ -282,21 +293,6 @@ class word extends sandbox_typed
             $result .= $this->phrase_type_selector($form);
         }
         return $result;
-    }
-
-    /**
-     * create the HTML code to select a view
-     * @param string $form the name of the html form
-     * @return string the html code to select the phrase type
-     */
-    protected function view_selector(string $form): string
-    {
-        $msk_lst = new view_list();
-        $view_id = $this->view_id();
-        if ($view_id == null) {
-            $view_id = $msk_lst->default_id();
-        }
-        return $msk_lst->selector($form, $view_id);
     }
 
 
@@ -722,7 +718,7 @@ class word extends sandbox_typed
         $label = "Word:";
         //$sel->bs_class = $bs_class;
         //$sel->dummy_text = '... or select an existing word to link it';
-        return $phr_lst->selector($field_name, $form, $label, '', $id);
+        return $phr_lst->selector($form, $id, $field_name, $label, '');
     }
 
     /*
@@ -735,7 +731,7 @@ class word extends sandbox_typed
      * select a phrase based on a given context
      *
      * @param string $name the unique name inside the form for this selector
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @param string $label the text show to the user
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
@@ -745,7 +741,7 @@ class word extends sandbox_typed
      */
     protected function phrase_selector(
         string      $name,
-        string      $form_name,
+        string      $form,
         string      $label = '',
         string      $col_class = '',
         int         $selected = 0,
@@ -757,7 +753,7 @@ class word extends sandbox_typed
         $phr_lst = new phrase_list_dsp();
         if ($pattern != '') {
             $phr_lst->load_like($pattern);
-            $result = $phr_lst->selector($name, $form_name, $label, view_styles::COL_SM_4, $selected, html_selector::TYPE_DATALIST);
+            $result = $phr_lst->selector($form, $selected, $name, $label, view_styles::COL_SM_4, html_selector::TYPE_DATALIST);
         } else {
             $result = $this->name();
         }
@@ -778,7 +774,7 @@ class word extends sandbox_typed
         } else {
             $field_name = "word";
         }
-        return $phr_lst->selector($field_name, $form_name, '', $id);
+        return $phr_lst->selector($form_name, $id, $field_name, '');
     }
 
     /**

@@ -334,8 +334,11 @@ class all_unit_tests extends test_cleanup
         (new api_tests)->run_openapi_test($this);
         (new base_ui_tests)->run($this);
 
-        // test the html ui on localhost
+        // test the html ui on localhost without api
         (new all_ui_tests())->run($this);
+
+        // test the html ui on localhost with api
+        // (new all_ui_api_tests())->run($this);
 
         // restore the global vars
         $db_con = $global_db_con;

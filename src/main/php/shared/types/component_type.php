@@ -73,6 +73,7 @@ class component_type
     // simple close the form section
     const FORM_END = "form_end";
 
+
     /*
      * hidden
      */
@@ -81,6 +82,7 @@ class component_type
     const ROW_START = "row_start";
     const ROW_RIGHT = "row_right";
     const ROW_END = "row_end";
+
 
     /*
      * system components
@@ -107,8 +109,6 @@ class component_type
     const NUMERIC_VALUE = "word_value_list";
     // shows all: all words that link to the given word and all values related to the given word
     const VALUES_ALL = "values_all";
-    // display a table (e.g. ABB as first word, Cash Flow Statement as second word)
-    const VALUES_RELATED = "values_related";
     // display all formulas related to the given word
     const FORMULAS = "formula_list";
     // show a list of formula results related to a word
@@ -121,6 +121,14 @@ class component_type
     const CSV_EXPORT = "csv_export";
     // show a list of words and triples with a link type selector
     const LINK = "link";
+
+
+    /*
+     * related
+     */
+
+    // display a changeable list as a table (e.g. ABB as first word, Cash Flow Statement as second word)
+    const VALUES_RELATED = "values_related";
 
 
     // a list with all types for the initial load with name, code_id and description
@@ -195,7 +203,12 @@ class component_type
         [self::ROW_RIGHT, 33],
         [self::ROW_END, 34],
         [self::CALC_SHEET, 35],
-        [self::FORM_SOURCE_TYPE, 39]
+        [self::FORM_SOURCE_TYPE, 39],
+        [self::VIEW_SELECT, 40],
+        [self::REF_LIST_WORD, 41],
+        [self::LINK_LIST_WORD, 42],
+        [self::USAGE_WORD, 43],
+        [self::SYSTEM_CHANGE_LOG, 44]
     );
 
 }

@@ -373,7 +373,7 @@
       {
         "name": "fixed word",
         "code_id": "phrase",
-        "description": "show the user specifc name of a word or a triple as a text",
+        "description": "show the user specific name of a word or a triple as a text",
         "id": 4
       },
       {
@@ -6537,7 +6537,7 @@
         "id": 1,
         "protection": 3,
         "name": "Start view",
-        "description": "A dynamic entry mask that initially shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.",
+        "description": "A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.",
         "type_id": 2,
         "code_id": "entry_view",
         "components": [
@@ -6781,24 +6781,14 @@
             "position_type": 1
           },
           {
-            "id": 57,
-            "name": "system view default",
+            "id": 52,
+            "name": "system select default view word",
+            "description": "select the default view for this word",
+            "type_id": 40,
+            "code_id": "select_view_word",
+            "ui_msg_code_id": "select_view",
             "link_id": 22,
             "position": 7,
-            "position_type": 1
-          },
-          {
-            "id": 58,
-            "name": "system ref list word",
-            "link_id": 23,
-            "position": 8,
-            "position_type": 1
-          },
-          {
-            "id": 58,
-            "name": "system ref list word",
-            "link_id": 24,
-            "position": 9,
             "position_type": 1
           },
           {
@@ -6808,9 +6798,9 @@
             "type_id": 26,
             "code_id": "form_field_share_type",
             "ui_msg_code_id": "form_select_share",
-            "link_id": 25,
-            "position": 10,
-            "position_type": 1
+            "link_id": 23,
+            "position": 8,
+            "position_type": 2
           },
           {
             "id": 44,
@@ -6819,13 +6809,36 @@
             "type_id": 27,
             "code_id": "form_field_protection_type",
             "ui_msg_code_id": "form_select_protection",
-            "link_id": 26,
-            "position": 11,
+            "link_id": 24,
+            "position": 9,
             "position_type": 2
           },
           {
-            "id": 59,
-            "name": "system link list word",
+            "id": 53,
+            "name": "link list word",
+            "description": "changeable list of links of this word",
+            "type_id": 42,
+            "code_id": "link_list_word",
+            "link_id": 25,
+            "position": 10,
+            "position_type": 1
+          },
+          {
+            "id": 54,
+            "name": "value list word",
+            "description": "list of values related to this word",
+            "type_id": 11,
+            "code_id": "value_list_word",
+            "link_id": 26,
+            "position": 11,
+            "position_type": 1
+          },
+          {
+            "id": 55,
+            "name": "ref list word",
+            "description": "changeable list of reference of this word",
+            "type_id": 41,
+            "code_id": "ref_list_word",
             "link_id": 27,
             "position": 12,
             "position_type": 1
@@ -6862,8 +6875,8 @@
             "position_type": 1
           },
           {
-            "id": 55,
-            "name": "system usage word",
+            "id": 56,
+            "name": "usage word",
             "description": "show where this word has been used e.g. how many values are related",
             "type_id": 43,
             "code_id": "usage_word",
@@ -6872,8 +6885,8 @@
             "position_type": 1
           },
           {
-            "id": 56,
-            "name": "system change log word",
+            "id": 57,
+            "name": "change log word",
             "description": "show the change log of this word",
             "type_id": 44,
             "code_id": "change_log_word",
@@ -8102,7 +8115,7 @@
         "id": 21,
         "protection": 3,
         "name": "Change formula",
-        "description": "Chnage a formula, the name or the type",
+        "description": "Change a formula, the name or the type",
         "type_id": 7,
         "code_id": "formula_edit",
         "components": []
@@ -8336,7 +8349,7 @@
             "position_type": 1
           },
           {
-            "id": 70,
+            "id": 68,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -8353,7 +8366,7 @@
         "code_id": "verb",
         "components": [
           {
-            "id": 66,
+            "id": 64,
             "name": "Verb",
             "description": "simply show the verb name",
             "type_id": 37,
@@ -8362,7 +8375,7 @@
             "position_type": 1
           },
           {
-            "id": 68,
+            "id": 66,
             "name": "related words",
             "description": "show the most relevant and related words or triples",
             "type_id": 9,
@@ -8379,14 +8392,14 @@
         "code_id": "triple",
         "components": [
           {
-            "id": 71,
+            "id": 69,
             "name": "Triple",
             "link_id": 152,
             "position": 1,
             "position_type": 1
           },
           {
-            "id": 70,
+            "id": 68,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -8403,14 +8416,14 @@
         "code_id": "source",
         "components": [
           {
-            "id": 72,
+            "id": 70,
             "name": "Source",
             "link_id": 154,
             "position": 1,
             "position_type": 1
           },
           {
-            "id": 70,
+            "id": 68,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -8427,14 +8440,14 @@
         "code_id": "ref",
         "components": [
           {
-            "id": 73,
+            "id": 71,
             "name": "Reference",
             "link_id": 156,
             "position": 1,
             "position_type": 1
           },
           {
-            "id": 70,
+            "id": 68,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -8451,7 +8464,7 @@
         "code_id": "value",
         "components": [
           {
-            "id": 74,
+            "id": 72,
             "name": "Value",
             "link_id": 158,
             "position": 1,
@@ -8466,7 +8479,7 @@
         "code_id": "result",
         "components": [
           {
-            "id": 77,
+            "id": 75,
             "name": "Result",
             "link_id": 162,
             "position": 1,

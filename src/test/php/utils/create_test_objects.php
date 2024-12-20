@@ -76,7 +76,6 @@ use cfg\view_term_link;
 use html\system\messages;
 use shared\json_fields;
 use shared\types\component_type as comp_type_shared;
-use shared\api;
 use api\api_message;
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
@@ -167,6 +166,7 @@ use controller\system\sys_log as sys_log_api;
 use DateTime;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\word as word_dsp;
+use html\view\view_list as view_list_dsp;
 use shared\library;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
@@ -2263,6 +2263,14 @@ class create_test_objects extends test_base
         $lst->add($this->view_with_components());
         $lst->add($this->view_word_add());
         return $lst;
+    }
+
+    /**
+     * @return view_list_dsp a sample frontend view list
+     */
+    function view_list_dsp(): view_list_dsp
+    {
+        return new view_list_dsp($this->view_list()->api_json());
     }
 
     function view_link(): view_term_link

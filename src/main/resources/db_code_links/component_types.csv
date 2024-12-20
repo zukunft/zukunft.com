@@ -2,7 +2,7 @@ component_type_id, type_name, description, code_id
 1, 'word selector', 'to select a word or triple', 'phrase_select'
 2, 'view selector', 'to select an existing mask e.g. to set the default view', 'view_select'
 3, 'text', 'simply to display a variable text', 'text'
-4, 'fixed word', 'show the user specifc name of a word or a triple as a text', 'phrase'
+4, 'fixed word', 'show the user specific name of a word or a triple as a text', 'phrase'
 5, 'linked word', 'display a word and offer a link', 'link'
 6, 'formula results', 'show the results of a formula', 'formula_results'
 7, 'word list up', 'Show a list of words related with a specified verb e.g. for the triple <Canton of Zurich> show the word <canton>, because they are linked with verb <is a>', 'word_list_up'

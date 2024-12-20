@@ -78,7 +78,7 @@ SELECT view_insert_log_0111551111 (
                42,
                278,
                43,
-               'A dynamic entry mask that initially shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.',
+               'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.',
                45,
                'details',
                6,

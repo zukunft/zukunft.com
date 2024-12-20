@@ -268,7 +268,7 @@ class triple extends sandbox_typed
      * select a phrase based on a given context
      *
      * @param string $name the unique name inside the form for this selector
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @param string $label the text show to the user
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
@@ -277,25 +277,25 @@ class triple extends sandbox_typed
      * @return string the html code to select a phrase
      */
     protected function phrase_selector(
-        string $name,
-        string $form_name,
-        string $label = '',
-        string $col_class = '',
-        int $selected = 0,
-        string $pattern = '',
+        string      $name,
+        string      $form,
+        string      $label = '',
+        string      $col_class = '',
+        int         $selected = 0,
+        string      $pattern = '',
         ?phrase_dsp $phr = null
     ): string
     {
         $phr_lst = new phrase_list_dsp();
         $phr_lst->load_like($pattern);
-        return $phr_lst->selector($name, $form_name, $label, view_styles::COL_SM_4, $selected, html_selector::TYPE_DATALIST);
+        return $phr_lst->selector($form, $selected, $name, $label, view_styles::COL_SM_4, html_selector::TYPE_DATALIST);
     }
 
     /**
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @return string the html code to select a phrase
      */
-    protected function verb_selector(string $form_name): string
+    protected function verb_selector(string $form): string
     {
         global $html_verbs;
         if ($this->verb != null) {
@@ -303,7 +303,7 @@ class triple extends sandbox_typed
         } else {
             $id = 0;
         }
-        return $html_verbs->selector($form_name, $id, 'verb', view_styles::COL_SM_4, 'verb:');
+        return $html_verbs->selector($form, $id, 'verb', view_styles::COL_SM_4, 'verb:');
     }
 
 

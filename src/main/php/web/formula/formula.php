@@ -473,7 +473,7 @@ class formula extends sandbox_typed
      * TODO move load to calling function
      *
      * @param string $name the unique name inside the form for this selector
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @param string $label the text show to the user
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
@@ -482,18 +482,18 @@ class formula extends sandbox_typed
      * @return string with the HTML code to show the phrase selector
      */
     protected function phrase_selector(
-        string $name,
-        string $form_name,
-        string $label = '',
-        string $col_class = '',
-        int $selected = 0,
-        string $pattern = '',
+        string      $name,
+        string      $form,
+        string      $label = '',
+        string      $col_class = '',
+        int         $selected = 0,
+        string      $pattern = '',
         ?phrase_dsp $phr = null
     ): string
     {
         $phr_lst = new phrase_list_dsp();
         $phr_lst->load_like($pattern);
-        return $phr_lst->selector($name, $form_name, $label, '', $selected, html_selector::TYPE_DATALIST);
+        return $phr_lst->selector($form, $selected, $name, $label, '', html_selector::TYPE_DATALIST);
     }
 
     // test and refresh the formula and show some sample values by returning the HTML code

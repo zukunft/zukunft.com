@@ -52,9 +52,6 @@ class sandbox_named extends sandbox
     // the mouse over tooltip for the named object e.g. word, triple, formula, verb, view or component
     public ?string $description = null;
 
-    // the id of the default view for this object
-    private ?int $view_id = null;
-
 
     /*
      * set and get
@@ -125,11 +122,6 @@ class sandbox_named extends sandbox
         } else {
             return $this->description;
         }
-    }
-
-    function view_id(): ?int
-    {
-        return $this->view_id;
     }
 
 

@@ -52,7 +52,7 @@ class formula_list_ui_tests
         $test_page .= 'formula list with link: ' . $lst->display_linked() . '<br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
-        $test_page .= $lst->selector('test_selector', '', 'No formula selected') . '<br>';
+        $test_page .= $lst->selector('', 0, 'test_selector', 'No formula selected') . '<br>';
 
         $t->html_test($test_page, 'formula_list', 'formula_list', $t);
     }

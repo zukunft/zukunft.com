@@ -317,7 +317,7 @@ class phrase extends combine_named_dsp
         // TODO activate Prio 3
         // $sel->bs_class = $class;
 
-        return $phr_lst->selector($field_name, $form_name, $label, '', $this->id());
+        return $phr_lst->selector($form_name, $this->id(), $field_name, $label, '');
     }
 
     function dsp_graph(foaf_direction $direction, ?verb_list $link_types = null, string $back = ''): string

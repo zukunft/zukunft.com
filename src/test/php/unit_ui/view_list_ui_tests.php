@@ -54,7 +54,7 @@ class view_list_ui_tests
         $test_page .= 'view list with link: ' . $lst->display_linked() . '<br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
-        $test_page .= $lst->selector('test_selector', '', 'No view selected') . '<br>';
+        $test_page .= $lst->selector('', 0, 'test_selector', 'No view selected') . '<br>';
 
         $t->html_test($test_page, 'view_list', 'view_list', $t);
     }

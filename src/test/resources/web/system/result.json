@@ -1352,7 +1352,7 @@
       {
         "id": 2,
         "name": "Start view",
-        "description": "A dynamic start mask that shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems",
+        "description": "A dynamic start mask that shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems",
         "type_id": 2,
         "code_id": "entry_view",
         "components": [

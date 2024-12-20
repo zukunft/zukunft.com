@@ -53,7 +53,7 @@ class view extends sandbox_typed_api
     // TC_* means 'test code id'
     // TI_* means 'test id'
     const TN_READ = 'Start view';
-    const TD_READ = 'A dynamic entry mask that initially shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.';
+    const TD_READ = 'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.';
     const TC_READ = 'entry_view';
     const TI_READ = 1;
     const TN_ADD = 'System Test View';

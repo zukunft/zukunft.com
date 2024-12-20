@@ -109,10 +109,10 @@ class component extends sandbox_typed
      */
     function dsp_entries(
         ?db_object_dsp $dbo,
-        string $form_name,
-        int $msk_id,
-        string $back,
-        bool $test_mode = false
+        string         $form_name,
+        int            $msk_id,
+        string         $back,
+        bool           $test_mode = false
     ): string
     {
         if ($dbo == null) {
@@ -125,16 +125,12 @@ class component extends sandbox_typed
         $result = '';
 
         // list of all possible view components
-        $type_code_id = $this->type_code_id();
-        if ($type_code_id == '') {
-            $type_code_id = 'type id ' . $this->type_id();
-        }
-        $result .= match ($type_code_id) {
+        $result .= match ($this->type_code_id()) {
             // start page
             component_type::TEXT => $this->text(),
             component_type::CALC_SHEET => $this->calc_sheet(),
 
-            // system form
+            // system form - usage only allowed for internal system forms
             component_type::FORM_TITLE => $this->form_tile($form_name),
             component_type::FORM_BACK => $this->form_back($msk_id, $dbo->id(), $back),
             component_type::FORM_CONFIRM => $this->form_confirm($dbo, $back),
@@ -152,34 +148,43 @@ class component extends sandbox_typed
             component_type::FORM_DEL => $this->form_del($dbo, $back),
             component_type::FORM_END => $this->form_end(),
 
-            // hidden
+            // hidden - only used for formatting without functional behaviour
             component_type::ROW_START => $this->row_start(),
             component_type::ROW_RIGHT => $this->row_right(),
             component_type::ROW_END => $this->row_end(),
 
-            // system components
-            component_type::VIEW_SELECT => $this->view_select($dbo, $form_name),
-            component_type::REF_LIST_WORD => $this->ref_list_word($dbo, $form_name),
-            component_type::LINK_LIST_WORD => $this->link_list_word($dbo, $form_name),
+            // view only -
             component_type::USAGE_WORD => $this->usage_word($dbo, $form_name),
             component_type::SYSTEM_CHANGE_LOG => $this->system_change_log($dbo, $form_name),
 
+            // base
             component_type::PHRASE => $this->display_name(),
             component_type::PHRASE_NAME => $this->phrase_name($dbo),
-            component_type::PHRASE_SELECT => $this->phrase_select($dbo, $form_name),
             component_type::LINK => $this->phrase_link($dbo, $form_name),
+
+            // select
+            component_type::VIEW_SELECT => $this->view_select($dbo, $form_name),
+            component_type::PHRASE_SELECT => $this->phrase_select($dbo, $form_name),
+
+            // table
+            component_type::VALUES_ALL => $this->all($dbo, $back),
             component_type::VALUES_RELATED => $this->table($dbo),
             component_type::NUMERIC_VALUE => $this->num_list($dbo, $back),
+
+            // related
+            component_type::REF_LIST_WORD => $this->ref_list_word($dbo, $form_name),
+            component_type::LINK_LIST_WORD => $this->link_list_word($dbo, $form_name),
             component_type::FORMULAS => $this->formulas($dbo),
             component_type::FORMULA_RESULTS => $this->results($dbo),
             component_type::WORDS_DOWN => $this->word_children($dbo),
             component_type::WORDS_UP => $this->word_parents($dbo),
+
+            // export
             component_type::JSON_EXPORT => $this->json_export($dbo, $back),
             component_type::XML_EXPORT => $this->xml_export($dbo, $back),
             component_type::CSV_EXPORT => $this->csv_export($dbo, $back),
-            component_type::VALUES_ALL => $this->all($dbo, $back),
 
-            default => ' program code for component ' . $this->dsp_id() . ' missing<br>'
+            default => 'program code for component ' . $this->dsp_id() . ' missing<br>'
         };
         $this->log_debug($this->dsp_id() . ' created');
 
@@ -237,12 +242,14 @@ class component extends sandbox_typed
     }
 
     /**
+     * the html code to select the view for the given object
+     * which can also be the component itself
+     * so view_select (for the $obj) can call view_selector of this class if $obj is of class component
      * @return string with the html code to select a view
      */
-    function view_select(db_object_dsp $phr, string $form_name): string
+    function view_select(db_object_dsp $obj, string $form): string
     {
-        // TODO review
-        return $phr->phrase_selector('phrase', $form_name, 'word:', '', $phr->id());
+        return $obj->view_selector($form, $obj->view_list());
     }
 
     /**
@@ -287,7 +294,7 @@ class component extends sandbox_typed
      */
     function table(): string
     {
-        return $this->name();
+        return 'values related to ' . $this->name();
     }
 
     /**
@@ -624,23 +631,34 @@ class component extends sandbox_typed
     private function type_code_id(): string
     {
         global $html_component_types;
+        $type_code_id = '';
+        $err_msg = 'Component type code id for ' . $this->dsp_id()
+            . ' and type id ' . $this->type_id() . ' missing';
         if ($this->type_id() == null) {
-            $this->log_err('Component type code id for ' . $this->dsp_id() . ' missing');
-            return '';
+            $this->log_err($err_msg);
         } else {
-            return $html_component_types->code_id($this->type_id());
+            $type_code_id = $html_component_types->code_id($this->type_id());
+            if ($type_code_id == '') {
+                $this->log_err($err_msg);
+            }
         }
+        return $type_code_id;
     }
 
     function pos_type_code_id(): string
     {
         global $html_position_types;
+        $pos_type_code_id = '';
+        $err_msg = 'Position type code id for ' . $this->dsp_id() . ' missing';
         if ($this->pos_type_id == null) {
-            $this->log_err('Position type code id for ' . $this->dsp_id() . ' missing');
-            return '';
+            $this->log_err($err_msg);
         } else {
-            return $html_position_types->code_id($this->pos_type_id);
+            $pos_type_code_id = $html_position_types->code_id($this->pos_type_id);
+            if ($pos_type_code_id == '') {
+                $this->log_err($err_msg);
+            }
         }
+        return $pos_type_code_id;
     }
 
     function style_text(): string
@@ -1038,7 +1056,7 @@ class component extends sandbox_typed
     /**
      * HTML code of a phrase selector
      * @param string $name the unique name inside the form for this selector
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @param string $label the text show to the user
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
@@ -1048,7 +1066,7 @@ class component extends sandbox_typed
      */
     protected function phrase_selector(
         string      $name,
-        string      $form_name,
+        string      $form,
         string      $label = '',
         string      $col_class = '',
         int         $selected = 0,
@@ -1057,31 +1075,7 @@ class component extends sandbox_typed
     {
         $phr_lst = new phrase_list();
         $phr_lst->load_like($pattern);
-        return $phr_lst->selector($name, $form_name, $label, $selected, view_styles::COL_SM_4, html_selector::TYPE_DATALIST);
-    }
-
-    /**
-     * HTML code of a view selector
-     * @param string $name the unique name inside the form for this selector
-     * @param string $form_name the name of the html form
-     * @param string $label the label name (TODO remove from the selector?
-     * @param string $col_class the formatting code to adjust the formatting
-     * @param int $selected the id of the preselected item
-     * @param string $pattern the pattern to filter the views
-     * @return string with the HTML code to show the view selector
-     */
-    private function view_selector(
-        string $name,
-        string $form_name,
-        string $label = '',
-        string $col_class = '',
-        int    $selected = 0,
-        string $pattern = ''
-    ): string
-    {
-        $msk_lst = new view_list();
-        $msk_lst->load_like($pattern);
-        return $msk_lst->selector($name, $form_name, $label, view_styles::COL_SM_4, $selected);
+        return $phr_lst->selector($form, $selected, $name, $label, view_styles::COL_SM_4, html_selector::TYPE_DATALIST);
     }
 
     /**
@@ -1119,7 +1113,8 @@ class component extends sandbox_typed
         $result .= '    <td>';
         if ($add_link == 1) {
             // $sel->dummy_text = 'select a view where the view component should also be used';
-            $result .= $this->view_selector('link_view', 'component_edit');
+            $msk_lst = new view_list();
+            $result .= $msk_lst->selector('component_edit', 0, 'link_view');
 
             $result .= $html->dsp_form_end('', $back);
         } else {

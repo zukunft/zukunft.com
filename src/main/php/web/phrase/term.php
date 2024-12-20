@@ -349,7 +349,7 @@ class term extends combine_named_dsp
         // TODO activate Prio 3
         // $sel->bs_class = $class;
 
-        return $trm_lst->selector($field_name, $form_name, $label, '', $this->id());
+        return $trm_lst->selector($form_name, $this->id(), $field_name, $label, '');
     }
 
 }

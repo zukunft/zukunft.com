@@ -60,8 +60,8 @@ class word_list_ui_tests
         $test_page .= 'measure and scaling: ' . '<br>' . $lst_long->measure_scale_lst()->display() . '<br><br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
-        $test_page .= $lst_long->selector('test_selector', '', 'No word selected') . '<br>';
-        $test_page .= $lst_long->selector('2_selected', '', 'Pi selected', '', 3) . '<br>';
+        $test_page .= $lst_long->selector('', 0, 'test_selector', 'No word selected') . '<br>';
+        $test_page .= $lst_long->selector('', 3, '2_selected', 'Pi selected', '') . '<br>';
 
         $t->html_test($test_page, '', 'word_list', $t);
     }
