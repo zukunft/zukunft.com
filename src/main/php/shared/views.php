@@ -95,6 +95,7 @@ class views
     const MC_COMPONENT_UNLINK = 'component_unlink';
 
     // default views
+    // TODO easy add missing default views e.g. for formula
     const MC_WORD = 'word';
     const MI_WORD = 41;
     const MC_VERB = 'verb';

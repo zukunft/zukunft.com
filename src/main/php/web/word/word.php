@@ -57,6 +57,7 @@ use html\sandbox\sandbox_typed;
 use html\system\back_trace;
 use html\system\messages;
 use html\user\user_message;
+use html\view\view_list;
 use shared\api;
 use shared\enum\foaf_direction;
 use shared\json_fields;
@@ -290,12 +291,12 @@ class word extends sandbox_typed
      */
     protected function view_selector(string $form): string
     {
-        global $html_views;
-        $used_phrase_id = $this->type_id();
-        if ($used_phrase_id == null) {
-            $used_phrase_id = $html_views->default_id();
+        $msk_lst = new view_list();
+        $view_id = $this->view_id();
+        if ($view_id == null) {
+            $view_id = $msk_lst->default_id();
         }
-        return $html_views->selector($form, $used_phrase_id);
+        return $msk_lst->selector($form, $view_id);
     }
 
 

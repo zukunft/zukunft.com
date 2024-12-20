@@ -34,11 +34,17 @@ namespace html\view;
 include_once SANDBOX_PATH . 'list_dsp.php';
 include_once VIEW_PATH . 'view.php';
 
+use html\ref\source;
 use html\rest_ctrl;
 use html\sandbox\list_dsp;
+use html\sandbox\sandbox;
 use html\user\user_message;
+use html\verb\verb;
 use html\view\view as view_dsp;
+use html\word\triple;
+use html\word\word;
 use shared\api;
+use shared\views;
 
 class view_list extends list_dsp
 {
@@ -158,6 +164,23 @@ class view_list extends list_dsp
             $views[] = $fig->display_linked();
         }
         return $views;
+    }
+
+    /**
+     * get the default view
+     * TODO if a phrase is rankable use the ranking view
+     * @param sandbox $sbx the object to which the default view should be found
+     * @return int the view id if no view has been selected until now
+     */
+    function default_id(sandbox $sbx): int
+    {
+        return match ($sbx::class) {
+            word::class => views::MI_WORD,
+            verb::class => views::MI_VERB,
+            triple::class => views::MI_TRIPLE,
+            source::class => views::MI_SOURCE,
+            default => views::MI_START
+        };
     }
 
 
