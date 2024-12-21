@@ -74,7 +74,7 @@ class type_lists_ui_tests
         $msk = $html_system_views->get(view_api::TC_READ);
         $wrd = $t->word_dsp();
         $wrd->set_name('All type selectors');
-        $test_page = $msk->show($wrd, '') . '<br><br>';
+        $test_page = $msk->show($wrd, null, '') . '<br><br>';
 
         // test the type list selectors
         $form_name = 'view';

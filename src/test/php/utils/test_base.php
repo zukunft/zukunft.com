@@ -68,6 +68,7 @@ use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_list;
 use cfg\config;
+use cfg\data_object;
 use cfg\db\sql;
 use cfg\db\sql as sql_creator;
 use cfg\db\sql_db;
@@ -121,6 +122,7 @@ use html\verb\verb as verb_dsp;
 use html\ref\source as source_dsp;
 use html\ref\ref as ref_dsp;
 use html\value\value as value_dsp;
+
 // TODO activate
 //use html\group\group as group_dsp;
 use html\formula\formula as formula_dsp;
@@ -781,13 +783,17 @@ class test_base
      * @param user $usr to define for which user the view should be created
      * @param db_object_seq_id $dbo the database object that should be shown
      * @param int $id the id of the database object that should be loaded and send to the frontend
+     * @param data_object|null $cfg the context that should be used to create the view
+     *                              which can be fixed test data for stable test results
      * @return bool true if the generated view matches the expected
      */
     function assert_view(
         string           $dsp_code_id,
         user             $usr,
         db_object_seq_id $dbo,
-        int              $id = 0): bool
+        int              $id = 0,
+        ?data_object     $cfg = null
+    ): bool
     {
         $lib = new library();
 
@@ -827,7 +833,7 @@ class test_base
         // create the view for the user
         $dsp_html = new view_dsp;
         $dsp_html->set_from_json($api_msg);
-        $actual = $dsp_html->show($dbo_dsp, '', true);
+        $actual = $dsp_html->show($dbo_dsp, $cfg, '', true);
 
         // check if the created view matches the expected view
         return $this->assert_html(

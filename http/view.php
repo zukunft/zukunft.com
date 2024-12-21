@@ -182,7 +182,7 @@ if ($usr->id() > 0) {
         $msk_dsp = new view_dsp();
         $msk_dsp->load_by_id_with($view_id);
         $title = $msk_dsp->title($dbo_dsp);
-        $dsp_text = $msk_dsp->show($dbo_dsp, $back);
+        $dsp_text = $msk_dsp->show($dbo_dsp, null, $back);
 
         // use a fallback if the view is empty
         if ($dsp_text == '' or $msk_dsp->name() == '') {

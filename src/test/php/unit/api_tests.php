@@ -60,6 +60,7 @@ use api\view\view as view_api;
 use api\word\word as word_api;
 use cfg\component\component;
 use cfg\component\component_list;
+use cfg\data_object;
 use cfg\formula;
 use cfg\formula_list;
 use cfg\job;
@@ -182,9 +183,13 @@ class api_tests
      */
     function run_ui_test(test_cleanup $t): void
     {
+        // create the stable test context that is not based on the database so that the test results rarely change
+        $cfg = new data_object($t->usr1);
+        $cfg->set_view_list($t->view_list());
+        // create the test pages
         $t->assert_view(view_shared::MC_WORD, $t->usr1, new word($t->usr1), 1);
         $t->assert_view(view_shared::MC_WORD_ADD, $t->usr1, new word($t->usr1));
-        $t->assert_view(view_shared::MC_WORD_EDIT, $t->usr1, new word($t->usr1), 1);
+        $t->assert_view(view_shared::MC_WORD_EDIT, $t->usr1, new word($t->usr1), 1, $cfg);
         $t->assert_view(view_shared::MC_WORD_DEL, $t->usr1, new word($t->usr1), 1);
         $t->assert_view(view_shared::MC_VERB_ADD, $t->usr1, new verb());
         $t->assert_view(view_shared::MC_VERB_EDIT, $t->usr1, new verb(), 1);

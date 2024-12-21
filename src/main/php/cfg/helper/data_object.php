@@ -49,6 +49,7 @@ class data_object
     private triple_list $trp_lst;
     private value_list $val_lst;
     private formula_list $frm_lst;
+    private view_list $msk_lst;
     // for warning and errors while filling the data_object
     private user_message $usr_msg;
 
@@ -70,6 +71,7 @@ class data_object
         $this->trp_lst = new triple_list($usr);
         $this->val_lst = new value_list($usr);
         $this->frm_lst = new formula_list($usr);
+        $this->msk_lst = new view_list($usr);
         $this->usr_msg = new user_message();
     }
 
@@ -127,6 +129,35 @@ class data_object
     function formula_list(): formula_list
     {
         return $this->frm_lst;
+    }
+
+    /**
+     * set the view_list of this data object
+     * @param view_list $msk_lst
+     */
+    function set_view_list(view_list $msk_lst): void
+    {
+        $this->msk_lst = $msk_lst;
+    }
+
+    /**
+     * @return view_list with the view of this data object
+     */
+    function view_list(): view_list
+    {
+        return $this->msk_lst;
+    }
+
+    /**
+     * @return bool true if this context object contains a view list
+     */
+    function has_view_list(): bool
+    {
+        if ($this->msk_lst->count() > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
