@@ -92,6 +92,20 @@ class view_list extends list_dsp
      * load
      */
 
+    function load_by_pattern(string $pattern = '%'): bool
+    {
+        $result = false;
+
+        $data = array(api::URL_VAR_PATTERN => $pattern);
+        $rest = new rest_ctrl();
+        $json_body = $rest->api_get(view_list::class, $data);
+        $this->set_from_json_array($json_body);
+        if (!$this->is_empty()) {
+            $result = true;
+        }
+        return $result;
+    }
+
     /**
      * get the views that use this component from the backend
      *

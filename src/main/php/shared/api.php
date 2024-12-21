@@ -41,6 +41,7 @@ class api
 
     // TODO review (move to application.yaml)
     const HOST_DEV = 'http://localhost/';
+    const HOST_DEV_RELATIVE = '/';
     const HOST_UAT = 'https://test.zukunft.com/';
     const HOST_PROD = 'https://www.zukunft.com/';
     const HOST_SAME = '/';

@@ -167,6 +167,7 @@ class html_base
     {
         if ($server_url == '') {
             $server_url = api::HOST_DEV;
+            $server_url_rel = api::HOST_DEV_RELATIVE;
         }
         if ($bs_path == '') {
             $bs_path = api::BS_PATH_DEV;
@@ -176,7 +177,7 @@ class html_base
         }
 
         // set vars to shorten the lines
-        $url_ext_lib = $server_url . api::EXT_LIB_PATH;
+        $url_ext_lib = $server_url_rel . api::EXT_LIB_PATH;
 
         $result = '<!DOCTYPE html>';
         $result .= '<html lang="en">'; // TODO: to be adjusted depending on the display language

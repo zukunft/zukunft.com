@@ -70,7 +70,7 @@ if ($usr->id() > 0) {
         $lst = new view_list($usr);
         $lst->load_by_component_id($cmp_id);
         $result = $lst->api_obj();
-    } elseif ($pattern != '') {
+    } elseif ($_GET[api::URL_VAR_PATTERN] != null) {
         $lst = new view_list($usr);
         $lst->load_names(($pattern));
         $result = $lst->api_obj();

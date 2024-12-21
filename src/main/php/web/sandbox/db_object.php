@@ -45,6 +45,7 @@ use html\phrase\phrase as phrase_dsp;
 use html\phrase\term as term_dsp;
 use html\user\user_message;
 use shared\json_fields;
+use test\create_test_objects;
 
 class db_object
 {
@@ -234,9 +235,11 @@ class db_object
      * load
      */
 
-    function view_list(): view_list
+
+    function view_list(?string $pattern = null): view_list
     {
         $msk_lst = new view_list();
+        $msk_lst->load_by_pattern($pattern);
         return $msk_lst;
     }
 

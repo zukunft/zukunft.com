@@ -65,6 +65,7 @@ use shared\types\view_styles;
 use shared\words;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\views as view_shared;
+use test\create_test_objects;
 
 class word extends sandbox_typed
 {
@@ -182,12 +183,12 @@ class word extends sandbox_typed
      * load
      */
 
-    function view_list(): view_list
+    function view_list(?string $pattern = null): view_list
     {
         $msk_lst = new view_list();
+        $msk_lst->load_by_pattern();
         return $msk_lst;
     }
-
 
     /*
      * names

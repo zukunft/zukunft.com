@@ -79,6 +79,7 @@ use cfg\user;
 use cfg\value\value;
 use cfg\verb;
 use cfg\view;
+use cfg\view_list;
 use cfg\word;
 use cfg\word_list;
 use html\phrase\phrase as phrase_dsp;
@@ -143,6 +144,7 @@ class api_tests
         $t->assert_api_get_list(phrase_list::class, word_api::TN_READ, api::URL_VAR_PATTERN);
         $t->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $t->assert_api_get_list(formula_list::class, [1]);
+        $t->assert_api_get_list(view_list::class, view_api::TN_READ, api::URL_VAR_PATTERN);
         $t->assert_api_get_list(component_list::class, 2, 'view_id');
         $t->assert_api_chg_list(
             change_log_list::class,
