@@ -2247,6 +2247,16 @@ class create_test_objects extends test_base
         return $msk;
     }
 
+    /**
+     * @return view a view from the biological point of view e.g. with the 
+     */
+    function view_biological(): view
+    {
+        $msk = $this->view_protected();
+        $msk->cmp_lnk_lst = $this->component_link_list();
+        return $msk;
+    }
+
     function view_word_add(): view
     {
         $msk = new view($this->usr1);
@@ -2258,6 +2268,17 @@ class create_test_objects extends test_base
     }
 
     function view_list(): view_list
+    {
+        $lst = new view_list($this->usr1);
+        $lst->add($this->view_with_components());
+        $lst->add($this->view_word_add());
+        return $lst;
+    }
+
+    /**
+     * @return view_list with a list of suggested views for a word
+     */
+    function view_list_word(): view_list
     {
         $lst = new view_list($this->usr1);
         $lst->add($this->view_with_components());

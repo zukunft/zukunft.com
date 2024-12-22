@@ -43,6 +43,7 @@ include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\data_object;
 use html\button;
+use html\helper\data_object as data_object_dsp;
 use html\system\messages;
 use shared\api;
 use api\word\word as word_api;
@@ -104,18 +105,18 @@ class component extends sandbox_typed
      * @param db_object_dsp|null $dbo the word, triple or formula object that should be shown to the user
      * @param string $form_name the name of the view which is also used for the html form name
      * @param int $msk_id the database id of the calling view
-     * @param data_object|null $cfg the context used to create the view
+     * @param data_object_dsp|null $cfg the context used to create the view
      * @param string $back the backtrace for undo actions
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code of all view components
      */
     function dsp_entries(
-        ?db_object_dsp $dbo,
-        string         $form_name = '',
-        int            $msk_id,
-        ?data_object   $cfg = null,
-        string         $back = '',
-        bool           $test_mode = false
+        ?db_object_dsp   $dbo,
+        string           $form_name = '',
+        int              $msk_id,
+        ?data_object_dsp $cfg = null,
+        string           $back = '',
+        bool             $test_mode = false
     ): string
     {
         if ($dbo == null) {
@@ -250,10 +251,10 @@ class component extends sandbox_typed
      * so view_select (for the $obj) can call view_selector of this class if $obj is of class component
      * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
      * @param string $form the name of the view which is also used for the html form name
-     * @param data_object|null $cfg the context used to create the view
+     * @param data_object_dsp|null $cfg the context used to create the view
      * @return string with the html code to select a view
      */
-    function view_select(db_object_dsp $dbo, string $form, ?data_object $cfg = null): string
+    function view_select(db_object_dsp $dbo, string $form, ?data_object_dsp $cfg = null): string
     {
         $msk_lst = null;
         // over
@@ -265,8 +266,7 @@ class component extends sandbox_typed
         if ($msk_lst == null) {
             $msk_lst = $dbo->view_list();
         }
-        $msk_lst_dsp = new view_list($msk_lst->api_json());
-        return $dbo->view_selector($form, $msk_lst_dsp);
+        return $dbo->view_selector($form, $msk_lst);
     }
 
     /**

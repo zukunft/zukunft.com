@@ -54,10 +54,11 @@ include_once VIEW_PATH . 'view_list.php';
 include_once WORD_PATH . 'word.php';
 include_once WORD_PATH . 'triple.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once HTML_HELPER_PATH . 'data_object.php';
 
 // TODO remove model classes
 use cfg\component\position_type;
-use cfg\data_object;
+use html\helper\data_object as data_object_dsp;
 use shared\api;
 use html\user\user_message;
 use api\component\component as component_api;
@@ -218,17 +219,17 @@ class view extends sandbox_typed
     /**
      * create the html code to view a sandbox object
      * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
-     * @param data_object|null $cfg the context used to create the view
+     * @param data_object_dsp|null $cfg the context used to create the view
      * @param string $back the history of the user actions to allow rollbacks
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code for a view: this is the main function of this lib
      * TODO use backtrace or use a global backtrace var
      */
     function show(
-        db_object_dsp $dbo,
-        ?data_object  $cfg = null,
-        string        $back = '',
-        bool          $test_mode = false
+        db_object_dsp    $dbo,
+        ?data_object_dsp $cfg = null,
+        string           $back = '',
+        bool             $test_mode = false
     ): string
     {
         $result = '';
@@ -262,18 +263,18 @@ class view extends sandbox_typed
      * create the html code for all components of this view
      *
      * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
-     * @param data_object|null $cfg the context used to create the view
+     * @param data_object_dsp|null $cfg the context used to create the view
      * @param string $form_name the name of the view which is also used for the html form name
      * @param string $back the backtrace for undo actions
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code of all view components
      */
     private function dsp_entries(
-        db_object_dsp $dbo,
-        ?data_object  $cfg = null,
-        string        $form_name = '',
-        string        $back = '',
-        bool          $test_mode = false
+        db_object_dsp    $dbo,
+        ?data_object_dsp $cfg = null,
+        string           $form_name = '',
+        string           $back = '',
+        bool             $test_mode = false
     ): string
     {
         $this->log_debug($this->dsp_id());

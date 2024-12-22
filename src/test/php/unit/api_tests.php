@@ -50,6 +50,7 @@ include_once API_PHRASE_PATH . 'phrase_type.php';
 include_once API_LANGUAGE_PATH . 'language.php';
 include_once API_LANGUAGE_PATH . 'language_form.php';
 include_once SHARED_PATH . 'views.php';
+include_once HTML_HELPER_PATH . 'data_object.php';
 
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
@@ -60,7 +61,6 @@ use api\view\view as view_api;
 use api\word\word as word_api;
 use cfg\component\component;
 use cfg\component\component_list;
-use cfg\data_object;
 use cfg\formula;
 use cfg\formula_list;
 use cfg\job;
@@ -85,6 +85,7 @@ use cfg\word;
 use cfg\word_list;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
+use html\helper\data_object as data_object_dsp;
 use shared\api;
 use shared\library;
 use shared\views as view_shared;
@@ -184,8 +185,8 @@ class api_tests
     function run_ui_test(test_cleanup $t): void
     {
         // create the stable test context that is not based on the database so that the test results rarely change
-        $cfg = new data_object($t->usr1);
-        $cfg->set_view_list($t->view_list());
+        $cfg = new data_object_dsp();
+        $cfg->set_view_list($t->view_list_dsp());
         // create the test pages
         $t->assert_view(view_shared::MC_WORD, $t->usr1, new word($t->usr1), 1);
         $t->assert_view(view_shared::MC_WORD_ADD, $t->usr1, new word($t->usr1));

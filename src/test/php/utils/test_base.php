@@ -122,6 +122,7 @@ use html\verb\verb as verb_dsp;
 use html\ref\source as source_dsp;
 use html\ref\ref as ref_dsp;
 use html\value\value as value_dsp;
+use html\helper\data_object as data_object_dsp;
 
 // TODO activate
 //use html\group\group as group_dsp;
@@ -783,7 +784,7 @@ class test_base
      * @param user $usr to define for which user the view should be created
      * @param db_object_seq_id $dbo the database object that should be shown
      * @param int $id the id of the database object that should be loaded and send to the frontend
-     * @param data_object|null $cfg the context that should be used to create the view
+     * @param data_object_dsp|null $cfg the context that should be used to create the view
      *                              which can be fixed test data for stable test results
      * @return bool true if the generated view matches the expected
      */
@@ -792,7 +793,7 @@ class test_base
         user             $usr,
         db_object_seq_id $dbo,
         int              $id = 0,
-        ?data_object     $cfg = null
+        ?data_object_dsp $cfg = null
     ): bool
     {
         $lib = new library();
