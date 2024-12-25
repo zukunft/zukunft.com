@@ -578,7 +578,7 @@ class word extends sandbox_typed
     }
 
     /*
-     * to be replaced by a system view
+     * TODO to be replaced by a system view
      */
 
     /**

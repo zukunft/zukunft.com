@@ -43,3 +43,5 @@ component_type_id, type_name, description, code_id
 42, 'system form link list', 'changeable list of links', 'link_list'
 43, 'system usage', 'show where this object has been used', 'usage'
 44, 'system change log', 'show the change log of this object', 'change_log'
+45, 'ranking parameters', 'the parameters used to calculate a ranking', 'ranking_parameters'
+46, 'ranking list', 'list sorted by the calculated ranking', 'ranking_list'

@@ -615,6 +615,18 @@
         "code_id": "change_log",
         "description": "show the change log of this object",
         "id": 44
+      },
+      {
+        "name": "ranking parameters",
+        "code_id": "ranking_parameters",
+        "description": "the parameters used to calculate a ranking",
+        "id": 45
+      },
+      {
+        "name": "ranking list",
+        "code_id": "ranking_list",
+        "description": "list sorted by the calculated ranking",
+        "id": 46
       }
     ],
     "position_types": [
@@ -8392,7 +8404,7 @@
         "code_id": "triple",
         "components": [
           {
-            "id": 69,
+            "id": 72,
             "name": "Triple",
             "link_id": 152,
             "position": 1,
@@ -8416,7 +8428,7 @@
         "code_id": "source",
         "components": [
           {
-            "id": 70,
+            "id": 73,
             "name": "Source",
             "link_id": 154,
             "position": 1,
@@ -8440,7 +8452,7 @@
         "code_id": "ref",
         "components": [
           {
-            "id": 71,
+            "id": 74,
             "name": "Reference",
             "link_id": 156,
             "position": 1,
@@ -8464,7 +8476,7 @@
         "code_id": "value",
         "components": [
           {
-            "id": 72,
+            "id": 75,
             "name": "Value",
             "link_id": 158,
             "position": 1,
@@ -8479,10 +8491,45 @@
         "code_id": "result",
         "components": [
           {
-            "id": 75,
+            "id": 78,
             "name": "Result",
             "link_id": 162,
             "position": 1,
+            "position_type": 1
+          }
+        ]
+      },
+      {
+        "id": 49,
+        "name": "Ranking",
+        "description": "the default view for all phrases where a better could be selected",
+        "code_id": "ranking",
+        "components": [
+          {
+            "id": 69,
+            "name": "phrase",
+            "description": "simply show the name of a word or triple",
+            "type_id": 8,
+            "link_id": 163,
+            "position": 1,
+            "position_type": 1
+          },
+          {
+            "id": 70,
+            "name": "ranking parameters",
+            "description": "the parameters used to calculate a ranking",
+            "type_id": 45,
+            "link_id": 164,
+            "position": 2,
+            "position_type": 1
+          },
+          {
+            "id": 71,
+            "name": "ranking list",
+            "description": "list sorted by the calculated ranking",
+            "type_id": 46,
+            "link_id": 165,
+            "position": 3,
             "position_type": 1
           }
         ]

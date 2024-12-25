@@ -2157,7 +2157,6 @@ class create_test_objects extends test_base
 
     function view(): view
     {
-        global $ptc_typ_cac;
         $msk = new view($this->usr1);
         $msk->set(1, view_api::TN_READ);
         $msk->description = view_api::TD_READ;
@@ -2174,6 +2173,83 @@ class create_test_objects extends test_base
         $msk->code_id = view_api::TC_READ;
         $msk->set_type(view_type::ENTRY);
         $msk->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+        return $msk;
+    }
+
+    /**
+     * @return view with sample data to view a phrase from the science point of view
+     */
+    function view_science(): view
+    {
+        $msk = new view($this->usr1);
+        $msk->set(view_api::TI_SCIENCE, view_api::TN_SCIENCE);
+        $msk->description = view_api::TD_SCIENCE;
+        return $msk;
+    }
+
+    /**
+     * @return view with sample data to show mainly related words that are relevant in sciences
+     */
+    function view_historic(): view
+    {
+        $msk = new view($this->usr1);
+        $msk->set(view_api::TI_HISTORIC, view_api::TN_HISTORIC);
+        $msk->description = view_api::TD_HISTORIC;
+        return $msk;
+    }
+
+    /**
+     * @return view a view from the biological point of view e.g. with the
+     */
+    function view_biological(): view
+    {
+        $msk = new view($this->usr1);
+        $msk->set(view_api::TI_BIOLOGICAL, view_api::TN_BIOLOGICAL);
+        $msk->description = view_api::TD_BIOLOGICAL;
+        return $msk;
+    }
+
+    /**
+     * @return view with sample data to show mainly related words that are relevant in sciences
+     */
+    function view_education(): view
+    {
+        $msk = new view($this->usr1);
+        $msk->set(view_api::TI_EDUCATION, view_api::TN_EDUCATION);
+        $msk->description = view_api::TD_EDUCATION;
+        return $msk;
+    }
+
+    /**
+     * @return view with sample data to show mainly related words that are relevant in sciences
+     */
+    function view_touristic(): view
+    {
+        $msk = new view($this->usr1);
+        $msk->set(view_api::TI_TOURISTIC, view_api::TN_TOURISTIC);
+        $msk->description = view_api::TD_TOURISTIC;
+        return $msk;
+    }
+
+    /**
+     * @return view with sample data to show mainly related words that are relevant in sciences
+     */
+    function view_graph(): view
+    {
+        $msk = new view($this->usr1);
+        $msk->set(view_api::TI_GRAPH, view_api::TN_GRAPH);
+        $msk->description = view_api::TD_GRAPH;
+        return $msk;
+    }
+
+    /**
+     * @return view with sample data to show mainly related words that are relevant in sciences
+     */
+    function view_simple(): view
+    {
+        $msk = new view($this->usr1);
+        $msk->set(view_api::TI_SIMPLE, view_api::TN_SIMPLE);
+        $msk->description = view_api::TD_SIMPLE;
         return $msk;
     }
 
@@ -2247,16 +2323,6 @@ class create_test_objects extends test_base
         return $msk;
     }
 
-    /**
-     * @return view a view from the biological point of view e.g. with the 
-     */
-    function view_biological(): view
-    {
-        $msk = $this->view_protected();
-        $msk->cmp_lnk_lst = $this->component_link_list();
-        return $msk;
-    }
-
     function view_word_add(): view
     {
         $msk = new view($this->usr1);
@@ -2281,8 +2347,23 @@ class create_test_objects extends test_base
     function view_list_word(): view_list
     {
         $lst = new view_list($this->usr1);
-        $lst->add($this->view_with_components());
-        $lst->add($this->view_word_add());
+        $lst->add($this->view_science());
+        $lst->add($this->view_historic());
+        $lst->add($this->view_education());
+        $lst->add($this->view_touristic());
+        return $lst;
+    }
+
+    /**
+     * TODO add the relevance to test the sorting
+     * @return view_list with a longer list of suggested views for a word
+     */
+    function view_list_word_long(): view_list
+    {
+        $lst = $this->view_list_word();
+        $lst->add($this->view_biological());
+        $lst->add($this->view_graph());
+        $lst->add($this->view_simple());
         return $lst;
     }
 
@@ -2291,7 +2372,15 @@ class create_test_objects extends test_base
      */
     function view_list_dsp(): view_list_dsp
     {
-        return new view_list_dsp($this->view_list()->api_json());
+        return new view_list_dsp($this->view_list_word()->api_json());
+    }
+
+    /**
+     * @return view_list_dsp a sample frontend view list with more than 5 entries
+     */
+    function view_list_long_dsp(): view_list_dsp
+    {
+        return new view_list_dsp($this->view_list_word_long()->api_json());
     }
 
     function view_link(): view_term_link

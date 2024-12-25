@@ -45,6 +45,7 @@ use cfg\data_object;
 use html\button;
 use html\helper\data_object as data_object_dsp;
 use html\system\messages;
+use html\value\value_list;
 use shared\api;
 use api\word\word as word_api;
 use html\sheet;
@@ -113,7 +114,7 @@ class component extends sandbox_typed
     function dsp_entries(
         ?db_object_dsp   $dbo,
         string           $form_name = '',
-        int              $msk_id,
+        int              $msk_id = 0,
         ?data_object_dsp $cfg = null,
         string           $back = '',
         bool             $test_mode = false
@@ -172,12 +173,12 @@ class component extends sandbox_typed
 
             // table
             component_type::VALUES_ALL => $this->all($dbo, $back),
-            component_type::VALUES_RELATED => $this->table($dbo),
+            component_type::VALUES_RELATED => $this->table($dbo, $cfg),
             component_type::NUMERIC_VALUE => $this->num_list($dbo, $back),
 
             // related
-            component_type::REF_LIST_WORD => $this->ref_list_word($dbo, $form_name),
-            component_type::LINK_LIST_WORD => $this->link_list_word($dbo, $form_name),
+            component_type::REF_LIST_WORD => $this->ref_list_word($dbo, $cfg),
+            component_type::LINK_LIST_WORD => $this->link_list_word($dbo, $cfg),
             component_type::FORMULAS => $this->formulas($dbo),
             component_type::FORMULA_RESULTS => $this->results($dbo),
             component_type::WORDS_DOWN => $this->word_children($dbo),
@@ -272,19 +273,23 @@ class component extends sandbox_typed
     /**
      * @return string with the html code of the external references
      */
-    function ref_list_word(db_object_dsp $phr, string $form_name): string
+    function ref_list_word(db_object_dsp $dbo, data_object_dsp $cfg): string
     {
         // TODO review
-        return $phr->phrase_selector('phrase', $form_name, 'word:', '', $phr->id());
+        $result = 'list of references to ' . $dbo->name();
+        if ($cfg != null) {
+            $result .= '';
+        }
+        return $result;
     }
 
     /**
      * @return string with the html code of links that can be changes
      */
-    function link_list_word(db_object_dsp $phr, string $form_name): string
+    function link_list_word(db_object_dsp $dbo, data_object_dsp $cfg): string
     {
         // TODO review
-        return $phr->phrase_selector('phrase', $form_name, 'word:', '', $phr->id());
+        return 'list of phrases related to ' . $dbo->name();
     }
 
     /**
@@ -307,9 +312,9 @@ class component extends sandbox_typed
 
     /**
      * TODO move code from component_dsp_old
-     * @return string a dummy text
+     * @return string the html code to show a list of values
      */
-    function table(): string
+    function table(db_object_dsp $dbo, ?data_object_dsp $cfg): string
     {
         return 'values related to ' . $this->name();
     }

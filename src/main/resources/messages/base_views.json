@@ -40,6 +40,21 @@
       "name": "related values",
       "description": "show the most relevant and related values",
       "type": "values_related"
+    },
+    {
+      "name": "phrase",
+      "description": "simply show the name of a word or triple",
+      "type": "phrase_name"
+    },
+    {
+      "name": "ranking parameters",
+      "description": "the parameters used to calculate a ranking",
+      "type": "ranking_parameters"
+    },
+    {
+      "name": "ranking list",
+      "description": "list sorted by the calculated ranking",
+      "type": "ranking_list"
     }
   ],
   "views": [
@@ -164,8 +179,79 @@
       ]
     },
     {
+      "name": "Ranking",
+      "description": "the default view for all phrases where a better could be selected",
+      "code_id": "ranking",
+      "components": [
+        {
+          "position": "1",
+          "name": "phrase"
+        },
+        {
+          "position": "2",
+          "name": "ranking parameters"
+        },
+        {
+          "position": "3",
+          "name": "ranking list"
+        }
+      ],
+      "assigned": [
+        "country"
+      ]
+    },
+    {
+      "name": "Science",
+      "description": "show mainly related words that are relevant in sciences",
+      "assigned": [
+        "Mathematics"
+      ]
+    },
+    {
+      "name": "Historic",
+      "description": "show the related words in historic order",
+      "assigned": [
+        "Mathematics"
+      ]
+    },
+    {
+      "name": "Biological",
+      "description": "show what is relevant from the biological point of view",
+      "assigned": [
+        "Tomatoes"
+      ]
+    },
+    {
+      "name": "Education",
+      "description": "sort related topics by difficulty",
+      "assigned": [
+        "Mathematics"
+      ]
+    },
+    {
+      "name": "Touristic",
+      "description": "show things to see",
+      "assigned": [
+        "Mathematics"
+      ]
+    },
+    {
+      "name": "Graph",
+      "description": "show the related topics as a visual graph",
+      "assigned": [
+        "Mathematics"
+      ]
+    },
+    {
+      "name": "Simple",
+      "description": "show only the most relevant facts",
+      "assigned": [
+        "Mathematics"
+      ]
+    },
+    {
       "name": "math const",
-      "description": "Show a mathatical constance and the related words and formulas",
+      "description": "Show a mathematical constance and the related words and formulas",
       "components": [
         {
           "position": "1",

@@ -396,11 +396,15 @@ class view_term_link extends sandbox_link
             array(user::FLD_ID)));
         if ($this->id() > 0) {
             $sc->add_where($this->id_field(), $this->id());
-        } elseif ($this->view()->id() > 0 and $this->term()->id() > 0) {
+        } elseif ($this->view()->id() > 0 and $this->term()->id() != 0) {
             $sc->add_where(view::FLD_ID, $this->view()->id());
             $sc->add_where(term::FLD_ID, $this->term()->id());
         } else {
-            log_err('Cannot load default view term link because id is missing');
+            if ($this->view()->id() > 0) {
+                log_err('Cannot load default view term link because term id for ' . $this->term()-$this->dsp_id() . 'is missing');
+            } else {
+                log_err('Cannot load default view term link because term id for ' . $this->view()-$this->dsp_id() . 'is missing');
+            }
         }
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

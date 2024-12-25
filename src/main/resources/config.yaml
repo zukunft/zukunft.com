@@ -54,8 +54,15 @@ zukunft.com:
           millisecond: 1000
           tooltip-comment: "the average time in milliseconds to update the results of one formula use to estimate how many formulas can be combined on one calculation block"
     select:
-      initial entry: 7
-      tooltip-comment: "the initial number of options shown to the user"
+      initial:
+        entries: 5
+        tooltip-comment: "the initial number of options shown to the user"
+      suggested:
+        entries: 3
+        tooltip-comment: "if the selection list contains more than the initial entries, the number of suggested entries show on the top"
+      more:
+        entries: 20
+        tooltip-comment: "if the selection list contains more than the initial entries, the number of alphabetic sorted entries show initially and added with each click on more"
       phrase:
         preselect:
           min percent: 30%

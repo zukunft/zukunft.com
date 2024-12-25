@@ -72,6 +72,27 @@ class view extends sandbox_typed_api
     const TD_FORM = 'system form to add a word';
     const TC_FORM = 'word_add';
     const TI_FORM = 3;
+    const TN_SCIENCE = 'Science';
+    const TD_SCIENCE = 'show mainly related words that are relevant in sciences';
+    const TI_SCIENCE = 50;
+    const TN_HISTORIC = 'Historic';
+    const TD_HISTORIC = 'show mainly related words that are relevant in sciences';
+    const TI_HISTORIC = 51;
+    const TN_BIOLOGICAL = 'Biological';
+    const TD_BIOLOGICAL = 'show what is relevant from the biological point of view';
+    const TI_BIOLOGICAL = 52;
+    const TN_EDUCATION = 'Education';
+    const TD_EDUCATION = 'show mainly related words that are relevant in sciences';
+    const TI_EDUCATION = 53;
+    const TN_TOURISTIC = 'Touristic';
+    const TD_TOURISTIC = 'show mainly related words that are relevant in sciences';
+    const TI_TOURISTIC = 54;
+    const TN_GRAPH = 'Graph';
+    const TD_GRAPH = 'show mainly related words that are relevant in sciences';
+    const TI_GRAPH = 55;
+    const TN_SIMPLE = 'Simple';
+    const TD_SIMPLE = 'show mainly related words that are relevant in sciences';
+    const TI_SIMPLE = 56;
 
     const TN_READ_RATIO = 'Company ratios';
     const TN_READ_NESN_2016 = 'Nestlé Financial Statement 2016';
