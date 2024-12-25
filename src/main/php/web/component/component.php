@@ -271,12 +271,14 @@ class component extends sandbox_typed
     }
 
     /**
+     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
+     * @param data_object_dsp|null $cfg the context used to create the view
      * @return string with the html code of the external references
      */
-    function ref_list_word(db_object_dsp $dbo, data_object_dsp $cfg): string
+    function ref_list_word(db_object_dsp $dbo, ?data_object_dsp $cfg): string
     {
         // TODO review
-        $result = 'list of references to ' . $dbo->name();
+        $result = 'list of references to ' . $dbo->name() . ' ';
         if ($cfg != null) {
             $result .= '';
         }
@@ -284,12 +286,14 @@ class component extends sandbox_typed
     }
 
     /**
+     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
+     * @param data_object_dsp|null $cfg the context used to create the view
      * @return string with the html code of links that can be changes
      */
-    function link_list_word(db_object_dsp $dbo, data_object_dsp $cfg): string
+    function link_list_word(db_object_dsp $dbo, ?data_object_dsp $cfg): string
     {
         // TODO review
-        return 'list of phrases related to ' . $dbo->name();
+        return 'list of phrases related to ' . $dbo->name() . ' ';
     }
 
     /**
@@ -298,16 +302,16 @@ class component extends sandbox_typed
     function usage_word(db_object_dsp $phr, string $form_name): string
     {
         // TODO review
-        return $phr->phrase_selector('phrase', $form_name, 'word:', '', $phr->id());
+        return 'usage of ' . $phr->name() . ' ';
     }
 
     /**
-     * @return string with the html code that shows the recend changes of this object
+     * @return string with the html code that shows the recent changes of this object
      */
     function system_change_log(db_object_dsp $phr, string $form_name): string
     {
         // TODO review
-        return $phr->phrase_selector('phrase', $form_name, 'word:', '', $phr->id());
+        return 'change log for ' . $phr->name() . ' ';
     }
 
     /**
@@ -316,7 +320,7 @@ class component extends sandbox_typed
      */
     function table(db_object_dsp $dbo, ?data_object_dsp $cfg): string
     {
-        return 'values related to ' . $this->name();
+        return 'values related to ' . $this->name() . ' ';
     }
 
     /**

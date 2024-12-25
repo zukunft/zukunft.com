@@ -521,11 +521,13 @@
         },
         {
           "position": "11",
-          "name": "value list word"
+          "name": "value list word",
+          "position_type": "side"
         },
         {
           "position": "12",
-          "name": "ref list word"
+          "name": "ref list word",
+          "position_type": "side"
         },
         {
           "position": "13",
@@ -541,11 +543,13 @@
         },
         {
           "position": "16",
-          "name": "usage word"
+          "name": "usage word",
+          "position_type": "side"
         },
         {
           "position": "17",
-          "name": "change log word"
+          "name": "change log word",
+          "position_type": "side"
         }
       ]
     },

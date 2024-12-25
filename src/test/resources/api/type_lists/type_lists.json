@@ -6843,7 +6843,7 @@
             "code_id": "value_list_word",
             "link_id": 26,
             "position": 11,
-            "position_type": 1
+            "position_type": 2
           },
           {
             "id": 55,
@@ -6853,7 +6853,7 @@
             "code_id": "ref_list_word",
             "link_id": 27,
             "position": 12,
-            "position_type": 1
+            "position_type": 2
           },
           {
             "id": 45,
@@ -6894,7 +6894,7 @@
             "code_id": "usage_word",
             "link_id": 31,
             "position": 16,
-            "position_type": 1
+            "position_type": 2
           },
           {
             "id": 57,
@@ -6904,7 +6904,7 @@
             "code_id": "change_log_word",
             "link_id": 32,
             "position": 17,
-            "position_type": 1
+            "position_type": 2
           }
         ]
       },
