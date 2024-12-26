@@ -71,12 +71,13 @@ A user updates a formula
 
 namespace cfg;
 
+include_once DB_PATH . 'sql.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once API_SYSTEM_PATH . 'job.php';
 
 use api\system\job as job_api;
 use cfg\db\sql;
-use cfg\db\sql_db;
+use cfg\db\sql_creator;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
@@ -288,12 +289,12 @@ class job extends db_object_seq_id_user
     /**
      * create the common part of an SQL statement to retrieve the parameters of a batch job from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql_multi($sc, $query_name, $class, new sql_type_list([sql_type::MOST]));
         $sc->set_class(job::class);
@@ -308,11 +309,11 @@ class job extends db_object_seq_id_user
     /**
      * create an SQL statement to retrieve a batch job by id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int $id): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
         return parent::load_sql_by_id($sc, $id);
     }

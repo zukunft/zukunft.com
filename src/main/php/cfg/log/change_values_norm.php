@@ -36,7 +36,7 @@ include_once MODEL_LOG_PATH . 'change_value.php';
 use api\log\change_log_named as change_log_named_api;
 use api\sandbox\user_config;
 use cfg\component\component;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;

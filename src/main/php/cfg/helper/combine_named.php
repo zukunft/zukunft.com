@@ -34,13 +34,14 @@
 
 namespace cfg;
 
-use cfg\db\sql;
-use cfg\db\sql_type;
-use cfg\db\sql_where_type;
-use shared\library;
-
+include_once DB_PATH . 'sql.php';
 include_once MODEL_DB_PATH . 'sql_where_type.php';
 include_once MODEL_HELPER_PATH . 'combine_object.php';
+
+use cfg\db\sql;
+use cfg\db\sql_creator;
+use cfg\db\sql_type;
+use shared\library;
 
 class combine_named extends combine_object
 {
@@ -223,7 +224,7 @@ class combine_named extends combine_object
     /**
      * @return string the SQL script to create the views
      */
-    function sql_view(sql $sc, string $class): string
+    function sql_view(sql_creator $sc, string $class): string
     {
         $sql = $sc->sql_separator();
         $lib = new library();
@@ -241,7 +242,7 @@ class combine_named extends combine_object
         return $sql;
     }
 
-    function sql_create_view(sql $sc, string $tbl_name, array $sc_par_lst): string
+    function sql_create_view(sql_creator $sc, string $tbl_name, array $sc_par_lst): string
     {
         $lib = new library();
         $usr_prefix = '';
@@ -369,7 +370,7 @@ class combine_named extends combine_object
         return $sql;
     }
 
-    private function sql_when(sql $sc, array $fld_lst, string $tbl_chr): string
+    private function sql_when(sql_creator $sc, array $fld_lst, string $tbl_chr): string
     {
         $sql = '';
         $this_fld = array_shift($fld_lst);

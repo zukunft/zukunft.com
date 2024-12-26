@@ -54,6 +54,7 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once DB_PATH . 'sql_par_type.php';
@@ -73,6 +74,7 @@ include_once SHARED_PATH . 'json_fields.php';
 
 use api\system\messages as msg_enum;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
@@ -80,7 +82,6 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\export\sandbox_exp;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
@@ -388,11 +389,11 @@ class sandbox_named extends sandbox
     /**
      * create an SQL statement to retrieve a term by name from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the term and the related word, triple, formula or verb
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql $sc, string $name): sql_par
+    function load_sql_by_name(sql_creator $sc, string $name): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME);
         $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
@@ -404,10 +405,10 @@ class sandbox_named extends sandbox
 
     /**
      * create the SQL to load the single default value always by the id or name
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc): sql_par
+    function load_standard_sql(sql_creator $sc): sql_par
     {
         $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
         if ($this->id() != 0) {
@@ -989,14 +990,14 @@ class sandbox_named extends sandbox
      * TODO add qp merge
      * TODO check if it can be merged with the sandbox function
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_switch(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
         sql_type_list      $sc_par_lst = new sql_type_list([])): sql_par
@@ -1025,7 +1026,7 @@ class sandbox_named extends sandbox
      * create the sql statement to add a new named sandbox object e.g. word to the database
      * TODO add qp merge
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
@@ -1033,7 +1034,7 @@ class sandbox_named extends sandbox
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_key_field(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
@@ -1042,7 +1043,7 @@ class sandbox_named extends sandbox
     {
         // set some var names to shorten the code lines
         $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
-        $ext = sql::NAME_SEP . sql::FILE_INSERT;
+        $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
 
         // list of parameters actually used in order of the function usage
         $sql = '';
@@ -1112,7 +1113,7 @@ class sandbox_named extends sandbox
     ): sql_par_field_list
     {
         $lst = new sql_par_field_list();
-        $sc = new sql();
+        $sc = new sql_creator();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $is_insert = $sc_par_lst->is_insert();
         $do_log = $sc_par_lst->incl_log();

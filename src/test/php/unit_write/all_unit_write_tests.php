@@ -41,7 +41,7 @@ use cfg\component\component_type;
 use cfg\component\component_type_list;
 use cfg\component\position_type_list;
 use cfg\config;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\element\element;
 use cfg\element\element_type;

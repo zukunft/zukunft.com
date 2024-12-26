@@ -35,7 +35,7 @@ namespace unit;
 include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_IMPORT_PATH . 'convert_wikipedia_table.php';
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\import\convert_wikipedia_table;
 use cfg\import\import;
 use html\html_base;
@@ -47,7 +47,7 @@ class import_tests
     function run(test_cleanup $t): void
     {
         global $usr;
-        $sc = new sql();
+        $sc = new sql_creator();
 
         $t->subheader('Import unit tests');
 

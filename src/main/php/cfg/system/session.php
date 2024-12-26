@@ -32,11 +32,12 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
-
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 
 class session extends db_object_seq_id
 {

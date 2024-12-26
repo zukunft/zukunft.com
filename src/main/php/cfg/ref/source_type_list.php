@@ -31,15 +31,14 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql.php';
+include_once MODEL_REF_PATH . 'source_type.php';
+
 use cfg\db\sql;
 use cfg\db\sql_db;
 use shared\library;
-
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once MODEL_REF_PATH . 'source_type.php';
-
-global $src_typ_cac;
 
 class source_type_list extends type_list
 {

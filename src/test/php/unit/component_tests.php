@@ -37,7 +37,7 @@ include_once MODEL_COMPONENT_PATH . 'component.php';
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_type;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use html\component\component as component_dsp;
@@ -52,7 +52,7 @@ class component_tests
         global $usr;
 
         // init
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'component->';
         $t->resource_path = 'db/component/';
 

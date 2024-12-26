@@ -38,7 +38,7 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\word\word as word_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\phrase_type;
 use cfg\verb;
@@ -62,7 +62,7 @@ class word_list_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'word_list->';
         $t->resource_path = 'db/word/';
 

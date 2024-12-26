@@ -32,7 +32,10 @@
 
 namespace cfg\log;
 
+include_once DB_PATH . 'sql.php';
+
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\sandbox_named;
 use shared\library;
 
@@ -73,7 +76,7 @@ class change_table_field
     /**
      * @return string the SQL script to create the views
      */
-    function sql_view_link(sql $sc, array $tbl_fld_lst): string
+    function sql_view_link(sql_creator $sc, array $tbl_fld_lst): string
     {
         $lib = new library();
 
@@ -140,7 +143,7 @@ class change_table_field
         return $sql;
     }
 
-    private function sql_field_table(sql $sc, array $fld_par): string
+    private function sql_field_table(sql_creator $sc, array $fld_par): string
     {
         $fld_name = $fld_par[0];
         $fld_tbl = $fld_par[1];
@@ -148,7 +151,7 @@ class change_table_field
         return $tbl_chr . '.' . $sc->name_sql_esc($fld_name);
     }
 
-    private function sql_field_concat(sql $sc, array $fld_par): string
+    private function sql_field_concat(sql_creator $sc, array $fld_par): string
     {
         $sql = sql::CONCAT . '(';
         $sql_fld = '';
@@ -162,7 +165,7 @@ class change_table_field
         return $sql;
     }
 
-    private function sql_field_when(sql $sc, array $fld_par): string
+    private function sql_field_when(sql_creator $sc, array $fld_par): string
     {
         $sql = '';
         $fld_when = $fld_par[0];

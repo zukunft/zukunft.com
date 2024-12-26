@@ -51,9 +51,11 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
@@ -405,14 +407,14 @@ class sandbox_link extends sandbox
     /**
      * create an SQL statement to retrieve a user sandbox link by the ids of the linked objects from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $from the subject object id
      * @param int $predicate_id the predicate object id
      * @param int|string $to the object (grammar) object id or the unique external key
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link(sql $sc, int $from, int $predicate_id, int|string $to, string $class): sql_par
+    function load_sql_by_link(sql_creator $sc, int $from, int $predicate_id, int|string $to, string $class): sql_par
     {
         if ($predicate_id > 0) {
             $qp = $this->load_sql($sc, 'link_type_ids', $class);
@@ -795,7 +797,7 @@ class sandbox_link extends sandbox
      * create the sql statement to add a new link sandbox object e.g. triple to the database
      * TODO add qp merge
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
@@ -803,7 +805,7 @@ class sandbox_link extends sandbox
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_key_field(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
@@ -812,7 +814,7 @@ class sandbox_link extends sandbox
     {
         // set some var names to shorten the code lines
         $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
-        $ext = sql::NAME_SEP . sql::FILE_INSERT;
+        $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
 
         // init the function body
         $id_field = $sc->id_field_name();
@@ -1032,7 +1034,7 @@ class sandbox_link extends sandbox
         global $cng_fld_cac;
 
         $lst = new sql_par_field_list();
-        $sc = new sql();
+        $sc = new sql_creator();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $is_insert = $sc_par_lst->is_insert();
         $is_delete = $sc_par_lst->is_delete();
@@ -1256,12 +1258,12 @@ class sandbox_link extends sandbox
      * always all fields are included in the query to be able to remove overwrites with a null value
      * TODO check first the query name and skip the sql building if not needed
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -1288,13 +1290,13 @@ class sandbox_link extends sandbox
     /**
      * create the sql statement to update a sandbox link object in the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sandbox $db_row the word with the database values before the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update(
-        sql           $sc,
+        sql_creator   $sc,
         sandbox       $db_row,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par

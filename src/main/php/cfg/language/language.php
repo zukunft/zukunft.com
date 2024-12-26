@@ -32,6 +32,7 @@
 namespace cfg;
 
 include_once SHARED_PATH . 'json_fields.php';
+include_once DB_PATH . 'sql.php';
 
 use cfg\db\sql;
 use cfg\db\sql_field_default;

@@ -41,7 +41,7 @@ include_once WEB_PHRASE_PATH . 'term.php';
 use api\formula\formula as formula_api;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use html\formula\formula as formula_dsp;
 use html\phrase\term as term_dsp;
 use html\word\word as word_dsp;
@@ -62,7 +62,7 @@ class term_tests
         global $usr;
 
         // init
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'term->';
         $t->resource_path = 'db/term/';
 

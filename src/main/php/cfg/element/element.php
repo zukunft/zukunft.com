@@ -39,9 +39,11 @@
 
 namespace cfg\element;
 
+include_once DB_PATH . 'sql.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
@@ -203,12 +205,12 @@ class element extends db_object_seq_id_user
     /**
      * create the common part of an SQL statement to get the formula element from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
@@ -270,11 +272,11 @@ class element extends db_object_seq_id_user
      * create an SQL statement to retrieve a formula element by id from the database
      * just set the class formula element for the parent function
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int $id): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
         return parent::load_sql_by_id($sc, $id);
     }
@@ -349,12 +351,12 @@ class element extends db_object_seq_id_user
      * create the sql statement to add an element to the database
      * always all fields are included in the query to be able to remove overwrites with a null value
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -381,12 +383,12 @@ class element extends db_object_seq_id_user
     /**
      * create the sql statement to update a word in the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param element $db_row the word with the database values before the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, element $db_row, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
+    function sql_update(sql_creator $sc, element $db_row, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
     {
         // get the field names, values and parameter types that have been changed
         // and that needs to be updated in the database

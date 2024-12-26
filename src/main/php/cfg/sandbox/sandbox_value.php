@@ -34,10 +34,12 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -393,10 +395,10 @@ class sandbox_value extends sandbox_multi
     /**
      * the sql statements to create all tables used to store values in the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the table
      */
-    function sql_table(sql $sc): string
+    function sql_table(sql_creator $sc): string
     {
         return $this->sql_table_creator($sc, 0);
     }
@@ -404,10 +406,10 @@ class sandbox_value extends sandbox_multi
     /**
      * the sql statements to create all indices for the tables used to store values in the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the indices of the value tables
      */
-    function sql_index(sql $sc): string
+    function sql_index(sql_creator $sc): string
     {
         return $this->sql_table_creator($sc, 1);
     }
@@ -415,10 +417,10 @@ class sandbox_value extends sandbox_multi
     /**
      * the sql statements to create all foreign keys for the tables
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the foreign keys of a value table
      */
-    function sql_foreign_key(sql $sc): string
+    function sql_foreign_key(sql_creator $sc): string
     {
         return $this->sql_table_creator($sc, 2);
     }
@@ -427,10 +429,10 @@ class sandbox_value extends sandbox_multi
      * the sql statements to create either all tables ($pos = 0), the indices ($pos = 1) or the foreign keys ($pos = 2)
      * used to store values in the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the table
      */
-    private function sql_table_creator(sql $sc, int $pos): string
+    private function sql_table_creator(sql_creator $sc, int $pos): string
     {
 
         $sql_array = $this->sql_one_type(
@@ -477,7 +479,7 @@ class sandbox_value extends sandbox_multi
      * for one field type e.g. numeric value, text values
      * TODO move the table types to an const array
      *
-     * @param sql $sc
+     * @param sql_creator $sc
      * @param array $fld_par the parameters for the value field e.g. for a numeric field, text, time or geo
      * @param array $fld_par_usr the user specific parameters for the value field
      * @param string $ext_type the additional table extension for the field type
@@ -486,12 +488,12 @@ class sandbox_value extends sandbox_multi
      * @return array the sql statements to create the tables, indices and foreign keys
      */
     protected function sql_one_type(
-        sql    $sc,
-        array  $fld_par,
-        array  $fld_par_usr,
-        string $ext_type = '',
-        string $type_name = '',
-        string $comment_overwrite = ''): array
+        sql_creator $sc,
+        array       $fld_par,
+        array       $fld_par_usr,
+        string      $ext_type = '',
+        string      $type_name = '',
+        string      $comment_overwrite = ''): array
     {
         $lib = new library();
         $type_class_name = $type_name . ' ' . $lib->class_to_name($this::class);
@@ -654,11 +656,11 @@ class sandbox_value extends sandbox_multi
     /**
      * create an SQL statement to retrieve a value or result by id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int|string $id the id of the value
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int|string $id): sql_par
+    function load_sql_by_id(sql_creator $sc, int|string $id): sql_par
     {
         $this->grp()->set_id($id);
         return $this->load_sql_by_grp_id($sc, 'id');
@@ -667,11 +669,11 @@ class sandbox_value extends sandbox_multi
     /**
      * create an SQL statement to retrieve a value by phrase group from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param group $grp the id of the phrase group
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp(sql $sc, group $grp): sql_par
+    function load_sql_by_grp(sql_creator $sc, group $grp): sql_par
     {
         $this->set_grp($grp);
         return $this->load_sql_by_grp_id($sc, 'grp');
@@ -680,12 +682,12 @@ class sandbox_value extends sandbox_multi
     /**
      * create an SQL statement to retrieve the user changes of the current value or result
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_user_changes(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -715,10 +717,10 @@ class sandbox_value extends sandbox_multi
      * create an SQL statement to get all the users that have changed this value
      * TODO overwrites the sandbox function
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_changer(sql $sc): sql_par
+    function load_sql_changer(sql_creator $sc): sql_par
     {
         $ext = 'changer';
         if ($this->owner_id > 0) {
@@ -768,11 +770,11 @@ class sandbox_value extends sandbox_multi
     /**
      * create an SQL statement to retrieve a value or result by already set phrase group
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the unique name of the query e.g. id or name
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql_by_grp_id(sql $sc, string $query_name): sql_par
+    protected function load_sql_by_grp_id(sql_creator $sc, string $query_name): sql_par
     {
         $sc_par_lst = new sql_type_list([$this->table_type()]);
         $id_ext = $this->table_extension();
@@ -797,13 +799,13 @@ class sandbox_value extends sandbox_multi
      * create the SQL to load the single default value or result always by the id
      * the $sc fields must be set by the child function
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_standard_sql(
-        sql    $sc,
-        array  $fld_lst = []
+        sql_creator $sc,
+        array       $fld_lst = []
     ): sql_par
     {
         $sc_par_lst = new sql_type_list([]);
@@ -822,10 +824,10 @@ class sandbox_value extends sandbox_multi
 
     /**
      * sql statement to get the user that has created the most often used value
-     * @param sql $sc
+     * @param sql_creator $sc
      * @return sql_par sql parameter
      */
-    function load_sql_median_user(sql $sc): sql_par
+    function load_sql_median_user(sql_creator $sc): sql_par
     {
         $sc_par_lst = new sql_type_list([]);
         $sc_par_lst->add($this->table_type());
@@ -1255,13 +1257,13 @@ class sandbox_value extends sandbox_multi
 
     /**
      * the common part of the sql statement creation for insert and update statements
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the change field base name extension that cannot be taken from the $sc_par_lst
      * @return sql_par the common part for insert and update sql statements
      */
     protected function sql_common(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst,
         string        $ext = '',
         string        $id_ext = ''
@@ -1274,15 +1276,15 @@ class sandbox_value extends sandbox_multi
 
     /**
      * create the sql statement to update a value in the database
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sandbox_value $db_obj the value object with the database values before the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update_value(sql $sc, sandbox_value $db_obj, sql_type_list $sc_par_lst): sql_par
+    function sql_update_value(sql_creator $sc, sandbox_value $db_obj, sql_type_list $sc_par_lst): sql_par
     {
         $qp = $this->sql_common($sc, $sc_par_lst);
-        $qp->name .= sql::NAME_SEP . sql::FILE_UPDATE;
+        $qp->name .= sql::NAME_SEP . sql_creator::FILE_UPDATE;
         $sc->set_name($qp->name);
         // get the fields and values that have been changed and needs to be updated in the database
         // TODO fix it
@@ -1387,12 +1389,12 @@ class sandbox_value extends sandbox_multi
     /**
      * create the sql statement to add a new value or result to the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -1409,13 +1411,13 @@ class sandbox_value extends sandbox_multi
      * create the sql statement to update a value or result in the database
      * TODO move the code to an object used by sandbox and sandbox_value
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sandbox_value $db_row the sandbox object with the database values before the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update(
-        sql           $sc,
+        sql_creator   $sc,
         sandbox_value $db_row,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
@@ -1431,13 +1433,13 @@ class sandbox_value extends sandbox_multi
      * create a sql statement to insert or update a sandbox object in the database
      * TODO move the code to an object used by sandbox and sandbox_value
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sandbox_value|null $db_row the sandbox object with the database values before the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_write(
-        sql                $sc,
+        sql_creator        $sc,
         sandbox_value|null $db_row,
         sql_type_list      $sc_par_lst = new sql_type_list([])
     ): sql_par
@@ -1490,7 +1492,7 @@ class sandbox_value extends sandbox_multi
     /**
      * create the sql statement to add a new value and log the changes
      *
-     * @param sql $sc sql creator with the target db_type already set
+     * @param sql_creator $sc sql creator with the target db_type already set
      * @param sql_par_field_list $fvt_lst_id list of id field names, values and sql types additional to the standard id fields
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id fields
      * @param array $fld_lst_all list of all potential field names of the given object that can be changed by the user
@@ -1498,7 +1500,7 @@ class sandbox_value extends sandbox_multi
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_write_with_log(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst_id,
         sql_par_field_list $fvt_lst,
@@ -1622,13 +1624,13 @@ class sandbox_value extends sandbox_multi
      * create the sql statement to update a value in the database
      * based on the given list of fields and values
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update_fields(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par_field_list $fvt_lst,
         sql_type_list      $sc_par_lst = new sql_type_list([])
     ): sql_par
@@ -1674,12 +1676,12 @@ class sandbox_value extends sandbox_multi
      * create the sql statement to delete a value in the database
      * TODO check if user specific overwrites can be deleted
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_delete(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -1713,14 +1715,14 @@ class sandbox_value extends sandbox_multi
     /**
      * create a sql statement to delete or exclude a value
      *
-     * @param sql $sc the sql creator object with the db type set
+     * @param sql_creator $sc the sql creator object with the db type set
      * @param sql_par $qp the query parameter with the name already set
      * @param sql_par_field_list $fvt_lst_id name, value and type of the id field (or list of field names)
      * @param sql_type_list $sc_par_lst
      * @return sql_par
      */
     private function sql_delete_and_log(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst_id,
         sql_type_list      $sc_par_lst = new sql_type_list([])
@@ -1888,7 +1890,7 @@ class sandbox_value extends sandbox_multi
         sql_type_list               $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        $sc = new sql();
+        $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $is_insert = $sc_par_lst->is_insert();
         $is_update = $sc_par_lst->is_update();

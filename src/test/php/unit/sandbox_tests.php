@@ -32,6 +32,7 @@
 
 namespace unit;
 
+include_once DB_PATH . 'sql.php';
 include_once API_WORD_PATH . 'word.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_GROUP_PATH . 'group.php';
@@ -43,6 +44,7 @@ use cfg\component\component;
 use cfg\component\component_link;
 use cfg\config;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\formula;
 use cfg\formula_link;
@@ -234,7 +236,7 @@ class sandbox_tests
         $t->display('MySQL select max', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test a simple SQL select creation for Postgres without the standard id and name identification
-        $sc = new sql();
+        $sc = new sql_creator();
         $sc->set_db_type(sql_db::POSTGRES);
         $sc->set_class(config::class);
         $sc->set_name('query_test');

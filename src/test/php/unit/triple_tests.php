@@ -6,7 +6,7 @@ include_once API_WORD_PATH . 'triple.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use html\word\triple as triple_dsp;
 use cfg\db\sql_db;
@@ -21,7 +21,7 @@ class triple_tests
         global $usr;
 
         // init
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
 
@@ -112,10 +112,10 @@ class triple_tests
      * similar to assert_load_sql of the test base but for the standard (generated) triple name
      * check the object load by name SQL statements for all allowed SQL database dialects
      *
-     * @param sql $sc does not need to be connected to a real database
+     * @param sql_creator $sc does not need to be connected to a real database
      * @param triple $trp the user sandbox object e.g. a word
      */
-    private function assert_sql_by_name_generated(sql $sc, triple $trp, test_cleanup $t): void
+    private function assert_sql_by_name_generated(sql_creator $sc, triple $trp, test_cleanup $t): void
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);

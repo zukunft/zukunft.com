@@ -43,6 +43,7 @@
 
 namespace cfg\log;
 
+include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_LOG_PATH . 'change_log.php';
 include_once API_LOG_PATH . 'change_log_named.php';
@@ -52,6 +53,7 @@ use api\log\change_log_named as change_log_named_api;
 use api\sandbox\user_config;
 use cfg\component\component;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -62,8 +64,6 @@ use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\formula;
 use cfg\group\group;
-use cfg\group\group_id;
-use cfg\type_object;
 use cfg\user;
 use cfg\value\value;
 use cfg\view;
@@ -72,7 +72,6 @@ use DateTime;
 use DateTimeInterface;
 use Exception;
 use html\log\change_log_named as change_log_named_dsp;
-use shared\library;
 
 class change extends change_log
 {
@@ -242,11 +241,11 @@ class change extends change_log
      * create the common part of an SQL statement to retrieve the parameters of the change log
      * TODO use class name instead of TBL_CHANGE
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         if ($this::class == changes_norm::class
             or $this::class == changes_big::class) {
@@ -268,11 +267,11 @@ class change extends change_log
     /**
      * create an SQL statement to retrieve a change long entry by the changing user
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param user|null $usr the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_user(sql $sc, ?user $usr = null): sql_par
+    function load_sql_by_user(sql_creator $sc, ?user $usr = null): sql_par
     {
         $qp = $this->load_sql($sc, 'user_last', self::class);
 
@@ -289,12 +288,12 @@ class change extends change_log
     /**
      * create the SQL statement to retrieve the parameters of the change log by field and row id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int|null $field_id the database id of the database field (and table) of the changes that the user wants to see
      * @param int|null $row_id the database id of the database row of the changes that the user wants to see
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_field_row(sql $sc, ?int $field_id = null, ?int $row_id = null): sql_par
+    function load_sql_by_field_row(sql_creator $sc, ?int $field_id = null, ?int $row_id = null): sql_par
     {
         $qp = $this->load_sql($sc, 'field_row', self::class);
         if ($field_id != null) {
@@ -496,7 +495,7 @@ class change extends change_log
      *
      * @return sql_par_field_list list of the database field names
      */
-    function db_field_values_types(sql $sc, sql_type_list $sc_par_lst): sql_par_field_list
+    function db_field_values_types(sql_creator $sc, sql_type_list $sc_par_lst): sql_par_field_list
     {
         $fvt_lst = parent::db_field_values_types($sc, $sc_par_lst);
 

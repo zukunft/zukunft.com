@@ -50,6 +50,7 @@ namespace cfg;
 
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
+include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
@@ -60,6 +61,7 @@ include_once MODEL_SANDBOX_PATH . 'share_type.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_PATH . 'json_fields.php';
 
+use cfg\db\sql;
 use cfg\element\element;
 use cfg\group\group;
 use cfg\db\sql_field_type;
@@ -76,12 +78,11 @@ use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use cfg\component\component;
 use cfg\component\component_link;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
-use cfg\export\sandbox_exp;
 use cfg\group\group_id;
 use cfg\log\change;
 use cfg\log\change_action;
@@ -462,13 +463,13 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * create the SQL to load the single default value always by the id
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields for the value, result or group
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_standard_sql(
-        sql   $sc,
-        array $fld_lst = []
+        sql_creator $sc,
+        array       $fld_lst = []
     ): sql_par
     {
         $sc_par_lst = new sql_type_list([]);
@@ -500,11 +501,11 @@ class sandbox_multi extends db_object_multi_user
      * for a value, result or group query
      *
      * @param sql_par $qp the query parameters fully set without the sql, par and ext
-     * @param sql $sc the sql creator with all parameters set
+     * @param sql_creator $sc the sql creator with all parameters set
      * @param string $ext the table extension
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql_set_where(sql_par $qp, sql $sc, string $ext): sql_par
+    protected function load_sql_set_where(sql_par $qp, sql_creator $sc, string $ext): sql_par
     {
         $this->load_sql_where_id($qp, $sc, true);
 
@@ -520,11 +521,11 @@ class sandbox_multi extends db_object_multi_user
      * for a value, result or group query
      *
      * @param sql_par $qp the query parameters fully set without the sql, par and ext
-     * @param sql $sc the sql creator with all parameters set
+     * @param sql_creator $sc the sql creator with all parameters set
      * @param bool $all true if all id fields should be used independend from the number of ids
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql_where_id(sql_par $qp, sql $sc, bool $all = false): sql_par
+    protected function load_sql_where_id(sql_par $qp, sql_creator $sc, bool $all = false): sql_par
     {
         if ($this->is_prime() or $this->is_main()) {
             $fields = $this->id_names($all);
@@ -546,11 +547,11 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * create the SQL to load the single default value always by something else than the main id
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp the query parameters with the class and name already set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql_by(sql $sc, sql_par $qp): sql_par
+    function load_standard_sql_by(sql_creator $sc, sql_par $qp): sql_par
     {
         $qp->name .= '_std';
         $sc->set_name($qp->name);
@@ -586,7 +587,7 @@ class sandbox_multi extends db_object_multi_user
     /**
      * prepare the SQL parameter to load a single user specific value
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param array $fields list of the fields from the child object
      * @param array $usr_fields list of the user specified fields from the child object
@@ -594,11 +595,11 @@ class sandbox_multi extends db_object_multi_user
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_fields(
-        sql    $sc,
-        string $query_name,
-        array  $fields,
-        array  $usr_fields,
-        array  $usr_num_fields,
+        sql_creator $sc,
+        string      $query_name,
+        array       $fields,
+        array       $usr_fields,
+        array       $usr_num_fields,
     ): sql_par
     {
         $qp = parent::load_sql($sc, $query_name);
@@ -613,12 +614,12 @@ class sandbox_multi extends db_object_multi_user
     /**
      * create the SQL to load a sandbox object with numeric user specific fields
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sandbox $sbx the name of the child class from where the call has been triggered
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_usr_num(sql $sc, sandbox_multi $sbx, string $query_name): sql_par
+    function load_sql_usr_num(sql_creator $sc, sandbox_multi $sbx, string $query_name): sql_par
     {
         $lib = new library();
 
@@ -639,11 +640,11 @@ class sandbox_multi extends db_object_multi_user
      * create the SQL to load a single user specific value
      * TODO replace by load_sql_usr or load_sql_usr_num
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_obj_vars(sql $sc, string $class): sql_par
+    function load_sql_obj_vars(sql_creator $sc, string $class): sql_par
     {
         return new sql_par($class);
     }
@@ -861,10 +862,10 @@ class sandbox_multi extends db_object_multi_user
      */
 
     /**
-     * @param sql $sc
+     * @param sql_creator $sc
      * @return sql_par sql parameter to get the user id of the most often used link (position) beside the standard (position)
      */
-    function load_sql_median_user(sql $sc): sql_par
+    function load_sql_median_user(sql_creator $sc): sql_par
     {
         $qp = new sql_par($this::class);
         $qp->name .= sql::NAME_EXT_MEDIAN_USER;
@@ -1093,10 +1094,10 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * create an SQL statement to get a list of all user that have ever changed the object
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_of_users_that_changed(sql $sc): sql_par
+    function load_sql_of_users_that_changed(sql_creator $sc): sql_par
     {
         $lib = new library();
 
@@ -1756,20 +1757,20 @@ class sandbox_multi extends db_object_multi_user
      * create the sql statement to update a value in the database
      * to be overwritten by child object
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param array $fld_val_typ_lst list of field names, values and sql types additional to the standard id and name fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update_multi(
-        sql           $sc,
+        sql_creator   $sc,
         array         $fld_val_typ_lst = [],
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
         $sc->set_class($this::class, $sc_par_lst);
         $qp = new sql_par($this::class, $sc_par_lst);
-        $qp->name .= sql::NAME_SEP . sql::FILE_UPDATE;
+        $qp->name .= sql::NAME_SEP . sql_creator::FILE_UPDATE;
         $sc->set_name($qp->name);
         $fvt_lst = new sql_par_field_list();
         $fvt_lst->set($fld_val_typ_lst);
@@ -1793,12 +1794,12 @@ class sandbox_multi extends db_object_multi_user
      * TODO check if user specific overwrites can be deleted
      * TODO chekc if can be moved to sandbox_value object
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_delete(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -1837,13 +1838,13 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * @param sql $sc the sql creator object with the db type set
+     * @param sql_creator $sc the sql creator object with the db type set
      * @param sql_par $qp the query parameter with the name already set
      * @param sql_type_list $sc_par_lst
      * @return sql_par
      */
     private function sql_delete_and_log(
-        sql           $sc,
+        sql_creator   $sc,
         sql_par       $qp,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
@@ -1853,7 +1854,7 @@ class sandbox_multi extends db_object_multi_user
         $table_id = $sc->table_id($this::class);
 
         // set some var names to shorten the code lines
-        $ext = sql::NAME_SEP . sql::FILE_DELETE;
+        $ext = sql::NAME_SEP . sql_creator::FILE_DELETE;
         $id_fld = $sc->id_field_name();
         $id_val = '_' . $id_fld;
         $name_fld = $this->name_field();
@@ -1990,11 +1991,11 @@ class sandbox_multi extends db_object_multi_user
      * in moste cases overwritten by the child object
      * TODO include the sql statements to log the changes
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par prepared sql parameter object with the name set
      */
-    protected function sql_common(sql $sc, sql_type_list $sc_par_lst): sql_par
+    protected function sql_common(sql_creator $sc, sql_type_list $sc_par_lst): sql_par
     {
         $qp = new sql_par($this::class, $sc_par_lst);
 
@@ -3030,14 +3031,14 @@ class sandbox_multi extends db_object_multi_user
      * TODO review
      * TODO check if it can be merged with the sandbox function
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_switch(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
         sql_type_list      $sc_par_lst = new sql_type_list([])): sql_par
@@ -3066,14 +3067,14 @@ class sandbox_multi extends db_object_multi_user
      * create the sql statement to change or exclude a sandbox object e.g. word to the database
      * either via a prepared SQL statement or via a function that includes the logging
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
      */
     function sql_update_switch(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
         sql_type_list      $sc_par_lst = new sql_type_list([])
@@ -3112,14 +3113,14 @@ class sandbox_multi extends db_object_multi_user
      * TODO review
      * TODO add qp merge
      *
-     * @param sql $sc sql creator with the target db_type already set
+     * @param sql_creator $sc sql creator with the target db_type already set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id fields
      * @param array $fld_lst_all list of all potential field names of the given object that can be changed by the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     private function sql_insert_with_log(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
@@ -3243,7 +3244,7 @@ class sandbox_multi extends db_object_multi_user
      * create the sql statement to update a value or result in the database
      *
      * TODO review
-     * @param sql $sc the sql creator object with the db type set
+     * @param sql_creator $sc the sql creator object with the db type set
      * @param sql_par $qp the query parameter with the name already set
      * @param sql_par_field_list $fvt_lst
      * @param array $fld_lst_all
@@ -3251,7 +3252,7 @@ class sandbox_multi extends db_object_multi_user
      * @return sql_par
      */
     private function sql_update_named_and_log(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
@@ -3261,7 +3262,7 @@ class sandbox_multi extends db_object_multi_user
 
         // set some var names to shorten the code lines
         $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $ext = sql::NAME_SEP . sql::FILE_INSERT;
+        $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
         $id_fld = $sc->id_field_name();
         $id_val = '_' . $id_fld;
 
@@ -3408,7 +3409,7 @@ class sandbox_multi extends db_object_multi_user
      * TODO review
      * TODO add qp merge
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
@@ -3416,7 +3417,7 @@ class sandbox_multi extends db_object_multi_user
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_key_field(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
@@ -3425,7 +3426,7 @@ class sandbox_multi extends db_object_multi_user
     {
         // set some var names to shorten the code lines
         $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
-        $ext = sql::NAME_SEP . sql::FILE_INSERT;
+        $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
 
         // list of parameters actually used in order of the function usage
         $sql = '';
@@ -3585,7 +3586,7 @@ class sandbox_multi extends db_object_multi_user
         global $cng_fld_cac;
 
         $lst = new sql_par_field_list();
-        $sc = new sql();
+        $sc = new sql_creator();
         $table_id = $sc->table_id($this::class);
 
         if ($sbx->excluded <> $this->excluded) {

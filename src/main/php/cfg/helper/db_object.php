@@ -32,7 +32,10 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql.php';
+
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
@@ -89,14 +92,14 @@ class db_object
     /**
      * the sql statement to create the table for this (or a child) object
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
      * @param string $tbl_comment if given the comment that should be added to the sql create table statement
      * @return string the sql statement to create the table
      */
     function sql_table_create(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([]),
         array         $fields = [],
         string        $tbl_comment = ''
@@ -117,12 +120,12 @@ class db_object
     /**
      * the name of the sql table for this (or a child) object
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @return string the sql statement to create the table
      */
     function sql_truncate_create(
-        sql $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst
     ): string
     {
@@ -135,15 +138,15 @@ class db_object
     /**
      * the sql statement to create the indices for this (or a child) object
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
      * @return string the sql statement to create the table
      */
     function sql_index_create(
-        sql $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([]),
-        array $fields = []
+        array         $fields = []
     ): string
     {
         if ($sc->get_table() == '') {
@@ -158,15 +161,15 @@ class db_object
     /**
      * the sql statement to create the foreign keys for this (or a child) object
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @param array $fields array with all fields and all parameter for the table creation in a two-dimensional array
      * @return string the sql statement to create the table
      */
     function sql_foreign_key_create(
-        sql $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([]),
-        array $fields = []
+        array         $fields = []
     ): string
     {
         if ($sc->get_table() == '') {
@@ -220,7 +223,7 @@ class db_object
      * parent function to create the common part of an SQL statement for group, value and result tables
      * child object sets the table and fields in the db sql builder
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -229,7 +232,7 @@ class db_object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql           $sc,
+        sql_creator   $sc,
         string        $query_name,
         string        $class,
         sql_type_list $sc_par_lst,
@@ -259,11 +262,11 @@ class db_object
      * parent function to create the common part of an SQL statement
      * child object sets the table and fields in the db sql builder
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         return $this->load_sql_multi($sc, $query_name, $this::class, new sql_type_list([sql_type::MOST]));
     }
@@ -271,11 +274,11 @@ class db_object
     /**
      * create an SQL statement to retrieve a user sandbox object by id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int|string $id the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id_str(sql $sc, int|string $id): sql_par
+    function load_sql_by_id_str(sql_creator $sc, int|string $id): sql_par
     {
         $class = $this::class;
         if ($class == group::class

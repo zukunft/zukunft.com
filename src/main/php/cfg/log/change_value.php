@@ -31,12 +31,14 @@
 
 namespace cfg\log;
 
+include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_LOG_PATH . 'change_log.php';
 include_once API_LOG_PATH . 'change_log_named.php';
 include_once WEB_LOG_PATH . 'change_log_named.php';
 
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
@@ -47,7 +49,6 @@ use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\type_object;
 use cfg\user;
-use shared\library;
 
 class change_value extends change_log
 {
@@ -106,11 +107,11 @@ class change_value extends change_log
     /**
      * create the common part of an SQL statement to retrieve the parameters of the value change log
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         if ($this::class == change_values_prime::class
             or $this::class == change_values_norm::class
@@ -160,7 +161,7 @@ class change_value extends change_log
      *
      * @return sql_par_field_list list of the database field names
      */
-    function db_field_values_types(sql $sc, sql_type_list $sc_par_lst): sql_par_field_list
+    function db_field_values_types(sql_creator $sc, sql_type_list $sc_par_lst): sql_par_field_list
     {
         $fvt_lst = parent::db_field_values_types($sc, $sc_par_lst);
 

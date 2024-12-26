@@ -31,15 +31,16 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\export\sandbox_exp;
 use cfg\log\change_log_list;
 use shared\json_fields;
 
@@ -383,7 +384,7 @@ class sandbox_link_named extends sandbox_link
      * create the sql statement to add a new named sandbox object e.g. word to the database
      * TODO add qp merge
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
@@ -391,7 +392,7 @@ class sandbox_link_named extends sandbox_link
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_key_field(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
@@ -400,7 +401,7 @@ class sandbox_link_named extends sandbox_link
     {
         // set some var names to shorten the code lines
         $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
-        $ext = sql::NAME_SEP . sql::FILE_INSERT;
+        $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
 
         // list of parameters actually used in order of the function usage
         $sql = '';
@@ -474,7 +475,7 @@ class sandbox_link_named extends sandbox_link
     {
         global $cng_fld_cac;
 
-        $sc = new sql();
+        $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 

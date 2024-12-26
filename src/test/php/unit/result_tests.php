@@ -36,7 +36,7 @@ include_once API_RESULT_PATH . 'result.php';
 
 use api\result\result as result_api;
 use api\word\word as word_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use cfg\formula;
 use cfg\group\group;
@@ -57,7 +57,7 @@ class result_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'result->';
         $t->resource_path = 'db/result/';
 

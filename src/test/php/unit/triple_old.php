@@ -36,7 +36,7 @@ namespace unit;
 
 use api\phrase\phrase as phrase_api;
 use api\word\triple as triple_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\triple;
 use cfg\verb;
@@ -52,7 +52,7 @@ class triple_old
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
 

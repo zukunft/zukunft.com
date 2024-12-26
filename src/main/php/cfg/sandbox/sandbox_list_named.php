@@ -32,7 +32,7 @@
 
 namespace cfg;
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_par_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
@@ -352,7 +352,7 @@ class sandbox_list_named extends sandbox_list
      * get a list of all sql functions that are needed to add all triples of this list to the database
      * @return sql_par_list with the sql function names
      */
-    function sql(sql $sc, bool $use_func = true): sql_par_list
+    function sql(sql_creator $sc, bool $use_func = true): sql_par_list
     {
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $trp) {
@@ -373,7 +373,7 @@ class sandbox_list_named extends sandbox_list
      * @param bool $use_func true if sql function should be used to write the named user sandbox objects to the database
      * @return sql_par_list with the sql function names
      */
-    function sql_call_with_par(sql $sc, bool $use_func = true): sql_par_list
+    function sql_call_with_par(sql_creator $sc, bool $use_func = true): sql_par_list
     {
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $trp) {

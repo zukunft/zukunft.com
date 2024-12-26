@@ -34,7 +34,7 @@ namespace cfg;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_list;
 use cfg\db\sql_par;
@@ -103,7 +103,7 @@ class sandbox_value_list extends sandbox_list
      * TODO add ORDER BY (relevance of value)
      * TODO use LIMIT and PAGE
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
      * @param string $class the value or result class name
      * @param bool $usr_tbl true if only the user overwrites should be loaded
@@ -113,7 +113,7 @@ class sandbox_value_list extends sandbox_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr_lst_multi(
-        sql         $sc,
+        sql_creator $sc,
         phrase_list $phr_lst,
         string      $class = value::class,
         bool        $usr_tbl = false,
@@ -208,7 +208,7 @@ class sandbox_value_list extends sandbox_list
      * create an SQL statement to retrieve a list of values linked to a phrase from the database
      * from a single table
      *     *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the value or result class name
      * @param bool $or true if all values related to any phrase of the list should be loaded
      * @param array $sc_par_lst the parameters for the sql statement creation
@@ -219,14 +219,14 @@ class sandbox_value_list extends sandbox_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr_lst_single(
-        sql    $sc,
-        string $class,
-        bool   $or,
-        array  $sc_par_lst,
-        array  $phr_pos_lst,
-        array  $grp_pos_lst,
-        int    $usr_pos,
-        int    $frm_pos = 0
+        sql_creator $sc,
+        string      $class,
+        bool        $or,
+        array       $sc_par_lst,
+        array       $phr_pos_lst,
+        array       $grp_pos_lst,
+        int         $usr_pos,
+        int         $frm_pos = 0
     ): sql_par
     {
         $qp = $this->load_sql_init(
@@ -275,16 +275,16 @@ class sandbox_value_list extends sandbox_list
      * add the single phrase fields to the sql creator object
      * TODO make $par_pos unnecessary
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param array $phr_pos_lst to set a fixed name for the parameter
      * @param bool $or true if all values related to any phrase of the list should be loaded
      * @param int $max_phr the maximal number of phrases allowed for this table
      */
     private function load_sql_set_phrase_fields(
-        sql   $sc,
-        array $phr_pos_lst,
-        bool  $or,
-        int   $max_phr
+        sql_creator $sc,
+        array       $phr_pos_lst,
+        bool        $or,
+        int         $max_phr
     ): void
     {
         $used_or = true; // the first phrase is always or to force staring with brakest
@@ -306,13 +306,13 @@ class sandbox_value_list extends sandbox_list
      * set the SQL query parameters to load a list of values or results
      * set the fields for a union select of all possible tables
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the value or result class name
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_init(
-        sql            $sc,
+        sql_creator    $sc,
         string         $class,
         string         $query_name,
         array          $tbl_types,

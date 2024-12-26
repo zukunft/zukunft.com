@@ -58,6 +58,7 @@ include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once SERVICE_EXPORT_PATH . 'formula_exp.php';
 include_once MODEL_RESULT_PATH . 'result_list.php';
 
+include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
@@ -78,6 +79,7 @@ include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_PATH . 'json_fields.php';
 
+use cfg\db\sql;
 use shared\api;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
@@ -88,7 +90,7 @@ use shared\json_fields;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use api\formula\formula as formula_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -550,10 +552,10 @@ class formula extends sandbox_typed
     /**
      * create the SQL to load the default formula always by the id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc): sql_par
+    function load_standard_sql(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
@@ -570,12 +572,12 @@ class formula extends sandbox_typed
      * create the common part of an SQL statement to retrieve
      * the parameters of a formula from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         // maybe the formula name should be excluded from the user sandbox to avoid confusion
         return parent::load_sql_usr_num($sc, $this, $query_name);
@@ -1933,7 +1935,7 @@ class formula extends sandbox_typed
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 to check if the formula has been changed
      */
-    function not_changed_sql(sql $sc): sql_par
+    function not_changed_sql(sql_creator $sc): sql_par
     {
         $lib = new library();
         $sc->set_class($lib->class_to_name(self::class));
@@ -1994,12 +1996,12 @@ class formula extends sandbox_typed
     /**
      * create an SQL statement to retrieve the user changes of the current formula
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_user_changes(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -2653,7 +2655,7 @@ class formula extends sandbox_typed
     {
         global $cng_fld_cac;
 
-        $sc = new sql();
+        $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 

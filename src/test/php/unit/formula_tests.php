@@ -37,7 +37,7 @@ include_once MODEL_FORMULA_PATH . 'expression.php';
 use api\formula\formula as formula_api;
 use api\value\value as value_api;
 use api\word\word as word_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use cfg\expression;
 use cfg\formula;
@@ -56,7 +56,7 @@ class formula_tests
         global $usr;
 
         // init
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'formula->';
         $t->resource_path = 'db/formula/';
 

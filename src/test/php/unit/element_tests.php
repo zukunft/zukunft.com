@@ -34,7 +34,7 @@ namespace unit;
 
 include_once MODEL_ELEMENT_PATH . 'element_list.php';
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\element\element_list;
@@ -49,7 +49,7 @@ class element_tests
         global $usr;
 
         // init
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'element->';
         $t->resource_path = 'db/element/';
 

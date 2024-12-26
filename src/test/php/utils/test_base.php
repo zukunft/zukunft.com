@@ -55,9 +55,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once DB_PATH . 'sql_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
-use api\ref\source as source_api;
 use api\sandbox\sandbox as sandbox_api;
-use api\verb\verb as verb_api;
 use api\word\word as word_api;
 use api\word\triple as triple_api;
 use api\value\value as value_api;
@@ -68,14 +66,11 @@ use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_list;
 use cfg\config;
-use cfg\data_object;
-use cfg\db\sql;
-use cfg\db\sql as sql_creator;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_type_list;
 use cfg\db_object_seq_id;
-use cfg\db_object_seq_id_user;
 use cfg\element\element_list;
 use cfg\fig_ids;
 use cfg\formula;
@@ -971,11 +966,11 @@ class test_base
      * check if the object can return the sql table names
      * for all allowed SQL database dialects
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_truncate(sql $sc, object $usr_obj): bool
+    function assert_sql_truncate(sql_creator $sc, object $usr_obj): bool
     {
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
@@ -1008,7 +1003,7 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
-        $sc = new sql(sql_db::POSTGRES);
+        $sc = new sql_creator(sql_db::POSTGRES);
         $name = $class . '_create';
         $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
         $actual_sql = $usr_obj->sql_table($sc, $class);
@@ -1036,7 +1031,7 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
-        $sc = new sql(sql_db::POSTGRES);
+        $sc = new sql_creator(sql_db::POSTGRES);
         $name = $class . '_index';
         $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
         $actual_sql = $usr_obj->sql_index($sc, $class);
@@ -1064,7 +1059,7 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
-        $sc = new sql(sql_db::POSTGRES);
+        $sc = new sql_creator(sql_db::POSTGRES);
         $name = $class . '_foreign_key';
         $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
         $actual_sql = $usr_obj->sql_foreign_key($sc, $class);
@@ -1092,7 +1087,7 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
-        $sc = new sql(sql_db::POSTGRES);
+        $sc = new sql_creator(sql_db::POSTGRES);
         $name = $class . '_view';
         $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
         $actual_sql = $usr_obj->sql_view($sc, $class);
@@ -1120,7 +1115,7 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($usr_obj::class);
         // check the Postgres query syntax
-        $sc = new sql(sql_db::POSTGRES);
+        $sc = new sql_creator(sql_db::POSTGRES);
         $name = $class . '_view';
         $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
         $actual_sql = $usr_obj->sql_view_link($sc, $usr_obj::FLD_LST_VIEW);
@@ -1140,12 +1135,12 @@ class test_base
      * check the SQL statement creation to add a database row
      * for all allowed SQL database dialects
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param array $sc_par_lst_in the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_insert(sql $sc, object $usr_obj, array $sc_par_lst_in = []): bool
+    function assert_sql_insert(sql_creator $sc, object $usr_obj, array $sc_par_lst_in = []): bool
     {
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
@@ -1166,13 +1161,13 @@ class test_base
      * check the SQL statement creation to update a database row
      * for all allowed SQL database dialects
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param object $db_obj must be the same object as the $usr_obj but with the values from the database before the update
      * @param array $sql_type_array the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_update(sql $sc, object $usr_obj, object $db_obj, array $sql_type_array = []): bool
+    function assert_sql_update(sql_creator $sc, object $usr_obj, object $db_obj, array $sql_type_array = []): bool
     {
         $sc_par_lst = new sql_type_list($sql_type_array);
         // check the Postgres query syntax
@@ -1193,12 +1188,12 @@ class test_base
      * check the SQL statement to delete a database row
      * for all allowed SQL database dialects
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param array $sc_par_lst_in the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_delete(sql $sc, object $usr_obj, array $sc_par_lst_in = []): bool
+    function assert_sql_delete(sql_creator $sc, object $usr_obj, array $sc_par_lst_in = []): bool
     {
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
@@ -1219,12 +1214,12 @@ class test_base
      * check the SQL statement to load a db object by id
      * for all allowed SQL database dialects
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param array $sc_par_lst_in the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_id(sql $sc, object $usr_obj, array $sc_par_lst_in = []): bool
+    function assert_sql_by_id(sql_creator $sc, object $usr_obj, array $sc_par_lst_in = []): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1243,13 +1238,13 @@ class test_base
     /**
      * similar to assert_sql_by_id, but for the parent/formula id type
      *
-     * @param sql $sc the test database connection
+     * @param sql_creator $sc the test database connection
      * @param element_list $lst the empty word list object
      * @param int $frm_id the formula id that should be used for selecting the elements
      * @param string $test_name the test name only for the test log
      * @return void
      */
-    function assert_sql_by_frm_id(sql $sc, element_list $lst, int $frm_id, string $test_name = ''): void
+    function assert_sql_by_frm_id(sql_creator $sc, element_list $lst, int $frm_id, string $test_name = ''): void
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1268,11 +1263,11 @@ class test_base
      * check the SQL statement to load the default object by id
      * for all allowed SQL database dialects
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param sandbox|sandbox_multi $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_standard(sql $sc, sandbox|sandbox_multi $usr_obj): bool
+    function assert_sql_standard(sql_creator $sc, sandbox|sandbox_multi $usr_obj): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1292,11 +1287,11 @@ class test_base
      * check the SQL statement to load the default object by id
      * for all allowed SQL database dialects
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param group $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_standard_by_name(sql $sc, group $usr_obj): bool
+    function assert_sql_standard_by_name(sql_creator $sc, group $usr_obj): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1316,12 +1311,12 @@ class test_base
      * check the SQL statements to get the user sandbox changes
      * e.g. the value a user has changed of word, triple, value or formulas
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
      * @param array $sc_par_lst_in the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_user_changes(sql $sc, sandbox|sandbox_value $usr_obj, array $sc_par_lst_in = []): bool
+    function assert_sql_user_changes(sql_creator $sc, sandbox|sandbox_value $usr_obj, array $sc_par_lst_in = []): bool
     {
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
@@ -1343,11 +1338,11 @@ class test_base
      * check the SQL statements to get all users that have changed the object
      * TODO add this test once to each user object type
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_changer(sql $sc, sandbox|sandbox_value $usr_obj): bool
+    function assert_sql_changer(sql_creator $sc, sandbox|sandbox_value $usr_obj): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1368,11 +1363,11 @@ class test_base
      * check the SQL statements to get the users that has created the most often used db row
      * TODO add this test once to each relevant object type (at least once for named sandbox, link and value)
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_median_user(sql $sc, sandbox|sandbox_value $usr_obj): bool
+    function assert_sql_median_user(sql_creator $sc, sandbox|sandbox_value $usr_obj): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1393,11 +1388,11 @@ class test_base
      * check the SQL statements to get the users that have ever done a change
      * e.g. to clean up changes not needed any more
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param sandbox $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_changing_users(sql $sc, sandbox $usr_obj): bool
+    function assert_sql_changing_users(sql_creator $sc, sandbox $usr_obj): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1423,11 +1418,11 @@ class test_base
      * check the SQL statement to load a db object by name for all allowed SQL database dialects
      * similar to assert_sql_by_id but select one row based on the name
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_name(sql $sc, object $usr_obj): bool
+    function assert_sql_by_name(sql_creator $sc, object $usr_obj): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1448,12 +1443,12 @@ class test_base
      * for all allowed SQL database dialects
      * TODO add unit and load test for triple, verb, view and component list
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param string $pattern the pattern for the name used for testing
      * @return bool true if all tests are fine
      */
-    function assert_sql_like(sql $sc, object $usr_obj, string $pattern = ''): bool
+    function assert_sql_like(sql_creator $sc, object $usr_obj, string $pattern = ''): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1472,12 +1467,12 @@ class test_base
     /**
      * check the SQL statements to load a sandbox object by term
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param sandbox $usr_obj the user sandbox object e.g. a view
      * @param term $trm the term used for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_term(sql $sc, sandbox $usr_obj, term $trm): bool
+    function assert_sql_by_term(sql_creator $sc, sandbox $usr_obj, term $trm): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1503,11 +1498,11 @@ class test_base
      * check the object load by name SQL statements for all allowed SQL database dialects
      * similar to assert_load_sql but select one row based on the code id
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a verb
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_code_id(sql $sc, object $usr_obj): bool
+    function assert_sql_by_code_id(sql_creator $sc, object $usr_obj): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1532,11 +1527,11 @@ class test_base
      * check the SQL statements for user object load by linked objects for all allowed SQL database dialects
      * similar to assert_sql_by_id but select one row based on the linked components
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param sandbox_link $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_link(sql $sc, sandbox_link $usr_obj): bool
+    function assert_sql_by_link(sql_creator $sc, sandbox_link $usr_obj): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1588,12 +1583,12 @@ class test_base
     /**
      * check the object load SQL statements for all allowed SQL database dialects
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param string $class to define the database type if it does not match the class
      * @return bool true if all tests are fine
      */
-    function assert_sql_all(sql $sc, object $usr_obj, string $class = ''): bool
+    function assert_sql_all(sql_creator $sc, object $usr_obj, string $class = ''): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1618,11 +1613,11 @@ class test_base
      * check the object load by id list SQL statements for all allowed SQL database dialects
      * similar to assert_load_sql but for a user
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_user(sql $sc, object $usr_obj): bool
+    function assert_sql_by_user(sql_creator $sc, object $usr_obj): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1646,13 +1641,13 @@ class test_base
      * check the object load by id list SQL statements for all allowed SQL database dialects
      * similar to assert_sql_by_id but for an id list
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param array|phr_ids|trm_ids|fig_ids|null $ids the ids that should be loaded
      * @return bool true if all tests are fine
      */
     function assert_sql_by_ids(
-        sql                                $sc,
+        sql_creator                        $sc,
         object                             $usr_obj,
         array|phr_ids|trm_ids|fig_ids|null $ids = array(1, 2)): bool
     {
@@ -1674,11 +1669,11 @@ class test_base
      * check the object load by id list SQL statements for all allowed SQL database dialects
      * similar to assert_sql_by_id but for an id list
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_names_by_ids(sql $sc, object $usr_obj, ?array $ids = array(1, 2)): bool
+    function assert_sql_names_by_ids(sql_creator $sc, object $usr_obj, ?array $ids = array(1, 2)): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1697,14 +1692,14 @@ class test_base
     /**
      * check the object load by id list SQL statements for all allowed SQL database dialects
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $lst_obj the user sandbox object e.g. a word
      * @param sandbox_named|sandbox_link_named|combine_named $sbx the user sandbox object e.g. a word
      * @param string $pattern the pattern to filter
      * @return bool true if all tests are fine
      */
     function assert_sql_names(
-        sql                                            $sc,
+        sql_creator                                    $sc,
         object                                         $lst_obj,
         sandbox_named|sandbox_link_named|combine_named $sbx,
         string                                         $pattern = ''
@@ -1728,12 +1723,12 @@ class test_base
      * check the SQL statements to load a list by name for all allowed SQL database dialects
      * similar to assert_sql_by_ids but for a name list
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param array $names with the names of the objects that should be loaded
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_names(sql $sc, object $usr_obj, array $names): bool
+    function assert_sql_by_names(sql_creator $sc, object $usr_obj, array $names): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1752,12 +1747,12 @@ class test_base
     /**
      * check the SQL statements to load a group by phrase list for all allowed SQL database dialects
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param phrase $phr with the names of the objects that should be loaded
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_phrase(sql $sc, object $usr_obj, phrase $phr): bool
+    function assert_sql_by_phrase(sql_creator $sc, object $usr_obj, phrase $phr): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1806,13 +1801,13 @@ class test_base
     /**
      * check the SQL statements to load a list of result by group
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param group $grp with the phrase to select the results
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
      * @return bool true if all tests are fine
      */
-    function assert_sql_by_group(sql $sc, object $usr_obj, group $grp, bool $by_source = false): bool
+    function assert_sql_by_group(sql_creator $sc, object $usr_obj, group $grp, bool $by_source = false): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -1869,12 +1864,12 @@ class test_base
     /**
      * check the SQL statements for loading a list of objects selected by the type in all allowed SQL database dialects
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param object $lst_obj the list object e.g. batch job list
      * @param string $type_code_id the type code id that should be used for the selection
      * @return bool true if all tests are fine
      */
-    function assert_sql_list_by_type(sql $sc, object $lst_obj, string $type_code_id): bool
+    function assert_sql_list_by_type(sql_creator $sc, object $lst_obj, string $type_code_id): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
@@ -2148,11 +2143,11 @@ class test_base
      * create a sql statement to check if any user has uses another than the default value
      * e.g. word, triple, value or formulas has been renamed
      *
-     * @param sql $sc a sql creator object that can be empty
+     * @param sql_creator $sc a sql creator object that can be empty
      * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
      * @return bool true if all tests are fine
      */
-    function assert_sql_not_changed(sql $sc, sandbox|sandbox_value $usr_obj): bool
+    function assert_sql_not_changed(sql_creator $sc, sandbox|sandbox_value $usr_obj): bool
     {
         // check the Postgres query syntax
         $usr_obj->owner_id = 0;

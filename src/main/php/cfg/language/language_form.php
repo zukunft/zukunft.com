@@ -31,10 +31,11 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql.php';
+
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
-use shared\library;
 
 class language_form extends type_object
 {

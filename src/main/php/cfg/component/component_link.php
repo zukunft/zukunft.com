@@ -50,11 +50,13 @@
 namespace cfg\component;
 
 // TODO easy include all used classes
+include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once API_VIEW_PATH . 'component_link.php';
 
 use api\view\component_link as component_link_api;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -63,7 +65,6 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\export\sandbox_exp;
 use cfg\log\change;
 use cfg\sandbox;
 use cfg\sandbox_link;
@@ -567,10 +568,10 @@ class component_link extends sandbox_link
     /**
      * create an SQL statement to retrieve the parameters of the standard view component link from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc): sql_par
+    function load_standard_sql(sql_creator $sc): sql_par
     {
         // try to get the search values from the objects
         if ($this->id() <= 0) {
@@ -608,12 +609,12 @@ class component_link extends sandbox_link
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view component link from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = new sql_par($class);
         $qp->name .= $query_name;
@@ -630,13 +631,13 @@ class component_link extends sandbox_link
     /**
      * create an SQL statement to load the component_link by the link id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $dsp_id the view id
      * @param int $type_id the link type id
      * @param int $cmp_id the component id
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link_and_type(sql $sc, int $dsp_id, int $type_id, int $cmp_id, string $class = self::class): sql_par
+    function load_sql_by_link_and_type(sql_creator $sc, int $dsp_id, int $type_id, int $cmp_id, string $class = self::class): sql_par
     {
         return parent::load_sql_by_link($sc, $dsp_id, $type_id, $cmp_id, $class);
     }
@@ -644,13 +645,13 @@ class component_link extends sandbox_link
     /**
      * create an SQL statement to retrieve a user sandbox link by the ids of the linked objects from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $msk_id the id of the view
      * @param int $cmp_id the id of the lin type
      * @param int $pos the position of the component
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link_and_pos(sql $sc, int $msk_id, int $cmp_id, int $pos): sql_par
+    function load_sql_by_link_and_pos(sql_creator $sc, int $msk_id, int $cmp_id, int $pos): sql_par
     {
         $qp = $this->load_sql($sc, 'link_and_pos');
         $sc->add_where($this->from_field(), $msk_id);
@@ -665,11 +666,11 @@ class component_link extends sandbox_link
     /**
      * create a simple SQL statement to retrieve the max order number of one view
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the view
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_max_pos(sql $sc, int $id): sql_par
+    function load_sql_max_pos(sql_creator $sc, int $id): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'max_pos';
@@ -940,12 +941,12 @@ class component_link extends sandbox_link
     /**
      * create an SQL statement to retrieve the user changes of the current view component link
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_user_changes(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -1067,7 +1068,7 @@ class component_link extends sandbox_link
     {
         global $cng_fld_cac;
 
-        $sc = new sql();
+        $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);

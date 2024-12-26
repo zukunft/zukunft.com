@@ -36,7 +36,7 @@ include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once WEB_WORD_PATH . 'triple_list.php';
 
 use api\word\triple as triple_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\phrase;
 use cfg\phrase_list;
@@ -56,7 +56,7 @@ class triple_list_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'triple_list->';
         $t->resource_path = 'db/triple/';
 

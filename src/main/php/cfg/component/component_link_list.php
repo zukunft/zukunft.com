@@ -40,7 +40,7 @@ include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_par_type.php';
 
 use api\view\component_link_list as component_link_list_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\sandbox_list;
@@ -98,11 +98,11 @@ class component_link_list extends sandbox_list
 
     /**
      * set the common part of the SQL query component links
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -117,11 +117,11 @@ class component_link_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load all components linked to a view
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param view $msk the id of the view to which the components should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_view(sql $sc, view $msk): sql_par
+    function load_sql_by_view(sql_creator $sc, view $msk): sql_par
     {
         $qp = $this->load_sql($sc, view::FLD_ID);
         if ($msk->id() > 0) {
@@ -138,11 +138,11 @@ class component_link_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load all views linked to a component
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param component $cmp the id of the component to which the views should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_component(sql $sc, component $cmp): sql_par
+    function load_sql_by_component(sql_creator $sc, component $cmp): sql_par
     {
         $qp = $this->load_sql($sc, component::FLD_ID);
         if ($cmp->id() > 0) {

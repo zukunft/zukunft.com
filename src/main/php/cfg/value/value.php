@@ -76,6 +76,7 @@
 
 namespace cfg\value;
 
+include_once DB_PATH . 'sql.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
@@ -88,6 +89,7 @@ include_once SERVICE_EXPORT_PATH . 'json.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_PATH . 'json_fields.php';
 
+use cfg\db\sql;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
 use cfg\log\change;
@@ -98,19 +100,15 @@ use cfg\log\changes_big;
 use cfg\log\changes_norm;
 use shared\json_fields;
 use shared\types\protection_type as protect_type_shared;
-use shared\types\share_type as share_type_shared;
-use shared\api;
 use api\value\value as value_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
 use cfg\export\export;
-use cfg\export\sandbox_exp;
 use cfg\export\source_exp;
-use cfg\export\value_exp;
 use cfg\expression;
 use cfg\figure;
 use cfg\group\group;
@@ -126,16 +124,13 @@ use cfg\log\change_value;
 use cfg\phr_ids;
 use cfg\phrase;
 use cfg\phrase_list;
-use cfg\phrase_type;
 use cfg\result\result_list;
 use cfg\sandbox;
 use cfg\sandbox_multi;
 use cfg\sandbox_value;
 use cfg\source;
-use cfg\triple_list;
 use cfg\user;
 use cfg\user_message;
-use cfg\word_list;
 use DateTime;
 use Exception;
 use html\value\value as value_dsp;
@@ -623,7 +618,7 @@ class value extends sandbox_value
     /**
      * create the common part of an SQL statement to retrieve the parameters of a value from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -632,7 +627,7 @@ class value extends sandbox_value
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql           $sc,
+        sql_creator   $sc,
         string        $query_name,
         string        $class = self::class,
         sql_type_list $sc_par_lst = new sql_type_list([]),
@@ -655,11 +650,11 @@ class value extends sandbox_value
 
     /**
      * create the SQL to load the single default value always by the id
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, array $fld_lst = []): sql_par
+    function load_standard_sql(sql_creator $sc, array $fld_lst = []): sql_par
     {
         $fld_lst = array_merge(
             self::FLD_NAMES,
@@ -1321,7 +1316,7 @@ class value extends sandbox_value
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 to check if the value has been changed
      */
-    function not_changed_sql(sql $sc): sql_par
+    function not_changed_sql(sql_creator $sc): sql_par
     {
         $sc_par_lst = new sql_type_list([]);
         $tbl_typ = $this->table_type();
@@ -1838,7 +1833,7 @@ class value extends sandbox_value
             //    $this->set_id($ins_result->get_row_id());
             //}
             //$db_con->set_type(self::class);
-            //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE), array($this->grp->id(), $this->user()->id, $this->number, sql_creator::NOW)));
+            //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE), array($this->grp->id(), $this->user()->id, $this->number, sql::NOW)));
             if ($this->is_id_set()) {
                 // update the reference in the log
                 if ($this->grp()->is_prime()) {
@@ -1980,7 +1975,7 @@ class value extends sandbox_value
     ): sql_par_field_list
     {
         global $cng_fld_cac;
-        $sc = new sql();
+        $sc = new sql_creator();
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);

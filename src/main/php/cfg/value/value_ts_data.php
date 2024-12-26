@@ -32,17 +32,18 @@
 
 namespace cfg\value;
 
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_type_list;
 use cfg\db_object;
-use cfg\sandbox;
 use DateTime;
-
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
 
 class value_ts_data extends db_object
 {
@@ -84,10 +85,10 @@ class value_ts_data extends db_object
      * the sql statement to create the table
      * is e.g. overwritten for the user sandbox objects
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the table
      */
-    function sql_table(sql $sc): string
+    function sql_table(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         $sql .= $this->sql_table_create($sc);
@@ -98,10 +99,10 @@ class value_ts_data extends db_object
      * the sql statement to create the database indices
      * is e.g. overwritten for the user sandbox objects
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the indices
      */
-    function sql_index(sql $sc): string
+    function sql_index(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         $sql .= $this->sql_index_create($sc);
@@ -112,10 +113,10 @@ class value_ts_data extends db_object
      * the sql statements to create all foreign keys
      * is e.g. overwritten for the user sandbox objects
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the foreign keys
      */
-    function sql_foreign_key(sql $sc): string
+    function sql_foreign_key(sql_creator $sc): string
     {
         return $this->sql_foreign_key_create($sc, new sql_type_list([]), [],false);
     }

@@ -35,7 +35,7 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\phr_ids;
 use cfg\phrase;
@@ -68,7 +68,7 @@ class phrase_list_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'phrase_list->';
         $t->resource_path = 'db/phrase/';
 
@@ -265,7 +265,7 @@ class phrase_list_tests
      * @param foaf_direction $direction to define the link direction
      */
     private function assert_sql_linked_phrases(
-        sql            $sc,
+        sql_creator    $sc,
         test_cleanup   $t,
         object         $usr_obj,
         ?verb          $vrb,

@@ -55,7 +55,7 @@ use shared\json_fields;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use api\value\value_list as value_list_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
@@ -280,7 +280,7 @@ class value_list extends sandbox_value_list
      * TODO add ORDER BY (relevance of value)
      * TODO use LIMIT and PAGE
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
      * @param bool $usr_tbl true if only the user overwrites should be loaded
      * @param bool $or true if all values related to any phrase of the list should be loaded
@@ -289,7 +289,7 @@ class value_list extends sandbox_value_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr_lst(
-        sql         $sc,
+        sql_creator $sc,
         phrase_list $phr_lst,
         bool        $usr_tbl = false,
         bool        $or = false,
@@ -303,15 +303,15 @@ class value_list extends sandbox_value_list
     /**
      * create an SQL statement to retrieve a list of values linked to the given phrase from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param phrase $phr if set to get all values for this phrase
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr(
-        sql    $sc,
-        phrase $phr,
-        int    $limit = 0,
-        int    $page = 0
+        sql_creator $sc,
+        phrase      $phr,
+        int         $limit = 0,
+        int         $page = 0
     ): sql_par
     {
         $lib = new library();
@@ -375,13 +375,13 @@ class value_list extends sandbox_value_list
 
     /**
      * set the SQL query parameters to load a list of values
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql           $sc,
+        sql_creator   $sc,
         string        $query_name,
         sql_type_list $sc_par_lst
     ): sql_par
@@ -517,11 +517,11 @@ class value_list extends sandbox_value_list
      * create an SQL statement to retrieve a list of values by the id from the database
      * TODO links and select all phrase ids
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param array $ids value ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql $sc, array $ids, bool $usr_tbl = false): sql_par
+    function load_sql_by_ids(sql_creator $sc, array $ids, bool $usr_tbl = false): sql_par
     {
         /*
          * 1. collect the potential source tables (maybe all)
@@ -587,11 +587,11 @@ class value_list extends sandbox_value_list
      * create an SQL statement to retrieve a list of values by a list of group ids from the database
      * TODO check if this not the same as the load_sql_by_ids function
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp_lst(sql $sc, phrase_list $phr_lst, bool $usr_tbl = false): sql_par
+    function load_sql_by_grp_lst(sql_creator $sc, phrase_list $phr_lst, bool $usr_tbl = false): sql_par
     {
         // get the matrix of the potential tables, the number of phrases of the table and the phrase id list
         $tbl_id_matrix = $this->extension_id_matrix($phr_lst->ids());
@@ -647,7 +647,7 @@ class value_list extends sandbox_value_list
      * create an SQL statement to retrieve a list of values linked to a phrase from the database
      * from a single table
      *     *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $phr_pos the array key of the query parameter for the phrase id
      * @param int $grp_pos the array key of the query parameter for the phrase id as group id
      * @param int $usr_pos the array key of the query parameter for the user id
@@ -656,7 +656,7 @@ class value_list extends sandbox_value_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr_single(
-        sql            $sc,
+        sql_creator    $sc,
         int            $phr_pos,
         int            $grp_pos,
         int            $usr_pos,

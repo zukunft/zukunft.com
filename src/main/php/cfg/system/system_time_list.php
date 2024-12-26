@@ -48,7 +48,7 @@ include_once API_SYSTEM_PATH . 'sys_log_list.php';
 include_once WEB_SYSTEM_PATH . 'sys_log_list.php';
 include_once WEB_SYSTEM_PATH . 'sys_log_list_old.php';
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;

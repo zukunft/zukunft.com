@@ -45,6 +45,7 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
@@ -62,12 +63,13 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
+use cfg\db\sql;
 use cfg\db\sql_field_type;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use api\phrase\term as term_api;
 use api\word\word as word_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
@@ -581,11 +583,11 @@ class term extends combine_named
      * create the common part of an SQL statement to retrieve a term from the database
      * uses the term view which includes only the most relevant fields of words, triples, formulas and verbs
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql $sc, string $query_name): sql_par
+    private function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -602,11 +604,11 @@ class term extends combine_named
     /**
      * create an SQL statement to retrieve a term by term id (not the object id) from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the term as defined in the database term view
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int $id): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_ID);
         $sc->add_where(term::FLD_ID, $id);
@@ -619,11 +621,11 @@ class term extends combine_named
     /**
      * create an SQL statement to retrieve a term by name from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the term and the related word, triple, formula or verb
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql $sc, string $name): sql_par
+    function load_sql_by_name(sql_creator $sc, string $name): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME);
         $sc->add_where(term::FLD_NAME, $name);

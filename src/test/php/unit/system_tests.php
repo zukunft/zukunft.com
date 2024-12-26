@@ -40,7 +40,7 @@ include_once API_SYSTEM_PATH . 'sys_log.php';
 use api\word\word as word_api;
 use api\ref\ref as ref_api;
 use cfg\config;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\formula;
 use cfg\ip_range;
@@ -69,7 +69,7 @@ class system_tests
         // init
         $lib = new library();
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'system->';
         $t->resource_path = 'db/system/';
 

@@ -69,6 +69,7 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
@@ -83,6 +84,7 @@ include_once SHARED_PATH . 'json_fields.php';
 
 use api\word\word as word_api;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -90,17 +92,12 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type_list;
-use cfg\export\sandbox_exp;
-use cfg\export\sandbox_exp_named;
-use cfg\export\word_exp;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\value\value_list;
 use shared\enum\foaf_direction;
 use shared\json_fields;
 use shared\library;
-use shared\types\protection_type as protect_type_shared;
-use shared\types\share_type as share_type_shared;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
 
@@ -681,10 +678,10 @@ class word extends sandbox_typed
     /**
      * create the SQL to load the default word always by the id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc): sql_par
+    function load_standard_sql(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
@@ -701,11 +698,11 @@ class word extends sandbox_typed
      * create an SQL statement to retrieve a word by id from the database
      * added to word just to assign the class for the user sandbox object
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int $id): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
         return parent::load_sql_by_id($sc, $id);
     }
@@ -713,11 +710,11 @@ class word extends sandbox_typed
     /**
      * create an SQL statement to retrieve a word representing a formula by name
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the formula
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_formula_name(sql $sc, string $name): sql_par
+    function load_sql_by_formula_name(sql_creator $sc, string $name): sql_par
     {
         global $phr_typ_cac;
         $qp = parent::load_sql_usr_num($sc, $this, formula::FLD_NAME);
@@ -732,12 +729,12 @@ class word extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a word from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         // TODO check if and where it is needed to exclude the formula words
         // global $phr_typ_cac;
@@ -1616,7 +1613,7 @@ class word extends sandbox_typed
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 to check if the word has been changed
      */
-    function not_changed_sql(sql $sc): sql_par
+    function not_changed_sql(sql_creator $sc): sql_par
     {
         $sc->set_class(word::class);
         return $sc->load_sql_not_changed($this->id(), $this->owner_id);
@@ -1938,7 +1935,7 @@ class word extends sandbox_typed
     {
         global $cng_fld_cac;
 
-        $sc = new sql();
+        $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 

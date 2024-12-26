@@ -37,7 +37,7 @@ namespace cfg;
 include_once MODEL_HELPER_PATH . 'db_object.php';
 
 use api\system\db_object as db_object_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_par;
 use cfg\group\group;
 use cfg\group\group_id;
@@ -151,11 +151,11 @@ class db_object_multi extends db_object
     /**
      * create an SQL statement to retrieve a user sandbox object by id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int|string $id the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int|string $id): sql_par
+    function load_sql_by_id(sql_creator $sc, int|string $id): sql_par
     {
         return parent::load_sql_by_id_str($sc, $id);
     }

@@ -32,7 +32,7 @@
 
 namespace unit;
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\job_time;
 use cfg\user;
@@ -49,7 +49,7 @@ class user_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'user->';
         $t->resource_path = 'db/user/';
 

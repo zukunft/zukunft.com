@@ -37,7 +37,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_value_list.php';
 include_once API_RESULT_PATH . 'result_list.php';
 
 use api\result\result_list as result_list_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_list;
 use cfg\db\sql_par;
@@ -214,7 +214,7 @@ class result_list extends sandbox_value_list
      *  TODO use order by in query
      *  TODO use limit and page in query
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related results should be loaded
      * @param bool $usr_tbl true if only the user overwrites should be loaded
      * @param bool $or if true all results are returned that are linked to any phrase of the list
@@ -223,7 +223,7 @@ class result_list extends sandbox_value_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr_lst(
-        sql         $sc,
+        sql_creator $sc,
         phrase_list $phr_lst,
         bool        $usr_tbl = false,
         bool        $or = false,
@@ -236,11 +236,11 @@ class result_list extends sandbox_value_list
 
     /**
      * create an SQL statement to retrieve a list of results linked to a formula from the database
-     * @param sql $sc
+     * @param sql_creator $sc
      * @param formula $frm
      * @return sql_par
      */
-    function load_sql_by_frm(sql $sc, formula $frm): sql_par
+    function load_sql_by_frm(sql_creator $sc, formula $frm): sql_par
     {
         $qp = new sql_par(result_list::class);
         $qp->name .= 'frm';
@@ -261,7 +261,7 @@ class result_list extends sandbox_value_list
      * TODO add ORDER BY (relevance of value)
      * TODO use LIMIT and PAGE
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related results should be loaded
      * @param bool $usr_tbl true if only the user overwrites should be loaded
      * @param bool $or true if all results related to any phrase of the list should be loaded
@@ -270,7 +270,7 @@ class result_list extends sandbox_value_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_src(
-        sql         $sc,
+        sql_creator $sc,
         phrase_list $phr_lst,
         bool        $usr_tbl = false,
         bool        $or = false,
@@ -357,12 +357,12 @@ class result_list extends sandbox_value_list
      * create an SQL statement to retrieve a list of results linked to a phrase from the database
      * from a single table
      *     *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param formula $frm if set to get all results for this phrase
      * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_single(sql $sc, formula $frm, array $sc_par_lst): sql_par
+    function load_sql_by_frm_single(sql_creator $sc, formula $frm, array $sc_par_lst): sql_par
     {
         $qp = $this->load_sql_init($sc, result::class, 'frm', $sc_par_lst, new sql_field_list());
         $sc->add_where(formula::FLD_ID, $frm->id());
@@ -377,12 +377,12 @@ class result_list extends sandbox_value_list
     /**
      * the common query parameter to get a list of results
      *
-     * @param sql $sc the sql creator instance with the target db_type already set
+     * @param sql_creator $sc the sql creator instance with the target db_type already set
      * @param string $query_name the name extension to make the query name unique
      * @param sql_type $tbl_typ the table extension to force the sub table selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql $sc, string $query_name, sql_type $tbl_typ = sql_type::MOST): sql_par
+    private function load_sql(sql_creator $sc, string $query_name, sql_type $tbl_typ = sql_type::MOST): sql_par
     {
         $qp = new sql_par(self::class, new sql_type_list([$tbl_typ]));
         $qp->name .= $query_name;
@@ -401,11 +401,11 @@ class result_list extends sandbox_value_list
     /**
      * load a list of results by the phrase group e.g. the results of other users
      *
-     * @param sql $sc the sql creator instance with the target db_type already set
+     * @param sql_creator $sc the sql creator instance with the target db_type already set
      * @param group $grp the group of phrases to select the results
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp(sql $sc, group $grp): sql_par
+    function load_sql_by_grp(sql_creator $sc, group $grp): sql_par
     {
         $ext = $grp->table_type();
         $qp = $this->load_sql($sc, 'grp', $ext);
@@ -430,11 +430,11 @@ class result_list extends sandbox_value_list
     /**
      * load a list of results by the source group e.g. to get the dependent results
      *
-     * @param sql $sc the sql creator instance with the target db_type already set
+     * @param sql_creator $sc the sql creator instance with the target db_type already set
      * @param group $grp the group of phrases to select the results
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_src_grp(sql $sc, group $grp): sql_par
+    function load_sql_by_src_grp(sql_creator $sc, group $grp): sql_par
     {
         $qp = $this->load_sql($sc, 'src_grp');
         if ($grp->is_prime()) {

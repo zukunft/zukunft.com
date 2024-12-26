@@ -35,7 +35,7 @@ namespace unit;
 include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
 include_once MODEL_FORMULA_PATH . 'formula_link_list.php';
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\formula_link;
@@ -54,7 +54,7 @@ class formula_link_tests
         // init
         $lib = new library();
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'formula_link->';
         $t->resource_path = 'db/formula/';
 

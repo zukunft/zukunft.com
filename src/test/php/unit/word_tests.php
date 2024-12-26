@@ -39,7 +39,7 @@ include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\formula\formula as formula_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\sandbox;
@@ -61,7 +61,7 @@ class word_tests
         global $phr_typ_cac;
 
         // init
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'word->';
         $t->resource_path = 'db/word/';
 
@@ -179,11 +179,11 @@ class word_tests
      * check the load SQL statements creation to get the word corresponding to the formula name
      *
      * @param test_cleanup $t the testing object with the error counter
-     * @param sql $sc does not need to be connected to a real database
+     * @param sql_creator $sc does not need to be connected to a real database
      * @param word $wrd the user sandbox object e.g. a word
      * @return void true if all tests are fine
      */
-    private function assert_sql_formula_name(test_cleanup $t, sql $sc, word $wrd): void
+    private function assert_sql_formula_name(test_cleanup $t, sql_creator $sc, word $wrd): void
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);

@@ -395,7 +395,7 @@ class sql_par_field_list
             $i = 0;
             foreach ($fields as $fld) {
                 $val = $values[$i];
-                $sc = new sql();
+                $sc = new sql_creator();
                 $type = $sc->get_sql_par_type($val);
                 if (count($types) == count($fields)) {
                     $type = $types[$i];
@@ -615,7 +615,7 @@ class sql_par_field_list
         return $this;
     }
 
-    function esc_names(sql $sc): void
+    function esc_names(sql_creator $sc): void
     {
         foreach ($this->lst as $key => $fld) {
             if ($fld->value != sql::NOW) {
@@ -626,10 +626,10 @@ class sql_par_field_list
 
     /**
      * create the sql function call parameter statement
-     * @param sql $sc
+     * @param sql_creator $sc
      * @return string
      */
-    function par_sql(sql $sc): string
+    function par_sql(sql_creator $sc): string
     {
         $sql = '';
         foreach ($this->lst as $key => $fld) {
@@ -663,10 +663,10 @@ class sql_par_field_list
 
     /**
      * create the sql call parameter type statement part
-     * @param sql $sc
+     * @param sql_creator $sc
      * @return string
      */
-    function par_types(sql $sc): string
+    function par_types(sql_creator $sc): string
     {
         $sql = '';
         foreach ($this->lst as $key => $fld) {
@@ -681,10 +681,10 @@ class sql_par_field_list
 
     /**
      * create the sql call parameter symbol statement part
-     * @param sql $sc
+     * @param sql_creator $sc
      * @return string
      */
-    function par_vars(sql $sc): string
+    function par_vars(sql_creator $sc): string
     {
         $sql = '';
         $pos = 1;
@@ -704,10 +704,10 @@ class sql_par_field_list
 
     /**
      * create the sql function call parameter statement
-     * @param sql $sc
+     * @param sql_creator $sc
      * @return string
      */
-    function sql_par_names(sql $sc): string
+    function sql_par_names(sql_creator $sc): string
     {
         $sql = '';
         foreach ($this->lst as $key => $fld) {

@@ -43,7 +43,11 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
+
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -56,8 +60,6 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_table_list;
 use shared\library;
-
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 
 class formula_link extends sandbox_link
 {
@@ -302,12 +304,12 @@ class formula_link extends sandbox_link
     /**
      * create an SQL statement to retrieve the user specific formula link from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
      * @return sql_par the SQL statement base on the parameters set in $this
      */
     function load_sql_user_changes(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -318,11 +320,11 @@ class formula_link extends sandbox_link
     /**
      * create the common part of an SQL statement to retrieve the parameters of a formula link from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = new sql_par($class);
         $qp->name .= $query_name;
@@ -355,10 +357,10 @@ class formula_link extends sandbox_link
     /**
      * create an SQL statement to retrieve the parameters of the standard formula link from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc): sql_par
+    function load_standard_sql(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
@@ -489,7 +491,7 @@ class formula_link extends sandbox_link
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 to check if no one else has changed the formula link
      */
-    function not_changed_sql(sql $sc): sql_par
+    function not_changed_sql(sql_creator $sc): sql_par
     {
         $sc->set_class(formula_link::class);
         return $sc->load_sql_not_changed($this->id(), $this->owner_id);
@@ -710,7 +712,7 @@ class formula_link extends sandbox_link
     {
         global $cng_fld_cac;
 
-        $sc = new sql();
+        $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);

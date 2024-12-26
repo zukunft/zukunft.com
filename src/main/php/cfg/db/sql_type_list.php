@@ -484,7 +484,7 @@ class sql_type_list
             } elseif ($this->get_all()) {
                 $ext .= sql::NAME_SEP;
             } else {
-                $sc = new sql();
+                $sc = new sql_creator();
                 if (!$this->is_cur_not_l()) {
                     $ext .= sql::NAME_SEP . sql::NAME_BY . sql::NAME_SEP;
                 }

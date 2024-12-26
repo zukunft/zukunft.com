@@ -36,7 +36,7 @@ include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\word\word as word_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\phrase_table;
 use cfg\phrase_table_status;
 use cfg\phrase_type;
@@ -59,7 +59,7 @@ class phrase_tests
         global $usr;
 
         // init
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'phrase->';
         $t->resource_path = 'db/phrase/';
 

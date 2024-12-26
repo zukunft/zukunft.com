@@ -52,12 +52,13 @@
 
 namespace cfg\component;
 
+include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_COMPONENT_PATH . 'view_style.php';
 
-use shared\api;
-use api\component\component as component_api;
 use cfg\db\sql;
+use api\component\component as component_api;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -65,8 +66,6 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\export\component_exp;
-use cfg\export\sandbox_exp;
 use cfg\formula;
 use cfg\log\change;
 use cfg\log\change_action;
@@ -513,10 +512,10 @@ class component extends sandbox_typed
 
     /**
      * TODO use a set_join function for all not simple sql joins
-     * @param sql $sc the sql creator without component joins
-     * @return sql the sql creator with the components join set
+     * @param sql_creator $sc the sql creator without component joins
+     * @return sql_creator the sql creator with the components join set
      */
-    function set_join(sql $sc): sql
+    function set_join(sql_creator $sc): sql_creator
     {
         $sc->set_join_fields(component::FLD_NAMES, component::class);
         $sc->set_join_usr_fields(component::FLD_NAMES_USR, component::class);
@@ -661,10 +660,10 @@ class component extends sandbox_typed
     /**
      * create the SQL to load the default view always by the id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc): sql_par
+    function load_standard_sql(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
@@ -680,12 +679,12 @@ class component extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view component from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         return parent::load_sql_usr_num($sc, $this, $query_name);
     }
@@ -812,12 +811,12 @@ class component extends sandbox_typed
     /**
      * create an SQL statement to retrieve the user changes of the current view component
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_user_changes(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -1311,7 +1310,7 @@ class component extends sandbox_typed
     {
         global $cng_fld_cac;
 
-        $sc = new sql();
+        $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 

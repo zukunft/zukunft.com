@@ -37,7 +37,7 @@
 
 namespace cfg\value;
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
@@ -158,11 +158,11 @@ class value_time_series extends sandbox_value
 
     /**
      * create the SQL to load the default time series always by the id
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, array $fld_lst = []): sql_par
+    function load_standard_sql(sql_creator $sc, array $fld_lst = []): sql_par
     {
         $fld_lst = array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR);
         return parent::load_standard_sql($sc, $fld_lst);
@@ -171,12 +171,12 @@ class value_time_series extends sandbox_value
     /**
      * create the common part of an SQL statement to retrieve the parameters of a time series from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
@@ -206,7 +206,7 @@ class value_time_series extends sandbox_value
     /**
      * create the common part of an SQL statement to retrieve the parameters of a value time series
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -215,12 +215,12 @@ class value_time_series extends sandbox_value
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql      $sc,
-        string   $query_name,
-        string   $class = self::class,
-        sql_type_list    $sc_par_lst = new sql_type_list([]),
-        string   $ext = '',
-        string   $id_ext = ''
+        sql_creator   $sc,
+        string        $query_name,
+        string        $class = self::class,
+        sql_type_list $sc_par_lst = new sql_type_list([]),
+        string        $ext = '',
+        string        $id_ext = ''
     ): sql_par
     {
         $qp = parent::load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext, $id_ext);
@@ -239,12 +239,12 @@ class value_time_series extends sandbox_value
     /**
      * create an SQL statement to retrieve a time series by the phrase group from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param group $grp the phrase group to which the time series should be loaded
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp(sql $sc, group $grp, string $class = self::class): sql_par
+    function load_sql_by_grp(sql_creator $sc, group $grp, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, group::FLD_ID);
         $sc->add_where(group::FLD_ID, $grp->id());

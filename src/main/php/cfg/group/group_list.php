@@ -35,7 +35,7 @@ namespace cfg\group;
 
 include_once DB_PATH . 'sql_par_type.php';
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
@@ -107,15 +107,15 @@ class group_list extends sandbox_list
      * create an SQL statement to retrieve a list of groups linked to the given phrase from the database
      * TODO review to load the prime group by id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param phrase $phr if set to get all values for this phrase
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr(
-        sql    $sc,
-        phrase $phr,
-        int    $limit = 0,
-        int    $page = 0
+        sql_creator $sc,
+        phrase      $phr,
+        int         $limit = 0,
+        int         $page = 0
     ): sql_par
     {
         $lib = new library();
@@ -154,12 +154,12 @@ class group_list extends sandbox_list
      * create an SQL statement to retrieve a list of values linked to a phrase from the database
      * from a single table
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param phrase $phr if set to get all values for this phrase
      * @param array $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_phr_single(sql $sc, phrase $phr, array $sc_par_lst): sql_par
+    function load_sql_by_phr_single(sql_creator $sc, phrase $phr, array $sc_par_lst): sql_par
     {
         $qp = $this->load_sql_init($sc, group::class, 'phr', $sc_par_lst);
         $grp_id = new group_id();
@@ -174,16 +174,16 @@ class group_list extends sandbox_list
      * set the SQL query parameters to load a list of groups
      * set the fields for a union select of all possible tables
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the value or result class name
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_init(
-        sql    $sc,
-        string $class,
-        string $query_name,
-        array  $tbl_types = []
+        sql_creator $sc,
+        string      $class,
+        string      $query_name,
+        array       $tbl_types = []
     ): sql_par
     {
         $is_prime = $this->is_prime($tbl_types);
@@ -207,11 +207,11 @@ class group_list extends sandbox_list
     /**
      * create the common part of an SQL statement to get a list of phrase groups names from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_names_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    protected function load_names_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $grp = new group($this->user());
         return $grp->load_sql($sc, $query_name, $class);
@@ -219,13 +219,13 @@ class group_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of phrase groups names by the ids
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param array $grp_ids a list of int values with the group ids
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_names_sql_by_ids(sql $sc, array $grp_ids, int $limit = 0, int $offset = 0): sql_par
+    function load_names_sql_by_ids(sql_creator $sc, array $grp_ids, int $limit = 0, int $offset = 0): sql_par
     {
         $qp = $this->load_names_sql($sc, 'ids_fast');
 
@@ -247,12 +247,12 @@ class group_list extends sandbox_list
      * create the common part of an SQL statement to get a list of phrase groups from the database
      * TODO combine standard with prime and big
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    protected function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $grp = new group($this->user());
         $qp = $grp->load_sql($sc, $query_name);
@@ -272,13 +272,13 @@ class group_list extends sandbox_list
      * TODO add load test to compare like matching with link table matching
      * TODO for prime use binary key like matching
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param array $grp_ids a list of int values with the group ids
      * @param int $limit the number of rows to return
      * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql $sc, array $grp_ids, int $limit = 0, int $offset = 0): sql_par
+    function load_sql_by_ids(sql_creator $sc, array $grp_ids, int $limit = 0, int $offset = 0): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(group::FLD_ID, $grp_ids);

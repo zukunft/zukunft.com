@@ -44,14 +44,15 @@
 
 namespace cfg\result;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
+include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
 include_once SERVICE_EXPORT_PATH . 'result_exp.php';
 
-use shared\api;
-use api\result\result as result_api;
 use cfg\db\sql;
+use api\result\result as result_api;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -61,7 +62,6 @@ use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\element\element_list;
 use cfg\export\export;
-use cfg\export\result_exp;
 use cfg\expression;
 use cfg\figure;
 use cfg\formula;
@@ -506,12 +506,12 @@ class result extends sandbox_value
 
     /**
      * create the SQL to load the single default result always by the id
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, array $fld_lst = []): sql_par
+    function load_standard_sql(sql_creator $sc, array $fld_lst = []): sql_par
     {
         $fld_lst = array_merge(self::FLD_NAMES, array(user::FLD_ID));
         return parent::load_standard_sql($sc, $fld_lst);
@@ -521,7 +521,7 @@ class result extends sandbox_value
      * fill the sql creator with the parameter the SQL to load results
      * from one of the tables with results
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the unique name of the query e.g. id or name
      * @param string $class the name of the child class from where the call has been triggered
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -530,7 +530,7 @@ class result extends sandbox_value
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql           $sc,
+        sql_creator   $sc,
         string        $query_name,
         string        $class = self::class,
         sql_type_list $sc_par_lst = new sql_type_list([]),
@@ -552,12 +552,12 @@ class result extends sandbox_value
     /**
      * create the SQL to load a results by phrase group id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param group $grp the group used for the selection
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp(sql $sc, group $grp, string $class = self::class): sql_par
+    function load_sql_by_grp(sql_creator $sc, group $grp, string $class = self::class): sql_par
     {
         return parent::load_sql_by_grp($sc, $grp, $class);
     }
@@ -565,11 +565,11 @@ class result extends sandbox_value
     /**
      * prepare the query parameter to load a results by phrase group id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql_by_grp_prepare(sql $sc, group $grp): sql_par
+    private function load_sql_by_grp_prepare(sql_creator $sc, group $grp): sql_par
     {
         $qp = $this->load_sql($sc, 'grp');
         $sc->set_name($qp->name);
@@ -580,11 +580,11 @@ class result extends sandbox_value
     /**
      * create the SQL to load a default results for all users by phrase group id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_std_by_grp(sql $sc, group $grp): sql_par
+    function load_sql_std_by_grp(sql_creator $sc, group $grp): sql_par
     {
         $sc->set_class(self::class);
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
@@ -598,12 +598,12 @@ class result extends sandbox_value
     /**
      * create the SQL to load a results by formula id and phrase group id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param formula $frm the formula used for the selection
      * @param group $grp the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_grp(sql $sc, formula $frm, group $grp): sql_par
+    function load_sql_by_frm_grp(sql_creator $sc, formula $frm, group $grp): sql_par
     {
         $qp = $this->load_sql($sc, 'frm_grp');
         $sc->set_name($qp->name);
@@ -617,12 +617,12 @@ class result extends sandbox_value
     /**
      * create the SQL to load a results by formula id and phrase group id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param formula $frm the formula used for the selection
      * @param group_list $lst the group used for the selection
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_grp_lst(sql $sc, formula $frm, group_list $lst): sql_par
+    function load_sql_by_frm_grp_lst(sql_creator $sc, formula $frm, group_list $lst): sql_par
     {
         $qp = $this->load_sql($sc, 'frm_grp_lst');
         $sc->set_name($qp->name);
@@ -1609,7 +1609,7 @@ class result extends sandbox_value
                     $field_values[] = $this->user()->id();
                 }
                 $field_names[] = sandbox_value::FLD_LAST_UPDATE;
-                //$field_values[] = sql_creator::NOW; // replaced with time of last change that has been included in the calculation
+                //$field_values[] = sql::NOW; // replaced with time of last change that has been included in the calculation
                 $field_values[] = $this->last_val_update->format('Y-m-d H:i:s');
                 $db_con->set_class(result::class);
                 $sc = $db_con->sql_creator();

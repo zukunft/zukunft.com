@@ -34,7 +34,7 @@ namespace unit;
 
 include_once WEB_FIGURE_PATH . 'figure_list.php';
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\fig_ids;
 use cfg\figure;
 use cfg\figure_list;
@@ -51,7 +51,7 @@ class figure_list_tests
         global $usr;
 
         // init
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'figure->';
         $t->resource_path = 'db/figure/';
         $json_file = 'unit/figure/figure_list_import.json';

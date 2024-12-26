@@ -34,7 +34,7 @@ namespace unit;
 
 include_once MODEL_ELEMENT_PATH . 'element_list.php';
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\element\element_list;
 use cfg\element\element_type;
@@ -48,7 +48,7 @@ class element_list_tests
         global $elm_typ_cac;
 
         // init
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'element_list->';
         $t->resource_path = 'db/element/';
         $elm_lst = new element_list($t->usr1);
@@ -77,7 +77,7 @@ class element_list_tests
      * and check if the statement name is unique
      *
      * @param test_cleanup $t the test environment
-     * @param sql $sc the test database connection
+     * @param sql_creator $sc the test database connection
      * @param element_list $lst the empty formula element list object
      * @param int $frm_id id of the formula to be used for the query creation
      * @param int $elm_type_id
@@ -86,7 +86,7 @@ class element_list_tests
      */
     private function assert_sql_by_frm_and_type_id(
         test_cleanup $t,
-        sql          $sc,
+        sql_creator  $sc,
         element_list $lst,
         int          $frm_id,
         int          $elm_type_id,
@@ -109,16 +109,16 @@ class element_list_tests
      * check the sql to delete row select by id
      *
      * @param test_cleanup $t the test environment
-     * @param sql $sc the test database connection
+     * @param sql_creator $sc the test database connection
      * @param element_list $lst the empty formula element list object
      * @param string $test_name the test name only for the test log
      * @return void
      */
     function assert_sql_del_by_id_lst(
         test_cleanup $t,
-        sql $sc,
+        sql_creator  $sc,
         element_list $lst,
-        string $test_name = ''): void
+        string       $test_name = ''): void
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);

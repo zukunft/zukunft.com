@@ -70,6 +70,7 @@ namespace cfg;
 include_once MODEL_SYSTEM_PATH . 'message_translator.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
+include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
@@ -82,6 +83,7 @@ include_once SHARED_PATH . 'json_fields.php';
 use api\system\messages as msg_enum;
 use api\sandbox\sandbox as sandbox_api;
 use cfg\component\component_link_type;
+use cfg\db\sql;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
 use cfg\log\change_table;
@@ -90,14 +92,13 @@ use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use cfg\component\component;
 use cfg\component\component_link;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
-use cfg\export\sandbox_exp;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
@@ -706,10 +707,10 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * create the SQL to load the single default value always by the id
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc): sql_par
+    function load_standard_sql(sql_creator $sc): sql_par
     {
         $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
         $qp->name .= sql_db::FLD_ID;
@@ -726,12 +727,12 @@ class sandbox extends db_object_seq_id_user
     /**
      * create the SQL to load a sandbox object with numeric user specific fields
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sandbox $sbx the name of the child class from where the call has been triggered
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_usr_num(sql $sc, sandbox $sbx, string $query_name): sql_par
+    function load_sql_usr_num(sql_creator $sc, sandbox $sbx, string $query_name): sql_par
     {
         $qp = new sql_par($sbx::class);
         $qp->name .= $query_name;
@@ -750,7 +751,7 @@ class sandbox extends db_object_seq_id_user
     /**
      * prepare the SQL parameter to load a single user specific value
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param array $fields list of the fields from the child object
      * @param array $usr_fields list of the user specified fields from the child object
@@ -758,11 +759,11 @@ class sandbox extends db_object_seq_id_user
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_fields(
-        sql    $sc,
-        string $query_name,
-        array  $fields,
-        array  $usr_fields,
-        array  $usr_num_fields,
+        sql_creator $sc,
+        string      $query_name,
+        array       $fields,
+        array       $usr_fields,
+        array       $usr_num_fields,
     ): sql_par
     {
         $qp = parent::load_sql($sc, $query_name);
@@ -1096,10 +1097,10 @@ class sandbox extends db_object_seq_id_user
     /**
      * create an SQL statement to get all the users that have changed this value
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_changer(sql $sc): sql_par
+    function load_sql_changer(sql_creator $sc): sql_par
     {
         $qp = new sql_par($this::class);
         $qp->name .= 'changer';
@@ -1150,10 +1151,10 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * create an SQL statement to get a list of all user that have ever changed the object
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_of_users_that_changed(sql $sc): sql_par
+    function load_sql_of_users_that_changed(sql_creator $sc): sql_par
     {
         $lib = new library();
 
@@ -1367,12 +1368,12 @@ class sandbox extends db_object_seq_id_user
     /**
      * create an SQL statement to retrieve the user changes of the current object
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_user_changes(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -2806,12 +2807,12 @@ class sandbox extends db_object_seq_id_user
      * always all fields are included in the query to be able to remove overwrites with a null value
      * overwritten by link objects
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -2834,13 +2835,13 @@ class sandbox extends db_object_seq_id_user
     /**
      * create the sql statement to update a sandbox object in the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sandbox $db_row the sandbox object with the database values before the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update(
-        sql           $sc,
+        sql_creator   $sc,
         sandbox       $db_row,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
@@ -2864,12 +2865,12 @@ class sandbox extends db_object_seq_id_user
     /**
      * create the sql statement to delete or exclude a named sandbox object e.g. word to the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
      */
     function sql_delete(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -2909,14 +2910,14 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * @param sql $sc the sql creator object with the db type set
+     * @param sql_creator $sc the sql creator object with the db type set
      * @param sql_par $qp the query parameter with the name already set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types for the log entry what has been deleted
      * @param sql_type_list $sc_par_lst
      * @return sql_par
      */
     private function sql_delete_and_log(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         sql_type_list      $sc_par_lst = new sql_type_list([])
@@ -2927,7 +2928,7 @@ class sandbox extends db_object_seq_id_user
         $table_id = $sc->table_id($this::class);
 
         // set some var names to shorten the code lines
-        $ext = sql::NAME_SEP . sql::FILE_DELETE;
+        $ext = sql::NAME_SEP . sql_creator::FILE_DELETE;
         $id_fld = $sc->id_field_name();
         $id_val = '_' . $id_fld;
         $name_fld = $this->name_field();
@@ -3118,7 +3119,7 @@ class sandbox extends db_object_seq_id_user
         global $cng_fld_cac;
 
         $lst = new sql_par_field_list();
-        $sc = new sql();
+        $sc = new sql_creator();
         $table_id = $sc->table_id($this::class);
 
         if ($sbx->excluded <> $this->excluded) {
@@ -3182,10 +3183,10 @@ class sandbox extends db_object_seq_id_user
     /**
      * the sql statement to create the tables of a sandbox object
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the table
      */
-    function sql_table(sql $sc): string
+    function sql_table(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         $sql .= $this->sql_table_create($sc, new sql_type_list([sql_type::SANDBOX]));
@@ -3197,10 +3198,10 @@ class sandbox extends db_object_seq_id_user
     /**
      * the sql statement to create the database indices of a sandbox object
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the indices
      */
-    function sql_index(sql $sc): string
+    function sql_index(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         $sql .= $this->sql_index_create($sc, new sql_type_list([sql_type::SANDBOX]));
@@ -3212,10 +3213,10 @@ class sandbox extends db_object_seq_id_user
     /**
      * the sql statement to create the foreign keys of a sandbox object
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the foreign keys
      */
-    function sql_foreign_key(sql $sc): string
+    function sql_foreign_key(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         $sql .= $this->sql_foreign_key_create($sc, new sql_type_list([sql_type::SANDBOX]));
@@ -3234,14 +3235,14 @@ class sandbox extends db_object_seq_id_user
      * "_switch" because either including the logging or without
      * TODO add qp merge
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_switch(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
         sql_type_list      $sc_par_lst = new sql_type_list([])): sql_par
@@ -3279,14 +3280,14 @@ class sandbox extends db_object_seq_id_user
      * create the sql statement to add a new named sandbox object e.g. add a word to the database
      * TODO add qp merge
      *
-     * @param sql $sc sql creator with the target db_type already set
+     * @param sql_creator $sc sql creator with the target db_type already set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id fields
      * @param array $fld_lst_all list of all potential field names of the given object that can be changed by the user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_with_log(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
@@ -3473,7 +3474,7 @@ class sandbox extends db_object_seq_id_user
      * create the sql statement to add a new named sandbox object e.g. word to the database
      * dummy function overwritten by the child objects
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
@@ -3481,7 +3482,7 @@ class sandbox extends db_object_seq_id_user
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_key_field(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
@@ -3495,14 +3496,14 @@ class sandbox extends db_object_seq_id_user
      * create the sql statement to change or exclude a sandbox object e.g. word to the database
      * either via a prepared SQL statement or via a function that includes the logging
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
      */
     function sql_update_switch(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
         sql_type_list      $sc_par_lst = new sql_type_list([])
@@ -3534,7 +3535,7 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * @param sql $sc the sql creator object with the db type set
+     * @param sql_creator $sc the sql creator object with the db type set
      * @param sql_par $qp the query parameter with the name already set
      * @param sql_par_field_list $fvt_lst
      * @param array $fld_lst_all
@@ -3542,7 +3543,7 @@ class sandbox extends db_object_seq_id_user
      * @return sql_par
      */
     private function sql_update_named_and_log(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
@@ -3552,7 +3553,7 @@ class sandbox extends db_object_seq_id_user
 
         // set some var names to shorten the code lines
         $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $ext = sql::NAME_SEP . sql::FILE_INSERT;
+        $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
         $id_fld = $sc->id_field_name();
         $id_val = '_' . $id_fld;
 
@@ -3698,12 +3699,12 @@ class sandbox extends db_object_seq_id_user
      * the common part of the sql_insert and sql_update functions
      * TODO include the sql statements to log the changes
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the query name extension to differ the queries based on the fields changed
      * @return sql_par prepared sql parameter object with the name set
      */
-    protected function sql_common(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([]), string $ext = ''): sql_par
+    protected function sql_common(sql_creator $sc, sql_type_list $sc_par_lst = new sql_type_list([]), string $ext = ''): sql_par
     {
         $qp = new sql_par($this::class, $sc_par_lst, $ext);
 

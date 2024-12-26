@@ -33,7 +33,7 @@
 namespace html\log;
 
 use cfg\component\component;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\formula;
 use cfg\log\change_table_list;

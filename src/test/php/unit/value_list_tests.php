@@ -35,7 +35,7 @@ namespace unit;
 include_once WEB_VALUE_PATH . 'value_list.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\phrase;
 use cfg\phrase_list;
@@ -58,7 +58,7 @@ class value_list_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'value_list->';
         $t->resource_path = 'db/value/';
 

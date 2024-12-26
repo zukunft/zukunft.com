@@ -36,7 +36,7 @@
 namespace cfg\db;
 
 include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_DB_PATH . 'sql.php';
+include_once MODEL_DB_PATH . 'sql_creator.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 include_once MODEL_IMPORT_PATH . 'import_file.php';
 include_once MODEL_HELPER_PATH . 'config_numbers.php';
@@ -939,7 +939,7 @@ class sql_db
 
         // truncate tables that have already a build in truncate statement creation
         $sql = '';
-        $sc = new sql();
+        $sc = new sql_creator();
         $grp = new group($sys_usr);
         $sql .= $grp->sql_truncate($sc);
 
@@ -5246,7 +5246,7 @@ class sql_db
 
     function sql_setup_header(): string
     {
-        $sc = new sql();
+        $sc = new sql_creator();
         $sql = $sc->sql_separator();
         if ($this->db_type == sql_db::MYSQL) {
             $sql .= self::SETUP_HEADER_MYSQL;
@@ -5258,7 +5258,7 @@ class sql_db
 
     function sql_setup_footer(): string
     {
-        $sc = new sql();
+        $sc = new sql_creator();
         $sql = '';
         if ($this->db_type == sql_db::MYSQL) {
             $sql .= self::SETUP_FOOTER_MYSQL;
@@ -5270,7 +5270,7 @@ class sql_db
 
     function sql_separator_index(): string
     {
-        $sc = new sql();
+        $sc = new sql_creator();
         $sql = $sc->sql_separator();
         $sql .= self::SETUP_COMMENT . ' ';
         $sql .= self::SETUP_COMMENT . ' ' . self::SETUP_INDEX . ' ';
@@ -5281,7 +5281,7 @@ class sql_db
 
     function sql_separator_foreign_key(): string
     {
-        $sc = new sql();
+        $sc = new sql_creator();
         $sql = $sc->sql_separator();
         $sql .= self::SETUP_COMMENT . ' ';
         $sql .= self::SETUP_COMMENT . ' ' . self::SETUP_FOREIGN_KEY . ' ';
@@ -5291,11 +5291,11 @@ class sql_db
     }
 
     /**
-     * @return sql with the same db_type
+     * @return sql_creator with the same db_type
      */
-    function sql_creator(): sql
+    function sql_creator(): sql_creator
     {
-        $sc = new sql();
+        $sc = new sql_creator();
         if ($this->db_type == null) {
             $sc->set_db_type(sql_db::POSTGRES);
         } else {

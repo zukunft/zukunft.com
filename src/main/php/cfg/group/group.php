@@ -54,6 +54,7 @@
 
 namespace cfg\group;
 
+include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
@@ -65,6 +66,7 @@ include_once API_PHRASE_PATH . 'group.php';
 use api\system\messages as msg_enum;
 use api\phrase\group as group_api;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -73,7 +75,6 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\export\sandbox_exp;
 use cfg\message_translator;
 use cfg\phr_ids;
 use cfg\phrase;
@@ -510,10 +511,10 @@ class group extends sandbox_multi
     /**
      * the sql statement to create the group tables
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the table
      */
-    function sql_table(sql $sc): string
+    function sql_table(sql_creator $sc): string
     {
         return $this->sql_creator($sc)[0];
     }
@@ -521,10 +522,10 @@ class group extends sandbox_multi
     /**
      * the sql statements to create all indices for the group tables used to store the group name changes of a user
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the indices
      */
-    function sql_index(sql $sc): string
+    function sql_index(sql_creator $sc): string
     {
         return $this->sql_creator($sc)[1];
     }
@@ -532,10 +533,10 @@ class group extends sandbox_multi
     /**
      * the sql statements to create all foreign keys for the group tables used to store the group name changes of a user
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the foreign keys
      */
-    function sql_foreign_key(sql $sc): string
+    function sql_foreign_key(sql_creator $sc): string
     {
         return $this->sql_creator($sc)[2];
     }
@@ -543,10 +544,10 @@ class group extends sandbox_multi
     /**
      * the sql statements to truncate the group tables
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the table
      */
-    function sql_truncate(sql $sc): string
+    function sql_truncate(sql_creator $sc): string
     {
         return $this->sql_creator($sc)[3];
     }
@@ -557,10 +558,10 @@ class group extends sandbox_multi
      * 1 => all indices for the group tables used to store the group name changes of a user
      * 1 => all foreign keys for the group tables used to store the group name changes of a user
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return array the sql statement to create the table
      */
-    private function sql_creator(sql $sc): array
+    private function sql_creator(sql_creator $sc): array
     {
         $sql = $sc->sql_separator();
         $sql_index = $sc->sql_separator();
@@ -577,7 +578,7 @@ class group extends sandbox_multi
 
     /**
      * add the sql statements for one table to the given array of sql statements
-     * @param sql $sc the sql creator object with the target db_type set
+     * @param sql_creator $sc the sql creator object with the target db_type set
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @param array $key_fld with the parameter for the table primary key field
      * @param string $tbl_comment the comment for the table in the sql statement
@@ -585,7 +586,7 @@ class group extends sandbox_multi
      * @return array the list of sql statements including the statements created by this function call
      */
     private function sql_one_tbl(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst,
         array         $key_fld,
         string        $tbl_comment,
@@ -726,12 +727,12 @@ class group extends sandbox_multi
     /**
      * create an SQL statement to retrieve a user sandbox object by id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int|string $id the id of the phrase group, which can also be a string representing a 512-bit key
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int|string $id, string $class = self::class): sql_par
     {
         $this->set_id($id);
         // for the group the number of phrases are not relevant for the queries
@@ -750,11 +751,11 @@ class group extends sandbox_multi
      * TODO check that the user does not use a group name that matches the generated name of another group
      * TODO include the prime and big tables into the search
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the phrase group
      * @return sql_par the SQL statement base on the parameters set in $this
      */
-    function load_sql_by_name(sql $sc, string $name): sql_par
+    function load_sql_by_name(sql_creator $sc, string $name): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME);
         foreach (group::TBL_LIST as $tbl_typ) {
@@ -783,12 +784,12 @@ class group extends sandbox_multi
      * create an SQL statement to retrieve a phrase groups by name from the database
      * from a single table so either from the table with an int, 512bit or text key
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the phrase group
      * @param array $sc_par_arr the parameters for the sql statement creation
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name_single(sql $sc, string $name, array $sc_par_arr): sql_par
+    function load_sql_by_name_single(sql_creator $sc, string $name, array $sc_par_arr): sql_par
     {
         $sc_par_lst = new sql_type_list($sc_par_arr);
         $qp = $this->load_sql_multi($sc, sql_db::FLD_NAME, $this::class, $sc_par_lst);
@@ -802,11 +803,11 @@ class group extends sandbox_multi
     /**
      * create an SQL statement to retrieve a phrase groups from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst list of phrases that should all be used to create the group id
      * @return sql_par the SQL statement base on the parameters set in $this
      */
-    function load_sql_by_phrase_list(sql $sc, phrase_list $phr_lst): sql_par
+    function load_sql_by_phrase_list(sql_creator $sc, phrase_list $phr_lst): sql_par
     {
         $grp_id = new group_id();
         return $this->load_sql_by_id($sc, $grp_id->get_id($phr_lst));
@@ -814,11 +815,11 @@ class group extends sandbox_multi
 
     /**
      * create the SQL to load the default group always by the id
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, array $fld_lst = []): sql_par
+    function load_standard_sql(sql_creator $sc, array $fld_lst = []): sql_par
     {
         $fld_lst = array_merge(
             $this::FLD_NAMES,
@@ -829,10 +830,10 @@ class group extends sandbox_multi
 
     /**
      * create the SQL to load the single default value always by the id
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_by_name_sql(sql $sc, string $name): sql_par
+    function load_standard_by_name_sql(sql_creator $sc, string $name): sql_par
     {
         $sc_par_lst = new sql_type_list([]);
         $sc_par_lst->add($this->table_type());
@@ -865,11 +866,11 @@ class group extends sandbox_multi
     /**
      * create an SQL statement to retrieve a phrase groups from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the name of this class to overwrite the parent class
      * @return sql_par the SQL statement base on the parameters set in $this
      */
-    function load_sql_obj_vars(sql $sc, string $class = self::class): sql_par
+    function load_sql_obj_vars(sql_creator $sc, string $class = self::class): sql_par
     {
         $sc->set_class($class);
         $qp = new sql_par($class);
@@ -926,11 +927,11 @@ class group extends sandbox_multi
     /**
      * add the select parameters to the query parameters
      *
-     * @param sql $sc the db connection object with the SQL name and others parameter already set
+     * @param sql_creator $sc the db connection object with the SQL name and others parameter already set
      * @param sql_par $qp the query parameters with the name already set
      * @return sql_par the query parameters with the select parameters added
      */
-    private function load_sql_select_qp(sql $sc, sql_par $qp): sql_par
+    private function load_sql_select_qp(sql_creator $sc, sql_par $qp): sql_par
     {
         if ($this->id() != 0) {
             $sc->add_where(self::FLD_ID, $this->id());
@@ -1636,11 +1637,11 @@ class group extends sandbox_multi
     /**
      * create the sql statement to add a new group name to the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql $sc, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
+    function sql_insert(sql_creator $sc, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
         $sc_par_lst_used = clone $sc_par_lst;
@@ -1667,12 +1668,12 @@ class group extends sandbox_multi
     /**
      * create the sql statement to update a group name in the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param group $db_grp
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, group $db_grp, sql_type_list $sc_par_lst): sql_par
+    function sql_update(sql_creator $sc, group $db_grp, sql_type_list $sc_par_lst): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
         $sc_par_lst_used = clone $sc_par_lst;
@@ -1702,11 +1703,11 @@ class group extends sandbox_multi
 
     /**
      * the common part of the sql statement creation for insert and update statements
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the common part for insert and update sql statements
      */
-    protected function sql_common(sql $sc, sql_type_list $sc_par_lst): sql_par
+    protected function sql_common(sql_creator $sc, sql_type_list $sc_par_lst): sql_par
     {
         $sc_par_lst->add($this->table_type());
         $qp = new sql_par($this::class, $sc_par_lst);

@@ -32,14 +32,17 @@
 
 namespace unit;
 
+include_once DB_PATH . 'sql.php';
 include_once MODEL_VALUE_PATH . 'value_time_series.php';
 
 use api\phrase\group as group_api;
 use api\value\value as value_api;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use cfg\group\group;
 use cfg\db\sql_db;
+use cfg\sandbox_value;
 use cfg\value\value;
 use cfg\value\value_time_series;
 use html\value\value as value_dsp;
@@ -55,7 +58,7 @@ class value_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'value->';
         $t->resource_path = 'db/value/';
 
@@ -251,7 +254,7 @@ class value_tests
     function assert_sql_update_trigger(test_cleanup $t, sql_db $db_con, value $val, value $db_val): bool
     {
         $sc = $db_con->sql_creator();
-        $fields = array(value::FLD_LAST_UPDATE);
+        $fields = array(sandbox_value::FLD_LAST_UPDATE);
         $values = array(sql::NOW);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);

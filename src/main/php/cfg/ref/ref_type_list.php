@@ -32,6 +32,7 @@
 namespace cfg;
 
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use shared\library;
 use test\create_test_objects;

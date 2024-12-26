@@ -35,7 +35,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once API_FORMULA_PATH . 'formula_list.php';
 
 use api\formula\formula_list as formula_list_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
@@ -152,11 +152,11 @@ class formula_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of formulas
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name = ''): sql_par
+    function load_sql(sql_creator $sc, string $query_name = ''): sql_par
     {
         $sc->set_class(formula::class);
         $qp = new sql_par(self::class);
@@ -170,11 +170,11 @@ class formula_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of formulas by an array of formula ids
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param array $frm_ids an array of formula ids which should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql $sc, array $frm_ids): sql_par
+    function load_sql_by_ids(sql_creator $sc, array $frm_ids): sql_par
     {
         $qp = $this->load_sql($sc, 'frm_ids');
         if (count($frm_ids) > 0) {
@@ -189,11 +189,11 @@ class formula_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of formulas by an array of formula names
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param array $names an array of formula names which should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_names(sql $sc, array $names): sql_par
+    function load_sql_by_names(sql_creator $sc, array $names): sql_par
     {
         $qp = $this->load_sql($sc, 'names');
         if (count($names) > 0) {
@@ -208,11 +208,11 @@ class formula_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of formulas by a pattern
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $pattern the text part that should be used to select the formulas
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_like(sql $sc, string $pattern = ''): sql_par
+    function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
         $sc->add_where(formula::FLD_NAME, $pattern, sql_par_type::LIKE_R);
@@ -223,11 +223,11 @@ class formula_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of formulas linked to one of the phrases from the given list
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param phrase $phr a phrase used to select the formulas
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_phr(sql $sc, phrase $phr): sql_par
+    function load_sql_by_phr(sql_creator $sc, phrase $phr): sql_par
     {
         $qp = $this->load_sql($sc, 'phr');
         if ($phr->id() <> 0) {
@@ -248,11 +248,11 @@ class formula_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of formulas linked to one of the phrases from the given list
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst a phrase list used to select the formulas
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_phr_lst(sql $sc, phrase_list $phr_lst): sql_par
+    function load_sql_by_phr_lst(sql_creator $sc, phrase_list $phr_lst): sql_par
     {
         $qp = $this->load_sql($sc, 'phr_lst');
         if ($phr_lst->count() > 0) {
@@ -274,17 +274,17 @@ class formula_list extends sandbox_list
     /**
      * set the SQL query parameters to load a list of formulas that
      * use the results of the given word, triple, verb or formula
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $ref_id the id of the used object
      * @param int $par_type_id the id of the parameter type
      * @param string $type_query_name the short name of the parameter type to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_ref(
-        sql    $sc,
-        int    $ref_id,
-        int    $par_type_id,
-        string $type_query_name): sql_par
+        sql_creator $sc,
+        int         $ref_id,
+        int         $par_type_id,
+        string      $type_query_name): sql_par
     {
         $qp = $this->load_sql($sc, $type_query_name . '_ref');
         if ($ref_id > 0) {
@@ -307,11 +307,11 @@ class formula_list extends sandbox_list
     /**
      * set the SQL query parameters to load a list of formulas that
      * use the results of the given word
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param word $wrd the word to which the depending on formulas should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_word_ref(sql $sc, word $wrd): sql_par
+    function load_sql_by_word_ref(sql_creator $sc, word $wrd): sql_par
     {
         return $this->load_sql_by_ref(
             $sc,
@@ -323,11 +323,11 @@ class formula_list extends sandbox_list
     /**
      * set the SQL query parameters to load a list of formulas that
      * use the results of the given triple
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param triple $trp the triple to which the depending on formulas should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_triple_ref(sql $sc, triple $trp): sql_par
+    function load_sql_by_triple_ref(sql_creator $sc, triple $trp): sql_par
     {
         return $this->load_sql_by_ref(
             $sc,
@@ -339,11 +339,11 @@ class formula_list extends sandbox_list
     /**
      * set the SQL query parameters to load a list of formulas that
      * use the results of the given verb
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param verb $vrb the verb to which the depending on formulas should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_verb_ref(sql $sc, verb $vrb): sql_par
+    function load_sql_by_verb_ref(sql_creator $sc, verb $vrb): sql_par
     {
         return $this->load_sql_by_ref(
             $sc,
@@ -355,11 +355,11 @@ class formula_list extends sandbox_list
     /**
      * set the SQL query parameters to load a list of formulas that
      * use the results of the given formula
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param formula $frm the formula
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_formula_ref(sql $sc, formula $frm): sql_par
+    function load_sql_by_formula_ref(sql_creator $sc, formula $frm): sql_par
     {
         return $this->load_sql_by_ref(
             $sc,

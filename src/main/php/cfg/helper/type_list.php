@@ -34,6 +34,7 @@ namespace cfg;
 
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql.php';
 include_once SHARED_PATH . 'library.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 include_once API_SYSTEM_PATH . 'type_list.php';
@@ -49,6 +50,7 @@ use cfg\component\position_type_list;
 use cfg\component\view_style;
 use cfg\component\view_style_list;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
@@ -207,17 +209,17 @@ class type_list
      * a 'database type' is a group of type used for the same objects
      * e.g. a db_type is phrase_type or view type
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the class of the related object e.g. phrase_type or formula_type
      * @param string $query_name the name extension to make the query name unique
      * @param string $order_field set if the type list should e.g. be sorted by the name instead of the id
      * @return sql_par the sql statement with the parameters and the name
      */
     function load_sql(
-        sql    $sc,
-        string $class,
-        string $query_name = sql::NAME_ALL,
-        string $order_field = ''
+        sql_creator $sc,
+        string      $class,
+        string      $query_name = sql::NAME_ALL,
+        string      $order_field = ''
     ): sql_par
     {
         $lib = new library();
@@ -253,11 +255,11 @@ class type_list
      *
      * TODO create a warning if number of rows is above the sql_db::ROW_MAX limit
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the class of the related object e.g. phrase_type or formula_type
      * @return sql_par the sql statement with the parameters and the name
      */
-    function load_sql_all(sql $sc, string $class = ''): sql_par
+    function load_sql_all(sql_creator $sc, string $class = ''): sql_par
     {
         if ($class == '') {
             $class = $this::class;

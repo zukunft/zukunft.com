@@ -78,6 +78,7 @@ use cfg\component\component_link_list;
 use cfg\component\component_list;
 use cfg\component\position_type;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -86,8 +87,6 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\export\sandbox_exp;
-use cfg\export\view_exp;
 use cfg\log\change;
 use shared\json_fields;
 use shared\library;
@@ -546,11 +545,11 @@ class view extends sandbox_typed
     /**
      * create an SQL statement to retrieve a view by code id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $code_id the code id of the view
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql $sc, string $code_id): sql_par
+    function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id', $this::class);
         $sc->add_where(sql::FLD_CODE_ID, $code_id);
@@ -565,12 +564,12 @@ class view extends sandbox_typed
      * TODO include user_view_term_links into the selection
      * TODO take the usage into account for the selection of the view
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param term $trm the code id of the view
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_term(sql $sc, term $trm, string $class = self::class): sql_par
+    function load_sql_by_term(sql_creator $sc, term $trm, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'term', $class);
         $sc->set_join_fields(
@@ -589,11 +588,11 @@ class view extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $sc->set_class($this::class);
         return parent::load_sql_fields(
@@ -607,10 +606,10 @@ class view extends sandbox_typed
     /**
      * create the SQL to load the default view always by the id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc): sql_par
+    function load_standard_sql(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
@@ -710,10 +709,10 @@ class view extends sandbox_typed
     }
 
     /**
-     * @param sql $sc the sql creator without view joins
-     * @return sql the sql creator with the view join set
+     * @param sql_creator $sc the sql creator without view joins
+     * @return sql_creator the sql creator with the view join set
      */
-    function set_join(sql $sc): sql
+    function set_join(sql_creator $sc): sql_creator
     {
         $sc->set_join_fields(view::FLD_NAMES, view::class);
         $sc->set_join_usr_fields(view::FLD_NAMES_USR, view::class);
@@ -1040,12 +1039,12 @@ class view extends sandbox_typed
     /**
      * create an SQL statement to retrieve the user changes of the current view
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_user_changes(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -1179,7 +1178,7 @@ class view extends sandbox_typed
     {
         global $cng_fld_cac;
 
-        $sc = new sql();
+        $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 

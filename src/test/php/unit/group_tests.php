@@ -39,7 +39,7 @@ include_once MODEL_GROUP_PATH . 'group_list.php';
 include_once MODEL_GROUP_PATH . 'result_id.php';
 
 use api\phrase\group as group_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
@@ -60,7 +60,7 @@ class group_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'group->';
         $t->resource_path = 'db/group/';
 

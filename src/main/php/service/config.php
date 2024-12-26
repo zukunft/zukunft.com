@@ -44,6 +44,7 @@
 namespace cfg;
 
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -53,6 +54,7 @@ use cfg\db\sql_par_type;
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql.php';
 include_once MODEL_USER_PATH . 'user.php';
 
 class config extends db_object_seq_id
@@ -105,10 +107,10 @@ class config extends db_object_seq_id
     /**
      * the sql statement to create the tables of a config table
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the table
      */
-    function sql_table(sql $sc): string
+    function sql_table(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         $sql .= $this->sql_table_create($sc);
@@ -118,10 +120,10 @@ class config extends db_object_seq_id
     /**
      * the sql statement to create the database indices of a config table
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the indices
      */
-    function sql_index(sql $sc): string
+    function sql_index(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         $sql .= $this->sql_index_create($sc);

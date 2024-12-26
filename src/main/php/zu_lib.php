@@ -606,7 +606,7 @@ use cfg\component\component_type;
 use cfg\component\position_type;
 use cfg\component\view_style;
 use cfg\db\db_check;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\element\element;
 use cfg\element\element_type;
@@ -1669,7 +1669,7 @@ function prg_restart(string $code_name): sql_db
     // link to database
     $db_con = new sql_db;
     $db_con->db_type = SQL_DB_TYPE;
-    $sc = new sql();
+    $sc = new sql_creator();
     $sc->set_db_type($db_con->db_type);
     $db_con->open();
     if ($db_con->postgres_link === false) {

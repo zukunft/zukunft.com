@@ -33,7 +33,7 @@
 namespace unit;
 
 use api\ref\source as source_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use cfg\ref_type;
 use cfg\ref_type_list;
@@ -55,7 +55,7 @@ class ref_tests
         global $usr;
 
         // init for reference
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'ref->';
         $t->resource_path = 'db/ref/';
 
@@ -129,14 +129,14 @@ class ref_tests
      * and check if the statement name is unique
      *
      * @param test_cleanup $t the test environment
-     * @param sql $sc the test database connection
+     * @param sql_creator $sc the test database connection
      * @param ref $ref the reference object for which the load by link ids sql statement creation should be tested
      * @return void
      */
     private function assert_sql_link_ids(
         test_cleanup $t,
-        sql $sc,
-        ref $ref): void
+        sql_creator  $sc,
+        ref          $ref): void
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);

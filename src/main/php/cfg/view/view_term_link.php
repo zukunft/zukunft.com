@@ -38,15 +38,15 @@
 
 namespace cfg;
 
-use api\view\view as view_api;
+include_once DB_PATH . 'sql.php';
+
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
-use cfg\export\sandbox_exp;
-use cfg\export\view_exp;
 use cfg\log\change;
 
 class view_term_link extends sandbox_link
@@ -308,12 +308,12 @@ class view_term_link extends sandbox_link
     /**
      * create the common part of an SQL statement to retrieve a view term link from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = new sql_par($class);
         $qp->name .= $query_name;
@@ -371,10 +371,10 @@ class view_term_link extends sandbox_link
     /**
      * create an SQL statement to retrieve the parameters of the standard view term link from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc): sql_par
+    function load_standard_sql(sql_creator $sc): sql_par
     {
         // try to get the search values from the objects
         if ($this->id() <= 0) {
@@ -448,7 +448,7 @@ class view_term_link extends sandbox_link
     {
         global $cng_fld_cac;
 
-        $sc = new sql();
+        $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 

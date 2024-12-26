@@ -71,6 +71,7 @@ TODO    rename to change_base
 
 namespace cfg\log;
 
+include_once DB_PATH . 'sql.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once API_LOG_PATH . 'change_log.php';
 
@@ -78,6 +79,7 @@ use api\log\change_log as change_log_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -381,10 +383,10 @@ class change_log extends db_object_seq_id_user
     /**
      * the sql statements to create a change log table
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the table
      */
-    function sql_table(sql $sc): string
+    function sql_table(sql_creator $sc): string
     {
         return $this->sql_creator($sc, 0);
     }
@@ -393,10 +395,10 @@ class change_log extends db_object_seq_id_user
     /**
      * the sql statements to create all indices for a change log table
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the indices of the change log tables
      */
-    function sql_index(sql $sc): string
+    function sql_index(sql_creator $sc): string
     {
         return $this->sql_creator($sc, 1);
     }
@@ -404,10 +406,10 @@ class change_log extends db_object_seq_id_user
     /**
      * the sql statements to create all foreign keys for a change log table
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the foreign keys of a change log table
      */
-    function sql_foreign_key(sql $sc): string
+    function sql_foreign_key(sql_creator $sc): string
     {
         return $this->sql_creator($sc, 2);
     }
@@ -419,10 +421,10 @@ class change_log extends db_object_seq_id_user
      * or the foreign keys ($pos = 2)
      * used to store values in the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the table
      */
-    protected function sql_creator(sql $sc, int $pos): string
+    protected function sql_creator(sql_creator $sc, int $pos): string
     {
 
         $sql_array = $this->sql_one_type(
@@ -437,17 +439,17 @@ class change_log extends db_object_seq_id_user
      * create the sql statements for one or a set of change tables
      * e.g. for bigint or text row id
      *
-     * @param sql $sc
+     * @param sql_creator $sc
      * @param array $fld_row_id the parameters for the value field e.g. for a numeric field, text, time or geo
      * @param string $ext_type the additional table extension for the field type
      * @param string $type_name the name of the value type
      * @return array the sql statements to create the tables, indices and foreign keys
      */
     protected function sql_one_type(
-        sql    $sc,
-        array  $fld_row_id,
-        string $ext_type = '',
-        string $type_name = ''): array
+        sql_creator $sc,
+        array       $fld_row_id,
+        string      $ext_type = '',
+        string      $type_name = ''): array
     {
         $lib = new library();
         $type_name .= ' ' . $lib->class_to_name($this::class);
@@ -734,7 +736,7 @@ class change_log extends db_object_seq_id_user
     /**
      * create the sql statement to add a log entry to the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param string $ext the name extension that should be used
      * @param string $val_tbl name of the table to select the values to insert
@@ -744,7 +746,7 @@ class change_log extends db_object_seq_id_user
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([]),
         string        $ext = '',
         string        $val_tbl = '',
@@ -798,13 +800,13 @@ class change_log extends db_object_seq_id_user
 
     /**
      * dummy function overwritten by the child object
-     * @param sql $sc
+     * @param sql_creator $sc
      * @param sql_type_list $sc_par_lst
      * @param sandbox_link|null $sbx
      * @return sql_par
      */
     function sql_insert_link(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst,
         ?sandbox_link $sbx = null
     ): sql_par
@@ -823,7 +825,7 @@ class change_log extends db_object_seq_id_user
      *
      * @return sql_par_field_list list of the database field names
      */
-    function db_field_values_types(sql $sc, sql_type_list $sc_par_lst): sql_par_field_list
+    function db_field_values_types(sql_creator $sc, sql_type_list $sc_par_lst): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
         $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQL_TYP);

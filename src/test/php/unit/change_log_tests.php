@@ -43,7 +43,7 @@ include_once MODEL_LOG_PATH . 'change_link.php';
 use api\word\triple as triple_api;
 use api\value\value as value_api;
 use api\word\word as word_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
@@ -77,7 +77,7 @@ class change_log_tests
         // init
         $lib = new library();
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'change_log->';
         $t->resource_path = 'db/log/';
 

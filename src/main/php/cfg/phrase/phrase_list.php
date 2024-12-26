@@ -72,7 +72,7 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\phrase\phrase_list as phrase_list_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
@@ -264,11 +264,11 @@ class phrase_list extends sandbox_list_named
      * TODO add limit and page
      * TODO add read test that formula link words are excluded
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $pattern phrase names that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_like(sql $sc, string $pattern): sql_par
+    function load_sql_like(sql_creator $sc, string $pattern): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
         $sc->add_where(phrase::FLD_NAME, $pattern, sql_par_type::LIKE_R);
@@ -281,11 +281,11 @@ class phrase_list extends sandbox_list_named
     /**
      * create an SQL statement to retrieve a list of phrase objects by the name from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param array $names phrase names that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_names(sql $sc, array $names): sql_par
+    function load_sql_by_names(sql_creator $sc, array $names): sql_par
     {
         $qp = $this->load_sql($sc, 'names');
         $sc->add_where(phrase::FLD_NAME, $names, sql_par_type::TEXT_LIST);
@@ -298,11 +298,11 @@ class phrase_list extends sandbox_list_named
     /**
      * create an SQL statement to retrieve a list of phrase objects by the id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param phr_ids $ids phrase ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql $sc, phr_ids $ids): sql_par
+    function load_sql_by_ids(sql_creator $sc, phr_ids $ids): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(phrase::FLD_ID, $ids->lst, sql_par_type::INT_LIST);
@@ -316,11 +316,11 @@ class phrase_list extends sandbox_list_named
      * set the SQL query parameters to load a list of phrase objects
      * with all parameters and the related phrase
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $sc->set_class(phrase::class);
         $qp = new sql_par(self::class);
@@ -341,11 +341,11 @@ class phrase_list extends sandbox_list_named
      * create an SQL statement to retrieve a list of phrase names by the id from the database
      * compared to load_sql_by_ids this reads only the phrase names and not the related phrase to save time and memory
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param phr_ids $ids phrase ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_names_sql_by_ids(sql $sc, phr_ids $ids): sql_par
+    function load_names_sql_by_ids(sql_creator $sc, phr_ids $ids): sql_par
     {
         $qp = $this->load_sql($sc, 'ids_fast');
         $sc->add_where(phrase::FLD_ID, $ids->lst, sql_par_type::INT_LIST);
@@ -357,13 +357,13 @@ class phrase_list extends sandbox_list_named
 
     /**
      * set the SQL query parameters to load a list of phrase by a phrase list, verb and direction
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param verb|null $vrb if set to filter the selection
      * @param foaf_direction $direction to select either the parents, children or all related words ana triples
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr_lst(
-        sql $sc, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): sql_par
+        sql_creator $sc, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): sql_par
     {
         $qp = $this->load_sql($sc, 'sc_phr_lst');
         if (!$this->empty()) {
@@ -2270,12 +2270,12 @@ class phrase_list extends sandbox_list_named
      * create the sql statement to select the related phrases
      * the relation can be narrowed with a verb id
      *
-     * @param sql $sc the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc the db connection object as a function parameter for unit testing
      * @param verb|null $vrb if set to select only phrases linked with this verb
      * @param foaf_direction $direction to define the link direction
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_linked_phrases(sql $sc, ?verb $vrb, foaf_direction $direction): sql_par
+    function load_sql_linked_phrases(sql_creator $sc, ?verb $vrb, foaf_direction $direction): sql_par
     {
         $qp = $this->load_sql($sc, '');
         $join_field = '';

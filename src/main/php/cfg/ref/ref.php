@@ -61,6 +61,7 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once SERVICE_EXPORT_PATH . 'ref_exp.php';
 include_once MODEL_REF_PATH . 'ref_type.php';
@@ -74,9 +75,9 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 
-use shared\api;
-use api\ref\ref as ref_api;
 use cfg\db\sql;
+use api\ref\ref as ref_api;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -84,8 +85,6 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\export\sandbox_exp;
-use cfg\export\ref_exp;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
@@ -575,10 +574,10 @@ class ref extends sandbox_link
     /**
      * create the SQL to load the default ref always by the id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc): sql_par
+    function load_standard_sql(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
@@ -611,12 +610,12 @@ class ref extends sandbox_link
     /**
      * create the common part of an SQL statement to retrieve the parameters of a ref from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         return parent::load_sql_usr_num($sc, $this, $query_name);
     }
@@ -624,12 +623,12 @@ class ref extends sandbox_link
     /**
      * create an SQL statement to retrieve a ref by id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $phr_id the id of the phrase that is referenced
      * @param int $type_id the id of the reference type
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link_ids(sql $sc, int $phr_id, int $type_id): sql_par
+    function load_sql_by_link_ids(sql_creator $sc, int $phr_id, int $type_id): sql_par
     {
         $qp = $this->load_sql($sc, 'link_ids');
         $sc->add_where(phrase::FLD_ID, $phr_id);
@@ -1175,7 +1174,7 @@ class ref extends sandbox_link
     {
         global $cng_fld_cac;
 
-        $sc = new sql();
+        $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);

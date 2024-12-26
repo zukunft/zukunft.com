@@ -32,7 +32,7 @@
 
 namespace unit;
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\phrase;
 use cfg\verb;
@@ -51,7 +51,7 @@ class verb_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'verb->';
         $t->resource_path = 'db/verb/';
 

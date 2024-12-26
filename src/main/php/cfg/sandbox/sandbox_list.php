@@ -41,7 +41,7 @@
 
 namespace cfg;
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
@@ -152,7 +152,7 @@ class sandbox_list extends base_list
      * e.g. for words to exclude formula words
      *   or for view to exclude system views
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
@@ -160,7 +160,7 @@ class sandbox_list extends base_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     protected function load_sql_names_pre(
-        sql                                            $sc,
+        sql_creator                                    $sc,
         sandbox_named|sandbox_link_named|combine_named $sbx,
         string                                         $pattern = '',
         int                                            $limit = 0,
@@ -191,7 +191,7 @@ class sandbox_list extends base_list
      * build the SQL statement to load only the id and name to save time and memory
      * without further filter
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
@@ -199,7 +199,7 @@ class sandbox_list extends base_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_names(
-        sql                                            $sc,
+        sql_creator                                    $sc,
         sandbox_named|sandbox_link_named|combine_named $sbx,
         string                                         $pattern = '',
         int                                            $limit = 0,

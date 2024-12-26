@@ -31,12 +31,13 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_PHRASE_PATH . 'phrase_table_status.php';
 
+use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
-use cfg\db\sql;
 
 class phrase_table extends db_object_seq_id
 {

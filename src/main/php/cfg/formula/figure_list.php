@@ -36,7 +36,7 @@ include_once API_FORMULA_PATH . 'figure_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 
 use api\formula\figure_list as figure_list_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_par;
 use cfg\result\result;
 use cfg\value\value;
@@ -114,11 +114,11 @@ class figure_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of figure objects
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -137,11 +137,11 @@ class figure_list extends sandbox_list
     /**
      * create an SQL statement to retrieve a list of phrase objects by the id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param fig_ids $ids figure ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql $sc, fig_ids $ids): sql_par
+    function load_sql_by_ids(sql_creator $sc, fig_ids $ids): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(figure::FLD_ID, $ids->lst);

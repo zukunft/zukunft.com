@@ -48,11 +48,13 @@
 
 namespace cfg;
 
+include_once DB_PATH . 'sql.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use api\system\db_object as db_object_api;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
@@ -207,10 +209,10 @@ class db_object_seq_id extends db_object implements JsonSerializable
      * the sql statement to create the table
      * is e.g. overwritten for the user sandbox objects
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the table
      */
-    function sql_table(sql $sc): string
+    function sql_table(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         $sql .= $this->sql_table_create($sc);
@@ -221,10 +223,10 @@ class db_object_seq_id extends db_object implements JsonSerializable
      * the sql statement to create the database indices
      * is e.g. overwritten for the user sandbox objects
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the indices
      */
-    function sql_index(sql $sc): string
+    function sql_index(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         $sql .= $this->sql_index_create($sc);
@@ -235,10 +237,10 @@ class db_object_seq_id extends db_object implements JsonSerializable
      * the sql statements to create all foreign keys
      * is e.g. overwritten for the user sandbox objects
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the foreign keys
      */
-    function sql_foreign_key(sql $sc): string
+    function sql_foreign_key(sql_creator $sc): string
     {
         return $this->sql_foreign_key_create($sc, new sql_type_list([]));
     }
@@ -314,11 +316,11 @@ class db_object_seq_id extends db_object implements JsonSerializable
     /**
      * create an SQL statement to retrieve a user sandbox object by id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int $id): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
         return parent::load_sql_by_id_str($sc, $id);
     }

@@ -33,7 +33,7 @@
 namespace unit;
 
 use api\ref\source as source_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use cfg\source_type_list;
 use html\ref\source as source_dsp;
@@ -49,7 +49,7 @@ class source_tests
         global $usr;
 
         // init for source
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'source->';
         $t->resource_path = 'db/ref/';
 
