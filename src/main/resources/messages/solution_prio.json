@@ -95,7 +95,7 @@
       ]
     },
     {
-      "name": "warming",
+      "name": "warm",
       "refs": [
         {
           "name": "heating",
@@ -106,6 +106,12 @@
           "type": "wikidata"
         }
       ]
+    },
+    {
+      "name": "warming"
+    },
+    {
+      "name": "warmer"
     },
     {
       "name": "reduce"
@@ -158,13 +164,13 @@
       "name": "intelligence"
     },
     {
-      "name": "Health"
+      "name": "health"
     },
     {
       "name": "research"
     },
     {
-      "name": "povertiy"
+      "name": "poverty"
     },
     {
       "name": "taxes"
@@ -227,7 +233,7 @@
       ]
     },
     {
-      "name": "Population",
+      "name": "population",
       "refs": [
         {
           "name": "Population",
@@ -255,15 +261,32 @@
       "protection": "admin_protection"
     },
     {
+      "name": "mio"
+    },
+    {
       "name": "m"
+    },
+    {
+      "name": "CHF",
+      "type": "measure"
     }
   ],
   "triples": [
     {
+      "from": "warmer",
+      "verb": "is a",
+      "to": "warm"
+    },
+    {
+      "from": "warming",
+      "verb": "is a",
+      "to": "warm"
+    },
+    {
       "name": "climate warming",
       "from": "climate",
-      "verb": "can",
-      "to": "warm",
+      "verb": "can get",
+      "to": "warmer",
       "refs": [
         {
           "name": "Climate_change",
@@ -282,10 +305,10 @@
       "to": "potential"
     },
     {
-      "name": "Climate gas",
+      "name": "climate gas",
       "from": "gas",
       "verb": "can cause",
-      "to": "warm",
+      "to": "warming",
       "refs": [
         {
           "name": "Climate_change",
@@ -334,6 +357,11 @@
     },
     {
       "from": "m",
+      "verb": "is symbol for",
+      "to": "million"
+    },
+    {
+      "from": "mio",
       "verb": "is symbol for",
       "to": "million"
     },

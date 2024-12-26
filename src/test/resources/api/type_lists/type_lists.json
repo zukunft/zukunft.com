@@ -6467,6 +6467,17 @@
         "id": 17
       },
       {
+        "name": "can get",
+        "code_id": "can_get",
+        "description": null,
+        "plural": "can get",
+        "reverse": null,
+        "rev_plural": null,
+        "frm_name": null,
+        "usage": 0,
+        "id": 18
+      },
+      {
         "name": "can use",
         "code_id": "can_use",
         "description": "use indicates that a new result is created e.g. a turbine can use water or wind or any type of liquid or gas to convert energy",
@@ -6475,7 +6486,7 @@
         "rev_plural": "can be used by",
         "frm_name": null,
         "usage": 0,
-        "id": 18
+        "id": 19
       },
       {
         "name": "scaled by",
@@ -6486,7 +6497,7 @@
         "rev_plural": "are scaling for",
         "frm_name": null,
         "usage": 0,
-        "id": 19
+        "id": 20
       },
       {
         "name": "per",
@@ -6497,7 +6508,7 @@
         "rev_plural": null,
         "frm_name": null,
         "usage": 0,
-        "id": 20
+        "id": 21
       },
       {
         "name": "is selector for",
@@ -6508,7 +6519,7 @@
         "rev_plural": "are grouped by",
         "frm_name": null,
         "usage": 0,
-        "id": 21
+        "id": 22
       },
       {
         "name": "is symbol for",
@@ -6519,7 +6530,7 @@
         "rev_plural": "can have symbols",
         "frm_name": null,
         "usage": 0,
-        "id": 22
+        "id": 23
       },
       {
         "name": "can cause",
@@ -6530,7 +6541,7 @@
         "rev_plural": "can be caused by",
         "frm_name": null,
         "usage": 0,
-        "id": 23
+        "id": 24
       },
       {
         "name": "and",
@@ -6541,7 +6552,7 @@
         "rev_plural": "and",
         "frm_name": null,
         "usage": 0,
-        "id": 24
+        "id": 25
       }
     ],
     "system_views": [
