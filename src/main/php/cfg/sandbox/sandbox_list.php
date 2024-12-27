@@ -367,11 +367,15 @@ class sandbox_list extends base_list
 
         // show at least 4 elements by name
         $min_names = $debug;
+        $min_num = $debug;
         if ($min_names < LIST_MIN_NAMES) {
             $min_names = LIST_MIN_NAMES;
         }
+        if ($min_num < LIST_MIN_NUM) {
+            $min_num = LIST_MIN_NUM;
+        }
 
-        $id = $this->ids_txt($min_names);
+        $id = $this->ids_txt($min_num);
         if ($this->lst() != null) {
             $id_field = $this::class . '_id';
             if ($this->count() > 0) {

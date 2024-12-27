@@ -658,7 +658,8 @@ const SYSTEM_USER_ID = 1; //
 const SYSTEM_USER_TEST_ID = 2; //
 
 // parameters for internal testing and debugging
-const LIST_MIN_NAMES = 4; // number of object names that should al least be shown
+const LIST_MIN_NAMES = 4; // number of object names that should at least be shown
+const LIST_MIN_NUM = 20; // number of object ids that should at least be shown
 const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
 
 // set all path for the program code here at once

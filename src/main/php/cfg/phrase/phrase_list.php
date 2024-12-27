@@ -2137,8 +2137,19 @@ class phrase_list extends sandbox_list_named
      */
     function name(int $limit = null): string
     {
+        $result = '';
+        if ($limit == null) {
+            $limit = LIST_MIN_NAMES;
+        }
+        $lib = new library();
         $name_lst = $this->names();
-        return '"' . implode('","', $name_lst) . '"';
+        if (count($name_lst) <= $limit) {
+            $result .= '"' . implode('","', $name_lst) . '"';
+        } else {
+            $result .= '"' . implode('","', array_slice($name_lst, 0, $limit - 1)) . '"';
+            $result .= ' ... total ' . $lib->dsp_count($name_lst);
+        }
+        return $result;
     }
 
     /**

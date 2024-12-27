@@ -72,7 +72,7 @@ class phrase_list_tests
         $t->name = 'phrase_list->';
         $t->resource_path = 'db/phrase/';
 
-        $t->header('Unit tests of the phrase list class (src/main/php/model/phrase/phrase_list.php)');
+        $t->header('phrase list unit tests');
 
 
         $t->subheader('Cast tests');

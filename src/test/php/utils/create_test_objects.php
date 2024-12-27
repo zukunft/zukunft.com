@@ -1113,6 +1113,28 @@ class create_test_objects extends test_base
         return $lst;
     }
 
+    /**
+     * @return phrase_list with more than 10 phrases
+     */
+    function phrase_list_long(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->word()->phrase());
+        $lst->add($this->word_const()->phrase());
+        $lst->add($this->word_pi()->phrase());
+        $lst->add($this->word_e()->phrase());
+        $lst->add($this->word_2019()->phrase());
+        $lst->add($this->word_one()->phrase());
+        $lst->add($this->word_mio()->phrase());
+        $lst->add($this->word_pct()->phrase());
+        $lst->add($this->triple()->phrase());
+        $lst->add($this->triple_pi()->phrase());
+        $lst->add($this->zh_canton()->phrase());
+        $lst->add($this->triple_bern()->phrase());
+        $lst->add($this->triple_ge()->phrase());
+        return $lst;
+    }
+
     function phrase_list_pi(): phrase_list
     {
         $lst = new phrase_list($this->usr1);

@@ -103,7 +103,8 @@ class system_tests
         $t->assert_dsp_id($t->triple(), '"constant" "is part of" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->triple_list(), '"Pi (math)" (triple_id 2) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->triple()->phrase(), '"constant" "is part of" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test) as phrase');
-        $t->assert_dsp_id($t->phrase_list(), '"Mathematical constant","Mathematics","Pi","Pi (math)","constant" (phrase_id 1,2,4,-1,-2) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->phrase_list_prime(), '"Mathematical constant","Mathematics","Pi (math)","constant" (phrase_id 1,2,-1,-2) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->phrase_list_long(), '"2019","Bern (City)","Euler\'s constant" ... total 13 (phrase_id 1,2,4,6,142,3,170,172,-1,-2,-38,-39,-40) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->group(), '"Pi (math)" (group_id 32770) as "Pi (math)" for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->group_list(), ' ... total 1');
         $t->assert_dsp_id($t->term(), '"Mathematics" (word_id 1) for user 1 (zukunft.com system test) as term');
