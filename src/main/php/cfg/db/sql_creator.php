@@ -2283,7 +2283,7 @@ class sql_creator
                 $sql = sql::DELETE . ' ' . $this->table . ' ';
                 $sql .= $sql_where;
                 if ($excluded) {
-                    $sql .= ' AND ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                    $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
                 }
             }
         } else {
@@ -2486,7 +2486,7 @@ class sql_creator
                         if ($join_link == '') {
                             $join_link .= ' ON ';
                         } else {
-                            $join_link .= ' AND ';
+                            $join_link .= ' ' . sql::AND . ' ';
                         }
                         $join_link .= sql_db::STD_TBL . '.' . $id_fld . ' = ' . sql_db::USR_TBL . '.' . $id_fld;
                     }
@@ -2495,7 +2495,7 @@ class sql_creator
                     $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $this->id_field . ' = ' . sql_db::USR_TBL . '.' . $this->id_field;
                 }
                 if (!$this->all_query) {
-                    $this->join .= ' AND ' . sql_db::USR_TBL . '.' . user::FLD_ID . ' = ';
+                    $this->join .= ' ' . sql::AND . ' ' . sql_db::USR_TBL . '.' . user::FLD_ID . ' = ';
                     if ($this->query_name == '' and !$this->sub_query) {
                         $this->join .= $this->usr_view_id;
                     } else {
@@ -2703,18 +2703,18 @@ class sql_creator
                 if (is_array($this->id_field_dummy)) {
                     if (in_array($field, $this->id_field_dummy)) {
                         if ($this->db_type() == sql_db::POSTGRES) {
-                            $result .= " '' AS " . $field;
+                            $result .= " '' " . sql::AS . " " . $field;
                         } else {
-                            $result .= " NULL AS " . $field;
+                            $result .= " NULL " . sql::AS . " " . $field;
                         }
                         $fld_used = true;
                     }
                 } else {
                     if ($field == $this->id_field_dummy) {
                         if ($this->db_type() == sql_db::POSTGRES) {
-                            $result .= " '' AS " . $field;
+                            $result .= " '' " . sql::AS . " " . $field;
                         } else {
-                            $result .= " NULL AS " . $field;
+                            $result .= " NULL " . sql::AS . " " . $field;
                         }
                         $fld_used = true;
                     }
@@ -2725,12 +2725,12 @@ class sql_creator
                 if ($this->id_field_num_dummy != '') {
                     if (is_array($this->id_field_num_dummy)) {
                         if (in_array($field, $this->id_field_num_dummy)) {
-                            $result .= ' 0 AS ' . $field;
+                            $result .= ' 0 ' . sql::AS . ' ' . $field;
                             $fld_used = true;
                         }
                     } else {
                         if ($field == $this->id_field_num_dummy) {
-                            $result .= ' 0 AS ' . $field;
+                            $result .= ' 0 ' . sql::AS . ' ' . $field;
                             $fld_used = true;
                         }
                     }
@@ -2742,18 +2742,18 @@ class sql_creator
                     if (is_array($this->id_field_usr_dummy)) {
                         if (in_array($field, $this->id_field_usr_dummy)) {
                             if ($this->db_type() == sql_db::POSTGRES) {
-                                $result .= " '' AS " . $field;
+                                $result .= " '' " . sql::AS . " " . $field;
                             } else {
-                                $result .= " NULL AS " . $field;
+                                $result .= " NULL " . sql::AS . " " . $field;
                             }
                             $fld_used = true;
                         }
                     } else {
                         if ($field == $this->id_field_usr_dummy) {
                             if ($this->db_type() == sql_db::POSTGRES) {
-                                $result .= " '' AS " . $field;
+                                $result .= " '' " . sql::AS . " " . $field;
                             } else {
-                                $result .= " NULL AS " . $field;
+                                $result .= " NULL " . sql::AS . " " . $field;
                             }
                             $fld_used = true;
                         }
@@ -2766,12 +2766,12 @@ class sql_creator
                 if ($this->field_lst_num_dummy != '') {
                     if (is_array($this->field_lst_num_dummy)) {
                         if (in_array($field, $this->field_lst_num_dummy)) {
-                            $result .= " 0 AS " . $field;
+                            $result .= " 0 " . sql::AS . " " . $field;
                             $fld_used = true;
                         }
                     } else {
                         if ($field == $this->field_lst_num_dummy) {
-                            $result .= " 0 AS " . $field;
+                            $result .= " 0 " . sql::AS . " " . $field;
                             $fld_used = true;
                         }
                     }
@@ -2789,7 +2789,8 @@ class sql_creator
                         } else {
                             if ($this->usr_query) {
                                 $result = $this->sep($result);
-                                $result .= ' ' . sql_db::USR_TBL . '.' . $field . ' AS ' . sql_db::USER_PREFIX . $this->id_field;
+                                $result .= ' ' . sql_db::USR_TBL . '.' . $field . ' '
+                                    . sql::AS . ' ' . sql_db::USER_PREFIX . $this->id_field;
                             }
                         }
                     }
@@ -2803,7 +2804,8 @@ class sql_creator
         // select the owner of the standard values in case of an overview query
         if ($this->all_query) {
             $result = $this->sep($result);
-            $result .= ' ' . sql_db::STD_TBL . '.' . user::FLD_ID . ' AS owner_id';
+            $result .= ' ' . sql_db::STD_TBL . '.' . user::FLD_ID . ' '
+                . sql::AS . ' owner_id';
         }
 
         // add group fields
@@ -2811,7 +2813,7 @@ class sql_creator
             $field = $this->name_sql_esc($field);
             $result = $this->sep($result);
             // TODO add min
-            $result .= ' max(' . sql_db::GRP_TBL . '.' . $field . ') AS ' . sql::MAX_PREFIX . $field;
+            $result .= ' max(' . sql_db::GRP_TBL . '.' . $field . ') ' . sql::AS . ' ' . sql::MAX_PREFIX . $field;
         }
 
         // add join fields
@@ -2820,7 +2822,7 @@ class sql_creator
             $result = $this->sep($result);
             $result .= ' ' . sql_db::LNK_TBL . '.' . $field_esc;
             if ($this->join_force_rename) {
-                $result .= ' AS ' . $this->name_sql_esc($field . '1');
+                $result .= ' ' . sql::AS . ' ' . $this->name_sql_esc($field . '1');
             } elseif ($this->usr_query and $this->join_usr_query) {
                 $result = $this->sep($result);
                 $result .= ' ' . sql_db::ULK_TBL . '.' . $field_esc;
@@ -2837,7 +2839,7 @@ class sql_creator
             $result = $this->sep($result);
             $result .= ' ' . sql_db::LNK2_TBL . '.' . $field_esc;
             if ($this->join2_force_rename) {
-                $result .= ' AS ' . $this->name_sql_esc($field . '2');
+                $result .= ' ' . sql::AS . ' ' . $this->name_sql_esc($field . '2');
             } elseif ($this->usr_query and $this->join2_usr_query) {
                 $result = $this->sep($result);
                 $result .= ' ' . sql_db::ULK2_TBL . '.' . $field_esc;
@@ -2853,7 +2855,7 @@ class sql_creator
             $result = $this->sep($result);
             $result .= ' ' . sql_db::LNK3_TBL . '.' . $field_esc;
             if ($this->join3_force_rename) {
-                $result .= ' AS ' . $this->name_sql_esc($field . '3');
+                $result .= ' ' . sql::AS . ' ' . $this->name_sql_esc($field . '3');
             } elseif ($this->usr_query and $this->join3_usr_query) {
                 $result = $this->sep($result);
                 $result .= ' ' . sql_db::ULK3_TBL . '.' . $field_esc;
@@ -2869,7 +2871,7 @@ class sql_creator
             $result = $this->sep($result);
             $result .= ' ' . sql_db::LNK4_TBL . '.' . $field_esc;
             if ($this->join4_force_rename) {
-                $result .= ' AS ' . $this->name_sql_esc($field . '4');
+                $result .= ' ' . sql::AS . ' ' . $this->name_sql_esc($field . '4');
             } elseif ($this->usr_query and $this->join4_usr_query) {
                 if ($result != '') {
                     $result .= ', ';
@@ -2976,7 +2978,7 @@ class sql_creator
             $field = $this->name_sql_esc($field);
             $result = $this->sep($result);
             if ($field == sandbox::FLD_CHANGE_USER) {
-                $result .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID . ' AS ' . $field;
+                $result .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID . ' ' . sql::AS . ' ' . $field;
             } else {
                 $result .= ' ' . sql_db::USR_TBL . '.' . $field;
             }
@@ -3019,7 +3021,7 @@ class sql_creator
             $sc_sub->par_lst = $this->par_lst;
             $sc_sub->par_where = $this->par_where;
 
-            $result = ' FROM ( ' . $sc_sub->sql(0, false) . ' ) AS ' . sql_db::GRP_TBL;
+            $result = ' ' . sql::FROM . ' ( ' . $sc_sub->sql(0, false) . ' ) ' . sql::AS . ' ' . sql_db::GRP_TBL;
         }
         if ($this->join_type <> '') {
             if ($this->join_sub_query) {
@@ -3056,26 +3058,26 @@ class sql_creator
                         $field_order_sql .= ', ';
                     }
                     $field_name_as = $field_name . '_count';
-                    $field_count_sql .= 'count(' . sql_db::LNK_TBL . '.' . $field_name . ') AS ' . $field_name_as;
+                    $field_count_sql .= 'count(' . sql_db::LNK_TBL . '.' . $field_name . ') ' . sql::AS . ' ' . $field_name_as;
                     $field_order_sql .= $field_name_as;
                 }
                 if (count($this->join_usr_count_field_lst) > 0) {
-                    $result .= ' FROM ' . $this->name_sql_esc($this->table) . ' ' . sql_db::STD_TBL;
+                    $result .= ' ' . sql::FROM . ' ' . $this->name_sql_esc($this->table) . ' ' . sql_db::STD_TBL;
                     $result .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join_table_name . ' ' . sql_db::LNK_TBL;
                     $result .= ' ON ' . sql_db::LNK_TBL . '.' . $join_from_id_field . ' = ' . sql_db::STD_TBL . '.' . $join_id_field;
                     $this->add_par(sql_par_type::INT, $this->usr_id);
                     $result .= ' WHERE ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . $this->par_name() . ' ';
                     $result .= ' GROUP BY ' . $fields . ' ';
-                    $result .= ' ) AS ' . sql_db::STD_TBL;
+                    $result .= ' ) ' . sql::AS . ' ' . sql_db::STD_TBL;
                     $this->order = ' ORDER BY ' . $field_order_sql . ' DESC';
                 } else {
-                    $result = ' FROM ( SELECT ' . $this->name_sql_esc($this->table);
+                    $result = ' ' . sql::FROM . ' ( ' . sql::SELECT . ' ' . $this->name_sql_esc($this->table);
                     $result .= ' LEFT JOIN ' . $join_table_name . ' ' . sql_db::LNK_TBL;
                     $result .= ' ON ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . sql_db::LNK_TBL . '.' . $join_id_field;
                     $this->add_par(sql_par_type::INT, $this->usr_id);
                     $result .= ' WHERE ' . sql_db::STD_TBL . '.' . $join_from_id_field . ' = ' . $this->par_name() . ' ';
                     $result .= ' GROUP BY ' . $field_sql . ' ';
-                    $result .= ' ) AS c1';
+                    $result .= ' ) ' . sql::AS . ' c1';
                     $this->order = $field_order_sql . ' DESC';
                 }
             } else {
@@ -3085,7 +3087,7 @@ class sql_creator
                     $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join_table_name . ' ' . sql_db::ULK_TBL;
                     $this->join .= ' ON ' . sql_db::LNK_TBL . '.' . $join_id_field . ' = ' . sql_db::ULK_TBL . '.' . $join_id_field;
                     if (!$this->all_query) {
-                        $this->join .= ' AND ' . sql_db::ULK_TBL . '.' . user::FLD_ID . ' = ';
+                        $this->join .= ' ' . sql::AND . ' ' . sql_db::ULK_TBL . '.' . user::FLD_ID . ' = ';
                         if ($this->query_name == '') {
                             $this->join .= $this->usr_view_id;
                         } else {
@@ -3101,7 +3103,7 @@ class sql_creator
                     if ($this->where == '') {
                         $this->where = ' WHERE ';
                     } else {
-                        $this->where .= ' AND ';
+                        $this->where .= ' ' . sql::AND . ' ';
                     }
                     $this->add_par(sql_par_type::INT, $this->join_select_id);
                     $this->where .= sql_db::LNK_TBL . '.' . $this->join_select_field . ' = ' . $this->par_name();
@@ -3125,7 +3127,7 @@ class sql_creator
                 $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join2_table_name . ' ' . sql_db::ULK2_TBL;
                 $this->join .= ' ON ' . sql_db::LNK2_TBL . '.' . $join2_id_field . ' = ' . sql_db::ULK2_TBL . '.' . $join2_id_field;
                 if (!$this->all_query) {
-                    $this->join .= ' AND ' . sql_db::ULK2_TBL . '.' . user::FLD_ID . ' = ';
+                    $this->join .= ' ' . sql::AND . ' ' . sql_db::ULK2_TBL . '.' . user::FLD_ID . ' = ';
                     if ($this->query_name == '') {
                         $this->join .= $this->usr_view_id;
                     } else {
@@ -3141,7 +3143,7 @@ class sql_creator
                 if ($this->where == '') {
                     $this->where = ' WHERE ';
                 } else {
-                    $this->where .= ' AND ';
+                    $this->where .= ' ' . sql::AND . ' ';
                 }
                 $this->add_par(sql_par_type::INT, $this->join2_select_id);
                 $this->where .= sql_db::LNK2_TBL . '.' . $this->join2_select_field . ' = ' . $this->par_name();
@@ -3164,7 +3166,7 @@ class sql_creator
                 $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join3_table_name . ' ' . sql_db::ULK3_TBL;
                 $this->join .= ' ON ' . sql_db::LNK3_TBL . '.' . $join3_id_field . ' = ' . sql_db::ULK3_TBL . '.' . $join3_id_field;
                 if (!$this->all_query) {
-                    $this->join .= ' AND ' . sql_db::ULK3_TBL . '.' . user::FLD_ID . ' = ';
+                    $this->join .= ' ' . sql::AND . ' ' . sql_db::ULK3_TBL . '.' . user::FLD_ID . ' = ';
                     if ($this->query_name == '') {
                         $this->join .= $this->usr_view_id;
                     } else {
@@ -3180,7 +3182,7 @@ class sql_creator
                 if ($this->where == '') {
                     $this->where = ' WHERE ';
                 } else {
-                    $this->where .= ' AND ';
+                    $this->where .= ' ' . sql::AND . ' ';
                 }
                 $this->add_par(sql_par_type::INT, $this->join3_select_id);
                 $this->where .= sql_db::LNK3_TBL . '.' . $this->join3_select_field . ' = ' . $this->par_name();
@@ -3203,7 +3205,7 @@ class sql_creator
                 $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join4_table_name . ' ' . sql_db::ULK4_TBL;
                 $this->join .= ' ON ' . sql_db::LNK4_TBL . '.' . $join4_id_field . ' = ' . sql_db::ULK4_TBL . '.' . $join4_id_field;
                 if (!$this->all_query) {
-                    $this->join .= ' AND ' . sql_db::ULK4_TBL . '.' . user::FLD_ID . ' = ';
+                    $this->join .= ' ' . sql::AND . ' ' . sql_db::ULK4_TBL . '.' . user::FLD_ID . ' = ';
                     if ($this->query_name == '') {
                         $this->join .= $this->usr_view_id;
                     } else {
@@ -3219,14 +3221,14 @@ class sql_creator
                 if ($this->where == '') {
                     $this->where = ' WHERE ';
                 } else {
-                    $this->where .= ' AND ';
+                    $this->where .= ' ' . sql::AND . ' ';
                 }
                 $this->add_par(sql_par_type::INT, $this->join4_select_id);
                 $this->where .= sql_db::LNK4_TBL . '.' . $this->join4_select_field . ' = ' . $this->par_name();
             }
         }
         if ($result == '') {
-            $result = ' FROM ' . $this->name_sql_esc($this->table);
+            $result = ' ' . sql::FROM . ' ' . $this->name_sql_esc($this->table);
             if ($this->join <> '') {
                 $result .= ' ' . sql_db::STD_TBL;
             }
@@ -3443,7 +3445,7 @@ class sql_creator
             if ($typ == sql_par_type::TEXT or $typ == sql_par_type::KEY_512) {
                 if ($fld == sql::FLD_CODE_ID) {
                     if ($this->db_type == sql_db::POSTGRES) {
-                        $sql_where .= ' AND ';
+                        $sql_where .= ' ' . sql::AND . ' ';
                         if ($this->usr_query or $this->join <> '') {
                             $sql_where .= sql_db::STD_TBL . '.';
                         }
@@ -3621,7 +3623,7 @@ class sql_creator
                         if ($typ == sql_par_type::TEXT or $typ == sql_par_type::KEY_512) {
                             if ($this->par_lst->name($i) == sql::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
-                                    $result .= ' AND ';
+                                    $result .= ' ' . sql::AND . ' ';
                                     if ($this->usr_query or $this->join <> '') {
                                         $result .= sql_db::STD_TBL . '.';
                                     }
@@ -3763,13 +3765,13 @@ class sql_creator
         if ($this->db_type == sql_db::POSTGRES) {
             $par_types = $this->par_types_to_postgres($par_types);
             if ($this->used_par_types() > 0) {
-                $sql = sql::PREPARE . ' ' . $query_name . ' (' . implode(', ', $par_types) . ') AS ' . $sql;
+                $sql = sql::PREPARE . ' ' . $query_name . ' (' . implode(', ', $par_types) . ') ' . sql::AS . ' ' . $sql;
             } else {
-                $sql = sql::PREPARE . ' ' . $query_name . ' AS ' . $sql;
+                $sql = sql::PREPARE . ' ' . $query_name . ' ' . sql::AS . ' ' . $sql;
             }
             $sql .= ";";
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $sql = "PREPARE " . $query_name . " FROM '" . $sql;
+            $sql = sql::PREPARE . " " . $query_name . " " . sql::FROM . " '" . $sql;
             $sql .= "';";
         } else {
             log_err(sql::PREPARE . ' SQL not yet defined for SQL dialect ' . $this->db_type);
@@ -3844,10 +3846,11 @@ class sql_creator
                             } else {
                                 $par_string = '(' . implode(', ', $par_types) . ')';
                                 $sql = sql::PREPARE . ' ' . $this->query_name . ' '
-                                    . $par_string . ' AS ' . $sql_statement_type;
+                                    . $par_string . ' ' . sql::AS . ' ' . $sql_statement_type;
                             }
                         } else {
-                            $sql = sql::PREPARE . ' ' . $this->query_name . ' AS ' . $sql_statement_type;
+                            $sql = sql::PREPARE . ' ' . $this->query_name . ' '
+                                . sql::AS . ' ' . $sql_statement_type;
                         }
                     } elseif ($this->db_type == sql_db::MYSQL) {
                         if ($this->used_par_types() > 0) {
@@ -3864,11 +3867,11 @@ class sql_creator
                                 }
                                 $this->end = ' ';
                             } else {
-                                $sql = sql::PREPARE . ' ' . $this->query_name . " FROM '" . $sql_statement_type;
+                                $sql = sql::PREPARE . ' ' . $this->query_name . " " . sql::FROM . " '" . $sql_statement_type;
                                 $this->end = "';";
                             }
                         } else {
-                            $sql = sql::PREPARE . ' ' . $this->query_name . " FROM '" . $sql_statement_type;
+                            $sql = sql::PREPARE . ' ' . $this->query_name . " " . sql::FROM . " '" . $sql_statement_type;
                             $this->end = "';";
                         }
                     } else {
@@ -5008,7 +5011,7 @@ class sql_creator
         $result = array();
         foreach ($in_types as $type) {
             $pg_type = $this->par_type_to_postgres($type);
-            // TODO review const excusion
+            // TODO review const exclusion
             if ($pg_type != '') {
                 $result[] = $this->par_type_to_postgres($type);
             }
@@ -5146,16 +5149,16 @@ class sql_creator
                 $this->add_par(sql_par_type::INT, $id);
             }
             $sql_mid = " " . user::FLD_ID;
-            $sql_mid .= " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table);
+            $sql_mid .= " " . sql::FROM . " " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table);
             if (!is_array($this->id_field)) {
                 $pos++;
                 $sql_mid_where .= $this->id_field . " = " . $this->par_name($pos);
             }
-            $sql_mid .= $sql_mid_where . " AND (excluded <> 1 OR excluded is NULL)";
+            $sql_mid .= $sql_mid_where . " " . sql::AND . " (excluded <> 1 OR excluded is NULL)";
             if ($owner_id > 0) {
                 $pos++;
                 $this->add_par(sql_par_type::INT, $owner_id);
-                $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name($pos);
+                $sql_mid .= " " . sql::AND . " " . user::FLD_ID . " <> " . $this->par_name($pos);
             }
             $sql_mid = sql::SELECT . ' ' . $sql_mid;
             $qp->sql = $this->prepare_sql($sql_mid, $qp->name, $this->get_par_types());
@@ -5192,13 +5195,13 @@ class sql_creator
             $pos = 1;
             $this->add_par(sql_par_type::INT, $id);
             $sql_mid = " " . user::FLD_ID .
-                " FROM " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table) .
+                " " . sql::FROM . " " . $this->name_sql_esc(sql_db::TBL_USER_PREFIX . $this->table) .
                 " WHERE " . $this->id_field . " = " . $this->par_name($pos) . "
-                 AND (excluded <> 1 OR excluded is NULL)";
+                 " . sql::AND . " (excluded <> 1 OR excluded is NULL)";
             $pos++;
             if ($owner_id > 0) {
                 $this->add_par(sql_par_type::INT, $owner_id);
-                $sql_mid .= " AND " . user::FLD_ID . " <> " . $this->par_name($pos);
+                $sql_mid .= " " . sql::AND . " " . user::FLD_ID . " <> " . $this->par_name($pos);
                 $pos++;
             }
             $sql_mid = sql::SELECT . ' ' . $sql_mid;
@@ -5212,7 +5215,7 @@ class sql_creator
 
 
     /**
-     * create a sql statment to delete all rows that have one of the given ids
+     * create a sql statement to delete all rows that have one of the given ids
      *
      * @param string $class the class name e.g. element not element_list
      * @param string $id_field the name of the id fields of the class
@@ -5234,7 +5237,6 @@ class sql_creator
         $qp->par = [implode(',', $id_lst)];
         return $qp;
     }
-
 
 
     /*
@@ -5291,7 +5293,7 @@ class sql_creator
      */
     private function set_field_num_dummy(string $field): string
     {
-        return " 0 AS " . $field;
+        return " 0 " . sql::AS . " " . $field;
     }
 
     /**
@@ -5301,7 +5303,7 @@ class sql_creator
      */
     private function set_field_date_dummy(string $field): string
     {
-        return " now() AS " . $field;
+        return " now() " . sql::AS . " " . $field;
     }
 
     /**
@@ -5315,7 +5317,11 @@ class sql_creator
     private function set_field_usr_count(
         string $fields, string $field, string $stb_tbl = sql_db::LNK_TBL, string $as = ''): string
     {
-        return ' FROM ( SELECT ' . $fields . ', count(' . $stb_tbl . '.' . $field . ') AS ' . $as;
+        return ' '
+            . sql::FROM
+            . ' ( ' . sql::SELECT . ' ' . $fields
+            . ', count(' . $stb_tbl . '.' . $field . ') '
+            . sql::AS . ' ' . $as;
     }
 
     /**
@@ -5350,24 +5356,39 @@ class sql_creator
         }
         if ($this->db_type == sql_db::POSTGRES) {
             if ($field_format == sql_db::FLD_FORMAT_TEXT) {
-                $result = " CASE WHEN (" . $usr_tbl . "." . $field . " <> '' IS NOT TRUE) THEN "
-                    . $stb_tbl . "." . $field . " ELSE " . $usr_tbl . "." . $field . " END AS " . $as;
+                $result = " "
+                    . sql::CASE . " (" . $usr_tbl . "." . $field . " <> '' " . sql::NOT_TRUE . ") "
+                    . sql::THEN . " "  . $stb_tbl . "." . $field . " "
+                    . sql::ELSE . " " . $usr_tbl . "." . $field . " " . sql::END . " "
+                    . sql::AS . " " . $as;
             } elseif ($field_format == sql_db::FLD_FORMAT_VAL) {
-                $result = " CASE WHEN (" . $usr_tbl . "." . $field . " IS NULL) THEN "
-                    . $stb_tbl . "." . $field . " ELSE " . $usr_tbl . "." . $field . " END AS " . $as;
+                $result = " "
+                    . sql::CASE . " (" . $usr_tbl . "." . $field . " " . sql::IS_NULL . ") "
+                    . sql::THEN . " " . $stb_tbl . "." . $field . " "
+                    . sql::ELSE . " " . $usr_tbl . "." . $field . " " . sql::END . " "
+                    . sql::AS . " " . $as;
             } elseif ($field_format == sql_db::FLD_FORMAT_BOOL) {
-                $result = " CASE WHEN (" . $usr_tbl . "." . $field . " IS NULL) THEN COALESCE("
-                    . $stb_tbl . "." . $field . ",0) ELSE COALESCE(" . $usr_tbl . "." . $field . ",0) END AS " . $as;
+                $result = " "
+                    . sql::CASE . " (" . $usr_tbl . "." . $field . " " . sql::IS_NULL . ") "
+                    . sql::THEN . " " . sql::COALESCE . "(" . $stb_tbl . "." . $field . ",0) "
+                    . sql::ELSE . " " . sql::COALESCE . "(" . $usr_tbl . "." . $field . ",0) " . sql::END . " "
+                    . sql::AS . " " . $as;
             } else {
                 log_err('Unexpected field format ' . $field_format);
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
             if ($field_format == sql_db::FLD_FORMAT_TEXT or $field_format == sql_db::FLD_FORMAT_VAL) {
-                $result = '         IF(' . $usr_tbl . '.' . $field . ' IS NULL, '
-                    . $stb_tbl . '.' . $field . ', ' . $usr_tbl . '.' . $field . ')    AS ' . $as;
+                $result = ' '
+                    . sql::CASE_MYSQL . $usr_tbl . '.' . $field . ' ' . sql::IS_NULL
+                    . sql::THEN_MYSQL . ' ' . $stb_tbl . '.' . $field
+                    . sql::ELSE_MYSQL . ' ' . $usr_tbl . '.' . $field . ') '
+                    . sql::AS . ' ' . $as;
             } elseif ($field_format == sql_db::FLD_FORMAT_BOOL) {
-                $result = '         IF(' . $usr_tbl . '.' . $field . ' IS NULL, COALESCE('
-                    . $stb_tbl . '.' . $field . ',0), COALESCE(' . $usr_tbl . '.' . $field . ',0))    AS ' . $as;
+                $result = ' '
+                    . sql::CASE_MYSQL . $usr_tbl . '.' . $field . ' ' . sql::IS_NULL
+                    . sql::THEN_MYSQL . ' ' . sql::COALESCE . '(' . $stb_tbl . '.' . $field . ',0)'
+                    . sql::ELSE_MYSQL . ' ' . sql::COALESCE . '(' . $usr_tbl . '.' . $field . ',0)) '
+                    . sql::AS . ' ' . $as;
             } else {
                 log_err('Unexpected field format ' . $field_format);
             }

@@ -36,18 +36,35 @@ class sql
 
     // common SQL const that must exist in all used sql dialects
     // or the say it another way: used SQL elements that are the same in all used dialects
+
+    // start of statements
     const SELECT = 'SELECT';
     const INSERT = 'INSERT';
     const UPDATE = 'UPDATE';
     const DELETE = 'DELETE FROM';
-    const NOW = 'Now()';
-    const ORDER_ASC = 'ASC';
-    const ORDER_DESC = 'DESC';
-    const NULL_VALUE = 'NULL';
+    const PREPARE = 'PREPARE';
+
+    // setup tables
+    const CREATE = 'CREATE OR REPLACE';
     const INDEX = 'INDEX';
     const UNIQUE = 'UNIQUE INDEX';  // TODO check if UNIQUE needs to be used for word and triple names
-    const PREPARE = 'PREPARE';
-    const CREATE = 'CREATE OR REPLACE';
+
+    // functions
+    const NOW = 'Now()';
+
+    // logic
+    const AND = 'AND';
+    const OR = 'OR';
+
+    // condition
+    const WHERE = 'WHERE';
+
+    // sorting
+    const ORDER_ASC = 'ASC';
+    const ORDER_DESC = 'DESC';
+
+    // not yet checked in sql_creator
+    const NULL_VALUE = 'NULL';
     const DROP_MYSQL = 'DROP PROCEDURE IF EXISTS';
     const TRUNCATE = 'TRUNCATE';
     const CASCADE = 'CASCADE';
@@ -69,22 +86,24 @@ class sql
     const VIEW = 'VIEW';
     const AS = 'AS';
     const FROM = 'FROM';
-    const WHERE = 'WHERE';
-    const AND = 'AND';
-    const OR = 'OR';
     const CONCAT = 'CONCAT';
     const CASE = 'CASE WHEN';
     const CASE_MYSQL = 'IF(';
     const THEN = 'THEN';
     const THEN_MYSQL = ',';
     const IS_NULL = 'IS NULL';
+    const NOT_TRUE = 'IS NOT TRUE';
     const ELSE = 'ELSE';
     const ELSE_MYSQL = ',';
     const END = 'END';
     const END_MYSQL = ')';
     const UNION = 'UNION';
     const IN = 'IN';
+    const COALESCE = 'COALESCE';
+
+    // to separate one SQL statement from the next
     const SEP = ';';
+
     const TBL_SEP = '.';
     const WITH = 'WITH';
 

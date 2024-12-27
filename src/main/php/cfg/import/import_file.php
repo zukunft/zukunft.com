@@ -146,6 +146,8 @@ class import_file
 
     /**
      * import the initial system configuration
+     * TODO validate the import by comparing the import with the api message to tne frontend
+     *
      * @param user $usr who has triggered the function
      * @return bool true if the configuration has imported
      */
