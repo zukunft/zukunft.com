@@ -166,7 +166,7 @@ class config_numbers extends value_list
      */
 
     /**
-     * loaf the system configuration from the database to this object
+     * load the system configuration from the database to this object
      *
      * @return bool true if the values of the system configuration have been loaded
      */

@@ -25,7 +25,7 @@ zukunft.com:
           max phrase: 3
           tooltip-comment: "maximal number of phrases that can be included in the table name for a separate value table e.g. if the system detects that a separate table for the inhabitants at the end of the year of a city will increase speed and reduce time the table name can be inhabitants-city-year and each row has the city name and the columns have the year names"
     user:
-      tooltip-comment: "settings that can each user can can set individually"
+      tooltip-comment: "settings that each user can set individually"
       default:
         tooltip-comment: "the default settings for normal users"
         frontend:

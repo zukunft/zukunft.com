@@ -62,6 +62,9 @@ $msg .= $usr->get();
 if ($usr->id() > 0) {
     $cfg_lst = new config_numbers($usr);
     $cfg_lst->load_usr_cfg($usr);
+    if ($cfg_lst->is_empty()) {
+        $msg = 'config is empty';
+    }
     $result = $cfg_lst->api_obj();
 }
 

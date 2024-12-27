@@ -91,6 +91,8 @@ class sandbox_value_list extends sandbox_list
 
         if ($phr_lst->is_empty()) {
             log_warning("At lease one phrase should be given to load a value list");
+        } else {
+            log_debug($phr_lst->dsp_id());
         }
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_phr_lst_multi($sc, $phr_lst, $class, false, $or, $limit, $page);

@@ -8,9 +8,9 @@ info:
     TODO: combine external (without id) and internal objects (with id)
     TODO: add multi defence layer security levels (valueList for normal user but user only for admin)
     TODO: add the missing types
-    TODO: add the missing lists e.g. PhraseList
+    TODO: add the missing lists e.g. sysLogList
     TODO: add list saving functions
-  version: "0.0.2.5"
+  version: "0.0.2.7"
   contact:
     name: Timon Zielonka
     email: timon@zukunft.com
@@ -69,6 +69,8 @@ tags:
     description: get the changes done be the users
   - name: error
     description: to trace the fixing of a setup error and for admins to confirm the fixing
+  - name: config
+    description: the system configuration setting
   - name: typeLists
     description: |-
       get all code linked types with one request
@@ -2135,6 +2137,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /config:
+    get:
+      tags:
+        - config
+      summary: get the system settings
+      description: |-
+        a value list with the backend, frontend and user settings
+      operationId: allTypeLists
+      responses:
+        '200':
+          description: all code linked object types
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValueList'
+        '204':
+          description: could be the case if not even the default config has been loaded yet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   schemas:
@@ -2875,6 +2904,15 @@ components:
             description: the internal id of a word, value, formula or any other database object
             example: 1
 
+    Message:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: non critical message text
+          example: question is empty
     Error:
       type: object
       required:

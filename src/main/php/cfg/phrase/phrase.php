@@ -869,6 +869,7 @@ class phrase extends combine_named
      */
     function all_children(): phrase_list
     {
+        log_debug($this->dsp_id());
         $phr_lst = new phrase_list($this->user());
         $phr_lst->add($this);
         return $phr_lst->foaf_children();
