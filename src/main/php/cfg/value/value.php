@@ -77,6 +77,7 @@
 namespace cfg\value;
 
 include_once DB_PATH . 'sql.php';
+include_once API_VALUE_PATH . 'value.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';

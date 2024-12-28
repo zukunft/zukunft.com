@@ -192,9 +192,12 @@ class config_numbers extends value_list
         $root_phr = new phrase($usr);
         $root_phr->load_by_name(word::SYSTEM_CONFIG);
         $phr_lst = $root_phr->all_children();
-        $this->load_by_phr_lst($phr_lst);
+        $this->load_by_phr($root_phr);
         if (!$this->is_empty()) {
             $result = true;
+            log_debug($this->count() . ' config values loaded');
+        } else {
+            log_debug('no config values loaded');
         }
         return $result;
     }

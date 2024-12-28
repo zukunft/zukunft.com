@@ -61,9 +61,12 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
     $cfg_lst = new config_numbers($usr);
-    $cfg_lst->load_usr_cfg($usr);
-    if ($cfg_lst->is_empty()) {
-        $msg = 'config is empty';
+    if (!$cfg_lst->load_usr_cfg($usr)) {
+        $msg = 'cannot load config';
+    } else {
+        if ($cfg_lst->is_empty()) {
+            $msg = 'config is empty';
+        }
     }
     $result = $cfg_lst->api_obj();
 }
