@@ -35,10 +35,10 @@ namespace unit;
 include_once WEB_VALUE_PATH . 'value_list.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\phrase;
-use cfg\phrase_list;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
 use cfg\value\value_list;
 use html\value\value_list as value_list_dsp;
 use shared\library;
@@ -58,10 +58,9 @@ class value_list_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'value_list->';
         $t->resource_path = 'db/value/';
-        $json_file = 'unit/value/travel_scoring_value_list.json';
 
         $t->header('Unit tests of the value list class (src/main/php/model/value/value_list.php)');
 
@@ -92,7 +91,7 @@ class value_list_tests
 
 
         $t->subheader('Im- and Export tests');
-
+        $json_file = 'unit/value/travel_scoring_value_list.json';
         $t->assert_json_file(new value_list($usr), $json_file);
 
 
@@ -123,13 +122,13 @@ class value_list_tests
     {
         // check the Postgres query syntax
         $sc = $db_con->sql_creator();
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst, false, $or);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_phr_lst($sc, $phr_lst, false, $or);
             $t->assert_qp($qp, $sc->db_type);
         }
@@ -148,13 +147,13 @@ class value_list_tests
     {
         // check the Postgres query syntax
         $sc = $db_con->sql_creator();
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_by_grp_lst($sc, $phr_lst);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_grp_lst($sc, $phr_lst);
             $t->assert_qp($qp, $sc->db_type);
         }
@@ -173,13 +172,13 @@ class value_list_tests
     {
         // check the Postgres query syntax
         $sc = $db_con->sql_creator();
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $val_lst->load_sql_by_phr($sc, $phr);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $val_lst->load_sql_by_phr($sc, $phr);
             $t->assert_qp($qp, $sc->db_type);
         }

@@ -82,7 +82,7 @@
       "protection": "admin_protection"
     },
     {
-      "name": "Climate",
+      "name": "climate",
       "refs": [
         {
           "name": "Climate",
@@ -106,6 +106,12 @@
           "type": "wikidata"
         }
       ]
+    },
+    {
+      "name": "warming"
+    },
+    {
+      "name": "warmer"
     },
     {
       "name": "reduce"
@@ -158,13 +164,13 @@
       "name": "intelligence"
     },
     {
-      "name": "Health"
+      "name": "health"
     },
     {
       "name": "research"
     },
     {
-      "name": "povertiy"
+      "name": "poverty"
     },
     {
       "name": "taxes"
@@ -227,7 +233,7 @@
       ]
     },
     {
-      "name": "Population",
+      "name": "population",
       "refs": [
         {
           "name": "Population",
@@ -246,7 +252,7 @@
       "name": "billion"
     },
     {
-      "name": "b"
+      "name": "trillion"
     },
     {
       "name": "million",
@@ -255,15 +261,45 @@
       "protection": "admin_protection"
     },
     {
+      "name": "mio"
+    },
+    {
       "name": "m"
+    },
+    {
+      "name": "CHF",
+      "type": "measure"
+    },
+    {
+      "name": "USD",
+      "type": "measure"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "2024"
     }
   ],
   "triples": [
     {
+      "from": "warmer",
+      "verb": "is a",
+      "to": "warm"
+    },
+    {
+      "from": "warming",
+      "verb": "is a",
+      "to": "warm"
+    },
+    {
       "name": "climate warming",
       "from": "climate",
-      "verb": "can",
-      "to": "warm",
+      "verb": "can get",
+      "to": "warmer",
       "refs": [
         {
           "name": "Climate_change",
@@ -282,10 +318,10 @@
       "to": "potential"
     },
     {
-      "name": "Climate gas",
+      "name": "climate gas",
       "from": "gas",
       "verb": "can cause",
-      "to": "warm",
+      "to": "warming",
       "refs": [
         {
           "name": "Climate_change",
@@ -338,6 +374,11 @@
       "to": "million"
     },
     {
+      "from": "mio",
+      "verb": "is symbol for",
+      "to": "million"
+    },
+    {
       "from": "b",
       "verb": "is symbol for",
       "to": "billion"
@@ -355,13 +396,113 @@
     },
     {
       "words": [
+        "world",
+        "GDP",
+        "million",
+        "USD",
+        "2024"
+      ],
+      "number": "110047109"
+    },
+    {
+      "words": [
         "climate warming",
         "potential",
         "loss",
         "percent",
         "htp"
       ],
-      "number": "-30"
+      "number": "-37"
+    },
+    {
+      "words": [
+        "climate warming",
+        "potential",
+        "loss",
+        "percent",
+        "GDP"
+      ],
+      "number": "-32"
+    },
+    {
+      "words": [
+        "populism",
+        "potential",
+        "loss",
+        "percent",
+        "htp"
+      ],
+      "number": "-28"
+    },
+    {
+      "words": [
+        "populism",
+        "potential",
+        "loss",
+        "percent",
+        "GDP"
+      ],
+      "number": "-31"
+    },
+    {
+      "words": [
+        "health",
+        "potential",
+        "loss",
+        "percent",
+        "htp"
+      ],
+      "number": "-24"
+    },
+    {
+      "words": [
+        "health",
+        "potential",
+        "loss",
+        "percent",
+        "GDP"
+      ],
+      "number": "-31"
+    },
+    {
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "htp"
+      ],
+      "number": "-16"
+    },
+    {
+      "words": [
+        "poverty",
+        "potential",
+        "loss",
+        "percent",
+        "GDP"
+      ],
+      "number": "-8"
+    },
+    {
+      "words": [
+        "education",
+        "potential",
+        "loss",
+        "percent",
+        "htp"
+      ],
+      "number": "-11"
+    },
+    {
+      "words": [
+        "education",
+        "potential",
+        "loss",
+        "percent",
+        "GDP"
+      ],
+      "number": "-13"
     }
   ],
   "formulas": [
@@ -374,6 +515,11 @@
       "name": "scale billion to one",
       "expression": "\"one\" = \"billion\" * 1000000000",
       "assigned_word": "billion"
+    },
+    {
+      "name": "scale trillion to one",
+      "expression": "\"one\" = \"trillion\" * 1000000000000",
+      "assigned_word": "trillion"
     },
     {
       "name": "global happy time points",

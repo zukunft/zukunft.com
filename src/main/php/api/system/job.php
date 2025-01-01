@@ -34,11 +34,11 @@ namespace api\system;
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_USER_PATH . 'user.php';
 
-use cfg\db_object_seq_id;
-use cfg\user;
+use cfg\helper\db_object_seq_id;
+use cfg\user\user;
 use DateTime;
 
-class job extends db_object_seq_id
+class job
 {
 
     /*
@@ -60,7 +60,6 @@ class job extends db_object_seq_id
 
     function __construct(user $usr)
     {
-        parent::__construct();
         $this->set_user($usr);
         $this->id = 0;
         $this->request_time = '';

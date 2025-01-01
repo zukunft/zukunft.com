@@ -31,7 +31,7 @@
 
 */
 
-namespace cfg;
+namespace cfg\system;
 
 class log
 {

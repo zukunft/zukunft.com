@@ -35,11 +35,11 @@
 
 */
 
-namespace cfg;
+namespace cfg\user;
 
 include_once MODEL_HELPER_PATH . 'type_object.php';
 
-use cfg\type_object;
+use cfg\helper\type_object;
 
 class user_official_type extends type_object
 {

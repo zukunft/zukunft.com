@@ -37,8 +37,8 @@ include_once API_WORD_PATH . 'triple.php';
 include_once WORD_PATH . 'word.php';
 include_once WORD_PATH . 'triple.php';
 include_once PHRASE_PATH . 'phrase.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use api\api;
 use api\sandbox\combine_named as combine_named_api;
 use api\sandbox\combine_object as combine_object_api;
 use api\word\triple as triple_api;
@@ -47,6 +47,7 @@ use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
 use JsonSerializable;
+use shared\json_fields;
 
 class phrase extends combine_named_api implements JsonSerializable
 {
@@ -167,11 +168,14 @@ class phrase extends combine_named_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = parent::jsonSerialize();
-        $vars[api::FLD_ID] = $this->obj_id();
-        if ($this->is_word()) {
-            $vars[combine_object_api::FLD_CLASS] = self::CLASS_WORD;
-        } else {
-            $vars[combine_object_api::FLD_CLASS] = self::CLASS_TRIPLE;
+        $id = $this->obj_id();
+        $vars[json_fields::ID] = $this->obj_id();
+        if ($id != 0) {
+            if ($this->is_word()) {
+                $vars[json_fields::OBJECT_CLASS] = self::CLASS_WORD;
+            } else {
+                $vars[json_fields::OBJECT_CLASS] = self::CLASS_TRIPLE;
+            }
         }
         return $vars;
     }

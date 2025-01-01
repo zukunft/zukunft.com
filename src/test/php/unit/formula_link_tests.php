@@ -35,12 +35,12 @@ namespace unit;
 include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
 include_once MODEL_FORMULA_PATH . 'formula_link_list.php';
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
-use cfg\formula_link;
-use cfg\formula_link_list;
-use cfg\formula_link_type;
+use cfg\formula\formula_link;
+use cfg\formula\formula_link_list;
+use cfg\formula\formula_link_type;
 use shared\library;
 use test\test_cleanup;
 
@@ -54,7 +54,7 @@ class formula_link_tests
         // init
         $lib = new library();
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'formula_link->';
         $t->resource_path = 'db/formula/';
 
@@ -114,7 +114,7 @@ class formula_link_tests
         $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/formula/scale_second_to_minute.json'), true);
         $lnk = new formula($usr);
         $lnk->import_obj($json_in, $t);
-        $json_ex = json_decode(json_encode($lnk->export_obj(false)), true);
+        $json_ex = json_decode(json_encode($lnk->export_json(false)), true);
         $result = json_is_similar($json_in, $json_ex);
         $target = true;
         $t->display('formula_link->import check name', $target, $result);

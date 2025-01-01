@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><title>test (zukunft.com)</title>
+<head><title>test view (zukunft.com)</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="http://localhost/lib_external/bootstrap-5.3.3-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="/lib_external/bootstrap-5.3.3-dist/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css"/>
-    <link rel="stylesheet" href="http://localhost/lib_external/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/lib_external/fontawesome/css/all.css">
 </head>
 <body>
 <div class="container"><h4>add word</h4>
@@ -14,7 +14,7 @@
                 class="form-control mr-sm-2" type="search" name="pattern" id="pattern" placeholder="word or formula">
             <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>
         </form>
-        <div class="col-sm-2">
+        <div class="col-md-2">
             <ul class="nav navbar-nav">
                 <li class="active"></li>
                 <li class="active"></li>
@@ -25,36 +25,82 @@
         </div>
     </nav>
     <br><br><br><br><br>
-    <form action="/http/word_add.php" id="word_add"><input class="form-control" type="hidden" name="back"
-                                                           id="back"><input class="form-control" type="hidden"
-                                                                            name="confirm" id="confirm" value="1">
-        <div class="form-group col-sm-4"><label for="name">Name</label><input class="form-control" type="text"
-                                                                              name="Name" id="name" value="Mathematics">
+    <form action="/http/view.php" id="word_add"><input class="form-control" type="hidden" name="m" id="m"
+                                                       value="3"><input class="form-control" type="hidden" name="id"
+                                                                        id="id" value="1"><input class="form-control"
+                                                                                                 type="hidden"
+                                                                                                 name="back" id="back"
+                                                                                                 value="1"><input
+            class="form-control" type="hidden" name="confirm" id="confirm" value="1">
+        <div class="row col-md-12">
+            <div class="form-group col-md-4"><label for="name">name</label><input class="form-control" type="text"
+                                                                                  name="name" id="name"
+                                                                                  value="Mathematics"></div>
         </div>
-        <div class="form-group col-sm-12"><label for="description">Description</label><input class="form-control"
-                                                                                             type="text"
-                                                                                             name="Description"
-                                                                                             id="description"
-                                                                                             value="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
+        <div class="row col-md-12">
+            <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
+                                                                                                 type="text"
+                                                                                                 name="description"
+                                                                                                 id="description"
+                                                                                                 value="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
+            </div>
         </div>
-        <div class="form-group col-sm-4"><label for="share">share:</label><select class="form-control" name="share"
-                                                                                  form="share" id="share">
-            <option value="1" selected>public</option>
-            <option value="2">personal</option>
-            <option value="3">group</option>
-            <option value="4">private</option>
-        </select></div>
-        <div class="form-group col-sm-4"><label for="protection">protection:</label><select class="form-control"
-                                                                                            name="protection"
-                                                                                            form="protection"
-                                                                                            id="protection">
-            <option value="1">no protection</option>
-            <option value="2">user</option>
-            <option value="3" selected>admin</option>
-            <option value="4">no change</option>
-        </select></div>
-        <button class="btn btn-space btn-outline-secondary" type="submit">Cancel</button>
-        <button class="btn btn-space btn-outline-success" type="submit">Save</button>
+        <div class="row col-md-12">
+            <div class="form-group col-md-4"><label for="phrase type">type:</label><select class="form-control"
+                                                                                           name="phrase type"
+                                                                                           form="word_add"
+                                                                                           id="phrase type">
+                <option value="1" selected>standard</option>
+                <option value="2">time</option>
+                <option value="3">measure type</option>
+                <option value="4">time jump</option>
+                <option value="5">calc</option>
+                <option value="6">format percent</option>
+                <option value="7">scaling</option>
+                <option value="8">hidden scaling</option>
+                <option value="9">view / layer</option>
+                <option value="10">formula link</option>
+                <option value="11">differentiator filler</option>
+                <option value="12">this</option>
+                <option value="13">next</option>
+                <option value="14">prior</option>
+                <option value="15">scaling word percent</option>
+                <option value="16">scaled measure</option>
+                <option value="17">math constant</option>
+                <option value="18">measure divisor</option>
+                <option value="19">latest</option>
+                <option value="20">key</option>
+                <option value="21">information</option>
+                <option value="22">hidden triple</option>
+                <option value="23">hidden system</option>
+                <option value="24">group and select</option>
+                <option value="25">symbol</option>
+                <option value="26">rank</option>
+                <option value="27">ignore</option>
+            </select></div>
+        </div>
+        <div class="row col-md-12">
+            <div class="form-group col-md-4"><label for="share">share:</label><select class="form-control" name="share"
+                                                                                      form="word_add" id="share">
+                <option value="1" selected>public</option>
+                <option value="2">personal</option>
+                <option value="3">group</option>
+                <option value="4">private</option>
+            </select></div>
+        </div>
+        <div class="row col-md-12">
+            <div class="form-group col-md-4"><label for="protection">protection:</label><select class="form-control"
+                                                                                                name="protection"
+                                                                                                form="word_add"
+                                                                                                id="protection">
+                <option value="1">no protection</option>
+                <option value="2">user</option>
+                <option value="3" selected>admin</option>
+                <option value="4">no change</option>
+            </select></div>
+        </div>
+        <a href="/http/view.php?m=41&id=1" title="Cancel" class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
+        <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
     </form>
     <br></div>
 <footer>

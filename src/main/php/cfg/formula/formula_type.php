@@ -29,7 +29,11 @@
 
 */
 
-namespace cfg;
+namespace cfg\formula;
+
+include_once MODEL_HELPER_PATH . 'type_object.php';
+
+use cfg\helper\type_object;
 
 class formula_type extends type_object
 {

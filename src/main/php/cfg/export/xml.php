@@ -42,9 +42,9 @@ include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once EXPORT_PATH . 'xml_serializer.php';
 
-use cfg\phrase_list;
-use cfg\user;
-use cfg\user_service;
+use cfg\phrase\phrase_list;
+use cfg\sandbox\user_service;
+use cfg\user\user;
 
 class xml extends user_service
 {

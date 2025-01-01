@@ -29,12 +29,25 @@
   
 */
 
-namespace cfg;
+namespace cfg\element;
+
+include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_PHRASE_PATH . 'term_list.php';
+
+use cfg\sandbox\sandbox_list;
+use cfg\phrase\term_list;
 
 class element_group_list extends sandbox_list
 {
 
     // array $lst is the list of formula element groups
+
+    /*
+     * construct and map
+     */
+
+    // the rows_mapper is not needed, because the element group is not saved in the database
+
 
     /*
      * debug

@@ -40,7 +40,7 @@ include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
 use cfg\component\component_link;
 use cfg\component\component_link_type;
 use cfg\component\position_type;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use test\test_cleanup;
@@ -54,7 +54,7 @@ class component_link_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'component_link->';
         $t->resource_path = 'db/component/';
 
@@ -79,7 +79,6 @@ class component_link_tests
         $vcl = new component_link($usr);
         $t->assert_sql_by_id($sc, $vcl);
         $t->assert_sql_by_link($sc, $vcl);
-        $this->assert_sql_link_and_type($t, $db_con, $vcl);
         $this->assert_sql_link_and_pos($t, $db_con, $vcl);
         $this->assert_sql_max_pos($t, $db_con, $vcl);
 
@@ -113,31 +112,6 @@ class component_link_tests
     }
 
     /**
-     * test the SQL statement creation to retrieve a component link by view, component and link type
-     * and check if the statement name is unique
-     *
-     * @param test_cleanup $t the test environment
-     * @param sql_db $db_con the test database connection
-     * @param component_link $vcl
-     * @return void
-     */
-    private function assert_sql_link_and_type(
-        test_cleanup $t,
-        sql_db $db_con,
-        component_link $vcl): void
-    {
-        // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $vcl->load_sql_by_link_and_type($db_con->sql_creator(), 1, 2, 3);
-        $t->assert_qp($qp, $db_con->db_type);
-
-        // check the MySQL query syntax
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $vcl->load_sql_by_link_and_type($db_con->sql_creator(), 1, 2, 3);
-        $t->assert_qp($qp, $db_con->db_type);
-    }
-
-    /**
      * test the SQL statement creation to retrieve a component link by view, component and pos
      * and check if the statement name is unique
      *
@@ -147,8 +121,8 @@ class component_link_tests
      * @return void
      */
     private function assert_sql_link_and_pos(
-        test_cleanup $t,
-        sql_db $db_con,
+        test_cleanup   $t,
+        sql_db         $db_con,
         component_link $vcl): void
     {
         // check the Postgres query syntax
@@ -172,8 +146,8 @@ class component_link_tests
      * @return void
      */
     private function assert_sql_max_pos(
-        test_cleanup $t,
-        sql_db $db_con,
+        test_cleanup   $t,
+        sql_db         $db_con,
         component_link $vcl): void
     {
         // check the Postgres query syntax

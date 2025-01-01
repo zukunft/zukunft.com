@@ -34,25 +34,23 @@
 
 namespace html\phrase;
 
+include_once SERVICE_PATH . 'config.php';
 include_once SANDBOX_PATH . 'list_dsp.php';
 include_once PHRASE_PATH . 'phrase.php';
 
-use api\phrase\term as term_api;
-use api\sandbox\combine_object as combine_object_api;
 use cfg\config;
-use cfg\foaf_direction;
-use cfg\phrase;
-use cfg\phrase_list as phrase_list_db;
-use cfg\user;
-use cfg\verb_list;
-use controller\controller;
-use html\rest_ctrl as api_dsp;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list as phrase_list_db;
+use cfg\user\user;
+use cfg\verb\verb_list;
 use html\html_base;
-use html\sandbox\list_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
-use html\word\triple as triple_dsp;
-use html\word\word as word_dsp;
+use html\rest_ctrl as api_dsp;
+use html\sandbox\list_dsp;
+use html\user\user_message;
+use shared\api;
+use shared\enum\foaf_direction;
 use shared\library;
 
 class phrase_list extends list_dsp
@@ -65,28 +63,11 @@ class phrase_list extends list_dsp
     /**
      * set the vars of a phrase list based on the given json
      * @param array $json_array an api single object json message
-     * @return object a term_dsp with the word or triple set based on the given json
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_obj_from_json_array(array $json_array): object
+    function set_from_json_array(array $json_array): user_message
     {
-        $trm = null;
-        if (array_key_exists(combine_object_api::FLD_CLASS, $json_array)) {
-            if ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_WORD) {
-                $wrd = new word_dsp();
-                $wrd->set_from_json_array($json_array);
-                $trm = $wrd->phrase();
-            } elseif ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_TRIPLE) {
-                $trp = new triple_dsp();
-                $trp->set_from_json_array($json_array);
-                $trm = $trp->phrase();
-            } else {
-                log_err('class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected.');
-            }
-        } else {
-            $lib = new library();
-            log_err('json key ' . combine_object_api::FLD_CLASS . ' is missing in ' . $lib->dsp_array($json_array));
-        }
-        return $trm;
+        return parent::set_list_from_json($json_array, new phrase_dsp());
     }
 
     /**
@@ -126,9 +107,9 @@ class phrase_list extends list_dsp
         // TODO move the
         $api = new api_dsp();
         $data = array();
-        $data[controller::URL_VAR_PHRASE] = $phr->id();
-        $data[controller::URL_VAR_DIRECTION] = $direction;
-        $data[controller::URL_VAR_LEVELS] = 1;
+        $data[api::URL_VAR_PHRASE] = $phr->id();
+        $data[api::URL_VAR_DIRECTION] = $direction;
+        $data[api::URL_VAR_LEVELS] = 1;
         $json_body = $api->api_get(self::class, $data);
         $this->set_from_json_array($json_body);
         if (!$this->is_empty()) {
@@ -184,6 +165,15 @@ class phrase_list extends list_dsp
         return $html->text_h2($this->InitCap());
     }
 
+    /**
+     * the old long form to encode
+     */
+    function id_url_long(): string
+    {
+        $lib = new library();
+        return $lib->ids_to_url($this->id_lst(), "phrase");
+    }
+
 
     /*
      * info
@@ -205,7 +195,7 @@ class phrase_list extends list_dsp
 
 
     /*
-     * modification
+     * modify
      */
 
     /**

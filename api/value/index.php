@@ -36,7 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -45,14 +45,15 @@ include_once API_VALUE_PATH . 'value.php';
 
 use cfg\value\value;
 use controller\controller;
-use cfg\user;
+use cfg\user\user;
 use api\value\value as value_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/value", "", false);
 
 // get the parameters
-$val_id = $_GET[controller::URL_VAR_ID] ?? 0;
+$val_id = $_GET[api::URL_VAR_ID] ?? 0;
 
 $msg = '';
 $result = new value_api(); // reset the html code var

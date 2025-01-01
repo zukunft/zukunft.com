@@ -39,24 +39,46 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once DB_PATH . 'sql_par_type.php';
 include_once API_SANDBOX_PATH . 'type_object.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+// TODO avoid include loops
+//include_once MODEL_LANGUAGE_PATH . 'language.php';
+//include_once MODEL_LANGUAGE_PATH . 'language_form.php';
+//include_once MODEL_LOG_PATH . 'change_action.php';
+//include_once MODEL_LOG_PATH . 'change_table.php';
+//include_once MODEL_LOG_PATH . 'change_table_field.php';
+//include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+//include_once MODEL_SYSTEM_PATH . 'pod.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use api\sandbox\type_object as type_object_api;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
-use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\language\language;
+use cfg\language\language_form;
 use cfg\log\change_action;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
+use cfg\sandbox\sandbox_named;
+use cfg\system\pod;
+use shared\json_fields;
 use JsonSerializable;
 
 class type_object extends db_object_seq_id implements JsonSerializable
@@ -67,18 +89,18 @@ class type_object extends db_object_seq_id implements JsonSerializable
      */
 
     // comments used for the database creation
-    // *_SQLTYP is the sql data type used for the field
+    // *_SQL_TYP is the sql data type used for the field
     const TBL_COMMENT = 'for a type to set the predefined behaviour of an object';
 
     // database and JSON object field names
     const FLD_ID_COM = 'the database id is also used as the array pointer';
-    const FLD_ID_SQLTYP = sql_field_type::INT_SMALL;
+    const FLD_ID_SQL_TYP = sql_field_type::INT_SMALL;
     const FLD_NAME_COM = 'the unique type name as shown to the user and used for the selection';
     const FLD_NAME = 'type_name';
     const FLD_CODE_ID_COM = 'this id text is unique for all code links, is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
     const FLD_DESCRIPTION_COM = 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
     const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
+    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
 
     // type name exceptions
     const FLD_ACTION = 'change_action_name';
@@ -86,10 +108,12 @@ class type_object extends db_object_seq_id implements JsonSerializable
     const FLD_FIELD = 'change_table_field_name';
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
+    const FLD_LST_NAME = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    const FLD_LST_ALL = array(
         [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
 
@@ -120,14 +144,14 @@ class type_object extends db_object_seq_id implements JsonSerializable
 
     function reset(): void
     {
-        $this->id = 0;
+        $this->set_id(0);
         $this->code_id = null;
         $this->name = '';
         $this->description = null;
     }
 
     /**
-     * fill the type object vars based on a array of fields from the database
+     * fill the type object vars based on an array of fields from the database
      * @param array $db_row with the data from the database
      * @param string $class the type class name that should be filled
      * @return bool true if all expected object vars have been set
@@ -137,9 +161,9 @@ class type_object extends db_object_seq_id implements JsonSerializable
         $result = parent::row_mapper($db_row, $this->id_field_typ($class));
         // set the id upfront to allow row mapping
         if ($class == language::class AND array_key_exists(language::FLD_ID, $db_row)) {
-            $this->id = ($db_row[language::FLD_ID]);
+            $this->set_id(($db_row[language::FLD_ID]));
         }
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $this->code_id = strval($db_row[sql::FLD_CODE_ID]);
             $type_name = '';
             if ($class == change_action::class) {
@@ -208,10 +232,37 @@ class type_object extends db_object_seq_id implements JsonSerializable
     function api_obj(): type_object_api
     {
         $api_obj = new type_object_api();
-        $api_obj->id = $this->id;
+        $api_obj->id = $this->id();
         $api_obj->name = $this->name;
         $api_obj->code_id = $this->code_id;
         return $api_obj;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = [];
+
+        if ($this->name() <> '') {
+            $vars[json_fields::NAME] = $this->name();
+        }
+        if ($this->code_id <> '') {
+            $vars[json_fields::CODE_ID] = $this->code_id;
+        }
+        if ($this->description <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+
+        return $vars;
     }
 
 
@@ -236,10 +287,10 @@ class type_object extends db_object_seq_id implements JsonSerializable
     /**
      * the sql statement to create the tables of a type object
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the table
      */
-    function sql_table(sql $sc): string
+    function sql_table(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         // the pod is a type object but the number of pods might be significant higher than the number of types
@@ -254,10 +305,10 @@ class type_object extends db_object_seq_id implements JsonSerializable
     /**
      * the sql statement to create the database indices of a type object
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the indices
      */
-    function sql_index(sql $sc): string
+    function sql_index(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         $sql .= $this->sql_index_create($sc);
@@ -272,12 +323,12 @@ class type_object extends db_object_seq_id implements JsonSerializable
     /**
      * create an SQL statement to retrieve a type object by id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the type object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int $id, string $class = ''): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id, string $class = ''): sql_par
     {
         $typ_lst = new type_list();
         $qp = $typ_lst->load_sql($sc, $class, sql_db::FLD_ID);
@@ -290,25 +341,25 @@ class type_object extends db_object_seq_id implements JsonSerializable
 
     /**
      * synthetic creation of grandparent:: for verb
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the type object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id_fwd(sql $sc, int $id, string $class = ''): sql_par
+    function load_sql_by_id_fwd(sql_creator $sc, int $id, string $class = ''): sql_par
     {
-        return parent::load_sql_by_id($sc, $id, $class);
+        return parent::load_sql_by_id($sc, $id);
     }
 
     /**
      * create an SQL statement to retrieve a type object by name from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the source
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql $sc, string $name, string $class = ''): sql_par
+    function load_sql_by_name(sql_creator $sc, string $name, string $class = ''): sql_par
     {
         $typ_lst = new type_list();
         $qp = $typ_lst->load_sql($sc, $class, sql_db::FLD_NAME);
@@ -322,12 +373,12 @@ class type_object extends db_object_seq_id implements JsonSerializable
     /**
      * create an SQL statement to retrieve a type object by code id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $code_id the code id of the source
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql $sc, string $code_id, string $class = ''): sql_par
+    function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = ''): sql_par
     {
         $typ_lst = new type_list();
         $qp = $typ_lst->load_sql($sc, $class, 'code_id');
@@ -386,7 +437,8 @@ class type_object extends db_object_seq_id implements JsonSerializable
      */
     function jsonSerialize(): array
     {
-        $vars = get_object_vars($this);
+        $vars = parent::jsonSerialize();
+        $vars = array_merge($vars, get_object_vars($this));
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

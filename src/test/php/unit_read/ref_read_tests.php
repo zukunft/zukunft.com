@@ -32,11 +32,14 @@
 
 namespace unit_read;
 
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+
 use api\ref\ref as ref_api;
-use cfg\phrase_type;
-use cfg\ref;
-use cfg\ref_type_list;
+use cfg\phrase\phrase_type;
+use cfg\ref\ref;
+use cfg\ref\ref_type_list;
 use shared\library;
+use shared\types\phrase_type as phrase_type_shared;
 use test\test_cleanup;
 
 class ref_read_tests
@@ -46,7 +49,7 @@ class ref_read_tests
     {
 
         global $db_con;
-        global $phrase_types;
+        global $phr_typ_cac;
 
         // init
         $lib = new library();
@@ -63,8 +66,8 @@ class ref_read_tests
 
         // ... and check if at least the most critical is loaded
         // TODO check
-        $result = $phrase_types->id(phrase_type::NORMAL);
-        $t->assert('check ' . phrase_type::NORMAL, $result, 1);
+        $result = $phr_typ_cac->id(phrase_type_shared::NORMAL);
+        $t->assert('check ' . phrase_type_shared::NORMAL, $result, 1);
 
         $t->subheader('API unit db tests');
 

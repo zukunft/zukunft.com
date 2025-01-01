@@ -32,10 +32,11 @@
 
 namespace unit_write;
 
+use api\view\view as view_api;
 use api\word\word as word_api;
-use cfg\ref_type;
-use cfg\ref_type_list;
-use cfg\ref;
+use cfg\ref\ref_type;
+use cfg\ref\ref_type_list;
+use cfg\ref\ref;
 use test\test_cleanup;
 
 class ref_write_tests
@@ -46,18 +47,21 @@ class ref_write_tests
 
         global $usr;
 
-        $t->header('Test the ref class (src/main/php/model/ref/ref.php)');
+        $t->header('reference db write tests');
+
+        $t->subheader('reference write sandbox tests for ' . ref::TEST_REF_NAME);
+        $t->assert_write_link($t->ref_filled_add());
 
         // create the test ref
         $wrd = $t->test_word(word_api::TN_ADD);
         $t->test_ref(word_api::TN_ADD, ref::TEST_REF_NAME, ref_type::WIKIDATA);
 
         // load by phrase and type
-        global $ref_types;
+        global $ref_typ_cac;
         $ref = new ref($usr);
         $ref->set_phrase($wrd->phrase());
-        $ref->set_type_id($ref_types->id(ref_type::WIKIDATA));
-        $ref->load_by_link_ids($wrd->phrase()->id(), $ref->type_id());
+        $ref->set_predicate_id($ref_typ_cac->id(ref_type::WIKIDATA));
+        $ref->load_by_link_ids($wrd->phrase()->id(), $ref->predicate_id());
         $result = $ref->external_key;
         $target = ref::TEST_REF_NAME;
         $t->display('ref->load "' . word_api::TN_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
@@ -69,11 +73,13 @@ class ref_write_tests
             $result = $ref2->phrase()->name();
             $target = word_api::TN_ADD;
             $t->display('ref->load_object word', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
-            $result = $ref2->type_name();
+            $result = $ref2->predicate_name();
             $target = ref_type::WIKIDATA;
             $t->display('ref->load_object type', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
         }
 
+        // cleanup of ref specific tests
+        $t->write_named_cleanup($wrd, word_api::TN_ADD);
     }
 
 }

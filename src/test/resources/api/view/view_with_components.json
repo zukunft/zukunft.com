@@ -1,16 +1,28 @@
 {
   "id": 1,
-  "name": "Word",
-  "description": "the default view for words",
-  "code_id": "word",
+  "protection": 3,
+  "name": "Start view",
+  "description": "A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.",
+  "type_id": 2,
+  "code_id": "entry_view",
   "components": [
     {
       "id": 1,
       "name": "Word",
-      "description": "simply show the word name",
+      "description": "simply show the word or triple name",
       "type_id": 8,
       "link_id": 1,
-      "position": 1
+      "position": 1,
+      "position_type": 1
+    },
+    {
+      "id": 2,
+      "name": "spreadsheet",
+      "description": "s sheet with words, number and formulas",
+      "type_id": 35,
+      "link_id": 2,
+      "position": 2,
+      "position_type": 1
     }
   ]
 }

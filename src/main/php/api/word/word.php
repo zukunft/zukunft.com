@@ -33,15 +33,15 @@
 namespace api\word;
 
 include_once API_SANDBOX_PATH . 'sandbox_typed.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use api\api;
 use api\phrase\phrase as phrase_api;
 use api\phrase\term as term_api;
-use api\sandbox\combine_object as combine_object_api;
 use api\sandbox\sandbox_typed as sandbox_typed_api;
-use cfg\phrase_type;
-use cfg\word as word_cfg;
+use cfg\phrase\phrase_type;
+use cfg\word\word as word_cfg;
 use JsonSerializable;
+use shared\json_fields;
 
 class word extends sandbox_typed_api implements JsonSerializable
 {
@@ -146,6 +146,7 @@ class word extends sandbox_typed_api implements JsonSerializable
     // persevered word names for unit and integration tests based on the database
     // TWN_* - is a Test Word Name for words created only for testing (see also TN_*)
     const TN_ADD = 'System Test Word';
+    const TN_ADD_TO = 'System Test Word To';
     const TN_ADD_VIA_FUNC = 'System Test Word added via sql function';
     const TN_ADD_VIA_SQL = 'System Test Word added via sql insert';
     const TN_ADD_GROUP_PRIME_FUNC = 'System Test Word for prime group add via sql function';
@@ -197,8 +198,8 @@ class word extends sandbox_typed_api implements JsonSerializable
     const TD_UPD_API = 'System Test Word API Description Renamed';
 
 
-    // list of predefined words used for system testing that are expected to be never renamed
-    const RESERVED_WORDS = array(
+    // list of predefined word names used for system testing that are expected to be never renamed
+    const RESERVED_NAMES = array(
         word_cfg::SYSTEM_CONFIG,
         self::TN_READ,
         self::TN_CONST,
@@ -273,6 +274,12 @@ class word extends sandbox_typed_api implements JsonSerializable
         self::TN_ADD_API,
         self::TN_UPD_API
     );
+
+    // array of word names that used for db read testing and that should not be renamed
+    const FIXED_NAMES = array(
+        self::TN_READ
+    );
+
     // list of words that are used for system testing that should be removed are the system test has been completed
     // and that are never expected to be used by a user
     const TEST_WORDS = array(
@@ -442,11 +449,11 @@ class word extends sandbox_typed_api implements JsonSerializable
      */
     function set_type(?string $code_id): void
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         if ($code_id == null) {
             $this->set_type_id(null);
         } else {
-            $this->set_type_id($phrase_types->id($code_id));
+            $this->set_type_id($phr_typ_cac->id($code_id));
         }
     }
 
@@ -456,11 +463,11 @@ class word extends sandbox_typed_api implements JsonSerializable
      */
     function type(): ?object
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         if ($this->type_id == null) {
             return null;
         } else {
-            return $phrase_types->get_by_id($this->type_id);
+            return $phr_typ_cac->get_by_id($this->type_id);
         }
     }
 
@@ -494,7 +501,7 @@ class word extends sandbox_typed_api implements JsonSerializable
     {
         $vars = parent::jsonSerialize();
         if ($this->plural() != null) {
-            $vars[api::FLD_PLURAL] = $this->plural();
+            $vars[json_fields::PLURAL] = $this->plural();
         }
         return $vars;
     }

@@ -37,7 +37,7 @@ use api\word\triple as triple_api;
 use api\value\value as value_api;
 use api\word\word as word_api;
 use cfg\group\group_id;
-use cfg\phrase_list;
+use cfg\phrase\phrase_list;
 use cfg\value\value;
 use test\test_cleanup;
 

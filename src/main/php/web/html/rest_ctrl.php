@@ -2,7 +2,7 @@
 
 /*
 
-    web\html\api_const.php - constants used for the backend to frontend api of zukunft.com
+    web/html/api_const.php - constants used for the backend to frontend api of zukunft.com
     ----------------------
 
 
@@ -32,7 +32,10 @@
 
 namespace html;
 
+include_once SHARED_PATH . 'library.php';
+
 use controller\controller;
+use shared\api;
 use shared\library;
 
 class rest_ctrl
@@ -44,15 +47,12 @@ class rest_ctrl
     const PUT = 'PUT';
     const DELETE = 'DELETE';
 
-    // TODO to be move to the environment variables as defined in appication.yaml
-    // the url of the backend
-    const HOST_BACKEND = 'http://localhost/';
-
     // url path of the api
     const PATH = 'api/';
 
     // url path to the fixed views
     const PATH_FIXED = '/http/';
+    const URL_MAIN_SCRIPT = 'view';
 
     // url extension of the fixed views
     const EXT = '.php';
@@ -78,11 +78,9 @@ class rest_ctrl
     // special api function independent of a class
     const LOGIN_RESET = 'login_reset';
     const ERROR_UPDATE = 'error_update';
+    const URL_ABOUT = 'about';
 
     // view parameter names
-    const PAR_VIEW_WORDS = 'words';  // to select the words that should be display
-    const PAR_VIEW_TRIPLES = 'triples';  // to select the triple that should be display
-    const PAR_VIEW_FORMULAS = 'formulas';  // to select the formulas that should be display
     const PAR_VIEW_VERBS = 'verbs';  // to select the verbs that should be display
     const PAR_LOG_STATUS = 'status'; // to set the status of a log entry
     const PAR_VIEW_SOURCES = 'sources';  // to select the formulas that should be display
@@ -120,12 +118,12 @@ class rest_ctrl
      * by id
      * @param string $class the frontend class name that should be loaded
      * @param int $id the id of the database object that should be loaded
+     * @param array $data additional data that should be included in the get request
      * @return array with the body json message from the backend
      */
-    function api_call_id(string $class, int $id): array
+    function api_call_id(string $class, int $id, array $data = []): array
     {
-        $data = array();
-        $data[controller::URL_VAR_ID] = $id;
+        $data[api::URL_VAR_ID] = $id;
         return $this->api_get($class, $data);
     }
 
@@ -139,12 +137,12 @@ class rest_ctrl
     function api_call_name(string $class, string $name): array
     {
         $data = array();
-        $data[controller::URL_VAR_NAME] = $name;
+        $data[api::URL_VAR_NAME] = $name;
         return $this->api_get($class, $data);
     }
 
     /**
-     * create an execute an api call for a database object
+     * create and execute an api call for a database object
      * by id
      * @param string $class the frontend class name that should be loaded
      * @param array $data with the parameter for the get call

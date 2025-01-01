@@ -31,13 +31,21 @@
 
 namespace cfg;
 
-include_once API_REF_PATH . 'source_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
+include_once API_REF_PATH . 'source_list.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_REF_PATH . 'source.php';
 
 use api\ref\source_list as source_list_api;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\ref\source;
+use cfg\sandbox\sandbox_list_named;
 
 class source_list extends sandbox_list_named
 {
@@ -94,11 +102,11 @@ class source_list extends sandbox_list_named
      * create the common part of an SQL statement to retrieve a list of sources from the database
      * uses the source view which includes only the main fields
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql $sc, string $query_name): sql_par
+    private function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -116,10 +124,10 @@ class source_list extends sandbox_list_named
     /**
      * create an SQL statement to retrieve a list of sources from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql $sc, array $ids): sql_par
+    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(source::FLD_ID, $ids);
@@ -134,10 +142,10 @@ class source_list extends sandbox_list_named
      * create an SQL statement to retrieve a list of sources from the database
      * uses the erm view which includes only the main fields
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_like(sql $sc, string $pattern = ''): sql_par
+    function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
         $sc->add_where(source::FLD_NAME, $pattern, sql_par_type::LIKE_R);
@@ -162,10 +170,7 @@ class source_list extends sandbox_list_named
         foreach ($src_lst as $db_row) {
             $src = new source($this->user());
             $src->row_mapper_sandbox($db_row);
-            if ($src->id() != 0) {
-                $this->add($src);
-                $result = true;
-            }
+            $result = $this->add($src);
         }
 
         return $result;
@@ -196,21 +201,5 @@ class source_list extends sandbox_list_named
         $qp = $this->load_sql_like($db_con->sql_creator(), $pattern);
         return $this->load($qp);
     }
-
-
-    /*
-     * modification
-     */
-
-    /**
-     * add one source to the source list, but only if it is not yet part of the source list
-     * @param source|null $src_to_add the source backend object that should be added
-     * @returns bool true the source has been added
-     */
-    function add(?source $src_to_add): bool
-    {
-        return parent::add_obj($src_to_add);
-    }
-
 
 }

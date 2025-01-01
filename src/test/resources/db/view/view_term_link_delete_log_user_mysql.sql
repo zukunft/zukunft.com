@@ -26,7 +26,7 @@ SELECT view_term_link_delete_log_user
     (1,
      3,
      89,
-     'Word',
+     'Start view',
      'default',
      'Mathematics',
      1,

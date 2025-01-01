@@ -34,9 +34,8 @@ namespace unit_read;
 
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 
+use cfg\sandbox\protection_type_list;
 use shared\types\protection_type as protect_type_shared;
-use cfg\protection_type;
-use cfg\protection_type_list;
 use test\test_cleanup;
 
 class protection_read_tests
@@ -46,7 +45,7 @@ class protection_read_tests
     {
 
         global $db_con;
-        global $protection_types;
+        global $ptc_typ_cac;
 
         // init
         $t->name = 'protection read db->';
@@ -61,7 +60,7 @@ class protection_read_tests
         $t->assert('load types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $protection_types->id(protect_type_shared::NO_PROTECT);
+        $result = $ptc_typ_cac->id(protect_type_shared::NO_PROTECT);
         $t->assert('check ' . protect_type_shared::NO_PROTECT, $result, 1);
     }
 

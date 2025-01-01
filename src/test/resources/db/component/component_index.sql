@@ -7,6 +7,7 @@
 CREATE INDEX components_user_idx ON components (user_id);
 CREATE INDEX components_component_name_idx ON components (component_name);
 CREATE INDEX components_component_type_idx ON components (component_type_id);
+CREATE INDEX components_view_style_idx ON components (view_style_id);
 CREATE INDEX components_word_id_row_idx ON components (word_id_row);
 CREATE INDEX components_formula_idx ON components (formula_id);
 CREATE INDEX components_word_id_col_idx ON components (word_id_col);
@@ -24,6 +25,7 @@ CREATE INDEX user_components_component_idx ON user_components (component_id);
 CREATE INDEX user_components_user_idx ON user_components (user_id);
 CREATE INDEX user_components_component_name_idx ON user_components (component_name);
 CREATE INDEX user_components_component_type_idx ON user_components (component_type_id);
+CREATE INDEX user_components_view_style_idx ON user_components (view_style_id);
 CREATE INDEX user_components_word_id_row_idx ON user_components (word_id_row);
 CREATE INDEX user_components_formula_idx ON user_components (formula_id);
 CREATE INDEX user_components_word_id_col_idx ON user_components (word_id_col);

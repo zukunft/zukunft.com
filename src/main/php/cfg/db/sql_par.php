@@ -37,12 +37,8 @@
 
 namespace cfg\db;
 
-use cfg\log\change;
-use cfg\log\change_value;
-use cfg\log\change_values_big;
-use cfg\log\change_values_norm;
-use cfg\log\changes_big;
-use cfg\log\changes_norm;
+include_once SHARED_PATH . 'library.php';
+
 use shared\library;
 
 /**
@@ -56,6 +52,7 @@ class sql_par
     public string $call_sql;  // the sql call for function sql statements
     public string $call_name; // the sql call name
     public string $call;      // sample call for testing only
+    public string $obj_name;  // the name of the first object that has request this SQL statement
     public array $par_name_lst; // the list of the parameters names to reuse already added parameters
     public sql_par_field $par_fld; //
     public sql_par_field_list $par_fld_lst; //
@@ -103,7 +100,7 @@ class sql_par
         // add the sql type e.g. "_insert" to query name
         $name .= $sc_par_lst->ext_type();
 
-        // add extesion that cannot be created by the sql_type_list e.g. "_0012" for the changed fields
+        // add extension that cannot be created by the sql_type_list e.g. "_0012" for the changed fields
         $name .= $ext;
 
         // add "_user" to queries the handle user specific values
@@ -120,6 +117,7 @@ class sql_par
         $this->call_sql = '';
         $this->call_name = '';
         $this->call = '';
+        $this->obj_name = '';
     }
 
     /**

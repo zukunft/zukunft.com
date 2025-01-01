@@ -34,16 +34,20 @@
 
 namespace unit_read;
 
+include_once WEB_PATH . 'frontend.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\phrase\group as group_api;
 use api\value\value as value_api;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
-use cfg\user_message;
-use cfg\verb;
+use cfg\user\user_message;
+use cfg\verb\verb;
 use html\types\type_lists as type_list_dsp;
 use test\all_tests;
 use unit\api_tests;
 use unit\all_unit_tests;
+use shared\types\verbs;
 
 class all_unit_read_tests extends all_unit_tests
 {
@@ -109,7 +113,10 @@ class all_unit_read_tests extends all_unit_tests
 
         $api_test = new api_tests();
         $api_test->run_api_test($this);
+
+        // test all system views
         $api_test->run_ui_test($this);
+
         (new export_read_tests())->run($this);
 
         // cleanup also before testing to remove any leftovers
@@ -121,14 +128,14 @@ class all_unit_read_tests extends all_unit_tests
     {
         // add functional test rows to the database for read testing e.g. exclude sandbox entries
         $this->test_triple(
-            triple_api::TN_PI, verb::IS, word_api::TN_READ,
+            triple_api::TN_PI, verbs::IS, word_api::TN_READ,
             triple_api::TN_PI_NAME, triple_api::TN_PI_NAME
         );
         $phr_grp = $this->add_phrase_group(array(triple_api::TN_PI_NAME), group_api::TN_READ);
         $this->test_value_by_phr_grp($phr_grp, value_api::TV_READ);
 
         $this->test_triple(
-            triple_api::TN_E, verb::IS, word_api::TN_READ,
+            triple_api::TN_E, verbs::IS, word_api::TN_READ,
             triple_api::TN_E, triple_api::TN_E
         );
         $phr_grp = $this->add_phrase_group(array(triple_api::TN_E), group_api::TN_READ);

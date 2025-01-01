@@ -31,16 +31,16 @@
 
 namespace cfg\log;
 
-use cfg\db\sql_db;
-use cfg\type_list;
-use cfg\type_object;
-use test\create_test_objects;
-
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_LOG_PATH . 'change_table.php';
 include_once MODEL_LOG_PATH . 'change_table_list.php';
 include_once MODEL_LOG_PATH . 'change_field.php';
 include_once MODEL_LOG_PATH . 'change_field_list.php';
+
+use cfg\helper\type_list;
+use cfg\helper\type_object;
 
 class change_field_list extends type_list
 {
@@ -87,15 +87,14 @@ class change_field_list extends type_list
      */
     function load_dummy(): void
     {
-        global $change_table_list;
+        global $cng_tbl_cac;
 
         parent::load_dummy();
 
         // read the corresponding names and description from the internal config csv files
-        $t = new create_test_objects();
-        $t->read_from_config_csv($this);
+        $this->read_from_config_csv($this);
         // TODO Prio 3 load from csv
-        $table_id = $change_table_list->id(change_table_list::WORD);
+        $table_id = $cng_tbl_cac->id(change_table_list::WORD);
         $table_field_name = $table_id . change_field_list::FLD_WORD_NAME;
         $type = new type_object(
             $table_field_name,
@@ -111,8 +110,8 @@ class change_field_list extends type_list
      */
     function default_id(): int
     {
-        global $change_table_list;
-        $table_id = $change_table_list->id(change_table_list::WORD);
+        global $cng_tbl_cac;
+        $table_id = $cng_tbl_cac->id(change_table_list::WORD);
         $table_field_name = $table_id . change_field_list::FLD_WORD_NAME;
         return parent::id($table_field_name);
     }

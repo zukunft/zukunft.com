@@ -30,13 +30,11 @@
   
 */
 
-namespace cfg;
+namespace cfg\user;
 
-global $user_profiles;
+include_once MODEL_HELPER_PATH . 'type_list.php';
 
-use cfg\db\sql_db;
-use cfg\user\user_profile;
-use test\create_test_objects;
+use cfg\helper\type_list;
 
 class user_profile_list extends type_list
 {
@@ -48,8 +46,7 @@ class user_profile_list extends type_list
     {
         $this->reset();
         // read the corresponding names and description from the internal config csv files
-        $t = new create_test_objects();
-        $t->read_from_config_csv($this);
+        $this->read_from_config_csv($this);
     }
 
     /**

@@ -2,8 +2,8 @@
 
 /*
 
-  find.php - general search for a word or formula by a pattern
-  --------
+    find.php - general search for a word or formula by a pattern
+    --------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -36,15 +36,18 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-use controller\controller;
+include_once SHARED_PATH . 'views.php';
+
 use html\html_base;
 use html\view\view as view_dsp;
 use html\word\word_list as word_list_dsp;
-use cfg\user;
-use cfg\view;
-use cfg\word_list;
+use cfg\user\user;
+use cfg\view\view;
+use cfg\word\word_list;
+use shared\api;
+use shared\views as view_shared;
 
-global $system_views;
+global $sys_msk_cac;
 
 $result = ''; // reset the html code var
 
@@ -58,7 +61,7 @@ $html = new html_base();
 if (!$db_con->connected()) {
     $result = log_fatal("Cannot connect to " . SQL_DB_TYPE . " database with user " . SQL_DB_USER_MYSQL, "find.php");
 } else {
-    $back = $_GET[controller::API_BACK];
+    $back = $_GET[api::URL_VAR_BACK] ?? '';
 
     // load the session user parameters
     $usr = new user;
@@ -70,8 +73,10 @@ if (!$db_con->connected()) {
         $usr->load_usr_data();
 
         // show view header
+        $view_id = $sys_msk_cac->id(view_shared::MC_WORD_FIND);
         $msk = new view($usr);
-        $msk->set_id($system_views->id(controller::MC_WORD_FIND));
+        $msk->load_by_id($view_id);
+        $msk->load_components();
         $msk_dsp = new view_dsp($msk->api_json());
         $result .= $msk_dsp->dsp_navbar($back);
 

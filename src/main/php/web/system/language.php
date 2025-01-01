@@ -31,11 +31,13 @@
 
 namespace html\system;
 
-use controller\controller;
-use api\api;
+include_once SHARED_PATH . 'json_fields.php';
+
 use html\rest_ctrl as api_dsp;
 use html\html_base;
 use html\sandbox\sandbox_typed;
+use html\user\user_message;
+use shared\json_fields;
 
 class language extends sandbox_typed
 {
@@ -49,16 +51,17 @@ class language extends sandbox_typed
     /**
      * set the vars of this language frontend object bases on the api json array
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_URL, $json_array)) {
-            $this->set_url($json_array[api::FLD_URL]);
+        $usr_msg = parent::set_from_json_array($json_array);
+        if (array_key_exists(json_fields::URL, $json_array)) {
+            $this->set_url($json_array[json_fields::URL]);
         } else {
             $this->set_url(null);
         }
+        return $usr_msg;
     }
 
     function set_url(?string $url): void
@@ -83,7 +86,7 @@ class language extends sandbox_typed
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_URL] = $this->url();
+        $vars[json_fields::URL] = $this->url();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -109,7 +112,7 @@ class language extends sandbox_typed
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(api_dsp::LANGUAGE, $this->id, $back, api_dsp::PAR_VIEW_LANGUAGES);
+        $url = $html->url(api_dsp::LANGUAGE, $this->id(), $back, api_dsp::PAR_VIEW_LANGUAGES);
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 

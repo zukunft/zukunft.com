@@ -36,7 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -44,20 +44,21 @@ include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once API_PHRASE_PATH . 'phrase_list.php';
 
-use cfg\phrase;
+use cfg\phrase\phrase;
 use controller\controller;
-use cfg\user;
-use cfg\phr_ids;
-use cfg\phrase_list;
+use cfg\user\user;
+use cfg\phrase\phr_ids;
+use cfg\phrase\phrase_list;
 use api\phrase\phrase_list as phrase_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/phraseList", "", false);
 
 // get the parameters
-$phr_ids = $_GET[controller::URL_VAR_ID_LST] ?? '';
-$phr_id = $_GET[controller::URL_VAR_PHRASE] ?? '';
-$pattern = $_GET[controller::URL_VAR_PATTERN] ?? '';
+$phr_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
+$phr_id = $_GET[api::URL_VAR_PHRASE] ?? '';
+$pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
 $msg = '';
 $result = new phrase_list_api(); // reset the html code var

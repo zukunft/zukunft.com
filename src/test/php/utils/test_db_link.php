@@ -35,14 +35,14 @@ use test\all_tests;
 
 function run_db_link_test(all_tests $t): void
 {
-    global $change_table_list;
+    global $cng_tbl_cac;
 
     $t->header('Test database link functions');
 
     // test code link
     $id = change_table_list::WORD;
     $target = 5;
-    $result = $change_table_list->id($id);
+    $result = $cng_tbl_cac->id($id);
     $t->display(", sql_code_link " . $id, $target, $result);
 
 }

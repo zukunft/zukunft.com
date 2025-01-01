@@ -8,7 +8,7 @@
     The main sections of this object are
     - construct and map: including the mapping of the db row to this element object
     - load:              database access object (DAO) functions
-    - modification:      change this list
+    - modify:            change potentially all object and all variables of this list with one function call
 
 
     This file is part of zukunft.com - calc with words
@@ -35,15 +35,23 @@
 
 */
 
-namespace cfg;
+namespace cfg\element;
 
-use cfg\component\component;
-use cfg\db\sql;
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_par.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+
+use cfg\db\sql_creator;
 use cfg\db\sql_par;
-
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_ELEMENT_PATH . 'element.php';
-include_once MODEL_FORMULA_PATH . 'parameter_type.php';
+use cfg\formula\formula;
+use cfg\sandbox\sandbox_list;
+use cfg\system\sys_log_level;
+use cfg\user\user;
+use cfg\user\user_message;
 
 class element_list extends sandbox_list
 {
@@ -91,11 +99,11 @@ class element_list extends sandbox_list
     /**
      * set the SQL query parameters to load a list of formula elements
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql $sc, string $query_name): sql_par
+    private function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -109,11 +117,11 @@ class element_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of formula elements by the formula id
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $frm_id the id of the formula which elements should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_id(sql $sc, int $frm_id): sql_par
+    function load_sql_by_frm_id(sql_creator $sc, int $frm_id): sql_par
     {
         $qp = $this->load_sql($sc, 'frm_id');
         if ($frm_id > 0) {
@@ -129,12 +137,12 @@ class element_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of formula elements by the formula id and filter by the element type
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $frm_id the id of the formula which elements should be loaded
      * @param int $elm_type_id the id of the formula element type used to filter the elements
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_and_type_id(sql $sc, int $frm_id, int $elm_type_id): sql_par
+    function load_sql_by_frm_and_type_id(sql_creator $sc, int $frm_id, int $elm_type_id): sql_par
     {
         $qp = $this->load_sql($sc, 'frm_and_type_id');
         if ($frm_id > 0 and $elm_type_id != 0) {
@@ -151,7 +159,7 @@ class element_list extends sandbox_list
 
 
     /*
-     * modification
+     * modify
      */
 
     /**
@@ -185,10 +193,10 @@ class element_list extends sandbox_list
     /**
      * create a sql statement that deletes all formula elements of this list
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par
      */
-    function del_sql_without_log(sql $sc): sql_par
+    function del_sql_without_log(sql_creator $sc): sql_par
     {
         return $sc->del_sql_list_without_log(
             element::class, (new element($this->user()))->id_field(), $this->ids());

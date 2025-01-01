@@ -29,9 +29,11 @@
 
 */
 
-namespace cfg;
+namespace cfg\sandbox;
 
 include_once MODEL_HELPER_PATH . 'type_object.php';
+
+use cfg\helper\type_object;
 
 class protection_type extends type_object
 {

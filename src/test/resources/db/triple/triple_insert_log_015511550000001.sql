@@ -70,7 +70,7 @@ SELECT triple_insert_log_015511550000001
          1::smallint,
          7::smallint,
          'constant'::text,
-         'contains'::text,
+         'is part of'::text,
          'Mathematics'::text,
          18::smallint,
          'Mathematical constant'::text,

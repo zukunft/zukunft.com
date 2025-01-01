@@ -44,7 +44,7 @@ SELECT triple_insert_log_1100040000101_user (
                1,
                7,
                'constant',
-               'contains',
+               'is part of',
                'Mathematics',
                null,
                null,

@@ -30,7 +30,7 @@
   
 */
 
-namespace cfg;
+namespace cfg\phrase;
 
 /**
  * helper class to make sure that

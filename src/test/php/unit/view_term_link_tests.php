@@ -33,12 +33,12 @@
 namespace unit;
 
 use api\view\view as view_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
-use cfg\view;
+use cfg\view\view;
 use cfg\view_link_type;
-use cfg\view_term_link;
+use cfg\view\view_term_link;
 use cfg\view_type;
 use html\view\view as view_dsp;
 use shared\library;
@@ -52,7 +52,7 @@ class view_term_link_tests
         global $usr;
 
         // init
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'view->';
         $t->resource_path = 'db/view/';
 

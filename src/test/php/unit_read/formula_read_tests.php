@@ -33,10 +33,10 @@
 namespace unit_read;
 
 use api\formula\formula as formula_api;
-use cfg\formula;
-use cfg\formula_type;
-use cfg\formula_type_list;
-use cfg\formula_list;
+use cfg\formula\formula;
+use cfg\formula\formula_type;
+use cfg\formula\formula_type_list;
+use cfg\formula\formula_list;
 use test\test_cleanup;
 
 class formula_read_tests
@@ -46,7 +46,7 @@ class formula_read_tests
     {
 
         global $db_con;
-        global $formula_types;
+        global $frm_typ_cac;
 
         // init
         $t->name = 'formula read db->';
@@ -82,7 +82,7 @@ class formula_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $formula_types->id(formula_type::CALC);
+        $result = $frm_typ_cac->id(formula_type::CALC);
         $target = 1;
         $t->assert('check ' . formula_type::CALC, $result, 1);
 

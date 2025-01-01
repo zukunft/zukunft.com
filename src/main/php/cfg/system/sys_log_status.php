@@ -29,10 +29,15 @@
 
 */
 
-namespace cfg;
+namespace cfg\system;
+
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
 
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use cfg\helper\type_object;
 
 class sys_log_status extends type_object
 {

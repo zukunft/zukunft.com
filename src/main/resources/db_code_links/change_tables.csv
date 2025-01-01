@@ -96,3 +96,4 @@ change_table_id, change_table_name, description, code_id
 95,'values_norm',,'values_norm'
 96,'groups_norm',,'groups_norm'
 97,'change_values_prime',,'change_values_prime'
+98,'view_styles',,'view_styles'

@@ -2,7 +2,7 @@
   "id": 5,
   "phrase_id": 4,
   "external_key": "Q167",
-  "type_id": 2,
+  "predicate_id": 2,
   "source_id": 2,
   "url": "https:\/\/www.wikidata.org\/wiki\/Special:EntityData\/Q167.json",
   "description": "pi - ratio of the circumference of a circle to its diameter"

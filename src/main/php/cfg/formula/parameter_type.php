@@ -29,9 +29,17 @@
 
 */
 
-namespace cfg;
+namespace cfg\formula;
 
 include_once MODEL_SYSTEM_PATH . 'BasicEnum.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+
+use cfg\system\BasicEnum;
+use cfg\word\triple;
+use cfg\verb\verb;
+use cfg\word\word;
 
 class parameter_type extends BasicEnum
 {

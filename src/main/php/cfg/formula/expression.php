@@ -120,13 +120,38 @@
 
 */
 
-namespace cfg;
+namespace cfg\formula;
 
+include_once MODEL_ELEMENT_PATH . 'element.php';
 include_once MODEL_ELEMENT_PATH . 'element_group.php';
 include_once MODEL_ELEMENT_PATH . 'element_group_list.php';
+include_once MODEL_ELEMENT_PATH . 'element_list.php';
+include_once MODEL_PHRASE_PATH . 'phr_ids.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_PHRASE_PATH . 'term.php';
+include_once MODEL_PHRASE_PATH . 'term_list.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'library.php';
 
-use Exception;
+use cfg\element\element;
+use cfg\element\element_group;
+use cfg\element\element_group_list;
+use cfg\element\element_list;
+use cfg\phrase\phr_ids;
+use cfg\phrase\phrase_list;
+use cfg\phrase\term;
+use cfg\phrase\term_list;
+use cfg\word\word;
+use cfg\word\triple;
+use cfg\verb\verb;
+use cfg\user\user;
+use shared\types\phrase_type as phrase_type_shared;
 use shared\library;
+use Exception;
 
 class expression
 {
@@ -370,7 +395,7 @@ class expression
      */
     function element_special_following(?term_list $trm_lst = null): phrase_list
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $lib = new library();
 
         $phr_lst = new phrase_list($this->usr);
@@ -389,9 +414,9 @@ class expression
                     }
                 }
                 if ($elm->type == word::class or $elm->type == triple::class) {
-                    if ($elm->obj->type_id == $phrase_types->id(phrase_type::THIS)
-                        or $elm->obj->type_id == $phrase_types->id(phrase_type::NEXT)
-                        or $elm->obj->type_id == $phrase_types->id(phrase_type::PRIOR)) {
+                    if ($elm->obj->type_id == $phr_typ_cac->id(phrase_type_shared::THIS)
+                        or $elm->obj->type_id == $phr_typ_cac->id(phrase_type_shared::NEXT)
+                        or $elm->obj->type_id == $phr_typ_cac->id(phrase_type_shared::PRIOR)) {
                         $phr_lst->add($elm->obj->phrase());
                     }
                 }

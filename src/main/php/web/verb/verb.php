@@ -32,13 +32,16 @@
 namespace html\verb;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use api\api;
+use shared\api;
 use api\verb\verb as verb_api;
 use html\rest_ctrl as api_dsp;
 use html\html_base;
 use html\phrase\term as term_dsp;
 use html\sandbox\sandbox_named as sandbox_named_dsp;
+use html\user\user_message;
+use shared\json_fields;
 
 class verb extends sandbox_named_dsp
 {
@@ -58,16 +61,17 @@ class verb extends sandbox_named_dsp
      * set the vars of this object bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_CODE_ID, $json_array)) {
-            $this->set_code_id($json_array[api::FLD_CODE_ID]);
+        $usr_msg = parent::set_from_json_array($json_array);
+        if (array_key_exists(json_fields::CODE_ID, $json_array)) {
+            $this->set_code_id($json_array[json_fields::CODE_ID]);
         } else {
             $this->set_code_id('');
         }
+        return $usr_msg;
     }
 
     /**
@@ -129,7 +133,7 @@ class verb extends sandbox_named_dsp
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(api_dsp::VERB, $this->id, $back, api_dsp::PAR_VIEW_VERBS);
+        $url = $html->url(api_dsp::VERB, $this->id(), $back, api::URL_VAR_VERBS);
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 
@@ -145,7 +149,7 @@ class verb extends sandbox_named_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_CODE_ID] = $this->code_id();
+        $vars[json_fields::CODE_ID] = $this->code_id();
         return $vars;
     }
 

@@ -30,15 +30,13 @@
   
 */
 
-namespace cfg;
+namespace cfg\language;
 
-use cfg\db\sql_db;
-use test\create_test_objects;
-
+include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_LANGUAGE_PATH . 'language_form.php';
 
-global $language_forms;
+use cfg\helper\type_list;
 
 class language_form_list extends type_list
 {
@@ -50,8 +48,7 @@ class language_form_list extends type_list
     {
         $this->reset();
         // read the corresponding names and description from the internal config csv files
-        $t = new create_test_objects();
-        $t->read_from_config_csv($this);
+        $this->read_from_config_csv($this);
     }
 
     /**

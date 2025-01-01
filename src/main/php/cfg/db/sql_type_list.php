@@ -52,7 +52,7 @@ class sql_type_list
 
 
     /*
-     * modification
+     * modify
      */
 
     /**
@@ -85,6 +85,14 @@ class sql_type_list
     /*
      * info sql type
      */
+
+    /**
+     * @return bool true if only the sql function name should be created
+     */
+    function is_call_only(): bool
+    {
+        return in_array(sql_type::CALL_AND_PAR_ONLY, $this->lst);
+    }
 
     /**
      * @return bool true if an insert sql statement should be created
@@ -476,7 +484,7 @@ class sql_type_list
             } elseif ($this->get_all()) {
                 $ext .= sql::NAME_SEP;
             } else {
-                $sc = new sql();
+                $sc = new sql_creator();
                 if (!$this->is_cur_not_l()) {
                     $ext .= sql::NAME_SEP . sql::NAME_BY . sql::NAME_SEP;
                 }

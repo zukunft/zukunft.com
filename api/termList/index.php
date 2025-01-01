@@ -36,7 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -45,17 +45,18 @@ include_once MODEL_PHRASE_PATH . 'term_list.php';
 include_once API_PHRASE_PATH . 'term_list.php';
 
 use controller\controller;
-use cfg\user;
-use cfg\trm_ids;
-use cfg\term_list;
+use cfg\user\user;
+use cfg\phrase\trm_ids;
+use cfg\phrase\term_list;
 use api\phrase\term_list as term_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/termList", "", false);
 
 // get the parameters
-$trm_ids = $_GET[controller::URL_VAR_ID_LST] ?? '';
-$pattern = $_GET[controller::URL_VAR_PATTERN] ?? '';
+$trm_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
+$pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
 $msg = '';
 $result = new term_list_api(); // reset the html code var

@@ -36,12 +36,12 @@ include_once API_RESULT_PATH . 'result.php';
 
 use api\result\result as result_api;
 use api\word\word as word_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_type;
-use cfg\formula;
+use cfg\formula\formula;
 use cfg\group\group;
 use cfg\group\group_list;
-use cfg\phrase_list;
+use cfg\phrase\phrase_list;
 use cfg\db\sql_db;
 use cfg\result\result;
 use html\result\result as result_dsp;
@@ -57,10 +57,9 @@ class result_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'result->';
         $t->resource_path = 'db/result/';
-        $json_file = 'unit/result/result_import_part.json';
 
 
         $t->header('Unit tests of the result class (src/main/php/model/formula/result.php)');
@@ -161,7 +160,9 @@ class result_tests
 
 
         $t->subheader('Im- and Export tests');
-
+        $t->assert_ex_and_import($t->result());
+        $t->assert_ex_and_import($t->result_main_filled());
+        $json_file = 'unit/result/result_import_part.json';
         $t->assert_json_file(new result($usr), $json_file);
 
 

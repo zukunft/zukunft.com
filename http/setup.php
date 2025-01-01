@@ -16,7 +16,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 use cfg\db\db_check;
-use cfg\user;
+use cfg\user\user;
 
 /*
 

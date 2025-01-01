@@ -29,7 +29,9 @@
   
 */
 
-namespace cfg;
+namespace cfg\system;
+
+include_once MODEL_SYSTEM_PATH . 'BasicEnum.php';
 
 use ReflectionException;
 

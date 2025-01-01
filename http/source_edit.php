@@ -30,21 +30,25 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use controller\controller;
-use html\ref\source as source_dsp;
-use html\view\view as view_dsp;
-use cfg\source;
-use cfg\user;
-use cfg\view;
-
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once SHARED_PATH . 'views.php';
+
+use html\ref\source as source_dsp;
+use html\view\view as view_dsp;
+use cfg\ref\source;
+use cfg\user\user;
+use cfg\view\view;
+use shared\api;
+use shared\views as view_shared;
 
 // open database
 $db_con = prg_start("source_edit");
 
-global $system_views;
+global $sys_msk_cac;
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -62,33 +66,33 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($system_views->id(controller::MC_SOURCE_EDIT));
-    $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change if finished
+    $msk->load_by_id($sys_msk_cac->id(view_shared::MC_SOURCE_EDIT));
+    $back = $_GET[api::URL_VAR_BACK] = ''; // the original calling page that should be shown after the change if finished
 
     // create the source object to have an place to update the parameters
     $src = new source($usr);
-    $src->load_by_id($_GET[controller::URL_VAR_ID]);
+    $src->load_by_id($_GET[api::URL_VAR_ID]);
 
     if ($src->id() <= 0) {
         $result .= log_err("No source found to change because the id is missing.", "source_edit.php");
     } else {
 
         // if the save button has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)
-        if ($_GET[controller::URL_VAR_NAME] <> '') {
+        if ($_GET[api::URL_VAR_NAME] <> '') {
 
             // get the parameters (but if not set, use the database value)
-            if (isset($_GET[controller::URL_VAR_NAME])) {
-                $src->set_name($_GET[controller::URL_VAR_NAME]);
+            if (isset($_GET[api::URL_VAR_NAME])) {
+                $src->set_name($_GET[api::URL_VAR_NAME]);
             }
             if (isset($_GET['url'])) {
                 $src->url = $_GET['url'];
             }
-            if (isset($_GET[controller::URL_VAR_COMMENT])) {
-                $src->description = $_GET[controller::URL_VAR_COMMENT];
+            if (isset($_GET[api::URL_VAR_COMMENT])) {
+                $src->description = $_GET[api::URL_VAR_COMMENT];
             }
 
             // save the changes
-            $upd_result = $src->save();
+            $upd_result = $src->save()->get_last_message();
 
             // if update was successful ...
             if (str_replace('1', '', $upd_result) == '') {

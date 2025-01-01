@@ -34,16 +34,16 @@ namespace unit_write;
 
 use api\formula\formula as formula_api;
 use api\word\word as word_api;
-use cfg\user;
-use cfg\word;
+use cfg\user\user;
+use cfg\word\word;
 use html\formula\formula as formula_dsp;
 use cfg\log\change_link;
 use cfg\log\change_table_list;
-use cfg\formula;
-use cfg\formula_link;
-use cfg\formula_link_list;
-use cfg\phrase;
-use cfg\phrase_list;
+use cfg\formula\formula;
+use cfg\formula\formula_link;
+use cfg\formula\formula_link_list;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
 use test\test_cleanup;
 
 class formula_link_write_tests

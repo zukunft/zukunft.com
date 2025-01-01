@@ -6,6 +6,7 @@ PREPARE component_link_by_view_and_cmp_id (bigint, bigint, bigint) AS
                s.component_id,
                CASE WHEN (u.order_nbr        IS NULL) THEN s.order_nbr        ELSE u.order_nbr        END AS order_nbr,
                CASE WHEN (u.position_type_id IS NULL) THEN s.position_type_id ELSE u.position_type_id END AS position_type_id,
+               CASE WHEN (u.view_style_id    IS NULL) THEN s.view_style_id    ELSE u.view_style_id    END AS view_style_id,
                CASE WHEN (u.excluded         IS NULL) THEN s.excluded         ELSE u.excluded         END AS excluded,
                CASE WHEN (u.share_type_id    IS NULL) THEN s.share_type_id    ELSE u.share_type_id    END AS share_type_id,
                CASE WHEN (u.protect_id       IS NULL) THEN s.protect_id       ELSE u.protect_id       END AS protect_id

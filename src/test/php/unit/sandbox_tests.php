@@ -32,6 +32,8 @@
 
 namespace unit;
 
+include_once SERVICE_PATH . 'config.php';
+include_once DB_PATH . 'sql.php';
 include_once API_WORD_PATH . 'word.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_GROUP_PATH . 'group.php';
@@ -43,21 +45,22 @@ use cfg\component\component;
 use cfg\component\component_link;
 use cfg\config;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\formula;
-use cfg\formula_link;
-use cfg\formula_link_type;
-use cfg\phrase;
-use cfg\sandbox;
-use cfg\sandbox_named;
-use cfg\source;
-use cfg\source_type;
-use cfg\triple;
-use cfg\user;
+use cfg\formula\formula;
+use cfg\formula\formula_link;
+use cfg\formula\formula_link_type;
+use cfg\phrase\phrase;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
+use cfg\ref\source;
+use cfg\ref\source_type;
+use cfg\verb\verb;
+use cfg\word\triple;
+use cfg\user\user;
 use cfg\value\value;
-use cfg\verb;
-use cfg\view;
-use cfg\word;
+use cfg\view\view;
+use cfg\word\word;
 use shared\library;
 use test\test_cleanup;
 
@@ -234,7 +237,7 @@ class sandbox_tests
         $t->display('MySQL select max', $lib->trim($expected_sql), $lib->trim($created_sql));
 
         // test a simple SQL select creation for Postgres without the standard id and name identification
-        $sc = new sql();
+        $sc = new sql_creator();
         $sc->set_db_type(sql_db::POSTGRES);
         $sc->set_class(config::class);
         $sc->set_name('query_test');
@@ -1188,51 +1191,6 @@ class sandbox_tests
               GROUP BY f.formula_id;";
         $t->display('formula list load query', $lib->trim($expected_sql), $lib->trim($created_sql));
 
-        // the value list load query
-        $db_con->db_type = sql_db::POSTGRES;
-        $limit = 10;
-        $created_sql = "SELECT v.group_id,
-                     u.group_id AS user_group_id,
-                     v.user_id,
-                    " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(sandbox::FLD_EXCLUDED, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(value::FLD_LAST_UPDATE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                    " . $db_con->get_usr_field(source::FLD_ID, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
-                     v.group_id,
-                     g.word_ids,
-                     g.triple_ids
-                FROM groups g, " . $db_con->get_table_name_esc(value::class) . " v 
-           LEFT JOIN user_values u ON u.group_id = v.group_id 
-                                  AND u.user_id = 1
-               WHERE g.group_id = v.group_id 
-                 AND v.group_id IN ( SELECT group_id 
-                                       FROM value_phrase_links 
-                                      WHERE phrase_id = 1
-                                   GROUP BY group_id )
-            ORDER BY v.group_id
-               LIMIT " . $limit . ";";
-        $expected_sql = "SELECT v.group_id,
-                     u.group_id AS user_group_id,
-                     v.user_id,
-                     CASE WHEN (u.numeric_value  IS NULL) THEN v.numeric_value  ELSE u.numeric_value  END AS numeric_value,
-                     CASE WHEN (u.excluded    IS NULL) THEN v.excluded    ELSE u.excluded    END AS excluded,
-                     CASE WHEN (u.last_update IS NULL) THEN v.last_update ELSE u.last_update END AS last_update,
-                     CASE WHEN (u.source_id   IS NULL) THEN v.source_id   ELSE u.source_id   END AS source_id,
-                     v.group_id,
-                     g.word_ids,
-                     g.triple_ids
-                FROM groups g, values v 
-           LEFT JOIN user_values u ON u.group_id = v.group_id 
-                                  AND u.user_id = 1 
-               WHERE g.group_id = v.group_id 
-                 AND v.group_id IN ( SELECT group_id 
-                                       FROM value_phrase_links 
-                                      WHERE phrase_id = 1
-                                   GROUP BY group_id )
-            ORDER BY v.group_id
-               LIMIT 10;";
-        $t->display('value list load query', $lib->trim($expected_sql), $lib->trim($created_sql));
-
         // the phrase load word query
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = 'SELECT w.word_id AS id, 
@@ -1825,25 +1783,26 @@ class sandbox_tests
         // the word changer query (used in _sandbox->changer_sql)
         $wrd = new word($usr);
         $wrd->set_id( 1);
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $wrd->load_sql_changer_old($db_con);
-        $t->assert_qp($qp, $db_con->db_type);
+        $sc = $db_con->sql_creator();
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $wrd->load_sql_changer($sc);
+        $t->assert_qp($qp, $sc->db_type);
 
         // ... and for MySQL
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $wrd->load_sql_changer_old($db_con);
-        $t->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::MYSQL;
+        $qp = $wrd->load_sql_changer($sc);
+        $t->assert_qp($qp, $sc->db_type);
 
         // ... and the word changer ex owner query (used in _sandbox->changer_sql)
         $wrd->owner_id = 2;
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $wrd->load_sql_changer_old($db_con);
-        $t->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $wrd->load_sql_changer($sc);
+        $t->assert_qp($qp, $sc->db_type);
 
         // ... and for MySQL
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $wrd->load_sql_changer_old($db_con);
-        $t->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::MYSQL;
+        $qp = $wrd->load_sql_changer($sc);
+        $t->assert_qp($qp, $sc->db_type);
     }
 
 }

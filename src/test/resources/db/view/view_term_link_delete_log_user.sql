@@ -25,7 +25,7 @@ SELECT view_term_link_delete_log_user
     (1::bigint,
      3::smallint,
      89::smallint,
-     'Word'::text,
+     'Start view'::text,
      'default'::text,
      'Mathematics'::text,
      1::bigint,

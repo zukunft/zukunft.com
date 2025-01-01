@@ -29,14 +29,24 @@
   
 */
 
-namespace cfg;
+namespace cfg\phrase;
 
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_PHRASE_PATH . 'phrase_table_status.php';
+include_once MODEL_SYSTEM_PATH . 'pod.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
+include_once MODEL_USER_PATH . 'user.php';
 
+use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
-use cfg\db\sql;
+use cfg\helper\db_object_seq_id;
+use cfg\system\pod;
+use cfg\system\sys_log_status;
+use cfg\user\user;
 
 class phrase_table extends db_object_seq_id
 {

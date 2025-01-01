@@ -42,66 +42,28 @@ include_once API_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_PATH . 'views.php';
 
 use api\api_message;
 use api\sandbox\combine_object as combine_object_api;
 use api\sandbox\list_object as list_api;
 use api\system\type_lists as type_lists_api;
 use api\sandbox\sandbox as sandbox_api;
-use cfg\combine_object;
-use cfg\sandbox;
-use cfg\source;
-use cfg\word;
+use cfg\helper\combine_object;
+use cfg\sandbox\sandbox;
+use cfg\ref\source;
+use cfg\word\word;
+use shared\api;
+use shared\views as view_shared;
 
 class controller
 {
-
-    /*
-     * URL
-     */
-
-    // the parameter names used in the url or in the result json
-    const URL_API_PATH = 'api/';
-    const URL_VAR_ID = 'id'; // the internal database id that should never be shown to the user
-    const URL_VAR_ID_LST = 'ids'; // a comma seperated list of internal database ids
-    const URL_VAR_NAME = 'name'; // the unique name of a term, view, component, user, source, language or type
-    const URL_VAR_PATTERN = 'pattern'; // part of a name to select a named object such as word, triple, ...
-    const URL_VAR_COMMENT = 'comment';
-    const URL_VAR_DESCRIPTION = 'description';
-    const URL_VAR_DEBUG = 'debug'; // to force the output of debug messages
-    const URL_VAR_CODE_ID = 'code_id';
-    const URL_VAR_WORD = 'words';
-    const URL_VAR_PHRASE = 'phrase'; // the id (or name?) of one phrase
-    const URL_VAR_DIRECTION = 'dir'; // 'up' to get the parents and 'down' for the children
-    const URL_VAR_LEVELS = 'levels'; // the number of search levels'
-    const URL_VAR_MSG = 'message';
-    const URL_VAR_RESULT = 'result';
-    const URL_VAR_EMAIL = 'email';
-    const URL_VAR_VIEW_ID = 'view_id';
-    const URL_VAR_COMPONENT_ID = 'component_id';
-
-    // used for the change log
-    const URL_VAR_WORD_ID = 'word_id';
-    const URL_VAR_WORD_FLD = 'word_field';
-    const URL_VAR_LINK_PHRASE = 'link_phrase';
-    const URL_VAR_UNLINK_PHRASE = 'unlink_phrase';
-
 
     /*
      * API
      */
 
     // json field names of the api json messages
-
-
-    const API_BODY = 'body';
-    const API_BODY_SYS_LOG = 'sys_log';
-
-    // to include the objects that should be displayed in one api message
-    const API_WORD = 'word';
-    const API_TRIPLE = 'triple';
-
-    //
     const API_TYPE_LISTS = 'type_lists';
     const API_LIST_USER_PROFILES = 'user_profiles';
     const API_LIST_PHRASE_TYPES = 'phrase_types';
@@ -109,6 +71,7 @@ class controller
     const API_LIST_FORMULA_LINK_TYPES = 'formula_link_types';
     const API_LIST_ELEMENT_TYPES = 'element_types';
     const API_LIST_VIEW_TYPES = 'view_types';
+    const API_LIST_VIEW_STYLES = 'view_styles';
     const API_LIST_VIEW_LINK_TYPES = 'view_link_types';
     const API_LIST_COMPONENT_TYPES = 'component_types';
     // const API_LIST_COMPONENT_LINK_TYPES = 'component_link_types';
@@ -137,56 +100,12 @@ class controller
      * VIEWS
      */
 
-    // list of the view used by the program that are never supposed to be changed
-    // also the list of the view code_id
-    // MC_* is the Mask Code id that is expected never to change
-    // MI_* is the Mask ID that is expected never to change
-    const MC_START = "start";
-    const MI_START = 2;
-    const MC_WORD = "word";
-    const MC_WORD_ADD = "word_add";
-    const MC_WORD_EDIT = "word_edit";
-    const MC_WORD_DEL = "word_del";
-    const MC_WORD_FIND = "word_find";
-    const MC_TRIPLE_ADD = "triple_add";
-    const MC_TRIPLE_EDIT = "triple_edit";
-    const MC_TRIPLE_DEL = "triple_del";
-    const MC_VALUE_DISPLAY = "value";
-    const MC_VALUE_ADD = "value_add";
-    const MC_VALUE_EDIT = "value_edit";
-    const MC_VALUE_DEL = "value_del";
-    const MC_FORMULA_ADD = "formula_add";
-    const MC_FORMULA_EDIT = "formula_edit";
-    const MC_FORMULA_DEL = "formula_del";
-    const MC_FORMULA_EXPLAIN = "formula_explain";
-    const MC_FORMULA_TEST = "formula_test";
-    const MC_SOURCE_ADD = "source_add";
-    const MC_SOURCE_EDIT = "source_edit";
-    const MC_SOURCE_DEL = "source_del";
-    const MC_VERBS = "verbs";
-    const MC_VERB_ADD = "verb_add";
-    const MC_VERB_EDIT = "verb_edit";
-    const MC_VERB_DEL = "verb_del";
-    const MC_USER = "user";
-    const MC_ERR_LOG = "error_log";
-    const MC_ERR_UPD = "error_update";
-    const MC_IMPORT = "import";
-    // views to edit views
-    const MC_VIEW_ADD = "view_add";
-    const MC_VIEW_EDIT = "view_edit";
-    const MC_VIEW_DEL = "view_del";
-    const MC_COMPONENT_ADD = "component_add";
-    const MC_COMPONENT_EDIT = "component_edit";
-    const MC_COMPONENT_DEL = "component_del";
-    const MC_COMPONENT_LINK = "component_link";
-    const MC_COMPONENT_UNLINK = "component_unlink";
-
     // list of add system views which don't need an object
     const DSP_SYS_ADD = array(
-        self::MC_WORD_ADD,
-        self::MC_TRIPLE_ADD,
-        self::MC_VALUE_ADD,
-        self::MC_COMPONENT_ADD
+        view_shared::MC_WORD_ADD,
+        view_shared::MC_TRIPLE_ADD,
+        view_shared::MC_VALUE_ADD,
+        view_shared::MC_COMPONENT_ADD
     );
 
 
@@ -224,7 +143,7 @@ class controller
 
             // tell the user no products found
             echo json_encode(
-                array(self::URL_VAR_MSG => $msg)
+                array(api::URL_VAR_MSG => $msg)
             );
         }
     }
@@ -263,14 +182,14 @@ class controller
                     // set response code - 200 OK
                     http_response_code(200);
                     echo json_encode(
-                        array(self::URL_VAR_ID => $result)
+                        array(api::URL_VAR_ID => $result)
                     );
                 } else {
 
                     // set response code - 400 Bad Request
                     http_response_code(400);
                     echo json_encode(
-                        array(self::URL_VAR_MSG => $result)
+                        array(api::URL_VAR_MSG => $result)
                     );
                 }
                 break;
@@ -291,7 +210,7 @@ class controller
 
                     // tell the user no object found
                     echo json_encode(
-                        array(self::URL_VAR_MSG => $msg)
+                        array(api::URL_VAR_MSG => $msg)
                     );
                 }
                 break;
@@ -310,14 +229,14 @@ class controller
                         // set response code - 200 OK
                         http_response_code(200);
                         echo json_encode(
-                            array(self::URL_VAR_ID => $result)
+                            array(api::URL_VAR_ID => $result)
                         );
                     } else {
 
                         // set response code - 400 Bad Request
                         http_response_code(400);
                         echo json_encode(
-                            array(self::URL_VAR_MSG => $result)
+                            array(api::URL_VAR_MSG => $result)
                         );
                     }
                 }
@@ -336,7 +255,7 @@ class controller
                             http_response_code(409);
 
                             echo json_encode(
-                                array(self::URL_VAR_RESULT => $result->get_last_message())
+                                array(api::URL_VAR_RESULT => $result->get_last_message())
                             );
                         }
                     }
@@ -351,7 +270,7 @@ class controller
 
                     // tell the user no products found
                     echo json_encode(
-                        array(self::URL_VAR_MSG => $msg)
+                        array(api::URL_VAR_MSG => $msg)
                     );
                 }
                 break;
@@ -432,13 +351,24 @@ class controller
         }
     }
 
+    function get_export_json(string $json, string $msg): void
+    {
+        // return the api json or the error message
+        if ($msg == '') {
+            $this->get_response($json, $msg);
+        } else {
+            // tell the user e.g. that no products found
+            $this->get_response('', $msg);
+        }
+    }
+
     /**
      * check if an api message is fine
      * @param array|null $api_msg the complete api message including the header and in some cases several body parts
      * @param string $body_key to select a body part of the api message
      * @return array the message body if everything has been fine or an empty array
      */
-    function check_api_msg(?array $api_msg, string $body_key = controller::API_BODY): array
+    function check_api_msg(?array $api_msg, string $body_key = api::JSON_BODY): array
     {
         $msg_ok = true;
         $body = array();

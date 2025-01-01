@@ -30,22 +30,26 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use controller\controller;
-use html\html_base;
-use html\view\view as view_dsp;
-use cfg\user;
-use cfg\view;
-use cfg\word;
-
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once SHARED_PATH . 'views.php';
+
+use html\html_base;
+use html\view\view as view_dsp;
+use cfg\user\user;
+use cfg\view\view;
+use cfg\word\word;
+use shared\api;
+use shared\views as view_shared;
 
 // open database
 $db_con = prg_start("view_add");
 $html = new html_base();
 
-global $system_views;
+global $sys_msk_cac;
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -61,18 +65,18 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($system_views->id(controller::MC_VIEW_ADD));
-    $back = $_GET[controller::API_BACK]; //
+    $msk->load_by_id($sys_msk_cac->id(view_shared::MC_VIEW_ADD));
+    $back = $_GET[api::URL_VAR_BACK] = ''; //
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
     $msk_add = new view($usr);
 
     // load the parameters to the view object to display the user input again in case of an error
-    if (isset($_GET[controller::URL_VAR_NAME])) {
-        $msk_add->set_name($_GET[controller::URL_VAR_NAME]);
+    if (isset($_GET[api::URL_VAR_NAME])) {
+        $msk_add->set_name($_GET[api::URL_VAR_NAME]);
     }    // name of the new view to add
-    if (isset($_GET[controller::URL_VAR_COMMENT])) {
-        $msk_add->description = $_GET[controller::URL_VAR_COMMENT];
+    if (isset($_GET[api::URL_VAR_COMMENT])) {
+        $msk_add->description = $_GET[api::URL_VAR_COMMENT];
     }
     if (isset($_GET['type'])) {
         $msk_add->type_id = $_GET['type'];
@@ -81,11 +85,11 @@ if ($usr->id() > 0) {
     if ($_GET['confirm'] > 0) {
 
         // check essential parameters
-        if ($_GET[controller::URL_VAR_NAME] == "") {
+        if ($_GET[api::URL_VAR_NAME] == "") {
             $msg .= 'Name missing; Please press back and enter a name for the new view.';
         } else {
 
-            $add_result = $msk_add->save();
+            $add_result = $msk_add->save()->get_last_message();
 
             // if adding was successful ...
             if (str_replace('1', '', $add_result) == '') {

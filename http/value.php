@@ -30,16 +30,20 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use cfg\view;
-use controller\controller;
-use html\view\view as view_dsp;
-use html\value\value as value_dsp;
-use cfg\user;
-use cfg\word_list;
-
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once SHARED_PATH . 'views.php';
+
+use cfg\view\view;
+use html\view\view as view_dsp;
+use html\value\value as value_dsp;
+use cfg\user\user;
+use cfg\word\word_list;
+use shared\api;
+use shared\views as view_shared;
 
 // open database
 $db_con = prg_start("value");
@@ -61,8 +65,8 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::MC_VALUE_DISPLAY);
-    $back = $_GET[controller::API_BACK]; // the page (or phrase id) from which formula testing has been called
+    $msk->load_by_code_id(view_shared::MC_VALUE_DISPLAY);
+    $back = $_GET[api::URL_VAR_BACK] = ''; // the page (or phrase id) from which formula testing has been called
 
     $msk_dsp = new view_dsp($msk->api_json());
     $result .= $msk_dsp->dsp_navbar($back);

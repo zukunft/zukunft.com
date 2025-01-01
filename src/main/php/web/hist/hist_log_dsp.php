@@ -33,7 +33,7 @@ namespace html\hist;
 
 use html\html_base;
 use html\word\word as word_dsp;
-use cfg\word;
+use cfg\word\word;
 
 class hist_log_dsp
 {
@@ -45,7 +45,7 @@ class hist_log_dsp
         log_debug($wrd->id());
         $result = '';
 
-        // if ($this->id <= 0 OR !is_null($this->usr_id)) {
+        // if ($this->id() <= 0 OR !is_null($this->usr_id)) {
         if ($wrd->id() <= 0) {
             $result .= 'no word selected';
         } else {

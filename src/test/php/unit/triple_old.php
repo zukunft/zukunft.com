@@ -36,11 +36,11 @@ namespace unit;
 
 use api\phrase\phrase as phrase_api;
 use api\word\triple as triple_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\triple;
-use cfg\verb;
-use cfg\word;
+use cfg\word\triple;
+use cfg\verb\verb;
+use cfg\word\word;
 use test\test_cleanup;
 
 class triple_old
@@ -52,10 +52,9 @@ class triple_old
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
-        $json_file = 'unit/triple/pi.json';
 
         $t->header('Unit tests of the word class (src/main/php/model/word/triple.php)');
 
@@ -83,7 +82,7 @@ class triple_old
         $wrd_to = new word($usr);
         $wrd_to->set_id(4);
         $trp->set_from($wrd_from->phrase());
-        $trp->verb = $vrb;
+        $trp->set_verb($vrb);
         $trp->set_to($wrd_to->phrase());
         $t->assert_sql_by_obj_vars($db_con, $trp);
         $t->assert_sql_standard($sc, $trp);
@@ -94,7 +93,7 @@ class triple_old
         // sql to check the usage of a triple
 
         $t->subheader('Im- and Export tests');
-
+        $json_file = 'unit/triple/pi.json';
         $t->assert_json_file(new triple($usr), $json_file);
     }
 

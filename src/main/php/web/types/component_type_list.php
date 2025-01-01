@@ -32,7 +32,7 @@
 
 namespace html\types;
 
-use html\html_selector;
+include_once TYPES_PATH . 'type_list.php';
 
 class component_type_list extends type_list
 {

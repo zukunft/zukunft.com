@@ -2,38 +2,40 @@
 <html lang="en">
 <head><title>test (zukunft.com)</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="http://localhost/lib_external/bootstrap-5.3.3-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="/lib_external/bootstrap-5.3.3-dist/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css"/>
-    <link rel="stylesheet" href="http://localhost/lib_external/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/lib_external/fontawesome/css/all.css">
 </head>
 <body>
-<div class="container"><h2>Word list display test</h2>names with links:<br><a href="/http/view.php?words=1"
+<div class="container"><h2>Word list display test</h2>names with links:<br><a href="/http/view.php?m=41&id=1"
                                                                               title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">Mathematics</a>,<a
-        href="/http/view.php?words=4" title="ratio of the circumference of a circle to its diameter">Pi</a><br><br>table
+        href="/http/view.php?m=41&id=4" title="ratio of the circumference of a circle to its diameter">Pi</a><br><br>table
     cells<br>
     <table class="table table-borderless text-muted">
         <tr>
-            <td><a href="/http/view.php?words=1"
+            <td><a href="/http/view.php?m=41&id=1"
                    title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">Mathematics</a>
             </td>
-            <td><a href="/http/view.php?words=4" title="ratio of the circumference of a circle to its diameter">Pi</a>
+            <td><a href="/http/view.php?m=41&id=4" title="ratio of the circumference of a circle to its diameter">Pi</a>
             </td>
         </tr>
     </table>
-    all word types:<br><a href="/http/view.php?words=1"
+    all word types:<br><a href="/http/view.php?m=41&id=1"
                           title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">Mathematics</a>,<a
-            href="/http/view.php?words=2" title="fixed and well-defined number">constant</a>,<a
-            href="/http/view.php?words=4" title="ratio of the circumference of a circle to its diameter">Pi</a>,<a
-            href="/http/view.php?words=142" title="2019">2019</a>,<a href="/http/view.php?words=170" title="mio">mio</a>,<a
-            href="/http/view.php?words=172" title="percent">percent</a><br><br>ex measure and time:<br><a
-            href="/http/view.php?words=1"
+            href="/http/view.php?m=41&id=2" title="fixed and well-defined number">constant</a>,<a
+            href="/http/view.php?m=41&id=4" title="ratio of the circumference of a circle to its diameter">Pi</a>,<a
+            href="/http/view.php?m=41&id=142" title="2019">2019</a>,<a href="/http/view.php?m=41&id=170"
+                                                                       title="mio">mio</a>,<a
+            href="/http/view.php?m=41&id=172" title="percent">percent</a><br><br>ex measure and time:<br><a
+            href="/http/view.php?m=41&id=1"
             title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">Mathematics</a>,<a
-            href="/http/view.php?words=2" title="fixed and well-defined number">constant</a>,<a
-            href="/http/view.php?words=4" title="ratio of the circumference of a circle to its diameter">Pi</a><br><br>measure
-    and scaling:<br><a href="/http/view.php?words=170" title="mio">mio</a><br><br><br><h4>Selector tests</h4>
-    <div class="form-group "><label for="test_selector">No word selected</label><select class="form-control"
-                                                                                        name="test_selector"
-                                                                                        id="test_selector">
+            href="/http/view.php?m=41&id=2" title="fixed and well-defined number">constant</a>,<a
+            href="/http/view.php?m=41&id=4"
+            title="ratio of the circumference of a circle to its diameter">Pi</a><br><br>measure and scaling:<br><a
+            href="/http/view.php?m=41&id=170" title="mio">mio</a><br><br><br><h4>Selector tests</h4>
+    <div class="form-group col-md-4"><label for="test_selector">No word selected</label><select class="form-control"
+                                                                                                name="test_selector"
+                                                                                                id="test_selector">
         <option value="0" selected>please select ...</option>
         <option value="1">Mathematics</option>
         <option value="2">constant</option>

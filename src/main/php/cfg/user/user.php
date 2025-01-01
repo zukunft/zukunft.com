@@ -46,33 +46,63 @@
   
 */
 
-namespace cfg;
+namespace cfg\user;
 
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once API_USER_PATH . 'user.php';
+//include_once DB_PATH . 'db_check.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+//include_once MODEL_IMPORT_PATH . 'import_file.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
+//include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+//include_once MODEL_LOG_PATH . 'change_table_list.php';
+//include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+//include_once MODEL_REF_PATH . 'source.php';
+//include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
-include_once SERVICE_EXPORT_PATH . 'user_exp.php';
+include_once MODEL_USER_PATH . 'user_type.php';
+//include_once MODEL_VERB_PATH . 'verb_list.php';
+//include_once MODEL_VIEW_PATH . 'view.php';
+//include_once MODEL_VIEW_PATH . 'view_sys_list.php';
+//include_once MODEL_WORD_PATH . 'word.php';
+include_once WEB_USER_PATH . 'user.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use api\user\user as user_api;
 use cfg\db\db_check;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\export\user_exp;
-use cfg\export\sandbox_exp;
+use cfg\helper\db_object_seq_id;
 use cfg\import\import_file;
+use cfg\system\ip_range_list;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_table_list;
+use cfg\sandbox\sandbox_named;
+use cfg\ref\source;
+use cfg\word\triple;
 use cfg\user\user_profile;
 use cfg\user\user_type;
-use Exception;
+use cfg\verb\verb_list;
+use cfg\view\view;
+use cfg\view\view_sys_list;
+use cfg\word\word;
 use html\user\user as user_dsp;
+use shared\json_fields;
+use Exception;
 
 class user extends db_object_seq_id
 {
@@ -83,10 +113,10 @@ class user extends db_object_seq_id
 
     // database fields and comments only used for user
     // *_COM: the description of the field
-    // *_SQLTYP is the sql data type used for the field
+    // *_SQL_TYP is the sql data type used for the field
     const TBL_COMMENT = 'for users including system users; only users can add data';
     const FLD_ID = 'user_id'; // also the field name for foreign keys
-    const FLD_ID_SQLTYP = sql_field_type::INT;
+    const FLD_ID_SQL_TYP = sql_field_type::INT;
     // fields for the main logon
     const FLD_NAME_COM = 'the user name unique for this pod';
     const FLD_NAME = 'user_name';
@@ -97,7 +127,7 @@ class user extends db_object_seq_id
     // description and type
     const FLD_DESCRIPTION_COM = 'for system users the description to expain the profile to human users';
     const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
+    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
     const FLD_CODE_ID_COM = 'to select e.g. the system batch user';
     const FLD_CODE_ID = 'code_id';
     const FLD_PROFILE_COM = 'to define the user roles and read and write rights';
@@ -179,7 +209,7 @@ class user extends db_object_seq_id
         [self::FLD_IP_ADDR, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_IP_ADDR_COM],
         [self::FLD_PASSWORD, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_PASSWORD_COM],
         // description and type
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
         [self::FLD_PROFILE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user_profile::class, self::FLD_PROFILE_COM],
         [self::FLD_TYPE_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user_type::class, self::FLD_TYPE_ID_COM],
@@ -323,15 +353,15 @@ class user extends db_object_seq_id
             $this->email = $email;
         }
 
-        //global $user_profiles;
-        //$this->profile = $user_profiles->get_by_code_id(user_profile::NORMAL);
+        //global $usr_pro_cac;
+        //$this->profile = $usr_pro_cac->get_by_code_id(user_profile::NORMAL);
         //$this->profile = cl(db_cl::USER_PROFILE, user_profile::NORMAL);
 
     }
 
     function reset(): void
     {
-        $this->id = 0;
+        $this->set_id(0);
         $this->name = null;
         $this->description = null;
         $this->ip_addr = null;
@@ -475,7 +505,7 @@ class user extends db_object_seq_id
      */
     private function api_obj_fields(user_api|user_dsp $api_obj): user_api|user_dsp
     {
-        $api_obj->id = $this->id;
+        $api_obj->id = $this->id();
         if ($this->name != null) {
             $api_obj->name = $this->name;
         } else {
@@ -497,12 +527,12 @@ class user extends db_object_seq_id
     /**
      * create the common part of an SQL statement to retrieve the parameters of a user from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 
@@ -510,13 +540,13 @@ class user extends db_object_seq_id
         $sc->set_name($qp->name);
 
         if ($this->viewer == null) {
-            if ($this->id == null) {
+            if ($this->id() == null) {
                 $sc->set_usr(0);
             } else {
-                $sc->set_usr($this->id);
+                $sc->set_usr($this->id());
             }
         } else {
-            $sc->set_usr($this->viewer->id);
+            $sc->set_usr($this->viewer->id());
         }
         $sc->set_fields(self::FLD_NAMES);
         return $qp;
@@ -525,12 +555,12 @@ class user extends db_object_seq_id
     /**
      * create an SQL statement to retrieve a user by id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_ID, $class);
         $sc->add_where(self::FLD_ID, $id);
@@ -543,12 +573,12 @@ class user extends db_object_seq_id
     /**
      * create an SQL statement to retrieve a user by name from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql $sc, string $name, string $class = self::class): sql_par
+    function load_sql_by_name(sql_creator $sc, string $name, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
         $sc->add_where(self::FLD_NAME, $name);
@@ -561,12 +591,12 @@ class user extends db_object_seq_id
     /**
      * create an SQL statement to retrieve a user by email from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $email the email of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_email(sql $sc, string $email, string $class = self::class): sql_par
+    function load_sql_by_email(sql_creator $sc, string $email, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'email', $class);
         $sc->add_where(self::FLD_EMAIL, $email);
@@ -579,13 +609,13 @@ class user extends db_object_seq_id
     /**
      * create an SQL statement to retrieve a user by name or email from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the user
      * @param string $email the email of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name_or_email(sql $sc, string $name, string $email, string $class = self::class): sql_par
+    function load_sql_by_name_or_email(sql_creator $sc, string $name, string $email, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'name_or_email', $class);
         $sc->add_where(self::FLD_NAME, $name, sql_par_type::TEXT_OR);
@@ -599,12 +629,12 @@ class user extends db_object_seq_id
     /**
      * create an SQL statement to retrieve a user with the ip from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $ip_addr the ip address with which the user has logged in
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ip(sql $sc, string $ip_addr, string $class = self::class): sql_par
+    function load_sql_by_ip(sql_creator $sc, string $ip_addr, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'ip', $class);
         $sc->add_where(self::FLD_IP_ADDR, $ip_addr);
@@ -617,12 +647,12 @@ class user extends db_object_seq_id
     /**
      * create an SQL statement to retrieve a user with the profile from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $profile_id the id of the profile of which the first matching user should be loaded
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_profile(sql $sc, int $profile_id, string $class = self::class): sql_par
+    function load_sql_by_profile(sql_creator $sc, int $profile_id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'profile', $class);
         $sc->add_where(self::FLD_PROFILE, $profile_id);
@@ -652,11 +682,10 @@ class user extends db_object_seq_id
      * TODO make sure that it is always checked if the requesting user has the sufficient permissions
      *  param user|null $request_usr the user who has requested the loading of the user data to prevent right gains
      *
-     * @param int $id
-     * @param string $class the name of the user
-     * @return int
+     * @param int $id of the user that should be loaded
+     * @return int an id > 0 if the loading has been successful
      */
-    function load_by_id(int $id, string $class = self::class): int
+    function load_by_id(int $id): int
     {
         global $db_con;
 
@@ -744,8 +773,8 @@ class user extends db_object_seq_id
 
     function load_by_profile_code(string $profile_code_id): bool
     {
-        global $user_profiles;
-        return $this->load_by_profile($user_profiles->id($profile_code_id));
+        global $usr_pro_cac;
+        return $this->load_by_profile($usr_pro_cac->id($profile_code_id));
     }
 
     /**
@@ -755,14 +784,14 @@ class user extends db_object_seq_id
     function load_usr_data(): void
     {
         global $db_con;
-        global $verbs;
-        global $system_views;
+        global $vrb_cac;
+        global $sys_msk_cac;
 
-        $verbs = new verb_list($this);
-        $verbs->load($db_con);
+        $vrb_cac = new verb_list($this);
+        $vrb_cac->load($db_con);
 
-        $system_views = new view_sys_list($this);
-        $system_views->load($db_con);
+        $sys_msk_cac = new view_sys_list($this);
+        $sys_msk_cac->load($db_con);
 
     }
 
@@ -795,7 +824,7 @@ class user extends db_object_seq_id
         $ip_lst->load();
         $test_result = $ip_lst->includes($ip_addr);
         if (!$test_result->is_ok()) {
-            $this->id = 0; // switch off the permission
+            $this->set_id(0); // switch off the permission
         }
         return $test_result->all_message_text();
     }
@@ -837,15 +866,15 @@ class user extends db_object_seq_id
             if (isset($_SESSION['logged'])) {
                 if ($_SESSION['logged']) {
                     $this->load_by_id($_SESSION['usr_id']);
-                    log_debug('use (' . $this->id . ')');
+                    log_debug('use (' . $this->id() . ')');
                 }
             } else {
                 // else use the IP address (for testing don't overwrite any testing ip)
-                global $user_profiles;
+                global $usr_pro_cac;
                 global $db_con;
 
                 $this->load_by_ip($this->get_ip());
-                if ($this->id <= 0) {
+                if ($this->id() <= 0) {
                     // use the ip address as the username and add the user
                     $this->name = $this->get_ip();
 
@@ -865,7 +894,7 @@ class user extends db_object_seq_id
                 }
             }
         }
-        log_debug(' "' . $this->name . '" (' . $this->id . ')');
+        log_debug(' "' . $this->name . '" (' . $this->id() . ')');
         return $result;
     }
 
@@ -897,18 +926,18 @@ class user extends db_object_seq_id
      */
     function import_obj(array $json_obj, int $profile_id, object $test_obj = null): user_message
     {
-        global $user_profiles;
+        global $usr_pro_cac;
 
         log_debug();
-        $result = parent::import_db_obj($this, $test_obj);
+        $usr_msg = parent::import_db_obj($this, $test_obj);
 
         // reset all parameters of this user object
         $this->reset();
         foreach ($json_obj as $key => $value) {
-            if ($key == sandbox_exp::FLD_NAME) {
+            if ($key == json_fields::NAME) {
                 $this->name = $value;
             }
-            if ($key == sandbox_exp::FLD_DESCRIPTION) {
+            if ($key == json_fields::DESCRIPTION) {
                 $this->description = $value;
             }
             if ($key == self::FLD_EMAIL) {
@@ -924,11 +953,11 @@ class user extends db_object_seq_id
                 $this->code_id = $value;
             }
             if ($key == self::FLD_EX_PROFILE) {
-                $this->profile_id = $user_profiles->id($value);
+                $this->profile_id = $usr_pro_cac->id($value);
             }
-            if ($key == sandbox_exp::FLD_CODE_ID) {
-                if ($profile_id == $user_profiles->id(user_profile::ADMIN)
-                    or $profile_id == $user_profiles->id(user_profile::SYSTEM)) {
+            if ($key == json_fields::CODE_ID) {
+                if ($profile_id == $usr_pro_cac->id(user_profile::ADMIN)
+                    or $profile_id == $usr_pro_cac->id(user_profile::SYSTEM)) {
                     $this->code_id = $value;
                 }
             }
@@ -936,54 +965,51 @@ class user extends db_object_seq_id
 
         // save the user in the database
         if (!$test_obj) {
-            if ($result->is_ok()) {
+            if ($usr_msg->is_ok()) {
                 // check the importing profile and make sure that gaining additional privileges is impossible
                 // the user profiles must always be in the order that the lower ID has same or less rights
                 // TODO use the right level of the profile
                 if ($profile_id >= $this->profile_id) {
                     global $db_con;
-                    $result->add_message($this->save($db_con));
+                    $usr_msg->add_message($this->save($db_con));
                 }
             }
         }
 
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
-     * create a user object for the export
+     * create an array with the export json fields
      * @param bool $do_load to switch off the database load for unit tests
-     * @return sandbox_exp the filled object used to create the json
+     * @return array the filled array used to create the user export json
      */
-    function export_obj(bool $do_load = true): sandbox_exp
+    function export_json(bool $do_load = true): array
     {
-        log_debug();
-        $result = new user_exp();
+        $vars = [];
 
-        // add the source parameters
-        $result->name = $this->name;
+        $vars[json_fields::NAME] = $this->name;
         if ($this->description <> '') {
-            $result->description = $this->description;
+            $vars[json_fields::DESCRIPTION] = $this->description;
         }
         if ($this->email <> '') {
-            $result->email = $this->email;
+            $vars[json_fields::EMAIL] = $this->email;
         }
         if ($this->first_name <> '') {
-            $result->first_name = $this->first_name;
+            $vars[json_fields::FIRST_NAME] = $this->first_name;
         }
         if ($this->last_name <> '') {
-            $result->last_name = $this->last_name;
+            $vars[json_fields::LAST_NAME] = $this->last_name;
         }
         if ($this->code_id <> '') {
-            $result->code_id = $this->code_id;
+            $vars[json_fields::CODE_ID] = $this->code_id;
         }
         if ($this->profile <> '') {
-            $result->profile = $this->profile;
+            $vars[json_fields::PROFILE] = $this->profile;
         }
 
-        log_debug(json_encode($result));
-        return $result;
+        return $vars;
     }
 
 
@@ -996,7 +1022,7 @@ class user extends db_object_seq_id
      */
     function is_set(): bool
     {
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             return true;
         } else {
             return false;
@@ -1008,12 +1034,12 @@ class user extends db_object_seq_id
      */
     function is_admin(): bool
     {
-        global $user_profiles;
+        global $usr_pro_cac;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $user_profiles->id(user_profile::ADMIN)) {
+            if ($this->profile_id == $usr_pro_cac->id(user_profile::ADMIN)) {
                 $result = true;
             }
         }
@@ -1025,13 +1051,13 @@ class user extends db_object_seq_id
      */
     function is_system(): bool
     {
-        global $user_profiles;
+        global $usr_pro_cac;
         log_debug();
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $user_profiles->id(user_profile::TEST)
-                or $this->profile_id == $user_profiles->id(user_profile::SYSTEM)) {
+            if ($this->profile_id == $usr_pro_cac->id(user_profile::TEST)
+                or $this->profile_id == $usr_pro_cac->id(user_profile::SYSTEM)) {
                 $result = true;
             }
         }
@@ -1053,13 +1079,13 @@ class user extends db_object_seq_id
     // true if the user has the right to import data
     function can_import(): bool
     {
-        global $user_profiles;
+        global $usr_pro_cac;
         log_debug();
         $result = false;
 
-        if ($this->profile_id == $user_profiles->id(user_profile::ADMIN)
-            or $this->profile_id == $user_profiles->id(user_profile::TEST)
-            or $this->profile_id == $user_profiles->id(user_profile::SYSTEM)) {
+        if ($this->profile_id == $usr_pro_cac->id(user_profile::ADMIN)
+            or $this->profile_id == $usr_pro_cac->id(user_profile::TEST)
+            or $this->profile_id == $usr_pro_cac->id(user_profile::SYSTEM)) {
             $result = true;
         }
         return $result;
@@ -1074,7 +1100,7 @@ class user extends db_object_seq_id
             $this->wrd_id = DEFAULT_WORD_ID;
         }
         $wrd = new word($this);
-        $wrd->load_by_id($this->wrd_id, word::class);
+        $wrd->load_by_id($this->wrd_id);
         $this->wrd = $wrd;
         return $wrd;
     }
@@ -1084,7 +1110,7 @@ class user extends db_object_seq_id
      */
     function dummy_all(): void
     {
-        $this->id = 0;
+        $this->set_id(0);
         $this->code_id = 'all';
         $this->name = 'standard user view for all users';
     }
@@ -1093,47 +1119,46 @@ class user extends db_object_seq_id
     // create the display user object based on the object (not needed any more if always the display user object is used)
     function dsp_user(): user_dsp
     {
-        global $db_con;
         $usr = new user;
-        $usr->load_by_id($this->id);
+        $usr->load_by_id($this->id());
         return new user_dsp($usr->api_json());
     }
 
     // create the HTML code to display the username with the HTML link
     function display(): string
     {
-        return '<a href="/http/user.php?id=' . $this->id . '">' . $this->name . '</a>';
+        return '<a href="/http/user.php?id=' . $this->id() . '">' . $this->name . '</a>';
     }
 
     // remember the last source that the user has used
     function set_source($source_id): bool
     {
-        log_debug('(' . $this->id . ',s' . $source_id . ')');
+        log_debug('(' . $this->id() . ',s' . $source_id . ')');
         global $db_con;
         //$db_con = new mysql;
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
         $db_con->set_class(user::class);
-        return $db_con->update_old($this->id, 'source_id', $source_id);
+        return $db_con->update_old($this->id(), 'source_id', $source_id);
     }
 
     // remember the last source that the user has used
     // TODO add the database field
     function set_verb($vrb_id): bool
     {
-        log_debug('(' . $this->id . ',s' . $vrb_id . ')');
+        log_debug('(' . $this->id() . ',s' . $vrb_id . ')');
         global $db_con;
         //$db_con = new mysql;
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
         $result = $db_con->set_class(user::class);
-        //$result = $db_con->update($this->id, verb::FLD_ID, $vrb_id);
+        //$result = $db_con->update($this->id(), verb::FLD_ID, $vrb_id);
         return $result;
     }
 
     function set_profile(string $profile_code_id): void
     {
-        global $user_profiles;
-        $this->profile_id = $user_profiles->id($profile_code_id);
-        //$this->profile = $user_profiles->lst[$this->profile_id];
+        global $usr_pro_cac;
+        $this->profile_id = $usr_pro_cac->id($profile_code_id);
+        //$this->profile = $usr_pro_cac->lst[$this->profile_id];
     }
 
     // set the main log entry parameters for updating one word field
@@ -1160,11 +1185,11 @@ class user extends db_object_seq_id
             $log = $this->log_upd();
             $log->old_value = $db_value;
             $log->new_value = $usr_par[$par_name];
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field($fld_name);
             if ($log->add()) {
                 $db_con->set_class(user::class);
-                $result = $db_con->update_old($this->id, $log->field(), $log->new_value);
+                $result = $db_con->update_old($this->id(), $log->field(), $log->new_value);
             }
         }
     }
@@ -1183,11 +1208,11 @@ class user extends db_object_seq_id
         $result = ''; // reset the html code var
 
         // build the database object because the is anyway needed
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
         $db_con->set_class(user::class);
 
         $db_usr = new user;
-        $db_id = $db_usr->load_by_id($this->id);
+        $db_id = $db_usr->load_by_id($this->id());
         log_debug('database user loaded "' . $db_id . '"');
 
         $this->upd_par($db_con, $usr_par, $db_usr->name, self::FLD_NAME, 'name');
@@ -1215,52 +1240,52 @@ class user extends db_object_seq_id
      */
     function save(sql_db $db_con): string
     {
-        global $user_profiles;
+        global $usr_pro_cac;
 
         $result = '';
 
         // build the database object because the is anyway needed
         //$db_con = new mysql;
-        $db_con->usr_id = $this->id;
+        $db_con->usr_id = $this->id();
         $db_con->set_class(user::class);
 
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             log_debug(' add (' . $this->name . ')');
 
-            $this->id = $db_con->insert_old('user_name', $this->name);
+            $this->set_id($db_con->insert_old('user_name', $this->name));
             // log the changes???
-            if ($this->id > 0) {
+            if ($this->id() > 0) {
                 // add the description of the user
-                if (!$db_con->update_old($this->id, sandbox_named::FLD_DESCRIPTION, $this->description)) {
-                    $result = 'Saving of user description ' . $this->id . ' failed.';
+                if (!$db_con->update_old($this->id(), sandbox_named::FLD_DESCRIPTION, $this->description)) {
+                    $result = 'Saving of user description ' . $this->id() . ' failed.';
                 }
                 // add the email of the user
-                if (!$db_con->update_old($this->id, self::FLD_EMAIL, $this->email)) {
-                    $result = 'Saving of user email ' . $this->id . ' failed.';
+                if (!$db_con->update_old($this->id(), self::FLD_EMAIL, $this->email)) {
+                    $result = 'Saving of user email ' . $this->id() . ' failed.';
                 }
                 // add the first name of the user
-                if (!$db_con->update_old($this->id, self::FLD_FIRST_NAME, $this->first_name)) {
-                    $result = 'Saving of user first name ' . $this->id . ' failed.';
+                if (!$db_con->update_old($this->id(), self::FLD_FIRST_NAME, $this->first_name)) {
+                    $result = 'Saving of user first name ' . $this->id() . ' failed.';
                 }
                 // add the last name of the user
-                if (!$db_con->update_old($this->id, self::FLD_LAST_NAME, $this->last_name)) {
-                    $result = 'Saving of user last name ' . $this->id . ' failed.';
+                if (!$db_con->update_old($this->id(), self::FLD_LAST_NAME, $this->last_name)) {
+                    $result = 'Saving of user last name ' . $this->id() . ' failed.';
                 }
                 // add the code of the user
                 if ($this->code_id != '') {
-                    if (!$db_con->update_old($this->id, self::FLD_CODE_ID, $this->code_id)) {
-                        $result = 'Saving of user code id ' . $this->id . ' failed.';
+                    if (!$db_con->update_old($this->id(), self::FLD_CODE_ID, $this->code_id)) {
+                        $result = 'Saving of user code id ' . $this->id() . ' failed.';
                     }
                 }
                 // add the profile of the user
-                if (!$db_con->update_old($this->id, self::FLD_PROFILE, $this->profile_id)) {
-                    $result = 'Saving of user profile ' . $this->id . ' failed.';
+                if (!$db_con->update_old($this->id(), self::FLD_PROFILE, $this->profile_id)) {
+                    $result = 'Saving of user profile ' . $this->id() . ' failed.';
                 }
                 // add the ip address to the user, but never for system users
-                if ($this->profile_id != $user_profiles->id(user_profile::SYSTEM)
-                    and $this->profile_id != $user_profiles->id(user_profile::TEST)) {
-                    if (!$db_con->update_old($this->id, self::FLD_IP_ADDR, $this->get_ip())) {
-                        $result = 'Saving of user ' . $this->id . ' failed.';
+                if ($this->profile_id != $usr_pro_cac->id(user_profile::SYSTEM)
+                    and $this->profile_id != $usr_pro_cac->id(user_profile::TEST)) {
+                    if (!$db_con->update_old($this->id(), self::FLD_IP_ADDR, $this->get_ip())) {
+                        $result = 'Saving of user ' . $this->id() . ' failed.';
                     }
                 }
                 log_debug(' add ... done');
@@ -1293,7 +1318,7 @@ class user extends db_object_seq_id
 
     function dsp_id(): string
     {
-        return $this->name . ' (' . $this->id . ')';
+        return $this->name . ' (' . $this->id() . ')';
     }
 
 }

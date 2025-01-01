@@ -32,19 +32,28 @@
 namespace html\word;
 
 include_once SANDBOX_PATH . 'sandbox_typed.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use cfg\phrase_type;
+use shared\api;
+use cfg\phrase\phrase_type;
 use html\rest_ctrl;
 use html\button;
 use html\html_base;
 use html\html_selector;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\system\messages;
+use html\user\user_message;
 use html\word\word as word_dsp;
+use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\sandbox\sandbox_typed;
 use html\phrase\term as term_dsp;
 use html\verb\verb as verb_dsp;
+use shared\api AS api_shared;
+use shared\json_fields;
+use shared\types\phrase_type as phrase_type_shared;
+use shared\types\view_styles;
 
 class triple extends sandbox_typed
 {
@@ -54,20 +63,16 @@ class triple extends sandbox_typed
     const FORM_EDIT = 'triple_edit';
     const FORM_DEL = 'triple_del';
 
-    // the json field names in the api json message which is supposed to be the same as the var $id
-    const FLD_FROM = 'from';
-    const FLD_VERB = 'parent';
-    const FLD_TO = 'to';
-
 
     /*
      * object vars
      */
 
     // the triple components
-    private phrase_dsp $from;
+    // they can be null to allow front end error messages to the user
+    private ?phrase_dsp $from = null;
     private ?verb_dsp $verb = null;
-    private phrase_dsp $to;
+    private ?phrase_dsp $to = null;
     private ?string $plural = null;
 
 
@@ -78,26 +83,27 @@ class triple extends sandbox_typed
     /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
-        if (array_key_exists(self::FLD_FROM, $json_array)) {
-            $this->set_from($json_array[self::FLD_FROM]);
+        $usr_msg = parent::set_from_json_array($json_array);
+        if (array_key_exists(json_fields::FROM, $json_array)) {
+            $this->set_from_by_id($json_array[json_fields::FROM]);
         } else {
             $this->set_from(new phrase_dsp());
         }
-        if (array_key_exists(self::FLD_VERB, $json_array)) {
-            $this->set_verb($json_array[self::FLD_VERB]);
+        if (array_key_exists(json_fields::VERB, $json_array)) {
+            $this->set_verb_by_id($json_array[json_fields::VERB]);
         } else {
             $this->set_verb(new verb_dsp());
         }
-        if (array_key_exists(self::FLD_TO, $json_array)) {
-            $this->set_to($json_array[self::FLD_TO]);
+        if (array_key_exists(json_fields::TO, $json_array)) {
+            $this->set_to_by_id($json_array[json_fields::TO]);
         } else {
             $this->set_to(new phrase_dsp());
         }
+        return $usr_msg;
     }
 
     function set(string $from, string $verb, string $to): void
@@ -112,14 +118,49 @@ class triple extends sandbox_typed
         $this->from = $from;
     }
 
+    function set_from_by_id(int $id): void
+    {
+        $this->from = $this->set_phrase_by_id($id);
+    }
+
     function set_verb(verb_dsp $vrb): void
     {
+        $this->verb = $vrb;
+    }
+
+    function set_verb_by_id(int $id): void
+    {
+        $vrb = new verb_dsp();
+        $vrb->set_id($id);
         $this->verb = $vrb;
     }
 
     function set_to(phrase_dsp $to): void
     {
         $this->to = $to;
+    }
+
+    function set_to_by_id(int $id): void
+    {
+        $this->to = $this->set_phrase_by_id($id);
+    }
+
+    private function set_phrase_by_id(int $id): phrase_dsp
+    {
+        if ($id > 0) {
+            $wrd = new word_dsp();
+            $wrd->set_id($id);
+            $phr = $wrd->phrase();
+        } elseif ($id < 0) {
+            $trp = new triple_dsp();
+            $trp->set_id($id * -1);
+            $phr = $trp->phrase();
+        } else {
+            $wrd = new word_dsp();
+            $wrd->set_id(0);
+            $phr = $wrd->phrase();
+        }
+        return $phr;
     }
 
     function from(): phrase_dsp
@@ -152,11 +193,11 @@ class triple extends sandbox_typed
      */
     function set_type(?string $code_id): void
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         if ($code_id == null) {
             $this->set_type_id();
         } else {
-            $this->set_type_id($phrase_types->id($code_id));
+            $this->set_type_id($phr_typ_cac->id($code_id));
         }
     }
 
@@ -166,11 +207,11 @@ class triple extends sandbox_typed
      */
     function type(): ?object
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         if ($this->type_id() == null) {
             return null;
         } else {
-            return $phrase_types->get($this->type_id());
+            return $phr_typ_cac->get($this->type_id());
         }
     }
 
@@ -196,7 +237,7 @@ class triple extends sandbox_typed
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(rest_ctrl::TRIPLE, $this->id, $back, rest_ctrl::PAR_VIEW_TRIPLES);
+        $url = $html->url(rest_ctrl::TRIPLE, $this->id(), $back, api_shared::URL_VAR_TRIPLES);
         return $html->ref($url, $this->name(), $this->name(), $style);
     }
 
@@ -206,12 +247,28 @@ class triple extends sandbox_typed
      */
 
     /**
+     * create the HTML code to select a phrase type
+     * and select the phrase type of this word
+     * @param string $form the name of the html form
+     * @return string the html code to select the phrase type
+     */
+    protected function phrase_type_selector(string $form): string
+    {
+        global $html_phrase_types;
+        $used_phrase_id = $this->type_id();
+        if ($used_phrase_id == null) {
+            $used_phrase_id = $html_phrase_types->default_id();
+        }
+        return $html_phrase_types->selector($form, $used_phrase_id);
+    }
+
+    /**
      * TODO review
      *
      * select a phrase based on a given context
      *
      * @param string $name the unique name inside the form for this selector
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @param string $label the text show to the user
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
@@ -220,25 +277,25 @@ class triple extends sandbox_typed
      * @return string the html code to select a phrase
      */
     protected function phrase_selector(
-        string $name,
-        string $form_name,
-        string $label = '',
-        string $col_class = '',
-        int $selected = 0,
-        string $pattern = '',
+        string      $name,
+        string      $form,
+        string      $label = '',
+        string      $col_class = '',
+        int         $selected = 0,
+        string      $pattern = '',
         ?phrase_dsp $phr = null
     ): string
     {
         $phr_lst = new phrase_list_dsp();
         $phr_lst->load_like($pattern);
-        return $phr_lst->selector($name, $form_name, $label, html_base::COL_SM_4, $selected, html_selector::TYPE_DATALIST);
+        return $phr_lst->selector($form, $selected, $name, $label, view_styles::COL_SM_4, html_selector::TYPE_DATALIST);
     }
 
     /**
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @return string the html code to select a phrase
      */
-    protected function verb_selector(string $name, string $form_name): string
+    protected function verb_selector(string $form): string
     {
         global $html_verbs;
         if ($this->verb != null) {
@@ -246,7 +303,7 @@ class triple extends sandbox_typed
         } else {
             $id = 0;
         }
-        return $html_verbs->selector($form_name, $id, 'verb', html_base::COL_SM_4, 'verb:');
+        return $html_verbs->selector($form, $id, 'verb', view_styles::COL_SM_4, 'verb:');
     }
 
 
@@ -263,9 +320,9 @@ class triple extends sandbox_typed
         $result = ''; // reset the html code var
 
         // prepare to show the word link
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $header = $html->text_h2('Change "' . $this->from()->name() . ' ' . $this->verb()->name() . ' ' . $this->to()->name() . '"');
-            $hidden_fields = $html->form_hidden("id", $this->id);
+            $hidden_fields = $html->form_hidden("id", $this->id());
             $hidden_fields .= $html->form_hidden("back", $back);
             $hidden_fields .= $html->form_hidden("confirm", '1');
             $detail_fields = $html->form_text("name", $this->name());
@@ -274,7 +331,7 @@ class triple extends sandbox_typed
                 'from', self::FORM_EDIT, 'from:', '', $this->from()->id(), '', $this->from());
             /* TODO
             if (isset($this->verb)) {
-                $result .= $this->verb->dsp_selector('forward', $form_name, html_base::COL_SM_4, $back);
+                $result .= $this->verb->dsp_selector('forward', $form_name, view_styles::COL_SM_4, $back);
             }
             */
             $detail_fields .= 'to: ' . $this->phrase_selector(
@@ -298,7 +355,7 @@ class triple extends sandbox_typed
     {
 
         $html = new html_base();
-        $url = $html->url(rest_ctrl::PATH_FIXED . 'link' . rest_ctrl::CREATE . rest_ctrl::EXT, $this->id, $this->id);
+        $url = $html->url(rest_ctrl::PATH_FIXED . 'link' . rest_ctrl::CREATE . rest_ctrl::EXT, $this->id(), $this->id());
         $btn = (new button($url. $back))->edit(messages::TRIPLE_ADD);
 
         return $html->td($btn);
@@ -311,7 +368,7 @@ class triple extends sandbox_typed
     {
 
         $html = new html_base();
-        $url = $html->url(rest_ctrl::PATH_FIXED . 'link' . rest_ctrl::UPDATE . rest_ctrl::EXT, $this->id, $trp->id());
+        $url = $html->url(rest_ctrl::PATH_FIXED . 'link' . rest_ctrl::UPDATE . rest_ctrl::EXT, $this->id(), $trp->id());
         $btn = (new button($url. $back))->edit(messages::TRIPLE_EDIT);
 
         return $html->td($btn);
@@ -374,7 +431,25 @@ class triple extends sandbox_typed
      */
     function is_percent(): bool
     {
-        return $this->is_type(phrase_type::PERCENT);
+        return $this->is_type(phrase_type_shared::PERCENT);
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars = parent::api_array();
+        $vars[json_fields::FROM] = $this->from()->id();
+        $vars[json_fields::VERB] = $this->verb()->id();
+        $vars[json_fields::TO] = $this->to()->id();
+        return $vars;
     }
 
 }

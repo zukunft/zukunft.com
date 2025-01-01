@@ -9,6 +9,7 @@ PREPARE component_list_by_view_id (bigint, bigint) AS
                CASE WHEN (u.component_name <> '' IS NOT TRUE) THEN s.component_name    ELSE u.component_name    END AS component_name,
                CASE WHEN (u.description    <> '' IS NOT TRUE) THEN s.description       ELSE u.description       END AS description,
                CASE WHEN (u.component_type_id    IS     NULL) THEN s.component_type_id ELSE u.component_type_id END AS component_type_id,
+               CASE WHEN (u.view_style_id        IS     NULL) THEN s.view_style_id     ELSE u.view_style_id     END AS view_style_id,
                CASE WHEN (u.word_id_row          IS     NULL) THEN s.word_id_row       ELSE u.word_id_row       END AS word_id_row,
                CASE WHEN (u.link_type_id         IS     NULL) THEN s.link_type_id      ELSE u.link_type_id      END AS link_type_id,
                CASE WHEN (u.formula_id           IS     NULL) THEN s.formula_id        ELSE u.formula_id        END AS formula_id,

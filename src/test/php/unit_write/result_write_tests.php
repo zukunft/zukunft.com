@@ -37,8 +37,8 @@ namespace unit_write;
 use api\formula\formula as formula_api;
 use api\result\result as result_api;
 use api\word\word as word_api;
-use cfg\formula;
-use cfg\phrase_list;
+use cfg\formula\formula;
+use cfg\phrase\phrase_list;
 use cfg\result\result;
 use cfg\result\result_list;
 use cfg\value\value;
@@ -62,7 +62,7 @@ class result_write_tests
         $frm = new formula($t->usr1);
         $frm->set_name(formula_api::TN_ADD);
         $frm->usr_text = formula_api::TF_INCREASE;
-        $result = $frm->save();
+        $result = $frm->save()->get_last_message();
         if ($frm->id() > 0) {
             $result = $frm->usr_text;
         }
@@ -72,7 +72,7 @@ class result_write_tests
         // check if the formula can be renamed
         $frm = $t->load_formula(formula_api::TN_ADD);
         $frm->set_name(formula_api::TN_RENAMED);
-        $result = $frm->save();
+        $result = $frm->save()->get_last_message();
         $target = '';
         $t->display('formula->save rename "' . formula_api::TN_ADD . '" to "' . formula_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 

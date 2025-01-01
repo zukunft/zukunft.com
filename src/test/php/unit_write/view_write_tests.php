@@ -34,14 +34,14 @@ namespace unit_write;
 
 use api\view\view as view_api;
 use api\word\word as word_api;
-use cfg\user;
-use cfg\view_type;
-use cfg\view;
+use cfg\user\user;
+use cfg\view\view_type;
+use cfg\view\view;
 use html\view\view as view_dsp;
 use cfg\log\change;
 use cfg\log\change_table_list;
-use cfg\sandbox_named;
-use cfg\word;
+use cfg\sandbox\sandbox_named;
+use cfg\word\word;
 use test\test_cleanup;
 
 class view_write_tests
@@ -50,7 +50,7 @@ class view_write_tests
     function run(test_cleanup $t): void
     {
         global $db_con;
-        global $view_types;
+        global $msk_typ_cac;
 
         // init
         $t->name = 'view db write->';
@@ -107,7 +107,7 @@ class view_write_tests
         $msk = new view($t->usr1);
         $msk->set_name(view_api::TN_ADD);
         $msk->description = 'Just added for testing';
-        $result = $msk->save();
+        $result = $msk->save()->get_last_message();
         if ($msk->id() > 0) {
             $result = $msk->description;
         }
@@ -133,7 +133,7 @@ class view_write_tests
         // check if adding the same view again creates a correct error message
         $msk = new view($t->usr1);
         $msk->set_name(view_api::TN_ADD);
-        $result = $msk->save();
+        $result = $msk->save()->get_last_message();
         $target = 'A view with the name "' . view_api::TN_ADD . '" already exists. Please use another name.'; // is this error message really needed???
         $target = '';
         $t->display('view->save adding "' . $msk->name() . '" again', $target, $result, $t::TIMEOUT_LIMIT_DB);
@@ -142,7 +142,7 @@ class view_write_tests
         $msk = new view($t->usr1);
         $msk->load_by_name(view_api::TN_ADD, view::class);
         $msk->set_name(view_api::TN_RENAMED);
-        $result = $msk->save();
+        $result = $msk->save()->get_last_message();
         $target = '';
         $t->display('view->save rename "' . view_api::TN_ADD . '" to "' . view_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -168,8 +168,8 @@ class view_write_tests
 
         // check if the view parameters can be added
         $dsp_renamed->description = 'Just added for testing the user sandbox';
-        $dsp_renamed->type_id = $view_types->id(view_type::WORD_DEFAULT);
-        $result = $dsp_renamed->save();
+        $dsp_renamed->type_id = $msk_typ_cac->id(view_type::WORD_DEFAULT);
+        $result = $dsp_renamed->save()->get_last_message();
         $target = '';
         $t->display('view->save all view fields beside the name for "' . view_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -180,7 +180,7 @@ class view_write_tests
         $target = 'Just added for testing the user sandbox';
         $t->display('view->load comment for "' . view_api::TN_RENAMED . '"', $target, $result);
         $result = $dsp_reloaded->type_id;
-        $target = $view_types->id(view_type::WORD_DEFAULT);
+        $target = $msk_typ_cac->id(view_type::WORD_DEFAULT);
         $t->display('view->load type_id for "' . view_api::TN_RENAMED . '"', $target, $result);
 
         // check if the view parameter adding have been logged
@@ -208,8 +208,8 @@ class view_write_tests
         $dsp_usr2 = new view($t->usr2);
         $dsp_usr2->load_by_name(view_api::TN_RENAMED, view::class);
         $dsp_usr2->description = 'Just changed for testing the user sandbox';
-        $dsp_usr2->type_id = $view_types->id(view_type::ENTRY);
-        $result = $dsp_usr2->save();
+        $dsp_usr2->type_id = $msk_typ_cac->id(view_type::ENTRY);
+        $result = $dsp_usr2->save()->get_last_message();
         $target = '';
         $t->display('view->save all view fields for user 2 beside the name for "' . view_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -220,7 +220,7 @@ class view_write_tests
         $target = 'Just changed for testing the user sandbox';
         $t->display('view->load comment for "' . view_api::TN_RENAMED . '"', $target, $result);
         $result = $dsp_usr2_reloaded->type_id;
-        $target = $view_types->id(view_type::ENTRY);
+        $target = $msk_typ_cac->id(view_type::ENTRY);
         $t->display('view->load type_id for "' . view_api::TN_RENAMED . '"', $target, $result);
 
         // check the view for the original user remains unchanged
@@ -230,15 +230,15 @@ class view_write_tests
         $target = 'Just added for testing the user sandbox';
         $t->display('view->load comment for "' . view_api::TN_RENAMED . '"', $target, $result);
         $result = $dsp_reloaded->type_id;
-        $target = $view_types->id(view_type::WORD_DEFAULT);
+        $target = $msk_typ_cac->id(view_type::WORD_DEFAULT);
         $t->display('view->load type_id for "' . view_api::TN_RENAMED . '"', $target, $result);
 
         // check if undo all specific changes removes the user view
         $dsp_usr2 = new view($t->usr2);
         $dsp_usr2->load_by_name(view_api::TN_RENAMED, view::class);
         $dsp_usr2->description = 'Just added for testing the user sandbox';
-        $dsp_usr2->type_id = $view_types->id(view_type::WORD_DEFAULT);
-        $result = $dsp_usr2->save();
+        $dsp_usr2->type_id = $msk_typ_cac->id(view_type::WORD_DEFAULT);
+        $result = $dsp_usr2->save()->get_last_message();
         $target = '';
         $t->display('view->save undo the user view fields beside the name for "' . view_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -249,7 +249,7 @@ class view_write_tests
         $target = 'Just added for testing the user sandbox';
         $t->display('view->load comment for "' . view_api::TN_RENAMED . '"', $target, $result);
         $result = $dsp_usr2_reloaded->type_id;
-        $target = $view_types->id(view_type::WORD_DEFAULT);
+        $target = $msk_typ_cac->id(view_type::WORD_DEFAULT);
         $t->display('view->load type_id for "' . view_api::TN_RENAMED . '"', $target, $result);
 
         // redo the user specific view changes

@@ -27,7 +27,7 @@ SELECT component_link_delete_log_user
        (1::bigint,
         3::smallint,
         16::smallint,
-        'Word'::text,
+        'Start view'::text,
         null::text,
         'Word'::text,
         1::bigint,

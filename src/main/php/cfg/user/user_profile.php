@@ -33,8 +33,10 @@
 namespace cfg\user;
 
 include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
 
-use cfg\type_object;
+use cfg\helper\type_object;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 

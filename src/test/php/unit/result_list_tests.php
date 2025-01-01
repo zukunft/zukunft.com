@@ -32,15 +32,15 @@
 
 namespace unit;
 
-use cfg\db\sql;
-use cfg\formula;
+use cfg\db\sql_creator;
+use cfg\formula\formula;
 use cfg\group\group;
-use cfg\phrase_list;
+use cfg\phrase\phrase_list;
 use cfg\result\result_list;
 use cfg\db\sql_db;
-use cfg\triple;
-use cfg\user;
-use cfg\word;
+use cfg\word\triple;
+use cfg\user\user;
+use cfg\word\word;
 use html\result\result_list as result_list_dsp;
 use test\test_cleanup;
 
@@ -54,7 +54,7 @@ class result_list_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'result_list->';
         $t->resource_path = 'db/result/';
         $res_lst = new result_list($usr);
@@ -137,7 +137,7 @@ class result_list_tests
         test_cleanup $t): void
     {
         // create objects
-        $sc = new sql();
+        $sc = new sql_creator();
         $res_lst = new result_list(new user());
 
         // check the Postgres query syntax
@@ -170,7 +170,7 @@ class result_list_tests
         test_cleanup $t): void
     {
         // create objects
-        $sc = new sql();
+        $sc = new sql_creator();
         $res_lst = new result_list(new user());
 
         // check the Postgres query syntax

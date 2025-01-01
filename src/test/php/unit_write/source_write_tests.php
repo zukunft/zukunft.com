@@ -36,8 +36,8 @@ use api\ref\source as source_api;
 use cfg\log\change_field_list;
 use cfg\log\change;
 use cfg\log\change_table_list;
-use cfg\sandbox_named;
-use cfg\source;
+use cfg\sandbox\sandbox_named;
+use cfg\ref\source;
 use test\test_cleanup;
 
 class source_write_tests
@@ -66,7 +66,7 @@ class source_write_tests
         $src_usr2->load_by_name(source_api::TN_RENAMED, source::class);
         $src_usr2->url = source_api::TU_ADD;
         $src_usr2->description = source_api::TD_ADD;
-        $result = $src_usr2->save();
+        $result = $src_usr2->save()->get_last_message();
         $target = '';
         $t->display('source->save undo the user source fields beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 

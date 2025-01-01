@@ -8,6 +8,9 @@
         "name": "Pi (math)",
         "description": "ratio of the circumference of a circle to its diameter",
         "type_id": 22,
+        "from_id": 4,
+        "verb_id": 2,
+        "to_id": -1,
         "class": "triple"
       }
     ],

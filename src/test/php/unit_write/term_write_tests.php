@@ -32,13 +32,16 @@
 
 namespace unit_write;
 
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\formula\formula as formula_api;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
-use cfg\term;
-use cfg\verb;
-use cfg\word;
+use cfg\phrase\term;
+use cfg\verb\verb;
+use cfg\word\word;
 use shared\library;
+use shared\types\verbs;
 use test\test_cleanup;
 
 class term_write_tests
@@ -73,7 +76,7 @@ class term_write_tests
 
         // ... check also for a verb
         $term = new term($usr);
-        $term->load_by_obj_name(verb::IS);
+        $term->load_by_obj_name(verbs::IS);
         $target = '<style class="text-danger">A word with the name "" already exists. '
             . 'Please use another ' . $lib->class_to_name(word::class) . ' name.</style>';
         $result = $term->id_used_msg($wrd_zh);

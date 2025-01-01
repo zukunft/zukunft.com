@@ -42,18 +42,10 @@
 
 namespace cfg\db;
 
-use cfg\combine_named;
-use cfg\db_object_seq_id;
-use cfg\log\change;
-use cfg\sandbox;
-use cfg\sandbox_link_named;
-use cfg\sandbox_multi;
-use cfg\sandbox_named;
-use cfg\type_list;
-use cfg\type_object;
-use cfg\user;
+include_once DB_PATH . 'sql_field.php';
+include_once SHARED_PATH . 'library.php';
+
 use DateTime;
-use DateTimeInterface;
 use shared\library;
 
 class sql_field_list
@@ -74,7 +66,7 @@ class sql_field_list
     }
 
     /**
-     * add a field based on the seperate name, value and type
+     * add a field based on the separate name, value and type
      *
      * @param string|null $name
      * @param string|int|float|DateTime|null $value
@@ -146,7 +138,7 @@ class sql_field_list
 
     /**
      * get the sql_field of the given position
-     * @param int $pos the position of the requeted element
+     * @param int $pos the position of the requested element
      * @return sql_field if found the filled sql_field
      */
     function get(int $pos): sql_field

@@ -7,6 +7,7 @@ PREPARE component_by_name FROM
             IF(u.component_name    IS NULL, s.component_name,    u.component_name)    AS component_name,
             IF(u.description       IS NULL, s.description,       u.description)       AS description,
             IF(u.component_type_id IS NULL, s.component_type_id, u.component_type_id) AS component_type_id,
+            IF(u.view_style_id     IS NULL, s.view_style_id,     u.view_style_id)     AS view_style_id,
             IF(u.word_id_row       IS NULL, s.word_id_row,       u.word_id_row)       AS word_id_row,
             IF(u.link_type_id      IS NULL, s.link_type_id,      u.link_type_id)      AS link_type_id,
             IF(u.formula_id        IS NULL, s.formula_id,        u.formula_id)        AS formula_id,

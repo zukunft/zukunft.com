@@ -34,19 +34,20 @@ namespace unit_read;
 
 include_once SHARED_TYPES_PATH . 'view_type.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
+include_once SHARED_PATH . 'views.php';
 
-use cfg\view_link_type;
-use cfg\view_link_type_list;
+use cfg\view\view_link_type;
+use cfg\view\view_link_type_list;
+use cfg\view\view_sys_list;
+use cfg\view\view_type_list;
 use shared\types\view_type as view_type_shared;
 use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_type_list;
-use cfg\view;
-use cfg\view_sys_list;
-use cfg\view_type_list;
-use controller\controller;
+use cfg\view\view;
+use shared\views as view_shared;
 use test\test_cleanup;
 
 class view_read_tests
@@ -56,10 +57,10 @@ class view_read_tests
     {
 
         global $db_con;
-        global $view_types;
-        global $view_link_types;
-        global $system_views;
-        global $component_types;
+        global $msk_typ_cac;
+        global $msk_lnk_typ_cac;
+        global $sys_msk_cac;
+        global $cmp_typ_cac;
 
         // init
         $t->name = 'view read->';
@@ -76,18 +77,18 @@ class view_read_tests
         $msk->load_components();
         $t->assert_contains($test_name, $msk->component_link_list()->names(), component_api::TN_READ);
 
-        $test_name = 'load view by code id "' . controller::MC_WORD_ADD . '"';
+        $test_name = 'load view by code id "' . view_shared::MC_WORD_ADD . '"';
         $msk = new view($t->usr1);
-        $msk->load_by_code_id(controller::MC_WORD_ADD);
+        $msk->load_by_code_id(view_shared::MC_WORD_ADD);
         $t->assert($test_name, $msk->name(), view_api::TN_FORM_NEW);
 
-        $test_name = 'load view by phrase "' . controller::MC_WORD_ADD . '"';
+        $test_name = 'load view by phrase "' . view_shared::MC_WORD_ADD . '"';
         $msk = new view($t->usr1);
         // TODO activate
         //$msk->load_by_phrase($t->phrase_pi());
         //$t->assert($test_name, $msk->name(), view_api::TN_FORM_NEW);
 
-        $test_name = 'load view by term "' . controller::MC_WORD_ADD . '"';
+        $test_name = 'load view by term "' . view_shared::MC_WORD_ADD . '"';
         $msk = new view($t->usr1);
         // TODO activate
         //$msk->load_by_term($t->formula()->term());
@@ -101,7 +102,7 @@ class view_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $view_types->id(view_type_shared::DEFAULT);
+        $result = $msk_typ_cac->id(view_type_shared::DEFAULT);
         $t->assert('check type' . view_type_shared::DEFAULT, $result, 1);
 
         // load the view link types
@@ -110,7 +111,7 @@ class view_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $view_link_types->id(view_link_type::DEFAULT);
+        $result = $msk_lnk_typ_cac->id(view_link_type::DEFAULT);
         $t->assert('check type' . view_link_type::DEFAULT, $result, 1);
 
 
@@ -130,18 +131,18 @@ class view_read_tests
         $t->assert('load', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $system_views->id(controller::MC_WORD);
+        $result = $sys_msk_cac->id(view_shared::MC_WORD);
         $target = 0;
         if ($result > 0) {
             $target = $result; // just check if the id is found
         }
-        $t->assert('check' . controller::MC_WORD, $result, $target);
+        $t->assert('check' . view_shared::MC_WORD, $result, $target);
 
         // check all system views
         // TODO activate Prio 2
-        //$t->assert_view(controller::DSP_COMPONENT_ADD, $t->usr1);
-        //$t->assert_view(controller::DSP_COMPONENT_EDIT, $t->usr1);
-        //$t->assert_view(controller::DSP_COMPONENT_DEL, $t->usr1);
+        //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1);
+        //$t->assert_view(view_shared::DSP_COMPONENT_EDIT, $t->usr1);
+        //$t->assert_view(view_shared::DSP_COMPONENT_DEL, $t->usr1);
 
 
 
@@ -151,7 +152,7 @@ class view_read_tests
         $cmp = new component($t->usr1);
         $cmp->load_by_name(component_api::TN_READ);
         $cmp_by_id = new component($t->usr1);
-        $cmp_by_id->load_by_id($cmp->id(), component::class);
+        $cmp_by_id->load_by_id($cmp->id());
         $t->assert($test_name, $cmp_by_id->name(), component_api::TN_READ);
         $t->assert($test_name, $cmp_by_id->description, component_api::TD_READ);
 
@@ -165,7 +166,7 @@ class view_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $component_types->id(comp_type_shared::TEXT);
+        $result = $cmp_typ_cac->id(comp_type_shared::TEXT);
         $t->assert('check type' . comp_type_shared::TEXT, $result, 3);
     }
 

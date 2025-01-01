@@ -36,7 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -44,16 +44,17 @@ include_once MODEL_VIEW_PATH . 'view_list.php';
 include_once API_VIEW_PATH . 'view_list.php';
 
 use controller\controller;
-use cfg\user;
-use cfg\view_list;
+use cfg\user\user;
+use cfg\view\view_list;
 use api\view\view_list as view_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/viewList", "", false);
 
 // get the parameters
-$cmp_id = $_GET[controller::URL_VAR_VIEW_ID] ?? '';
-$pattern = $_GET[controller::URL_VAR_PATTERN] ?? '';
+$cmp_id = $_GET[api::URL_VAR_VIEW_ID] ?? '';
+$pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
 $msg = '';
 $result = new view_list_api(array());
@@ -69,7 +70,7 @@ if ($usr->id() > 0) {
         $lst = new view_list($usr);
         $lst->load_by_component_id($cmp_id);
         $result = $lst->api_obj();
-    } elseif ($pattern != '') {
+    } elseif ($_GET[api::URL_VAR_PATTERN] != null) {
         $lst = new view_list($usr);
         $lst->load_names(($pattern));
         $result = $lst->api_obj();

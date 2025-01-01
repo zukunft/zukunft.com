@@ -36,6 +36,7 @@ include_once COMPONENT_PATH . 'component.php';
 
 use html\sandbox\list_dsp;
 use html\component\component as component_dsp;
+use html\user\user_message;
 
 class component_list extends list_dsp
 {
@@ -45,27 +46,13 @@ class component_list extends list_dsp
      */
 
     /**
-     * set the vars of a view object based on the given json
-     * @param array $json_array an api single object json message
-     * @return object a view set based on the given json
-     */
-    function set_obj_from_json_array(array $json_array): object
-    {
-        $cmp = new component_dsp();
-        $cmp->set_from_json_array($json_array);
-        return $cmp;
-    }
-
-    /**
      * set the vars of these list display objects bases on the api json array
      * @param array $json_array an api list json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        foreach ($json_array as $value) {
-            $this->add_obj($this->set_obj_from_json_array($value), true);
-        }
+        return parent::set_list_from_json($json_array, new component_dsp());
     }
 
     /*

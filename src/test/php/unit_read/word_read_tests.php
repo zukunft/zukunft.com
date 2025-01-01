@@ -32,14 +32,19 @@
 
 namespace unit_read;
 
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\word\triple as triple_api;
 use api\word\word as word_api;
-use cfg\phrase;
-use cfg\phrase_type;
-use cfg\phrase_types;
-use cfg\verb;
-use cfg\word;
-use cfg\word_list;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_type;
+use cfg\phrase\phrase_types;
+use cfg\verb\verb;
+use cfg\word\word;
+use cfg\word\word_list;
+use shared\types\phrase_type as phrase_type_shared;
+use shared\types\verbs;
 use test\test_cleanup;
 
 class word_read_tests
@@ -49,7 +54,7 @@ class word_read_tests
     {
 
         global $db_con;
-        global $phrase_types;
+        global $phr_typ_cac;
 
         // init
         $t->name = 'word read->';
@@ -73,8 +78,8 @@ class word_read_tests
         $result = $lst->load($db_con);
         $t->assert_true($test_name, $result);
 
-        $test_name = 'check that at least ' . phrase_type::NORMAL . ' is loaded';
-        $result = $phrase_types->id(phrase_type::NORMAL);
+        $test_name = 'check that at least ' . phrase_type_shared::NORMAL . ' is loaded';
+        $result = $phr_typ_cac->id(phrase_type_shared::NORMAL);
         $t->assert($test_name, $result, 1);
 
 
@@ -135,7 +140,7 @@ class word_read_tests
 
         // load a word list by type
         $wrd_lst = new word_list ($t->usr1);
-        $wrd_lst->load_by_type($phrase_types->id(phrase_type::PERCENT));
+        $wrd_lst->load_by_type($phr_typ_cac->id(phrase_type_shared::PERCENT));
         $t->assert('load_by_type', $wrd_lst->name(), '"' . word_api::TN_PCT . '"');
 
         // load a word list by name pattern
@@ -161,8 +166,9 @@ class word_read_tests
 
         // TODO review all tests base on this one
         $test_name = 'The list von cities must contain at least Zurich, Bern ans Geneva';
-        $city_lst = $t->word_city()->are();
-        $t->assert_contains($test_name, $t->phrase_list_cities()->wrd_lst_all()->names(), $city_lst->names());
+        $foaf_lst = $t->word_city()->are()->names();
+        $fixed_lst = $t->phrase_list_cities()->wrd_lst_all()->names();
+        $t->assert_contains($test_name, $foaf_lst, $fixed_lst);
 
 
         $t->header('Unit database tests of the triple class (src/main/php/model/word/triple.php)');
@@ -170,7 +176,7 @@ class word_read_tests
 
         $t->subheader('Frontend API tests');
 
-        $trp = $t->load_triple(triple_api::TN_PI, verb::IS, word_api::TN_READ);
+        $trp = $t->load_triple(triple_api::TN_PI, verbs::IS, word_api::TN_READ);
         $t->assert_api_obj($trp);
     }
 

@@ -35,13 +35,13 @@ namespace unit_read;
 include_once MODEL_SYSTEM_PATH . 'sys_log.php';
 include_once DB_PATH . 'db_check.php';
 
-use cfg\formula;
-use cfg\job_type_list;
+use cfg\formula\formula;
+use cfg\system\job_type_list;
 use cfg\db\db_check;
-use cfg\sys_log_status;
-use cfg\type_lists;
+use cfg\system\sys_log_status;
+use cfg\system\sys_log_status_list;
+use cfg\helper\type_lists;
 use cfg\db\sql_db;
-use cfg\sys_log_status_list;
 use test\test_cleanup;
 
 class system_read_tests
@@ -51,7 +51,7 @@ class system_read_tests
     {
 
         global $db_con;
-        global $sys_log_stati;
+        global $sys_log_sta_cac;
 
         // init
         $t->name = 'system read db->';
@@ -66,7 +66,7 @@ class system_read_tests
         $t->assert('load status', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $sys_log_stati->id(sys_log_status::OPEN);
+        $result = $sys_log_sta_cac->id(sys_log_status::OPEN);
         $t->assert('check status ' . sys_log_status::OPEN, $result, 1);
 
         $t->subheader('System batch job type tests');
@@ -77,8 +77,8 @@ class system_read_tests
         $t->assert('load batch job', $result, true);
 
         // ... and check if at least the most critical is loaded
-        global $job_types;
-        $result = $job_types->id(job_type_list::VALUE_UPDATE);
+        global $job_typ_cac;
+        $result = $job_typ_cac->id(job_type_list::VALUE_UPDATE);
         $t->assert('check batch job ' . job_type_list::VALUE_UPDATE, $result, 1);
 
         /*

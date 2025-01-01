@@ -32,22 +32,11 @@
 namespace cfg\log;
 
 include_once MODEL_LOG_PATH . 'change_value.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
 
-use api\log\change_log_named as change_log_named_api;
-use api\sandbox\user_config;
-use cfg\component\component;
-use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\formula;
-use cfg\db\sql_db;
-use cfg\user;
-use cfg\value\value;
-use cfg\view;
-use cfg\word;
-use Exception;
-use html\log\change_log_named as change_log_named_dsp;
 
 class change_values_norm extends change_value
 {

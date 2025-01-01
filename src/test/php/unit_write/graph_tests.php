@@ -32,12 +32,12 @@
 namespace unit_write;
 
 use api\word\word as word_api;
-use cfg\foaf_direction;
-use cfg\phrase_list;
-use cfg\triple_list;
+use cfg\phrase\phrase_list;
+use cfg\word\triple_list;
 use cfg\value\value_list;
-use cfg\verb;
-use cfg\word;
+use cfg\word\word;
+use html\word\triple_list as triple_list_dsp;
+use shared\enum\foaf_direction;
 use test\test_cleanup;
 
 class graph_tests
@@ -110,29 +110,24 @@ class graph_tests
         $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
 
-        // the other side
+        $test_name = 'load the types of Zurich from the database: Zurich is a ';
+        // load the word Zurich from the database
         $ZH = new word($usr);
-        $ZH->load_by_name(word_api::TN_ZH, word::class);
-        $is = new verb;
-        $is->set_user($usr);
-        $is->load_by_code_id(verb::IS);
-        $graph = new triple_list($usr);
-        $graph->load_by_phr($ZH->phrase(), $is, foaf_direction::UP);
-        //$target = zut_html_list_related($ZH->id, $graph->direction, $usr->id());
-        $result = $graph->display($back);
-        /*
-        $diff = str_diff($target, $result);
-        if ($diff != null) {
-            if (in_array('view', $diff)) {
-                if (in_array(0, $diff['view'])) {
-                    if ($diff['view'][0] == 0) {
-                        $target = $result;
-                    }
-                }
-            }
-        } */
-        $target = word_api::TN_COMPANY;
-        $t->dsp_contains('graph->load for ZH up is', $target, $result);
+        $ZH->load_by_name(word_api::TN_ZH);
+        // load all types of Zurich e.g. Zurich Insurance
+        $zh_lst = new phrase_list($usr);
+        $zh_lst->load_by_phr($ZH->phrase(), $t->verb_is(), foaf_direction::UP);
+        // load the type names of the Zurich types e.g. Company
+        $trp_lst = $zh_lst->triples();
+        $zh_types = $trp_lst->phrase_parts();
+        // create the HTML code to display the type names
+        $api_json = json_decode($zh_types->api_json(), true);
+        $dsp_trp_list = new triple_list_dsp();
+        $dsp_trp_list->set_from_json_array($api_json);
+        $result = $dsp_trp_list->tbl($back);
+        $t->assert_text_contains($test_name . word_api::TN_CITY, $result, word_api::TN_COMPANY);
+        $t->assert_text_contains($test_name . word_api::TN_CANTON, $result, word_api::TN_COMPANY);
+        $t->assert_text_contains($test_name . word_api::TN_COMPANY, $result, word_api::TN_COMPANY);
 
     }
 

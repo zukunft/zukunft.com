@@ -33,11 +33,13 @@
 namespace api\formula;
 
 include_once API_SANDBOX_PATH . 'combine_object.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use api\result\result as result_api;
 use api\sandbox\combine_object as combine_object_api;
 use api\value\value as value_api;
 use JsonSerializable;
+use shared\json_fields;
 
 class figure extends combine_object_api implements JsonSerializable
 {
@@ -115,11 +117,12 @@ class figure extends combine_object_api implements JsonSerializable
      */
     function jsonSerialize(): array
     {
-        $vars = $this->obj()->jsonSerialize();
+        $vars = parent::jsonSerialize();
+        $vars = array_merge($vars, $this->obj()->jsonSerialize());
         if ($this->is_result()) {
-            $vars[combine_object_api::FLD_CLASS] = self::CLASS_RESULT;
+            $vars[json_fields::OBJECT_CLASS] = self::CLASS_RESULT;
         } else {
-            $vars[combine_object_api::FLD_CLASS] = self::CLASS_VALUE;
+            $vars[json_fields::OBJECT_CLASS] = self::CLASS_VALUE;
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

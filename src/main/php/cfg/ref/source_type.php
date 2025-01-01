@@ -33,7 +33,11 @@
    
 */
 
-namespace cfg;
+namespace cfg\ref;
+
+include_once MODEL_HELPER_PATH . 'type_object.php';
+
+use cfg\helper\type_object;
 
 class source_type extends type_object
 {

@@ -55,18 +55,33 @@
 
 */
 
-namespace cfg;
+namespace cfg\ref;
 
-include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 include_once API_REF_PATH . 'source.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
-include_once SERVICE_EXPORT_PATH . 'source_exp.php';
 include_once WEB_REF_PATH . 'source.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use api\api;
 use api\ref\source as source_api;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -74,9 +89,14 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\export\sandbox_exp;
-use cfg\export\source_exp;
+use cfg\helper\type_object;
 use cfg\log\change;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
+use cfg\sandbox\sandbox_typed;
+use cfg\user\user;
+use cfg\user\user_message;
+use shared\json_fields;
 
 class source extends sandbox_typed
 {
@@ -90,7 +110,7 @@ class source extends sandbox_typed
 
     // object specific database and JSON object field names
     // *_COM: the description of the field
-    // *_SQLTYP is the sql data type used for the field
+    // *_SQL_TYP is the sql data type used for the field
     const FLD_ID = 'source_id';
     const FLD_NAME_COM = 'the unique name of the source used e.g. as the primary search key';
     const FLD_NAME = 'source_name';
@@ -99,7 +119,7 @@ class source extends sandbox_typed
     const FLD_TYPE = 'source_type_id';
     const FLD_URL_COM = 'the url of the source';
     const FLD_URL = 'url';
-    const FLD_URL_SQLTYP = sql_field_type::TEXT;
+    const FLD_URL_SQL_TYP = sql_field_type::TEXT;
     const FLD_CODE_ID_COM = 'to select sources used by this program';
 
     // list of fields that MUST be set by one user
@@ -108,13 +128,13 @@ class source extends sandbox_typed
     );
     // list of must fields that CAN be changed by the user
     const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [self::FLD_NAME, self::FLD_NAME_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+        [self::FLD_NAME, self::FLD_NAME_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     // list of fields that can be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [self::FLD_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, source_type::class, self::FLD_TYPE_COM],
-        [self::FLD_URL, self::FLD_URL_SQLTYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, source_type::class, self::FLD_TYPE_COM],
+        [self::FLD_URL, self::FLD_URL_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
         [sql::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
     );
 
@@ -178,7 +198,7 @@ class source extends sandbox_typed
      * map the database object to this source class fields
      *
      * @param array|null $db_row with the data directly from the database
-     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the source is loaded and valid
@@ -228,8 +248,8 @@ class source extends sandbox_typed
      */
     function set_type(string $type_code_id): void
     {
-        global $source_types;
-        $this->type_id = $source_types->id($type_code_id);
+        global $src_typ_cac;
+        $this->type_id = $src_typ_cac->id($type_code_id);
     }
 
 
@@ -242,11 +262,11 @@ class source extends sandbox_typed
      */
     function type_name(): string
     {
-        global $source_types;
+        global $src_typ_cac;
 
         $type_name = '';
         if ($this->type_id > 0) {
-            $type_name = $source_types->name($this->type_id);
+            $type_name = $src_typ_cac->name($this->type_id);
         }
         return $type_name;
     }
@@ -257,8 +277,8 @@ class source extends sandbox_typed
      */
     function type_code_id(): string
     {
-        global $source_types;
-        return $source_types->code_id($this->type_id);
+        global $src_typ_cac;
+        return $src_typ_cac->code_id($this->type_id);
     }
 
 
@@ -294,7 +314,7 @@ class source extends sandbox_typed
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_URL) {
+            if ($key == json_fields::URL) {
                 if ($value <> '') {
                     $this->url = $value;
                 }
@@ -311,39 +331,16 @@ class source extends sandbox_typed
      */
 
     /**
-     * just set the class name for the user sandbox function
-     * load a source object by name
-     * @param string $name the name source
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_name(string $name): int
-    {
-        return parent::load_by_name($name);
-    }
-
-    /**
-     * just set the class name for the user sandbox function
-     * load a source object by database id
-     * @param int $id the id of the source
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id): int
-    {
-        return parent::load_by_id($id);
-    }
-
-    /**
      * load a source by code id
      * @param string $code_id the code id of the source
-     * @param string $class the name of the child class from where the call has been triggered
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_code_id(string $code_id, string $class = self::class): int
+    function load_by_code_id(string $code_id): int
     {
         global $db_con;
 
         log_debug($code_id);
-        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id, $class);
+        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id);
         return parent::load($qp);
     }
 
@@ -367,14 +364,13 @@ class source extends sandbox_typed
     /**
      * create an SQL statement to retrieve a source by code id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $code_id the code id of the source
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql $sc, string $code_id, string $class): sql_par
+    function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
     {
-        $qp = $this->load_sql($sc, 'code_id', $class);
+        $qp = $this->load_sql($sc, 'code_id');
         $sc->add_where(sql::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -385,10 +381,10 @@ class source extends sandbox_typed
     /**
      * create the SQL to load the default source always by the id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc): sql_par
+    function load_standard_sql(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
@@ -404,11 +400,11 @@ class source extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a source from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $sc->set_class($this::class);
         return parent::load_sql_fields(
@@ -448,7 +444,7 @@ class source extends sandbox_typed
      */
     function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
-        global $source_types;
+        global $src_typ_cac;
 
         log_debug();
         $result = parent::import_obj($in_ex_json, $test_obj);
@@ -458,19 +454,19 @@ class source extends sandbox_typed
                 $this->url = $value;
             }
             if ($this->user()->is_system() or $this->user()->is_admin()) {
-                if ($key == sandbox_exp::FLD_CODE_ID) {
+                if ($key == json_fields::CODE_ID) {
                     $this->code_id = $value;
                 }
             }
-            if ($key == sandbox_exp::FLD_TYPE) {
-                $this->type_id = $source_types->id($value);
+            if ($key == json_fields::TYPE_NAME) {
+                $this->type_id = $src_typ_cac->id($value);
             }
         }
 
         // save the source in the database
         if (!$test_obj) {
             if ($result->is_ok()) {
-                $result->add_message($this->save());
+                $result->add($this->save());
             }
         }
 
@@ -478,32 +474,22 @@ class source extends sandbox_typed
     }
 
     /**
-     * create an object for the export
-     * @param bool $do_load to switch off the database load for unit tests
-     * @return sandbox_exp the filled object used to create the json
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
      */
-    function export_obj(bool $do_load = true): sandbox_exp
+    function export_json(bool $do_load = true): array
     {
-        log_debug();
-        $result = new source_exp();
+        $vars = parent::export_json($do_load);
 
-        // add the source parameters
-        $result->name = $this->name();
         if ($this->url <> '') {
-            $result->url = $this->url;
-        }
-        if ($this->description <> '') {
-            $result->description = $this->description;
-        }
-        if ($this->type_name() <> '') {
-            $result->type = $this->type_name();
+            $vars[json_fields::URL] = $this->url;
         }
         if ($this->code_id <> '') {
-            $result->code_id = $this->code_id;
+            $vars[json_fields::CODE_ID] = $this->code_id;
         }
 
-        log_debug(json_encode($result));
-        return $result;
+        return $vars;
     }
 
     /**
@@ -515,29 +501,29 @@ class source extends sandbox_typed
     function save_from_api_msg(array $api_json, bool $do_save = true): user_message
     {
         log_debug();
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == sandbox_exp::FLD_NAME) {
+            if ($key == json_fields::NAME) {
                 $this->name = $value;
             }
             if ($key == self::FLD_URL) {
                 $this->url = $value;
             }
-            if ($key == sandbox_exp::FLD_DESCRIPTION) {
+            if ($key == json_fields::DESCRIPTION) {
                 $this->description = $value;
             }
-            if ($key == sandbox_exp::FLD_TYPE_ID) {
+            if ($key == json_fields::TYPE) {
                 $this->type_id = $value;
             }
         }
 
-        if ($result->is_ok() and $do_save) {
-            $result->add_message($this->save());
+        if ($usr_msg->is_ok() and $do_save) {
+            $usr_msg->add($this->save());
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 
@@ -550,7 +536,7 @@ class source extends sandbox_typed
      */
     function not_used(): bool
     {
-        log_debug($this->id);
+        log_debug($this->id());
 
         // to review: maybe replace by a database foreign key check
         return $this->not_changed();
@@ -560,10 +546,10 @@ class source extends sandbox_typed
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      *                 to check if the source has been changed
      */
-    function not_changed_sql(sql $sc): sql_par
+    function not_changed_sql(sql_creator $sc): sql_par
     {
         $sc->set_class(source::class);
-        return $sc->load_sql_not_changed($this->id, $this->owner_id);
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id);
     }
 
     /**
@@ -571,12 +557,12 @@ class source extends sandbox_typed
      */
     function not_changed(): bool
     {
-        log_debug($this->id . ' by someone else than the owner (' . $this->owner_id . ')');
+        log_debug($this->dsp_id() . ' by someone else than the owner (' . $this->owner_id . ')');
 
         global $db_con;
         $result = true;
 
-        if ($this->id == 0) {
+        if ($this->id() == 0) {
             log_err('The id must be set to detect if the link has been changed');
         } else {
             $qp = $this->not_changed_sql($db_con->sql_creator());
@@ -586,19 +572,19 @@ class source extends sandbox_typed
                 $result = false;
             }
         }
-        log_debug('for ' . $this->id . ' is ' . zu_dsp_bool($result));
+        log_debug('for ' . $this->dsp_id() . ' is ' . zu_dsp_bool($result));
         return $result;
     }
 
     /**
      * create an SQL statement to retrieve the user changes of the current source
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_user_changes(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -616,36 +602,57 @@ class source extends sandbox_typed
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param source $db_rec the database record before the saving
      * @param source $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    private function save_field_url(sql_db $db_con, source $db_rec, source $std_rec): string
+    private function save_field_url(sql_db $db_con, source $db_rec, source $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message;
         if ($db_rec->url <> $this->url) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->url;
             $log->new_value = $this->url;
             $log->std_value = $std_rec->url;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_URL);
-            $result = $this->save_field_user($db_con, $log);
+            $usr_msg->add($this->save_field_user($db_con, $log));
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * save all updated source fields excluding the name, because already done when adding a source
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param source|sandbox $db_rec the database record before the saving
-     * @param source|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
+     * @param source|sandbox $db_obj the database record before the saving
+     * @param source|sandbox $norm_obj the database record defined as standard because it is used by most users
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_fields(sql_db $db_con, source|sandbox $db_rec, source|sandbox $std_rec): string
+    function save_all_fields(sql_db $db_con, source|sandbox $db_obj, source|sandbox $norm_obj): user_message
     {
-        $result = parent::save_fields_typed($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_url($db_con, $db_rec, $std_rec);
+        $usr_msg = parent::save_fields_typed($db_con, $db_obj, $norm_obj);
+        $usr_msg->add($this->save_field_url($db_con, $db_obj, $norm_obj));
         log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        return $result;
+        return $usr_msg;
+    }
+
+
+    /*
+     * save helper
+     */
+
+    /**
+     * @return array with the reserved source names
+     */
+    protected function reserved_names(): array
+    {
+        return source_api::RESERVED_NAMES;
+    }
+
+    /**
+     * @return array with the fixed source names for db read testing
+     */
+    protected function fixed_names(): array
+    {
+        return source_api::FIXED_NAMES;
     }
 
 
@@ -686,9 +693,9 @@ class source extends sandbox_typed
         sql_type_list  $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
-        $sc = new sql();
+        $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
@@ -697,14 +704,14 @@ class source extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE,
-                    $change_field_list->id($table_id . self::FLD_TYPE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . self::FLD_TYPE),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_TYPE,
                 $this->type_id(),
-                type_object::FLD_ID_SQLTYP,
+                type_object::FLD_ID_SQL_TYP,
                 $sbx->type_id()
             );
         }
@@ -712,14 +719,14 @@ class source extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_URL,
-                    $change_field_list->id($table_id . self::FLD_URL),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . self::FLD_URL),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_URL,
                 $this->url,
-                self::FLD_URL_SQLTYP,
+                self::FLD_URL_SQL_TYP,
                 $sbx->url
             );
         }
@@ -727,8 +734,8 @@ class source extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
-                    $change_field_list->id($table_id . sql::FLD_CODE_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . sql::FLD_CODE_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(

@@ -39,7 +39,7 @@
 
 */
 
-namespace cfg;
+namespace cfg\user;
 
 class user_message
 {
@@ -175,6 +175,22 @@ class user_message
     }
 
     /**
+     * show the info message to the user without interrupting the process
+     *
+     * @param string $msg_text the warning text to add
+     * @return void is never expected to fail
+     */
+    function add_info(string $msg_text): void
+    {
+        if ($msg_text != '') {
+            // do not repeat the same text more than once
+            if (!in_array($msg_text, $this->msg_text)) {
+                $this->msg_text[] = $msg_text;
+            }
+        }
+    }
+
+    /**
      * combine the given message with this message
      *
      * @param user_message $msg_to_add a message of which all parameter should be added to this message
@@ -273,7 +289,7 @@ class user_message
     }
 
     /**
-     * combine the status of two user messages and assume the worse
+     * combine the status of two user messages and assume the worst
      * @param user_message $msg_to_add the user messages that should be combined with this user message
      * @return void
      */

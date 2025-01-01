@@ -32,14 +32,17 @@
 
 namespace unit;
 
+include_once DB_PATH . 'sql.php';
 include_once MODEL_VALUE_PATH . 'value_time_series.php';
 
 use api\phrase\group as group_api;
 use api\value\value as value_api;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use cfg\group\group;
 use cfg\db\sql_db;
+use cfg\sandbox\sandbox_value;
 use cfg\value\value;
 use cfg\value\value_time_series;
 use html\value\value as value_dsp;
@@ -55,10 +58,9 @@ class value_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'value->';
         $t->resource_path = 'db/value/';
-        $json_file = 'unit/value/speed_of_light.json';
 
 
         $t->header('value unit tests');
@@ -155,8 +157,10 @@ class value_tests
         $val->grp->set_id(2);
         //$t->assert_load_sql_obj_vars($db_con, $val);
 
-        $t->subheader('Im- and Export tests');
-
+        $t->subheader('value im- and export tests');
+        $t->assert_ex_and_import($t->value());
+        $t->assert_ex_and_import($t->value_16_filled());
+        $json_file = 'unit/value/speed_of_light.json';
         $t->assert_json_file(new value($usr), $json_file);
 
 
@@ -166,6 +170,9 @@ class value_tests
         // TODO add class field to api message
         $t->assert_api_to_dsp($val, new value_dsp());
 
+        $val_dsp = new value_dsp($val->api_json());
+        $t->assert('value name with link', $val_dsp->name_linked(), 'Pi (math)');
+        $t->assert('value edit link', $val_dsp->ref_edit(), '<a href="/http/value_edit.php?id=32770" title="3.14">3.14</a>');
 
         $t->subheader('Convert and API unit tests');
 
@@ -222,13 +229,13 @@ class value_tests
         $sc = $db_con->sql_creator();
 
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_by_grp($sc, $grp, $usr_obj::class);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_grp($sc, $grp, $usr_obj::class);
             $t->assert_qp($qp, $sc->db_type);
         }
@@ -247,16 +254,16 @@ class value_tests
     function assert_sql_update_trigger(test_cleanup $t, sql_db $db_con, value $val, value $db_val): bool
     {
         $sc = $db_con->sql_creator();
-        $fields = array(value::FLD_LAST_UPDATE);
+        $fields = array(sandbox_value::FLD_LAST_UPDATE);
         $values = array(sql::NOW);
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $val->sql_update($sc, $db_val);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $val->sql_update($sc, $db_val);
             $result = $t->assert_qp($qp, $sc->db_type);
         }

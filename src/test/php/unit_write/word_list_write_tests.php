@@ -32,14 +32,19 @@
 
 namespace unit_write;
 
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\value\value as value_api;
 use api\word\word as word_api;
-use cfg\foaf_direction;
 use cfg\group\group;
-use cfg\phrase_type;
-use cfg\verb;
-use cfg\word_list;
+use cfg\phrase\phrase_type;
+use cfg\verb\verb;
+use cfg\word\word_list;
+use shared\enum\foaf_direction;
 use shared\library;
+use shared\types\phrase_type as phrase_type_shared;
+use shared\types\verbs;
 use test\test_cleanup;
 
 class word_list_write_tests
@@ -49,7 +54,7 @@ class word_list_write_tests
     {
 
         global $usr;
-        global $verbs;
+        global $vrb_cac;
 
         $t->header('Test the word list class (classes/word_list.php)');
 
@@ -64,39 +69,39 @@ class word_list_write_tests
         $wrd_canton = $t->test_word(word_api::TN_CANTON);
         $wrd_city = $t->test_word(word_api::TN_CITY);
         $wrd_ZH = $t->test_word(word_api::TN_ZH);
-        $t->test_triple(word_api::TN_ZH, verb::IS, word_api::TN_CANTON);
-        $t->test_triple(word_api::TN_ZH, verb::IS, word_api::TN_CITY);
+        $t->test_triple(word_api::TN_ZH, verbs::IS, word_api::TN_CANTON);
+        $t->test_triple(word_api::TN_ZH, verbs::IS, word_api::TN_CITY);
 
         // create the test words and relations for multi level contains
         // e.g. assets contain current assets which contains cash
         $t->test_word(word_api::TN_ASSETS);
         $t->test_word(word_api::TN_ASSETS_CURRENT);
         $t->test_word(word_api::TN_CASH);
-        $t->test_triple(word_api::TN_CASH, verb::IS_PART_OF, word_api::TN_ASSETS_CURRENT);
-        $t->test_triple(word_api::TN_ASSETS_CURRENT, verb::IS_PART_OF, word_api::TN_ASSETS);
+        $t->test_triple(word_api::TN_CASH, verbs::IS_PART_OF, word_api::TN_ASSETS_CURRENT);
+        $t->test_triple(word_api::TN_ASSETS_CURRENT, verbs::IS_PART_OF, word_api::TN_ASSETS);
 
         // create the test words and relations for differentiators
         // e.g. energy can be a sector
         $t->test_word(word_api::TN_SECTOR);
         $t->test_word(word_api::TN_ENERGY);
         $t->test_word(word_api::TN_WIND_ENERGY);
-        $t->test_triple(word_api::TN_SECTOR, verb::CAN_CONTAIN, word_api::TN_ENERGY);
-        $t->test_triple(word_api::TN_ENERGY, verb::CAN_CONTAIN, word_api::TN_WIND_ENERGY);
+        $t->test_triple(word_api::TN_SECTOR, verbs::CAN_CONTAIN, word_api::TN_ENERGY);
+        $t->test_triple(word_api::TN_ENERGY, verbs::CAN_CONTAIN, word_api::TN_WIND_ENERGY);
 
         // create the test words and relations for a parent child relation without inheritance
         // e.g. ...
         $wrd_cf = $t->test_word(word_api::TWN_CASH_FLOW);
         $wrd_tax = $t->test_word(word_api::TN_TAX_REPORT);
-        $wrd_time = $t->test_word(word_api::TN_2021, phrase_type::TIME);
-        $t->test_triple(word_api::TN_TAX_REPORT, verb::IS_PART_OF, word_api::TWN_CASH_FLOW);
+        $wrd_time = $t->test_word(word_api::TN_2021, phrase_type_shared::TIME);
+        $t->test_triple(word_api::TN_TAX_REPORT, verbs::IS_PART_OF, word_api::TWN_CASH_FLOW);
 
         // create the test words and relations many mixed relations
         // e.g. a financial report
         $t->test_word(word_api::TN_FIN_REPORT);
-        $t->test_triple(word_api::TWN_CASH_FLOW, verb::IS, word_api::TN_FIN_REPORT);
+        $t->test_triple(word_api::TWN_CASH_FLOW, verbs::IS, word_api::TN_FIN_REPORT);
 
         // is measure
-        $wrd_measure = $t->test_word(word_api::TWN_CHF, phrase_type::MEASURE);
+        $wrd_measure = $t->test_word(word_api::TWN_CHF, phrase_type_shared::MEASURE);
         $result = $wrd_measure->is_measure();
         $t->assert('word->is_measure for ' . word_api::TWN_CHF, $result, true);
 
@@ -129,39 +134,39 @@ class word_list_write_tests
         // test add by verb e.g. "Zurich" "is a" "Canton", "City" or "Company"
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_ZH));
-        $wrd_lst_linked = $wrd_lst->load_linked_words($verbs->get_verb(verb::IS), foaf_direction::UP);
+        $wrd_lst_linked = $wrd_lst->load_linked_words($vrb_cac->get_verb(verbs::IS), foaf_direction::UP);
         $result = $lib->dsp_array($wrd_lst_linked->names());
         $target = word_api::TN_CANTON . "," . word_api::TN_CITY . "," . word_api::TN_COMPANY; // order adjusted based on the number of usage
-        $t->assert('word_list->load_linked_words for "' . word_api::TN_ZH . '" "' . verb::IS . '" up', $result, $target);
+        $t->assert('word_list->load_linked_words for "' . word_api::TN_ZH . '" "' . verbs::IS . '" up', $result, $target);
 
         // test getting all parents e.g. "Cash" is part of "Current Assets" and "Assets"
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_CASH));
-        $parents = $wrd_lst->foaf_parents($verbs->get_verb(verb::IS_PART_OF));
+        $parents = $wrd_lst->foaf_parents($vrb_cac->get_verb(verbs::IS_PART_OF));
         $result = $lib->dsp_array($parents->names());
         $target = word_api::TN_ASSETS_CURRENT . "," . word_api::TN_ASSETS;
-        $t->assert('word_list->foaf_parent for "' . word_api::TN_ZH . '" "' . verb::IS . '" up', $result, $target);
+        $t->assert('word_list->foaf_parent for "' . word_api::TN_ZH . '" "' . verbs::IS . '" up', $result, $target);
 
         // test add parent step 1
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_CASH));
-        $parents = $wrd_lst->parents($verbs->get_verb(verb::IS_PART_OF), 1);
+        $parents = $wrd_lst->parents($vrb_cac->get_verb(verbs::IS_PART_OF), 1);
         $result = $lib->dsp_array($parents->names());
         $target = word_api::TN_ASSETS_CURRENT;
-        $t->assert('word_list->parents for "' . word_api::TN_CASH . '" "' . verb::IS_PART_OF . '" up', $result, $target);
+        $t->assert('word_list->parents for "' . word_api::TN_CASH . '" "' . verbs::IS_PART_OF . '" up', $result, $target);
 
         // test add parent step 2
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_CASH));
-        $parents = $wrd_lst->parents($verbs->get_verb(verb::IS_PART_OF), 2);
+        $parents = $wrd_lst->parents($vrb_cac->get_verb(verbs::IS_PART_OF), 2);
         $result = $lib->dsp_array($parents->names());
         $target = word_api::TN_ASSETS_CURRENT . "," . word_api::TN_ASSETS;
-        $t->assert('word_list->parents for "' . word_api::TN_CASH . '" "' . verb::IS_PART_OF . '" up', $result, $target);
+        $t->assert('word_list->parents for "' . word_api::TN_CASH . '" "' . verbs::IS_PART_OF . '" up', $result, $target);
 
         // test add child and contains
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_CANTON));
-        $children = $wrd_lst->children($verbs->get_verb(verb::IS));
+        $children = $wrd_lst->children($vrb_cac->get_verb(verbs::IS));
         $wrd = $t->load_word(word_api::TN_ZH);
         $result = $children->does_contain($wrd);
         $t->assert('word_list->foaf_children is "' . implode('","', $wrd_lst->names()) . '", which contains ' . word_api::TN_ZH . ' ', $result, true);
@@ -169,7 +174,7 @@ class word_list_write_tests
         // test direct children
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_CANTON));
-        $children = $wrd_lst->direct_children($verbs->get_verb(verb::IS));
+        $children = $wrd_lst->direct_children($vrb_cac->get_verb(verbs::IS));
         $wrd = $t->load_word(word_api::TN_ZH);
         $result = $children->does_contain($wrd);
         $t->assert('word_list->children is "' . implode('","', $wrd_lst->names()) . '", which contains ' . word_api::TN_ZH . ' ', $result, true);

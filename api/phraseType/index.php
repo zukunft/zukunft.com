@@ -39,23 +39,26 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once API_PHRASE_PATH . 'phrase_list.php';
 
 use controller\controller;
-use cfg\user;
-use cfg\phrase_type;
+use cfg\user\user;
+use cfg\phrase\phrase_type;
+use shared\types\phrase_type as phrase_type_shared;
 use api\phrase\phrase_list as phrase_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/phraseType", "", false);
 
 // get the parameters
-$phr_typ_id = $_GET[controller::URL_VAR_ID] ?? 0;
+$phr_typ_id = $_GET[api::URL_VAR_ID] ?? 0;
 
 $msg = '';
 $result = new phrase_list_api(); // reset the html code var
@@ -67,8 +70,8 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    if ($phr_typ_id != '') {
-        $phr_typ = new phrase_type(phrase_type::NORMAL);
+    if ($phr_typ_id != 0) {
+        $phr_typ = new phrase_type(phrase_type_shared::NORMAL);
         $phr_typ->load_by_id($phr_typ_id);
         $result = $phr_typ->api_obj();
     } else {

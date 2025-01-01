@@ -34,18 +34,21 @@ namespace unit;
 
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once WEB_WORD_PATH . 'word_list.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\word\word as word_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\foaf_direction;
-use cfg\phrase_type;
-use cfg\verb;
-use cfg\word;
-use cfg\word_list;
+use cfg\verb\verb;
+use cfg\word\word;
+use cfg\word\word_list;
 use html\word\word_list as word_list_dsp;
+use shared\enum\foaf_direction;
 use shared\library;
+use shared\types\phrase_type as phrase_type_shared;
 use test\test_cleanup;
+use shared\types\verbs;
 
 class word_list_tests
 {
@@ -53,15 +56,14 @@ class word_list_tests
     {
 
         global $usr;
-        global $phrase_types;
-        global $verbs;
+        global $phr_typ_cac;
+        global $vrb_cac;
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'word_list->';
         $t->resource_path = 'db/word/';
-        $json_file = 'unit/word/word_list.json';
 
         $t->header('Unit tests of the word list class (src/main/php/model/word/word_list.php)');
 
@@ -105,7 +107,7 @@ class word_list_tests
         $wrd = new word($usr);
         $wrd->set_id(7);
         $wrd_lst->add($wrd);
-        $vrb = $verbs->get_verb(verb::IS);
+        $vrb = $vrb_cac->get_verb(verbs::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         // the child words
@@ -122,7 +124,7 @@ class word_list_tests
         $wrd = new word($usr);
         $wrd->set_id(9);
         $wrd_lst->add($wrd);
-        $vrb = $verbs->get_verb(verb::IS);
+        $vrb = $vrb_cac->get_verb(verbs::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
         $t->subheader('Modify and filter word lists');
@@ -141,23 +143,23 @@ class word_list_tests
         $wrd_time = new word($usr);
         $wrd_time->set_id(4);
         $wrd_time->set_name('time_word');
-        $wrd_time->type_id = $phrase_types->id(phrase_type::TIME);
+        $wrd_time->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         $wrd_time2 = new word($usr);
         $wrd_time2->set_id(5);
         $wrd_time2->set_name('time_word2');
-        $wrd_time2->type_id = $phrase_types->id(phrase_type::TIME);
+        $wrd_time2->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         $wrd_scale = new word($usr);
         $wrd_scale->set_id(6);
         $wrd_scale->set_name('scale_word');
-        $wrd_scale->type_id = $phrase_types->id(phrase_type::SCALING);
+        $wrd_scale->type_id = $phr_typ_cac->id(phrase_type_shared::SCALING);
         $wrd_percent = new word($usr);
         $wrd_percent->set_id(7);
         $wrd_percent->set_name('percent_word');
-        $wrd_percent->type_id = $phrase_types->id(phrase_type::PERCENT);
+        $wrd_percent->type_id = $phr_typ_cac->id(phrase_type_shared::PERCENT);
         $wrd_measure = new word($usr);
         $wrd_measure->set_id(8);
         $wrd_measure->set_name('measure_word');
-        $wrd_measure->type_id = $phrase_types->id(phrase_type::MEASURE);
+        $wrd_measure->type_id = $phr_typ_cac->id(phrase_type_shared::MEASURE);
 
         // merge two lists
         $wrd_lst = new word_list($usr);
@@ -238,6 +240,14 @@ class word_list_tests
         $wrd_lst_filtered = $wrd_lst->filter($wrd_lst_filter);
         $t->assert($t->name . '->sorted', $wrd_lst_filtered->name(), '"word3","word2"');
 
+        // filter by name
+        $test_name = 'filtered word list by name does not contain ' . word_api::TN_E . ' any more';
+        $wrd_lst = $t->word_list();
+        $filtered = $wrd_lst->filter_by_name([word_api::TN_E]);
+        $t->assert_contains_not($test_name, $filtered->names(), word_api::TN_E);
+        $test_name = 'filtered word list by name still contains ' . word_api::TN_PI;
+        $t->assert_contains($test_name, $filtered->names(), word_api::TN_PI);
+
         // time list
         $wrd_lst = new word_list($usr);
         $wrd_lst->add($wrd_time);
@@ -272,7 +282,7 @@ class word_list_tests
         $wrd_lst->add($wrd_time);
         $wrd_lst->add($wrd_measure);
         $wrd_lst->add($wrd_scale);
-        $json = json_decode(json_encode($wrd_lst->export_obj()));
+        $json = $wrd_lst->export_json();
         $json_expected = json_decode(file_get_contents(PATH_TEST_FILES . 'export/word/word_list.json'));
         $result = $lib->json_is_similar($json, $json_expected);
         // TODO remove, for faster debugging only
@@ -282,7 +292,7 @@ class word_list_tests
 
 
         $t->subheader('Im- and Export tests');
-
+        $json_file = 'unit/word/word_list.json';
         $t->assert_json_file(new word_list($usr), $json_file);
 
 

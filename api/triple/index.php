@@ -36,7 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -44,16 +44,17 @@ include_once MODEL_WORD_PATH . 'triple.php';
 include_once API_WORD_PATH . 'triple.php';
 
 use controller\controller;
-use cfg\user;
-use cfg\triple;
+use cfg\user\user;
+use cfg\word\triple;
 use api\word\triple as triple_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/triple", "", false);
 
 // get the parameters
-$trp_id = $_GET[controller::URL_VAR_ID] ?? 0;
-$trp_name = $_GET[controller::URL_VAR_NAME] ?? '';
+$trp_id = $_GET[api::URL_VAR_ID] ?? 0;
+$trp_name = $_GET[api::URL_VAR_NAME] ?? '';
 
 $msg = '';
 $result = new triple_api();

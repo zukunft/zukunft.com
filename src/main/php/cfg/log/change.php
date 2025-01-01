@@ -43,15 +43,33 @@
 
 namespace cfg\log;
 
-include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_LOG_PATH . 'change_log.php';
 include_once API_LOG_PATH . 'change_log_named.php';
+include_once API_SANDBOX_PATH . 'user_config.php';
+//include_once MODEL_COMPONENT_PATH . 'component.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+//include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_GROUP_PATH . 'group.php';
+//include_once MODEL_USER_PATH . 'user.php';
+//include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VIEW_PATH . 'view.php';
+//include_once MODEL_WORD_PATH . 'word.php';
 include_once WEB_LOG_PATH . 'change_log_named.php';
 
 use api\log\change_log_named as change_log_named_api;
 use api\sandbox\user_config;
 use cfg\component\component;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -60,19 +78,16 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\formula;
+use cfg\formula\formula;
 use cfg\group\group;
-use cfg\group\group_id;
-use cfg\type_object;
-use cfg\user;
+use cfg\user\user;
 use cfg\value\value;
-use cfg\view;
-use cfg\word;
+use cfg\view\view;
+use cfg\word\word;
+use html\log\change_log_named as change_log_named_dsp;
 use DateTime;
 use DateTimeInterface;
 use Exception;
-use html\log\change_log_named as change_log_named_dsp;
-use shared\library;
 
 class change extends change_log
 {
@@ -93,22 +108,22 @@ class change extends change_log
 
     // user log database and JSON object field names for named user sandbox objects
     // *_COM is the description of the field
-    // *_SQLTYP is the sql data type used for the field
+    // *_SQL_TYP is the sql data type used for the field
     const FLD_FIELD_ID = 'change_field_id';
-    const FLD_FIELD_ID_SQLTYP = sql_field_type::INT_SMALL;
+    const FLD_FIELD_ID_SQL_TYP = sql_field_type::INT_SMALL;
     const FLD_ROW_ID = 'row_id';
     const FLD_OLD_VALUE = 'old_value';
-    const FLD_OLD_VALUE_SQLTYP = sql_field_type::TEXT;
+    const FLD_OLD_VALUE_SQL_TYP = sql_field_type::TEXT;
     const FLD_OLD_ID_COM = 'old value id';
     const FLD_OLD_ID = 'old_id';
-    const FLD_OLD_ID_SQLTYP = sql_field_type::INT;
-    const FLD_OLD_ID_NORM_SQLTYP = sql_field_type::REF_512;
-    const FLD_OLD_ID_BIG_SQLTYP = sql_field_type::TEXT;
+    const FLD_OLD_ID_SQL_TYP = sql_field_type::INT;
+    const FLD_OLD_ID_NORM_SQL_TYP = sql_field_type::REF_512;
+    const FLD_OLD_ID_BIG_SQL_TYP = sql_field_type::TEXT;
     const FLD_NEW_VALUE = 'new_value';
-    const FLD_NEW_VALUE_SQLTYP = sql_field_type::TEXT;
+    const FLD_NEW_VALUE_SQL_TYP = sql_field_type::TEXT;
     const FLD_NEW_ID_COM = 'new value id';
     const FLD_NEW_ID = 'new_id';
-    const FLD_NEW_ID_SQLTYP = sql_field_type::INT;
+    const FLD_NEW_ID_SQL_TYP = sql_field_type::INT;
     const FLD_OLD_EXT = '_old';
 
     // all database field names
@@ -126,11 +141,11 @@ class change extends change_log
 
     // field list to log the actual change of the named user sandbox object
     const FLD_LST_CHANGE = array(
-        [self::FLD_FIELD_ID, self::FLD_FIELD_ID_SQLTYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
-        [self::FLD_OLD_VALUE, self::FLD_OLD_VALUE_SQLTYP, sql_field_default::NULL, '', '', ''],
-        [self::FLD_NEW_VALUE, self::FLD_NEW_VALUE_SQLTYP, sql_field_default::NULL, '', '', ''],
-        [self::FLD_OLD_ID, self::FLD_OLD_ID_SQLTYP, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
-        [self::FLD_NEW_ID, self::FLD_NEW_ID_SQLTYP, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
+        [self::FLD_FIELD_ID, self::FLD_FIELD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
+        [self::FLD_OLD_VALUE, self::FLD_OLD_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [self::FLD_NEW_VALUE, self::FLD_NEW_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [self::FLD_OLD_ID, self::FLD_OLD_ID_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
+        [self::FLD_NEW_ID, self::FLD_NEW_ID_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
     );
 
 
@@ -161,7 +176,7 @@ class change extends change_log
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
         global $debug;
-        global $change_field_list;
+        global $cng_fld_cac;
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $this->action_id = $db_row[self::FLD_ACTION];
@@ -181,7 +196,7 @@ class change extends change_log
                 $this->new_id = $db_row[self::FLD_NEW_ID];
             }
 
-            $fld_tbl = $change_field_list->get($this->field_id);
+            $fld_tbl = $cng_fld_cac->get($this->field_id);
             $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
             // TODO check if not the complete user should be loaded
             $usr = new user();
@@ -242,11 +257,11 @@ class change extends change_log
      * create the common part of an SQL statement to retrieve the parameters of the change log
      * TODO use class name instead of TBL_CHANGE
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         if ($this::class == changes_norm::class
             or $this::class == changes_big::class) {
@@ -268,11 +283,11 @@ class change extends change_log
     /**
      * create an SQL statement to retrieve a change long entry by the changing user
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param user|null $usr the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_user(sql $sc, ?user $usr = null): sql_par
+    function load_sql_by_user(sql_creator $sc, ?user $usr = null): sql_par
     {
         $qp = $this->load_sql($sc, 'user_last', self::class);
 
@@ -289,12 +304,12 @@ class change extends change_log
     /**
      * create the SQL statement to retrieve the parameters of the change log by field and row id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int|null $field_id the database id of the database field (and table) of the changes that the user wants to see
      * @param int|null $row_id the database id of the database row of the changes that the user wants to see
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_field_row(sql $sc, ?int $field_id = null, ?int $row_id = null): sql_par
+    function load_sql_by_field_row(sql_creator $sc, ?int $field_id = null, ?int $row_id = null): sql_par
     {
         $qp = $this->load_sql($sc, 'field_row', self::class);
         if ($field_id != null) {
@@ -332,22 +347,18 @@ class change extends change_log
         return $qp;
     }
 
-    function load_sql_old(string $type): sql_par
+    function load_sql_old(string $type, int $limit = 0): sql_par
     {
         global $db_con;
-        global $change_table_list;
+        global $cng_tbl_cac;
 
         $result = ''; // reset the html code var
 
         $qp = new sql_par(self::class);
 
         // set default values
-        if (!isset($this->size)) {
-            $this->size = sql_db::ROW_LIMIT;
-        } else {
-            if ($this->size <= 0) {
-                $this->size = sql_db::ROW_LIMIT;
-            }
+        if ($limit <= 0) {
+            $limit = sql_db::ROW_LIMIT;
         }
 
         // select the change table to use
@@ -358,27 +369,27 @@ class change extends change_log
         $sql_row = ' s.row_id  = $2 ';
         // the class specific settings
         if ($type == user::class) {
-            $sql_where = " (f.table_id = " . $change_table_list->id(change_table_list::WORD) . " 
-                   OR f.table_id = " . $change_table_list->id(change_table_list::WORD_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::WORD) . " 
+                   OR f.table_id = " . $cng_tbl_cac->id(change_table_list::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 's.user_id = u.user_id
                 AND s.user_id = ' . $this->user()->id() . ' ';
         } elseif ($type == word::class) {
-            //$db_con->add_par(sql_par_type::INT, $change_table_list->id(change_table_list::WORD));
-            //$db_con->add_par(sql_par_type::INT, $change_table_list->id(change_table_list::WORD_USR));
+            //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_table_list::WORD));
+            //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_table_list::WORD_USR));
             $sql_where = " s.change_field_id = $1 ";
         } elseif ($type == value::class) {
-            $sql_where = " (f.table_id = " . $change_table_list->id(change_table_list::VALUE) . " 
-                     OR f.table_id = " . $change_table_list->id(change_table_list::VALUE_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::VALUE) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::VALUE_USR) . ") AND ";
         } elseif ($type == formula::class) {
-            $sql_where = " (f.table_id = " . $change_table_list->id(change_table_list::FORMULA) . " 
-                     OR f.table_id = " . $change_table_list->id(change_table_list::FORMULA_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::FORMULA) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::FORMULA_USR) . ") AND ";
         } elseif ($type == view::class) {
-            $sql_where = " (f.table_id = " . $change_table_list->id(change_table_list::VIEW) . " 
-                     OR f.table_id = " . $change_table_list->id(change_table_list::VIEW_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::VIEW) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_USR) . ") AND ";
         } elseif ($type == component::class) {
-            $sql_where = " (f.table_id = " . $change_table_list->id(change_table_list::VIEW_COMPONENT) . " 
-                     OR f.table_id = " . $change_table_list->id(change_table_list::VIEW_COMPONENT_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_COMPONENT) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_COMPONENT_USR) . ") AND ";
         }
 
         if ($sql_where == '') {
@@ -402,7 +413,7 @@ class change extends change_log
            LEFT JOIN change_fields l2 ON s.change_field_id = l2.change_field_id
                WHERE " . $sql_where . " AND " . $sql_row . " 
             ORDER BY s.change_time DESC
-               LIMIT " . $this->size . ";";
+               LIMIT " . $limit . ";";
             log_debug('user_log_display->dsp_hist ' . $qp->sql);
             $db_con->usr_id = $this->user()->id();
         }
@@ -500,7 +511,7 @@ class change extends change_log
      *
      * @return sql_par_field_list list of the database field names
      */
-    function db_field_values_types(sql $sc, sql_type_list $sc_par_lst): sql_par_field_list
+    function db_field_values_types(sql_creator $sc, sql_type_list $sc_par_lst): sql_par_field_list
     {
         $fvt_lst = parent::db_field_values_types($sc, $sc_par_lst);
 

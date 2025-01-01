@@ -1,71 +1,98 @@
 [
   {
-    "id": 2,
+    "id": 3,
     "name": "system form title word add",
     "description": "show the language specific title for the system form to add a new word",
     "type_id": 17,
-    "code_id": "form_title_word_add"
+    "code_id": "form_title_word_add",
+    "ui_msg_code_id": "form_title_word_add"
   },
   {
-    "id": 7,
+    "id": 33,
     "name": "system form hidden back stack",
     "description": "field that contains the stack for the undo actions",
     "type_id": 18,
     "code_id": "form_back_stack"
   },
   {
-    "id": 8,
+    "id": 34,
     "name": "system form hidden confirm status",
     "description": "switch on that the form saving needs an extra confirm by the user",
     "type_id": 19,
     "code_id": "form_confirm_status"
   },
   {
-    "id": 9,
+    "id": 36,
     "name": "system form field name",
     "description": "the name field in a form",
-    "type_id": 20,
-    "code_id": "form_field_name"
+    "type_id": 21,
+    "code_id": "form_field_name",
+    "ui_msg_code_id": "form_field_name"
   },
   {
-    "id": 10,
+    "id": 41,
+    "name": "system form select phrase type",
+    "description": "selector for the phrase type",
+    "type_id": 25,
+    "code_id": "form_field_phrase_type",
+    "ui_msg_code_id": "form_select_phrase"
+  },
+  {
+    "id": 37,
     "name": "system form field description",
     "description": "the description field in a form",
-    "type_id": 21,
-    "code_id": "form_field_description"
+    "type_id": 22,
+    "code_id": "form_field_description",
+    "ui_msg_code_id": "form_field_description"
   },
   {
-    "id": 14,
+    "id": 43,
     "name": "system form select share type",
     "description": "selector for the share type",
-    "type_id": 24,
-    "code_id": "form_field_share_type"
+    "type_id": 26,
+    "code_id": "form_field_share_type",
+    "ui_msg_code_id": "form_select_share"
   },
   {
-    "id": 15,
+    "id": 44,
     "name": "system form select protection type",
     "description": "selector for the protection type",
-    "type_id": 25,
-    "code_id": "form_field_protection_type"
+    "type_id": 27,
+    "code_id": "form_field_protection_type",
+    "ui_msg_code_id": "form_select_protection"
   },
   {
-    "id": 16,
+    "id": 50,
+    "name": "system formatter row right",
+    "type_id": 33,
+    "code_id": "row_right"
+  },
+  {
+    "id": 45,
     "name": "system form button cancel",
     "description": "button to cancel the form action and go back to the previous view",
-    "type_id": 26,
-    "code_id": "form_cancel_button"
+    "type_id": 28,
+    "code_id": "form_cancel_button",
+    "ui_msg_code_id": "form_button_cancel"
   },
   {
-    "id": 17,
+    "id": 46,
     "name": "system form button save",
     "description": "button to save the form field into the database",
-    "type_id": 27,
-    "code_id": "form_button_save"
+    "type_id": 29,
+    "code_id": "form_button_save",
+    "ui_msg_code_id": "form_button_save"
   },
   {
-    "id": 19,
+    "id": 51,
+    "name": "system formatter row end",
+    "type_id": 34,
+    "code_id": "row_end"
+  },
+  {
+    "id": 48,
     "name": "system form end",
-    "type_id": 29,
+    "type_id": 31,
     "code_id": "form_end"
   }
 ]

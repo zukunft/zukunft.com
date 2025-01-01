@@ -3,6 +3,7 @@ PREPARE view_by_usr_cfg FROM
            view_name,
            description,
            view_type_id,
+           view_style_id,
            excluded,
            share_type_id,
            protect_id

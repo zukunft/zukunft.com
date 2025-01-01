@@ -34,9 +34,8 @@ namespace unit_read;
 
 include_once SHARED_TYPES_PATH . 'share_type.php';
 
+use cfg\sandbox\share_type_list;
 use shared\types\share_type as share_type_shared;
-use cfg\share_type;
-use cfg\share_type_list;
 use test\test_cleanup;
 
 class share_read_tests
@@ -46,7 +45,7 @@ class share_read_tests
     {
 
         global $db_con;
-        global $share_types;
+        global $shr_typ_cac;
 
         // init
         $t->name = 'share read db->';
@@ -61,7 +60,7 @@ class share_read_tests
         $t->assert('load types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $share_types->id(share_type_shared::PUBLIC);
+        $result = $shr_typ_cac->id(share_type_shared::PUBLIC);
         $t->assert('check ' . share_type_shared::PUBLIC, $result, 1);
     }
 

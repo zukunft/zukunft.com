@@ -36,10 +36,10 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-use controller\controller;
 use html\html_base;
 use cfg\db\sql_db;
-use cfg\user;
+use cfg\user\user;
+use shared\api;
 
 // open database
 $db_con = prg_start("login_activate", "center_form");
@@ -53,7 +53,7 @@ $_SESSION['logged'] = FALSE;
 if (isset($_POST['submit'])) {
     $html = new html_base();
 
-    $usr_id = $_POST[controller::URL_VAR_ID];
+    $usr_id = $_POST[api::URL_VAR_ID];
     $debug = $_POST['debug'];
     log_debug("login_activate (user: " . $usr_id . ")");
 
@@ -131,10 +131,10 @@ if (isset($_POST['submit'])) {
 }
 
 if (!$_SESSION['logged']) {
-    $usr_id = $_GET[controller::URL_VAR_ID];
+    $usr_id = $_GET[api::URL_VAR_ID];
     if ($usr_id <= 0) {
         if (isset($_POST['submit'])) {
-            $usr_id = $_POST[controller::URL_VAR_ID];
+            $usr_id = $_POST[api::URL_VAR_ID];
         }
     }
     if ($usr_id > 0) {
@@ -142,25 +142,25 @@ if (!$_SESSION['logged']) {
         $result .= $html->logo_big();
         $result .= '<br><br>';
         $result .= '<form action="login_activate.php" method="post">';
-        $result .= '<input type="hidden" name="id" value="' . $usr_id . '">';
+        $result .= '<input type="' . html_base::INPUT_HIDDEN . '" name="id" value="' . $usr_id . '">';
         if ($debug > 0) {
-            $result .= '<input type="hidden" name="debug" value="' . $debug . '">';
+            $result .= '<input type="' . html_base::INPUT_HIDDEN . '" name="debug" value="' . $debug . '">';
         }
         $result .= $html->dsp_text_h2('Change password<br>');
 
         $key = $_GET['key'];
         if ($key <> '') {
-            $result .= '<input type="hidden" name="key" value="' . $key . '">';
+            $result .= '<input type="' . html_base::INPUT_HIDDEN . '" name="key" value="' . $key . '">';
         } else {
             $result .= 'Please enter the activation key sent via email or open the link in the email:<br><br> ';
-            $result .= '<p>Activation key:<br><input type="text" name="key"></p>  ';
+            $result .= '<p>Activation key:<br><input type="' . html_base::INPUT_TEXT . '" name="key"></p>  ';
         }
 
         $result .= 'Please enter a new password:<br><br> ';
-        $result .= '<p>password:<br><input type="password" name="password"></p>  ';
-        $result .= '<p>Re-Type password:<br><input type="password" name="re_password"></p>  ';
+        $result .= '<p>password:<br><input type="' . html_base::INPUT_PASSWORD . '" name="password"></p>  ';
+        $result .= '<p>Re-Type password:<br><input type="' . html_base::INPUT_PASSWORD . '" name="re_password"></p>  ';
         $result .= $msg;
-        $result .= '  <input type="submit" name="submit" value="Change password"> ';
+        $result .= '  <input type="' . html_base::INPUT_SUBMIT . '" name="submit" value="Change password"> ';
         $result .= '</form>   ';
         $result .= '</div>   ';
     } else {

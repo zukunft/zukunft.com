@@ -34,16 +34,26 @@
 
 */
 
-namespace cfg;
+namespace cfg\system;
 
-include_once DB_PATH . 'sql_par_type.php';
-include_once API_SYSTEM_PATH . 'job_list.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
+include_once API_SYSTEM_PATH . 'job_list.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_par.php';
+include_once MODEL_SYSTEM_PATH . 'base_list.php';
+include_once MODEL_SYSTEM_PATH . 'job.php';
+include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 
 use api\system\job_list as job_list_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_par;
-use cfg\db\sql_par_type;
+use cfg\system\base_list;
+use cfg\system\job;
+use cfg\system\job_type_list;
+use cfg\user\user;
+use cfg\user\user_message;
 use DateTime;
 
 class job_list extends base_list
@@ -123,14 +133,14 @@ class job_list extends base_list
     /**
      * prepare sql to get all open job of one type
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $type_code_id the code id of the job type that should be loaded
      * @return sql_par
      */
-    function load_sql_by_type(sql $sc, string $type_code_id = ''): sql_par
+    function load_sql_by_type(sql_creator $sc, string $type_code_id = ''): sql_par
     {
-        global $job_types;
-        $type_id = $job_types->id($type_code_id);
+        global $job_typ_cac;
+        $type_id = $job_typ_cac->id($type_code_id);
         $job = new job($this->usr);
         $qp = $job->load_sql($sc, 'job_type', self::class);
         $sc->add_where(job::FLD_TYPE, $type_id);
@@ -179,32 +189,32 @@ class job_list extends base_list
      */
     function add(job $job): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         log_debug('job_list->add');
 
         // check if the job to add has all needed parameters
         if ($job->type_code_id() != job_type_list::BASE_IMPORT) {
             if (!isset($job->frm)) {
                 $msg = 'Job ' . $job->dsp_id() . ' cannot be added, because formula is missing.';
-                $result->add_message($msg);
+                $usr_msg->add_message($msg);
             } elseif (!isset($job->phr_lst)) {
                 $msg = 'Job ' . $job->dsp_id() . ' cannot be added, because no words or triples are defined.';
-                $result->add_message($msg);
+                $usr_msg->add_message($msg);
             }
         }
 
         // do not add similar jobs
-        if ($result->is_ok()) {
-            $result->add($this->has_similar($job));
+        if ($usr_msg->is_ok()) {
+            $usr_msg->add($this->has_similar($job));
         }
 
         // finally add the job to the list if everything has been fine
-        if ($result->is_ok()) {
+        if ($usr_msg->is_ok()) {
             $this->add_obj($job);
         }
 
         log_debug('done');
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -215,7 +225,7 @@ class job_list extends base_list
      */
     private function has_similar(job $job): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         // build the list of phrase ids
         $chk_phr_lst_ids = array();
@@ -228,12 +238,12 @@ class job_list extends base_list
                 if ($chk_job->usr == $job->user()) {
                     if (in_array($chk_job->phr_lst->id(), $chk_phr_lst_ids)) {
                         $msg = 'Job for phrases ' . $chk_job->phr_lst->name() . ' is already in the list of active jobs';
-                        $result->add_message($msg);
+                        $usr_msg->add_message($msg);
                     }
                 }
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**

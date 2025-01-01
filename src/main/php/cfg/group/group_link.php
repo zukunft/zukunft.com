@@ -33,15 +33,19 @@
 
 namespace cfg\group;
 
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once MODEL_WORD_PATH . 'triple.php';
 
-use cfg\db\sql_par;
-use cfg\db_object_seq_id;
-use cfg\db\sql;
-use cfg\db\sql_par_type;
-use cfg\group\group;
 use cfg\db\sql_db;
-use cfg\triple;
+use cfg\db\sql_par;
+use cfg\db\sql_creator;
+use cfg\db\sql_par_type;
+use cfg\helper\db_object_seq_id;
+use cfg\word\triple;
 
 class group_link extends db_object_seq_id
 {
@@ -90,12 +94,12 @@ class group_link extends db_object_seq_id
     /**
      * create the common part of an SQL statement to get the phrase group triple link from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql($sc, $query_name, $class);
 

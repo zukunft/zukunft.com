@@ -32,16 +32,21 @@
 
 namespace unit_write;
 
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\word\triple as triple_api;
 use api\word\word as word_api;
-use cfg\phr_ids;
-use cfg\phrase_list;
-use cfg\phrase_type;
-use cfg\triple;
-use cfg\verb;
-use cfg\word_list;
+use cfg\phrase\phr_ids;
+use cfg\phrase\phrase_list;
+use cfg\phrase\phrase_type;
+use cfg\word\triple;
+use cfg\verb\verb;
+use cfg\word\word_list;
 use shared\library;
+use shared\types\phrase_type as phrase_type_shared;
 use test\test_cleanup;
+use shared\types\verbs;
 
 class phrase_list_write_tests
 {
@@ -50,17 +55,17 @@ class phrase_list_write_tests
     {
 
         global $usr;
-        global $verbs;
+        global $vrb_cac;
 
         $t->header('Test the phrase list class (src/main/php/model/phrase/phrase_list.php)');
 
         // TODO make prepare not needed any more
-        $t->test_word(word_api::TN_CHF, phrase_type::MEASURE);
+        $t->test_word(word_api::TN_CHF, phrase_type_shared::MEASURE);
         $t->test_word(word_api::TN_SALES);
 
         // load the main test word and verb
         $wrd_company = $t->test_word(word_api::TN_READ);
-        $is_id = $verbs->id(verb::IS);
+        $is_id = $vrb_cac->id(verbs::IS);
 
         // prepare test by loading Insurance Zurich
         $wrd_zh = $t->load_word(word_api::TN_ZH);
@@ -93,7 +98,7 @@ class phrase_list_write_tests
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(word_api::TN_ABB));
         $phr_lst = $wrd_lst->phrase_lst();
-        $lst_parents = $phr_lst->foaf_parents($verbs->get_verb(verb::IS));
+        $lst_parents = $phr_lst->foaf_parents($vrb_cac->get_verb(verbs::IS));
         $result = $lib->dsp_array($lst_parents->names());
         $target = word_api::TN_COMPANY; // order adjusted based on the number of usage
         $t->display('phrase_list->foaf_parents for ' . $phr_lst->dsp_name() . ' up', $target, $result);

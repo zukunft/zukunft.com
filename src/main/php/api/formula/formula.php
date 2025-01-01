@@ -103,7 +103,7 @@ class formula extends sandbox_typed_api
     // for creating the test formulas, that are removed after the test
     // so these formula names cannot be used for user formulas
     // or for fixed of the default data set that are used for unit tests
-    const RESERVED_FORMULAS = array(
+    const RESERVED_NAMES = array(
         self::TN_READ,
         self::TN_ADD,
         self::TN_ADD_VIA_FUNC,
@@ -117,6 +117,11 @@ class formula extends sandbox_typed_api
         self::TN_SCALE_TO_K,
         self::TN_SCALE_MIO,
         self::TN_SCALE_BIL
+    );
+
+    // array of formula names that used for db read testing and that should not be renamed
+    const FIXED_NAMES = array(
+        self::TN_READ
     );
 
     // formula names used for integration tests
@@ -194,7 +199,8 @@ class formula extends sandbox_typed_api
      */
     function jsonSerialize(): array
     {
-        $vars = get_object_vars($this);
+        $vars = parent::jsonSerialize();
+        $vars = array_merge($vars, get_object_vars($this));
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

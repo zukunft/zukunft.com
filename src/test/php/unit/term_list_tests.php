@@ -28,22 +28,25 @@
 
 namespace unit;
 
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\formula\formula as formula_api;
 use api\word\triple as triple_api;
 use api\verb\verb as verb_api;
 use api\word\word as word_api;
-use cfg\db\sql;
-use cfg\phrase_list;
-use cfg\trm_ids;
+use cfg\db\sql_creator;
+use cfg\phrase\phrase_list;
+use cfg\phrase\trm_ids;
 use html\html_base;
 use html\phrase\term_list as term_list_dsp;
-use cfg\formula;
+use cfg\formula\formula;
 use cfg\db\sql_db;
-use cfg\term;
-use cfg\term_list;
-use cfg\triple;
-use cfg\verb;
-use cfg\word;
+use cfg\phrase\term;
+use cfg\phrase\term_list;
+use cfg\word\triple;
+use cfg\verb\verb;
+use cfg\word\word;
+use shared\types\verbs;
 use test\test_cleanup;
 
 class term_list_tests
@@ -62,7 +65,7 @@ class term_list_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'term_list->';
         $t->resource_path = 'db/term/';
 
@@ -113,9 +116,9 @@ class term_list_tests
         $lst->add($this->t->new_word(word_api::TN_READ)->term());
         $lst->add($this->t->new_triple(
             triple_api::TN_PI_NAME,
-            triple_api::TN_PI, verb::IS, word_api::TN_READ)->term());
+            triple_api::TN_PI, verbs::IS, word_api::TN_READ)->term());
         $lst->add($this->t->new_formula(formula_api::TN_INCREASE)->term());
-        $lst->add($this->t->new_verb(verb::IS)->term());
+        $lst->add($this->t->new_verb(verbs::IS)->term());
         return $lst;
     }
 

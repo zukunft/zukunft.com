@@ -35,7 +35,7 @@ namespace unit;
 use api\component\component as component_api;
 use cfg\component\component;
 use cfg\component\component_list;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use test\test_cleanup;
 
@@ -48,7 +48,7 @@ class component_list_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'component_list->';
         $t->resource_path = 'db/component/';
 

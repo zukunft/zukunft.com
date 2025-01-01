@@ -36,16 +36,15 @@ include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once WEB_WORD_PATH . 'triple_list.php';
 
 use api\word\triple as triple_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\foaf_direction;
-use cfg\phrase;
-use cfg\phrase_list;
-use cfg\triple;
-use cfg\triple_list;
-use cfg\verb;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
+use cfg\word\triple;
+use cfg\word\triple_list;
+use cfg\verb\verb;
 use html\word\triple_list as triple_list_dsp;
-use shared\library;
+use shared\enum\foaf_direction;
 use test\test_cleanup;
 
 class triple_list_tests
@@ -57,10 +56,9 @@ class triple_list_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'triple_list->';
         $t->resource_path = 'db/triple/';
-        $json_file = 'unit/triple/triple_list.json';
 
         $t->header('Unit tests of the word link list class (src/main/php/model/word/triple_list.php)');
 
@@ -103,7 +101,7 @@ class triple_list_tests
 
 
         $t->subheader('Im- and Export tests');
-
+        $json_file = 'unit/triple/triple_list.json';
         $t->assert_json_file(new triple_list($usr), $json_file);
 
 

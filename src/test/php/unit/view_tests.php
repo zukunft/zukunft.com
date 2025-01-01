@@ -33,10 +33,11 @@
 namespace unit;
 
 use api\view\view as view_api;
-use cfg\db\sql;
+use cfg\component\view_style;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
-use cfg\view;
+use cfg\view\view;
 use html\view\view as view_dsp;
 use shared\library;
 use test\test_cleanup;
@@ -49,7 +50,7 @@ class view_tests
         global $usr;
 
         // init
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'view->';
         $t->resource_path = 'db/view/';
 
@@ -111,7 +112,7 @@ class view_tests
         $t->subheader('view api unit tests');
         $msk = $t->view_filled();
         $t->assert_api_json($msk);
-        $msk = $t->view();
+        $msk = $t->view_protected();
         $t->assert_api($msk);
         $t->assert_api_to_dsp($msk, new view_dsp());
 
@@ -120,7 +121,9 @@ class view_tests
         $t->assert_api($msk, 'view_with_components');
         $t->assert_api_to_dsp($msk, new view_dsp());
 
-        $t->subheader('view html frontend unit tests');
+        $t->subheader('view im- and export unit tests');
+        $t->assert_ex_and_import($t->view());
+        $t->assert_ex_and_import($t->view_filled());
         $json_file = 'unit/view/car_costs.json';
         $t->assert_json_file(new view($usr), $json_file);
 

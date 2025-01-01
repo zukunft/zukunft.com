@@ -8,6 +8,12 @@
     same as db_object_user but for database objects that have an auto sequence prime id
     TODO should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
 
+    The main sections of this object are
+    - object vars:       the variables of this seq id object
+    - construct and map: including the mapping of the db row to this seq id object
+    - set and get:       to capsule the single variables from unexpected changes
+    - modify:            change potentially all variables of this seq id object with one function
+
 
     This file is part of zukunft.com - calc with words
 
@@ -33,11 +39,14 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
-use cfg\db\sql;
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 
-include_once MODEL_HELPER_PATH . 'db_object.php';
+use cfg\user\user;
+use cfg\user\user_message;
 
 class db_object_seq_id_user extends db_object_seq_id
 {
@@ -92,6 +101,27 @@ class db_object_seq_id_user extends db_object_seq_id
     function user_id(): int
     {
         return $this->usr->id();
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this db user object based on the given object
+     * if the given user id is not set (null) the user id is set
+     *
+     * @param db_object_seq_id_user|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(db_object_seq_id_user|db_object_seq_id $sbx): user_message
+    {
+        $usr_msg = parent::fill($sbx);
+        if ($sbx->user_id() != null) {
+            $this->set_user($sbx->user());
+        }
+        return $usr_msg;
     }
 
 

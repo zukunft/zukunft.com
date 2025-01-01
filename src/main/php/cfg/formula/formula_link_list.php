@@ -29,12 +29,25 @@
   
 */
 
-namespace cfg;
+namespace cfg\formula;
 
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_PHRASE_PATH . 'phr_ids.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once SHARED_PATH . 'library.php';
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_par;
+use cfg\phrase\phr_ids;
+use cfg\phrase\phrase;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_list;
+use cfg\user\user;
 use shared\library;
 
 class formula_link_list extends sandbox_list
@@ -67,11 +80,11 @@ class formula_link_list extends sandbox_list
     /**
      * set the SQL query parameters to load a list of formula links
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -106,11 +119,11 @@ class formula_link_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of formula links by the formula id
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $frm_id the id of the formula which links should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_frm_id(sql $sc, int $frm_id): sql_par
+    function load_sql_by_frm_id(sql_creator $sc, int $frm_id): sql_par
     {
         $qp = $this->load_sql($sc, 'frm_id');
         if ($frm_id > 0) {

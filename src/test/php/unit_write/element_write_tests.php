@@ -32,17 +32,22 @@
 
 namespace unit_write;
 
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\formula\formula as formula_api;
 use api\word\word as word_api;
-use cfg\verb;
+use cfg\verb\verb;
+use shared\api;
+use shared\views;
 use test\test_cleanup;
+use shared\types\verbs;
 
 class element_write_tests
 {
 
     function run(test_cleanup $t): void
     {
-        global $verbs;
+        global $vrb_cac;
 
         $back = 0;
 
@@ -60,7 +65,7 @@ class element_write_tests
         // get the test word ids
         $wrd_country = $t->load_word(word_api::TN_COUNTRY);
         $wrd_canton = $t->load_word(word_api::TN_CANTON);
-        $vrb_id = $verbs->id(verb::CAN_CONTAIN);
+        $vrb_id = $vrb_cac->id(verbs::CAN_CONTAIN);
 
         if (isset($elm_lst)) {
             $pos = 0;
@@ -97,14 +102,15 @@ class element_write_tests
                 $t->display('element->dsp_id', $target, $result);
 
                 $result = $elm->name_linked($back);
+                $url = '<a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::MI_WORD . '&' . api::URL_VAR_ID . '=';
                 if ($pos == 0) {
-                    $target = '<a href="/http/view.php?words=' . $wrd_country->id() . '&back=0" title="Country">Country</a>';
+                    $target = $url . $wrd_country->id() . '&back=0" title="Country">Country</a>';
                 } elseif ($pos == 1) {
                     $target = 'can be used as a differentiator for';
                 } elseif ($pos == 2) {
-                    $target = '<a href="/http/view.php?words=' . $wrd_canton->id() . '&back=0" title="Canton">Canton</a>';
+                    $target = $url . $wrd_canton->id() . '&back=0" title="Canton">Canton</a>';
                 } elseif ($pos == 3) {
-                    $target = '<a href="/http/view.php?words=' . $wrd_total->id() . '&back=0" title="System Test Word Total">System Test Word Total</a>';
+                    $target = $url . $wrd_total->id() . '&back=0" title="System Test Word Total">System Test Word Total</a>';
                 }
                 $t->display('element->dsp_id', $target, $result);
 

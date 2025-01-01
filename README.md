@@ -25,12 +25,35 @@ To install this version 0.0.3 use a LAMP server (https://wiki.debian.org/LaMp) a
 6) change the password "xxx" in db_link/zu_lib_sql_link.php with the password used in 2)
 7) test if the installation is running fine by calling http://yourserver.com/test/test.php
 
+Target install
+--------------
+
+In the final version the installation on debian should be 
+
+sudo apt-get install zukunftcom
+
+with the options
+
+-p for python (php if not set)
+-j for java / jvm based version
+-c for C++ / rust based version
+
+After "zukunftcom start" a message should be shown including the pod name. Every critical event, 
+such as the connection to other pods, should be shown in the console 
+and beginning with an increasing minute based interval, 
+but at least once a day a status message should be shown with the system usage and a summery if the usage. 
+
+
 Additional for development
 --------------------------
 
 on debian systems
 
+sudo apt-get install php-pgsql
 
+sudo apt-get install php-yaml
+
+sudo apt-get install php-curl
 
 Planned changes
 ---------------
@@ -94,7 +117,7 @@ Coding team suggestions
 Decisions
 - use this program for a mind map with all arguments where each has a weight and value and all changes are logged
 
-Naming conventions for vars:
+naming conventions for vars:
 ---------------------------
 
 backend - main
@@ -129,21 +152,33 @@ verbs are also named as triples
 
 backend - admin
 - usr (USeR)               - the person who is logged in
+- pro (PROfile)            - a group of user rights
 - log                      - to save all changes in a user readable format
+- sta (STAtus)             - the status of a lod entry e.g. solved
+- cng (ChaNGe)             - parts of the change log
+- act (ACTion)             - the change log actions
+- tbl (TaBLe)              - the change log tables
+- fld (FieLD)              - the change log fields of a table
 
 backend - internal
 - sbx (SandBoX)            - the user sandbox tables where the adjustments of the users are saved
+- shr (SHaRe)              - the sharing settings
+- ptc (ProTeCt)            - the protection settings
 - lst (LiST)               - an array of objects
+- typ (TYPe)               - field name to connect predefined functionality to a core object
+- pdi (PreDIcate)          - define the connection type between two core objects (verb is a special form of predicate for triples)
 - id (IDentifier)          - internal prime key of a database row
-- ids (IDentifierS)        - an simple array of database table IDs (ids_txt is the text / imploded version of the ids array)
+- ids (IDentifierS)        - a simple array of database table IDs (ids_txt is the text / imploded version of the ids array)
 - sc (Sql Creator)         - for writing SQL statements
 - std (STanDard)           - a value that have not been changed and is public (for results additional "main" is used)
 - nrm (NoRMal)             - data that is used by most users
 - dsl (DSp cmp Link)       - link of a view component to a view
+- sty (STYle)              - the HTML style class used for a view
 - uso (User Sbx Object)    - an object (word, value, formula, ...) that uses the user sandbox
 (useless?)
 - cl (Code Link)           - a text used to identify one predefined database entry that triggers to use of some program code
 - sf (Sql Format)          - to convert a text for the database
+- cac (CAChe)              - preload lists
 
 object extensions
 - _min (MINimal)           - the minimal object used for the frontend API and only valid for the session user
@@ -160,6 +195,8 @@ a view object or a function that return HTML code that can be displayed
 - dtx (DiSPlay TeXt)       - functions for the text interface implementation mainly for debugging
 - btn (BuTtoN)             - button
 - tbl (TaBLe)              - HTML code for a table
+- lan (LANguage)           - the language used for the frontend
+- for (FORm)               - the language form of a word e.g. plural
 
 to be deprecated:
 - glst (Get LiST)          - is used to name the private internal functions that can also create the user list
@@ -167,13 +204,44 @@ to be deprecated:
   the list should only be used to display something and never for checking if an item exists
   this is the short for the sbx_lst
 
+main objects
+------------
+
+the logical order of the main objects is
+- word - use single words for better assignments
+- verb - a predicate to connect two words
+- triple - combine two words or triples with a verb
+- source - import only data source
+- ref - im- and export to external systems
+- value - a number for calculation 
+- group - list of words or triples
+- formula - expression for calculation
+- result - numeric result of a formula
+- view - named display mask
+- component - parts of a display mask
+
+object sections
+---------------
+
+most objects have these sections
+- db const - const for the database like field names
+- object vars - the variables of the object in order of the db const
+- construct and map - including the mapping of the db row to the object
+- set and get - interface for the object vars grouped by first set in order of db fields
+- preloaded - select e.g. types from cache
+- cast - create an api object and set the vars from an api json
+- load - database access object (DAO) functions
+- save - manage to update the database
+- sql write fields - field list for writing to the database
+- debug - internal support functions for debugging that must include dsp_id()
+
 
 database change setup
 ---------------------
 
 User Sandbox: values, formulas, formula_links, views and view elements are included in the user sandbox, which means, each user can exclude or adjust single entries
 
-to avoid confusion words, formula names, triples (verbs) and value_phrase_links are excluded from the user sandbox, but a normal user can change the name, which will hopefully not happen often.
+to avoid confusion words, formula names, triples and verbs may have a limited user sandbox, but a normal user can change the name, which will hopefully not happen often.
 
 for words, formulas and verbs the user can add a specific name in any language
 

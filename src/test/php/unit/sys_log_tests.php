@@ -35,10 +35,10 @@ namespace unit;
 include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
 include_once MODEL_SYSTEM_PATH . 'system_time.php';
 
-use cfg\db\sql;
-use cfg\sys_log;
-use cfg\system_time;
-use cfg\system_time_type;
+use cfg\db\sql_creator;
+use cfg\system\sys_log;
+use cfg\system\system_time;
+use cfg\system\system_time_type;
 use shared\library;
 use test\test_cleanup;
 
@@ -55,7 +55,7 @@ class sys_log_tests
 
         // init
         $lib = new library();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'sys_log->';
         $t->resource_path = 'db/sys_log/';
 

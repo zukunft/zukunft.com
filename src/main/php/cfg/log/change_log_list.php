@@ -33,29 +33,45 @@
 
 namespace cfg\log;
 
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
 include_once API_LOG_PATH . 'change_log_list.php';
-include_once WEB_LOG_PATH . 'change_log_list.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
+//include_once MODEL_COMPONENT_PATH . 'component.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_type.php';
+//include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_GROUP_PATH . 'group.php';
+//include_once MODEL_GROUP_PATH . 'group_id.php';
+//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+//include_once MODEL_REF_PATH . 'source.php';
+//include_once MODEL_USER_PATH . 'user.php';
+//include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VERB_PATH . 'verb.php';
+//include_once MODEL_VIEW_PATH . 'view.php';
+//include_once MODEL_WORD_PATH . 'word.php';
+//include_once MODEL_WORD_PATH . 'triple.php';
+include_once WEB_LOG_PATH . 'change_log_list.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\log\change_log_list as change_log_list_api;
-use cfg\base_list;
+use cfg\system\base_list;
 use cfg\component\component;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
-use cfg\formula;
+use cfg\formula\formula;
 use cfg\group\group;
 use cfg\group\group_id;
-use cfg\sandbox;
-use cfg\source;
-use cfg\triple;
-use cfg\user;
+use cfg\sandbox\sandbox;
+use cfg\ref\source;
+use cfg\user\user;
 use cfg\value\value;
-use cfg\verb;
-use cfg\view;
-use cfg\word;
+use cfg\verb\verb;
+use cfg\view\view;
+use cfg\word\word;
+use cfg\word\triple;
 use html\log\change_log_list as change_log_list_dsp;
 use shared\library;
 
@@ -157,11 +173,11 @@ class change_log_list extends base_list
     /**
      * create an SQL statement to retrieve the changes done by the given user
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param user $usr the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_user(sql $sc, user $usr): sql_par
+    function load_sql_by_user(sql_creator $sc, user $usr): sql_par
     {
         $qp = $this->load_sql($sc, 'user_last', self::class);
 
@@ -175,11 +191,11 @@ class change_log_list extends base_list
      * create the common part of an SQL statement to retrieve the parameters of the change log
      * TODO use class name instead of TBL_CHANGE
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par($this::class);
         $sc->set_class(change::class);
@@ -400,7 +416,7 @@ class change_log_list extends base_list
      * e.g. the when and how a user has changed the way a word should be shown in the user interface
      * only public for SQL unit testing
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the class name of the user sandbox object to select the table e.g. 'word'
      * @param string $field_name the field that has been change e.g. 'view'
      * @param string|int $id the database id of the user sandbox object that has been changed
@@ -408,21 +424,21 @@ class change_log_list extends base_list
      * @return sql_par
      */
     function load_sql_obj_fld(
-        sql        $sc,
-        string     $class,
-        string     $field_name,
-        string|int $id,
-        user       $usr): sql_par
+        sql_creator $sc,
+        string      $class,
+        string      $field_name,
+        string|int  $id,
+        user        $usr): sql_par
     {
-        global $change_table_list;
-        global $change_field_list;
+        global $cng_tbl_cac;
+        global $cng_fld_cac;
 
         // prepare sql to get the view changes of a user sandbox object e.g. word
         $lib = new library();
         $table_name = $lib->class_to_table($class);
-        $table_id = $change_table_list->id($table_name);
+        $table_id = $cng_tbl_cac->id($table_name);
         $table_field_name = $table_id . $field_name;
-        $field_id = $change_field_list->id($table_field_name);
+        $field_id = $cng_fld_cac->id($table_field_name);
         $log_named = new change($usr);
         $query_ext = $this->table_field_to_query_name($class, $field_name);
         if ($class == value::class) {
@@ -468,20 +484,20 @@ class change_log_list extends base_list
     /**
      * prepare sql to get the last changes of a user sandbox object
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $class the class name of the user sandbox object to select the table e.g. 'word'
      * @param string|int $id the database id of the user sandbox object that has been changed
      * @param user $usr the user who has requested the change
      * @return sql_par the sql statement to get the latest changed
      */
     function load_sql_obj_last(
-        sql        $sc,
-        string     $class,
-        string|int $id,
-        user       $usr): sql_par
+        sql_creator $sc,
+        string      $class,
+        string|int  $id,
+        user        $usr): sql_par
     {
-        global $change_table_list;
-        global $change_field_list;
+        global $cng_tbl_cac;
+        global $cng_fld_cac;
 
         // prepare sql to get the view changes of a user sandbox object e.g. word
         $log_named = new change($usr);

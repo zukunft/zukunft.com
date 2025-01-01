@@ -26,5 +26,5 @@ SELECT view_delete_log
        (1::bigint,
         3::smallint,
         42::smallint,
-        'Word'::text,
+        'Start view'::text,
         1::bigint);

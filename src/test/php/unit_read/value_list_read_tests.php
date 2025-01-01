@@ -32,13 +32,15 @@
 
 namespace unit_read;
 
+include_once SERVICE_PATH . 'config.php';
+
 use api\word\word as word_api;
 use cfg\config;
-use cfg\phrase;
+use cfg\phrase\phrase;
 use cfg\value\value;
 use cfg\value\value_list;
 use api\value\value as value_api;
-use cfg\word;
+use cfg\word\word;
 use test\test_cleanup;
 
 class value_list_read_tests
@@ -108,7 +110,8 @@ class value_list_read_tests
         $t->assert($test_name, $result, $target);
 
         // load by phrase list
-        $phr = new phrase($t->usr1, word::SYSTEM_CONFIG);
+        $phr = new phrase($t->usr1);
+        $phr->load_by_name(word::SYSTEM_CONFIG);
         $phr_lst = $phr->all_children();
         $val_lst = new value_list($t->usr1);
         // TODO activate Prio 2

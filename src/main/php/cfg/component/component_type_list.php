@@ -38,10 +38,10 @@ include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 
 use shared\types\component_type as comp_type_shared;
-use cfg\type_list;
-use cfg\type_object;
+use cfg\helper\type_list;
+use cfg\helper\type_object;
 
-global $component_types;
+global $cmp_typ_cac;
 
 class component_type_list extends type_list
 {

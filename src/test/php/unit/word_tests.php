@@ -36,16 +36,19 @@ include_once DB_PATH . 'sql_db.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once API_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\formula\formula as formula_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
-use cfg\phrase_type;
-use cfg\word;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
+use cfg\word\word;
 use api\word\word as word_api;
 use html\word\word as word_dsp;
 use test\test_cleanup;
+use shared\types\phrase_type as phrase_type_shared;
 
 class word_tests
 {
@@ -55,10 +58,10 @@ class word_tests
 
         global $usr;
         global $usr_sys;
-        global $phrase_types;
+        global $phr_typ_cac;
 
         // init
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'word->';
         $t->resource_path = 'db/word/';
 
@@ -106,7 +109,7 @@ class word_tests
         $wrd_updated->set_user($usr_sys);
         $wrd_updated->plural = word_api::TN_RENAMED;
         $wrd_updated->description = word_api::TN_RENAMED;
-        $wrd_updated->type_id = $phrase_types->id(phrase_type::TIME);
+        $wrd_updated->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         $t->assert_sql_update($sc, $wrd_updated, $wrd, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('word sql write update of all fields changed');
@@ -127,7 +130,7 @@ class word_tests
         $t->assert_api_json($wrd);
         $wrd = $t->word_filled();
         $t->assert_api_json($wrd);
-        $wrd->excluded = false;
+        $wrd->include();
         $t->assert_api($wrd, 'word_full');
         $wrd = $t->word();
         $t->assert_api($wrd, 'word_body');
@@ -137,9 +140,33 @@ class word_tests
         $t->assert_api_to_dsp($wrd, new word_dsp());
 
         $t->subheader('word im- and export unit tests');
+        // TODO check that all objects have a im and export test
+        $t->assert_ex_and_import($t->word());
+        $t->assert_ex_and_import($t->word_filled());
         $json_file = 'unit/word/second.json';
         $t->assert_json_file(new word($usr), $json_file);
 
+        $t->subheader('word sync and fill tests');
+        $test_name = 'check if the word fill function set all database fields';
+        $wrd_imp = $t->word_filled();
+        $wrd_db = $t->word();
+        $wrd_db->fill($wrd_imp);
+        $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp)->names();
+        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, [word::FLD_VIEW, sandbox::FLD_EXCLUDED]);
+        $test_name = 'check if the word id is filled up';
+        $wrd_imp = $t->word();
+        $wrd_imp->set_id(0);
+        $wrd_db = $t->word();
+        $wrd_imp->fill($wrd_db);
+        $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp)->names();
+        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, []);
+        $test_name = 'check if description can be set to an empty string';
+        $wrd_imp = $t->word();
+        $wrd_imp->set_description('');
+        $wrd_db = $t->word();
+        $wrd_db->fill($wrd_imp);
+        $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp)->names();
+        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, [sandbox_named::FLD_DESCRIPTION]);
 
         $test_name = 'check if database would not be updated if only the name is given in import';
         $in_wrd = $t->word_name_only();
@@ -152,20 +179,20 @@ class word_tests
      * check the load SQL statements creation to get the word corresponding to the formula name
      *
      * @param test_cleanup $t the testing object with the error counter
-     * @param sql $sc does not need to be connected to a real database
+     * @param sql_creator $sc does not need to be connected to a real database
      * @param word $wrd the user sandbox object e.g. a word
      * @return void true if all tests are fine
      */
-    private function assert_sql_formula_name(test_cleanup $t, sql $sc, word $wrd): void
+    private function assert_sql_formula_name(test_cleanup $t, sql_creator $sc, word $wrd): void
     {
         // check the Postgres query syntax
-        $sc->db_type = sql_db::POSTGRES;
+        $sc->reset(sql_db::POSTGRES);
         $qp = $wrd->load_sql_by_formula_name($sc, formula_api::TN_READ);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $sc->db_type = sql_db::MYSQL;
+            $sc->reset(sql_db::MYSQL);
             $qp = $wrd->load_sql_by_formula_name($sc, formula_api::TN_READ);
             $t->assert_qp($qp, $sc->db_type);
         }

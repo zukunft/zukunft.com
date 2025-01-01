@@ -33,14 +33,15 @@
 namespace api\value;
 
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once WEB_VALUE_PATH . 'value.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use api\api;
 use api\sandbox\sandbox_value as sandbox_value_api;
 use html\value\value as value_dsp;
 use JsonSerializable;
+use shared\json_fields;
 
 class value extends sandbox_value_api implements JsonSerializable
 {
@@ -130,19 +131,19 @@ class value extends sandbox_value_api implements JsonSerializable
         $vars = get_object_vars($this);
 
         // add the var of the parent object
-        $vars[sandbox_value_api::FLD_NUMBER] = $this->number();
+        $vars[json_fields::NUMBER] = $this->number();
 
         // remove vars from the json that have the default value
         if ($this->is_std) {
-            if (array_key_exists(api::FLD_IS_STD, $vars)) {
-                unset($vars[api::FLD_IS_STD]);
+            if (array_key_exists(json_fields::IS_STD, $vars)) {
+                unset($vars[json_fields::IS_STD]);
             }
         }
 
         // add the phrase list to the api object because this is always needed to display the value
         // the phrase group is not used in the api because this is always created dynamically based on the phrase
         // and only used to speed up the database and reduce the size
-        $vars[api::FLD_PHRASES] = json_decode(json_encode($this->phr_lst()));
+        $vars[json_fields::PHRASES] = json_decode(json_encode($this->phr_lst()));
 
         return $vars;
     }

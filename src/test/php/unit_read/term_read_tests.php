@@ -36,12 +36,12 @@ use api\formula\formula as formula_api;
 use api\word\triple as triple_api;
 use api\verb\verb as verb_api;
 use api\word\word as word_api;
-use cfg\formula;
-use cfg\phrase;
-use cfg\term;
-use cfg\triple;
-use cfg\verb;
-use cfg\word;
+use cfg\formula\formula;
+use cfg\phrase\phrase;
+use cfg\phrase\term;
+use cfg\word\triple;
+use cfg\verb\verb;
+use cfg\word\word;
 use test\test_cleanup;
 
 class term_read_tests
@@ -58,7 +58,7 @@ class term_read_tests
 
         // test load by term by a word db row
         $wrd = new word($t->usr1); // create a word object just to create the query parameters
-        $qp = $wrd->load_sql_by_id($db_con->sql_creator(),1, word::class);
+        $qp = $wrd->load_sql_by_id($db_con->sql_creator(),1);
         $db_row = $db_con->get1($qp);
         $trm = new term($t->usr1); // use the term object to convert the id
         $trm->set_obj_from_class(word::class);
@@ -72,7 +72,7 @@ class term_read_tests
 
         // test load by term by a triple db row
         $trp = new triple($t->usr1);
-        $qp = $trp->load_sql_by_id($db_con->sql_creator(),1, triple::class);
+        $qp = $trp->load_sql_by_id($db_con->sql_creator(),1);
         $db_row = $db_con->get1($qp);
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(triple::class);
@@ -86,7 +86,7 @@ class term_read_tests
 
         // test load by term by a formula db row
         $frm = new formula($t->usr1);
-        $qp = $frm->load_sql_by_id($db_con->sql_creator(),1, formula::class);
+        $qp = $frm->load_sql_by_id($db_con->sql_creator(),1);
         $db_row = $db_con->get1($qp);
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(formula::class);

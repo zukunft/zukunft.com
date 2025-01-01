@@ -32,6 +32,8 @@
 
 namespace test;
 
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
 use api\phrase\phrase as phrase_api;
@@ -43,23 +45,24 @@ use api\word\word as word_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\db\sql_par;
-use cfg\formula;
-use cfg\formula_link;
-use cfg\formula_type;
-use cfg\phrase;
-use cfg\phrase_list;
-use cfg\phrase_type;
-use cfg\ref_type;
-use cfg\source;
-use cfg\term;
-use cfg\term_list;
-use cfg\triple;
+use cfg\formula\formula;
+use cfg\formula\formula_link;
+use cfg\formula\formula_type;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
+use cfg\phrase\phrase_type;
+use cfg\ref\ref_type;
+use cfg\ref\source;
+use cfg\phrase\term;
+use cfg\phrase\term_list;
+use cfg\word\triple;
 use cfg\value\value;
-use cfg\verb;
-use cfg\view;
-use cfg\word;
+use cfg\verb\verb;
+use cfg\view\view;
+use cfg\word\word;
 use html\html_base;
 use shared\library;
+use shared\types\verbs;
 
 class test_cleanup extends test_api
 {
@@ -331,7 +334,7 @@ class test_cleanup extends test_api
         }
 
         // request to delete the added test phrases
-        foreach (phrase_api::TEST_TRIPLE_STANDARD as $phr_name) {
+        foreach (triple_api::TEST_TRIPLE_STANDARD as $phr_name) {
             $phr = $this->load_phrase($phr_name);
             if ($phr->id() <> 0) {
                 $msg = $phr->del();
@@ -342,19 +345,19 @@ class test_cleanup extends test_api
         }
 
         // request to delete some triples not yet covered by the other cleanup jobs
-        $this->del_triple(word_api::TN_2019, verb::IS, word_api::TN_YEAR);
-        $this->del_triple(word_api::TN_2020, verb::IS, word_api::TN_YEAR);
-        $this->del_triple(word_api::TN_2021, verb::IS, word_api::TN_YEAR);
-        $this->del_triple(word_api::TN_2022, verb::IS, word_api::TN_YEAR);
-        $this->del_triple(word_api::TN_2020, verb::FOLLOW, word_api::TN_2019);
-        $this->del_triple(word_api::TN_2021, verb::FOLLOW, word_api::TN_2020);
-        $this->del_triple(word_api::TN_2022, verb::FOLLOW, word_api::TN_2021);
-        $this->del_triple(word_api::TWN_CASH_FLOW, verb::IS, word_api::TN_FIN_REPORT);
-        $this->del_triple(word_api::TN_TAX_REPORT, verb::IS_PART_OF, word_api::TWN_CASH_FLOW);
-        $this->del_triple(word_api::TN_CASH, verb::IS_PART_OF, word_api::TN_ASSETS_CURRENT);
-        $this->del_triple(word_api::TN_ASSETS_CURRENT, verb::IS_PART_OF, word_api::TN_ASSETS);
-        $this->del_triple(word_api::TN_SECTOR, verb::CAN_CONTAIN, word_api::TN_ENERGY);
-        $this->del_triple(word_api::TN_ENERGY, verb::CAN_CONTAIN, word_api::TN_WIND_ENERGY);
+        $this->del_triple(word_api::TN_2019, verbs::IS, word_api::TN_YEAR);
+        $this->del_triple(word_api::TN_2020, verbs::IS, word_api::TN_YEAR);
+        $this->del_triple(word_api::TN_2021, verbs::IS, word_api::TN_YEAR);
+        $this->del_triple(word_api::TN_2022, verbs::IS, word_api::TN_YEAR);
+        $this->del_triple(word_api::TN_2020, verbs::FOLLOW, word_api::TN_2019);
+        $this->del_triple(word_api::TN_2021, verbs::FOLLOW, word_api::TN_2020);
+        $this->del_triple(word_api::TN_2022, verbs::FOLLOW, word_api::TN_2021);
+        $this->del_triple(word_api::TWN_CASH_FLOW, verbs::IS, word_api::TN_FIN_REPORT);
+        $this->del_triple(word_api::TN_TAX_REPORT, verbs::IS_PART_OF, word_api::TWN_CASH_FLOW);
+        $this->del_triple(word_api::TN_CASH, verbs::IS_PART_OF, word_api::TN_ASSETS_CURRENT);
+        $this->del_triple(word_api::TN_ASSETS_CURRENT, verbs::IS_PART_OF, word_api::TN_ASSETS);
+        $this->del_triple(word_api::TN_SECTOR, verbs::CAN_CONTAIN, word_api::TN_ENERGY);
+        $this->del_triple(word_api::TN_ENERGY, verbs::CAN_CONTAIN, word_api::TN_WIND_ENERGY);
 
         // request to delete the added test word
         // TODO: if a user has changed the word during the test, delete also the user words
@@ -430,35 +433,6 @@ class test_cleanup extends test_api
     }
 
     /**
-     * create a dummy phrase list based on the given names
-     * @param array $names the names that should be used to create the phrase list
-     * @return phrase_list
-     */
-    function phrase_list_for_tests(array $names): phrase_list
-    {
-        global $usr;
-
-        $phr_lst = new phrase_list($usr);
-        $pos = 1;
-        foreach ($names as $name) {
-            $class = match ($name) {
-                triple_api::TN_PI_NAME => triple::class,
-                default => word::class,
-            };
-            $phr = new phrase($usr, $pos, $name);
-
-            // set types of some special terms
-            if ($name == word_api::TN_2020) {
-                $phr->obj()->set_type(phrase_type::TIME);
-            }
-
-            $phr_lst->add($phr);
-            $pos++;
-        }
-        return $phr_lst;
-    }
-
-    /**
      * create a dummy term list based on the given names
      * @param array $names the names that should be used to create the term list
      * @return term_list
@@ -473,7 +447,7 @@ class test_cleanup extends test_api
             $class = match ($name) {
                 triple_api::TN_PI_NAME => triple::class,
                 formula_api::TN_READ, formula_api::TN_READ_THIS, formula_api::TN_READ_PRIOR => formula::class,
-                verb_api::TN_READ, verb::CAN_CONTAIN_NAME, verb::CAN_CONTAIN_NAME_REVERSE => verb::class,
+                verb_api::TN_READ, verbs::CAN_CONTAIN_NAME, verbs::CAN_CONTAIN_NAME_REVERSE => verb::class,
                 default => word::class,
             };
             $trm = new term($usr);
@@ -540,24 +514,29 @@ class test_cleanup extends test_api
         return $result;
     }
 
-    function html_test(string $body, string $filename, test_cleanup $t): void
+    function html_test(string $body, string $title, string $filename, test_cleanup $t): void
     {
         $lib = new library();
 
-        $created_html = $this->html_page($body);
+        if ($title == '') {
+            $title = 'test';
+        } else {
+            $title = 'test ' . $title;
+        }
+        $created_html = $this->html_page($body, $title);
         $expected_html = $t->file('web/html/' . $filename . '.html');
         $t->display($filename, $lib->trim_html($expected_html), $lib->trim_html($created_html));
     }
 
     function html_view_test(string $body, string $filename, test_cleanup $t): void
     {
-        $this->html_test($body, 'views/' . $filename, $t);
+        $this->html_test($body, 'view', 'views/' . $filename, $t);
     }
 
-    private function html_page(string $body): string
+    private function html_page(string $body, string $title): string
     {
         $html = new html_base();
-        return $html->header_test('test') . $body . $html->footer();
+        return $html->header_test($title) . $body . $html->footer();
     }
 
 }

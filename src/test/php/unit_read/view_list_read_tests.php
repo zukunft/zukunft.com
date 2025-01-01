@@ -33,7 +33,7 @@
 namespace unit_read;
 
 use api\view\view as view_api;
-use cfg\view_list;
+use cfg\view\view_list;
 use shared\library;
 use test\test_cleanup;
 

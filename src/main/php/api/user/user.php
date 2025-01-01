@@ -56,7 +56,7 @@ class user
 
     function __construct()
     {
-        $this->id = 0;
+        $this->set_id(0);
         $this->name = '';
         $this->description = null;
         $this->profile = null;

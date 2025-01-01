@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "name": "Mathematics",
+    "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
+    "type_id": 1,
+    "protection": 3,
+    "class": "word"
+  },
+  {
+    "id": 1,
+    "name": "Mathematical constant",
+    "description": "A mathematical constant that never changes e.g. Pi",
+    "type_id": 17,
+    "protection": 3,
+    "class": "triple"
+  },
+  {
+    "id": 1,
+    "name": "scale minute to sec",
+    "type_id": 1,
+    "user_text": "\"second\" = \"minute\" * 60",
+    "class": "formula"
+  },
+  {
+    "id": 1,
+    "name": "not set",
+    "class": "verb"
+  }
+]

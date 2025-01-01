@@ -32,14 +32,19 @@
 
 namespace unit_write;
 
+include_once SHARED_TYPES_PATH . 'verbs.php';
+
 use api\word\triple as triple_api;
 use api\word\word as word_api;
-use cfg\phrase;
-use cfg\triple;
-use cfg\verb;
-use cfg\word;
+use cfg\phrase\phrase;
+use cfg\word\triple;
+use cfg\verb\verb;
+use cfg\word\word;
 use html\phrase\phrase as phrase_dsp;
+use shared\api;
 use shared\library;
+use shared\views;
+use shared\types\verbs;
 use test\test_cleanup;
 
 class phrase_write_tests
@@ -49,7 +54,7 @@ class phrase_write_tests
     {
 
         global $usr;
-        global $verbs;
+        global $vrb_cac;
         $lib = new library();
 
         $t->header('Test the phrase class (src/main/php/model/phrase/phrase.php)');
@@ -61,7 +66,7 @@ class phrase_write_tests
         // load or create a word that can be parts of a group e.g. Zurich
         $wrd = $t->test_word(word_api::TN_ZH);
         $zh_id = $wrd->id();
-        $is_id = $verbs->id(verb::IS);
+        $is_id = $vrb_cac->id(verbs::IS);
         // load a triple that is parts of a group e.g. Zurich Insurance
         $trp = new triple($usr);
         $trp->load_by_link_id($zh_id, $is_id, $company_id);
@@ -77,7 +82,8 @@ class phrase_write_tests
         $t->assert('phrase->load word by id ' . $company_id, $result, $target);
 
         $result = $lib->trim_html($phr->dsp_tbl());
-        $target = $lib->trim_html('<td><a href="/http/view.php?words=' . $company_id . '" title="' .
+        $url = '<td><a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::MI_WORD . '&' . api::URL_VAR_ID . '=';
+        $target = $lib->trim_html($url . $company_id . '" title="' .
             word_api::TN_COMPANY . '">' . word_api::TN_COMPANY . '</a></td> ');
         $t->assert('phrase->dsp_tbl word for ' . word_api::TN_COMPANY, $result, $target);
 
@@ -124,6 +130,10 @@ class phrase_write_tests
         $is_phr = $phr->is_mainly();
         if ($is_phr != null) {
             $result = $is_phr->name();
+        } else {
+            // TODO activate
+            //log_err('Vestas type test failed');
+            log_warning('Vestas type test failed');
         }
         $target = word_api::TN_COMPANY;
         $t->display('phrase->is_mainly for ' . $phr->name(), $target, $result);

@@ -45,7 +45,7 @@ To update the formula results the main actions are
   C) create the depending on formula results (or delete if not valid anymore)
   D) calculate und update the depending on formula results
   
-A add, update or delete on an object always triggers all action from A) to D)
+add, update or delete on an object always triggers all action from A) to D)
   except the update of a value, which for which A) is not needed
   
 If the change influences the standard result additional to the user value the standard value needs to be updated
@@ -69,19 +69,46 @@ A user updates a formula
 
 */
 
-namespace cfg;
+namespace cfg\system;
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once API_SYSTEM_PATH . 'job.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_SYSTEM_PATH . 'job_type.php';
+include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_REF_PATH . 'ref.php';
+include_once MODEL_USER_PATH . 'user.php';
 
 use api\system\job as job_api;
 use cfg\db\sql;
-use cfg\db\sql_db;
+use cfg\db\sql_creator;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\db_object_seq_id_user;
+use cfg\formula\formula;
+use cfg\helper\type_object;
+use cfg\ref\source;
+use cfg\system\job_type;
+use cfg\system\job_type_list;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
+use cfg\ref\ref;
+use cfg\user\user;
 use DateTime;
 use DateTimeInterface;
 
@@ -117,7 +144,7 @@ class job extends db_object_seq_id_user
     const FLD_TIME_END = 'end_time';
     const FLD_TYPE_COM = 'the id of the job type that should be started';
     const FLD_TYPE = 'job_type_id';
-    const FLD_PARAMETER_COM = 'id of the phrase with the snaped parameter set for this job start';
+    const FLD_PARAMETER_COM = 'id of the phrase with the snapped parameter set for this job start';
     const FLD_PARAMETER = 'parameter';
     const FLD_CHANGE_FIELD_COM = 'e.g. for undo jobs the id of the field that should be changed';
     const FLD_CHANGE_FIELD = 'change_field_id';
@@ -140,12 +167,12 @@ class job extends db_object_seq_id_user
     // field lists for the table creation
     const FLD_LST_ALL = array(
         [user::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
-        [job_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, job_type::class, self::FLD_TYPE_COM],
+        [job_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, job_type::class, self::FLD_TYPE_COM],
         [self::FLD_TIME_REQUEST, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_REQUEST_COM],
         [self::FLD_TIME_START, sql_field_type::TIME, sql_field_default::NULL, sql::INDEX, '', self::FLD_TIME_START_COM],
         [self::FLD_TIME_END, sql_field_type::TIME, sql_field_default::NULL, sql::INDEX, '', self::FLD_TIME_END_COM],
         [self::FLD_PARAMETER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PARAMETER_COM, phrase::FLD_ID],
-        [self::FLD_CHANGE_FIELD, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_CHANGE_FIELD_COM],
+        [self::FLD_CHANGE_FIELD, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_CHANGE_FIELD_COM],
         [self::FLD_ROW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_COM],
         [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
         [ref::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, ref::class, self::FLD_REF_COM],
@@ -161,7 +188,7 @@ class job extends db_object_seq_id_user
     public ?DateTime $start_time = null;    // start time of the job execution
     public ?DateTime $end_time = null;      // end time of the job execution
     private ?int $type_id;                  // id of the job type e.g. "update value", "add formula", ... because getting the type is fast from the preloaded type list
-    public ?int $row_id = null;             // the id of the related object e.g. if a value has been updated the group_id
+    public int|string|null $row_id = null;             // the id of the related object e.g. if a value has been updated the group_id
     public string $status;
     public string $priority;
 
@@ -199,7 +226,7 @@ class job extends db_object_seq_id_user
      */
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
-        global $job_types;
+        global $job_typ_cac;
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             //$this->request_time = $db_row[self::FLD_TIME_REQUEST];
@@ -230,16 +257,16 @@ class job extends db_object_seq_id_user
 
     function set_type(string $code_id): void
     {
-        global $job_types;
-        $this->set_type_id($job_types->id($code_id));
+        global $job_typ_cac;
+        $this->set_type_id($job_typ_cac->id($code_id));
     }
 
     function type_code_id(): string
     {
-        global $job_types;
+        global $job_typ_cac;
         $result = '';
         if ($this->type_id != 0) {
-            $type = $job_types->get($this->type_id);
+            $type = $job_typ_cac->get($this->type_id);
             if ($type != null) {
                 $result = $type->code_id();
             }
@@ -257,7 +284,7 @@ class job extends db_object_seq_id_user
     function api_obj(): job_api
     {
         $api_obj = new job_api($this->user());
-        $api_obj->id = $this->id;
+        $api_obj->id = $this->id();
         // TODO use time zone?
         $api_obj->request_time = $this->request_time->format(DateTimeInterface::ATOM);
         if ($this->start_time != null) {
@@ -288,12 +315,12 @@ class job extends db_object_seq_id_user
     /**
      * create the common part of an SQL statement to retrieve the parameters of a batch job from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql_multi($sc, $query_name, $class, new sql_type_list([sql_type::MOST]));
         $sc->set_class(job::class);
@@ -308,14 +335,13 @@ class job extends db_object_seq_id_user
     /**
      * create an SQL statement to retrieve a batch job by id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
-        return parent::load_sql_by_id($sc, $id, $class);
+        return parent::load_sql_by_id($sc, $id);
     }
 
     /**
@@ -330,21 +356,6 @@ class job extends db_object_seq_id_user
         $db_row = $db_con->get1($qp);
         $this->row_mapper($db_row);
         return $this->id();
-    }
-
-    /**
-     * load a batch job by database id
-     * @param int $id the id of the batch job
-     * @param string $class the name of the child class from where the call has been triggered
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_id(int $id, string $class = self::class): int
-    {
-        global $db_con;
-
-        log_debug($id);
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
-        return $this->load($qp);
     }
 
     /**
@@ -408,7 +419,7 @@ class job extends db_object_seq_id_user
 
                     // execute the job if possible
                     if ($job_id > 0 and $code_id != job_type_list::BASE_IMPORT) {
-                        $this->id = $job_id;
+                        $this->set_id($job_id);
                         $this->exe();
                         $result = $job_id;
                     }
@@ -448,7 +459,7 @@ class job extends db_object_seq_id_user
         $db_type = $db_con->get_class();
         $db_con->set_class(job::class);
         $db_con->usr_id = $this->user()->id();
-        $result = $db_con->update_old($this->id, 'end_time', sql::NOW);
+        $result = $db_con->update_old($this->id(), 'end_time', sql::NOW);
         $db_con->set_class($db_type);
 
         log_debug('done with ' . $result);
@@ -464,7 +475,7 @@ class job extends db_object_seq_id_user
         $db_type = $db_con->get_class();
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(job::class);
-        $result = $db_con->update_old($this->id, 'start_time', sql::NOW);
+        $result = $db_con->update_old($this->id(), 'start_time', sql::NOW);
 
         log_debug($this->type_code_id() . ' with ' . $result);
         if ($this->type_code_id() == job_type_list::VALUE_UPDATE) {
@@ -509,8 +520,8 @@ class job extends db_object_seq_id_user
                 $result .= ' ' . get_class($this->phr_lst) . ' ' . $this->phr_lst->dsp_id();
             }
         }
-        if ($this->id > 0) {
-            $result .= ' (' . $this->id . ')';
+        if ($this->id() > 0) {
+            $result .= ' (' . $this->id() . ')';
         }
         $result .= $this->dsp_id_user();
         return $result;

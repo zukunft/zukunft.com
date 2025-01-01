@@ -30,17 +30,20 @@
 
 */
 
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+
 use api\word\word as word_api;
 use api\ref\source as source_api;
-use cfg\phrase_type;
-use cfg\source;
-use cfg\word;
+use cfg\phrase\phrase_type;
+use cfg\ref\source;
+use cfg\word\word;
 use test\all_tests;
+use shared\types\phrase_type as phrase_type_shared;
 
 function run_sandbox_test(all_tests $t): void
 {
 
-    global $phrase_types;
+    global $phr_typ_cac;
 
     $t->header('Test the user sandbox class (classes/sandbox.php)');
 
@@ -48,10 +51,10 @@ function run_sandbox_test(all_tests $t): void
 
     // a word is not the same as the same word that represents a formula
     $wrd1 = new word($t->usr1);
-    $wrd1->type_id = $phrase_types->id(phrase_type::FORMULA_LINK);
+    $wrd1->type_id = $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK);
     $wrd1->set_name(word_api::TN_MIO);
     $wrd2 = new word($t->usr1);
-    $wrd2->type_id = $phrase_types->default_id();
+    $wrd2->type_id = $phr_typ_cac->default_id();
     $wrd2->set_name(word_api::TN_MIO);
     $target = false;
     $result = $wrd1->is_same($wrd2);
@@ -67,7 +70,7 @@ function run_sandbox_test(all_tests $t): void
     // create a new source (_sandbox->save case 1)
     $src = new source($t->usr1);
     $src->set_name(source_api::TN_IPCC_AR6_SYNTHESIS);
-    $result = $src->save();
+    $result = $src->save()->get_last_message();
     $target = '';
     $t->display('_sandbox->save create a new source', $target, $result);
 
@@ -89,7 +92,7 @@ function run_sandbox_test(all_tests $t): void
     $src = new source($t->usr1);
     $src->set_name(source_api::TN_IPCC_AR6_SYNTHESIS);
     $src->url = source_api::TU_IPCC_AR6_SYNTHESIS;
-    $result = $src->save();
+    $result = $src->save()->get_last_message();
     $target = '';
     $t->display('_sandbox->save update the source url by name', $target, $result);
 

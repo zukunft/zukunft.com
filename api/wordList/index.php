@@ -36,7 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -44,16 +44,17 @@ include_once MODEL_WORD_PATH . 'word_list.php';
 include_once API_WORD_PATH . 'word_list.php';
 
 use controller\controller;
-use cfg\user;
-use cfg\word_list;
+use cfg\user\user;
+use cfg\word\word_list;
 use api\word\word_list as word_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/wordList", "", false);
 
 // get the parameters
-$wrd_ids = $_GET[controller::URL_VAR_ID_LST] ?? '';
-$pattern = $_GET[controller::URL_VAR_PATTERN] ?? '';
+$wrd_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
+$pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
 $msg = '';
 $result = new word_list_api(); // reset the html code var

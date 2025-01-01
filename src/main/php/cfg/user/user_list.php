@@ -29,18 +29,41 @@
 
 */
 
-namespace cfg;
+namespace cfg\user;
+
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_HELPER_PATH . 'db_object.php';
+//include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_REF_PATH . 'ref.php';
+//include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_profile.php';
+//include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+//include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\formula\formula;
+use cfg\helper\db_object;
+use cfg\ref\ref;
+use cfg\ref\source;
+use cfg\user\user;
 use cfg\user\user_profile;
 use cfg\value\value;
+use cfg\view\view;
+use cfg\word\triple;
+use cfg\word\word;
 use shared\library;
-
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
 
 global $system_users;
 
@@ -83,11 +106,11 @@ class user_list
 
     /**
      * set the SQL query parameters to load a list of figure objects
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql $sc, string $query_name): sql_par
+    private function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -103,11 +126,11 @@ class user_list
     /**
      * create an SQL statement to retrieve a user list by the id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param array $ids list of user ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql $sc, array $ids): sql_par
+    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(user::FLD_ID, $ids);
@@ -120,11 +143,11 @@ class user_list
     /**
      * create an SQL statement to retrieve a user the code id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $code_id all users with this code id should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_code_id(sql $sc, string $code_id): sql_par
+    function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id');
         $sc->add_where(sql::FLD_CODE_ID, $code_id);
@@ -139,11 +162,11 @@ class user_list
      * have the given profile level or higher
      * e.g. loading the admin includes the system user
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $profile_id list of user that have at least this profile level
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_profile_and_higher(sql $sc, int $profile_id): sql_par
+    function load_sql_by_profile_and_higher(sql_creator $sc, int $profile_id): sql_par
     {
         $qp = $this->load_sql($sc, 'profiles');
         $sc->set_join_fields(
@@ -204,10 +227,10 @@ class user_list
     /**
      * create an SQL statement to retrieve users that have changed something
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_count_changes(sql $sc): sql_par
+    function load_sql_count_changes(sql_creator $sc): sql_par
     {
         $sub_sql = '(' . $this->load_sql_count_sum_changes() . ')';
         $qp = $this->load_sql($sc, 'count_changes');
@@ -411,41 +434,55 @@ class user_list
      */
     function load_dummy(): void
     {
-        global $user_profiles;
+        global $usr_pro_cac;
 
         $this->lst = array();
         $this->code_id_hash = array();
 
         $usr = new user(user::SYSTEM_NAME, user::SYSTEM_EMAIL);
         $usr->code_id = user::SYSTEM_CODE_ID;
-        $usr->profile_id = $user_profiles->id(user_profile::SYSTEM);
+        $usr->profile_id = $usr_pro_cac->id(user_profile::SYSTEM);
         $this->lst[user::SYSTEM_ID] = $usr;
         $this->code_id_hash[user::SYSTEM_CODE_ID] = user::SYSTEM_ID;
 
         $usr = new user(user::SYSTEM_ADMIN_NAME, user::SYSTEM_ADMIN_EMAIL);
         $usr->code_id = user::SYSTEM_ADMIN_CODE_ID;
-        $usr->profile_id = $user_profiles->id(user_profile::ADMIN);
+        $usr->profile_id = $usr_pro_cac->id(user_profile::ADMIN);
         $this->lst[user::SYSTEM_ADMIN_ID] = $usr;
         $this->code_id_hash[user::SYSTEM_ADMIN_CODE_ID] = user::SYSTEM_ADMIN_ID;
 
         $usr = new user(user::SYSTEM_TEST_NAME, user::SYSTEM_TEST_EMAIL);
         $usr->code_id = user::SYSTEM_TEST_CODE_ID;
-        $usr->profile_id = $user_profiles->id(user_profile::TEST);
+        $usr->profile_id = $usr_pro_cac->id(user_profile::TEST);
         $this->lst[user::SYSTEM_TEST_ID] = $usr;
         $this->code_id_hash[user::SYSTEM_TEST_CODE_ID] = user::SYSTEM_TEST_ID;
 
         $usr = new user(user::SYSTEM_TEST_PARTNER_NAME, user::SYSTEM_TEST_PARTNER_EMAIL);
         $usr->code_id = user::SYSTEM_TEST_PARTNER_CODE_ID;
-        $usr->profile_id = $user_profiles->id(user_profile::TEST);
+        $usr->profile_id = $usr_pro_cac->id(user_profile::TEST);
         $this->lst[user::SYSTEM_TEST_PARTNER_ID] = $usr;
         $this->code_id_hash[user::SYSTEM_TEST_PARTNER_CODE_ID] = user::SYSTEM_TEST_PARTNER_ID;
 
         $usr = new user(user::SYSTEM_TEST_NORMAL_NAME, user::SYSTEM_TEST_NORMAL_EMAIL);
         $usr->code_id = user::SYSTEM_TEST_NORMAL_CODE_ID;
-        $usr->profile_id = $user_profiles->id(user_profile::NORMAL);
+        $usr->profile_id = $usr_pro_cac->id(user_profile::NORMAL);
         $this->lst[user::SYSTEM_TEST_NORMAL_ID] = $usr;
         $this->code_id_hash[user::SYSTEM_TEST_NORMAL_CODE_ID] = user::SYSTEM_TEST_NORMAL_ID;
 
+    }
+
+
+    /*
+     * information
+     */
+
+    function is_empty(): bool
+    {
+        $result = true;
+        if ($this->lst > 0) {
+            $result = false;
+        }
+        return $result;
     }
 
 }

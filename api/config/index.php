@@ -36,7 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -44,7 +44,7 @@ include_once MODEL_HELPER_PATH . 'config_numbers.php';
 
 use cfg\config_numbers;
 use controller\controller;
-use cfg\user;
+use cfg\user\user;
 
 // open database
 $db_con = prg_start("api/config", "", false);
@@ -61,7 +61,13 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
     $cfg_lst = new config_numbers($usr);
-    $cfg_lst->load_usr_cgf($db_con, $usr);
+    if (!$cfg_lst->load_usr_cfg($usr)) {
+        $msg = 'cannot load config';
+    } else {
+        if ($cfg_lst->is_empty()) {
+            $msg = 'config is empty';
+        }
+    }
     $result = $cfg_lst->api_obj();
 }
 

@@ -1,0 +1,11 @@
+zukunft.com AG (Schweiz):
+  tooltip-comment: "zukunft.com AG is the company that has developted zukunft.com"
+  Jahr 2023:
+    Kontenplan:
+      Bilanz:
+        Aktive:
+          Konto: 1
+          Flüssige Mittel:
+            Konto: 100
+            PostFinance 89-274297-2:
+              Konto: 1010

@@ -38,17 +38,31 @@
 
 namespace cfg\db;
 
-use cfg\combine_named;
-use cfg\db_object_seq_id;
-use cfg\formula;
+include_once DB_PATH . 'sql_par_field.php';
+include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+//include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once SHARED_PATH . 'library.php';
+
+use cfg\helper\combine_named;
+use cfg\helper\db_object_seq_id;
+use cfg\formula\formula;
 use cfg\log\change;
-use cfg\sandbox;
-use cfg\sandbox_link_named;
-use cfg\sandbox_multi;
-use cfg\sandbox_named;
-use cfg\type_list;
-use cfg\type_object;
-use cfg\user;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_link_named;
+use cfg\sandbox\sandbox_multi;
+use cfg\sandbox\sandbox_named;
+use cfg\helper\type_list;
+use cfg\helper\type_object;
+use cfg\user\user;
 use DateTime;
 use DateTimeInterface;
 use shared\library;
@@ -215,16 +229,18 @@ class sql_par_field_list
         $this->add_field(
             $db_fld,
             $chg_sbx?->name(),
-            sandbox_named::FLD_NAME_SQLTYP,
+            sandbox_named::FLD_NAME_SQL_TYP,
             $db_sbx?->name(),
             $usr_fld,
             $chg_sbx?->id(),
             $db_sbx?->id(),
-            db_object_seq_id::FLD_ID_SQLTYP);
+            db_object_seq_id::FLD_ID_SQL_TYP);
     }
 
     /**
-     * add a type field e.g. the phrase type
+     * add a type or predicate field
+     * and include the type name for logging based on the given type list
+     * e.g. the phrase type or reference type
      *
      * @param string $db_fld the field name to be updated in the database e.g. view_id
      * @param string $usr_fld the field name from the user point of view e.g. view_name
@@ -244,12 +260,12 @@ class sql_par_field_list
         $this->add_field(
             $db_fld,
             $typ_lst->name_or_null($chg_id),
-            type_list::FLD_NAME_SQLTYP,
+            type_list::FLD_NAME_SQL_TYP,
             $typ_lst->name_or_null($db_id),
             $usr_fld,
             $chg_id,
             $db_id,
-            type_object::FLD_ID_SQLTYP);
+            type_object::FLD_ID_SQL_TYP);
     }
 
     /**
@@ -263,12 +279,12 @@ class sql_par_field_list
         $this->add_field(
             $sbx::FLD_ID,
             $sbx->id(),
-            db_object_seq_id::FLD_ID_SQLTYP
+            db_object_seq_id::FLD_ID_SQL_TYP
         );
         $this->add_field(
             user::FLD_ID,
             $sbx->user_id(),
-            db_object_seq_id::FLD_ID_SQLTYP
+            db_object_seq_id::FLD_ID_SQL_TYP
         );
 
     }
@@ -289,14 +305,14 @@ class sql_par_field_list
         int                   $table_id
     ): void
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         if ($sbx_db->user_id() <> $sbx_upd->user_id()) {
             if ($do_log) {
                 $this->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID,
-                    $change_field_list->id($table_id . user::FLD_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . user::FLD_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             if ($sbx_db->user_id() == 0) {
@@ -307,7 +323,7 @@ class sql_par_field_list
             $this->add_field(
                 user::FLD_ID,
                 $sbx_upd->user_id(),
-                db_object_seq_id::FLD_ID_SQLTYP,
+                db_object_seq_id::FLD_ID_SQL_TYP,
                 $old_user_id
             );
         }
@@ -330,15 +346,15 @@ class sql_par_field_list
         int                                      $table_id
     ): void
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
         // include the name field for the log also if the object is only excluded
         if ($sbx_db->name() <> $sbx_upd->name()) {
             if ($do_log) {
                 $this->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . $sbx_upd->name_field(),
-                    $change_field_list->id($table_id . $sbx_upd->name_field()),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . $sbx_upd->name_field()),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             if ($sbx_db->name() == '') {
@@ -349,7 +365,7 @@ class sql_par_field_list
             $this->add_field(
                 $sbx_upd->name_field(),
                 $sbx_upd->name(),
-                sandbox_named::FLD_NAME_SQLTYP,
+                sandbox_named::FLD_NAME_SQL_TYP,
                 $old_name
             );
         }
@@ -357,14 +373,14 @@ class sql_par_field_list
             if ($do_log) {
                 $this->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $change_field_list->id($table_id . sandbox_named::FLD_DESCRIPTION),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $this->add_field(
                 sandbox_named::FLD_DESCRIPTION,
                 $sbx_upd->description,
-                sandbox_named::FLD_DESCRIPTION_SQLTYP,
+                sandbox_named::FLD_DESCRIPTION_SQL_TYP,
                 $sbx_db->description
             );
         }
@@ -393,7 +409,7 @@ class sql_par_field_list
             $i = 0;
             foreach ($fields as $fld) {
                 $val = $values[$i];
-                $sc = new sql();
+                $sc = new sql_creator();
                 $type = $sc->get_sql_par_type($val);
                 if (count($types) == count($fields)) {
                     $type = $types[$i];
@@ -613,7 +629,7 @@ class sql_par_field_list
         return $this;
     }
 
-    function esc_names(sql $sc): void
+    function esc_names(sql_creator $sc): void
     {
         foreach ($this->lst as $key => $fld) {
             if ($fld->value != sql::NOW) {
@@ -624,10 +640,10 @@ class sql_par_field_list
 
     /**
      * create the sql function call parameter statement
-     * @param sql $sc
+     * @param sql_creator $sc
      * @return string
      */
-    function par_sql(sql $sc): string
+    function par_sql(sql_creator $sc): string
     {
         $sql = '';
         foreach ($this->lst as $key => $fld) {
@@ -661,10 +677,10 @@ class sql_par_field_list
 
     /**
      * create the sql call parameter type statement part
-     * @param sql $sc
+     * @param sql_creator $sc
      * @return string
      */
-    function par_types(sql $sc): string
+    function par_types(sql_creator $sc): string
     {
         $sql = '';
         foreach ($this->lst as $key => $fld) {
@@ -679,10 +695,10 @@ class sql_par_field_list
 
     /**
      * create the sql call parameter symbol statement part
-     * @param sql $sc
+     * @param sql_creator $sc
      * @return string
      */
-    function par_vars(sql $sc): string
+    function par_vars(sql_creator $sc): string
     {
         $sql = '';
         $pos = 1;
@@ -702,10 +718,10 @@ class sql_par_field_list
 
     /**
      * create the sql function call parameter statement
-     * @param sql $sc
+     * @param sql_creator $sc
      * @return string
      */
-    function sql_par_names(sql $sc): string
+    function sql_par_names(sql_creator $sc): string
     {
         $sql = '';
         foreach ($this->lst as $key => $fld) {

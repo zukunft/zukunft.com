@@ -2,6 +2,7 @@ PREPARE word_norm_by_id (bigint) AS
     SELECT word_id,
            word_name,
            values,
+           code_id,
            plural,
            description,
            phrase_type_id,

@@ -36,7 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -44,15 +44,16 @@ include_once MODEL_WORD_PATH . 'phrase.php';
 
 use api\api_message;
 use controller\controller;
-use cfg\user;
-use cfg\phrase;
+use cfg\user\user;
+use cfg\phrase\phrase;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/phrase", "", false);
 
 // get the parameters
-$phr_id = $_GET[controller::URL_VAR_ID] ?? 0;
-$phr_name = $_GET[controller::URL_VAR_NAME] ?? '';
+$phr_id = $_GET[api::URL_VAR_ID] ?? 0;
+$phr_name = $_GET[api::URL_VAR_NAME] ?? '';
 
 // load the session user parameters
 $msg = '';

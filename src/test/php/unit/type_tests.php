@@ -32,21 +32,22 @@
 
 namespace unit;
 
-use cfg\formula_type;
-use cfg\job_type;
-use cfg\phrase_type;
-use cfg\protection_type;
-use cfg\ref_type;
-use cfg\share_type;
-use cfg\source_type;
-use cfg\sys_log_function;
-use cfg\sys_log_status;
-use cfg\sys_log_type;
+use cfg\component\view_style;
+use cfg\formula\formula_type;
+use cfg\ref\ref_type;
+use cfg\ref\source_type;
+use cfg\sandbox\protection_type;
+use cfg\sandbox\share_type;
+use cfg\system\job_type;
+use cfg\phrase\phrase_type;
+use cfg\system\sys_log_function;
+use cfg\system\sys_log_status;
+use cfg\system\sys_log_type;
+use cfg\user\user_official_type;
 use cfg\user\user_profile;
 use cfg\user\user_type;
-use cfg\user_official_type;
-use cfg\view_link_type;
-use cfg\view_type;
+use cfg\view\view_link_type;
+use cfg\view\view_type;
 use test\test_cleanup;
 
 class type_tests
@@ -133,6 +134,11 @@ class type_tests
         $dsp_typ = new view_type('');
         $t->assert_sql_table_create($dsp_typ);
         $t->assert_sql_index_create($dsp_typ);
+
+        $t->subheader('view style sql setup');
+        $style = new view_style('');
+        $t->assert_sql_table_create($style);
+        $t->assert_sql_index_create($style);
 
         $t->subheader('view term link type sql setup');
         $dsp_lnk_typ = new view_link_type('');

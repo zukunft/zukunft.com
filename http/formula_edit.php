@@ -2,51 +2,56 @@
 
 /*
 
-  formula_edit.php - change a formula
-  ----------------
-  
-  This file is part of zukunft.com - calc with words
+    formula_edit.php - change a formula
+    ----------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
-use controller\controller;
+// standard zukunft header for callable php files to allow debugging and lib loading
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once SHARED_PATH . 'views.php';
+
 use html\html_base;
 use html\view\view as view_dsp;
 use html\formula\formula as formula_dsp;
-use cfg\formula;
-use cfg\phrase;
-use cfg\user;
-use cfg\view;
-
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+use cfg\formula\formula;
+use cfg\phrase\phrase;
+use cfg\user\user;
+use cfg\view\view;
+use shared\api;
+use shared\views as view_shared;
 
 $db_con = prg_start("formula_edit");
 $html = new html_base();
 
 // get the parameters
-$frm_id = $_GET[controller::URL_VAR_ID] ?? 0;
+$frm_id = $_GET[api::URL_VAR_ID] ?? 0;
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -62,8 +67,8 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::MC_FORMULA_EDIT);
-    $back = $_GET[controller::API_BACK];
+    $msk->load_by_code_id(view_shared::MC_FORMULA_EDIT);
+    $back = $_GET[api::URL_VAR_BACK] = '';
 
     // create the formula object to have a place to update the parameters
     $frm = new formula($usr);
@@ -76,8 +81,8 @@ if ($usr->id() > 0) {
     if (isset($_GET['formula_text'])) {
         $frm->usr_text = $_GET['formula_text'];
     } // the new formula text in the user format
-    if (isset($_GET[controller::URL_VAR_DESCRIPTION])) {
-        $frm->description = $_GET[controller::URL_VAR_DESCRIPTION];
+    if (isset($_GET[api::URL_VAR_DESCRIPTION])) {
+        $frm->description = $_GET[api::URL_VAR_DESCRIPTION];
     }
     if (isset($_GET['type'])) {
         $frm->type_id = $_GET['type'];
@@ -97,7 +102,7 @@ if ($usr->id() > 0) {
 
         // do the direct changes initiated by other buttons than the save button
         // to link the formula to another word
-        $link_phr_id = $_GET[controller::URL_VAR_LINK_PHRASE] ?? 0;
+        $link_phr_id = $_GET[api::URL_VAR_LINK_PHRASE] ?? 0;
         if ($link_phr_id != 0) {
             $phr = new phrase($usr);
             $phr->load_by_id($link_phr_id);
@@ -105,7 +110,7 @@ if ($usr->id() > 0) {
         }
 
         // to unlink a word from the formula
-        $unlink_phr_id = $_GET[controller::URL_VAR_UNLINK_PHRASE] ?? 0;
+        $unlink_phr_id = $_GET[api::URL_VAR_UNLINK_PHRASE] ?? 0;
         if ($unlink_phr_id > 0) {
             $phr = new phrase($usr);
             $phr->load_by_id($unlink_phr_id);
@@ -116,7 +121,7 @@ if ($usr->id() > 0) {
         if ($frm->usr_text <> '') {
 
             // update the formula if it has been changed
-            $upd_result = $frm->save();
+            $upd_result = $frm->save()->get_last_message();
 
             // if update was successful ...
             if (str_replace('1', '', $upd_result) == '') {

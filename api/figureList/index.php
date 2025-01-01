@@ -39,7 +39,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -48,15 +48,16 @@ include_once API_FORMULA_PATH . 'figure_list.php';
 
 use cfg\fig_ids;
 use controller\controller;
-use cfg\user;
-use cfg\figure_list;
+use cfg\user\user;
+use cfg\formula\figure_list;
 use api\formula\figure_list as figure_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/figureList", "", false);
 
 // get the parameters
-$frm_ids = $_GET[controller::URL_VAR_ID_LST] ?? 0;
+$frm_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
 
 $msg = '';
 $result = new figure_list_api(); // reset the html code var

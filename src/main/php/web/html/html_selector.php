@@ -113,7 +113,7 @@ class html_selector
             }
             */
             if ($this->type == self::TYPE_DATALIST) {
-                $result .= '<input type="text" list="' . $this->name . '_list" class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $this->name . '" ' . $this->attribute . '>';
+                $result .= '<input type="' . html_base::INPUT_TEXT . '" list="' . $this->name . '_list" class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $this->name . '" ' . $this->attribute . '>';
                 $result .= '<datalist id="' . $this->name . '_list">';
             } else {
                 if ($this->form != "") {

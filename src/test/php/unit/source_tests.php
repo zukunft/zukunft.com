@@ -33,11 +33,11 @@
 namespace unit;
 
 use api\ref\source as source_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_type;
-use cfg\source_type_list;
+use cfg\ref\source_type_list;
 use html\ref\source as source_dsp;
-use cfg\source;
+use cfg\ref\source;
 use cfg\db\sql_db;
 use test\test_cleanup;
 
@@ -49,7 +49,7 @@ class source_tests
         global $usr;
 
         // init for source
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'source->';
         $t->resource_path = 'db/ref/';
 
@@ -119,6 +119,8 @@ class source_tests
         $t->assert_api_to_dsp($src, new source_dsp());
 
         $t->subheader('source import and export tests');
+        $t->assert_ex_and_import($t->source());
+        $t->assert_ex_and_import($t->source_filled());
         $json_file = 'unit/ref/bipm.json';
         $t->assert_json_file(new source($usr), $json_file);
 

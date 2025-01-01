@@ -12,6 +12,11 @@
     the values in the config table can only be changed by the system admin
     expose the config class functions as simple functions for simple coding
 
+    application.yaml vs config.yaml:
+    - the application.yaml contains the settings that cannot be changed without code change
+    - the config.yaml contains all settings that the admin can adjust without code change
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -38,17 +43,22 @@
 
 namespace cfg;
 
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql.php';
+include_once MODEL_USER_PATH . 'user.php';
+
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_USER_PATH . 'user.php';
+use cfg\helper\db_object_seq_id;
+use cfg\sandbox\sandbox_named;
 
 class config extends db_object_seq_id
 {
@@ -82,14 +92,14 @@ class config extends db_object_seq_id
     const FLD_VALUE = 'value';
     const FLD_DESCRIPTION_COM = 'text to explain the config value to an admin user';
     const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
+    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
 
     // field lists for the table creation
     const FLD_LST_ALL = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
         [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
         [sql::FLD_VALUE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_VALUE_COM],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
 
@@ -100,10 +110,10 @@ class config extends db_object_seq_id
     /**
      * the sql statement to create the tables of a config table
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the table
      */
-    function sql_table(sql $sc): string
+    function sql_table(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         $sql .= $this->sql_table_create($sc);
@@ -113,10 +123,10 @@ class config extends db_object_seq_id
     /**
      * the sql statement to create the database indices of a config table
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the indices
      */
-    function sql_index(sql $sc): string
+    function sql_index(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         $sql .= $this->sql_index_create($sc);

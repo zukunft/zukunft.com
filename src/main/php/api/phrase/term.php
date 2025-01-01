@@ -41,8 +41,8 @@ include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_PHRASE_PATH . 'term.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use api\api;
 use api\formula\formula as formula_api;
 use api\sandbox\combine_named as combine_named_api;
 use api\sandbox\combine_object as combine_object_api;
@@ -55,6 +55,7 @@ use html\word\triple as triple_dsp;
 use html\formula\formula as formula_dsp;
 use html\verb\verb as verb_dsp;
 use JsonSerializable;
+use shared\json_fields;
 
 class term extends combine_named_api implements JsonSerializable
 {
@@ -224,15 +225,15 @@ class term extends combine_named_api implements JsonSerializable
     function jsonSerialize(): array
     {
         $vars = parent::jsonSerialize();
-        $vars[api::FLD_ID] = $this->obj_id();
+        $vars[json_fields::ID] = $this->obj_id();
         if ($this->is_word()) {
-            $vars[combine_object_api::FLD_CLASS] = self::CLASS_WORD;
+            $vars[json_fields::OBJECT_CLASS] = self::CLASS_WORD;
         } elseif ($this->is_triple()) {
-            $vars[combine_object_api::FLD_CLASS] = self::CLASS_TRIPLE;
+            $vars[json_fields::OBJECT_CLASS] = self::CLASS_TRIPLE;
         } elseif ($this->is_formula()) {
-            $vars[combine_object_api::FLD_CLASS] = self::CLASS_FORMULA;
+            $vars[json_fields::OBJECT_CLASS] = self::CLASS_FORMULA;
         } elseif ($this->is_verb()) {
-            $vars[combine_object_api::FLD_CLASS] = self::CLASS_VERB;
+            $vars[json_fields::OBJECT_CLASS] = self::CLASS_VERB;
         } else {
             log_err('class ' . $this->obj()::class . ' of term ' . $this->name() . ' not expected');
         }

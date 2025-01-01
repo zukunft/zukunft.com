@@ -31,6 +31,7 @@
 
 namespace unit;
 
+include_once SERVICE_PATH . 'config.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
 include_once MODEL_SYSTEM_PATH . 'session.php';
@@ -40,17 +41,17 @@ include_once API_SYSTEM_PATH . 'sys_log.php';
 use api\word\word as word_api;
 use api\ref\ref as ref_api;
 use cfg\config;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\formula;
-use cfg\ip_range;
-use cfg\ip_range_list;
-use cfg\session;
-use cfg\sys_log;
+use cfg\formula\formula;
 use cfg\sys_log_list;
-use cfg\sys_log_status;
-use cfg\sys_log_status_list;
-use cfg\verb;
+use cfg\system\ip_range;
+use cfg\system\ip_range_list;
+use cfg\system\session;
+use cfg\system\sys_log;
+use cfg\system\sys_log_status;
+use cfg\system\sys_log_status_list;
+use cfg\verb\verb;
 use controller\system\sys_log as sys_log_api;
 use DateTime;
 use shared\library;
@@ -64,12 +65,12 @@ class system_tests
         global $usr;
         global $usr_sys;
         global $sql_names;
-        global $sys_log_stati;
+        global $sys_log_sta_cac;
 
         // init
         $lib = new library();
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'system->';
         $t->resource_path = 'db/system/';
 
@@ -103,14 +104,14 @@ class system_tests
         $t->assert_dsp_id($t->triple(), '"constant" "is part of" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->triple_list(), '"Pi (math)" (triple_id 2) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->triple()->phrase(), '"constant" "is part of" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test) as phrase');
-        $t->assert_dsp_id($t->phrase_list(), '"Mathematical constant","Mathematics","Pi","Pi (math)","constant" (phrase_id 1,2,4,-1,-2) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->phrase_list_prime(), '"Mathematical constant","Mathematics","Pi (math)","constant" (phrase_id 1,2,-1,-2) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->phrase_list_long(), '"2019","Bern (City)","Euler\'s constant" ... total 13 (phrase_id 1,2,4,6,142,3,170,172,-1,-2,-38,-39,-40) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->group(), '"Pi (math)" (group_id 32770) as "Pi (math)" for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->group_list(), ' ... total 1');
         $t->assert_dsp_id($t->term(), '"Mathematics" (word_id 1) for user 1 (zukunft.com system test) as term');
         $t->assert_dsp_id($t->term_list(), '"Mathematical constant","Mathematics","not set","scale minute to sec" (-2,-1,1,2)');
         $t->assert_dsp_id($t->value(), '"Pi (math)" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->value_list(), '"Pi (math)" 3.1415926535898 / "inhabitant in the city of Zurich (2019)" 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / ' . word_api::TI_INHABITANT . ',' . word_api::TI_ZH . ',' . word_api::TI_2019 . ',) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->value_phrase_link(), 'link "Pi (math)" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) to "Mathematics" (word_id 1) as phrase for zukunft.com system test (1)');
         $t->assert_dsp_id($t->source(), '"The International System of Units" (source_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->reference(), 'ref of "Pi" to "wikidata" (' . ref_api::TI_PI . ')');
         $t->assert_dsp_id($t->formula(), '"scale minute to sec" (formula_id 1) for user 1 (zukunft.com system test)');
@@ -123,12 +124,12 @@ class system_tests
         $t->assert_dsp_id($t->result_list(), '"Mathematics" 123456 / "percent" 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / 2,,,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->figure_value(), 'value figure "Pi (math)" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test) 2022-12-26 18:23:45');
         $t->assert_dsp_id($t->figure_list(), ' 3.1415926535898 Pi (math)  123456 "Mathematics"  (32770,-1)');
-        $t->assert_dsp_id($t->view(), '"Word" (view_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->view_list(), '"Word","Add word" (view_id 1,3) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->view(), '"Start view" (view_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->view_list(), '"Start view","Add word" (view_id 1,3) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->component(), '"Word" (component_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->component_list(), '"Word","form field share type" (component_id 1,6) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->component_link(), 'from "Word" (view_id 1) to "Word" (component_id 1) as (component_link_id 1) at pos 1');
-        $t->assert_dsp_id($t->component_link_list(), '"Word" (component_link_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->component_list(), '"Word","form field share type" (component_id 1,7) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->component_link(), 'from "Start view" (view_id 1) to "Word" (component_id 1) as (component_link_id 1) at pos 1');
+        $t->assert_dsp_id($t->component_link_list(), '"Word","spreadsheet" (component_link_id 1,2) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->language(), 'English/english (language_id 1)');
         $t->assert_dsp_id($t->change_log_named(), 'log add words,word_name Mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t->change_log_norm(), 'log add words,word_name Mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
@@ -215,32 +216,32 @@ class system_tests
          * activate if nevertheless an issue occurs
         $system_users = new user_list();
         $t->assert_sql_all($db_con, $system_users);
-        $user_profiles = new user_profile_list();
-        $t->assert_sql_all($db_con, $user_profiles);
-        $phrase_types = new phrase_types(true);
-        $t->assert_sql_all($db_con, $phrase_types);
-        $formula_types = new formula_type_list();
-        $t->assert_sql_all($db_con, $formula_types);
-        $formula_link_types = new formula_link_type_list();
-        $t->assert_sql_all($db_con, $formula_link_types);
-        $element_types = new element_type_list();
-        $t->assert_sql_all($db_con, $element_types);
-        $view_types = new view_type_list();
-        $t->assert_sql_all($db_con, $view_types);
-        $component_types = new component_type_list();
-        $t->assert_sql_all($db_con, $component_types);
-        $ref_types = new ref_type_list();
-        $t->assert_sql_all($db_con, $ref_types);
-        $share_types = new share_type_list();
-        $t->assert_sql_all($db_con, $share_types);
-        $protection_types = new protection_type_list();
-        $t->assert_sql_all($db_con, $protection_types);
-        $job_types = new job_type_list();
-        $t->assert_sql_all($db_con, $job_types);
-        $change_table_list = new change_table_list();
-        $t->assert_sql_all($db_con, $change_table_list);
-        $change_field_list = new change_field_list();
-        $t->assert_sql_all($db_con, $change_field_list);
+        $usr_pro_cac = new user_profile_list();
+        $t->assert_sql_all($db_con, $usr_pro_cac);
+        $phr_typ_cac = new phrase_types(true);
+        $t->assert_sql_all($db_con, $phr_typ_cac);
+        $frm_typ_cac = new formula_type_list();
+        $t->assert_sql_all($db_con, $frm_typ_cac);
+        $frm_lnk_typ_cac = new formula_link_type_list();
+        $t->assert_sql_all($db_con, $frm_lnk_typ_cac);
+        $elm_typ_cac = new element_type_list();
+        $t->assert_sql_all($db_con, $elm_typ_cac);
+        $msk_typ_cac = new view_type_list();
+        $t->assert_sql_all($db_con, $msk_typ_cac);
+        $cmp_typ_cac = new component_type_list();
+        $t->assert_sql_all($db_con, $cmp_typ_cac);
+        $ref_typ_cac = new ref_type_list();
+        $t->assert_sql_all($db_con, $ref_typ_cac);
+        $shr_typ_cac = new share_type_list();
+        $t->assert_sql_all($db_con, $shr_typ_cac);
+        $ptc_typ_cac = new protection_type_list();
+        $t->assert_sql_all($db_con, $ptc_typ_cac);
+        $job_typ_cac = new job_type_list();
+        $t->assert_sql_all($db_con, $job_typ_cac);
+        $cng_tbl_cac = new change_table_list();
+        $t->assert_sql_all($db_con, $cng_tbl_cac);
+        $cng_fld_cac = new change_field_list();
+        $t->assert_sql_all($db_con, $cng_fld_cac);
          */
 
         /*
@@ -253,7 +254,7 @@ class system_tests
         $ip_range = new ip_range();
         $ip_range->set_user($usr);
         $ip_range->import_obj($json_in, $t);
-        $json_ex = json_decode(json_encode($ip_range->export_obj()), true);
+        $json_ex = $ip_range->export_json();
         $result = $lib->json_is_similar($json_in, $json_ex);
         $t->assert_true('ip_range->import check', $result);
 
@@ -295,6 +296,8 @@ class system_tests
         $qp = $db_con->missing_owner_sql();
         $expected_sql = $t->file('db/system/missing_owner_by_formula.sql');
         $t->assert('system_consistency->missing_owner_sql by formula', $lib->trim($qp->sql), $lib->trim($expected_sql));
+
+        $this->php_include_tests($t);
 
         // ... and check if the prepared sql name is unique
         if (!in_array($qp->name, $sql_names)) {
@@ -380,7 +383,7 @@ class system_tests
         $log->log_trace = sys_log_api::TV_LOG_TRACE;
         $log->function_name = sys_log_api::TV_FUNC_NAME;
         $log->solver_name = sys_log_api::TV_SOLVE_ID;
-        $log->status_name = $sys_log_stati->id(sys_log_status::OPEN);
+        $log->status_name = $sys_log_sta_cac->id(sys_log_status::OPEN);
         $log_dsp = $log->get_api_obj();
         $created = $log_dsp->get_json();
         $expected = file_get_contents(PATH_TEST_FILES . 'api/system/sys_log.json');
@@ -406,7 +409,7 @@ class system_tests
         $log2->log_trace = sys_log_api::T2_LOG_TRACE;
         $log2->function_name = sys_log_api::T2_FUNC_NAME;
         $log2->solver_name = sys_log_api::TV_SOLVE_ID;
-        $log2->status_name = $sys_log_stati->id(sys_log_status::CLOSED);
+        $log2->status_name = $sys_log_sta_cac->id(sys_log_status::CLOSED);
 
         $log_lst = new sys_log_list();
         $log_lst->add($log);
@@ -439,6 +442,59 @@ class system_tests
         $expected = file_get_contents(PATH_TEST_FILES . 'db/formula/formula_count.sql');
         $t->assert_sql('sql_db->count', $created, $expected);
 
+    }
+
+    /**
+     * check if all used classes are also included once within the same file
+     *
+     * @param test_cleanup $t
+     * @return void
+     */
+    function php_include_tests(test_cleanup $t): void
+    {
+        $lib = new library();
+        $test_name = 'check if all used classes are loaded in php with include once';
+        $result = '';
+        $file_array = $lib->dir_to_array(MODEL_PATH);
+        $code_files = $lib->array_to_path($file_array);
+        $pos = 1;
+        foreach ($code_files as $code_file) {
+            log_debug($code_file);
+            $ctrl_code = file(MODEL_PATH . $code_file);
+            $use_classes = $lib->php_code_use($ctrl_code);
+            // the use code lines sorted by name for copy and paste to code
+            $use_sorted = implode("\n", $lib->php_code_use_sorted($ctrl_code));
+            // the include code lines sorted by name for copy and paste to code
+            $use_converted = implode("\n", $lib->php_code_use_converted($ctrl_code));
+            $include_classes = $lib->php_code_include($ctrl_code);
+            foreach ($use_classes as $use) {
+                $class = $use[0];
+                $path = $use[1];
+                if ($path != '') {
+                    $found = false;
+                    foreach ($include_classes as $include) {
+                        $class_incl = $include[0];
+                        $path_incl = $include[1];
+                        if ($class == $class_incl) {
+                            $path_conv = $lib->php_path_convert($path);
+                            if ($path_conv == $path_incl) {
+                                $found = true;
+                            }
+                        }
+                    }
+                    if (!$found) {
+                        $t->assert(
+                            'includes missing in ' . $path . '\\' . $class
+                            . ' in ' . $code_file
+                            . ' (' . $pos . ' of ' .count($code_files) . ')', '',
+                            $class);
+                    }
+                } else {
+                    log_debug($class . ' is expected to be a PHP default library');
+                }
+            }
+            $pos++;
+        }
     }
 
 }

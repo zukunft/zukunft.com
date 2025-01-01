@@ -36,14 +36,16 @@ include_once API_VERB_PATH . 'verb.php';
 include_once API_VIEW_PATH . 'view.php';
 include_once API_SANDBOX_PATH . 'list_object.php';
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use api\api;
+use shared\api;
 use api\sandbox\list_object as list_api;
 use api\sandbox\type_object as type_api;
-use cfg\verb;
-use cfg\view;
+use cfg\verb\verb;
+use cfg\view\view;
 use html\user\user_type_list as type_list_dsp;
 use JsonSerializable;
+use shared\json_fields;
 
 class type_list extends list_api implements JsonSerializable
 {
@@ -81,7 +83,7 @@ class type_list extends list_api implements JsonSerializable
                     if ($obj::class == verb::class or $obj::class == view::class) {
                         $id = $obj->id();
                     } else {
-                        $id = $obj->id;
+                        $id = $obj->id();
                     }
                 }
                 $api_obj = new type_api(
@@ -143,7 +145,7 @@ class type_list extends list_api implements JsonSerializable
         $vars = [];
         foreach ($this->lst() as $typ) {
             $typ_vars = get_object_vars($typ);
-            $typ_vars[api::FLD_ID] = $typ->id();
+            $typ_vars[json_fields::ID] = $typ->id();
             $vars[] = $typ_vars;
         }
         return $vars;

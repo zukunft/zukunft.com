@@ -71,10 +71,13 @@
 namespace cfg\group;
 
 include_once MODEL_GROUP_PATH . 'id.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once SHARED_PATH . 'library.php';
 
-use cfg\db\sql_type;
-use cfg\formula;
-use cfg\phrase_list;
+use cfg\formula\formula;
+use cfg\phrase\phrase_list;
+use shared\library;
 
 class result_id extends id
 {
@@ -205,7 +208,9 @@ class result_id extends id
             $id_lst[] = 0;
         }
         if (count($id_lst) != $total_length) {
-            log_err('Wrong id array size in two_int_group_id based on ' . implode(",", $both_lst));
+            $lib = new library();
+            $lst_txt = $lib->dsp_array($both_lst->lst());
+            log_err('Wrong id array size in two_int_group_id based on ' . $lst_txt);
         } else {
             $keys[] = $this->id_lst_to_int(array_slice($id_lst, 0, 3));
             $keys[] = $this->id_lst_to_int(array_slice($id_lst, 4, 7));

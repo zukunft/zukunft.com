@@ -39,7 +39,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -47,18 +47,19 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once API_PHRASE_PATH . 'phrase_list.php';
 
 use controller\controller;
-use cfg\user;
-use cfg\word;
+use cfg\user\user;
+use cfg\word\word;
 use api\phrase\phrase_list as phrase_list_api;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/json", "", false);
 
 // get the parameters
-$wrd_id = $_GET[controller::URL_VAR_WORD_ID] ?? 0;
+$wrd_id = $_GET[api::URL_VAR_WORD_ID] ?? 0;
 
 $msg = '';
-$result = new phrase_list_api(); // reset the html code var
+$result = ''; // reset the json string
 
 // load the session user parameters
 $usr = new user;
@@ -70,14 +71,14 @@ if ($usr->id() > 0) {
     if ($wrd_id != 0) {
         $wrd = new word($usr);
         $wrd->load_by_id($wrd_id);
-        $result = json_decode(json_encode($wrd->export_obj()));
+        $result = json_encode($wrd->export_json());
     } else {
         $msg = 'word id missing';
     }
 }
 
 $ctrl = new controller();
-$ctrl->get_export($result, $msg);
+$ctrl->get_export_json($result, $msg);
 
 
 prg_end_api($db_con);

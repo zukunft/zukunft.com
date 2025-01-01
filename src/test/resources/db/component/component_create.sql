@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS components
     component_name              varchar(255)     NOT NULL,
     description                 text         DEFAULT NULL,
     component_type_id           smallint     DEFAULT NULL,
+    view_style_id               smallint     DEFAULT NULL,
     word_id_row                 bigint       DEFAULT NULL,
     formula_id                  bigint       DEFAULT NULL,
     word_id_col                 bigint       DEFAULT NULL,
@@ -31,6 +32,7 @@ COMMENT ON COLUMN components.user_id IS 'the owner / creator of the component';
 COMMENT ON COLUMN components.component_name IS 'the unique name used to select a component by the user';
 COMMENT ON COLUMN components.description IS 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry';
 COMMENT ON COLUMN components.component_type_id IS 'to select the predefined functionality';
+COMMENT ON COLUMN components.view_style_id IS 'the default display style for this component';
 COMMENT ON COLUMN components.word_id_row IS 'for a tree the related value the start node';
 COMMENT ON COLUMN components.formula_id IS 'used for type 6';
 COMMENT ON COLUMN components.word_id_col IS 'to define the type for the table columns';
@@ -55,6 +57,7 @@ CREATE TABLE IF NOT EXISTS user_components
     component_name         varchar(255) DEFAULT NULL,
     description            text         DEFAULT NULL,
     component_type_id      smallint     DEFAULT NULL,
+    view_style_id          smallint     DEFAULT NULL,
     word_id_row            bigint       DEFAULT NULL,
     formula_id             bigint       DEFAULT NULL,
     word_id_col            bigint       DEFAULT NULL,
@@ -73,6 +76,7 @@ COMMENT ON COLUMN user_components.user_id IS 'the changer of the component';
 COMMENT ON COLUMN user_components.component_name IS 'the unique name used to select a component by the user';
 COMMENT ON COLUMN user_components.description IS 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry';
 COMMENT ON COLUMN user_components.component_type_id IS 'to select the predefined functionality';
+COMMENT ON COLUMN user_components.view_style_id IS 'the default display style for this component';
 COMMENT ON COLUMN user_components.word_id_row IS 'for a tree the related value the start node';
 COMMENT ON COLUMN user_components.formula_id IS 'used for type 6';
 COMMENT ON COLUMN user_components.word_id_col IS 'to define the type for the table columns';
