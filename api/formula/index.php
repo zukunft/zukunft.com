@@ -44,8 +44,8 @@ include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once API_FORMULA_PATH . 'formula.php';
 
 use controller\controller;
-use cfg\user;
-use cfg\formula;
+use cfg\user\user;
+use cfg\formula\formula;
 use api\formula\formula as formula_api;
 use shared\api;
 

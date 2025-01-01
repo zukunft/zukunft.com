@@ -45,8 +45,8 @@ include_once MODEL_SYSTEM_PATH . 'job_time.php';
 include_once MODEL_SYSTEM_PATH . 'job.php';
 
 use controller\controller;
-use cfg\user;
-use cfg\job;
+use cfg\user\user;
+use cfg\system\job;
 use shared\api;
 
 // open database

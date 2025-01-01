@@ -34,12 +34,12 @@ namespace unit_ui;
 
 use api\word\word as word_api;
 use api\value\value as value_api;
-use cfg\word;
-use cfg\word_list;
+use cfg\word\word;
+use cfg\word\word_list;
 use cfg\value\value;
 use cfg\value\value_list;
 use html\value\value_list as value_list_dsp;
-use cfg\phrase_list;
+use cfg\phrase\phrase_list;
 use html\html_base;
 use html\value\value as value_dsp;
 use test\test_cleanup;

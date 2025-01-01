@@ -44,8 +44,8 @@ include_once MODEL_WORD_PATH . 'phrase.php';
 
 use api\api_message;
 use controller\controller;
-use cfg\user;
-use cfg\phrase;
+use cfg\user\user;
+use cfg\phrase\phrase;
 use shared\api;
 
 // open database

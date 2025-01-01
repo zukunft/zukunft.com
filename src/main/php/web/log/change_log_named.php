@@ -41,7 +41,7 @@ use html\button;
 use html\html_base;
 use html\system\back_trace;
 use cfg\log\change_table_list;
-use cfg\formula;
+use cfg\formula\formula;
 use html\system\messages;
 
 class change_log_named extends change_log_named_api

@@ -71,10 +71,12 @@
 namespace cfg\group;
 
 include_once MODEL_GROUP_PATH . 'id.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once SHARED_PATH . 'library.php';
 
-use cfg\db\sql_type;
-use cfg\formula;
-use cfg\phrase_list;
+use cfg\formula\formula;
+use cfg\phrase\phrase_list;
 use shared\library;
 
 class result_id extends id

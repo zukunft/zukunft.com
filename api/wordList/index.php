@@ -44,8 +44,8 @@ include_once MODEL_WORD_PATH . 'word_list.php';
 include_once API_WORD_PATH . 'word_list.php';
 
 use controller\controller;
-use cfg\user;
-use cfg\word_list;
+use cfg\user\user;
+use cfg\word\word_list;
 use api\word\word_list as word_list_api;
 use shared\api;
 

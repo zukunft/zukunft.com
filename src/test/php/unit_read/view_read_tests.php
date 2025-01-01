@@ -36,17 +36,17 @@ include_once SHARED_TYPES_PATH . 'view_type.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once SHARED_PATH . 'views.php';
 
-use cfg\view_link_type;
-use cfg\view_link_type_list;
+use cfg\view\view_link_type;
+use cfg\view\view_link_type_list;
+use cfg\view\view_sys_list;
+use cfg\view\view_type_list;
 use shared\types\view_type as view_type_shared;
 use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_type_list;
-use cfg\view;
-use cfg\view_sys_list;
-use cfg\view_type_list;
+use cfg\view\view;
 use shared\views as view_shared;
 use test\test_cleanup;
 

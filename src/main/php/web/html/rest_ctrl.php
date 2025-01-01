@@ -32,6 +32,8 @@
 
 namespace html;
 
+include_once SHARED_PATH . 'library.php';
+
 use controller\controller;
 use shared\api;
 use shared\library;

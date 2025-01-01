@@ -42,10 +42,10 @@ include_once SHARED_PATH . 'views.php';
 use html\html_base;
 use html\view\view as view_dsp;
 use html\formula\formula as formula_dsp;
-use cfg\formula;
-use cfg\user;
-use cfg\view;
-use cfg\word;
+use cfg\formula\formula;
+use cfg\user\user;
+use cfg\view\view;
+use cfg\word\word;
 use shared\api;
 use shared\views as view_shared;
 

@@ -32,11 +32,39 @@
 
 */
 
-namespace cfg;
+namespace cfg\sandbox;
 
-include_once DB_PATH . 'sql.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_GROUP_PATH . 'group.php';
+include_once MODEL_GROUP_PATH . 'group_id.php';
+include_once MODEL_GROUP_PATH . 'result_id.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+include_once MODEL_LOG_PATH . 'change_field_list.php';
+include_once MODEL_LOG_PATH . 'change_link.php';
+include_once MODEL_LOG_PATH . 'change_value.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_RESULT_PATH . 'result.php';
+include_once MODEL_WORD_PATH . 'triple_list.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_WORD_PATH . 'word_list.php';
+include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -48,20 +76,28 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\formula\formula;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\result_id;
+use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_field_list;
 use cfg\log\change_link;
 use cfg\log\change_value;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
+use cfg\ref\source;
 use cfg\result\result;
+use cfg\word\triple_list;
+use cfg\user\user;
 use cfg\value\value;
-use DateTime;
-use Exception;
+use cfg\word\word_list;
 use shared\json_fields;
 use shared\library;
+use DateTime;
+use Exception;
 
 class sandbox_value extends sandbox_multi
 {

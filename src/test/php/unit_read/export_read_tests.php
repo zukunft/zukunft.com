@@ -58,9 +58,10 @@ class export_read_tests
 
         $t->header('Test the json export class (classes/json.php)');
 
-        $json_export = new json_io($usr, $phr_lst);
-        $result = $json_export->export();
-        $target = 'Mathematics';
+        // TODO activate
+        //$json_export = new json_io($usr, $phr_lst);
+        //$result = $json_export->export();
+        //$target = 'Mathematics';
         //$t->dsp_contains(', json->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
     }

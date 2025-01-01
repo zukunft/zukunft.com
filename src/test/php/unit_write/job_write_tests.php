@@ -35,10 +35,10 @@ namespace unit_write;
 use api\formula\formula as formula_api;
 use api\value\value as value_api;
 use api\word\word as word_api;
-use cfg\job;
-use cfg\job_list;
-use cfg\job_type_list;
-use cfg\phrase_list;
+use cfg\system\job;
+use cfg\system\job_list;
+use cfg\system\job_type_list;
+use cfg\phrase\phrase_list;
 use cfg\value\value;
 use test\test_cleanup;
 

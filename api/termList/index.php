@@ -45,9 +45,9 @@ include_once MODEL_PHRASE_PATH . 'term_list.php';
 include_once API_PHRASE_PATH . 'term_list.php';
 
 use controller\controller;
-use cfg\user;
-use cfg\trm_ids;
-use cfg\term_list;
+use cfg\user\user;
+use cfg\phrase\trm_ids;
+use cfg\phrase\term_list;
 use api\phrase\term_list as term_list_api;
 use shared\api;
 

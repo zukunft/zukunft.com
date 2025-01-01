@@ -32,20 +32,37 @@
 
 namespace cfg\db;
 
+include_once MODEL_COMPONENT_PATH . 'component.php';
+include_once SERVICE_PATH . 'config.php';
+include_once MODEL_FORMULA_PATH . 'formula_list.php';
+include_once MODEL_GROUP_PATH . 'group.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_RESULT_PATH . 'result_two.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
+include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_profile.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_USER_PATH . 'user_profile_list.php';
+include_once MODEL_VALUE_PATH . 'value.php';
+include_once SHARED_PATH . 'library.php';
+
 use cfg\component\component;
 use cfg\config;
-use cfg\formula_list;
+use cfg\formula\formula_list;
 use cfg\group\group;
-use cfg\phrase;
+use cfg\phrase\phrase;
 use cfg\result\result_two;
-use cfg\sandbox;
-use cfg\sandbox_named;
-use cfg\sys_log_function;
-use cfg\system_time_type;
-use cfg\user;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
+use cfg\system\sys_log_function;
+use cfg\system\system_time_type;
+use cfg\user\user;
 use cfg\user\user_profile;
-use cfg\user_message;
-use cfg\user_profile_list;
+use cfg\user\user_message;
+use cfg\user\user_profile_list;
 use cfg\value\value;
 use shared\library;
 

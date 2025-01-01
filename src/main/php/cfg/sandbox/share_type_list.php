@@ -30,17 +30,14 @@
 
 */
 
-namespace cfg;
+namespace cfg\sandbox;
 
+include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
-include_once DB_PATH . 'sql_db.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 
+use cfg\helper\type_list;
 use shared\types\share_type as share_type_shared;
-use cfg\db\sql_db;
-use test\create_test_objects;
-
-global $shr_typ_cac;
 
 class share_type_list extends type_list
 {
@@ -52,8 +49,7 @@ class share_type_list extends type_list
     {
         $this->reset();
         // read the corresponding names and description from the internal config csv files
-        $t = new create_test_objects();
-        $t->read_from_config_csv($this);
+        $this->read_from_config_csv($this);
     }
 
     /**

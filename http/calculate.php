@@ -32,10 +32,10 @@
 
 */
 
-use cfg\formula;
-use cfg\formula_list;
+use cfg\formula\formula;
+use cfg\formula\formula_list;
 use cfg\result\result_list;
-use cfg\user;
+use cfg\user\user;
 use shared\api;
 use shared\library;
 

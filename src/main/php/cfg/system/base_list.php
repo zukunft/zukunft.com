@@ -31,9 +31,14 @@
 
 */
 
-namespace cfg;
+namespace cfg\system;
+
+include_once DB_PATH . 'sql_db.php';
+//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_db;
+use cfg\sandbox\sandbox;
 use shared\library;
 
 class base_list

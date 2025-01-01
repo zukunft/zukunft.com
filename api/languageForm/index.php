@@ -46,8 +46,8 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_LANGUAGE_PATH . 'language_form.php';
 
 use controller\controller;
-use cfg\user;
-use cfg\language_form;
+use cfg\user\user;
+use cfg\language\language_form;
 use shared\api;
 
 // open database

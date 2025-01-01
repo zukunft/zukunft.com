@@ -30,10 +30,11 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
 include_once API_SYSTEM_PATH . 'type_object.php';
 include_once API_SYSTEM_PATH . 'type_lists.php';
+include_once DB_PATH . 'sql_db.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
@@ -71,6 +72,10 @@ include_once MODEL_LOG_PATH . 'change_table.php';
 include_once MODEL_LOG_PATH . 'change_table_list.php';
 include_once MODEL_LOG_PATH . 'change_field.php';
 include_once MODEL_LOG_PATH . 'change_field_list.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_profile_list.php';
+include_once MODEL_USER_PATH . 'user_list.php';
+include_once API_PATH . 'controller.php';
 
 use api\system\type_lists as type_lists_api;
 use cfg\component\position_type_list;
@@ -78,9 +83,27 @@ use cfg\component\component_type_list;
 use cfg\component\view_style_list;
 use cfg\db\sql_db;
 use cfg\element\element_type_list;
+use cfg\formula\formula_link_type_list;
+use cfg\formula\formula_type_list;
+use cfg\language\language_form_list;
+use cfg\language\language_list;
 use cfg\log\change_action_list;
 use cfg\log\change_field_list;
 use cfg\log\change_table_list;
+use cfg\phrase\phrase_types;
+use cfg\ref\ref_type_list;
+use cfg\ref\source_type_list;
+use cfg\sandbox\protection_type_list;
+use cfg\sandbox\share_type_list;
+use cfg\system\job_type_list;
+use cfg\system\sys_log_status_list;
+use cfg\user\user;
+use cfg\user\user_profile_list;
+use cfg\user\user_list;
+use cfg\verb\verb_list;
+use cfg\view\view_link_type_list;
+use cfg\view\view_sys_list;
+use cfg\view\view_type_list;
 use controller\controller;
 
 class type_lists

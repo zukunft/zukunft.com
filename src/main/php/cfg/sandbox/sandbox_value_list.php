@@ -30,9 +30,28 @@
 
 */
 
-namespace cfg;
+namespace cfg\sandbox;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_list.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_GROUP_PATH . 'group.php';
+//include_once MODEL_GROUP_PATH . 'group_id.php';
+//include_once MODEL_GROUP_PATH . 'result_id.php';
+//include_once MODEL_PHRASE_PATH . 'phrase.php';
+//include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+//include_once MODEL_RESULT_PATH . 'result.php';
+//include_once MODEL_RESULT_PATH . 'result_list.php';
+include_once MODEL_USER_PATH . 'user.php';
+//include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VALUE_PATH . 'value_list.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -40,11 +59,15 @@ use cfg\db\sql_field_list;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type_list;
+use cfg\formula\formula;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\result_id;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
 use cfg\result\result;
 use cfg\result\result_list;
+use cfg\user\user;
 use cfg\value\value;
 use cfg\value\value_list;
 use shared\library;

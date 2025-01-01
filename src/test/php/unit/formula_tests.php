@@ -39,12 +39,12 @@ use api\value\value as value_api;
 use api\word\word as word_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_type;
-use cfg\expression;
-use cfg\formula;
-use cfg\phrase_list;
+use cfg\formula\expression;
+use cfg\formula\formula;
+use cfg\phrase\phrase_list;
 use cfg\db\sql_db;
-use cfg\term_list;
-use cfg\word;
+use cfg\phrase\term_list;
+use cfg\word\word;
 use html\formula\formula as formula_dsp;
 use test\test_cleanup;
 

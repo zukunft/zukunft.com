@@ -39,7 +39,7 @@ include_once PHP_PATH . 'zu_lib.php';
 use controller\controller;
 use html\rest_ctrl;
 use html\html_base;
-use cfg\user;
+use cfg\user\user;
 
 // open database
 $db_con = prg_start("login", "center_form");

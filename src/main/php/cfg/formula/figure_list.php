@@ -29,20 +29,29 @@
   
 */
 
-namespace cfg;
+namespace cfg\formula;
 
-include_once MODEL_FORMULA_PATH . 'fig_ids.php';
 include_once API_FORMULA_PATH . 'figure_list.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_par.php';
+include_once MODEL_PHRASE_PATH . 'term_list.php';
+include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VALUE_PATH . 'value.php';
+include_once WEB_FIGURE_PATH . 'figure.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\formula\figure_list as figure_list_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
+use cfg\phrase\term_list;
 use cfg\result\result;
+use cfg\sandbox\sandbox_list;
+use cfg\user\user_message;
 use cfg\value\value;
 use html\figure\figure as figure_dsp;
 use shared\library;
-use test\test_api;
 
 class figure_list extends sandbox_list
 {
@@ -253,9 +262,10 @@ class figure_list extends sandbox_list
         $result = '';
 
         foreach ($this->lst() as $fig) {
-            $t = new test_api();
-            $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
-            $result .= $fig_dsp->display($back) . ' ';
+            $fig_dsp = new figure_dsp();
+            $api_json = $fig->api_obj()->get_json();
+            $fig_dsp->set_from_json($api_json);
+            $result .= $fig_dsp->display() . ' ';
         }
 
         return $result;

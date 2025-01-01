@@ -29,18 +29,14 @@
   
 */
 
-namespace cfg;
+namespace cfg\view;
 
-include_once SHARED_TYPES_PATH . 'view_type.php';
-include_once DB_PATH . 'sql_db.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once SHARED_TYPES_PATH . 'view_type.php';
 
+use cfg\helper\type_list;
 use shared\types\view_type as view_type_shared;
-use cfg\db\sql_db;
-use test\create_test_objects;
-
-global $msk_typ_cac;
 
 class view_type_list extends type_list
 {
@@ -52,8 +48,7 @@ class view_type_list extends type_list
     {
         $this->reset();
         // read the corresponding names and description from the internal config csv files
-        $t = new create_test_objects();
-        $t->read_from_config_csv($this);
+        $this->read_from_config_csv($this);
     }
 
     /**

@@ -29,10 +29,25 @@
 
 */
 
-namespace cfg;
+namespace cfg\view;
 
-include_once API_VIEW_PATH . 'view_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once API_VIEW_PATH . 'view_list.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_COMPONENT_PATH . 'component.php';
+include_once MODEL_COMPONENT_PATH . 'component_link.php';
+include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_VIEW_PATH . 'view_type.php';
 
 use api\view\view_list as view_list_api;
 use cfg\component\component;
@@ -41,6 +56,15 @@ use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\helper\combine_named;
+use cfg\helper\type_list;
+use cfg\sandbox\sandbox_link_named;
+use cfg\sandbox\sandbox_list;
+use cfg\sandbox\sandbox_named;
+use cfg\user\user;
+use cfg\user\user_message;
+use cfg\view\view;
+use cfg\view\view_type;
 
 global $sys_msk_cac;
 

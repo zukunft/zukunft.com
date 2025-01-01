@@ -37,7 +37,7 @@ use cfg\component\view_style;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
-use cfg\view;
+use cfg\view\view;
 use html\view\view as view_dsp;
 use shared\library;
 use test\test_cleanup;

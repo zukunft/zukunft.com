@@ -33,21 +33,21 @@
 namespace unit;
 
 use cfg\component\view_style;
-use cfg\formula_type;
-use cfg\job_type;
-use cfg\phrase_type;
-use cfg\protection_type;
-use cfg\ref_type;
-use cfg\share_type;
-use cfg\source_type;
-use cfg\sys_log_function;
-use cfg\sys_log_status;
-use cfg\sys_log_type;
+use cfg\formula\formula_type;
+use cfg\ref\ref_type;
+use cfg\ref\source_type;
+use cfg\sandbox\protection_type;
+use cfg\sandbox\share_type;
+use cfg\system\job_type;
+use cfg\phrase\phrase_type;
+use cfg\system\sys_log_function;
+use cfg\system\sys_log_status;
+use cfg\system\sys_log_type;
+use cfg\user\user_official_type;
 use cfg\user\user_profile;
 use cfg\user\user_type;
-use cfg\user_official_type;
-use cfg\view_link_type;
-use cfg\view_type;
+use cfg\view\view_link_type;
+use cfg\view\view_type;
 use test\test_cleanup;
 
 class type_tests

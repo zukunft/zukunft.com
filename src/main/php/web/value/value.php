@@ -40,8 +40,8 @@ include_once API_SANDBOX_PATH . 'sandbox_value.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql_db;
-use cfg\phrase;
-use cfg\user_message;
+use cfg\phrase\phrase;
+use cfg\user\user_message;
 use shared\api;
 use html\sandbox\config as config_html;
 use html\log\user_log_display;

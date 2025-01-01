@@ -29,17 +29,22 @@
 
 */
 
-namespace cfg;
+namespace cfg\language;
 
-include_once SHARED_PATH . 'json_fields.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
-use JsonSerializable;
+use cfg\helper\type_object;
 use shared\json_fields;
 use shared\library;
+use JsonSerializable;
 
 class language extends type_object implements JsonSerializable
 {

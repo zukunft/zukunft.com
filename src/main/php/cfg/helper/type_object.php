@@ -39,12 +39,28 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql.php';
 include_once API_SANDBOX_PATH . 'type_object.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+// TODO avoid include loops
+//include_once MODEL_LANGUAGE_PATH . 'language.php';
+//include_once MODEL_LANGUAGE_PATH . 'language_form.php';
+//include_once MODEL_LOG_PATH . 'change_action.php';
+//include_once MODEL_LOG_PATH . 'change_table.php';
+//include_once MODEL_LOG_PATH . 'change_table_field.php';
+//include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+//include_once MODEL_SYSTEM_PATH . 'pod.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use api\sandbox\type_object as type_object_api;
 use cfg\db\sql;
@@ -55,11 +71,15 @@ use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\language\language;
+use cfg\language\language_form;
 use cfg\log\change_action;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
-use JsonSerializable;
+use cfg\sandbox\sandbox_named;
+use cfg\system\pod;
 use shared\json_fields;
+use JsonSerializable;
 
 class type_object extends db_object_seq_id implements JsonSerializable
 {

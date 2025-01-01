@@ -37,17 +37,32 @@
 
 namespace cfg\value;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_GROUP_PATH . 'group.php';
+include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'library.php';
+
+use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\group\group;
-use cfg\sandbox;
-use cfg\sandbox_value;
-use cfg\source;
-use cfg\user;
-use cfg\user_message;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_value;
+use cfg\ref\source;
+use cfg\user\user;
+use cfg\user\user_message;
 use shared\library;
 
 class value_time_series extends sandbox_value

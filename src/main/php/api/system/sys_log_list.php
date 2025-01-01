@@ -35,7 +35,7 @@ include_once API_PATH . 'api_message.php';
 
 use api\api_message;
 use cfg\db\sql_db;
-use cfg\user;
+use cfg\user\user;
 use JsonSerializable;
 use shared\api;
 

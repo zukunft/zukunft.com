@@ -39,9 +39,9 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 use api\verb\verb as verb_api;
 use api\word\word as word_api;
 use api\word\triple as triple_api;
-use cfg\word;
-use cfg\verb;
-use cfg\verb_list;
+use cfg\word\word;
+use cfg\verb\verb;
+use cfg\verb\verb_list;
 use test\test_cleanup;
 use shared\types\verbs;
 

@@ -30,13 +30,15 @@
    
 */
 
-namespace cfg;
+namespace cfg\ref;
+
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
 
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
-
-include_once MODEL_HELPER_PATH . 'type_object.php';
-
+use cfg\helper\type_object;
 
 class ref_type extends type_object
 {

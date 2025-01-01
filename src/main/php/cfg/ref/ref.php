@@ -59,24 +59,43 @@
    
 */
 
-namespace cfg;
+namespace cfg\ref;
 
+// include should also contain the files not shown by use to enable automatic java and rust translation
+// the order is first the extends and then in alphabetic order except word before triple
+// the order should in any case match the use order but with the additional files which does not need to be used
+include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
+include_once API_REF_PATH . 'ref.php';
 include_once DB_PATH . 'sql.php';
-include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
-include_once SERVICE_EXPORT_PATH . 'ref_exp.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+include_once MODEL_LOG_PATH . 'change_link.php';
+include_once MODEL_LOG_PATH . 'change_table_list.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_REF_PATH . 'ref_type.php';
 include_once MODEL_REF_PATH . 'ref_type_list.php';
-include_once API_REF_PATH . 'ref.php';
 include_once WEB_REF_PATH . 'ref.php';
 include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 
-use cfg\db\sql;
 use api\ref\ref as ref_api;
+use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
@@ -85,10 +104,18 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\combine_named;
+use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
 use cfg\log\change_table_list;
+use cfg\phrase\phrase;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_link;
+use cfg\sandbox\sandbox_named;
+use cfg\user\user;
+use cfg\user\user_message;
 use shared\json_fields;
 
 class ref extends sandbox_link

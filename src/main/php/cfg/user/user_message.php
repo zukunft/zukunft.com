@@ -39,7 +39,7 @@
 
 */
 
-namespace cfg;
+namespace cfg\user;
 
 class user_message
 {

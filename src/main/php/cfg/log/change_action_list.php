@@ -31,11 +31,11 @@
 
 namespace cfg\log;
 
-global $cng_act_cac;
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
 
-use cfg\db\sql_db;
-use cfg\type_list;
-use cfg\type_object;
+use cfg\helper\type_list;
+use cfg\helper\type_object;
 
 class change_action_list extends type_list
 {

@@ -64,28 +64,63 @@
 
 */
 
-namespace cfg;
+namespace cfg\phrase;
 
 include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once API_PHRASE_PATH . 'phrase.php';
 include_once API_WORD_PATH . 'word.php';
 include_once API_WORD_PATH . 'triple.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_type.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'formula_link.php';
+include_once MODEL_GROUP_PATH . 'group_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_VALUE_PATH . 'value_list.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_VERB_PATH . 'verb_list.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_WORD_PATH . 'word_list.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once WEB_WORD_PATH . 'triple.php';
+include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\phrase\phrase as phrase_api;
+use cfg\helper\combine_named;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
+use cfg\helper\db_object_seq_id;
+use cfg\formula\formula;
+use cfg\formula\formula_link;
 use cfg\group\group_list;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
 use cfg\value\value_list;
+use cfg\verb\verb;
+use cfg\verb\verb_list;
+use cfg\user\user;
+use cfg\user\user_message;
+use cfg\word\word;
+use cfg\word\word_list;
+use cfg\word\triple;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\triple as triple_dsp;
@@ -93,7 +128,7 @@ use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
 use shared\json_fields;
 use shared\library;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
 
 class phrase extends combine_named

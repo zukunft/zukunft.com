@@ -40,9 +40,9 @@ include_once MODEL_PHRASE_PATH . 'phrase_table.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\pod;
-use cfg\pod_status;
-use cfg\pod_type;
+use cfg\system\pod;
+use cfg\system\pod_status;
+use cfg\system\pod_type;
 use test\test_cleanup;
 
 class pod_tests

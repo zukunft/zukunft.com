@@ -37,17 +37,21 @@
 
 namespace cfg\element;
 
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_par.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
-use cfg\formula;
-use cfg\sandbox_list;
-use cfg\sys_log_level;
-use cfg\user;
-use cfg\user_message;
-
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_ELEMENT_PATH . 'element.php';
-include_once MODEL_FORMULA_PATH . 'parameter_type.php';
+use cfg\formula\formula;
+use cfg\sandbox\sandbox_list;
+use cfg\system\sys_log_level;
+use cfg\user\user;
+use cfg\user\user_message;
 
 class element_list extends sandbox_list
 {

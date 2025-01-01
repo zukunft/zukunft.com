@@ -33,31 +33,45 @@
 
 namespace cfg\log;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
 include_once API_LOG_PATH . 'change_log_list.php';
-include_once WEB_LOG_PATH . 'change_log_list.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
+//include_once MODEL_COMPONENT_PATH . 'component.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_type.php';
+//include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_GROUP_PATH . 'group.php';
+//include_once MODEL_GROUP_PATH . 'group_id.php';
+//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+//include_once MODEL_REF_PATH . 'source.php';
+//include_once MODEL_USER_PATH . 'user.php';
+//include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VERB_PATH . 'verb.php';
+//include_once MODEL_VIEW_PATH . 'view.php';
+//include_once MODEL_WORD_PATH . 'word.php';
+//include_once MODEL_WORD_PATH . 'triple.php';
+include_once WEB_LOG_PATH . 'change_log_list.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\log\change_log_list as change_log_list_api;
-use cfg\base_list;
+use cfg\system\base_list;
 use cfg\component\component;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
-use cfg\formula;
+use cfg\formula\formula;
 use cfg\group\group;
 use cfg\group\group_id;
-use cfg\sandbox;
-use cfg\source;
-use cfg\triple;
-use cfg\user;
+use cfg\sandbox\sandbox;
+use cfg\ref\source;
+use cfg\user\user;
 use cfg\value\value;
-use cfg\verb;
-use cfg\view;
-use cfg\word;
+use cfg\verb\verb;
+use cfg\view\view;
+use cfg\word\word;
+use cfg\word\triple;
 use html\log\change_log_list as change_log_list_dsp;
 use shared\library;
 

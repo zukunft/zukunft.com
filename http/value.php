@@ -37,11 +37,11 @@ include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'views.php';
 
-use cfg\view;
+use cfg\view\view;
 use html\view\view as view_dsp;
 use html\value\value as value_dsp;
-use cfg\user;
-use cfg\word_list;
+use cfg\user\user;
+use cfg\word\word_list;
 use shared\api;
 use shared\views as view_shared;
 

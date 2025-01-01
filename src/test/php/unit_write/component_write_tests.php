@@ -34,14 +34,14 @@ namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'component_type.php';
 
-use cfg\user;
+use cfg\user\user;
 use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
 use cfg\component\component;
 use cfg\log\change_field_list;
 use cfg\log\change;
 use cfg\log\change_table_list;
-use cfg\sandbox_named;
+use cfg\sandbox\sandbox_named;
 use test\test_cleanup;
 
 class component_write_tests

@@ -31,26 +31,36 @@
 
 namespace cfg\component;
 
-include_once DB_PATH . 'sql.php';
-include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once API_COMPONENT_PATH . 'component_list.php';
 include_once API_VIEW_PATH . 'component_link_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
+include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VIEW_PATH . 'view.php';
+include_once SHARED_TYPES_PATH . 'component_type.php';
 
-use cfg\db\sql;
-use shared\types\component_type as comp_type_shared;
 use api\component\component_list as component_list_api;
-use cfg\combine_named;
+use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\sandbox_link_named;
-use cfg\sandbox_list;
-use cfg\sandbox_named;
-use cfg\type_list;
-use cfg\user_message;
-use cfg\view;
+use cfg\sandbox\sandbox_list;
+use cfg\sandbox\sandbox_named;
+use cfg\sandbox\sandbox_link_named;
+use cfg\helper\combine_named;
+use cfg\helper\type_list;
+use cfg\user\user_message;
+use cfg\view\view;
+use shared\types\component_type as comp_type_shared;
 
 class component_list extends sandbox_list
 {

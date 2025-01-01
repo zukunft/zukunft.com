@@ -33,10 +33,10 @@
 
 namespace cfg\element;
 
+include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_ELEMENT_PATH . 'element_type.php';
 
-use cfg\type_list;
-use test\create_test_objects;
+use cfg\helper\type_list;
 
 class element_type_list extends type_list
 {
@@ -48,8 +48,7 @@ class element_type_list extends type_list
     {
         $this->reset();
         // read the corresponding names and description from the internal config csv files
-        $t = new create_test_objects();
-        $t->read_from_config_csv($this);
+        $this->read_from_config_csv($this);
     }
 
     /**

@@ -39,9 +39,14 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
-include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+
+use cfg\user\user;
+use cfg\user\user_message;
 
 class db_object_seq_id_user extends db_object_seq_id
 {

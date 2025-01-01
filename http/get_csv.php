@@ -30,9 +30,9 @@
 
 */
 
-use cfg\formula_list;
-use cfg\user;
-use cfg\word_list;
+use cfg\formula\formula_list;
+use cfg\user\user;
+use cfg\word\word_list;
 use shared\api;
 
 $debug = $_GET['debug'] ?? 0;

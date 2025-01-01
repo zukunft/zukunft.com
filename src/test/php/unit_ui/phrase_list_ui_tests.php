@@ -41,7 +41,7 @@ use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
-use cfg\verb;
+use cfg\verb\verb;
 use shared\types\verbs;
 use test\test_cleanup;
 

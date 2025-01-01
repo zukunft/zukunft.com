@@ -49,10 +49,10 @@ use api\sandbox\combine_object as combine_object_api;
 use api\sandbox\list_object as list_api;
 use api\system\type_lists as type_lists_api;
 use api\sandbox\sandbox as sandbox_api;
-use cfg\combine_object;
-use cfg\sandbox;
-use cfg\source;
-use cfg\word;
+use cfg\helper\combine_object;
+use cfg\sandbox\sandbox;
+use cfg\ref\source;
+use cfg\word\word;
 use shared\api;
 use shared\views as view_shared;
 

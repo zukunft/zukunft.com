@@ -45,7 +45,7 @@ include_once API_VALUE_PATH . 'value.php';
 
 use cfg\value\value;
 use controller\controller;
-use cfg\user;
+use cfg\user\user;
 use api\value\value as value_api;
 use shared\api;
 

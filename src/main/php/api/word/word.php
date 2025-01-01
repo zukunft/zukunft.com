@@ -38,8 +38,8 @@ include_once SHARED_PATH . 'json_fields.php';
 use api\phrase\phrase as phrase_api;
 use api\phrase\term as term_api;
 use api\sandbox\sandbox_typed as sandbox_typed_api;
-use cfg\phrase_type;
-use cfg\word as word_cfg;
+use cfg\phrase\phrase_type;
+use cfg\word\word as word_cfg;
 use JsonSerializable;
 use shared\json_fields;
 

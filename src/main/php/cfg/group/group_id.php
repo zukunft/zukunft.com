@@ -55,9 +55,11 @@
 namespace cfg\group;
 
 include_once MODEL_GROUP_PATH . 'id.php';
+include_once DB_PATH . 'sql_type.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 
 use cfg\db\sql_type;
-use cfg\phrase_list;
+use cfg\phrase\phrase_list;
 
 class group_id extends id
 {
@@ -99,7 +101,7 @@ class group_id extends id
 
     /**
      * get the max number if phrases for type of the given id
-     * @param int|string $id either a 64-bit integer group id, a 512-bit alpha_num group id or a text of more than 16 +/- seperated 6 alpha_num char phrase ids
+     * @param int|string $id either a 64-bit integer group id, a 512-bit alpha_num group id or a text of more than 16 +/- separated 6 alpha_num char phrase ids
      * @return int the
      */
     function max_number_of_phrase(int|string $id): int
@@ -121,7 +123,7 @@ class group_id extends id
     /**
      * get the sorted array of phrase ids from the given group id
      *
-     * @param int|string $grp_id either a 64-bit integer group id, a 512-bit alpha_num group id or a text of more than 16 +/- seperated 6 alpha_num char phrase ids
+     * @param int|string $grp_id either a 64-bit integer group id, a 512-bit alpha_num group id or a text of more than 16 +/- separated 6 alpha_num char phrase ids
      * @param bool $filled if true the missing ids are filled with a null value
      * @return array a sorted list of phrase ids
      */

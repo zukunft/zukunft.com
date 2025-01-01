@@ -38,9 +38,9 @@ include_once MODEL_FORMULA_PATH . 'formula_link_list.php';
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
-use cfg\formula_link;
-use cfg\formula_link_list;
-use cfg\formula_link_type;
+use cfg\formula\formula_link;
+use cfg\formula\formula_link_list;
+use cfg\formula\formula_link_type;
 use shared\library;
 use test\test_cleanup;
 

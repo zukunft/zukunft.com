@@ -41,8 +41,8 @@ use cfg\value\value;
 use html\html_base;
 use html\view\view as view_dsp;
 use html\value\value as value_dsp;
-use cfg\user;
-use cfg\view;
+use cfg\user\user;
+use cfg\view\view;
 use shared\api;
 use shared\views as view_shared;
 

@@ -38,9 +38,9 @@ use api\word\word as word_api;
 use api\phrase\group as group_api;
 use cfg\db\sql_type;
 use cfg\group\group;
-use cfg\phrase_list;
-use cfg\word;
-use cfg\word_list;
+use cfg\phrase\phrase_list;
+use cfg\word\word;
+use cfg\word\word_list;
 use test\all_tests;
 use test\test_cleanup;
 

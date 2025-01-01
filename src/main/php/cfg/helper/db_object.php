@@ -30,9 +30,20 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+//include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+//include_once MODEL_GROUP_PATH . 'group.php';
+//include_once MODEL_RESULT_PATH . 'result.php';
+//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+//include_once MODEL_USER_PATH . 'user.php';
+//include_once MODEL_VALUE_PATH . 'value.php';
+//include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -42,6 +53,8 @@ use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\result\result;
+use cfg\sandbox\sandbox;
+use cfg\user\user;
 use cfg\value\value;
 use shared\library;
 

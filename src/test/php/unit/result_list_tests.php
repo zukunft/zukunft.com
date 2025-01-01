@@ -33,14 +33,14 @@
 namespace unit;
 
 use cfg\db\sql_creator;
-use cfg\formula;
+use cfg\formula\formula;
 use cfg\group\group;
-use cfg\phrase_list;
+use cfg\phrase\phrase_list;
 use cfg\result\result_list;
 use cfg\db\sql_db;
-use cfg\triple;
-use cfg\user;
-use cfg\word;
+use cfg\word\triple;
+use cfg\user\user;
+use cfg\word\word;
 use html\result\result_list as result_list_dsp;
 use test\test_cleanup;
 

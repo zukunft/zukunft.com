@@ -37,9 +37,9 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\word\word as word_api;
 use api\sandbox\list_object as list_api;
-use cfg\phrase_type;
+use cfg\phrase\phrase_type;
 use html\word\word_list as word_list_dsp;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 
 class word_list extends list_api
 {

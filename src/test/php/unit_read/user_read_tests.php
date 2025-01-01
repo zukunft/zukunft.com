@@ -34,8 +34,8 @@ namespace unit_read;
 
 use api\user\user as user_api;
 use cfg\user\user_profile;
-use cfg\user_profile_list;
-use cfg\user;
+use cfg\user\user_profile_list;
+use cfg\user\user;
 use test\test_cleanup;
 
 class user_read_tests

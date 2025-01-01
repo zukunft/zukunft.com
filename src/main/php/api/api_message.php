@@ -31,9 +31,12 @@
 
 namespace api;
 
+include_once SERVICE_PATH . 'config.php';
+include_once SHARED_PATH . 'library.php';
+
 use cfg\config;
 use cfg\db\sql_db;
-use cfg\user;
+use cfg\user\user;
 use DateTime;
 use DateTimeInterface;
 use html\html_base;

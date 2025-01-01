@@ -44,8 +44,8 @@ include_once MODEL_VIEW_PATH . 'view_list.php';
 include_once API_VIEW_PATH . 'view_list.php';
 
 use controller\controller;
-use cfg\user;
-use cfg\view_list;
+use cfg\user\user;
+use cfg\view\view_list;
 use api\view\view_list as view_list_api;
 use shared\api;
 

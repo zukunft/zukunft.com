@@ -30,8 +30,8 @@
 
 */
 
-use cfg\triple;
-use cfg\user;
+use cfg\word\triple;
+use cfg\user\user;
 use shared\api;
 
 $debug = $_GET['debug'] ?? 0;

@@ -46,12 +46,12 @@ include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'views.php';
 
-use cfg\formula_list;
-use cfg\phr_ids;
-use cfg\phrase_list;
+use cfg\formula\formula_list;
+use cfg\phrase\phr_ids;
+use cfg\phrase\phrase_list;
 use cfg\result_list;
-use cfg\user;
-use cfg\view;
+use cfg\user\user;
+use cfg\view\view;
 use html\html_base;
 use html\view\view as view_dsp;
 use shared\api;

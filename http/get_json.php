@@ -31,8 +31,8 @@
 */
 
 use im_export\json_io;
-use cfg\phrase_list;
-use cfg\user;
+use cfg\phrase\phrase_list;
+use cfg\user\user;
 use shared\api;
 
 $debug = $_GET['debug'] ?? 0;

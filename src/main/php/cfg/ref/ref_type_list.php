@@ -29,20 +29,19 @@
 
 */
 
-namespace cfg;
+namespace cfg\ref;
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use shared\library;
-use test\create_test_objects;
-
+include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_REF_PATH . 'ref_type.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 
-global $ref_typ_cac;
+use cfg\db\sql;
+use cfg\db\sql_db;
+use cfg\helper\type_list;
+use cfg\sandbox\sandbox_named;
 
 class ref_type_list extends type_list
 {
@@ -90,8 +89,7 @@ class ref_type_list extends type_list
     {
         $this->reset();
         // read the corresponding names and description from the internal config csv files
-        $t = new create_test_objects();
-        $t->read_from_config_csv($this);
+        $this->read_from_config_csv($this);
     }
 
     /**

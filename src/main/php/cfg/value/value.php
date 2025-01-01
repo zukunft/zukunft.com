@@ -16,7 +16,7 @@
           or a key-value table for a group of 1, 2, 4, 8, 16 and more phrases (or s standard table if public)
 
 
-    TODO: move the time word to the phrase group because otherwise a geo tag or an area also needs to be seperated
+    TODO: move the time word to the phrase group because otherwise a geo tag or an area also needs to be separated
 
     TODO: what happens if a user (not the value owner) is adding a word to the value
     TODO: split the object to a time term value and a time stamp value for memory saving
@@ -76,29 +76,66 @@
 
 namespace cfg\value;
 
-include_once DB_PATH . 'sql.php';
-include_once API_VALUE_PATH . 'value.php';
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_GROUP_PATH . 'group.php';
+include_once API_VALUE_PATH . 'value.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once EXPORT_PATH . 'export.php';
+include_once MODEL_FORMULA_PATH . 'expression.php';
 include_once MODEL_FORMULA_PATH . 'figure.php';
-include_once SERVICE_EXPORT_PATH . 'source_exp.php';
-include_once SERVICE_EXPORT_PATH . 'value_exp.php';
-include_once SERVICE_EXPORT_PATH . 'json.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once MODEL_GROUP_PATH . 'group.php';
+include_once MODEL_GROUP_PATH . 'group_id.php';
+include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+include_once MODEL_LOG_PATH . 'change_field_list.php';
+include_once MODEL_LOG_PATH . 'change_log.php';
+include_once MODEL_LOG_PATH . 'change_table_list.php';
+include_once MODEL_LOG_PATH . 'change_value.php';
+include_once MODEL_LOG_PATH . 'change_values_big.php';
+include_once MODEL_LOG_PATH . 'change_values_norm.php';
+include_once MODEL_LOG_PATH . 'change_values_prime.php';
+include_once MODEL_LOG_PATH . 'changes_big.php';
+include_once MODEL_LOG_PATH . 'changes_norm.php';
+include_once MODEL_PHRASE_PATH . 'phr_ids.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_RESULT_PATH . 'result_list.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
+include_once MODEL_SYSTEM_PATH . 'job.php';
+include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
+include_once MODEL_SYSTEM_PATH . 'log.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'protection_type.php';
+include_once WEB_VALUE_PATH . 'value.php';
 
 use cfg\db\sql;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
+use cfg\formula\figure;
 use cfg\log\change;
 use cfg\log\change_values_big;
 use cfg\log\change_values_norm;
 use cfg\log\change_values_prime;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
+use cfg\ref\source;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_multi;
+use cfg\system\log;
 use shared\json_fields;
 use shared\types\protection_type as protect_type_shared;
 use api\value\value as value_api;
@@ -109,35 +146,29 @@ use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
 use cfg\export\export;
-use cfg\export\source_exp;
-use cfg\expression;
-use cfg\figure;
+use cfg\formula\expression;
 use cfg\group\group;
 use cfg\group\group_id;
-use cfg\job;
-use cfg\job_type_list;
-use cfg\log;
+use cfg\system\job;
+use cfg\system\job_type_list;
 use cfg\log\change_action;
 use cfg\log\change_field_list;
 use cfg\log\change_log;
 use cfg\log\change_table_list;
 use cfg\log\change_value;
-use cfg\phr_ids;
-use cfg\phrase;
-use cfg\phrase_list;
+use cfg\phrase\phr_ids;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
 use cfg\result\result_list;
-use cfg\sandbox;
-use cfg\sandbox_multi;
-use cfg\sandbox_value;
-use cfg\source;
-use cfg\user;
-use cfg\user_message;
+use cfg\sandbox\sandbox_value;
+use cfg\user\user;
+use cfg\user\user_message;
+use html\value\value as value_dsp;
+use shared\library;
+use shared\types\phrase_type as phrase_type_shared;
 use DateTime;
 use Exception;
-use html\value\value as value_dsp;
 use math;
-use shared\library;
-use shared\types\phrase_type AS phrase_type_shared;
 
 class value extends sandbox_value
 {
@@ -429,7 +460,7 @@ class value extends sandbox_value
                 }
             }
 
-            if ($key == source_exp::FLD_REF) {
+            if ($key == json_fields::SOURCE_NAME) {
                 $src = new source($this->user());
                 $src->set_name($value);
                 $this->source = $src;
@@ -1195,7 +1226,7 @@ class value extends sandbox_value
             }
         }
 
-        if ($key == source_exp::FLD_REF) {
+        if ($key == json_fields::SOURCE_NAME) {
             $src = new source($this->user());
             $src->set_name($value);
             if ($msg->is_ok() and $do_save) {

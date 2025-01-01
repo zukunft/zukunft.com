@@ -29,25 +29,36 @@
   
 */
 
-namespace cfg;
+namespace cfg\verb;
 
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once API_VERB_PATH . 'verb.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once HTML_PATH . 'html_base.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
-include_once SHARED_PATH . 'library.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\verb\verb as verb_api;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\helper\type_list;
+use cfg\phrase\phrase;
+use cfg\sandbox\sandbox;
+use cfg\system\system_time_type;
+use cfg\user\user;
+use cfg\word\triple;
+use cfg\word\word;
 use html\html_base;
 use shared\enum\foaf_direction;
 use shared\library;

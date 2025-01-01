@@ -54,14 +54,31 @@
 
 namespace cfg\group;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_HELPER_PATH . 'db_object.php';
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_GROUP_PATH . 'group_link.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
+include_once API_SYSTEM_PATH . 'messages.php';
 include_once API_PHRASE_PATH . 'group.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_SYSTEM_PATH . 'message_translator.php';
+include_once MODEL_PHRASE_PATH . 'phr_ids.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_RESULT_PATH . 'result.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\system\messages as msg_enum;
 use api\phrase\group as group_api;
@@ -75,17 +92,17 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\message_translator;
-use cfg\phr_ids;
-use cfg\phrase;
-use cfg\phrase_list;
+use cfg\system\message_translator;
+use cfg\phrase\phr_ids;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
 use cfg\result\result;
-use cfg\sandbox_multi;
-use cfg\sandbox_value;
-use cfg\user;
-use cfg\user_message;
+use cfg\sandbox\sandbox_multi;
+use cfg\sandbox\sandbox_value;
+use cfg\user\user;
+use cfg\user\user_message;
 use cfg\value\value;
-use cfg\word;
+use cfg\word\word;
 use shared\json_fields;
 use shared\library;
 
@@ -223,7 +240,7 @@ class group extends sandbox_multi
      * set the phrase list of this group
      * and return the unique database id of this group
      * @param phrase_list $phr_lst sorted list of phrases for this group
-     * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- seperated 6 char alpha_num coded phrase ids
+     * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids
      */
     function set_phrase_list(phrase_list $phr_lst): int|string
     {
@@ -253,7 +270,7 @@ class group extends sandbox_multi
 
     /**
      * set the unique database id of this group
-     * @param int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- seperated 6 char alpha_num coded phrase ids
+     * @param int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids
      */
     function set_id(int|string $id): void
     {
@@ -297,7 +314,7 @@ class group extends sandbox_multi
 
 
     /**
-     * @return int|string either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- seperated 6 char alpha_num coded phrase ids
+     * @return int|string either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids
      * the internal null value is used to detect if database saving has been tried
      */
     function id(): int|string
@@ -403,7 +420,7 @@ class group extends sandbox_multi
     /**
      * set the unique database id of this group
      * @param phrase_list $phr_lst sorted list of phrases for this group
-     * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- seperated 6 char alpha_num coded phrase ids
+     * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids
      */
     private function set_id_from_phrase_list(phrase_list $phr_lst): int|string
     {
@@ -999,7 +1016,7 @@ class group extends sandbox_multi
             if ($db_rec->name() != $this->name() or $db_rec->description != $this->description) {
                 // TODO call insert or update sql statement
                 //$result .= $this->save_id();
-                log_warning('save of group description not yet implimented');
+                log_warning('save of group description not yet implemented');
             }
         }
         return $usr_msg;

@@ -43,8 +43,8 @@ use html\button;
 use html\html_base;
 use html\system\messages;
 use html\view\view as view_dsp;
-use cfg\user;
-use cfg\view;
+use cfg\user\user;
+use cfg\view\view;
 use shared\api;
 use shared\views as view_shared;
 

@@ -69,11 +69,27 @@ A user updates a formula
 
 */
 
-namespace cfg;
+namespace cfg\system;
 
-include_once DB_PATH . 'sql.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once API_SYSTEM_PATH . 'job.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_SYSTEM_PATH . 'job_type.php';
+include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_REF_PATH . 'ref.php';
+include_once MODEL_USER_PATH . 'user.php';
 
 use api\system\job as job_api;
 use cfg\db\sql;
@@ -83,6 +99,16 @@ use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\db_object_seq_id_user;
+use cfg\formula\formula;
+use cfg\helper\type_object;
+use cfg\ref\source;
+use cfg\system\job_type;
+use cfg\system\job_type_list;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
+use cfg\ref\ref;
+use cfg\user\user;
 use DateTime;
 use DateTimeInterface;
 
@@ -118,7 +144,7 @@ class job extends db_object_seq_id_user
     const FLD_TIME_END = 'end_time';
     const FLD_TYPE_COM = 'the id of the job type that should be started';
     const FLD_TYPE = 'job_type_id';
-    const FLD_PARAMETER_COM = 'id of the phrase with the snaped parameter set for this job start';
+    const FLD_PARAMETER_COM = 'id of the phrase with the snapped parameter set for this job start';
     const FLD_PARAMETER = 'parameter';
     const FLD_CHANGE_FIELD_COM = 'e.g. for undo jobs the id of the field that should be changed';
     const FLD_CHANGE_FIELD = 'change_field_id';

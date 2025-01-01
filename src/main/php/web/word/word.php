@@ -41,7 +41,7 @@ include_once SHARED_PATH . 'api.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use cfg\verb_list;
+use cfg\verb\verb_list;
 use html\button;
 use html\formula\formula as formula_dsp;
 use html\html_base;

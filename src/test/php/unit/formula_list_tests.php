@@ -34,13 +34,13 @@ include_once WEB_FORMULA_PATH . 'formula_list.php';
 use api\formula\formula as formula_api;
 use api\word\word as word_api;
 use cfg\db\sql_creator;
-use cfg\formula;
-use cfg\triple;
-use cfg\verb;
+use cfg\formula\formula;
+use cfg\word\triple;
+use cfg\verb\verb;
 use html\formula\formula_list as formula_list_dsp;
-use cfg\formula_list;
+use cfg\formula\formula_list;
 use cfg\db\sql_db;
-use cfg\word;
+use cfg\word\word;
 use test\test_cleanup;
 
 class formula_list_tests

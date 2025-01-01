@@ -33,10 +33,13 @@
 namespace cfg\log;
 
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
-use cfg\sandbox_named;
+use cfg\sandbox\sandbox_named;
 use shared\library;
 
 class change_table_field

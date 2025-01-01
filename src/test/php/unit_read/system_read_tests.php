@@ -35,13 +35,13 @@ namespace unit_read;
 include_once MODEL_SYSTEM_PATH . 'sys_log.php';
 include_once DB_PATH . 'db_check.php';
 
-use cfg\formula;
-use cfg\job_type_list;
+use cfg\formula\formula;
+use cfg\system\job_type_list;
 use cfg\db\db_check;
-use cfg\sys_log_status;
-use cfg\type_lists;
+use cfg\system\sys_log_status;
+use cfg\system\sys_log_status_list;
+use cfg\helper\type_lists;
 use cfg\db\sql_db;
-use cfg\sys_log_status_list;
 use test\test_cleanup;
 
 class system_read_tests

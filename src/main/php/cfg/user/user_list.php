@@ -29,19 +29,40 @@
 
 */
 
-namespace cfg;
+namespace cfg\user;
 
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_HELPER_PATH . 'db_object.php';
+//include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_REF_PATH . 'ref.php';
+//include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_profile.php';
+//include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+//include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\formula\formula;
+use cfg\helper\db_object;
+use cfg\ref\ref;
+use cfg\ref\source;
+use cfg\user\user;
 use cfg\user\user_profile;
 use cfg\value\value;
+use cfg\view\view;
+use cfg\word\triple;
+use cfg\word\word;
 use shared\library;
 
 global $system_users;

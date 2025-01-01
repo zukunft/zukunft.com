@@ -32,7 +32,17 @@
 
 namespace shared;
 
+include_once SERVICE_PATH . 'config.php';
+
 use cfg\component\view_style;
+use cfg\ref\source_type;
+use cfg\system\session;
+use cfg\system\sys_log_status;
+use cfg\system\sys_log_status_list;
+use cfg\system\sys_log_type;
+use cfg\system\system_time;
+use cfg\user\user_official_type;
+use cfg\view\view_link_type;
 use shared\api;
 use api\sandbox\combine_object as combine_object_api;
 use cfg\component\component;
@@ -45,16 +55,16 @@ use cfg\db\sql_db;
 use cfg\db\sql_par_field_list;
 use cfg\element\element;
 use cfg\element\element_type;
-use cfg\formula;
-use cfg\formula_link;
-use cfg\formula_link_type;
-use cfg\formula_type;
-use cfg\ip_range;
-use cfg\job;
-use cfg\job_time;
-use cfg\job_type;
-use cfg\language;
-use cfg\language_form;
+use cfg\formula\formula;
+use cfg\formula\formula_link;
+use cfg\formula\formula_link_type;
+use cfg\formula\formula_type;
+use cfg\system\ip_range;
+use cfg\system\job;
+use cfg\system\job_time;
+use cfg\system\job_type;
+use cfg\language\language;
+use cfg\language\language_form;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_values_big;
@@ -66,42 +76,34 @@ use cfg\log\change_table;
 use cfg\log\change_table_field;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
-use cfg\phrase;
-use cfg\phrase_table;
-use cfg\phrase_table_status;
-use cfg\phrase_type;
-use cfg\phrase_types;
-use cfg\pod;
-use cfg\pod_status;
-use cfg\pod_type;
-use cfg\protection_type;
-use cfg\ref;
-use cfg\ref_type;
-use cfg\sandbox_named;
-use cfg\session;
-use cfg\share_type;
-use cfg\source;
-use cfg\source_type;
-use cfg\sys_log;
-use cfg\sys_log_function;
-use cfg\sys_log_status;
-use cfg\sys_log_status_list;
-use cfg\sys_log_type;
-use cfg\system_time;
-use cfg\system_time_type;
-use cfg\user;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_table;
+use cfg\phrase\phrase_table_status;
+use cfg\phrase\phrase_type;
+use cfg\phrase\phrase_types;
+use cfg\system\pod;
+use cfg\system\pod_status;
+use cfg\system\pod_type;
+use cfg\ref\ref;
+use cfg\ref\ref_type;
+use cfg\sandbox\sandbox_named;
+use cfg\ref\source;
+use cfg\system\sys_log;
+use cfg\system\sys_log_function;
+use cfg\system\system_time_type;
+use cfg\user\user;
 use cfg\user\user_profile;
 use cfg\user\user_type;
-use cfg\user_official_type;
 use cfg\value\value;
 use cfg\value\value_ts_data;
-use cfg\view;
-use cfg\view_link_type;
-use cfg\view_term_link;
-use cfg\view_type;
-use cfg\word;
+use cfg\view\view;
+use cfg\view\view_term_link;
+use cfg\word\word;
 use DateTime;
 use Exception;
+use shared\types\protection_type;
+use shared\types\share_type;
+use shared\types\view_type;
 
 class library
 {
@@ -310,6 +312,21 @@ class library
     }
 
     /**
+     * @param string $text the text from which the maker several times e.g. "cfg\formula\formula"
+     * @param string $maker e.g. "\formula"
+     * @return string the text without the last maker e.g. "cfg\formula"
+     */
+    function str_left_of_last(string $text, string $maker): string
+    {
+        $result = "";
+        $pos = strrpos($text, $maker);
+        if ($pos > 0) {
+            $result = substr($text, 0, strrpos($text, $maker));
+        }
+        return $result;
+    }
+
+    /**
      * @param string|null $text the text from which the right part should be taken e.g. "select" of "ignore start<select"
      * @param string|null $maker e.g. "start<"
      * @return string the selected text e.g. "select"
@@ -337,6 +354,31 @@ class library
      * @param string|null $maker e.g. "start<"
      * @return string the selected text e.g. "select"
      */
+    function str_left_of_or_all(?string $text, ?string $maker): string
+    {
+        if ($text == null) {
+            $text = "";
+        }
+        $result = $text;
+        if ($maker == null) {
+            $maker = "";
+        }
+        if ($result !== $maker) {
+            while (str_contains($result, $maker)) {
+                if (substr($result, strpos($result, $maker), strlen($maker)) === $maker) {
+                    $result = substr($text, 0, strpos($text, $maker));
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string|null $text the text from which the right part should be taken e.g. "select" of "ignore start<select"
+     *                          or the complete text if maker not found
+     * @param string|null $maker e.g. "start<"
+     * @return string the selected text e.g. "select"
+     */
     function str_right_of_or_all(?string $text, ?string $maker): string
     {
         if ($text == null) {
@@ -347,7 +389,7 @@ class library
             $maker = "";
         }
         if ($result !== $maker) {
-            while (strpos($result, $maker) !== false) {
+            while (str_contains($result, $maker)) {
                 if (substr($result, strpos($result, $maker), strlen($maker)) === $maker) {
                     $result = substr($result, strpos($result, $maker) + strlen($maker));
                 }
@@ -441,7 +483,7 @@ class library
     /**
      * remove all empty string entries from an array
      * @param array|null $in_array the array with empty strings or string with leading spaces
-     * @return array the value comma seperated or "null" if the array is empty
+     * @return array the value comma separated or "null" if the array is empty
      */
     function array_trim(?array $in_array): array
     {
@@ -463,7 +505,7 @@ class library
      * @param array $in_array the array that should be formatted
      * @param string $start the start text of the SQL statement
      * @param string $end the end text of the SQL statement
-     * @return string the values comma seperated or "" if the array is empty
+     * @return string the values comma separated or "" if the array is empty
      */
     function sql_array(
         array  $in_array,
@@ -755,6 +797,187 @@ class library
 
 
     /*
+     * file
+     */
+
+    /**
+     * get all file names of a folder and its subfolders as an array
+     * @param string $dir the initial path of the root folder for the search
+     * @return array with the folders and file names
+     */
+    function dir_to_array(string $dir): array
+    {
+        $result = [];
+        $files = scandir($dir);
+        foreach ($files as $file) {
+            if (!in_array($file, array(".", ".."))) {
+                if (is_dir($dir . DIRECTORY_SEPARATOR . $file)) {
+                    $result[$file] = $this->dir_to_array($dir . DIRECTORY_SEPARATOR . $file);
+                } else {
+                    $result[] = $file;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * flat the folder and file name array
+     * @param array $files with the folders and file names
+     * @param string $path the path of the files
+     * @return array flat array with the path of the files
+     */
+    function array_to_path(array $files, string $path = ''): array
+    {
+
+        $result = [];
+        foreach ($files as $key => $file) {
+            if (is_array($file)) {
+                $sub_path = $path . DIRECTORY_SEPARATOR . $key;
+                $result = array_merge($result, $this->array_to_path($file, $sub_path));
+            } else {
+                $result[] = $path . DIRECTORY_SEPARATOR . $file;
+            }
+        }
+        return $result;
+    }
+
+    function php_code_use(array $lines): array
+    {
+        $result = [];
+        foreach ($lines as $line) {
+            if (str_starts_with($line, 'use')) {
+                $class_with_path = trim($this->str_between($line, 'use', ';'));
+                $class = $this->str_right_of_or_all($class_with_path, '\\');
+                $path = $this->str_left_of_last($class_with_path, '\\' . $class);
+                $class = $this->str_left_of_or_all($class, ' as ');
+                $use = [];
+                $use[] = $class;;
+                $use[] = $path;;
+                if ($class != '') {
+                    $result[] = $use;
+                }
+            }
+        }
+        return $result;
+    }
+
+    function php_code_use_sorted(array $lines): array
+    {
+        $result = [];
+        foreach ($lines as $line) {
+            if (str_starts_with($line, 'use')) {
+                $result[] = $line;
+            }
+        }
+        asort($result);
+        return $result;
+    }
+
+    function php_code_use_converted(array $lines): array
+    {
+        $result = [];
+        foreach ($lines as $line) {
+            if (str_starts_with($line, 'use')) {
+                $class_with_path = trim($this->str_between($line, 'use', ';'));
+                $class = $this->str_right_of_or_all($class_with_path, '\\');
+                $path = $this->str_left_of_last($class_with_path, '\\' . $class);
+                $class = $this->str_left_of_or_all($class, ' as ');
+                $path_conv = $this->php_path_convert($path);
+                $result[] = 'include_once ' . $path_conv . " . '" . $class . ".php';";
+            }
+        }
+        asort($result);
+        return $result;
+    }
+
+    function php_code_include(array $lines): array
+    {
+        $result = [];
+        foreach ($lines as $line) {
+            if (str_starts_with($line, 'include_once') or str_starts_with($line, '//include_once')) {
+                $class_with_path = trim($this->str_between($line, 'include_once', ';'));
+                $class = $this->str_left_of_or_all($class_with_path, '.php');
+                $path = trim($this->str_left_of_or_all($class, '.'));
+                $class = $this->str_right_of_or_all($class, " . '");
+                $include = [];
+                $include[] = $class;;
+                $include[] = $path;;
+                if ($class != '') {
+                    $result[] = $include;
+                }
+            }
+        }
+        return $result;
+    }
+
+
+    /*
+     * php code
+     */
+
+    /**
+     * returns the const name for the include path
+     * for standard PHP libraries 'PHP' is returned
+     * @param string $use_path the namespace prefix of the class
+     * @return string the const name
+     */
+    function php_path_convert(string $use_path): string
+    {
+        return match ($use_path) {
+            'cfg' => 'SERVICE_PATH',
+            'cfg\db' => 'DB_PATH',
+            'cfg\log' => 'MODEL_LOG_PATH',
+            'cfg\system' => 'MODEL_SYSTEM_PATH',
+            'cfg\formula' => 'MODEL_FORMULA_PATH',
+            'cfg\element' => 'MODEL_ELEMENT_PATH',
+            'cfg\result' => 'MODEL_RESULT_PATH',
+            'cfg\phrase' => 'MODEL_PHRASE_PATH',
+            'cfg\sandbox' => 'MODEL_SANDBOX_PATH',
+            'cfg\helper' => 'MODEL_HELPER_PATH',
+            'cfg\group' => 'MODEL_GROUP_PATH',
+            'cfg\user' => 'MODEL_USER_PATH',
+            'cfg\word' => 'MODEL_WORD_PATH',
+            'cfg\ref' => 'MODEL_REF_PATH',
+            'cfg\view' => 'MODEL_VIEW_PATH',
+            'cfg\value' => 'MODEL_VALUE_PATH',
+            'cfg\import' => 'MODEL_IMPORT_PATH',
+            'cfg\language' => 'MODEL_LANGUAGE_PATH',
+            'cfg\verb' => 'MODEL_VERB_PATH',
+            'cfg\component' => 'MODEL_COMPONENT_PATH',
+            'cfg\export' => 'EXPORT_PATH',
+            'shared' => 'SHARED_PATH',
+            'html' => 'HTML_PATH',
+            'html\log' => 'WEB_LOG_PATH',
+            'html\user' => 'WEB_USER_PATH',
+            'html\formula' => 'WEB_FORMULA_PATH',
+            'html\word' => 'WEB_WORD_PATH',
+            'html\figure' => 'WEB_FIGURE_PATH',
+            'html\phrase' => 'WEB_PHRASE_PATH',
+            'html\value' => 'WEB_VALUE_PATH',
+            'html\system' => 'WEB_SYSTEM_PATH',
+            'shared\types' => 'SHARED_TYPES_PATH',
+            'shared\enum' => 'SHARED_ENUM_PATH',
+            'controller' => 'API_PATH',
+            'controller\system', 'api\system' => 'API_SYSTEM_PATH',
+            'api\result' => 'API_RESULT_PATH',
+            'api\word' => 'API_WORD_PATH',
+            'api\phrase' => 'API_PHRASE_PATH',
+            'api\value' => 'API_VALUE_PATH',
+            'api\ref' => 'API_REF_PATH',
+            'api\user' => 'API_USER_PATH',
+            'api\sandbox' => 'API_SANDBOX_PATH',
+            'api\formula' => 'API_FORMULA_PATH',
+            'api\component' => 'API_COMPONENT_PATH',
+            'api\verb' => 'API_VERB_PATH',
+            'api\view' => 'API_VIEW_PATH',
+            'api\log' => 'API_LOG_PATH',
+            default => 'missing path for ' . $use_path,
+        };
+    }
+
+
+    /*
      * display
      * to format objects as a string
      */
@@ -780,7 +1003,7 @@ class library
     /**
      * create a human-readable string from an array
      * @param array|null $in_array the array that should be formatted
-     * @return string the value comma seperated or "null" if the array is empty
+     * @return string the value comma separated or "null" if the array is empty
      */
     function dsp_array(?array $in_array, bool $with_keys = false): string
     {
@@ -1150,7 +1373,7 @@ class library
             if ($long_text) {
                 if ($type != self::STR_DIFF_UNCHANGED) {
                     if (is_array($diff_val[$i])) {
-                        $msg .= implode(',',$diff_val[$i]);
+                        $msg .= implode(',', $diff_val[$i]);
                     } else {
                         $msg .= $diff_val[$i];
                     }

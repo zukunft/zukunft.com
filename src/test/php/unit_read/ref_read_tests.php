@@ -35,11 +35,11 @@ namespace unit_read;
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\ref\ref as ref_api;
-use cfg\phrase_type;
-use cfg\ref;
-use cfg\ref_type_list;
+use cfg\phrase\phrase_type;
+use cfg\ref\ref;
+use cfg\ref\ref_type_list;
 use shared\library;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 use test\test_cleanup;
 
 class ref_read_tests

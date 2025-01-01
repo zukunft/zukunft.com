@@ -31,10 +31,19 @@
 
 namespace cfg;
 
-global $refs;
+include_once API_REF_PATH . 'ref.php';
+include_once DB_PATH . 'sql_db.php';
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_REF_PATH . 'ref.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_VERB_PATH . 'verb.php';
 
 use api\ref\ref as ref_api;
 use cfg\db\sql_db;
+use cfg\helper\type_list;
+use cfg\ref\ref;
+use cfg\user\user;
+use cfg\verb\verb;
 
 class ref_list extends type_list
 {

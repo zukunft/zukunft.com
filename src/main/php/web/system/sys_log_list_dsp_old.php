@@ -34,7 +34,7 @@ namespace html\system;
 
 include_once API_SYSTEM_PATH . 'sys_log_list.php';
 
-use cfg\user;
+use cfg\user\user;
 use controller\system\sys_log_list as sys_log_list_api;
 use html\html_base;
 

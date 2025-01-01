@@ -52,12 +52,34 @@
 
 namespace cfg\component;
 
+include_once API_COMPONENT_PATH . 'component.php';
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+include_once MODEL_LOG_PATH . 'change_link.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_PATH . 'json_fields.php';
 include_once MODEL_COMPONENT_PATH . 'view_style.php';
 
-use cfg\db\sql;
 use api\component\component as component_api;
+use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
@@ -66,18 +88,18 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\formula;
+use cfg\formula\formula;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
-use cfg\phrase;
-use cfg\sandbox;
-use cfg\sandbox_named;
-use cfg\sandbox_typed;
-use cfg\type_object;
-use cfg\user;
-use cfg\user_message;
-use cfg\word;
+use cfg\phrase\phrase;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
+use cfg\sandbox\sandbox_typed;
+use cfg\helper\type_object;
+use cfg\user\user;
+use cfg\user\user_message;
+use cfg\word\word;
 use shared\json_fields;
 
 class component extends sandbox_typed

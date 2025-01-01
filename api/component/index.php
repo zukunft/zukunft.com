@@ -45,7 +45,7 @@ include_once API_VIEW_PATH . 'view_cmp.php';
 
 use api\component\component as component_api;
 use cfg\component\component;
-use cfg\user;
+use cfg\user\user;
 use controller\controller;
 use shared\api;
 

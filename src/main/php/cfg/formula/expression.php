@@ -120,19 +120,38 @@
 
 */
 
-namespace cfg;
+namespace cfg\formula;
 
+include_once MODEL_ELEMENT_PATH . 'element.php';
 include_once MODEL_ELEMENT_PATH . 'element_group.php';
 include_once MODEL_ELEMENT_PATH . 'element_group_list.php';
+include_once MODEL_ELEMENT_PATH . 'element_list.php';
+include_once MODEL_PHRASE_PATH . 'phr_ids.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_PHRASE_PATH . 'term.php';
+include_once MODEL_PHRASE_PATH . 'term_list.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_USER_PATH . 'user.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\element\element;
 use cfg\element\element_group;
 use cfg\element\element_group_list;
 use cfg\element\element_list;
-use Exception;
+use cfg\phrase\phr_ids;
+use cfg\phrase\phrase_list;
+use cfg\phrase\term;
+use cfg\phrase\term_list;
+use cfg\word\word;
+use cfg\word\triple;
+use cfg\verb\verb;
+use cfg\user\user;
+use shared\types\phrase_type as phrase_type_shared;
 use shared\library;
-use shared\types\phrase_type AS phrase_type_shared;
+use Exception;
 
 class expression
 {

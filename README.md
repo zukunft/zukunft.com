@@ -25,6 +25,25 @@ To install this version 0.0.3 use a LAMP server (https://wiki.debian.org/LaMp) a
 6) change the password "xxx" in db_link/zu_lib_sql_link.php with the password used in 2)
 7) test if the installation is running fine by calling http://yourserver.com/test/test.php
 
+Target install
+--------------
+
+In the final version the installation on debian should be 
+
+sudo apt-get install zukunftcom
+
+with the options
+
+-p for python (php if not set)
+-j for java / jvm based version
+-c for C++ / rust based version
+
+After "zukunftcom start" a message should be shown including the pod name. Every critical event, 
+such as the connection to other pods, should be shown in the console 
+and beginning with an increasing minute based interval, 
+but at least once a day a status message should be shown with the system usage and a summery if the usage. 
+
+
 Additional for development
 --------------------------
 

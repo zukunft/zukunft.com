@@ -43,7 +43,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_HELPER_PATH . 'type_lists.php';
 
 use controller\controller;
-use cfg\user;
+use cfg\user\user;
 use cfg\type_lists;
 
 // open database

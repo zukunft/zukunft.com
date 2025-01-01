@@ -37,9 +37,9 @@ include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'views.php';
 
-use cfg\view;
+use cfg\view\view;
 use html\view\view as view_dsp;
-use cfg\user;
+use cfg\user\user;
 use shared\views as view_shared;
 
 // open database

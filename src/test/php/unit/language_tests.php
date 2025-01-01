@@ -32,8 +32,8 @@
 
 namespace unit;
 
-use cfg\language;
-use cfg\language_form;
+use cfg\language\language;
+use cfg\language\language_form;
 use test\test_cleanup;
 
 class language_tests

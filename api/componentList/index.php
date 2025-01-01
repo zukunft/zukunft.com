@@ -44,7 +44,7 @@ include_once MODEL_COMPONENT_PATH . 'component_list.php';
 include_once API_COMPONENT_PATH . 'component_list.php';
 
 use controller\controller;
-use cfg\user;
+use cfg\user\user;
 use cfg\component\component_list;
 use api\component\component_list as component_list_api;
 use shared\api;

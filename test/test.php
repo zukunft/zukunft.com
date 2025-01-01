@@ -54,7 +54,7 @@ include_once TEST_PHP_UTIL_PATH . 'test_base.php';
 // load the main test control class
 include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
 
-use cfg\user;
+use cfg\user\user;
 use test\all_tests;
 
 

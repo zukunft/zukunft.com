@@ -38,8 +38,8 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
-use cfg\verb;
-use cfg\word;
+use cfg\verb\verb;
+use cfg\word\word;
 use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
 use shared\library;

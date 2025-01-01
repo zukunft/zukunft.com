@@ -43,7 +43,7 @@ include_once SHARED_PATH . 'json_fields.php';
 use shared\api;
 use api\phrase\phrase as phrase_api;
 use api\sandbox\combine_object as combine_object_api;
-use cfg\verb_list;
+use cfg\verb\verb_list;
 use html\button;
 use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;

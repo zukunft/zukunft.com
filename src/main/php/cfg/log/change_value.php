@@ -31,9 +31,19 @@
 
 namespace cfg\log;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_LOG_PATH . 'change_log.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+//include_once MODEL_GROUP_PATH . 'group.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_USER_PATH . 'user.php';
 include_once API_LOG_PATH . 'change_log_named.php';
 include_once WEB_LOG_PATH . 'change_log_named.php';
 
@@ -47,8 +57,8 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\group\group;
-use cfg\type_object;
-use cfg\user;
+use cfg\helper\type_object;
+use cfg\user\user;
 
 class change_value extends change_log
 {

@@ -59,11 +59,11 @@ include_once SHARED_PATH . 'views.php';
 use html\html_base;
 use html\view\view as view_dsp;
 use html\word\word as word_dsp;
-use cfg\term;
-use cfg\triple;
-use cfg\user;
-use cfg\view;
-use cfg\word;
+use cfg\phrase\term;
+use cfg\word\triple;
+use cfg\user\user;
+use cfg\view\view;
+use cfg\word\word;
 use shared\api;
 use shared\views as view_shared;
 

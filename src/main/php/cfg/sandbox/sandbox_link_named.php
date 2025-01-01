@@ -29,9 +29,19 @@
 
 */
 
-namespace cfg;
+namespace cfg\sandbox;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+//include_once MODEL_LOG_PATH . 'change_log_list.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql;
@@ -42,9 +52,9 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\log\change_log_list;
+use cfg\user\user;
+use cfg\user\user_message;
 use shared\json_fields;
-
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 
 class sandbox_link_named extends sandbox_link
 {

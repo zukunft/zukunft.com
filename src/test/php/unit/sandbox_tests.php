@@ -32,6 +32,7 @@
 
 namespace unit;
 
+include_once SERVICE_PATH . 'config.php';
 include_once DB_PATH . 'sql.php';
 include_once API_WORD_PATH . 'word.php';
 include_once MODEL_REF_PATH . 'source.php';
@@ -46,20 +47,20 @@ use cfg\config;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\formula;
-use cfg\formula_link;
-use cfg\formula_link_type;
-use cfg\phrase;
-use cfg\sandbox;
-use cfg\sandbox_named;
-use cfg\source;
-use cfg\source_type;
-use cfg\triple;
-use cfg\user;
+use cfg\formula\formula;
+use cfg\formula\formula_link;
+use cfg\formula\formula_link_type;
+use cfg\phrase\phrase;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
+use cfg\ref\source;
+use cfg\ref\source_type;
+use cfg\verb\verb;
+use cfg\word\triple;
+use cfg\user\user;
 use cfg\value\value;
-use cfg\verb;
-use cfg\view;
-use cfg\word;
+use cfg\view\view;
+use cfg\word\word;
 use shared\library;
 use test\test_cleanup;
 

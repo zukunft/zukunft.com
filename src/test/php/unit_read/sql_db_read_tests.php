@@ -33,7 +33,7 @@
 namespace unit_read;
 
 use cfg\db\sql_db;
-use cfg\user_message;
+use cfg\user\user_message;
 use shared\library;
 use test\test_cleanup;
 

@@ -32,7 +32,7 @@
 
 namespace html\types;
 
-use cfg\source_type;
+use cfg\ref\source_type;
 use html\html_selector;
 
 class source_type_list extends type_list

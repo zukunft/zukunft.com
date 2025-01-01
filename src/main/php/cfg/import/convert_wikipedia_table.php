@@ -32,17 +32,21 @@
 
 namespace cfg\import;
 
+include_once API_VERB_PATH . 'verb.php';
+include_once EXPORT_PATH . 'export.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_USER_PATH . 'user.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\verb\verb as verb_api;
 use cfg\export\export;
-use cfg\phrase_list;
-use cfg\phrase_type;
-use cfg\user;
+use cfg\phrase\phrase_list;
+use cfg\user\user;
+use shared\types\phrase_type as phrase_type_shared;
+use shared\library;
 use DateTime;
 use DateTimeInterface;
-use shared\library;
-use shared\types\phrase_type AS phrase_type_shared;
 
 class convert_wikipedia_table
 {

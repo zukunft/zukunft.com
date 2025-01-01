@@ -44,11 +44,11 @@ include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once API_PHRASE_PATH . 'phrase_list.php';
 
-use cfg\phrase;
+use cfg\phrase\phrase;
 use controller\controller;
-use cfg\user;
-use cfg\phr_ids;
-use cfg\phrase_list;
+use cfg\user\user;
+use cfg\phrase\phr_ids;
+use cfg\phrase\phrase_list;
 use api\phrase\phrase_list as phrase_list_api;
 use shared\api;
 

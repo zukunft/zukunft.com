@@ -30,7 +30,7 @@
   
 */
 
-namespace cfg;
+namespace cfg\formula;
 
 /**
  * helper class to make sure that

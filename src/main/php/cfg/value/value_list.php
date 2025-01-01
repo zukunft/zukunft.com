@@ -40,17 +40,36 @@
 
 namespace cfg\value;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox_value_list.php';
+include_once API_VALUE_PATH . 'value_list.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_list.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_GROUP_PATH . 'group.php';
+include_once MODEL_GROUP_PATH . 'group_id.php';
+include_once MODEL_GROUP_PATH . 'group_list.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_WORD_PATH . 'word_list.php';
+include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once API_VALUE_PATH . 'value_list.php';
-include_once SERVICE_EXPORT_PATH . 'value_list_exp.php';
-include_once MODEL_GROUP_PATH . 'group_id_list.php';
-include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql_field_list;
 use cfg\db\sql_type_list;
-use cfg\user;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_value_list;
+use cfg\user\user;
 use shared\json_fields;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
@@ -60,22 +79,15 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
-use cfg\export\sandbox_exp;
-use cfg\export\source_exp;
-use cfg\export\value_list_exp;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_list;
-use cfg\phrase;
-use cfg\phrase_list;
-use cfg\protection_type;
-use cfg\sandbox;
-use cfg\sandbox_value_list;
-use cfg\share_type;
-use cfg\source;
-use cfg\user_message;
-use cfg\word;
-use cfg\word_list;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
+use cfg\ref\source;
+use cfg\user\user_message;
+use cfg\word\word;
+use cfg\word\word_list;
 use shared\library;
 
 class value_list extends sandbox_value_list
@@ -786,7 +798,7 @@ class value_list extends sandbox_value_list
                 $val->protection_id = $ptc_typ_cac->id($value);
             }
 
-            if ($key == source_exp::FLD_REF) {
+            if ($key == json_fields::SOURCE_NAME) {
                 $src = new source($this->user());
                 $src->set_name($value);
                 if ($test_obj) {

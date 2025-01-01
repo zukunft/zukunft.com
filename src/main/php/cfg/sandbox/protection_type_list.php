@@ -30,16 +30,14 @@
   
 */
 
-namespace cfg;
+namespace cfg\sandbox;
 
+include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once DB_PATH . 'sql_db.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 
+use cfg\helper\type_list;
 use shared\types\protection_type as protect_type_shared;
-use test\create_test_objects;
-
-global $ptc_typ_cac;
 
 class protection_type_list extends type_list
 {
@@ -51,8 +49,7 @@ class protection_type_list extends type_list
     {
         $this->reset();
         // read the corresponding names and description from the internal config csv files
-        $t = new create_test_objects();
-        $t->read_from_config_csv($this);
+        $this->read_from_config_csv($this);
     }
 
     /**

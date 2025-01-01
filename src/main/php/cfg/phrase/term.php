@@ -43,40 +43,59 @@
 
 */
 
-namespace cfg;
+namespace cfg\phrase;
 
-include_once DB_PATH . 'sql.php';
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once API_PHRASE_PATH . 'term.php';
 include_once API_WORD_PATH . 'word.php';
 include_once API_WORD_PATH . 'triple.php';
 include_once API_VERB_PATH . 'verb.php';
 include_once API_FORMULA_PATH . 'formula.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+//include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'term.php';
+include_once HTML_PATH . 'html_base.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_TYPES_PATH . 'protection_type.php';
+include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_field_type;
-use shared\types\protection_type as protect_type_shared;
-use shared\types\share_type as share_type_shared;
+use cfg\helper\combine_named;
 use api\phrase\term as term_api;
 use api\word\word as word_api;
+use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
+use cfg\db\sql_field_type;
+use cfg\helper\db_object_seq_id;
+use cfg\formula\formula;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
+use cfg\verb\verb;
+use cfg\user\user;
+use cfg\word\word;
+use cfg\word\triple;
 use html\html_base;
 use html\word\word as word_dsp;
+use shared\types\protection_type as protect_type_shared;
+use shared\types\share_type as share_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 use shared\library;
-use shared\types\phrase_type AS phrase_type_shared;
 
 class term extends combine_named
 {

@@ -30,14 +30,19 @@
 
 */
 
-namespace cfg;
+namespace cfg\system;
 
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once WEB_SYSTEM_PATH . 'messages.php';
 
+use cfg\system\base_list;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
+use cfg\user\user_message;
 use html\system\messages;
 
 class ip_range_list extends base_list

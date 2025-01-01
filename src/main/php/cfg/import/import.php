@@ -40,16 +40,24 @@ namespace cfg\import;
 
 include_once SHARED_PATH . 'library.php';
 include_once EXPORT_PATH . 'export.php';
+include_once MODEL_COMPONENT_PATH . 'component.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
+include_once EXPORT_PATH . 'export.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_FORMULA_PATH . 'formula_list.php';
 include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_RESULT_PATH . 'result_list.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range.php';
 include_once MODEL_SYSTEM_PATH . 'session.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_REF_PATH . 'ref.php';
 include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_RESULT_PATH . 'result.php';
+include_once MODEL_RESULT_PATH . 'result_list.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
 include_once MODEL_VERB_PATH . 'verb.php';
@@ -58,25 +66,25 @@ include_once MODEL_VIEW_PATH . 'view_list.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
 
 use cfg\component\component;
-use cfg\data_object;
+use cfg\helper\data_object;
 use cfg\export\export;
-use cfg\formula;
-use cfg\formula_list;
-use cfg\ip_range;
-use cfg\phrase_list;
-use cfg\ref;
+use cfg\formula\formula;
+use cfg\formula\formula_list;
+use cfg\system\ip_range;
+use cfg\phrase\phrase_list;
+use cfg\ref\ref;
 use cfg\result\result;
 use cfg\result\result_list;
-use cfg\source;
-use cfg\triple;
-use cfg\user;
-use cfg\user_message;
+use cfg\ref\source;
+use cfg\word\triple;
+use cfg\user\user;
+use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_list;
-use cfg\verb;
-use cfg\view;
-use cfg\view_list;
-use cfg\word;
+use cfg\verb\verb;
+use cfg\view\view;
+use cfg\view\view_list;
+use cfg\word\word;
 use shared\library;
 
 class import
@@ -239,22 +247,22 @@ class import
                 }
             } elseif ($key == export::POD) {
                 // TODO set the source pod
-                log_warning('import of pod details not yet implimented');
+                log_warning('import of pod details not yet implemented');
             } elseif ($key == export::TIME) {
                 // TODO set the time of the export
-                log_warning('import of time not yet implimented');
+                log_warning('import of time not yet implemented');
             } elseif ($key == export::SELECTION) {
                 // TODO set the selection as context
-                log_warning('import of selection not yet implimented');
+                log_warning('import of selection not yet implemented');
             } elseif ($key == export::DESCRIPTION) {
                 // TODO remember the description for the log
-                log_warning('import of description not yet implimented');
+                log_warning('import of description not yet implemented');
             } elseif ($key == export::USER) {
                 // TODO set the user that has created the export
-                log_warning('import of a single user not yet implimented');
+                log_warning('import of a single user not yet implemented');
             } elseif ($key == export::USERS) {
                 // TODO import the users (but only by a user with the privileges)
-                log_warning('import of users not yet implimented');
+                log_warning('import of users not yet implemented');
             } elseif ($key == export::VERBS) {
                 $import_result = new user_message();
                 foreach ($json_obj as $verb) {

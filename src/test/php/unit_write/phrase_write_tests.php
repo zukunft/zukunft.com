@@ -36,10 +36,10 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
-use cfg\phrase;
-use cfg\triple;
-use cfg\verb;
-use cfg\word;
+use cfg\phrase\phrase;
+use cfg\word\triple;
+use cfg\verb\verb;
+use cfg\word\word;
 use html\phrase\phrase as phrase_dsp;
 use shared\api;
 use shared\library;

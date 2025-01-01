@@ -49,26 +49,41 @@
   
 */
 
-namespace cfg;
+namespace cfg\view;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 include_once API_VIEW_PATH . 'view.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once MODEL_COMPONENT_PATH . 'component_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_link.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
-include_once MODEL_DB_PATH . 'sql.php';
-include_once MODEL_DB_PATH . 'sql_db.php';
-include_once MODEL_DB_PATH . 'sql_field_default.php';
-include_once MODEL_DB_PATH . 'sql_field_type.php';
-include_once MODEL_DB_PATH . 'sql_par.php';
-include_once MODEL_DB_PATH . 'sql_par_type.php';
-include_once MODEL_DB_PATH . 'sql_type.php';
-include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
-include_once SERVICE_EXPORT_PATH . 'view_exp.php';
-include_once SERVICE_EXPORT_PATH . 'component_exp.php';
-include_once WEB_VIEW_PATH . 'view.php';
+include_once MODEL_COMPONENT_PATH . 'component_list.php';
+include_once MODEL_COMPONENT_PATH . 'position_type.php';
+include_once MODEL_COMPONENT_PATH . 'view_style.php';
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_LANGUAGE_PATH . 'language.php';
+include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'term.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VIEW_PATH . 'view_term_link.php';
+include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\component\view_style;
 use api\view\view as view_api;
@@ -87,7 +102,19 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\type_list;
+use cfg\helper\type_object;
+use cfg\language\language;
 use cfg\log\change;
+use cfg\phrase\phrase;
+use cfg\phrase\term;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
+use cfg\sandbox\sandbox_typed;
+use cfg\user\user;
+use cfg\user\user_message;
+use cfg\view\view_term_link;
+use cfg\view\view_type;
 use shared\json_fields;
 use shared\library;
 

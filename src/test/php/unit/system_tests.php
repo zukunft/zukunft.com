@@ -31,6 +31,7 @@
 
 namespace unit;
 
+include_once SERVICE_PATH . 'config.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
 include_once MODEL_SYSTEM_PATH . 'session.php';
@@ -42,15 +43,15 @@ use api\ref\ref as ref_api;
 use cfg\config;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\formula;
-use cfg\ip_range;
-use cfg\ip_range_list;
-use cfg\session;
-use cfg\sys_log;
+use cfg\formula\formula;
 use cfg\sys_log_list;
-use cfg\sys_log_status;
-use cfg\sys_log_status_list;
-use cfg\verb;
+use cfg\system\ip_range;
+use cfg\system\ip_range_list;
+use cfg\system\session;
+use cfg\system\sys_log;
+use cfg\system\sys_log_status;
+use cfg\system\sys_log_status_list;
+use cfg\verb\verb;
 use controller\system\sys_log as sys_log_api;
 use DateTime;
 use shared\library;
@@ -296,6 +297,8 @@ class system_tests
         $expected_sql = $t->file('db/system/missing_owner_by_formula.sql');
         $t->assert('system_consistency->missing_owner_sql by formula', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
+        $this->php_include_tests($t);
+
         // ... and check if the prepared sql name is unique
         if (!in_array($qp->name, $sql_names)) {
             $result = true;
@@ -439,6 +442,59 @@ class system_tests
         $expected = file_get_contents(PATH_TEST_FILES . 'db/formula/formula_count.sql');
         $t->assert_sql('sql_db->count', $created, $expected);
 
+    }
+
+    /**
+     * check if all used classes are also included once within the same file
+     *
+     * @param test_cleanup $t
+     * @return void
+     */
+    function php_include_tests(test_cleanup $t): void
+    {
+        $lib = new library();
+        $test_name = 'check if all used classes are loaded in php with include once';
+        $result = '';
+        $file_array = $lib->dir_to_array(MODEL_PATH);
+        $code_files = $lib->array_to_path($file_array);
+        $pos = 1;
+        foreach ($code_files as $code_file) {
+            log_debug($code_file);
+            $ctrl_code = file(MODEL_PATH . $code_file);
+            $use_classes = $lib->php_code_use($ctrl_code);
+            // the use code lines sorted by name for copy and paste to code
+            $use_sorted = implode("\n", $lib->php_code_use_sorted($ctrl_code));
+            // the include code lines sorted by name for copy and paste to code
+            $use_converted = implode("\n", $lib->php_code_use_converted($ctrl_code));
+            $include_classes = $lib->php_code_include($ctrl_code);
+            foreach ($use_classes as $use) {
+                $class = $use[0];
+                $path = $use[1];
+                if ($path != '') {
+                    $found = false;
+                    foreach ($include_classes as $include) {
+                        $class_incl = $include[0];
+                        $path_incl = $include[1];
+                        if ($class == $class_incl) {
+                            $path_conv = $lib->php_path_convert($path);
+                            if ($path_conv == $path_incl) {
+                                $found = true;
+                            }
+                        }
+                    }
+                    if (!$found) {
+                        $t->assert(
+                            'includes missing in ' . $path . '\\' . $class
+                            . ' in ' . $code_file
+                            . ' (' . $pos . ' of ' .count($code_files) . ')', '',
+                            $class);
+                    }
+                } else {
+                    log_debug($class . ' is expected to be a PHP default library');
+                }
+            }
+            $pos++;
+        }
     }
 
 }

@@ -29,17 +29,42 @@
 
 */
 
-namespace cfg;
+namespace cfg\formula;
 
-include_once DB_PATH . 'sql_par_type.php';
 include_once API_FORMULA_PATH . 'formula_list.php';
+include_once SERVICE_PATH . 'config.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_ELEMENT_PATH . 'element.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+include_once WEB_FORMULA_PATH . 'formula.php';
+include_once WEB_FORMULA_PATH . 'formula_list.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\formula\formula_list as formula_list_api;
+use cfg\config;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\element\element;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_list;
+use cfg\user\user_message;
+use cfg\verb\verb;
+use cfg\word\triple;
+use cfg\word\word;
 use html\formula\formula as formula_dsp;
 use html\formula\formula_list as formula_list_dsp;
 use shared\library;
@@ -547,7 +572,7 @@ class formula_list extends sandbox_list
     function import_obj(array $json_obj, object $test_obj = null): user_message
     {
         $usr_msg = new user_message();
-        foreach ($json_obj as $key => $value) {
+        foreach ($json_obj as $value) {
             $frm = new formula($this->user());
             $usr_msg->add($frm->import_obj($value, $test_obj));
             // add a dummy id for unit testing

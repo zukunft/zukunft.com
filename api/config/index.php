@@ -44,7 +44,7 @@ include_once MODEL_HELPER_PATH . 'config_numbers.php';
 
 use cfg\config_numbers;
 use controller\controller;
-use cfg\user;
+use cfg\user\user;
 
 // open database
 $db_con = prg_start("api/config", "", false);

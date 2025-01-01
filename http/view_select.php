@@ -32,9 +32,9 @@
 // standard zukunft header for callable php files to allow debugging and lib loading
 use html\view\view as view_dsp;
 use html\word\word as word_dsp;
-use cfg\user;
-use cfg\view;
-use cfg\word;
+use cfg\user\user;
+use cfg\view\view;
+use cfg\word\word;
 use shared\api;
 
 $debug = $_GET['debug'] ?? 0;

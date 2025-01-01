@@ -34,9 +34,8 @@ namespace unit_read;
 
 include_once SHARED_TYPES_PATH . 'share_type.php';
 
+use cfg\sandbox\share_type_list;
 use shared\types\share_type as share_type_shared;
-use cfg\share_type;
-use cfg\share_type_list;
 use test\test_cleanup;
 
 class share_read_tests

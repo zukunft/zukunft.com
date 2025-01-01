@@ -32,15 +32,21 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
 include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once API_SYSTEM_PATH . 'db_object.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_par.php';
+//include_once MODEL_GROUP_PATH . 'group_id.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 
 use api\system\db_object as db_object_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
-use cfg\group\group;
 use cfg\group\group_id;
+use cfg\helper\db_object;
+use cfg\user\user_message;
 
 class db_object_multi extends db_object
 {

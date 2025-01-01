@@ -34,9 +34,9 @@ namespace unit;
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\phrase;
-use cfg\verb;
-use cfg\verb_list;
+use cfg\phrase\phrase;
+use cfg\verb\verb;
+use cfg\verb\verb_list;
 use html\verb\verb as verb_dsp;
 use shared\enum\foaf_direction;
 use test\test_cleanup;

@@ -34,11 +34,11 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\word\word as word_api;
 use api\ref\source as source_api;
-use cfg\phrase_type;
-use cfg\source;
-use cfg\word;
+use cfg\phrase\phrase_type;
+use cfg\ref\source;
+use cfg\word\word;
 use test\all_tests;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 
 function run_sandbox_test(all_tests $t): void
 {

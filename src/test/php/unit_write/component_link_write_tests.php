@@ -38,8 +38,8 @@ use cfg\component\component;
 use cfg\component\component_link;
 use cfg\log\change_link;
 use cfg\log\change_table_list;
-use cfg\user;
-use cfg\view;
+use cfg\user\user;
+use cfg\view\view;
 use test\test_cleanup;
 
 class component_link_write_tests

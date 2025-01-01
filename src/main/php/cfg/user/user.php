@@ -46,15 +46,35 @@
   
 */
 
-namespace cfg;
+namespace cfg\user;
 
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once API_USER_PATH . 'user.php';
+//include_once DB_PATH . 'db_check.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+//include_once MODEL_IMPORT_PATH . 'import_file.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
+//include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+//include_once MODEL_LOG_PATH . 'change_table_list.php';
+//include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+//include_once MODEL_REF_PATH . 'source.php';
+//include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
-include_once SERVICE_EXPORT_PATH . 'user_exp.php';
+include_once MODEL_USER_PATH . 'user_type.php';
+//include_once MODEL_VERB_PATH . 'verb_list.php';
+//include_once MODEL_VIEW_PATH . 'view.php';
+//include_once MODEL_VIEW_PATH . 'view_sys_list.php';
+//include_once MODEL_WORD_PATH . 'word.php';
+include_once WEB_USER_PATH . 'user.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use api\user\user as user_api;
 use cfg\db\db_check;
@@ -65,17 +85,24 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\export\user_exp;
-use cfg\export\sandbox_exp;
+use cfg\helper\db_object_seq_id;
 use cfg\import\import_file;
+use cfg\system\ip_range_list;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_table_list;
+use cfg\sandbox\sandbox_named;
+use cfg\ref\source;
+use cfg\word\triple;
 use cfg\user\user_profile;
 use cfg\user\user_type;
-use Exception;
+use cfg\verb\verb_list;
+use cfg\view\view;
+use cfg\view\view_sys_list;
+use cfg\word\word;
 use html\user\user as user_dsp;
 use shared\json_fields;
+use Exception;
 
 class user extends db_object_seq_id
 {

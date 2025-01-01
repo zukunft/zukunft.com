@@ -38,11 +38,11 @@ include_once WEB_PHRASE_PATH . 'phrase_group_list.php';
 include_once SHARED_PATH . 'views.php';
 
 use cfg\group\group;
-use cfg\phr_ids;
-use cfg\phrase;
-use cfg\phrase_list;
+use cfg\phrase\phr_ids;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
 use cfg\result\result_list;
-use cfg\word_list;
+use cfg\word\word_list;
 use html\rest_ctrl;
 use html\button;
 use html\html_base;

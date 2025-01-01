@@ -32,8 +32,8 @@
 
 namespace unit_read;
 
-use cfg\language;
-use cfg\language_form;
+use cfg\language\language;
+use cfg\language\language_form;
 use test\test_cleanup;
 
 class language_read_tests

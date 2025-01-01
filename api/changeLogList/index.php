@@ -45,9 +45,9 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once API_PHRASE_PATH . 'term_list.php';
 
 use controller\controller;
-use cfg\user;
+use cfg\user\user;
 use cfg\log\change_log_list;
-use cfg\word;
+use cfg\word\word;
 use api\phrase\term_list as term_list_api;
 use shared\api;
 

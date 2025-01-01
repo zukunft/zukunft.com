@@ -32,16 +32,15 @@
 namespace cfg\component;
 
 include_once SHARED_TYPES_PATH . 'component_type.php';
+include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_COMPONENT_PATH . 'component_type.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 
 use shared\types\view_styles;
-use cfg\type_list;
-use cfg\type_object;
-
-global $msk_sty_cac;
+use cfg\helper\type_list;
+use cfg\helper\type_object;
 
 class view_style_list extends type_list
 {

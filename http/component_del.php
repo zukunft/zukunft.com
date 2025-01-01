@@ -38,8 +38,8 @@ include_once PHP_PATH . 'zu_lib.php';
 include_once SHARED_PATH . 'views.php';
 
 use cfg\component\component;
-use cfg\user;
-use cfg\view;
+use cfg\user\user;
+use cfg\view\view;
 use html\html_base;
 use html\view\view as view_dsp;
 use shared\api;

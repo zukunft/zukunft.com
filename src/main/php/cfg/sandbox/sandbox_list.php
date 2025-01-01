@@ -39,19 +39,36 @@
 
 */
 
-namespace cfg;
+namespace cfg\sandbox;
 
+include_once MODEL_SYSTEM_PATH . 'base_list.php';
+include_once MODEL_SYSTEM_PATH . 'base_list.php';
+include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+//include_once MODEL_PHRASE_PATH . 'term_list.php';
+include_once MODEL_RESULT_PATH . 'result_list.php';
+include_once MODEL_USER_PATH . 'user.php';
+//include_once MODEL_VALUE_PATH . 'value_list.php';
+include_once SHARED_PATH . 'library.php';
+
+use cfg\system\base_list;
+use cfg\helper\combine_named;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\phrase\term_list;
 use cfg\result\result_list;
+use cfg\user\user;
 use cfg\value\value_list;
 use shared\library;
-
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
 class sandbox_list extends base_list
 {

@@ -40,16 +40,51 @@ include_once MODEL_DB_PATH . 'sql_where.php';
 include_once MODEL_DB_PATH . 'sql_where_list.php';
 include_once MODEL_DB_PATH . 'sql_pg.php';
 include_once MODEL_DB_PATH . 'sql.php';
+//include_once MODEL_COMPONENT_PATH . 'component_link.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once MODEL_ELEMENT_PATH . 'element.php';
+include_once MODEL_FORMULA_PATH . 'formula_link.php';
+include_once MODEL_GROUP_PATH . 'group.php';
+include_once MODEL_GROUP_PATH . 'group_id.php';
+include_once MODEL_SYSTEM_PATH . 'ip_range.php';
+include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
+include_once MODEL_SYSTEM_PATH . 'job.php';
+include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+include_once MODEL_LOG_PATH . 'change_values_big.php';
+include_once MODEL_LOG_PATH . 'change_link.php';
+include_once MODEL_LOG_PATH . 'change_values_norm.php';
+include_once MODEL_LOG_PATH . 'change_values_prime.php';
+include_once MODEL_LOG_PATH . 'change_table.php';
+include_once MODEL_LOG_PATH . 'changes_big.php';
+include_once MODEL_LOG_PATH . 'changes_norm.php';
+include_once MODEL_REF_PATH . 'ref.php';
+include_once MODEL_RESULT_PATH . 'result.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_profile.php';
+include_once MODEL_USER_PATH . 'user_type.php';
+include_once MODEL_USER_PATH . 'user_official_type.php';
+include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_time_series.php';
+include_once MODEL_VIEW_PATH . 'view_term_link.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\component\component_link;
-use cfg\db_object_seq_id;
+use cfg\helper\db_object_seq_id;
 use cfg\element\element;
-use cfg\formula_link;
+use cfg\formula\formula_link;
 use cfg\group\group;
 use cfg\group\group_id;
-use cfg\ip_range;
-use cfg\ip_range_list;
-use cfg\job;
+use cfg\sandbox\sandbox_value;
+use cfg\system\ip_range;
+use cfg\system\ip_range_list;
+use cfg\system\job;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_values_big;
@@ -59,23 +94,22 @@ use cfg\log\change_values_prime;
 use cfg\log\change_table;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
-use cfg\ref;
+use cfg\ref\ref;
 use cfg\result\result;
-use cfg\sandbox;
-use cfg\sandbox_link;
-use cfg\sandbox_link_named;
-use cfg\sandbox_value;
-use cfg\sys_log;
-use cfg\triple;
-use cfg\user;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_link;
+use cfg\sandbox\sandbox_link_named;
+use cfg\system\sys_log;
+use cfg\word\triple;
+use cfg\user\user;
 use cfg\user\user_profile;
 use cfg\user\user_type;
-use cfg\user_official_type;
+use cfg\user\user_official_type;
 use cfg\value\value;
 use cfg\value\value_time_series;
-use cfg\view_term_link;
-use DateTime;
+use cfg\view\view_term_link;
 use shared\library;
+use DateTime;
 
 class sql_creator
 {
@@ -5180,7 +5214,7 @@ class sql_creator
      */
 
     /**
-     * @param string $txt sql fields that should be seperated with a comma
+     * @param string $txt sql fields that should be separated with a comma
      * @return string the original text with the sql separator if the text is not empty
      */
     private function sep(string $txt): string

@@ -29,8 +29,10 @@
 
 */
 
-namespace cfg;
+namespace cfg\view;
 
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once API_VIEW_PATH . 'view_list.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -41,6 +43,10 @@ include_once SHARED_PATH . 'views.php';
 use api\view\view_list as view_list_api;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
+use cfg\helper\type_list;
+use cfg\user\user;
+use cfg\view\view;
+use cfg\view\view_list;
 use shared\views as view_shared;
 
 global $sys_msk_cac;

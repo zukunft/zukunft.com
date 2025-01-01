@@ -36,9 +36,9 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\word\triple as triple_api;
 use api\sandbox\list_object as list_api;
-use cfg\phrase_type;
+use cfg\phrase\phrase_type;
 use html\word\triple_list as triple_list_dsp;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 
 class triple_list extends list_api
 {

@@ -92,7 +92,7 @@ class api
     const URL_VAR_SYS_LOG = 'hs'; // history of a system event
     const URL_VAR_JOB = 'j'; // for system batch jobs
     const URL_VAR_IP = 'ip'; // for ip ranges (for admin only)
-    const URL_VAR_ID_LST = 'ids'; // a comma seperated list of internal database ids
+    const URL_VAR_ID_LST = 'ids'; // a comma separated list of internal database ids
     const URL_VAR_NAME = 'name'; // the unique name of a term, view, component, user, source, language or type
     const URL_VAR_PATTERN = 'pattern'; // part of a name to select a named object such as word, triple, ...
     const URL_VAR_COMMENT = 'comment';

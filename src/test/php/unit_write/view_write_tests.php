@@ -34,14 +34,14 @@ namespace unit_write;
 
 use api\view\view as view_api;
 use api\word\word as word_api;
-use cfg\user;
-use cfg\view_type;
-use cfg\view;
+use cfg\user\user;
+use cfg\view\view_type;
+use cfg\view\view;
 use html\view\view as view_dsp;
 use cfg\log\change;
 use cfg\log\change_table_list;
-use cfg\sandbox_named;
-use cfg\word;
+use cfg\sandbox\sandbox_named;
+use cfg\word\word;
 use test\test_cleanup;
 
 class view_write_tests

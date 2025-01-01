@@ -31,8 +31,9 @@
 
 namespace cfg\element;
 
-use cfg\type_object;
+include_once MODEL_HELPER_PATH . 'type_object.php';
 
+use cfg\helper\type_object;
 class element_type extends type_object
 {
 

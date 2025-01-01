@@ -34,9 +34,9 @@ namespace unit;
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\job_time;
-use cfg\user;
-use cfg\user_list;
+use cfg\system\job_time;
+use cfg\user\user;
+use cfg\user\user_list;
 use test\test_cleanup;
 
 class user_tests

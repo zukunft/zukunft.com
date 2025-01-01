@@ -19,7 +19,7 @@
     - construct and map: including the mapping of the db row to this triple object
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
-    - sql:               to create sql statments e.g. for load word from the sql database
+    - sql:               to create sql statements e.g. for load word from the sql database
     - im- and export:    create an export object and set the vars from an import object
     - information:       to make the code more readable
     - convert:           more complex cast
@@ -51,10 +51,25 @@
 
 */
 
-namespace cfg;
+namespace cfg\word;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
 include_once API_WORD_PATH . 'triple_list.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_WORD_PATH . 'word_list.php';
+include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\word\triple_list as triple_list_api;
@@ -62,6 +77,17 @@ use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\helper\combine_named;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
+use cfg\sandbox\sandbox_link_named;
+use cfg\sandbox\sandbox_list_named;
+use cfg\sandbox\sandbox_named;
+use cfg\user\user_message;
+use cfg\verb\verb;
+use cfg\word\triple;
+use cfg\word\word;
+use cfg\word\word_list;
 use shared\enum\foaf_direction;
 use shared\types\verbs;
 

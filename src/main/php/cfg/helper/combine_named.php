@@ -32,15 +32,20 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_type.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+include_once SHARED_PATH . 'library.php';
 include_once MODEL_DB_PATH . 'sql_where_type.php';
 include_once MODEL_HELPER_PATH . 'combine_object.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_type;
+use cfg\verb\verb;
 use shared\library;
 
 class combine_named extends combine_object

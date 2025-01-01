@@ -36,12 +36,12 @@ use api\formula\formula as formula_api;
 use api\word\triple as triple_api;
 use api\verb\verb as verb_api;
 use api\word\word as word_api;
-use cfg\formula;
-use cfg\formula_list;
-use cfg\triple;
-use cfg\verb;
-use cfg\word;
-use cfg\word_list;
+use cfg\formula\formula;
+use cfg\formula\formula_list;
+use cfg\word\triple;
+use cfg\verb\verb;
+use cfg\word\word;
+use cfg\word\word_list;
 use test\test_cleanup;
 
 class formula_list_read_tests

@@ -34,8 +34,8 @@ namespace unit_read;
 
 use api\formula\formula as formula_api;
 use api\word\word as word_api;
-use cfg\formula;
-use cfg\word_list;
+use cfg\formula\formula;
+use cfg\word\word_list;
 use test\test_cleanup;
 
 class word_list_read_tests

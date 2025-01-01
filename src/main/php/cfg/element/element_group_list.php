@@ -31,8 +31,11 @@
 
 namespace cfg\element;
 
-use cfg\sandbox_list;
-use cfg\term_list;
+include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_PHRASE_PATH . 'term_list.php';
+
+use cfg\sandbox\sandbox_list;
+use cfg\phrase\term_list;
 
 class element_group_list extends sandbox_list
 {

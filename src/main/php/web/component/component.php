@@ -40,6 +40,7 @@ include_once HTML_PATH . 'sheet.php';
 include_once TYPES_PATH . 'view_style_list.php';
 include_once SHARED_PATH . 'views.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\data_object;
 use html\button;
@@ -53,7 +54,7 @@ use html\user\user_message;
 use shared\json_fields;
 use shared\types\component_type;
 use cfg\db\sql_db;
-use cfg\word;
+use cfg\word\word;
 use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;

@@ -35,17 +35,17 @@ namespace unit_write;
 use api\formula\formula as formula_api;
 use api\result\result as result_api;
 use api\word\word as word_api;
-use cfg\formula_list;
-use cfg\formula_type;
-use cfg\user;
-use cfg\word;
+use cfg\formula\formula_list;
+use cfg\formula\formula_type;
+use cfg\user\user;
+use cfg\word\word;
 use html\formula\formula as formula_dsp;
 use cfg\log\change_field_list;
 use cfg\log\change;
 use cfg\log\change_table_list;
-use cfg\formula;
-use cfg\phrase_list;
-use cfg\sandbox_named;
+use cfg\formula\formula;
+use cfg\phrase\phrase_list;
+use cfg\sandbox\sandbox_named;
 use test\test_cleanup;
 
 class formula_write_tests

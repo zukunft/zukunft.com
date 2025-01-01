@@ -34,12 +34,12 @@ namespace html\word;
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
-use cfg\phrase_type;
+use cfg\phrase\phrase_type;
 use html\user\user_message;
 use html\word\word as word_dsp;
 use html\html_base;
 use html\sandbox\list_dsp;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 
 class word_list extends list_dsp
 {

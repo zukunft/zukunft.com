@@ -34,10 +34,10 @@ namespace unit;
 
 use api\view\view as view_api;
 use cfg\db\sql_creator;
-use cfg\view;
-use cfg\view_sys_list;
+use cfg\view\view;
+use cfg\view\view_sys_list;
 use cfg\db\sql_db;
-use cfg\view_list;
+use cfg\view\view_list;
 use test\test_cleanup;
 
 class view_list_tests

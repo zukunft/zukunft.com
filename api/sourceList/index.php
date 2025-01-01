@@ -44,7 +44,7 @@ include_once MODEL_REF_PATH . 'source_list.php';
 include_once API_REF_PATH . 'source_list.php';
 
 use controller\controller;
-use cfg\user;
+use cfg\user\user;
 use cfg\source_list;
 use api\ref\source_list as source_list_api;
 use shared\api;

@@ -38,7 +38,7 @@ include_once PHP_PATH . 'zu_lib.php';
 
 use html\html_base;
 use cfg\db\sql_db;
-use cfg\user;
+use cfg\user\user;
 use shared\api;
 
 // open database

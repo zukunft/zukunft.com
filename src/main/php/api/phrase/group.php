@@ -33,6 +33,7 @@
 namespace api\phrase;
 
 include_once SHARED_PATH . 'json_fields.php';
+include_once API_SANDBOX_PATH . 'sandbox_named.php';
 
 use api\word\word as word_api;
 use api\phrase\phrase_list as phrase_list_api;

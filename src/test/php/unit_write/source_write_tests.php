@@ -36,8 +36,8 @@ use api\ref\source as source_api;
 use cfg\log\change_field_list;
 use cfg\log\change;
 use cfg\log\change_table_list;
-use cfg\sandbox_named;
-use cfg\source;
+use cfg\sandbox\sandbox_named;
+use cfg\ref\source;
 use test\test_cleanup;
 
 class source_write_tests

@@ -41,9 +41,9 @@ include_once SHARED_PATH . 'views.php';
 use html\html_base;
 use html\view\view as view_dsp;
 use html\word\word_list as word_list_dsp;
-use cfg\user;
-use cfg\view;
-use cfg\word_list;
+use cfg\user\user;
+use cfg\view\view;
+use cfg\word\word_list;
 use shared\api;
 use shared\views as view_shared;
 

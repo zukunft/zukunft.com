@@ -40,7 +40,7 @@ use html\html_base;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;
-use cfg\verb;
+use cfg\verb\verb;
 use shared\types\verbs;
 use test\test_cleanup;
 

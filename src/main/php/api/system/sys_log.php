@@ -35,9 +35,8 @@ include_once API_USER_PATH . 'user.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 
-use cfg\db_object_seq_id;
-use cfg\sys_log_status;
-use cfg\user;
+use cfg\system\sys_log_status;
+use cfg\user\user;
 use html\rest_ctrl;
 use html\html_base;
 

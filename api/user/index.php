@@ -47,7 +47,7 @@ include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 
 use controller\controller;
-use cfg\user;
+use cfg\user\user;
 use shared\api;
 
 // open database

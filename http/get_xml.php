@@ -30,8 +30,8 @@
 
 */
 
-use cfg\phrase_list;
-use cfg\user;
+use cfg\phrase\phrase_list;
+use cfg\user\user;
 use shared\api;
 use shared\library;
 

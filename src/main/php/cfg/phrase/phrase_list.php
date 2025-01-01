@@ -58,18 +58,35 @@
   
 */
 
-namespace cfg;
+namespace cfg\phrase;
 
-include_once DB_PATH . 'sql.php';
-include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
+include_once API_PHRASE_PATH . 'phrase_list.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once EXPORT_PATH . 'export.php';
+include_once MODEL_FORMULA_PATH . 'formula_list.php';
+include_once MODEL_GROUP_PATH . 'group.php';
+include_once MODEL_GROUP_PATH . 'group_id.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_list.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
+include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once MODEL_PHRASE_PATH . 'trm_ids.php';
 include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_GROUP_PATH . 'group.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\phrase\phrase_list as phrase_list_api;
 use cfg\db\sql_creator;
@@ -77,15 +94,24 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\export\export;
+use cfg\formula\formula_list;
 use cfg\group\group;
 use cfg\group\group_id;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_list_named;
+use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_list;
+use cfg\verb\verb;
+use cfg\word\word;
+use cfg\word\word_list;
+use cfg\word\triple;
+use cfg\word\triple_list;
 use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
-use shared\library;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
+use shared\library;
 
 class phrase_list extends sandbox_list_named
 {

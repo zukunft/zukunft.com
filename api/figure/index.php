@@ -48,7 +48,7 @@ use api\formula\figure as figure_api;
 use cfg\value\value;
 use controller\controller;
 use cfg\result\result;
-use cfg\user;
+use cfg\user\user;
 use shared\api;
 
 // open database

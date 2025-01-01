@@ -35,8 +35,8 @@ include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
-use cfg\phrase_type;
-use cfg\verb;
+use cfg\phrase\phrase_type;
+use cfg\verb\verb;
 use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\sandbox\list_dsp;
@@ -44,7 +44,7 @@ use html\user\user_message;
 use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;
 use shared\enum\foaf_direction;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
 
 class triple_list extends list_dsp

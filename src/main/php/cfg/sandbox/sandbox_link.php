@@ -49,11 +49,30 @@
 
 */
 
-namespace cfg;
+namespace cfg\sandbox;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+//include_once MODEL_LOG_PATH . 'change_link.php';
+//include_once MODEL_REF_PATH . 'ref.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
+use cfg\helper\combine_named;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -62,9 +81,14 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\db_object_seq_id;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
+use cfg\ref\ref;
+use cfg\word\triple;
+use cfg\user\user;
+use cfg\user\user_message;
 use Exception;
 use shared\json_fields;
 use shared\library;

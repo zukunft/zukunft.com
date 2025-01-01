@@ -71,9 +71,34 @@ TODO    rename to change_base
 
 namespace cfg\log;
 
-include_once DB_PATH . 'sql.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once API_LOG_PATH . 'change_log.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+//include_once MODEL_COMPONENT_PATH . 'component.php';
+//include_once MODEL_COMPONENT_PATH . 'component_link.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+//include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_FORMULA_PATH . 'formula_link.php';
+//include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
+//include_once MODEL_REF_PATH . 'ref.php';
+//include_once MODEL_REF_PATH . 'source.php';
+//include_once MODEL_VERB_PATH . 'verb.php';
+//include_once MODEL_USER_PATH . 'user.php';
+//include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VIEW_PATH . 'view.php';
+//include_once MODEL_VIEW_PATH . 'view_term_link.php';
+//include_once MODEL_WORD_PATH . 'word.php';
+//include_once MODEL_WORD_PATH . 'triple.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\log\change_log as change_log_api;
 use cfg\component\component;
@@ -87,24 +112,24 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\db_object_seq_id_user;
-use cfg\formula;
-use cfg\formula_link;
-use cfg\ref;
-use cfg\sandbox_link;
-use cfg\source;
-use cfg\triple;
-use cfg\type_object;
-use cfg\user;
+use cfg\helper\db_object_seq_id_user;
+use cfg\helper\type_object;
+use cfg\formula\formula;
+use cfg\formula\formula_link;
+use cfg\sandbox\sandbox_link;
+use cfg\ref\ref;
+use cfg\ref\source;
+use cfg\verb\verb;
+use cfg\word\triple;
+use cfg\user\user;
 use cfg\value\value;
-use cfg\verb;
-use cfg\view;
-use cfg\view_term_link;
-use cfg\word;
+use cfg\view\view;
+use cfg\view\view_term_link;
+use cfg\word\word;
+use shared\library;
 use DateTime;
 use DateTimeInterface;
 use Exception;
-use shared\library;
 
 class change_log extends db_object_seq_id_user
 {

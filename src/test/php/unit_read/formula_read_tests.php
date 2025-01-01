@@ -33,10 +33,10 @@
 namespace unit_read;
 
 use api\formula\formula as formula_api;
-use cfg\formula;
-use cfg\formula_type;
-use cfg\formula_type_list;
-use cfg\formula_list;
+use cfg\formula\formula;
+use cfg\formula\formula_type;
+use cfg\formula\formula_type_list;
+use cfg\formula\formula_list;
 use test\test_cleanup;
 
 class formula_read_tests

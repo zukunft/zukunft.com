@@ -35,9 +35,9 @@ namespace unit;
 use api\ref\source as source_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_type;
-use cfg\source_type_list;
+use cfg\ref\source_type_list;
 use html\ref\source as source_dsp;
-use cfg\source;
+use cfg\ref\source;
 use cfg\db\sql_db;
 use test\test_cleanup;
 

@@ -31,14 +31,17 @@
   
 */
 
-namespace cfg;
+namespace cfg\phrase;
 
+include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
-use shared\types\phrase_type AS phrase_type_shared;
+use cfg\helper\type_list;
+use cfg\helper\type_object;
+use shared\types\phrase_type as phrase_type_shared;
 
 class phrase_types extends type_list
 {
@@ -80,7 +83,7 @@ class phrase_types extends type_list
      */
 
     /**
-     * @param bool $usr_can_add true by default to allow seariching by name for new added phrase types
+     * @param bool $usr_can_add true by default to allow searching by name for new added phrase types
      */
     function __construct(bool $usr_can_add = true)
     {

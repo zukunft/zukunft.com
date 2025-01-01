@@ -49,10 +49,27 @@
 
 namespace cfg\component;
 
-// TODO easy include all used classes
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_par_type.php';
 include_once API_VIEW_PATH . 'component_link.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VIEW_PATH . 'view.php';
+include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\view\component_link as component_link_api;
 use cfg\db\sql;
@@ -66,13 +83,13 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\log\change;
-use cfg\sandbox;
-use cfg\sandbox_link;
-use cfg\sandbox_named;
-use cfg\type_object;
-use cfg\user;
-use cfg\user_message;
-use cfg\view;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_link;
+use cfg\sandbox\sandbox_named;
+use cfg\helper\type_object;
+use cfg\user\user;
+use cfg\user\user_message;
+use cfg\view\view;
 use shared\json_fields;
 use shared\library;
 

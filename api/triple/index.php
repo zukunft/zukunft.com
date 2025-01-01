@@ -44,8 +44,8 @@ include_once MODEL_WORD_PATH . 'triple.php';
 include_once API_WORD_PATH . 'triple.php';
 
 use controller\controller;
-use cfg\user;
-use cfg\triple;
+use cfg\user\user;
+use cfg\word\triple;
 use api\word\triple as triple_api;
 use shared\api;
 

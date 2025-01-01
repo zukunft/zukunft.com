@@ -34,9 +34,9 @@ namespace unit_write;
 
 use api\view\view as view_api;
 use api\word\word as word_api;
-use cfg\ref_type;
-use cfg\ref_type_list;
-use cfg\ref;
+use cfg\ref\ref_type;
+use cfg\ref\ref_type_list;
+use cfg\ref\ref;
 use test\test_cleanup;
 
 class ref_write_tests

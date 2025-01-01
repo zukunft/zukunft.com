@@ -39,9 +39,9 @@ include_once SHARED_PATH . 'views.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\component\component;
-use cfg\user;
-use cfg\view;
-use cfg\word;
+use cfg\user\user;
+use cfg\view\view;
+use cfg\word\word;
 use html\html_base;
 use html\view\view as view_dsp;
 use html\component\component as component_dsp;

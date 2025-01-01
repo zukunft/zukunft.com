@@ -31,17 +31,34 @@
 
 */
 
-namespace cfg;
+namespace cfg\verb;
 
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once API_SYSTEM_PATH . 'messages.php';
+include_once API_VERB_PATH . 'verb.php';
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once HTML_PATH . 'html_base.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+//include_once MODEL_LOG_PATH . 'change_table_list.php';
 include_once MODEL_LOG_PATH . 'changes_norm.php';
 include_once MODEL_LOG_PATH . 'changes_big.php';
-include_once API_VERB_PATH . 'verb.php';
-include_once SERVICE_EXPORT_PATH . 'verb_exp.php';
-include_once SERVICE_EXPORT_PATH . 'sandbox_exp_named.php';
+//include_once MODEL_PHRASE_PATH . 'term.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SYSTEM_PATH . 'message_translator.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+//include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\system\messages as msg_enum;
 use api\verb\verb as verb_api;
@@ -52,10 +69,17 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\export\verb_exp;
+use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_table_list;
+use cfg\system\message_translator;
+use cfg\phrase\term;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
+use cfg\user\user;
+use cfg\user\user_message;
+use cfg\word\word;
 use html\html_base;
 use shared\json_fields;
 use shared\library;
@@ -498,48 +522,6 @@ class verb extends type_object
         }
 
         return $usr_msg;
-    }
-
-    /**
-     * create a verb object for the export
-     * @return verb_exp a reduced word object that can be used to create a JSON message
-     */
-    function export_obj(): verb_exp
-    {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
-
-        log_debug();
-        $result = new verb_exp();
-
-        if ($this->name <> '') {
-            $result->name = $this->name();
-        }
-        if ($this->code_id <> '') {
-            $result->code_id = $this->code_id;
-        }
-        if ($this->description <> '') {
-            $result->description = $this->description;
-        }
-        if ($this->plural <> '') {
-            $result->name_plural = $this->plural;
-        }
-        if ($this->reverse <> '') {
-            $result->name_reverse = $this->reverse;
-        }
-        if ($this->rev_plural <> '') {
-            $result->name_plural_reverse = $this->rev_plural;
-        }
-
-        // TODO add the protection type
-        /*
-        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protection_type::NO_PROTECT)) {
-            $result->protection = $this->protection_type_code_id();
-        }
-        */
-
-        log_debug(json_encode($result));
-        return $result;
     }
 
     /**

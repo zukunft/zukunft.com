@@ -34,7 +34,7 @@ include_once EXPORT_PATH . 'xml.php';
 
 use api\word\word as word_api;
 use im_export\json_io;
-use cfg\phrase_list;
+use cfg\phrase\phrase_list;
 use test\test_cleanup;
 
 function run_export_test(test_cleanup $t): void

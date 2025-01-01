@@ -34,20 +34,9 @@
 
 namespace cfg\db;
 
-use cfg\combine_named;
-use cfg\db_object_seq_id;
-use cfg\log\change;
-use cfg\sandbox;
-use cfg\sandbox_link_named;
-use cfg\sandbox_multi;
-use cfg\sandbox_named;
-use cfg\type_list;
-use cfg\type_object;
-use cfg\user;
-use cfg\user_message;
-use DateTime;
-use DateTimeInterface;
-use shared\library;
+include_once MODEL_USER_PATH . 'user_message.php';
+
+use cfg\user\user_message;
 
 class sql_par_list
 {

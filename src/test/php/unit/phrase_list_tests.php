@@ -37,16 +37,16 @@ use api\word\triple as triple_api;
 use api\word\word as word_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\phr_ids;
-use cfg\phrase;
-use cfg\phrase_list;
-use cfg\phrase_type;
-use cfg\verb;
-use cfg\word;
+use cfg\phrase\phr_ids;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
+use cfg\phrase\phrase_type;
+use cfg\verb\verb;
+use cfg\word\word;
 use html\phrase\phrase_list as phrase_list_dsp;
 use shared\enum\foaf_direction;
 use test\test_cleanup;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
 
 class phrase_list_tests

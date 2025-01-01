@@ -30,9 +30,13 @@
 
 */
 
-namespace cfg;
+namespace cfg\system;
+
+include_once API_SYSTEM_PATH . 'messages.php';
+include_once MODEL_LANGUAGE_PATH . 'language.php';
 
 use api\system\messages as msg_enum;
+use cfg\language\language;
 
 class message_translator
 {

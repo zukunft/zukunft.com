@@ -32,13 +32,15 @@
 
 namespace cfg\log;
 
-include_once DB_PATH . 'sql.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
 
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
-use cfg\type_object;
+use cfg\helper\type_object;
 
 class change_field extends type_object
 {

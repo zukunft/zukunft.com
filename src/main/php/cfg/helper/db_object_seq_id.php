@@ -46,10 +46,18 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
+include_once API_SYSTEM_PATH . 'db_object.php';
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+//include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
+//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use api\system\db_object as db_object_api;
@@ -59,8 +67,10 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type_list;
-use JsonSerializable;
+use cfg\sandbox\sandbox;
+use cfg\user\user_message;
 use shared\json_fields;
+use JsonSerializable;
 
 class db_object_seq_id extends db_object implements JsonSerializable
 {

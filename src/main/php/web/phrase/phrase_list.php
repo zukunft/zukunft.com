@@ -34,14 +34,15 @@
 
 namespace html\phrase;
 
+include_once SERVICE_PATH . 'config.php';
 include_once SANDBOX_PATH . 'list_dsp.php';
 include_once PHRASE_PATH . 'phrase.php';
 
 use cfg\config;
-use cfg\phrase;
-use cfg\phrase_list as phrase_list_db;
-use cfg\user;
-use cfg\verb_list;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list as phrase_list_db;
+use cfg\user\user;
+use cfg\verb\verb_list;
 use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;

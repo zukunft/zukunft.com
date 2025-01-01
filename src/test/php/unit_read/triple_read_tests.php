@@ -36,12 +36,12 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
-use cfg\phrase;
-use cfg\phrase_type;
-use cfg\phrase_types;
-use cfg\verb;
-use cfg\triple;
-use cfg\triple_list;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_type;
+use cfg\phrase\phrase_types;
+use cfg\verb\verb;
+use cfg\word\triple;
+use cfg\word\triple_list;
 use shared\types\verbs;
 use test\test_cleanup;
 

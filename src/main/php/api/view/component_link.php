@@ -32,6 +32,7 @@
 
 namespace api\view;
 
+include_once API_SANDBOX_PATH . 'sandbox.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use api\sandbox\sandbox as sandbox_api;

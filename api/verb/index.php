@@ -44,8 +44,8 @@ include_once MODEL_VERB_PATH . 'verb.php';
 include_once API_VERB_PATH . 'verb.php';
 
 use controller\controller;
-use cfg\user;
-use cfg\verb;
+use cfg\user\user;
+use cfg\verb\verb;
 use api\verb\verb as verb_api;
 use shared\api;
 

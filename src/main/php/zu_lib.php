@@ -191,7 +191,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add simple value list table with the hashed phrase list as key and the value
     TODO add a calculation validation section to the import
     TODO add a text based view validation section to the import
-    TODO by default do not use SQL joins also to be able to move the user overwrites to a seperate database server
+    TODO by default do not use SQL joins also to be able to move the user overwrites to a separate database server
     TODO add a second line of defence e.g. prevent that the web client is using all resources (CPU, memory)
          or that data objects are synced between the pod too often and are blocking more critical data updates
     TODO for the frontend use three level of objects: normal, full and small
@@ -610,48 +610,46 @@ use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\element\element;
 use cfg\element\element_type;
-use cfg\formula_link_type;
-use cfg\formula_type;
-use cfg\job;
-use cfg\job_type;
-use cfg\language;
-use cfg\language_form;
+use cfg\formula\formula_link_type;
+use cfg\formula\formula_type;
+use cfg\helper\type_lists;
+use cfg\ref\ref_type;
+use cfg\ref\source_type;
+use cfg\system\job;
+use cfg\system\job_type;
+use cfg\language\language;
+use cfg\language\language_form;
 use cfg\log\change_action;
 use cfg\log\change_field;
 use cfg\log\change_link;
 use cfg\log\change_log;
 use cfg\log\change_table;
 use cfg\log\change_value;
-use cfg\phrase_types;
-use cfg\protection_type;
-use cfg\ref_type;
-use cfg\result\result;
-use cfg\session;
-use cfg\share_type;
-use cfg\source_type;
-use cfg\sys_log;
-use cfg\sys_log_function;
-use cfg\sys_log_level;
-use cfg\sys_log_status;
-use cfg\sys_log_status_list;
-use cfg\sys_log_type;
-use cfg\system_time;
+use cfg\phrase\phrase_types;
+use cfg\system\session;
+use cfg\system\sys_log;
+use cfg\system\sys_log_function;
+use cfg\system\sys_log_level;
+use cfg\system\sys_log_status;
+use cfg\system\sys_log_status_list;
+use cfg\system\sys_log_type;
+use cfg\system\system_time;
 use cfg\system_time_list;
-use cfg\system_time_type;
-use cfg\type_lists;
-use cfg\user;
+use cfg\system\system_time_type;
+use cfg\user\user;
 use cfg\user\user_profile;
 use cfg\user\user_type;
-use cfg\user_official_type;
-use cfg\user_profile_list;
-use cfg\view;
-use cfg\view_link_type;
-use cfg\view_type;
+use cfg\user\user_official_type;
+use cfg\user\user_profile_list;
+use cfg\view\view;
+use cfg\view\view_link_type;
+use cfg\view\view_type;
 use html\html_base;
 use html\view\view as view_dsp;
 use shared\library;
+use shared\types\protection_type;
+use shared\types\share_type;
 use test\test_cleanup;
-use unit\html\word as word_html_tests;
 
 // the fixed system user
 const SYSTEM_USER_ID = 1; //
@@ -1626,7 +1624,7 @@ function log_fatal(string $msg_text,
 /**
  * should be called from all code that can be accessed by an url
  * return null if the db connection fails or the db is not compatible
- * TODO create a seperate class for starting the backend and frontend
+ * TODO create a separate class for starting the backend and frontend
  *
  * @param string $code_name the place that is displayed to the user e.g. add word
  * @param string $style the display style used to show the place

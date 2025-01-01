@@ -30,14 +30,34 @@
 
 */
 
-namespace cfg;
+namespace cfg\sandbox;
+
+include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_par_list.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'term.php';
+include_once MODEL_WORD_PATH . 'triple_list.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_WORD_PATH . 'word_list.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_par_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+use cfg\phrase\phrase;
+use cfg\phrase\term;
+use cfg\word\triple_list;
+use cfg\user\user;
+use cfg\user\user_message;
+use cfg\word\triple;
+use cfg\word\word;
+use cfg\word\word_list;
 
 class sandbox_list_named extends sandbox_list
 {

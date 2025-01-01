@@ -38,12 +38,12 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 use api\value\value as value_api;
 use api\word\word as word_api;
 use cfg\group\group;
-use cfg\phrase_type;
-use cfg\verb;
-use cfg\word_list;
+use cfg\phrase\phrase_type;
+use cfg\verb\verb;
+use cfg\word\word_list;
 use shared\enum\foaf_direction;
 use shared\library;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
 use test\test_cleanup;
 

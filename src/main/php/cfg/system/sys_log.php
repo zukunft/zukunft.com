@@ -29,25 +29,26 @@
   
 */
 
-namespace cfg;
+namespace cfg\system;
 
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once DB_PATH . 'sql.php';
-include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function_list.php';
 include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'changes_norm.php';
-include_once MODEL_LOG_PATH . 'changes_big.php';
-include_once MODEL_LOG_PATH . 'change_value.php';
-include_once MODEL_LOG_PATH . 'change_values_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_big.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_action_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once API_SANDBOX_PATH . 'sandbox_value.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
+include_once MODEL_USER_PATH . 'user.php';
 include_once API_SYSTEM_PATH . 'sys_log.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -56,12 +57,19 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type_list;
+use cfg\helper\db_object_seq_id;
+use cfg\helper\type_list;
+use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_action;
+use cfg\sandbox\sandbox;
+use cfg\system\sys_log_status;
+use cfg\system\sys_log_function;
+use cfg\user\user;
 use controller\system\sys_log as sys_log_api;
+use shared\library;
 use DateTime;
 use DateTimeInterface;
-use shared\library;
 
 class sys_log extends db_object_seq_id
 {
@@ -81,9 +89,9 @@ class sys_log extends db_object_seq_id
     const FLD_TYPE = 'sys_log_type_id';
     const FLD_FUNCTION_COM = 'the function or function group for the entry e.g. db_write to measure the db write times';
     const FLD_FUNCTION = 'sys_log_function_id';
-    const FLD_TEXT_COM = 'the short text of the log entry to indentify the error and to reduce the number of double entries';
+    const FLD_TEXT_COM = 'the short text of the log entry to identify the error and to reduce the number of double entries';
     const FLD_TEXT = 'sys_log_text';
-    const FLD_DESCRIPTION_COM = 'the lond description with all details of the log entry to solve ti issue';
+    const FLD_DESCRIPTION_COM = 'the long description with all details of the log entry to solve ti issue';
     const FLD_DESCRIPTION = 'sys_log_description';
     const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
     const FLD_TRACE_COM = 'the generated code trace to local the path to the error cause';
@@ -258,14 +266,14 @@ class sys_log extends db_object_seq_id
     }
 
     /**
-     * the sql statements to create all foreign keysof a system log table
+     * the sql statements to create all foreign keys of a system log table
      *
      * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the foreign keys
      */
     function sql_foreign_key(sql_creator $sc): string
     {
-        return $this->sql_foreign_key_create($sc, new sql_type_list([]), [], false);
+        return $this->sql_foreign_key_create($sc, new sql_type_list([]));
     }
 
 
@@ -284,7 +292,7 @@ class sys_log extends db_object_seq_id
      */
     function load_sql(sql_creator $sc, string $query_name = sql_db::FLD_ID, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($sc, $query_name, $class);
+        $qp = parent::load_sql($sc, $query_name);
         $sc->set_class(sys_log::class);
 
         $sc->set_name($qp->name);

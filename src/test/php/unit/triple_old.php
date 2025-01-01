@@ -38,9 +38,9 @@ use api\phrase\phrase as phrase_api;
 use api\word\triple as triple_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\triple;
-use cfg\verb;
-use cfg\word;
+use cfg\word\triple;
+use cfg\verb\verb;
+use cfg\word\word;
 use test\test_cleanup;
 
 class triple_old

@@ -8,7 +8,7 @@
     combines unit, read, write, api, ui and connection tests
 
 
-    seperated into:
+    separated into:
     unit tests - test_units.php: for fast internal code consistency TESTing of the technical library functions without database connection
     db read tests - test_unit_db.php: for unit testing that only read from the database
     db write tests - test all processes that can be initiated by a user including database writing and database cleanup

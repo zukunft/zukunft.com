@@ -10,7 +10,7 @@ use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use html\word\triple as triple_dsp;
 use cfg\db\sql_db;
-use cfg\triple;
+use cfg\word\triple;
 use test\test_cleanup;
 
 class triple_tests

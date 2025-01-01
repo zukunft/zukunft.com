@@ -38,11 +38,11 @@ include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'views.php';
 
-use cfg\sys_log;
+use cfg\system\sys_log;
 use cfg\sys_log_list;
-use cfg\user;
+use cfg\user\user;
 use cfg\user\user_profile;
-use cfg\view;
+use cfg\view\view;
 use html\html_base;
 use html\view\view as view_dsp;
 use shared\api;

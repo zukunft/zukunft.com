@@ -42,13 +42,13 @@ use api\formula\formula as formula_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
-use cfg\sandbox;
-use cfg\sandbox_named;
-use cfg\word;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
+use cfg\word\word;
 use api\word\word as word_api;
 use html\word\word as word_dsp;
 use test\test_cleanup;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 
 class word_tests
 {

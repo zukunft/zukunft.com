@@ -29,9 +29,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 namespace cfg\import;
 
 include_once MODEL_IMPORT_PATH . 'import.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once HTML_PATH . 'html_base.php';
 
-use cfg\user;
-use cfg\user_message;
+use cfg\user\user;
+use cfg\user\user_message;
 use html\html_base;
 
 class import_file
@@ -167,6 +170,7 @@ class import_file
     }
 
     /**
+     * TODO move HTML code to frontend
      * import all zukunft.com base configuration json files
      * for an import it can be assumed that this base configuration is loaded
      * even if a user has overwritten some of these definitions the technical import should be possible
@@ -195,6 +199,7 @@ class import_file
     }
 
     /**
+     * TODO move HTML code to frontend
      * import some zukunft.com test json files
      */
     function import_test_files(user $usr): string

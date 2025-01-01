@@ -30,8 +30,14 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
+include_once API_SYSTEM_PATH . 'type_list.php';
+include_once API_VALUE_PATH . 'value_list.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_VALUE_PATH . 'value_list.php';
+include_once MODEL_WORD_PATH . 'word.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once SHARED_PATH . 'library.php';
@@ -40,7 +46,10 @@ include_once API_SYSTEM_PATH . 'type_list.php';
 include_once WEB_USER_PATH . 'user_type_list.php';
 
 use api\value\value_list as value_list_api;
+use cfg\phrase\phrase;
+use cfg\user\user;
 use cfg\value\value_list;
+use cfg\word\word;
 
 
 class config_numbers extends value_list

@@ -44,8 +44,8 @@ include_once MODEL_REF_PATH . 'source.php';
 
 use api\api_message;
 use controller\controller;
-use cfg\user;
-use cfg\source;
+use cfg\user\user;
+use cfg\ref\source;
 use shared\api;
 
 // open database

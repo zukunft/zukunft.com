@@ -36,7 +36,7 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
-use cfg\phrase_type;
+use cfg\phrase\phrase_type;
 use html\rest_ctrl;
 use html\button;
 use html\html_base;
@@ -52,7 +52,7 @@ use html\phrase\term as term_dsp;
 use html\verb\verb as verb_dsp;
 use shared\api AS api_shared;
 use shared\json_fields;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 use shared\types\view_styles;
 
 class triple extends sandbox_typed

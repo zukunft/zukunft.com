@@ -37,7 +37,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 use cfg\db\sql_creator;
-use cfg\user;
+use cfg\user\user;
 
 echo 'logging off ...'; // reset the html code var
 

@@ -33,18 +33,28 @@
 
 namespace cfg\group;
 
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_PHRASE_PATH . 'term_list.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type_list;
-use cfg\phrase;
-use cfg\phrase_list;
-use cfg\sandbox_list;
-use cfg\term_list;
-use cfg\user_message;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
+use cfg\phrase\term_list;
+use cfg\sandbox\sandbox_list;
+use cfg\user\user_message;
 use shared\library;
 
 class group_list extends sandbox_list

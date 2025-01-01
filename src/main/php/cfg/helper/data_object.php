@@ -32,11 +32,29 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
+include_once MODEL_FORMULA_PATH . 'formula_list.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_list.php';
+include_once MODEL_VIEW_PATH . 'view_list.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_WORD_PATH . 'word_list.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_WORD_PATH . 'triple_list.php';
 
+use cfg\formula\formula_list;
+use cfg\user\user;
+use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_list;
+use cfg\view\view_list;
+use cfg\word\word;
+use cfg\word\word_list;
+use cfg\word\triple;
+use cfg\word\triple_list;
 
 class data_object
 {

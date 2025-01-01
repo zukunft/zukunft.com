@@ -30,14 +30,20 @@
 
 */
 
-namespace cfg;
+namespace cfg\system;
 
-include_once DB_PATH . 'sql.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_WORD_PATH . 'triple.php';
 
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use cfg\helper\type_object;
+use cfg\word\triple;
 
 class pod extends type_object
 {

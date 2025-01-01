@@ -47,9 +47,9 @@ include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_PATH . 'views.php';
 
-use cfg\sys_log;
-use cfg\user;
-use cfg\view;
+use cfg\system\sys_log;
+use cfg\user\user;
+use cfg\view\view;
 use html\system\sys_log as sys_log_dsp;
 use html\view\view as view_dsp;
 use shared\api;

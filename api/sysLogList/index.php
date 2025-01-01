@@ -44,7 +44,7 @@ include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
 include_once API_SYSTEM_PATH . 'sys_log_list.php';
 
 use cfg\sys_log_list;
-use cfg\user;
+use cfg\user\user;
 use controller\controller;
 use controller\system\sys_log_list as sys_log_list_api;
 

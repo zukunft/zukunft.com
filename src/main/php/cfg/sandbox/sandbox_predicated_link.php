@@ -32,9 +32,7 @@
 
 */
 
-namespace cfg;
-
-use shared\api;
+namespace cfg\sandbox;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 

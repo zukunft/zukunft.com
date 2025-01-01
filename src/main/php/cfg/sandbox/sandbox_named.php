@@ -52,25 +52,36 @@
 
 */
 
-namespace cfg;
+namespace cfg\sandbox;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+
+include_once API_SYSTEM_PATH . 'messages.php';
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_par_field.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_field.php';
-include_once DB_PATH . 'sql_field_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once API_FORMULA_PATH . 'formula.php';
-include_once API_PHRASE_PATH . 'phrase.php';
-include_once API_REF_PATH . 'source.php';
-include_once API_VIEW_PATH . 'view.php';
-include_once API_COMPONENT_PATH . 'component.php';
-include_once API_WORD_PATH . 'word.php';
-include_once API_SYSTEM_PATH . 'messages.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+//include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+//include_once MODEL_LOG_PATH . 'change_link.php';
+//include_once MODEL_LOG_PATH . 'change_log_list.php';
+include_once MODEL_SYSTEM_PATH . 'message_translator.php';
+//include_once MODEL_PHRASE_PATH . 'phrase.php';
+//include_once MODEL_PHRASE_PATH . 'term.php';
+//include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+//include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\system\messages as msg_enum;
 use cfg\db\sql;
@@ -82,13 +93,23 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\db_object_seq_id;
+use cfg\formula\formula;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
 use cfg\log\change_log_list;
-use Exception;
+use cfg\system\message_translator;
+use cfg\phrase\phrase;
+use cfg\phrase\term;
+use cfg\word\triple;
+use cfg\user\user;
+use cfg\user\user_message;
+use cfg\verb\verb;
+use cfg\word\word;
 use shared\json_fields;
 use shared\library;
+use Exception;
 
 class sandbox_named extends sandbox
 {

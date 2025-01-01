@@ -47,7 +47,7 @@ use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_link;
 use cfg\group\result_id;
-use cfg\phrase_list;
+use cfg\phrase\phrase_list;
 use shared\library;
 use test\test_cleanup;
 

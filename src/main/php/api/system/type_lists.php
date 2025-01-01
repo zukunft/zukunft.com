@@ -39,7 +39,7 @@ use api\api_message;
 use controller\controller;
 use cfg\db\sql_db;
 use JsonSerializable;
-use cfg\user;
+use cfg\user\user;
 
 class type_lists extends api_message implements JsonSerializable
 {

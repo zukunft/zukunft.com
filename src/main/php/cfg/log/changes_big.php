@@ -32,6 +32,8 @@
 namespace cfg\log;
 
 include_once MODEL_LOG_PATH . 'change_value.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
 
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;

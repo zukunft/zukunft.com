@@ -40,14 +40,13 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 use api\word\word as word_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\phrase_type;
-use cfg\verb;
-use cfg\word;
-use cfg\word_list;
+use cfg\verb\verb;
+use cfg\word\word;
+use cfg\word\word_list;
 use html\word\word_list as word_list_dsp;
 use shared\enum\foaf_direction;
 use shared\library;
-use shared\types\phrase_type AS phrase_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 use test\test_cleanup;
 use shared\types\verbs;
 

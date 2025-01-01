@@ -43,8 +43,8 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_REF_PATH . 'reference.php';
 
 use controller\controller;
-use cfg\user;
-use cfg\ref;
+use cfg\user\user;
+use cfg\ref\ref;
 use shared\api;
 
 // open database

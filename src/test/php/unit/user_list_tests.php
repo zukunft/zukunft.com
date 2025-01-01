@@ -34,8 +34,8 @@ namespace unit;
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\user;
-use cfg\user_list;
+use cfg\user\user;
+use cfg\user\user_list;
 use shared\library;
 use test\test_cleanup;
 

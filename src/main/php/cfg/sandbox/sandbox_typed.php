@@ -42,12 +42,19 @@
 
 */
 
-namespace cfg;
+namespace cfg\sandbox;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once DB_PATH . 'sql_db.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql_db;
+use cfg\helper\db_object_seq_id;
+use cfg\ref\source;
+use cfg\user\user_message;
 use shared\json_fields;
 
 class sandbox_typed extends sandbox_named
