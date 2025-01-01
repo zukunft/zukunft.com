@@ -3,7 +3,7 @@
 /*
 
   component_edit.php - adjust a view element
-  -----------------------
+  ------------------
   
   This file is part of zukunft.com - calc with words
 
@@ -30,19 +30,21 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use api\api;
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+include_once SHARED_PATH . 'json_fields.php';
+
 use cfg\component\component;
-use cfg\user;
-use cfg\view;
-use cfg\word;
-use controller\controller;
+use cfg\user\user;
+use cfg\view\view;
+use cfg\word\word;
 use html\html_base;
 use html\view\view as view_dsp;
 use html\component\component as component_dsp;
-
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+use shared\api;
+use shared\json_fields;
 
 // open database
 $db_con = prg_start("component_edit");
@@ -62,7 +64,7 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // get the view component id
-    if (!isset($_GET[controller::URL_VAR_ID])) {
+    if (!isset($_GET[api::URL_VAR_ID])) {
         log_info("The view component id must be set to display a view.", "component_edit.php", '', (new Exception)->getTraceAsString(), $usr);
     } else {
         // init the display object to show the standard elements such as the header
@@ -70,7 +72,7 @@ if ($usr->id() > 0) {
 
         // create the view component object to apply the user changes to it
         $cmp = new component($usr);
-        $result .= $cmp->load_by_id($_GET[controller::URL_VAR_ID]);
+        $result .= $cmp->load_by_id($_GET[api::URL_VAR_ID]);
 
         // get the word used as a sample to illustrate the changes
         $wrd = new word($usr);
@@ -81,7 +83,7 @@ if ($usr->id() > 0) {
         }
 
         // the calling stack to move back to page where the user has come from after editing the view component is done
-        $back = $_GET[controller::API_BACK];
+        $back = $_GET[api::URL_VAR_BACK] = '';
 
         // save the direct changes
         // link or unlink a view
@@ -101,31 +103,31 @@ if ($usr->id() > 0) {
         }
 
         // if the save button has been pressed (an empty view component name should never be saved; instead the view should be deleted)
-        $cmp_name = $_GET[controller::URL_VAR_NAME];
+        $cmp_name = $_GET[api::URL_VAR_NAME];
         if ($cmp_name <> '') {
 
             // save the user changes in the database
             $upd_result = '';
 
             // get other field parameters
-            if (isset($_GET[controller::URL_VAR_NAME])) {
-                $cmp->set_name($_GET[controller::URL_VAR_NAME]);
+            if (isset($_GET[api::URL_VAR_NAME])) {
+                $cmp->set_name($_GET[api::URL_VAR_NAME]);
             }
-            if (isset($_GET[controller::URL_VAR_COMMENT])) {
-                $cmp->description = $_GET[controller::URL_VAR_COMMENT];
+            if (isset($_GET[api::URL_VAR_COMMENT])) {
+                $cmp->description = $_GET[api::URL_VAR_COMMENT];
             }
             if (isset($_GET['type'])) {
                 $cmp->type_id = $_GET['type'];
             } //
-            if (isset($_GET[api::FLD_PHRASE_ROW])) {
-                $cmp->load_row_phrase($_GET[api::FLD_PHRASE_ROW]);
+            if (isset($_GET[json_fields::PHRASE_ROW])) {
+                $cmp->load_row_phrase($_GET[json_fields::PHRASE_ROW]);
             } //
-            if (isset($_GET[api::FLD_PHRASE_COL])) {
-                $cmp->load_col_phrase($_GET[api::FLD_PHRASE_ROW]);
+            if (isset($_GET[json_fields::PHRASE_COL])) {
+                $cmp->load_col_phrase($_GET[json_fields::PHRASE_ROW]);
             } //
 
             // save the changes
-            $upd_result .= $cmp->save();
+            $upd_result .= $cmp->save()->get_last_message();
 
             // if update was fine ...
             if (str_replace('1', '', $upd_result) == '') {

@@ -32,15 +32,21 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
-use cfg\db\sql;
-use cfg\db\sql_type;
-use cfg\db\sql_where_type;
-use shared\library;
-
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_type.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+include_once SHARED_PATH . 'library.php';
 include_once MODEL_DB_PATH . 'sql_where_type.php';
 include_once MODEL_HELPER_PATH . 'combine_object.php';
+
+use cfg\db\sql;
+use cfg\db\sql_creator;
+use cfg\db\sql_type;
+use cfg\verb\verb;
+use shared\library;
 
 class combine_named extends combine_object
 {
@@ -71,9 +77,13 @@ class combine_named extends combine_object
     function reset(): void
     {
         $this->set_obj_id(0);
-        $this->set_name(null);
+        $this->set_name('');
         $this->set_description(null);
         $this->set_type_id(null);
+        $this->set_share(null);
+        $this->set_protection(null);
+        // TODO review
+        $this->set_plural(null);
     }
 
 
@@ -148,6 +158,24 @@ class combine_named extends combine_object
     }
 
     /**
+     * @param string|null $code_id the code id of the target share type or null to remove the parent overwrite
+     * @return void
+     */
+    function set_share(?string $code_id): void
+    {
+        $this->obj()?->set_share($code_id);
+    }
+
+    /**
+     * @param string|null $code_id the code id of the target protection or null to remove the parent overwrite
+     * @return void
+     */
+    function set_protection(?string $code_id): void
+    {
+        $this->obj()?->set_protection($code_id);
+    }
+
+    /**
      * @return int|null the type id of the word, triple, formula or verb
      * if null the type of related phrase or term can be used
      * e.g. if the type of the triple "Pi (math)" is not set
@@ -158,6 +186,42 @@ class combine_named extends combine_object
         return $this->obj()?->type_id();
     }
 
+    /**
+     * set excluded to 'true' to switch off the usage of this named combine object
+     * @return void
+     */
+    function exclude(): void
+    {
+        $this->obj()?->exclude();
+    }
+
+    /**
+     * set excluded to 'false' to switch on the usage of this user sandbox object
+     * @return void
+     */
+    function include(): void
+    {
+        $this->obj()?->include();
+    }
+
+    /**
+     * @return bool true if the user does not want to use this object at all
+     */
+    function is_excluded(): bool
+    {
+        return $this->obj()?->excluded();
+    }
+
+    /**
+     * @param string|null $plural the code id of the target protection or null to remove the parent overwrite
+     * @return void
+     */
+    function set_plural(?string $plural): void
+    {
+        $this->obj()?->set_plural($plural);
+    }
+
+
     /*
      * SQL creation
      */
@@ -165,7 +229,7 @@ class combine_named extends combine_object
     /**
      * @return string the SQL script to create the views
      */
-    function sql_view(sql $sc, string $class): string
+    function sql_view(sql_creator $sc, string $class): string
     {
         $sql = $sc->sql_separator();
         $lib = new library();
@@ -183,7 +247,7 @@ class combine_named extends combine_object
         return $sql;
     }
 
-    function sql_create_view(sql $sc, string $tbl_name, array $sc_par_lst): string
+    function sql_create_view(sql_creator $sc, string $tbl_name, array $sc_par_lst): string
     {
         $lib = new library();
         $usr_prefix = '';
@@ -311,7 +375,7 @@ class combine_named extends combine_object
         return $sql;
     }
 
-    private function sql_when(sql $sc, array $fld_lst, string $tbl_chr): string
+    private function sql_when(sql_creator $sc, array $fld_lst, string $tbl_chr): string
     {
         $sql = '';
         $this_fld = array_shift($fld_lst);

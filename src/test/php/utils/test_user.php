@@ -34,7 +34,7 @@
 // start testing the user permission functionality
 // -----------------------------------------------
 
-use cfg\user;
+use cfg\user\user;
 use html\user\user as user_dsp;
 use test\all_tests;
 

@@ -64,7 +64,9 @@
 
 */
 
-use cfg\expression;
+include_once SHARED_PATH . 'library.php';
+
+use cfg\formula\expression;
 use shared\library;
 
 class math

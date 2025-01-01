@@ -34,11 +34,11 @@ namespace unit;
 
 include_once MODEL_ELEMENT_PATH . 'element_list.php';
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
-use cfg\element_list;
-use cfg\element_type;
+use cfg\element\element_list;
+use cfg\element\element_type;
 use test\test_cleanup;
 
 class element_tests
@@ -49,7 +49,7 @@ class element_tests
         global $usr;
 
         // init
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'element->';
         $t->resource_path = 'db/element/';
 
@@ -87,7 +87,7 @@ class element_tests
         $wrd_lst->add($wrd_time);
         $wrd_lst->add($wrd_measure);
         $wrd_lst->add($wrd_scale);
-        $json = json_encode($wrd_lst->export_obj());
+        $json = json_encode($wrd_lst->export_json());
         $t->assert($t->name . '->measure list', $json, '[{"plural":"","description":"","type":"time","view":"","refs":[],"name":"time_word","share":"","protection":""},{"plural":"","description":"","type":"measure","view":"","refs":[],"name":"measure_word","share":"","protection":""},{"plural":"","description":"","type":"scaling","view":"","refs":[],"name":"scale_word","share":"","protection":""}]');
         */
 

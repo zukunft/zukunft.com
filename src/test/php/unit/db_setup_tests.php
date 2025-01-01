@@ -34,6 +34,8 @@ namespace unit;
 
 include_once MODEL_IMPORT_PATH . 'import.php';
 
+use cfg\component\component;
+use cfg\component\component_link;
 use cfg\db\sql_db;
 use shared\library;
 use test\test_cleanup;

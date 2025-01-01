@@ -29,14 +29,12 @@
 
 */
 
-namespace cfg;
+namespace cfg\formula;
 
-use cfg\db\sql_db;
-use test\create_test_objects;
-
+include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once DB_PATH . 'sql_db.php';
 
-global $formula_types;
+use cfg\helper\type_list;
 
 class formula_type_list extends type_list
 {
@@ -48,8 +46,7 @@ class formula_type_list extends type_list
     {
         $this->reset();
         // read the corresponding names and description from the internal config csv files
-        $t = new create_test_objects();
-        $t->read_from_config_csv($this);
+        $this->read_from_config_csv($this);
     }
 
     /**

@@ -32,15 +32,21 @@
 
 namespace cfg\import;
 
+include_once API_VERB_PATH . 'verb.php';
+include_once EXPORT_PATH . 'export.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\verb\verb as verb_api;
 use cfg\export\export;
-use cfg\phrase_list;
-use cfg\phrase_type;
-use cfg\user;
+use cfg\phrase\phrase_list;
+use cfg\user\user;
+use shared\types\phrase_type as phrase_type_shared;
+use shared\library;
 use DateTime;
 use DateTimeInterface;
-use shared\library;
 
 class convert_wikipedia_table
 {
@@ -73,7 +79,7 @@ class convert_wikipedia_table
      * TODO review and move the parameters to a more general context
      *
      * @param string $wiki_tbl wth the wikipedia table
-     * @param user $usr the user how has initiated the convertion
+     * @param user $usr the user how has initiated the conversion
      * @param string $timestamp
      * @param array $context a list of phrases that describes the context of the table
      * @param string $row_name_in
@@ -153,12 +159,12 @@ class convert_wikipedia_table
      * based on wikitable2json
      * TODO use it to compare wikipedia table with wikidata and report the differences
      * TODO base all assumptions on the given context
-     * TODO add a word splitter to seperate e.g. "Growth rate (2019–2022)" to "Growth rate", "2019" and "2022"
+     * TODO add a word splitter to separate e.g. "Growth rate (2019–2022)" to "Growth rate", "2019" and "2022"
      *
      * @param string $wiki_json wth the wikipedia table
-     * @param user $usr the user how has initiated the convertion
+     * @param user $usr the user how has initiated the conversion
      * @param string $timestamp the timestamp of the import
-     * @param int $table_nbr position of the tbale that should be converted
+     * @param int $table_nbr position of the table that should be converted
      * @param string $context a json string with a phrase list for the import context
      * @param array $context_array a list of phrases that describes the context of the table
      * @param string $row_name_wiki column name used to select the row name
@@ -181,7 +187,7 @@ class convert_wikipedia_table
         string $col_name_out = ''
     ): string
     {
-        global $verbs;
+        global $vrb_cac;
 
         // create context for assumptions
         $list_of_symbols = []; // if a row contains a symbol and a name they are usually linked
@@ -190,9 +196,9 @@ class convert_wikipedia_table
         $phr_lst = new phrase_list($usr);
         if ($context != '') {
             $phr_lst->import_context(json_decode($context, true));
-            $list_of_symbols = $phr_lst->get_names_by_type(phrase_type::SYMBOL);
-            $rank_names = $phr_lst->get_names_by_type(phrase_type::RANK);
-            $ignore_names = $phr_lst->get_names_by_type(phrase_type::IGNORE);
+            $list_of_symbols = $phr_lst->get_names_by_type(phrase_type_shared::SYMBOL);
+            $rank_names = $phr_lst->get_names_by_type(phrase_type_shared::RANK);
+            $ignore_names = $phr_lst->get_names_by_type(phrase_type_shared::IGNORE);
         }
         $exclude_col_names = array_merge($rank_names, $ignore_names);
 
@@ -313,7 +319,7 @@ class convert_wikipedia_table
                             }
                             $triples[] = $trp;
 
-                            // create other assumend relations
+                            // create other assumed relations
                             if (in_array($col_names[$i], $list_of_symbols)) {
                                 $trp = [];
                                 $trp[export::FROM] = $phr_name;

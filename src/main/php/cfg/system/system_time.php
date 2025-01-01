@@ -29,14 +29,20 @@
   
 */
 
-namespace cfg;
+namespace cfg\system;
 
-include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
 
+use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
-use cfg\db\sql;
+use cfg\helper\db_object_seq_id;
+use cfg\helper\type_object;
 
 class system_time extends db_object_seq_id
 {
@@ -69,7 +75,7 @@ class system_time extends db_object_seq_id
     const FLD_LST_ALL = array(
         [self::FLD_TIME_START, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_START_COM],
         [self::FLD_TIME_END, sql_field_type::TIME, sql_field_default::NULL, sql::INDEX, '', self::FLD_TIME_END_COM],
-        [self::FLD_GROUP, type_object::FLD_ID_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, system_time_type::class, self::FLD_GROUP_COM],
+        [self::FLD_GROUP, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, system_time_type::class, self::FLD_GROUP_COM],
         [self::FLD_MILLISECONDS, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', self::FLD_MILLISECONDS_COM],
     );
 

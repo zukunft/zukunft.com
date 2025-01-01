@@ -38,26 +38,31 @@
 
 */
 
-use cfg\formula_list;
-use cfg\phr_ids;
-use cfg\phrase_list;
-use cfg\result_list;
-use cfg\user;
-use cfg\view;
-use controller\controller;
-use html\html_base;
-use html\view\view as view_dsp;
-use shared\library;
-
+// standard zukunft header for callable php files to allow debugging and lib loading
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once SHARED_PATH . 'views.php';
+
+use cfg\formula\formula_list;
+use cfg\phrase\phr_ids;
+use cfg\phrase\phrase_list;
+use cfg\result_list;
+use cfg\user\user;
+use cfg\view\view;
+use html\html_base;
+use html\view\view as view_dsp;
+use shared\api;
+use shared\library;
+use shared\views as view_shared;
 
 // open database
 $db_con = prg_start("start formula_test.php");
 $html = new html_base();
 
-global $system_views;
+global $sys_msk_cac;
 
 // load the session user parameters
 $session_usr = new user;
@@ -71,13 +76,13 @@ if ($session_usr->id() > 0) {
 
     // show the header even if all parameters are wrong
     $msk = new view($session_usr);
-    $msk->set_id($system_views->id(controller::MC_FORMULA_TEST));
-    $back = $_GET[controller::API_BACK]; // the page (or phrase id) from which formula testing has been called
+    $msk->set_id($sys_msk_cac->id(view_shared::MC_FORMULA_TEST));
+    $back = $_GET[api::URL_VAR_BACK] = ''; // the page (or phrase id) from which formula testing has been called
     $msk_dsp = new view_dsp($msk->api_json());
     echo $msk_dsp->dsp_navbar($back);
 
     // get all parameters
-    $frm_id = $_GET[controller::URL_VAR_ID];
+    $frm_id = $_GET[api::URL_VAR_ID];
     $phr_ids_txt = $_GET['phrases'];
     $usr_id = $_GET['user'];    // to force another user view for testing the formula calculation
     $refresh = $_GET['refresh']; // delete all results for this formula and calculate the results again

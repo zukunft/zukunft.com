@@ -4,6 +4,7 @@ PREPARE view_norm_by_id (bigint) AS
            code_id,
            description,
            view_type_id,
+           view_style_id,
            excluded,
            share_type_id,
            protect_id,

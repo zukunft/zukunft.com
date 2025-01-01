@@ -30,17 +30,21 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use controller\controller;
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once SHARED_PATH . 'views.php';
+
+use cfg\value\value;
 use html\html_base;
 use html\view\view as view_dsp;
 use html\value\value as value_dsp;
-use cfg\user;
-use cfg\value;
-use cfg\view;
-
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+use cfg\user\user;
+use cfg\view\view;
+use shared\api;
+use shared\views as view_shared;
 
 // open database
 $db_con = prg_start("value_add");
@@ -60,8 +64,8 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::MC_VALUE_ADD);
-    $back = $_GET[controller::API_BACK];     // the word id from which this value change has been called (maybe later any page)
+    $msk->load_by_code_id(view_shared::MC_VALUE_ADD);
+    $back = $_GET[api::URL_VAR_BACK] = '';     // the word id from which this value change has been called (maybe later any page)
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
     $val = new value($usr);
@@ -105,7 +109,7 @@ if ($usr->id() > 0) {
         $val->convert();
 
         // add the new value to the database
-        $upd_result = $val->save();
+        $upd_result = $val->save()->get_last_message();
 
         // if update was successful ...
         if ($val->id() > 0 and str_replace('1', '', $upd_result) == '') {
@@ -117,7 +121,7 @@ if ($usr->id() > 0) {
                 if ($val->get_source_id() > 0) {
                     log_debug("save source" . $val->get_source_id() . ".");
                     $usr->set_source($val->get_source_id());
-                    $upd_result = $val->save();
+                    $upd_result = $val->save()->get_last_message();
                     log_debug("save source done.");
                 }
             }

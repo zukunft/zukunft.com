@@ -32,8 +32,8 @@
 
 use api\word\word as word_api;
 use api\user\user as user_api;
-use cfg\user;
-use cfg\user_list;
+use cfg\user\user;
+use cfg\user\user_list;
 use test\all_tests;
 
 function run_system_test(all_tests $t): void

@@ -39,15 +39,18 @@ include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_VERB_PATH . 'verb.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use api\api;
+use shared\api;
 use api\phrase\term as term_api;
 use api\sandbox\combine_object as combine_object_api;
 use html\sandbox\combine_named as combine_named_dsp;
 use html\formula\formula as formula_dsp;
+use html\user\user_message;
 use html\verb\verb as verb_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
+use shared\json_fields;
 
 class term extends combine_named_dsp
 {
@@ -59,36 +62,37 @@ class term extends combine_named_dsp
 
     /**
      * set the vars of this term html display object bases on the api message
-     * @param string $json_api_msg an api json message as a string
-     * @return void
+     * @param array $json_array an api json message as a string
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json(string $json_api_msg): void
+    function set_from_json_array(array $json_array): user_message
     {
-        $json_array = json_decode($json_api_msg, true);
-        if ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_WORD) {
+        $usr_msg = new user_message();
+        if ($json_array[json_fields::OBJECT_CLASS] == term_api::CLASS_WORD) {
             $wrd = new word_dsp();
             $wrd->set_from_json_array($json_array);
             $this->set_obj($wrd);
             // unlike the cases below the switch of the term id to the object id not needed for words
-        } elseif ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_TRIPLE) {
+        } elseif ($json_array[json_fields::OBJECT_CLASS] == term_api::CLASS_TRIPLE) {
             $trp = new triple_dsp();
             $trp->set_from_json_array($json_array);
             $this->set_obj($trp);
             // TODO check if needed
             //$this->set_id($trp->id());
-        } elseif ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_VERB) {
+        } elseif ($json_array[json_fields::OBJECT_CLASS] == term_api::CLASS_VERB) {
             $vrb = new verb_dsp();
             $vrb->set_from_json_array($json_array);
             $this->set_obj($vrb);
             //$this->set_id($vrb->id());
-        } elseif ($json_array[combine_object_api::FLD_CLASS] == term_api::CLASS_FORMULA) {
+        } elseif ($json_array[json_fields::OBJECT_CLASS] == term_api::CLASS_FORMULA) {
             $frm = new formula_dsp();
             $frm->set_from_json_array($json_array);
             $this->set_obj($frm);
             //$this->set_id($frm->id());
         } else {
-            log_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a term');
+            $usr_msg->add_err('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a term');
         }
+        return $usr_msg;
     }
 
     function set_term_obj(word_dsp|triple_dsp|verb_dsp|formula_dsp|null $obj): void
@@ -131,10 +135,10 @@ class term extends combine_named_dsp
     }
 
     /**
-     * @return int|string the id of the object
+     * @return int|string|null the id of the object
      * e.g 1 for a word 1, 1 for a triple 1, 1 for a formula 1 and 1 for a verb 1
      */
-    function obj_id(): int|string
+    function obj_id(): int|string|null
     {
         return $this->obj()->id();
     }
@@ -154,31 +158,35 @@ class term extends combine_named_dsp
     {
         $vars = array();
         if ($this->is_word()) {
-            $vars[combine_object_api::FLD_CLASS] = term_api::CLASS_WORD;
+            $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_WORD;
         } elseif ($this->is_triple()) {
-            $vars[combine_object_api::FLD_CLASS] = term_api::CLASS_TRIPLE;
+            $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_TRIPLE;
+            $trp = $this->obj();
+            $vars[json_fields::FROM] = $trp->from()->id();
+            $vars[json_fields::VERB] = $trp->verb()->id();
+            $vars[json_fields::TO] = $trp->to()->id();
         } elseif ($this->is_formula()) {
-            $vars[combine_object_api::FLD_CLASS] = term_api::CLASS_FORMULA;
+            $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_FORMULA;
         } elseif ($this->is_verb()) {
-            $vars[combine_object_api::FLD_CLASS] = term_api::CLASS_VERB;
+            $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_VERB;
         } else {
             log_err('cannot create api message for term ' . $this->dsp_id() . ' because class is unknown');
         }
-        $vars[api::FLD_ID] = $this->obj_id();
-        $vars[api::FLD_NAME] = $this->name();
-        $vars[api::FLD_DESCRIPTION] = $this->description();
+        $vars[json_fields::ID] = $this->obj_id();
+        $vars[json_fields::NAME] = $this->name();
+        $vars[json_fields::DESCRIPTION] = $this->description();
         if (!$this->is_verb()) {
-            $vars[api::FLD_TYPE] = $this->type_id();
+            $vars[json_fields::TYPE] = $this->type_id();
         }
         if ($this->is_formula()) {
-            $vars[api::FLD_USER_TEXT] = $this->obj()->usr_text();
+            $vars[json_fields::USER_TEXT] = $this->obj()->usr_text();
         }
         // TODO add exclude field and move to a parent object?
         if ($this->obj()?->share_id != null) {
-            $vars[api::FLD_SHARE] = $this->obj()?->share_id;
+            $vars[json_fields::SHARE] = $this->obj()?->share_id;
         }
         if ($this->obj()?->protection_id != null) {
-            $vars[api::FLD_PROTECTION] = $this->obj()?->protection_id;
+            $vars[json_fields::PROTECTION] = $this->obj()?->protection_id;
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -341,7 +349,7 @@ class term extends combine_named_dsp
         // TODO activate Prio 3
         // $sel->bs_class = $class;
 
-        return $trm_lst->selector($field_name, $form_name, $label, '', $this->id());
+        return $trm_lst->selector($form_name, $this->id(), $field_name, $label, '');
     }
 
 }

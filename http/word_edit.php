@@ -30,17 +30,21 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use controller\controller;
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once SHARED_PATH . 'views.php';
+
 use html\html_base;
 use html\view\view as view_dsp;
 use html\word\word as word_dsp;
-use cfg\user;
-use cfg\view;
-use cfg\word;
-
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+use cfg\user\user;
+use cfg\view\view;
+use cfg\word\word;
+use shared\api;
+use shared\views as view_shared;
 
 // open database
 $db_con = prg_start("word_edit");
@@ -60,26 +64,26 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::MC_WORD_EDIT);
-    $back = $_GET[controller::API_BACK]; // the word id from which this value change has been called (maybe later any page)
+    $msk->load_by_code_id(view_shared::MC_WORD_EDIT);
+    $back = $_GET[api::URL_VAR_BACK] = ''; // the word id from which this value change has been called (maybe later any page)
 
     // create the word object to have a place to update the parameters
     $wrd = new word($usr);
-    $wrd->load_by_id($_GET[controller::URL_VAR_ID]);
+    $wrd->load_by_id($_GET[api::URL_VAR_ID]);
 
     if ($wrd->id() <= 0) {
         $result .= log_info("The word id must be set to display a word.", "word_edit.php", '', (new Exception)->getTraceAsString(), $usr);
     } else {
 
         // get all parameters (but if not set, use the database value)
-        if (isset($_GET[controller::URL_VAR_NAME])) {
-            $wrd->set_name($_GET[controller::URL_VAR_NAME]);
+        if (isset($_GET[api::URL_VAR_NAME])) {
+            $wrd->set_name($_GET[api::URL_VAR_NAME]);
         } //
         if (isset($_GET['plural'])) {
             $wrd->plural = $_GET['plural'];
         } //
-        if (isset($_GET[controller::URL_VAR_DESCRIPTION])) {
-            $wrd->description = $_GET[controller::URL_VAR_DESCRIPTION];
+        if (isset($_GET[api::URL_VAR_DESCRIPTION])) {
+            $wrd->description = $_GET[api::URL_VAR_DESCRIPTION];
         } //
         if (isset($_GET['type'])) {
             $wrd->type_id = $_GET['type'];
@@ -93,7 +97,7 @@ if ($usr->id() > 0) {
                 $msg .= 'An empty name should never be saved. Please delete the word instead.';
             } else {
                 // save the changes
-                $upd_result = $wrd->save();
+                $upd_result = $wrd->save()->get_last_message();
 
                 // if update was fine ...
                 if (str_replace('1', '', $upd_result) == '') {

@@ -34,13 +34,9 @@
 
 namespace html\figure;
 
-use api\formula\figure as figure_api;
-use api\sandbox\combine_object as combine_object_api;
 use html\figure\figure as figure_dsp;
 use html\sandbox\list_dsp;
-use html\result\result as result_dsp;
-use html\value\value as value_dsp;
-use shared\library;
+use html\user\user_message;
 
 class figure_list extends list_dsp
 {
@@ -50,30 +46,13 @@ class figure_list extends list_dsp
      */
 
     /**
-     * set the vars of a figure object based on the given json
+     * set the vars of this figure list based on the given json
      * @param array $json_array an api single object json message
-     * @return object a term_dsp with the word or triple set based on the given json
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_obj_from_json_array(array $json_array): object
+    function set_from_json_array(array $json_array): user_message
     {
-        $fig = null;
-        if (array_key_exists(combine_object_api::FLD_CLASS, $json_array)) {
-            if ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_VALUE) {
-                $val = new value_dsp();
-                $val->set_from_json_array($json_array);
-                $fig = $val->figure();
-            } elseif ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_RESULT) {
-                $res = new result_dsp();
-                $res->set_from_json_array($json_array);
-                $fig = $res->figure();
-            } else {
-                log_err('class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected.');
-            }
-        } else {
-            $lib = new library();
-            log_err('json key ' . combine_object_api::FLD_CLASS . ' is missing in ' . $lib->dsp_array($json_array));
-        }
-        return $fig;
+        return parent::set_list_from_json($json_array, new figure_dsp());
     }
 
 

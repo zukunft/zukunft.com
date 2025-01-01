@@ -32,8 +32,8 @@
 
 namespace unit_read;
 
-use cfg\language;
-use cfg\language_form;
+use cfg\language\language;
+use cfg\language\language_form;
 use test\test_cleanup;
 
 class language_read_tests
@@ -64,8 +64,8 @@ class language_read_tests
         // test reading a language form via API that is not yet included in the preloaded language form
         // e.g. because it has been just added by the user to request e new language form
         $test_name = 'load language form ' . language_form::PLURAL . ' by id';
-        global $language_forms;
-        $lan_typ_id = $language_forms->id(language_form::PLURAL);
+        global $lan_for_cac;
+        $lan_typ_id = $lan_for_cac->id(language_form::PLURAL);
         $lan_typ = new language_form(language_form::PLURAL);
         $lan_typ->load_by_id($lan_typ_id);
         $t->assert($test_name, $lan_typ->code_id(), language_form::PLURAL);

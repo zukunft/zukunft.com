@@ -32,8 +32,6 @@
 
 namespace cfg\group;
 
-use cfg\phrase_list;
-
 class group_id_list
 {
 

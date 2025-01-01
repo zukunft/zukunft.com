@@ -1,0 +1,8 @@
+{
+  "id": 0,
+  "protection": 3,
+  "name": "System Test Triple",
+  "description": "A mathematical constant that never changes e.g. Pi",
+  "type_id": 17,
+  "verb_id": 3
+}

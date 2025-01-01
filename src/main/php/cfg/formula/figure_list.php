@@ -29,23 +29,42 @@
   
 */
 
-namespace cfg;
+namespace cfg\formula;
 
-include_once MODEL_FORMULA_PATH . 'fig_ids.php';
 include_once API_FORMULA_PATH . 'figure_list.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_par.php';
+include_once MODEL_PHRASE_PATH . 'term_list.php';
+include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VALUE_PATH . 'value.php';
+include_once WEB_FIGURE_PATH . 'figure.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\formula\figure_list as figure_list_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_par;
+use cfg\phrase\term_list;
+use cfg\result\result;
+use cfg\sandbox\sandbox_list;
+use cfg\user\user_message;
+use cfg\value\value;
 use html\figure\figure as figure_dsp;
 use shared\library;
-use test\test_api;
 
 class figure_list extends sandbox_list
 {
 
     // array $lst is the list of figures
+
+    /*
+     * construct and map
+     */
+
+    // the rows_mapper is not needed, because the figuresare not saved in the database
+
+
     public ?bool $fig_missing = false; // true if at least one of the results is not set which means is NULL (but zero is a value)
 
 
@@ -84,17 +103,17 @@ class figure_list extends sandbox_list
      */
     function set_by_api_json(array $api_json): user_message
     {
-        $msg = new user_message();
+        $usr_msg = new user_message();
 
         foreach ($api_json as $json_phr) {
             $fig = new figure($this->user());
-            $msg->add($fig->set_by_api_json($json_phr));
-            if ($msg->is_ok()) {
+            $usr_msg->add($fig->set_by_api_json($json_phr));
+            if ($usr_msg->is_ok()) {
                 $this->add($fig);
             }
         }
 
-        return $msg;
+        return $usr_msg;
     }
 
 
@@ -104,11 +123,11 @@ class figure_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of figure objects
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -127,11 +146,11 @@ class figure_list extends sandbox_list
     /**
      * create an SQL statement to retrieve a list of phrase objects by the id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param fig_ids $ids figure ids that should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql $sc, fig_ids $ids): sql_par
+    function load_sql_by_ids(sql_creator $sc, fig_ids $ids): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(figure::FLD_ID, $ids->lst);
@@ -159,11 +178,13 @@ class figure_list extends sandbox_list
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     if ($db_row[figure::FLD_ID] > 0) {
-                        $fig = new figure(new value($this->user()));
+                        $val = new value($this->user());
+                        $fig = new figure($val);
                     } else {
-                        $fig = new figure(new value($this->user()));
+                        $res = new result($this->user());
+                        $fig = new figure($res);
                     }
-                    $fig->row_mapper($db_row);
+                    $fig->row_mapper($db_row, $qp->ext);
                     $this->add_obj($fig);
                     $result = true;
                 }
@@ -187,7 +208,7 @@ class figure_list extends sandbox_list
     }
 
     /*
-     * modification function
+     * modify
      */
 
     /**
@@ -241,9 +262,10 @@ class figure_list extends sandbox_list
         $result = '';
 
         foreach ($this->lst() as $fig) {
-            $t = new test_api();
-            $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
-            $result .= $fig_dsp->display($back) . ' ';
+            $fig_dsp = new figure_dsp();
+            $api_json = $fig->api_obj()->get_json();
+            $fig_dsp->set_from_json($api_json);
+            $result .= $fig_dsp->display() . ' ';
         }
 
         return $result;

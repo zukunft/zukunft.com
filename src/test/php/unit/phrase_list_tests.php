@@ -30,20 +30,24 @@ namespace unit;
 
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
-use cfg\db\sql;
-use cfg\foaf_direction;
-use cfg\phrase_type;
-use html\phrase\phrase_list as phrase_list_dsp;
-use cfg\phr_ids;
-use cfg\phrase;
-use cfg\phrase_list;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\verb;
-use cfg\word;
+use cfg\phrase\phr_ids;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
+use cfg\phrase\phrase_type;
+use cfg\verb\verb;
+use cfg\word\word;
+use html\phrase\phrase_list as phrase_list_dsp;
+use shared\enum\foaf_direction;
 use test\test_cleanup;
+use shared\types\phrase_type as phrase_type_shared;
+use shared\types\verbs;
 
 class phrase_list_tests
 {
@@ -60,15 +64,15 @@ class phrase_list_tests
     {
 
         global $usr;
-        global $verbs;
+        global $vrb_cac;
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'phrase_list->';
         $t->resource_path = 'db/phrase/';
 
-        $t->header('Unit tests of the phrase list class (src/main/php/model/phrase/phrase_list.php)');
+        $t->header('phrase list unit tests');
 
 
         $t->subheader('Cast tests');
@@ -104,7 +108,7 @@ class phrase_list_tests
         $wrd = new word($usr);
         $wrd->set(1, word_api::TN_CH);
         $phr_lst->add($wrd->phrase());
-        $vrb = $verbs->get_verb(verb::IS_PART_OF);
+        $vrb = $vrb_cac->get_verb(verbs::IS_PART_OF);
         $this->assert_sql_linked_phrases($db_con->sql_creator(), $t, $phr_lst, $vrb, foaf_direction::UP);
         // TODO activate Prio 1
         //$this->assert_sql_by_phr_lst($db_con, $t, $phr_lst, $vrb, foaf_direction::UP);
@@ -203,11 +207,11 @@ class phrase_list_tests
     private function get_time_phrase(): phrase
     {
         global $usr;
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $wrd = new word($usr);
         $wrd->set(2, word_api::TN_RENAMED);
-        $wrd->type_id = $phrase_types->id(phrase_type::TIME);
+        $wrd->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         return $wrd->phrase();
     }
 
@@ -261,7 +265,7 @@ class phrase_list_tests
      * @param foaf_direction $direction to define the link direction
      */
     private function assert_sql_linked_phrases(
-        sql            $sc,
+        sql_creator    $sc,
         test_cleanup   $t,
         object         $usr_obj,
         ?verb          $vrb,

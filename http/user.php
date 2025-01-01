@@ -30,35 +30,40 @@
 
 */
 
+// standard zukunft header for callable php files to allow debugging and lib loading
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once SHARED_PATH . 'views.php';
+
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\db\sql_db;
-use cfg\formula;
-use cfg\formula_link;
-use cfg\triple;
-use cfg\user;
+use cfg\formula\formula;
+use cfg\formula\formula_link;
+use cfg\word\triple;
+use cfg\user\user;
 use cfg\user_profile;
 use cfg\value\value;
-use cfg\view;
-use cfg\word;
-use controller\controller;
+use cfg\view\view;
+use cfg\word\word;
 use html\html_base;
 use html\view\view as view_dsp;
-
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+use shared\api;
+use shared\views as view_shared;
 
 $db_con = prg_start("user");
 $html = new html_base();
 
-global $user_profiles;
+global $usr_pro_cac;
 
 $result = ''; // reset the html code var
 
 // get the parameters
-$id = $_GET[controller::URL_VAR_ID];
-$back = $_GET[controller::API_BACK];
+$id = $_GET[api::URL_VAR_ID];
+$back = $_GET[api::URL_VAR_BACK] = '';
 $undo_val = $_GET['undo_value'];
 $undo_wrd = $_GET['undo_word'];
 $undo_lnk = $_GET['undo_triple'];
@@ -83,7 +88,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::MC_USER);
+    $msk->load_by_code_id(view_shared::MC_USER);
 
     // do user change
     $result .= $usr->upd_pars($_GET);
@@ -189,7 +194,7 @@ if ($usr->id() > 0) {
     }
 
     // display all program issues if the user is an admin
-    if ($usr->profile_id == $user_profiles->id(user_profile::ADMIN)) {
+    if ($usr->profile_id == $usr_pro_cac->id(user_profile::ADMIN)) {
         $errors_all = $dsp_usr_old->dsp_errors("other", sql_db::ROW_LIMIT, 1, $back);
         if (trim($errors_all) <> "") {
             $result .= $html->dsp_text_h2("Program issues that other user have found, that have not yet been solved.");

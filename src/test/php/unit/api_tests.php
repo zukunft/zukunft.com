@@ -49,6 +49,8 @@ include_once API_SYSTEM_PATH . 'type_object.php';
 include_once API_PHRASE_PATH . 'phrase_type.php';
 include_once API_LANGUAGE_PATH . 'language.php';
 include_once API_LANGUAGE_PATH . 'language_form.php';
+include_once SHARED_PATH . 'views.php';
+include_once HTML_HELPER_PATH . 'data_object.php';
 
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
@@ -59,38 +61,39 @@ use api\view\view as view_api;
 use api\word\word as word_api;
 use cfg\component\component;
 use cfg\component\component_list;
-use cfg\formula;
-use cfg\formula_list;
-use cfg\job;
-use cfg\language;
-use cfg\language_form;
+use cfg\formula\formula;
+use cfg\formula\formula_list;
+use cfg\system\job;
+use cfg\language\language;
+use cfg\language\language_form;
 use cfg\log\change_field_list;
 use cfg\log\change_log_list;
-use cfg\phrase_list;
-use cfg\phrase_type;
-use cfg\ref;
-use cfg\source;
+use cfg\phrase\phrase_list;
+use cfg\phrase\phrase_type;
+use cfg\ref\ref;
+use cfg\ref\source;
 use cfg\sys_log_list;
-use cfg\term_list;
-use cfg\triple;
+use cfg\phrase\term_list;
+use cfg\word\triple;
 use cfg\type_lists;
-use cfg\user;
+use cfg\user\user;
 use cfg\value\value;
-use cfg\verb;
-use cfg\view;
-use cfg\word;
-use cfg\word_list;
-use controller\controller;
+use cfg\verb\verb;
+use cfg\view\view;
+use cfg\view\view_list;
+use cfg\word\word;
+use cfg\word\word_list;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
+use html\helper\data_object as data_object_dsp;
+use shared\api;
 use shared\library;
+use shared\views as view_shared;
 use test\test_cleanup;
 
 class api_tests
 {
     // path
-    const TEST_ROOT_PATH = '/home/timon/git/zukunft.com/';
-    const TEST_ROOT_PATH2 = '/home/timon/PhpstormProjects/zukunft.com/';
     const OPEN_API_PATH = 'src/main/resources/openapi/zukunft_com_api.yaml';
 
     const API_PATH = 'api/';
@@ -110,9 +113,9 @@ class api_tests
 
         $t->assert_api_get(user::class, user::SYSTEM_TEST_ID);
         $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_NAME);
-        $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_EMAIL, controller::URL_VAR_EMAIL);
+        $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_EMAIL, api::URL_VAR_EMAIL);
         $t->assert_api_get(word::class);
-        $t->assert_api_get_json(word::class, controller::URL_VAR_WORD_ID);
+        $t->assert_api_get_json(word::class, api::URL_VAR_WORD_ID);
         $t->assert_api_get_by_text(word::class, word_api::TN_READ);
         $t->assert_api_get(verb::class);
         $t->assert_api_get_by_text(verb::class, verb_api::TN_READ);
@@ -124,6 +127,7 @@ class api_tests
         $t->assert_api_get(formula::class);
         $t->assert_api_get_by_text(formula::class, formula_api::TN_READ);
         $t->assert_api_get(view::class);
+        $t->assert_api_get(view::class, 1, 1);
         $t->assert_api_get_by_text(view::class, view_api::TN_READ);
         $t->assert_api_get(component::class);
         $t->assert_api_get_by_text(component::class, component_api::TN_READ);
@@ -137,16 +141,17 @@ class api_tests
 
         $t->assert_api_get_list(type_lists::class);
         $t->assert_api_get_list(word_list::class, [1, 2, word_api::TI_PI]);
-        $t->assert_api_get_list(word_list::class, word_api::TN_READ, controller::URL_VAR_PATTERN);
+        $t->assert_api_get_list(word_list::class, word_api::TN_READ, api::URL_VAR_PATTERN);
         $t->assert_api_get_list(phrase_list::class, [1, 2, word_api::TI_PI, -1, -2]);
-        $t->assert_api_get_list(phrase_list::class, word_api::TN_READ, controller::URL_VAR_PATTERN);
+        $t->assert_api_get_list(phrase_list::class, word_api::TN_READ, api::URL_VAR_PATTERN);
         $t->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $t->assert_api_get_list(formula_list::class, [1]);
-        $t->assert_api_get_list(component_list::class, 3, 'view_id');
+        $t->assert_api_get_list(view_list::class, view_api::TN_READ, api::URL_VAR_PATTERN);
+        $t->assert_api_get_list(component_list::class, 2, 'view_id');
         $t->assert_api_chg_list(
             change_log_list::class,
-            controller::URL_VAR_WORD_ID, 1,
-            controller::URL_VAR_WORD_FLD, change_field_list::FLD_WORD_NAME);
+            api::URL_VAR_WORD_ID, 1,
+            api::URL_VAR_WORD_FLD, change_field_list::FLD_WORD_NAME);
         $t->assert_api_get_list(
             sys_log_list::class,
             [1, 2], 'ids',
@@ -172,19 +177,31 @@ class api_tests
 
     /**
      * get the api message and forward it to the ui
-     * TODO move all other HTML frontend tests to this
+     * TODO move all other HTML frontend tests here
      *
      * @param test_cleanup $t
      * @return void
      */
     function run_ui_test(test_cleanup $t): void
     {
-        $t->assert_view(controller::MC_WORD, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(controller::MC_WORD_ADD, $t->usr1, new word($t->usr1));
-        $t->assert_view(controller::MC_WORD_EDIT, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(controller::MC_WORD_DEL, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(controller::MC_TRIPLE_ADD, $t->usr1, new triple($t->usr1));
-        //$t->assert_view(controller::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1);
+        // create the stable test context that is not based on the database so that the test results rarely change
+        $cfg = new data_object_dsp();
+        $cfg->set_view_list($t->view_list_dsp());
+        // create the test pages
+        $t->assert_view(view_shared::MC_WORD, $t->usr1, new word($t->usr1), 1);
+        $t->assert_view(view_shared::MC_WORD_ADD, $t->usr1, new word($t->usr1));
+        $t->assert_view(view_shared::MC_WORD_EDIT, $t->usr1, new word($t->usr1), 1, $cfg);
+        $t->assert_view(view_shared::MC_WORD_DEL, $t->usr1, new word($t->usr1), 1);
+        $t->assert_view(view_shared::MC_VERB_ADD, $t->usr1, new verb());
+        $t->assert_view(view_shared::MC_VERB_EDIT, $t->usr1, new verb(), 1);
+        $t->assert_view(view_shared::MC_VERB_DEL, $t->usr1, new verb(), 1);
+        $t->assert_view(view_shared::MC_TRIPLE_ADD, $t->usr1, new triple($t->usr1));
+        $t->assert_view(view_shared::MC_TRIPLE_EDIT, $t->usr1, new triple($t->usr1), 1);
+        $t->assert_view(view_shared::MC_TRIPLE_DEL, $t->usr1, new triple($t->usr1), 1);
+        $t->assert_view(view_shared::MC_SOURCE_ADD, $t->usr1, new source($t->usr1));
+        $t->assert_view(view_shared::MC_SOURCE_EDIT, $t->usr1, new source($t->usr1), 1);
+        $t->assert_view(view_shared::MC_SOURCE_DEL, $t->usr1, new source($t->usr1), 1);
+        //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1);
         // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
     }
 
@@ -221,7 +238,7 @@ class api_tests
         $id = $t->assert_api_put_no_rest($class, $add_data);
         // check if the object has been created
         // the id is ignored in the compare because it depends on the number of rows in the database that cannot be controlled by the test
-        $t->assert_api_get($class, $id, $add_data, true);
+        $t->assert_api_get($class, $id, 0, $add_data, true);
         // update the previous created test object
         $id = $t->assert_api_post_no_rest($class, $id, $upd_data);
         // remove the previous created test object
@@ -244,7 +261,7 @@ class api_tests
         $id = $t->assert_api_put($class, $add_data, true);
         if ($id != 0) {
             // check if the source has been created
-            $t->assert_api_get($class, $id, $add_data, true);
+            $t->assert_api_get($class, $id, 0, $add_data, true);
             //$t->assert_api_post(source::class);
             $t->assert_api_del($class, $id);
         } else {
@@ -299,10 +316,7 @@ class api_tests
 
         $test_name = 'check if a controller for each api tag exists';
         $result = '';
-        $open_api_filename = self::TEST_ROOT_PATH . self::OPEN_API_PATH;
-        if (!file_exists($open_api_filename)) {
-            $open_api_filename = self::TEST_ROOT_PATH2 . self::OPEN_API_PATH;
-        }
+        $open_api_filename = ROOT_PATH . self::OPEN_API_PATH;
         $api_def = yaml_parse_file($open_api_filename);
         if ($api_def == null) {
             log_err('OpenAPI file ' . $open_api_filename . ' missing');
@@ -312,10 +326,7 @@ class api_tests
                 $paths = $t->get_paths_of_tag($tag['name'], $api_def);
                 foreach ($paths as $path) {
                     // check if at least some controller code exists for each tag
-                    $filename = self::TEST_ROOT_PATH . self::API_PATH . $path . '/' . self::PHP_DEFAULT_FILENAME;
-                    if (!file_exists($filename)) {
-                        $filename = self::TEST_ROOT_PATH2 . self::API_PATH . $path . '/' . self::PHP_DEFAULT_FILENAME;
-                    }
+                    $filename = ROOT_PATH . self::API_PATH . $path . '/' . self::PHP_DEFAULT_FILENAME;
                     $ctrl_code = file_get_contents($filename);
                     if ($ctrl_code == null or $ctrl_code == '') {
                         if ($result != '') {

@@ -37,7 +37,7 @@ include_once MODEL_COMPONENT_PATH . 'component.php';
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_type;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use html\component\component as component_dsp;
@@ -52,7 +52,7 @@ class component_tests
         global $usr;
 
         // init
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'component->';
         $t->resource_path = 'db/component/';
 
@@ -115,7 +115,9 @@ class component_tests
         $t->subheader('component frontend unit tests');
         $t->assert_api_to_dsp($cmp, new component_dsp());
 
-        $t->subheader('component import and export tests');
+        $t->subheader('component im- and export tests');
+        $t->assert_ex_and_import($t->component());
+        $t->assert_ex_and_import($t->component_filled());
         $json_file = 'unit/view/component_import.json';
         $t->assert_json_file(new component($usr), $json_file);
 

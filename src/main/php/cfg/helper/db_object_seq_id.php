@@ -7,6 +7,20 @@
 
     similar to db_object_seq_id
 
+    The main sections of this object are
+    - db const:          const for the database link
+    - object vars:       the variables of this object
+    - construct and map: including the mapping of the db row to this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - cast:              create an api object and set the vars from an api json
+    - sql create:        to create the database objects
+    - load:              database access object (DAO) functions
+    - im- and export:    create an export object and set the vars from an import object
+    - information:       functions to make code easier to read
+    - to overwrite:      functions that should always be overwritten by the child objects
+    - interface:         to fill api messages
+    - debug:             internal support functions for debugging
+
 
     This file is part of zukunft.com - calc with words
 
@@ -25,35 +39,50 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
+include_once API_SYSTEM_PATH . 'db_object.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+//include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
+//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use api\system\db_object as db_object_api;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
-use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\sandbox\sandbox;
+use cfg\user\user_message;
+use shared\json_fields;
+use JsonSerializable;
 
-class db_object_seq_id extends db_object
+class db_object_seq_id extends db_object implements JsonSerializable
 {
 
     /*
-     * database link
+     * db const
      */
 
     // database fields and comments
-    // *_SQLTYP is the sql data type used for the field
-    const FLD_ID_SQLTYP = sql_field_type::INT; // this default type is changed e.g. if the id is part of and index
+    // *_SQL_TYP is the sql data type used for the field
+    const FLD_ID_SQL_TYP = sql_field_type::INT; // this default type is changed e.g. if the id is part of and index
+
 
     /*
      * object vars
@@ -61,7 +90,8 @@ class db_object_seq_id extends db_object
 
     // database fields that are used in all model objects
     // the database id is the unique prime key
-    protected int $id;
+    // is private because some objects like group have a complex id which needs a id() function
+    private int $id;
 
 
     /*
@@ -72,6 +102,15 @@ class db_object_seq_id extends db_object
      * reset the id to null to indicate that the database object has not been loaded
      */
     function __construct()
+    {
+        $this->set_id(0);
+    }
+
+    /**
+     * reset the vars of this object
+     * used to search for the standard object, because the search is word, value, formula or ... specific
+     */
+    function reset(): void
     {
         $this->set_id(0);
     }
@@ -124,6 +163,34 @@ class db_object_seq_id extends db_object
 
 
     /*
+     * modify
+     */
+
+    /**
+     * fill this seq id object based on the given object
+     * if the given id is zero the id is never overwritten
+     * if the given id is not zero the id is set if not yet done
+     *
+     * @param db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(db_object_seq_id $sbx): user_message
+    {
+        $usr_msg = new user_message();
+        if ($sbx->id() != 0) {
+            if ($this->id() == 0) {
+                $this->set_id($sbx->id());
+            } elseif ($sbx->id() != $this->id()) {
+                $usr_msg->add_message(
+                    'Unexpected conflict of the database id. '
+                    . $this->dsp_id() . ' != ' . $this->dsp_id());
+            }
+        }
+        return $usr_msg;
+    }
+
+
+    /*
      * cast
      */
 
@@ -150,12 +217,12 @@ class db_object_seq_id extends db_object
 
     /**
      * the sql statement to create the table
-     * is e.g. overwriten for the user sandbox objects
+     * is e.g. overwritten for the user sandbox objects
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the table
      */
-    function sql_table(sql $sc): string
+    function sql_table(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         $sql .= $this->sql_table_create($sc);
@@ -164,12 +231,12 @@ class db_object_seq_id extends db_object
 
     /**
      * the sql statement to create the database indices
-     * is e.g. overwriten for the user sandbox objects
+     * is e.g. overwritten for the user sandbox objects
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the indices
      */
-    function sql_index(sql $sc): string
+    function sql_index(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         $sql .= $this->sql_index_create($sc);
@@ -180,32 +247,31 @@ class db_object_seq_id extends db_object
      * the sql statements to create all foreign keys
      * is e.g. overwritten for the user sandbox objects
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the foreign keys
      */
-    function sql_foreign_key(sql $sc): string
+    function sql_foreign_key(sql_creator $sc): string
     {
-        return $this->sql_foreign_key_create($sc, new sql_type_list([]), [], false);
+        return $this->sql_foreign_key_create($sc, new sql_type_list([]));
     }
 
     /**
      *  create a list of fields with the parameters for this object
      *
-     * @param sql $sc with the target db_type set
      * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @return array[] with the parameters of the table fields
      */
-    protected function sql_all_field_par(sql $sc, sql_type_list $sc_par_lst): array
+    protected function sql_all_field_par(sql_type_list $sc_par_lst): array
     {
         $usr_tbl = $sc_par_lst->is_usr_tbl();
-        $small_key =  $sc_par_lst->has_key_int_small();
+        $small_key = $sc_par_lst->has_key_int_small();
         $use_sandbox = $sc_par_lst->use_sandbox_fields();
         if (!$usr_tbl) {
             if ($use_sandbox) {
                 $fields = array_merge($this->sql_id_field_par(false, $small_key), sandbox::FLD_ALL_OWNER);
                 $fields = array_merge($fields, $this::FLD_LST_MUST_BE_IN_STD);
             } else {
-                $fields = array_merge($this->sql_id_field_par(false, $small_key), $this::FLD_LST_ALL);
+                $fields = array_merge($this->sql_id_field_par(false, $small_key), $this::FLD_LST_NAME, $this::FLD_LST_ALL);
                 $fields = array_merge($fields, $this::FLD_LST_EXTRA);
             }
         } else {
@@ -260,13 +326,13 @@ class db_object_seq_id extends db_object
     /**
      * create an SQL statement to retrieve a user sandbox object by id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int $id): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
-        return parent::load_sql_by_id_str($sc, $id, $this::class);
+        return parent::load_sql_by_id_str($sc, $id);
     }
 
     /**
@@ -293,12 +359,12 @@ class db_object_seq_id extends db_object
      */
     function import_db_obj(db_object_seq_id $db_obj, object $test_obj = null): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         // add a dummy id for unit testing
         if ($test_obj) {
             $db_obj->set_id($test_obj->seq_id());
         }
-        return $result;
+        return $usr_msg;
     }
 
 
@@ -311,10 +377,10 @@ class db_object_seq_id extends db_object
      */
     function is_loaded(): bool
     {
-        if ($this->id == null) {
+        if ($this->id() == null) {
             return false;
         } else {
-            if ($this->id != 0) {
+            if ($this->id() != 0) {
                 return true;
             } else {
                 return false;
@@ -324,7 +390,7 @@ class db_object_seq_id extends db_object
 
 
     /*
-     * dummy functions that should always be overwritten by the child
+     * to overwrite
      */
 
     /**
@@ -334,7 +400,7 @@ class db_object_seq_id extends db_object
      */
     function name(): string
     {
-        return 'ERROR: name function not overwritten by child';
+        return 'ERROR: name function not overwritten by child object';
     }
 
     /**
@@ -362,6 +428,21 @@ class db_object_seq_id extends db_object
         return 0;
     }
 
+
+    /*
+     * interface
+     */
+
+    /**
+     * for the message from the backend to the frontend
+     * @return array with the ID
+     */
+    function jsonSerialize(): array
+    {
+        $vars = [];
+        $vars[json_fields::ID] = $this->id();
+        return $vars;
+    }
 
     /*
      * debug

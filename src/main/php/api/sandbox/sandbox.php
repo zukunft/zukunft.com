@@ -34,8 +34,11 @@
 
 namespace api\sandbox;
 
-use api\api;
+include_once SHARED_PATH . 'json_fields.php';
+
+use shared\api;
 use JsonSerializable;
+use shared\json_fields;
 use shared\types\protection_type;
 
 class sandbox implements JsonSerializable
@@ -63,13 +66,13 @@ class sandbox implements JsonSerializable
      * construct and map
      */
 
-    function __construct(int $id = 0)
+    function __construct(int|string $id = 0)
     {
-        $this->id = 0;
+        $this->set_id(0);
 
         // set the id if included in new call
         if ($id <> 0) {
-            $this->id = $id;
+            $this->set_id($id);
         }
     }
 
@@ -104,7 +107,7 @@ class sandbox implements JsonSerializable
     function api_array(): array
     {
         $vars = array();
-        $vars[api::FLD_ID] = $this->id();
+        $vars[json_fields::ID] = $this->id();
         return $vars;
     }
 
@@ -129,20 +132,20 @@ class sandbox implements JsonSerializable
      */
     function jsonSerialize(): array
     {
-        global $share_types;
-        global $protection_types;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
 
         $vars = get_object_vars($this);
 
         // remove vars from the json that have the default value
-        if (array_key_exists(api::FLD_SHARE, $vars)) {
-            if ($vars[api::FLD_SHARE] == $share_types->default_id()) {
-                unset($vars[api::FLD_SHARE]);
+        if (array_key_exists(json_fields::SHARE, $vars)) {
+            if ($vars[json_fields::SHARE] == $shr_typ_cac->default_id()) {
+                unset($vars[json_fields::SHARE]);
             }
         }
-        if (array_key_exists(api::FLD_PROTECTION, $vars)) {
-            if ($vars[api::FLD_PROTECTION] == $protection_types->default_id()) {
-                unset($vars[api::FLD_PROTECTION]);
+        if (array_key_exists(json_fields::PROTECTION, $vars)) {
+            if ($vars[json_fields::PROTECTION] == $ptc_typ_cac->default_id()) {
+                unset($vars[json_fields::PROTECTION]);
             }
         }
 

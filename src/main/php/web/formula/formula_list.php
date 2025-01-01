@@ -36,6 +36,7 @@ include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 use html\html_base;
 use html\sandbox\list_dsp;
 use html\formula\formula as formula_dsp;
+use html\user\user_message;
 
 class formula_list extends list_dsp
 {
@@ -47,13 +48,11 @@ class formula_list extends list_dsp
     /**
      * set the vars of a formula object based on the given json
      * @param array $json_array an api single object json message
-     * @return object a formula set based on the given json
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_obj_from_json_array(array $json_array): object
+    function set_from_json_array(array $json_array): user_message
     {
-        $wrd = new formula_dsp();
-        $wrd->set_from_json_array($json_array);
-        return $wrd;
+        return parent::set_list_from_json($json_array, new formula_dsp());
     }
 
 

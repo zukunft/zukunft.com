@@ -35,7 +35,7 @@ namespace html\system;
 class messages
 {
 
-    // text to be shon in buttons
+    // text to be shown in buttons
     const SEARCH_MAIN = 'search_main';
     const WORD_ADD = 'word_add';
     const WORD_EDIT = 'word_edit';
@@ -69,6 +69,16 @@ class messages
     const IP_BLOCK_SOLUTION = 'ip_block_solution';
     const FORM_WORD_ADD_TITLE = 'form_title_word_add';
     const FORM_WORD_EDIT_TITLE = 'form_title_word_edit';
+    const FORM_WORD_DEL_TITLE = 'form_title_word_del';
+    const FORM_VERB_ADD_TITLE = 'form_title_verb_add';
+    const FORM_VERB_EDIT_TITLE = 'form_title_verb_edit';
+    const FORM_VERB_DEL_TITLE = 'form_title_verb_del';
+    const FORM_TRIPLE_ADD_TITLE = 'form_title_triple_add';
+    const FORM_TRIPLE_EDIT_TITLE = 'form_title_triple_edit';
+    const FORM_TRIPLE_DEL_TITLE = 'form_title_triple_del';
+    const FORM_SOURCE_ADD_TITLE = 'form_title_source_add';
+    const FORM_SOURCE_EDIT_TITLE = 'form_title_source_edit';
+    const FORM_SOURCE_DEL_TITLE = 'form_title_source_del';
     const FORM_COMPONENT_ADD_TITLE = 'form_component_add_title';
     const FORM_FIELD_NAME = 'form_field_name';
     const FORM_FIELD_DESCRIPTION = 'form_field_description';
@@ -81,6 +91,8 @@ class messages
     const UNDO_ADD = 'undo_add';
     const UNDO_EDIT = 'undo_edit';
     const UNDO_DEL = 'undo_del';
+
+    // other text to be shown to users
 
     // language elements to create a text
     CONST FOR = 'for'; // e.g. to indicate which phrases a value is assigned to
@@ -99,7 +111,7 @@ class messages
             self::SEARCH_MAIN => 'find a word or formula',
             self::WORD_ADD, self::TRIPLE_ADD => 'add new word',
             self::WORD_EDIT, self::TRIPLE_EDIT => 'rename word',
-            self::WORD_DEL, self::TRIPLE_DEL => 'Delete word',
+            self::WORD_DEL, self::TRIPLE_DEL => 'delete word',
             self::VERB_ADD => 'add new verb',
             self::VERB_EDIT => 'change verb',
             self::VERB_DEL => 'delete verb',
@@ -126,6 +138,17 @@ class messages
             self::IP_BLOCK_SOLUTION => '. If you think, this should not be the case, ' .
                 'please request the unblocking with an email to admin@zukunft.com.',
             self::FORM_WORD_ADD_TITLE => 'Add a new word',
+            self::FORM_WORD_EDIT_TITLE => 'Change word',
+            self::FORM_WORD_DEL_TITLE => 'Delete word',
+            self::FORM_VERB_ADD_TITLE => 'Add a new verb',
+            self::FORM_VERB_EDIT_TITLE => 'Change verb',
+            self::FORM_VERB_DEL_TITLE => 'Delete verb',
+            self::FORM_TRIPLE_ADD_TITLE => 'Add a new triple',
+            self::FORM_TRIPLE_EDIT_TITLE => 'Change triple',
+            self::FORM_TRIPLE_DEL_TITLE => 'Delete triple',
+            self::FORM_SOURCE_ADD_TITLE => 'Add a new source',
+            self::FORM_SOURCE_EDIT_TITLE => 'Change source',
+            self::FORM_SOURCE_DEL_TITLE => 'Delete source',
             self::FORM_COMPONENT_ADD_TITLE => 'Add a view element',
             self::FORM_WORD_FLD_NAME => 'Word name',
             self::UNDO => 'undo',
@@ -137,7 +160,7 @@ class messages
             default => $message_id . ' (translation missing)',
         };
         if ($msg_text == $message_id . ' (translation missing)') {
-            //log_warning('translation missing for ' . $message_id);
+            log_warning('translation missing for ' . $message_id);
         }
         return $msg_text;
     }

@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "name": "Mathematics",
+    "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
+    "type_id": 1,
+    "protection": 3,
+    "class": "word"
+  },
+  {
+    "id": 2,
+    "name": "constant",
+    "description": "fixed and well-defined number",
+    "type_id": 17,
+    "protection": 3,
+    "class": "word"
+  },
+  {
+    "id": 4,
+    "name": "Pi",
+    "description": "ratio of the circumference of a circle to its diameter",
+    "type_id": 17,
+    "protection": 3,
+    "class": "word"
+  },
+  {
+    "id": 1,
+    "name": "Mathematical constant",
+    "description": "A mathematical constant that never changes e.g. Pi",
+    "type_id": 17,
+    "protection": 3,
+    "class": "triple"
+  },
+  {
+    "id": 2,
+    "name": "Pi (math)",
+    "description": "ratio of the circumference of a circle to its diameter",
+    "type_id": 22,
+    "class": "triple"
+  }
+]

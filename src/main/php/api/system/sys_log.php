@@ -35,13 +35,12 @@ include_once API_USER_PATH . 'user.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 
-use cfg\db_object_seq_id;
-use cfg\sys_log_status;
-use cfg\user;
+use cfg\system\sys_log_status;
+use cfg\user\user;
 use html\rest_ctrl;
 use html\html_base;
 
-class sys_log extends db_object_seq_id
+class sys_log
 {
 
     CONST TV_TIME = '2023-01-03T20:59:59+0100'; // time for unit tests
@@ -68,7 +67,6 @@ class sys_log extends db_object_seq_id
 
     function __construct()
     {
-        parent::__construct();
         $this->id = 0;
         $this->time = '';
         $this->user = '';
@@ -91,7 +89,7 @@ class sys_log extends db_object_seq_id
 
     function get_html(user $usr = null, string $back = ''): string
     {
-        global $sys_log_stati;
+        global $sys_log_sta_cac;
 
         $html = new html_base();
         $row_text = $html->td($this->time);
@@ -104,7 +102,7 @@ class sys_log extends db_object_seq_id
         $row_text .= $html->td($this->status);
         if ($usr != null) {
             if ($usr->is_admin() or $usr->is_system()) {
-                $par_status = rest_ctrl::PAR_LOG_STATUS. '=' . $sys_log_stati->id(sys_log_status::CLOSED);
+                $par_status = rest_ctrl::PAR_LOG_STATUS. '=' . $sys_log_sta_cac->id(sys_log_status::CLOSED);
                 $url = $html->url(rest_ctrl::ERROR_UPDATE, $this->id, $back, '', $par_status);
                 $row_text .= $html->td($html->ref($url, 'close'));
             }

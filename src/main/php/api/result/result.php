@@ -33,14 +33,14 @@
 namespace api\result;
 
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
-include_once API_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once WEB_RESULT_PATH . 'result.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use api\api;
 use api\sandbox\sandbox_value as sandbox_value_api;
 use JsonSerializable;
 use html\result\result as result_dsp;
+use shared\json_fields;
 
 class result extends sandbox_value_api implements JsonSerializable
 {
@@ -66,7 +66,7 @@ class result extends sandbox_value_api implements JsonSerializable
      * construct and map
      */
 
-    function __construct(int $id = 0)
+    function __construct(int|string $id = 0)
     {
         parent::__construct($id);
         $this->is_std = true;
@@ -97,22 +97,23 @@ class result extends sandbox_value_api implements JsonSerializable
      */
     function jsonSerialize(): array
     {
-        $vars = get_object_vars($this);
+        $vars = parent::jsonSerialize();
+        $vars = array_merge($vars, get_object_vars($this));
 
         // add the var of the parent object
-        $vars[sandbox_value_api::FLD_NUMBER] = $this->number();
+        $vars[json_fields::NUMBER] = $this->number();
 
         // remove vars from the json that have the default value
         if ($this->is_std) {
-            if (array_key_exists(api::FLD_IS_STD, $vars)) {
-                unset($vars[api::FLD_IS_STD]);
+            if (array_key_exists(json_fields::IS_STD, $vars)) {
+                unset($vars[json_fields::IS_STD]);
             }
         }
 
         // add the phrase list to the api object because this is always needed to display the value
         // the phrase group is not used in the api because this is always created dynamically based on the phrase
         // and only used to speed up the database and reduce the size
-        $vars[api::FLD_PHRASES] = json_decode(json_encode($this->phr_lst()));
+        $vars[json_fields::PHRASES] = json_decode(json_encode($this->phr_lst()));
 
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

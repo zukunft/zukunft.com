@@ -37,17 +37,32 @@
 
 namespace cfg\value;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_GROUP_PATH . 'group.php';
+include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'library.php';
+
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\group\group;
-use cfg\sandbox;
-use cfg\sandbox_value;
-use cfg\source;
-use cfg\user;
-use cfg\user_message;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_value;
+use cfg\ref\source;
+use cfg\user\user;
+use cfg\user\user_message;
 use shared\library;
 
 class value_time_series extends sandbox_value
@@ -132,7 +147,7 @@ class value_time_series extends sandbox_value
      * map the database fields to the object fields
      *
      * @param array|null $db_row with the data directly from the database
-     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the value time series is loaded and valid
@@ -158,11 +173,11 @@ class value_time_series extends sandbox_value
 
     /**
      * create the SQL to load the default time series always by the id
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc, array $fld_lst = []): sql_par
+    function load_standard_sql(sql_creator $sc, array $fld_lst = []): sql_par
     {
         $fld_lst = array_merge(self::FLD_NAMES, self::FLD_NAMES_NUM_USR);
         return parent::load_standard_sql($sc, $fld_lst);
@@ -171,12 +186,12 @@ class value_time_series extends sandbox_value
     /**
      * create the common part of an SQL statement to retrieve the parameters of a time series from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         $qp = parent::load_sql_obj_vars($sc, $class);
         $qp->name .= $query_name;
@@ -206,7 +221,7 @@ class value_time_series extends sandbox_value
     /**
      * create the common part of an SQL statement to retrieve the parameters of a value time series
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -215,12 +230,12 @@ class value_time_series extends sandbox_value
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_multi(
-        sql      $sc,
-        string   $query_name,
-        string   $class = self::class,
-        sql_type_list    $sc_par_lst = new sql_type_list([]),
-        string   $ext = '',
-        string   $id_ext = ''
+        sql_creator   $sc,
+        string        $query_name,
+        string        $class = self::class,
+        sql_type_list $sc_par_lst = new sql_type_list([]),
+        string        $ext = '',
+        string        $id_ext = ''
     ): sql_par
     {
         $qp = parent::load_sql_multi($sc, $query_name, $class, $sc_par_lst, $ext, $id_ext);
@@ -239,12 +254,12 @@ class value_time_series extends sandbox_value
     /**
      * create an SQL statement to retrieve a time series by the phrase group from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param group $grp the phrase group to which the time series should be loaded
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_grp(sql $sc, group $grp, string $class = self::class): sql_par
+    function load_sql_by_grp(sql_creator $sc, group $grp, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, group::FLD_ID);
         $sc->add_where(group::FLD_ID, $grp->id());
@@ -259,21 +274,20 @@ class value_time_series extends sandbox_value
      * load a reference object by database id
      * TODO load the related time series data
      * @param int|string $id the id of the reference
-     * @param string $class the reference class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int|string $id, string $class = self::class): int
+    function load_by_id(int|string $id): int
     {
-        return parent::load_by_id($id, $class);
+        return parent::load_by_id($id);
     }
 
     /**
      * load a row from the database selected by id
      * TODO load the related time series data
      * @param group $grp the phrase group to which the time series should be loaded
-     * @return int the id of the object found and zero if nothing is found
+     * @return bool true if time series has been loaded
      */
-    function load_by_grp(group $grp): int
+    function load_by_grp(group $grp, bool $by_source = false): bool
     {
         global $db_con;
 
@@ -295,7 +309,7 @@ class value_time_series extends sandbox_value
         log_debug('->add');
 
         global $db_con;
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         // log the insert attempt first
         $log = $this->log_add();
@@ -304,10 +318,10 @@ class value_time_series extends sandbox_value
             $this->id = $db_con->insert_old(
                 array(group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
                 array($this->grp->id(), $this->user()->id(), sql::NOW));
-            if ($this->id > 0) {
+            if ($this->id() > 0) {
                 // update the reference in the log
-                if (!$log->add_ref($this->id)) {
-                    $result->add_message('adding the value time series reference in the system log failed');
+                if (!$log->add_ref($this->id())) {
+                    $usr_msg->add_message('adding the value time series reference in the system log failed');
                 }
 
                 // update the phrase links for fast searching
@@ -315,18 +329,18 @@ class value_time_series extends sandbox_value
                 $upd_result = $this->upd_phr_links();
                 if ($upd_result != '') {
                     $result->add_message('Adding the phrase links of the value time series failed because ' . $upd_result);
-                    $this->id = 0;
+                    $this->set_id(0);
                 }
                 */
 
                 // create an empty db_rec element to force saving of all set fields
                 //$db_vts = new value_time_series($this->user());
-                //$db_vts->id = $this->id;
+                //$db_vts->id = $this->id();
                 // TODO add the data list saving
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /*
@@ -353,21 +367,21 @@ class value_time_series extends sandbox_value
     /**
      * insert or update a time series in the database or save user specific time series numbers
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return string the message that should be shown to the user in case something went wrong
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save(?bool $use_func = null): string
+    function save(?bool $use_func = null): user_message
     {
         log_debug('->save');
 
         global $db_con;
-        $result = '';
+        $usr_msg = new user_message();
 
         // build the database object because the is anyway needed
         $db_con->set_class(value_time_series::class);
         $db_con->set_usr($this->user()->id());
 
         // check if a new time series is supposed to be added
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             // check if a time series for the phrase group is already in the database
             $db_chk = new value_time_series($this->user());
             $db_chk->load_by_grp($this->grp);
@@ -376,8 +390,8 @@ class value_time_series extends sandbox_value
             }
         }
 
-        if ($this->id <= 0) {
-            $result .= $this->add()->get_last_message();
+        if ($this->id() <= 0) {
+            $usr_msg->add($this->add());
         } else {
             // update a value
             // TODO: if no one else has ever changed the value, change to default value, else create a user overwrite
@@ -385,9 +399,9 @@ class value_time_series extends sandbox_value
             // read the database value to be able to check if something has been changed
             // done first, because it needs to be done for user and general values
             $db_rec = new value_time_series($this->user());
-            $db_rec->load_by_id($this->id);
+            $db_rec->load_by_id($this->id());
             $std_rec = new value_time_series($this->user()); // user must also be set to allow to take the ownership
-            $std_rec->id = $this->id;
+            $std_rec->id = $this->id();
             $std_rec->load_standard();
 
             // for a correct user value detection (function can_change) set the owner even if the value has not been loaded before the save
@@ -396,22 +410,23 @@ class value_time_series extends sandbox_value
             }
 
             // check if the id parameters are supposed to be changed
-            $result = $this->save_id_if_updated($db_con, $db_rec, $std_rec);
+            $usr_msg->add_message($this->save_id_if_updated($db_con, $db_rec, $std_rec));
 
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
-            if ($result == '') {
+            // TODO add function based db saving
+            if ($usr_msg->is_ok()) {
                 // if the user is the owner and no other user has adjusted the value, really delete the value in the database
-                $result = $this->save_fields($db_con, $db_rec, $std_rec);
+                $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
             }
 
         }
 
-        if ($result != '') {
-            log_err($result);
+        if (!$usr_msg->is_ok()) {
+            log_err($usr_msg->get_last_message());
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 }

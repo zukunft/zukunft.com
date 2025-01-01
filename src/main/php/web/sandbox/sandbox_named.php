@@ -35,9 +35,12 @@ namespace html\sandbox;
 include_once SANDBOX_PATH . 'db_object.php';
 include_once SANDBOX_PATH . 'sandbox.php';
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use api\api;
+use shared\api;
 use html\rest_ctrl as api_dsp;
+use html\user\user_message;
+use shared\json_fields;
 
 class sandbox_named extends sandbox
 {
@@ -57,22 +60,41 @@ class sandbox_named extends sandbox
     /**
      * set the vars of this named sandbox object bases on the api json array
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_NAME, $json_array)) {
-            $this->set_name($json_array[api::FLD_NAME]);
+        $usr_msg = parent::set_from_json_array($json_array);
+        if (array_key_exists(json_fields::NAME, $json_array)) {
+            $this->set_name($json_array[json_fields::NAME]);
         } else {
             $this->set_name('');
             log_err('Mandatory field name missing in API JSON ' . json_encode($json_array));
         }
-        if (array_key_exists(api::FLD_DESCRIPTION, $json_array)) {
-            $this->set_description($json_array[api::FLD_DESCRIPTION]);
+        if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
+            $this->set_description($json_array[json_fields::DESCRIPTION]);
         } else {
             $this->set_description(null);
         }
+        return $usr_msg;
+    }
+
+    /**
+     * set the vars of this object bases on the url array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_from_url_array(array $url_array): user_message
+    {
+        $usr_msg = parent::set_from_url_array($url_array);
+        if (array_key_exists(api::URL_VAR_NAME, $url_array)) {
+            $this->set_name($url_array[api::URL_VAR_NAME]);
+        } else {
+            $this->set_name('');
+            log_err('Mandatory field name missing in form array ' . json_encode($url_array));
+        }
+        return $usr_msg;
     }
 
     function set_name(string $name): void
@@ -140,9 +162,14 @@ class sandbox_named extends sandbox
     {
         $vars = parent::api_array();
 
-        $vars[api::FLD_NAME] = $this->name();
-        $vars[api::FLD_DESCRIPTION] = $this->description();
+        $vars[json_fields::NAME] = $this->name();
+        $vars[json_fields::DESCRIPTION] = $this->description();
         return $vars;
+    }
+
+    function calc_view_id(): int
+    {
+        return 0;
     }
 
 
@@ -165,6 +192,15 @@ class sandbox_named extends sandbox
             $result .= $this->id();
         }
         return $result;
+    }
+
+    /*
+     * save
+     */
+
+    function save_view(): user_message
+    {
+        return new user_message();
     }
 
 }

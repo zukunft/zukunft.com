@@ -14,15 +14,11 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
-    TODO review unit, read and write tests
-         each test should be with one line e.g. $t->assert_sql_table_create($wrd);
-         3 to 7 tests should be within a block starting with $t->subheader(' ....
-         sort load functions (done in: view
-         group function within a class e.g. by load, save ....
-         use $this::class for load functions
-    TODO make write tests autonomies (no prerequieries, no depenedencies, no left overs)
-    TODO check if MySQL create script is working
-    TODO add unit test for all system views
+    TODO used different name for each type e.g. view_style_name instead of type_name to be able to log the name of the change
+    TODO test the single html frontend function like $wrd->btn_edit() with the html_tests e.g. word_html_tests
+    TODO create an test the html frontend masks using run_ui_test in unit/api_tests
+    TODO remove all other frontend tests
+
     TODO Substeps: create insert, update and delete sql create tests for the main objects (TODO activate db write)
                    include the log in the prepared sql write statement
     TODO combine db_row and std_row for with-log use of update word
@@ -54,6 +50,10 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO Step 16: deprecate the get_old in ???
     TODO review the remaining db write tests
     TODO activate the tests and create a unit and read test if possible
+
+    TODO set the vars of the backend objects to private e.g. to make sure that missing db updates can be detected
+    TODO set vars in the frontend object to public and reduce the set and get function because frontend objects never save directly to the database
+
     TODO for user_values allow a source 0=not set or exclude the source_id from the prime index?
     TODO test if a table with 1, 2, 4, 8, 16, 32 or 64 smallint key is faster and more efficient than a table with one bigger index
     TODO create an use the figure database view
@@ -68,7 +68,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO use the $load_all parameter for all load functions to include excluded rows for admins
     TODO add a unit and db test
     TODO check which arrays cam be converted to a class
-    TODO add system parameter to include the log write into the curl sql statements or use seperate statements for log
+    TODO add system parameter to include the log write into the curl sql statements or use separate statements for log
     TODO combine phrase_group_word_links and phrase_group_triple_links to group_phrase_links
     TODO add a simple value format where the json key is used as the phrase name e.g "system config target number of selection entries": 7
     TODO add system and user config parameter that are e.g. 100 views a view is automatically frozen for the user
@@ -103,7 +103,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO unit test: create a unit test for all possible class functions next to review: formula expression
     TODO check that all dummy function that are supposed to be overwritten by the child object create a error if overwrite is missing
     TODO api load: expose all load functions to the api (with security check!)
-    TODO use always prepared queries based on the value_phrase_link_list_by_phrase_id.sql sample
     TODO fix error in upgrade process for MySQL
     TODO fix syntax suggestions in existing code
     TODO add the view result at least as simple text to the JSON export
@@ -123,6 +122,25 @@ use html\phrase\phrase_group as phrase_group_dsp;
          load, im- and export, filter, modify, check, save, del
 
     after that this should be done while keeping step 1. to 4. for each commit:
+    TODO check the consistency of the object var default values e.g. if == null is used it must be possible that the var is null
+    TODO in api use always field names from the api object
+    TODO reduce the api objects as much as possible and move functionality to the cfg object
+    TODO review unit, read and write tests
+         each test should be with one line e.g. $t->assert_sql_table_create($wrd);
+         3 to 7 tests should be within a block starting with $t->subheader(' ....
+         sort load functions (done in: view
+         group function within a class e.g. by load, save ....
+         use $this::class for load functions
+    TODO make write tests autonomies (no prerequieries, no dependencies, no left overs)
+    TODO check if MySQL create script is working
+    TODO add unit test for all system views
+    TODO convert from null e.g. to empty string at the last possible point e.g. to distinguish between not set
+    TODO cleanup set and get functions:
+            1. start with set for the core values
+            2. group set and get
+            3. order the functions by importance
+            4. remove unneeded overwrites
+    TODO use list of most often used words for the prime word selection
     TODO define a phrase range for global prime phrases (e.g. 5124)
          and a range for pot prime terms
     TODO add a frontend cache e.g. for terms, formulas and view
@@ -173,6 +191,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add simple value list table with the hashed phrase list as key and the value
     TODO add a calculation validation section to the import
     TODO add a text based view validation section to the import
+    TODO by default do not use SQL joins also to be able to move the user overwrites to a separate database server
+    TODO add a second line of defence e.g. prevent that the web client is using all resources (CPU, memory)
+         or that data objects are synced between the pod too often and are blocking more critical data updates
     TODO for the frontend use three level of objects: normal, full and small
          where the full additional contains the share and protection type
          and the small object contains basically e.g. the id and the name
@@ -181,6 +202,10 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO use a key-value table without a phrase group if a value is not user specific and none of the default settings has been changed
          for the key-value table without a phrase group encode the key, so that automatically a virtual phrase group can be created
          e.g. convert -12,3,67 to something like 4c48d5685a7e with the possibility to reverse
+    TODO create db id sync tables (with this_pod_db_id, foreign_pod, foreign_db_id)
+         each pod can create its own database id for words, triple, formulas and users
+         if the id request from the master pod takes too long
+         or if the word or triple should be a prefered / prime phrase for the pod
     TODO move all sample SQL statements from the unit test to separate files for auto syntax check
     TODO check that all sample SQL statements are checked for the unique name and for mysql syntax
     TODO cleanup the objects and remove all vars not needed any more e.g. id arrays
@@ -285,13 +310,16 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO make sure that "sudo apt-get install php-dom" is part of the install process
     TODO before deleting a word make sure that there are not depending triples
     TODO Include in the message the user@pot or usergroup@pot that can read, write and export the data and who is owner
+    TODO base all messages to the final user on a language translation (whereas all log messages are for admin only and only in english)
     TODO Export of restricted data is always pgp secured and the header includes the access rights,
     TODO rename phrase_group to group
     TODO rename element to element
+    TODO check if handling of negative ids is correct
     TODO check that all modules used are loaded with include_once before the use statement
     TODO create a undo und redo function for a change_log entry
     TODO for behavior that should apply to several types create a property/behavior table with an n:m reration to phrase types e.g. "show preferred as column" for time phrases
     TODO create a user view for contradicting behaviour e.g. if time should be shown in column, but days in rows
+    TODO save time series data in datetime/value tables where the table name contains the group id e.g. TS_....0C+....0e+....12+....13+ for inhabitant of Switzerland in Mio
     TODO add a text table for string and prosa that never should be used for selection
     TODO add a date table to save dates in an efficient way
     TODO create a alternative backend based on Rust for better speed
@@ -318,7 +346,11 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO if options are excluded show them in grey with the mouseover reason, why they have been excluded
     TODO ad sample how the use Reuters RIC where the price is in pence
     TODO create a function to earn cooperative parts by work
+    TODO creat a pod prime phrase mapping table, so that each pod can have its own prime phrases without losing the connection to other pod
+    TODO create an id range for all pod prime phrases e.g. 1 to 16'384 and a range for this pod only prime phrases e.g. 16'385 to 32'768 and reserve an temp id range used during the relocation process
     TODO because MySQL does not keep the interface stable (e.g. https://dev.mysql.com/doc/refman/8.4/en/charset-unicode-utf8.html) switch to postgres and MariaDB
+    TODO use th principles of compression for database optimisation e.g. to sort phrases by usage to increase the number of prime value keys
+    TODO use a universal type to create the value tables, so instead of prime, main and big use value 1,2 and 3
 
     TODO message handling
         in dought return a user message to the highest level, so that it can be shown to the user
@@ -428,6 +460,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
        10. capsule object vars
         done:
 
+
     the target model object structure is:
 
     db_object - all database objects with the sql_table_create function
@@ -443,13 +476,11 @@ use html\phrase\phrase_group as phrase_group_dsp;
                             component - an formatting element for the user view e.g. to show a word or number
                     sandbox_Link - user sandbox objects that link two objects
                         sandbox_link_named - user sandbox objects that link two objects
-                            sandbox_link_typed - objects that have additional a type and a predefined behavior
-                                triple - link two words with a predicate / verb
-                            sandbox_link_with_type - TODO combine with sandbox_link_typed?
-                                formula_link - link a formula to a phrase
-                                view_term_link - link a view to a term
-                                component_link - to assign a component to a view
-                                ref - to link a value to an external source
+                            triple - link two words with a predicate / verb
+                        formula_link - link a formula to a phrase
+                        view_term_link - link a view to a term
+                        component_link - to assign a component to a view
+                        ref - to link a value to an external source
                     sandbox_value - to save a user specific numbers
                         value - a single number added by the user
                         result - one calculated numeric result
@@ -471,10 +502,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
         job_list - to forward the batch jobs to the UI
         ip_range_list - list of the ip ranges
         sandbox_list - a user specific paged list
-            word_list - a list of words (TODO move to sandbox_list_named?)
-            triple_list - a list of triples (TODO move to sandbox_list_named?)
             value_list - a list of values
-            value_phrase_link_list - list of value_phrase_link
             formula_list - a list of formulas
             element_list - a list of formula elements
             element_group_list - a list of formula element groups
@@ -485,6 +513,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
             component_list - a list of components
             component_link_list - a list of component_links
             sandbox_list_named - a paged list of named objects
+                word_list - a list of words
+                triple_list - a list of triples
                 phrase_list - a list of phrases
                 term_list - a list of terms
     type_object - to assign program code to a single object
@@ -530,7 +560,6 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
     model objects to be reviewed
         phrase_group_list - a list of phrase group that is supposed to be a sandbox_list
-        value_phrase_link - db index to find a valur by the phrase (not the db normal form to speed up)
         element_group - to combine several formula elements that are depending on each other
         component_type - TODO rename to component_type and move to type_object?
         component_pos_type - TODO use a simple enum?
@@ -575,50 +604,51 @@ use html\phrase\phrase_group as phrase_group_dsp;
 use cfg\component\component_link_type;
 use cfg\component\component_type;
 use cfg\component\position_type;
+use cfg\component\view_style;
 use cfg\db\db_check;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\element;
-use cfg\element_type;
-use cfg\formula_link_type;
-use cfg\formula_type;
-use cfg\job;
-use cfg\job_type;
-use cfg\language;
-use cfg\language_form;
+use cfg\element\element;
+use cfg\element\element_type;
+use cfg\formula\formula_link_type;
+use cfg\formula\formula_type;
+use cfg\helper\type_lists;
+use cfg\ref\ref_type;
+use cfg\ref\source_type;
+use cfg\system\job;
+use cfg\system\job_type;
+use cfg\language\language;
+use cfg\language\language_form;
 use cfg\log\change_action;
 use cfg\log\change_field;
 use cfg\log\change_link;
 use cfg\log\change_log;
 use cfg\log\change_table;
 use cfg\log\change_value;
-use cfg\phrase_types;
-use cfg\protection_type;
-use cfg\ref_type;
-use cfg\result\result;
-use cfg\session;
-use cfg\share_type;
-use cfg\source_type;
-use cfg\sys_log;
-use cfg\sys_log_function;
-use cfg\sys_log_level;
-use cfg\sys_log_status;
-use cfg\sys_log_status_list;
-use cfg\sys_log_type;
-use cfg\system_time;
-use cfg\system_time_type;
-use cfg\type_lists;
-use cfg\user;
+use cfg\phrase\phrase_types;
+use cfg\system\session;
+use cfg\system\sys_log;
+use cfg\system\sys_log_function;
+use cfg\system\sys_log_level;
+use cfg\system\sys_log_status;
+use cfg\system\sys_log_status_list;
+use cfg\system\sys_log_type;
+use cfg\system\system_time;
+use cfg\system_time_list;
+use cfg\system\system_time_type;
+use cfg\user\user;
 use cfg\user\user_profile;
 use cfg\user\user_type;
-use cfg\user_official_type;
-use cfg\user_profile_list;
-use cfg\view;
-use cfg\view_link_type;
-use cfg\view_type;
+use cfg\user\user_official_type;
+use cfg\user\user_profile_list;
+use cfg\view\view;
+use cfg\view\view_link_type;
+use cfg\view\view_type;
 use html\html_base;
 use html\view\view as view_dsp;
 use shared\library;
+use shared\types\protection_type;
+use shared\types\share_type;
 use test\test_cleanup;
 
 // the fixed system user
@@ -626,7 +656,8 @@ const SYSTEM_USER_ID = 1; //
 const SYSTEM_USER_TEST_ID = 2; //
 
 // parameters for internal testing and debugging
-const LIST_MIN_NAMES = 4; // number of object names that should al least be shown
+const LIST_MIN_NAMES = 4; // number of object names that should at least be shown
+const LIST_MIN_NUM = 20; // number of object ids that should at least be shown
 const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
 
 // set all path for the program code here at once
@@ -663,6 +694,7 @@ const MODEL_COMPONENT_PATH = MODEL_PATH . 'component' . DIRECTORY_SEPARATOR;
 
 const SHARED_PATH = PHP_PATH_LIB . 'shared' . DIRECTORY_SEPARATOR;
 const SHARED_TYPES_PATH = SHARED_PATH . 'types' . DIRECTORY_SEPARATOR;
+const SHARED_ENUM_PATH = SHARED_PATH . 'enum' . DIRECTORY_SEPARATOR;
 
 const API_PATH = PHP_PATH_LIB . 'api' . DIRECTORY_SEPARATOR; // path of the api objects for the message creation to the frontend
 const API_SANDBOX_PATH = API_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
@@ -718,6 +750,7 @@ const SYSTEM_PATH = WEB_PATH . 'system' . DIRECTORY_SEPARATOR;
 const TYPES_PATH = WEB_PATH . 'types' . DIRECTORY_SEPARATOR;
 const SANDBOX_PATH = WEB_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
 const HTML_PATH = WEB_PATH . 'html' . DIRECTORY_SEPARATOR;
+const HTML_HELPER_PATH = WEB_PATH . 'helper' . DIRECTORY_SEPARATOR;
 const HIST_PATH = WEB_PATH . 'hist' . DIRECTORY_SEPARATOR;
 const WORD_PATH = WEB_PATH . 'word' . DIRECTORY_SEPARATOR;
 const PHRASE_PATH = WEB_PATH . 'phrase' . DIRECTORY_SEPARATOR;
@@ -774,7 +807,6 @@ include_once SERVICE_PATH . 'config.php';
 
 // to avoid circle include
 include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_phrase_link.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
 
 // preloaded lists
@@ -783,6 +815,8 @@ include_once MODEL_HELPER_PATH . 'type_lists.php';
 include_once MODEL_SYSTEM_PATH . 'BasicEnum.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
+include_once MODEL_SYSTEM_PATH . 'system_time_list.php';
+include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_profile_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase_types.php';
@@ -926,6 +960,7 @@ const BASE_CODE_LINK_FILES = [
     component_type::class,
     view_link_type::class,
     view_type::class,
+    view_style::class,
     phrase_types::class
 ];
 
@@ -1152,6 +1187,7 @@ const DB_TABLE_LIST = [
     'user_types',
     'user_profiles',
     'view_types',
+    'view_styles',
     'component_types',
     'view_link_types',
     'view_term_links',
@@ -1176,6 +1212,7 @@ const SYSTEM_VERB_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'verbs.json';
 const SYSTEM_VIEW_CONFIG_FILE = 'system_views.json';
 const BASE_VIEW_CONFIG_FILE = 'base_views.json';
 const SYSTEM_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'config.json';
+const SYSTEM_CONFIG_FILE_YAML = PATH_BASE_CONFIG_FILES . 'config.yaml';
 const PATH_BASE_CONFIG_MESSAGE_FILES = PATH_BASE_CONFIG_FILES . 'messages/';
 const SYSTEM_VIEW_CONFIG_PATH = PATH_BASE_CONFIG_MESSAGE_FILES . SYSTEM_VIEW_CONFIG_FILE;
 const BASE_CONFIG_FILES = [
@@ -1245,9 +1282,9 @@ function log_debug(string $msg_text = '', int $debug_overwrite = null): string
 {
     global $debug;
 
-    $debug_used = $debug;
-
-    if ($debug_overwrite != null) {
+    if ($debug_overwrite == null) {
+        $debug_used = $debug;
+    } else {
         $debug_used = $debug_overwrite;
     }
 
@@ -1255,10 +1292,24 @@ function log_debug(string $msg_text = '', int $debug_overwrite = null): string
     if ($msg_text != '') {
         $msg_text = ': ' . $msg_text;
     }
-    if (array_key_exists('class', debug_backtrace()[1])) {
-        $msg_text = debug_backtrace()[1]['class'] . '->' . debug_backtrace()[1]['function'] . $msg_text;
+
+    // get the last script before this script
+    $backtrace = debug_backtrace();
+    if (array_key_exists(1, $backtrace)) {
+        $last = $backtrace[1];
     } else {
-        $msg_text = debug_backtrace()[1]['function'] . $msg_text;
+        $last = $backtrace[0];
+    }
+
+    // extract the relevant part from backtrace
+    if ($last != null) {
+        if (array_key_exists('class', $last)) {
+            $msg_text = $last['class'] . '->' . $last['function'] . $msg_text;
+        } else {
+            $msg_text = $last['function'] . $msg_text;
+        }
+    } else {
+        $msg_text = $last['function'] . $msg_text;
     }
 
     if ($debug_used > 0) {
@@ -1330,7 +1381,7 @@ function log_msg(string  $msg_text,
         }
         if ($function_name == '' or $function_name == null) {
             $function_name = (new Exception)->getTraceAsString();
-            $function_name = $lib->str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
+            $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
             $function_name = $lib->str_left_of($function_name, ': log_');
         }
         if ($function_trace == '') {
@@ -1504,7 +1555,7 @@ function log_fatal_db(
     $lib = new library();
     if ($function_name == '' or $function_name == null) {
         $function_name = (new Exception)->getTraceAsString();
-        $function_name = $lib->str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
+        $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
         $function_name = $lib->str_left_of($function_name, ': log_');
     }
     if ($function_trace == '') {
@@ -1552,7 +1603,7 @@ function log_fatal(string $msg_text,
     $lib = new library();
     if ($function_name == '' or $function_name == null) {
         $function_name = (new Exception)->getTraceAsString();
-        $function_name = $lib->str_right_of($function_name, '#1 /home/timon/git/zukunft.com/');
+        $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
         $function_name = $lib->str_left_of($function_name, ': log_');
         $write_with_more_info = true;
     }
@@ -1573,7 +1624,7 @@ function log_fatal(string $msg_text,
 /**
  * should be called from all code that can be accessed by an url
  * return null if the db connection fails or the db is not compatible
- * TODO create a seperate class for starting the backend and frontend
+ * TODO create a separate class for starting the backend and frontend
  *
  * @param string $code_name the place that is displayed to the user e.g. add word
  * @param string $style the display style used to show the place
@@ -1582,11 +1633,14 @@ function log_fatal(string $msg_text,
 function prg_start(string $code_name, string $style = "", $echo_header = true): sql_db
 {
     global $sys_time_start, $sys_script, $errors;
+    global $sys_times;
 
     // resume session (based on cookies)
     session_start();
 
     $sys_time_start = time();
+    $sys_times = new system_time_list();
+    $sys_times->switch(system_time_type::DEFAULT);
     $sys_script = $code_name;
     $errors = 0;
 
@@ -1614,7 +1668,7 @@ function prg_restart(string $code_name): sql_db
     // link to database
     $db_con = new sql_db;
     $db_con->db_type = SQL_DB_TYPE;
-    $sc = new sql();
+    $sc = new sql_creator();
     $sc->set_db_type($db_con->db_type);
     $db_con->open();
     if ($db_con->postgres_link === false) {
@@ -1661,11 +1715,13 @@ function prg_restart(string $code_name): sql_db
 
 function prg_start_api($code_name): sql_db
 {
-    global $sys_time_start, $sys_script, $user_profiles;
+    global $sys_time_start, $sys_script, $usr_pro_cac;
+    global $sys_times;
 
     log_debug($code_name . ' ..');
 
     $sys_time_start = time();
+    $sys_times = new system_time_list();
     $sys_script = $code_name;
 
     // resume session (based on cookies)
@@ -1687,11 +1743,13 @@ function prg_start_api($code_name): sql_db
  */
 function prg_start_system($code_name): sql_db
 {
-    global $sys_time_start, $sys_script, $user_profiles;
+    global $sys_time_start, $sys_script, $usr_pro_cac;
+    global $sys_times;
 
     log_debug($code_name . ' ..');
 
     $sys_time_start = time();
+    $sys_times = new system_time_list();
     $sys_script = $code_name;
 
     // resume session (based on cookies)
@@ -1704,13 +1762,13 @@ function prg_start_system($code_name): sql_db
     log_debug($code_name . ' ... database link open');
 
     // load user profiles
-    $user_profiles = new user_profile_list();
+    $usr_pro_cac = new user_profile_list();
     $lib = new library();
     $tbl_name = $lib->class_to_name(user_profile::class);
     if ($db_con->has_table($tbl_name)) {
-        $user_profiles->load($db_con);
+        $usr_pro_cac->load($db_con);
     } else {
-        $user_profiles->load_dummy();
+        $usr_pro_cac->load_dummy();
     }
 
     return $db_con;
@@ -1722,7 +1780,9 @@ function prg_start_system($code_name): sql_db
 function prg_end_write_time($db_con): void
 {
     global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
+    global $sys_times;
 
+    $time_report = $sys_times->report();
     $sys_time_end = time();
     if ($sys_time_end > $sys_time_limit) {
         $db_con->usr_id = SYSTEM_USER_ID;

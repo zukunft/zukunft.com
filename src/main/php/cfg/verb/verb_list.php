@@ -29,26 +29,42 @@
   
 */
 
-namespace cfg;
+namespace cfg\verb;
 
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once API_VERB_PATH . 'verb.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once HTML_PATH . 'html_base.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once SHARED_PATH . 'library.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once SHARED_ENUM_PATH . 'foaf_direction.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'library.php';
 
+use api\verb\verb as verb_api;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\helper\type_list;
+use cfg\phrase\phrase;
+use cfg\sandbox\sandbox;
+use cfg\system\system_time_type;
+use cfg\user\user;
+use cfg\word\triple;
+use cfg\word\word;
 use html\html_base;
+use shared\enum\foaf_direction;
 use shared\library;
+use shared\types\verbs;
 
-global $verbs;
+global $vrb_cac;
 
 class verb_list extends type_list
 {
@@ -218,33 +234,34 @@ class verb_list extends type_list
 
     /**
      * adding the verbs used for unit tests to the dummy list
+     * TODO use always the verb_api name const
      */
     function load_dummy(): void
     {
         $vrb = new verb();
         $vrb->set_id(1);
-        $vrb->set_name(verb::NOT_SET);
-        $vrb->code_id = verb::NOT_SET;
+        $vrb->set_name(verbs::NOT_SET);
+        $vrb->code_id = verbs::NOT_SET;
         $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(2);
-        $vrb->set_name(verb::IS);
-        $vrb->code_id = verb::IS;
+        $vrb->set_name(verb_api::TN_IS);
+        $vrb->code_id = verbs::IS;
         $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(3);
-        $vrb->set_name(verb::IS_PART_OF);
-        $vrb->code_id = verb::IS_PART_OF;
+        $vrb->set_name(verbs::IS_PART_OF);
+        $vrb->code_id = verbs::IS_PART_OF;
         $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(4);
-        $vrb->set_name(verb::IS_WITH);
-        $vrb->code_id = verb::IS_WITH;
+        $vrb->set_name(verbs::IS_WITH);
+        $vrb->code_id = verbs::IS_WITH;
         $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(9);
-        $vrb->set_name(verb::FOLLOW);
-        $vrb->code_id = verb::FOLLOW;
+        $vrb->set_name(verbs::FOLLOW);
+        $vrb->code_id = verbs::FOLLOW;
         $this->add_verb($vrb);
     }
 
@@ -272,6 +289,7 @@ class verb_list extends type_list
         log_debug('verb_list->calc_usage');
 
         global $db_con;
+        global $sys_times;
 
         $sql = "UPDATE verbs v
                    SET words = ( SELECT COUNT(to_phrase_id) 
@@ -279,7 +297,10 @@ class verb_list extends type_list
                                   WHERE v.verb_id = l.verb_id)
                  WHERE verb_id > 0;";
         $db_con->usr_id = $this->user()->id();
-        return $db_con->exe_try('Calculation of the verb usage', $sql);
+        $sys_times->switch(system_time_type::DB_WRITE);
+        $result = $db_con->exe_try('Calculation of the verb usage', $sql);
+        $sys_times->switch();
+        return $result;
     }
 
     /*
@@ -324,8 +345,8 @@ class verb_list extends type_list
      * get a single verb from this list selected by the code id
      * a kind of replacement for the user_type_list->get() function but for the verb object
      *
-     * @param string $code_id
-     * @return verb the verb object or null if no match is found
+     * @param string $code_id the code id of the requested verb
+     * @return verb|null the verb object or null if no match is found
      */
     function get_verb(string $code_id): ?verb
     {

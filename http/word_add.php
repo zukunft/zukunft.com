@@ -30,6 +30,12 @@
   
 */
 
+// standard zukunft header for callable php files to allow debugging and lib loading
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
 /*
 
 ------------------------
@@ -48,22 +54,21 @@ Delete a word (check if nothing is depending on the word to delete)
 
 /* standard zukunft header for callable php files to allow debugging and lib loading */
 
-use controller\controller;
+include_once SHARED_PATH . 'views.php';
+
 use html\html_base;
 use html\view\view as view_dsp;
 use html\word\word as word_dsp;
-use cfg\term;
-use cfg\triple;
-use cfg\user;
-use cfg\view;
-use cfg\word;
-
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+use cfg\phrase\term;
+use cfg\word\triple;
+use cfg\user\user;
+use cfg\view\view;
+use cfg\word\word;
+use shared\api;
+use shared\views as view_shared;
 
 /* open database */
-$db_con = prg_start(controller::MC_WORD_ADD);
+$db_con = prg_start(view_shared::MC_WORD_ADD);
 $html = new html_base();
 
 $result = ''; // reset the html code var
@@ -80,8 +85,8 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::MC_WORD_ADD);
-    $back = $_GET[controller::API_BACK]; // the calling page which should be displayed after saving
+    $msk->load_by_code_id(view_shared::MC_WORD_ADD);
+    $back = $_GET[api::URL_VAR_BACK] = ''; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
     $wrd = new word($usr);
@@ -140,18 +145,18 @@ if ($usr->id() > 0) {
 
         } elseif ($wrd_id > 0) {
             // check link of the existing word already exists
-            $lnk_test = new triple($usr);
-            $lnk_test->load_by_link_id($wrd_id, $vrb_id, $wrd_to);
-            if ($lnk_test->id() > 0) {
-                $lnk_test->load_objects();
+            $trp_test = new triple($usr);
+            $trp_test->load_by_link_id($wrd_id, $vrb_id, $wrd_to);
+            if ($trp_test->id() > 0) {
+                $trp_test->load_objects();
                 log_debug('check forward link ' . $wrd_id . ' ' . $vrb_id . ' ' . $wrd_to . '');
-                $msg .= '"' . $lnk_test->from_name . ' ' . $lnk_test->verb->name() . ' ' . $lnk_test->to_name . '" already exists. ';
+                $msg .= '"' . $trp_test->from_name . ' ' . $trp_test->verb_name() . ' ' . $trp_test->to_name . '" already exists. ';
             }
-            $lnk_rev = new triple($usr);
-            $lnk_rev->load_by_link_id($wrd_to, $vrb_id, $wrd_id);
-            if ($lnk_rev->id() > 0) {
-                $lnk_rev->load_objects();
-                $msg .= 'The reverse of "' . $lnk_rev->from_name . ' ' . $lnk_rev->verb->name() . ' ' . $lnk_rev->to_name . '" already exists. Do you really want to add both sides? ';
+            $trp_rev = new triple($usr);
+            $trp_rev->load_by_link_id($wrd_to, $vrb_id, $wrd_id);
+            if ($trp_rev->id() > 0) {
+                $trp_rev->load_objects();
+                $msg .= 'The reverse of "' . $trp_rev->from_name . ' ' . $trp_rev->verb_name() . ' ' . $trp_rev->to_name . '" already exists. Do you really want to add both sides? ';
             }
         }
 
@@ -161,7 +166,7 @@ if ($usr->id() > 0) {
             $add_result = '';
             // ... add the new word to the database
             if ($wrd->name() <> "") {
-                $add_result .= $wrd->save();
+                $add_result .= $wrd->save()->get_last_message();
             } else {
                 $wrd->load_by_id($wrd_id);
             }
@@ -171,9 +176,9 @@ if ($usr->id() > 0) {
                 log_debug('word ' . $wrd->id() . ' linked via ' . $vrb_id . ' to ' . $wrd_to . ': ' . $add_result);
                 $lnk = new triple($usr);
                 $lnk->from()->set_id($wrd->id());
-                $lnk->verb->set_id($vrb_id);
+                $lnk->set_verb_id($vrb_id);
                 $lnk->to()->set_id($wrd_to);
-                $add_result .= $lnk->save();
+                $add_result .= $lnk->save()->get_last_message();
             }
 
             // if adding was successful ...

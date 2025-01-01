@@ -34,6 +34,8 @@ namespace html;
 
 use cfg\component\sheet\position_list;
 use cfg\data_object;
+use html\word\triple;
+use html\word\word;
 
 class sheet
 {
@@ -46,50 +48,101 @@ class sheet
     function calc_sheet(?data_object $data = null, ?position_list $pos_lst = null): string
     {
         // loop over the position list and get the related object
-        return '<table>
-  <tr>
-    <th>Priority</th>
-    <th>Problem</th>
-    <th>Solution</th>
-    <th>Gain</th>
-    <th></th>
-  </tr>
-  <tr>
-    <td>1</td>
-    <td>Climate warming</td>
-    <td>reduce climate gas emissions</td>
-    <td>2.4</td>
-    <td>b htp</td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>Populism</td>
-    <td>avoid wrong decisions</td>
-    <td>1.5</td>
-    <td>b htp</td>
-  </tr>
-  <tr>
-    <td>3</td>
-    <td>Health</td>
-    <td>research</td>
-    <td>700</td>
-    <td>m htp</td>
-  </tr>
-  <tr>
-    <td>4</td>
-    <td>Povertiy</td>
-    <td>taxes</td>
-    <td>300</td>
-    <td>m htp</td>
-  </tr>
-  <tr>
-    <td>5</td>
-    <td>Education</td>
-    <td>spending</td>
-    <td>250</td>
-    <td>m htp</td>
-  </tr>
+
+        $result = '<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Priority</th>
+      <th scope="col">Problem</th>
+      <th class="text-right" scope="col">Costs in ';
+        // temp code
+        $wrd = new word();
+        $wrd->load_by_name('trillion');
+        $result .= $wrd->display_linked();
+        $result .= ' ';
+        // temp code
+        $wrd = new word();
+        $wrd->load_by_name('USD');
+        $result .= $wrd->display_linked();
+        $result .= '</th>
+      <th scope="col">Solution</th>
+      <th class="text-right" scope="col">Gain in ';
+        // temp code
+        $wrd = new word();
+        $wrd->load_by_name('billion');
+        $result .= $wrd->display_linked();
+        $result .= ' ';
+        // temp code
+        $wrd = new word();
+        $wrd->load_by_name('htp');
+        $result .= $wrd->display_linked();
+        $result .= '</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">1</th>
+      <td>';
+          // temp code
+          $wrd = new triple();
+          $wrd->load_by_name('climate warming');
+          $result .= $wrd->display_linked();
+          $result .= '</td>
+      <td class="text-right">31.5</td>
+      <td>reduce climate gas emissions</td>
+      <td class="text-right">35.2</td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>';
+          // temp code
+          $wrd = new word();
+          $wrd->load_by_name('populism');
+          $result .= $wrd->display_linked();
+          $result .= '</td>
+      <td class="text-right">23.8</td>
+      <td>avoid wrong decisions</td>
+      <td class="text-right">34.1</td>
+    </tr>
+    <tr>
+      <th scope="row">3</th>
+      <td>';
+          // temp code
+          $wrd = new word();
+          $wrd->load_by_name('health');
+          $result .= $wrd->display_linked();
+          $result .= '</td>
+      <td class="text-right">20.4</td>
+      <td>research</td>
+      <td class="text-right">34.1</td>
+    </tr>
+    <tr>
+      <th scope="row">4</th>
+      <td>';
+          // temp code
+          $wrd = new word();
+          $wrd->load_by_name('poverty');
+          $result .= $wrd->display_linked();
+          $result .= '</td>
+      <td class="text-right">13.6</td>
+      <td>taxes</td>
+      <td class="text-right">8.8</td>
+    </tr>
+    <tr>
+      <th scope="row">5</th>
+      <td>';
+          // temp code
+          $wrd = new word();
+          $wrd->load_by_name('education');
+          $result .= $wrd->display_linked();
+          $result .= '</td>
+      <td class="text-right">9.4</td>
+      <td>spending</td>
+      <td class="text-right">14.3</td>
+    </tr>
+  </tbody>
 </table>';
+        return $result;
     }
 
 }

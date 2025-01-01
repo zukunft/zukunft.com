@@ -5,6 +5,15 @@
     model/sandbox/sandbox_list.php - a base object for a list of user sandbox objects
     ------------------------------
 
+    The main sections of this object are
+    - object vars:       the variables of this list object
+    - construct and map: including the mapping of the db rows to this list
+    - set and get:       to capsule the vars from unexpected changes
+    - load:              database access object (DAO) functions
+    - im- and export:    create an export object and set the vars from an import object
+    - modify:            change potentially all items of this list object
+    - debug:             internal support functions for debugging
+
 
     This file is part of zukunft.com - calc with words
 
@@ -30,19 +39,36 @@
 
 */
 
-namespace cfg;
+namespace cfg\sandbox;
 
-use cfg\db\sql;
+include_once MODEL_SYSTEM_PATH . 'base_list.php';
+include_once MODEL_SYSTEM_PATH . 'base_list.php';
+include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+//include_once MODEL_PHRASE_PATH . 'term_list.php';
+include_once MODEL_RESULT_PATH . 'result_list.php';
+include_once MODEL_USER_PATH . 'user.php';
+//include_once MODEL_VALUE_PATH . 'value_list.php';
+include_once SHARED_PATH . 'library.php';
+
+use cfg\system\base_list;
+use cfg\helper\combine_named;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\phrase\term_list;
 use cfg\result\result_list;
+use cfg\user\user;
 use cfg\value\value_list;
 use shared\library;
-
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
 
 class sandbox_list extends base_list
 {
@@ -143,7 +169,7 @@ class sandbox_list extends base_list
      * e.g. for words to exclude formula words
      *   or for view to exclude system views
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
@@ -151,15 +177,13 @@ class sandbox_list extends base_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     protected function load_sql_names_pre(
-        sql                                            $sc,
+        sql_creator                                    $sc,
         sandbox_named|sandbox_link_named|combine_named $sbx,
         string                                         $pattern = '',
         int                                            $limit = 0,
         int                                            $offset = 0
     ): sql_par
     {
-        $lib = new library();
-
         $qp = new sql_par($sbx::class, new sql_type_list([sql_type::COMPLETE]));
         $qp->name .= 'names';
 
@@ -184,7 +208,7 @@ class sandbox_list extends base_list
      * build the SQL statement to load only the id and name to save time and memory
      * without further filter
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the words
      * @param int $limit the number of rows to return
@@ -192,7 +216,7 @@ class sandbox_list extends base_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_names(
-        sql                                            $sc,
+        sql_creator                                    $sc,
         sandbox_named|sandbox_link_named|combine_named $sbx,
         string                                         $pattern = '',
         int                                            $limit = 0,
@@ -281,7 +305,26 @@ class sandbox_list extends base_list
 
 
     /*
-     * modification
+     * im- and export
+     */
+
+    /**
+     * create an array with one export json array for each list item
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array of export json arrays
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $exp_lst = [];
+        foreach ($this->lst() as $sbx) {
+            $exp_lst[] = $sbx->export_json($do_load);
+        }
+        return $exp_lst;
+    }
+
+
+    /*
+     * modify
      */
 
     /**
@@ -297,6 +340,7 @@ class sandbox_list extends base_list
         // check parameters
         if ($obj_to_add->user() == null) {
             $obj_to_add->set_user($this->user());
+            log_warning('missing user set in ' . $this->dsp_id());
         }
         if ($obj_to_add->user() != $this->user()) {
             if (!$this->user()->is_admin() and !$this->user()->is_system()) {
@@ -310,8 +354,6 @@ class sandbox_list extends base_list
             if ($allow_duplicates) {
                 $result = parent::add_obj($obj_to_add, $allow_duplicates);
             } else {
-                $obj_id = $obj_to_add->id();
-                $ids = $this->ids();
                 if (!in_array($obj_to_add->id(), $this->ids())) {
                     $result = parent::add_obj($obj_to_add);
                 } else {
@@ -342,11 +384,15 @@ class sandbox_list extends base_list
 
         // show at least 4 elements by name
         $min_names = $debug;
+        $min_num = $debug;
         if ($min_names < LIST_MIN_NAMES) {
             $min_names = LIST_MIN_NAMES;
         }
+        if ($min_num < LIST_MIN_NUM) {
+            $min_num = LIST_MIN_NUM;
+        }
 
-        $id = $this->ids_txt($min_names);
+        $id = $this->ids_txt($min_num);
         if ($this->lst() != null) {
             $id_field = $this::class . '_id';
             if ($this->count() > 0) {
@@ -385,7 +431,7 @@ class sandbox_list extends base_list
      * @param int $pos the first list id that has not yet been shown
      * @return string a short summary of the remaining ids
      */
-    protected function dsp_id_remaining(int $pos,): string
+    protected function dsp_id_remaining(int $pos): string
     {
         global $debug;
         $lib = new library();

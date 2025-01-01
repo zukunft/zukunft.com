@@ -32,6 +32,10 @@
 
 namespace cfg;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
+
+use cfg\sandbox\sandbox_link_named;
+
 class triple_object extends sandbox_link_named
 {
 

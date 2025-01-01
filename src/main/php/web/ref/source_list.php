@@ -36,6 +36,7 @@ include_once WEB_REF_PATH . 'source.php';
 
 use html\sandbox\list_dsp;
 use html\ref\source as source_dsp;
+use html\user\user_message;
 
 class source_list extends list_dsp
 {
@@ -47,13 +48,11 @@ class source_list extends list_dsp
     /**
      * set the vars of a source object based on the given json
      * @param array $json_array an api single object json message
-     * @return object a source set based on the given json
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_obj_from_json_array(array $json_array): object
+    function set_from_json_array(array $json_array): user_message
     {
-        $src = new source_dsp();
-        $src->set_from_json_array($json_array);
-        return $src;
+        return parent::set_list_from_json($json_array, new source_dsp());
     }
 
 

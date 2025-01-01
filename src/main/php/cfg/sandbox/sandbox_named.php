@@ -12,13 +12,20 @@
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
     - set and get:       to capsule the vars from unexpected changes
+    - modify:            change potentially all variables of this sandbox object
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
+    - load sql:          create the sql statements for loading from the db
     - im- and export:    create an export object and set the vars from an import object
     - information:       functions to make code easier to read
-    - save:              manage to update the database
+    - log read:          read related log messages
+    - log write:         write changes to the log table
+    - add:               insert a new row the database
+    - save helper:       to support updating the database
     - sql write:         sql statement creation to write to the database
     - sql write fields:  field list for writing to the database
+    - internal:          e.g. to generate the name based on the link
+    - debug:             internal support functions for debugging
 
 
     This file is part of zukunft.com - calc with words
@@ -45,32 +52,40 @@
 
 */
 
-namespace cfg;
+namespace cfg\sandbox;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+
+include_once API_SYSTEM_PATH . 'messages.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_par_field.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_field.php';
-include_once DB_PATH . 'sql_field_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once API_FORMULA_PATH . 'formula.php';
-include_once API_PHRASE_PATH . 'phrase.php';
-include_once API_REF_PATH . 'source.php';
-include_once API_VIEW_PATH . 'view.php';
-include_once API_COMPONENT_PATH . 'component.php';
-include_once API_WORD_PATH . 'word.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+//include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+//include_once MODEL_LOG_PATH . 'change_link.php';
+//include_once MODEL_LOG_PATH . 'change_log_list.php';
+include_once MODEL_SYSTEM_PATH . 'message_translator.php';
+//include_once MODEL_PHRASE_PATH . 'phrase.php';
+//include_once MODEL_PHRASE_PATH . 'term.php';
+//include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+//include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
-use api\api;
-use api\component\component as component_api;
-use api\formula\formula as formula_api;
-use api\phrase\phrase as phrase_api;
-use api\ref\source as source_api;
-use api\view\view as view_api;
-use api\word\word as word_api;
-use cfg\component\component;
+use api\system\messages as msg_enum;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
@@ -78,13 +93,23 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\export\sandbox_exp;
+use cfg\helper\db_object_seq_id;
+use cfg\formula\formula;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
 use cfg\log\change_log_list;
-use Exception;
+use cfg\system\message_translator;
+use cfg\phrase\phrase;
+use cfg\phrase\term;
+use cfg\word\triple;
+use cfg\user\user;
+use cfg\user\user_message;
+use cfg\verb\verb;
+use cfg\word\word;
+use shared\json_fields;
 use shared\library;
+use Exception;
 
 class sandbox_named extends sandbox
 {
@@ -94,11 +119,11 @@ class sandbox_named extends sandbox
      */
 
     // object specific database and JSON object field names
-    // *_SQLTYP is the sql data type used for the field
+    // *_SQL_TYP is the sql data type used for the field
     const FLD_NAME = 'name';
-    const FLD_NAME_SQLTYP = sql_field_type::NAME; // in many cases overwritten by NAME_UNIQUE
+    const FLD_NAME_SQL_TYP = sql_field_type::NAME; // in many cases overwritten by NAME_UNIQUE
     const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
+    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
 
 
     /*
@@ -132,7 +157,7 @@ class sandbox_named extends sandbox
      * to be extended by the child object
      *
      * @param array|null $db_row with the data directly from the database
-     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as set in the child class
      * @param string $name_fld the name of the name field as set in the child class
@@ -213,7 +238,7 @@ class sandbox_named extends sandbox
     /**
      * get the description of the sandbox object
      * if the object is excluded null is returned
-     * to check the value before the exclution access the var direkt via $this->description
+     * to check the value before the exclusion access the var direct via $this->description
      *
      * @return string|null the description from the object e.g. word using the same function as the phrase and term
      */
@@ -241,20 +266,29 @@ class sandbox_named extends sandbox
         return $obj_cpy;
     }
 
-    /**
-     * @return array with the field names of the object and any child object
-     *         is a function and not a const because the id and name fields are a function and php does not yet have final functions
+
+    /*
+     * modify
      */
-    function field_list_named(): array
+
+    /**
+     * fill this sandbox object based on the given object
+     * if the given description is not set (null) the description is not removed
+     * if the given description is an empty string (not null) the description is removed
+     *
+     * @param sandbox_named|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(sandbox_named|db_object_seq_id $sbx): user_message
     {
-        return [
-            user::FLD_ID,
-            $this->name_field(),
-            self::FLD_DESCRIPTION,
-            sandbox::FLD_EXCLUDED,
-            sandbox::FLD_SHARE,
-            sandbox::FLD_PROTECT
-        ];
+        $usr_msg = parent::fill($sbx);
+        if ($sbx->name() != null) {
+            $this->set_name($sbx->name());
+        }
+        if ($sbx->description() != null) {
+            $this->set_description($sbx->description());
+        }
+        return $usr_msg;
     }
 
 
@@ -307,10 +341,10 @@ class sandbox_named extends sandbox
         $msg = parent::set_by_api_json($api_json);
 
         foreach ($api_json as $key => $value) {
-            if ($key == api::FLD_NAME) {
+            if ($key == json_fields::NAME) {
                 $this->set_name($value);
             }
-            if ($key == api::FLD_DESCRIPTION) {
+            if ($key == json_fields::DESCRIPTION) {
                 if ($value <> '') {
                     $this->description = $value;
                 }
@@ -319,52 +353,34 @@ class sandbox_named extends sandbox
         return $msg;
     }
 
-    /**
-     * fill a similar object that is extended with display interface functions
-     * TODO base on the api object and deprecate
-     *
-     * @param object $dsp_obj the object that should be filled with all user sandbox value
-     */
-    function fill_dsp_obj(object $dsp_obj): void
-    {
-        parent::fill_dsp_obj($dsp_obj);
-
-        $dsp_obj->set_name($this->name());
-        $dsp_obj->description = $this->description;
-    }
-
 
     /*
      * load
      */
 
     /**
-     * create the SQL to load the single default value always by the id or name
-     * @param sql $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * load a named user sandbox object by name
+     * @param string $name the name of the word, triple, formula, verb, view or view component
+     * @return int the id of the object found and zero if nothing is found
      */
-    function load_standard_sql(sql $sc): sql_par
+    function load_by_name(string $name): int
     {
-        $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
-        if ($this->id() != 0) {
-            $qp->name .= sql_db::FLD_ID;
-        } elseif ($this->name() != '') {
-            $qp->name .= sql_db::FLD_NAME;
-        } else {
-            log_err('Either the id or name must be set to get a named user sandbox object');
-        }
+        global $db_con;
 
-        $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id);
-        if ($this->id != 0) {
-            $sc->add_where($this->id_field(), $this->id());
-        } else {
-            $sc->add_where($this->name_field(), $this->name());
-        }
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
+        log_debug($name);
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
+        return parent::load($qp);
+    }
 
-        return $qp;
+    /**
+     * only to suppress the polymorphic warning and to be overwritten by the child objects
+     * @param string $code_id
+     * @return int zero if not overwritten by the child object to indicate the internal error
+     */
+    function load_by_code_id(string $code_id): int
+    {
+        log_err($this::class . ' does not have a load_by_code_id function');
+        return 0;
     }
 
     /**
@@ -377,7 +393,7 @@ class sandbox_named extends sandbox
         global $db_con;
         $result = false;
 
-        if ($this->id == 0 and $this->name() == '') {
+        if ($this->id() == 0 and $this->name() == '') {
             log_err('The ' . $this::class . ' id or name must be set to load ' . $this::class, $this::class . '->load_standard');
         } else {
             $db_row = $db_con->get1($qp);
@@ -386,17 +402,21 @@ class sandbox_named extends sandbox
         return $result;
     }
 
+
+    /*
+     * load sql
+     */
+
     /**
      * create an SQL statement to retrieve a term by name from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the term and the related word, triple, formula or verb
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql $sc, string $name, string $class): sql_par
+    function load_sql_by_name(sql_creator $sc, string $name): sql_par
     {
-        $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
+        $qp = $this->load_sql($sc, sql_db::FLD_NAME);
         $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -405,37 +425,34 @@ class sandbox_named extends sandbox
     }
 
     /**
-     * load a named user sandbox object by name
-     * @param string $name the name of the word, triple, formula, verb, view or view component
-     * @return int the id of the object found and zero if nothing is found
+     * create the SQL to load the single default value always by the id or name
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_name(string $name): int
+    function load_standard_sql(sql_creator $sc): sql_par
     {
-        global $db_con;
+        $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
+        if ($this->id() != 0) {
+            $qp->name .= sql_db::FLD_ID;
+        } elseif ($this->name() != '') {
+            $qp->name .= sql_db::FLD_NAME;
+        } else {
+            log_err('Either the id or name must be set to get a named user sandbox object');
+        }
 
-        log_debug($name);
-        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name, $this::class);
-        return parent::load($qp);
+        $sc->set_name($qp->name);
+        $sc->set_usr($this->user()->id());
+        if ($this->id() != 0) {
+            $sc->add_where($this->id_field(), $this->id());
+        } else {
+            $sc->add_where($this->name_field(), $this->name());
+        }
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
     }
 
-    /**
-     * @return array with the id and name field of the child object
-     */
-    function main_fields(): array
-    {
-        return array($this->id_field(), $this->name_field());
-    }
-
-    /**
-     * only to suppress the polymorthic warning and to be overwritten by the child objects
-     * @param string $code_id
-     * @return int zero if not overwritten by the child object to indicate the internal error
-     */
-    function load_by_code_id(string $code_id): int
-    {
-        log_err($this::class . ' does not have a load_by_code_id function');
-        return 0;
-    }
 
     /*
      * im- and export
@@ -451,18 +468,33 @@ class sandbox_named extends sandbox
      */
     function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
-        $result = parent::import_obj($in_ex_json, $test_obj);
+        $usr_msg = parent::import_obj($in_ex_json, $test_obj);
         foreach ($in_ex_json as $key => $value) {
-            if ($key == sandbox_exp::FLD_NAME) {
+            if ($key == json_fields::NAME) {
                 $this->set_name($value);
             }
-            if ($key == sandbox_exp::FLD_DESCRIPTION) {
+            if ($key == json_fields::DESCRIPTION) {
                 if ($value <> '') {
                     $this->description = $value;
                 }
             }
         }
-        return $result;
+        return $usr_msg;
+    }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = parent::export_json($do_load);
+        $vars[json_fields::NAME] = $this->name();
+        if ($this->description <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        return $vars;
     }
 
 
@@ -474,7 +506,7 @@ class sandbox_named extends sandbox
      * check if the named object in the database needs to be updated
      *
      * @param sandbox_named $db_obj the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the datanase
+     * @return bool true if this word has infos that should be saved in the database
      */
     function needs_db_update_named(sandbox_named $db_obj): bool
     {
@@ -499,7 +531,7 @@ class sandbox_named extends sandbox
 
     /**
      * get the description of the latest change related to this object
-     * @param user $usr who has requeted to see the change
+     * @param user $usr who has requested to see the change
      * @return string the description of the latest change
      */
     function log_last_msg(user $usr): string
@@ -511,7 +543,7 @@ class sandbox_named extends sandbox
 
     /**
      * get the description of the latest change related to this object and the given field
-     * @param user $usr who has requeted to see the change
+     * @param user $usr who has requested to see the change
      * @param string $fld the field name to filter the changes
      * @return string the description of the latest change
      */
@@ -553,7 +585,7 @@ class sandbox_named extends sandbox
     }
 
     /**
-     * set the log entry parameter to delete a object
+     * set the log entry parameter to delete an object
      * @returns change_link with the object presets e.g. th object name
      */
     function log_del(): change
@@ -569,7 +601,7 @@ class sandbox_named extends sandbox
         $log->old_value = $this->name();
         $log->new_value = null;
 
-        $log->row_id = $this->id;
+        $log->row_id = $this->id();
         $log->add();
 
         return $log;
@@ -577,70 +609,7 @@ class sandbox_named extends sandbox
 
 
     /*
-     * save support
-     */
-
-    /**
-     * check if this object uses any preserved names and if return a message to the user
-     * TODO move to the single objects
-     *
-     * @return string
-     */
-    protected function check_preserved(): string
-    {
-        global $usr;
-
-        // TODO move to languga based messages
-        $msg_res = 'is a reserved';
-        $msg_for = 'name for system testing. Please use another name';
-        $result = '';
-        if (!$usr->is_system()) {
-            if ($this->is_named_obj()) {
-                if ($this::class == word::class) {
-                    if (in_array($this->name, word_api::RESERVED_WORDS)) {
-                        // the admin user needs to add the read test word during initial load
-                        if (!$usr->is_admin()) {
-                            $result = '"' . $this->name() . '" ' . $msg_res . ' ' . $msg_for;
-                        }
-                    }
-                } elseif ($this::class == phrase::class) {
-                    if (in_array($this->name, phrase_api::RESERVED_PHRASES)) {
-                        $result = '"' . $this->name() . '" ' . $msg_res . ' phrase ' . $msg_for;
-                    }
-                } elseif ($this::class == formula::class) {
-                    if (in_array($this->name, formula_api::RESERVED_FORMULAS)) {
-                        if ($usr->is_admin() and $this->name() != formula_api::TN_READ) {
-                            $result = '"' . $this->name() . '" ' . $msg_res . ' formula ' . $msg_for;
-                        }
-                    }
-                } elseif ($this::class == view::class) {
-                    if (in_array($this->name, view_api::RESERVED_VIEWS)) {
-                        if ($usr->is_admin() and $this->name() != view_api::TN_READ) {
-                            $result = '"' . $this->name() . '" ' . $msg_res . ' view ' . $msg_for;
-                        }
-                    }
-                } elseif ($this::class == component::class) {
-                    if (in_array($this->name, component_api::RESERVED_COMPONENTS)) {
-                        if ($usr->is_admin() and $this->name() != component_api::TN_READ) {
-                            $result = '"' . $this->name() . '" ' . $msg_res . ' view component ' . $msg_for;
-                        }
-                    }
-                } elseif ($this::class == source::class) {
-                    if (in_array($this->name, source_api::RESERVED_SOURCES)) {
-                        // the admin user needs to add the read test source during initial load
-                        if ($usr->is_admin() and $this->name() != source_api::TN_READ_REF) {
-                            $result = '"' . $this->name() . '" ' . $msg_res . ' source ' . $msg_for;
-                        }
-                    }
-                }
-            }
-        }
-        return $result;
-    }
-
-
-    /*
-     * save
+     * add
      */
 
     /**
@@ -661,16 +630,16 @@ class sandbox_named extends sandbox
         log_debug($this->dsp_id());
 
         global $db_con;
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
-            $usr_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-            if ($usr_msg->is_ok()) {
-                $this->id = $usr_msg->get_row_id();
+            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+            if ($ins_msg->is_ok()) {
+                $this->set_id($ins_msg->get_row_id());
             }
-            $result->add($usr_msg);
+            $usr_msg->add($ins_msg);
         } else {
 
             // log the insert attempt first
@@ -682,29 +651,31 @@ class sandbox_named extends sandbox
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
                     $qp = $this->sql_insert($sc);
-                    $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
-                    if ($usr_msg->is_ok()) {
-                        $this->id = $usr_msg->get_row_id();
+                    $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
+                    if ($ins_msg->is_ok()) {
+                        $this->set_id($ins_msg->get_row_id());
                     }
                 } else {
                     $lib = new library();
                     $class_name = $lib->class_to_name($this::class);
                     $db_con->set_class($this::class);
-                    $db_con->set_usr($this->user()->id);
-                    $this->id = $db_con->insert_old(array($class_name . '_name', user::FLD_ID), array($this->name, $this->user()->id));
+                    $db_con->set_usr($this->user()->id());
+                    $this->set_id(
+                        $db_con->insert_old(
+                            array($class_name . '_name', user::FLD_ID), array($this->name, $this->user()->id())));
                 }
 
                 // save the object fields if saving the key was successful
-                if ($this->id > 0) {
+                if ($this->id() > 0) {
                     log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
                     // update the id in the log
-                    if (!$log->add_ref($this->id)) {
-                        $result->add_message('Updating the reference in the log failed');
+                    if (!$log->add_ref($this->id())) {
+                        $usr_msg->add_message('Updating the reference in the log failed');
                         // TODO do rollback or retry?
                     } else {
-                        //$result->add_message($this->set_owner($new_owner_id));
+                        //$usr_msg->add_message($this->set_owner($new_owner_id));
 
-                        // TODO all all objects to the pontential used of the prepared sql function with log
+                        // TODO all all objects to the potential used of the prepared sql function with log
                         if (!$this->sql_write_prepared()) {
                             // create an empty db_rec element to force saving of all set fields
                             $db_rec = clone $this;
@@ -713,17 +684,84 @@ class sandbox_named extends sandbox
                             $db_rec->set_user($this->user());
                             $std_rec = clone $db_rec;
                             // save the object fields
-                            $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                            $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                         }
                     }
 
                 } else {
-                    $result->add_message('Adding ' . $class_name . ' ' . $this->dsp_id() . ' failed due to logging error.');
+                    $lib = new library();
+                    $class_name = $lib->class_to_name($this::class);
+                    $usr_msg->add_message('Adding ' . $class_name . ' ' . $this->dsp_id() . ' failed due to logging error.');
                 }
             }
         }
 
-        return $result;
+        return $usr_msg;
+    }
+
+
+    /*
+     * save helper
+     */
+
+    /**
+     * preform the pre save checks which means
+     * for these named objects check if the user has requested to use a preserved name
+     * and if yes return a message and a suggested solution to the user
+     *
+     * @return user_message
+     */
+    protected function check_save(): user_message
+    {
+        return $this->check_preserved();
+    }
+
+    /**
+     * check if the user has requested to use a preserved name for the sandbox object
+     * and if yes return a message to the user
+     *
+     * @return user_message
+     */
+    protected function check_preserved(): user_message
+    {
+        global $usr;
+
+        // init
+        $usr_msg = new user_message();
+        $mtr = new message_translator();
+        $msg_res = $mtr->txt(msg_enum::IS_RESERVED);
+        $msg_for = $mtr->txt(msg_enum::RESERVED_NAME);
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+
+        // system users are always allowed to add objects e.g. for the system views
+        if (!$usr->is_system()) {
+            if (in_array($this->name(), $this->reserved_names())) {
+                // the admin user needs to add the read test objects during initial load
+                if ($usr->is_admin() and !in_array($this->name(), $this->fixed_names())) {
+                    $usr_msg->add_message('"' . $this->name() . '" ' . $msg_res . ' ' . $class_name . ' ' . $msg_for);
+                }
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * @return array with the reserved names of the child object
+     */
+    protected function reserved_names(): array
+    {
+        log_err('The dummy parent method reserved_names has been called, which should never happen');
+        return [];
+    }
+
+    /**
+     * @return array with the fixed names of the child object for db read testing
+     */
+    protected function fixed_names(): array
+    {
+        log_err('The dummy parent method fixed_names has been called, which should never happen');
+        return [];
     }
 
     /**
@@ -763,11 +801,11 @@ class sandbox_named extends sandbox
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param sandbox_named $db_rec the database record before the saving
      * @param sandbox_named $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_description(sql_db $db_con, sandbox_named $db_rec, sandbox_named $std_rec): string
+    function save_field_description(sql_db $db_con, sandbox_named $db_rec, sandbox_named $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         // if the description is not set, don't overwrite any db entry
         if ($this->description <> Null) {
             if ($this->description <> $db_rec->description) {
@@ -775,12 +813,12 @@ class sandbox_named extends sandbox
                 $log->old_value = $db_rec->description;
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
-                $log->row_id = $this->id;
+                $log->row_id = $this->id();
                 $log->set_field(self::FLD_DESCRIPTION);
-                $result = $this->save_field_user($db_con, $log);
+                $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -788,13 +826,13 @@ class sandbox_named extends sandbox
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param sandbox_named $db_rec the database record before the saving
      * @param sandbox_named $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_fields_named(sql_db $db_con, sandbox_named $db_rec, sandbox_named $std_rec): string
+    function save_fields_named(sql_db $db_con, sandbox_named $db_rec, sandbox_named $std_rec): user_message
     {
-        $result = $this->save_field_description($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
-        return $result;
+        $usr_msg = $this->save_field_description($db_con, $db_rec, $std_rec);
+        $usr_msg->add($this->save_field_excluded($db_con, $db_rec, $std_rec));
+        return $usr_msg;
     }
 
     /**
@@ -822,7 +860,7 @@ class sandbox_named extends sandbox
             $log->std_value = $std_rec->name();
             $log->set_field($tbl_name . '_name');
 
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             if ($log->add()) {
                 // TODO activate when the prepared SQL is ready to use
                 // only do the update here if the update is not done with one sql statement at the end
@@ -832,8 +870,8 @@ class sandbox_named extends sandbox
                     $result = $usr_msg->get_message();
                 } else {
                     $db_con->set_class($this::class);
-                    $db_con->set_usr($this->user()->id);
-                    if (!$db_con->update_old($this->id,
+                    $db_con->set_usr($this->user()->id());
+                    if (!$db_con->update_old($this->id(),
                         array($tbl_name . '_name'),
                         array($this->name))) {
                         $result .= 'update of name to ' . $this->name() . 'failed';
@@ -973,14 +1011,14 @@ class sandbox_named extends sandbox
      * TODO add qp merge
      * TODO check if it can be merged with the sandbox function
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all list of field names of the given object
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_switch(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
         sql_type_list      $sc_par_lst = new sql_type_list([])): sql_par
@@ -1009,7 +1047,7 @@ class sandbox_named extends sandbox
      * create the sql statement to add a new named sandbox object e.g. word to the database
      * TODO add qp merge
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
@@ -1017,7 +1055,7 @@ class sandbox_named extends sandbox
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_key_field(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
@@ -1026,10 +1064,7 @@ class sandbox_named extends sandbox
     {
         // set some var names to shorten the code lines
         $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
-        $ext = sql::NAME_SEP . sql::FILE_INSERT;
-
-        // init the function body
-        $id_field = $sc->id_field_name();
+        $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
 
         // list of parameters actually used in order of the function usage
         $sql = '';
@@ -1039,7 +1074,7 @@ class sandbox_named extends sandbox
         $fvt_insert_list = new sql_par_field_list();
         $fvt_insert_list->add($fvt_insert);
         $sc_insert = clone $sc;
-        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);;
+        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
         $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
         if ($sc->db_type == sql_db::MYSQL) {
             $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
@@ -1099,7 +1134,7 @@ class sandbox_named extends sandbox
     ): sql_par_field_list
     {
         $lst = new sql_par_field_list();
-        $sc = new sql();
+        $sc = new sql_creator();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $is_insert = $sc_par_lst->is_insert();
         $do_log = $sc_par_lst->incl_log();

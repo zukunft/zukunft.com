@@ -29,7 +29,7 @@ SELECT view_term_link_delete_log
     (1,
      3,
      89,
-     'Word',
+     'Start view',
      'default',
      'Mathematics',
      1,

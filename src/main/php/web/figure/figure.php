@@ -35,21 +35,22 @@ namespace html\figure;
 include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once API_FORMULA_PATH . 'figure.php';
 include_once API_PHRASE_PATH . 'phrase_list.php';
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once WEB_VALUE_PATH . 'value.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use api\formula\figure as figure_api;
 use api\phrase\phrase_list as phrase_list_api;
-use api\sandbox\combine_object as combine_object_api;
-use api\api;
 use api\sandbox\sandbox_value as sandbox_value_api;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\combine_named as combine_named_dsp;
 use html\html_base;
 use html\phrase\phrase_group as phrase_group_dsp;
 use html\result\result as result_dsp;
+use html\user\user_message;
 use html\value\value as value_dsp;
+use shared\json_fields;
 
 class figure extends combine_named_dsp
 {
@@ -60,27 +61,28 @@ class figure extends combine_named_dsp
 
     /**
      * set the vars of this figure html display object bases on the api message
-     * @param string $json_api_msg an api json message as a string
-     * @return void
+     * @param array $json_array an api json message as a string
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json(string $json_api_msg): void
+    function set_from_json_array(array $json_array): user_message
     {
-        $json_array = json_decode($json_api_msg, true);
-        if (array_key_exists(combine_object_api::FLD_CLASS, $json_array)) {
-            if ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_RESULT) {
+        $usr_msg = new user_message();
+        if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
+            if ($json_array[json_fields::OBJECT_CLASS] == figure_api::CLASS_RESULT) {
                 $res_dsp = new result_dsp();
                 $res_dsp->set_from_json_array($json_array);
                 $this->set_obj($res_dsp);
-            } elseif ($json_array[combine_object_api::FLD_CLASS] == figure_api::CLASS_VALUE) {
+            } elseif ($json_array[json_fields::OBJECT_CLASS] == figure_api::CLASS_VALUE) {
                 $val = new value_dsp();
                 $val->set_from_json_array($json_array);
                 $this->set_obj($val);
             } else {
-                log_err('Json class ' . $json_array[combine_object_api::FLD_CLASS] . ' not expected for a figure');
+                $usr_msg->add_err('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a figure');
             }
         } else {
-            log_err('Json class missing, but expected for a figure');
+            $usr_msg->add_err('Json class missing, but expected for a figure');
         }
+        return $usr_msg;
     }
 
     /**
@@ -101,10 +103,10 @@ class figure extends combine_named_dsp
     }
 
     /**
-     * @return int|string the id of the value or result id (not unique!)
+     * @return int|string|null the id of the value or result id (not unique!)
      * must have the same logic as the database view and the frontend
      */
-    function obj_id(): int|string
+    function obj_id(): int|string|null
     {
         if ($this->obj() == null) {
             return 0;
@@ -136,13 +138,13 @@ class figure extends combine_named_dsp
     {
         $vars = array();
         if ($this->is_result()) {
-            $vars[combine_object_api::FLD_CLASS] = figure_api::CLASS_RESULT;
+            $vars[json_fields::OBJECT_CLASS] = figure_api::CLASS_RESULT;
         } else {
-            $vars[combine_object_api::FLD_CLASS] = figure_api::CLASS_VALUE;
+            $vars[json_fields::OBJECT_CLASS] = figure_api::CLASS_VALUE;
         }
-        $vars[api::FLD_ID] = $this->obj_id();
-        $vars[sandbox_value_api::FLD_NUMBER] = $this->number();
-        $vars[api::FLD_PHRASES] = $this->obj->grp()->api_array();
+        $vars[json_fields::ID] = $this->obj_id();
+        $vars[json_fields::NUMBER] = $this->number();
+        $vars[json_fields::PHRASES] = $this->obj->grp()->api_array();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

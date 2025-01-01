@@ -37,15 +37,21 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_link.php';
 include_once API_VIEW_PATH . 'component_link_list.php';
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VIEW_PATH . 'view.php';
 
 use api\view\component_link_list as component_link_list_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
-use cfg\sandbox_list;
-use cfg\user_message;
-use cfg\view;
+use cfg\sandbox\sandbox_list;
+use cfg\user\user_message;
+use cfg\view\view;
 
 class component_link_list extends sandbox_list
 {
@@ -98,11 +104,11 @@ class component_link_list extends sandbox_list
 
     /**
      * set the common part of the SQL query component links
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the selection fields to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -117,11 +123,11 @@ class component_link_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load all components linked to a view
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param view $msk the id of the view to which the components should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_view(sql $sc, view $msk): sql_par
+    function load_sql_by_view(sql_creator $sc, view $msk): sql_par
     {
         $qp = $this->load_sql($sc, view::FLD_ID);
         if ($msk->id() > 0) {
@@ -138,11 +144,11 @@ class component_link_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load all views linked to a component
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param component $cmp the id of the component to which the views should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_component(sql $sc, component $cmp): sql_par
+    function load_sql_by_component(sql_creator $sc, component $cmp): sql_par
     {
         $qp = $this->load_sql($sc, component::FLD_ID);
         if ($cmp->id() > 0) {
@@ -263,11 +269,11 @@ class component_link_list extends sandbox_list
      */
     function del(): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         if (!$this->is_empty()) {
             foreach ($this->lst() as $dsp_cmp_lnk) {
-                $result->add($dsp_cmp_lnk->del());
+                $usr_msg->add($dsp_cmp_lnk->del());
             }
         }
         return new user_message();
@@ -292,6 +298,25 @@ class component_link_list extends sandbox_list
             }
         }
         return $can_add;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = [];
+        foreach ($this->lst() as $lnk) {
+            $vars[] = $lnk->export_json($do_load);
+        }
+        return $vars;
     }
 
 

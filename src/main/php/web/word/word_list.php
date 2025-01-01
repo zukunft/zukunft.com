@@ -32,11 +32,14 @@
 namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
-use cfg\phrase_type;
+use cfg\phrase\phrase_type;
+use html\user\user_message;
 use html\word\word as word_dsp;
 use html\html_base;
 use html\sandbox\list_dsp;
+use shared\types\phrase_type as phrase_type_shared;
 
 class word_list extends list_dsp
 {
@@ -48,13 +51,11 @@ class word_list extends list_dsp
     /**
      * set the vars of a word object based on the given json
      * @param array $json_array an api single object json message
-     * @return object a word set based on the given json
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_obj_from_json_array(array $json_array): object
+    function set_from_json_array(array $json_array): user_message
     {
-        $wrd = new word_dsp();
-        $wrd->set_from_json_array($json_array);
-        return $wrd;
+        return parent::set_list_from_json($json_array, new word_dsp());
     }
 
 
@@ -178,7 +179,7 @@ class word_list extends list_dsp
      */
     function time_lst(): word_list
     {
-        return $this->filter(phrase_type::TIME);
+        return $this->filter(phrase_type_shared::TIME);
     }
 
     /**
@@ -186,7 +187,7 @@ class word_list extends list_dsp
      */
     function measure_lst(): word_list
     {
-        return $this->filter(phrase_type::MEASURE);
+        return $this->filter(phrase_type_shared::MEASURE);
     }
 
     /**
@@ -220,7 +221,7 @@ class word_list extends list_dsp
      */
     function percent_lst(): word_list
     {
-        return $this->filter(phrase_type::PERCENT);
+        return $this->filter(phrase_type_shared::PERCENT);
     }
 
     /**

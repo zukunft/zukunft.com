@@ -33,9 +33,13 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
 include_once MODEL_HELPER_PATH . 'db_object_multi.php';
+include_once MODEL_USER_PATH . 'user.php';
+
+use cfg\helper\db_object_multi;
+use cfg\user\user;
 
 class db_object_multi_user extends db_object_multi
 {

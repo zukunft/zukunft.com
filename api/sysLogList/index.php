@@ -36,7 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -44,7 +44,7 @@ include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
 include_once API_SYSTEM_PATH . 'sys_log_list.php';
 
 use cfg\sys_log_list;
-use cfg\user;
+use cfg\user\user;
 use controller\controller;
 use controller\system\sys_log_list as sys_log_list_api;
 

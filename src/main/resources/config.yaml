@@ -1,0 +1,92 @@
+zukunft.com:
+  tooltip-comment: "zukunft.com is the keyword to select the global settings for all zukunft.com pods"
+  system configuration:
+    tooltip-comment: "keyword to separate the internal system configuration"
+    database:
+      version: 0.0.3
+      tooltip-comment: "the version of the database of the master pod"
+      retry:
+        start delay:
+          sec: 1
+          tooltip-comment: "initial delay in seconds for the first connection retry"
+        max delay:
+          sec: 3600
+          tooltip-comment: "target delay time for a frontend updates so that the user always knows what the system is doing"
+      block size:
+        tooltip-comment: "group the database statements for faster execution"
+        insert: 200
+        update: 100
+        delete: 500
+      row limit:
+        tooltip-comment: "initial number of page rows "
+        default: 20
+      value table:
+        table name:
+          max phrase: 3
+          tooltip-comment: "maximal number of phrases that can be included in the table name for a separate value table e.g. if the system detects that a separate table for the inhabitants at the end of the year of a city will increase speed and reduce time the table name can be inhabitants-city-year and each row has the city name and the columns have the year names"
+    user:
+      tooltip-comment: "settings that each user can set individually"
+      default:
+        tooltip-comment: "the default settings for normal users"
+        frontend:
+          tooltip-comment: "the setting for the user interface"
+          row limit:
+            tooltip-comment: "number of rows to be shown"
+            word changes: 20
+          time:
+            tooltip-comment: "time related user specific settings"
+            min columns:
+              sys-conf-value: 3
+              tooltip-comment: "minimum number of same time type word to display in a table e.g. if at least 3 years exist use a table to display"
+            max columns:
+              sys-conf-value: 10
+              tooltip-comment: "maximum number of same time type word to display in a table e.g. if more the 10 years exist, by default show only the lst 10 years"
+            future percent:
+              sys-conf-value: 20
+              tooltip-comment: "the default number of future outlook e.g. if there are 10 years of hist and 3 years of outlook display 8 years of hist and 2 years outlook"
+          number format:
+              percent decimal:
+                sys-conf-value: 2
+                tooltip-comment: "the default number of decimal places of a percent value"
+    calculation:
+      block size:
+        average delay:
+          millisecond: 1000
+          tooltip-comment: "the average time in milliseconds to update the results of one formula use to estimate how many formulas can be combined on one calculation block"
+    select:
+      initial:
+        entries: 5
+        tooltip-comment: "the initial number of options shown to the user"
+      suggested:
+        entries: 3
+        tooltip-comment: "if the selection list contains more than the initial entries, the number of suggested entries show on the top"
+      more:
+        entries: 20
+        tooltip-comment: "if the selection list contains more than the initial entries, the number of alphabetic sorted entries show initially and added with each click on more"
+      phrase:
+        preselect:
+          min percent: 30%
+          tooltip-comment: "used to preselect phrases for the next value: if 30% or more of the phrases of a list are the same, the probability is high that the next phrase is the same"
+    year:
+      automatic create: 10
+      tooltip-comment: "the number of futures year automatically created by the system"
+    view:
+      freeze: 20
+      tooltip-comment: "the number of view by one user to automatically freeze the view for the user"
+    component:
+      list:
+        entries:
+          top:
+            sys-conf-value: 20
+            tooltip-comment: "the number of phrases shown in a list by default"
+          bottom:
+            sys-conf-value: 4
+            tooltip-comment: "the number of phrases shown in a ranked list with the lowest ranking for an indication of the range"
+    job:
+      tooltip-comment: "keyword to separate the internal system job configuration"
+    pod:
+      url: "zukunft.com"
+      tooltip-comment: "the url name of this pod"
+      database:
+        version: 0.0.3
+        tooltip-comment: "the version of the database of this pod"

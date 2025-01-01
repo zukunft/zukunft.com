@@ -33,11 +33,13 @@
 namespace api\word;
 
 include_once API_SANDBOX_PATH . 'list_object.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\word\word as word_api;
 use api\sandbox\list_object as list_api;
-use cfg\phrase_type;
+use cfg\phrase\phrase_type;
 use html\word\word_list as word_list_dsp;
+use shared\types\phrase_type as phrase_type_shared;
 
 class word_list extends list_api
 {
@@ -146,7 +148,7 @@ class word_list extends list_api
      */
     function time_lst(): word_list
     {
-        return $this->filter(phrase_type::TIME);
+        return $this->filter(phrase_type_shared::TIME);
     }
 
     /**
@@ -154,7 +156,7 @@ class word_list extends list_api
      */
     function measure_lst(): word_list
     {
-        return $this->filter(phrase_type::MEASURE);
+        return $this->filter(phrase_type_shared::MEASURE);
     }
 
     /**
@@ -188,7 +190,7 @@ class word_list extends list_api
      */
     function percent_lst(): word_list
     {
-        return $this->filter(phrase_type::PERCENT);
+        return $this->filter(phrase_type_shared::PERCENT);
     }
 
     /**

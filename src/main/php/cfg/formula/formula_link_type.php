@@ -29,10 +29,19 @@
 
 */
 
-namespace cfg;
+namespace cfg\formula;
+
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use cfg\helper\type_object;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_type;
 
 class formula_link_type extends type_object
 {
@@ -59,7 +68,7 @@ class formula_link_type extends type_object
     // field lists for the table creation of phrase type
     const FLD_LST_EXTRA = array(
         [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, '', formula::class, ''],
-        [phrase::FLD_TYPE, phrase::FLD_TYPE_SQLTYP, sql_field_default::NOT_NULL, '', phrase_type::class, ''],
+        [phrase::FLD_TYPE, phrase::FLD_TYPE_SQL_TYP, sql_field_default::NOT_NULL, '', phrase_type::class, ''],
     );
 
 }

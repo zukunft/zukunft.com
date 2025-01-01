@@ -37,14 +37,14 @@ include_once MODEL_FORMULA_PATH . 'expression.php';
 use api\formula\formula as formula_api;
 use api\value\value as value_api;
 use api\word\word as word_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_type;
-use cfg\expression;
-use cfg\formula;
-use cfg\phrase_list;
+use cfg\formula\expression;
+use cfg\formula\formula;
+use cfg\phrase\phrase_list;
 use cfg\db\sql_db;
-use cfg\term_list;
-use cfg\word;
+use cfg\phrase\term_list;
+use cfg\word\word;
 use html\formula\formula as formula_dsp;
 use test\test_cleanup;
 
@@ -56,7 +56,7 @@ class formula_tests
         global $usr;
 
         // init
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'formula->';
         $t->resource_path = 'db/formula/';
 
@@ -115,7 +115,7 @@ class formula_tests
         $t->subheader('formula api unit tests');
         $frm = $t->formula_filled();
         $t->assert_api_json($frm);
-        $frm->excluded = false;
+        $frm->include();
         $t->assert_api($frm, 'formula_body');
 
         $t->subheader('formula frontend unit tests');
@@ -123,6 +123,8 @@ class formula_tests
         $t->assert_api_to_dsp($frm, new formula_dsp());
 
         $t->subheader('formula im- and export unit tests');
+        $t->assert_ex_and_import($t->formula());
+        $t->assert_ex_and_import($t->formula_filled());
         $json_file = 'unit/formula/scale_second_to_minute.json';
         $t->assert_json_file(new formula($usr), $json_file);
 
@@ -147,7 +149,7 @@ class formula_tests
         /*
         $frm_next = new formula($usr);
         $frm_next->name = "next";
-        $frm_next->type_id = $formula_types->id(formula_type::NEXT);
+        $frm_next->type_id = $frm_typ_cac->id(formula_type::NEXT);
         $frm_next->id = 1;
         $frm_has_next = new formula($usr);
         $frm_has_next->usr_text = '=next';
@@ -155,7 +157,6 @@ class formula_tests
         */
 
         // test the calculation of one value
-        //$phr_lst = $t->phrase_list_for_tests(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020, word_api::TN_MIO));
         $trm_lst = $t->term_list_for_tests(array(
             word_api::TN_PCT,
             formula_api::TN_READ_THIS,

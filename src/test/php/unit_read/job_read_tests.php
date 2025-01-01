@@ -32,9 +32,9 @@
 
 namespace unit_read;
 
-use cfg\job_list;
-use cfg\job_type_list;
-use cfg\user;
+use cfg\system\job_list;
+use cfg\system\job_type_list;
+use cfg\user\user;
 use test\test_cleanup;
 
 class job_read_tests

@@ -65,7 +65,7 @@ SELECT triple_insert_log_015511550000001
          1,
          7,
          'constant',
-         'contains',
+         'is part of',
          'Mathematics',
          18,
          'Mathematical constant',

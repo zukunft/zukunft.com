@@ -39,11 +39,9 @@ use cfg\log\change_action;
 use html\rest_ctrl;
 use html\button;
 use html\html_base;
-use html\message;
 use html\system\back_trace;
-use cfg\log\change_action_list;
 use cfg\log\change_table_list;
-use cfg\formula;
+use cfg\formula\formula;
 use html\system\messages;
 
 class change_log_named extends change_log_named_api
@@ -131,17 +129,17 @@ class change_log_named extends change_log_named_api
         }
 
         // encode the undo action
-        $undo_text = '';
+        // $undo_text = '';
         $undo_call = '';
         $undo_btn = '';
         if ($this->table_name() == change_table_list::WORD) {
             if ($this->action_code_id() == change_action::ADD) {
-                $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id, $back->url_encode());
+                $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
                 $undo_btn = (new button($undo_call))->undo(messages::UNDO_ADD);
             }
         } elseif ($this->table_name() == change_table_list::VIEW) {
             if ($this->action_code_id() == change_action::ADD) {
-                $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id, $back->url_encode());
+                $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
                 $undo_btn = (new button($undo_call))->undo(messages::UNDO_EDIT);
             }
         } elseif ($this->table_name() == change_table_list::FORMULA) {
@@ -180,9 +178,9 @@ class change_log_named extends change_log_named_api
      */
     private function action_code_id(): string
     {
-        global $change_action_list;
+        global $cng_act_cac;
 
-        $action = $change_action_list->get($this->action_id);
+        $action = $cng_act_cac->get($this->action_id);
         return $action->code_id;
     }
 
@@ -191,9 +189,9 @@ class change_log_named extends change_log_named_api
      */
     private function action_name(): string
     {
-        global $change_action_list;
+        global $cng_act_cac;
 
-        $action = $change_action_list->get_by_id($this->action_id);
+        $action = $cng_act_cac->get_by_id($this->action_id);
         return $action->name;
     }
 
@@ -202,9 +200,9 @@ class change_log_named extends change_log_named_api
      */
     private function field_code_id(): string
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
-        $field = $change_field_list->get($this->field_id);
+        $field = $cng_fld_cac->get($this->field_id);
         return $field->code_id;
     }
 
@@ -213,9 +211,9 @@ class change_log_named extends change_log_named_api
      */
     private function field_description(): string
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
-        $field = $change_field_list->get($this->field_id);
+        $field = $cng_fld_cac->get($this->field_id);
         return $field->description;
     }
 
@@ -224,9 +222,9 @@ class change_log_named extends change_log_named_api
      */
     private function table_name(): string
     {
-        global $change_table_list;
+        global $cng_tbl_cac;
 
-        $table = $change_table_list->get($this->table_id);
+        $table = $cng_tbl_cac->get($this->table_id);
         return $table->name;
     }
 

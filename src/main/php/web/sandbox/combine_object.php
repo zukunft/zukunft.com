@@ -42,6 +42,7 @@ namespace html\sandbox;
 include_once HTML_PATH . 'rest_ctrl.php';
 
 use html\rest_ctrl as api_dsp;
+use html\user\user_message;
 
 class combine_object
 {
@@ -50,7 +51,7 @@ class combine_object
      * object vars
      */
 
-    protected object $obj;
+    protected ?object $obj = null;
 
 
     /*
@@ -76,22 +77,24 @@ class combine_object
     /**
      * set the vars of this combine frontend object bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json(string $json_api_msg): void
+    function set_from_json(string $json_api_msg): user_message
     {
-        $this->set_from_json_array(json_decode($json_api_msg, true));
+        return $this->set_from_json_array(json_decode($json_api_msg, true));
     }
 
     /**
      * set the vars of this combine frontend object bases on the api json array
      * dummy function that should be overwritten by the child object
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        log_err('This set_from_json_array function should have been overwritten by the child object');
+        $usr_msg = new user_message();
+        $usr_msg->add_err('This set_from_json_array function should have been overwritten by the child object');
+        return $usr_msg;
     }
 
     function set_obj(object $obj): void
@@ -99,7 +102,7 @@ class combine_object
         $this->obj = $obj;
     }
 
-    function obj(): object
+    function obj(): object|null
     {
         return $this->obj;
     }

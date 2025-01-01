@@ -38,9 +38,9 @@ use api\word\word as word_api;
 use api\phrase\group as group_api;
 use cfg\db\sql_type;
 use cfg\group\group;
-use cfg\phrase_list;
-use cfg\word;
-use cfg\word_list;
+use cfg\phrase\phrase_list;
+use cfg\word\word;
+use cfg\word\word_list;
 use test\all_tests;
 use test\test_cleanup;
 
@@ -129,7 +129,7 @@ class group_write_tests
         if ($phr_grp->is_id_set()) {
             $phr_grp_reload = new group($usr);
             $phr_grp_reload->load_by_id($phr_grp->id());
-            $wrd_lst_reloaded = $phr_grp_reload->phrase_list()->wrd_lst();
+            $wrd_lst_reloaded = $phr_grp_reload->phrase_list()->words();
             $result = array_diff(
                 array(word_api::TN_MIO, word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_CH),
                 $wrd_lst_reloaded->names()

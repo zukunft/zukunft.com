@@ -29,20 +29,44 @@
 
 */
 
-namespace cfg;
+namespace cfg\view;
 
-include_once API_VIEW_PATH . 'view_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once API_VIEW_PATH . 'view_list.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_COMPONENT_PATH . 'component.php';
+include_once MODEL_COMPONENT_PATH . 'component_link.php';
+include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_VIEW_PATH . 'view_type.php';
 
 use api\view\view_list as view_list_api;
 use cfg\component\component;
 use cfg\component\component_link;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\helper\combine_named;
+use cfg\helper\type_list;
+use cfg\sandbox\sandbox_link_named;
+use cfg\sandbox\sandbox_list;
+use cfg\sandbox\sandbox_named;
+use cfg\user\user;
+use cfg\user\user_message;
+use cfg\view\view;
+use cfg\view\view_type;
 
-global $system_views;
+global $sys_msk_cac;
 
 class view_list extends sandbox_list
 {
@@ -125,7 +149,7 @@ class view_list extends sandbox_list
      * add system view filter to
      * the SQL statement to load only the view id and name
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the views
      * @param int $limit the number of rows to return
@@ -133,7 +157,7 @@ class view_list extends sandbox_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_names(
-        sql                                            $sc,
+        sql_creator                                    $sc,
         sandbox_named|sandbox_link_named|combine_named $sbx,
         string                                         $pattern = '',
         int                                            $limit = 0,
@@ -251,27 +275,14 @@ class view_list extends sandbox_list
      */
     function import_obj(array $json_obj, object $test_obj = null): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         foreach ($json_obj as $dsp_json) {
             $msk = new view($this->user());
-            $result->add($msk->import_obj($dsp_json, $test_obj));
+            $usr_msg->add($msk->import_obj($dsp_json, $test_obj));
             $this->add($msk);
         }
 
-        return $result;
-    }
-
-    /**
-     * create a list of views for the export
-     * @return array with the reduced results that can be used to create a JSON message
-     */
-    function export_obj(bool $do_load = true): array
-    {
-        $exp_views = array();
-        foreach ($this->lst() as $dsp) {
-            $exp_views[] = $dsp->export_obj($do_load);
-        }
-        return $exp_views;
+        return $usr_msg;
     }
 
 }

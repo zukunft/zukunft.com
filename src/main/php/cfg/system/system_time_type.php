@@ -29,7 +29,11 @@
 
 */
 
-namespace cfg;
+namespace cfg\system;
+
+include_once MODEL_HELPER_PATH . 'type_object.php';
+
+use cfg\helper\type_object;
 
 class system_time_type extends type_object
 {
@@ -42,6 +46,8 @@ class system_time_type extends type_object
     const DEFAULT = "not_specified";
     const DB_WRITE = "db_write";
     const DB_READ = "db_read";
+    const DB_UPGRADE = "db_upgrade";
+    const DB_SETUP = "db_setup";
 
 
     /*

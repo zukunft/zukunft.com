@@ -36,7 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once API_PATH . 'api.php';
+include_once SHARED_PATH . 'api.php';
 include_once API_PATH . 'controller.php';
 include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -45,15 +45,16 @@ include_once API_VIEW_PATH . 'view_cmp.php';
 
 use api\component\component as component_api;
 use cfg\component\component;
-use cfg\user;
+use cfg\user\user;
 use controller\controller;
+use shared\api;
 
 // open database
 $db_con = prg_start("api/component", "", false);
 
 // get the parameters
-$cmp_id = $_GET[controller::URL_VAR_ID] ?? 0;
-$cmp_name = $_GET[controller::URL_VAR_NAME] ?? '';
+$cmp_id = $_GET[api::URL_VAR_ID] ?? 0;
+$cmp_name = $_GET[api::URL_VAR_NAME] ?? '';
 
 $msg = '';
 $result = new component_api(); // reset the html code var

@@ -32,19 +32,37 @@
 
 namespace cfg\db;
 
+include_once MODEL_COMPONENT_PATH . 'component.php';
+include_once SERVICE_PATH . 'config.php';
+include_once MODEL_FORMULA_PATH . 'formula_list.php';
+include_once MODEL_GROUP_PATH . 'group.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_RESULT_PATH . 'result_two.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
+include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_profile.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_USER_PATH . 'user_profile_list.php';
+include_once MODEL_VALUE_PATH . 'value.php';
+include_once SHARED_PATH . 'library.php';
+
 use cfg\component\component;
 use cfg\config;
-use cfg\formula_list;
+use cfg\formula\formula_list;
 use cfg\group\group;
-use cfg\phrase;
+use cfg\phrase\phrase;
 use cfg\result\result_two;
-use cfg\sandbox;
-use cfg\sandbox_named;
-use cfg\sys_log_function;
-use cfg\user;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
+use cfg\system\sys_log_function;
+use cfg\system\system_time_type;
+use cfg\user\user;
 use cfg\user\user_profile;
-use cfg\user_message;
-use cfg\user_profile_list;
+use cfg\user\user_message;
+use cfg\user\user_profile_list;
 use cfg\value\value;
 use shared\library;
 
@@ -132,8 +150,11 @@ class db_check
 // the version 0.0.3 is the first version, which has a build in upgrade process
     function db_upgrade_0_0_3(sql_db $db_con): string
     {
+        global $sys_times;
+
         $cfg = new config();
         $lib = new library();
+        $sys_times->switch(system_time_type::DB_UPGRADE);
 
         // prepare to remove the time word from the values
         $msg = $this->db_move_time_phrase_to_group();
@@ -340,9 +361,9 @@ class db_check
 
         if ($db_con->db_type == sql_db::MYSQL) {
 
-            global $user_profiles;
-            $user_profiles = new user_profile_list();
-            $user_profiles->load($db_con);
+            global $usr_pro_cac;
+            $usr_pro_cac = new user_profile_list();
+            $usr_pro_cac->load($db_con);
 
             // add missing system users if needed
             $sys_usr = new user();
@@ -400,6 +421,7 @@ class db_check
         if ($db_version != PRG_VERSION) {
             $result = 'Database upgrade to 0.0.3 has failed';
         }
+        $sys_times->switch();
 
         return $result;
     }
@@ -407,14 +429,14 @@ class db_check
 // TODO finish
     function db_move_time_phrase_to_group(): user_message
     {
-        $msg = new user_message();
+        $usr_msg = new user_message();
         // get all values where the time word is used
         $qp = new sql_par(value::class);
 
         // loop over values that needs to be adjusted
         // create the new group including the time
         // update the value
-        return $msg;
+        return $usr_msg;
     }
 
     /**

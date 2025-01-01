@@ -37,32 +37,30 @@ namespace html;
 include_once SHARED_PATH . 'api.php';
 
 use shared\api;
+use shared\types\view_styles;
 use const test\HOST_TESTING;
 
 class html_base
 {
 
     // html const used in zukunft.com
+
+    // the html input types used
     const INPUT_TEXT = 'text';
     const INPUT_SUBMIT = 'submit';
     const INPUT_SEARCH = 'search';
+    const INPUT_CHECKBOX = 'checkbox';
+    const INPUT_FILE = 'file';
     const INPUT_HIDDEN = 'hidden';
+    const INPUT_PASSWORD = 'password';
+    const INPUT_EMAIL = 'email';
 
     // bootstrap const used in zukunft.com
     const BS_FORM = 'form-control';
-    const BS_BTN = 'btn btn-space';
+    const BS_BTN = 'btn btn-space col-1';
     const BS_BTN_SUCCESS = 'btn-outline-success';
     const BS_BTN_CANCEL = 'btn-outline-secondary';
     const BS_BTN_DEL = 'btn-outline-secondary';
-    const BS_SM_2 = 'mr-sm-2';
-    const COL_SM_2 = 'col-sm-2';
-    const COL_SM_4 = 'col-sm-4';
-    const COL_SM_5 = 'col-sm-5';
-    const COL_SM_6 = 'col-sm-6';
-    const COL_SM_7 = 'col-sm-7';
-    const COL_SM_8 = 'col-sm-8';
-    const COL_SM_10 = 'col-sm-10';
-    const COL_SM_12 = 'col-sm-12';
 
     // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
     const UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
@@ -117,7 +115,7 @@ class html_base
         $result .= '  <meta charset="utf-8">';
         if (self::UI_USE_BOOTSTRAP) {
             // include the bootstrap stylesheets
-            $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . $bs_css_path . api::BS_CSS .'">';
+            $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . $bs_css_path . api::BS_CSS . '">';
             // include the jQuery UI stylesheets
             $result .= '  <link rel="stylesheet" href="' . $server_url . 'lib_external/jQueryUI/1.12.1/jquery-ui.css">';
             // include the jQuery library
@@ -169,6 +167,7 @@ class html_base
     {
         if ($server_url == '') {
             $server_url = api::HOST_DEV;
+            $server_url_rel = api::HOST_DEV_RELATIVE;
         }
         if ($bs_path == '') {
             $bs_path = api::BS_PATH_DEV;
@@ -178,7 +177,7 @@ class html_base
         }
 
         // set vars to shorten the lines
-        $url_ext_lib = $server_url . api::EXT_LIB_PATH;
+        $url_ext_lib = $server_url_rel . api::EXT_LIB_PATH;
 
         $result = '<!DOCTYPE html>';
         $result .= '<html lang="en">'; // TODO: to be adjusted depending on the display language
@@ -199,11 +198,9 @@ class html_base
             $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style.css" />';
         }
         $result .= '</head>';
+        $result .= '<body>';
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= '<body>';
             $result .= '  <div class="container">';
-        } else {
-            $result .= '<body>';
         }
 
         return $result;
@@ -227,7 +224,8 @@ class html_base
         }
         $result .= '<small>';
         if (!$no_about) {
-            $result .= $this->ref($this->url("about"), "About") . ' &middot; ';
+            $url = $this->url(rest_ctrl::URL_ABOUT);
+            $result .= $this->ref($url, "About") . ' &middot; ';
         }
         $result .= '<a href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; ';
         $result .= 'All structured data is available under the <a href="//creativecommons.org/publicdomain/zero/1.0/" title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a> License';
@@ -281,7 +279,7 @@ class html_base
      * build an url for link a zukunft.com element
      *
      * @param string $obj_name the object that is requested e.g. a view
-     * @param int $id the id of the parameter e.g. 1 for math const
+     * @param int|string $id the id of the parameter e.g. 1 for math const
      * @param string|null $back the back trace calls to return to the original url and for undo
      * @param string|array $par either the array with the parameters or the parameter objects e.g. a phrase
      * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
@@ -311,6 +309,51 @@ class html_base
     }
 
     /**
+     * build a zukunft.com internal url based on the html one-page setup
+     * o for the main object that should be shown to the user
+     * v for view which contains the main object type
+     * i for the database id of the main object
+     * r for the related phrase (the phrases used for all components)
+     * c for the related terms (the term used for all components)
+     * other related phrases or term are set in the components
+     *
+     * @param int|string $view the code_id or the database id of the view
+     * @param int|string $id the database id or name of the object e.g. 1 for the word Mathematics
+     * @param string $obj_name the object that should be shown e.g. a value
+     * @param string|null $back the back trace calls to return to the original url and for undo
+     * @param string|array $par either the array with the parameters or the parameter objects e.g. a phrase
+     * @param string $id_ext an additional id parameter e.g. used to link and unlink two objects
+     * @return string the created url
+     */
+    function url_new(int|string   $view,
+                     int|string   $id = 0,
+                     string       $obj_name = '',
+                     ?string      $back = '',
+                     string|array $par = '',
+                     string       $id_ext = ''
+    ): string
+    {
+        if (is_string($id)) {
+            $result = rest_ctrl::PATH_FIXED . $id . rest_ctrl::EXT . '?';
+        } else {
+            $result = rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
+            $result .= api::URL_VAR_MASK . '=' . $view;
+            if (is_string($id)) {
+                $result .= '&id=' . $id;
+            } elseif ($id <> 0) {
+                $result .= '&id=' . $id;
+            }
+            if ($id_ext != '') {
+                $result .= '&' . $id_ext;
+            }
+        }
+        if ($back != '') {
+            $result .= '&back=' . $back;
+        }
+        return $result;
+    }
+
+    /**
      * build an url for link a zukunft.com element
      *
      * @param string $obj_name the object that is requested e.g. a view
@@ -322,11 +365,12 @@ class html_base
     }
 
     /**
+     * TODO change based on the environment
      * @return string the host name of the api
      */
     private function host(): string
     {
-        return HOST_TESTING;
+        return frontend::HOST_DEV;
     }
 
     /*
@@ -479,7 +523,7 @@ class html_base
     function tbl_start_half(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            $result = '<table class="table ' . html_base::COL_SM_5 . ' table-striped table-bordered">';
+            $result = '<table class="table ' . view_styles::COL_SM_5 . ' table-striped table-bordered">';
         } else {
             $result = '<table style="width:' . $this->tbl_width_half() . '">';
         }
@@ -502,7 +546,7 @@ class html_base
     function tbl_start_select(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            $result = '<table class="table ' . html_base::COL_SM_10 . ' table-borderless">' . "\n";
+            $result = '<table class="table ' . view_styles::COL_SM_10 . ' table-borderless">' . "\n";
         } else {
             $result = '<table style="width:' . $this->tbl_width_half() . '">' . "\n";
         }
@@ -552,7 +596,7 @@ class html_base
     function form_text(string  $field,
                        ?string $txt_value = '',
                        string  $label = '',
-                       string  $class = html_base::COL_SM_4,
+                       string  $class = view_styles::COL_SM_4,
                        string  $attribute = ''): string
     {
         $result = '';
@@ -562,7 +606,10 @@ class html_base
         if (self::UI_USE_BOOTSTRAP) {
             $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
         } else {
-            $result .= $field . ': <input type="text" name="' . $field . '" value="' . $txt_value . '">';
+            $result .= $field .
+                ': <input type="' . html_base::INPUT_TEXT .
+                '" name="' . $field .
+                '" value="' . $txt_value . '">';
         }
         return $result;
     }
@@ -575,7 +622,9 @@ class html_base
      */
     function form_hidden(string $name, string $value): string
     {
-        return '<input type="hidden" name="' . $name . '" value="' . $value . '">';
+        return '<input type="' . html_base::INPUT_HIDDEN .
+            '" name="' . $name .
+            '" value="' . $value . '">';
     }
 
     /**
@@ -602,9 +651,11 @@ class html_base
             }
         } else {
             if ($submit_name == "") {
-                $result .= '<input type="submit">';
+                $result .= '<input type="' . html_base::INPUT_SUBMIT .
+                    '">';
             } else {
-                $result .= '<input type="submit" value="' . $submit_name . '">';
+                $result .= '<input type="' . html_base::INPUT_SUBMIT .
+                    '" value="' . $submit_name . '">';
             }
             if ($back <> "") {
                 $result .= \html\btn_back($back);
@@ -622,7 +673,7 @@ class html_base
      */
     function about(): string
     {
-        $result = $this->header("", "center_form"); // reset the html code var
+        $result = $this->header('about', "center_form"); // reset the html code var
 
         $result .= $this->dsp_form_center();
         $result .= $this->logo_big();
@@ -900,7 +951,7 @@ class html_base
         $hist_id = str_replace(' ', '_', strtolower($hist_name));
         $link_id = str_replace(' ', '_', strtolower($link_name));
 
-        $result .= '<div class="' . html_base::COL_SM_5 . '">';
+        $result .= '<div class="' . view_styles::COL_SM_5 . '">';
         $result .= '<ul class="nav nav-tabs">';
         $result .= '  <li class="nav-item">';
         $result .= '    <a class="nav-link active" id="' . $comp_id . '-tab" data-toggle="tab" href="#' . $comp_id . '" role="tab" aria-controls="' . $comp_id . '" aria-selected="true">' . $comp_name . '</a>';
@@ -962,7 +1013,7 @@ class html_base
     function dsp_tbl_start_half(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            $result = '<table class="table ' . html_base::COL_SM_5 . ' table-borderless">' . "\n";
+            $result = '<table class="table ' . view_styles::COL_SM_5 . ' table-borderless">' . "\n";
         } else {
             $result = '<table style="width:' . $this->dsp_tbl_width_half() . '">' . "\n";
         }
@@ -983,7 +1034,7 @@ class html_base
     function dsp_tbl_start_select(): string
     {
         if (self::UI_USE_BOOTSTRAP) {
-            $result = '<table class="table ' . html_base::COL_SM_10 . ' table-borderless">' . "\n";
+            $result = '<table class="table ' . view_styles::COL_SM_10 . ' table-borderless">' . "\n";
         } else {
             $result = '<table style="width:' . $this->dsp_tbl_width_half() . '">' . "\n";
         }
@@ -1030,9 +1081,11 @@ class html_base
             }
         } else {
             if ($submit_name == "") {
-                $result .= '<input type="submit">';
+                $result .= '<input type="' . html_base::INPUT_SUBMIT .
+                    '">';
             } else {
-                $result .= '<input type="submit" value="' . $submit_name . '">';
+                $result .= '<input type="' . html_base::INPUT_SUBMIT .
+                    '" value="' . $submit_name . '">';
             }
             if ($back <> "") {
                 $result .= \html\btn_back($back);
@@ -1057,41 +1110,55 @@ class html_base
 // add the element id, which should always be using the field "id"
     function dsp_form_id($id): string
     {
-        return '<input type="hidden" name="id" value="' . $id . '">';
+        return '<input type="' . html_base::INPUT_HIDDEN .
+            '" name="id" value="' . $id . '">';
     }
 
-// add the hidden field
-    function dsp_form_hidden($field, $id): string
+    /**
+     * html hidden field
+     * @param string $field the name of the hidden
+     * @param int $id
+     * @return string the html code for a hidden form field
+     */
+    function dsp_form_hidden(string $field, int $id): string
     {
-        return '<input type="hidden" name="' . $field . '" value="' . $id . '">';
+        return '<input type="' . html_base::INPUT_HIDDEN .
+            '" name="' . $field .
+            '" value="' . $id . '">';
     }
 
 // add the text field to a form
-    function dsp_form_text($field, $txt_value, $label, $class = self::COL_SM_4, $attribute = ''): string
+    function dsp_form_text($field, $txt_value, $label, $class = view_styles::COL_SM_4, $attribute = ''): string
     {
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
             $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
         } else {
-            $result .= '' . $field . ': <input type="text" name="' . $field . '" value="' . $txt_value . '">';
+            $result .= '' . $field .
+                ': <input type="' . html_base::INPUT_TEXT .
+                '" name="' . $field .
+                '" value="' . $txt_value . '">';
         }
         return $result;
     }
 
 // add the text big field to a form
-    function dsp_form_text_big($field, $txt_value, $label, $class = self::COL_SM_4, $attribute = ''): string
+    function dsp_form_text_big($field, $txt_value, $label, $class = view_styles::COL_SM_4, $attribute = ''): string
     {
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
             $result .= $this->dsp_form_fld($field, $txt_value, $label, $class, $attribute);
         } else {
-            $result .= '' . $field . ': <input type="text" name="' . $field . '" class="resizedTextbox" value="' . $txt_value . '">';
+            $result .= '' . $field .
+                ': <input type="' . html_base::INPUT_TEXT .
+                '" name="' . $field .
+                '" class="resizedTextbox" value="' . $txt_value . '">';
         }
         return $result;
     }
 
 // add the field to a form
-    function dsp_form_fld($field, $txt_value, $label, $class = self::COL_SM_4, $attribute = ''): string
+    function dsp_form_fld($field, $txt_value, $label, $class = view_styles::COL_SM_4, $attribute = ''): string
     {
         $result = '';
         if ($label == '') {
@@ -1125,7 +1192,8 @@ class html_base
             $result .= '>' . $label . '</label>';
             $result .= '</div>';
         } else {
-            $result .= '  <input type="checkbox" name="' . $field . '"';
+            $result .= '  <input type="' . html_base::INPUT_CHECKBOX .
+                '" name="' . $field . '"';
             if ($is_checked) {
                 $result .= ' checked';
             }
@@ -1145,7 +1213,8 @@ class html_base
         if (self::UI_USE_BOOTSTRAP) {
           $result .= ' <form>';
           $result .= '  <div class="custom-file">';
-          $result .= '    <input type="file" class="custom-file-input" id="fileToUpload">';
+          $result .= '    <input type="' . html_base::INPUT_FILE .
+                '" class="custom-file-input" id="fileToUpload">';
           $result .= '    <label class="custom-file-label" for="fileToUpload">Choose file</label>';
           $result .= '  </div>';
           //$result .= '  <button type="submit" id="submit" name="import" class="btn-submit">Import</button>';
@@ -1161,8 +1230,10 @@ class html_base
         */
         $result .= ' <form action="import.php" method="post" enctype="multipart/form-data">';
         $result .= '   Select JSON to upload:';
-        $result .= '   <input type="file" name="fileToUpload" id="fileToUpload">';
-        $result .= '   <input type="submit" value="Upload JSON" name="submit">';
+        $result .= '   <input type="' . html_base::INPUT_FILE .
+            '" name="fileToUpload" id="fileToUpload">';
+        $result .= '   <input type="' . html_base::INPUT_SUBMIT .
+            '" value="Upload JSON" name="submit">';
         $result .= ' </form>';
         //}
         return $result;
@@ -1237,7 +1308,7 @@ class html_base
     function div(string $text, string $class = ''): string
     {
         if ($class == '') {
-            $class = 'form-group ' . self::COL_SM_4;
+            $class = 'form-group ' . view_styles::COL_SM_4;
         } else {
             $class = 'form-group ' . $class;
         }
@@ -1252,13 +1323,7 @@ class html_base
     function form_start(string $form_name): string
     {
         // switch on post forms for private values
-        // return '<form action="'.$form_name.'.php" method="post" id="'.$form_name.'">';
-        if ($form_name == 'user_edit') {
-            $script_name = 'user';
-        } else {
-            $script_name = $form_name;
-        }
-        $action = ' action="/http/' . $script_name . '.php"';
+        $action = ' action="' . api::HOST_SAME . api::MAIN_SCRIPT . '"';
         $id = ' id="' . $form_name . '"';
 
         return '<form' . $action . $id . '>';
@@ -1298,7 +1363,10 @@ class html_base
      */
     function row_start(): string
     {
-        return '<div class="row col-sm-12">';
+        $result = '<div class="row ';
+        $result .= view_styles::COL_SM_12;
+        $result .= '">';
+        return $result;
     }
 
     /**
@@ -1306,7 +1374,10 @@ class html_base
      */
     function row_right(): string
     {
-        return '<div class="text-right">';
+        $result = '<div class="row ';
+        $result .= view_styles::COL_SM_12;
+        $result .= ' justify-content-end">';
+        return $result;
     }
 
     /**

@@ -32,13 +32,18 @@
 
 namespace api\word;
 
+include_once API_SANDBOX_PATH . 'sandbox_typed.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'json_fields.php';
+
 use api\word\word as word_api;
 use api\phrase\phrase as phrase_api;
 use api\phrase\term as term_api;
 use api\sandbox\sandbox_typed as sandbox_typed_api;
 use api\verb\verb as verb_api;
-use cfg\phrase_type;
-use cfg\word as word_cfg;
+use cfg\word\word as word_cfg;
+use shared\json_fields;
+use shared\types\phrase_type as phrase_type_shared;
 
 class triple extends sandbox_typed_api
 {
@@ -83,11 +88,17 @@ class triple extends sandbox_typed_api
     const TN_TAXES_OF_CF = "Income taxes is part of cash flow statement";
 
     // list of predefined triple used for system testing that are expected to be never renamed
-    const RESERVED_TRIPLES = array(
+    const RESERVED_NAMES = array(
         word_cfg::SYSTEM_CONFIG,
         self::TN_ADD,
         self::TN_EXCLUDED
     );
+
+    // array of triple names that used for db read testing and that should not be renamed
+    const FIXED_NAMES = array(
+        self::TN_READ
+    );
+
     // list of triples that are used for system testing that should be removed are the system test has been completed
     // and that are never expected to be used by a user
     const TEST_TRIPLES = array(
@@ -95,6 +106,12 @@ class triple extends sandbox_typed_api
         self::TN_ADD_VIA_FUNC,
         self::TN_ADD_VIA_SQL
     );
+
+    const TEST_TRIPLE_STANDARD = array(
+        self::TN_ADD,
+        self::TN_EXCLUDED
+    );
+
 
     /*
      * object vars
@@ -119,9 +136,7 @@ class triple extends sandbox_typed_api
     )
     {
         parent::__construct($id, $name);
-        if ($from != '' or $verb != '' or $to != '') {
-            $this->set($from, $verb, $to);
-        }
+        $this->set($from, $verb, $to);
     }
 
 
@@ -131,15 +146,9 @@ class triple extends sandbox_typed_api
 
     function set(string $from, string $verb, string $to): void
     {
-        if ($from != '') {
-            $this->set_from(new phrase_api(new word_api(0, $from)));
-        }
-        if ($verb != '') {
-            $this->set_verb(new verb_api(0, $verb));
-        }
-        if ($to != '') {
-            $this->set_to(new phrase_api(new word_api(0, $to)));
-        }
+        $this->set_from(new phrase_api(new word_api(0, $from)));
+        $this->set_verb(new verb_api(0, $verb));
+        $this->set_to(new phrase_api(new word_api(0, $to)));
     }
 
     function set_from(phrase_api $from): void
@@ -170,6 +179,16 @@ class triple extends sandbox_typed_api
     function to(): phrase_api
     {
         return $this->to;
+    }
+
+    function set_predicate_id(?int $predicate_id): void
+    {
+        $this->verb->id = $predicate_id;
+    }
+
+    function predicate_id(): ?int
+    {
+        return $this->verb()->id();
     }
 
 
@@ -206,10 +225,10 @@ class triple extends sandbox_typed_api
      */
     function is_type(string $type): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
         $result = false;
         if ($this->type_id() != Null) {
-            if ($this->type_id() == $phrase_types->id($type)) {
+            if ($this->type_id() == $phr_typ_cac->id($type)) {
                 $result = true;
             }
         }
@@ -221,7 +240,7 @@ class triple extends sandbox_typed_api
      */
     function is_time(): bool
     {
-        return $this->is_type(phrase_type::TIME);
+        return $this->is_type(phrase_type_shared::TIME);
     }
 
     /**
@@ -229,7 +248,7 @@ class triple extends sandbox_typed_api
      */
     function is_time_jump(): bool
     {
-        return $this->is_type(phrase_type::TIME_JUMP);
+        return $this->is_type(phrase_type_shared::TIME_JUMP);
     }
 
     /**
@@ -239,7 +258,7 @@ class triple extends sandbox_typed_api
      */
     function is_measure(): bool
     {
-        return $this->is_type(phrase_type::MEASURE);
+        return $this->is_type(phrase_type_shared::MEASURE);
     }
 
     /**
@@ -248,8 +267,8 @@ class triple extends sandbox_typed_api
     function is_scaling(): bool
     {
         $result = false;
-        if ($this->is_type(phrase_type::SCALING)
-            or $this->is_type(phrase_type::SCALING_HIDDEN)) {
+        if ($this->is_type(phrase_type_shared::SCALING)
+            or $this->is_type(phrase_type_shared::SCALING_HIDDEN)) {
             $result = true;
         }
         return $result;
@@ -260,7 +279,7 @@ class triple extends sandbox_typed_api
      */
     function is_percent(): bool
     {
-        return $this->is_type(phrase_type::PERCENT);
+        return $this->is_type(phrase_type_shared::PERCENT);
     }
 
     /**
@@ -269,10 +288,36 @@ class triple extends sandbox_typed_api
     function is_hidden(): bool
     {
         $result = false;
-        if ($this->is_type(phrase_type::SCALING_HIDDEN)) {
+        if ($this->is_type(phrase_type_shared::SCALING_HIDDEN)) {
             $result = true;
         }
         return $result;
+    }
+
+
+    /*
+     * interface
+     */
+
+    /**
+     * @return array with the triple vars without empty values that are not needed
+     * the message from the backend to the frontend does not need to include empty fields
+     * the message from the frontend to the backend on the other side must include empty fields
+     * to be able to unset fields in the backend
+     */
+    function jsonSerialize(): array
+    {
+        $vars = parent::jsonSerialize();
+        if ($this->from()->id() != 0) {
+            $vars[json_fields::FROM] = $this->from()->id();
+        }
+        if ($this->verb()->id() != 0) {
+            $vars[json_fields::VERB] = $this->verb()->id();
+        }
+        if ($this->to()->id() != 0) {
+            $vars[json_fields::TO] = $this->to()->id();
+        }
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 }

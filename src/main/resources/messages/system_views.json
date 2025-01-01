@@ -8,8 +8,13 @@
   "components": [
     {
       "name": "Word",
-      "description": "simply show the word name",
+      "description": "simply show the word or triple name",
       "type": "phrase_name"
+    },
+    {
+      "name": "spreadsheet",
+      "description": "changeable sheet with words, number and formulas",
+      "type": "calc_sheet"
     },
     {
       "name": "system form title word add",
@@ -33,6 +38,27 @@
       "ui_msg_code_id": "form_title_word_del"
     },
     {
+      "name": "system form title verb add",
+      "description": "show the language specific title for the system form to add a new verb",
+      "type": "system_form_title",
+      "code_id": "form_title_verb_add",
+      "ui_msg_code_id": "form_title_verb_add"
+    },
+    {
+      "name": "system form title verb edit",
+      "description": "show the language specific title for the system form to change a verb",
+      "type": "system_form_title",
+      "code_id": "form_title_verb_edit",
+      "ui_msg_code_id": "form_title_verb_edit"
+    },
+    {
+      "name": "system form title verb del",
+      "description": "show the language specific title for the system form to delete or exclude a verb",
+      "type": "system_form_title",
+      "code_id": "form_title_verb_del",
+      "ui_msg_code_id": "form_title_verb_del"
+    },
+    {
       "name": "system form title triple add",
       "description": "show the language specific title for the system form to add a new triple",
       "type": "system_form_title",
@@ -40,11 +66,165 @@
       "ui_msg_code_id": "form_title_triple_add"
     },
     {
+      "name": "system form title triple edit",
+      "description": "show the language specific title for the system form to change a triple",
+      "type": "system_form_title",
+      "code_id": "form_title_triple_edit",
+      "ui_msg_code_id": "form_title_triple_edit"
+    },
+    {
+      "name": "system form title triple del",
+      "description": "show the language specific title for the system form to delete or exclude a triple",
+      "type": "system_form_title",
+      "code_id": "form_title_triple_del",
+      "ui_msg_code_id": "form_title_triple_del"
+    },
+    {
+      "name": "system form title source add",
+      "description": "show the language specific title for the system form to add a new source",
+      "type": "system_form_title",
+      "code_id": "form_title_source_add",
+      "ui_msg_code_id": "form_title_source_add"
+    },
+    {
+      "name": "system form title source edit",
+      "description": "show the language specific title for the system form to change a source",
+      "type": "system_form_title",
+      "code_id": "form_title_source_edit",
+      "ui_msg_code_id": "form_title_source_edit"
+    },
+    {
+      "name": "system form title source del",
+      "description": "show the language specific title for the system form to delete or exclude a source",
+      "type": "system_form_title",
+      "code_id": "form_title_source_del",
+      "ui_msg_code_id": "form_title_source_del"
+    },
+    {
+      "name": "system form title reference add",
+      "description": "show the language specific title for the system form to add a new reference",
+      "type": "system_form_title",
+      "code_id": "form_title_ref_add",
+      "ui_msg_code_id": "form_title_ref_add"
+    },
+    {
+      "name": "system form title reference edit",
+      "description": "show the language specific title for the system form to change a reference",
+      "type": "system_form_title",
+      "code_id": "form_title_ref_edit",
+      "ui_msg_code_id": "form_title_ref_edit"
+    },
+    {
+      "name": "system form title reference del",
+      "description": "show the language specific title for the system form to delete or exclude a reference",
+      "type": "system_form_title",
+      "code_id": "form_title_ref_del",
+      "ui_msg_code_id": "form_title_ref_del"
+    },
+    {
+      "name": "system form title value add",
+      "description": "show the language specific title for the system form to add a new value",
+      "type": "system_form_title",
+      "code_id": "form_title_value_add",
+      "ui_msg_code_id": "form_title_value_add"
+    },
+    {
+      "name": "system form title value edit",
+      "description": "show the language specific title for the system form to change a value",
+      "type": "system_form_title",
+      "code_id": "form_title_value_edit",
+      "ui_msg_code_id": "form_title_value_edit"
+    },
+    {
+      "name": "system form title value del",
+      "description": "show the language specific title for the system form to delete or exclude a value",
+      "type": "system_form_title",
+      "code_id": "form_title_value_del",
+      "ui_msg_code_id": "form_title_value_del"
+    },
+    {
+      "name": "system form title formula add",
+      "description": "show the language specific title for the system form to add a new formula",
+      "type": "system_form_title",
+      "code_id": "form_title_formula_add",
+      "ui_msg_code_id": "form_title_formula_add"
+    },
+    {
+      "name": "system form title formula edit",
+      "description": "show the language specific title for the system form to change a formula",
+      "type": "system_form_title",
+      "code_id": "form_title_formula_edit",
+      "ui_msg_code_id": "form_title_formula_edit"
+    },
+    {
+      "name": "system form title formula del",
+      "description": "show the language specific title for the system form to delete or exclude a formula",
+      "type": "system_form_title",
+      "code_id": "form_title_formula_del",
+      "ui_msg_code_id": "form_title_formula_del"
+    },
+    {
+      "name": "system form title result add",
+      "description": "show the language specific title for the system form to add a new result",
+      "type": "system_form_title",
+      "code_id": "form_title_result_add",
+      "ui_msg_code_id": "form_title_result_add"
+    },
+    {
+      "name": "system form title result edit",
+      "description": "show the language specific title for the system form to change a result",
+      "type": "system_form_title",
+      "code_id": "form_title_result_edit",
+      "ui_msg_code_id": "form_title_result_edit"
+    },
+    {
+      "name": "system form title result del",
+      "description": "show the language specific title for the system form to delete or exclude a result",
+      "type": "system_form_title",
+      "code_id": "form_title_result_del",
+      "ui_msg_code_id": "form_title_result_del"
+    },
+    {
+      "name": "system form title view add",
+      "description": "show the language specific title for the system form to add a new view",
+      "type": "system_form_title",
+      "code_id": "form_title_view_add",
+      "ui_msg_code_id": "form_title_view_add"
+    },
+    {
+      "name": "system form title view edit",
+      "description": "show the language specific title for the system form to change a view",
+      "type": "system_form_title",
+      "code_id": "form_title_view_edit",
+      "ui_msg_code_id": "form_title_view_edit"
+    },
+    {
+      "name": "system form title view del",
+      "description": "show the language specific title for the system form to delete or exclude a view",
+      "type": "system_form_title",
+      "code_id": "form_title_view_del",
+      "ui_msg_code_id": "form_title_view_del"
+    },
+    {
       "name": "system form title component add",
       "description": "show the language specific title for the system form to add a new component",
       "type": "system_form_title",
       "code_id": "form_title_component_add",
       "ui_msg_code_id": "form_title_component_add"
+    },
+    {
+      "name": "system form title component edit",
+      "description": "show the language specific title for the system form to change component",
+      "type": "system_form_title",
+      "code_id": "form_title_component_edit",
+      "ui_msg_code_id": "form_title_component_edit"
+    },
+    {
+      "name": "system form title component del",
+      "description": "show the language specific title for the system form to delete or exclude a component",
+      "type": "system_form_title",
+      "code_id": "form_title_component_del",
+      "ui_msg_code_id": "form_title_component_del"
     },
     {
       "name": "system form hidden back stack",
@@ -57,6 +237,12 @@
       "description": "switch on that the form saving needs an extra confirm by the user",
       "type": "system_form_confirm_status",
       "code_id": "form_confirm_status"
+    },
+    {
+      "name": "system show field name",
+      "description": "the object name as read only",
+      "type": "system_show_field_name",
+      "code_id": "show_field_name"
     },
     {
       "name": "system form field name",
@@ -92,6 +278,20 @@
       "type": "system_form_select_verb",
       "code_id": "form_field_triple_verb",
       "ui_msg_code_id": "form_triple_verb"
+    },
+    {
+      "name": "system form select phrase type",
+      "description": "selector for the phrase type",
+      "type": "system_form_select_phrase_type",
+      "code_id": "form_field_phrase_type",
+      "ui_msg_code_id": "form_select_phrase"
+    },
+    {
+      "name": "system form select source type",
+      "description": "selector for the source type",
+      "type": "system_form_select_source_type",
+      "code_id": "form_field_source_type",
+      "ui_msg_code_id": "form_select_source"
     },
     {
       "name": "system form select share type",
@@ -149,39 +349,67 @@
       "code_id": "row_end"
     },
     {
-      "name": "spreadsheet",
-      "description": "s sheet with words, number and formulas",
-      "type": "calc_sheet"
+      "name": "system select default view word",
+      "description": "select the default view for this word",
+      "type": "view_select",
+      "code_id": "select_view_word",
+      "ui_msg_code_id": "select_view"
+    },
+    {
+      "name": "link list word",
+      "description": "changeable list of links of this word",
+      "type": "link_list",
+      "code_id": "link_list_word"
+    },
+    {
+      "name": "value list word",
+      "description": "list of values related to this word",
+      "type": "values_related",
+      "code_id": "value_list_word"
+    },
+    {
+      "name": "ref list word",
+      "description": "changeable list of reference of this word",
+      "type": "ref_list",
+      "code_id": "ref_list_word"
+    },
+    {
+      "name": "usage word",
+      "description": "show where this word has been used e.g. how many values are related",
+      "type": "usage",
+      "code_id": "usage_word"
+    },
+    {
+      "name": "change log word",
+      "description": "show the change log of this word",
+      "type": "change_log",
+      "code_id": "change_log_word"
     }
   ],
   "views": [
     {
-      "name": "Word",
-      "description": "the default view for words",
-      "code_id": "word",
+      "name": "Start view",
+      "description": "A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.",
+      "code_id": "entry_view",
+      "type": "entry",
+      "protection": "admin_protection",
       "components": [
         {
           "position": "1",
           "name": "Word"
-        }
-      ]
-    },
-    {
-      "name": "Start view",
-      "description": "A dynamic start mask that shows a table for calcalations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems",
-      "type": "entry",
-      "code_id": "entry_view",
-      "components": [
+        },
         {
-          "position": "1",
+          "position": "2",
           "name": "spreadsheet"
         }
       ]
     },
     {
-      "name": "Add New Word",
+      "name": "Add new word",
+      "description": "Create a new word with all parameters e.g. the phrase type",
       "code_id": "word_add",
       "type": "system",
+      "protection": "admin_protection",
       "components": [
         {
           "position": "1",
@@ -197,39 +425,55 @@
         },
         {
           "position": "4",
-          "name": "system form field name"
+          "name": "system form field name",
+          "style": "col-md-8"
         },
         {
           "position": "5",
-          "name": "system form field description"
+          "name": "system form select phrase type",
+          "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system form select share type"
+          "name": "system form field description"
         },
         {
           "position": "7",
-          "name": "system form select protection type"
+          "name": "system form select share type"
         },
         {
           "position": "8",
-          "name": "system form button cancel"
+          "name": "system form select protection type",
+          "position_type": "side"
         },
         {
           "position": "9",
-          "name": "system form button save"
+          "name": "system formatter row right"
         },
         {
           "position": "10",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "11",
+          "name": "system form button save"
+        },
+        {
+          "position": "12",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "13",
           "name": "system form end"
         }
       ]
     },
     {
-      "name": "Change Word",
+      "name": "Change word",
       "description": "Change name, description or settings of a word",
-      "type": "system",
       "code_id": "word_edit",
+      "type": "system",
+      "protection": "admin_protection",
       "components": [
         {
           "position": "1",
@@ -245,6 +489,128 @@
         },
         {
           "position": "4",
+          "name": "system form field name",
+          "style": "col-md-8"
+        },
+        {
+          "position": "5",
+          "name": "system form select phrase type",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system form field description"
+        },
+        {
+          "position": "7",
+          "name": "system select default view word"
+        },
+        {
+          "position": "8",
+          "name": "system form select share type",
+          "position_type": "side"
+        },
+        {
+          "position": "9",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "10",
+          "name": "link list word"
+        },
+        {
+          "position": "11",
+          "name": "value list word",
+          "position_type": "side"
+        },
+        {
+          "position": "12",
+          "name": "ref list word",
+          "position_type": "side"
+        },
+        {
+          "position": "13",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "14",
+          "name": "system form button save"
+        },
+        {
+          "position": "15",
+          "name": "system form end"
+        },
+        {
+          "position": "16",
+          "name": "usage word",
+          "position_type": "side"
+        },
+        {
+          "position": "17",
+          "name": "change log word",
+          "position_type": "side"
+        }
+      ]
+    },
+    {
+      "name": "Delete word",
+      "description": "Exclude or delete a word",
+      "code_id": "word_del",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title word del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system show field name"
+        },
+        {
+          "position": "5",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "6",
+          "name": "system form button del"
+        },
+        {
+          "position": "7",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Add new verb",
+      "description": "Request to add a new verb/predicate",
+      "code_id": "verb_add",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title verb add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
           "name": "system form field name"
         },
         {
@@ -266,14 +632,15 @@
       ]
     },
     {
-      "name": "Delete Word",
-      "description": "Exclude or delete a word",
-      "code_id": "word_del",
+      "name": "Change verb",
+      "description": "Rename a verb/predicate",
+      "code_id": "verb_edit",
       "type": "system",
+      "protection": "admin_protection",
       "components": [
         {
           "position": "1",
-          "name": "system form title word del"
+          "name": "system form title verb edit"
         },
         {
           "position": "2",
@@ -285,22 +652,147 @@
         },
         {
           "position": "4",
-          "name": "system form button cancel"
+          "name": "system form field name"
         },
         {
           "position": "5",
-          "name": "system form button del"
+          "name": "system form field description"
         },
         {
           "position": "6",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "7",
+          "name": "system form button save"
+        },
+        {
+          "position": "8",
           "name": "system form end"
         }
       ]
     },
     {
-      "name": "System View Add Triple",
+      "name": "Delete verb",
+      "description": "Exclude or delete a verb",
+      "code_id": "verb_del",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title verb del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system show field name"
+        },
+        {
+          "position": "5",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "6",
+          "name": "system form button del"
+        },
+        {
+          "position": "7",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Add new triple",
+      "description": "Create a new triple with all parameters",
       "code_id": "triple_add",
       "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title triple add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name",
+          "style": "col-md-8"
+        },
+        {
+          "position": "5",
+          "name": "system form select phrase type",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system form field description"
+        },
+        {
+          "position": "7",
+          "name": "system form triple phrase from"
+        },
+        {
+          "position": "8",
+          "name": "system form triple verb",
+          "position_type": "side"
+        },
+        {
+          "position": "9",
+          "name": "system form triple phrase to",
+          "position_type": "side"
+        },
+        {
+          "position": "10",
+          "name": "system form select share type"
+        },
+        {
+          "position": "11",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "12",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "13",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "14",
+          "name": "system form button save"
+        },
+        {
+          "position": "15",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "16",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Change triple",
+      "description": "Rename a triple",
+      "code_id": "triple_edit",
+      "type": "system",
+      "protection": "admin_protection",
       "components": [
         {
           "position": "1",
@@ -381,128 +873,289 @@
       ]
     },
     {
-      "name": "Search",
-      "description": "The search page for all words and formulas",
-      "code_id": "word_find"
-    },
-    {
-      "name": "Display Number",
-      "code_id": "value"
-    },
-    {
-      "name": "Add New Number",
-      "code_id": "value_add"
-    },
-    {
-      "name": "Change Number",
-      "code_id": "value_edit"
-    },
-    {
-      "name": "Delete Number",
-      "code_id": "value_del"
-    },
-    {
-      "name": "Add New Formula",
-      "code_id": "formula_add"
-    },
-    {
-      "name": "Change Formula",
-      "code_id": "formula_edit"
-    },
-    {
-      "name": "Delete Formula",
-      "description": "To confirm the exclusion or deleting of a formula",
-      "code_id": "formula_del"
-    },
-    {
-      "name": "Explain Formula Result",
-      "description": "Explain the formula result",
-      "code_id": "formula_explain"
-    },
-    {
-      "name": "Formula test",
-      "description": "To debug the formula",
-      "code_id": "formula_test"
-    },
-    {
-      "name": "Add New Source",
-      "code_id": "source_add"
-    },
-    {
-      "name": "Change Source",
-      "code_id": "source_edit"
-    },
-    {
-      "name": "Delete Source",
-      "description": "Delete an external data source",
-      "code_id": "source_del"
-    },
-    {
-      "name": "Verb List",
-      "description": "List all available ways how to link two words",
-      "code_id": "verbs"
-    },
-    {
-      "name": "Add New Verb",
-      "code_id": "verb_add"
-    },
-    {
-      "name": "Change Verb",
-      "description": "Rename a tern link type",
-      "code_id": "verb_edit"
-    },
-    {
-      "name": "Delete verb",
-      "description": "Exclude or delete a verb",
-      "code_id": "verb_del"
-    },
-    {
-      "name": "Change Triple",
-      "description": "Rename a triple",
-      "code_id": "triple_edit"
-    },
-    {
       "name": "Delete triple",
       "description": "Exclude or delete a triple",
-      "code_id": "triple_del"
+      "code_id": "triple_del",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title triple del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system show field name"
+        },
+        {
+          "position": "5",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "6",
+          "name": "system form button del"
+        },
+        {
+          "position": "7",
+          "name": "system form end"
+        }
+      ]
     },
     {
-      "name": "User Settings",
-      "description": "to change the user settings",
-      "code_id": "user"
+      "name": "Add new source",
+      "description": "Create a new source with all parameters e.g. the type",
+      "code_id": "source_add",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title source add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "system form field description"
+        },
+        {
+          "position": "6",
+          "name": "system form select source type"
+        },
+        {
+          "position": "7",
+          "name": "system form select share type"
+        },
+        {
+          "position": "8",
+          "name": "system form select protection type"
+        },
+        {
+          "position": "9",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "10",
+          "name": "system form button save"
+        },
+        {
+          "position": "11",
+          "name": "system form end"
+        }
+      ]
     },
     {
-      "name": "Error Log",
-      "description": "simple confirm page for a new error that has been logged in the database",
-      "code_id": "error_log"
+      "name": "Change source",
+      "description": "Rename a triple or change the type",
+      "code_id": "source_edit",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title source edit"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "system form field description"
+        },
+        {
+          "position": "6",
+          "name": "system form select source type"
+        },
+        {
+          "position": "7",
+          "name": "system form select share type"
+        },
+        {
+          "position": "8",
+          "name": "system form select protection type"
+        },
+        {
+          "position": "9",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "10",
+          "name": "system form button save"
+        },
+        {
+          "position": "11",
+          "name": "system form end"
+        }
+      ]
     },
     {
-      "name": "System Error List",
-      "description": "List the system errors and allow the user to change the status",
-      "code_id": "error_update"
+      "name": "Delete source",
+      "description": "To confirm the exclusion or deleting of an external source",
+      "code_id": "source_del",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title source del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system show field name"
+        },
+        {
+          "position": "5",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "6",
+          "name": "system form button del"
+        },
+        {
+          "position": "7",
+          "name": "system form end"
+        }
+      ]
     },
     {
-      "name": "Import",
-      "description": "Select a file to import data",
-      "code_id": "import"
+      "name": "Add new reference",
+      "description": "Create a new data link to external systems",
+      "code_id": "ref_add",
+      "type": "system",
+      "protection": "admin_protection"
     },
     {
-      "name": "Add View",
-      "code_id": "view_add"
+      "name": "Change reference",
+      "description": "Change then link to external system",
+      "code_id": "ref_edit",
+      "type": "system",
+      "protection": "admin_protection"
     },
     {
-      "name": "Change View",
+      "name": "Delete reference",
+      "description": "To confirm the exclusion or deleting of a reference",
+      "code_id": "ref_del",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Add new number",
+      "description": "Create a new value",
+      "code_id": "value_add",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Change number",
+      "description": "Change a number",
+      "code_id": "value_edit",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Delete number",
+      "description": "Exclude or delete a number",
+      "code_id": "value_del",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Add new formula",
+      "description": "Create a new formula with all parameters e.g. the type",
+      "code_id": "formula_add",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Change formula",
+      "description": "Change a formula, the name or the type",
+      "code_id": "formula_edit",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Delete formula",
+      "description": "To confirm the exclusion or deleting of a formula",
+      "code_id": "formula_del",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Change result",
+      "description": "Overwrite a result",
+      "code_id": "result_edit",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Delete result",
+      "description": "Exclude or delete a result",
+      "code_id": "result_del",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Add view",
+      "description": "Create a new view and set the type",
+      "code_id": "view_add",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Change view",
       "description": "Rename a view",
-      "code_id": "view_edit"
+      "code_id": "view_edit",
+      "type": "system",
+      "protection": "admin_protection"
     },
     {
-      "name": "Delete View",
+      "name": "Delete view",
       "description": "Exclude or delete a view",
-      "code_id": "view_del"
+      "code_id": "view_del",
+      "type": "system",
+      "protection": "admin_protection"
     },
     {
-      "name": "Add View Component",
+      "name": "Add new view component",
+      "description": "Create a new view and set the type",
       "code_id": "component_add",
+      "type": "system",
+      "protection": "admin_protection",
       "components": [
         {
           "position": "1",
@@ -535,14 +1188,58 @@
       ]
     },
     {
-      "name": "Change View Component",
+      "name": "Change view component",
       "description": "Adjust a view component",
-      "code_id": "component_edit"
+      "code_id": "component_edit",
+      "type": "system",
+      "protection": "admin_protection"
     },
     {
-      "name": "Delete View Component",
+      "name": "Delete view component",
       "description": "Exclude or delete a view component",
-      "code_id": "component_del"
+      "code_id": "component_del",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Search",
+      "description": "The search page for all words and formulas",
+      "code_id": "word_find"
+    },
+    {
+      "name": "Explain Formula Result",
+      "description": "Explain the formula result",
+      "code_id": "formula_explain"
+    },
+    {
+      "name": "Formula test",
+      "description": "To debug the formula",
+      "code_id": "formula_test"
+    },
+    {
+      "name": "Verb List",
+      "description": "List all available ways how to link two words",
+      "code_id": "verbs"
+    },
+    {
+      "name": "User Settings",
+      "description": "to change the user settings",
+      "code_id": "user"
+    },
+    {
+      "name": "Error Log",
+      "description": "simple confirm page for a new error that has been logged in the database",
+      "code_id": "error_log"
+    },
+    {
+      "name": "System Error List",
+      "description": "List the system errors and allow the user to change the status",
+      "code_id": "error_update"
+    },
+    {
+      "name": "Import",
+      "description": "Select a file to import data",
+      "code_id": "import"
     },
     {
       "name": "complete",

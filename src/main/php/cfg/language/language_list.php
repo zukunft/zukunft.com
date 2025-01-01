@@ -30,14 +30,15 @@
   
 */
 
-namespace cfg;
+namespace cfg\language;
 
-use cfg\db\sql_db;
-
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_LANGUAGE_PATH . 'language.php';
 
-global $languages;
+use cfg\helper\type_list;
+use cfg\helper\type_object;
 
 class language_list extends type_list
 {

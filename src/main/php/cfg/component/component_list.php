@@ -31,24 +31,36 @@
 
 namespace cfg\component;
 
-include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once API_COMPONENT_PATH . 'component_list.php';
 include_once API_VIEW_PATH . 'component_link_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
+include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VIEW_PATH . 'view.php';
+include_once SHARED_TYPES_PATH . 'component_type.php';
 
-use shared\types\component_type as comp_type_shared;
 use api\component\component_list as component_list_api;
-use cfg\combine_named;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\sandbox_link_named;
-use cfg\sandbox_list;
-use cfg\sandbox_named;
-use cfg\type_list;
-use cfg\user_message;
-use cfg\view;
+use cfg\sandbox\sandbox_list;
+use cfg\sandbox\sandbox_named;
+use cfg\sandbox\sandbox_link_named;
+use cfg\helper\combine_named;
+use cfg\helper\type_list;
+use cfg\user\user_message;
+use cfg\view\view;
+use shared\types\component_type as comp_type_shared;
 
 class component_list extends sandbox_list
 {
@@ -103,7 +115,7 @@ class component_list extends sandbox_list
      * the SQL statement to load only the view id and name
      * to exclude the system component from the user selection
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
      * @param string $pattern the pattern to filter the views
      * @param int $limit the number of rows to return
@@ -111,7 +123,7 @@ class component_list extends sandbox_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_names(
-        sql                                            $sc,
+        sql_creator                                    $sc,
         sandbox_named|sandbox_link_named|combine_named $sbx,
         string                                         $pattern = '',
         int                                            $limit = 0,
@@ -134,11 +146,11 @@ class component_list extends sandbox_list
 
     /**
      * set the common SQL query parameters to load a list of components
-     * @param sql $sc the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc the db connection object as a function parameter for unit testing
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $class = self::class): sql_par
     {
         $qp = new sql_par($class);
         $sc->set_class(component::class);
@@ -153,10 +165,10 @@ class component_list extends sandbox_list
     /**
      * create an SQL statement to retrieve a list of sources from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql $sc, array $ids): sql_par
+    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(component::FLD_ID, $ids);
@@ -169,11 +181,11 @@ class component_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of components by the view id
-     * @param sql $sc the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc the db connection object as a function parameter for unit testing
      * @param int $id the id of the view to which the components should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_view_id(sql $sc, int $id): sql_par
+    function load_sql_by_view_id(sql_creator $sc, int $id): sql_par
     {
         $qp = $this->load_sql($sc);
         $qp->name .= 'view_id';
@@ -268,28 +280,28 @@ class component_list extends sandbox_list
      */
     function import_obj(array $json_obj, object $test_obj = null): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         foreach ($json_obj as $dsp_json) {
             $cmp = new component($this->user());
-            $result->add($cmp->import_obj($dsp_json, $test_obj));
+            $usr_msg->add($cmp->import_obj($dsp_json, $test_obj));
             $this->add($cmp);
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
-     * create a list of components for the export
-     * @param bool $do_load
-     * @return array with the reduced results that can be used to create a JSON message
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
      */
-    function export_obj(bool $do_load = true): array
+    function export_json(bool $do_load = true): array
     {
-        $exp_components = array();
-        foreach ($this->lst() as $dsp) {
-            $exp_components[] = $dsp->export_obj($do_load);
+        $cmp_lst = [];
+        foreach ($this->lst() as $cmp) {
+            $cmp_lst[] = $cmp->export_json($do_load);
         }
-        return $exp_components;
+        return $cmp_lst;
     }
 
 }

@@ -53,11 +53,12 @@ class phrase_list extends list_api implements JsonSerializable
 
     /**
      * add a phrase to the list
+     * dublicate id is allowed because the phrase and term objects have an extra field for the class
      * @returns bool true if the phrase has been added
      */
     function add(phrase $phr): bool
     {
-        return parent::add_obj($phr);
+        return parent::add_obj($phr, true);
     }
 
 
@@ -133,7 +134,7 @@ class phrase_list extends list_api implements JsonSerializable
 
 
     /*
-     * modification functions
+     * modify
      */
 
     function remove(phrase_list $del_lst): phrase_list

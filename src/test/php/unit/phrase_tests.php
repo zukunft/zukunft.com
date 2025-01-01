@@ -33,20 +33,22 @@
 namespace unit;
 
 include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
 use api\word\word as word_api;
-use cfg\db\sql;
-use cfg\phrase_table;
-use cfg\phrase_table_status;
-use cfg\phrase_type;
+use cfg\db\sql_creator;
+use cfg\phrase\phrase_table;
+use cfg\phrase\phrase_table_status;
+use cfg\phrase\phrase_type;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
-use cfg\phrase;
+use cfg\phrase\phrase;
 use cfg\db\sql_db;
-use cfg\word;
+use cfg\word\word;
 use test\test_base;
 use test\test_cleanup;
+use shared\types\phrase_type as phrase_type_shared;
 
 class phrase_tests
 {
@@ -57,54 +59,58 @@ class phrase_tests
         global $usr;
 
         // init
-        $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'phrase->';
         $t->resource_path = 'db/phrase/';
-        $json_file = 'unit/phrase/second.json';
 
+        $t->header('phrase unit tests');
 
-        $t->header('Unit tests of the phrase class (src/main/php/model/phrase/phrase.php)');
-
-        $t->subheader('Phrase SQL setup statements');
+        $t->subheader('phrase sql setup');
         $phr = $t->phrase();
         $t->assert_sql_view_create($phr);
 
-        $t->subheader('SQL statement tests');
-
+        $t->subheader('phrase sql read');
         $phr = new phrase($usr);
         $t->assert_sql_by_id($sc, $phr);
         $t->assert_sql_by_name($sc, $phr);
 
-        // sql to load the phrase by id
-        $phr = new phrase($usr);
-        $phr->set_id(2);
+        $t->subheader('phrase type api unit tests');
+        $phr = $t->phrase();
+        $t->assert_api_json($phr);
+        $phr = $t->word_filled()->phrase();
+        $t->assert_api_json($phr);
+        $phr = $t->word_filled()->phrase();
+        $phr->include();
+        $t->assert_api($phr, 'phrase_word_full');
+        $phr = $t->triple_filled_add()->phrase();
+        $phr->include();
+        $t->assert_api($phr, 'phrase_triple_full');
+        $phr = $t->phrase();
+        $t->assert_api($phr, 'phrase_body');
+
+        $t->subheader('phrase html frontend unit tests');
+        $phr = $t->word()->phrase();
+        $t->assert_api_to_dsp($phr, new phrase_dsp());
+        $phr = $t->triple_pi()->phrase();
+        $t->assert_api_to_dsp($phr, new phrase_dsp());
 
         // check the Postgres query syntax
         $wrd_company = new word($usr);
         $wrd_company->set(2, word_api::TN_COMPANY);
         $sql_name = 'phrase_list_related';
-        $db_con->db_type = sql_db::POSTGRES;
         $file_name = $t->resource_path . $sql_name . test_base::FILE_EXT;
         $created_sql = $phr->sql_list($wrd_company);
         $expected_sql = $t->file($file_name);
         $t->assert_sql($t->name . $sql_name, $created_sql, $expected_sql
         );
 
-        $t->subheader('HTML frontend unit tests');
-
-        $phr = $t->word()->phrase();
-        $t->assert_api_to_dsp($phr, new phrase_dsp());
-        $phr = $t->triple_pi()->phrase();
-        $t->assert_api_to_dsp($phr, new phrase_dsp());
 
 
         $t->header('Unit tests of the phrase type class (src/main/php/model/phrase/phrase_type.php)');
 
-        $t->subheader('API unit tests');
-
-        global $phrase_types;
-        $phr_typ = $phrase_types->get_by_code_id(phrase_type::PERCENT);
+        $t->subheader('phrase type api unit tests');
+        global $phr_typ_cac;
+        $phr_typ = $phr_typ_cac->get_by_code_id(phrase_type_shared::PERCENT);
         $t->assert_api($phr_typ, 'phrase_type');
 
 

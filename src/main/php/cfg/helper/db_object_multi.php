@@ -5,7 +5,7 @@
     model/helper/db_object_multi.php - a base object for all db objects which use more than one table to store the data
     --------------------------------
 
-    like db_object_seq_id but not using a auto sequence as db index
+    like db_object_seq_id but not using an auto sequence as db index
 
 
     This file is part of zukunft.com - calc with words
@@ -32,15 +32,21 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
 include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once API_SYSTEM_PATH . 'db_object.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_par.php';
+//include_once MODEL_GROUP_PATH . 'group_id.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 
 use api\system\db_object as db_object_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_par;
-use cfg\group\group;
 use cfg\group\group_id;
+use cfg\helper\db_object;
+use cfg\user\user_message;
 
 class db_object_multi extends db_object
 {
@@ -151,14 +157,13 @@ class db_object_multi extends db_object
     /**
      * create an SQL statement to retrieve a user sandbox object by id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int|string $id the id of the user sandbox object
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int|string $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int|string $id): sql_par
     {
-        return parent::load_sql_by_id_str($sc, $id, $class);
+        return parent::load_sql_by_id_str($sc, $id);
     }
 
     /**
@@ -185,12 +190,12 @@ class db_object_multi extends db_object
      */
     function import_db_obj(db_object_multi $db_obj, object $test_obj = null): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         // add a dummy id for unit testing
         if ($test_obj) {
             $db_obj->set_id($test_obj->seq_id());
         }
-        return $result;
+        return $usr_msg;
     }
 
 
@@ -203,17 +208,17 @@ class db_object_multi extends db_object
      */
     function isset(): bool
     {
-        if ($this->id == null) {
+        if ($this->id() == null) {
             return false;
         } else {
-            if (is_string($this->id)) {
-                if ($this->id != '') {
+            if (is_string($this->id())) {
+                if ($this->id() != '') {
                     return true;
                 } else {
                     return false;
                 }
             } else {
-                if ($this->id != 0) {
+                if ($this->id() != 0) {
                     return true;
                 } else {
                     return false;

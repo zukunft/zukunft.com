@@ -36,20 +36,41 @@
   
 */
 
-namespace cfg;
+namespace cfg\view;
 
-use api\view\view as view_api;
+include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_PHRASE_PATH . 'term.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_VIEW_PATH . 'view.php';
+
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
-use cfg\export\sandbox_exp;
-use cfg\export\view_exp;
+use cfg\helper\type_object;
 use cfg\log\change;
+use cfg\phrase\term;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_link;
+use cfg\sandbox\sandbox_named;
+use cfg\user\user;
+use cfg\view\view;
 
-class view_term_link extends sandbox_link_with_type
+class view_term_link extends sandbox_link
 {
 
     /*
@@ -57,10 +78,10 @@ class view_term_link extends sandbox_link_with_type
      */
 
     // the database and JSON object field names used only for formula links
-    // *_SQLTYP is the sql data type used for the field
+    // *_SQL_TYP is the sql data type used for the field
     const TBL_COMMENT = 'to link view to a word, triple, verb or formula with an n:m relation';
     const FLD_ID = 'view_term_link_id';
-    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
+    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
     const FLD_TYPE_COM = '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
 
     // all database field names excluding the id
@@ -86,16 +107,16 @@ class view_term_link extends sandbox_link_with_type
     const FLD_LST_LINK = array(
         [term::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
         [view::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
-        [view_link_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::ONE, sql::INDEX, view_link_type::class, self::FLD_TYPE_COM],
+        [view_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::ONE, sql::INDEX, view_link_type::class, self::FLD_TYPE_COM],
     );
     // list of MANDATORY fields that CAN be CHANGEd by the user
     const FLD_LST_MUST_BUT_STD_ONLY = array(
-        [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
+        [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CAN be CHANGEd by the user
     const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [view_link_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
-        [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
+        [view_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
+        [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
 
 
@@ -117,13 +138,13 @@ class view_term_link extends sandbox_link_with_type
     {
         parent::__construct($usr);
         $this->reset();
-        $this->set_type(view_link_type::DEFAULT);
+        $this->set_predicate(view_link_type::DEFAULT);
     }
 
     function reset(): void
     {
         parent::reset();
-        $this->set_type_id(null);
+        $this->set_predicate_id(null);
         $this->description = null;
     }
 
@@ -132,7 +153,7 @@ class view_term_link extends sandbox_link_with_type
      * TODO get the related view and term object from the cache if possible
      *
      * @param array|null $db_row with the data directly from the database
-     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the view component link is loaded and valid
@@ -151,7 +172,7 @@ class view_term_link extends sandbox_link_with_type
             $trm = new term($this->user());
             $trm->set_id($db_row[term::FLD_ID]);
             $this->set_term($trm);
-            $this->set_type_id($db_row[view_link_type::FLD_ID]);
+            $this->set_predicate_id($db_row[view_link_type::FLD_ID]);
             $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
         }
         return $result;
@@ -197,14 +218,14 @@ class view_term_link extends sandbox_link_with_type
     }
 
     /**
-     * interface function to set the term always to the to object
+     * interface function to set the connection type from the term to the view
      * @param string $type_code_id the word, triple or formula that should be linked
      * @return void
      */
-    function set_type(string $type_code_id): void
+    function set_predicate(string $type_code_id): void
     {
-        global $view_link_types;
-        $this->set_type_id($view_link_types->id($type_code_id));
+        global $msk_lnk_typ_cac;
+        $this->set_predicate_id($msk_lnk_typ_cac->id($type_code_id));
     }
 
     /**
@@ -294,10 +315,10 @@ class view_term_link extends sandbox_link_with_type
     /**
      * @return string the name of the reference type e.g. wikidata
      */
-    function type_name(): string
+    function predicate_name(): string
     {
-        global $view_link_types;
-        return $view_link_types->name($this->type_id);
+        global $msk_lnk_typ_cac;
+        return $msk_lnk_typ_cac->name($this->predicate_id);
     }
 
 
@@ -308,14 +329,14 @@ class view_term_link extends sandbox_link_with_type
     /**
      * create the common part of an SQL statement to retrieve a view term link from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql_obj_vars($sc, $class);
+        $qp = new sql_par($class);
         $qp->name .= $query_name;
 
         $sc->set_class($class);
@@ -371,19 +392,19 @@ class view_term_link extends sandbox_link_with_type
     /**
      * create an SQL statement to retrieve the parameters of the standard view term link from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc): sql_par
+    function load_standard_sql(sql_creator $sc): sql_par
     {
         // try to get the search values from the objects
-        if ($this->id <= 0) {
-            $this->id = 0;
+        if ($this->id() <= 0) {
+            $this->set_id(0);
         }
 
         $sc->set_class($this::class);
         $qp = new sql_par($this::class);
-        if ($this->id != 0) {
+        if ($this->id() != 0) {
             $qp->name .= 'std_id';
         } else {
             $qp->name .= 'std_link_ids';
@@ -396,11 +417,15 @@ class view_term_link extends sandbox_link_with_type
             array(user::FLD_ID)));
         if ($this->id() > 0) {
             $sc->add_where($this->id_field(), $this->id());
-        } elseif ($this->view()->id() > 0 and $this->term()->id() > 0) {
+        } elseif ($this->view()->id() > 0 and $this->term()->id() != 0) {
             $sc->add_where(view::FLD_ID, $this->view()->id());
             $sc->add_where(term::FLD_ID, $this->term()->id());
         } else {
-            log_err('Cannot load default component link because id is missing');
+            if ($this->view()->id() > 0) {
+                log_err('Cannot load default view term link because term id for ' . $this->term()-$this->dsp_id() . 'is missing');
+            } else {
+                log_err('Cannot load default view term link because term id for ' . $this->view()-$this->dsp_id() . 'is missing');
+            }
         }
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -433,18 +458,18 @@ class view_term_link extends sandbox_link_with_type
     /**
      * add the type field to the list of changed database fields with name, value and type
      *
-     * @param sandbox|word $sbx the compare value to detect the changed fields
+     * @param sandbox|view_term_link $sbx the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
-        sandbox|word  $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sandbox|view_term_link $sbx,
+        sql_type_list          $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
-        $sc = new sql();
+        $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
@@ -454,34 +479,33 @@ class view_term_link extends sandbox_link_with_type
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $change_field_list->id($table_id . sandbox_named::FLD_DESCRIPTION),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 sandbox_named::FLD_DESCRIPTION,
                 $this->description,
-                sandbox_named::FLD_DESCRIPTION_SQLTYP,
+                sandbox_named::FLD_DESCRIPTION_SQL_TYP,
                 $sbx->description
             );
         }
 
-        if ($sbx->type_id() <> $this->type_id()) {
+        if ($sbx->predicate_id() <> $this->predicate_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_link_type::FLD_ID,
-                    $change_field_list->id($table_id . view_link_type::FLD_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . view_link_type::FLD_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $phrase_types;
+            global $phr_typ_cac;
             $lst->add_type_field(
                 view_link_type::FLD_ID,
                 type_object::FLD_NAME,
-                $this->type_id(),
-                $sbx->type_id(),
-                $phrase_types
-            );
+                $this->predicate_id(),
+                $sbx->predicate_id(),
+                $phr_typ_cac            );
         }
         return $lst;
     }

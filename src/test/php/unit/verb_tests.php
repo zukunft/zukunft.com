@@ -32,13 +32,13 @@
 
 namespace unit;
 
-use cfg\db\sql;
-use cfg\foaf_direction;
-use cfg\verb_list;
-use html\verb\verb as verb_dsp;
-use cfg\phrase;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\verb;
+use cfg\phrase\phrase;
+use cfg\verb\verb;
+use cfg\verb\verb_list;
+use html\verb\verb as verb_dsp;
+use shared\enum\foaf_direction;
 use test\test_cleanup;
 
 class verb_tests
@@ -51,10 +51,9 @@ class verb_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'verb->';
         $t->resource_path = 'db/verb/';
-        $json_file = 'unit/verb/is_a.json';
 
 
         $t->header('verb unit tests');
@@ -83,6 +82,7 @@ class verb_tests
         $vrb = new verb();
         // set the admin user if this is needed for the import e.g. for verbs
         $vrb->set_user($usr_sys);
+        $json_file = 'unit/verb/is_a.json';
         $t->assert_json_file($vrb, $json_file);
 
 

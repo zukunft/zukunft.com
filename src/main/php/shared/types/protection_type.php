@@ -33,8 +33,6 @@ namespace shared\types;
 
 class protection_type
 {
-    // the field name used for the JSON im- and export
-    const JSON_FLD = 'protection';
 
     // list of the protection types that have a coded functionality
     const NO_PROTECT = "no_protection";

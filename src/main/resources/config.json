@@ -13,6 +13,11 @@
       "protection": "admin_protection"
     },
     {
+      "name": "job configuration",
+      "description": "keyword to separate the internal system job configuration",
+      "protection": "admin_protection"
+    },
+    {
       "name": "database",
       "description": "An organized collection of data stored and accessed electronically",
       "protection": "admin_protection"
@@ -20,6 +25,17 @@
     {
       "name": "initial retry delay in sec",
       "description": "the number of seconds first retry"
+    },
+    {
+      "name": "response time",
+      "description": "target time delay for a frontend updates so that the user always knows what the system is doing",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "second",
+      "plural": "seconds",
+      "type": "measure",
+      "protection": "admin_protection"
     },
     {
       "name": "max retry delay in sec",
@@ -289,6 +305,19 @@
       "name": "calculation block size in milliseconds",
       "description": "the average time in milliseconds to update the results of one formula use to estimate how many formulas can be combined on one calculation block",
       "number": "1000",
+      "share": "public",
+      "protection": "admin_protection"
+    },
+    {
+      "words": [
+        "system configuration",
+        "job configuration",
+        "response time",
+        "second"
+      ],
+      "name": "system job target response time in sec",
+      "description": "target time delay for a frontend updates so that the user always knows what the system is doing",
+      "number": "2",
       "share": "public",
       "protection": "admin_protection"
     }

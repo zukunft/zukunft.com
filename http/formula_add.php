@@ -2,48 +2,52 @@
 
 /*
 
-  formula_add.php - create a new formula
-  ---------------
-  
-  formulas should never be linked to a single value, because always a "rule" must be defined
-  
-  This file is part of zukunft.com - calc with words
+    formula_add.php - create a new formula
+    ---------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
-  
+    formulas should never be linked to a single value, because always a "rule" must be defined
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
+
 */
 
 // header for all zukunft.com code 
-use controller\controller;
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once SHARED_PATH . 'views.php';
+
 use html\html_base;
 use html\view\view as view_dsp;
 use html\formula\formula as formula_dsp;
-use cfg\formula;
-use cfg\user;
-use cfg\view;
-use cfg\word;
-
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+use cfg\formula\formula;
+use cfg\user\user;
+use cfg\view\view;
+use cfg\word\word;
+use shared\api;
+use shared\views as view_shared;
 
 // open database
 $db_con = prg_start("formula_add");
@@ -63,8 +67,8 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::MC_FORMULA_ADD);
-    $back = $_GET[controller::API_BACK];
+    $msk->load_by_code_id(view_shared::MC_FORMULA_ADD);
+    $back = $_GET[api::URL_VAR_BACK] = '';
 
     // init the formula object
     $frm = new formula($usr);
@@ -76,8 +80,8 @@ if ($usr->id() > 0) {
     if (isset($_GET['formula_text'])) {
         $frm->set_user_text($_GET['formula_text']);
     } // the new formula text in the user format
-    if (isset($_GET[controller::URL_VAR_DESCRIPTION])) {
-        $frm->description = $_GET[controller::URL_VAR_DESCRIPTION];
+    if (isset($_GET[api::URL_VAR_DESCRIPTION])) {
+        $frm->description = $_GET[api::URL_VAR_DESCRIPTION];
     }
     if (isset($_GET['type'])) {
         $frm->type_id = $_GET['type'];
@@ -124,7 +128,7 @@ if ($usr->id() > 0) {
             log_debug('do');
 
             // add to db
-            $add_result = $frm->save();
+            $add_result = $frm->save()->get_last_message();
 
             // in case of a problem show the message
             if (str_replace('1', '', $add_result) <> '') {

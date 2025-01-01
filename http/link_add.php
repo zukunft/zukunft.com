@@ -33,16 +33,20 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use controller\controller;
-use html\html_base;
-use html\view\view as view_dsp;
-use cfg\triple;
-use cfg\user;
-use cfg\view;
-
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once SHARED_PATH . 'views.php';
+
+use html\html_base;
+use html\view\view as view_dsp;
+use cfg\word\triple;
+use cfg\user\user;
+use cfg\view\view;
+use shared\api;
+use shared\views as view_shared;
 
 // open database
 $db_con = prg_start("link_add");
@@ -64,8 +68,8 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::MC_TRIPLE_ADD);
-    $back = $_GET[controller::API_BACK]; // the calling word which should be displayed after saving
+    $msk->load_by_code_id(view_shared::MC_TRIPLE_ADD);
+    $back = $_GET[api::URL_VAR_BACK] = ''; // the calling word which should be displayed after saving
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
     $trp = new triple($usr);
@@ -75,7 +79,7 @@ if ($usr->id() > 0) {
         $trp->from()->set_id($_GET['from']);
     }   // the word or triple to be linked
     if (isset($_GET['verb'])) {
-        $trp->verb->set_id($_GET['verb']);
+        $trp->set_verb_id($_GET['verb']);
     }   // the link type (verb)
     if (isset($_GET['phrase'])) {
         $trp->to()->set_id($_GET['phrase']);
@@ -85,11 +89,11 @@ if ($usr->id() > 0) {
     if ($_GET['confirm'] == 1) {
 
         // check essential parameters
-        if ($trp->from_id() == 0 or $trp->verb->id() == 0 or $trp->to_id() == 0) {
+        if ($trp->from_id() == 0 or $trp->verb_id() == 0 or $trp->to_id() == 0) {
             $msg .= 'Please select two words and a verb.';
         } else {
 
-            $add_result = $trp->save();
+            $add_result = $trp->save()->get_last_message();
 
             // if adding was successful ...
             if (str_replace('1', '', $add_result) == '') {

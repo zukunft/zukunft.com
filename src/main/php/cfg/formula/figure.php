@@ -32,20 +32,26 @@
 
 */
 
-namespace cfg;
+namespace cfg\formula;
 
-include_once MODEL_HELPER_PATH . 'combine_object.php';
 include_once API_FORMULA_PATH . 'figure.php';
-include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_HELPER_PATH . 'combine_object.php';
+include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use api\api;
 use api\formula\figure as figure_api;
+use cfg\helper\combine_object;
 use cfg\group\group;
 use cfg\result\result;
+use cfg\user\user;
+use cfg\user\user_message;
 use cfg\value\value;
+use shared\json_fields;
 use DateTime;
 
 class figure extends combine_object
@@ -89,7 +95,7 @@ class figure extends combine_object
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the triple is loaded and valid
      */
-    function row_mapper(?array $db_row, string $id_fld = self::FLD_ID): bool
+    function row_mapper(?array $db_row, string $ext, string $id_fld = self::FLD_ID): bool
     {
         $result = false;
         $this->set_id(0);
@@ -98,7 +104,7 @@ class figure extends combine_object
                 $this->set_obj_id($db_row[$id_fld]);
                 // map a user value
                 $val = new value($this->user());
-                $val->row_mapper_sandbox($db_row);
+                $val->row_mapper_sandbox_multi($db_row, $ext);
                 $this->set_obj($val);
                 $result = true;
             } elseif ($db_row[$id_fld] < 0) {
@@ -254,23 +260,23 @@ class figure extends combine_object
      */
     function set_by_api_json(array $api_json): user_message
     {
-        $msg = new user_message();
+        $usr_msg = new user_message();
 
-        if ($api_json[api::FLD_ID] > 0) {
+        if ($api_json[json_fields::ID] > 0) {
             $val = new value($this->user());
-            $msg->add($val->set_by_api_json($api_json));
-            if ($msg->is_ok()) {
+            $usr_msg->add($val->set_by_api_json($api_json));
+            if ($usr_msg->is_ok()) {
                 $this->obj = $val;
             }
         } else {
             $res = new result($this->user());
-            $api_json[api::FLD_ID] = $api_json[api::FLD_ID] * -1;
-            $msg->add($res->set_by_api_json($api_json));
-            if ($msg->is_ok()) {
+            $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
+            $usr_msg->add($res->set_by_api_json($api_json));
+            if ($usr_msg->is_ok()) {
                 $this->obj = $res;
             }
         }
-        return $msg;
+        return $usr_msg;
     }
 
 

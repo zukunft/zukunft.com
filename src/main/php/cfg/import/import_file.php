@@ -29,8 +29,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 namespace cfg\import;
 
 include_once MODEL_IMPORT_PATH . 'import.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once HTML_PATH . 'html_base.php';
 
-use cfg\user;
+use cfg\user\user;
+use cfg\user\user_message;
 use html\html_base;
 
 class import_file
@@ -48,14 +52,14 @@ class import_file
         $msg = '';
 
         $json_str = file_get_contents($filename);
-        if ($json_str == false) {
+        if (!$json_str) {
             log_err('Error reading JSON resource ' . $filename);
         } else {
             if ($json_str == '') {
                 $msg .= ' failed because message file is empty of not found.';
             } else {
                 $import = new import;
-                $import_result = $import->put($json_str, $usr);
+                $import_result = $import->put_json($json_str, $usr);
                 if ($import_result->is_ok()) {
                     $msg .= ' done ('
                         . $import->words_done . ' words, '
@@ -86,15 +90,50 @@ class import_file
     }
 
     /**
+     * import a single yaml file
+     *
+     * @param string $filename
+     * @param user $usr
+     * @return user_message
+     */
+    function yaml_file(string $filename, user $usr): user_message
+    {
+        $usr_msg = new user_message();
+
+        $yaml_str = file_get_contents($filename);
+        if (!$yaml_str) {
+            log_err('Error reading JSON resource ' . $filename);
+        } else {
+            if ($yaml_str == '') {
+                $usr_msg->add_message(' failed because message file is empty of not found.');
+            } else {
+                $import = new import;
+                $import_result = $import->put_yaml($yaml_str, $usr);
+                if ($import_result->is_ok()) {
+                    $usr_msg->add_info(' done (' . $import->status_text()->get_last_message() . ' )');
+                    if ($import->users_done > 0) {
+                        $usr_msg->add_message(' ... and ' . $import->users_done . ' $users');
+                    }
+                    if ($import->system_done > 0) {
+                        $usr_msg->add_message(' ... and ' . $import->system_done . ' $system objects');
+                    }
+                } else {
+                    $usr_msg->add_message(' failed because ' . $import_result->all_message_text() . '.');
+                }
+            }
+        }
+
+        return $usr_msg;
+    }
+
+    /**
      * import the initial system configuration
+     * TODO deprecate and replace with import_config_yaml
      * @param user $usr who has triggered the function
      * @return bool true if the configuration has imported
      */
     function import_config(user $usr): bool
     {
-        global $db_con;
-        global $verbs;
-
         $result = false;
 
         if ($usr->is_admin() or $usr->is_system()) {
@@ -105,14 +144,33 @@ class import_file
             }
         }
 
-        // TODO load the config
-        // $verbs = new verb_list($usr);
-        // $verbs->load($db_con);
+        return $result;
+    }
+
+    /**
+     * import the initial system configuration
+     * TODO validate the import by comparing the import with the api message to tne frontend
+     *
+     * @param user $usr who has triggered the function
+     * @return bool true if the configuration has imported
+     */
+    function import_config_yaml(user $usr): bool
+    {
+        $result = false;
+
+        if ($usr->is_admin() or $usr->is_system()) {
+            $imf = new import_file();
+            $import_result = $imf->yaml_file(SYSTEM_CONFIG_FILE_YAML, $usr);
+            if (str_starts_with($import_result->get_last_message(), ' done ')) {
+                $result = true;
+            }
+        }
 
         return $result;
     }
 
     /**
+     * TODO move HTML code to frontend
      * import all zukunft.com base configuration json files
      * for an import it can be assumed that this base configuration is loaded
      * even if a user has overwritten some of these definitions the technical import should be possible
@@ -141,6 +199,7 @@ class import_file
     }
 
     /**
+     * TODO move HTML code to frontend
      * import some zukunft.com test json files
      */
     function import_test_files(user $usr): string

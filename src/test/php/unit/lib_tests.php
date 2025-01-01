@@ -34,8 +34,8 @@ namespace unit;
 
 include_once MODEL_USER_PATH . 'user_message.php';
 
-use cfg\user;
-use cfg\user_message;
+use cfg\user\user;
+use cfg\user\user_message;
 use DateTimeInterface;
 use shared\library;
 use test\all_tests;
@@ -467,7 +467,7 @@ class lib_tests
         $test_result = '{"user_id":2,"sys_log":[{"id":1,"user":"zukunft.com system test"},{"id":2,"user":"zukunft.com system test"}]}';
         $test_target = '{"user_id":3,"sys_log":[{"id":1,"user":"zukunft.com system test"},{"id":2,"user":"zukunft.com system test"}]}';
         $result = $lib->str_diff($test_result, $test_target);
-        $target = '//-2zukunft.com system test////+3Array//';
+        $target = '//-2zukunft.com system test////+3Array,Array//';
         $t->assert("diff_msg, with position in long html string", $result, $target);
 
 
@@ -682,18 +682,18 @@ class lib_tests
 
         $t->subheader('user message tests');
 
-        $msg = new user_message();
-        $t->assert("user_message - default ok", $msg->is_ok(), true);
+        $usr_msg = new user_message();
+        $t->assert("user_message - default ok", $usr_msg->is_ok(), true);
 
-        $msg = new user_message('first message text');
-        $t->assert("construct with message", $msg->get_message(), 'first message text');
-        $t->assert("if a message text is given, the result is by default NOT ok", $msg->is_ok(), false);
+        $usr_msg = new user_message('first message text');
+        $t->assert("construct with message", $usr_msg->get_message(), 'first message text');
+        $t->assert("if a message text is given, the result is by default NOT ok", $usr_msg->is_ok(), false);
 
-        $msg->add_message('second message text');
-        $t->assert("after adding a message the first message stays the same", $msg->get_message(), 'first message text');
-        $t->assert("... and the second message can be shown", $msg->get_message(2), 'second message text');
-        $t->assert("... which is also the last message", $msg->get_last_message(), 'second message text');
-        $t->assert("a too high position simply returns an empty message", $msg->get_message(3), '');
+        $usr_msg->add_message('second message text');
+        $t->assert("after adding a message the first message stays the same", $usr_msg->get_message(), 'first message text');
+        $t->assert("... and the second message can be shown", $usr_msg->get_message(2), 'second message text');
+        $t->assert("... which is also the last message", $usr_msg->get_last_message(), 'second message text');
+        $t->assert("a too high position simply returns an empty message", $usr_msg->get_message(3), '');
 
         $msg_2 = new user_message();
         $msg_2->add_message('');
@@ -701,8 +701,8 @@ class lib_tests
         $msg_2->add_message('error text');
         $t->assert("but adding an error text does", $msg_2->is_ok(), false);
 
-        $msg->add($msg_2);
-        $t->assert("last message of the combined message should be from msg_2", $msg->get_last_message(), 'error text');
+        $usr_msg->add($msg_2);
+        $t->assert("last message of the combined message should be from msg_2", $usr_msg->get_last_message(), 'error text');
     }
 
 }

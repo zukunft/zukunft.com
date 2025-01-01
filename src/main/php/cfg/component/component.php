@@ -52,11 +52,35 @@
 
 namespace cfg\component;
 
+include_once API_COMPONENT_PATH . 'component.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+include_once MODEL_LOG_PATH . 'change_link.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_PATH . 'json_fields.php';
+include_once MODEL_COMPONENT_PATH . 'view_style.php';
 
-use api\api;
 use api\component\component as component_api;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -64,20 +88,19 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\export\component_exp;
-use cfg\export\sandbox_exp;
-use cfg\formula;
+use cfg\formula\formula;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
-use cfg\phrase;
-use cfg\sandbox;
-use cfg\sandbox_named;
-use cfg\sandbox_typed;
-use cfg\type_object;
-use cfg\user;
-use cfg\user_message;
-use cfg\word;
+use cfg\phrase\phrase;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
+use cfg\sandbox\sandbox_typed;
+use cfg\helper\type_object;
+use cfg\user\user;
+use cfg\user\user_message;
+use cfg\word\word;
+use shared\json_fields;
 
 class component extends sandbox_typed
 {
@@ -91,18 +114,19 @@ class component extends sandbox_typed
 
     // the database and JSON object field names used only for view components links
     // *_COM: the description of the field
-    // *_SQLTYP: the sql field type used for this field
+    // *_SQL_TYP: the sql field type used for this field
     const FLD_ID = 'component_id';
     const FLD_NAME_COM = 'the unique name used to select a component by the user';
     const FLD_NAME = 'component_name';
     const FLD_DESCRIPTION_COM = 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry';
     const FLD_TYPE_COM = 'to select the predefined functionality';
     const FLD_TYPE = 'component_type_id';
-    const FLD_TYPE_SQLTYP = sql_field_type::INT_SMALL;
+    const FLD_STYLE_COM = 'the default display style for this component';
+    const FLD_STYLE = 'view_style_id';
     const FLD_CODE_ID_COM = 'used for system components to select the component by the program code';
     const FLD_UI_MSG_ID_COM = 'used for system components the id to select the language specific user interface message e.g. "add word"';
     const FLD_UI_MSG_ID = 'ui_msg_code_id';
-    const FLD_UI_MSG_ID_SQLTYP = sql_field_type::CODE_ID;
+    const FLD_UI_MSG_ID_SQL_TYP = sql_field_type::CODE_ID;
     // TODO move the lined phrases to a component phrase link table for n:m relation with a type for each link
     const FLD_ROW_PHRASE_COM = 'for a tree the related value the start node';
     const FLD_ROW_PHRASE = 'word_id_row';
@@ -117,7 +141,7 @@ class component extends sandbox_typed
     const FLD_LINK_COMP_TYPE = 'component_link_type_id';
     const FLD_LINK_TYPE_COM = 'e.g. for type 4 to select possible terms';
     const FLD_LINK_TYPE = 'link_type_id';
-    const FLD_LINK_TYPE_SQLTYP = sql_field_type::INT_SMALL;
+    const FLD_LINK_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
     const FLD_POSITION = 'position'; // TODO move to component_link
 
     // list of fields that MUST be set by one user
@@ -130,16 +154,17 @@ class component extends sandbox_typed
     );
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [self::FLD_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, component_type::class, self::FLD_TYPE_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, component_type::class, self::FLD_TYPE_COM],
+        [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
         // TODO link with a foreign key to phrases (or terms?) if link to a view is allowed
         [self::FLD_ROW_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_PHRASE_COM],
         [formula::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
         [self::FLD_COL_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_COL_PHRASE_COM],
         [self::FLD_COL2_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_COL2_PHRASE_COM],
         [self::FLD_LINK_COMP, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_COMP_COM],
-        [self::FLD_LINK_COMP_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_COMP_TYPE_COM],
-        [self::FLD_LINK_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_TYPE_COM],
+        [self::FLD_LINK_COMP_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_COMP_TYPE_COM],
+        [self::FLD_LINK_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_TYPE_COM],
     );
     // list of fields that CANNOT be changed by the user
     const FLD_LST_NON_CHANGEABLE = array(
@@ -159,6 +184,7 @@ class component extends sandbox_typed
     // list of the user specific database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
+        self::FLD_STYLE,
         self::FLD_ROW_PHRASE,
         self::FLD_LINK_TYPE,
         formula::FLD_ID,
@@ -173,6 +199,7 @@ class component extends sandbox_typed
         self::FLD_NAME,
         sandbox_named::FLD_DESCRIPTION,
         self::FLD_TYPE,
+        self::FLD_STYLE,
         self::FLD_ROW_PHRASE,
         self::FLD_LINK_TYPE,
         formula::FLD_ID,
@@ -205,7 +232,8 @@ class component extends sandbox_typed
 
     // database fields repeated from the component link for a easy to use in memory view object
     // TODO create a component_phrase_link table with a type fields where the type can be at least row, row_right, col and sub_col
-    public ?int $pos_type = null;           // the position in the linked view
+    // TODO easy use the position type object similar to the style
+    public ?int $pos_type_id = null;           // the position type in the linked view
 
     // linked fields
     public ?object $obj = null;             // the object that should be shown to the user
@@ -213,6 +241,7 @@ class component extends sandbox_typed
     public ?phrase $col_phrase = null;           // for a table to defined which columns should be used (if not defined by the calling word)
     public ?phrase $col_sub_phrase = null;          // the word object for $word_id_col2
     public ?formula $frm = null;            // the formula object for $formula_id
+    private ?type_object $style = null; // the default display style for this component which can be overwritten by the link
 
 
     /*
@@ -240,6 +269,7 @@ class component extends sandbox_typed
 
         $this->order_nbr = null;
         $this->type_id = null;
+        $this->style = null;
         $this->link_type_id = null;
         $this->formula_id = null;
         $this->word_id_col2 = null;
@@ -255,7 +285,7 @@ class component extends sandbox_typed
      * map the database fields to the object fields
      *
      * @param array|null $db_row with the data directly from the database
-     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @param string $name_fld the name of the name field as defined in this child class
@@ -269,6 +299,7 @@ class component extends sandbox_typed
         string $name_fld = self::FLD_NAME
     ): bool
     {
+        global $msk_sty_cac;
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
             if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
@@ -277,8 +308,12 @@ class component extends sandbox_typed
             if (array_key_exists(self::FLD_UI_MSG_ID, $db_row)) {
                 $this->ui_msg_code_id = $db_row[self::FLD_UI_MSG_ID];
             }
+            // TODO easy use set_type_by_id function
             if (array_key_exists(self::FLD_TYPE, $db_row)) {
                 $this->type_id = $db_row[self::FLD_TYPE];
+            }
+            if (array_key_exists(self::FLD_STYLE, $db_row)) {
+                $this->set_style_by_id($db_row[self::FLD_STYLE]);
             }
             if (array_key_exists(self::FLD_ROW_PHRASE, $db_row)) {
                 $this->load_row_phrase($db_row[self::FLD_ROW_PHRASE]);
@@ -327,8 +362,56 @@ class component extends sandbox_typed
      */
     function set_type(string $type_code_id): void
     {
-        global $component_types;
-        $this->type_id = $component_types->id($type_code_id);
+        global $cmp_typ_cac;
+        $this->type_id = $cmp_typ_cac->id($type_code_id);
+    }
+
+    /**
+     * set the default style for this component by the code id
+     *
+     * @param string|null $code_id the code id of the display style use for im and export
+     * @return void
+     */
+    function set_style(?string $code_id): void
+    {
+        global $msk_sty_cac;
+        if ($code_id == null) {
+            $this->style = null;
+        } else {
+            $this->style = $msk_sty_cac->get_by_code_id($code_id);
+        }
+    }
+
+    /**
+     * set the default style for this component by the database id
+     *
+     * @param int|null $style_id the database id of the display style
+     * @return void
+     */
+    function set_style_by_id(?int $style_id): void
+    {
+        global $msk_sty_cac;
+        if ($style_id == null) {
+            $this->style = null;
+        } else {
+            $this->style = $msk_sty_cac->get($style_id);
+        }
+    }
+
+    /**
+     * @return view_style|type_object|null the view style for this component or null if the parent style should be used
+     */
+    function style(): view_style|type_object|null
+    {
+        return $this->style;
+    }
+
+    /**
+     * @return int|null the database id of the view style or null
+     */
+    function style_id(): ?int
+    {
+        return $this->style?->id();
     }
 
     /**
@@ -445,16 +528,16 @@ class component extends sandbox_typed
      */
     function set_link_type(string $type_code_id): void
     {
-        global $component_link_types;
-        $this->link_type_id = $component_link_types->id($type_code_id);
+        global $cmp_lnk_typ_cac;
+        $this->link_type_id = $cmp_lnk_typ_cac->id($type_code_id);
     }
 
     /**
      * TODO use a set_join function for all not simple sql joins
-     * @param sql $sc the sql creator without component joins
-     * @return sql the sql creator with the components join set
+     * @param sql_creator $sc the sql creator without component joins
+     * @return sql_creator the sql creator with the components join set
      */
-    function set_join(sql $sc): sql
+    function set_join(sql_creator $sc): sql_creator
     {
         $sc->set_join_fields(component::FLD_NAMES, component::class);
         $sc->set_join_usr_fields(component::FLD_NAMES_USR, component::class);
@@ -472,8 +555,8 @@ class component extends sandbox_typed
      */
     function type_name(): string
     {
-        global $component_types;
-        return $component_types->name($this->type_id);
+        global $cmp_typ_cac;
+        return $cmp_typ_cac->name($this->type_id);
     }
 
     /**
@@ -482,8 +565,8 @@ class component extends sandbox_typed
      */
     function type_name_or_null(): ?string
     {
-        global $component_types;
-        return $component_types->name_or_null($this->type_id);
+        global $cmp_typ_cac;
+        return $cmp_typ_cac->name_or_null($this->type_id);
     }
 
     /**
@@ -493,8 +576,8 @@ class component extends sandbox_typed
      */
     private function type_id_by_code_id(string $code_id): int
     {
-        global $component_types;
-        return $component_types->id($code_id);
+        global $cmp_typ_cac;
+        return $cmp_typ_cac->id($code_id);
     }
 
 
@@ -514,6 +597,7 @@ class component extends sandbox_typed
         } else {
             parent::fill_api_obj($api_obj);
             $api_obj->code_id = $this->code_id;
+            $api_obj->ui_msg_code_id = $this->ui_msg_code_id;
         }
         return $api_obj;
     }
@@ -528,9 +612,12 @@ class component extends sandbox_typed
         $msg = parent::set_by_api_json($api_json);
 
         foreach ($api_json as $key => $value) {
-            // TODO the code id might be not be mapped because this can nover be changed by the user
-            if ($key == api::FLD_CODE_ID) {
+            // TODO the code id might be not be mapped because this can never be changed by the user
+            if ($key == json_fields::CODE_ID) {
                 $this->code_id = $value;
+            }
+            if ($key == json_fields::UI_MSG_CODE_ID) {
+                $this->ui_msg_code_id = $value;
             }
         }
 
@@ -551,7 +638,7 @@ class component extends sandbox_typed
     function load_by_name(string $name): int
     {
         $id = parent::load_by_name($name);
-        if ($this->id > 0) {
+        if ($this->id() > 0) {
             $this->load_phrases();
         }
         return $id;
@@ -561,13 +648,12 @@ class component extends sandbox_typed
      * just set the class name for the user sandbox function
      * load a view component object by database id
      * @param int $id the id of the view component
-     * @param string $class the view component class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id, string $class = self::class): int
+    function load_by_id(int $id): int
     {
-        $id = parent::load_by_id($id, $class);
-        if ($this->id > 0) {
+        $id = parent::load_by_id($id);
+        if ($this->id() > 0) {
             $this->load_phrases();
         }
         return $id;
@@ -596,10 +682,10 @@ class component extends sandbox_typed
     /**
      * create the SQL to load the default view always by the id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc): sql_par
+    function load_standard_sql(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
@@ -615,12 +701,12 @@ class component extends sandbox_typed
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view component from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         return parent::load_sql_usr_num($sc, $this, $query_name);
     }
@@ -724,7 +810,7 @@ class component extends sandbox_typed
         $result = '';
         if ($this->word_id_col2 > 0) {
             $wrd_col2 = new word($this->user());
-            $wrd_col2->load_by_id($this->word_id_col2, word::class);
+            $wrd_col2->load_by_id($this->word_id_col2);
             $this->col_sub_phrase = $wrd_col2->phrase();
             $result = $wrd_col2->name();
         }
@@ -737,7 +823,7 @@ class component extends sandbox_typed
         $result = '';
         if ($this->formula_id > 0) {
             $frm = new formula($this->user());
-            $frm->load_by_id($this->formula_id, formula::class);
+            $frm->load_by_id($this->formula_id);
             $this->frm = $frm;
             $result = $frm->name();
         }
@@ -747,12 +833,12 @@ class component extends sandbox_typed
     /**
      * create an SQL statement to retrieve the user changes of the current view component
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_user_changes(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -779,28 +865,33 @@ class component extends sandbox_typed
      */
     function import_obj(array $in_ex_json, object $test_obj = null): user_message
     {
-        $result = parent::import_obj($in_ex_json, $test_obj);
+        $usr_msg = parent::import_obj($in_ex_json, $test_obj);
 
         foreach ($in_ex_json as $key => $value) {
 
             if ($key == self::FLD_POSITION) {
                 $this->order_nbr = $value;
             }
-            if ($key == sandbox_exp::FLD_TYPE) {
+            if ($key == json_fields::TYPE_NAME) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->type_id = $this->type_id_by_code_id($value);
                     }
                 }
             }
-            if ($key == sandbox_exp::FLD_CODE_ID) {
+            if ($key == json_fields::STYLE) {
+                if ($value != '') {
+                    $this->set_style($value);
+                }
+            }
+            if ($key == json_fields::CODE_ID) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->code_id = $value;
                     }
                 }
             }
-            if ($key == sandbox_exp::FLD_UI_MSG_ID) {
+            if ($key == json_fields::UI_MSG_CODE_ID) {
                 if ($value != '') {
                     if ($this->user()->is_admin() or $this->user()->is_system()) {
                         $this->ui_msg_code_id = $value;
@@ -810,51 +901,56 @@ class component extends sandbox_typed
         }
 
         if (!$test_obj) {
-            if ($result->is_ok()) {
-                $result->add_message($this->save());
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save());
             } else {
-                log_debug('not saved because ' . $result->get_last_message());
+                log_debug('not saved because ' . $usr_msg->get_last_message());
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
-     * fill the component export object to create a json
-     * which does not include the internal database id
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
      */
-    function export_obj(bool $do_load = true): sandbox_exp
+    function export_json(bool $do_load = true): array
     {
-        log_debug('component->export_obj ' . $this->dsp_id());
-        $result = new component_exp();
+        $vars = parent::export_json($do_load);
 
-        // add the component parameters
-        $this->load_phrases();
         if ($this->order_nbr >= 0) {
-            $result->position = $this->order_nbr;
+            $vars[json_fields::POSITION] = $this->order_nbr;
         }
-        $result->name = $this->name();
-        if ($this->type_name() <> '') {
-            $result->type = $this->type_name();
+        if ($this->code_id != null) {
+            $vars[json_fields::CODE_ID] = $this->code_id;
         }
-        $result->code_id = $this->code_id;
-        $result->ui_msg_code_id = $this->ui_msg_code_id;
-        if (isset($this->row_phrase)) {
-            $result->row = $this->row_phrase->name();
-        }
-        if (isset($this->col_phrase)) {
-            $result->column = $this->col_phrase->name();
-        }
-        if (isset($this->col_sub_phrase)) {
-            $result->column2 = $this->col_sub_phrase->name();
-        }
-        if ($this->description <> '') {
-            $result->description = $this->description;
+        if ($this->ui_msg_code_id != null) {
+            $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
         }
 
-        log_debug(json_encode($result));
-        return $result;
+        // add the phrases used
+        if ($do_load) {
+            $this->load_phrases();
+        }
+        if ($this->row_phrase != null) {
+            if ($this->row_phrase->name() != '') {
+                $vars[json_fields::ROW] = $this->row_phrase->name();
+            }
+        }
+        if ($this->col_phrase != null) {
+            if ($this->col_phrase->name() != '') {
+                $vars[json_fields::COLUMN] = $this->col_phrase->name();
+            }
+        }
+        if ($this->col_sub_phrase != null) {
+            if ($this->col_sub_phrase->name() != '') {
+                $vars[json_fields::COLUMN2] = $this->col_sub_phrase->name();
+            }
+        }
+
+        return $vars;
     }
 
 
@@ -904,7 +1000,7 @@ class component extends sandbox_typed
         $log->set_class(component_link::class);
         $log->new_from = clone $this;
         $log->new_to = clone $dsp;
-        $log->row_id = $this->id;
+        $log->row_id = $this->id();
         $result = $log->add_link_ref();
 
         log_debug('logged ' . $log->id());
@@ -920,7 +1016,7 @@ class component extends sandbox_typed
         $log->set_class(component_link::class);
         $log->old_from = clone $this;
         $log->old_to = clone $dsp;
-        $log->row_id = $this->id;
+        $log->row_id = $this->id();
         $result = $log->add_link_ref();
 
         log_debug('logged ' . $log->id());
@@ -935,7 +1031,7 @@ class component extends sandbox_typed
     // link a view component to a view
     function link($dsp, $order_nbr): string
     {
-        global $position_types;
+        global $pos_typ_cac;
 
         log_debug($this->dsp_id() . ' to ' . $dsp->dsp_id() . ' at pos ' . $order_nbr);
 
@@ -944,8 +1040,8 @@ class component extends sandbox_typed
         $dsp_lnk->set_view($dsp);
         $dsp_lnk->set_component($this);
         $dsp_lnk->order_nbr = $order_nbr;
-        $dsp_lnk->pos_type_id = $position_types->id(position_type::BELOW);
-        return $dsp_lnk->save();
+        $dsp_lnk->set_pos_type(position_type::BELOW);
+        return $dsp_lnk->save()->get_last_message();
     }
 
     // remove a view component from a view
@@ -956,7 +1052,7 @@ class component extends sandbox_typed
         $result = '';
 
         if (isset($dsp) and $this->user() != null) {
-            log_debug($this->dsp_id() . ' from "' . $dsp->name . '" (' . $dsp->id . ')');
+            log_debug($this->dsp_id() . ' from "' . $dsp->name() . '" (' . $dsp->id() . ')');
             $dsp_lnk = new component_link($this->user());
             $dsp_lnk->load_by_link($dsp, $this);
             $dsp_lnk->load_objects();
@@ -975,66 +1071,24 @@ class component extends sandbox_typed
      */
 
     /**
-     * create a database record to save user specific settings for this component
-     */
-    protected function add_usr_cfg(string $class = self::class): bool
-    {
-        global $db_con;
-        $result = true;
-
-        if (!$this->has_usr_cfg()) {
-            log_debug('for "' . $this->dsp_id() . ' und user ' . $this->user()->name);
-
-            // check again if there ist not yet a record
-            $db_con->set_class(component::class, true);
-            $qp = new sql_par(self::class);
-            $qp->name = 'component_del_usr_cfg_if';
-            $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id());
-            $db_con->set_fields(array(component::FLD_ID));
-            $db_con->set_where_std($this->id);
-            $qp->sql = $db_con->select_by_set_id();
-            $qp->par = $db_con->get_par();
-            $db_row = $db_con->get1($qp);
-            if ($db_row != null) {
-                $this->usr_cfg_id = $db_row[component::FLD_ID];
-            }
-            if (!$this->has_usr_cfg()) {
-                // create an entry in the user sandbox
-                $db_con->set_class(component::class, true);
-                $log_id = $db_con->insert_old(array(component::FLD_ID, user::FLD_ID), array($this->id, $this->user()->id()));
-                if ($log_id <= 0) {
-                    log_err('Insert of user_component failed.');
-                    $result = false;
-                } else {
-                    // TODO check if correct in all cases
-                    $this->usr_cfg_id = $this->id;
-                    $result = true;
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
      * set the update parameters for the component code id
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_code_id(sql_db $db_con, component $db_rec): string
+    function save_field_code_id(sql_db $db_con, component $db_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($this->code_id <> $db_rec->code_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->code_id;
             $log->new_value = $this->code_id;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(sql::FLD_CODE_ID);
-            $result = $this->save_field($db_con, $log);
+            $usr_msg = $this->save_field($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1042,20 +1096,20 @@ class component extends sandbox_typed
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_ui_msg_id(sql_db $db_con, component $db_rec): string
+    function save_field_ui_msg_id(sql_db $db_con, component $db_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($this->ui_msg_code_id <> $db_rec->ui_msg_code_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->ui_msg_code_id;
             $log->new_value = $this->ui_msg_code_id;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_UI_MSG_ID);
-            $result = $this->save_field($db_con, $log);
+            $usr_msg = $this->save_field($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1064,11 +1118,11 @@ class component extends sandbox_typed
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
      * @param component $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_wrd_row(sql_db $db_con, component $db_rec, component $std_rec): string
+    function save_field_wrd_row(sql_db $db_con, component $db_rec, component $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->row_phrase_id() <> $this->row_phrase_id()) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->row_phrase_name();
@@ -1079,9 +1133,9 @@ class component extends sandbox_typed
             $log->std_id = $std_rec->row_phrase_id();
             $log->row_id = $this->id();
             $log->set_field(self::FLD_ROW_PHRASE);
-            $result = $this->save_field_user($db_con, $log);
+            $usr_msg->add($this->save_field_user($db_con, $log));
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1090,11 +1144,11 @@ class component extends sandbox_typed
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
      * @param component $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_wrd_col(sql_db $db_con, component $db_rec, component $std_rec): string
+    function save_field_wrd_col(sql_db $db_con, component $db_rec, component $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->col_phrase_id() <> $this->col_phrase_id()) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->col_phrase_name();
@@ -1105,9 +1159,9 @@ class component extends sandbox_typed
             $log->std_id = $std_rec->col_phrase_id();
             $log->row_id = $this->id();
             $log->set_field(self::FLD_COL_PHRASE);
-            $result = $this->save_field_user($db_con, $log);
+            $usr_msg = $this->save_field_user($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1116,11 +1170,11 @@ class component extends sandbox_typed
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
      * @param component $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_wrd_col2(sql_db $db_con, component $db_rec, component $std_rec): string
+    function save_field_wrd_col2(sql_db $db_con, component $db_rec, component $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->word_id_col2 <> $this->word_id_col2) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->load_wrd_col2();
@@ -1129,11 +1183,11 @@ class component extends sandbox_typed
             $log->new_id = $this->word_id_col2;
             $log->std_value = $std_rec->load_wrd_col2();
             $log->std_id = $std_rec->word_id_col2;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(self::FLD_COL2_PHRASE);
-            $result = $this->save_field_user($db_con, $log);
+            $usr_msg = $this->save_field_user($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1142,11 +1196,11 @@ class component extends sandbox_typed
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param component $db_rec the view component as saved in the database before the update
      * @param component $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_field_formula(sql_db $db_con, component $db_rec, component $std_rec): string
+    function save_field_formula(sql_db $db_con, component $db_rec, component $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->formula_id <> $this->formula_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->load_formula();
@@ -1155,32 +1209,53 @@ class component extends sandbox_typed
             $log->new_id = $this->formula_id;
             $log->std_value = $std_rec->load_formula();
             $log->std_id = $std_rec->formula_id;
-            $log->row_id = $this->id;
+            $log->row_id = $this->id();
             $log->set_field(formula::FLD_ID);
-            $result = $this->save_field_user($db_con, $log);
+            $usr_msg = $this->save_field_user($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * save all updated component fields excluding the name, because already done when adding a component
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param component|sandbox $db_rec the view component as saved in the database before the update
-     * @param component|sandbox $std_rec the default parameter used for this view component
-     * @returns string any message that should be shown to the user or a empty string if everything is fine
+     * @param component|sandbox $db_obj the view component as saved in the database before the update
+     * @param component|sandbox $norm_obj the default parameter used for this view component
+     * @returns string any message that should be shown to the user or an empty string if everything is fine
      */
-    function save_fields(sql_db $db_con, component|sandbox $db_rec, component|sandbox $std_rec): string
+    function save_all_fields(sql_db $db_con, component|sandbox $db_obj, component|sandbox $norm_obj): user_message
     {
-        $result = parent::save_fields_typed($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_code_id($db_con, $db_rec);
-        $result .= $this->save_field_ui_msg_id($db_con, $db_rec);
-        $result .= $this->save_field_wrd_row($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_wrd_col($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_wrd_col2($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_formula($db_con, $db_rec, $std_rec);
+        $result = parent::save_fields_typed($db_con, $db_obj, $norm_obj);
+        $result->add($this->save_field_code_id($db_con, $db_obj));
+        $result->add($this->save_field_ui_msg_id($db_con, $db_obj));
+        $result->add($this->save_field_wrd_row($db_con, $db_obj, $norm_obj));
+        $result->add($this->save_field_wrd_col($db_con, $db_obj, $norm_obj));
+        $result->add($this->save_field_wrd_col2($db_con, $db_obj, $norm_obj));
+        $result->add($this->save_field_formula($db_con, $db_obj, $norm_obj));
         log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         return $result;
+    }
+
+
+    /*
+     * save helper
+     */
+
+    /**
+     * @return array with the reserved component names
+     */
+    protected function reserved_names(): array
+    {
+        return component_api::RESERVED_COMPONENTS;
+    }
+
+    /**
+     * @return array with the fixed component names for db read testing
+     */
+    protected function fixed_names(): array
+    {
+        return component_api::FIXED_NAMES;
     }
 
 
@@ -1194,7 +1269,7 @@ class component extends sandbox_typed
      */
     function del_links(): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         // collect all component links where this component is used
         $lnk_lst = new component_link_list($this->user());
@@ -1203,10 +1278,10 @@ class component extends sandbox_typed
         // if there are links, delete if not used by anybody else than the user who has requested the deletion
         // or exclude the links for the user if the link is used by someone else
         if (!$lnk_lst->is_empty()) {
-            $result->add($lnk_lst->del());
+            $usr_msg->add($lnk_lst->del());
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 
@@ -1228,6 +1303,7 @@ class component extends sandbox_typed
             parent::db_fields_all(),
             [
                 self::FLD_TYPE,
+                self::FLD_STYLE,
                 sql::FLD_CODE_ID,
                 self::FLD_UI_MSG_ID,
                 self::FLD_ROW_PHRASE,
@@ -1254,9 +1330,9 @@ class component extends sandbox_typed
         sql_type_list     $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
-        $sc = new sql();
+        $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
@@ -1265,31 +1341,55 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE,
-                    $change_field_list->id($table_id . self::FLD_TYPE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . self::FLD_TYPE),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $component_types;
+            global $cmp_typ_cac;
+            if ($this->type_id() < 0) {
+                log_err('component type for ' . $this->dsp_id() . ' not found');
+            }
             $lst->add_type_field(
                 self::FLD_TYPE,
                 type_object::FLD_NAME,
                 $this->type_id(),
                 $sbx->type_id(),
-                $component_types
+                $cmp_typ_cac
+            );
+        }
+        if ($sbx->style_id() <> $this->style_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_STYLE,
+                    $cng_fld_cac->id($table_id . self::FLD_STYLE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            global $msk_sty_cac;
+            // TODO easy move to id function of type list
+            if ($this->style_id() < 0) {
+                log_err('component style for ' . $this->dsp_id() . ' not found');
+            }
+            $lst->add_type_field(
+                self::FLD_STYLE,
+                view_style::FLD_NAME,
+                $this->style_id(),
+                $sbx->style_id(),
+                $msk_sty_cac
             );
         }
         if ($sbx->code_id <> $this->code_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
-                    $change_field_list->id($table_id . sql::FLD_CODE_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . sql::FLD_CODE_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 sql::FLD_CODE_ID,
                 $this->code_id,
-                sql::FLD_CODE_ID_SQLTYP,
+                sql::FLD_CODE_ID_SQL_TYP,
                 $sbx->code_id
             );
         }
@@ -1297,14 +1397,14 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_UI_MSG_ID,
-                    $change_field_list->id($table_id . self::FLD_UI_MSG_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . self::FLD_UI_MSG_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_UI_MSG_ID,
                 $this->ui_msg_code_id,
-                self::FLD_UI_MSG_ID_SQLTYP,
+                self::FLD_UI_MSG_ID_SQL_TYP,
                 $sbx->ui_msg_code_id
             );
         }
@@ -1312,8 +1412,8 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ROW_PHRASE,
-                    $change_field_list->id($table_id . self::FLD_ROW_PHRASE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . self::FLD_ROW_PHRASE),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $old_val = $sbx->row_phrase_id();
@@ -1323,7 +1423,7 @@ class component extends sandbox_typed
             $lst->add_field(
                 self::FLD_ROW_PHRASE,
                 $this->row_phrase_id(),
-                phrase::FLD_ID_SQLTYP,
+                phrase::FLD_ID_SQL_TYP,
                 $old_val
             );
         }
@@ -1331,8 +1431,8 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_COL_PHRASE,
-                    $change_field_list->id($table_id . self::FLD_COL_PHRASE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . self::FLD_COL_PHRASE),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $old_val = $sbx->col_phrase_id();
@@ -1342,7 +1442,7 @@ class component extends sandbox_typed
             $lst->add_field(
                 self::FLD_COL_PHRASE,
                 $this->col_phrase_id(),
-                phrase::FLD_ID_SQLTYP,
+                phrase::FLD_ID_SQL_TYP,
                 $old_val
             );
         }
@@ -1350,8 +1450,8 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_COL2_PHRASE,
-                    $change_field_list->id($table_id . self::FLD_COL2_PHRASE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . self::FLD_COL2_PHRASE),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $old_val = $sbx->col_sub_phrase_id();
@@ -1361,7 +1461,7 @@ class component extends sandbox_typed
             $lst->add_field(
                 self::FLD_COL2_PHRASE,
                 $this->col_sub_phrase_id(),
-                phrase::FLD_ID_SQLTYP,
+                phrase::FLD_ID_SQL_TYP,
                 $old_val
             );
         }
@@ -1369,8 +1469,8 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula::FLD_ID,
-                    $change_field_list->id($table_id . formula::FLD_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . formula::FLD_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $old_val = $sbx->formula_id();
@@ -1380,7 +1480,7 @@ class component extends sandbox_typed
             $lst->add_field(
                 formula::FLD_ID,
                 $this->formula_id(),
-                formula::FLD_ID_SQLTYP,
+                formula::FLD_ID_SQL_TYP,
                 $old_val
             );
         }
@@ -1389,14 +1489,14 @@ class component extends sandbox_typed
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_LINK_TYPE,
-                    $change_field_list->id($table_id . self::FLD_LINK_TYPE),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . self::FLD_LINK_TYPE),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_LINK_TYPE,
                 $this->link_type_id,
-                self::FLD_LINK_TYPE_SQLTYP,
+                self::FLD_LINK_TYPE_SQL_TYP,
                 $sbx->link_type_id
             );
         }
@@ -1438,7 +1538,7 @@ class component extends sandbox_typed
     {
         $result = array();
 
-        if ($this->id > 0 and $this->user() != null) {
+        if ($this->id() > 0 and $this->user() != null) {
             $lst = new component_link_list($this->user());
             $lst->load_by_component($this);
             $result = $lst->view_ids();

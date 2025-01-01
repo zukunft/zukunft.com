@@ -30,22 +30,36 @@
   
 */
 
-namespace cfg;
+namespace cfg\phrase;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
+include_once API_PHRASE_PATH . 'term_list.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
 include_once WEB_PHRASE_PATH . 'term_list.php';
-include_once API_PHRASE_PATH . 'term_list.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\phrase\term_list as term_list_api;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\formula\formula;
+use cfg\sandbox\sandbox_list_named;
+use cfg\word\triple;
+use cfg\verb\verb;
+use cfg\word\word;
 use html\phrase\term_list as term_list_dsp;
 use shared\library;
-
 
 class term_list extends sandbox_list_named
 {
@@ -132,11 +146,11 @@ class term_list extends sandbox_list_named
      * create the common part of an SQL statement to retrieve a list of terms from the database
      * uses the term view which includes only the main fields
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql $sc, string $query_name): sql_par
+    private function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -154,10 +168,10 @@ class term_list extends sandbox_list_named
     /**
      * create an SQL statement to retrieve a list of terms from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql $sc, trm_ids $ids): sql_par
+    function load_sql_by_ids(sql_creator $sc, trm_ids $ids): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(term::FLD_ID, $ids->lst);
@@ -172,10 +186,10 @@ class term_list extends sandbox_list_named
      * create an SQL statement to retrieve a list of terms from the database
      * uses the erm view which includes only the main fields
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_like(sql $sc, string $pattern = ''): sql_par
+    function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
         $sc->add_where(term::FLD_NAME, $pattern, sql_par_type::LIKE_R);
@@ -247,36 +261,6 @@ class term_list extends sandbox_list_named
         return $this->load($qp);
     }
 
-
-    /*
-     * search
-     */
-
-    /**
-     * cast the finding by name for terms
-     *
-     * @param string $name the term name that should be returned
-     * @return term|null the found term or null if no name is found
-     */
-    function get_by_name(string $name): ?term
-    {
-        return parent::get_obj_by_name($name);
-    }
-
-
-    /*
-     * modification
-     */
-
-    /**
-     * add one term to the term list, but only if it is not yet part of the term list
-     * @param term|null $trm_to_add the term backend object that should be added
-     * @returns bool true the term has been added
-     */
-    function add(?term $trm_to_add): bool
-    {
-        return parent::add_obj($trm_to_add);
-    }
 
     /*
      * get function

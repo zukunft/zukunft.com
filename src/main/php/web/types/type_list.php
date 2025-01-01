@@ -39,10 +39,14 @@ include_once SHARED_PATH . 'api.php';
 include_once TYPES_PATH . 'type_object.php';
 include_once TYPES_PATH . 'protection.php';
 include_once HTML_PATH . 'html_selector.php';
+include_once WEB_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'json_fields.php';
 
+use html\user\user_message;
 use shared\api;
 use html\html_selector;
 use html\types\type_object as type_object_dsp;
+use shared\json_fields;
 use shared\library;
 
 class type_list
@@ -59,27 +63,32 @@ class type_list
     /**
      * set the vars of these list display objects bases on the api json array
      * @param array $json_array an api list json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_obj_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
+        $usr_msg = new user_message();
         foreach ($json_array as $value) {
-            if (array_key_exists(api::FLD_DESCRIPTION, $value)) {
+            if (!array_key_exists(json_fields::CODE_ID, $value)) {
+                $usr_msg->add_err('code id is missing for ' . implode(',', $value));
+            }
+            if (array_key_exists(json_fields::DESCRIPTION, $value)) {
                 $typ = new type_object_dsp(
-                    $value[api::FLD_ID],
-                    $value[api::FLD_CODE_ID],
-                    $value[api::FLD_NAME],
-                    $value[api::FLD_DESCRIPTION]
+                    $value[json_fields::ID],
+                    $value[json_fields::CODE_ID],
+                    $value[json_fields::NAME],
+                    $value[json_fields::DESCRIPTION]
                 );
             } else {
                 $typ = new type_object_dsp(
-                    $value[api::FLD_ID],
-                    $value[api::FLD_CODE_ID],
-                    $value[api::FLD_NAME]
+                    $value[json_fields::ID],
+                    $value[json_fields::CODE_ID],
+                    $value[json_fields::NAME]
                 );
             }
             $this->add_obj($typ);
         }
+        return $usr_msg;
     }
 
     /**
@@ -123,8 +132,18 @@ class type_list
         $type = $this->get($id);
         if ($type != null) {
             $result = $type->code_id;
-        //} else {
-            //log_err('Type code id not found for ' . $id . ' in ' . $this->dsp_id());
+        } else {
+            log_warning('Type code id not found for ' . $id . ' in ' . $this->dsp_id());
+        }
+        return $result;
+    }
+
+    function name(int $id): string
+    {
+        $result = '';
+        $type = $this->get($id);
+        if ($type != null) {
+            $result = $type->name;
         }
         return $result;
     }
@@ -142,11 +161,11 @@ class type_list
                 $key = array_search($id, $this->hash);
                 $lst_key = array_search($key, array_keys($this->hash));
                 $result = $this->lst[$lst_key];
-            //} else {
-                //log_err('Type with is ' . $id . ' not found in ' . $this->dsp_id());
+            } else {
+                log_warning('Type with is ' . $id . ' not found in ' . $this->dsp_id());
             }
-        //} else {
-            //log_debug('Type id not set');
+        } else {
+            log_debug('Type id not set');
         }
         return $result;
     }
@@ -191,26 +210,27 @@ class type_list
      */
 
     /**
+     * create the HTML code to select a type
      * @param array $key_lst the key value list for the selector
      * @param string $name the unique name inside the form for this selector
-     * @param string $form_name the name of the html form
+     * @param string $form the unique name of the html form
      * @param int $selected the id of the preselected phrase
      * @param string $col_class the formatting code to adjust the formatting
      * @param string $label the text show to the user
      * @returns string the html code to select a type from this list
      */
     function type_selector(
-        array $key_lst,
+        array  $key_lst,
         string $name = '',
-        string $form_name = '',
-        int $selected = 0,
+        string $form = '',
+        int    $selected = 0,
         string $col_class = '',
         string $label = ''
     ): string
     {
         $sel = new html_selector();
         $sel->name = $name;
-        $sel->form = $form_name;
+        $sel->form = $form;
         $sel->label = $label;
         $sel->lst = $key_lst;
         $sel->selected = $selected;
@@ -234,6 +254,14 @@ class type_list
                 $this->hash[$type->code_id] = $key;
             }
         }
+    }
+
+    /*
+     * debug
+     */
+    function dsp_id(): string
+    {
+        return '';
     }
 
 }

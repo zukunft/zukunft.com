@@ -5,12 +5,14 @@
     model/sandbox/sandbox_description.php - adding the description field to the _sandbox superclass
     -------------------------------------
 
-    This superclass should be used by the classes words, formula, ... su that users can link predefied behavier
+    This superclass should be used by the classes words, formula, ... su that users can link predefined behavior
 
     The main sections of this object are
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
-    - set and get:       to capsule the vars from unexpected changes
+    - set and get:       to capsule the variables from unexpected changes
+    - preloaded:         get preloaded information such as the type code id
+    - modify:            change potentially all variables of this sandbox object
     - cast:              create an api object and set the vars from an api json
     - information:       functions to make code easier to read
     - save:              manage to update the database
@@ -40,12 +42,20 @@
 
 */
 
-namespace cfg;
+namespace cfg\sandbox;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once DB_PATH . 'sql_db.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use api\api;
 use cfg\db\sql_db;
+use cfg\helper\db_object_seq_id;
+use cfg\ref\source;
+use cfg\user\user_message;
+use shared\json_fields;
 
 class sandbox_typed extends sandbox_named
 {
@@ -110,6 +120,21 @@ class sandbox_typed extends sandbox_named
 
 
     /*
+     * preloaded
+     */
+
+    /**
+     * the code id of the type for the export json
+     * must be overwritten by the child objects
+     * @return string with the code id of the type
+     */
+    private function type_code_id(): string
+    {
+        return 'type_code_id() function not overwritten by the ' . $this::class . ' object';
+    }
+
+
+    /*
      * cast
      */
 
@@ -132,22 +157,54 @@ class sandbox_typed extends sandbox_named
         $msg = parent::set_by_api_json($api_json);
 
         foreach ($api_json as $key => $value) {
-            if ($key == api::FLD_TYPE) {
+            if ($key == json_fields::TYPE) {
                 $this->set_type_id($value);
             }
         }
         return $msg;
     }
 
-    /**
-     * TODO deprecate or move to frontend part
-     * @param object $dsp_obj frontend API objects that should be filled with unique object name
-     */
-    function fill_dsp_obj(object $dsp_obj): void
-    {
-        parent::fill_api_obj($dsp_obj);
 
-        $dsp_obj->set_type_id($this->type_id());
+    /*
+     * im- and export
+     */
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = parent::export_json($do_load);
+
+        // TODO check for which object the code id should be used and why
+        if ($this->type_name() <> '') {
+            $vars[json_fields::TYPE_NAME] = $this->type_name();
+        }
+        return $vars;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this sandbox object based on the given object
+     * if the given type is not set (null) the type is not removed
+     * if the given type is zero (not null) the type is removed
+     *
+     * @param sandbox_typed|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(sandbox_typed|db_object_seq_id $sbx): user_message
+    {
+        $usr_msg = parent::fill($sbx);
+        if ($sbx->type_id() != null) {
+            $this->set_type_id($sbx->type_id());
+        }
+        return $usr_msg;
     }
 
 
@@ -159,7 +216,7 @@ class sandbox_typed extends sandbox_named
      * check if the typed object in the database needs to be updated
      *
      * @param sandbox_typed $db_obj the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the datanase
+     * @return bool true if this word has infos that should be saved in the database
      */
     function needs_db_update_typed(sandbox_typed $db_obj): bool
     {
@@ -182,13 +239,13 @@ class sandbox_typed extends sandbox_named
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param source $db_rec the database record before the saving
      * @param source $std_rec the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_fields_typed(sql_db $db_con, sandbox_typed $db_rec, sandbox_typed $std_rec): string
+    function save_fields_typed(sql_db $db_con, sandbox_typed $db_rec, sandbox_typed $std_rec): user_message
     {
-        $result = parent::save_fields_named($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_type($db_con, $db_rec, $std_rec);
-        return $result;
+        $usr_msg = parent::save_fields_named($db_con, $db_rec, $std_rec);
+        $usr_msg->add($this->save_field_type($db_con, $db_rec, $std_rec));
+        return $usr_msg;
     }
 
 }

@@ -32,10 +32,13 @@
 
 namespace api\word;
 
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+
 use api\word\triple as triple_api;
 use api\sandbox\list_object as list_api;
-use cfg\phrase_type;
+use cfg\phrase\phrase_type;
 use html\word\triple_list as triple_list_dsp;
+use shared\types\phrase_type as phrase_type_shared;
 
 class triple_list extends list_api
 {
@@ -144,7 +147,7 @@ class triple_list extends list_api
      */
     function time_lst(): triple_list
     {
-        return $this->filter(phrase_type::TIME);
+        return $this->filter(phrase_type_shared::TIME);
     }
 
     /**
@@ -152,7 +155,7 @@ class triple_list extends list_api
      */
     function measure_lst(): triple_list
     {
-        return $this->filter(phrase_type::MEASURE);
+        return $this->filter(phrase_type_shared::MEASURE);
     }
 
     /**
@@ -186,7 +189,7 @@ class triple_list extends list_api
      */
     function percent_lst(): triple_list
     {
-        return $this->filter(phrase_type::PERCENT);
+        return $this->filter(phrase_type_shared::PERCENT);
     }
 
     /**

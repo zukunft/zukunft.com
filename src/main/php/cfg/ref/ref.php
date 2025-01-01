@@ -59,22 +59,44 @@
    
 */
 
-namespace cfg;
+namespace cfg\ref;
 
-include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
-include_once SERVICE_EXPORT_PATH . 'ref_exp.php';
+// include should also contain the files not shown by use to enable automatic java and rust translation
+// the order is first the extends and then in alphabetic order except word before triple
+// the order should in any case match the use order but with the additional files which does not need to be used
+include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
+include_once API_REF_PATH . 'ref.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+include_once MODEL_LOG_PATH . 'change_link.php';
+include_once MODEL_LOG_PATH . 'change_table_list.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_REF_PATH . 'ref_type.php';
 include_once MODEL_REF_PATH . 'ref_type_list.php';
-include_once API_REF_PATH . 'ref.php';
 include_once WEB_REF_PATH . 'ref.php';
 include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_with_type.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use api\api;
+
 use api\ref\ref as ref_api;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -82,14 +104,21 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\export\sandbox_exp;
-use cfg\export\ref_exp;
+use cfg\helper\combine_named;
+use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
 use cfg\log\change_table_list;
+use cfg\phrase\phrase;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_link;
+use cfg\sandbox\sandbox_named;
+use cfg\user\user;
+use cfg\user\user_message;
+use shared\json_fields;
 
-class ref extends sandbox_link_with_type
+class ref extends sandbox_link
 {
 
     /*
@@ -98,20 +127,20 @@ class ref extends sandbox_link_with_type
 
     // object specific database and JSON object field names
     // *_COM: the description of the field
-    // *_SQLTYP is the sql data type used for the field
-    const TBL_COMMENT = 'to link external data to internal for syncronisation';
+    // *_SQL_TYP is the sql data type used for the field
+    const TBL_COMMENT = 'to link external data to internal for synchronisation';
     const FLD_ID = 'ref_id';
     const FLD_USER_COM = 'the user who has created or adjusted the reference';
     const FLD_EX_KEY_COM = 'the unique external key used in the other system';
     const FLD_EX_KEY = 'external_key';
-    const FLD_EX_KEY_SQLTYP = sql_field_type::NAME;
+    const FLD_EX_KEY_SQL_TYP = sql_field_type::NAME;
     const FLD_TYPE = 'ref_type_id';
-    const FLD_URL_COM = 'the concrete url for the entry inluding the item id';
+    const FLD_URL_COM = 'the concrete url for the entry including the item id';
     const FLD_URL = 'url';
-    const FLD_URL_SQLTYP = sql_field_type::TEXT;
+    const FLD_URL_SQL_TYP = sql_field_type::TEXT;
     const FLD_SOURCE_COM = 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
     const FLD_SOURCE = 'source_id';
-    const FLD_PHRASE_COM = 'the phrase for which the external data should be syncronised';
+    const FLD_PHRASE_COM = 'the phrase for which the external data should be synchronised';
 
     // field names that cannot be user specific
     const FLD_NAMES = array(
@@ -133,26 +162,24 @@ class ref extends sandbox_link_with_type
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_SANDBOX_FLD_NAMES = array(
-        phrase::FLD_ID,
         self::FLD_EX_KEY,
-        self::FLD_TYPE,
         self::FLD_URL,
         sandbox_named::FLD_DESCRIPTION,
         sandbox::FLD_EXCLUDED
     );
     // list of fields that must be set
     const FLD_LST_MUST_BUT_STD_ONLY = array(
-        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
+        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
     );
     // list of fields that must be set, but CAN be changed by the user
     const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQLTYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
+        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
     );
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_URL, self::FLD_URL_SQLTYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
+        [self::FLD_URL, self::FLD_URL_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
         [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
-        [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
+        [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CANNOT be changed by the user
     const FLD_LST_NON_CHANGEABLE = array(
@@ -195,7 +222,7 @@ class ref extends sandbox_link_with_type
     {
         parent::reset();
         $this->create_objects($this->user());
-        $this->set_type_id(0);
+        $this->set_predicate_id(0);
         $this->external_key = '';
         $this->source = null;
         $this->url = null;
@@ -204,7 +231,7 @@ class ref extends sandbox_link_with_type
 
     private function create_objects(user $usr): void
     {
-        global $ref_types;
+        global $ref_typ_cac;
         $this->set_phrase(new phrase($usr));
     }
 
@@ -212,7 +239,7 @@ class ref extends sandbox_link_with_type
      * set the class vars based on a database record
      *
      * @param array|null $db_row is an array with the database values
-     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @return bool true if the reference is loaded and valid
@@ -224,12 +251,12 @@ class ref extends sandbox_link_with_type
         string $id_fld = ''
     ): bool
     {
-        global $ref_types;
+        global $ref_typ_cac;
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_phrase_by_id($db_row[phrase::FLD_ID]);
             $this->external_key = $db_row[self::FLD_EX_KEY];
-            $this->set_type_id($db_row[self::FLD_TYPE]);
+            $this->set_predicate_id($db_row[self::FLD_TYPE]);
             $this->url = $db_row[self::FLD_URL];
             $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
             $this->set_source_by_id($db_row[source::FLD_ID]);
@@ -248,19 +275,21 @@ class ref extends sandbox_link_with_type
 
     /**
      * set the most often used reference vars with one set statement
-     * @param int $id mainly for test creation the database id of the reference
+     * @param int $id the database id of the reference mainly for unit testing
+     * @param phrase|null $phr the phrase that should be linked to an external source for data exchange
      */
-    function set(int $id = 0): void
+    function set(int $id = 0, phrase $phr = null, int $predicate_id = 0, string|null $external_key = null): void
     {
         $this->set_id($id);
-    }
-
-    /**
-     * @param int $id the database id of the verb
-     */
-    function set_id(int $id): void
-    {
-        $this->id = $id;
+        if ($phr != null) {
+            $this->set_phrase($phr);
+        }
+        if ($predicate_id != 0) {
+            $this->set_predicate_id($predicate_id);
+        }
+        if ($external_key != null) {
+            $this->set_to_id($external_key);
+        }
     }
 
     /**
@@ -306,6 +335,40 @@ class ref extends sandbox_link_with_type
     }
 
     /**
+     * interface function to overwrite the corresponding parent function
+     * @return int the id of the linked object with is in this case the phrase id (or maybe later the group_id)
+     */
+    function from_id(): int
+    {
+            return $this->phrase_id();
+    }
+
+    /**
+     * interface function to overwrite the corresponding parent function
+     * @param string $external_key the unique id of the external object
+     */
+    function set_to_id(string $external_key): void
+    {
+        $this->external_key = $external_key;
+    }
+
+    /**
+     * @return int|string the unique id of the external object
+     */
+    function to_id(): int|string
+    {
+        return $this->external_key;
+    }
+
+    /**
+     * @return string the unique external key of the linked object
+     */
+    function to_name(): string
+    {
+        return $this->external_key;
+    }
+
+    /**
      * @param string|null $name the name of the reference
      */
     function set_name(?string $name): void
@@ -313,37 +376,10 @@ class ref extends sandbox_link_with_type
         $this->name = $name;
     }
 
-    /**
-     * @return int the database id which is not 0 if the object has been saved
-     */
-    function id(): int
-    {
-        return $this->id;
-    }
-
-    /**
-     * @return int the id of the linked object with is in this case the phrase id (or maybe later the group_id))
-     */
-    function from_id(): int
-    {
-        if ($this->fob() == null) {
-            return 0;
-        } else {
-            return $this->phrase()->id();
-        }
-    }
-
-    /**
-     * @return int|string the id of the linked object with is in this case the phrase id (or maybe later the group_id))
-     */
-    function to_id(): int|string
-    {
-        return $this->external_key;
-    }
-
+    // TODO check why >= and not >
     function has_type(): bool
     {
-        if ($this->type_id() >= 0) {
+        if ($this->predicate_id() >= 0) {
             return true;
         } else {
             return false;
@@ -401,7 +437,7 @@ class ref extends sandbox_link_with_type
     {
 
         $obj_cpy = parent::cloned();
-        $obj_cpy->set_type_id($this->type_id());
+        $obj_cpy->set_predicate_id($this->predicate_id());
         $obj_cpy->external_key = $external_key;
         return $obj_cpy;
     }
@@ -412,23 +448,23 @@ class ref extends sandbox_link_with_type
      */
 
     /**
-     * get the name of the reference type
-     * @return string the name of the reference type
+     * overwrite the link type function
+     * @return string|null the name of the verb
      */
-    function type_name(): string
+    function predicate_name(): ?string
     {
-        global $ref_types;
-        return $ref_types->name($this->type_id);
+        global $ref_typ_cac;
+        return $ref_typ_cac->name($this->predicate_id());
     }
 
     /**
      * get the code_id of the reference type
      * @return string the code_id of the reference type
      */
-    function type_code_id(): string
+    function predicate_code_id(): string
     {
-        global $ref_types;
-        return $ref_types->code_id($this->type_id);
+        global $ref_typ_cac;
+        return $ref_typ_cac->code_id($this->predicate_id);
     }
 
     /**
@@ -436,8 +472,8 @@ class ref extends sandbox_link_with_type
      */
     function type(): ?type_object
     {
-        global $ref_types;
-        return $ref_types->get($this->type_id);
+        global $ref_typ_cac;
+        return $ref_typ_cac->get($this->predicate_id);
     }
 
 
@@ -481,24 +517,24 @@ class ref extends sandbox_link_with_type
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == api::FLD_PHRASE) {
+            if ($key == json_fields::PHRASE) {
                 if ($value != '' and $value != 0) {
                     $phr = new phrase($this->user());
                     $phr->set_id($value);
                     $this->set_phrase($phr);
                 }
             }
-            if ($key == api::FLD_EXTERNAL_KEY) {
+            if ($key == json_fields::EXTERNAL_KEY) {
                 if ($value <> '') {
                     $this->external_key = $value;
                 }
             }
-            if ($key == api::FLD_URL) {
+            if ($key == json_fields::URL) {
                 if ($value <> '') {
                     $this->url = $value;
                 }
             }
-            if ($key == api::FLD_DESCRIPTION) {
+            if ($key == json_fields::DESCRIPTION) {
                 if ($value <> '') {
                     $this->description = $value;
                 }
@@ -529,14 +565,30 @@ class ref extends sandbox_link_with_type
     }
 
     /**
+     * load a reference by the id, predicate and the external key
+     * @param int $from the id of the phrase that is linked
+     * @param int $predicate_id the type id of the link
+     * @param int|string $to the unique external key to which is the link directed
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_link_id(int $from, int $predicate_id = 0, int|string $to = 0, string $class = self::class): int
+    {
+        global $db_con;
+
+        log_debug($from . ' ' . $predicate_id . ' ' . $to);
+        $qp = $this->load_sql_by_link($db_con->sql_creator(), $from, $predicate_id, $to, $class);
+        return $this->load($qp);
+    }
+
+    /**
      * just set the class name for the user sandbox function
      * load a reference object by database id
      * @param int $phr_id the id of the phrase that is referenced
      * @param int $type_id the id of the reference type
-     * @param string $class the reference class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_link_ids(int $phr_id, int $type_id, string $class = self::class): int
+    function load_by_link_ids(int $phr_id, int $type_id): int
     {
         global $db_con;
 
@@ -549,10 +601,10 @@ class ref extends sandbox_link_with_type
     /**
      * create the SQL to load the default ref always by the id
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_standard_sql(sql $sc): sql_par
+    function load_standard_sql(sql_creator $sc): sql_par
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
@@ -585,12 +637,12 @@ class ref extends sandbox_link_with_type
     /**
      * create the common part of an SQL statement to retrieve the parameters of a ref from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         return parent::load_sql_usr_num($sc, $this, $query_name);
     }
@@ -598,12 +650,12 @@ class ref extends sandbox_link_with_type
     /**
      * create an SQL statement to retrieve a ref by id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $phr_id the id of the phrase that is referenced
      * @param int $type_id the id of the reference type
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_link_ids(sql $sc, int $phr_id, int $type_id): sql_par
+    function load_sql_by_link_ids(sql_creator $sc, int $phr_id, int $type_id): sql_par
     {
         $qp = $this->load_sql($sc, 'link_ids');
         $sc->add_where(phrase::FLD_ID, $phr_id);
@@ -624,7 +676,7 @@ class ref extends sandbox_link_with_type
         global $db_con;
 
         $db_row = $db_con->get1($qp);
-        $this->row_mapper_sandbox($db_row);
+        $this->row_mapper_sandbox($db_row, false, true);
         return $this->id();
     }
 
@@ -701,14 +753,14 @@ class ref extends sandbox_link_with_type
     {
         $result = parent::import_obj($in_ex_json, $test_obj);
 
-        global $ref_types;
+        global $ref_typ_cac;
         // reset of object not needed, because the calling function has just created the object
         foreach ($in_ex_json as $key => $value) {
-            if ($key == sandbox_exp::FLD_SOURCE) {
+            if ($key == json_fields::SOURCE_NAME) {
                 $src = new source($this->user());
                 if (!$test_obj) {
                     $src->load_by_name($value);
-                    if ($src->id == 0) {
+                    if ($src->id() == 0) {
                         $result->add_message('Cannot find source "' . $value . '" when importing ' . $this->dsp_id());
                     }
                 } else {
@@ -716,17 +768,17 @@ class ref extends sandbox_link_with_type
                 }
                 $this->source = $src;
             }
-            if ($key == sandbox_exp::FLD_TYPE) {
-                $this->set_type_id($ref_types->id($value));
+            if ($key == json_fields::TYPE_NAME) {
+                $this->set_predicate_id($ref_typ_cac->id($value));
 
-                if ($this->type_id() == null or $this->type_id() <= 0) {
+                if ($this->predicate_id() == null or $this->predicate_id() <= 0) {
                     $result->add_message('Reference type for ' . $value . ' not found');
                 }
             }
-            if ($key == sandbox_exp::FLD_NAME) {
+            if ($key == json_fields::NAME) {
                 $this->external_key = $value;
             }
-            if ($key == sandbox_exp::FLD_DESCRIPTION) {
+            if ($key == json_fields::DESCRIPTION) {
                 $this->description = $value;
             }
             if ($key == self::FLD_URL) {
@@ -737,7 +789,7 @@ class ref extends sandbox_link_with_type
         if (!$test_obj) {
             if ($this->load_objects()) {
                 if ($result->is_ok()) {
-                    $result->add_message($this->save());
+                    $result->add($this->save());
                 }
             }
         }
@@ -746,31 +798,30 @@ class ref extends sandbox_link_with_type
     }
 
     /**
-     * create a reference object for export (so excluding e.g. the database id)
-     * @return ref_exp a reduced reference object for the JSON message creation
+     * create an array with the export json fields of this reference excluding e.g. the database id
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
      */
-    function export_obj(bool $do_load = true): sandbox_exp
+    function export_json(bool $do_load = true): array
     {
-        global $ref_types;
-        $result = new ref_exp();
+        $vars = [];
 
         if ($this->source != null) {
-            $result->source = $this->source->name();
+            $vars[json_fields::SOURCE_NAME] = $this->source->name();
         }
-        if ($this->type_id > 0) {
-            $result->type = $this->type_code_id();
+        if ($this->predicate_id > 0) {
+            $vars[json_fields::TYPE_NAME] = $this->predicate_code_id();
         }
         if ($this->external_key <> '') {
-            $result->name = $this->external_key;
+            $vars[json_fields::NAME] = $this->external_key;
         }
         if ($this->description <> '') {
-            $result->description = $this->description;
+            $vars[json_fields::DESCRIPTION] = $this->description;
         }
         if ($this->url <> '') {
-            $result->url = $this->url;
+            $vars[json_fields::URL] = $this->url;
         }
-
-        return $result;
+        return $vars;
     }
 
 
@@ -789,7 +840,7 @@ class ref extends sandbox_link_with_type
         if ($this->phrase() == null) {
             log_err('The phrase object must be set to log adding an external reference.', 'ref->log_add');
         }
-        if ($this->type_id() <= 0) {
+        if ($this->predicate_id() <= 0) {
             log_err('The reference type object must be set to log adding an external reference.', 'ref->log_add');
         }
 
@@ -822,7 +873,7 @@ class ref extends sandbox_link_with_type
         $log->new_from = $this->phrase();
         $log->new_link = $this->type();
         $log->new_to = $this;
-        $log->row_id = $this->id;
+        $log->row_id = $this->id();
         $log->add();
 
         return $log;
@@ -839,7 +890,7 @@ class ref extends sandbox_link_with_type
         if ($this->phrase() == null) {
             log_err('The phrase object must be set to log deletion of an external reference.', 'ref->log_del');
         }
-        if ($this->type_id() <= 0) {
+        if ($this->predicate_id() <= 0) {
             log_err('The reference type object must be set to log deletion of an external reference.', 'ref->log_del');
         }
 
@@ -849,7 +900,7 @@ class ref extends sandbox_link_with_type
         $log->old_from = $this->phrase();
         $log->old_link = $this->type();
         $log->old_to = $this;
-        $log->row_id = $this->id;
+        $log->row_id = $this->id();
         $log->add();
 
         return $log;
@@ -865,11 +916,11 @@ class ref extends sandbox_link_with_type
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param ref|sandbox $db_rec the database record before the saving
      * @param ref|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    private function save_field_description(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): string
+    private function save_field_description(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         // if the plural is not set, don't overwrite any db entry
         if ($this->description <> Null) {
             if ($this->description <> $db_rec->description) {
@@ -877,12 +928,12 @@ class ref extends sandbox_link_with_type
                 $log->old_value = $db_rec->description;
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
-                $log->row_id = $this->id;
+                $log->row_id = $this->id();
                 $log->set_field(sandbox_named::FLD_DESCRIPTION);
-                $result = $this->save_field_user($db_con, $log);
+                $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -890,11 +941,11 @@ class ref extends sandbox_link_with_type
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param ref|sandbox $db_rec the database record before the saving
      * @param ref|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    private function save_field_url(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): string
+    private function save_field_url(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         // if the plural is not set, don't overwrite any db entry
         if ($this->url <> Null) {
             if ($this->url <> $db_rec->url) {
@@ -902,12 +953,12 @@ class ref extends sandbox_link_with_type
                 $log->old_value = $db_rec->url;
                 $log->new_value = $this->url;
                 $log->std_value = $std_rec->url;
-                $log->row_id = $this->id;
+                $log->row_id = $this->id();
                 $log->set_field(self::FLD_URL);
-                $result = $this->save_field_user($db_con, $log);
+                $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -915,11 +966,11 @@ class ref extends sandbox_link_with_type
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param ref|sandbox $db_rec the database record before the saving
      * @param ref|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    private function save_field_source(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): string
+    private function save_field_source(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->source_id() <> $this->source_id()) {
             $log = $this->log_upd_field();
             $log->old_value = $db_rec->source_name();
@@ -930,26 +981,26 @@ class ref extends sandbox_link_with_type
             $log->std_id = $std_rec->source_id();
             $log->row_id = $this->id();
             $log->set_field(self::FLD_SOURCE);
-            $result = $this->save_field_user($db_con, $log);
+            $usr_msg->add($this->save_field_user($db_con, $log));
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * save all updated reference fields
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param ref|sandbox $db_rec the database record before the saving
-     * @param ref|sandbox $std_rec the database record defined as standard because it is used by most users
-     * @return string the message shown to the user why the action has failed or an empty string if everything is fine
+     * @param ref|sandbox $db_obj the database record before the saving
+     * @param ref|sandbox $norm_obj the database record defined as standard because it is used by most users
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save_fields(sql_db $db_con, ref|sandbox $db_rec, ref|sandbox $std_rec): string
+    function save_all_fields(sql_db $db_con, ref|sandbox $db_obj, ref|sandbox $norm_obj): user_message
     {
-        $result = parent::save_fields($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_description($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_url($db_con, $db_rec, $std_rec);
-        $result .= $this->save_field_source($db_con, $db_rec, $std_rec);
+        $usr_msg = parent::save_all_fields($db_con, $db_obj, $norm_obj);
+        $usr_msg->add($this->save_field_description($db_con, $db_obj, $norm_obj));
+        $usr_msg->add($this->save_field_url($db_con, $db_obj, $norm_obj));
+        $usr_msg->add($this->save_field_source($db_con, $db_obj, $norm_obj));
         log_debug('all fields for "' . $this->dsp_id() . '" has been saved');
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -962,16 +1013,16 @@ class ref extends sandbox_link_with_type
         log_debug('ref->add ' . $this->dsp_id());
 
         global $db_con;
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
-            $usr_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-            if ($usr_msg->is_ok()) {
-                $this->id = $usr_msg->get_row_id();
+            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+            if ($ins_msg->is_ok()) {
+                $this->set_id($ins_msg->get_row_id());
             }
-            $result->add($usr_msg);
+            $usr_msg->add($ins_msg);
         } else {
             // log the insert attempt first
             $log = $this->log_link_add();
@@ -980,14 +1031,14 @@ class ref extends sandbox_link_with_type
                 $db_con->set_class(ref::class);
                 $db_con->set_usr($this->user()->id());
 
-                $this->id = $db_con->insert_old(
+                $this->set_id($db_con->insert_old(
                     array(phrase::FLD_ID, self::FLD_EX_KEY, self::FLD_TYPE),
-                    array($this->phrase_id(), $this->external_key, $this->type_id));
-                if ($this->id > 0) {
+                    array($this->phrase_id(), $this->external_key, $this->predicate_id)));
+                if ($this->id() > 0) {
                     // update the id in the log for the correct reference
-                    if (!$log->add_ref($this->id)) {
-                        $result->add_message('Adding reference ' . $this->dsp_id() . ' in the log failed.');
-                        log_err($result->get_message(), 'ref->add');
+                    if (!$log->add_ref($this->id())) {
+                        $usr_msg->add_message('Adding reference ' . $this->dsp_id() . ' in the log failed.');
+                        log_err($usr_msg->get_message(), 'ref->add');
                     } else {
                         // create an empty db_rec element to force saving of all set fields
                         $db_rec = clone $this;
@@ -997,16 +1048,16 @@ class ref extends sandbox_link_with_type
                         $db_rec->set_user($this->user());
                         $std_rec = clone $db_rec;
                         // save the object fields
-                        $result->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                        $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                     }
                 } else {
-                    $result->add_message('Adding reference ' . $this->dsp_id() . ' failed.');
-                    log_err($result->get_message(), 'ref->add');
+                    $usr_msg->add_message('Adding reference ' . $this->dsp_id() . ' failed.');
+                    log_err($usr_msg->get_message(), 'ref->add');
                 }
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1019,8 +1070,8 @@ class ref extends sandbox_link_with_type
 
         $db_chk = clone $this;
         $db_chk->reset();
-        $db_chk->load_by_link_ids($this->phrase_id(), $this->type_id());
-        if ($db_chk->id > 0) {
+        $db_chk->load_by_link_ids($this->phrase_id(), $this->predicate_id());
+        if ($db_chk->id() > 0) {
             log_debug('ref->get_similar an external reference for ' . $this->dsp_id() . ' already exists');
             $result = $db_chk;
         }
@@ -1030,15 +1081,16 @@ class ref extends sandbox_link_with_type
 
     /**
      * update a ref in the database or update the existing
+     * TODO review by comparing with sandbox function
      * @param bool $use_func if true a predefined function is used that also creates the log entries
-     * @return string the id of the updated or created reference
+     * @return user_message the id of the updated or created reference
      */
-    function save(?bool $use_func = null): string
+    function save(?bool $use_func = null): user_message
     {
         log_debug();
 
         global $db_con;
-        $result = '';
+        $usr_msg = new user_message();
 
         // decide which db write method should be used
         if ($use_func === null) {
@@ -1052,21 +1104,21 @@ class ref extends sandbox_link_with_type
         $db_con->set_class(ref::class);
 
         // check if the external reference is supposed to be added
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             // check possible duplicates before adding
             log_debug('ref->save check possible duplicates before adding ' . $this->dsp_id());
             $similar = $this->get_similar();
             if (isset($similar)) {
-                if ($similar->id <> 0) {
-                    $this->id = $similar->id;
+                if ($similar->id() != 0) {
+                    $this->set_id($similar->id());
                 }
             }
         }
 
         // create a new object or update an existing
-        if ($this->id <= 0) {
+        if ($this->id() <= 0) {
             log_debug('add ' . $this->dsp_id());
-            $result .= $this->add($use_func)->get_message();
+            $usr_msg->add($this->add($use_func));
         } else {
             log_debug('update ' . $this->dsp_id());
 
@@ -1074,19 +1126,19 @@ class ref extends sandbox_link_with_type
             // done first, because it needs to be done for user and general object values
             $db_rec = clone $this;
             $db_rec->reset();
-            $db_rec->load_by_id($this->id);
+            $db_rec->load_by_id($this->id());
             log_debug('ref->save reloaded from db');
             $std_rec = new ref($this->user()); // must also be set to allow to take the ownership
-            $std_rec->id = $this->id;
+            $std_rec->set_id($this->id());
             $std_rec->load_standard();
-            log_debug("standard reference settings loaded (" . $std_rec->id . ")");
+            log_debug("standard reference settings loaded (" . $std_rec->id() . ")");
 
             // if needed log the change and update the database
             if ($this->external_key <> $db_rec->external_key) {
                 $log = $this->log_link_upd($db_rec);
                 if ($log->id() > 0) {
                     $db_con->set_class(ref::class);
-                    if ($db_con->update_old($this->id, self::FLD_EX_KEY, $this->external_key)) {
+                    if ($db_con->update_old($this->id(), self::FLD_EX_KEY, $this->external_key)) {
                         log_debug('ref->save update ... done.');
                     }
                 }
@@ -1094,53 +1146,16 @@ class ref extends sandbox_link_with_type
 
             // if everything has been fine until here
             // update the
-            if ($result == '') {
-                $result = $this->save_fields($db_con, $db_rec, $std_rec);
-            }
-        }
-
-        return $result;
-    }
-
-
-    /*
-     * del
-     */
-
-    /**
-     * delete a reference of return false if it fails
-     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
-     * @return user_message in case of an issue with the message to the user and a suggested solution
-     */
-    function del(?bool $use_func = null): user_message
-    {
-        global $db_con;
-        $result = new user_message();
-
-        $reloaded = false;
-        $reloaded_id = $this->load_by_id($this->id());
-        if ($reloaded_id != 0) {
-            $reloaded = true;
-        }
-        if (!$reloaded) {
-            log_warning('Reload of ref ' . $this->dsp_id() . ' for deletion failed', 'ref->del');
-        } else {
-            if ($this->id <= 0) {
-                log_warning('Delete failed, because it seems that the ref ' . $this->dsp_id() . ' has been deleted in the meantime.', 'ref->del');
-            } else {
-                $log = $this->log_link_del();
-                if ($log->id() > 0) {
-                    $db_con->set_class(ref::class);
-                    $del_result = $db_con->delete_old(self::FLD_ID, $this->id);
-                    if ($del_result == '') {
-                        log_debug('done.');
-                    } else {
-                        $result->add_message($del_result);
-                    }
+            if ($usr_msg->is_ok()) {
+                if ($use_func) {
+                    $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
+                } else {
+                    $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                 }
             }
         }
-        return $result;
+
+        return $usr_msg;
     }
 
 
@@ -1184,9 +1199,9 @@ class ref extends sandbox_link_with_type
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
-        $sc = new sql();
+        $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
@@ -1195,22 +1210,22 @@ class ref extends sandbox_link_with_type
         // the link type cannot be changed by the user, because this would be another link
         if (!$usr_tbl) {
             // for insert into the standard table the type field should always be included
-            // because it is part of the prime indey
-            if ($sbx->type_id() <> $this->type_id() or $sc_par_lst->is_insert()) {
+            // because it is part of the prime index
+            if ($sbx->predicate_id() <> $this->predicate_id() or $sc_par_lst->is_insert()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . ref_type::FLD_ID,
-                        $change_field_list->id($table_id . ref_type::FLD_ID),
-                        change::FLD_FIELD_ID_SQLTYP
+                        $cng_fld_cac->id($table_id . ref_type::FLD_ID),
+                        change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
-                global $ref_types;
+                global $ref_typ_cac;
                 $lst->add_type_field(
                     ref_type::FLD_ID,
                     type_object::FLD_NAME,
-                    $this->type_id(),
-                    $sbx->type_id(),
-                    $ref_types
+                    $this->predicate_id(),
+                    $sbx->predicate_id(),
+                    $ref_typ_cac
                 );
             }
         }
@@ -1219,8 +1234,8 @@ class ref extends sandbox_link_with_type
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_ID,
-                        $change_field_list->id($table_id . phrase::FLD_ID),
-                        change::FLD_FIELD_ID_SQLTYP
+                        $cng_fld_cac->id($table_id . phrase::FLD_ID),
+                        change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 $lst->add_link_field(
@@ -1235,8 +1250,8 @@ class ref extends sandbox_link_with_type
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_EX_KEY,
-                    $change_field_list->id($table_id . self::FLD_EX_KEY),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . self::FLD_EX_KEY),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $old_key = $sbx->external_key;
@@ -1246,7 +1261,7 @@ class ref extends sandbox_link_with_type
             $lst->add_field(
                 self::FLD_EX_KEY,
                 $this->external_key,
-                self::FLD_EX_KEY_SQLTYP,
+                self::FLD_EX_KEY_SQL_TYP,
                 $old_key
             );
         }
@@ -1254,14 +1269,14 @@ class ref extends sandbox_link_with_type
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_URL,
-                    $change_field_list->id($table_id . self::FLD_URL),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . self::FLD_URL),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 self::FLD_URL,
                 $this->url,
-                self::FLD_URL_SQLTYP,
+                self::FLD_URL_SQL_TYP,
                 $sbx->url
             );
         }
@@ -1269,8 +1284,8 @@ class ref extends sandbox_link_with_type
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
-                    $change_field_list->id($table_id . source::FLD_ID),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . source::FLD_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_link_field(
@@ -1284,14 +1299,14 @@ class ref extends sandbox_link_with_type
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $change_field_list->id($table_id . sandbox_named::FLD_DESCRIPTION),
-                    change::FLD_FIELD_ID_SQLTYP
+                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
                 sandbox_named::FLD_DESCRIPTION,
                 $this->description,
-                sandbox_named::FLD_DESCRIPTION_SQLTYP,
+                sandbox_named::FLD_DESCRIPTION_SQL_TYP,
                 $sbx->description
             );
         }
@@ -1309,11 +1324,11 @@ class ref extends sandbox_link_with_type
     {
         $result = $this->name();
         if ($result <> '') {
-            if ($this->id > 0) {
-                $result .= ' (' . $this->id . ')';
+            if ($this->id() > 0) {
+                $result .= ' (' . $this->id() . ')';
             }
         } else {
-            $result .= $this->id;
+            $result .= $this->id();
         }
         return $result;
     }
@@ -1333,11 +1348,11 @@ class ref extends sandbox_link_with_type
             }
         }
         if ($this->has_type()) {
-            $result .= ' to "' . $this->type_name() . '"';
+            $result .= ' to "' . $this->predicate_name() . '"';
         } else {
-            if ($this->type_id != null) {
-                if ($this->type_id > 0) {
-                    $result .= 'to type id ' . $this->type_id() . ' ';
+            if ($this->predicate_id != null) {
+                if ($this->predicate_id > 0) {
+                    $result .= 'to type id ' . $this->predicate_id() . ' ';
                 }
             }
         }

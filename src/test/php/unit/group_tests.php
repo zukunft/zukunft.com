@@ -39,7 +39,7 @@ include_once MODEL_GROUP_PATH . 'group_list.php';
 include_once MODEL_GROUP_PATH . 'result_id.php';
 
 use api\phrase\group as group_api;
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
@@ -47,7 +47,7 @@ use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_link;
 use cfg\group\result_id;
-use cfg\phrase_list;
+use cfg\phrase\phrase_list;
 use shared\library;
 use test\test_cleanup;
 
@@ -60,7 +60,7 @@ class group_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'group->';
         $t->resource_path = 'db/group/';
 
@@ -178,11 +178,14 @@ class group_tests
         $t->assert_sql_truncate($sc, $grp);
 
         $t->subheader('SQL statements - read');
-        //$t->assert_sql_by_id($sc, $grp);
-        $t->assert_sql_by_name($sc, $grp);
+        $grp = $t->group();
+        $t->assert_sql_by_name($sc, $grp); // by name is always for all tables: prime, most and big
+        $t->assert_sql_standard($sc, $grp);
+        $t->assert_sql_standard_by_name($sc, $grp);
         $this->assert_sql_by_phrase_list($t, $db_con);
 
         $t->subheader('SQL statements - write');
+        $grp = new group($usr);
         $grp->set_phrase_list($t->phrase_list_prime());
         $t->assert_sql_insert($sc, $grp);
         $t->assert_sql_insert($sc, $grp, [sql_type::USER]);

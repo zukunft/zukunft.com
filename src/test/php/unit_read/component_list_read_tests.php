@@ -68,14 +68,14 @@ class component_list_read_tests
         $cmp_lst->load_by_view_id(1);
         $result = $cmp_lst->name();
         $target = '"' . component_api::TN_READ . '"';
-        $t->assert($test_name . '1', $result, $target);
+        $t->assert_text_contains($test_name . '1', $result, $target);
 
         $test_name = 'loading the api message creation of the api index file for ';
         // TODO add this to all db read tests for all API call functions
         $result = json_decode(json_encode($cmp_lst->api_obj()), true);
         $class_for_file = $t->class_without_namespace(component_list::class);
         $target = json_decode($t->api_json_expected($class_for_file), true);
-        $t->assert($test_name . $cmp_lst->dsp_id(), $lib->json_is_similar($target, $result), true);
+        $t->assert_json($test_name . $cmp_lst->dsp_id(), $result, $target);
 
         $test_name = 'loading by component list by pattern ';
         $cmp_lst = new component_list($t->usr1);

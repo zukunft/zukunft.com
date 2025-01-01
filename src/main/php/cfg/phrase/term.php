@@ -43,35 +43,58 @@
 
 */
 
-namespace cfg;
+namespace cfg\phrase;
 
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once API_PHRASE_PATH . 'term.php';
 include_once API_WORD_PATH . 'word.php';
 include_once API_WORD_PATH . 'triple.php';
 include_once API_VERB_PATH . 'verb.php';
 include_once API_FORMULA_PATH . 'formula.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+//include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'term.php';
+include_once HTML_PATH . 'html_base.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_TYPES_PATH . 'protection_type.php';
+include_once SHARED_TYPES_PATH . 'share_type.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'library.php';
 
-use cfg\db\sql_field_type;
-use shared\types\protection_type as protect_type_shared;
-use shared\types\share_type as share_type_shared;
+use cfg\helper\combine_named;
 use api\phrase\term as term_api;
 use api\word\word as word_api;
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
+use cfg\db\sql_field_type;
+use cfg\helper\db_object_seq_id;
+use cfg\formula\formula;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
+use cfg\verb\verb;
+use cfg\user\user;
+use cfg\word\word;
+use cfg\word\triple;
 use html\html_base;
 use html\word\word as word_dsp;
+use shared\types\protection_type as protect_type_shared;
+use shared\types\share_type as share_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
 use shared\library;
 
 class term extends combine_named
@@ -84,7 +107,7 @@ class term extends combine_named
     // field names of the database view for terms
     // the database view is used e.g. for a fast check of a new term name
     const FLD_ID = 'term_id';
-    const FLD_ID_SQLTYP = sql_field_type::INT;
+    const FLD_ID_SQL_TYP = sql_field_type::INT;
     const FLD_NAME = 'term_name';
     const FLD_USAGE = 'usage'; // included in the database view to be able to show the user the most relevant terms
     const FLD_TYPE = 'term_type_id'; // the term type for word or triple or the formula type for formulas; not used for verbs
@@ -579,11 +602,11 @@ class term extends combine_named
      * create the common part of an SQL statement to retrieve a term from the database
      * uses the term view which includes only the most relevant fields of words, triples, formulas and verbs
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql $sc, string $query_name): sql_par
+    private function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -600,11 +623,11 @@ class term extends combine_named
     /**
      * create an SQL statement to retrieve a term by term id (not the object id) from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the term as defined in the database term view
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int $id): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_ID);
         $sc->add_where(term::FLD_ID, $id);
@@ -617,11 +640,11 @@ class term extends combine_named
     /**
      * create an SQL statement to retrieve a term by name from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the term and the related word, triple, formula or verb
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name(sql $sc, string $name): sql_par
+    function load_sql_by_name(sql_creator $sc, string $name): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME);
         $sc->add_where(term::FLD_NAME, $name);
@@ -648,10 +671,9 @@ class term extends combine_named
     /**
      * load the main term parameters by id from the database term view
      * @param int $id the id of the term as defined in the database term view
-     * @param string $class not used for this term object just to be compatible with the db base object
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id, string $class = self::class): int
+    function load_by_id(int $id): int
     {
         global $db_con;
 
@@ -718,13 +740,13 @@ class term extends combine_named
     private
     function load_word_by_id(int $id): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $result = false;
         $wrd = new word($this->user());
-        if ($wrd->load_by_id($id, word::class)) {
-            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $phrase_types->id(phrase_type::FORMULA_LINK));
-            if ($wrd->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
+        if ($wrd->load_by_id($id)) {
+            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK));
+            if ($wrd->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
                 $result = $this->load_formula_by_id($id);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);
@@ -744,7 +766,7 @@ class term extends combine_named
         $result = false;
         if ($including_triples) {
             $trp = new triple($this->user());
-            if ($trp->load_by_id($id, triple::class)) {
+            if ($trp->load_by_id($id)) {
                 $this->set_id_from_obj($trp->id(), triple::class);
                 $this->obj = $trp;
                 $result = true;
@@ -761,7 +783,7 @@ class term extends combine_named
     {
         $result = false;
         $frm = new formula($this->user());
-        if ($frm->load_by_id($id, formula::class)) {
+        if ($frm->load_by_id($id)) {
             $this->set_id_from_obj($frm->id(), formula::class);
             $this->obj = $frm;
             $result = true;
@@ -818,13 +840,13 @@ class term extends combine_named
     private
     function load_word_by_name(string $name): bool
     {
-        global $phrase_types;
+        global $phr_typ_cac;
 
         $result = false;
         $wrd = new word($this->user());
         if ($wrd->load_by_name($name)) {
-            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $phrase_types->id(phrase_type::FORMULA_LINK));
-            if ($wrd->type_id == $phrase_types->id(phrase_type::FORMULA_LINK)) {
+            log_debug('type is "' . $wrd->type_id . '" and the formula type is ' . $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK));
+            if ($wrd->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
                 $result = $this->load_formula_by_name($name);
             } else {
                 $this->set_id_from_obj($wrd->id(), word::class);

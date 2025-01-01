@@ -42,7 +42,7 @@ use api\view\view as view_api;
 use api\word\word as word_api;
 use cfg\log\change_field_list;
 use cfg\log\change_log_list;
-use cfg\word;
+use cfg\word\word;
 use test\test_cleanup;
 
 class change_log_read_tests

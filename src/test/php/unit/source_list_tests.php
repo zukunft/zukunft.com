@@ -32,7 +32,7 @@
 
 namespace unit;
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\source_list;
 use test\test_cleanup;
 
@@ -44,7 +44,7 @@ class source_list_tests
         global $usr;
 
         // init for source list
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'source_list->';
 
         $t->subheader('source list sql read');

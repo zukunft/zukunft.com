@@ -30,19 +30,23 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once SHARED_PATH . 'views.php';
+
 use cfg\value\value;
-use controller\controller;
 use html\rest_ctrl;
 use html\button;
 use html\html_base;
 use html\system\messages;
 use html\view\view as view_dsp;
-use cfg\user;
-use cfg\view;
-
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+use cfg\user\user;
+use cfg\view\view;
+use shared\api;
+use shared\views as view_shared;
 
 // to create the code for the html frontend
 $html = new html_base();
@@ -63,11 +67,11 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::MC_VALUE_DEL);
-    $back = $_GET[controller::API_BACK];  // the page from which the value deletion has been called
+    $msk->load_by_code_id(view_shared::MC_VALUE_DEL);
+    $back = $_GET[api::URL_VAR_BACK] = '';  // the page from which the value deletion has been called
 
     // get the parameters
-    $val_id = $_GET[controller::URL_VAR_ID];
+    $val_id = $_GET[api::URL_VAR_ID];
     $confirm = $_GET['confirm'];
 
     if ($val_id > 0) {
@@ -89,7 +93,7 @@ if ($usr->id() > 0) {
             $val->load_phrases();
             $url = $html->url(rest_ctrl::VALUE . rest_ctrl::REMOVE, $val_id, $back);
             $ui_msg = new messages();
-            $result .= (new button($url, $back))->yesno(
+            $result .= (new button($url, $back))->yes_no(
                 messages::VALUE_DEL, $val->number() . $ui_msg->txt(messages::FOR) . $val->phr_lst()->dsp_name() . '?');
         }
     } else {

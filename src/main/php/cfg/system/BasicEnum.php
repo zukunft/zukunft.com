@@ -29,7 +29,7 @@
 
 */
 
-namespace cfg;
+namespace cfg\system;
 
 use ReflectionClass;
 use ReflectionException;

@@ -59,7 +59,7 @@ class db_object implements JsonSerializable
 
     function reset(): void
     {
-        $this->id = 0;
+        $this->set_id(0);
     }
 
     /*

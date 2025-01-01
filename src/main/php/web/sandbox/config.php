@@ -34,11 +34,64 @@
 
 namespace html\sandbox;
 
+use html\phrase\phrase_list;
+use html\user\user_message;
+use shared\words;
+
 class config
 {
 
-    // default number of rows per page/query if the user has not defined another limit
+    // fallback config values e.g. if the backend connection is lost
     const ROW_LIMIT = 20;
+    const DEFAULT_DEC_POINT = ".";
+    const DEFAULT_PERCENT_DECIMALS = 2;
+
+    function percent_decimals(): int
+    {
+        return DEFAULT_PERCENT_DECIMALS;
+    }
+
+    function dec_point(): string
+    {
+        return DEFAULT_DEC_POINT;
+    }
+
+    function thousand_sep(): string
+    {
+        return DEFAULT_THOUSAND_SEP;
+    }
+
+    /**
+     * request the user specific frontend configuration from the backend
+     * @return user_message if it fails the reason why
+     */
+    function load(): user_message
+    {
+        $usr_msg = new user_message();
+        return $usr_msg;
+    }
+
+    /**
+     * get a frontend config value selected by the phrase names
+     * @param array $names with the phrase names to select the config value
+     * @return int|float|string|null with the user specific config value
+     */
+    function get(array $names): int|float|string|null
+    {
+        $phr_lst = new phrase_list();
+        $val = null;
+        switch ($names) {
+            case [words::PERCENT, words::DECIMAL]:
+                $val = self::DEFAULT_PERCENT_DECIMALS;
+                break;
+            case [words::ROW, words::LIMIT]:
+                $val = self::ROW_LIMIT;
+                break;
+            case [words::DECIMAL, words::POINT]:
+                $val = self::DEFAULT_DEC_POINT;
+        }
+        return $val;
+    }
 
 }
 

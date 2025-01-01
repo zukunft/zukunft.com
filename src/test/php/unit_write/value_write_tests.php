@@ -32,8 +32,6 @@
 
 namespace unit_write;
 
-include_once MODEL_VALUE_PATH . 'value_dsp_old.php';
-
 use api\value\value as value_api;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
@@ -43,10 +41,10 @@ use cfg\log\change_table_list;
 use cfg\log\change_values_big;
 use cfg\log\change_values_norm;
 use cfg\log\change_values_prime;
-use cfg\phrase_list;
-use cfg\user;
+use cfg\phrase\phrase_list;
+use cfg\user\user;
 use cfg\value\value;
-use cfg\value\value_dsp_old;
+use html\value\value as value_dsp;
 use html\figure\figure as figure_dsp;
 use shared\library;
 use test\test_cleanup;
@@ -201,7 +199,7 @@ class value_write_tests
                 $result = 'No value found for ' . $val->dsp_id() . '.';
             } else {
                 if ($val->grp != null) {
-                    if ($val->phr_lst()->wrd_lst() != null) {
+                    if ($val->phr_lst()->words() != null) {
                         $val_lst = $val->phr_lst()->names();
                         $result = array_diff($val_lst, $phr_lst->names());
                     }
@@ -235,30 +233,32 @@ class value_write_tests
 
         // test the figure object creation
         $phr_lst = $t->load_phrase_list(array(word_api::TN_CANTON, word_api::TN_ZH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
-        $mio_val = new value_dsp_old($t->usr1);
+        $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
+        $mio_val_dsp = new value_dsp();
+        $mio_val_dsp->set_from_json($mio_val->api_json());
         $fig = $mio_val->figure();
         $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
         $result = $fig_dsp->display_linked('1');
-        $target = '<a href="/http/result_edit.php?id=' . $mio_val->id() . '&back=1" title="1.55">1.55</a>';
+        $target = '<a href="/http/result_edit.php?id=' . $mio_val_dsp->id() . '&back=1" title="1.55">1.55</a>';
         $t->assert(', value->figure->display_linked for word list ' . $phr_lst->dsp_id(), $result, $target);
 
         // test the HTML code creation
-        $result = $mio_val->display();
+        $result = $mio_val_dsp->display_value();
         $target = number_format(value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO, 2, DEFAULT_DEC_POINT, DEFAULT_THOUSAND_SEP);
         $t->display(', value->display', $target, $result);
 
         // test the HTML code creation including the hyperlink
-        $result = $mio_val->display_linked('1');
+        $result = $mio_val_dsp->display_value_linked('1');
         //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1"  >1.55</a>';
+        $target = '<a href="/http/value_edit.php?id=' . $mio_val_dsp->id() . '&back=1"  >1.55</a>';
         $t->assert(', value->display_linked', $result, $target);
 
         // change the number to force using the thousand separator
-        $mio_val->set_number(value_api::TV_INT);
-        $result = $mio_val->display_linked('1');
+        $mio_val_dsp->set_number(value_api::TV_INT);
+        $result = $mio_val_dsp->display_value_linked('1');
         //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
-        $target = '<a href="/http/value_edit.php?id=' . $mio_val->id() . '&back=1"  >123\'456</a>';
+        $target = '<a href="/http/value_edit.php?id=' . $mio_val_dsp->id() . '&back=1"  >123\'456</a>';
         $t->assert(', value->display_linked', $result, $target);
 
         // convert the user input for the database
@@ -280,7 +280,7 @@ class value_write_tests
         $add_val = new value($t->usr1);
         $add_val->grp = $phr_grp;
         $add_val->set_number(value_api::TV_BIG);
-        $result = $add_val->save();
+        $result = $add_val->save()->get_last_message();
         $target = '';
         $t->display(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         $test_val_lst[] = $add_val->id();
@@ -319,7 +319,7 @@ class value_write_tests
         $add_val2 = new value($t->usr1);
         $add_val2->grp = $phr_grp2;
         $add_val2->set_number(value_api::TV_BIGGER);
-        $result = $add_val2->save();
+        $result = $add_val2->save()->get_last_message();
         $target = '';
         $t->display(', value->save ' . $add_val2->number() . ' for ' . $phr_grp2->name() . ' by user "' . $t->usr1->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -330,7 +330,7 @@ class value_write_tests
         $add_val_ts->ids = $phr_lst_ts->ids;
         $add_val_ts->set_number(TV_ABB_PRICE_20200515;
         $add_val_ts->time_stamp = new DateTime('2020-05-15');
-        $result = $add_val_ts->save();
+        $result = $add_val_ts->save()->get_last_message();
         $target = '';
         $t->display(', value->save ' . $add_val_ts->number() . ' for ' . $phr_lst_ts->name() . ' and ' . $add_val_ts->time_stamp->format(DateTimeInterface::ATOM) . ' by user "' . $t->usr1->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         */
@@ -360,7 +360,7 @@ class value_write_tests
         $added_val = new value($t->usr1);
         $added_val->load_by_id($added_val_id);
         $added_val->set_number(987654321);
-        $result = $added_val->save();
+        $result = $added_val->save()->get_last_message();
         $target = '';
         $t->display(', word->save update value id "' . $added_val_id . '" from  "' . $add_val->number() . '" to "' . $added_val->number() . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -391,7 +391,7 @@ class value_write_tests
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_id($added_val_id);
         $val_usr2->set_number(23456);
-        $result = $val_usr2->save();
+        $result = $val_usr2->save()->get_last_message();
         $target = '';
         $t->display(', value->save ' . $val_usr2->number() . ' for ' . $phr_lst->name() . ' and user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
@@ -430,7 +430,7 @@ class value_write_tests
         $added_val_usr2 = new value($t->usr2);
         $added_val_usr2->load_by_grp($phr_grp);
         $added_val_usr2->set_number(987654321);
-        $result = $added_val_usr2->save();
+        $result = $added_val_usr2->save()->get_last_message();
         $target = '';
         $t->display(', value->save change to ' . $val_usr2->number() . ' for ' . $phr_grp->name() . ' and user "' . $t->usr2->name . '" should undo the user change', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 

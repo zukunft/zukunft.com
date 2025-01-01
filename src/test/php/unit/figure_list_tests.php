@@ -32,13 +32,14 @@
 
 namespace unit;
 
+include_once DB_PATH . 'sql_creator.php';
+include_once MODEL_FORMULA_PATH . 'fig_ids.php';
+include_once MODEL_FORMULA_PATH . 'figure_list.php';
 include_once WEB_FIGURE_PATH . 'figure_list.php';
 
-use cfg\db\sql;
-use cfg\fig_ids;
-use cfg\figure;
-use cfg\figure_list;
-use cfg\db\sql_db;
+use cfg\db\sql_creator;
+use cfg\formula\fig_ids;
+use cfg\formula\figure_list;
 use html\figure\figure_list as figure_list_dsp;
 use test\test_cleanup;
 
@@ -51,7 +52,7 @@ class figure_list_tests
         global $usr;
 
         // init
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'figure->';
         $t->resource_path = 'db/figure/';
         $json_file = 'unit/figure/figure_list_import.json';

@@ -4,6 +4,7 @@ PREPARE word_list_by_children FROM
            u.word_id AS user_word_id,
            s.user_id,
            s.`values`,
+           s.code_id,
            l.verb_id,
            IF(u.word_name      IS NULL, s.word_name,      u.word_name)      AS word_name,
            IF(u.plural         IS NULL, s.plural,         u.plural)         AS plural,

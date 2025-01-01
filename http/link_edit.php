@@ -29,17 +29,22 @@
   
 */
 
-use controller\controller;
+// standard zukunft header for callable php files to allow debugging and lib loading
+$debug = $_GET['debug'] ?? 0;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
+include_once PHP_PATH . 'zu_lib.php';
+
+include_once SHARED_PATH . 'views.php';
+
 use html\html_base;
 use html\view\view as view_dsp;
 use html\word\triple as triple_dsp;
-use cfg\triple;
-use cfg\user;
-use cfg\view;
-
-$debug = $_GET['debug'] ?? 0;
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-include_once ROOT_PATH . 'src/main/php/zu_lib.php';
+use cfg\word\triple;
+use cfg\user\user;
+use cfg\view\view;
+use shared\api;
+use shared\views as view_shared;
 
 // open database
 $db_con = prg_start("link_edit");
@@ -59,12 +64,12 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(controller::MC_TRIPLE_EDIT);
-    $back = $_GET[controller::API_BACK]; // the original calling page that should be shown after the change if finished
+    $msk->load_by_code_id(view_shared::MC_TRIPLE_EDIT);
+    $back = $_GET[api::URL_VAR_BACK] = ''; // the original calling page that should be shown after the change if finished
 
     // create the link object to have a place to update the parameters
     $trp = new triple($usr);
-    $trp->load_by_id($_GET[controller::URL_VAR_ID]);
+    $trp->load_by_id($_GET[api::URL_VAR_ID]);
 
     // edit the link or ask for confirmation
     if ($trp->id() <= 0) {
@@ -75,11 +80,11 @@ if ($usr->id() > 0) {
 
             // get the parameters
             $trp->from()->set_id($_GET['phrase1']); // the word or triple linked from
-            $trp->verb->set_id($_GET['verb']);    // the link type (verb)
+            $trp->set_verb_id($_GET['verb']);    // the link type (verb)
             $trp->to()->set_id($_GET['phrase2']); // the word or triple linked to
 
             // save the changes
-            $upd_result = $trp->save();
+            $upd_result = $trp->save()->get_last_message();
 
             // if update was successful ...
             if (str_replace('1', '', $upd_result) == '') {

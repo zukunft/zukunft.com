@@ -29,37 +29,47 @@
   
 */
 
-namespace cfg;
+namespace cfg\system;
 
-include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function_list.php';
 include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'changes_norm.php';
-include_once MODEL_LOG_PATH . 'changes_big.php';
-include_once MODEL_LOG_PATH . 'change_value.php';
-include_once MODEL_LOG_PATH . 'change_values_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_big.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_action_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once API_SANDBOX_PATH . 'sandbox_value.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
+include_once MODEL_USER_PATH . 'user.php';
 include_once API_SYSTEM_PATH . 'sys_log.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type_list;
+use cfg\helper\db_object_seq_id;
+use cfg\helper\type_list;
+use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_action;
+use cfg\sandbox\sandbox;
+use cfg\system\sys_log_status;
+use cfg\system\sys_log_function;
+use cfg\user\user;
 use controller\system\sys_log as sys_log_api;
+use shared\library;
 use DateTime;
 use DateTimeInterface;
-use shared\library;
 
 class sys_log extends db_object_seq_id
 {
@@ -70,7 +80,7 @@ class sys_log extends db_object_seq_id
 
     // database and export JSON object field names
     // and comments used for the database creation
-    // *_SQLTYP is the sql data type used for the field
+    // *_SQL_TYP is the sql data type used for the field
     const TBL_COMMENT = 'for system error tracking and to measure execution times';
     const FLD_ID = 'sys_log_id';
     const FLD_TIME_COM = 'timestamp of the creation';
@@ -79,11 +89,11 @@ class sys_log extends db_object_seq_id
     const FLD_TYPE = 'sys_log_type_id';
     const FLD_FUNCTION_COM = 'the function or function group for the entry e.g. db_write to measure the db write times';
     const FLD_FUNCTION = 'sys_log_function_id';
-    const FLD_TEXT_COM = 'the short text of the log entry to indentify the error and to reduce the number of double entries';
+    const FLD_TEXT_COM = 'the short text of the log entry to identify the error and to reduce the number of double entries';
     const FLD_TEXT = 'sys_log_text';
-    const FLD_DESCRIPTION_COM = 'the lond description with all details of the log entry to solve ti issue';
+    const FLD_DESCRIPTION_COM = 'the long description with all details of the log entry to solve ti issue';
     const FLD_DESCRIPTION = 'sys_log_description';
-    const FLD_DESCRIPTION_SQLTYP = sql_field_type::TEXT;
+    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
     const FLD_TRACE_COM = 'the generated code trace to local the path to the error cause';
     const FLD_TRACE = 'sys_log_trace';
     const FLD_USER_COM = 'the id of the user who has caused the log entry';
@@ -112,10 +122,10 @@ class sys_log extends db_object_seq_id
     // field lists for the table creation
     const FLD_LST_ALL = array(
         [self::FLD_TIME, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_COM],
-        [self::FLD_TYPE, type_object::FLD_ID_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TYPE_COM],
-        [self::FLD_FUNCTION, type_object::FLD_ID_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, sys_log_function::class, self::FLD_FUNCTION_COM],
+        [self::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TYPE_COM],
+        [self::FLD_FUNCTION, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, sys_log_function::class, self::FLD_FUNCTION_COM],
         [self::FLD_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_TEXT_COM],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_TRACE, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_TRACE_COM],
         [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_USER_COM],
         [self::FLD_SOLVER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_SOLVER_COM, user::FLD_ID],
@@ -232,10 +242,10 @@ class sys_log extends db_object_seq_id
     /**
      * the sql statement to create the tables of a system log table
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the table
      */
-    function sql_table(sql $sc): string
+    function sql_table(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         $sql .= $this->sql_table_create($sc);
@@ -245,10 +255,10 @@ class sys_log extends db_object_seq_id
     /**
      * the sql statement to create the database indices of a system log table
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the indices
      */
-    function sql_index(sql $sc): string
+    function sql_index(sql_creator $sc): string
     {
         $sql = $sc->sql_separator();
         $sql .= $this->sql_index_create($sc);
@@ -256,14 +266,14 @@ class sys_log extends db_object_seq_id
     }
 
     /**
-     * the sql statements to create all foreign keysof a system log table
+     * the sql statements to create all foreign keys of a system log table
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @return string the sql statement to create the foreign keys
      */
-    function sql_foreign_key(sql $sc): string
+    function sql_foreign_key(sql_creator $sc): string
     {
-        return $this->sql_foreign_key_create($sc, new sql_type_list([]), [], false);
+        return $this->sql_foreign_key_create($sc, new sql_type_list([]));
     }
 
 
@@ -274,15 +284,15 @@ class sys_log extends db_object_seq_id
     /**
      * create the SQL statement to load one system log entry
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the database depending on sql statement to load a system error from the log table
      *                 and the unique name for the query
      */
-    function load_sql(sql $sc, string $query_name = sql_db::FLD_ID, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name = sql_db::FLD_ID, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($sc, $query_name, $class);
+        $qp = parent::load_sql($sc, $query_name);
         $sc->set_class(sys_log::class);
 
         $sc->set_name($qp->name);
@@ -298,12 +308,12 @@ class sys_log extends db_object_seq_id
     /**
      * create an SQL statement to retrieve a system log entry by id from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int $id, string $class = self::class): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id, string $class = self::class): sql_par
     {
 
         $qp = $this->load_sql($sc, sql_db::FLD_ID, $class);
@@ -316,17 +326,17 @@ class sys_log extends db_object_seq_id
 
     /**
      * load a system error from the database e.g. to be able to display more details
-     * @param string $class the name of the child class from where the call has been triggered
+     * @param int $id the id of the system log entry that should be loaded
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id, string $class = self::class): int
+    function load_by_id(int $id): int
     {
         log_debug();
 
         global $db_con;
 
         // at the moment it is only possible to select the error by the id
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $class);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
         return $this->row_mapper($db_con->get1($qp));
     }
 

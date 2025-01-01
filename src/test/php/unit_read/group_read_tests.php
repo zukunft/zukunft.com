@@ -34,8 +34,8 @@ namespace unit_read;
 
 use api\word\word as word_api;
 use cfg\group\group;
-use cfg\phrase_list;
-use cfg\word_list;
+use cfg\phrase\phrase_list;
+use cfg\word\word_list;
 use test\test_cleanup;
 
 class group_read_tests

@@ -1,20 +1,10 @@
 {
   "name": "car cost agreement",
   "description": "view the cost agreement of car usage",
-  "type": "default",
-  "share": "",
-  "protection": "",
   "components": [
     {
       "position": 1,
-      "name": "Name",
-      "type": "",
-      "row": "",
-      "column": "",
-      "column2": "",
-      "share": "",
-      "protection": "",
-      "description": ""
+      "name": "Name"
     }
   ]
 }

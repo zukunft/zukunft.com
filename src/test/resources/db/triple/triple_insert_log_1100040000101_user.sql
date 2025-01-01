@@ -48,7 +48,7 @@ SELECT triple_insert_log_1100040000101_user (
                1::smallint,
                7::smallint,
                'constant'::text,
-               'contains'::text,
+               'is part of'::text,
                'Mathematics'::text,
                null::text,
                null::text,

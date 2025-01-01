@@ -29,19 +29,32 @@
 
 */
 
-namespace cfg;
+namespace cfg\sandbox;
 
-use api\api;
+include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+//include_once MODEL_LOG_PATH . 'change_log_list.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'json_fields.php';
+
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\export\sandbox_exp;
 use cfg\log\change_log_list;
-
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
+use cfg\user\user;
+use cfg\user\user_message;
+use shared\json_fields;
 
 class sandbox_link_named extends sandbox_link
 {
@@ -58,6 +71,11 @@ class sandbox_link_named extends sandbox_link
     protected ?string $name = '';   // simply the object name, which cannot be empty if it is a named object
     public ?string $description = null;
 
+    // database id of the type used for named link user sandbox objects with predefined functionality
+    // which is actually only triple
+    // repeating _sandbox_typed, because php 8.1 does not yet allow multi extends
+    public ?int $type_id = null;
+
 
     /*
      * construct and map
@@ -67,6 +85,7 @@ class sandbox_link_named extends sandbox_link
     {
         parent::reset();
         $this->description = null;
+        $this->type_id = null;
     }
 
     /**
@@ -74,7 +93,7 @@ class sandbox_link_named extends sandbox_link
      * to be extended by the child object
      *
      * @param array|null $db_row with the data directly from the database
-     * @param bool $load_std true if only the standard user sandbox object ist loaded
+     * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as set in the child class
      * @param string $name_fld the name of the name field as set in the child class
@@ -156,13 +175,60 @@ class sandbox_link_named extends sandbox_link
         return $obj_cpy;
     }
 
+    /**
+     * set the description of this named user sandbox link object which explains the object for the user
+     * set and get of the description is needed to use the same function for phrase or term
+     *
+     * @param string|null $description the name of this named user sandbox object e.g. word set in the related object
+     * @return void
+     */
+    function set_description(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * get the description of the sandbox link object
+     * if the object is excluded null is returned
+     * to check the value before the exclusion access the var direct via $this->description
+     *
+     * @return string|null the description from the object e.g. word using the same function as the phrase and term
+     */
+    function description(): ?string
+    {
+        if ($this->excluded) {
+            return null;
+        } else {
+            return $this->description;
+        }
+    }
+
+    /**
+     * set the database id of the type
+     *
+     * @param int|null $type_id the database id of the type
+     * @return void
+     */
+    function set_type_id(?int $type_id): void
+    {
+        $this->type_id = $type_id;
+    }
+
+    /**
+     * @return int|null the database id of the type
+     */
+    function type_id(): ?int
+    {
+        return $this->type_id;
+    }
+
 
     /*
      * cast
      */
 
     /**
-     * same as in cfg/sandbox/sanbox_named, but php does not yet allow multi extends
+     * same as in cfg/sandbox/sandbox_named, but php does not yet allow multi extends
      * @param object $api_obj frontend API objects that should be filled with unique object name
      */
     function fill_api_obj(object $api_obj): void
@@ -171,6 +237,7 @@ class sandbox_link_named extends sandbox_link
 
         $api_obj->set_name($this->name());
         $api_obj->description = $this->description;
+        $api_obj->set_type_id($this->type_id());
     }
 
     /**
@@ -182,13 +249,16 @@ class sandbox_link_named extends sandbox_link
         $msg = parent::set_by_api_json($api_json);
 
         foreach ($api_json as $key => $value) {
-            if ($key == api::FLD_NAME) {
+            if ($key == json_fields::NAME) {
                 $this->set_name($value);
             }
-            if ($key == api::FLD_DESCRIPTION) {
+            if ($key == json_fields::DESCRIPTION) {
                 if ($value <> '') {
                     $this->description = $value;
                 }
+            }
+            if ($key == json_fields::TYPE) {
+                $this->set_type_id($value);
             }
         }
         return $msg;
@@ -212,10 +282,10 @@ class sandbox_link_named extends sandbox_link
 
         // reset of object not needed, because the calling function has just created the object
         foreach ($in_ex_json as $key => $value) {
-            if ($key == sandbox_exp::FLD_NAME) {
+            if ($key == json_fields::NAME) {
                 $this->set_name($value);
             }
-            if ($key == sandbox_exp::FLD_DESCRIPTION) {
+            if ($key == json_fields::DESCRIPTION) {
                 $this->description = $value;
             }
         }
@@ -232,7 +302,7 @@ class sandbox_link_named extends sandbox_link
      * check if the named object in the database needs to be updated
      *
      * @param sandbox_link_named $db_obj the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the datanase
+     * @return bool true if this word has infos that should be saved in the database
      */
     function needs_db_update_named(sandbox_link_named $db_obj): bool
     {
@@ -247,6 +317,11 @@ class sandbox_link_named extends sandbox_link
                 $result = true;
             }
         }
+        if ($this->type_id != null) {
+            if ($this->type_id != $db_obj->type_id) {
+                $result = true;
+            }
+        }
         return $result;
     }
 
@@ -257,7 +332,7 @@ class sandbox_link_named extends sandbox_link
 
     /**
      * get the description of the latest change related to this object
-     * @param user $usr who has requeted to see the change
+     * @param user $usr who has requested to see the change
      * @return string the description of the latest change
      */
     function log_last_msg(user $usr): string
@@ -269,7 +344,7 @@ class sandbox_link_named extends sandbox_link
 
     /**
      * get the description of the latest change related to this object and the given field
-     * @param user $usr who has requeted to see the change
+     * @param user $usr who has requested to see the change
      * @param string $fld the field name to filter the changes
      * @return string the description of the latest change
      */
@@ -302,7 +377,7 @@ class sandbox_link_named extends sandbox_link
                 $log->old_value = $db_rec->description;
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
-                $log->row_id = $this->id;
+                $log->row_id = $this->id();
                 $log->set_field(sandbox_named::FLD_DESCRIPTION);
                 $result = $this->save_field_user($db_con, $log);
             }
@@ -319,7 +394,7 @@ class sandbox_link_named extends sandbox_link
      * create the sql statement to add a new named sandbox object e.g. word to the database
      * TODO add qp merge
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param string $id_fld_new
@@ -327,7 +402,7 @@ class sandbox_link_named extends sandbox_link
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_key_field(
-        sql                $sc,
+        sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
@@ -336,7 +411,7 @@ class sandbox_link_named extends sandbox_link
     {
         // set some var names to shorten the code lines
         $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
-        $ext = sql::NAME_SEP . sql::FILE_INSERT;
+        $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
 
         // list of parameters actually used in order of the function usage
         $sql = '';
@@ -348,7 +423,7 @@ class sandbox_link_named extends sandbox_link
         $fvt_insert_list = new sql_par_field_list();
         $fvt_insert_list->add($fvt_insert);
         $sc_insert = clone $sc;
-        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);;
+        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
         $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
         if ($sc->db_type == sql_db::MYSQL) {
             $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
@@ -408,9 +483,9 @@ class sandbox_link_named extends sandbox_link
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par_field_list
     {
-        global $change_field_list;
+        global $cng_fld_cac;
 
-        $sc = new sql();
+        $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 

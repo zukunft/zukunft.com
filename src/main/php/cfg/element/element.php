@@ -37,18 +37,48 @@
 
 */
 
-namespace cfg;
+namespace cfg\element;
 
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'expression.php';
+include_once MODEL_FORMULA_PATH . 'parameter_type.php';
+include_once MODEL_PHRASE_PATH . 'term.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once WEB_FORMULA_PATH . 'formula.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\log\change;
+use cfg\helper\db_object_seq_id_user;
+use cfg\formula\expression;
+use cfg\formula\formula;
+use cfg\formula\parameter_type;
+use cfg\phrase\term;
+use cfg\verb\verb;
+use cfg\word\triple;
+use cfg\helper\type_object;
+use cfg\user\user;
+use cfg\word\word;
 use html\formula\formula as formula_dsp;
 use html\word\word as word_dsp;
 use shared\library;
@@ -80,7 +110,7 @@ class element extends db_object_seq_id_user
     const FLD_ID = 'element_id';
     const FLD_FORMULA_COM = 'each element can only be used for one formula';
     const FLD_ORDER = 'order_nbr';
-    const FLD_ORDER_SQLTYP = sql_field_type::INT;
+    const FLD_ORDER_SQL_TYP = sql_field_type::INT;
     const FLD_TYPE = 'element_type_id';
     const FLD_REF_ID_COM = 'either a term, verb or formula id';
     const FLD_REF_ID = 'ref_id';
@@ -100,7 +130,7 @@ class element extends db_object_seq_id_user
     const FLD_LST_ALL = array(
         [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
         [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', ''],
-        [element_type::FLD_ID, type_object::FLD_ID_SQLTYP, sql_field_default::NOT_NULL, sql::INDEX, element_type::class, ''],
+        [element_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, element_type::class, ''],
         [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, '', user::class, ''],
         [self::FLD_REF_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_REF_ID_COM],
         [self::FLD_TEXT, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
@@ -138,12 +168,11 @@ class element extends db_object_seq_id_user
      * map the formula element database fields for later load of the object
      *
      * @param array|null $db_row with the data directly from the database
-     * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if the triple is loaded and valid
      */
-    function row_mapper_sandbox(?array $db_row, string $id_fld = ''): bool
+    function row_mapper_sandbox(?array $db_row): bool
     {
-        $this->id = 0;
+        $this->set_id(0);
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $par_typ = new parameter_type();
@@ -194,14 +223,14 @@ class element extends db_object_seq_id_user
     /**
      * create the common part of an SQL statement to get the formula element from the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name of the query use to prepare and call the query
      * @param string $class the name of this class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql $sc, string $query_name, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        $qp = parent::load_sql($sc, $query_name, $class);
+        $qp = parent::load_sql($sc, $query_name);
 
         $sc->set_class($class);
         $sc->set_name($qp->name);
@@ -220,7 +249,7 @@ class element extends db_object_seq_id_user
         if ($id != 0 and $this->user()->is_set()) {
             if ($this->type == word::class) {
                 $wrd = new word($this->user());
-                $wrd->load_by_id($id, word::class);
+                $wrd->load_by_id($id);
                 $this->symbol = expression::WORD_START . $wrd->id() . expression::WORD_END;
                 $this->obj = $wrd;
             } elseif ($this->type == triple::class) {
@@ -232,11 +261,11 @@ class element extends db_object_seq_id_user
                 $vrb = new verb;
                 $vrb->set_user($this->user());
                 $vrb->load_by_id($id);
-                $this->symbol = expression::TRIPLE_START . $vrb->id . expression::TRIPLE_END;
+                $this->symbol = expression::TRIPLE_START . $vrb->id() . expression::TRIPLE_END;
                 $this->obj = $vrb;
             } elseif ($this->type == formula::class) {
                 $frm = new formula($this->user());
-                $frm->load_by_id($id, formula::class);
+                $frm->load_by_id($id);
                 $this->symbol = expression::FORMULA_START . $frm->id() . expression::FORMULA_END;
                 $this->obj = $frm;
                 /*
@@ -261,11 +290,11 @@ class element extends db_object_seq_id_user
      * create an SQL statement to retrieve a formula element by id from the database
      * just set the class formula element for the parent function
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql $sc, int $id): sql_par
+    function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
         return parent::load_sql_by_id($sc, $id);
     }
@@ -289,8 +318,8 @@ class element extends db_object_seq_id_user
         if ($name <> '') {
             $result .= '"' . $name . '" ';
         }
-        if ($this->id > 0) {
-            $result .= '(' . $this->id . ')';
+        if ($this->id() > 0) {
+            $result .= '(' . $this->id() . ')';
         } else {
             if ($this->obj != null) {
                 $result .= '(' . $this->obj->id() . ')';
@@ -340,12 +369,12 @@ class element extends db_object_seq_id_user
      * create the sql statement to add an element to the database
      * always all fields are included in the query to be able to remove overwrites with a null value
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst = new sql_type_list([])
     ): sql_par
     {
@@ -355,7 +384,7 @@ class element extends db_object_seq_id_user
         $sc_par_lst_used->add(sql_type::INSERT);
         // get the fields and values that are filled and should be written to the db
         $elm_empty = new element($this->user()->clone_reset());
-        $fvt_lst = $this->db_fields_changed($elm_empty, $sc_par_lst_used);
+        $fvt_lst = $this->db_fields_changed($elm_empty);
 
         // create the sql and get the sql parameters used
         $qp = new sql_par($this::class, $sc_par_lst_used);
@@ -372,19 +401,19 @@ class element extends db_object_seq_id_user
     /**
      * create the sql statement to update a word in the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param element $db_row the word with the database values before the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql $sc, element $db_row, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
+    function sql_update(sql_creator $sc, element $db_row, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
     {
         // get the field names, values and parameter types that have been changed
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
         // including the sql parameters for logging
-        $fvt_lst = $this->db_fields_changed($db_row, $sc_par_lst);
-        $all_fields = $this->db_fields_all();
+        $fvt_lst = $this->db_fields_changed($db_row);
+        $this->db_fields_all();
         // create the sql and get the sql parameters used
         $qp = new sql_par($this::class, $sc_par_lst);
         $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
@@ -418,20 +447,16 @@ class element extends db_object_seq_id_user
      * get a list of database field names, values and types that have been updated
      *
      * @param element $sbx the compare value to detect the changed fields
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
-    function db_fields_changed(
-        element  $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list([])
-    ): sql_par_field_list
+    function db_fields_changed(element $sbx): sql_par_field_list
     {
         $lst = new sql_par_field_list();
         if ($sbx->trm_id() <> $this->trm_id()) {
             $lst->add_field(
                 term::FLD_ID,
                 $this->trm_id(),
-                term::FLD_ID_SQLTYP,
+                term::FLD_ID_SQL_TYP,
                 $sbx->trm_id()
             );
         }

@@ -32,8 +32,8 @@
 
 namespace unit;
 
-use cfg\language;
-use cfg\language_form;
+use cfg\language\language;
+use cfg\language\language_form;
 use test\test_cleanup;
 
 class language_tests
@@ -63,8 +63,8 @@ class language_tests
 
         $t->subheader('API unit tests');
 
-        global $languages;
-        $lan = $languages->get_by_code_id(language::DEFAULT);
+        global $lan_cac;
+        $lan = $lan_cac->get_by_code_id(language::DEFAULT);
         $t->assert_api($lan, 'language');
 
 
@@ -72,8 +72,8 @@ class language_tests
 
         $t->subheader('API unit tests');
 
-        global $language_forms;
-        $lan_typ = $language_forms->get_by_code_id(language_form::PLURAL);
+        global $lan_for_cac;
+        $lan_typ = $lan_for_cac->get_by_code_id(language_form::PLURAL);
         $t->assert_api($lan_typ, 'language_form');
 
     }

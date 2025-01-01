@@ -39,7 +39,7 @@ include_once PHP_PATH . 'zu_lib.php';
 use controller\controller;
 use html\rest_ctrl;
 use html\html_base;
-use cfg\user;
+use cfg\user\user;
 
 // open database
 $db_con = prg_start("login", "center_form");
@@ -60,7 +60,7 @@ if ($usr->id() > 0) {
     if (isset($_POST[controller::API_BACK])) {
         $back = $_POST[controller::API_BACK];
     } else {
-        $back = $_GET[controller::API_BACK];
+        $back = $_GET[api::URL_VAR_BACK] = '';
     }
 
     if (isset($_POST['submit'])) {
@@ -92,7 +92,9 @@ if ($usr->id() > 0) {
             //header("Location: ../view.php?sid=".SID."");
             exit;
         } else {
-            $msg .= $html->dsp_err('Login failed. ' .  $html->ref($html->url(rest_ctrl::LOGIN_RESET), 'Forgot password?', 'Send a new password via email.'));
+            $url = $html->url(rest_ctrl::LOGIN_RESET);
+            $ref = $html->ref($url, 'Forgot password?', 'Send a new password via email.');
+            $msg .= $html->dsp_err('Login failed. ' . $ref);
         }
     }
 }
@@ -104,12 +106,12 @@ if (!$_SESSION['logged']) {
     $result .= '<br><br>';
     $result .= '<form action="login.php" method="post">';
     $result .= '  User Name:<br> ';
-    $result .= '  <input type="text" name="username"><br><br> ';
+    $result .= '  <input type="' . html_base::INPUT_TEXT . '" name="username"><br><br> ';
     $result .= '  password:<br> ';
-    $result .= '  <input type="password" name="password"><br><br> ';
-    $result .= '  <input type="hidden" name="back" value="' . $back . '"> ';
+    $result .= '  <input type="' . html_base::INPUT_PASSWORD . '" name="password"><br><br> ';
+    $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="back" value="' . $back . '"> ';
     $result .= $msg;
-    $result .= '  <input type="submit" name="submit" value="Login"> ';
+    $result .= '  <input type="' . html_base::INPUT_SUBMIT . '" name="submit" value="Login"> ';
     $result .= '</form>   ';
     $result .= '</div>   ';
 }

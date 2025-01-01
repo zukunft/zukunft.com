@@ -34,10 +34,18 @@ namespace html\view;
 include_once SANDBOX_PATH . 'list_dsp.php';
 include_once VIEW_PATH . 'view.php';
 
+use html\ref\source;
 use html\rest_ctrl;
 use html\sandbox\list_dsp;
+use html\sandbox\sandbox;
+use html\user\user_message;
+use html\verb\verb;
 use html\view\view as view_dsp;
+use html\word\triple;
+use html\word\word;
 use shared\api;
+use shared\types\view_styles;
+use shared\views;
 
 class view_list extends list_dsp
 {
@@ -47,15 +55,13 @@ class view_list extends list_dsp
      */
 
     /**
-     * set the vars of a view object based on the given json
+     * set the vars of the view list based on the given json
      * @param array $json_array an api single object json message
-     * @return object a view set based on the given json
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_obj_from_json_array(array $json_array): object
+    function set_from_json_array(array $json_array): user_message
     {
-        $msk = new view_dsp();
-        $msk->set_from_json_array($json_array);
-        return $msk;
+        return parent::set_list_from_json($json_array, new view_dsp());
     }
 
     function get(string $code_id): view_dsp
@@ -85,6 +91,20 @@ class view_list extends list_dsp
     /*
      * load
      */
+
+    function load_by_pattern(string $pattern = '%'): bool
+    {
+        $result = false;
+
+        $data = array(api::URL_VAR_PATTERN => $pattern);
+        $rest = new rest_ctrl();
+        $json_body = $rest->api_get(view_list::class, $data);
+        $this->set_from_json_array($json_body);
+        if (!$this->is_empty()) {
+            $result = true;
+        }
+        return $result;
+    }
 
     /**
      * get the views that use this component from the backend
@@ -161,6 +181,48 @@ class view_list extends list_dsp
         return $views;
     }
 
+    /**
+     * get the default view
+     * TODO if a phrase can be ranked use the ranking view
+     * @param sandbox $sbx the object to which the default view should be found
+     * @return int the view id if no view has been selected until now
+     */
+    function default_id(sandbox $sbx): int
+    {
+        return match ($sbx::class) {
+            word::class => views::MI_WORD,
+            verb::class => views::MI_VERB,
+            triple::class => views::MI_TRIPLE,
+            source::class => views::MI_SOURCE,
+            default => views::MI_START
+        };
+    }
+
+
+    /**
+     * HTML code of a view selector
+     * @param string $form the name of the html form
+     * @param int $selected the id of the preselected item
+     * @param string $name the unique name inside the form for this selector
+     * @param string $label the label name (TODO remove from the selector?
+     * @param string $col_class the formatting code to adjust the formatting
+     * @param string $pattern the pattern to filter the views
+     * @return string with the HTML code to show the view selector
+     */
+    function selector(
+        string    $form = '',
+        int       $selected = 0,
+        string    $name = 'view',
+        string    $label = 'view: ',
+        string    $col_class = view_styles::COL_SM_4,
+        string    $pattern = ''
+    ): string
+    {
+        if ($pattern != '') {
+            $this->load_like($pattern);
+        }
+        return parent::selector($form, $selected, $name, $label, $col_class);
+    }
 
     /**
      * create a selection page where the user can select a view that should be used for a view
@@ -186,7 +248,7 @@ class view_list extends list_dsp
         foreach ($dsp_lst as $dsp) {
             $view_id = $dsp['id'];
             $view_name = $dsp['name'];
-            if ($view_id == $this->id) {
+            if ($view_id == $this->id()) {
                 $result .= '<b><a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a></b> ';
             } else {
                 $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';

@@ -134,6 +134,12 @@
       "name_reverse": "can be"
     },
     {
+      "name": "can get",
+      "code_id": "can_get",
+      "description": "",
+      "name_plural": "can get"
+    },
+    {
       "name": "can use",
       "code_id": "can_use",
       "description": "use indicates that a new result is created e.g. a turbine can use water or wind or any type of liquid or gas to convert energy",

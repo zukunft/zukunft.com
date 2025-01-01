@@ -38,6 +38,7 @@ use html\html_base;
 use html\sandbox\list_value;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\result\result as result_dsp;
+use html\user\user_message;
 
 include_once WEB_SANDBOX_PATH . 'list_value.php';
 
@@ -51,13 +52,11 @@ class result_list extends list_value
     /**
      * set the vars of a result object based on the given json
      * @param array $json_array an api single object json message
-     * @return object a result set based on the given json
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_obj_from_json_array(array $json_array): object
+    function set_from_json_array(array $json_array): user_message
     {
-        $wrd = new result_dsp();
-        $wrd->set_from_json_array($json_array);
-        return $wrd;
+        return parent::set_list_from_json($json_array, new result_dsp());
     }
 
 

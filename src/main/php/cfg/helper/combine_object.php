@@ -38,9 +38,26 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
+
+include_once DB_PATH . 'sql_db.php';
+//include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_RESULT_PATH . 'result.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+//include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+//include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_db;
+use cfg\formula\formula;
+use cfg\result\result;
+use cfg\sandbox\sandbox_named;
+use cfg\value\value;
+use cfg\verb\verb;
+use cfg\word\triple;
+use cfg\word\word;
 use shared\library;
 
 class combine_object
@@ -50,7 +67,7 @@ class combine_object
      * object vars
      */
 
-    protected object $obj;
+    protected word|triple|verb|formula|value|result|sandbox_named|null $obj;
 
 
     /*
@@ -60,9 +77,9 @@ class combine_object
     /**
      * a combine object always covers an existing object
      * e.g. used to combine word and triple to a phrase
-     * @param object $obj the object that should be covered by a common interface
+     * @param word|triple|verb|formula|value|result|sandbox_named|null $obj the object that should be covered by a common interface
      */
-    function __construct(object $obj)
+    function __construct(word|triple|verb|formula|value|result|sandbox_named|null $obj)
     {
         $this->set_obj($obj);
     }
@@ -72,7 +89,7 @@ class combine_object
      * set and get
      */
 
-    function set_obj(object $obj): void
+    function set_obj(word|triple|verb|formula|value|result|sandbox_named|null $obj): void
     {
         $this->obj = $obj;
     }
@@ -84,7 +101,7 @@ class combine_object
 
     function isset(): bool
     {
-        return $this->obj->isset();
+        return $this->obj()->isset();
     }
 
 

@@ -32,11 +32,11 @@
 
 namespace unit;
 
-use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\job_time;
-use cfg\user;
-use cfg\user_list;
+use cfg\system\job_time;
+use cfg\user\user;
+use cfg\user\user_list;
 use test\test_cleanup;
 
 class user_tests
@@ -49,10 +49,9 @@ class user_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'user->';
         $t->resource_path = 'db/user/';
-        $json_file = 'unit/user/user_import.json';
 
         $t->header('Unit tests of the user class (src/main/php/model/user/user.php)');
 
@@ -86,7 +85,7 @@ class user_tests
 
 
         $t->subheader('Im- and Export tests');
-
+        $json_file = 'unit/user/user_import.json';
         $t->assert_json_file(new user(), $json_file);
 
     }

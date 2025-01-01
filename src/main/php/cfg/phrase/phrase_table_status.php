@@ -30,7 +30,11 @@
 */
 
 
-namespace cfg;
+namespace cfg\phrase;
+
+include_once MODEL_HELPER_PATH . 'type_object.php';
+
+use cfg\helper\type_object;
 
 class phrase_table_status extends type_object
 {

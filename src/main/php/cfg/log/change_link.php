@@ -46,7 +46,28 @@
 
 namespace cfg\log;
 
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_db.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
+include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field_list.php';
+include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
+include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_LOG_PATH . 'change_log.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once SHARED_PATH . 'library.php';
+
 use cfg\db\sql;
+use cfg\db\sql_creator;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
@@ -54,19 +75,13 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\sandbox_link;
-use cfg\source;
-use cfg\db\sql_db;
-use cfg\type_object;
-use cfg\user;
-use cfg\word;
+use cfg\sandbox\sandbox_link;
+use cfg\ref\source;
+use cfg\helper\type_object;
+use cfg\user\user;
+use cfg\word\word;
 use Exception;
 use shared\library;
-
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once MODEL_USER_PATH . 'user.php';
 
 class change_link extends change_log
 {
@@ -204,22 +219,22 @@ class change_link extends change_log
      * TODO use always limit queries to avoid long runners
      * create an SQL statement to retrieve a change long entry for links by the changing user
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param user $usr the id of the user sandbox object
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_user(sql $sc, user $usr): sql_par
+    function load_sql_by_user(sql_creator $sc, user $usr): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= 'user_last';
         $sc->set_class(change_link::class);
 
         $sc->set_name($qp->name);
-        $sc->set_usr($usr->id);
+        $sc->set_usr($usr->id());
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_join_fields(array(user::FLD_NAME), user::class);
 
-        $sc->add_where(user::FLD_ID, $usr->id);
+        $sc->add_where(user::FLD_ID, $usr->id());
         $sc->set_order(self::FLD_ID, sql::ORDER_DESC);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -522,7 +537,6 @@ class change_link extends change_log
             }
         }
         if ($this->table() == change_table_list::VIEW_LINK
-            or $this->table() == change_table_list::VALUE_PHRASE_LINK
             or $this->table() == change_table_list::FORMULA_LINK) {
             if ($this->action() == change_action::ADD or $this->action() == change_action::UPDATE) {
                 if ($this->new_from != null and $this->new_to != null) {
@@ -694,13 +708,13 @@ class change_link extends change_log
     /**
      * create the sql statement to add a log link entry to the database
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param sandbox_link|null $sbx the sandbox link object used to get the sql parameter names e.g. "_from_phrase_id" instead of "_new_from_id"
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert_link(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst,
         ?sandbox_link $sbx = null
     ): sql_par
@@ -730,21 +744,21 @@ class change_link extends change_log
      * get a list of all database fields to log am link
      * list must be corresponding to the db_values fields
      *
-     * @param sql $sc with the target db_type set
+     * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param sandbox_link|null $sbx the sandbox link object used to get the sql parameter names e.g. "_from_phrase_id" instead of "_new_from_id"
      * @return sql_par_field_list list of the database field names
      */
     function db_field_values_link_types(
-        sql           $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst,
         ?sandbox_link $sbx
     ): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
-        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQLTYP);
-        $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQLTYP);
-        $fvt_lst->add_field(change_table::FLD_ID, $this->table_id, type_object::FLD_ID_SQLTYP);
+        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQL_TYP);
+        $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQL_TYP);
+        $fvt_lst->add_field(change_table::FLD_ID, $this->table_id, type_object::FLD_ID_SQL_TYP);
 
         if ($this->old_text_from !== null) {
             $fvt_lst->add_field(self::FLD_OLD_FROM_TEXT, $this->old_text_from, $sc->get_sql_par_type($this->old_text_from));

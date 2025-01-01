@@ -33,11 +33,11 @@
 namespace unit;
 
 use api\view\view as view_api;
-use cfg\db\sql;
-use cfg\view;
-use cfg\view_sys_list;
+use cfg\db\sql_creator;
+use cfg\view\view;
+use cfg\view\view_sys_list;
 use cfg\db\sql_db;
-use cfg\view_list;
+use cfg\view\view_list;
 use test\test_cleanup;
 
 class view_list_tests
@@ -49,10 +49,9 @@ class view_list_tests
 
         // init
         $db_con = new sql_db();
-        $sc = new sql();
+        $sc = new sql_creator();
         $t->name = 'view_list->';
         $t->resource_path = 'db/view/';
-        $json_file = 'unit/view/view_list.json';
 
         $t->header('Unit tests of the view list class (src/main/php/model/view/view_list.php)');
 
@@ -72,7 +71,7 @@ class view_list_tests
 
 
         $t->subheader('Im- and Export tests');
-
+        $json_file = 'unit/view/view_list.json';
         $t->assert_json_file(new view_list($usr), $json_file);
 
     }

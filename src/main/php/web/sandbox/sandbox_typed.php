@@ -33,8 +33,13 @@
 namespace html\sandbox;
 
 include_once SANDBOX_PATH . 'sandbox_named.php';
+include_once SHARED_PATH . 'api.php';
+include_once WEB_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use api\api;
+use shared\api;
+use html\user\user_message;
+use shared\json_fields;
 
 class sandbox_typed extends sandbox_named
 {
@@ -53,16 +58,17 @@ class sandbox_typed extends sandbox_named
     /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): void
+    function set_from_json_array(array $json_array): user_message
     {
-        parent::set_from_json_array($json_array);
-        if (array_key_exists(api::FLD_TYPE, $json_array)) {
-            $this->set_type_id($json_array[api::FLD_TYPE]);
+        $usr_msg = parent::set_from_json_array($json_array);
+        if (array_key_exists(json_fields::TYPE, $json_array)) {
+            $this->set_type_id($json_array[json_fields::TYPE]);
         } else {
             $this->set_type_id();
         }
+        return $usr_msg;
     }
 
     function set_type_id(?int $type_id = null): void
@@ -73,6 +79,22 @@ class sandbox_typed extends sandbox_named
     function type_id(): ?int
     {
         return $this->type_id;
+    }
+
+    /**
+     * set the vars of this object bases on the url array
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_from_url_array(array $url_array): user_message
+    {
+        $usr_msg = parent::set_from_url_array($url_array);
+        if (array_key_exists(api::URL_VAR_TYPE, $url_array)) {
+            $this->set_type_id($url_array[api::URL_VAR_TYPE]);
+        } else {
+            $this->set_type_id();
+        }
+        return $usr_msg;
     }
 
 
@@ -87,7 +109,7 @@ class sandbox_typed extends sandbox_named
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[api::FLD_TYPE] = $this->type_id();
+        $vars[json_fields::TYPE] = $this->type_id();
         return $vars;
     }
 

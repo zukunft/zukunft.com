@@ -36,9 +36,114 @@
 namespace cfg\db;
 
 include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_DB_PATH . 'sql.php';
+include_once MODEL_DB_PATH . 'sql_creator.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 include_once MODEL_IMPORT_PATH . 'import_file.php';
+include_once MODEL_HELPER_PATH . 'config_numbers.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once MODEL_COMPONENT_PATH . 'component.php';
+include_once MODEL_COMPONENT_PATH . 'component_link.php';
+include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
+include_once MODEL_COMPONENT_PATH . 'component_type.php';
+include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
+include_once MODEL_COMPONENT_PATH . 'position_type.php';
+include_once MODEL_COMPONENT_PATH . 'position_type_list.php';
+include_once MODEL_COMPONENT_PATH . 'view_style.php';
+include_once MODEL_COMPONENT_PATH . 'view_style_list.php';
+include_once SERVICE_PATH . 'config.php';
+include_once MODEL_HELPER_PATH . 'config_numbers.php';
+include_once MODEL_ELEMENT_PATH . 'element.php';
+include_once MODEL_ELEMENT_PATH . 'element_type.php';
+include_once MODEL_ELEMENT_PATH . 'element_type_list.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'formula_link.php';
+include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
+include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
+include_once MODEL_FORMULA_PATH . 'formula_type.php';
+include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
+include_once MODEL_GROUP_PATH . 'group.php';
+include_once MODEL_IMPORT_PATH . 'import_file.php';
+include_once MODEL_SANDBOX_PATH . 'protection_type.php';
+include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'share_type.php';
+include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
+include_once MODEL_SYSTEM_PATH . 'ip_range.php';
+include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
+include_once MODEL_SYSTEM_PATH . 'job.php';
+include_once MODEL_SYSTEM_PATH . 'job_time.php';
+include_once MODEL_SYSTEM_PATH . 'job_type.php';
+include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
+include_once MODEL_LANGUAGE_PATH . 'language.php';
+include_once MODEL_LANGUAGE_PATH . 'language_form.php';
+include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
+include_once MODEL_LANGUAGE_PATH . 'language_list.php';
+include_once MODEL_SYSTEM_PATH . 'log.php';
+include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+include_once MODEL_LOG_PATH . 'change_action_list.php';
+include_once MODEL_LOG_PATH . 'change_field_list.php';
+include_once MODEL_LOG_PATH . 'change_table_list.php';
+include_once MODEL_LOG_PATH . 'change_values_big.php';
+include_once MODEL_LOG_PATH . 'change_field.php';
+include_once MODEL_LOG_PATH . 'change_link.php';
+include_once MODEL_LOG_PATH . 'change_values_norm.php';
+include_once MODEL_LOG_PATH . 'change_values_prime.php';
+include_once MODEL_LOG_PATH . 'change_table.php';
+include_once MODEL_LOG_PATH . 'change_table_field.php';
+include_once MODEL_LOG_PATH . 'changes_big.php';
+include_once MODEL_LOG_PATH . 'changes_norm.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'phrase_table.php';
+include_once MODEL_PHRASE_PATH . 'phrase_table_status.php';
+include_once MODEL_PHRASE_PATH . 'phrase_type.php';
+include_once MODEL_PHRASE_PATH . 'phrase_types.php';
+include_once MODEL_SYSTEM_PATH . 'pod.php';
+include_once MODEL_SYSTEM_PATH . 'pod_status.php';
+include_once MODEL_SYSTEM_PATH . 'pod_type.php';
+include_once MODEL_REF_PATH . 'ref.php';
+include_once MODEL_REF_PATH . 'ref_type.php';
+include_once MODEL_REF_PATH . 'ref_type_list.php';
+include_once MODEL_RESULT_PATH . 'result.php';
+include_once MODEL_SYSTEM_PATH . 'session.php';
+include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_REF_PATH . 'source_type.php';
+include_once MODEL_REF_PATH . 'source_type_list.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_type.php';
+include_once MODEL_SYSTEM_PATH . 'system_time.php';
+include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
+include_once MODEL_PHRASE_PATH . 'term.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_HELPER_PATH . 'type_lists.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_profile.php';
+include_once MODEL_USER_PATH . 'user_type.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_USER_PATH . 'user_official_type.php';
+include_once MODEL_USER_PATH . 'user_profile_list.php';
+include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_time_series.php';
+include_once MODEL_VALUE_PATH . 'value_ts_data.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_VERB_PATH . 'verb_list.php';
+include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_VIEW_PATH . 'view_link_type.php';
+include_once MODEL_VIEW_PATH . 'view_link_type_list.php';
+include_once MODEL_VIEW_PATH . 'view_sys_list.php';
+include_once MODEL_VIEW_PATH . 'view_term_link.php';
+include_once MODEL_VIEW_PATH . 'view_type.php';
+include_once MODEL_VIEW_PATH . 'view_type_list.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once HTML_PATH . 'html_base.php';
+include_once SHARED_PATH . 'library.php';
+include_once SHARED_TYPES_PATH . 'protection_type.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -47,29 +152,37 @@ use cfg\component\component_type;
 use cfg\component\component_type_list;
 use cfg\component\position_type;
 use cfg\component\position_type_list;
+use cfg\component\view_style;
+use cfg\component\view_style_list;
 use cfg\config;
-use cfg\element;
-use cfg\element_type;
-use cfg\element_type_list;
-use cfg\formula;
-use cfg\formula_link;
-use cfg\formula_link_type;
-use cfg\formula_link_type_list;
-use cfg\formula_type;
-use cfg\formula_type_list;
+use cfg\helper\config_numbers;
+use cfg\element\element;
+use cfg\element\element_type;
+use cfg\element\element_type_list;
+use cfg\formula\formula;
+use cfg\formula\formula_link;
+use cfg\formula\formula_link_type;
+use cfg\formula\formula_link_type_list;
+use cfg\formula\formula_type;
+use cfg\formula\formula_type_list;
 use cfg\group\group;
 use cfg\import\import_file;
-use cfg\ip_range;
-use cfg\ip_range_list;
-use cfg\job;
-use cfg\job_time;
-use cfg\job_type;
-use cfg\job_type_list;
-use cfg\language;
-use cfg\language_form;
-use cfg\language_form_list;
-use cfg\language_list;
-use cfg\log;
+use cfg\sandbox\protection_type;
+use cfg\sandbox\protection_type_list;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\share_type;
+use cfg\sandbox\share_type_list;
+use cfg\system\ip_range;
+use cfg\system\ip_range_list;
+use cfg\system\job;
+use cfg\system\job_time;
+use cfg\system\job_type;
+use cfg\system\job_type_list;
+use cfg\language\language;
+use cfg\language\language_form;
+use cfg\language\language_form_list;
+use cfg\language\language_list;
+use cfg\system\log;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_action_list;
@@ -84,64 +197,60 @@ use cfg\log\change_table;
 use cfg\log\change_table_field;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
-use cfg\phrase;
-use cfg\phrase_table;
-use cfg\phrase_table_status;
-use cfg\phrase_type;
-use cfg\phrase_types;
-use cfg\pod;
-use cfg\pod_status;
-use cfg\pod_type;
-use cfg\protection_type;
-use cfg\protection_type_list;
-use cfg\ref;
-use cfg\ref_type;
-use cfg\ref_type_list;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_table;
+use cfg\phrase\phrase_table_status;
+use cfg\phrase\phrase_type;
+use cfg\phrase\phrase_types;
+use cfg\system\pod;
+use cfg\system\pod_status;
+use cfg\system\pod_type;
+use cfg\ref\ref;
+use cfg\ref\ref_type;
+use cfg\ref\ref_type_list;
 use cfg\result\result;
-use cfg\sandbox;
-use cfg\session;
-use cfg\share_type;
-use cfg\share_type_list;
-use cfg\source;
-use cfg\source_type;
-use cfg\source_type_list;
-use cfg\sys_log;
-use cfg\sys_log_function;
-use cfg\sys_log_level;
-use cfg\sys_log_status;
-use cfg\sys_log_type;
-use cfg\system_time;
-use cfg\system_time_type;
-use cfg\term;
-use cfg\triple;
-use cfg\type_lists;
-use cfg\user;
+use cfg\system\session;
+use cfg\ref\source;
+use cfg\ref\source_type;
+use cfg\ref\source_type_list;
+use cfg\system\sys_log;
+use cfg\system\sys_log_function;
+use cfg\system\sys_log_level;
+use cfg\system\sys_log_status;
+use cfg\system\sys_log_type;
+use cfg\system\system_time;
+use cfg\system\system_time_type;
+use cfg\phrase\term;
+use cfg\word\triple;
+use cfg\helper\type_lists;
+use cfg\user\user;
 use cfg\user\user_profile;
 use cfg\user\user_type;
-use cfg\user_message;
-use cfg\user_official_type;
-use cfg\user_profile_list;
+use cfg\user\user_message;
+use cfg\user\user_official_type;
+use cfg\user\user_profile_list;
 use cfg\value\value;
-use cfg\value\value_phrase_link;
 use cfg\value\value_time_series;
 use cfg\value\value_ts_data;
-use cfg\verb;
-use cfg\verb_list;
-use cfg\view;
-use cfg\view_link_type;
-use cfg\view_link_type_list;
-use cfg\view_sys_list;
-use cfg\view_term_link;
-use cfg\view_type;
-use cfg\view_type_list;
-use cfg\word;
+use cfg\verb\verb;
+use cfg\verb\verb_list;
+use cfg\view\view;
+use cfg\view\view_link_type;
+use cfg\view\view_link_type_list;
+use cfg\view\view_sys_list;
+use cfg\view\view_term_link;
+use cfg\view\view_type;
+use cfg\view\view_type_list;
+use cfg\word\word;
 use Exception;
 use html\html_base;
 use mysqli;
 use mysqli_result;
 use PDOException;
 use shared\library;
-use test\all_tests;
+use shared\types\protection_type as protect_type_shared;
+use shared\types\phrase_type as phrase_type_shared;
+use shared\types\verbs;
 
 class sql_db
 {
@@ -195,7 +304,7 @@ class sql_db
     const SETUP_INDEX_COM = 'remark: no index needed for preloaded tables such as phrase types';
     const SETUP_FOREIGN_KEY = 'foreign key constraints and auto_increment for tables';
 
-    // classes that have a database table in order of suggested table creation so that depending tables are created later
+    // classes that have a database table in order of suggested table creation so that depending on tables are created later
     const DB_TABLE_CLASSES = [
         config::class,
         sys_log_type::class,
@@ -251,6 +360,7 @@ class sql_db
         formula_link::class,
         result::class,
         view_type::class,
+        view_style::class,
         view::class,
         view_link_type::class,
         view_term_link::class,
@@ -262,6 +372,7 @@ class sql_db
     ];
 
     // classes that have a database table in order of least depending first to avoid the usage of CASCADE on truncate
+    // array with true for the table with user overwrites
     const DB_TABLE_CLASSES_DESC_DEPENDING = [
         [value::class, true],
         value::class,
@@ -282,6 +393,7 @@ class sql_db
         [view::class, true],
         view::class,
         view_type::class,
+        view_style::class,
         [group::class, true],
         group::class,
         verb::class,
@@ -375,7 +487,6 @@ class sql_db
         result::class,
         element::class,
         component_link::class,
-        value_phrase_link::class,
         view_term_link::class,
         ref::class,
         ip_range::class,
@@ -444,7 +555,7 @@ class sql_db
     private int $reconnect_delay = 0;               // number of seconds of the last reconnect retry delay
 
     public ?int $usr_id = null;                     // the user id of the person who request the database changes
-    private ?int $usr_view_id = null;               // the user id of the person which values should be returned e.g. an admin might want to check the data of an user
+    private ?int $usr_view_id = null;               // the user id of the person which values should be returned e.g. an admin might want to check the data of a user
 
     private ?string $class = '';                    // based of this database object type the table name and the standard fields are defined e.g. for type "word" the field "word_name" is used
     private ?string $table = '';                    // name of the table that is used for the next query
@@ -723,7 +834,11 @@ class sql_db
      */
     function setup(): bool
     {
+        global $sys_times;
+
         $result = false;
+        $sys_times->switch(system_time_type::DB_WRITE);
+
         // ask the user for the database server, admin user and pw
         $db_server = 'localhost';
         $db_admin_user = 'postgres';
@@ -738,7 +853,7 @@ class sql_db
             if (!$sql_result) {
                 // show the error message direct to the setup user because database does not yet exist
                 echo 'ERROR: creation of the technical pod user failed ';
-                echo 'due to ' . $sql_result;
+                echo 'due to ' . pg_last_error();
             }
         } catch (Exception $e) {
             // show the error message direct to the setup user because database does not yet exist
@@ -756,7 +871,7 @@ class sql_db
                 if (!$sql_result) {
                     // show the error message direct to the setup user because database does not yet exist
                     echo 'ERROR: creation of the database failed ';
-                    echo 'due to ' . $sql_result;
+                    echo 'due to ' . pg_last_error();
                 }
             } catch (Exception $e) {
                 // show the error message direct to the setup user because database does not yet exist
@@ -776,7 +891,7 @@ class sql_db
                 if (!$sql_result) {
                     // show the error message direct to the setup user because database does not yet exist
                     echo 'ERROR: creation of the database failed ';
-                    echo 'due to ' . $sql_result;
+                    echo 'due to ' . pg_last_error();
                 }
             } catch (Exception $e) {
                 // show the error message direct to the setup user because database does not yet exist
@@ -785,6 +900,8 @@ class sql_db
             }
             $result = true;
         }
+        $sys_times->switch();
+
         // create the tables and view
         return $result;
     }
@@ -797,6 +914,8 @@ class sql_db
      */
     function setup_db(): user_message
     {
+        global $sys_times;
+
         $html = new html_base();
         $usr_msg = new user_message();
 
@@ -804,12 +923,16 @@ class sql_db
         $sql = resource_file(DB_RES_SUB_PATH . DB_SETUP_SUB_PATH . $this->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
         try {
             $html->echo('Run db setup sql script');
+            $sys_times->switch(system_time_type::DB_SETUP);
             $sql_msg = $this->exe_script($sql);
+            $sys_times->switch();
             if (!$sql_msg->is_ok()) {
                 // retry once but try to delete upfront all remaining tables and objects
                 $usr_msg = new user_message();
                 $this->reset_db_core();
+                $sys_times->switch(system_time_type::DB_SETUP);
                 $sql_msg = $this->exe_script($sql);
+                $sys_times->switch();
                 $usr_msg->add($sql_msg);
             }
             if (!$sql_msg->is_ok()) {
@@ -845,16 +968,20 @@ class sql_db
             $import = new import_file();
             $this->import_verbs($usr);
             $import->import_base_config($usr);
+            $this->create_internal_words($usr);
             $import->import_config($usr);
+            $import->import_config_yaml($usr);
             $this->db_check_missing_owner();
 
             // create the test dataset to check the basic write functions
-            $t = new all_tests();
-            $t->set_users();
-            $t->create_test_db_entries($t);
+            // TODO use import instead
+            //$t = new all_tests();
+            //$t->set_users();
+            //$t->create_test_db_entries($t);
 
             // remove the test dataset for a clean database
             // TODO use the user message object instead of a string
+            /*
             $cleanup_result = $t->cleanup();
             if (!$cleanup_result) {
                 log_err('Cleanup not successful, because ...');
@@ -863,6 +990,7 @@ class sql_db
                     log_err('Cleanup check not successful.');
                 }
             }
+            */
 
             // reload the session user parameters
             $usr = new user;
@@ -901,7 +1029,10 @@ class sql_db
      */
     function run_db_truncate(user $sys_usr): void
     {
+        global $sys_times;
+
         $lib = new library();
+        $sys_times->switch(system_time_type::DB_WRITE);
 
         // the tables in order to avoid the usage of CASCADE
         $table_names = sql_db::DB_TABLE_CLASSES_DESC_DEPENDING;
@@ -912,7 +1043,7 @@ class sql_db
 
         // truncate tables that have already a build in truncate statement creation
         $sql = '';
-        $sc = new sql();
+        $sc = new sql_creator();
         $grp = new group($sys_usr);
         $sql .= $grp->sql_truncate($sc);
 
@@ -943,58 +1074,64 @@ class sql_db
 
         // reset the preloaded data
         $this->run_preloaded_truncate();
+        $sys_times->switch();
     }
 
     function run_preloaded_truncate(): void
     {
+        // TODO use system user cache
         global $system_users;
-        global $user_profiles;
-        global $phrase_types;
-        global $formula_types;
-        global $formula_link_types;
-        global $element_types;
-        global $view_types;
-        global $view_link_types;
-        global $component_types;
-        global $component_link_types;
-        global $position_types;
-        global $ref_types;
-        global $source_types;
-        global $share_types;
-        global $protection_types;
-        global $languages;
-        global $language_forms;
-        global $verbs;
-        global $system_views;
-        global $sys_log_stati;
-        global $job_types;
-        global $change_action_list;
-        global $change_table_list;
-        global $change_field_list;
+        // TODO use user profile cache
+        global $usr_pro_cac;
+        global $phr_typ_cac;
+        global $frm_typ_cac;
+        global $frm_lnk_typ_cac;
+        global $elm_typ_cac;
+        global $msk_typ_cac;
+        global $msk_sty_cac;
+        global $msk_lnk_typ_cac;
+        global $cmp_typ_cac;
+        // TODO use component link type cache
+        global $cmp_lnk_typ_cac;
+        global $pos_typ_cac;
+        global $ref_typ_cac;
+        global $src_typ_cac;
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+        global $lan_cac;
+        global $lan_for_cac;
+        global $vrb_cac;
+        global $sys_msk_cac;
+        global $sys_log_sta_cac;
+        global $job_typ_cac;
+        global $cng_act_cac;
+        global $cng_tbl_cac;
+        global $cng_fld_cac;
 
         // TODO activate or remove
         //$system_users =[];
-        //$user_profiles =[];
-        $phrase_types = new phrase_types();
-        $formula_types = new formula_type_list();
-        $formula_link_types = new formula_link_type_list();
-        $element_types = new element_type_list();
-        $view_types = new view_type_list();
-        $view_link_types = new view_link_type_list();
-        $component_types = new component_type_list();
+        //$usr_pro_cac =[];
+        $phr_typ_cac = new phrase_types();
+        $frm_typ_cac = new formula_type_list();
+        $frm_lnk_typ_cac = new formula_link_type_list();
+        $elm_typ_cac = new element_type_list();
+        $msk_typ_cac = new view_type_list();
+        $msk_sty_cac = new view_style_list();
+        $msk_lnk_typ_cac = new view_link_type_list();
+        $cmp_typ_cac = new component_type_list();
         // not yet needed?
-        //$component_link_types = new component_link_type_list();
-        $position_types = new position_type_list();
-        $ref_types = new ref_type_list();
-        $source_types = new source_type_list();
-        $share_types = new share_type_list();
-        $protection_types = new protection_type_list();
-        $languages = new language_list();
-        $language_forms = new language_form_list();
-        $job_types = new job_type_list();
-        $change_action_list = new change_action_list();
-        $change_table_list = new change_table_list();
-        $change_field_list = new change_field_list();
+        //$cmp_lnk_typ_cac = new component_link_type_list();
+        $pos_typ_cac = new position_type_list();
+        $ref_typ_cac = new ref_type_list();
+        $src_typ_cac = new source_type_list();
+        $shr_typ_cac = new share_type_list();
+        $ptc_typ_cac = new protection_type_list();
+        $lan_cac = new language_list();
+        $lan_for_cac = new language_form_list();
+        $job_typ_cac = new job_type_list();
+        $cng_act_cac = new change_action_list();
+        $cng_tbl_cac = new change_table_list();
+        $cng_fld_cac = new change_field_list();
     }
 
     /**
@@ -2072,11 +2209,12 @@ class sql_db
         }
     }
 
-    function get_name_field(string $type): string
+    function get_name_field(string $class): string
     {
         global $debug;
 
         $lib = new library();
+        $type = $lib->class_to_name($class);
 
         // exceptions for user overwrite tables
         if (str_starts_with($type, sql_db::TBL_USER_PREFIX)) {
@@ -2231,17 +2369,22 @@ class sql_db
     ): \PgSql\Result|mysqli_result|null
     {
         global $debug;
+        global $sys_times;
+
         $lib = new library();
         log_debug('"' . $sql . '" with "' . $lib->dsp_array($sql_array) . '" named "' . $sql_name . '" for  user ' . $this->usr_id, $debug - 15);
 
-        // Postgres part
+        // sql db selector
         if ($this->db_type == sql_db::POSTGRES) {
+            // Postgres part
             $result = $this->exe_postgres($sql, $sql_name, $sql_array, $sql_call, $sql_call_name, $log_level);            // check database connection
         } elseif ($this->db_type == sql_db::MYSQL) {
+            // MySQL part
             $result = $this->exe_mysql($sql, $sql_name, $sql_array, $sql_call, $log_level);            // check database connection
         } else {
             throw new Exception('Unknown database type "' . $this->db_type . '"');
         }
+        $sys_times->switch();
 
         return $result;
     }
@@ -2253,7 +2396,7 @@ class sql_db
      */
     function exe_script(string $sql): \PgSql\Result|mysqli_result|user_message
     {
-        $msg = new user_message();
+        $usr_msg = new user_message();
         $result = true;
         // execute on the connected database
         if ($this->db_type == sql_db::POSTGRES) {
@@ -2261,22 +2404,22 @@ class sql_db
                 $result = pg_query($this->postgres_link, $sql);
             } catch (Exception $e) {
                 $trace_link = $this->log_db_exception('execute script', $e, $sql, $log_level);
-                $msg->set_url($trace_link);
+                $usr_msg->set_url($trace_link);
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
             try {
                 $result = mysqli_query($this->mysql, $sql);
             } catch (Exception $e) {
                 $trace_link = $this->log_db_exception('execute script', $e, $sql, $log_level);
-                $msg->set_url($trace_link);
+                $usr_msg->set_url($trace_link);
             }
         } else {
             log_fatal('Unknown database type "' . $this->db_type . '"', 'exe_script');
         }
         if ($result === false) {
-            $msg->add_message(pg_last_error($this->postgres_link));
+            $usr_msg->add_message(pg_last_error($this->postgres_link));
         }
-        return $msg;
+        return $usr_msg;
     }
 
     /**
@@ -2584,7 +2727,10 @@ class sql_db
     private
     function fetch(string $sql, string $sql_name = '', array $sql_array = array(), bool $fetch_all = false): ?array
     {
+        global $sys_times;
+
         $result = array();
+        $sys_times->switch(system_time_type::DB_READ);
 
         if ($sql <> "") {
             if ($this->db_type == sql_db::POSTGRES) {
@@ -2638,6 +2784,7 @@ class sql_db
                 log_err('Unknown database type "' . $this->db_type . '"', 'sql_db->fetch');
             }
         }
+        $sys_times->switch();
 
         return $result;
     }
@@ -3998,6 +4145,8 @@ class sql_db
      */
     function set_default_owner(): bool
     {
+        global $sys_times;
+
         log_debug("sql_db->set_default_owner (" . $this->class . ")");
         $result = true;
 
@@ -4014,6 +4163,7 @@ class sql_db
              WHERE user_id IS NULL;";
 
             //return $this->exe($sql, 'user_default', array());
+            $sys_times->switch(system_time_type::DB_WRITE);
             try {
                 $sql_result = $this->exe($sql, '', array());
                 if (!$sql_result) {
@@ -4026,6 +4176,7 @@ class sql_db
                 log_err($msg . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $e->getMessage());
                 $result = false;
             }
+            $sys_times->switch();
         }
 
         return $result;
@@ -4049,7 +4200,10 @@ class sql_db
      */
     function insert(sql_par $qp, string $description, bool $usr_tbl = false): user_message
     {
-        $result = new user_message();
+        global $sys_times;
+
+        $sys_times->switch(system_time_type::DB_WRITE);
+        $usr_msg = new user_message();
         $err_msg = 'Insert of ' . $description . ' failed.';
         try {
             $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name);
@@ -4058,7 +4212,7 @@ class sql_db
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
                     log_err($sql_error . ' while executing ' . $qp->sql);
-                    $result->add_message($err_msg);
+                    $usr_msg->add_message($err_msg);
                 } else {
                     if (!$usr_tbl) {
                         $db_id = pg_fetch_array($sql_result)[0];
@@ -4072,17 +4226,18 @@ class sql_db
             if (!$usr_tbl) {
                 if ($db_id == 0 or $db_id == '') {
                     log_err($err_msg);
-                    $result->add_message($err_msg);
+                    $usr_msg->add_message($err_msg);
                 } else {
-                    $result->set_db_row_id($db_id);
+                    $usr_msg->set_db_row_id($db_id);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $result->add_message($trace_link);
+            $usr_msg->add_message($trace_link);
         }
+        $sys_times->switch();
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -4098,7 +4253,10 @@ class sql_db
      */
     function update(sql_par $qp, string $description): user_message
     {
-        $result = new user_message();
+        global $sys_times;
+
+        $sys_times->switch(system_time_type::DB_WRITE);
+        $usr_msg = new user_message();
         $err_msg = 'Update of ' . $description . ' failed';
         try {
             $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql, $qp->call_name);
@@ -4107,15 +4265,16 @@ class sql_db
                 if ($sql_error != '') {
                     $err_msg .= ' due to ' . $sql_error;
                     log_err($err_msg);
-                    $result->add_message($err_msg);
+                    $usr_msg->add_message($err_msg);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $result->add_message($trace_link);
+            $usr_msg->add_message($trace_link);
         }
+        $sys_times->switch();
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -4131,7 +4290,10 @@ class sql_db
      */
     function delete(sql_par $qp, string $description): user_message
     {
-        $result = new user_message();
+        global $sys_times;
+
+        $sys_times->switch(system_time_type::DB_WRITE);
+        $usr_msg = new user_message();
         $err_msg = 'Delete of ' . $description . ' failed';
         try {
             $sql_result = $this->exe($qp->sql, $qp->name, $qp->par, $qp->call_sql);
@@ -4140,15 +4302,16 @@ class sql_db
                 if ($sql_error != '') {
                     $err_msg .= ' due to ' . $sql_error;
                     log_err($err_msg);
-                    $result->add_message($err_msg);
+                    $usr_msg->add_message($err_msg);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $result->add_message($trace_link);
+            $usr_msg->add_message($trace_link);
         }
+        $sys_times->switch();
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -4163,9 +4326,12 @@ class sql_db
      */
     function insert_old($fields, $values, bool $log_err = true): int
     {
+        global $sys_times;
+
         $result = 0;
         $is_valid = false;
         $lib = new library();
+        $sys_times->switch(system_time_type::DB_WRITE);
 
         // escape the fields and values and build the SQL statement
         $sql = 'INSERT INTO ' . $this->name_sql_esc($this->table);
@@ -4301,9 +4467,10 @@ class sql_db
         }
 
         if ($result == null) {
-            log_err('Unexpected result for "' . $this->db_type . '"', 'sql_db->fetch');
+            log_warning('Unexpected result for "' . $this->db_type . '"', 'sql_db->fetch');
             $result = 0;
         }
+        $sys_times->switch();
 
         return $result;
     }
@@ -4348,7 +4515,10 @@ class sql_db
     function update_old($id, $fields, $values, string $id_field = ''): bool
     {
         global $debug;
+        global $sys_times;
+
         $lib = new library();
+        $sys_times->switch(system_time_type::DB_WRITE);
 
         log_debug('of ' . $this->class . ' row ' . $lib->dsp_var($id) . ' ' . $lib->dsp_var($fields) . ' with "' . $lib->dsp_var($values) . '" for user ' . $this->usr_id, $debug - 7);
 
@@ -4412,6 +4582,7 @@ class sql_db
                 $result = $msg . log::MSG_ERR_INTERNAL . $trace_link;
             }
         }
+        $sys_times->switch();
 
         log_debug('done (' . $result . ')', $debug - 17);
         return $result;
@@ -4435,6 +4606,9 @@ class sql_db
      */
     function delete_old($id_fields, $id_values): string
     {
+        global $sys_times;
+        $sys_times->switch(system_time_type::DB_WRITE);
+
         $lib = new library();
         if (is_array($id_fields)) {
             log_debug('in "' . $this->class . '" WHERE "' . $lib->dsp_array($id_fields) . '" IS "' . $lib->dsp_array($id_values) . '" for user ' . $this->usr_id);
@@ -4465,7 +4639,9 @@ class sql_db
         }
 
         log_debug('sql "' . $sql . '"');
-        return $this->exe_try('Deleting of ' . $this->class, $sql, '', array(), sys_log_level::FATAL);
+        $result = $this->exe_try('Deleting of ' . $this->class, $sql, '', array(), sys_log_level::FATAL);
+        $sys_times->switch();
+        return $result;
     }
 
     /*
@@ -4746,6 +4922,26 @@ class sql_db
     }
 
     /**
+     * @return array with the function that are actually in the database
+     */
+    function get_functions(): array
+    {
+        $names = [];
+        // TODO move db selection to the top e.g. db/postgres/setup instead of db/setup/postgres this way the number of if can be reduced
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql = resource_file('db/select/postgres/routines.sql');
+        } else {
+            $sql = resource_file('db/select/mysql/routines.sql');
+        }
+        $db_lst = $this->get_internal($sql);
+        foreach ($db_lst as $row) {
+            $names[] = $row[0];
+        }
+
+        return $names;
+    }
+
+    /**
      * check if a foreign key exists
      * @param string $table_name
      * @param string $key_name
@@ -4861,7 +5057,7 @@ class sql_db
      */
     function del_field(string $table_name, string $field_name): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
 
         // adjust the parameters to the used database used
         $table_name = $this->get_table_name($table_name);
@@ -4872,10 +5068,10 @@ class sql_db
             // actually add the column
             $sql = 'ALTER TABLE IF EXISTS ' . $this->name_sql_esc($table_name) .
                 ' DROP COLUMN IF EXISTS ' . $this->name_sql_esc($field_name) . ';';
-            $result->add_message($this->exe_try('Deleting column ' . $field_name . ' of ' . $table_name, $sql));
+            $usr_msg->add_message($this->exe_try('Deleting column ' . $field_name . ' of ' . $table_name, $sql));
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -5082,6 +5278,8 @@ class sql_db
 
     function change_code_id(string $table_name, string $old_code_id, string $new_code_id): string
     {
+        global $sys_times;
+
         $result = '';
 
         // adjust the parameters to the used database name
@@ -5089,7 +5287,9 @@ class sql_db
 
         if ($new_code_id != '' and $old_code_id != '' and $old_code_id != $new_code_id) {
             $sql = "UPDATE " . $table_name . " SET code_id = '" . $new_code_id . "' WHERE code_id = '" . $old_code_id . "';";
+            $sys_times->switch(system_time_type::DB_WRITE);
             $result = $this->exe_try('Changing code id from ' . $old_code_id . ' to ' . $new_code_id, $sql);
+            $sys_times->switch();
         }
 
         return $result;
@@ -5150,7 +5350,7 @@ class sql_db
 
     function sql_setup_header(): string
     {
-        $sc = new sql();
+        $sc = new sql_creator();
         $sql = $sc->sql_separator();
         if ($this->db_type == sql_db::MYSQL) {
             $sql .= self::SETUP_HEADER_MYSQL;
@@ -5162,7 +5362,7 @@ class sql_db
 
     function sql_setup_footer(): string
     {
-        $sc = new sql();
+        $sc = new sql_creator();
         $sql = '';
         if ($this->db_type == sql_db::MYSQL) {
             $sql .= self::SETUP_FOOTER_MYSQL;
@@ -5174,7 +5374,7 @@ class sql_db
 
     function sql_separator_index(): string
     {
-        $sc = new sql();
+        $sc = new sql_creator();
         $sql = $sc->sql_separator();
         $sql .= self::SETUP_COMMENT . ' ';
         $sql .= self::SETUP_COMMENT . ' ' . self::SETUP_INDEX . ' ';
@@ -5185,7 +5385,7 @@ class sql_db
 
     function sql_separator_foreign_key(): string
     {
-        $sc = new sql();
+        $sc = new sql_creator();
         $sql = $sc->sql_separator();
         $sql .= self::SETUP_COMMENT . ' ';
         $sql .= self::SETUP_COMMENT . ' ' . self::SETUP_FOREIGN_KEY . ' ';
@@ -5195,11 +5395,11 @@ class sql_db
     }
 
     /**
-     * @return sql with the same db_type
+     * @return sql_creator with the same db_type
      */
-    function sql_creator(): sql
+    function sql_creator(): sql_creator
     {
-        $sc = new sql();
+        $sc = new sql_creator();
         if ($this->db_type == null) {
             $sc->set_db_type(sql_db::POSTGRES);
         } else {
@@ -5240,7 +5440,7 @@ class sql_db
     {
         // the sequence names of the tables to reset
         $html = new html_base();
-        $html->echo('truncate ');
+        $html->echo('truncate all tables ');
         foreach (DB_SEQ_LIST as $seq_name) {
             $this->reset_seq($seq_name);
         }
@@ -5249,8 +5449,8 @@ class sql_db
     function truncate_table(string $table_name): void
     {
         $html = new html_base();
-        $html->echo('TRUNCATE TABLE ' . $table_name);
-        $sql = 'TRUNCATE ' . $this->get_table_name_esc($table_name) . ' CASCADE;';
+        $html->echo('truncate table ' . $table_name);
+        $sql = sql::TRUNCATE . ' ' . $this->get_table_name_esc($table_name) . ' ' . sql::CASCADE . '; ';
         try {
             $this->exe($sql);
         } catch (Exception $e) {
@@ -5260,6 +5460,9 @@ class sql_db
 
     function drop_table(string $table_name): void
     {
+        global $sys_times;
+        $sys_times->switch(system_time_type::DB_WRITE);
+
         $html = new html_base();
         $html->echo('DROP TABLE ' . $table_name);
         if ($this->has_table($table_name)) {
@@ -5270,6 +5473,7 @@ class sql_db
                 //log_info('Cannot drop table ' . $table_name . ' with "' . $sql . '" because: ' . $e->getMessage());
             }
         }
+        $sys_times->switch();
     }
 
     function reset_seq_all(): void
@@ -5282,6 +5486,9 @@ class sql_db
 
     function reset_seq(string $seq_name, int $start_id = 1): void
     {
+        global $sys_times;
+        $sys_times->switch(system_time_type::DB_WRITE);
+
         $html = new html_base();
         $html->echo('RESET SEQUENCE ' . $seq_name);
         $sql = 'ALTER SEQUENCE ' . $seq_name . ' RESTART ' . $start_id . ';';
@@ -5290,6 +5497,7 @@ class sql_db
         } catch (Exception $e) {
             log_err('Cannot do sequence reset with "' . $sql . '" because: ' . $e->getMessage());
         }
+        $sys_times->switch();
     }
 
     /**
@@ -5301,9 +5509,9 @@ class sql_db
         foreach (USER_CODE_LINK_FILES as $csv_file_name) {
             $this->load_db_code_link_file($csv_file_name, $this);
         }
-        global $user_profiles;
-        $user_profiles = new user_profile_list();
-        $user_profiles->load($this);
+        global $usr_pro_cac;
+        $usr_pro_cac = new user_profile_list();
+        $usr_pro_cac->load($this);
     }
 
     /**
@@ -5349,7 +5557,7 @@ class sql_db
     function import_verbs(user $usr): bool
     {
         global $db_con;
-        global $verbs;
+        global $vrb_cac;
 
         $result = false;
 
@@ -5361,16 +5569,96 @@ class sql_db
             }
         }
 
-        $verbs = new verb_list($usr);
-        $verbs->load($db_con);
+        $vrb_cac = new verb_list($usr);
+        $vrb_cac->load($db_con);
 
         return $result;
+    }
+
+    /**
+     * create the words used for the system configuration
+     * @param user $usr the user how has called this function which mus be and admin of the system itself
+     * @return user_message ok if the words has been created successfully of an error message
+     */
+    function create_internal_words(user $usr): user_message
+    {
+        $usr_msg = new user_message();
+
+        global $ptc_typ_cac;
+        global $vrb_cac;
+
+        if ($usr->is_admin() or $usr->is_system()) {
+            foreach (config_numbers::ADMIN_KEYWORDS as $name) {
+                $wrd = new word($usr);
+                $wrd->set_name($name);
+                $wrd->set_code_id($name);
+                $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+                $usr_msg->add($wrd->save());
+            }
+            foreach (config_numbers::HIDDEN_KEYWORDS as $name) {
+                $wrd = new word($usr);
+                $wrd->set_name($name);
+                $wrd->set_code_id($name);
+                $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+                $wrd->set_type(phrase_type_shared::SYSTEM_HIDDEN);
+                $usr_msg->add($wrd->save());
+            }
+            foreach (config_numbers::INTERNAL_COMMENTS as $com_wrd_lst) {
+                $wrd = new word($usr);
+                $com = $com_wrd_lst[0];
+                $name = $com_wrd_lst[1];
+                if (!$wrd->load_by_name($name)) {
+                    $wrd->set_name($name);
+                }
+                $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+                $wrd->description = $com;
+                $wrd->set_code_id($name);
+                $usr_msg->add($wrd->save());
+            }
+            foreach (config_numbers::HIDDEN_KEY_TRIPLES as $trp_lst) {
+                $from_name = $trp_lst[0];
+                $to_name = $trp_lst[1];
+                $vrb = $vrb_cac->get_verb(verbs::CAN_USE);
+                $trp = new triple($usr);
+                $from = new phrase($usr);
+                $from->load_by_name($from_name);
+                $to = new phrase($usr);
+                $to->load_by_name($to_name);
+                $trp->set_from($from);
+                $trp->set_verb($vrb);
+                $trp->set_to($to);
+                $trp->set_name($from_name . ' ' . $to_name);
+                $trp->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+                $trp->set_type(phrase_type_shared::SYSTEM_HIDDEN);
+                //$trp->set_code_id($from_name . ' ' . $to_name);
+                $usr_msg->add($trp->save());
+            }
+            foreach (config_numbers::ADMIN_KEY_TRIPLES as $trp_lst) {
+                $from_name = $trp_lst[0];
+                $to_name = $trp_lst[1];
+                $vrb = $vrb_cac->get_verb(verbs::CAN_USE);
+                $trp = new triple($usr);
+                $from = new phrase($usr);
+                $from->load_by_name($from_name);
+                $to = new phrase($usr);
+                $to->load_by_name($to_name);
+                $trp->set_from($from);
+                $trp->set_verb($vrb);
+                $trp->set_to($to);
+                $trp->set_name($from_name . ' ' . $to_name);
+                $trp->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+                //$trp->set_code_id($from_name . ' ' . $to_name);
+                $usr_msg->add($trp->save());
+            }
+        }
+
+        return $usr_msg;
     }
 
     function import_system_views(user $usr): bool
     {
         global $db_con;
-        global $system_views;
+        global $sys_msk_cac;
 
         $result = false;
 
@@ -5382,8 +5670,8 @@ class sql_db
             }
         }
 
-        $system_views = new view_sys_list($usr);
-        $system_views->load($db_con);
+        $sys_msk_cac = new view_sys_list($usr);
+        $sys_msk_cac->load($db_con);
 
         return $result;
     }

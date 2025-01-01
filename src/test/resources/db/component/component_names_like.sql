@@ -7,7 +7,7 @@ PREPARE component_names_like (bigint, text, bigint, bigint) AS
       LEFT JOIN user_components u ON s.component_id = u.component_id
             AND u.user_id = $1
           WHERE s.component_name like $2
-            AND ( s.component_type_id NOT IN (17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32) OR s.component_type_id IS NULL )
+            AND ( s.component_type_id NOT IN (17,18,19,20,21,22,23,24,25,39,26,27,28,29,30,31,32,33,34) OR s.component_type_id IS NULL )
        ORDER BY s.component_name
           LIMIT $3
          OFFSET $4;

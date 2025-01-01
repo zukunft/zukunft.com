@@ -29,12 +29,17 @@
 
 */
 
-namespace cfg;
+namespace cfg\language;
+
+include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_field_default.php';
+include_once DB_PATH . 'sql_field_type.php';
 
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
-use shared\library;
+use cfg\helper\type_object;
 
 class language_form extends type_object
 {
@@ -49,10 +54,12 @@ class language_form extends type_object
     const FLD_NAME = 'language_form_name';
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
+    const FLD_LST_NAME = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
+    );
+    const FLD_LST_ALL = array(
         [sql::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQLTYP, sql_field_default::NULL, '', '', ''],
+        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [language::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, language::class, ''],
     );
 
@@ -74,18 +81,15 @@ class language_form extends type_object
      * mainly set the class name for the type object function
      *
      * @param int $id the id of the language form
-     * @param string $class the language form class name
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int $id, string $class = self::class): int
+    function load_by_id(int $id): int
     {
         global $db_con;
 
         log_debug($id);
-        $lib = new library();
-        $dp_type = $lib->class_to_name($class);
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $dp_type);
-        return $this->load_typ_obj($qp, $class);
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id, $this::class);
+        return $this->load_typ_obj($qp, $this::class);
     }
 
 }
