@@ -42,9 +42,9 @@ include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_HELPER_PATH . 'type_lists.php';
 
+use cfg\helper\type_lists;
 use controller\controller;
 use cfg\user\user;
-use cfg\type_lists;
 
 // open database
 $db_con = prg_start("api/typeLists", "", false);
