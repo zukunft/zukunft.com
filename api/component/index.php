@@ -2,7 +2,7 @@
 
 /*
 
-  api/component/index.php - the component API controller: send a component component to the frontend
+  api/component/index.php - the component API controller: send a component to the frontend
   -----------------------
   
   This file is part of zukunft.com - calc with words

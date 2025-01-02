@@ -34,6 +34,8 @@
 
 */
 
+use cfg\phrase\phrase;
+
 class phrase_dsp_old extends phrase
 {
 

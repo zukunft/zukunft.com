@@ -42,7 +42,6 @@ include_once SHARED_PATH . 'views.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use cfg\data_object;
 use html\button;
 use html\helper\data_object as data_object_dsp;
 use html\system\messages;

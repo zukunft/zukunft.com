@@ -45,6 +45,7 @@ include_once MODEL_HELPER_PATH . 'combine_object.php';
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_type;
+use cfg\helper\combine_object;
 use cfg\verb\verb;
 use shared\library;
 

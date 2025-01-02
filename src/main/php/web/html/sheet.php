@@ -33,7 +33,7 @@
 namespace html;
 
 use cfg\component\sheet\position_list;
-use cfg\data_object;
+use cfg\helper\data_object;
 use html\word\triple;
 use html\word\word;
 

@@ -46,7 +46,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_FORMULA_PATH . 'figure_list.php';
 include_once API_FORMULA_PATH . 'figure_list.php';
 
-use cfg\fig_ids;
+use cfg\formula\fig_ids;
 use controller\controller;
 use cfg\user\user;
 use cfg\formula\figure_list;

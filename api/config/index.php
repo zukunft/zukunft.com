@@ -42,7 +42,7 @@ include_once API_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_HELPER_PATH . 'config_numbers.php';
 
-use cfg\config_numbers;
+use cfg\helper\config_numbers;
 use controller\controller;
 use cfg\user\user;
 

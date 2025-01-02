@@ -49,7 +49,6 @@ include_once API_PHRASE_PATH . 'phrase_list.php';
 use controller\controller;
 use cfg\user\user;
 use cfg\word\word;
-use api\phrase\phrase_list as phrase_list_api;
 use shared\api;
 
 // open database
