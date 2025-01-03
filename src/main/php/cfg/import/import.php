@@ -160,6 +160,7 @@ class import
             }
         } else {
             $dto = $this->yaml_data_object($yaml_array, $usr_trigger);
+            $usr_msg->set_checksum($dto->value_list()->count());
             $usr_msg = $dto->save();
         }
         return $usr_msg;

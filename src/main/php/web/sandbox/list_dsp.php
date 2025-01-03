@@ -157,6 +157,14 @@ class list_dsp
         return $result;
     }
 
+    /**
+     * @return string with the api json string that should be send to the backend
+     */
+    function api_json(): string
+    {
+        return json_encode($this->api_array());
+    }
+
 
     /*
      * load

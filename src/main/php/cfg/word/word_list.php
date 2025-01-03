@@ -967,7 +967,7 @@ class word_list extends sandbox_list_named
                 if (in_array($del_wrd_id, $this->ids())) {
                     $del_pos = array_search($del_wrd_id, $this->ids());
                     log_debug('exclude (' . $this->get_by_id($del_pos)->name() . ')');
-                    $this->unset_by_id($del_pos);
+                    $this->unset($del_pos);
                 }
             }
         }

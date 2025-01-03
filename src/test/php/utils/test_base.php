@@ -649,11 +649,11 @@ class test_base
      */
 
     /**
-     * check if the debug function dsp_id() returns an usefull text
+     * check if the debug function dsp_id() returns an usefully text
      * without calling other functions that might cause a loop (at least not db function)
      *
      * @param object $usr_obj any object with some sample vars set
-     * @param string $msg the extected text for a unique identification
+     * @param string $msg the expected text for a unique identification
      * @return bool true if the created text matches the expected text without causing a loop
      */
     function assert_dsp_id(object $usr_obj, string $msg): bool

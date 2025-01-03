@@ -28,11 +28,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 namespace cfg\import;
 
+include_once MODEL_HELPER_PATH . 'config_numbers.php';
 include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once HTML_PATH . 'html_base.php';
 
+use cfg\helper\config_numbers;
 use cfg\user\user;
 use cfg\user\user_message;
 use html\html_base;
@@ -163,6 +165,19 @@ class import_file
             $import_result = $imf->yaml_file(SYSTEM_CONFIG_FILE_YAML, $usr);
             if (str_starts_with($import_result->get_last_message(), ' done ')) {
                 $result = true;
+            }
+            // check the import
+            $cfg = new config_numbers($usr);
+            $cfg->load_cfg($usr);
+            if ($cfg->count() != $import_result->checksum()) {
+                // report the missing config values
+                $imp = new import;
+                $yaml_str = file_get_contents(SYSTEM_CONFIG_FILE_YAML);
+                $yaml_array = yaml_parse($yaml_str);
+                $dto = $imp->yaml_data_object($yaml_array, $usr);
+                $val_diff = $dto->value_list()->diff($dto->value_list());
+                log_warning('These configuration values could not be imported: ' . $val_diff->dsp_id());
+                //log_err('These configuration values could not be imported: ' . $val_diff->dsp_id());
             }
         }
 

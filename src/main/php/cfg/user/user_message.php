@@ -51,6 +51,7 @@ class user_message
     //const CONFIRM_CANCEL = 5;
 
     private int $msg_status;
+    private int|null $checksum = null;
 
     // array of the messages that should be shown to the user to explain the result of a process
     private array $msg_text;
@@ -81,7 +82,7 @@ class user_message
 
 
     /*
-     * set
+     * set and get
      */
 
     /**
@@ -126,6 +127,21 @@ class user_message
     function url(): string
     {
         return $this->url;
+    }
+
+    /**
+     * set a simple checksum e.g. for a fast import validation
+     * @param int $checksum a simple checksum for fast validation
+     * @return void
+     */
+    function set_checksum(int $checksum): void
+    {
+        $this->checksum = $checksum;
+    }
+
+    function checksum(): int|null
+    {
+        return $this->checksum;
     }
 
 

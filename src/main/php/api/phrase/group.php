@@ -62,8 +62,10 @@ class group extends sandbox_named_api implements JsonSerializable
     const TN_ADD_BIG_FUNC = 'System Test Group big added via sql function';
     const TN_ADD_BIG_SQL = 'System Test Group big added via sql insert';
 
-    const TN_ZH_2019 = 'inhabitant in the city of Zurich (2019)';
-    const TN_CH_2019 = 'inhabitant of Switzerland in Mio (2019)';
+    const TN_ZH_2019 = word_api::TN_INHABITANT . 's in the city of ' . word_api::TN_ZH . ' (' . word_api::TN_2019 . ')';
+    const TN_CH_INCREASE_2020 = word_api::TN_INCREASE . ' in ' . word_api::TN_CH . '\'s ' . word_api::TN_INHABITANT . 's from ' . word_api::TN_2019 . ' to ' . word_api::TN_2020 . ' in ' . word_api::TN_PCT;
+    const TN_ZH_2019_IN_MIO = self::TN_ZH_2019 . ' in ' . word_api::TN_MIO;
+    const TN_CH_2019 = word_api::TN_INHABITANT . ' of ' . word_api::TN_CH . ' in Mio (' . word_api::TN_2019 . ')';
 
     // list of predefined group names used for system testing that are expected to be never renamed
     const RESERVED_GROUP_NAMES = [

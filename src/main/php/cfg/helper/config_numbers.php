@@ -205,6 +205,7 @@ class config_numbers extends value_list
         if (!$this->is_empty()) {
             $result = true;
             log_debug($this->count() . ' config values loaded');
+            $this->load_phrases();
         } else {
             log_debug('no config values loaded');
         }

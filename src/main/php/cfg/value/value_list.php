@@ -55,6 +55,7 @@ include_once MODEL_GROUP_PATH . 'group_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
@@ -139,7 +140,7 @@ class value_list extends sandbox_value_list
             $val->set_grp($phr_lst->get_grp_id(false));
             //$usr_msg->add_message('');
         }
-        return new user_message();
+        return $usr_msg;
 
     }
 
@@ -744,6 +745,21 @@ class value_list extends sandbox_value_list
         return $result;
     }
 
+    /**
+     * remove a value from the list
+     * @param value|null $val the value that should be removed from this list
+     * @return bool true if the value has been removed
+     */
+    function remove(?value $val): bool
+    {
+        $result = false;
+        if ($this->get($val->id() != null)) {
+            $this->unset($val->id());
+            $result = true;
+        }
+        return $result;
+    }
+
 
     /*
      * im- and export
@@ -985,7 +1001,7 @@ class value_list extends sandbox_value_list
     }
 
     /**
-     * @return phrase_list  list with all unique phrase including the time phrase
+     * @return phrase_list list with all unique phrase including the time phrase
      */
     function phr_lst_all(): phrase_list
     {
@@ -1086,22 +1102,26 @@ class value_list extends sandbox_value_list
     */
 
     /**
+     * @param phrase_list|null $time_lst list of time phrases to filter only by these times
      * @returns value_list that contains only values that match the time word list
      */
-    function filter_by_time($time_lst): value_list
+    function filter_by_time(?phrase_list $time_lst): value_list
     {
         log_debug();
         $lib = new library();
         $val_lst = array();
         foreach ($this->lst() as $val) {
             // only include time specific value
-            if ($val->time_id > 0) {
-                // only include values within the specific time periods
-                if (in_array($val->time_id, $time_lst->ids)) {
-                    $val_lst[] = $val;
-                    log_debug('include ' . $val->name());
-                } else {
-                    log_debug('excluded ' . $val->name() . ' because outside the specified time periods');
+            $time_list = $val->phrase_list()->time_list();
+            if ($time_list->count() > 0) {
+                foreach ($time_list->lst() as $phr) {
+                    // only include values within the specific time periods
+                    if (in_array($phr->id(), $time_lst->ids())) {
+                        $val_lst[] = $val;
+                        log_debug('include ' . $val->name());
+                    } else {
+                        log_debug('excluded ' . $val->name() . ' because outside the specified time periods');
+                    }
                 }
             } else {
                 log_debug('excluded ' . $val->name() . ' because this is not time specific');
@@ -1115,9 +1135,9 @@ class value_list extends sandbox_value_list
     }
 
     /**
-     * return a value list object that contains only values that match at least one phrase from the phrase list
+     * @returns value_list that contains only values that match at least one phrase from the phrase list
      */
-    function filter_by_phrase_lst($phr_lst): value_list
+    function filter_by_phrase_lst(phrase_list $phr_lst): value_list
     {
         $lib = new library();
         log_debug($lib->dsp_count($this->lst()) . ' values by ' . $phr_lst->name());
@@ -1244,6 +1264,20 @@ class value_list extends sandbox_value_list
         $result = false;
         if ($this->count() > 0) {
             $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * get the values missing in the given list
+     * @param value_list $val_lst
+     * @return value_list
+     */
+    function diff(value_list $val_lst): value_list
+    {
+        $result = clone $this;
+        foreach ($val_lst->lst() as $val) {
+            $result->remove($val);
         }
         return $result;
     }

@@ -277,9 +277,10 @@ class base_list
 
     /**
      * unset an object of the list
+     * @param int|string $id the unique id of the entry
      * @returns bool true if the object has been added
      */
-    protected function unset_by_id(int $id): bool
+    protected function unset(int|string $id): bool
     {
         $result = false;
         $key_lst = $this->id_pos_lst();

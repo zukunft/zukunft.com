@@ -1482,7 +1482,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_zh_2019();
         $grp = $lst->get_grp_id(false);
-        $grp->name = group_api::TN_READ;
+        $grp->name = group_api::TN_ZH_2019;
         return $grp;
     }
 
@@ -1493,7 +1493,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_zh_mio();
         $grp = $lst->get_grp_id(false);
-        $grp->name = group_api::TN_READ;
+        $grp->name = group_api::TN_ZH_2019_IN_MIO;
         return $grp;
     }
 
@@ -1504,7 +1504,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_increase();
         $grp = $lst->get_grp_id(false);
-        $grp->name = group_api::TN_READ;
+        $grp->name = group_api::TN_CH_INCREASE_2020;
         return $grp;
     }
 
@@ -1547,6 +1547,19 @@ class create_test_objects extends test_base
     {
         $lst = new group_list($this->usr1);
         $lst->add($this->group());
+        return $lst;
+    }
+
+    function group_list_long(): group_list
+    {
+        $lst = new group_list($this->usr1);
+        $lst->add($this->group());
+        $lst->add($this->group_zh());
+        $lst->add($this->group_prime_3());
+        $lst->add($this->group_prime_max());
+        $lst->add($this->group_main_max());
+        $lst->add($this->group_16());
+        $lst->add($this->group_17_plus());
         return $lst;
     }
 

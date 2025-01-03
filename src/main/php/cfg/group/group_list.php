@@ -667,6 +667,13 @@ class group_list extends sandbox_list
     {
         global $debug;
         $lib = new library();
+
+        // show at least 4 elements by name
+        $min_names = $debug;
+        if ($min_names < LIST_MIN_NAMES) {
+            $min_names = LIST_MIN_NAMES;
+        }
+
         $result = '';
         // check the object setup
         if (count($this->lst()) <> count($this->time_lst)) {
@@ -675,7 +682,7 @@ class group_list extends sandbox_list
 
             $pos = 0;
             foreach ($this->lst() as $phr_lst) {
-                if ($debug > $pos) {
+                if ($pos < $min_names) {
                     if ($result <> '') {
                         $result .= ' / ';
                     }

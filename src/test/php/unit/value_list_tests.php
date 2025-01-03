@@ -62,21 +62,32 @@ class value_list_tests
         $t->name = 'value_list->';
         $t->resource_path = 'db/value/';
 
-        $t->header('Unit tests of the value list class (src/main/php/model/value/value_list.php)');
+        $t->header('value list unit tests');
 
-        /*
-         * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
-         */
+        $t->subheader('info value list unit tests');
+        $test_name = 'test the grp_ids function';
+        $val_ids = $t->value_list()->grp_ids()->dsp_id();
+        $t->assert($test_name, $val_ids, 'Pi (math) / inhabitants in the city of Zurich (2019)');
 
-        // sql to load a list of value by ...
+        $t->subheader('modify value list unit tests');
+        $time_val_lst = $t->value_list()->filter_by_time($t->phrase_list());
+
+        $t->subheader('api value list unit tests');
+        $test_name = 'test the api_json';
+        $api_json = $t->value_list()->api_json();
+        $val_lst_dsp = new value_list_dsp($api_json);
+        $t->assert_json_string($test_name, $val_lst_dsp->api_json(), $api_json);
+
+        $t->subheader('sql creation value list unit tests');
+        $test_names = 'sql to load a list of value by ... ';
         $val_lst = new value_list($usr);
-        // ... a related to a phrase e.g. all value related to the City of Zurich
+        $test_name = $test_names . 'a related to a phrase e.g. all value related to the City of Zurich';
         $phr = $t->phrase_zh();
         $this->assert_sql_by_phr($t, $db_con, $val_lst, $phr);
-        // ... a list of ids
+        $test_name = $test_names . 'a list of ids';
         $val_ids = $t->value_list()->id_lst();
         $t->assert_sql_by_ids($sc, $val_lst, $val_ids);
-        // ... a list of groups
+        $test_name = $test_names . 'a list of groups';
         $grp_lst = $t->phrase_list_small();
         $this->assert_sql_by_grp_lst($t, $db_con, $val_lst, $grp_lst);
         $test_name = 'load values related to all phrases of a list '
@@ -84,6 +95,8 @@ class value_list_tests
         $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->canton_zh_phrase_list());
         $test_name = 'load values related to any phrase of a list '
             . 'e.g. the match const pi and e';
+        // temp line until the function usage is checked correctly by the ide
+        $sql = $t->value_list()->load_sql_by_phr_lst($sc, $t->phrase_list_math_const());
         $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->phrase_list_math_const(), true);
         $test_name = 'load values related to any phrase of a longer word and triple list '
             . 'e.g. all phrase related to the math number pi';
