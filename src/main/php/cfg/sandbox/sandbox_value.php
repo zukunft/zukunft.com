@@ -276,6 +276,11 @@ class sandbox_value extends sandbox_multi
         $this->set_id($grp->id());
     }
 
+    function set_description(string $txt): void
+    {
+        $this->grp->set_description($txt);
+    }
+
     function grp(): group
     {
         return $this->grp;

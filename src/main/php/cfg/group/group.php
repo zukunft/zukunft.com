@@ -295,6 +295,12 @@ class group extends sandbox_multi
         }
     }
 
+    function set_description(string $description): void
+    {
+        $this->description = $description;
+        $this->is_saved = false;
+    }
+
     function phrase_list(): phrase_list
     {
         return $this->phr_lst;

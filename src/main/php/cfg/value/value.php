@@ -252,6 +252,8 @@ class value extends sandbox_value
     public ?source $source;    // the source object
     private string $symbol = '';               // the symbol of the related formula element
 
+    public string $text_value = '';
+
     // deprecated fields
     public ?DateTime $time_stamp = null;  // the time stamp for this value (if this is set, the time wrd is supposed to be empty and the value is saved in the time_series table)
 
@@ -398,6 +400,20 @@ class value extends sandbox_value
     function symbol(): string
     {
         return $this->symbol;
+    }
+
+    function set_text_value(string $text_value): void
+    {
+        if ($this->number() == null) {
+            $this->text_value = $text_value;
+        } else {
+            log_err('cannot set text value if number already set');
+        }
+    }
+
+    function text_value(string $text_value): ?string
+    {
+        return $this->text_value;
     }
 
     /**

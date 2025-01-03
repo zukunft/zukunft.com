@@ -160,8 +160,8 @@ class import
             }
         } else {
             $dto = $this->yaml_data_object($yaml_array, $usr_trigger);
-            $usr_msg->set_checksum($dto->value_list()->count());
             $usr_msg = $dto->save();
+            $usr_msg->set_checksum($dto->value_list()->count());
         }
         return $usr_msg;
     }
@@ -619,95 +619,85 @@ class import
     ): data_object
     {
         foreach ($yml_arr as $key => $value) {
-            $dto = $this->yaml_data_object_map($key, $value, $dto, $phr_lst, $wrd, $trp, $val, $usr_trigger);
-        }
-        return $dto;
-    }
-
-    /**
-     * @param string $key
-     * @param string|array $value
-     * @param data_object $dto
-     * @param phrase_list $phr_lst
-     * @param word|null $wrd the last created word
-     * @param triple|null $trp the last created triple
-     * @param value|null $val the last created value
-     * @param user $usr_trigger
-     * @return data_object
-     */
-    function yaml_data_object_map(
-        string       $key,
-        string|array $value,
-        data_object  $dto,
-        phrase_list  $phr_lst,
-        ?word        $wrd,
-        ?triple      $trp,
-        ?value       $val,
-        user         $usr_trigger
-    ): data_object
-    {
-        // add the comment to the previous set word or triple and add it to the lists
-        if ($key == word::TOOLTIP_COMMENT) {
-            if ($wrd == null and $trp == null) {
-                $dto->add_message('yaml is not expected to start with a tooltip-comment');
-            } else {
-                $wrd?->set_description($value);
-                $trp?->set_description($value);
-            }
-        } else {
-            // add the previous set word or triple to the lists
-            if ($wrd != null) {
-                $dto->add_word($wrd);
-                $phr_lst->add_by_name($wrd->phrase());
-            }
-            if ($trp != null) {
-                $dto->add_triple($trp);
-                $phr_lst->add_by_name($trp->phrase());
-            }
-            if ($val != null) {
-                $dto->add_value($val);
-            }
-            // reset the word, triple and value
-            $wrd = null;
-            $trp = null;
-            $val = null;
-            // if the name has a space create the separate words and use the triple
-            if ($key != word::SYS_CONF_VALUE) {
-                if (str_contains($key, ' ')) {
-                    $trp = $this->yaml_data_object_map_triple($key, $dto, $usr_trigger);
+            if ($key == word::TOOLTIP_COMMENT) {
+                if ($wrd == null and $trp == null and $val == null) {
+                    $dto->add_message('yaml is not expected to start with a tooltip-comment');
                 } else {
-                    // set the name for a normal word
-                    $wrd = new word($usr_trigger);
-                    $wrd->set_name($key);
+                    if ($wrd != null) {
+                        $wrd->set_description($value);
+                        $dto->add_word($wrd);
+                        $phr_lst->add_by_name($wrd->phrase());
+                        $wrd = null;
+                    }
+                    if ($trp != null) {
+                        $trp->set_description($value);
+                        $dto->add_triple($trp);
+                        $phr_lst->add_by_name($trp->phrase());
+                        $trp = null;
+                    }
+                    if ($val != null) {
+                        $val->set_description($value);
+                        $dto->add_value($val);
+                        $val = null;
+                    }
                 }
-            }
-            if (is_array($value)) {
-                $sub_phr_lst = clone $phr_lst;
-                $dto = $this->yaml_data_object_loop($dto, $sub_phr_lst, $value, $wrd, $trp, $val, $usr_trigger);
             } else {
-                // add the final phrase
+                // add the previous set word or triple to the lists
+                if ($wrd != null) {
+                    $dto->add_word($wrd);
+                    $phr_lst->add_by_name($wrd->phrase());
+                    $wrd = null;
+                }
+                if ($trp != null) {
+                    $dto->add_triple($trp);
+                    $phr_lst->add_by_name($trp->phrase());
+                    $trp = null;
+                }
+                // add the previous value to the lists
+                if ($val != null) {
+                    $dto->add_value($val);
+                    $val = null;
+                }
+                // add the phrase
                 // if the name has a space create the separate words and use the triple
                 if (str_contains($key, ' ')) {
                     $trp = $this->yaml_data_object_map_triple($key, $dto, $usr_trigger);
-                    $dto->add_triple($trp);
-                    $phr_lst->add($trp->phrase());
                 } else {
                     // set the name for a normal word
                     $wrd = new word($usr_trigger);
                     $wrd->set_name($key);
+                }
+                // add this word or triple to the lists
+                $sub_phr_lst = clone $phr_lst;
+                if ($wrd != null) {
                     $dto->add_word($wrd);
-                    $phr_lst->add($wrd->phrase());
+                    $sub_phr_lst->add_by_name($wrd->phrase());
+                    $wrd = null;
                 }
-                // add value
-                $val = new value($usr_trigger);
-                $val->set_phrase_lst($phr_lst);
-                if (is_numeric($value)) {
-                    $val->set_number($value);
+                if ($trp != null) {
+                    $dto->add_triple($trp);
+                    $sub_phr_lst->add_by_name($trp->phrase());
+                    $trp = null;
+                }
+                // add the sub array
+                if (is_array($value)) {
+                    $dto = $this->yaml_data_object_loop($dto, $sub_phr_lst, $value, $wrd, $trp, $val, $usr_trigger);
                 } else {
-                    log_warning('text values cannot yet be used');
+                    // remember the value
+                    $val = new value($usr_trigger);
+                    $val->set_phrase_lst($sub_phr_lst);
+                    if (is_numeric($value)) {
+                        $val->set_number($value);
+                    } else {
+                        $val->set_text_value($value);
+                    }
                 }
-                $dto->add_value($val);
             }
+        }
+        // add the previous value to the lists
+        if ($val != null) {
+            $dto->add_value($val);
+            $val = null;
         }
         return $dto;
     }

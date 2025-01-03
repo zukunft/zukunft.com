@@ -1381,6 +1381,8 @@ class value_list extends sandbox_value_list
 
         // insert the new values
         foreach ($this->lst() as $val) {
+            // TODO remove temp line used only for debugging
+            $val_name = $val->dsp_id();
             if ($val->number() == null) {
                 log_warning('numeric value missing fpr ' . $val->dsp_id());
             } else {
