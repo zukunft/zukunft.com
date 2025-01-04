@@ -1214,45 +1214,20 @@ class value_list extends sandbox_value_list
      * best matching means that all words from word_ids must be matching and the least additional words, because this would be a more specific value
      * used by value_list_dsp->dsp_table
      */
-    function get_by_grp($grp, $time)
+    function get_by_grp(group $grp)
     {
-        log_debug("value_list->get_by_grp " . $grp->auto_name . ".");
 
         $found = false;
         $result = null;
-        $row = 0;
         foreach ($this->lst() as $val) {
             if (!$found) {
-                // show only a few debug messages for a useful result
-                if ($row < 6) {
-                    log_debug("value_list->get_by_grp check if " . $val->grp_id . " = " . $grp->id() . " and " . $val->time_id . " = " . $time->id() . ".");
-                }
-                if ($val->grp_id == $grp->id
-                    and $val->time_id == $time->id) {
+                if ($val->grp()->id() == $grp->id()) {
                     $found = true;
                     $result = $val;
-                } else {
-                    if (!isset($val->grp)) {
-                        log_debug("load group");
-                        $val->load_phrases();
-                    }
-                    if (isset($val->grp)) {
-                        if ($row < 6) {
-                            log_debug('check if all of ' . $grp->name() . ' are in ' . $val->grp->name() . ' and value should be used');
-                        }
-                        if ($val->grp->has_all_phrases_of($grp)
-                            and $val->time_id == $time->id) {
-                            log_debug('all of ' . $grp->name() . ' are in ' . $val->grp->name() . ' so value is used');
-                            $found = true;
-                            $result = $val;
-                        }
-                    }
                 }
             }
-            $row++;
         }
 
-        log_debug("done " . $result->number);
         return $result;
     }
 
@@ -1275,9 +1250,11 @@ class value_list extends sandbox_value_list
      */
     function diff(value_list $val_lst): value_list
     {
-        $result = clone $this;
-        foreach ($val_lst->lst() as $val) {
-            $result->remove($val);
+        $result = new value_list($this->user());
+        foreach ($this->lst() as $val) {
+            if ($val_lst->get_by_grp($val->grp()) == null) {
+                $result->add($val);
+            }
         }
         return $result;
     }

@@ -324,9 +324,24 @@ class value extends sandbox_value
     ): bool
     {
         $lib = new library();
-        $one_id_fld = true;
-        if ($id_fld == self::FLD_ID) {
-            // TODO add $sc_par_lst ?
+
+        // check if text group id field is given and filled
+        $one_id_fld = false;
+        if (array_key_exists($id_fld, $db_row)) {
+            if ($db_row[$id_fld] != '' and $db_row[$id_fld] != 'null' and $db_row[$id_fld] != null) {
+                $one_id_fld = true;
+            }
+        }
+
+        if ($one_id_fld) {
+            // if the value is not of prime or main type, use the text group id
+            $id = $db_row[$id_fld];
+            $grp = new group($this->user());
+            $grp->set_phrase_list_by_id($id);
+            $grp->set_id($id);
+            $this->set_grp($grp);
+        } else {
+            // for prime and main values an array with the prime id fields is used
             $id_fld = $this->id_field();
             if (is_array($id_fld)) {
                 $grp_id = new group_id();
@@ -345,7 +360,6 @@ class value extends sandbox_value
                 $grp->set_phrase_list($phr_lst);
                 $this->set_grp($grp);
                 $id_fld = $id_fld[0];
-                $one_id_fld = false;
             }
         }
         $result = parent::row_mapper_sandbox_multi($db_row, $ext, $load_std, $allow_usr_protect, $id_fld, $one_id_fld);

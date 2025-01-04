@@ -175,7 +175,8 @@ class import_file
                 $yaml_str = file_get_contents(SYSTEM_CONFIG_FILE_YAML);
                 $yaml_array = yaml_parse($yaml_str);
                 $dto = $imp->yaml_data_object($yaml_array, $usr);
-                $val_diff = $dto->value_list()->diff($dto->value_list());
+                $dto->save();
+                $val_diff = $dto->value_list()->diff($cfg);
                 log_warning('These configuration values could not be imported: ' . $val_diff->dsp_id());
                 //log_err('These configuration values could not be imported: ' . $val_diff->dsp_id());
             }
