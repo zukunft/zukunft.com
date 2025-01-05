@@ -42,6 +42,7 @@ use cfg\phrase\phrase_type;
 use cfg\word\word as word_cfg;
 use JsonSerializable;
 use shared\json_fields;
+use shared\words;
 
 class word extends sandbox_typed_api implements JsonSerializable
 {
@@ -200,7 +201,7 @@ class word extends sandbox_typed_api implements JsonSerializable
 
     // list of predefined word names used for system testing that are expected to be never renamed
     const RESERVED_NAMES = array(
-        word_cfg::SYSTEM_CONFIG,
+        words::SYSTEM_CONFIG,
         self::TN_READ,
         self::TN_CONST,
         self::TN_PI,

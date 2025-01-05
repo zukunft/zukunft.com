@@ -1173,6 +1173,19 @@ class value_list extends sandbox_value_list
     }
 
     /**
+     * select only the values
+     *
+     * @param phrase $phr
+     * @return $this
+     */
+    function filter_by_phrase(phrase $phr): value_list
+    {
+        $phr_lst = new phrase_list($this->user());
+        $phr_lst->add($phr);
+        return $this->filter_by_phrase_lst($phr_lst);
+    }
+
+    /**
      * selects from a val_lst_phr the best matching value
      * best matching means that all words from word_ids must be matching and the least additional words, because this would be a more specific value
      * used by value_list_dsp->dsp_table

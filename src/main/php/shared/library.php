@@ -577,6 +577,18 @@ class library
         return $result;
     }
 
+    function not_msg(
+        string|array|null $result,
+        string|array|null $target
+    ): string
+    {
+        $msg = '';
+        if ($result == $target) {
+            $msg = $result . ' should not be' . $target;
+        }
+        return $msg;
+    }
+
 
     /*
      * diff

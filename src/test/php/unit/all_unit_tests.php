@@ -204,6 +204,7 @@ class all_unit_tests extends test_cleanup
              */
 
             // run the selected db write
+            (new api_tests())->run($this);
             (new word_read_tests())->run($this);
             //(new triple_read_tests())->run($this);
             (new source_read_tests())->run($this);

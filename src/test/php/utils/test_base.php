@@ -305,6 +305,7 @@ class test_base
     const URL = 'https://zukunft.com/';
 
     const TEST_TYPE_CONTAINS = 'contains';
+    const TEST_TYPE_NOT = 'not';
     const FILE_EXT = '.sql';
     const FILE_MYSQL = '_mysql';
 
@@ -437,7 +438,6 @@ class test_base
     {
         // init the test result vars
         $lib = new library();
-        $comment = '';
 
         // the result should never be null, but if, check it here not on each test
         if ($result === null) {
@@ -448,6 +448,8 @@ class test_base
         // do the compare depending on the type
         if ($test_type == self::TEST_TYPE_CONTAINS) {
             $msg = $lib->explain_missing($result, $target);
+        } elseif ($test_type == self::TEST_TYPE_NOT) {
+            $msg = $lib->not_msg($result, $target);
         } else {
             $msg = $lib->diff_msg($result, $target);
         }
@@ -468,6 +470,24 @@ class test_base
         }
 
         return $this->assert_dsp($test_name, $test_result, $target, $result, $msg, $exe_max_time);
+    }
+
+    /**
+     * check the object nor the id and nor the name is used
+     *
+     * @param string $test_name (unique) description of the test
+     * @param string|array|null $result the actual result
+     * @param string|array|null $target the expected result
+     * @return bool the load object to use it for more tests
+     */
+    function assert_not(
+        string            $test_name,
+        string|array|null $result,
+        string|array|null $target = ''
+    ): bool
+    {
+        return $this->assert($test_name, $result, $target
+            , self::TIMEOUT_LIMIT, '', self::TEST_TYPE_NOT);
     }
 
     /**

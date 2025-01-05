@@ -83,12 +83,14 @@ use cfg\view\view;
 use cfg\view\view_list;
 use cfg\word\word;
 use cfg\word\word_list;
+use html\helper\config;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use html\helper\data_object as data_object_dsp;
 use shared\api;
 use shared\library;
 use shared\views as view_shared;
+use shared\words;
 use test\test_cleanup;
 
 class api_tests
@@ -106,9 +108,10 @@ class api_tests
 
     /**
      * execute the API test using localhost
+     * @param test_cleanup $t the test object that includes the test results collected until now
      * @return void
      */
-    function run_api_test(test_cleanup $t): void
+    function run(test_cleanup $t): void
     {
 
         $t->assert_api_get(user::class, user::SYSTEM_TEST_ID);
@@ -158,6 +161,17 @@ class api_tests
             'sys_log_list_api',
             true);
         // $t->assert_rest(new word($usr, word_api::TN_READ));
+
+        $cfg = new config();
+        $cfg->load();
+        $test_name = 'at least one configuration value must be loaded';
+        $t->assert_not($test_name, $cfg->count(), 0);
+        $test_name = 'the configuration api message must at least contain the pod name';
+        // TODO activate
+        //$t->assert($test_name, $cfg->get([words::POD, words::URL]), POD_NAME);
+
+        // TODO get frontend configuration values and check if frontend and user config contains less values
+        // TODO check if requesting an unknown config part returns an error message
 
 
         // load the frontend objects via api call

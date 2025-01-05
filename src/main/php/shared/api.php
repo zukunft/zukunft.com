@@ -95,6 +95,12 @@ class api
     const URL_VAR_ID_LST = 'ids'; // a comma separated list of internal database ids
     const URL_VAR_NAME = 'name'; // the unique name of a term, view, component, user, source, language or type
     const URL_VAR_PATTERN = 'pattern'; // part of a name to select a named object such as word, triple, ...
+
+    // to select the configuration part that should be updated in the frontend e.g. all, frontend or user
+    const URL_VAR_CONFIG_PART = 'part';
+    const CONFIG_ALL = 'all';
+    const CONFIG_FRONTEND = 'frontend';
+    const CONFIG_USER = 'user';
     const URL_VAR_COMMENT = 'comment';
     const URL_VAR_DESCRIPTION = 'description';
     const URL_VAR_DEBUG = 'debug'; // to force the output of debug messages

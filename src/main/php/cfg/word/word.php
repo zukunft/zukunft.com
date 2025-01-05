@@ -306,7 +306,6 @@ class word extends sandbox_typed
     const FREEZE = 'freeze';
     const URL = 'url';
 
-    const SYSTEM_CONFIG = 'system configuration';
     // for the configuration of a single job
     // TODO complete the concrete setup
     const IMPORT_TYPE = 'import type';

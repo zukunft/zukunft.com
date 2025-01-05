@@ -44,6 +44,7 @@ use api\verb\verb as verb_api;
 use cfg\word\word as word_cfg;
 use shared\json_fields;
 use shared\types\phrase_type as phrase_type_shared;
+use shared\words;
 
 class triple extends sandbox_typed_api
 {
@@ -89,7 +90,7 @@ class triple extends sandbox_typed_api
 
     // list of predefined triple used for system testing that are expected to be never renamed
     const RESERVED_NAMES = array(
-        word_cfg::SYSTEM_CONFIG,
+        words::SYSTEM_CONFIG,
         self::TN_ADD,
         self::TN_EXCLUDED
     );

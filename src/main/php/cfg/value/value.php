@@ -22,6 +22,8 @@
     TODO: split the object to a time term value and a time stamp value for memory saving
     TODO: create an extreme reduced base object for effective handling of mass data with just phrase group (incl. time if needed) and value with can be used for key value noSQL databases
     TODO: remove PRIMARY KEY creation for prime tables aor allow null column in primary key
+    TODO: split the number, text and geo value object
+    TODO: split and move the dto_read and dto_write parts to separate objects
 
     Common object for the tables values, user_values,
     in the database the object is save in two tables
@@ -41,7 +43,7 @@
     - set and get:       to capsule the vars from unexpected changes
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
-    - sql:               to create sql statments e.g. for load
+    - sql:               to create sql statements e.g. for load
     - sql fields:        field names for sql
     - information:       functions to make code easier to read
     - check:             functions to check the consistency

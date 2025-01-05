@@ -2,8 +2,8 @@
 
 /*
 
-    web/sandbox/config.php - to cache and manage the user config in the frontend
-    ----------------------
+    web/helper/config.php - to cache and manage the user config in the frontend
+    ---------------------
 
     This superclass should be used by the classes word_dsp, formula_dsp, ... to enable user specific values and links
 
@@ -32,13 +32,16 @@
 
 */
 
-namespace html\sandbox;
+namespace html\helper;
 
 use html\phrase\phrase_list;
+use html\rest_ctrl;
 use html\user\user_message;
+use html\value\value_list;
+use shared\api;
 use shared\words;
 
-class config
+class config extends value_list
 {
 
     // fallback config values e.g. if the backend connection is lost
@@ -65,9 +68,17 @@ class config
      * request the user specific frontend configuration from the backend
      * @return user_message if it fails the reason why
      */
-    function load(): user_message
+    function load(string $part = api::CONFIG_FRONTEND): user_message
     {
         $usr_msg = new user_message();
+
+        $data = array(api::URL_VAR_CONFIG_PART => $part);
+        $rest = new rest_ctrl();
+        $json_body = $rest->api_get(config::class, $data);
+        $this->set_from_json_array($json_body);
+        if (!$this->is_empty()) {
+            $usr_msg->add_message('config api message is empty');
+        }
         return $usr_msg;
     }
 

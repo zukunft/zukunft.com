@@ -42,6 +42,7 @@ include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\verb\verb_list;
+use html\helper\config;
 use html\button;
 use html\formula\formula as formula_dsp;
 use html\html_base;
@@ -52,7 +53,6 @@ use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\term as term_dsp;
 use html\rest_ctrl;
-use html\sandbox\config;
 use html\sandbox\sandbox_typed;
 use html\system\back_trace;
 use html\system\messages;
@@ -61,11 +61,10 @@ use html\view\view_list;
 use shared\api;
 use shared\enum\foaf_direction;
 use shared\json_fields;
-use shared\types\view_styles;
-use shared\words;
 use shared\types\phrase_type as phrase_type_shared;
+use shared\types\view_styles;
 use shared\views as view_shared;
-use test\create_test_objects;
+use shared\words;
 
 class word extends sandbox_typed
 {

@@ -34,7 +34,7 @@
 
 namespace html\view;
 
-include_once SANDBOX_PATH . 'config.php';
+include_once HTML_HELPER_PATH . 'config.php';
 include_once SANDBOX_PATH . 'db_object.php';
 include_once SANDBOX_PATH . 'sandbox_typed.php';
 include_once SHARED_PATH . 'api.php';
@@ -57,25 +57,25 @@ include_once SHARED_PATH . 'json_fields.php';
 include_once HTML_HELPER_PATH . 'data_object.php';
 
 // TODO remove model classes
-use cfg\component\position_type;
-use html\helper\data_object as data_object_dsp;
-use shared\api;
-use html\user\user_message;
 use api\component\component as component_api;
-use html\rest_ctrl as api_dsp;
+use cfg\component\position_type;
+use html\helper\config;
 use html\button as button_dsp;
 use html\component\component as component_dsp;
 use html\component\component_list as component_list_dsp;
 use html\display_list;
+use html\helper\data_object as data_object_dsp;
 use html\html_base;
 use html\log\user_log_display;
-use html\sandbox\config;
+use html\rest_ctrl as api_dsp;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
 use html\system\messages;
+use html\user\user_message;
 use html\view\view_list as view_list_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
+use shared\api;
 use shared\json_fields;
 use shared\library;
 use shared\types\view_styles;

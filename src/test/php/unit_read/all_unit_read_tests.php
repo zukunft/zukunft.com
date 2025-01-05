@@ -112,7 +112,7 @@ class all_unit_read_tests extends all_unit_tests
         new type_list_dsp($api_msg);
 
         $api_test = new api_tests();
-        $api_test->run_api_test($this);
+        $api_test->run($this);
 
         // test all system views
         $api_test->run_ui_test($this);

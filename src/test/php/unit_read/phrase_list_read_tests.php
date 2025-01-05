@@ -44,6 +44,7 @@ use cfg\phrase\phrase_list;
 use cfg\phrase\phrase_type;
 use cfg\phrase\phrase;
 use cfg\word\word;
+use shared\words;
 use test\test_cleanup;
 
 class phrase_list_read_tests
@@ -109,7 +110,7 @@ class phrase_list_read_tests
         // all children
         $test_name = 'The default number of forecast years is a system configuration parameter';
         $sys_cfg_root_phr = new phrase($t->usr1);
-        $sys_cfg_root_phr->load_by_name(word::SYSTEM_CONFIG);
+        $sys_cfg_root_phr->load_by_name(words::SYSTEM_CONFIG);
         $sys_cfg_phr_lst = $sys_cfg_root_phr->all_children();
         $auto_years = new phrase($t->usr1);
         $auto_years->load_by_name(config::YEARS_AUTO_CREATE_DSP);

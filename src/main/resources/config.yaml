@@ -90,3 +90,30 @@ zukunft.com:
       database:
         version: 0.0.3
         tooltip-comment: "the version of the database of this pod"
+      phrase distribution:
+        top level:
+          pods: 16380
+          tooltip-comment: "for a fast selection of the prime responding pod the number of pods should start low but mainly the number of levels should be low"
+      hardware:
+        usage:
+          CPU:
+            target: 50%
+            info: 70%
+            warning: 90%
+          network:
+            target: 30%
+            info: 50%
+            warning: 70%
+          memory:
+            target: 40%
+            info: 60%
+            warning: 80%
+          storage:
+            target: 50%
+            info: 70%
+            warning: 80%
+          response time:
+            millisecond:
+              target: 100
+              info: 500
+              warning: 2000

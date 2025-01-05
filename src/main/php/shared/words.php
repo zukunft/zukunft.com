@@ -5,6 +5,8 @@
     shared/words.php - predefined words used for in the backend and frontend as code id
     ----------------
 
+    all words must always be owned by an administrator so that the standard cannot be renamed
+
 
     This file is part of zukunft.com - calc with words
 
@@ -40,6 +42,14 @@ class words
      */
 
     // words used in the frontend and backend for the system configuration
+    // keyword to select the system configuration
+    const SYSTEM_CONFIG = 'system configuration';
+
+    // e.g. an instance of zukunft.com
+    const POD = 'pod';
+
+    // e.g. an instance of zukunft.com
+    const URL = 'url';
     const ROW = 'row';
     const LIMIT = 'limit';
     const WORD = 'word';
