@@ -67,6 +67,14 @@ class group extends sandbox_named_api implements JsonSerializable
     const TN_ZH_2019_IN_MIO = self::TN_ZH_2019 . ' in ' . word_api::TN_MIO;
     const TN_CH_2019 = word_api::TN_INHABITANT . ' of ' . word_api::TN_CH . ' in Mio (' . word_api::TN_2019 . ')';
 
+    const TN_TIME_VALUE = 'zukunft.com beta launch date';
+    const TD_TIME_VALUE = 'the expected launch date of the first beta version of zukunft.com';
+    const TN_TEXT_VALUE = 'zukunft.com pod URL';
+    const TD_TEXT_VALUE = 'URL of this zukunft.com pod from the system configuration';
+
+    const TN_GEO_VALUE = 'zukunft.com development geolocation';
+    const TD_GEO_VALUE = 'the geolocation of the initial development of zukunft.com';
+
     // list of predefined group names used for system testing that are expected to be never renamed
     const RESERVED_GROUP_NAMES = [
         self::TN_READ,

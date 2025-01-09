@@ -39,7 +39,7 @@ use cfg\db\sql_db;
 use cfg\formula\formula;
 use cfg\log\change_table_list;
 use cfg\user\user;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\view\view;
 use cfg\word\word;
 use html\rest_ctrl;

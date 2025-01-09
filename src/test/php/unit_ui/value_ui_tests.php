@@ -36,7 +36,7 @@ use api\word\word as word_api;
 use api\value\value as value_api;
 use cfg\word\word;
 use cfg\word\word_list;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\value\value_list;
 use html\value\value_list as value_list_dsp;
 use cfg\phrase\phrase_list;

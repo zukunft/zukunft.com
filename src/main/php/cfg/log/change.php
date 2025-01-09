@@ -61,6 +61,7 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_GROUP_PATH . 'group.php';
 //include_once MODEL_USER_PATH . 'user.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 include_once WEB_LOG_PATH . 'change_log_named.php';
@@ -82,6 +83,7 @@ use cfg\formula\formula;
 use cfg\group\group;
 use cfg\user\user;
 use cfg\value\value;
+use cfg\value\value_base;
 use cfg\view\view;
 use cfg\word\word;
 use html\log\change_log_named as change_log_named_dsp;
@@ -133,17 +135,17 @@ class change extends change_log
         self::FLD_ACTION,
         self::FLD_FIELD_ID,
         self::FLD_ROW_ID,
-        self::FLD_OLD_VALUE,
+        change::FLD_OLD_VALUE,
         self::FLD_OLD_ID,
-        self::FLD_NEW_VALUE,
+        change::FLD_NEW_VALUE,
         self::FLD_NEW_ID
     );
 
     // field list to log the actual change of the named user sandbox object
     const FLD_LST_CHANGE = array(
         [self::FLD_FIELD_ID, self::FLD_FIELD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
-        [self::FLD_OLD_VALUE, self::FLD_OLD_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
-        [self::FLD_NEW_VALUE, self::FLD_NEW_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [change::FLD_OLD_VALUE, change::FLD_OLD_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [change::FLD_NEW_VALUE, change::FLD_NEW_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [self::FLD_OLD_ID, self::FLD_OLD_ID_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
         [self::FLD_NEW_ID, self::FLD_NEW_ID_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
     );
@@ -187,11 +189,11 @@ class change extends change_log
                 $this->row_id = $db_row[group::FLD_ID];
             }
             $this->set_time_str($db_row[self::FLD_TIME]);
-            $this->old_value = $db_row[self::FLD_OLD_VALUE];
+            $this->old_value = $db_row[change::FLD_OLD_VALUE];
             if (array_key_exists(self::FLD_OLD_ID, $db_row)) {
                 $this->old_id = $db_row[self::FLD_OLD_ID];
             }
-            $this->new_value = $db_row[self::FLD_NEW_VALUE];
+            $this->new_value = $db_row[change::FLD_NEW_VALUE];
             if (array_key_exists(self::FLD_NEW_ID, $db_row)) {
                 $this->new_id = $db_row[self::FLD_NEW_ID];
             }
@@ -509,17 +511,24 @@ class change extends change_log
      * get a list of all database fields
      * list must be corresponding to the db_values fields
      *
+     * @param sql_creator $sc the sql creation script with preset parameters
+     * @param sql_type_list $sc_par_lst the internal parameters to create the sql
+     * @param sql_par_type $val_typ the type of the value field
      * @return sql_par_field_list list of the database field names
      */
-    function db_field_values_types(sql_creator $sc, sql_type_list $sc_par_lst): sql_par_field_list
+    function db_field_values_types(
+        sql_creator $sc,
+        sql_type_list $sc_par_lst,
+        sql_par_type $val_typ = sql_par_type::TEXT
+    ): sql_par_field_list
     {
-        $fvt_lst = parent::db_field_values_types($sc, $sc_par_lst);
+        $fvt_lst = parent::db_field_values_types($sc, $sc_par_lst, $val_typ);
 
         if ($this->old_value !== null or ($sc_par_lst->is_update_part() and $this->new_value !== null)) {
-            $fvt_lst->add_field(self::FLD_OLD_VALUE, $this->old_value, $sc->get_sql_par_type($this->old_value));
+            $fvt_lst->add_field(change::FLD_OLD_VALUE, $this->old_value, $sc->get_sql_par_type($this->old_value));
         }
         if ($this->new_value !== null or ($sc_par_lst->is_update_part() and !$sc_par_lst->exclude_name_only() and $this->old_value !== null)) {
-            $fvt_lst->add_field(self::FLD_NEW_VALUE, $this->new_value, $sc->get_sql_par_type($this->new_value));
+            $fvt_lst->add_field(change::FLD_NEW_VALUE, $this->new_value, $sc->get_sql_par_type($this->new_value));
         }
 
         if ($this->old_id > 0 or ($sc_par_lst->is_update_part() and $this->new_id > 0)) {
@@ -551,10 +560,10 @@ class change extends change_log
         $sql_fields = parent::db_fields();
 
         if ($this->old_value !== null) {
-            $sql_fields[] = self::FLD_OLD_VALUE;
+            $sql_fields[] = change::FLD_OLD_VALUE;
         }
         if ($this->new_value !== null) {
-            $sql_fields[] = self::FLD_NEW_VALUE;
+            $sql_fields[] = change::FLD_NEW_VALUE;
         }
 
         if ($this->old_id > 0) {

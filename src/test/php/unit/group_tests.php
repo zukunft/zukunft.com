@@ -39,6 +39,7 @@ include_once MODEL_GROUP_PATH . 'group_list.php';
 include_once MODEL_GROUP_PATH . 'result_id.php';
 
 use api\phrase\group as group_api;
+use api\value\value as value_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
@@ -130,8 +131,8 @@ class group_tests
         $this->check_int2alpha($t, -12, '.....A(', true, );
         $this->check_int2alpha($t, -12, '.....A)', false, true);
 
-        $t->assert('group_id triple list', $grp_id->get_id($t->triple_list()->phrase_lst()),32770);
-        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(32770), $t->triple_list()->phrase_lst()->ids());
+        $t->assert('group_id triple list', $grp_id->get_id($t->triple_list()->phrase_lst()),value_api::TI_PI);
+        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(value_api::TI_PI), $t->triple_list()->phrase_lst()->ids());
         $phr_lst = new phrase_list($usr);
         $phr_lst->merge($t->word_list()->phrase_lst());
         $phr_lst->merge($t->triple_list()->phrase_lst());

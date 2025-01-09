@@ -406,7 +406,7 @@ class sandbox_link_named extends sandbox_link
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        sql_type_list      $sc_par_lst_sub = new sql_type_list([])
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -460,7 +460,7 @@ class sandbox_link_named extends sandbox_link
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         return array_merge(
             parent::db_all_fields_link($sc_par_lst),
@@ -480,7 +480,7 @@ class sandbox_link_named extends sandbox_link
      */
     function db_fields_changed(
         sandbox|sandbox_link_named $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $cng_fld_cac;

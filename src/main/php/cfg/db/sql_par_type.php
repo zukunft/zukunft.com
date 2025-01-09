@@ -66,6 +66,7 @@ enum sql_par_type: string
     case IS_NULL = 'is_null';
     case NOT_NULL = 'not_null';
     case TIME = 'timestamp'; // e.g. for now()
+    case POINT = 'point'; // e.g. for geolocations
 
     // parameter types to calculate the result for a group
     case MIN = 'min';

@@ -252,7 +252,7 @@ class db_object_seq_id extends db_object implements JsonSerializable
      */
     function sql_foreign_key(sql_creator $sc): string
     {
-        return $this->sql_foreign_key_create($sc, new sql_type_list([]));
+        return $this->sql_foreign_key_create($sc, new sql_type_list());
     }
 
     /**

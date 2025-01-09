@@ -34,6 +34,7 @@ namespace unit;
 
 include_once DB_PATH . 'sql.php';
 include_once MODEL_VALUE_PATH . 'value_time_series.php';
+include_once MODEL_VALUE_PATH . 'value_obj.php';
 
 use api\phrase\group as group_api;
 use api\value\value as value_api;
@@ -43,8 +44,13 @@ use cfg\db\sql_type;
 use cfg\group\group;
 use cfg\db\sql_db;
 use cfg\sandbox\sandbox_value;
+use cfg\value\value_geo;
 use cfg\value\value;
+use cfg\value\value_obj;
+use cfg\value\value_text;
+use cfg\value\value_time;
 use cfg\value\value_time_series;
+use DateTime;
 use html\value\value as value_dsp;
 use test\test_cleanup;
 
@@ -65,6 +71,20 @@ class value_tests
 
         $t->header('value unit tests');
 
+        $t->subheader('value object selection');
+        $test_name = 'create a numeric value object';
+        $val = (new value_obj())->get($usr, value_api::TV_READ);
+        $t->assert($test_name, $val::class, value::class);
+        $test_name = 'create a time value object';
+        $val = (new value_obj())->get($usr, (new DateTime(value_api::TV_TIME)));
+        $t->assert($test_name, $val::class, value_time::class);
+        $test_name = 'create a text value object';
+        $val = (new value_obj())->get($usr, value_api::TV_TEXT);
+        $t->assert($test_name, $val::class, value_text::class);
+        $test_name = 'create a geolocation value object';
+        $val = (new value_obj())->get($usr, value_api::TV_GEO);
+        $t->assert($test_name, $val::class, value_geo::class);
+
         $t->subheader('value sql setup');
         $val = $t->value(); // one value object creates all tables (e.g. prime, big, time, text and geo)
         $t->assert_sql_table_create($val);
@@ -74,9 +94,11 @@ class value_tests
         $t->subheader('value sql read');
         $val = $t->value();
         $val_16 = $t->value_16();
+        $val_txt = $t->text_value();
         $this->assert_sql_by_grp($t, $db_con, $val, $t->group_prime_3());
         $this->assert_sql_by_grp($t, $db_con, $val, $t->group_16());
         $this->assert_sql_by_grp($t, $db_con, $val, $t->group_17_plus());
+        $this->assert_sql_by_grp($t, $db_con, $val_txt, $t->group_pod_url());
         $t->assert_sql_by_id($sc, $val_16);
 
         $t->subheader('value sql read default and user changes');
@@ -84,6 +106,7 @@ class value_tests
         $val_3 = $t->value_prime_3();
         $val_16 = $t->value_16();
         $val_17 = $t->value_17_plus();
+        $val_txt = $t->text_value();
         $t->assert_sql_not_changed($sc, $val_3);
         $t->assert_sql_not_changed($sc, $val_17);
         $t->assert_sql_user_changes($sc, $val_3);
@@ -95,6 +118,7 @@ class value_tests
         $t->assert_sql_standard($sc, $val);
         $t->assert_sql_standard($sc, $val_16);
         $t->assert_sql_standard($sc, $val_17);
+        $t->assert_sql_standard($sc, $val_txt);
 
         // TODO activate db write
         $t->subheader('value sql write');
@@ -110,6 +134,8 @@ class value_tests
         $val_fill = $t->value_16_filled();
         $val_17 = $t->value_17_plus();
         $db_val_17 = $val_17->cloned(value_api::TV_FLOAT);
+        $val_txt = $t->text_value();
+        $db_val_txt = $val_txt->cloned(value_api::TV_DB_TEXT);
         $t->assert_sql_insert($sc, $val_0, [sql_type::USER]);
         $t->assert_sql_insert($sc, $val);
         $t->assert_sql_insert($sc, $val, [sql_type::LOG]);
@@ -127,6 +153,9 @@ class value_tests
         $t->assert_sql_insert($sc, $val_fill, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $val_17);
         $t->assert_sql_insert($sc, $val_17, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $val_txt);
+        $t->assert_sql_insert($sc, $val_txt, [sql_type::USER]);
+        $t->assert_sql_insert($sc, $val_txt, [sql_type::LOG, sql_type::USER]);
         // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
         // TODO for update fill the missing phrase id with zeros because only one row should be updated
         // TODO add test to change owner of the normal (not user specific) value
@@ -139,6 +168,8 @@ class value_tests
         $t->assert_sql_update($sc, $val_3, $db_val_3, [sql_type::USER]);
         $t->assert_sql_update($sc, $val_16, $db_val_16);
         $t->assert_sql_update($sc, $val_17, $db_val_17);
+        $t->assert_sql_update($sc, $val_txt, $db_val_txt);
+        $t->assert_sql_update($sc, $val_txt, $db_val_txt, [sql_type::LOG]);
         // update only the last_update date to trigger recalc
         $this->assert_sql_update_trigger($t, $db_con, $val_upd, $val);
         $t->assert_sql_delete($sc, $val);
@@ -148,6 +179,7 @@ class value_tests
         $t->assert_sql_delete($sc, $val, [sql_type::USER, sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $val_16);
         $t->assert_sql_delete($sc, $val_16, [sql_type::USER]);
+        $t->assert_sql_delete($sc, $val_txt, [sql_type::LOG]);
 
 
         $t->subheader('Database query creation tests');
@@ -177,8 +209,15 @@ class value_tests
         $t->subheader('Convert and API unit tests');
 
         // casting API
-        $grp = new group($usr, 1, array(group_api::TN_READ));
+        $grp = $t->group();
         $val = new value($usr, round(value_api::TV_READ, 13), $grp);
+        //$val = $t->value();
+        //$t->assert_api($val);
+        $val = $t->time_value();
+        $t->assert_api($val);
+        $val = $t->text_value();
+        $t->assert_api($val);
+        $val = $t->geo_value();
         $t->assert_api($val);
 
         // casting figure

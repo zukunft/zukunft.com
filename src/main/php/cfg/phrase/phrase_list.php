@@ -74,6 +74,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_WORD_PATH . 'word.php';
@@ -101,6 +102,7 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_list_named;
 use cfg\user\user_message;
 use cfg\value\value;
+use cfg\value\value_base;
 use cfg\value\value_list;
 use cfg\verb\verb;
 use cfg\word\word;
@@ -186,6 +188,14 @@ class phrase_list extends sandbox_list_named
     function api_json(): string
     {
         return $this->api_obj()->get_json();
+    }
+
+    /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json_array(): array
+    {
+        return json_decode($this->api_json(), true);
     }
 
     /**

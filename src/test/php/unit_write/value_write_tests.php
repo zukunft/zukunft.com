@@ -44,6 +44,7 @@ use cfg\log\change_values_prime;
 use cfg\phrase\phrase_list;
 use cfg\user\user;
 use cfg\value\value;
+use cfg\value\value_base;
 use html\value\value as value_dsp;
 use html\figure\figure as figure_dsp;
 use shared\library;
@@ -115,7 +116,7 @@ class value_write_tests
             // test load by value id
             $val = new value($t->usr1);
             if ($val_by_phr_lst->is_id_set()) {
-                $val->load_by_id($val_by_phr_lst->id(), value::class);
+                $val->load_by_id($val_by_phr_lst->id());
                 $result = $val->number();
                 $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
                 $t->display(', value->load for value id "' . $ch_inhabitants->id() . '"', $target, $result);

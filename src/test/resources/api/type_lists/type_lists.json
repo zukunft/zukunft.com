@@ -1558,6 +1558,60 @@
         "code_id": "view_styles",
         "description": "",
         "id": 98
+      },
+      {
+        "name": "change_values_time_prime",
+        "code_id": "change_values_time_prime",
+        "description": "",
+        "id": 99
+      },
+      {
+        "name": "change_values_time_norm",
+        "code_id": "change_values_time_norm",
+        "description": "",
+        "id": 100
+      },
+      {
+        "name": "change_values_time_big",
+        "code_id": "change_values_time_big",
+        "description": "",
+        "id": 101
+      },
+      {
+        "name": "change_values_text_prime",
+        "code_id": "change_values_text_prime",
+        "description": "",
+        "id": 102
+      },
+      {
+        "name": "change_values_text_norm",
+        "code_id": "change_values_text_norm",
+        "description": "",
+        "id": 103
+      },
+      {
+        "name": "change_values_text_big",
+        "code_id": "change_values_text_big",
+        "description": "",
+        "id": 104
+      },
+      {
+        "name": "change_values_geo_prime",
+        "code_id": "change_values_geo_prime",
+        "description": "",
+        "id": 105
+      },
+      {
+        "name": "change_values_geo_norm",
+        "code_id": "change_values_geo_norm",
+        "description": "",
+        "id": 106
+      },
+      {
+        "name": "change_values_geo_big",
+        "code_id": "change_values_geo_big",
+        "description": "",
+        "id": 107
       }
     ],
     "change_field_list": [
@@ -6272,10 +6326,28 @@
         "id": 786
       },
       {
+        "name": "2time_value",
+        "code_id": "2time_value",
+        "description": "",
+        "id": 787
+      },
+      {
+        "name": "2text_value",
+        "code_id": "2text_value",
+        "description": "",
+        "id": 788
+      },
+      {
+        "name": "2geo_value",
+        "code_id": "2geo_value",
+        "description": "",
+        "id": 789
+      },
+      {
         "name": "1NOW() AS db_now",
         "code_id": "1NOW() AS db_now",
         "description": "",
-        "id": 787
+        "id": 790
       }
     ],
     "verbs": [

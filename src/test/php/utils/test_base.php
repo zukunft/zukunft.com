@@ -95,12 +95,13 @@ use cfg\sandbox\sandbox_named;
 use cfg\sandbox\sandbox_value;
 use cfg\ref\source;
 use cfg\phrase\term;
+use cfg\value\value;
 use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\word\triple_list;
 use cfg\user\user;
 use cfg\user\user_profile;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\value\value_list;
 use cfg\view\view;
 use cfg\view\view_list;
@@ -1244,13 +1245,13 @@ class test_base
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->load_sql_by_id($sc, $usr_obj->id(), $usr_obj::class);
+        $qp = $usr_obj->load_sql_by_id($sc, $usr_obj->id());
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->load_sql_by_id($sc, $usr_obj->id(), $usr_obj::class);
+            $qp = $usr_obj->load_sql_by_id($sc, $usr_obj->id());
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -3563,10 +3564,10 @@ class test_base
 
     /**
      * only for unit testing: set the id of a value model object
-     * @param value|result $val the value or result object that
+     * @param value_base|result $val the value or result object that
      * @return void nothing because the value object a modified
      */
-    private function set_val_id_for_unit_tests(value|result $val): void
+    private function set_val_id_for_unit_tests(value_base|result $val): void
     {
         if (!$val->is_id_set()) {
             $val->set_id($this->next_seq_nbr());

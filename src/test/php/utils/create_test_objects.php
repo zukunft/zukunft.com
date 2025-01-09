@@ -52,6 +52,10 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
+include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_time.php';
+include_once MODEL_VALUE_PATH . 'value_text.php';
+include_once MODEL_VALUE_PATH . 'value_geo.php';
 include_once MODEL_VALUE_PATH . 'value_ts_data.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
@@ -72,6 +76,15 @@ use cfg\formula\formula_type_list;
 use cfg\language\language_form;
 use cfg\log\change_field;
 use cfg\log\change_table;
+use cfg\log\change_values_geo_big;
+use cfg\log\change_values_geo_norm;
+use cfg\log\change_values_geo_prime;
+use cfg\log\change_values_text_big;
+use cfg\log\change_values_text_norm;
+use cfg\log\change_values_text_prime;
+use cfg\log\change_values_time_big;
+use cfg\log\change_values_time_norm;
+use cfg\log\change_values_time_prime;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
 use cfg\phrase\phrase_list;
@@ -81,6 +94,10 @@ use cfg\sandbox\protection_type_list;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\share_type_list;
 use cfg\system\sys_log_status_list;
+use cfg\value\value_geo;
+use cfg\value\value;
+use cfg\value\value_text;
+use cfg\value\value_time;
 use cfg\verb\verb;
 use cfg\view\view_link_type;
 use cfg\view\view_link_type_list;
@@ -152,7 +169,7 @@ use cfg\helper\type_list;
 use cfg\helper\type_object;
 use cfg\user\user;
 use cfg\user\user_profile_list;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\value\value_list;
 use cfg\value\value_time_series;
 use cfg\value\value_ts_data;
@@ -172,6 +189,7 @@ use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use shared\types\view_styles;
 use shared\types\view_type;
+use shared\words;
 use unit_write\component_link_write_tests;
 use unit_write\component_write_tests;
 use unit_write\formula_link_write_tests;
@@ -422,7 +440,7 @@ class create_test_objects extends test_base
         return $list;
     }
 
-    private  function config_csv_get_file(type_list $list): string
+    private function config_csv_get_file(type_list $list): string
     {
         $csv_path = '';
         $lib = new library();
@@ -650,6 +668,56 @@ class create_test_objects extends test_base
         $wrd = new word($this->usr1);
         $wrd->set(word_api::TI_PCT, word_api::TN_PCT);
         $wrd->set_type(phrase_type_shared::PERCENT);
+        return $wrd;
+    }
+
+    /**
+     * @return word of the master pod name
+     */
+    function word_zukunftcom(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::MASTER_POD_NAME_ID, words::MASTER_POD_NAME);
+        return $wrd;
+    }
+
+    /**
+     * @return word pod
+     */
+    function word_pod(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::POD_ID, words::POD);
+        return $wrd;
+    }
+
+    /**
+     * @return word launch
+     */
+    function word_launch(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::LAUNCH_ID, words::LAUNCH);
+        return $wrd;
+    }
+
+    /**
+     * @return word url
+     */
+    function word_url(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::URL_ID, words::URL);
+        return $wrd;
+    }
+
+    /**
+     * @return word geo point
+     */
+    function word_point(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::POINT_ID, words::POINT);
         return $wrd;
     }
 
@@ -934,6 +1002,16 @@ class create_test_objects extends test_base
         $trp->set_to($this->triple()->phrase());
         $trp->set_type(phrase_type_shared::TRIPLE_HIDDEN);
         return $trp;
+    }
+
+    /**
+     * @return triple to select the system configuration
+     */
+    function triple_sys_config(): triple
+    {
+        $wrd = new triple($this->usr1);
+        $wrd->set(words::SYSTEM_CONFIG_ID, words::SYSTEM_CONFIG);
+        return $wrd;
     }
 
     /**
@@ -1459,6 +1537,45 @@ class create_test_objects extends test_base
         return $lst;
     }
 
+    /**
+     * @return phrase_list with the phrases to select the launch date of this pod in the config
+     */
+    function phrase_list_pod_launch(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->word_zukunftcom()->phrase());
+        $lst->add($this->triple_sys_config()->phrase());
+        $lst->add($this->word_pod()->phrase());
+        $lst->add($this->word_launch()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with the phrases to select the url of this pod in the config
+     */
+    function phrase_list_pod_url(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->word_zukunftcom()->phrase());
+        $lst->add($this->triple_sys_config()->phrase());
+        $lst->add($this->word_pod()->phrase());
+        $lst->add($this->word_url()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list with the phrases to select the geolocation of this pod development in the config
+     */
+    function phrase_list_pod_point(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->word_zukunftcom()->phrase());
+        $lst->add($this->triple_sys_config()->phrase());
+        $lst->add($this->word_pod()->phrase());
+        $lst->add($this->word_point()->phrase());
+        return $lst;
+    }
+
     function phrase_list_dsp(): phrase_list_dsp
     {
         return new phrase_list_dsp($this->phrase_list()->api_json());
@@ -1472,6 +1589,42 @@ class create_test_objects extends test_base
         $lst = $this->phrase_list_pi();
         $grp = $lst->get_grp_id(false);
         $grp->name = group_api::TN_READ;
+        return $grp;
+    }
+
+    /**
+     * @return group with the phrases of the launch date of this pod
+     */
+    function group_pod_launch(): group
+    {
+        $lst = $this->phrase_list_pod_launch();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = group_api::TN_TIME_VALUE;
+        $grp->description = group_api::TD_TIME_VALUE;
+        return $grp;
+    }
+
+    /**
+     * @return group with the phrases of the url of this pod
+     */
+    function group_pod_url(): group
+    {
+        $lst = $this->phrase_list_pod_url();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = group_api::TN_TEXT_VALUE;
+        $grp->description = group_api::TD_TEXT_VALUE;
+        return $grp;
+    }
+
+    /**
+     * @return group with the phrases of the geolocation of this pod
+     */
+    function group_pod_point(): group
+    {
+        $lst = $this->phrase_list_pod_point();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = group_api::TN_GEO_VALUE;
+        $grp->description = group_api::TD_GEO_VALUE;
         return $grp;
     }
 
@@ -1646,6 +1799,24 @@ class create_test_objects extends test_base
     {
         $grp = $this->group();
         return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
+    }
+
+    function time_value(): value_time
+    {
+        $grp = $this->group_pod_launch();
+        return new value_time($this->usr1, new DateTime(value_api::TV_TIME), $grp);
+    }
+
+    function text_value(): value_text
+    {
+        $grp = $this->group_pod_url();
+        return new value_text($this->usr1, value_api::TV_TEXT, $grp);
+    }
+
+    function geo_value(): value_geo
+    {
+        $grp = $this->group_pod_point();
+        return new value_geo($this->usr1, value_api::TV_GEO, $grp);
     }
 
     /**
@@ -2827,6 +2998,154 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return object an insert change log entry of a value with some dummy values and a standard group id
+     */
+    function log_obj_from_class(string $class): object
+    {
+        $lib = new library();
+
+        $log = $this->log_class_to_object($class);
+        $val_class = $this->log_class_to_value_class($class);
+        $val_fld = $this->log_class_to_value_field($class);
+        $val = $this->log_class_to_value($class);
+        $log->set_time_str(self::DUMMY_DATETIME);
+        $log->set_action(change_action::ADD);
+        $log->set_table($lib->class_to_table($val_class));
+        $log->set_field($val_fld);
+        $log->group_id = $this->group()->id();
+        $log->new_value = $val;
+        $log->row_id = 1;
+        return $log;
+    }
+
+    /**
+     * create the change log object based on the log class name
+     * @param string $class the name of the log class
+     * @return change|change_values_big|change_values_geo_big|change_values_geo_norm|change_values_geo_prime|change_values_norm|change_values_prime|change_values_text_prime|change_values_text_norm|change_values_text_big|change_values_time_big|change_values_time_norm|change_values_time_prime|changes_big|changes_norm
+     */
+    private function log_class_to_object(string $class): change|change_values_big|change_values_geo_big|change_values_geo_norm|change_values_geo_prime|change_values_norm|change_values_prime|change_values_text_prime|change_values_text_norm|change_values_text_big|change_values_time_big|change_values_time_norm|change_values_time_prime|changes_big|changes_norm
+    {
+        global $usr_sys;
+
+        if ($class == change::class) {
+            $chg = new change($usr_sys);
+        } elseif ($class == changes_norm::class) {
+            $chg = new changes_norm($usr_sys);
+        } elseif ($class == changes_big::class) {
+            $chg = new changes_big($usr_sys);
+        } elseif ($class == change_values_prime::class) {
+            $chg = new change_values_prime($usr_sys);
+        } elseif ($class == change_values_norm::class) {
+            $chg = new change_values_norm($usr_sys);
+        } elseif ($class == change_values_big::class) {
+            $chg = new change_values_big($usr_sys);
+        } elseif ($class == change_values_time_prime::class) {
+            $chg = new change_values_time_prime($usr_sys);
+        } elseif ($class == change_values_time_norm::class) {
+            $chg = new change_values_time_norm($usr_sys);
+        } elseif ($class == change_values_time_big::class) {
+            $chg = new change_values_time_big($usr_sys);
+        } elseif ($class == change_values_text_prime::class) {
+            $chg = new change_values_text_prime($usr_sys);
+        } elseif ($class == change_values_text_norm::class) {
+            $chg = new change_values_text_norm($usr_sys);
+        } elseif ($class == change_values_text_big::class) {
+            $chg = new change_values_text_big($usr_sys);
+        } elseif ($class == change_values_geo_prime::class) {
+            $chg = new change_values_geo_prime($usr_sys);
+        } elseif ($class == change_values_geo_norm::class) {
+            $chg = new change_values_geo_norm($usr_sys);
+        } elseif ($class == change_values_geo_big::class) {
+            $chg = new change_values_geo_big($usr_sys);
+        } else {
+            log_err('change log class ' . $class . ' not expected');
+            $chg = new change($usr_sys);
+        }
+        return $chg;
+    }
+
+    private function log_class_to_value_class(string $class): string
+    {
+        return match ($class) {
+            change::class,
+            changes_norm::class,
+            changes_big::class
+            => word::class,
+            change_values_prime::class,
+            change_values_big::class,
+            change_values_norm::class
+            => value::class,
+            change_values_time_prime::class,
+            change_values_time_big::class,
+            change_values_time_norm::class
+            => value_time::class,
+            change_values_text_prime::class,
+            change_values_text_norm::class,
+            change_values_text_big::class
+            => value_text::class,
+            change_values_geo_prime::class,
+            change_values_geo_norm::class,
+            change_values_geo_big::class
+            => value_geo::class,
+            change_link::class => triple::class,
+        };
+    }
+
+    private function log_class_to_value_field(string $class): string
+    {
+        return match ($class) {
+            change::class,
+            changes_norm::class,
+            changes_big::class
+            => word::FLD_NAME,
+            change_values_prime::class,
+            change_values_big::class,
+            change_values_norm::class
+            => value::FLD_VALUE,
+            change_values_time_prime::class,
+            change_values_time_big::class,
+            change_values_time_norm::class
+            => value_time::FLD_VALUE,
+            change_values_text_prime::class,
+            change_values_text_norm::class,
+            change_values_text_big::class
+            => value_text::FLD_VALUE,
+            change_values_geo_prime::class,
+            change_values_geo_norm::class,
+            change_values_geo_big::class
+            => value_geo::FLD_VALUE,
+            change_link::class => triple::class,
+        };
+    }
+
+    private function log_class_to_value(string $class): string|float|Datetime
+    {
+        return match ($class) {
+            change::class,
+            changes_norm::class,
+            changes_big::class
+            => word_api::TN_READ,
+            change_values_prime::class,
+            change_values_big::class,
+            change_values_norm::class
+            => value_api::TV_READ_SHORTEST,
+            change_values_time_prime::class,
+            change_values_time_big::class,
+            change_values_time_norm::class
+            => (new DateTime(value_api::TV_TIME)),
+            change_values_text_prime::class,
+            change_values_text_norm::class,
+            change_values_text_big::class
+            => value_api::TV_TEXT,
+            change_values_geo_prime::class,
+            change_values_geo_norm::class,
+            change_values_geo_big::class
+            => value_api::TV_GEO,
+            change_link::class => triple::class,
+        };
+    }
+
+    /**
      * @return change_values_norm an insert change log entry of a value with some dummy values and a standard group id
      */
     function change_log_value(): change_values_norm
@@ -2841,26 +3160,6 @@ class create_test_objects extends test_base
         $chg->group_id = $this->group()->id();
         $chg->new_value = value_api::TV_READ_SHORTEST;
         $chg->row_id = 1;
-        return $chg;
-    }
-
-    /**
-     * @return change_values_norm an update change log entryof a value
-     */
-    function change_log_value_update(): change_values_norm
-    {
-        $chg = $this->change_log_value();
-        $chg->old_value = value_api::TV_INT;
-        return $chg;
-    }
-
-    /**
-     * @return change_values_norm a delete change log entryof a value
-     */
-    function change_log_value_delete(): change_values_norm
-    {
-        $chg = $this->change_log_value_update();
-        $chg->new_value = null;
         return $chg;
     }
 
@@ -2895,6 +3194,26 @@ class create_test_objects extends test_base
         $chg->set_field(change_field_list::FLD_WORD_NAME);
         $chg->new_value = value_api::TV_READ_SHORTEST;
         $chg->row_id = 1;
+        return $chg;
+    }
+
+    /**
+     * @return change_values_norm an update change log entry of a value
+     */
+    function change_log_value_update(): change_values_norm
+    {
+        $chg = $this->change_log_value();
+        $chg->old_value = value_api::TV_INT;
+        return $chg;
+    }
+
+    /**
+     * @return change_values_norm a delete change log entry of a value
+     */
+    function change_log_value_delete(): change_values_norm
+    {
+        $chg = $this->change_log_value_update();
+        $chg->new_value = null;
         return $chg;
     }
 
@@ -3724,7 +4043,7 @@ class create_test_objects extends test_base
     function load_value_by_id(user $usr, int $id): value
     {
         $val = new value($this->usr1);
-        $val->load_by_id($id, value::class);
+        $val->load_by_id($id);
         return $val;
     }
 

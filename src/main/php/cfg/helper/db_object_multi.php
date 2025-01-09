@@ -38,12 +38,14 @@ include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once API_SYSTEM_PATH . 'db_object.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_type.php';
 //include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 
 use api\system\db_object as db_object_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
+use cfg\db\sql_type;
 use cfg\group\group_id;
 use cfg\helper\db_object;
 use cfg\user\user_message;
@@ -159,9 +161,14 @@ class db_object_multi extends db_object
      *
      * @param sql_creator $sc with the target db_type set
      * @param int|string $id the id of the user sandbox object
+     * @param ?sql_type $typ if known the value data type to preselect the table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int|string $id): sql_par
+    function load_sql_by_id(
+        sql_creator $sc,
+        int|string $id,
+        ?sql_type $typ = null
+    ): sql_par
     {
         return parent::load_sql_by_id_str($sc, $id);
     }
@@ -245,9 +252,13 @@ class db_object_multi extends db_object
     /**
      * load a row from the database selected by id
      * @param int|string $id the id of the word, triple, formula, verb, view or view component
+     * @param ?sql_type $typ if known the value data type to preselect the table
      * @return int|string the id of the object found and zero if nothing is found
      */
-    function load_by_id(int|string $id): int|string
+    function load_by_id(
+        int|string $id,
+        ?sql_type $typ = null
+    ): int|string
     {
         global $db_con;
 

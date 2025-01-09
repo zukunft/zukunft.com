@@ -59,6 +59,7 @@ use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\helper\type_object;
 use cfg\user\user;
+use DateTime;
 
 class change_value extends change_log
 {
@@ -68,28 +69,26 @@ class change_value extends change_log
      */
 
     // user log database and JSON object field names for named user sandbox objects
-    const TBL_COMMENT = 'to log all changes done by any user on all kind of values (table, prime, big and standard';
+    const TBL_COMMENT = 'to log all numeric value changes done by any user on all kind of values (table, prime, big and standard';
     const FLD_FIELD_ID = 'change_field_id';
     const FLD_GROUP_ID = 'group_id';
-    const FLD_OLD_VALUE = 'old_value';
-    const FLD_NEW_VALUE = 'new_value';
 
     // all database field names
     const FLD_NAMES = array(
         user::FLD_ID,
         self::FLD_TIME,
         self::FLD_ACTION,
-        self::FLD_FIELD_ID,
-        self::FLD_GROUP_ID,
-        self::FLD_OLD_VALUE,
-        self::FLD_NEW_VALUE,
+        change::FLD_FIELD_ID,
+        change_value::FLD_GROUP_ID,
+        change::FLD_OLD_VALUE,
+        change::FLD_NEW_VALUE,
     );
 
     // field list to log the actual change of the value with a standard group id
     const FLD_LST_CHANGE = array(
-        [self::FLD_FIELD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
-        [self::FLD_OLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
-        [self::FLD_NEW_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
+        [change::FLD_FIELD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
+        [change::FLD_OLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
+        [change::FLD_NEW_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', ''],
     );
 
 
@@ -98,9 +97,9 @@ class change_value extends change_log
      */
 
     // additional to user_log TODO change to float|int|null
-    public string|float|int|null $old_value = null; // the field value before the user change
-    public string|float|int|null $new_value = null; // the field value after the user change
-    public string|float|int|null $std_value = null; // the standard field value for all users that does not have changed it
+    public string|float|int|DateTime|null $old_value = null; // the field value before the user change
+    public string|float|int|DateTime|null $new_value = null; // the field value after the user change
+    public string|float|int|DateTime|null $std_value = null; // the standard field value for all users that does not have changed it
 
     public int|string|null $group_id = null;  // the reference id of the row in the database table
 
@@ -171,21 +170,33 @@ class change_value extends change_log
      *
      * @return sql_par_field_list list of the database field names
      */
-    function db_field_values_types(sql_creator $sc, sql_type_list $sc_par_lst): sql_par_field_list
+    function db_field_values_types(
+        sql_creator $sc,
+        sql_type_list $sc_par_lst,
+        sql_par_type $val_typ = sql_par_type::FLOAT
+    ): sql_par_field_list
     {
-        $fvt_lst = parent::db_field_values_types($sc, $sc_par_lst);
+        $fvt_lst = parent::db_field_values_types($sc, $sc_par_lst, $val_typ);
 
-        if ($this->old_value !== null or ($sc_par_lst->is_update_part() and $this->new_value !== null)) {
-            $fvt_lst->add_field(self::FLD_OLD_VALUE, $this->old_value, sql_par_type::FLOAT);
+        if ($this->old_value !== null
+            or ($sc_par_lst->is_update_part() and $this->new_value !== null)) {
+            $fvt_lst->add_field(change::FLD_OLD_VALUE, $this->old_value, $val_typ);
         }
-        if ($this->new_value !== null or ($sc_par_lst->is_update_part() and $this->old_value !== null)) {
-            $fvt_lst->add_field(self::FLD_NEW_VALUE, $this->new_value, sql_par_type::FLOAT);
+        if ($this->new_value !== null
+            or ($sc_par_lst->is_update_part() and $this->old_value !== null)) {
+            $fvt_lst->add_field(change::FLD_NEW_VALUE, $this->new_value, $val_typ);
         }
 
         $grp_typ = sql_par_type::INT;
-        if ($this::class == change_values_norm::class) {
+        if ($this::class == change_values_norm::class
+            or $this::class == change_values_time_norm::class
+            or $this::class == change_values_text_norm::class
+            or $this::class == change_values_geo_norm::class) {
             $grp_typ = sql_par_type::KEY_512;
-        } elseif ($this::class == change_values_big::class) {
+        } elseif ($this::class == change_values_big::class
+            or $this::class == change_values_time_big::class
+            or $this::class == change_values_text_big::class
+            or $this::class == change_values_geo_big::class) {
             $grp_typ = sql_par_type::TEXT;
         }
         $fvt_lst->add_field(group::FLD_ID, $this->group_id, $grp_typ);
@@ -204,10 +215,10 @@ class change_value extends change_log
         $sql_fields = parent::db_fields();
 
         if ($this->old_value !== null) {
-            $sql_fields[] = self::FLD_OLD_VALUE;
+            $sql_fields[] = change::FLD_OLD_VALUE;
         }
         if ($this->new_value !== null) {
-            $sql_fields[] = self::FLD_NEW_VALUE;
+            $sql_fields[] = change::FLD_NEW_VALUE;
         }
 
         $sql_fields[] = group::FLD_ID;

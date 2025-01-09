@@ -54,6 +54,7 @@ class value extends sandbox_value_api implements JsonSerializable
     CONST TV_READ = 3.14159265358979323846264338327950288419716939937510; // pi
     CONST TV_READ_SHORT = 3.1415926535898; // pi
     CONST TV_READ_SHORTEST = 3.1415927; // pi
+    const TI_PI = 32770;
     CONST TV_ZERO = 0.0;
     CONST TV_E = 0.57721566490153; // Euler const
     CONST TV_INT = 123456;
@@ -72,6 +73,11 @@ class value extends sandbox_value_api implements JsonSerializable
     CONST TV_EARNINGS_PER_SHARE = 1.22;
     CONST TV_SALES_INCREASE_2017_FORMATTED = '90.03 %';
     const TV_NESN_SALES_2016_FORMATTED = '89\'469';
+
+    CONST TV_TIME = '2025-06-07 12:30:00'; // to test time values
+    CONST TV_TEXT = POD_NAME; // to test text values
+    CONST TV_GEO = '47.263179, 8.684730'; // to test geo values
+    CONST TV_DB_TEXT = 'old db text sample value'; // to test updating text values
 
     // true if the user has done no personal overwrites which is the default case
     public bool $is_std;

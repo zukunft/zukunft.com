@@ -46,7 +46,7 @@ use cfg\formula\formula_link;
 use cfg\word\triple;
 use cfg\user\user;
 use cfg\user_profile;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\view\view;
 use cfg\word\word;
 use html\html_base;

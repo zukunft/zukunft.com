@@ -57,6 +57,7 @@ use api\formula\formula as formula_api;
 use api\ref\ref as ref_api;
 use api\ref\source as source_api;
 use api\verb\verb as verb_api;
+use api\value\value as value_api;
 use api\view\view as view_api;
 use api\word\word as word_api;
 use cfg\component\component;
@@ -75,9 +76,10 @@ use cfg\ref\ref;
 use cfg\ref\source;
 use cfg\sys_log_list;
 use cfg\phrase\term_list;
+use cfg\value\value;
 use cfg\word\triple;
 use cfg\user\user;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\verb\verb;
 use cfg\view\view;
 use cfg\view\view_list;
@@ -126,7 +128,7 @@ class api_tests
         //$t->assert_api_get_by_text(triple::class, triple_api::TN_READ);
         //$t->assert_api_get(phrase::class);
         // the value contains only the phrase id and name in the api message because the phrase are expected to be cached in the frontend
-        $t->assert_api_get(value::class, 32770);
+        $t->assert_api_get(value::class, value_api::TI_PI);
         $t->assert_api_get(formula::class);
         $t->assert_api_get_by_text(formula::class, formula_api::TN_READ);
         $t->assert_api_get(view::class);

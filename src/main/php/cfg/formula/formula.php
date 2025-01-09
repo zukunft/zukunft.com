@@ -88,6 +88,7 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_RESULT_PATH . 'result_list.php';
 include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_FORMULA_PATH . 'formula_type.php';
 include_once MODEL_FORMULA_PATH . 'formula_link.php';
 include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
@@ -124,11 +125,12 @@ use cfg\sandbox\sandbox_typed;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\user\user_message;
+use cfg\value\value;
 use cfg\view\view;
 use cfg\word\word;
 use cfg\result\result;
 use cfg\result\result_list;
-use cfg\value\value;
+use cfg\value\value_base;
 use api\formula\formula as formula_api;
 use html\word\word as word_dsp;
 use shared\types\phrase_type as phrase_type_shared;
@@ -2031,7 +2033,7 @@ class formula extends sandbox_typed
      */
     function load_sql_user_changes(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
@@ -2652,7 +2654,7 @@ class formula extends sandbox_typed
      * @param sql_type_list $sc_par_lst only used for link objects
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         return array_merge(
             parent::db_fields_all(),
@@ -2679,7 +2681,7 @@ class formula extends sandbox_typed
      */
     function db_fields_changed(
         sandbox|formula $sbx,
-        sql_type_list   $sc_par_lst = new sql_type_list([])
+        sql_type_list   $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $cng_fld_cac;

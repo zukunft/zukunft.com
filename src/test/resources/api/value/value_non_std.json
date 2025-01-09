@@ -1,14 +1,10 @@
 {
   "id": 32770,
-  "is_std": false,
-  "number": 3.1415926535898,
   "phrases": [
     {
       "id": 2,
-      "name": "Pi (math)",
-      "description": "ratio of the circumference of a circle to its diameter",
-      "type_id": 22,
       "class": "triple"
     }
-  ]
+  ],
+  "number": 3.1415926535898
 }

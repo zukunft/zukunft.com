@@ -40,6 +40,7 @@ use cfg\system\job_list;
 use cfg\system\job_type_list;
 use cfg\phrase\phrase_list;
 use cfg\value\value;
+use cfg\value\value_base;
 use test\test_cleanup;
 
 class job_write_tests

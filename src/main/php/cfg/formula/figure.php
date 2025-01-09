@@ -41,6 +41,7 @@ include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once SHARED_PATH . 'json_fields.php';
 
@@ -51,6 +52,7 @@ use cfg\result\result;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
+use cfg\value\value_base;
 use shared\json_fields;
 use DateTime;
 
@@ -76,9 +78,9 @@ class figure extends combine_object
 
     /**
      * a figure is either created based on a user value or formula result
-     * @param user|value|result|null $obj
+     * @param user|value_base|result|null $obj
      */
-    function __construct(user|value|result|null $obj)
+    function __construct(user|value_base|result|null $obj)
     {
         if ($obj::class == user::class) {
             // create a dummy value object to remember the user

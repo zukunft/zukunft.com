@@ -43,6 +43,7 @@ use api\ref\ref as ref_api;
 use cfg\config;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
+use cfg\db\sql_type;
 use cfg\formula\formula;
 use cfg\sys_log_list;
 use cfg\system\ip_range;
@@ -211,6 +212,17 @@ class system_tests
         $created_sql = $cfg->get_sql($db_con, config::VERSION_DB)->sql;
         $expected_sql = $t->file('db/system/cfg_get_mysql.sql');
         $t->assert('config->get_sql for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
+
+        $test_name = 'sql type unit tests';
+        $val_typ = sql_type::INSERT;
+        $t->assert_false($test_name, $val_typ->is_val_type());
+        $t->assert_true($test_name, $val_typ->is_sql_change());
+        $val_typ = sql_type::NUMERIC;
+        $t->assert_true($test_name, $val_typ->is_val_type());
+        $t->assert_false($test_name, $val_typ->is_sql_change());
+        $val_typ = sql_type::LOG;
+        $t->assert_false($test_name, $val_typ->is_val_type());
+        $t->assert_false($test_name, $val_typ->is_sql_change());
 
         /*
          * these tests are probably not needed because not problem is expected

@@ -50,6 +50,7 @@ include_once MODEL_FORMULA_PATH . 'formula.php';
 //include_once MODEL_RESULT_PATH . 'result_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VALUE_PATH . 'value_list.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -69,6 +70,7 @@ use cfg\result\result;
 use cfg\result\result_list;
 use cfg\user\user;
 use cfg\value\value;
+use cfg\value\value_base;
 use cfg\value\value_list;
 use shared\library;
 
@@ -149,7 +151,7 @@ class sandbox_value_list extends sandbox_list
     {
         // differences between value and result list
         $list_class = value_list::class;
-        $tbl_lst = value::TBL_LIST;
+        $tbl_lst = value_base::TBL_LIST;
         if ($class !== value::class) {
             $list_class = result_list::class;
             $tbl_lst = result::TBL_LIST;
@@ -351,13 +353,13 @@ class sandbox_value_list extends sandbox_list
 
         // differences between value and result list
         $list_class = value_list::class;
-        $fld_lst = value::FLD_NAMES;
-        $fld_lst_std = value::FLD_NAMES_STD;
-        $fld_lst_dummy = value::FLD_NAMES_STD_DUMMY;
-        $fld_lst_usr_ex_std = value::FLD_NAMES_DATE_USR_EX_STD;
-        $fld_lst_usr_num_ex_std = value::FLD_NAMES_NUM_USR_EX_STD;
-        $fld_lst_usr_num = value::FLD_NAMES_NUM_USR;
-        $fld_lst_usr_only = value::FLD_NAMES_USR_ONLY;
+        $fld_lst = value_base::FLD_NAMES;
+        $fld_lst_std = value_base::FLD_NAMES_STD;
+        $fld_lst_dummy = value_base::FLD_NAMES_STD_DUMMY;
+        $fld_lst_usr_ex_std = value_base::FLD_NAMES_DATE_USR_EX_STD;
+        $fld_lst_usr_num_ex_std = value_base::FLD_NAMES_NUM_USR_EX_STD;
+        $fld_lst_usr_num = value_base::FLD_NAMES_NUM_USR;
+        $fld_lst_usr_only = value_base::FLD_NAMES_USR_ONLY;
         if ($class != value::class) {
             $list_class = result_list::class;
             $fld_lst_std = result::FLD_NAMES_STD;
@@ -382,7 +384,7 @@ class sandbox_value_list extends sandbox_list
         $qp = new sql_par($list_class, new sql_type_list($tbl_types), $tbl_ext);
         $qp->name .= $query_name;
 
-        $sc->set_class($class, new sql_type_list([]), $tbl_ext);
+        $sc->set_class($class, new sql_type_list(), $tbl_ext);
         if ($par_lst->count() > 0) {
             $sc->set_par_list($par_lst);
         }

@@ -35,6 +35,15 @@ namespace shared;
 include_once SERVICE_PATH . 'config.php';
 
 use cfg\component\view_style;
+use cfg\log\change_values_geo_big;
+use cfg\log\change_values_geo_norm;
+use cfg\log\change_values_geo_prime;
+use cfg\log\change_values_text_big;
+use cfg\log\change_values_text_norm;
+use cfg\log\change_values_text_prime;
+use cfg\log\change_values_time_big;
+use cfg\log\change_values_time_norm;
+use cfg\log\change_values_time_prime;
 use cfg\ref\source_type;
 use cfg\system\session;
 use cfg\system\sys_log_status;
@@ -94,7 +103,7 @@ use cfg\system\system_time_type;
 use cfg\user\user;
 use cfg\user\user_profile;
 use cfg\user\user_type;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\value\value_ts_data;
 use cfg\view\view;
 use cfg\view\view_term_link;
@@ -1938,7 +1947,7 @@ class library
     }
 
     /**
-     * remove the namespace from the class name and adds the name extention for the table
+     * remove the namespace from the class name and adds the name extension for the table
      * @param string $class including the namespace
      * @return string class name without the namespace
      */
@@ -1953,6 +1962,16 @@ class library
             and $class != change_values_big::class
             and $class != sys_log_status::class) {
             $result .= sql_db::TABLE_EXTENSION;
+        }
+        // TODO remove these exception
+        if ($result == 'value_times') {
+            $result = 'values_time';
+        }
+        if ($result == 'value_texts') {
+            $result = 'values_text';
+        }
+        if ($result == 'value_geos') {
+            $result = 'values_geo';
         }
         return $result;
     }
@@ -1987,6 +2006,15 @@ class library
             case $this->class_to_name(change_values_prime::class):
             case $this->class_to_name(change_values_norm::class):
             case $this->class_to_name(change_values_big::class):
+            case $this->class_to_name(change_values_time_prime::class):
+            case $this->class_to_name(change_values_time_norm::class):
+            case $this->class_to_name(change_values_time_big::class):
+            case $this->class_to_name(change_values_text_prime::class):
+            case $this->class_to_name(change_values_text_norm::class):
+            case $this->class_to_name(change_values_text_big::class):
+            case $this->class_to_name(change_values_geo_prime::class):
+            case $this->class_to_name(change_values_geo_norm::class):
+            case $this->class_to_name(change_values_geo_big::class):
             case $this->class_to_name(change_link::class):
             case $this->class_to_name(change_table_field::class):
                 $result = 'log';
@@ -2113,11 +2141,11 @@ class library
                 word::FLD_NAME => 'wrd',
                 sandbox_named::FLD_DESCRIPTION => 'des',
                 phrase::FLD_TYPE => 'pty',
-                value::FLD_ID => 'grp',
+                value_base::FLD_ID => 'grp',
                 user::FLD_ID => 'usr',
                 source::FLD_ID => 'src',
-                value::FLD_VALUE => 'val',
-                value::FLD_LAST_UPDATE => 'upd',
+                value_base::FLD_VALUE => 'val',
+                value_base::FLD_LAST_UPDATE => 'upd',
                 phrase::FLD_ID . '_1' => '',
                 phrase::FLD_ID . '_2' => '',
                 phrase::FLD_ID . '_3' => '',

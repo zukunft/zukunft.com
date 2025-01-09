@@ -1171,7 +1171,7 @@ class ref extends sandbox_link
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         return array_merge(
             parent::db_all_fields_link($sc_par_lst),
@@ -1196,7 +1196,7 @@ class ref extends sandbox_link
      */
     function db_fields_changed(
         sandbox|ref   $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $cng_fld_cac;

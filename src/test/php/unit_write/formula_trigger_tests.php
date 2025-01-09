@@ -37,6 +37,7 @@ use api\value\value as value_api;
 use api\word\word as word_api;
 use cfg\phrase\phrase_list;
 use cfg\value\value;
+use cfg\value\value_base;
 use test\test_cleanup;
 
 class formula_trigger_tests

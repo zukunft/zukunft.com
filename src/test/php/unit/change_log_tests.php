@@ -52,17 +52,19 @@ use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_field;
 use cfg\log\change_link;
+use cfg\log\change_log;
 use cfg\log\change_log_list;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
 use cfg\log\change_value;
 use cfg\sandbox\sandbox_value;
+use cfg\value\value;
 use cfg\word\triple;
 use cfg\user\user;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\word\word;
 use html\log\user_log_display;
-use html\value\value AS value_dsp;
+use html\value\value as value_dsp;
 use shared\library;
 use test\test_cleanup;
 use unit_ui\verb_ui_tests;
@@ -123,23 +125,13 @@ class change_log_tests
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
 
-        $t->subheader('log standard value sql setup');
-        $log_val_std = $t->change_log_value();
-        $t->assert_sql_table_create($log_val_std);
-        $t->assert_sql_index_create($log_val_std);
-        $t->assert_sql_foreign_key_create($log_val_std);
-
-        $t->subheader('log prime value sql setup');
-        $log_val_prm = $t->change_log_value_prime();
-        $t->assert_sql_table_create($log_val_prm);
-        $t->assert_sql_index_create($log_val_prm);
-        $t->assert_sql_foreign_key_create($log_val_prm);
-
-        $t->subheader('log big value sql setup');
-        $log_val_big = $t->change_log_value_big();
-        $t->assert_sql_table_create($log_val_big);
-        $t->assert_sql_index_create($log_val_big);
-        $t->assert_sql_foreign_key_create($log_val_big);
+        foreach (change_log::LOG_CLASSES as $class) {
+            $t->subheader('log ' . $lib->class_to_name($class) . ' sql setup');
+            $log = $t->log_obj_from_class($class);
+            $t->assert_sql_table_create($log);
+            $t->assert_sql_index_create($log);
+            $t->assert_sql_foreign_key_create($log);
+        }
 
         $t->subheader('log link sql setup');
         $log_lnk = $t->change_log_link();
@@ -298,12 +290,12 @@ class change_log_tests
      * @param change_log_list $log_lst the user sandbox object e.g. a word
      */
     private function assert_sql_list_by_field(
-        string $class,
-        string $field_name,
-        int|string $id,
+        string          $class,
+        string          $field_name,
+        int|string      $id,
         change_log_list $log_lst,
-        sql_db $db_con,
-        test_cleanup $t): void
+        sql_db          $db_con,
+        test_cleanup    $t): void
     {
         $sc = $db_con->sql_creator();
 
@@ -338,11 +330,11 @@ class change_log_tests
      * @param change_log_list $log_lst the user sandbox object e.g. a word
      */
     private function assert_sql_list_last(
-        string $class,
-        int|string $id,
+        string          $class,
+        int|string      $id,
         change_log_list $log_lst,
-        sql_db $db_con,
-        test_cleanup $t): void
+        sql_db          $db_con,
+        test_cleanup    $t): void
     {
         $sc = $db_con->sql_creator();
 

@@ -37,7 +37,7 @@ include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'views.php';
 
-use cfg\value\value;
+use cfg\value\value_base;
 use html\html_base;
 use html\view\view as view_dsp;
 use html\value\value as value_dsp;

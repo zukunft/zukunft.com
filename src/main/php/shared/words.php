@@ -44,18 +44,29 @@ class words
     // words used in the frontend and backend for the system configuration
     // keyword to select the system configuration
     const SYSTEM_CONFIG = 'system configuration';
+    const SYSTEM_CONFIG_ID = 73;
+    const MASTER_POD_NAME = 'zukunft.com';
+    const MASTER_POD_NAME_ID = 314;
 
     // e.g. an instance of zukunft.com
     const POD = 'pod';
+    const POD_ID = 298;
 
     // e.g. an instance of zukunft.com
     const URL = 'url';
+    const URL_ID = 309;
+    // e.g. the launch date of the first beta version of zukunft.com
+    const LAUNCH = 'launch';
+    const LAUNCH_ID = 309;
+    // e.g. an instance of zukunft.com
     const ROW = 'row';
     const LIMIT = 'limit';
     const WORD = 'word';
     const CHANGES = 'changes';
     const PERCENT = 'percent';
     const DECIMAL = 'decimal';
+    // e.g. the geolocation of the development of zukunft.com
     const POINT = 'point';
+    const POINT_ID = 243;
 
 }

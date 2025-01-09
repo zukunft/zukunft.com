@@ -47,6 +47,7 @@ include_once DB_PATH . 'sql_type.php';
 //include_once MODEL_REF_PATH . 'source.php';
 //include_once MODEL_USER_PATH . 'user.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_WORD_PATH . 'word.php';
@@ -68,6 +69,7 @@ use cfg\sandbox\sandbox;
 use cfg\ref\source;
 use cfg\user\user;
 use cfg\value\value;
+use cfg\value\value_base;
 use cfg\verb\verb;
 use cfg\view\view;
 use cfg\word\word;
@@ -268,12 +270,12 @@ class change_log_list extends base_list
 
     /**
      * load a list of the view changes of a value
-     * @param value $val the value to which the view changes should be loaded
+     * @param value_base $val the value to which the view changes should be loaded
      * @param string $field_name the field that has been change e.g. 'numeric_value'
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_val(value $val, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_val(value_base $val, user $usr, string $field_name = ''): bool
     {
         global $db_con;
 

@@ -42,7 +42,11 @@ include_once MODEL_HELPER_PATH . 'db_object.php';
 //include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
+//include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VALUE_PATH . 'value_time.php';
+//include_once MODEL_VALUE_PATH . 'value_text.php';
+//include_once MODEL_VALUE_PATH . 'value_geo.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 //include_once MODEL_WORD_PATH . 'word.php';
@@ -59,7 +63,11 @@ use cfg\ref\ref;
 use cfg\ref\source;
 use cfg\user\user;
 use cfg\user\user_profile;
+use cfg\value\value_base;
+use cfg\value\value_geo;
 use cfg\value\value;
+use cfg\value\value_text;
+use cfg\value\value_time;
 use cfg\view\view;
 use cfg\word\triple;
 use cfg\word\word;
@@ -197,6 +205,10 @@ class user_list
         return $sql;
     }
 
+    /**
+     * TODO add the time, text and geo and prime and big value tables
+     * @return string
+     */
     private function load_sql_count_all_changes(): string
     {
         $sql = $this->load_sql_count_changes_dbo(new word($this->user()));

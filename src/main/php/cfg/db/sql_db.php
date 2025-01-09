@@ -88,8 +88,18 @@ include_once MODEL_LOG_PATH . 'change_table_list.php';
 include_once MODEL_LOG_PATH . 'change_values_big.php';
 include_once MODEL_LOG_PATH . 'change_field.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
+include_once MODEL_LOG_PATH . 'change_values_big.php';
 include_once MODEL_LOG_PATH . 'change_values_norm.php';
 include_once MODEL_LOG_PATH . 'change_values_prime.php';
+include_once MODEL_LOG_PATH . 'change_values_time_big.php';
+include_once MODEL_LOG_PATH . 'change_values_time_norm.php';
+include_once MODEL_LOG_PATH . 'change_values_text_norm.php';
+include_once MODEL_LOG_PATH . 'change_values_time_prime.php';
+include_once MODEL_LOG_PATH . 'change_values_text_big.php';
+include_once MODEL_LOG_PATH . 'change_values_text_prime.php';
+include_once MODEL_LOG_PATH . 'change_values_geo_big.php';
+include_once MODEL_LOG_PATH . 'change_values_geo_norm.php';
+include_once MODEL_LOG_PATH . 'change_values_geo_prime.php';
 include_once MODEL_LOG_PATH . 'change_table.php';
 include_once MODEL_LOG_PATH . 'change_table_field.php';
 include_once MODEL_LOG_PATH . 'changes_big.php';
@@ -126,7 +136,11 @@ include_once MODEL_USER_PATH . 'user_type.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_USER_PATH . 'user_official_type.php';
 include_once MODEL_USER_PATH . 'user_profile_list.php';
+include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_time.php';
+include_once MODEL_VALUE_PATH . 'value_text.php';
+include_once MODEL_VALUE_PATH . 'value_geo.php';
 include_once MODEL_VALUE_PATH . 'value_time_series.php';
 include_once MODEL_VALUE_PATH . 'value_ts_data.php';
 include_once MODEL_VERB_PATH . 'verb.php';
@@ -167,6 +181,15 @@ use cfg\formula\formula_type;
 use cfg\formula\formula_type_list;
 use cfg\group\group;
 use cfg\import\import_file;
+use cfg\log\change_values_geo_big;
+use cfg\log\change_values_geo_norm;
+use cfg\log\change_values_geo_prime;
+use cfg\log\change_values_text_big;
+use cfg\log\change_values_text_norm;
+use cfg\log\change_values_text_prime;
+use cfg\log\change_values_time_big;
+use cfg\log\change_values_time_norm;
+use cfg\log\change_values_time_prime;
 use cfg\sandbox\protection_type;
 use cfg\sandbox\protection_type_list;
 use cfg\sandbox\sandbox;
@@ -221,6 +244,10 @@ use cfg\system\sys_log_type;
 use cfg\system\system_time;
 use cfg\system\system_time_type;
 use cfg\phrase\term;
+use cfg\value\value;
+use cfg\value\value_geo;
+use cfg\value\value_text;
+use cfg\value\value_time;
 use cfg\word\triple;
 use cfg\helper\type_lists;
 use cfg\user\user;
@@ -229,7 +256,7 @@ use cfg\user\user_type;
 use cfg\user\user_message;
 use cfg\user\user_official_type;
 use cfg\user\user_profile_list;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\value\value_time_series;
 use cfg\value\value_ts_data;
 use cfg\verb\verb;
@@ -331,6 +358,15 @@ class sql_db
         change_values_prime::class,
         change_values_norm::class,
         change_values_big::class,
+        change_values_time_prime::class,
+        change_values_time_norm::class,
+        change_values_time_big::class,
+        change_values_text_norm::class,
+        change_values_text_prime::class,
+        change_values_text_big::class,
+        change_values_geo_prime::class,
+        change_values_geo_norm::class,
+        change_values_geo_big::class,
         change_link::class,
         pod_type::class,
         pod_status::class,
@@ -482,6 +518,9 @@ class sql_db
     const DB_TYPES_NOT_NAMED = [
         triple::class,
         value::class,
+        value_time::class,
+        value_text::class,
+        value_geo::class,
         value_time_series::class,
         formula_link::class,
         result::class,
@@ -494,6 +533,9 @@ class sql_db
         change::class,
         changes_norm::class,
         changes_big::class,
+        change_values_prime::class,
+        change_values_norm::class,
+        change_values_big::class,
         change_link::class,
         sys_log::class,
         job::class,

@@ -39,6 +39,7 @@ include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once WEB_FIGURE_PATH . 'figure.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -50,6 +51,7 @@ use cfg\result\result;
 use cfg\sandbox\sandbox_list;
 use cfg\user\user_message;
 use cfg\value\value;
+use cfg\value\value_base;
 use html\figure\figure as figure_dsp;
 use shared\library;
 

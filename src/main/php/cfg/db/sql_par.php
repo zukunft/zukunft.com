@@ -67,7 +67,7 @@ class sql_par
      */
     function __construct(
         string        $class,
-        sql_type_list $sc_par_lst = new sql_type_list([]),
+        sql_type_list $sc_par_lst = new sql_type_list(),
         string        $ext = '',
         string        $id_ext = '')
     {
@@ -82,6 +82,9 @@ class sql_par
         if ($sc_par_lst->is_sub_tbl()) {
             $name .= sql_type::SUB->extension();
         }
+
+        // add the table extension for select queries e.g. "_text"
+        $name .= $sc_par_lst->ext_value_type();
 
         // add the table extension for select queries e.g. "_prime"
         $name .= $sc_par_lst->ext_query();

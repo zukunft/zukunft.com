@@ -375,7 +375,7 @@ class element extends db_object_seq_id_user
      */
     function sql_insert(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
@@ -406,7 +406,7 @@ class element extends db_object_seq_id_user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql_creator $sc, element $db_row, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
+    function sql_update(sql_creator $sc, element $db_row, sql_type_list $sc_par_lst = new sql_type_list()): sql_par
     {
         // get the field names, values and parameter types that have been changed
         // and that needs to be updated in the database

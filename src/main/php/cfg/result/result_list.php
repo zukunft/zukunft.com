@@ -54,7 +54,7 @@ include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once HTML_PATH . 'html_base.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
@@ -86,7 +86,7 @@ use cfg\word\triple;
 use cfg\user\user;
 use cfg\user\user_list;
 use cfg\user\user_message;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\word\word;
 use html\html_base;
 use html\formula\formula as formula_dsp;
@@ -414,7 +414,7 @@ class result_list extends sandbox_value_list
         $qp = new sql_par(self::class, new sql_type_list([$tbl_typ]));
         $qp->name .= $query_name;
 
-        $sc->set_class(result::class, new sql_type_list([]), $tbl_typ->extension());
+        $sc->set_class(result::class, new sql_type_list(), $tbl_typ->extension());
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $res = new result($this->user());
         $sc->set_id_field($res->id_field_list($tbl_typ));
@@ -1147,7 +1147,7 @@ class result_list extends sandbox_value_list
      * TODO review: split the backend and frontend part
      *              target is: if a value is changed, what needs to be updated?
      */
-    function load_by_val(value $val): string
+    function load_by_val(value_base $val): string
     {
         $phr_lst = $val->phr_lst();
         return $this->load_by_phr_lst($phr_lst);

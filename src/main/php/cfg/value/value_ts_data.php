@@ -123,7 +123,7 @@ class value_ts_data extends db_object
      */
     function sql_foreign_key(sql_creator $sc): string
     {
-        return $this->sql_foreign_key_create($sc, new sql_type_list([]), [],false);
+        return $this->sql_foreign_key_create($sc, new sql_type_list(), [],false);
     }
 
 }

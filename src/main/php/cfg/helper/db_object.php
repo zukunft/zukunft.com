@@ -43,6 +43,7 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 //include_once MODEL_USER_PATH . 'user.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
@@ -56,6 +57,7 @@ use cfg\result\result;
 use cfg\sandbox\sandbox;
 use cfg\user\user;
 use cfg\value\value;
+use cfg\value\value_base;
 use shared\library;
 
 class db_object
@@ -113,7 +115,7 @@ class db_object
      */
     function sql_table_create(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([]),
+        sql_type_list $sc_par_lst = new sql_type_list(),
         array         $fields = [],
         string        $tbl_comment = ''
     ): string
@@ -158,7 +160,7 @@ class db_object
      */
     function sql_index_create(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([]),
+        sql_type_list $sc_par_lst = new sql_type_list(),
         array         $fields = []
     ): string
     {
@@ -181,7 +183,7 @@ class db_object
      */
     function sql_foreign_key_create(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([]),
+        sql_type_list $sc_par_lst = new sql_type_list(),
         array         $fields = []
     ): string
     {

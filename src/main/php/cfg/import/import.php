@@ -59,6 +59,7 @@ include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_VIEW_PATH . 'view.php';
@@ -76,10 +77,11 @@ use cfg\ref\ref;
 use cfg\result\result;
 use cfg\result\result_list;
 use cfg\ref\source;
+use cfg\value\value;
 use cfg\word\triple;
 use cfg\user\user;
 use cfg\user\user_message;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\value\value_list;
 use cfg\verb\verb;
 use cfg\view\view;
@@ -614,7 +616,7 @@ class import
         array       $yml_arr,
         ?word       $wrd,
         ?triple     $trp,
-        ?value      $val,
+        ?value_base $val,
         user        $usr_trigger
     ): data_object
     {
@@ -684,12 +686,15 @@ class import
                     $dto = $this->yaml_data_object_loop($dto, $sub_phr_lst, $value, $wrd, $trp, $val, $usr_trigger);
                 } else {
                     // remember the value
-                    $val = new value($usr_trigger);
-                    $val->set_phrase_lst($sub_phr_lst);
-                    if (is_numeric($value)) {
-                        $val->set_number($value);
+                    if (is_string($value)) {
+                        $val = new value($usr_trigger);
+                        $val->set_phrase_lst($sub_phr_lst);
+                        // TODO Prio 1
+                        log_warning('string value not yet implemented');
                     } else {
-                        $val->set_text_value($value);
+                        $val = new value($usr_trigger);
+                        $val->set_phrase_lst($sub_phr_lst);
+                        $val->set_value($value);
                     }
                 }
             }

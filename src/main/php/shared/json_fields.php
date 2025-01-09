@@ -64,6 +64,9 @@ class json_fields
 
     // object specific fields
     const NUMBER = 'number'; // a float number used for values and results
+    const TIME_VALUE = 'time_value'; // a date and time value or result
+    const TEXT_VALUE = 'text_value'; // a text value that should not be used for searching
+    const GEO_VALUE = 'geo_value'; // a geolocation value or result
 
     // the code id of the view style of a view, component or component_link
     const STYLE = 'style';
@@ -79,7 +82,7 @@ class json_fields
     // the order number e.g. of the component within the view
     const POSITION = 'position';
 
-    // languange forms
+    // language forms
     const PLURAL = 'plural';
     const NAME_PLURAL = 'name_plural';
     const NAME_REVERSE = 'name_reverse';
@@ -102,6 +105,7 @@ class json_fields
     const PHRASE = 'phrase_id';
     const SOURCE = 'source_id';
     const USER_ID = 'user_id';
+    const GROUP_ID = 'group_id';
 
     // for link api objects the id of the preloaded link type
     const PREDICATE = 'predicate_id';

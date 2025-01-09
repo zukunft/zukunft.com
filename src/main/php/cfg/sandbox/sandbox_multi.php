@@ -75,8 +75,17 @@ include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_LOG_PATH . 'change_log.php';
 include_once MODEL_LOG_PATH . 'change_value.php';
 include_once MODEL_LOG_PATH . 'change_values_big.php';
+include_once MODEL_LOG_PATH . 'change_values_time_big.php';
+include_once MODEL_LOG_PATH . 'change_values_text_big.php';
+include_once MODEL_LOG_PATH . 'change_values_geo_big.php';
 include_once MODEL_LOG_PATH . 'change_values_norm.php';
+include_once MODEL_LOG_PATH . 'change_values_time_norm.php';
+include_once MODEL_LOG_PATH . 'change_values_text_norm.php';
+include_once MODEL_LOG_PATH . 'change_values_geo_norm.php';
 include_once MODEL_LOG_PATH . 'change_values_prime.php';
+include_once MODEL_LOG_PATH . 'change_values_time_prime.php';
+include_once MODEL_LOG_PATH . 'change_values_text_prime.php';
+include_once MODEL_LOG_PATH . 'change_values_geo_prime.php';
 include_once MODEL_LOG_PATH . 'changes_big.php';
 include_once MODEL_LOG_PATH . 'changes_norm.php';
 //include_once MODEL_PHRASE_PATH . 'phrase.php';
@@ -85,6 +94,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_WORD_PATH . 'word.php';
@@ -122,8 +132,17 @@ use cfg\log\change_link;
 use cfg\log\change_log;
 use cfg\log\change_value;
 use cfg\log\change_values_big;
+use cfg\log\change_values_geo_big;
+use cfg\log\change_values_geo_norm;
+use cfg\log\change_values_geo_prime;
 use cfg\log\change_values_norm;
 use cfg\log\change_values_prime;
+use cfg\log\change_values_text_big;
+use cfg\log\change_values_text_norm;
+use cfg\log\change_values_text_prime;
+use cfg\log\change_values_time_big;
+use cfg\log\change_values_time_norm;
+use cfg\log\change_values_time_prime;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
 use cfg\phrase\phrase;
@@ -132,6 +151,7 @@ use cfg\user\user;
 use cfg\user\user_list;
 use cfg\user\user_message;
 use cfg\value\value;
+use cfg\value\value_base;
 use cfg\verb\verb;
 use cfg\view\view;
 use cfg\word\word;
@@ -520,7 +540,7 @@ class sandbox_multi extends db_object_multi_user
         array       $fld_lst = []
     ): sql_par
     {
-        $sc_par_lst = new sql_type_list([]);
+        $sc_par_lst = new sql_type_list();
         $sc_par_lst->add($this->table_type());
         $sc_par_lst->add(sql_type::NORM);
         if ($this::class == group::class) {
@@ -843,6 +863,22 @@ class sandbox_multi extends db_object_multi_user
 
 
     /*
+     * api
+     */
+
+    /**
+     * create the array for the api message
+     * which is on this level the same as the export json array
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(bool $do_load = true): array
+    {
+        return $this->common_json();
+    }
+
+
+    /*
      * im- and export
      */
 
@@ -886,6 +922,11 @@ class sandbox_multi extends db_object_multi_user
      */
     function export_json(bool $do_load = true): array
     {
+        return $this->common_json();
+    }
+
+    private function common_json(): array
+    {
         global $shr_typ_cac;
         global $ptc_typ_cac;
 
@@ -903,7 +944,6 @@ class sandbox_multi extends db_object_multi_user
 
         return $vars;
     }
-
 
     /*
      * information
@@ -1244,6 +1284,26 @@ class sandbox_multi extends db_object_multi_user
      * save helper - user sandbox
      */
 
+    function is_numeric(): bool
+    {
+        return false;
+    }
+
+    function is_time_value(): bool
+    {
+        return false;
+    }
+
+    function is_text_value(): bool
+    {
+        return false;
+    }
+
+    function is_geo_value(): bool
+    {
+        return false;
+    }
+
     /**
      * @return bool true if a record for a user specific configuration already exists in the database
      */
@@ -1553,9 +1613,9 @@ class sandbox_multi extends db_object_multi_user
         if ($this->is_prime()) {
             $log = $this->log_prime();
         } elseif ($this->is_big()) {
-            $log = $this->log_norm();
-        } else {
             $log = $this->log_big();
+        } else {
+            $log = $this->log_norm();
         }
         return $this->log_upd_common($log);
     }
@@ -1572,7 +1632,17 @@ class sandbox_multi extends db_object_multi_user
         if ($this::class == group::class) {
             $log = new change($this->user());
         } else {
-            $log = new change_values_prime($this->user());
+            if ($this->is_numeric()) {
+                $log = new change_values_prime($this->user());
+            } elseif ($this->is_time_value()) {
+                $log = new change_values_time_prime($this->user());
+            } elseif ($this->is_text_value()) {
+                $log = new change_values_text_prime($this->user());
+            } elseif ($this->is_geo_value()) {
+                $log = new change_values_geo_prime($this->user());
+            } else {
+                $log = new change_values_prime($this->user());
+            }
         }
         $class = (new library())->class_to_name($this::class);
         $log->set_table($class . sql_db::TABLE_EXTENSION);
@@ -1592,7 +1662,17 @@ class sandbox_multi extends db_object_multi_user
         if ($this::class == group::class) {
             $log = new changes_norm($this->user());
         } else {
-            $log = new change_values_norm($this->user());
+            if ($this->is_numeric()) {
+                $log = new change_values_norm($this->user());
+            } elseif ($this->is_time_value()) {
+                $log = new change_values_time_norm($this->user());
+            } elseif ($this->is_text_value()) {
+                $log = new change_values_text_norm($this->user());
+            } elseif ($this->is_geo_value()) {
+                $log = new change_values_geo_norm($this->user());
+            } else {
+                $log = new change_values_norm($this->user());
+            }
         }
         $class = (new library())->class_to_name($this::class);
         $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::NORM->extension());
@@ -1612,7 +1692,17 @@ class sandbox_multi extends db_object_multi_user
         if ($this::class == group::class) {
             $log = new changes_big($this->user());
         } else {
-            $log = new change_values_big($this->user());
+            if ($this->is_numeric()) {
+                $log = new change_values_big($this->user());
+            } elseif ($this->is_time_value()) {
+                $log = new change_values_time_big($this->user());
+            } elseif ($this->is_text_value()) {
+                $log = new change_values_text_big($this->user());
+            } elseif ($this->is_geo_value()) {
+                $log = new change_values_geo_big($this->user());
+            } else {
+                $log = new change_values_big($this->user());
+            }
         }
         $class = (new library())->class_to_name($this::class);
         $log->set_table($class . sql_db::TABLE_EXTENSION . sql_type::BIG->extension());
@@ -1813,7 +1903,7 @@ class sandbox_multi extends db_object_multi_user
     function sql_update_multi(
         sql_creator   $sc,
         array         $fld_val_typ_lst = [],
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         $sc->set_class($this::class, $sc_par_lst);
@@ -1848,7 +1938,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function sql_delete(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the parameter list to avoid changing the given list
@@ -1894,7 +1984,7 @@ class sandbox_multi extends db_object_multi_user
     private function sql_delete_and_log(
         sql_creator   $sc,
         sql_par       $qp,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         global $cng_act_cac;
@@ -2855,7 +2945,7 @@ class sandbox_multi extends db_object_multi_user
         // refresh the object with the database to include all updates utils now (TODO start of lock for commit here)
         // TODO it seems that the owner is not updated
         $reloaded = false;
-        $reloaded_id = $this->load_by_id($this->id(), $this::class);
+        $reloaded_id = $this->load_by_id($this->id());
         if ($reloaded_id != 0) {
             $reloaded = true;
         }
@@ -3034,7 +3124,7 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_type_list $sc_par_lst only used for link objects
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         log_err('function db_fields_all missing for class ' . $this::class);
         return [];
@@ -3068,7 +3158,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function db_fields_changed(
         sandbox_multi $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         return new sql_par_field_list();
@@ -3089,7 +3179,7 @@ class sandbox_multi extends db_object_multi_user
         sql_creator        $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
-        sql_type_list      $sc_par_lst = new sql_type_list([])): sql_par
+        sql_type_list      $sc_par_lst = new sql_type_list()): sql_par
     {
         // make the query name unique based on the changed fields
         $lib = new library();
@@ -3125,7 +3215,7 @@ class sandbox_multi extends db_object_multi_user
         sql_creator        $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
-        sql_type_list      $sc_par_lst = new sql_type_list([])
+        sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // TODO deprecate
@@ -3172,7 +3262,7 @@ class sandbox_multi extends db_object_multi_user
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
-        sql_type_list      $sc_par_lst = new sql_type_list([])
+        sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // list of parameters actually used in order of the function usage
@@ -3304,7 +3394,7 @@ class sandbox_multi extends db_object_multi_user
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
-        sql_type_list      $sc_par_lst = new sql_type_list([])
+        sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
 
@@ -3469,7 +3559,7 @@ class sandbox_multi extends db_object_multi_user
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        sql_type_list      $sc_par_lst_sub = new sql_type_list([])
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
         // set some var names to shorten the code lines

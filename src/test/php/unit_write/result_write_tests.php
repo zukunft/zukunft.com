@@ -42,6 +42,7 @@ use cfg\phrase\phrase_list;
 use cfg\result\result;
 use cfg\result\result_list;
 use cfg\value\value;
+use cfg\value\value_base;
 use test\test_cleanup;
 
 class result_write_tests

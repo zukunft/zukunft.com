@@ -1,11 +1,10 @@
 {
-  "id": 1,
-  "number": 3.1415926535898,
+  "id": 32770,
   "phrases": [
     {
-      "id": 1,
-      "name": "Pi (math)",
-      "class": "word"
+      "id": 2,
+      "class": "triple"
     }
-  ]
+  ],
+  "number": 3.1415926535898
 }

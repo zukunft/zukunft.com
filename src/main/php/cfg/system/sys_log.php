@@ -273,7 +273,7 @@ class sys_log extends db_object_seq_id
      */
     function sql_foreign_key(sql_creator $sc): string
     {
-        return $this->sql_foreign_key_create($sc, new sql_type_list([]));
+        return $this->sql_foreign_key_create($sc, new sql_type_list());
     }
 
 

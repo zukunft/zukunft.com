@@ -38,6 +38,7 @@ use api\word\word as word_api;
 use cfg\config;
 use cfg\phrase\phrase;
 use cfg\value\value;
+use cfg\value\value_base;
 use cfg\value\value_list;
 use api\value\value as value_api;
 use cfg\word\word;

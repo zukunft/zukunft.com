@@ -109,7 +109,7 @@ class sql_field_list
      */
     function add_par_field(
         sql_par_field $fld,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): void
     {
         $sql_fld = new sql_field();

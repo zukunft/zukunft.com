@@ -1427,7 +1427,7 @@ class sandbox extends db_object_seq_id_user
      */
     function load_sql_user_changes(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         $qp = new sql_par($this::class);
@@ -1792,7 +1792,7 @@ class sandbox extends db_object_seq_id_user
      * @param sql_type_list $sc_par_lst only used for link objects
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         log_err('function db_fields_all missing for class ' . $this::class);
         return [];
@@ -2816,7 +2816,7 @@ class sandbox extends db_object_seq_id_user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return user_message the message and potential solution shown to the user in case of a problem
      */
-    function insert(string $msg = '', sql_type_list $sc_par_lst = new sql_type_list([])): user_message
+    function insert(string $msg = '', sql_type_list $sc_par_lst = new sql_type_list()): user_message
     {
         global $db_con;
 
@@ -2837,7 +2837,7 @@ class sandbox extends db_object_seq_id_user
      */
     function update(
         string        $msg = '',
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): user_message
     {
         global $db_con;
@@ -2866,7 +2866,7 @@ class sandbox extends db_object_seq_id_user
      */
     function sql_insert(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
@@ -2896,7 +2896,7 @@ class sandbox extends db_object_seq_id_user
     function sql_update(
         sql_creator   $sc,
         sandbox       $db_row,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the parameter list to avoid changing the given list
@@ -2924,7 +2924,7 @@ class sandbox extends db_object_seq_id_user
      */
     function sql_delete(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
@@ -2973,7 +2973,7 @@ class sandbox extends db_object_seq_id_user
         sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
-        sql_type_list      $sc_par_lst = new sql_type_list([])
+        sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         global $cng_act_cac;
@@ -3298,7 +3298,7 @@ class sandbox extends db_object_seq_id_user
         sql_creator        $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
-        sql_type_list      $sc_par_lst = new sql_type_list([])): sql_par
+        sql_type_list      $sc_par_lst = new sql_type_list()): sql_par
     {
         // make the query name unique based on the changed fields
         $lib = new library();
@@ -3344,7 +3344,7 @@ class sandbox extends db_object_seq_id_user
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
-        sql_type_list      $sc_par_lst = new sql_type_list([])
+        sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // list of parameters actually used in order of the function usage
@@ -3539,7 +3539,7 @@ class sandbox extends db_object_seq_id_user
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        sql_type_list      $sc_par_lst_sub = new sql_type_list([])
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
         return $qp;
@@ -3559,7 +3559,7 @@ class sandbox extends db_object_seq_id_user
         sql_creator        $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
-        sql_type_list      $sc_par_lst = new sql_type_list([])
+        sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // make the query name unique based on the changed fields
@@ -3600,7 +3600,7 @@ class sandbox extends db_object_seq_id_user
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
-        sql_type_list      $sc_par_lst = new sql_type_list([])
+        sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
 
@@ -3757,7 +3757,7 @@ class sandbox extends db_object_seq_id_user
      * @param string $ext the query name extension to differ the queries based on the fields changed
      * @return sql_par prepared sql parameter object with the name set
      */
-    protected function sql_common(sql_creator $sc, sql_type_list $sc_par_lst = new sql_type_list([]), string $ext = ''): sql_par
+    protected function sql_common(sql_creator $sc, sql_type_list $sc_par_lst = new sql_type_list(), string $ext = ''): sql_par
     {
         $qp = new sql_par($this::class, $sc_par_lst, $ext);
 
@@ -3806,7 +3806,7 @@ class sandbox extends db_object_seq_id_user
      */
     function db_fields_changed(
         sandbox       $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         return new sql_par_field_list();

@@ -377,7 +377,7 @@ class sandbox_list_named extends sandbox_list
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $trp) {
             // check always user sandbox and normal name, because reading from database for check would take longer
-            $sc_par_lst = new sql_type_list([]);
+            $sc_par_lst = new sql_type_list();
             if ($use_func) {
                 $sc_par_lst->add(sql_type::LOG);
             }

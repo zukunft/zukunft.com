@@ -45,7 +45,7 @@ include_once MODEL_VALUE_PATH . 'value.php';
 include_once API_FORMULA_PATH . 'figure.php';
 
 use api\formula\figure as figure_api;
-use cfg\value\value;
+use cfg\value\value_base;
 use controller\controller;
 use cfg\result\result;
 use cfg\user\user;

@@ -233,7 +233,7 @@ class value_time_series extends sandbox_value
         sql_creator   $sc,
         string        $query_name,
         string        $class = self::class,
-        sql_type_list $sc_par_lst = new sql_type_list([]),
+        sql_type_list $sc_par_lst = new sql_type_list(),
         string        $ext = '',
         string        $id_ext = ''
     ): sql_par
@@ -274,9 +274,13 @@ class value_time_series extends sandbox_value
      * load a reference object by database id
      * TODO load the related time series data
      * @param int|string $id the id of the reference
+     * @param ?sql_type $typ if known the value data type to preselect the table
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int|string $id): int
+    function load_by_id(
+        int|string $id,
+        ?sql_type $typ = null
+    ): int
     {
         return parent::load_by_id($id);
     }
@@ -353,7 +357,7 @@ class value_time_series extends sandbox_value
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return string|array the field name(s) of the prime database index of the object
      */
-    function id_field(sql_type_list $sc_par_lst = new sql_type_list([])): string|array
+    function id_field(sql_type_list $sc_par_lst = new sql_type_list()): string|array
     {
         $lib = new library();
         return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;

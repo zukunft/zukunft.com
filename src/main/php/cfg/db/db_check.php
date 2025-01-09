@@ -47,6 +47,7 @@ include_once MODEL_USER_PATH . 'user_profile.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_USER_PATH . 'user_profile_list.php';
 include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\component\component;
@@ -64,6 +65,7 @@ use cfg\user\user_profile;
 use cfg\user\user_message;
 use cfg\user\user_profile_list;
 use cfg\value\value;
+use cfg\value\value_base;
 use shared\library;
 
 class db_check
@@ -323,8 +325,8 @@ class db_check
         $result .= $db_con->column_allow_null('job', 'end_time');
         $result .= $db_con->column_allow_null('job', 'row_id');
         $result .= $db_con->column_force_not_null('user_' . 'source', user::FLD_ID);
-        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'word_value', value::FLD_VALUE);
-        $result .= $db_con->change_column_name('user_' . $lib->class_to_name(value::class), 'word_value', value::FLD_VALUE);
+        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'word_value', value_base::FLD_VALUE);
+        $result .= $db_con->change_column_name('user_' . $lib->class_to_name(value::class), 'word_value', value_base::FLD_VALUE);
         $result .= $db_con->change_table_name('word_types', 'phrase_type');
         $result .= $db_con->change_column_name('phrase_type', 'word_type_id', phrase::FLD_TYPE);
         $result .= $db_con->change_column_name('word', 'word_type_id', phrase::FLD_TYPE);

@@ -833,7 +833,7 @@ class sandbox_link extends sandbox
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        sql_type_list      $sc_par_lst_sub = new sql_type_list([])
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -1052,7 +1052,7 @@ class sandbox_link extends sandbox
      */
     function db_fields_changed(
         sandbox|sandbox_link $sbx,
-        sql_type_list        $sc_par_lst = new sql_type_list([])
+        sql_type_list        $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
@@ -1288,7 +1288,7 @@ class sandbox_link extends sandbox
      */
     function sql_insert(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
@@ -1322,7 +1322,7 @@ class sandbox_link extends sandbox
     function sql_update(
         sql_creator   $sc,
         sandbox       $db_row,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the sql parameter list to avoid changing the given list

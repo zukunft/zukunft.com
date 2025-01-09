@@ -61,7 +61,12 @@ include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_base.php';
+//include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VALUE_PATH . 'value_time.php';
+//include_once MODEL_VALUE_PATH . 'value_text.php';
+//include_once MODEL_VALUE_PATH . 'value_geo.php';
+//include_once MODEL_VALUE_PATH . 'value_time_series.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -90,9 +95,14 @@ use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\ref\source;
 use cfg\result\result;
+use cfg\value\value_geo;
+use cfg\value\value;
+use cfg\value\value_text;
+use cfg\value\value_time;
+use cfg\value\value_time_series;
 use cfg\word\triple_list;
 use cfg\user\user;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\word\word_list;
 use shared\json_fields;
 use shared\library;
@@ -166,29 +176,35 @@ class sandbox_value extends sandbox_multi
     const FLD_KEY_BIG_USER = array(
         [group::FLD_ID, sql_field_type::KEY_PART_TEXT, sql_field_default::NOT_NULL, '', '', 'the text index for more than 16 phrases to find the -=class=-'],
     );
+    const FLD_ALL_VALUE = array(
+        [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NOT_NULL, '', '', 'the numeric value given by the user'],
+    );
     const FLD_ALL_VALUE_NUM = array(
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NOT_NULL, '', '', 'the numeric value given by the user'],
+    );
+    const FLD_ALL_VALUE_USER = array(
+        [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', 'the user specific numeric value change'],
     );
     const FLD_ALL_VALUE_NUM_USER = array(
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', 'the user specific numeric value change'],
     );
     const FLD_ALL_VALUE_TEXT = array(
-        [value::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', 'the text value given by the user'],
+        [value_base::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', 'the text value given by the user'],
     );
     const FLD_ALL_VALUE_TIME = array(
-        [value::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NOT_NULL, '', '', 'the timestamp given by the user'],
+        [value_base::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NOT_NULL, '', '', 'the timestamp given by the user'],
     );
     const FLD_ALL_VALUE_GEO = array(
-        [value::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NOT_NULL, '', '', 'the geolocation given by the user'],
+        [value_base::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NOT_NULL, '', '', 'the geolocation given by the user'],
     );
     const FLD_ALL_VALUE_TEXT_USER = array(
-        [value::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific text value change'],
+        [value_base::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific text value change'],
     );
     const FLD_ALL_VALUE_TIME_USER = array(
-        [value::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NULL, '', '', 'the user specific timestamp change'],
+        [value_base::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NULL, '', '', 'the user specific timestamp change'],
     );
     const FLD_ALL_VALUE_GEO_USER = array(
-        [value::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NULL, '', '', 'the user specific geolocation change'],
+        [value_base::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NULL, '', '', 'the user specific geolocation change'],
     );
     const FLD_ALL_SOURCE = array(
         [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, 'the source of the value as given by the user'],
@@ -224,8 +240,14 @@ class sandbox_value extends sandbox_multi
 
     // database fields only used for the value object
     public group $grp;  // phrases (word or triple) group object for this value
-    protected ?float $number; // simply the numeric value
-    private ?DateTime $last_update = null; // the time of the last update of fields that may influence the calculated results; also used to detect if the value has been saved
+
+    // the time of the database last update of any field
+    // that may influence the calculated results
+    // also used to detect if a check of the database is needed
+    // if no relevant var of this object has been changed
+    // since to last db load or db save
+    // calling the save function does not need to check
+    private ?DateTime $last_update = null;
 
 
     /*
@@ -245,7 +267,7 @@ class sandbox_value extends sandbox_multi
     {
         parent::reset();
         $this->set_grp(new group($this->user()));
-        $this->set_number(null);
+        $this->set_value(null);
         $this->set_last_update(null);
     }
 
@@ -276,11 +298,6 @@ class sandbox_value extends sandbox_multi
         $this->set_id($grp->id());
     }
 
-    function set_description(string $txt): void
-    {
-        $this->grp->set_description($txt);
-    }
-
     function grp(): group
     {
         return $this->grp;
@@ -290,6 +307,33 @@ class sandbox_value extends sandbox_multi
     {
         return $this->grp->id();
     }
+
+    function set_description(string $txt): void
+    {
+        $this->grp->set_description($txt);
+    }
+
+    /**
+     * interface function to set either the numeric, time, text or geolocation value
+     *
+     * @param float|DateTime|string|null $val the number, time, text or point that should be set
+     * @return void
+     */
+    function set_value(float|DateTime|string|null $val): void
+    {
+        log_warning('set_value() function of sandbox_value object is expected to be overwritten');
+    }
+
+    /**
+     * interface function to get the numeric, time, text or geolocation value
+     * @return float|DateTime|string|null the geolocation string
+     */
+    function value(): float|DateTime|string|null
+    {
+        log_err('value() function of sandbox_value object is expected to be overwritten');
+        return null;
+    }
+
 
     function is_id_set(): bool
     {
@@ -316,7 +360,7 @@ class sandbox_value extends sandbox_multi
      */
     function set_number(?float $number): void
     {
-        $this->number = $number;
+        $this->set_value($number);
     }
 
     /**
@@ -324,8 +368,9 @@ class sandbox_value extends sandbox_multi
      */
     function number(): ?float
     {
-        return $this->number;
+        return $this->value();
     }
+
 
     /**
      * set the timestamp of the last update of this value
@@ -359,6 +404,58 @@ class sandbox_value extends sandbox_multi
         }
     }
 
+    function value_type(): sql_type
+    {
+        // set the value type based table selection
+        if ($this::class == value::class) {
+            return sql_type::NUMERIC;
+        } elseif ($this::class == value_time::class) {
+            return sql_type::TIME;
+        } elseif ($this::class == value_text::class) {
+            return sql_type::TEXT;
+        } elseif ($this::class == value_geo::class) {
+            return sql_type::GEO;
+        } else {
+            return sql_type::NUMERIC;
+        }
+    }
+
+    function is_numeric(): bool
+    {
+        if ($this::class == value::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function is_time_value(): bool
+    {
+        if ($this::class == value_time::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function is_text_value(): bool
+    {
+        if ($this::class == value_text::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function is_geo_value(): bool
+    {
+        if ($this::class == value_geo::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function table_extension(): string
     {
         if ($this::class == value::class) {
@@ -389,7 +486,7 @@ class sandbox_value extends sandbox_multi
 
     function is_prime(): bool
     {
-        if ($this::class == value::class) {
+        if ($this->is_value_class($this::class)) {
             return $this->grp()->is_prime();
         } else {
             $grp_id = new group_id();
@@ -404,7 +501,7 @@ class sandbox_value extends sandbox_multi
 
     function is_main(): bool
     {
-        if ($this::class == value::class) {
+        if ($this->is_value_class($this::class)) {
             return false;
         } else {
             $grp_id = new group_id();
@@ -416,6 +513,23 @@ class sandbox_value extends sandbox_multi
                 return false;
             }
         }
+    }
+
+    /**
+     * @return bool true if the class is one of the value classes and not a result class
+     */
+    private function is_value_class(string $class): bool
+    {
+        if ($class == value::class
+            or $class == value_time::class
+            or $class == value_text::class
+            or $class == value_geo::class
+            or $class == value_time_series::class) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     function is_big(): bool
@@ -545,7 +659,7 @@ class sandbox_value extends sandbox_multi
 
         if ($type_name != $this::TYPE_TIME_SERIES) {
             // standard prime: for values or results without user specific changes and for up to four prime phrases
-            $sc->set_class($this::class, new sql_type_list([]), $ext_type . self::TBL_EXT_STD . sql_type::PRIME->extension());
+            $sc->set_class($this::class, new sql_type_list(), $ext_type . self::TBL_EXT_STD . sql_type::PRIME->extension());
             $fields = array_merge($this::FLD_KEY_PRIME, $fld_par, $this::FLD_ALL_SOURCE);
             $tbl_comment = $this::TBL_COMMENT_STD . $type_class_name . $this::TBL_COMMENT_STD_PRIME_CONT;
             $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
@@ -554,7 +668,7 @@ class sandbox_value extends sandbox_multi
 
             // standard main: for results without user specific changes and for up to e prime phrases
             if ($this::class == result::class) {
-                $sc->set_class($this::class, new sql_type_list([]), $ext_type . self::TBL_EXT_STD . sql_type::MAIN->extension());
+                $sc->set_class($this::class, new sql_type_list(), $ext_type . self::TBL_EXT_STD . sql_type::MAIN->extension());
                 $fields = array_merge(result::FLD_KEY_MAIN_STD, $fld_par, $this::FLD_ALL_SOURCE);
                 $tbl_comment = $this::TBL_COMMENT_STD . $type_class_name . $this::TBL_COMMENT_STD_MAIN_CONT;
                 $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
@@ -563,7 +677,7 @@ class sandbox_value extends sandbox_multi
             }
 
             // standard: for values or results without user specific changes and for up to 16 phrases
-            $sc->set_class($this::class, new sql_type_list([]), $ext_type . self::TBL_EXT_STD);
+            $sc->set_class($this::class, new sql_type_list(), $ext_type . self::TBL_EXT_STD);
             $fields = array_merge(self::FLD_KEY, $fld_par, $this::FLD_ALL_SOURCE);
             $tbl_comment = $this::TBL_COMMENT_STD . $type_class_name . $this::TBL_COMMENT_STD_CONT;
             if ($comment_overwrite != '') {
@@ -599,7 +713,7 @@ class sandbox_value extends sandbox_multi
         $fields = array_merge(self::FLD_KEY, $this::FLD_ALL_SOURCE_GROUP, $std_fields);
 
         // most: for values or results based on up to 16 phrases
-        $sc->set_class($this::class, new sql_type_list([]), $ext_type);
+        $sc->set_class($this::class, new sql_type_list(), $ext_type);
         $tbl_comment = $this::TBL_COMMENT . $type_class_name . $this::TBL_COMMENT_CONT;
         if ($comment_overwrite != '') {
             $tbl_comment = $comment_overwrite;
@@ -621,7 +735,7 @@ class sandbox_value extends sandbox_multi
         // most: for values or results based on up to four prime phrases
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_PRIME, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_fields);
-        $sc->set_class($this::class, new sql_type_list([]), $ext_type . sql_type::PRIME->extension());
+        $sc->set_class($this::class, new sql_type_list(), $ext_type . sql_type::PRIME->extension());
         $tbl_comment = $this::TBL_COMMENT_PRIME . $type_class_name . $this::TBL_COMMENT_PRIME_CONT;
         if ($comment_overwrite != '') {
             $tbl_comment = $comment_overwrite;
@@ -644,7 +758,7 @@ class sandbox_value extends sandbox_multi
         if ($this::class == result::class and $type_name != $this::TYPE_TIME_SERIES) {
             $sql .= $sc->sql_separator();
             $fields = array_merge(result::FLD_KEY_MAIN, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_fields);
-            $sc->set_class($this::class, new sql_type_list([]), $ext_type . sql_type::MAIN->extension());
+            $sc->set_class($this::class, new sql_type_list(), $ext_type . sql_type::MAIN->extension());
             $tbl_comment = $this::TBL_COMMENT_MAIN . $type_class_name . $this::TBL_COMMENT_MAIN_CONT;
             if ($comment_overwrite != '') {
                 $tbl_comment = $comment_overwrite;
@@ -667,7 +781,7 @@ class sandbox_value extends sandbox_multi
         // big: for values based on more than 16 phrases
         $sql .= $sc->sql_separator();
         $fields = array_merge(self::FLD_KEY_BIG, $this::FLD_ALL_SOURCE_GROUP_BIG, $std_fields);
-        $sc->set_class($this::class, new sql_type_list([]), $ext_type . sql_type::BIG->extension());
+        $sc->set_class($this::class, new sql_type_list(), $ext_type . sql_type::BIG->extension());
         $tbl_comment = $this::TBL_COMMENT . $type_class_name . $this::TBL_COMMENT_BIG_CONT;
         if ($comment_overwrite != '') {
             $tbl_comment = $comment_overwrite;
@@ -699,9 +813,14 @@ class sandbox_value extends sandbox_multi
      *
      * @param sql_creator $sc with the target db_type set
      * @param int|string $id the id of the value
+     * @param ?sql_type $typ if known the value data type to preselect the table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int|string $id): sql_par
+    function load_sql_by_id(
+        sql_creator $sc,
+        int|string  $id,
+        ?sql_type   $typ = null
+    ): sql_par
     {
         $this->grp()->set_id($id);
         return $this->load_sql_by_grp_id($sc, 'id');
@@ -729,11 +848,12 @@ class sandbox_value extends sandbox_multi
      */
     function load_sql_user_changes(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         $sc_par_lst->add(sql_type::USER);
         $sc_par_lst->add($this->table_type());
+        $sc_par_lst->add($this->value_type());
         $sc->set_class($this::class, $sc_par_lst);
         // overwrite the standard id field name (value_id or result_id) with the main database id field for results "group_id"
         $sc->set_id_field($this->id_field($sc_par_lst));
@@ -769,6 +889,7 @@ class sandbox_value extends sandbox_multi
         }
         $sc_par_lst = [sql_type::COMPLETE, sql_type::USER];
         $sc_par_lst[] = $this->table_type();
+        $sc_par_lst[] = $this->value_type();
         $qp = new sql_par($this::class, new sql_type_list($sc_par_lst), $ext);
         $sc->set_class($this::class, new sql_type_list($sc_par_lst));
         $sc->set_name($qp->name);
@@ -817,7 +938,9 @@ class sandbox_value extends sandbox_multi
      */
     protected function load_sql_by_grp_id(sql_creator $sc, string $query_name): sql_par
     {
-        $sc_par_lst = new sql_type_list([$this->table_type()]);
+        $sc_par_lst = new sql_type_list();
+        $sc_par_lst->add($this->table_type());
+        $sc_par_lst->add($this->value_type());
         $id_ext = $this->table_extension();
         $qp = $this->load_sql_multi($sc, $query_name, $this::class, $sc_par_lst, '', $id_ext);
         return $this->load_sql_set_where($qp, $sc, $id_ext);
@@ -849,8 +972,9 @@ class sandbox_value extends sandbox_multi
         array       $fld_lst = []
     ): sql_par
     {
-        $sc_par_lst = new sql_type_list([]);
+        $sc_par_lst = new sql_type_list();
         $sc_par_lst->add($this->table_type());
+        $sc_par_lst->add($this->value_type());
         $sc_par_lst->add(sql_type::NORM);
         $id_ext = $this->table_extension();
         $qp = new sql_par($this::class, $sc_par_lst, '', $id_ext);
@@ -870,8 +994,9 @@ class sandbox_value extends sandbox_multi
      */
     function load_sql_median_user(sql_creator $sc): sql_par
     {
-        $sc_par_lst = new sql_type_list([]);
+        $sc_par_lst = new sql_type_list();
         $sc_par_lst->add($this->table_type());
+        $sc_par_lst->add($this->value_type());
         $sc_par_lst->add(sql_type::USER);
         $ext = sql::NAME_EXT_MEDIAN_USER;
         if ($this->owner_id > 0) {
@@ -886,6 +1011,16 @@ class sandbox_value extends sandbox_multi
         $sc->set_fields(array(user::FLD_ID));
 
         return $this->load_sql_set_where($qp, $sc, $id_ext);
+    }
+
+    /*
+     * sql helper
+     */
+
+    public function sql_field_type(): sql_field_type
+    {
+        log_err('overwrite for sql_field_type() missing for ' . $this->dsp_id());
+        return sql_field_type::NUMERIC_FLOAT;
     }
 
 
@@ -911,7 +1046,7 @@ class sandbox_value extends sandbox_multi
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par_field_list with the id fields, values and types for this value or result object
      */
-    function id_fvt_lst(sql_type_list $sc_par_lst = new sql_type_list([])): sql_par_field_list
+    function id_fvt_lst(sql_type_list $sc_par_lst = new sql_type_list()): sql_par_field_list
     {
         $lst = new sql_par_field_list();
         if ($this->is_prime()) {
@@ -1005,7 +1140,7 @@ class sandbox_value extends sandbox_multi
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return string|array the field name(s) of the prime database index of the object
      */
-    function id_field(sql_type_list $sc_par_lst = new sql_type_list([])): string|array
+    function id_field(sql_type_list $sc_par_lst = new sql_type_list()): string|array
     {
         $result = $this->id_field_group();
         if ($this->is_prime()) {
@@ -1165,7 +1300,36 @@ class sandbox_value extends sandbox_multi
         $phr_lst = $this->grp()->phrase_list();
         $api_phr_lst = $phr_lst->api_obj();
         $api_obj->phrases = $api_phr_lst;
-        $api_obj->set_number($this->number);
+        $api_obj->set_number($this->value());
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create the array for the api message
+     * which is on this level the same as the export json array
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(bool $do_load = true): array
+    {
+        $vars = parent::api_json_array($do_load);
+
+        // reload the value parameters
+        if ($do_load) {
+            $this->load_by_grp($this->grp());
+        }
+
+        $vars[json_fields::ID] = $this->grp()->id();
+
+        $phr_lst = $this->grp()->phrase_list();
+        $vars[json_fields::PHRASES] = $phr_lst->api_json_array();
+
+        return $vars;
+
     }
 
 
@@ -1214,9 +1378,6 @@ class sandbox_value extends sandbox_multi
             }
         }
 
-        // add the value itself
-        $vars[json_fields::NUMBER] = $this->number;
-
         return $vars;
     }
 
@@ -1239,7 +1400,7 @@ class sandbox_value extends sandbox_multi
         $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
         $log->group_id = $this->grp_id();
         $log->old_value = null;
-        $log->new_value = $this->number;
+        $log->new_value = $this->value();
 
         $log->row_id = 0;
         $log->add();
@@ -1270,7 +1431,7 @@ class sandbox_value extends sandbox_multi
         $class = $lib->class_to_name($this::class);
         $log->set_table($class . sql_db::TABLE_EXTENSION);
         $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
-        $log->old_value = $this->number;
+        $log->old_value = $this->value();
         $log->new_value = null;
 
         $log->row_id = $this->id();
@@ -1436,7 +1597,7 @@ class sandbox_value extends sandbox_multi
      */
     function sql_insert(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the parameter list to avoid changing the given list
@@ -1460,7 +1621,7 @@ class sandbox_value extends sandbox_multi
     function sql_update(
         sql_creator   $sc,
         sandbox_value $db_row,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the parameter list to avoid changing the given list
@@ -1482,11 +1643,13 @@ class sandbox_value extends sandbox_multi
     function sql_write(
         sql_creator        $sc,
         sandbox_value|null $db_row,
-        sql_type_list      $sc_par_lst = new sql_type_list([])
+        sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // set the target sql table type for this value
         $sc_par_lst->add($this->table_type());
+        // set the target sql table type for numeric, text or geo values
+        $sc_par_lst->add($this->value_type());
         // get the name indicator how many id fields are user
         $id_ext = $this->table_extension();
         // get the prime db key list for this sandbox object
@@ -1523,7 +1686,7 @@ class sandbox_value extends sandbox_multi
                 $qp->par = $fvt_lst->db_values();
             } else {
                 $qp->sql = $sc->create_sql_update_fvt($fvt_lst_id, $fvt_lst, $sc_par_lst);
-                // and remember the paraemeters used
+                // and remember the parameters used
                 $qp->par = $sc->par_values();
             }
         }
@@ -1546,7 +1709,7 @@ class sandbox_value extends sandbox_multi
         sql_par_field_list $fvt_lst_id,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
-        sql_type_list      $sc_par_lst = new sql_type_list([])
+        sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // init the function body
@@ -1592,6 +1755,9 @@ class sandbox_value extends sandbox_multi
         $fld_lst_ex_id_and_val = array_diff($fld_lst_ex_id, [
             change_action::FLD_ID,
             sandbox_value::FLD_VALUE,
+            value_base::FLD_VALUE_TIME,
+            value_base::FLD_VALUE_TEXT,
+            value_base::FLD_VALUE_GEO,
             sandbox_value::FLD_LAST_UPDATE
         ]);
 
@@ -1625,7 +1791,17 @@ class sandbox_value extends sandbox_multi
                 $fvt_lst_write->add($fvt_lst_all->get(user::FLD_ID));
             }
         }
-        $fvt_lst_write->add($fvt_lst_all->get(sandbox_value::FLD_VALUE));
+        if ($this->is_numeric()) {
+            $fvt_lst_write->add($fvt_lst_all->get(sandbox_value::FLD_VALUE));
+        } elseif ($this->is_time_value()) {
+            $fvt_lst_write->add($fvt_lst_all->get(value_base::FLD_VALUE_TIME));
+        } elseif ($this->is_text_value()) {
+            $fvt_lst_write->add($fvt_lst_all->get(value_base::FLD_VALUE_TEXT));
+        } elseif ($this->is_geo_value()) {
+            $fvt_lst_write->add($fvt_lst_all->get(value_base::FLD_VALUE_GEO));
+        } else {
+            $fvt_lst_write->add($fvt_lst_all->get(sandbox_value::FLD_VALUE));
+        }
         if (!$sc_par_lst->is_standard()) {
             $fvt_lst_write->add($fvt_lst_all->get(sandbox_value::FLD_LAST_UPDATE));
         }
@@ -1673,13 +1849,15 @@ class sandbox_value extends sandbox_multi
     function sql_update_fields(
         sql_creator        $sc,
         sql_par_field_list $fvt_lst,
-        sql_type_list      $sc_par_lst = new sql_type_list([])
+        sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // set the sql query type
         $sc_par_lst->add(sql_type::UPDATE);
         // set the target sql table type for this value e.g. add prime
         $sc_par_lst->add($this->table_type());
+        // set the target sql table type for numeric, text or geo values
+        $sc_par_lst->add($this->value_type());
         // get the name indicator how many id fields are user
         $id_ext = $this->table_extension();
 
@@ -1723,7 +1901,7 @@ class sandbox_value extends sandbox_multi
      */
     function sql_delete(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the parameter list to avoid changing the given list
@@ -1732,6 +1910,8 @@ class sandbox_value extends sandbox_multi
         $sc_par_lst_used->add(sql_type::DELETE);
         // set the target sql table type for this value e.g. add prime
         $sc_par_lst_used->add($this->table_type());
+        // set the target sql table type for numeric, text or geo values
+        $sc_par_lst_used->add($this->value_type());
         // get the name indicator how many id fields are user
         $id_ext = $this->grp->table_extension();
         // get the prime db key list for this sandbox object
@@ -1766,7 +1946,7 @@ class sandbox_value extends sandbox_multi
         sql_creator        $sc,
         sql_par            $qp,
         sql_par_field_list $fvt_lst_id,
-        sql_type_list      $sc_par_lst = new sql_type_list([])
+        sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
     {
 
@@ -1901,7 +2081,7 @@ class sandbox_value extends sandbox_multi
      * @param sql_type_list $sc_par_lst only used for link objects
      * @return array with the field names of the object and any child object
      */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         if ($this->is_prime() or $this->is_main()) {
             $fields = $this->grp->id_names();
@@ -1911,7 +2091,17 @@ class sandbox_value extends sandbox_multi
         if (!$sc_par_lst->is_standard()) {
             $fields[] = user::FLD_ID;
         }
-        $fields[] = self::FLD_VALUE;
+        if ($this->is_numeric()) {
+            $fields[] = self::FLD_VALUE;
+        } elseif ($this->is_time_value()) {
+            $fields[] = value_base::FLD_VALUE_TIME;
+        } elseif ($this->is_text_value()) {
+            $fields[] = value_base::FLD_VALUE_TEXT;
+        } elseif ($this->is_geo_value()) {
+            $fields[] = value_base::FLD_VALUE_GEO;
+        } else {
+            $fields[] = self::FLD_VALUE;
+        }
         if (!$sc_par_lst->is_standard()) {
             $fields[] = self::FLD_LAST_UPDATE;
         }
@@ -1928,7 +2118,7 @@ class sandbox_value extends sandbox_multi
      */
     function db_fields_changed(
         sandbox_multi|sandbox_value $sbx,
-        sql_type_list               $sc_par_lst = new sql_type_list([])
+        sql_type_list               $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         $sc = new sql_creator();
@@ -1957,20 +2147,90 @@ class sandbox_value extends sandbox_multi
             }
         }
         // TODO check that all numeric fields are checked with !== to force writing the value zero
-        if ($sbx->number() !== $this->number()) {
-            if ($is_update) {
-                $lst->add_field(
-                    self::FLD_VALUE,
-                    $this->number(),
-                    sql_field_type::NUMERIC_FLOAT,
-                    $sbx->number()
-                );
-            } else {
-                $lst->add_field(
-                    self::FLD_VALUE,
-                    $this->number(),
-                    sql_field_type::NUMERIC_FLOAT
-                );
+        if ($this->is_numeric()) {
+            if ($sbx->value() !== $this->value()) {
+                if ($is_update) {
+                    $lst->add_field(
+                        self::FLD_VALUE,
+                        $this->value(),
+                        sql_field_type::NUMERIC_FLOAT,
+                        $sbx->value()
+                    );
+                } else {
+                    $lst->add_field(
+                        self::FLD_VALUE,
+                        $this->value(),
+                        sql_field_type::NUMERIC_FLOAT
+                    );
+                }
+            }
+        } elseif ($this->is_time_value()) {
+            if ($sbx->value() !== $this->value()) {
+                if ($is_update) {
+                    $lst->add_field(
+                        value_base::FLD_VALUE_TIME,
+                        $this->value(),
+                        sql_field_type::TIME,
+                        $sbx->number()
+                    );
+                } else {
+                    $lst->add_field(
+                        value_base::FLD_VALUE_TIME,
+                        $this->value(),
+                        sql_field_type::TIME
+                    );
+                }
+            }
+        } elseif ($this->is_text_value()) {
+            if ($sbx->value() !== $this->value()) {
+                if ($is_update) {
+                    $lst->add_field(
+                        value_base::FLD_VALUE_TEXT,
+                        $this->value(),
+                        sql_field_type::TEXT,
+                        $sbx->value()
+                    );
+                } else {
+                    $lst->add_field(
+                        value_base::FLD_VALUE_TEXT,
+                        $this->value(),
+                        sql_field_type::TEXT
+                    );
+                }
+            }
+        } elseif ($this->is_geo_value()) {
+            if ($sbx->value() !== $this->value()) {
+                if ($is_update) {
+                    $lst->add_field(
+                        value_base::FLD_VALUE_GEO,
+                        $this->value(),
+                        sql_field_type::NUMERIC_FLOAT,
+                        $sbx->value()
+                    );
+                } else {
+                    $lst->add_field(
+                        value_base::FLD_VALUE_GEO,
+                        $this->value(),
+                        sql_field_type::NUMERIC_FLOAT
+                    );
+                }
+            }
+        } else {
+            if ($sbx->number() !== $this->number()) {
+                if ($is_update) {
+                    $lst->add_field(
+                        self::FLD_VALUE,
+                        $this->number(),
+                        sql_field_type::NUMERIC_FLOAT,
+                        $sbx->number()
+                    );
+                } else {
+                    $lst->add_field(
+                        self::FLD_VALUE,
+                        $this->number(),
+                        sql_field_type::NUMERIC_FLOAT
+                    );
+                }
             }
         }
         if (!$sc_par_lst->is_standard()) {
@@ -2013,7 +2273,7 @@ class sandbox_value extends sandbox_multi
             $result[] = group::FLD_ID;
         }
         if ($sbx->number() <> $this->number()) {
-            $result[] = value::FLD_VALUE;
+            $result[] = value_base::FLD_VALUE;
         }
         return $result;
     }
@@ -2045,14 +2305,14 @@ class sandbox_value extends sandbox_multi
     /**
      * create a clone and update the number (mainly used for unit testing)
      *
-     * @param float|null $number the target value
+     * @param float|string|null $value the target value
      * @return $this a clone with the number changed
      */
-    function cloned(?float $number): sandbox_value
+    function cloned(float|string|null $value): sandbox_value
     {
         $obj_cpy = clone $this;
         $obj_cpy->reset();
-        $obj_cpy->set_number($number);
+        $obj_cpy->set_value($value);
         return $obj_cpy;
     }
 
@@ -2110,7 +2370,9 @@ class sandbox_value extends sandbox_multi
     {
         $result = $this->dsp_id_entry();
         if ($this->id() != 0) {
-            $sc_par_lst = new sql_type_list([$this->table_type()]);
+            $sc_par_lst = new sql_type_list();
+            $sc_par_lst->add($this->table_type());
+            $sc_par_lst->add($this->value_type());
             $id_fields = $this->id_field($sc_par_lst);
             if (is_array($id_fields)) {
                 $fld_dsp = ' (' . implode(', ', $id_fields);

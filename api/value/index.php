@@ -44,6 +44,7 @@ include_once MODEL_VALUE_PATH . 'value.php';
 include_once API_VALUE_PATH . 'value.php';
 
 use cfg\value\value;
+use cfg\value\value_base;
 use controller\controller;
 use cfg\user\user;
 use api\value\value as value_api;
@@ -56,7 +57,7 @@ $db_con = prg_start("api/value", "", false);
 $val_id = $_GET[api::URL_VAR_ID] ?? 0;
 
 $msg = '';
-$result = new value_api(); // reset the html code var
+$result = ''; // reset the api message
 
 // load the session user parameters
 $usr = new user;
@@ -72,14 +73,14 @@ if ($usr->id() > 0) {
         $val = new value($usr);
         $val->load_by_id($val_id);
         $val->load_objects();
-        $result = $val->api_obj();
+        $result = $val->api_json();
     } else {
         $msg = 'value id is missing';
     }
 }
 
 $ctrl = new controller();
-$ctrl->get($result, $msg);
+$ctrl->get_json($result, $msg);
 
 
 prg_end_api($db_con);

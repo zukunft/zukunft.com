@@ -39,6 +39,7 @@ use api\word\word as word_api;
 use cfg\group\group_id;
 use cfg\phrase\phrase_list;
 use cfg\value\value;
+use cfg\value\value_base;
 use test\test_cleanup;
 
 class value_read_tests

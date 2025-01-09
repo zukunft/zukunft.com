@@ -79,6 +79,10 @@ use cfg\helper\type_object;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
+use cfg\value\value_base;
+use cfg\value\value_geo;
+use cfg\value\value_text;
+use cfg\value\value_time;
 use cfg\word\word;
 use controller\controller;
 use controller\system\sys_log as sys_log_api;
@@ -101,18 +105,18 @@ class test_api extends create_test_objects
     function assert_api_to_dsp(object $usr_obj, object $dsp_obj): bool
     {
         $class = $this->class_to_api($usr_obj::class);
-        $api_obj = $usr_obj->api_obj(false);
-        $api_json_msg = json_decode($api_obj->get_json(), true);
-        $dsp_obj = $this->dsp_obj($usr_obj, $dsp_obj, false);
-        $msg_to_backend = $dsp_obj->api_array();
+        $msg_to_frontend = $usr_obj->api_json(false);
+        $dsp_obj->set_from_json($msg_to_frontend);
+        $array_to_backend = $dsp_obj->api_array();
         // remove the empty fields to compare the "api save" message with the "api show" message
-        // the "api show" message ($api_json_msg) should not contain empty fields
+        // the "api show" message ($msg_to_frontend) should not contain empty fields
         // because they are irrelevant for the user and this reduces traffic
-        // the "api save" message ($msg_to_backend) should contain empty fields
+        // the "api save" message ($array_to_backend) should contain empty fields
         // to allow the user to remove e.g. a description and less save traffic is expected
         // TODO add a test that e.g. the description can be removed via api
-        $msg_to_backend = array_filter($msg_to_backend, fn($value) => !is_null($value) && $value !== '');
-        return $this->assert_api_compare($class, $api_json_msg, $msg_to_backend);
+        $array_to_backend = array_filter($array_to_backend, fn($value) => !is_null($value) && $value !== '');
+        $array_to_frontend = json_decode($msg_to_frontend, true);
+        return $this->assert_api_compare($class, $array_to_frontend, $array_to_backend);
     }
 
 
@@ -129,13 +133,21 @@ class test_api extends create_test_objects
     {
         $class = $usr_obj::class;
         $class = $this->class_to_api($class);
-        if ($usr_obj::class == sys_log_list::class
-            or $usr_obj::class == type_lists::class) {
-            $api_obj = $usr_obj->api_obj($this->usr1, false);
+        // TODO Prio 0 switch all to api_json
+        if ($usr_obj::class == value::class
+            or $usr_obj::class == value_time::class
+            or $usr_obj::class == value_text::class
+            or $usr_obj::class == value_geo::class) {
+            $actual = json_decode($usr_obj->api_json(false), true);
         } else {
-            $api_obj = $usr_obj->api_obj(false);
+            if ($usr_obj::class == sys_log_list::class
+                or $usr_obj::class == type_lists::class) {
+                $api_obj = $usr_obj->api_obj($this->usr1, false);
+            } else {
+                $api_obj = $usr_obj->api_obj(false);
+            }
+            $actual = json_decode($api_obj->get_json(), true);
         }
-        $actual = json_decode($api_obj->get_json(), true);
         return $this->assert_api_compare($class, $actual, null, $filename, $contains);
     }
 

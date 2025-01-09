@@ -94,6 +94,7 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_USER_PATH . 'user.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_VIEW_PATH . 'view_term_link.php';
 //include_once MODEL_WORD_PATH . 'word.php';
@@ -110,6 +111,7 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
+use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\helper\db_object_seq_id_user;
@@ -119,10 +121,11 @@ use cfg\formula\formula_link;
 use cfg\sandbox\sandbox_link;
 use cfg\ref\ref;
 use cfg\ref\source;
+use cfg\value\value;
 use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\user\user;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\view\view;
 use cfg\view\view_term_link;
 use cfg\word\word;
@@ -166,7 +169,7 @@ class change_log extends db_object_seq_id_user
         [self::FLD_ROW_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_ROW_ID_COM],
     );
 
-    // list of all classes that store change log entries
+    // list of classes that store change log entries except log link because logging a link is too different
     const LOG_CLASSES = [
         change::class,
         changes_norm::class,
@@ -174,7 +177,15 @@ class change_log extends db_object_seq_id_user
         change_values_prime::class,
         change_values_norm::class,
         change_values_big::class,
-        change_link::class
+        change_values_time_prime::class,
+        change_values_time_norm::class,
+        change_values_time_big::class,
+        change_values_text_prime::class,
+        change_values_text_norm::class,
+        change_values_text_big::class,
+        change_values_geo_prime::class,
+        change_values_geo_norm::class,
+        change_values_geo_big::class,
     ];
 
 
@@ -483,7 +494,7 @@ class change_log extends db_object_seq_id_user
         $sql_index = $sc->sql_separator();
         $sql_foreign = $sc->sql_separator();
 
-        $sc->set_class($this::class, new sql_type_list([]), $ext_type);
+        $sc->set_class($this::class, new sql_type_list(), $ext_type);
         $fields = array_merge($this::FLD_LST_KEY, $fld_row_id, $this::FLD_LST_CHANGE);
         $sql .= $sc->table_create($fields, $type_name, $this::TBL_COMMENT, $this::class);
         $sql_index .= $sc->index_create($fields);
@@ -542,12 +553,12 @@ class change_log extends db_object_seq_id_user
                 }
             } elseif ($table_name == change_table_list::VALUE) {
                 $db_con->set_class(value::class);
-                foreach (value::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (value_base::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_table_list::VALUE_USR) {
                 $db_con->set_class(value::class, true);
-                foreach (value::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (value_base::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_table_list::FORMULA) {
@@ -772,7 +783,7 @@ class change_log extends db_object_seq_id_user
      */
     function sql_insert(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([]),
+        sql_type_list $sc_par_lst = new sql_type_list(),
         string        $ext = '',
         string        $val_tbl = '',
         string        $add_fld = '',
@@ -848,9 +859,16 @@ class change_log extends db_object_seq_id_user
      * get a list of all database fields
      * list must be corresponding to the db_values fields
      *
+     * @param sql_creator $sc the sql creation script with preset parameters
+     * @param sql_type_list $sc_par_lst the internal parameters to create the sql
+     * @param sql_par_type $val_typ the type of the value field
      * @return sql_par_field_list list of the database field names
      */
-    function db_field_values_types(sql_creator $sc, sql_type_list $sc_par_lst): sql_par_field_list
+    function db_field_values_types(
+        sql_creator $sc,
+        sql_type_list $sc_par_lst,
+        sql_par_type $val_typ
+    ): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
         $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQL_TYP);

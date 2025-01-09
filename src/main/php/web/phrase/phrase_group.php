@@ -75,6 +75,7 @@ class phrase_group extends sandbox_named_dsp
     function __construct(?string $api_json = null)
     {
         $this->name = '';
+        $this->lst = [];
         $this->set_dirty();
         parent::__construct($api_json);
     }

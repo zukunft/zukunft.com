@@ -358,7 +358,7 @@ class value_list extends sandbox_value_list
         $par_lst = clone $sc->par_list();
 
         // loop over the possible tables where the value might be stored in this pod
-        foreach (value::TBL_LIST as $tbl_typ) {
+        foreach (value_base::TBL_LIST as $tbl_typ) {
             // reset but keep the parameter list
             $sc->reset();
             $qp_tbl = $this->load_sql_by_phr_single($sc, $pos_phr, $pos_grp, $pos_usr, $tbl_typ, $par_lst);
@@ -399,7 +399,7 @@ class value_list extends sandbox_value_list
         sql_type_list $sc_par_lst
     ): sql_par
     {
-        $qp = new sql_par(value::class, new sql_type_list([]), $sc_par_lst->ext_ex_user());
+        $qp = new sql_par(value::class, new sql_type_list(), $sc_par_lst->ext_ex_user());
         $qp->name .= $query_name;
 
         $sc->set_class(value::class, $sc_par_lst);
@@ -409,7 +409,7 @@ class value_list extends sandbox_value_list
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(value::FLD_NAMES);
+        $sc->set_fields(value_base::FLD_NAMES);
         //$sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
         //$sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
         //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(word::FLD_VALUES) . ' DESC, ' . word::FLD_NAME);
@@ -548,7 +548,7 @@ class value_list extends sandbox_value_list
         $par_offset = 0;
         $par_types = array();
         foreach ($tbl_id_matrix as $matrix_row) {
-            $sc_par_lst = new sql_type_list([]);
+            $sc_par_lst = new sql_type_list();
             $tbl_typ = array_shift($matrix_row);
             $sc_par_lst->add($tbl_typ);
             // TODO add the union query creation for the other table types
@@ -563,11 +563,11 @@ class value_list extends sandbox_value_list
                 }
                 $qp_tbl = $this->load_sql_multi($sc, '', $sc_par_lst);
                 if ($par_offset == 0) {
-                    $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+                    $sc->set_usr_num_fields(value_base::FLD_NAMES_NUM_USR);
                 } else {
-                    $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR, false);
+                    $sc->set_usr_num_fields(value_base::FLD_NAMES_NUM_USR, false);
                 }
-                $sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
+                $sc->set_usr_only_fields(value_base::FLD_NAMES_USR_ONLY);
                 for ($pos = 1; $pos <= $max_row_ids; $pos++) {
                     // the array of the phrase ids starts with 0 whereas the phrase id fields start with 1
                     $id_pos = $pos - 1;
@@ -614,7 +614,7 @@ class value_list extends sandbox_value_list
         $par_offset = 0;
         $par_types = array();
         foreach ($tbl_id_matrix as $matrix_row) {
-            $sc_par_lst = new sql_type_list([]);
+            $sc_par_lst = new sql_type_list();
             $tbl_typ = array_shift($matrix_row);
             $sc_par_lst->add($tbl_typ);
             if ($tbl_typ == sql_type::PRIME) {
@@ -627,11 +627,11 @@ class value_list extends sandbox_value_list
                 }
                 $qp_tbl = $this->load_sql_multi($sc, 'grp_lst', $sc_par_lst);
                 if ($par_offset == 0) {
-                    $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+                    $sc->set_usr_num_fields(value_base::FLD_NAMES_NUM_USR);
                 } else {
-                    $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR, false);
+                    $sc->set_usr_num_fields(value_base::FLD_NAMES_NUM_USR, false);
                 }
-                $sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
+                $sc->set_usr_only_fields(value_base::FLD_NAMES_USR_ONLY);
                 for ($pos = 1; $pos <= $max_row_ids; $pos++) {
                     // the array of the phrase ids starts with o whereas the phrase id fields start with 1
                     $id_pos = $pos - 1;
@@ -722,22 +722,18 @@ class value_list extends sandbox_value_list
         $result = false;
         // check parameters
         if ($val_to_add != null) {
-            if (get_class($val_to_add) <> value::class) {
-                log_err("Object to add must be of type value, but it is " . get_class($val_to_add), "value_list->add");
+            if ($allow_duplicates) {
+                parent::add_obj($val_to_add, $allow_duplicates);
             } else {
-                if ($allow_duplicates) {
-                    parent::add_obj($val_to_add, $allow_duplicates);
-                } else {
-                    if ($val_to_add->is_id_set() or $val_to_add->grp->name() != '') {
-                        if (count($this->id_lst()) > 0) {
-                            if (!in_array($val_to_add->id(), $this->id_lst())) {
-                                parent::add_obj($val_to_add);
-                                $result = true;
-                            }
-                        } else {
+                if ($val_to_add->is_id_set() or $val_to_add->grp->name() != '') {
+                    if (count($this->id_lst()) > 0) {
+                        if (!in_array($val_to_add->id(), $this->id_lst())) {
                             parent::add_obj($val_to_add);
                             $result = true;
                         }
+                    } else {
+                        parent::add_obj($val_to_add);
+                        $result = true;
                     }
                 }
             }
@@ -1371,11 +1367,7 @@ class value_list extends sandbox_value_list
 
         // insert the new values
         foreach ($this->lst() as $val) {
-            // TODO remove temp line used only for debugging
-            $val_name = $val->dsp_id();
-            if ($val->number() == null) {
-                log_warning('numeric value missing fpr ' . $val->dsp_id());
-            } else {
+            if ($val->value() != null) {
                 $usr_msg->add($val->save());
             }
         }

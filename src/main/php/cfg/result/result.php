@@ -71,7 +71,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once HTML_PATH . 'html_base.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -102,7 +102,7 @@ use cfg\sandbox\sandbox_multi;
 use cfg\sandbox\sandbox_value;
 use cfg\user\user;
 use cfg\user\user_message;
-use cfg\value\value;
+use cfg\value\value_base;
 use html\formula\formula as formula_dsp;
 use html\html_base;
 use shared\json_fields;
@@ -265,7 +265,7 @@ class result extends sandbox_value
         [sandbox_value::FLD_ID_PREFIX . '8', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
     );
     const FLD_ALL_CHANGED = array(
-        [value::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
+        [value_base::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
         [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, 'the id of the formula which has been used to calculate this result'],
     );
     const FLD_ALL_SOURCE = array();
@@ -301,6 +301,9 @@ class result extends sandbox_value
     public group $grp;                  // the phrase group of the result
     // TODO use the is_std of the sandbox_value object
     public ?bool $is_std = True;        // true as long as no user specific value, formula or assignment is used for this result
+
+    // database related variables
+    private ?float $number = null;
 
     // to deprecate
     public ?DateTime $last_update = null;      // ... and the time of the last update; all updates up to this time are included in this result
@@ -386,6 +389,16 @@ class result extends sandbox_value
     function id(): int|string
     {
         return $this->grp()->id();
+    }
+
+    function set_value(float|DateTime|string|null $val): void
+    {
+        $this->number = $val;
+    }
+
+    function value(): float|DateTime|string|null
+    {
+        return $this->number;
     }
 
     function set_src_grp(group $grp): void
@@ -488,7 +501,7 @@ class result extends sandbox_value
 
             if ($key == json_fields::NUMBER) {
                 if (is_numeric($value)) {
-                    $this->number = $value;
+                    $this->set_value($value);
                 } else {
                     $usr_msg->add_message('Import result: "' . $value . '" is expected to be a number (' . $this->grp->dsp_id() . ')');
                 }
@@ -560,7 +573,7 @@ class result extends sandbox_value
         sql_creator   $sc,
         string        $query_name,
         string        $class = self::class,
-        sql_type_list $sc_par_lst = new sql_type_list([]),
+        sql_type_list $sc_par_lst = new sql_type_list(),
         string        $ext = '',
         string        $id_ext = ''
     ): sql_par
@@ -664,9 +677,13 @@ class result extends sandbox_value
      * load (or force reload from database of) a result by the id
      *
      * @param int|string $id the unique database id of the result that should be loaded
+     * @param ?sql_type $typ if known the value data type to preselect the table
      * @return int true if result has been loaded
      */
-    function load_by_id(int|string $id = 0): int
+    function load_by_id(
+        int|string $id = 0,
+        ?sql_type $typ = null
+    ): int
     {
         global $db_con;
         $result = 0;
@@ -1665,7 +1682,7 @@ class result extends sandbox_value
      * @param sql_type_list $sc_par_lst only used for link objects
      * @return array list of the database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         $fields = parent::db_fields_all();
         if (!$sc_par_lst->is_standard()) {
@@ -1686,7 +1703,7 @@ class result extends sandbox_value
      */
     function db_fields_changed(
         sandbox_multi|sandbox_value|result $sbx,
-        sql_type_list                      $sc_par_lst = new sql_type_list([])
+        sql_type_list                      $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);

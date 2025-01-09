@@ -76,6 +76,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -102,6 +103,7 @@ use cfg\sandbox\sandbox_value;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
+use cfg\value\value_base;
 use cfg\word\word;
 use shared\json_fields;
 use shared\library;
@@ -639,9 +641,13 @@ class group extends sandbox_multi
      * just set the class name for the user sandbox function
      * load a word object by database id
      * @param int|string $id the id of the group
+     * @param ?sql_type $typ for group this field is not used
      * @return int|string the id of the object found and zero if nothing is found
      */
-    function load_by_id(int|string $id): int|string
+    function load_by_id(
+        int|string $id,
+        ?sql_type $typ = null
+    ): int|string
     {
         global $db_con;
 
@@ -755,7 +761,12 @@ class group extends sandbox_multi
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int|string $id, string $class = self::class): sql_par
+    function load_sql_by_id(
+        sql_creator $sc,
+        int|string $id,
+        ?sql_type $typ = null,
+        string $class = self::class
+    ): sql_par
     {
         $this->set_id($id);
         // for the group the number of phrases are not relevant for the queries
@@ -858,7 +869,7 @@ class group extends sandbox_multi
      */
     function load_standard_by_name_sql(sql_creator $sc, string $name): sql_par
     {
-        $sc_par_lst = new sql_type_list([]);
+        $sc_par_lst = new sql_type_list();
         $sc_par_lst->add($this->table_type());
         $sc_par_lst->add(sql_type::NORM);
         $qp = new sql_par($this::class, $sc_par_lst);
@@ -1664,7 +1675,7 @@ class group extends sandbox_multi
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql_creator $sc, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
+    function sql_insert(sql_creator $sc, sql_type_list $sc_par_lst = new sql_type_list()): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
         $sc_par_lst_used = clone $sc_par_lst;
@@ -1749,7 +1760,7 @@ class group extends sandbox_multi
      *
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         return array_merge([self::FLD_NAME, self::FLD_DESCRIPTION]);
     }

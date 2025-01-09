@@ -839,7 +839,7 @@ class component extends sandbox_typed
      */
     function load_sql_user_changes(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
@@ -1297,7 +1297,7 @@ class component extends sandbox_typed
      * @param sql_type_list $sc_par_lst only used for link objects
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         return array_merge(
             parent::db_fields_all(),
@@ -1327,7 +1327,7 @@ class component extends sandbox_typed
      */
     function db_fields_changed(
         sandbox|component $sbx,
-        sql_type_list     $sc_par_lst = new sql_type_list([])
+        sql_type_list     $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $cng_fld_cac;

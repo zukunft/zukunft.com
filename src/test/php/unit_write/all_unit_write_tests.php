@@ -90,7 +90,7 @@ use cfg\sys_log_status;
 use cfg\word\triple;
 use cfg\user\user;
 use cfg\user\user_profile;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\verb\verb;
 use cfg\view\view;
 use cfg\view_type;

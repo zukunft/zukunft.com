@@ -306,6 +306,16 @@ class controller
             $this->get_response('', $msg);
         }
     }
+    function get_json(string $api_json, string $msg): void
+    {
+        // return the api json or the error message
+        if ($msg == '') {
+            $this->get_response($api_json, $msg);
+        } else {
+            // tell the user e.g. that no products found
+            $this->get_response('', $msg);
+        }
+    }
 
     function get_list(list_api $api_obj, string $msg): void
     {

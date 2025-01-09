@@ -42,7 +42,7 @@ use cfg\ref\source;
 use cfg\sys_log_list;
 use cfg\word\triple;
 use cfg\user\user;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\verb\verb;
 use cfg\view\view;
 use html\html_base;

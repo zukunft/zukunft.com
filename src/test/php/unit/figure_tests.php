@@ -70,8 +70,8 @@ class figure_tests
         $t->subheader('set and get unit tests');
 
         $fig = $t->figure_value();
-        $t->assert('figure value id', $fig->id(), 32770);
-        $t->assert('figure value obj id', $fig->obj_id(), 32770);
+        $t->assert('figure value id', $fig->id(), value_api::TI_PI);
+        $t->assert('figure value obj id', $fig->obj_id(), value_api::TI_PI);
         $t->assert('figure value number', $fig->number(), value_api::TV_READ_SHORTEST);
         $fig = $t->figure_result();
         $t->assert('figure result id', $fig->id(), -1);

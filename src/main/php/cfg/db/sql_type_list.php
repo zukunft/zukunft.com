@@ -40,7 +40,7 @@ class sql_type_list
     /**
      * @param array $lst with the initial sql create parameter
      */
-    function __construct(array $lst)
+    function __construct(array $lst = [])
     {
         $this->lst = $lst;
     }
@@ -369,12 +369,14 @@ class sql_type_list
 
     /**
      * @return string the table name extension excluding the user sandbox indication
+     *                but starting with the value type
      */
     public function ext_ex_user(): string
     {
-        $ext = '';
+        $ext = $this->ext_value_type();
         foreach ($this->lst as $sc_par) {
-            if ($sc_par != sql_type::USER) {
+            if ($sc_par != sql_type::USER
+                and !$sc_par->is_val_type()) {
                 $ext .= $sc_par->extension();
             }
         }
@@ -390,15 +392,34 @@ class sql_type_list
     {
         $ext = '';
         foreach ($this->lst as $sc_par) {
-            if ($sc_par != sql_type::USER
-                and $sc_par != sql_type::INSERT
-                and $sc_par != sql_type::UPDATE
-                and $sc_par != sql_type::DELETE
+            if (!$sc_par->is_sql_change()
+                and !$sc_par->is_val_type()
+                and $sc_par != sql_type::USER
                 and $sc_par != sql_type::EXCLUDE
                 and $sc_par != sql_type::LOG
                 and $sc_par != sql_type::SUB
                 and $sc_par != sql_type::LIST
-                and $sc_par != sql_type::NORM) {
+                and $sc_par != sql_type::NORM
+                and $sc_par != sql_type::NUMERIC
+                and $sc_par != sql_type::TIME
+                and $sc_par != sql_type::TEXT
+                and $sc_par != sql_type::GEO) {
+                $ext .= $sc_par->extension();
+            }
+        }
+        return $ext;
+    }
+
+    /**
+     * the extension of the query name excluding the sql type e.g. insert, update and delete query name extension
+     *
+     * @return string the table name extension excluding the user sandbox indication
+     */
+    public function ext_value_type(): string
+    {
+        $ext = '';
+        foreach ($this->lst as $sc_par) {
+            if ($sc_par->is_val_type()) {
                 $ext .= $sc_par->extension();
             }
         }
@@ -412,12 +433,11 @@ class sql_type_list
      */
     public function ext_select(): string
     {
-        $ext = '';
+        $ext = $this->ext_value_type();
         foreach ($this->lst as $sc_par) {
-            if ($sc_par != sql_type::USER
-                and $sc_par != sql_type::INSERT
-                and $sc_par != sql_type::UPDATE
-                and $sc_par != sql_type::DELETE
+            if (!$sc_par->is_sql_change()
+                and !$sc_par->is_val_type()
+                and $sc_par != sql_type::USER
                 and $sc_par != sql_type::EXCLUDE
                 and $sc_par != sql_type::LOG
                 and $sc_par != sql_type::SUB

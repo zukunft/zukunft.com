@@ -865,7 +865,7 @@ class sandbox_named extends sandbox
                 // TODO activate when the prepared SQL is ready to use
                 // only do the update here if the update is not done with one sql statement at the end
                 if ($this->sql_write_prepared()) {
-                    $qp = $this->sql_update($db_con->sql_creator(), $db_rec, new sql_type_list([]));
+                    $qp = $this->sql_update($db_con->sql_creator(), $db_rec, new sql_type_list());
                     $usr_msg = $db_con->update($qp, $this::class . ' update name');
                     $result = $usr_msg->get_message();
                 } else {
@@ -1021,7 +1021,7 @@ class sandbox_named extends sandbox
         sql_creator        $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
-        sql_type_list      $sc_par_lst = new sql_type_list([])): sql_par
+        sql_type_list      $sc_par_lst = new sql_type_list()): sql_par
     {
         // make the query name unique based on the changed fields
         $lib = new library();
@@ -1059,7 +1059,7 @@ class sandbox_named extends sandbox
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        sql_type_list      $sc_par_lst_sub = new sql_type_list([])
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -1110,7 +1110,7 @@ class sandbox_named extends sandbox
      * @param sql_type_list $sc_par_lst only used for link objects
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         return [
             $this::FLD_ID,
@@ -1130,7 +1130,7 @@ class sandbox_named extends sandbox
      */
     function db_fields_changed(
         sandbox       $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         $lst = new sql_par_field_list();
