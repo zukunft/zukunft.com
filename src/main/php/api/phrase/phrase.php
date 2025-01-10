@@ -34,9 +34,9 @@ namespace api\phrase;
 include_once API_SANDBOX_PATH . 'combine_named.php';
 include_once API_WORD_PATH . 'word.php';
 include_once API_WORD_PATH . 'triple.php';
-include_once WORD_PATH . 'word.php';
-include_once WORD_PATH . 'triple.php';
-include_once PHRASE_PATH . 'phrase.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once WEB_WORD_PATH . 'triple.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use api\sandbox\combine_named as combine_named_api;

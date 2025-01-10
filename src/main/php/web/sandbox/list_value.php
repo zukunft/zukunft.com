@@ -36,6 +36,8 @@
 namespace html\sandbox;
 
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once API_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
 
 use api\phrase\phrase_list as phrase_list_api;
 use html\phrase\phrase_list as phrase_list_dsp;

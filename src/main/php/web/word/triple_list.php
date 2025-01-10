@@ -32,11 +32,16 @@
 namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once HTML_PATH . 'html_base.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_WORD_PATH . 'triple.php';
+include_once WEB_WORD_PATH . 'triple_list.php';
+include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
-use cfg\phrase\phrase_type;
-use cfg\verb\verb;
 use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\sandbox\list_dsp;

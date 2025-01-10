@@ -34,6 +34,13 @@
 
 namespace html\helper;
 
+include_once WEB_VALUE_PATH . 'value_list.php';
+include_once HTML_PATH . 'rest_ctrl.php';
+include_once SHARED_PATH . 'api.php';
+include_once SHARED_PATH . 'words.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_USER_PATH . 'user_message.php';
+
 use html\phrase\phrase_list;
 use html\rest_ctrl;
 use html\user\user_message;

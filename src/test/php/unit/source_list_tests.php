@@ -33,7 +33,7 @@
 namespace unit;
 
 use cfg\db\sql_creator;
-use cfg\source_list;
+use cfg\ref\source_list;
 use test\test_cleanup;
 
 class source_list_tests

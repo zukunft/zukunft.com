@@ -37,7 +37,7 @@ use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use cfg\ref\ref_type;
 use cfg\ref\ref_type_list;
-use cfg\source_list;
+use cfg\ref\source_list;
 use cfg\ref\source_type_list;
 use api\ref\ref as ref_api;
 use html\ref\ref as ref_dsp;

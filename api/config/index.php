@@ -43,8 +43,8 @@ include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'words.php';
-include_once API_PATH . 'controller.php';
-include_once API_PATH . 'api_message.php';
+include_once API_OBJECT_PATH . 'controller.php';
+include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_HELPER_PATH . 'config_numbers.php';

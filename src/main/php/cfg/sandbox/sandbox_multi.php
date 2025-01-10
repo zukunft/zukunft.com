@@ -2685,7 +2685,7 @@ class sandbox_multi extends db_object_multi_user
                         $usr_msg->add_message($this->dsp_id() . ' seems to be not similar to ' . $similar->dsp_id());
                     } else {
                         // if similar is found set the id to trigger the updating instead of adding
-                        $similar->load_by_id($similar->id, $similar::class); // e.g. to get the type_id
+                        $similar->load_by_id($similar->id); // e.g. to get the type_id
                         // prevent that the id of a formula is used for the word with the type formula link
                         if (get_class($this) == get_class($similar)) {
                             $this->id = $similar->id();
@@ -2728,7 +2728,7 @@ class sandbox_multi extends db_object_multi_user
                     $db_rec = clone $this;
                     $db_rec->reset();
                     $db_rec->set_user($this->user());
-                    if ($db_rec->load_by_id($this->id(), $db_rec::class) != $this->id()) {
+                    if ($db_rec->load_by_id($this->id()) != $this->id()) {
                         $usr_msg->add_message('Reloading of user ' . $class_name . ' failed');
                     } else {
                         log_debug('reloaded from db');
@@ -3011,7 +3011,7 @@ class sandbox_multi extends db_object_multi_user
                         $db_rec = clone $this;
                         $db_rec->reset();
                         $db_rec->set_user($this->user());
-                        if ($db_rec->load_by_id($this->id(), $db_rec::class)) {
+                        if ($db_rec->load_by_id($this->id())) {
                             log_debug('reloaded ' . $db_rec->dsp_id() . ' from database');
                         }
                         if ($msg == '') {

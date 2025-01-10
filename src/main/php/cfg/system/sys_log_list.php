@@ -29,7 +29,7 @@
   
 */
 
-namespace cfg;
+namespace cfg\system;
 
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 include_once API_SYSTEM_PATH . 'sys_log_list.php';

@@ -34,27 +34,30 @@
 
 namespace html\view;
 
-include_once HTML_HELPER_PATH . 'config.php';
-include_once SANDBOX_PATH . 'db_object.php';
-include_once SANDBOX_PATH . 'sandbox_typed.php';
-include_once SHARED_PATH . 'api.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once API_COMPONENT_PATH . 'component.php';
-include_once SHARED_PATH . 'library.php';
-include_once SHARED_TYPES_PATH . 'view_type.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
+include_once HTML_PATH . 'button.php';
 include_once HTML_PATH . 'display_list.php';
-include_once COMPONENT_PATH . 'component.php';
-include_once COMPONENT_PATH . 'component_list.php';
 include_once HTML_PATH . 'html_base.php';
 include_once HTML_PATH . 'rest_ctrl.php';
-include_once HTML_PATH . 'button.php';
-include_once SYSTEM_PATH . 'messages.php';
-include_once LOG_PATH . 'user_log_display.php';
-include_once VIEW_PATH . 'view_list.php';
-include_once WORD_PATH . 'word.php';
-include_once WORD_PATH . 'triple.php';
+include_once MODEL_COMPONENT_PATH . 'position_type.php';
+include_once WEB_COMPONENT_PATH . 'component.php';
+include_once WEB_COMPONENT_PATH . 'component_list.php';
+include_once WEB_HELPER_PATH . 'config.php';
+include_once WEB_HELPER_PATH . 'data_object.php';
+include_once WEB_LOG_PATH . 'user_log_display.php';
+include_once WEB_SANDBOX_PATH . 'db_object.php';
+include_once WEB_SYSTEM_PATH . 'messages.php';
+include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_VIEW_PATH . 'view_list.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once WEB_WORD_PATH . 'triple.php';
+include_once SHARED_TYPES_PATH . 'view_styles.php';
+include_once SHARED_TYPES_PATH . 'view_type.php';
+include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
-include_once HTML_HELPER_PATH . 'data_object.php';
+include_once SHARED_PATH . 'library.php';
+
 
 // TODO remove model classes
 use api\component\component as component_api;

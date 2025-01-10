@@ -47,7 +47,7 @@ include_once PHP_PATH . 'zu_lib.php';
 include_once WEB_PATH . 'frontend.php';
 include_once MODEL_SYSTEM_PATH . 'system_time_list.php';
 include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
-include_once API_PATH . 'controller.php';
+include_once API_OBJECT_PATH . 'controller.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_VIEW_PATH . 'view.php';
 include_once MODEL_USER_PATH . 'user.php';

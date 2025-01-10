@@ -32,7 +32,9 @@
 
 namespace html\sandbox;
 
-use html\html_selector;
+include_once HTML_PATH . 'html_selector.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
+
 use cfg\sandbox\sandbox_value;
 
 class user_sandbox_display extends sandbox_value

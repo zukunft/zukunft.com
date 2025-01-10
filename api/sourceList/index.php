@@ -37,15 +37,15 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
-include_once API_PATH . 'controller.php';
-include_once API_PATH . 'api_message.php';
+include_once API_OBJECT_PATH . 'controller.php';
+include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_REF_PATH . 'source_list.php';
 include_once API_REF_PATH . 'source_list.php';
 
 use controller\controller;
 use cfg\user\user;
-use cfg\source_list;
+use cfg\ref\source_list;
 use api\ref\source_list as source_list_api;
 use shared\api;
 

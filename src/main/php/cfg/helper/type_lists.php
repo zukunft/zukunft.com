@@ -75,7 +75,7 @@ include_once MODEL_LOG_PATH . 'change_field_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_profile_list.php';
 include_once MODEL_USER_PATH . 'user_list.php';
-include_once API_PATH . 'controller.php';
+include_once API_OBJECT_PATH . 'controller.php';
 
 use api\system\type_lists as type_lists_api;
 use cfg\component\position_type_list;

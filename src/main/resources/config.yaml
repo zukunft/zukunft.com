@@ -28,6 +28,11 @@ zukunft.com:
       tooltip-comment: "settings that each user can set individually"
       default:
         tooltip-comment: "the default settings for normal users"
+        backend:
+          max change:
+            daily:
+              ip user: 1000
+              tooltip-comment: "maximal number of changes that an user without login can do per day"
         frontend:
           tooltip-comment: "the setting for the user interface"
           row limit:

@@ -34,7 +34,7 @@
 
 namespace controller;
 
-include_once API_PATH . 'api_message.php';
+include_once API_OBJECT_PATH . 'api_message.php';
 include_once API_SYSTEM_PATH . 'type_lists.php';
 include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once API_SANDBOX_PATH . 'list_object.php';
@@ -44,7 +44,7 @@ include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_PATH . 'views.php';
 
-use api\api_message;
+use controller\api_message;
 use api\sandbox\combine_object as combine_object_api;
 use api\sandbox\list_object as list_api;
 use api\system\type_lists as type_lists_api;

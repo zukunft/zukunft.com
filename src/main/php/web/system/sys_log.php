@@ -32,9 +32,11 @@
 namespace html\system;
 
 include_once WEB_LOG_PATH . 'log.php';
+include_once HTML_PATH . 'html_base.php';
+include_once WEB_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
 use DateTimeInterface;
 use html\html_base;
 use html\log\log as log_dsp;

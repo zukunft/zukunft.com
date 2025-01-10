@@ -34,6 +34,11 @@
 
 namespace html\user;
 
+include_once API_SYSTEM_PATH . 'type_list.php';
+include_once HTML_PATH . 'html_base.php';
+include_once HTML_PATH . 'html_selector.php';
+include_once SHARED_PATH . 'library.php';
+
 use api\system\type_list as type_list_api;
 use html\html_base;
 use html\html_selector;

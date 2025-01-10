@@ -33,6 +33,8 @@
 namespace html\helper;
 
 include_once SHARED_PATH . 'json_fields.php';
+include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_VIEW_PATH . 'view_list.php';
 
 use html\user\user_message;
 use html\view\view_list;

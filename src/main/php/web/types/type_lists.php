@@ -36,31 +36,33 @@
 
 namespace html\types;
 
-include_once TYPES_PATH . 'type_object.php';
-include_once TYPES_PATH . 'type_list.php';
-include_once TYPES_PATH . 'change_action_list.php';
-include_once TYPES_PATH . 'change_table_list.php';
-include_once TYPES_PATH . 'change_field_list.php';
-include_once TYPES_PATH . 'sys_log_status_list.php';
-include_once TYPES_PATH . 'user_profiles.php';
-include_once TYPES_PATH . 'job_type_list.php';
-include_once TYPES_PATH . 'languages.php';
-include_once TYPES_PATH . 'language_forms.php';
-include_once TYPES_PATH . 'share.php';
-include_once TYPES_PATH . 'protection.php';
-include_once TYPES_PATH . 'verbs.php';
-include_once TYPES_PATH . 'phrase_types.php';
-include_once TYPES_PATH . 'formula_type_list.php';
-include_once TYPES_PATH . 'formula_link_type_list.php';
-include_once TYPES_PATH . 'source_type_list.php';
-include_once TYPES_PATH . 'ref_type_list.php';
-include_once TYPES_PATH . 'view_type_list.php';
-include_once TYPES_PATH . 'view_style_list.php';
-include_once TYPES_PATH . 'view_link_type_list.php';
-include_once TYPES_PATH . 'component_type_list.php';
-include_once TYPES_PATH . 'component_link_type_list.php';
-include_once TYPES_PATH . 'position_type_list.php';
-include_once VIEW_PATH . 'view_list.php';
+include_once WEB_TYPES_PATH . 'type_object.php';
+include_once WEB_TYPES_PATH . 'type_list.php';
+include_once WEB_TYPES_PATH . 'change_action_list.php';
+include_once WEB_TYPES_PATH . 'change_table_list.php';
+include_once WEB_TYPES_PATH . 'change_field_list.php';
+include_once WEB_TYPES_PATH . 'sys_log_status_list.php';
+include_once WEB_TYPES_PATH . 'user_profiles.php';
+include_once WEB_TYPES_PATH . 'job_type_list.php';
+include_once WEB_TYPES_PATH . 'languages.php';
+include_once WEB_TYPES_PATH . 'language_forms.php';
+include_once WEB_TYPES_PATH . 'share.php';
+include_once WEB_TYPES_PATH . 'protection.php';
+include_once WEB_TYPES_PATH . 'verbs.php';
+include_once WEB_TYPES_PATH . 'phrase_types.php';
+include_once WEB_TYPES_PATH . 'formula_type_list.php';
+include_once WEB_TYPES_PATH . 'formula_link_type_list.php';
+include_once WEB_TYPES_PATH . 'source_type_list.php';
+include_once WEB_TYPES_PATH . 'ref_type_list.php';
+include_once WEB_TYPES_PATH . 'view_type_list.php';
+include_once WEB_TYPES_PATH . 'view_style_list.php';
+include_once WEB_TYPES_PATH . 'view_link_type_list.php';
+include_once WEB_TYPES_PATH . 'component_type_list.php';
+include_once WEB_TYPES_PATH . 'component_link_type_list.php';
+include_once WEB_TYPES_PATH . 'position_type_list.php';
+include_once WEB_VIEW_PATH . 'view_list.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once WEB_USER_PATH . 'user_message.php';
 
 // get the api const that are shared between the backend and the html frontend
 include_once SHARED_PATH . 'api.php';
@@ -69,7 +71,6 @@ use html\user\user_message;
 use html\view\view_list as view_list_dsp;
 use html\word\word as word_dsp;
 use shared\api;
-use shared\types\view_styles;
 
 class type_lists
 {

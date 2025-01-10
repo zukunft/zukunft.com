@@ -31,11 +31,26 @@
 
 namespace html\word;
 
-include_once SANDBOX_PATH . 'sandbox_typed.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once HTML_PATH . 'button.php';
+include_once HTML_PATH . 'html_base.php';
+include_once HTML_PATH . 'html_selector.php';
+include_once HTML_PATH . 'rest_ctrl.php';
+include_once MODEL_PHRASE_PATH . 'phrase_type.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+//include_once WEB_PHRASE_PATH . 'term.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once WEB_SYSTEM_PATH . 'messages.php';
+include_once WEB_USER_PATH . 'user_message.php';
+//include_once WEB_VERB_PATH . 'verb.php';
+include_once WEB_WORD_PATH . 'triple.php';
+include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'view_styles.php';
+include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
 use cfg\phrase\phrase_type;
 use html\rest_ctrl;
 use html\button;
@@ -50,7 +65,7 @@ use html\phrase\phrase as phrase_dsp;
 use html\sandbox\sandbox_typed;
 use html\phrase\term as term_dsp;
 use html\verb\verb as verb_dsp;
-use shared\api AS api_shared;
+use shared\api as api_shared;
 use shared\json_fields;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\view_styles;

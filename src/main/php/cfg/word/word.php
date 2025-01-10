@@ -258,6 +258,7 @@ class word extends sandbox_typed
     const POD = 'pod';
     const USER = 'user';
     const FRONTEND = 'frontend';
+    const BACKEND = 'backend';
 
     // general words used also for the system configuration that have a fixed tooltip
     const TIME = 'time';
@@ -305,6 +306,9 @@ class word extends sandbox_typed
     const VIEW = 'view';
     const FREEZE = 'freeze';
     const URL = 'url';
+    const CHANGE = 'change';
+    const DAILY = 'daily';
+    const IP = 'ip';
 
     // for the configuration of a single job
     // TODO complete the concrete setup

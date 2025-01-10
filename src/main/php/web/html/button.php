@@ -35,8 +35,8 @@
 namespace html;
 
 include_once SHARED_PATH . 'library.php';
-include_once PHRASE_PATH . 'phrase_list.php';
-include_once SYSTEM_PATH . 'messages.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once SHARED_PATH . 'library.php';
 
 use shared\library;

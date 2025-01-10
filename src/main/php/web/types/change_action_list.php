@@ -32,8 +32,6 @@
 
 namespace html\types;
 
-use html\html_selector;
-
 class change_action_list extends type_list
 {
 

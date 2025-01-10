@@ -32,17 +32,22 @@
 
 namespace html\phrase;
 
-include_once SANDBOX_PATH . 'combine_named.php';
+include_once WEB_SANDBOX_PATH . 'combine_named.php';
 include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once API_PHRASE_PATH . 'phrase.php';
-include_once WORD_PATH . 'word.php';
-include_once WORD_PATH . 'triple.php';
+include_once HTML_PATH . 'button.php';
+include_once HTML_PATH . 'html_base.php';
+include_once HTML_PATH . 'rest_ctrl.php';
+//include_once MODEL_VERB_PATH . 'verb_list.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_SYSTEM_PATH . 'messages.php';
+include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once WEB_WORD_PATH . 'triple.php';
+include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-
-use shared\api;
 use api\phrase\phrase as phrase_api;
-use api\sandbox\combine_object as combine_object_api;
 use cfg\verb\verb_list;
 use html\button;
 use html\html_base;

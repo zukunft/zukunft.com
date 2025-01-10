@@ -29,7 +29,7 @@
   
 */
 
-namespace cfg;
+namespace cfg\ref;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
 include_once API_REF_PATH . 'source_list.php';

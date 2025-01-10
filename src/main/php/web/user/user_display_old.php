@@ -29,6 +29,27 @@
   
 */
 
+include_once DB_PATH . 'sql_db.php';
+include_once HTML_PATH . 'html_base.php';
+include_once MODEL_COMPONENT_PATH . 'component.php';
+include_once MODEL_COMPONENT_PATH . 'component_link.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'formula_link.php';
+include_once MODEL_GROUP_PATH . 'group.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_VALUE_PATH . 'value_base.php';
+include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+include_once WEB_LOG_PATH . 'user_log_display.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_VIEW_PATH . 'view.php';
+
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\db\sql_db;
@@ -39,10 +60,9 @@ use cfg\phrase\phrase;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
 use cfg\ref\source;
-use cfg\sys_log_list;
+use cfg\system\sys_log_list;
 use cfg\word\triple;
 use cfg\user\user;
-use cfg\value\value_base;
 use cfg\verb\verb;
 use cfg\view\view;
 use html\html_base;

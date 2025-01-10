@@ -32,15 +32,20 @@
 
 namespace html\sandbox;
 
-include_once SANDBOX_PATH . 'db_object.php';
-include_once HTML_PATH . 'html_base.php';
+include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
+include_once HTML_PATH . 'html_base.php';
+include_once SHARED_TYPES_PATH . 'view_styles.php';
+include_once WEB_SANDBOX_PATH . 'db_object.php';
+include_once WEB_USER_PATH . 'user.php';
+include_once WEB_USER_PATH . 'user_message.php';
+//include_once WEB_VIEW_PATH . 'view_list.php';
+include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use html\view\view_list;
 use shared\api;
 use html\sandbox\db_object as db_object_dsp;
-use html\html_base;
 use html\user\user as user_dsp;
 use html\user\user_message;
 use shared\json_fields;

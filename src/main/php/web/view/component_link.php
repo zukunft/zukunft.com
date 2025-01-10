@@ -31,6 +31,8 @@
 
 namespace html\view;
 
+include_once MODEL_COMPONENT_PATH . 'component_link.php';
+
 use cfg\component\component_link;
 
 class component_link_dsp extends component_link

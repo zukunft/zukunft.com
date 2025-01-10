@@ -65,38 +65,33 @@ include_once SHARED_PATH . 'api.php';
 // get the pure html frontend objects
 include_once USER_PATH . 'user.php';
 
-include_once TYPES_PATH . 'type_object.php';
-include_once TYPES_PATH . 'type_list.php';
-include_once TYPES_PATH . 'change_action_list.php';
-include_once TYPES_PATH . 'change_table_list.php';
-include_once TYPES_PATH . 'change_field_list.php';
-include_once TYPES_PATH . 'sys_log_status_list.php';
-include_once TYPES_PATH . 'user_profiles.php';
-include_once TYPES_PATH . 'job_type_list.php';
-include_once TYPES_PATH . 'languages.php';
-include_once TYPES_PATH . 'language_forms.php';
-include_once TYPES_PATH . 'share.php';
-include_once TYPES_PATH . 'protection.php';
-include_once TYPES_PATH . 'verbs.php';
-include_once TYPES_PATH . 'phrase_types.php';
-include_once TYPES_PATH . 'formula_type_list.php';
-include_once TYPES_PATH . 'formula_link_type_list.php';
-include_once TYPES_PATH . 'source_type_list.php';
-include_once TYPES_PATH . 'ref_type_list.php';
-include_once TYPES_PATH . 'view_type_list.php';
-include_once TYPES_PATH . 'view_link_type_list.php';
-include_once TYPES_PATH . 'component_type_list.php';
-include_once TYPES_PATH . 'component_link_type_list.php';
-include_once TYPES_PATH . 'position_type_list.php';
+include_once WEB_TYPES_PATH . 'type_object.php';
+include_once WEB_TYPES_PATH . 'type_list.php';
+include_once WEB_TYPES_PATH . 'change_action_list.php';
+include_once WEB_TYPES_PATH . 'change_table_list.php';
+include_once WEB_TYPES_PATH . 'change_field_list.php';
+include_once WEB_TYPES_PATH . 'sys_log_status_list.php';
+include_once WEB_TYPES_PATH . 'user_profiles.php';
+include_once WEB_TYPES_PATH . 'job_type_list.php';
+include_once WEB_TYPES_PATH . 'languages.php';
+include_once WEB_TYPES_PATH . 'language_forms.php';
+include_once WEB_TYPES_PATH . 'share.php';
+include_once WEB_TYPES_PATH . 'protection.php';
+include_once WEB_TYPES_PATH . 'verbs.php';
+include_once WEB_TYPES_PATH . 'phrase_types.php';
+include_once WEB_TYPES_PATH . 'formula_type_list.php';
+include_once WEB_TYPES_PATH . 'formula_link_type_list.php';
+include_once WEB_TYPES_PATH . 'source_type_list.php';
+include_once WEB_TYPES_PATH . 'ref_type_list.php';
+include_once WEB_TYPES_PATH . 'view_type_list.php';
+include_once WEB_TYPES_PATH . 'view_link_type_list.php';
+include_once WEB_TYPES_PATH . 'component_type_list.php';
+include_once WEB_TYPES_PATH . 'component_link_type_list.php';
+include_once WEB_TYPES_PATH . 'position_type_list.php';
+include_once WEB_TYPES_PATH . 'type_lists.php';
+include_once WEB_USER_PATH . 'user.php';
 include_once VIEW_PATH . 'view_list.php';
 
-include_once TYPES_PATH . 'type_lists.php';
-
-
-include_once VIEW_PATH . 'view_list.php';
-
-use html\html_base;
-use html\rest_ctrl;
 use shared\library;
 use shared\api;
 use html\user\user;

@@ -31,15 +31,32 @@
 
 namespace html\word;
 
-include_once SANDBOX_PATH . 'sandbox_typed.php';
-include_once PHRASE_PATH . 'phrase.php';
-include_once HTML_PATH . 'html_base.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once API_PHRASE_PATH . 'phrase.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_PATH . 'views.php';
-include_once SHARED_PATH . 'api.php';
+include_once HTML_PATH . 'button.php';
+include_once HTML_PATH . 'html_base.php';
+include_once HTML_PATH . 'html_selector.php';
+include_once HTML_PATH . 'rest_ctrl.php';
+//include_once MODEL_VERB_PATH . 'verb_list.php';
+include_once SHARED_ENUM_PATH . 'foaf_direction.php';
+//include_once WEB_FORMULA_PATH . 'formula.php';
+//include_once WEB_HELPER_PATH . 'config.php';
+include_once WEB_LOG_PATH . 'change_log_named.php';
+//include_once WEB_LOG_PATH . 'user_log_display.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+//include_once WEB_PHRASE_PATH . 'term.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once WEB_SYSTEM_PATH . 'back_trace.php';
+include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_USER_PATH . 'user_message.php';
+//include_once WEB_VIEW_PATH . 'view_list.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'view_styles.php';
+include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'views.php';
+include_once SHARED_PATH . 'words.php';
 
 use cfg\verb\verb_list;
 use html\helper\config;

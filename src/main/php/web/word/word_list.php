@@ -32,9 +32,11 @@
 namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once HTML_PATH . 'html_base.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_WORD_PATH . 'word.php';
 
-use cfg\phrase\phrase_type;
 use html\user\user_message;
 use html\word\word as word_dsp;
 use html\html_base;

@@ -34,7 +34,22 @@
 
 namespace html\value;
 
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once HTML_PATH . 'button.php';
+include_once HTML_PATH . 'html_base.php';
+include_once HTML_PATH . 'rest_ctrl.php';
+include_once MODEL_GROUP_PATH . 'group.php';
+include_once MODEL_PHRASE_PATH . 'phr_ids.php';
+include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_RESULT_PATH . 'result_list.php';
+//include_once MODEL_WORD_PATH . 'word_list.php';
 include_once WEB_PHRASE_PATH . 'phrase_group_list.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_VALUE_PATH . 'value.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_PATH . 'library.php';
 include_once SHARED_PATH . 'views.php';
 
 use cfg\group\group;

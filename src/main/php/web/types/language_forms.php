@@ -32,8 +32,6 @@
 
 namespace html\types;
 
-use html\html_selector;
-
 class language_forms extends type_list
 {
 

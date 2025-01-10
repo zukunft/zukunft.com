@@ -35,6 +35,13 @@
 namespace html\sandbox;
 
 include_once API_SANDBOX_PATH . 'sandbox.php';
+include_once HTML_PATH . 'html_base.php';
+include_once HTML_PATH . 'rest_ctrl.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
+//include_once WEB_PHRASE_PATH . 'term.php';
+include_once WEB_USER_PATH . 'user_message.php';
+//include_once WEB_VIEW_PATH . 'view_list.php';
+include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use html\view\view_list;
@@ -45,7 +52,6 @@ use html\phrase\phrase as phrase_dsp;
 use html\phrase\term as term_dsp;
 use html\user\user_message;
 use shared\json_fields;
-use test\create_test_objects;
 
 class db_object
 {

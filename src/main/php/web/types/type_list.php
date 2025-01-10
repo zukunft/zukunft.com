@@ -36,14 +36,14 @@
 namespace html\types;
 
 include_once SHARED_PATH . 'api.php';
-include_once TYPES_PATH . 'type_object.php';
-include_once TYPES_PATH . 'protection.php';
+include_once WEB_TYPES_PATH . 'protection.php';
 include_once HTML_PATH . 'html_selector.php';
+include_once WEB_TYPES_PATH . 'type_object.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use html\user\user_message;
-use shared\api;
 use html\html_selector;
 use html\types\type_object as type_object_dsp;
 use shared\json_fields;

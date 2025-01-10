@@ -32,7 +32,7 @@
 
 namespace html\sandbox;
 
-include_once SANDBOX_PATH . 'sandbox_named.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 include_once SHARED_PATH . 'api.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';

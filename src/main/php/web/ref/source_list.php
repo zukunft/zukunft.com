@@ -33,6 +33,7 @@ namespace html\ref;
 
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_REF_PATH . 'source.php';
+include_once WEB_USER_PATH . 'user_message.php';
 
 use html\sandbox\list_dsp;
 use html\ref\source as source_dsp;

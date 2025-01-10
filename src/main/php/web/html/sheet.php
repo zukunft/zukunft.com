@@ -32,6 +32,11 @@
 
 namespace html;
 
+include_once MODEL_HELPER_PATH . 'data_object.php';
+include_once WEB_WORD_PATH . 'triple.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once MODEL_SHEET_PATH . 'position_list.php';
+
 use cfg\component\sheet\position_list;
 use cfg\helper\data_object;
 use html\word\triple;

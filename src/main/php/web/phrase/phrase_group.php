@@ -35,9 +35,14 @@
 namespace html\phrase;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
+include_once API_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_WORD_PATH . 'triple.php';
+include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
 use api\phrase\phrase as phrase_api;
 use html\sandbox\sandbox_named as sandbox_named_dsp;
 use html\user\user_message;

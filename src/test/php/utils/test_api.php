@@ -50,7 +50,7 @@ include_once API_PHRASE_PATH . 'phrase_type.php';
 include_once API_LANGUAGE_PATH . 'language.php';
 include_once API_LANGUAGE_PATH . 'language_form.php';
 
-use api\api_message;
+use controller\api_message;
 use api\component\component as component_api;
 use api\language\language as language_api;
 use api\language\language_form as language_form_api;
@@ -72,7 +72,7 @@ use cfg\phrase\phrase_type;
 use cfg\ref\ref;
 use cfg\ref\source;
 use cfg\system\sys_log;
-use cfg\sys_log_list;
+use cfg\system\sys_log_list;
 use cfg\phrase\term_list;
 use cfg\phrase\trm_ids;
 use cfg\helper\type_object;

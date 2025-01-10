@@ -34,16 +34,18 @@
 
 namespace html\result;
 
+include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
+include_once WEB_FIGURE_PATH . 'figure.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\sandbox\sandbox_value;
 use html\figure\figure as figure_dsp;
 use html\user\user_message;
 use shared\json_fields;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
 
 class result extends sandbox_value
 {

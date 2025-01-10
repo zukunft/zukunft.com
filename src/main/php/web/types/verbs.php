@@ -33,8 +33,8 @@
 namespace html\types;
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_TYPES_PATH . 'view_styles.php';
 
-use html\html_base;
 use shared\types\verbs as verbs_shared;
 use shared\types\view_styles;
 

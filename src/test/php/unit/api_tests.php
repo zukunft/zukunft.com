@@ -50,7 +50,7 @@ include_once API_PHRASE_PATH . 'phrase_type.php';
 include_once API_LANGUAGE_PATH . 'language.php';
 include_once API_LANGUAGE_PATH . 'language_form.php';
 include_once SHARED_PATH . 'views.php';
-include_once HTML_HELPER_PATH . 'data_object.php';
+include_once WEB_HELPER_PATH . 'data_object.php';
 
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
@@ -74,7 +74,7 @@ use cfg\phrase\phrase_list;
 use cfg\phrase\phrase_type;
 use cfg\ref\ref;
 use cfg\ref\source;
-use cfg\sys_log_list;
+use cfg\system\sys_log_list;
 use cfg\phrase\term_list;
 use cfg\value\value;
 use cfg\word\triple;

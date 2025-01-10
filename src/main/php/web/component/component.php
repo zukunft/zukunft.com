@@ -34,24 +34,37 @@
 
 namespace html\component;
 
-include_once SANDBOX_PATH . 'sandbox_typed.php';
-include_once SHARED_TYPES_PATH . 'component_type.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once API_WORD_PATH . 'word.php';
+include_once DB_PATH . 'sql_db.php';
+include_once HTML_PATH . 'html_base.php';
+include_once HTML_PATH . 'html_selector.php';
 include_once HTML_PATH . 'sheet.php';
-include_once TYPES_PATH . 'view_style_list.php';
-include_once SHARED_PATH . 'views.php';
+include_once MODEL_WORD_PATH . 'word.php';
+include_once WEB_LOG_PATH . 'user_log_display.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_SYSTEM_PATH . 'messages.php';
+include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_HELPER_PATH . 'data_object.php';
+include_once WEB_SANDBOX_PATH . 'db_object.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once WEB_VIEW_PATH . 'view_list.php';
+include_once WEB_TYPES_PATH . 'view_style_list.php';
+include_once SHARED_TYPES_PATH . 'component_type.php';
+include_once SHARED_TYPES_PATH . 'view_styles.php';
+include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
+include_once SHARED_PATH . 'views.php';
+include_once SHARED_PATH . 'library.php';
 
-use html\button;
 use html\helper\data_object as data_object_dsp;
 use html\system\messages;
-use html\value\value_list;
 use shared\api;
 use api\word\word as word_api;
 use html\sheet;
 use html\user\user_message;
-use shared\json_fields;
-use shared\types\component_type;
 use cfg\db\sql_db;
 use cfg\word\word;
 use html\html_base;
@@ -62,10 +75,11 @@ use html\phrase\phrase_list;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
 use html\view\view_list;
-use shared\library;
 use shared\types\view_styles;
+use shared\types\component_type;
 use shared\views;
-use shared\views as view_shared;
+use shared\json_fields;
+use shared\library;
 
 class component extends sandbox_typed
 {
@@ -858,11 +872,11 @@ class component extends sandbox_typed
 
         $hidden_fields = '';
         if ($this->id() <= 0) {
-            $script = view_shared::MC_COMPONENT_ADD;
+            $script = views::MC_COMPONENT_ADD;
             $fld_ext = '_add';
             $header = $html->text_h2('Create a view element');
         } else {
-            $script = view_shared::MC_COMPONENT_EDIT;
+            $script = views::MC_COMPONENT_EDIT;
             $fld_ext = '';
             $header = $html->text_h2('Change "' . $this->name . '"');
             $hidden_fields .= $html->form_hidden("id", $this->id());

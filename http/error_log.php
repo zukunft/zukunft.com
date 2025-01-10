@@ -39,7 +39,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 // load what is used here
-include_once API_PATH . 'controller.php';
+include_once API_OBJECT_PATH . 'controller.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_VIEW_PATH . 'view.php';
 include_once MODEL_USER_PATH . 'user.php';

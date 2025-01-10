@@ -34,10 +34,11 @@
 
 namespace html\phrase;
 
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once WEB_USER_PATH . 'user_message.php';
+
 use html\sandbox\list_dsp;
 use html\user\user_message;
-
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 
 class term_list extends list_dsp
 {

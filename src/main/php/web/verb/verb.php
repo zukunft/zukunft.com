@@ -32,10 +32,16 @@
 namespace html\verb;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
+include_once API_VERB_PATH . 'verb.php';
+include_once HTML_PATH . 'html_base.php';
+include_once HTML_PATH . 'rest_ctrl.php';
+include_once WEB_PHRASE_PATH . 'term.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
+include_once WEB_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use shared\api;
-use api\verb\verb as verb_api;
 use html\rest_ctrl as api_dsp;
 use html\html_base;
 use html\phrase\term as term_dsp;

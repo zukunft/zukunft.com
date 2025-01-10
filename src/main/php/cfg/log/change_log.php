@@ -867,7 +867,7 @@ class change_log extends db_object_seq_id_user
     function db_field_values_types(
         sql_creator $sc,
         sql_type_list $sc_par_lst,
-        sql_par_type $val_typ
+        sql_par_type $val_typ = sql_par_type::FLOAT
     ): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();

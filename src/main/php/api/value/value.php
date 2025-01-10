@@ -34,7 +34,7 @@ namespace api\value;
 
 include_once API_SANDBOX_PATH . 'sandbox_value.php';
 include_once SHARED_PATH . 'api.php';
-include_once API_PATH . 'controller.php';
+include_once API_OBJECT_PATH . 'controller.php';
 include_once WEB_VALUE_PATH . 'value.php';
 include_once SHARED_PATH . 'json_fields.php';
 

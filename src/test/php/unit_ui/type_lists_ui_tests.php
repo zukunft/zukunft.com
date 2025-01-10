@@ -32,12 +32,12 @@
 
 namespace unit_ui;
 
-include_once TYPES_PATH . 'type_list.php';
-include_once TYPES_PATH . 'type_lists.php';
-include_once TYPES_PATH . 'formula_type_list.php';
-include_once TYPES_PATH . 'phrase_types.php';
-include_once TYPES_PATH . 'view_style_list.php';
-include_once TYPES_PATH . 'protection.php';
+include_once WEB_TYPES_PATH . 'type_list.php';
+include_once WEB_TYPES_PATH . 'type_lists.php';
+include_once WEB_TYPES_PATH . 'formula_type_list.php';
+include_once WEB_TYPES_PATH . 'phrase_types.php';
+include_once WEB_TYPES_PATH . 'view_style_list.php';
+include_once WEB_TYPES_PATH . 'protection.php';
 
 use api\view\view as view_api;
 use html\html_base;

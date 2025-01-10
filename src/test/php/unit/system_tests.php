@@ -45,7 +45,7 @@ use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\formula\formula;
-use cfg\sys_log_list;
+use cfg\system\sys_log_list;
 use cfg\system\ip_range;
 use cfg\system\ip_range_list;
 use cfg\system\session;
@@ -310,7 +310,9 @@ class system_tests
         $expected_sql = $t->file('db/system/missing_owner_by_formula.sql');
         $t->assert('system_consistency->missing_owner_sql by formula', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
-        $this->php_include_tests($t);
+        $this->php_include_tests($t, MODEL_PATH);
+        $this->php_include_tests($t, API_PATH);
+        $this->php_include_tests($t, WEB_PATH);
 
         // ... and check if the prepared sql name is unique
         if (!in_array($qp->name, $sql_names)) {
@@ -463,17 +465,15 @@ class system_tests
      * @param test_cleanup $t
      * @return void
      */
-    function php_include_tests(test_cleanup $t): void
+    function php_include_tests(test_cleanup $t, string $base_path): void
     {
         $lib = new library();
-        $test_name = 'check if all used classes are loaded in php with include once';
-        $result = '';
-        $file_array = $lib->dir_to_array(MODEL_PATH);
+        $file_array = $lib->dir_to_array($base_path);
         $code_files = $lib->array_to_path($file_array);
         $pos = 1;
         foreach ($code_files as $code_file) {
             log_debug($code_file);
-            $ctrl_code = file(MODEL_PATH . $code_file);
+            $ctrl_code = file($base_path . $code_file);
             $use_classes = $lib->php_code_use($ctrl_code);
             // the use code lines sorted by name for copy and paste to code
             $use_sorted = implode("\n", $lib->php_code_use_sorted($ctrl_code));
@@ -496,11 +496,11 @@ class system_tests
                         }
                     }
                     if (!$found) {
-                        $t->assert(
-                            'includes missing in ' . $path . '\\' . $class
-                            . ' in ' . $code_file
-                            . ' (' . $pos . ' of ' .count($code_files) . ')', '',
-                            $class);
+                        $sub_path = $lib->str_between($base_path, '../', '/');
+                        $test_name = 'includes missing in ' . $path . '\\' . $class
+                            . ' in ' . $sub_path . $code_file
+                            . ' (' . $pos . ' of ' .count($code_files) . ')';
+                        $t->assert($test_name, '', $class);
                     }
                 } else {
                     log_debug($class . ' is expected to be a PHP default library');

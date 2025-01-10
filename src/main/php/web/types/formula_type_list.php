@@ -32,7 +32,7 @@
 
 namespace html\types;
 
-include_once TYPES_PATH . 'type_list.php';
+include_once WEB_TYPES_PATH . 'type_list.php';
 
 class formula_type_list extends type_list
 {

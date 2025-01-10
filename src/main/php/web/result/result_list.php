@@ -34,13 +34,17 @@
 
 namespace html\result;
 
+include_once WEB_SANDBOX_PATH . 'list_value.php';
+include_once HTML_PATH . 'html_base.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_RESULT_PATH . 'result.php';
+include_once WEB_USER_PATH . 'user_message.php';
+
 use html\html_base;
 use html\sandbox\list_value;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\result\result as result_dsp;
 use html\user\user_message;
-
-include_once WEB_SANDBOX_PATH . 'list_value.php';
 
 class result_list extends list_value
 {

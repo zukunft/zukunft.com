@@ -34,9 +34,21 @@
 
 namespace html\phrase;
 
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once HTML_PATH . 'html_base.php';
+include_once HTML_PATH . 'rest_ctrl.php';
+//include_once MODEL_PHRASE_PATH . 'phrase.php';
+//include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_USER_PATH . 'user.php';
+//include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once SERVICE_PATH . 'config.php';
-include_once SANDBOX_PATH . 'list_dsp.php';
-include_once PHRASE_PATH . 'phrase.php';
+include_once SHARED_ENUM_PATH . 'foaf_direction.php';
+include_once SHARED_PATH . 'api.php';
+include_once SHARED_PATH . 'library.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once WEB_USER_PATH . 'user_message.php';
 
 use cfg\config;
 use cfg\phrase\phrase;

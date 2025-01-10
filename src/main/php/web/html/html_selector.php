@@ -33,7 +33,7 @@
 
 namespace html;
 
-include_once SYSTEM_PATH . 'messages.php';
+include_once WEB_SYSTEM_PATH . 'messages.php';
 
 use html\system\messages;
 

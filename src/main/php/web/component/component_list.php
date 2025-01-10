@@ -31,11 +31,12 @@
 
 namespace html\component;
 
-include_once SANDBOX_PATH . 'list_dsp.php';
-include_once COMPONENT_PATH . 'component.php';
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once WEB_COMPONENT_PATH . 'component.php';
+include_once WEB_USER_PATH . 'user_message.php';
 
 use html\sandbox\list_dsp;
-use html\component\component as component_dsp;
+use html\component\component;
 use html\user\user_message;
 
 class component_list extends list_dsp
@@ -52,7 +53,7 @@ class component_list extends list_dsp
      */
     function set_from_json_array(array $json_array): user_message
     {
-        return parent::set_list_from_json($json_array, new component_dsp());
+        return parent::set_list_from_json($json_array, new component());
     }
 
     /*

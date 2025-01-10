@@ -32,8 +32,6 @@
 
 namespace html\types;
 
-use html\html_selector;
-
 class job_type_list extends type_list
 {
 

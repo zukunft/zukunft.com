@@ -37,15 +37,15 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
-include_once API_PATH . 'controller.php';
-include_once API_PATH . 'api_message.php';
+include_once API_OBJECT_PATH . 'controller.php';
+include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once API_FORMULA_PATH . 'figure.php';
 
 use api\formula\figure as figure_api;
-use cfg\value\value_base;
+use cfg\value\value;
 use controller\controller;
 use cfg\result\result;
 use cfg\user\user;

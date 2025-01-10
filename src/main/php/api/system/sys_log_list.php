@@ -31,9 +31,9 @@
 
 namespace controller\system;
 
-include_once API_PATH . 'api_message.php';
+include_once API_OBJECT_PATH . 'api_message.php';
 
-use api\api_message;
+use controller\api_message;
 use cfg\db\sql_db;
 use cfg\user\user;
 use JsonSerializable;

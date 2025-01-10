@@ -35,10 +35,10 @@
 namespace html;
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_TYPES_PATH . 'view_styles.php';
 
 use shared\api;
 use shared\types\view_styles;
-use const test\HOST_TESTING;
 
 class html_base
 {

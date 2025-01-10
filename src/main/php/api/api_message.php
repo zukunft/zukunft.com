@@ -29,7 +29,7 @@
 
 */
 
-namespace api;
+namespace controller;
 
 include_once SERVICE_PATH . 'config.php';
 include_once SHARED_PATH . 'library.php';

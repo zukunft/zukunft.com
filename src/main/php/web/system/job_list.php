@@ -33,7 +33,10 @@
 namespace html\system;
 
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once HTML_PATH . 'html_base.php';
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_SYSTEM_PATH . 'job.php';
+include_once WEB_USER_PATH . 'user_message.php';
 
 use html\html_base;
 use html\sandbox\list_dsp;

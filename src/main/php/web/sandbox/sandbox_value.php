@@ -34,12 +34,13 @@
 
 namespace html\sandbox;
 
-include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once WEB_SANDBOX_PATH . 'sandbox.php';
+include_once WEB_SANDBOX_PATH . 'db_object.php';
+include_once WEB_PHRASE_PATH . 'phrase_group.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use shared\api;
-use api\sandbox\sandbox_value as sandbox_value_api;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\phrase_group as phrase_group_dsp;
 use html\user\user_message;

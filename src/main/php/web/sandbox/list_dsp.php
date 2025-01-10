@@ -33,6 +33,12 @@
 
 namespace html\sandbox;
 
+include_once HTML_PATH . 'html_selector.php';
+include_once HTML_PATH . 'rest_ctrl.php';
+include_once SHARED_PATH . 'api.php';
+include_once SHARED_TYPES_PATH . 'view_styles.php';
+include_once WEB_USER_PATH . 'user_message.php';
+
 use html\rest_ctrl as api_dsp;
 use html\html_selector;
 use html\user\user_message;

@@ -32,7 +32,7 @@
 
 namespace unit_read;
 
-use cfg\sys_log_list;
+use cfg\system\sys_log_list;
 use cfg\user\user;
 use test\test_cleanup;
 

@@ -32,9 +32,9 @@
 
 namespace html\types;
 
-use cfg\ref\source_type;
-use html\html_selector;
+include_once MODEL_REF_PATH . 'source_type.php';
 
+use cfg\ref\source_type;
 class source_type_list extends type_list
 {
 

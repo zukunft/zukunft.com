@@ -31,8 +31,18 @@
 
 namespace html\view;
 
-include_once SANDBOX_PATH . 'list_dsp.php';
-include_once VIEW_PATH . 'view.php';
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once HTML_PATH . 'rest_ctrl.php';
+include_once WEB_REF_PATH . 'source.php';
+include_once WEB_SANDBOX_PATH . 'sandbox.php';
+include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_VERB_PATH . 'verb.php';
+include_once WEB_VIEW_PATH . 'view.php';
+include_once WEB_WORD_PATH . 'triple.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_TYPES_PATH . 'view_styles.php';
+include_once SHARED_PATH . 'api.php';
+include_once SHARED_PATH . 'views.php';
 
 use html\ref\source;
 use html\rest_ctrl;
