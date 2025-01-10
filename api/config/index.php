@@ -60,6 +60,7 @@ $db_con = prg_start("api/config", "", false);
 
 // get the parameter which config part is requested
 $part = $_GET[api::URL_VAR_CONFIG_PART] ?? '';
+$with_phr = $_GET[api::URL_VAR_WITH_PHRASES] ?? '';
 
 $usr_msg = new user_message();
 $result = ''; // reset the html code var
@@ -88,11 +89,15 @@ if ($usr->id() > 0) {
             $usr_msg->add_message('config is empty');
         }
     }
-    $result = $cfg_lst->api_obj();
+    if ($with_phr == api::URL_VAR_TRUE) {
+        $result = $cfg_lst->api_json(true);
+    } else {
+        $result = $cfg_lst->api_json();
+    }
 }
 
 $ctrl = new controller();
 
-$ctrl->get_list($result, $usr_msg->get_last_message());
+$ctrl->get_json($result, $usr_msg->get_last_message());
 
 prg_end_api($db_con);

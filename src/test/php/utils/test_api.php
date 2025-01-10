@@ -128,8 +128,16 @@ class test_api extends create_test_objects
      * check if the created api json message matches the api json message from the test resources
      * the unit test should be done for all api objects
      * @param object $usr_obj the user sandbox object that should be tested
+     * @param string $filename the exceptional filename that overwrites the generated filename
+     * @param bool $with_phrase true if the value list should contain the phrases
+     * @return bool true if everything is fine
      */
-    function assert_api(object $usr_obj, string $filename = '', bool $contains = false): bool
+    function assert_api(
+        object $usr_obj,
+        string $filename = '',
+        bool $with_phrase = false,
+        bool $contains = false
+    ): bool
     {
         $class = $usr_obj::class;
         $class = $this->class_to_api($class);
@@ -138,7 +146,7 @@ class test_api extends create_test_objects
             or $usr_obj::class == value_time::class
             or $usr_obj::class == value_text::class
             or $usr_obj::class == value_geo::class) {
-            $actual = json_decode($usr_obj->api_json(false), true);
+            $actual = json_decode($usr_obj->api_json($with_phrase, false), true);
         } else {
             if ($usr_obj::class == sys_log_list::class
                 or $usr_obj::class == type_lists::class) {
@@ -462,6 +470,10 @@ class test_api extends create_test_objects
         }
         // Check if backend is reading the id
         $data = array(api::URL_VAR_ID => $id);
+        // TODO move this exception to the api_par_lst
+        if ($class == value::class) {
+            $data[api::URL_VAR_WITH_PHRASES] = api::URL_VAR_TRUE;
+        }
         // TODO check why for formula a double call is needed
         if ($class == formula::class) {
             $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);

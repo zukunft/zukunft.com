@@ -174,14 +174,6 @@ class config_numbers extends value_list
         return parent::api_obj();
     }
 
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
 
     /*
      * load

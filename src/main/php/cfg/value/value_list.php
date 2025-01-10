@@ -170,11 +170,29 @@ class value_list extends sandbox_value_list
     }
 
     /**
+     * the api message string for this value list
+     *
+     * @param bool $with_phr true if the array should include the phrases for each value
      * @returns string the api json message for the object as a string
      */
-    function api_json(): string
+    function api_json(bool $with_phr = false): string
     {
-        return $this->api_obj()->get_json();
+        return json_encode($this->api_json_array($with_phr));
+    }
+
+    /**
+     * create an array for the json api message
+     *
+     * @param bool $with_phr true if the array should include the phrases for each value
+     * @returns array with the json fields to create an api message
+     */
+    function api_json_array(bool $with_phr = false): array
+    {
+        $vars = [];
+        foreach ($this->lst() as $val) {
+            $vars[] = $val->api_json_array($with_phr);
+        }
+        return $vars;
     }
 
 

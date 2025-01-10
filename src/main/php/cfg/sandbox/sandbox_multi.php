@@ -869,10 +869,11 @@ class sandbox_multi extends db_object_multi_user
     /**
      * create the array for the api message
      * which is on this level the same as the export json array
+     * @param bool $with_phr true if the array should include the phrases for this value
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(bool $do_load = true): array
+    function api_json_array(bool $with_phr = false, bool $do_load = true): array
     {
         return $this->common_json();
     }
@@ -933,12 +934,16 @@ class sandbox_multi extends db_object_multi_user
         $vars = [];
 
         // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
+        if ($this->share_id != null
+            and $this->share_id > 0
+            and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
             $vars[json_fields::SHARE] = $this->share_type_code_id();
         }
 
         // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
+        if ($this->protection_id != null
+            and $this->protection_id > 0
+            and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
             $vars[json_fields::PROTECTION] = $this->protection_type_code_id();
         }
 

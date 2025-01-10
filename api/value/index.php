@@ -53,6 +53,7 @@ $db_con = prg_start("api/value", "", false);
 
 // get the parameters
 $val_id = $_GET[api::URL_VAR_ID] ?? 0;
+$with_phr = $_GET[api::URL_VAR_WITH_PHRASES] ?? '';
 
 $msg = '';
 $result = ''; // reset the api message
@@ -71,7 +72,12 @@ if ($usr->id() > 0) {
         $val = new value($usr);
         $val->load_by_id($val_id);
         $val->load_objects();
-        $result = $val->api_json();
+        if ($with_phr == api::URL_VAR_TRUE) {
+            $result = $val->api_json(true);
+        } else {
+            $result = $val->api_json();
+
+        }
     } else {
         $msg = 'value id is missing';
     }

@@ -98,6 +98,8 @@ class api
 
     // to select the configuration part that should be updated in the frontend e.g. all, frontend or user
     const URL_VAR_CONFIG_PART = 'part';
+    const URL_VAR_WITH_PHRASES = 'incl_phrases';
+    const URL_VAR_TRUE = '1';
     const CONFIG_ALL = 'all';
     const CONFIG_FRONTEND = 'frontend';
     const CONFIG_USER = 'user';

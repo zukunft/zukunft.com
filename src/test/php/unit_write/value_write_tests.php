@@ -237,7 +237,7 @@ class value_write_tests
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
         $mio_val_dsp = new value_dsp();
-        $mio_val_dsp->set_from_json($mio_val->api_json());
+        $mio_val_dsp->set_from_json($mio_val->api_json(true));
         $fig = $mio_val->figure();
         $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
         $result = $fig_dsp->display_linked('1');

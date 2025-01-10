@@ -1,0 +1,26 @@
+{
+  "id": 88384422603358281,
+  "phrases": [
+    {
+      "id": 314,
+      "name": "zukunft.com",
+      "class": "word"
+    },
+    {
+      "id": 73,
+      "name": "system configuration",
+      "class": "triple"
+    },
+    {
+      "id": 298,
+      "name": "pod",
+      "class": "word"
+    },
+    {
+      "id": 243,
+      "name": "point",
+      "class": "word"
+    }
+  ],
+  "geo_value": "47.263179, 8.684730"
+}

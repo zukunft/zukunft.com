@@ -202,7 +202,7 @@ class value_tests
         // TODO add class field to api message
         $t->assert_api_to_dsp($val, new value_dsp());
 
-        $val_dsp = new value_dsp($val->api_json());
+        $val_dsp = new value_dsp($val->api_json(true));
         $t->assert('value name with link', $val_dsp->name_linked(), 'Pi (math)');
         $t->assert('value edit link', $val_dsp->ref_edit(), '<a href="/http/value_edit.php?id=32770" title="3.14">3.14</a>');
 
@@ -211,14 +211,17 @@ class value_tests
         // casting API
         $grp = $t->group();
         $val = new value($usr, round(value_api::TV_READ, 13), $grp);
-        //$val = $t->value();
-        //$t->assert_api($val);
+        $t->assert_api($val, 'value_without_phrases');
+        $t->assert_api($val, 'value_with_phrases', true);
         $val = $t->time_value();
         $t->assert_api($val);
+        $t->assert_api($val, 'value_with_phrases', true);
         $val = $t->text_value();
         $t->assert_api($val);
+        $t->assert_api($val, 'value_with_phrases', true);
         $val = $t->geo_value();
         $t->assert_api($val);
+        $t->assert_api($val, 'value_with_phrases', true);
 
         // casting figure
         $val = new value($usr);

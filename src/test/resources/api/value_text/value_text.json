@@ -1,26 +1,4 @@
 {
   "id": 88384469851603017,
-  "phrases": [
-    {
-      "id": 314,
-      "name": "zukunft.com",
-      "class": "word"
-    },
-    {
-      "id": 73,
-      "name": "system configuration",
-      "class": "triple"
-    },
-    {
-      "id": 298,
-      "name": "pod",
-      "class": "word"
-    },
-    {
-      "id": 309,
-      "name": "url",
-      "class": "word"
-    }
-  ],
   "text_value": "zukunft.com"
 }
