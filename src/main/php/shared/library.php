@@ -45,6 +45,7 @@ use cfg\log\change_values_time_big;
 use cfg\log\change_values_time_norm;
 use cfg\log\change_values_time_prime;
 use cfg\ref\source_type;
+use cfg\sandbox\sandbox_value;
 use cfg\system\session;
 use cfg\system\sys_log_status;
 use cfg\system\sys_log_status_list;
@@ -52,6 +53,7 @@ use cfg\system\sys_log_type;
 use cfg\system\system_time;
 use cfg\user\user_official_type;
 use cfg\view\view_link_type;
+use cfg\word\word_db;
 use shared\api;
 use api\sandbox\combine_object as combine_object_api;
 use cfg\component\component;
@@ -2147,14 +2149,14 @@ class library
         $result = [];
         foreach ($sql_names as $name) {
             $result[] = match ($name) {
-                word::FLD_NAME => 'wrd',
+                word_db::FLD_NAME => 'wrd',
                 sandbox_named::FLD_DESCRIPTION => 'des',
                 phrase::FLD_TYPE => 'pty',
                 value_base::FLD_ID => 'grp',
                 user::FLD_ID => 'usr',
                 source::FLD_ID => 'src',
-                value_base::FLD_VALUE => 'val',
-                value_base::FLD_LAST_UPDATE => 'upd',
+                sandbox_value::FLD_VALUE => 'val',
+                sandbox_value::FLD_LAST_UPDATE => 'upd',
                 phrase::FLD_ID . '_1' => '',
                 phrase::FLD_ID . '_2' => '',
                 phrase::FLD_ID . '_3' => '',

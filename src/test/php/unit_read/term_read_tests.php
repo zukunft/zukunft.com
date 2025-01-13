@@ -42,6 +42,7 @@ use cfg\phrase\term;
 use cfg\word\triple;
 use cfg\verb\verb;
 use cfg\word\word;
+use cfg\word\word_db;
 use test\test_cleanup;
 
 class term_read_tests
@@ -64,7 +65,7 @@ class term_read_tests
         $trm->set_obj_from_class(word::class);
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
-        $trm->row_mapper_sandbox($db_row, word::FLD_ID, word::FLD_NAME, phrase::FLD_TYPE);
+        $trm->row_mapper_sandbox($db_row, word_db::FLD_ID, word_db::FLD_NAME, phrase::FLD_TYPE);
         $t->assert($t->name . ' word row mapper', $trm->name(), word_api::TN_READ);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), word::class);

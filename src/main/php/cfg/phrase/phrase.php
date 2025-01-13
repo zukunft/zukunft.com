@@ -87,6 +87,7 @@ include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_WORD_PATH . 'word_db.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
@@ -119,6 +120,7 @@ use cfg\verb\verb_list;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\word;
+use cfg\word\word_db;
 use cfg\word\word_list;
 use cfg\word\triple;
 use html\phrase\phrase as phrase_dsp;
@@ -187,16 +189,16 @@ class phrase extends combine_named
     // with fields used in the view
     const TBL_FLD_LST_VIEW = [
         [word::class, [
-            [word::FLD_ID, phrase::FLD_ID],
+            [word_db::FLD_ID, phrase::FLD_ID],
             [user::FLD_ID],
-            [word::FLD_NAME, phrase::FLD_NAME],
+            [word_db::FLD_NAME, phrase::FLD_NAME],
             [sandbox_named::FLD_DESCRIPTION],
-            [word::FLD_VALUES],
+            [word_db::FLD_VALUES],
             [phrase::FLD_TYPE],
             [sandbox::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT]
-        ], word::FLD_ID],
+        ], word_db::FLD_ID],
         [triple::class, [
             [triple::FLD_ID, phrase::FLD_ID, '* -1'],
             [user::FLD_ID],

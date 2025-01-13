@@ -63,6 +63,7 @@ use cfg\word\triple;
 use cfg\user\user;
 use cfg\value\value_base;
 use cfg\word\word;
+use cfg\word\word_db;
 use html\log\user_log_display;
 use html\value\value as value_dsp;
 use shared\library;
@@ -188,8 +189,8 @@ class change_log_tests
         $log_lst = new change_log_list();
         // TODO activate
         //$t->assert_sql_by_user($sc, $log_lst);
-        //$this->assert_sql_list_last(word::class, word::FLD_NAME, $log_lst, $db_con, $t);
-        $this->assert_sql_list_by_field(word::class, word::FLD_NAME, 1, $log_lst, $db_con, $t);
+        //$this->assert_sql_list_last(word::class, word_db::FLD_NAME, $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(word::class, word_db::FLD_NAME, 1, $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(triple::class, triple::FLD_NAME_GIVEN, 1, $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group_16()->id(), $log_lst, $db_con, $t);

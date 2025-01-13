@@ -56,6 +56,7 @@ include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_WORD_PATH . 'word_db.php';
 include_once HTML_PATH . 'html_base.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
@@ -89,6 +90,7 @@ use cfg\user\user_list;
 use cfg\user\user_message;
 use cfg\value\value_base;
 use cfg\word\word;
+use cfg\word\word_db;
 use html\html_base;
 use html\formula\formula as formula_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
@@ -538,7 +540,7 @@ class result_list extends sandbox_value_list
                     $sql_by .= group::FLD_ID;
                 }
             } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
-                $sql_by .= word::FLD_ID;
+                $sql_by .= word_db::FLD_ID;
             } elseif (get_class($obj) == triple::class) {
                 $sql_by .= triple::FLD_ID;
             }
@@ -573,7 +575,7 @@ class result_list extends sandbox_value_list
                     // TODO check if the results are still correct if the user has excluded the word
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
                     // $db_con->set_join_fields(                        array(result::FLD_GRP),                        sql_db::TBL_GROUP_LINK,                        result::FLD_GRP,                        result::FLD_GRP);
-                    $qp->sql = $db_con->select_by_field_list(array(word::FLD_ID));
+                    $qp->sql = $db_con->select_by_field_list(array(word_db::FLD_ID));
                 } elseif (get_class($obj) == triple::class) {
                     // TODO check if the results are still correct if the user has excluded the triple
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);

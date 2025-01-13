@@ -75,8 +75,6 @@ include_once API_WORD_PATH . 'word.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_par_type.php';
@@ -84,16 +82,13 @@ include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_FORMULA_PATH . 'formula_link.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_LANGUAGE_PATH . 'language.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_REF_PATH . 'ref.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
@@ -112,8 +107,6 @@ use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
@@ -121,16 +114,13 @@ use cfg\db\sql_type_list;
 use cfg\helper\db_object_seq_id;
 use cfg\formula\formula;
 use cfg\formula\formula_link;
-use cfg\language\language;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
-use cfg\phrase\phrase_type;
 use cfg\phrase\term;
 use cfg\ref\ref;
 use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
 use cfg\sandbox\sandbox_typed;
 use cfg\user\user;
 use cfg\user\user_message;
@@ -153,87 +143,15 @@ class word extends sandbox_typed
 
     // comments used for the database creation
     const TBL_COMMENT = 'for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words';
-
-    // object specific database and JSON object field names
-    // means: database fields only used for words
-    // *_COM: the description of the field
-    // *_SQL_TYP is the sql data type used for the field
     const FLD_ID = 'word_id'; // TODO change the user_id field comment to 'the user who has changed the standard word'
-    const FLD_NAME_COM = 'the text used for searching';
-    const FLD_NAME = 'word_name';
-    const FLD_DESCRIPTION_COM = 'to be replaced by a language form entry';
-    const FLD_TYPE_COM = 'to link coded functionality to words e.g. to exclude measure words from a percent result';
-    const FLD_CODE_ID_COM = 'to link coded functionality to a specific word e.g. to get the values of the system configuration';
-    const FLD_PLURAL_COM = 'to be replaced by a language form entry; TODO to be move to language forms';
-    const FLD_PLURAL = 'plural'; // TODO move to language types
-    const FLD_PLURAL_SQL_TYP = sql_field_type::NAME;
-    const FLD_VIEW_COM = 'the default mask for this word';
-    const FLD_VIEW = 'view_id';
-    const FLD_VIEW_SQL_TYP = sql_field_type::INT;
-    const FLD_VALUES_COM = 'number of values linked to the word, which gives an indication of the importance';
-    const FLD_VALUES = 'values'; // TODO convert to a percent value of relative importance e.g. is 100% if all values, results, triples, formulas and views use this word; should be possible to adjust the weight of e.g. values and views with the user specific system settings
-    const FLD_VALUES_SQL_TYP = sql_field_type::INT;
-    const FLD_INACTIVE_COM = 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
-    const FLD_INACTIVE = 'inactive';
-    const FLD_INACTIVE_SQL_TYP = sql_field_type::INT_SMALL;
-    // the field names used for the im- and export in the json or yaml format
-    const FLD_REFS = 'refs';
-
-    // list of fields that MUST be set by one user
-    const FLD_LST_MUST_BE_IN_STD = array(
-        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
-    );
-    // list of must fields that CAN be changed by the user
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [language::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::ONE, sql::INDEX, language::class, self::FLD_NAME_COM],
-        [self::FLD_NAME, self::FLD_NAME_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
-    );
-    // list of fields that CAN be changed by the user
-    const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_PLURAL, self::FLD_PLURAL_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_PLURAL_COM],
-        [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [phrase::FLD_TYPE, phrase::FLD_TYPE_SQL_TYP, sql_field_default::NULL, sql::INDEX, phrase_type::class, self::FLD_TYPE_COM],
-        [self::FLD_VIEW, self::FLD_VIEW_SQL_TYP, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
-        [self::FLD_VALUES, self::FLD_VALUES_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_VALUES_COM],
-    );
-    // list of fields that CANNOT be changed by the user
-    const FLD_LST_NON_CHANGEABLE = array(
-        [self::FLD_INACTIVE, self::FLD_INACTIVE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_INACTIVE_COM],
-        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
-    );
-
-
-    // all database field names excluding the id, standard name and user specific fields
-    const FLD_NAMES = array(
-        self::FLD_VALUES,
-        sql::FLD_CODE_ID
-    );
-    // list of the user specific database field names
-    const FLD_NAMES_USR = array(
-        self::FLD_PLURAL,
-        sandbox_named::FLD_DESCRIPTION
-    );
-    // list of the user specific numeric database field names
-    const FLD_NAMES_NUM_USR = array(
-        phrase::FLD_TYPE,
-        self::FLD_VIEW,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
-    );
-    // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_SANDBOX_FLD_NAMES = array(
-        self::FLD_NAME,
-        self::FLD_VALUES,
-        self::FLD_PLURAL,
-        sandbox_named::FLD_DESCRIPTION,
-        phrase::FLD_TYPE,
-        self::FLD_VIEW,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
-    );
-
+    const FLD_LST_MUST_BE_IN_STD = word_db::FLD_LST_MUST_BE_IN_STD;
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = word_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
+    const FLD_LST_USER_CAN_CHANGE = word_db::FLD_LST_USER_CAN_CHANGE;
+    const FLD_LST_NON_CHANGEABLE = word_db::FLD_LST_NON_CHANGEABLE;
+    const FLD_NAMES = word_db::FLD_NAMES;
+    const FLD_NAMES_USR = word_db::FLD_NAMES_USR;
+    const FLD_NAMES_NUM_USR = word_db::FLD_NAMES_NUM_USR;
+    const ALL_SANDBOX_FLD_NAMES = word_db::ALL_SANDBOX_FLD_NAMES;
 
     /*
      * object vars
@@ -306,8 +224,8 @@ class word extends sandbox_typed
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = self::FLD_ID,
-        string $name_fld = self::FLD_NAME,
+        string $id_fld = word_db::FLD_ID,
+        string $name_fld = word_db::FLD_NAME,
         string $type_fld = phrase::FLD_TYPE): bool
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
@@ -315,15 +233,15 @@ class word extends sandbox_typed
             if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
                 $this->set_code_id($db_row[sql::FLD_CODE_ID]);
             }
-            if (array_key_exists(self::FLD_PLURAL, $db_row)) {
-                $this->plural = $db_row[self::FLD_PLURAL];
+            if (array_key_exists(word_db::FLD_PLURAL, $db_row)) {
+                $this->plural = $db_row[word_db::FLD_PLURAL];
             }
             if (array_key_exists($type_fld, $db_row)) {
                 $this->type_id = $db_row[$type_fld];
             }
-            if (array_key_exists(self::FLD_VIEW, $db_row)) {
-                if ($db_row[self::FLD_VIEW] != null) {
-                    $this->set_view_id($db_row[self::FLD_VIEW]);
+            if (array_key_exists(word_db::FLD_VIEW, $db_row)) {
+                if ($db_row[word_db::FLD_VIEW] != null) {
+                    $this->set_view_id($db_row[word_db::FLD_VIEW]);
                 }
             }
         }
@@ -647,9 +565,9 @@ class word extends sandbox_typed
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
-            self::FLD_NAMES,
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR,
+            word_db::FLD_NAMES,
+            word_db::FLD_NAMES_USR,
+            word_db::FLD_NAMES_NUM_USR,
             array(user::FLD_ID)
         ));
 
@@ -713,12 +631,12 @@ class word extends sandbox_typed
 
     function name_field(): string
     {
-        return self::FLD_NAME;
+        return word_db::FLD_NAME;
     }
 
     function all_sandbox_fields(): array
     {
-        return self::ALL_SANDBOX_FLD_NAMES;
+        return word_db::ALL_SANDBOX_FLD_NAMES;
     }
 
 
@@ -824,7 +742,7 @@ class word extends sandbox_typed
             } else {
                 foreach ($in_ex_json as $key => $value) {
                     if ($result->is_ok()) {
-                        if ($key == self::FLD_REFS) {
+                        if ($key == word_db::FLD_REFS) {
                             foreach ($value as $ref_data) {
                                 $ref_obj = new ref($this->user());
                                 $ref_obj->set_phrase($this->phrase());
@@ -868,7 +786,7 @@ class word extends sandbox_typed
                     }
                 }
             }
-            if ($key == self::FLD_PLURAL) {
+            if ($key == word_db::FLD_PLURAL) {
                 if ($value <> '') {
                     $this->plural = $value;
                 }
@@ -1370,8 +1288,8 @@ class word extends sandbox_typed
         $qp = $this->view_sql($db_con);
         $db_row = $db_con->get1($qp);
         if (isset($db_row)) {
-            if ($db_row[self::FLD_VIEW] != null) {
-                $view_id = $db_row[self::FLD_VIEW];
+            if ($db_row[word_db::FLD_VIEW] != null) {
+                $view_id = $db_row[word_db::FLD_VIEW];
             }
         }
 
@@ -1412,7 +1330,7 @@ class word extends sandbox_typed
     {
         $db_con->set_class(word::class);
         $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(array(self::FLD_VIEW));
+        $db_con->set_fields(array(word_db::FLD_VIEW));
         $db_con->set_join_usr_count_fields(array(user::FLD_ID), word::class);
         $qp = new sql_par(self::class);
         $qp->name = 'word_view_most_used';
@@ -1623,7 +1541,7 @@ class word extends sandbox_typed
         $log = new change($this->user());
         $log->set_action(change_action::UPDATE);
         $log->set_class(word::class);
-        $log->set_field(self::FLD_VIEW);
+        $log->set_field(word_db::FLD_VIEW);
         if ($this->view_id() > 0) {
             $msk_old = new view($this->user());
             $msk_old->load_by_id($this->view_id());
@@ -1748,7 +1666,7 @@ class word extends sandbox_typed
                 $log->new_value = $this->plural;
                 $log->std_value = $std_rec->plural;
                 $log->row_id = $this->id();
-                $log->set_field(self::FLD_PLURAL);
+                $log->set_field(word_db::FLD_PLURAL);
                 $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
@@ -1874,10 +1792,10 @@ class word extends sandbox_typed
             parent::db_fields_all(),
             [
                 phrase::FLD_TYPE,
-                self::FLD_VIEW,
+                word_db::FLD_VIEW,
                 sql::FLD_CODE_ID,
-                self::FLD_PLURAL,
-                self::FLD_VALUES
+                word_db::FLD_PLURAL,
+                word_db::FLD_VALUES
             ],
             parent::db_fields_all_sandbox()
         );
@@ -1921,13 +1839,13 @@ class word extends sandbox_typed
         if ($sbx->view_id() <> $this->view_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_VIEW,
-                    $cng_fld_cac->id($table_id . self::FLD_VIEW),
+                    sql::FLD_LOG_FIELD_PREFIX . word_db::FLD_VIEW,
+                    $cng_fld_cac->id($table_id . word_db::FLD_VIEW),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_link_field(
-                self::FLD_VIEW,
+                word_db::FLD_VIEW,
                 view::FLD_NAME,
                 $this->view,
                 $sbx->view
@@ -1954,15 +1872,15 @@ class word extends sandbox_typed
         if ($sbx->plural <> $this->plural) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_PLURAL,
-                    $cng_fld_cac->id($table_id . self::FLD_PLURAL),
+                    sql::FLD_LOG_FIELD_PREFIX . word_db::FLD_PLURAL,
+                    $cng_fld_cac->id($table_id . word_db::FLD_PLURAL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                self::FLD_PLURAL,
+                word_db::FLD_PLURAL,
                 $this->plural,
-                self::FLD_PLURAL_SQL_TYP,
+                word_db::FLD_PLURAL_SQL_TYP,
                 $sbx->plural
             );
         }
@@ -1970,15 +1888,15 @@ class word extends sandbox_typed
         if ($sbx->values <> $this->values) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_VALUES,
-                    $cng_fld_cac->id($table_id . self::FLD_VALUES),
+                    sql::FLD_LOG_FIELD_PREFIX . word_db::FLD_VALUES,
+                    $cng_fld_cac->id($table_id . word_db::FLD_VALUES),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                self::FLD_VALUES,
+                word_db::FLD_VALUES,
                 $this->values,
-                self::FLD_VALUES_SQL_TYP,
+                word_db::FLD_VALUES_SQL_TYP,
                 $sbx->values
             );
         }

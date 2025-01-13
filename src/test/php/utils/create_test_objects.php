@@ -102,6 +102,7 @@ use cfg\verb\verb;
 use cfg\view\view_link_type;
 use cfg\view\view_link_type_list;
 use cfg\view\view_term_link;
+use cfg\word\word_db;
 use cfg\word\word_list;
 use html\system\messages;
 use shared\json_fields;
@@ -3097,7 +3098,7 @@ class create_test_objects extends test_base
             change::class,
             changes_norm::class,
             changes_big::class
-            => word::FLD_NAME,
+            => word_db::FLD_NAME,
             change_values_prime::class,
             change_values_big::class,
             change_values_norm::class

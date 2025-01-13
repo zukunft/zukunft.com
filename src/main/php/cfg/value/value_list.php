@@ -435,7 +435,7 @@ class value_list extends sandbox_value_list
         $sc->set_fields(value_base::FLD_NAMES);
         //$sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
         //$sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
-        //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(word::FLD_VALUES) . ' DESC, ' . word::FLD_NAME);
+        //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(word_db::FLD_VALUES) . ' DESC, ' . word_db::FLD_NAME);
         return $qp;
     }
 

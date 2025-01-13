@@ -64,6 +64,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_WORD_PATH . 'word_db.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once HTML_PATH . 'html_base.php';
@@ -90,6 +91,7 @@ use cfg\verb\verb;
 use cfg\user\user;
 use cfg\word\word;
 use cfg\word\triple;
+use cfg\word\word_db;
 use html\html_base;
 use html\word\word as word_dsp;
 use shared\types\protection_type as protect_type_shared;
@@ -158,18 +160,18 @@ class term extends combine_named
     // the where field can be a single field or an array
     const TBL_FLD_LST_VIEW = [
         [word::class, [
-            [word::FLD_ID, term::FLD_ID, self::FLD_WORD_ID_TO_TERM_ID],
+            [word_db::FLD_ID, term::FLD_ID, self::FLD_WORD_ID_TO_TERM_ID],
             [user::FLD_ID],
-            [word::FLD_NAME, term::FLD_NAME],
+            [word_db::FLD_NAME, term::FLD_NAME],
             [sandbox_named::FLD_DESCRIPTION],
-            [word::FLD_VALUES, self::FLD_USAGE],
+            [word_db::FLD_VALUES, self::FLD_USAGE],
             [phrase::FLD_TYPE, self::FLD_TYPE],
             [sandbox::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
             ['', formula::FLD_FORMULA_TEXT],
             ['', formula::FLD_FORMULA_USER_TEXT]
-        ], [phrase::FLD_TYPE, word::FLD_ID]],
+        ], [phrase::FLD_TYPE, word_db::FLD_ID]],
         [triple::class, [
             [triple::FLD_ID, term::FLD_ID, self::FLD_TRIPLE_ID_TO_TERM_ID],
             [user::FLD_ID],

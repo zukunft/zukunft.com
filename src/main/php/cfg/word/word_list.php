@@ -99,7 +99,6 @@ use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
-use cfg\value\value_base;
 use cfg\value\value_list;
 use cfg\verb\verb;
 use html\word\word as word_dsp;
@@ -307,11 +306,11 @@ class word_list extends sandbox_list_named
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(word::FLD_NAMES);
-        $sc->set_usr_fields(word::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(word::FLD_NAMES_NUM_USR);
-        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(word::FLD_VALUES) . ' DESC, '
-            . word::FLD_NAME);
+        $sc->set_fields(word_db::FLD_NAMES);
+        $sc->set_usr_fields(word_db::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(word_db::FLD_NAMES_NUM_USR);
+        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(word_db::FLD_VALUES) . ' DESC, '
+            . word_db::FLD_NAME);
         return $qp;
     }
 
@@ -327,7 +326,7 @@ class word_list extends sandbox_list_named
     {
         $qp = $this->load_sql($sc, 'ids');
         if (count($wrd_ids) > 0) {
-            $sc->add_where(word::FLD_ID, $wrd_ids);
+            $sc->add_where(word_db::FLD_ID, $wrd_ids);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -346,7 +345,7 @@ class word_list extends sandbox_list_named
     {
         $qp = $this->load_sql($sc, 'names');
         if (count($wrd_names) > 0) {
-            $sc->add_where(word::FLD_NAME, $wrd_names, sql_par_type::TEXT_LIST);
+            $sc->add_where(word_db::FLD_NAME, $wrd_names, sql_par_type::TEXT_LIST);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -384,7 +383,7 @@ class word_list extends sandbox_list_named
     {
         $qp = $this->load_sql($sc, 'name_like');
         if ($pattern != '') {
-            $sc->add_where(word::FLD_NAME, $pattern, sql_par_type::LIKE_R);
+            $sc->add_where(word_db::FLD_NAME, $pattern, sql_par_type::LIKE_R);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -424,7 +423,7 @@ class word_list extends sandbox_list_named
             $sc->set_join_fields(
                 array(verb::FLD_ID),
                 triple::class,
-                word::FLD_ID,
+                word_db::FLD_ID,
                 $join_field);
             // verbs can have a negative id for the reverse selection
             if ($vrb != null) {
@@ -451,7 +450,7 @@ class word_list extends sandbox_list_named
     {
         $qp = $this->load_sql($db_con->sql_creator(), 'user_changes');
         if ($usr->id() > 0) {
-            $qp->sql = $db_con->select_by_field(word::FLD_ID);
+            $qp->sql = $db_con->select_by_field(word_db::FLD_ID);
         } else {
             $qp->name = '';
         }
@@ -512,7 +511,7 @@ class word_list extends sandbox_list_named
                 log_debug('got ' . $lib->dsp_count($db_wrd_lst));
                 foreach ($db_wrd_lst as $db_wrd) {
                     if (is_null($db_wrd[sandbox::FLD_EXCLUDED]) or $db_wrd[sandbox::FLD_EXCLUDED] == 0) {
-                        if ($db_wrd[word::FLD_ID] > 0 and !in_array($db_wrd[word::FLD_ID], $this->ids())) {
+                        if ($db_wrd[word_db::FLD_ID] > 0 and !in_array($db_wrd[word_db::FLD_ID], $this->ids())) {
                             $new_word = new word($this->user());
                             $new_word->row_mapper_sandbox($db_wrd);
                             $additional_added->add($new_word);

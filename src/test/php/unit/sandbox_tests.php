@@ -61,6 +61,7 @@ use cfg\user\user;
 use cfg\value\value_base;
 use cfg\view\view;
 use cfg\word\word;
+use cfg\word\word_db;
 use shared\library;
 use test\test_cleanup;
 
@@ -292,7 +293,7 @@ class sandbox_tests
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_class(word::class, true);
         $db_con->set_usr(1);
-        $db_con->set_fields(array(word::FLD_PLURAL, sandbox_named::FLD_DESCRIPTION, phrase::FLD_TYPE, word::FLD_VIEW));
+        $db_con->set_fields(array(word_db::FLD_PLURAL, sandbox_named::FLD_DESCRIPTION, phrase::FLD_TYPE, word_db::FLD_VIEW));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = 'SELECT word_id,

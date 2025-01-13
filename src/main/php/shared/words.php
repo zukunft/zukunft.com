@@ -2,10 +2,10 @@
 
 /*
 
-    shared/words.php - predefined words used for in the backend and frontend as code id
+    shared/words.php - predefined words used in the backend and frontend as code id
     ----------------
 
-    all words must always be owned by an administrator so that the standard cannot be renamed
+    all preserved words must always be owned by an administrator so that the standard cannot be renamed
 
 
     This file is part of zukunft.com - calc with words

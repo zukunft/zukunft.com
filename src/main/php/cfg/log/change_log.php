@@ -98,6 +98,7 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_VIEW_PATH . 'view_term_link.php';
 //include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_WORD_PATH . 'word_db.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -129,6 +130,7 @@ use cfg\value\value_base;
 use cfg\view\view;
 use cfg\view\view_term_link;
 use cfg\word\word;
+use cfg\word\word_db;
 use shared\library;
 use DateTime;
 use DateTimeInterface;
@@ -528,12 +530,12 @@ class change_log extends db_object_seq_id_user
                 }
             } elseif ($table_name == change_table_list::WORD) {
                 $db_con->set_class(word::class);
-                foreach (word::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (word_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_table_list::WORD_USR) {
                 $db_con->set_class(word::class, true);
-                foreach (word::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (word_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_table_list::VERB) {

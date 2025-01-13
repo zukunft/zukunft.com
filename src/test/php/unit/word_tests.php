@@ -34,6 +34,7 @@ namespace unit;
 
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_WORD_PATH . 'word.php';
+include_once MODEL_WORD_PATH . 'word_db.php';
 include_once API_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
@@ -46,6 +47,7 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
 use cfg\word\word;
 use api\word\word as word_api;
+use cfg\word\word_db;
 use html\word\word as word_dsp;
 use test\test_cleanup;
 use shared\types\phrase_type as phrase_type_shared;
@@ -152,7 +154,7 @@ class word_tests
         $wrd_db = $t->word();
         $wrd_db->fill($wrd_imp);
         $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp)->names();
-        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, [word::FLD_VIEW, sandbox::FLD_EXCLUDED]);
+        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, [word_db::FLD_VIEW, sandbox::FLD_EXCLUDED]);
         $test_name = 'check if the word id is filled up';
         $wrd_imp = $t->word();
         $wrd_imp->set_id(0);
