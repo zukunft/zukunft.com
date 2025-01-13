@@ -1339,7 +1339,11 @@ class sandbox_value extends sandbox_multi
             $this->load_by_grp($this->grp());
         }
 
-        $vars[json_fields::ID] = $this->grp()->id();
+        if ($typ_lst->no_key_fill()) {
+            $vars[json_fields::ID] = $this->grp()->id(true);
+        } else {
+            $vars[json_fields::ID] = $this->grp()->id();
+        }
         if ($this->description() != null) {
             $vars[json_fields::DESCRIPTION] = $this->description();
         }

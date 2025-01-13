@@ -94,7 +94,7 @@ if ($usr->id() > 0) {
     if ($with_phr == api::URL_VAR_TRUE) {
         $result = $cfg_lst->api_json([api_type::INCL_PHRASES]);
     } else {
-        $result = $cfg_lst->api_json();
+        $result = $cfg_lst->api_json([api_type::NO_KEY_FILL]);
     }
 }
 

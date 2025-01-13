@@ -38,6 +38,9 @@ enum api_type: string
     // include the phrases in the value list api message
     case INCL_PHRASES = 'incl_phrases';
 
+    // do not fill up the group id to the full key length
+    case NO_KEY_FILL = 'no_key_fill';
+
     // internal parameter for unit testing to switch off the database loading of missing objects
     case TEST_MODE = 'test_mode';
 }

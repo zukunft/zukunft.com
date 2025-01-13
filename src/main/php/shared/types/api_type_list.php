@@ -99,6 +99,14 @@ class api_type_list
     }
 
     /**
+     * @return bool true if the keys should not be filled to the full key length
+     */
+    public function no_key_fill(): bool
+    {
+        return in_array(api_type::NO_KEY_FILL, $this->lst);
+    }
+
+    /**
      * @return bool false to switch off the database load for unit tests
      */
     public function test_mode(): bool

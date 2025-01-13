@@ -330,15 +330,26 @@ class group extends sandbox_multi
 
 
     /**
+     * @param bool $no_fill if true the id is not filled up to the complete key size e.g. for the api messages
      * @return int|string either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids
      * the internal null value is used to detect if database saving has been tried
      */
-    function id(): int|string
+    function id(bool $no_fill = false): int|string
     {
         if (is_numeric($this->id)) {
             return (int)$this->id;
         } else {
-            return $this->id;
+            if ($no_fill) {
+                $id = $this->id;
+                $grp_id = new id();
+                $zero_id = $grp_id->int2alpha_num(0);
+                while (str_ends_with($id, $zero_id)) {
+                    $id = str_replace($zero_id, '', $id);
+                }
+                return $id;
+            } else {
+                return $this->id;
+            }
         }
     }
 

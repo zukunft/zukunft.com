@@ -25,6 +25,7 @@
     - modify:            change potentially all variables of this word object
     - preloaded:         select e.g. types from cache
     - cast:              create an api object and set the vars from an api json
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - convert:           convert this word e.g. phrase or term
     - load:              database access object (DAO) functions
     - sql fields:        field names for sql
@@ -131,8 +132,6 @@ use cfg\ref\ref;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
 use cfg\sandbox\sandbox_typed;
-use cfg\word\triple_list;
-use cfg\word\triple;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value_list;
@@ -234,90 +233,6 @@ class word extends sandbox_typed
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
-
-
-    /*
-     * preserved
-     */
-
-    // code_id and name of a words used by the system for its own configuration
-    // e.g. the number of decimal places related to the user specific words
-    // system configuration that is not related to user sandbox data is using the flat cfg methods
-    //included in the preserved word names
-
-    // words used to select parts of the system configuration where the normal name should not be changed
-    // *_COM is the tooltip for the word; to have the comments on one place the yaml is the preferred place
-    const TOOLTIP_COMMENT_COM = 'keyword to read the word or triple description from the config.yaml';
-    const TOOLTIP_COMMENT = 'tooltip-comment';
-    const SYS_CONF_VALUE_COM = 'keyword to read the numeric value from the config.yaml';
-    const SYS_CONF_VALUE = 'sys-conf-value';
-    const THIS_SYSTEM = 'zukunft.com';
-    const CONFIGURATION = 'configuration';
-    const SYSTEM = 'system';
-    const JOB = 'job';
-    const POD = 'pod';
-    const USER = 'user';
-    const FRONTEND = 'frontend';
-    const BACKEND = 'backend';
-
-    // general words used also for the system configuration that have a fixed tooltip
-    const TIME = 'time';
-    const TIME_COM = 'Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future';
-    const YEAR = 'year';
-    const YEAR_COM = 'A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.';
-    const CALCULATION = 'calculation';
-    const CALCULATION_COM = 'A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results';
-    const MIN = 'min';
-    const MIN_COM = 'The minimal numeric value.';
-    const MAX = 'max';
-    const MAX_COM = 'The maximal numeric value.';
-    const AVERAGE = 'average';
-    const AVERAGE_COM = 'The arithmetic mean – the sum of the numbers divided by how many numbers are in the list.';
-    const DEFAULT = 'default';
-    const DEFAULT_COM = 'The setting used if nothing else is specified.';
-    const DATABASE = 'database';
-    const DATABASE_COM = 'An organized collection of data stored and accessed electronically.';
-
-    // general words used also for the system configuration where the initial tooltip is in the config.yaml
-    const VALUE = 'value';
-    const VERSION = 'version';
-    const RETRY = 'retry';
-    const START = 'start';
-    const DELAY = 'delay';
-    const SEC = 'sec';
-    const BLOCK = 'block';
-    const SIZE = 'size';
-    const INSERT = 'insert';
-    const UPDATE = 'update';
-    const DELETE = 'delete';
-    const TABLE = 'table';
-    const NAME = 'name';
-    const PHRASE = 'phrase';
-    const MILLISECOND = 'millisecond';
-    const SELECT = 'select';
-    const INITIAL = 'initial';
-    const ENTRY = 'entry';
-    const PRESELECT = 'preselect';
-    const PERCENT = 'percent';
-    const FUTURE = 'future';
-    const COLUMNS = 'columns';
-    const AUTOMATIC = 'automatic';
-    const CREATE = 'create';
-    const VIEW = 'view';
-    const FREEZE = 'freeze';
-    const URL = 'url';
-    const CHANGE = 'change';
-    const DAILY = 'daily';
-    const IP = 'ip';
-
-    // for the configuration of a single job
-    // TODO complete the concrete setup
-    const IMPORT_TYPE = 'import type';
-    const API_WORD = 'API';
-    // to group the user data and configuration within the system configuration
-    const PASSWORD = 'password';
-    const OPEN_API = 'OpenAPI';
-    const DEFINITION = 'definition';
 
 
     /*

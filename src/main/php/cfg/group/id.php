@@ -96,9 +96,10 @@ class id
     /**
      * create the database key for a phrase group
      * @param phrase_list $phr_lst list of words or triples
-     * @return string the 512 bit db key of up to 16 32 bit phrase ids in alpha_num format
+     * @param bool $fill true if a 512-bit key should be created
+     * @return string the 512-bit db key of up to 16 32 bit phrase ids in alpha_num format
      */
-    protected function alpha_num(phrase_list $phr_lst): string
+    protected function alpha_num(phrase_list $phr_lst, bool $fill = true): string
     {
         $db_key = '';
         $i = 16;
@@ -107,9 +108,11 @@ class id
             $i--;
         }
         // fill the remaining key entries with zero keys to always have the same key size
-        while ($i > 0) {
-            $db_key .= $this->int2alpha_num(0);
-            $i--;
+        if ($fill) {
+            while ($i > 0) {
+                $db_key .= $this->int2alpha_num(0);
+                $i--;
+            }
         }
         return $db_key;
     }

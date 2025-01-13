@@ -65,6 +65,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
+include_once SHARED_PATH . 'words.php';
 
 use cfg\component\component;
 use cfg\helper\data_object;
@@ -88,6 +89,7 @@ use cfg\view\view;
 use cfg\view\view_list;
 use cfg\word\word;
 use shared\library;
+use shared\words;
 
 class import
 {
@@ -520,7 +522,7 @@ class import
     {
         $lib = new library();
         $names = array_unique($lib->array_keys_r($yaml_array));
-        return array_diff($names, [word::TOOLTIP_COMMENT]);
+        return array_diff($names, [words::TOOLTIP_COMMENT]);
     }
 
     /**
@@ -621,7 +623,7 @@ class import
     ): data_object
     {
         foreach ($yml_arr as $key => $value) {
-            if ($key == word::TOOLTIP_COMMENT) {
+            if ($key == words::TOOLTIP_COMMENT) {
                 if ($wrd == null and $trp == null and $val == null) {
                     $dto->add_message('yaml is not expected to start with a tooltip-comment');
                 } else {
