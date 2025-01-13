@@ -239,7 +239,8 @@ class sandbox_value extends sandbox_multi
      */
 
     // database fields only used for the value object
-    public group $grp;  // phrases (word or triple) group object for this value
+    // phrases (word or triple) group object for this value
+    private group $grp;
 
     // the time of the database last update of any field
     // that may influence the calculated results
@@ -305,12 +306,25 @@ class sandbox_value extends sandbox_multi
 
     function grp_id(): int|string
     {
-        return $this->grp->id();
+        return $this->grp()->id();
     }
 
+    /**
+     * remember the description of the value in the related phrase group object
+     * TODO check if the null value should be used to avoid overwriting the db value
+     * @param string $txt the description of the value or null if
+     */
     function set_description(string $txt): void
     {
-        $this->grp->set_description($txt);
+        $this->grp()->set_description($txt);
+    }
+
+    /**
+     * @return string|null the description of the value, which is the description of the phrase group
+     */
+    function description(): ?string
+    {
+        return $this->grp()->description();
     }
 
     /**
@@ -394,12 +408,12 @@ class sandbox_value extends sandbox_multi
     function table_type(): sql_type
     {
         if ($this::class == value::class) {
-            return $this->grp->table_type();
+            return $this->grp()->table_type();
         } else {
             if ($this->is_main()) {
                 return sql_type::MAIN;
             } else {
-                return $this->grp->table_type();
+                return $this->grp()->table_type();
             }
         }
     }
@@ -459,13 +473,13 @@ class sandbox_value extends sandbox_multi
     function table_extension(): string
     {
         if ($this::class == value::class) {
-            return $this->grp->table_extension();
+            return $this->grp()->table_extension();
         } else {
             if ($this->is_main()) {
                 $grp_id = new group_id();
                 return group_id::TBL_EXT_PHRASE_ID . $grp_id->count($this->grp_id());
             } else {
-                return $this->grp->table_extension();
+                return $this->grp()->table_extension();
             }
         }
     }
@@ -1251,7 +1265,7 @@ class sandbox_value extends sandbox_multi
 
     function phrase_list(): phrase_list
     {
-        return $this->grp->phrase_list();
+        return $this->grp()->phrase_list();
     }
 
 
@@ -1325,6 +1339,9 @@ class sandbox_value extends sandbox_multi
         }
 
         $vars[json_fields::ID] = $this->grp()->id();
+        if ($this->description() != null) {
+            $vars[json_fields::DESCRIPTION] = $this->description();
+        }
 
         if ($with_phr) {
             $phr_lst = $this->grp()->phrase_list();
@@ -1916,7 +1933,7 @@ class sandbox_value extends sandbox_multi
         // set the target sql table type for numeric, text or geo values
         $sc_par_lst_used->add($this->value_type());
         // get the name indicator how many id fields are user
-        $id_ext = $this->grp->table_extension();
+        $id_ext = $this->grp()->table_extension();
         // get the prime db key list for this sandbox object
         $fvt_lst_id = $this->id_fvt_lst($sc_par_lst_used);
 
@@ -2044,8 +2061,8 @@ class sandbox_value extends sandbox_multi
      */
     private function sql_id_fields(): string|array
     {
-        if ($this->grp->is_prime()) {
-            return $this->grp->id_names(true);
+        if ($this->grp()->is_prime()) {
+            return $this->grp()->id_names(true);
         } else {
             return $this->id_field();
         }
@@ -2087,7 +2104,7 @@ class sandbox_value extends sandbox_multi
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         if ($this->is_prime() or $this->is_main()) {
-            $fields = $this->grp->id_names();
+            $fields = $this->grp()->id_names();
         } else {
             $fields = [group::FLD_ID];
         }
@@ -2139,9 +2156,9 @@ class sandbox_value extends sandbox_multi
         $lst = new sql_par_field_list();
         if ($is_insert) {
             if ($this::class == result::class and $this->is_main()) {
-                $lst = $this->grp->id_fvt_main();
+                $lst = $this->grp()->id_fvt_main();
             } else {
-                $lst = $this->grp->id_fvt();
+                $lst = $this->grp()->id_fvt();
             }
         }
         if (!$sc_par_lst->is_standard()) {
@@ -2402,7 +2419,7 @@ class sandbox_value extends sandbox_multi
     function dsp_id_entry(): string
     {
         $result = '';
-        if (isset($this->grp)) {
+        if ($this->grp()->name() != '') {
             $result .= '"' . $this->grp()->name() . '" ';
         }
         if ($this->number() != null) {

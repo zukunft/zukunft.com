@@ -743,7 +743,7 @@ class value_list extends sandbox_value_list
             if ($allow_duplicates) {
                 parent::add_obj($val_to_add, $allow_duplicates);
             } else {
-                if ($val_to_add->is_id_set() or $val_to_add->grp->name() != '') {
+                if ($val_to_add->is_id_set() or $val_to_add->grp()->name() != '') {
                     if (count($this->id_lst()) > 0) {
                         if (!in_array($val_to_add->id(), $this->id_lst())) {
                             parent::add_obj($val_to_add);
@@ -809,7 +809,7 @@ class value_list extends sandbox_value_list
             if ($key == json_fields::CONTEXT) {
                 $phr_lst = new phrase_list($this->user());
                 $usr_msg->add($phr_lst->import_lst($value, $test_obj));
-                $val->grp = $phr_lst->get_grp_id($do_save);
+                $val->set_grp($phr_lst->get_grp_id($do_save));
             }
 
             if ($key == json_fields::TIMESTAMP) {
@@ -895,7 +895,7 @@ class value_list extends sandbox_value_list
         }
         $phr_lst_to_add->add($val_phr);
         $val_to_add->set_number($val_number);
-        $val_to_add->grp = $phr_lst_to_add->get_grp_id($do_save);
+        $val_to_add->set_grp($phr_lst_to_add->get_grp_id($do_save));
         if ($test_obj) {
             $val_to_add->set_id($test_obj->seq_id());
         } else {

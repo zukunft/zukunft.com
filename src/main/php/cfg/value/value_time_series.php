@@ -111,7 +111,6 @@ class value_time_series extends sandbox_value
      */
 
     // related objects used also for database mapping
-    public group $grp;  // phrases (word or triple) group object for this value
     public ?source $source;    // the source object
 
     /*
@@ -135,7 +134,7 @@ class value_time_series extends sandbox_value
     {
         parent::reset();
 
-        $this->grp = new group($this->user());
+        $this->set_grp(new group($this->user()));
         $this->source = null;
     }
 
@@ -161,7 +160,7 @@ class value_time_series extends sandbox_value
         $lib = new library();
         $result = parent::row_mapper_multi($db_row, '', self::FLD_ID);
         if ($result) {
-            $this->grp->set_id($db_row[group::FLD_ID]);
+            $this->grp()->set_id($db_row[group::FLD_ID]);
             if ($db_row[source::FLD_ID] > 0) {
                 $this->source = new source($this->user());
                 $this->source->set_id($db_row[source::FLD_ID]);
@@ -321,7 +320,7 @@ class value_time_series extends sandbox_value
             $db_con->set_class(value_time_series::class);
             $this->id = $db_con->insert_old(
                 array(group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
-                array($this->grp->id(), $this->user()->id(), sql::NOW));
+                array($this->grp()->id(), $this->user()->id(), sql::NOW));
             if ($this->id() > 0) {
                 // update the reference in the log
                 if (!$log->add_ref($this->id())) {
@@ -388,7 +387,7 @@ class value_time_series extends sandbox_value
         if ($this->id() <= 0) {
             // check if a time series for the phrase group is already in the database
             $db_chk = new value_time_series($this->user());
-            $db_chk->load_by_grp($this->grp);
+            $db_chk->load_by_grp($this->grp());
             if ($db_chk->id() > 0) {
                 $this->set_id($db_chk->id());
             }

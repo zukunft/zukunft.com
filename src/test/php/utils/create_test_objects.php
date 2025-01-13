@@ -2061,7 +2061,7 @@ class create_test_objects extends test_base
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd->phrase());
         $res->set_id(1);
-        $res->grp->set_phrase_list($phr_lst);
+        $res->grp()->set_phrase_list($phr_lst);
         $res->set_number(result_api::TV_INT);
         return $res;
     }
@@ -2140,7 +2140,7 @@ class create_test_objects extends test_base
         $wrd_pct = $this->new_word(word_api::TN_PCT, 2, phrase_type_shared::PERCENT);
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd_pct->phrase());
-        $res->grp->set_phrase_list($phr_lst);
+        $res->grp()->set_phrase_list($phr_lst);
         $res->set_number(result_api::TV_PCT);
         return $res;
     }
@@ -4078,7 +4078,7 @@ class create_test_objects extends test_base
             if ($phr_grp == null) {
                 log_err('Cannot get phrase group for ' . $phr_lst->dsp_id());
             } else {
-                $val->grp = $phr_grp;
+                $val->set_grp($phr_grp);
             }
             $val->set_number($target);
             $result = $val->save()->get_last_message();

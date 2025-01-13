@@ -197,6 +197,7 @@ class config_numbers extends value_list
         if ($phr != null) {
             // TODO Prio 1 activate
             //$this->filter_by_phrase($phr);
+            log_debug('filter by phrase');
         }
         if (!$this->is_empty()) {
             log_debug($this->count() . ' config values loaded');

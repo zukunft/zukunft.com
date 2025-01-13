@@ -186,7 +186,7 @@ class value_tests
 
         // sql to load a user specific value by phrase group id
         $val->reset($usr);
-        $val->grp->set_id(2);
+        $val->grp()->set_id(2);
         //$t->assert_load_sql_obj_vars($db_con, $val);
 
         $t->subheader('value im- and export tests');
@@ -245,8 +245,8 @@ class value_tests
 
         // sql to load a user specific time series by phrase group id
         $vts->reset($usr);
-        $vts->grp->set_id(2);
-        $this->assert_sql_by_grp($t, $db_con, $vts, $vts->grp);
+        $vts->grp()->set_id(2);
+        $this->assert_sql_by_grp($t, $db_con, $vts, $vts->grp());
 
         $t->subheader('Value time series data SQL setup statements');
         $tsn = $t->value_ts_data();

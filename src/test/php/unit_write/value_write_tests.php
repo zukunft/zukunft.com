@@ -199,7 +199,7 @@ class value_write_tests
             if (!$val->is_id_set()) {
                 $result = 'No value found for ' . $val->dsp_id() . '.';
             } else {
-                if ($val->grp != null) {
+                if ($val->grp() != null) {
                     if ($val->phr_lst()->words() != null) {
                         $val_lst = $val->phr_lst()->names();
                         $result = array_diff($val_lst, $phr_lst->names());
@@ -279,7 +279,7 @@ class value_write_tests
         // so the time phrase must be excluded
         $phr_grp = $t->load_phrase_group(array(word_api::TN_RENAMED, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
         $add_val = new value($t->usr1);
-        $add_val->grp = $phr_grp;
+        $add_val->set_grp($phr_grp);
         $add_val->set_number(value_api::TV_BIG);
         $result = $add_val->save()->get_last_message();
         $target = '';
@@ -318,7 +318,7 @@ class value_write_tests
         // test if a value with the same phrases, but different time can be added
         $phr_grp2 = $t->load_phrase_group(array(word_api::TN_RENAMED, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2019));
         $add_val2 = new value($t->usr1);
-        $add_val2->grp = $phr_grp2;
+        $add_val2->set_grp($phr_grp2);
         $add_val2->set_number(value_api::TV_BIGGER);
         $result = $add_val2->save()->get_last_message();
         $target = '';

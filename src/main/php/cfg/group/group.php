@@ -153,7 +153,7 @@ class group extends sandbox_multi
         self::FLD_DESCRIPTION
     );
     // list of fixed tables where a group name overwrite might be stored
-    // TODO check if this can be used somewhere else means if there are unwanted repeatings
+    // TODO check if this can be used somewhere else means if there are unwanted repeating
     const TBL_LIST = array(
         [sql_type::MOST],
         [sql_type::PRIME],
@@ -301,6 +301,14 @@ class group extends sandbox_multi
     {
         $this->description = $description;
         $this->is_saved = false;
+    }
+
+    /**
+     * @return string|null the description of the value, which is the description of the phrase group
+     */
+    function description(): ?string
+    {
+        return $this->description;
     }
 
     function phrase_list(): phrase_list
@@ -493,7 +501,7 @@ class group extends sandbox_multi
     }
 
     /**
-     * mark that the groud has been saved
+     * mark that the group has been saved and that the object matches the db entry
      */
     function set_saved(): void
     {
@@ -1438,7 +1446,7 @@ class group extends sandbox_multi
         $val = new value($this->user());
         $val->load_by_grp($this);
 
-        log_debug($val->grp->dsp_id() . ' for "' . $this->user()->name . '" is ' . $val->number());
+        log_debug($val->grp()->dsp_id() . ' for "' . $this->user()->name . '" is ' . $val->number());
         return $val;
     }
 
@@ -1506,7 +1514,6 @@ class group extends sandbox_multi
     {
         log_debug();
 
-        global $db_con;
         $result = '';
 
         // if not yet done, load, the words and triple list
@@ -1605,8 +1612,6 @@ class group extends sandbox_multi
     private function save_id(): ?int
     {
         log_debug($this->dsp_id());
-
-        global $db_con;
 
         if ($this->id() <= 0) {
             $this->generic_name();
