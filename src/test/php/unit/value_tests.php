@@ -52,6 +52,8 @@ use cfg\value\value_time;
 use cfg\value\value_time_series;
 use DateTime;
 use html\value\value as value_dsp;
+use shared\types\api_type;
+use shared\types\api_type_list;
 use test\test_cleanup;
 
 class value_tests
@@ -202,7 +204,7 @@ class value_tests
         // TODO add class field to api message
         $t->assert_api_to_dsp($val, new value_dsp());
 
-        $val_dsp = new value_dsp($val->api_json(true));
+        $val_dsp = new value_dsp($val->api_json([api_type::INCL_PHRASES]));
         $t->assert('value name with link', $val_dsp->name_linked(), 'Pi (math)');
         $t->assert('value edit link', $val_dsp->ref_edit(), '<a href="/http/value_edit.php?id=32770" title="3.14">3.14</a>');
 
@@ -212,16 +214,16 @@ class value_tests
         $grp = $t->group();
         $val = new value($usr, round(value_api::TV_READ, 13), $grp);
         $t->assert_api($val, 'value_without_phrases');
-        $t->assert_api($val, 'value_with_phrases', true);
+        $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
         $val = $t->time_value();
         $t->assert_api($val);
-        $t->assert_api($val, 'value_with_phrases', true);
+        $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
         $val = $t->text_value();
         $t->assert_api($val);
-        $t->assert_api($val, 'value_with_phrases', true);
+        $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
         $val = $t->geo_value();
         $t->assert_api($val);
-        $t->assert_api($val, 'value_with_phrases', true);
+        $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
 
         // casting figure
         $val = new value($usr);

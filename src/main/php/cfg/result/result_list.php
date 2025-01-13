@@ -61,6 +61,7 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\sandbox\sandbox_value_list;
@@ -95,6 +96,7 @@ use html\system\back_trace;
 use html\word\word as word_dsp;
 use shared\library;
 use Exception;
+use shared\types\api_type_list;
 
 class result_list extends sandbox_value_list
 {
@@ -116,8 +118,15 @@ class result_list extends sandbox_value_list
     /**
      * @returns string the api json message for the object as a string
      */
-    function api_json(bool $do_save = true): string
+    function api_json(api_type_list|array $typ_lst = []): string
     {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+        $do_save = true;
+        if ($typ_lst->test_mode()) {
+            $do_save = false;
+        }
         return $this->api_obj($do_save)->get_json();
     }
 

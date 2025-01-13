@@ -2,9 +2,9 @@
 
 /*
 
-    test/unit/html/result.php - testing of the html frontend functions for result
-    ------------------------
-  
+    api/helper/api_type.php - options of the api messages
+    -----------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -23,35 +23,21 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-
+  
 */
 
-namespace unit_ui;
+namespace shared\types;
 
-include_once SHARED_TYPES_PATH . 'api_type.php';
-
-use html\html_base;
-use html\result\result as result_dsp;
-use shared\types\api_type;
-use test\test_cleanup;
-
-class result_ui_tests
+enum api_type: string
 {
-    function run(test_cleanup $t): void
-    {
-        $html = new html_base();
 
-        $t->subheader('result tests');
+    // include the phrases in the value list api message
+    case INCL_PHRASES = 'incl_phrases';
 
-        $res = new result_dsp($t->result_simple()->api_json([api_type::TEST_MODE]));
-        $test_page = $html->text_h2('result display test');
-        $test_page .= 'with tooltip: ' . $res->display() . '<br>';
-        $test_page .= 'with link: ' . $res->display_linked() . '<br>';
-        $t->html_test($test_page, 'result', 'result', $t);
-    }
-
+    // internal parameter for unit testing to switch off the database loading of missing objects
+    case TEST_MODE = 'test_mode';
 }

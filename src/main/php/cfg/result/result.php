@@ -74,6 +74,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once HTML_PATH . 'html_base.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -108,6 +109,7 @@ use html\html_base;
 use shared\json_fields;
 use shared\library;
 use DateTime;
+use shared\types\api_type_list;
 
 class result extends sandbox_value
 {
@@ -522,8 +524,15 @@ class result extends sandbox_value
     /**
      * @returns string the api json message for the object as a string
      */
-    function api_json(bool $do_save = true): string
+    function api_json(api_type_list|array $typ_lst = []): string
     {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+        $do_save = true;
+        if ($typ_lst->test_mode()) {
+            $do_save = false;
+        }
         return $this->api_obj($do_save)->get_json();
     }
 
@@ -535,7 +544,6 @@ class result extends sandbox_value
     /**
      * create the SQL to load the single default result always by the id
      * @param sql_creator $sc with the target db_type set
-     * @param string $class the name of the child class from where the call has been triggered
      * @param array $fld_lst list of fields either for the value or the result
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */

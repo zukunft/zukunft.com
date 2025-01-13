@@ -48,6 +48,7 @@ include_once DB_PATH . 'sql_field_type.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql_field_default;
@@ -56,6 +57,7 @@ use cfg\group\group;
 use cfg\user\user;
 use DateTime;
 use shared\json_fields;
+use shared\types\api_type_list;
 
 class value_time extends value_base
 {
@@ -147,13 +149,12 @@ class value_time extends value_base
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param bool $with_phr true if the array should include the phrases for this value
-     * @param bool $do_load to switch off the database load for unit tests
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(bool $with_phr = false, bool $do_load = true): array
+    function api_json_array(api_type_list $typ_lst): array
     {
-        $vars = parent::api_json_array($with_phr, $do_load);
+        $vars = parent::api_json_array($typ_lst);
 
         // add the datetime value itself
         $vars[json_fields::TIME_VALUE] = $this->value();

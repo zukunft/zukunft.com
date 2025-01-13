@@ -118,11 +118,12 @@ include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+include_once WEB_VALUE_PATH . 'value.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once WEB_VALUE_PATH . 'value.php';
+include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_par_field_list;
@@ -139,6 +140,7 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_multi;
 use cfg\system\log;
 use shared\json_fields;
+use shared\types\api_type_list;
 use shared\types\protection_type as protect_type_shared;
 use api\value\value as value_api;
 use cfg\db\sql_creator;
@@ -302,7 +304,7 @@ class value_base extends sandbox_value
     function __construct(
         user                       $usr,
         float|DateTime|string|null $val = null,
-        ?group $grp = null
+        ?group                     $grp = null
     )
     {
         parent::__construct($usr);
@@ -556,11 +558,15 @@ class value_base extends sandbox_value
     }
 
     /**
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
      * @returns string the api json message for the object as a string
      */
-    function api_json(bool $with_phr = false, bool $do_load = true): string
+    function api_json(api_type_list|array $typ_lst = []): string
     {
-        return json_encode($this->api_json_array($with_phr, $do_load));
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+        return json_encode($this->api_json_array($typ_lst));
     }
 
     /**
@@ -1131,13 +1137,12 @@ class value_base extends sandbox_value
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param bool $with_phr true if the array should include the phrases for this value
-     * @param bool $do_load to switch off the database load for unit tests
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(bool $with_phr = false, bool $do_load = true): array
+    function api_json_array(api_type_list $typ_lst): array
     {
-        $vars = parent::api_json_array($with_phr, $do_load);
+        $vars = parent::api_json_array($typ_lst);
 
         // add the source
         if ($this->source != null) {

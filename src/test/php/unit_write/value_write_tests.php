@@ -48,6 +48,7 @@ use cfg\value\value_base;
 use html\value\value as value_dsp;
 use html\figure\figure as figure_dsp;
 use shared\library;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class value_write_tests
@@ -237,7 +238,7 @@ class value_write_tests
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
         $mio_val_dsp = new value_dsp();
-        $mio_val_dsp->set_from_json($mio_val->api_json(true));
+        $mio_val_dsp->set_from_json($mio_val->api_json([api_type::INCL_PHRASES]));
         $fig = $mio_val->figure();
         $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
         $result = $fig_dsp->display_linked('1');

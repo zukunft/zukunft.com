@@ -54,6 +54,7 @@ namespace test;
 include_once SERVICE_PATH . 'config.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once DB_PATH . 'sql_type.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\sandbox\sandbox as sandbox_api;
@@ -128,6 +129,7 @@ use html\result\result as result_dsp;
 use html\component\component as component_dsp;
 use shared\api;
 use shared\library;
+use shared\types\api_type;
 use shared\types\verbs;
 
 const HOST_TESTING = 'http://localhost/';
@@ -919,12 +921,12 @@ class test_base
      */
     function assert_ex_and_import(object $usr_obj): bool
     {
-        $json_before = $usr_obj->api_json(false);
+        $json_before = $usr_obj->api_json([api_type::TEST_MODE]);
         $json_ex = $usr_obj->export_json(false);
         $new_obj = clone $usr_obj;
         $new_obj->reset();
         $new_obj->import_obj($json_ex, $this);
-        $json_after = $usr_obj->api_json(false);
+        $json_after = $usr_obj->api_json([api_type::TEST_MODE]);
         return $this->assert_json_string(
             'ex- and import test for ' . $usr_obj::class, $json_after, $json_before);
     }

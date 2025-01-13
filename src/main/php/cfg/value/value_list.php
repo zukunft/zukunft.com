@@ -61,10 +61,11 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
+include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_field_list;
 use cfg\db\sql_type_list;
@@ -72,6 +73,7 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_value_list;
 use cfg\user\user;
 use shared\json_fields;
+use shared\types\api_type_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use api\value\value_list as value_list_api;
@@ -172,25 +174,28 @@ class value_list extends sandbox_value_list
     /**
      * the api message string for this value list
      *
-     * @param bool $with_phr true if the array should include the phrases for each value
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
      * @returns string the api json message for the object as a string
      */
-    function api_json(bool $with_phr = false): string
+    function api_json(api_type_list|array $typ_lst = []): string
     {
-        return json_encode($this->api_json_array($with_phr));
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+        return json_encode($this->api_json_array($typ_lst));
     }
 
     /**
      * create an array for the json api message
      *
-     * @param bool $with_phr true if the array should include the phrases for each value
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
      * @returns array with the json fields to create an api message
      */
-    function api_json_array(bool $with_phr = false): array
+    function api_json_array(api_type_list $typ_lst): array
     {
         $vars = [];
         foreach ($this->lst() as $val) {
-            $vars[] = $val->api_json_array($with_phr);
+            $vars[] = $val->api_json_array($typ_lst);
         }
         return $vars;
     }

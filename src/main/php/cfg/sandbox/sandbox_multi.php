@@ -99,6 +99,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
@@ -156,6 +157,7 @@ use cfg\verb\verb;
 use cfg\view\view;
 use cfg\word\word;
 use cfg\word\triple;
+use shared\types\api_type_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use shared\types\phrase_type as phrase_type_shared;
@@ -869,11 +871,10 @@ class sandbox_multi extends db_object_multi_user
     /**
      * create the array for the api message
      * which is on this level the same as the export json array
-     * @param bool $with_phr true if the array should include the phrases for this value
-     * @param bool $do_load to switch off the database load for unit tests
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(bool $with_phr = false, bool $do_load = true): array
+    function api_json_array(api_type_list $typ_lst): array
     {
         return $this->common_json();
     }

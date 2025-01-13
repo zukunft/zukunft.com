@@ -68,6 +68,7 @@ include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VALUE_PATH . 'value_geo.php';
 //include_once MODEL_VALUE_PATH . 'value_time_series.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -108,6 +109,7 @@ use shared\json_fields;
 use shared\library;
 use DateTime;
 use Exception;
+use shared\types\api_type_list;
 
 class sandbox_value extends sandbox_multi
 {
@@ -1325,16 +1327,15 @@ class sandbox_value extends sandbox_multi
     /**
      * create the array for the api message
      * which is on this level the same as the export json array
-     * @param bool $with_phr true if the array should include the phrases for this value
-     * @param bool $do_load to switch off the database load for unit tests
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(bool $with_phr = false, bool $do_load = true): array
+    function api_json_array(api_type_list $typ_lst): array
     {
-        $vars = parent::api_json_array($with_phr, $do_load);
+        $vars = parent::api_json_array($typ_lst);
 
         // reload the value parameters
-        if ($do_load) {
+        if ($typ_lst->test_mode()) {
             $this->load_by_grp($this->grp());
         }
 
@@ -1343,7 +1344,7 @@ class sandbox_value extends sandbox_multi
             $vars[json_fields::DESCRIPTION] = $this->description();
         }
 
-        if ($with_phr) {
+        if ($typ_lst->include_phrases()) {
             $phr_lst = $this->grp()->phrase_list();
             $vars[json_fields::PHRASES] = $phr_lst->api_json_array();
         }

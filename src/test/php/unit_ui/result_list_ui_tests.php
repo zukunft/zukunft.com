@@ -32,8 +32,11 @@
 
 namespace unit_ui;
 
+include_once SHARED_TYPES_PATH . 'api_type.php';
+
 use html\html_base;
 use html\result\result_list as result_list_dsp;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class result_list_ui_tests
@@ -46,7 +49,7 @@ class result_list_ui_tests
         $t->subheader('result list tests');
 
         // test the result list display functions
-        $lst = new result_list_dsp($t->result_list()->api_json(false));
+        $lst = new result_list_dsp($t->result_list()->api_json([api_type::TEST_MODE]));
         $test_page = $html->text_h2('result list display test');
         $test_page .= 'result list with tooltip: ' . $lst->display() . '<br>';
         $test_page .= 'result list with link: ' . $lst->display_linked() . '<br>';

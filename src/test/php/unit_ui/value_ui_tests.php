@@ -42,6 +42,7 @@ use html\value\value_list as value_list_dsp;
 use cfg\phrase\phrase_list;
 use html\html_base;
 use html\value\value as value_dsp;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class value_ui_tests
@@ -52,7 +53,7 @@ class value_ui_tests
 
         $t->subheader('value tests');
 
-        $val = new value_dsp($t->value()->api_json(true));
+        $val = new value_dsp($t->value()->api_json([api_type::INCL_PHRASES]));
         $test_page = $html->text_h2('value display test');
         $test_page .= 'with tooltip: ' . $val->display() . '<br>';
         $test_page .= 'with link: ' . $val->display_linked() . '<br>';

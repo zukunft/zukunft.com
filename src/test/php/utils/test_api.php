@@ -91,6 +91,8 @@ use Exception;
 use html\rest_ctrl;
 use shared\api;
 use shared\library;
+use shared\types\api_type;
+use shared\types\api_type_list;
 
 class test_api extends create_test_objects
 {
@@ -105,7 +107,7 @@ class test_api extends create_test_objects
     function assert_api_to_dsp(object $usr_obj, object $dsp_obj): bool
     {
         $class = $this->class_to_api($usr_obj::class);
-        $msg_to_frontend = $usr_obj->api_json(false);
+        $msg_to_frontend = $usr_obj->api_json([api_type::TEST_MODE]);
         $dsp_obj->set_from_json($msg_to_frontend);
         $array_to_backend = $dsp_obj->api_array();
         // remove the empty fields to compare the "api save" message with the "api show" message
@@ -129,13 +131,13 @@ class test_api extends create_test_objects
      * the unit test should be done for all api objects
      * @param object $usr_obj the user sandbox object that should be tested
      * @param string $filename the exceptional filename that overwrites the generated filename
-     * @param bool $with_phrase true if the value list should contain the phrases
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
      * @return bool true if everything is fine
      */
     function assert_api(
         object $usr_obj,
         string $filename = '',
-        bool $with_phrase = false,
+        api_type_list|array $typ_lst = [],
         bool $contains = false
     ): bool
     {
@@ -146,7 +148,12 @@ class test_api extends create_test_objects
             or $usr_obj::class == value_time::class
             or $usr_obj::class == value_text::class
             or $usr_obj::class == value_geo::class) {
-            $actual = json_decode($usr_obj->api_json($with_phrase, false), true);
+            if (is_array($typ_lst)) {
+                $typ_lst[] = api_type::TEST_MODE;
+            } else {
+                $typ_lst->add(api_type::TEST_MODE);
+            }
+            $actual = json_decode($usr_obj->api_json($typ_lst), true);
         } else {
             if ($usr_obj::class == sys_log_list::class
                 or $usr_obj::class == type_lists::class) {

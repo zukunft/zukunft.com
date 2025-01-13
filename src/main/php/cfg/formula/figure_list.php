@@ -41,6 +41,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once WEB_FIGURE_PATH . 'figure.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
 use api\formula\figure_list as figure_list_api;
@@ -54,6 +55,7 @@ use cfg\value\value;
 use cfg\value\value_base;
 use html\figure\figure as figure_dsp;
 use shared\library;
+use shared\types\api_type_list;
 
 class figure_list extends sandbox_list
 {
@@ -89,8 +91,15 @@ class figure_list extends sandbox_list
     /**
      * @returns string the api json message for the object as a string
      */
-    function api_json(bool $do_save = true): string
+    function api_json(api_type_list|array $typ_lst = []): string
     {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+        $do_save = true;
+        if ($typ_lst->test_mode()) {
+            $do_save = false;
+        }
         return $this->api_obj($do_save)->get_json();
     }
 

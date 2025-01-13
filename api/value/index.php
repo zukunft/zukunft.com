@@ -39,14 +39,16 @@ include_once PHP_PATH . 'zu_lib.php';
 include_once SHARED_PATH . 'api.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
+include_once API_VALUE_PATH . 'value.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VALUE_PATH . 'value.php';
-include_once API_VALUE_PATH . 'value.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 
 use cfg\value\value;
 use controller\controller;
 use cfg\user\user;
 use shared\api;
+use shared\types\api_type;
 
 // open database
 $db_con = prg_start("api/value", "", false);
@@ -73,7 +75,7 @@ if ($usr->id() > 0) {
         $val->load_by_id($val_id);
         $val->load_objects();
         if ($with_phr == api::URL_VAR_TRUE) {
-            $result = $val->api_json(true);
+            $result = $val->api_json([api_type::INCL_PHRASES]);
         } else {
             $result = $val->api_json();
 

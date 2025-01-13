@@ -66,7 +66,7 @@ class sys_log_read_tests
         $t->assert('system errors', $result, true);
 
         $t->subheader('API unit db tests');
-        $t->assert_api($err_lst, 'sys_log_list_setup', false, true);
+        $t->assert_api($err_lst, 'sys_log_list_setup', [], true);
 
     }
 

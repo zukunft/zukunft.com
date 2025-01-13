@@ -43,6 +43,7 @@ include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'words.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -54,6 +55,7 @@ use cfg\user\user_message;
 use controller\controller;
 use cfg\user\user;
 use shared\api;
+use shared\types\api_type;
 
 // open database
 $db_con = prg_start("api/config", "", false);
@@ -90,7 +92,7 @@ if ($usr->id() > 0) {
         }
     }
     if ($with_phr == api::URL_VAR_TRUE) {
-        $result = $cfg_lst->api_json(true);
+        $result = $cfg_lst->api_json([api_type::INCL_PHRASES]);
     } else {
         $result = $cfg_lst->api_json();
     }

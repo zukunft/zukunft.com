@@ -32,8 +32,11 @@
 
 namespace unit_ui;
 
+include_once SHARED_TYPES_PATH . 'api_type.php';
+
 use html\html_base;
 use html\figure\figure_list as figure_list_dsp;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class figure_list_ui_tests
@@ -46,7 +49,7 @@ class figure_list_ui_tests
         $t->subheader('figure list tests');
 
         // test the figure list display functions
-        $lst = new figure_list_dsp($t->figure_list()->api_json(false));
+        $lst = new figure_list_dsp($t->figure_list()->api_json([api_type::TEST_MODE]));
         $test_page = $html->text_h2('figure list display test');
         $test_page .= 'figure list with tooltip: ' . $lst->display() . '<br>';
         $test_page .= 'figure list with link: ' . $lst->display_linked() . '<br>';
