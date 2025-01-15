@@ -16,6 +16,7 @@
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
     - load sql:          create the sql statements for loading from the db
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - im- and export:    create an export object and set the vars from an import object
     - information:       functions to make code easier to read
     - log read:          read related log messages
@@ -80,6 +81,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -110,6 +112,7 @@ use cfg\word\word;
 use shared\json_fields;
 use shared\library;
 use Exception;
+use shared\types\api_type_list;
 
 class sandbox_named extends sandbox
 {
@@ -451,6 +454,27 @@ class sandbox_named extends sandbox
         $qp->par = $sc->get_par();
 
         return $qp;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst): array
+    {
+        $vars = parent::api_json_array($typ_lst);
+
+        $vars[json_fields::NAME] = $this->name();
+        $vars[json_fields::DESCRIPTION] = $this->description();
+
+        return $vars;
     }
 
 

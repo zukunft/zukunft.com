@@ -118,6 +118,7 @@ class json_fields
     const USR_TEXT = 'user_text'; // the formula expression in the user readable format
     const SHARE = 'share'; // the field name used for the JSON im- and export
     const PROTECTION = 'protection'; // the field name used for the JSON im- and export
+    const EXCLUDED = 'excluded'; // true if the object has been excluded by the user
 
     // fields for external ref
     const EXTERNAL_KEY = 'external_key'; // the unique key of the reference
@@ -165,6 +166,9 @@ class json_fields
     // phrase api specific fields
     // the json field name in the api json message to identify if the term is a word, triple, verb or formula
     const OBJECT_CLASS = 'class';
+
+    // view to component link
+    const POS_TYPE_CMP = 'pos_type';
 
 
     /*

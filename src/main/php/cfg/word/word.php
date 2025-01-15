@@ -22,15 +22,15 @@
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
     - set and get:       to capsule the vars from unexpected changes
-    - modify:            change potentially all variables of this word object
     - preloaded:         select e.g. types from cache
-    - cast:              create an api object and set the vars from an api json
-    - api:               create an api array for the frontend and set the vars based on a frontend api message
-    - convert:           convert this word e.g. phrase or term
     - load:              database access object (DAO) functions
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
+    - im- and export:    create an export object and set the vars from an import object
+    - cast:              create an api object and set the vars from an api json
+    - convert:           convert this word e.g. phrase or term
     - sql fields:        field names for sql
     - retrieval:         get related objects assigned to this word
-    - im- and export:    create an export object and set the vars from an import object
+    - modify:            change potentially all variables of this word object
     - information:       functions to make code easier to read
     - foaf:              get related words and triples based on the friend of a friend (foaf) concept
     - ui sort:           user interface optimization e.g. show the user to most relevant words
@@ -98,6 +98,7 @@ include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -131,6 +132,7 @@ use cfg\view\view;
 use shared\enum\foaf_direction;
 use shared\json_fields;
 use shared\library;
+use shared\types\api_type_list;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
 
@@ -398,98 +400,6 @@ class word extends sandbox_typed
 
 
     /*
-     * cast
-     */
-
-    /**
-     * create word the api object and map the fields
-     * @return word_api the word frontend api object with all vars set
-     */
-    function api_obj(): word_api
-    {
-        $api_obj = new word_api();
-        if ($this->is_excluded()) {
-            $api_obj->set_id($this->id());
-            $api_obj->excluded = true;
-        } else {
-            parent::fill_api_obj($api_obj);
-            $api_obj->set_plural($this->plural);
-        }
-        return $api_obj;
-    }
-
-    /**
-     * map a word api json to this model word object
-     * similar to the import_obj function but using the database id instead of names as the unique key
-     * TODO add a test case to check if an import of a pure name overwrites the existing type setting
-     *      or if loading later adding a word with admin_protection and type does not overwrite the type and protection
-     * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-
-            // TODO move plural to language forms
-            if ($key == json_fields::PLURAL) {
-                if ($value <> '') {
-                    $this->plural = $value;
-                }
-            }
-            /*
-            if ($key == exp_obj::FLD_VIEW) {
-                $wrd_view = new view($this->user());
-                if ($do_save) {
-                    $wrd_view->load_by_name($value);
-                    if ($wrd_view->id() == 0) {
-                        $result->add_message('Cannot find view >' . $value . '< when importing ' . $this->dsp_id());
-                    } else {
-                        $this->view_id = $wrd_view->id();
-                    }
-                } else {
-                    $wrd_view->set_name($value);
-                }
-                $this->view = $wrd_view;
-            }
-
-            if ($key == json_fields::PHRASES) {
-                $phr_lst = new phrase_list($this->user());
-                $msg->add($phr_lst->db_obj($value));
-                if ($msg->is_ok()) {
-                    $this->grp->phr_lst = $phr_lst;
-                }
-            }
-            */
-
-        }
-
-        return $msg;
-    }
-
-    /**
-     * return the main word object based on an id text e.g. used in view.php to get the word to display
-     * TODO: check if needed and review
-     */
-    function main_wrd_from_txt($id_txt): void
-    {
-        if ($id_txt <> '') {
-            log_debug('from "' . $id_txt . '"');
-            $wrd_ids = explode(",", $id_txt);
-            log_debug('check if "' . $wrd_ids[0] . '" is a number');
-            if (is_numeric($wrd_ids[0])) {
-                $this->load_by_id($wrd_ids[0]);
-                log_debug('from "' . $id_txt . '" got id ' . $this->id());
-            } else {
-                $this->load_by_name($wrd_ids[0]);
-                log_debug('from "' . $id_txt . '" got name ' . $this->name);
-            }
-        }
-    }
-
-
-    /*
      * convert
      */
 
@@ -514,6 +424,26 @@ class word extends sandbox_typed
         $trm->set_obj($this);
         log_debug($this->dsp_id());
         return $trm;
+    }
+
+    /**
+     * return the main word object based on an id text e.g. used in view.php to get the word to display
+     * TODO: check if needed and review
+     */
+    function main_wrd_from_txt($id_txt): void
+    {
+        if ($id_txt <> '') {
+            log_debug('from "' . $id_txt . '"');
+            $wrd_ids = explode(",", $id_txt);
+            log_debug('check if "' . $wrd_ids[0] . '" is a number');
+            if (is_numeric($wrd_ids[0])) {
+                $this->load_by_id($wrd_ids[0]);
+                log_debug('from "' . $id_txt . '" got id ' . $this->id());
+            } else {
+                $this->load_by_name($wrd_ids[0]);
+                log_debug('from "' . $id_txt . '" got name ' . $this->name);
+            }
+        }
     }
 
 
@@ -554,6 +484,11 @@ class word extends sandbox_typed
         }
         return $result;
     }
+
+
+    /*
+     * load sql
+     */
 
     /**
      * create the SQL to load the default word always by the id
@@ -641,69 +576,99 @@ class word extends sandbox_typed
 
 
     /*
-     * retrieval
+     * cast
      */
 
     /**
-     * get a list of values related to this word
-     * @param int $page the offset / page
-     * @param int $size the number of values that should be returned
-     * @return value_list a list object with the most relevant values related to this word
+     * create word the api object and map the fields
+     * @return word_api the word frontend api object with all vars set
      */
-    function value_list(int $page = 1, int $size = sql_db::ROW_LIMIT): value_list
+    function api_obj(): word_api
     {
-        $val_lst = new value_list($this->user());
-        $val_lst->load_by_phr($this->phrase(), $size, $page);
-        return $val_lst;
+        $api_obj = new word_api();
+        if ($this->is_excluded()) {
+            $api_obj->set_id($this->id());
+            $api_obj->excluded = true;
+        } else {
+            parent::fill_api_obj($api_obj);
+            $api_obj->set_plural($this->plural);
+        }
+        return $api_obj;
     }
 
     /**
-     * get a list of all values related to this word
+     * map a word api json to this model word object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * TODO add a test case to check if an import of a pure name overwrites the existing type setting
+     *      or if loading later adding a word with admin_protection and type does not overwrite the type and protection
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
      */
-    function val_lst(): value_list
+    function set_by_api_json(array $api_json): user_message
     {
-        $lib = new library();
-        log_debug('for ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
-        $val_lst = new value_list($this->user());
-        $val_lst->load_by_phr($this->phrase());
-        log_debug('got ' . $lib->dsp_count($val_lst->lst()));
-        return $val_lst;
-    }
+        $msg = parent::set_by_api_json($api_json);
 
-    /**
-     * if there is just one formula linked to the word, get it
-     * TODO separate the query parameter creation and add a unit test
-     * TODO allow also to retrieve a list of formulas
-     * TODO get the user specific list of formulas
-     */
-    function formula(): formula
-    {
-        log_debug('for ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
+        foreach ($api_json as $key => $value) {
 
-        global $db_con;
-
-        $db_con->set_class(formula_link::class);
-        $qp = new sql_par(self::class);
-        $qp->name = 'word_formula_by_id';
-        $db_con->set_name($qp->name);
-        $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
-        $db_con->set_where_link_no_fld(0, 0, $this->id());
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
-        $db_row = $db_con->get1($qp);
-        $frm = new formula($this->user());
-        if ($db_row !== false) {
-            if ($db_row[formula::FLD_ID] > 0) {
-                $frm->load_by_id($db_row[formula::FLD_ID]);
+            // TODO move plural to language forms
+            if ($key == json_fields::PLURAL) {
+                if ($value <> '') {
+                    $this->plural = $value;
+                }
             }
+            /*
+            if ($key == exp_obj::FLD_VIEW) {
+                $wrd_view = new view($this->user());
+                if ($do_save) {
+                    $wrd_view->load_by_name($value);
+                    if ($wrd_view->id() == 0) {
+                        $result->add_message('Cannot find view >' . $value . '< when importing ' . $this->dsp_id());
+                    } else {
+                        $this->view_id = $wrd_view->id();
+                    }
+                } else {
+                    $wrd_view->set_name($value);
+                }
+                $this->view = $wrd_view;
+            }
+
+            if ($key == json_fields::PHRASES) {
+                $phr_lst = new phrase_list($this->user());
+                $msg->add($phr_lst->db_obj($value));
+                if ($msg->is_ok()) {
+                    $this->grp->phr_lst = $phr_lst;
+                }
+            }
+            */
+
         }
 
-        return $frm;
+        return $msg;
     }
 
-    function view(): ?view
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst): array
     {
-        return $this->load_view();
+        if ($this->is_excluded()) {
+            $vars = [];
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            $vars = parent::api_json_array($typ_lst);
+            $vars[json_fields::PLURAL] = $this->plural;
+        }
+
+        return $vars;
     }
 
 
@@ -856,6 +821,74 @@ class word extends sandbox_typed
 
         return $vars;
     }
+
+
+    /*
+     * retrieval
+     */
+
+    /**
+     * get a list of values related to this word
+     * @param int $page the offset / page
+     * @param int $size the number of values that should be returned
+     * @return value_list a list object with the most relevant values related to this word
+     */
+    function value_list(int $page = 1, int $size = sql_db::ROW_LIMIT): value_list
+    {
+        $val_lst = new value_list($this->user());
+        $val_lst->load_by_phr($this->phrase(), $size, $page);
+        return $val_lst;
+    }
+
+    /**
+     * get a list of all values related to this word
+     */
+    function val_lst(): value_list
+    {
+        $lib = new library();
+        log_debug('for ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
+        $val_lst = new value_list($this->user());
+        $val_lst->load_by_phr($this->phrase());
+        log_debug('got ' . $lib->dsp_count($val_lst->lst()));
+        return $val_lst;
+    }
+
+    /**
+     * if there is just one formula linked to the word, get it
+     * TODO separate the query parameter creation and add a unit test
+     * TODO allow also to retrieve a list of formulas
+     * TODO get the user specific list of formulas
+     */
+    function formula(): formula
+    {
+        log_debug('for ' . $this->dsp_id() . ' and user "' . $this->user()->name . '"');
+
+        global $db_con;
+
+        $db_con->set_class(formula_link::class);
+        $qp = new sql_par(self::class);
+        $qp->name = 'word_formula_by_id';
+        $db_con->set_name($qp->name);
+        $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
+        $db_con->set_where_link_no_fld(0, 0, $this->id());
+        $qp->sql = $db_con->select_by_set_id();
+        $qp->par = $db_con->get_par();
+        $db_row = $db_con->get1($qp);
+        $frm = new formula($this->user());
+        if ($db_row !== false) {
+            if ($db_row[formula::FLD_ID] > 0) {
+                $frm->load_by_id($db_row[formula::FLD_ID]);
+            }
+        }
+
+        return $frm;
+    }
+
+    function view(): ?view
+    {
+        return $this->load_view();
+    }
+
 
     /*
      * TODO review

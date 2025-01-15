@@ -54,6 +54,7 @@ include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_RESULT_PATH . 'result_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 //include_once MODEL_VALUE_PATH . 'value_list.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\system\base_list;
@@ -69,6 +70,7 @@ use cfg\result\result_list;
 use cfg\user\user;
 use cfg\value\value_list;
 use shared\library;
+use shared\types\api_type_list;
 
 class sandbox_list extends base_list
 {
@@ -301,6 +303,26 @@ class sandbox_list extends base_list
             $result = $this->rows_mapper($db_lst, $load_all);
         }
         return $result;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the json api message
+     *
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @returns array with the json fields to create an api message
+     */
+    function api_json_array(api_type_list $typ_lst): array
+    {
+        $lst = [];
+        foreach ($this->lst() as $sbx) {
+            $lst[] = $sbx->api_json_array($typ_lst);
+        }
+        return $lst;
     }
 
 

@@ -21,6 +21,7 @@
     - placeholder:       function that are overwritten by the child objects (some load related)
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - im- and export:    create an export object and set the vars from an import object
     - information:       functions to make code easier to read
     - owner and access:  functions to make code easier to read
@@ -108,6 +109,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_VIEW_PATH . 'view_term_link.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
@@ -153,6 +155,7 @@ use cfg\view\view;
 use cfg\view\view_term_link;
 use cfg\word\word;
 use cfg\word\triple;
+use shared\types\api_type_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use shared\types\phrase_type as phrase_type_shared;
@@ -667,7 +670,7 @@ class sandbox extends db_object_seq_id_user
     /**
      * @returns string the api json message for any child object as a string
      */
-    function api_json(): string
+    function api_json_old(): string
     {
         return $this->api_obj()->get_json();
     }
@@ -871,6 +874,55 @@ class sandbox extends db_object_seq_id_user
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
         return true;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create the api json message
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(api_type_list|array $typ_lst = []): string
+    {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
+        // null values are not needed in the api message to the frontend (but in the api message to the backend!)
+        $vars = $this->api_json_array($typ_lst);
+        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+
+        return json_encode($vars);
+    }
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst): array
+    {
+        $vars = [];
+
+        $vars[json_fields::ID] = $this->id();
+        if ($this->is_excluded()) {
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            if ($this->share_id != null) {
+                $vars[json_fields::SHARE] = $this->share_id;
+            }
+            if ($this->protection_id != null) {
+                $vars[json_fields::PROTECTION] = $this->protection_id;
+            }
+
+        }
+
+        return $vars;
     }
 
 

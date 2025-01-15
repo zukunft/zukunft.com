@@ -98,6 +98,7 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once API_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -133,6 +134,7 @@ use cfg\result\result_list;
 use cfg\value\value_base;
 use api\formula\formula as formula_api;
 use html\word\word as word_dsp;
+use shared\types\api_type_list;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\json_fields;
 use shared\library;
@@ -504,58 +506,6 @@ class formula extends sandbox_typed
     {
         global $frm_typ_cac;
         return $frm_typ_cac->name($this->type_id);
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @returns term the formula object cast into a term object
-     */
-    function term(): term
-    {
-        $trm = new term($this->user());
-        $trm->set_obj($this);
-        return $trm;
-    }
-
-    /**
-     * @return formula_api the formula frontend api object
-     */
-    function api_obj(): formula_api
-    {
-        $api_obj = new formula_api();
-        if ($this->is_excluded()) {
-            $api_obj->set_id($this->id());
-            $api_obj->excluded = true;
-        } else {
-            parent::fill_api_obj($api_obj);
-            $api_obj->set_usr_text($this->usr_text);
-        }
-        return $api_obj;
-    }
-
-    /**
-     * map a formula api json to this model formula object
-     * similar to the import_obj function but using the database id instead of names as the unique key
-     * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-            if ($key == json_fields::USR_TEXT) {
-                if ($value <> '') {
-                    $this->set_user_text($value);
-                }
-            }
-        }
-
-        return $msg;
     }
 
 
@@ -1427,7 +1377,7 @@ class formula extends sandbox_typed
      * calculate the formula results based on a given figure list
      *
      * @param figure_list $fig_lst the value and results that should be used for the calculation
-     * @return figure_list the received figure list with the additions forlua results
+     * @return figure_list the received figure list with the additions formula results
      */
     function calc_with(figure_list $fig_lst): figure_list
     {
@@ -1455,6 +1405,83 @@ class formula extends sandbox_typed
         $res_lst = new result_list($this->user());
         $res_lst->load_by_frm($this);
         return $res_lst;
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @returns term the formula object cast into a term object
+     */
+    function term(): term
+    {
+        $trm = new term($this->user());
+        $trm->set_obj($this);
+        return $trm;
+    }
+
+    /**
+     * @return formula_api the formula frontend api object
+     */
+    function api_obj(): formula_api
+    {
+        $api_obj = new formula_api();
+        if ($this->is_excluded()) {
+            $api_obj->set_id($this->id());
+            $api_obj->excluded = true;
+        } else {
+            parent::fill_api_obj($api_obj);
+            $api_obj->set_usr_text($this->usr_text);
+        }
+        return $api_obj;
+    }
+
+    /**
+     * map a formula api json to this model formula object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+            if ($key == json_fields::USR_TEXT) {
+                if ($value <> '') {
+                    $this->set_user_text($value);
+                }
+            }
+        }
+
+        return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst): array
+    {
+        if ($this->is_excluded()) {
+            $vars = [];
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            $vars = parent::api_json_array($typ_lst);
+            $vars[json_fields::USR_TEXT] = $this->usr_text;
+        }
+
+        return $vars;
     }
 
 
@@ -2596,7 +2623,7 @@ class formula extends sandbox_typed
     /**
      * remove depending on objects
      * needs to be overwritten by the child class if needed
-     * TODO make sure that onle user specific data is deleted
+     * TODO make sure that only user specific data is deleted
      *
      * @return user_message the message for the user why the action has failed and a suggested solution
      */

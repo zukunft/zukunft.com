@@ -42,6 +42,7 @@ use cfg\formula\formula_link;
 use cfg\formula\formula_link_list;
 use cfg\formula\formula_link_type;
 use shared\library;
+use test\test_base;
 use test\test_cleanup;
 
 class formula_link_tests
@@ -107,6 +108,11 @@ class formula_link_tests
         $t->assert_sql_update($sc, $lnk_reordered, $lnk, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $lnk);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
+
+        // TODO Prio 1 add these test to all objects
+        $t->subheader('formula link base object handling');
+        $lnk = $t->formula_link();
+        $t->assert_reset($lnk);
 
         /*
         $t->subheader('Im- and Export tests');

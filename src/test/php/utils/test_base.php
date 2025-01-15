@@ -55,6 +55,7 @@ include_once SERVICE_PATH . 'config.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once DB_PATH . 'sql_type.php';
 include_once SHARED_TYPES_PATH . 'api_type.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\sandbox\sandbox as sandbox_api;
@@ -3174,7 +3175,7 @@ class test_base
      * @param sandbox_named|sandbox_link $sbx
      * @return bool
      */
-    private function assert_reset(sandbox_named|sandbox_link $sbx): bool
+    function assert_reset(sandbox_named|sandbox_link $sbx): bool
     {
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);

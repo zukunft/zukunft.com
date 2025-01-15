@@ -89,8 +89,10 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_REF_PATH . 'ref_type.php';
 include_once MODEL_REF_PATH . 'ref_type_list.php';
-include_once WEB_REF_PATH . 'ref.php';
 include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_WORD_PATH . 'triple.php';
+include_once WEB_REF_PATH . 'ref.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 
@@ -117,6 +119,7 @@ use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\user\user_message;
 use shared\json_fields;
+use shared\types\api_type_list;
 
 class ref extends sandbox_link
 {
@@ -735,6 +738,33 @@ class ref extends sandbox_link
     function type_field(): string
     {
         return ref_type::FLD_ID;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst): array
+    {
+        $vars = parent::api_json_array($typ_lst);
+        $vars[json_fields::URL] = $this->url;
+        $vars[json_fields::EXTERNAL_KEY] = $this->external_key;
+        if ($this->phrase()->id() != 0) {
+            $vars[json_fields::PHRASE] = $this->phrase()->id();
+        }
+        $vars[json_fields::SOURCE] = $this->source?->id();
+        if ($this->predicate_id() != 0) {
+            $vars[json_fields::PREDICATE] = $this->predicate_id();
+        }
+        $vars[json_fields::DESCRIPTION] = $this->description;
+        return $vars;
     }
 
 

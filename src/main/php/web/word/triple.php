@@ -104,17 +104,38 @@ class triple extends sandbox_typed
     {
         $usr_msg = parent::set_from_json_array($json_array);
         if (array_key_exists(json_fields::FROM, $json_array)) {
-            $this->set_from_by_id($json_array[json_fields::FROM]);
+            $value = $json_array[json_fields::FROM];
+            if (is_array($value)) {
+                $phr = new phrase_dsp();
+                $phr->set_from_json_array($value);
+                $this->set_from($phr);
+            } else {
+                $this->set_from_by_id($value);
+            }
         } else {
             $this->set_from(new phrase_dsp());
         }
         if (array_key_exists(json_fields::VERB, $json_array)) {
-            $this->set_verb_by_id($json_array[json_fields::VERB]);
+            $value = $json_array[json_fields::VERB];
+            if (is_array($value)) {
+                $vrb = new verb_dsp();
+                $vrb->set_from_json_array($value);
+                $this->set_verb($vrb);
+            } else {
+                $this->set_verb_by_id($value);
+            }
         } else {
             $this->set_verb(new verb_dsp());
         }
         if (array_key_exists(json_fields::TO, $json_array)) {
-            $this->set_to_by_id($json_array[json_fields::TO]);
+            $value = $json_array[json_fields::TO];
+            if (is_array($value)) {
+                $phr = new phrase_dsp();
+                $phr->set_from_json_array($value);
+                $this->set_to($phr);
+            } else {
+                $this->set_to_by_id($value);
+            }
         } else {
             $this->set_to(new phrase_dsp());
         }
@@ -343,14 +364,14 @@ class triple extends sandbox_typed
             $detail_fields = $html->form_text("name", $this->name());
             $detail_fields .= $html->form_text("description", $this->description);
             $detail_fields .= 'from: ' . $this->phrase_selector(
-                'from', self::FORM_EDIT, 'from:', '', $this->from()->id(), '', $this->from());
+                    'from', self::FORM_EDIT, 'from:', '', $this->from()->id(), '', $this->from());
             /* TODO
             if (isset($this->verb)) {
                 $result .= $this->verb->dsp_selector('forward', $form_name, view_styles::COL_SM_4, $back);
             }
             */
             $detail_fields .= 'to: ' . $this->phrase_selector(
-                'to', self::FORM_EDIT, 'to:', '', $this->to()->id(), '', $this->to());
+                    'to', self::FORM_EDIT, 'to:', '', $this->to()->id(), '', $this->to());
             $detail_row = $html->fr($detail_fields) . '<br>';
             $result = $header . $html->form(self::FORM_EDIT, $hidden_fields . $detail_row);
         }
@@ -371,7 +392,7 @@ class triple extends sandbox_typed
 
         $html = new html_base();
         $url = $html->url(rest_ctrl::PATH_FIXED . 'link' . rest_ctrl::CREATE . rest_ctrl::EXT, $this->id(), $this->id());
-        $btn = (new button($url. $back))->edit(messages::TRIPLE_ADD);
+        $btn = (new button($url . $back))->edit(messages::TRIPLE_ADD);
 
         return $html->td($btn);
     }
@@ -384,7 +405,7 @@ class triple extends sandbox_typed
 
         $html = new html_base();
         $url = $html->url(rest_ctrl::PATH_FIXED . 'link' . rest_ctrl::UPDATE . rest_ctrl::EXT, $this->id(), $trp->id());
-        $btn = (new button($url. $back))->edit(messages::TRIPLE_EDIT);
+        $btn = (new button($url . $back))->edit(messages::TRIPLE_EDIT);
 
         return $html->td($btn);
     }

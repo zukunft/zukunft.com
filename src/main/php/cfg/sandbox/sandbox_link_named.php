@@ -42,6 +42,7 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_LOG_PATH . 'change_log_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql;
@@ -55,6 +56,7 @@ use cfg\log\change_log_list;
 use cfg\user\user;
 use cfg\user\user_message;
 use shared\json_fields;
+use shared\types\api_type_list;
 
 class sandbox_link_named extends sandbox_link
 {
@@ -262,6 +264,28 @@ class sandbox_link_named extends sandbox_link
             }
         }
         return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst): array
+    {
+        $vars = parent::api_json_array($typ_lst);
+
+        $vars[json_fields::NAME] = $this->name();
+        $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::TYPE] = $this->type_id();
+
+        return $vars;
     }
 
 

@@ -566,7 +566,12 @@ class value_base extends sandbox_value
         if (is_array($typ_lst)) {
             $typ_lst = new api_type_list($typ_lst);
         }
-        return json_encode($this->api_json_array($typ_lst));
+
+        // null values are not needed in the api message to the frontend (but in the api message to the backend!)
+        $vars = $this->api_json_array($typ_lst);
+        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+
+        return json_encode($vars);
     }
 
     /**

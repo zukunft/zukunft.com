@@ -68,6 +68,7 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -92,6 +93,7 @@ use cfg\user\user_message;
 use cfg\view\view;
 use shared\json_fields;
 use shared\library;
+use shared\types\api_type_list;
 
 class component_link extends sandbox_link
 {
@@ -172,6 +174,7 @@ class component_link extends sandbox_link
 
     // the default display style for this component which can be overwritten by the link
     private ?type_object $style = null;
+
 
     /*
      * construct and map
@@ -467,46 +470,6 @@ class component_link extends sandbox_link
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @param object $api_obj minimal component link object that vars should be set based on this object vars
-     */
-    function fill_api_obj(object $api_obj): void
-    {
-        $api_obj->set_id($this->id());
-        if ($this->tob() != null) {
-            $api_obj->set_component($this->tob()->api_obj());
-        }
-        $api_obj->set_pos($this->order_nbr);
-        //$api_obj->set_type_id($this->type_id());
-        $api_obj->set_pos_type($this->pos_type_id());
-        if ($this->style != null) {
-            $api_obj->set_style($this->style_id());
-        }
-    }
-
-    /**
-     * @return component_link_api the view component frontend api object
-     */
-    function api_obj(): component_link_api
-    {
-        $api_obj = new component_link_api();
-        $this->fill_api_obj($api_obj);
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-
-    /*
      * load
      */
 
@@ -777,6 +740,80 @@ class component_link extends sandbox_link
     function all_sandbox_fields(): array
     {
         return self::ALL_SANDBOX_FLD_NAMES;
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @param object $api_obj minimal component link object that vars should be set based on this object vars
+     */
+    function fill_api_obj(object $api_obj): void
+    {
+        $api_obj->set_id($this->id());
+        if ($this->tob() != null) {
+            $api_obj->set_component($this->tob()->api_obj());
+        }
+        $api_obj->set_pos($this->order_nbr);
+        //$api_obj->set_type_id($this->type_id());
+        $api_obj->set_pos_type($this->pos_type_id());
+        if ($this->style != null) {
+            $api_obj->set_style($this->style_id());
+        }
+    }
+
+    /**
+     * @return component_link_api the view component frontend api object
+     */
+    function api_obj(): component_link_api
+    {
+        $api_obj = new component_link_api();
+        $this->fill_api_obj($api_obj);
+        return $api_obj;
+    }
+
+    /**
+     * TODO use the sandbox function
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(api_type_list|array $typ_lst = []): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst): array
+    {
+        $vars = [];
+        $vars[json_fields::LINK_ID] = $this->id();
+        if ($this->is_excluded()) {
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            if ($this->component() != null) {
+            $vars = array_merge($vars, $this->component()->api_json_array($typ_lst));
+            }
+            $vars[json_fields::POS] = $this->order_nbr;
+            // TODO Prio 2 activate
+            //$vars[json_fields::TYPE] = $this->type_id();
+            $vars[json_fields::POS_TYPE] = $this->pos_type_id();
+            if ($this->style != null) {
+                $vars[json_fields::STYLE] = $this->style_id();
+            }
+        }
+
+        return $vars;
     }
 
 

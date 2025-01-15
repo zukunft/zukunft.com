@@ -12,6 +12,7 @@
     - construct and map: including the mapping of the db row to this word object
     - set and get:       to capsule the variables from unexpected changes
     - preloaded:         get preloaded information such as the type code id
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - modify:            change potentially all variables of this sandbox object
     - cast:              create an api object and set the vars from an api json
     - information:       functions to make code easier to read
@@ -49,6 +50,7 @@ include_once DB_PATH . 'sql_db.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql_db;
@@ -56,6 +58,7 @@ use cfg\helper\db_object_seq_id;
 use cfg\ref\source;
 use cfg\user\user_message;
 use shared\json_fields;
+use shared\types\api_type_list;
 
 class sandbox_typed extends sandbox_named
 {
@@ -162,6 +165,26 @@ class sandbox_typed extends sandbox_named
             }
         }
         return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst): array
+    {
+        $vars = parent::api_json_array($typ_lst);
+
+        $vars[json_fields::TYPE] = $this->type_id();
+
+        return $vars;
     }
 
 

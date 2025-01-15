@@ -19,6 +19,7 @@
     - fields:            the field names of this object as overwrite functions
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - im- and export:    create an export object and set the vars from an import object
     - information:       functions to make code easier to read
     - internal:          e.g. to generate the name based on the link
@@ -93,6 +94,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_db.php';
 //include_once MODEL_WORD_PATH . 'word_list.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
@@ -139,6 +141,7 @@ use cfg\value\value_list;
 use html\html_base;
 use JsonSerializable;
 use shared\library;
+use shared\types\api_type_list;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
 use shared\types\view_styles;
@@ -647,7 +650,7 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     function description(): ?string
     {
-        return $this->description();
+        return $this->description;
     }
 
     /**
@@ -857,27 +860,16 @@ class triple extends sandbox_link_named implements JsonSerializable
         foreach ($api_json as $key => $value) {
 
             if ($key == json_fields::FROM) {
-                if ($value != 0) {
-                    // TODO use phrase cache
-                    $phr = new phrase($this->user());
-                    $phr->set_id($value);
-                    $this->set_from($phr);
-                }
+                $phr = $this->phrase_from_api_json($value);
+                $this->set_from($phr);
             }
             if ($key == json_fields::TO) {
-                if ($value != 0) {
-                    // TODO use phrase cache
-                    $phr = new phrase($this->user());
-                    $phr->set_id($value);
-                    $this->set_to($phr);
-                }
+                $phr = $this->phrase_from_api_json($value);
+                $this->set_to($phr);
             }
             if ($key == json_fields::VERB) {
-                if ($value != 0) {
-                    global $vrb_cac;
-                    $vrb = $vrb_cac->get($value);
-                    $this->set_verb($vrb);
-                }
+                $vrb = $this->verb_from_api_json($value);
+                $this->set_verb($vrb);
             }
 
             /* TODO
@@ -919,6 +911,56 @@ class triple extends sandbox_link_named implements JsonSerializable
         }
 
         return $msg;
+    }
+
+    /**
+     * select the id from a json array
+     * @param int|array $value either the id itself or an array with the id
+     * @return phrase
+     */
+    private function phrase_from_api_json(int|array $value): phrase
+    {
+        $phr = new phrase($this->user());
+        if (is_array($value)) {
+            $phr->set_by_api_json($value);
+        } elseif (is_int($value)) {
+            if ($value != 0) {
+                // TODO use phrase cache
+                $phr->set_id($value);
+            }
+        } else {
+            log_err('unexpected format of api message');
+        }
+        return $phr;
+    }
+
+    /**
+     * select the id from a json array
+     * @param int|array $value either the id itself or an array with the id
+     * @return verb
+     */
+    private function verb_from_api_json(int|array $value): verb
+    {
+        global $vrb_cac;
+        if (is_array($value)) {
+            if (key_exists(json_fields::ID, $value)) {
+                $id = $value[json_fields::ID];
+                $vrb = $vrb_cac->get($id);
+            } else {
+                $vrb = new verb();
+                log_err('id field missing in ' . implode(',', $value));
+            }
+        } elseif (is_int($value)) {
+            if ($value != 0) {
+                $vrb = $vrb_cac->get($value);
+            } else {
+                $vrb = new verb();
+            }
+        } else {
+            $vrb = new verb();
+            log_err('unexpected format of api message');
+        }
+        return $vrb;
     }
 
     /**
@@ -1442,6 +1484,48 @@ class triple extends sandbox_link_named implements JsonSerializable
 
         log_debug($wrd_lst->name());
         return $wrd_lst;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst): array
+    {
+        if ($this->is_excluded()) {
+            $vars = [];
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            $vars = parent::api_json_array($typ_lst);
+            $from = $this->from()->obj();
+            if ($from != null) {
+                if ($from->id() <> 0 or $from->name() != '') {
+                    //$vars[json_fields::FROM] = $from->phrase()->api_json_array($typ_lst);
+                    $vars[json_fields::FROM] = $this->from_id();
+                }
+            }
+            if ($this->verb() != null) {
+                //$vars[json_fields::VERB] = $this->verb()->api_json_array($typ_lst);
+                $vars[json_fields::VERB] = $this->verb()->id();
+            }
+            $to = $this->to()->obj();
+            if ($to != null) {
+                if ($to->id() <> 0 or $to->name() != '') {
+                    //$vars[json_fields::TO] = $to->phrase()->api_json_array($typ_lst);
+                    $vars[json_fields::TO] = $this->to_id();
+                }
+            }
+        }
+
+        return $vars;
     }
 
 

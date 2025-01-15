@@ -135,44 +135,6 @@ class word_list extends sandbox_list_named
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return word_list_api the word list object with the display interface functions
-     */
-    function api_obj(): word_list_api
-    {
-        $api_obj = new word_list_api();
-        foreach ($this->lst() as $wrd) {
-            $api_obj->add($wrd->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    /**
-     * @return word_list_dsp the word list object with the display interface functions
-     */
-    function dsp_obj(): word_list_dsp
-    {
-        $dsp_obj = new word_list_dsp();
-        foreach ($this->lst() as $wrd) {
-            $wrd_dsp = new word_dsp($wrd->api_json());
-            $dsp_obj->add($wrd_dsp);
-        }
-        return $dsp_obj;
-    }
-
-
-    /*
      * load
      */
 
@@ -259,7 +221,7 @@ class word_list extends sandbox_list_named
 
 
     /*
-     * sql
+     * load sql
      */
 
     /**
@@ -523,6 +485,88 @@ class word_list extends sandbox_list_named
             }
         }
         return $additional_added;
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @return word_list_api the word list object with the display interface functions
+     */
+    function api_obj(): word_list_api
+    {
+        $api_obj = new word_list_api();
+        foreach ($this->lst() as $wrd) {
+            $api_obj->add($wrd->api_obj());
+        }
+        return $api_obj;
+    }
+
+    /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
+     * @return word_list_dsp the word list object with the display interface functions
+     */
+    function dsp_obj(): word_list_dsp
+    {
+        $dsp_obj = new word_list_dsp();
+        foreach ($this->lst() as $wrd) {
+            $wrd_dsp = new word_dsp($wrd->api_json());
+            $dsp_obj->add($wrd_dsp);
+        }
+        return $dsp_obj;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * import a word list object from a JSON array object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(array $json_obj, object $test_obj = null): user_message
+    {
+        $usr_msg = new user_message();
+        foreach ($json_obj as $value) {
+            $wrd = new word($this->user());
+            $usr_msg->add($wrd->import_obj($value, $test_obj));
+            $this->add($wrd);
+        }
+
+        return $usr_msg;
+    }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $wrd_lst = [];
+        foreach ($this->lst() as $wrd) {
+            if (get_class($wrd) == word::class) {
+                if ($wrd->has_cfg()) {
+                    $wrd_lst[] = $wrd->export_json($do_load);
+                }
+            } else {
+                log_err('The function wrd_lst->export_json returns ' . $wrd->dsp_id() . ', which is ' . get_class($wrd) . ', but not a word.', 'export->get');
+            }
+        }
+        return $wrd_lst;
     }
 
 
@@ -813,50 +857,6 @@ class word_list extends sandbox_list_named
         $result = clone $this;
         $result->diff($parents);
         return $result;
-    }
-
-
-    /*
-     * im- and export
-     */
-
-    /**
-     * import a word list object from a JSON array object
-     *
-     * @param array $json_obj an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $json_obj, object $test_obj = null): user_message
-    {
-        $usr_msg = new user_message();
-        foreach ($json_obj as $value) {
-            $wrd = new word($this->user());
-            $usr_msg->add($wrd->import_obj($value, $test_obj));
-            $this->add($wrd);
-        }
-
-        return $usr_msg;
-    }
-
-    /**
-     * create an array with the export json fields
-     * @param bool $do_load to switch off the database load for unit tests
-     * @return array the filled array used to create the user export json
-     */
-    function export_json(bool $do_load = true): array
-    {
-        $wrd_lst = [];
-        foreach ($this->lst() as $wrd) {
-            if (get_class($wrd) == word::class) {
-                if ($wrd->has_cfg()) {
-                    $wrd_lst[] = $wrd->export_json($do_load);
-                }
-            } else {
-                log_err('The function wrd_lst->export_json returns ' . $wrd->dsp_id() . ', which is ' . get_class($wrd) . ', but not a word.', 'export->get');
-            }
-        }
-        return $wrd_lst;
     }
 
 

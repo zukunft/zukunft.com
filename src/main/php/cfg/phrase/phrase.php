@@ -96,6 +96,7 @@ include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -130,6 +131,7 @@ use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
 use shared\json_fields;
 use shared\library;
+use shared\types\api_type_list;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
 
@@ -602,6 +604,31 @@ class phrase extends combine_named
 
 
     /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst): array
+    {
+        $id = $this->obj_id();
+        $vars = $this->obj()->api_json_array($typ_lst);
+        if ($id != 0) {
+            if ($this->is_word()) {
+                $vars[json_fields::OBJECT_CLASS] = phrase_api::CLASS_WORD;
+            } else {
+                $vars[json_fields::OBJECT_CLASS] = phrase_api::CLASS_TRIPLE;
+            }
+        }
+
+        return $vars;
+    }
+
+    /*
      * im- and export
      */
 
@@ -1069,7 +1096,6 @@ class phrase extends combine_named
             return false;
         }
     }
-
 
 
     public

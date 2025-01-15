@@ -1350,7 +1350,7 @@ class sandbox_value extends sandbox_multi
 
         if ($typ_lst->include_phrases()) {
             $phr_lst = $this->grp()->phrase_list();
-            $vars[json_fields::PHRASES] = $phr_lst->api_json_array();
+            $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst);
         }
 
         return $vars;

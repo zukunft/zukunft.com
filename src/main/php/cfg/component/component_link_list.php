@@ -74,31 +74,6 @@ class component_link_list extends sandbox_list
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return component_link_list_api the component list object with the display interface functions
-     */
-    function api_obj(): component_link_list_api
-    {
-        $api_obj = new component_link_list_api(array());
-        foreach ($this->lst() as $lnk) {
-            $api_obj->add($lnk->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-
-    /*
      * load
      */
 
@@ -235,6 +210,50 @@ class component_link_list extends sandbox_list
 
 
     /*
+     * cast
+     */
+
+    /**
+     * @return component_link_list_api the component list object with the display interface functions
+     */
+    function api_obj(): component_link_list_api
+    {
+        $api_obj = new component_link_list_api(array());
+        foreach ($this->lst() as $lnk) {
+            $api_obj->add($lnk->api_obj());
+        }
+        return $api_obj;
+    }
+
+    /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = [];
+        foreach ($this->lst() as $lnk) {
+            $vars[] = $lnk->export_json($do_load);
+        }
+        return $vars;
+    }
+
+
+    /*
      * modify
      */
 
@@ -298,25 +317,6 @@ class component_link_list extends sandbox_list
             }
         }
         return $can_add;
-    }
-
-
-    /*
-     * im- and export
-     */
-
-    /**
-     * create an array with the export json fields
-     * @param bool $do_load true if any missing data should be loaded while creating the array
-     * @return array with the json fields
-     */
-    function export_json(bool $do_load = true): array
-    {
-        $vars = [];
-        foreach ($this->lst() as $lnk) {
-            $vars[] = $lnk->export_json($do_load);
-        }
-        return $vars;
     }
 
 

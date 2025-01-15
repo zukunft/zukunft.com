@@ -62,6 +62,8 @@ include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+//include_once MODEL_FORMULA_PATH . 'formula_link.php';
+//include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
 //include_once MODEL_LOG_PATH . 'change_link.php';
@@ -69,9 +71,12 @@ include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
+use cfg\formula\formula_link;
+use cfg\formula\formula_link_type;
 use cfg\helper\combine_named;
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -92,6 +97,7 @@ use cfg\user\user_message;
 use Exception;
 use shared\json_fields;
 use shared\library;
+use shared\types\api_type_list;
 
 class sandbox_link extends sandbox
 {
@@ -321,63 +327,6 @@ class sandbox_link extends sandbox
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @param object $api_obj frontend API objects that should be filled with unique object name
-     */
-    function fill_api_obj(object $api_obj): void
-    {
-        parent::fill_api_obj($api_obj);
-
-        if ($this->predicate_id() != 0) {
-            $api_obj->set_predicate_id($this->predicate_id());
-        }
-    }
-
-    /*
-    /**
-     * set the vars of the minimal api object based on this link object
-     * @param object $api_obj frontend API object filled with the database id
-     *
-     * @return void
-    function fill_api_obj(object $api_obj): void
-    {
-        parent::fill_api_obj($api_obj);
-
-        if ($this->fob != null) {
-            $api_obj->fob = $this->fob->api_obj();
-        }
-        if ($this->tob != null) {
-            $api_obj->tob = $this->tob->api_obj();
-        }
-    }
-    */
-
-    /**
-     * fill the vars with this link type sandbox object based on the given api json array
-     * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::PREDICATE) {
-                $this->predicate_id = $value;
-            }
-
-        }
-
-        return $msg;
-    }
-
-
-    /*
      * load
      */
 
@@ -516,6 +465,95 @@ class sandbox_link extends sandbox
             }
         }
         return $result;
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @param object $api_obj frontend API objects that should be filled with unique object name
+     */
+    function fill_api_obj(object $api_obj): void
+    {
+        parent::fill_api_obj($api_obj);
+
+        if ($this->predicate_id() != 0) {
+            $api_obj->set_predicate_id($this->predicate_id());
+        }
+    }
+
+    /*
+    /**
+     * set the vars of the minimal api object based on this link object
+     * @param object $api_obj frontend API object filled with the database id
+     *
+     * @return void
+    function fill_api_obj(object $api_obj): void
+    {
+        parent::fill_api_obj($api_obj);
+
+        if ($this->fob != null) {
+            $api_obj->fob = $this->fob->api_obj();
+        }
+        if ($this->tob != null) {
+            $api_obj->tob = $this->tob->api_obj();
+        }
+    }
+    */
+
+    /**
+     * fill the vars with this link type sandbox object based on the given api json array
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::PREDICATE) {
+                $this->predicate_id = $value;
+            }
+
+        }
+
+        return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst): array
+    {
+        $vars = parent::api_json_array($typ_lst);
+
+        // for triples the predicate is the verb and already included in the vars at this point
+        if ($this::class != triple::class) {
+            if ($this->predicate_id() != 0) {
+                if ($this::class == formula_link::class) {
+                    global $frm_lnk_typ_cac;
+                    if ($this->predicate_id() != $frm_lnk_typ_cac->id(formula_link_type::DEFAULT)) {
+                        $vars[json_fields::PREDICATE] = $this->predicate_id();
+                    }
+                } else {
+                    $vars[json_fields::PREDICATE] = $this->predicate_id();
+                }
+            }
+        }
+
+        return $vars;
     }
 
 

@@ -223,17 +223,27 @@ the logical order of the main objects is
 object sections
 ---------------
 
-most objects have these sections
-- db const - const for the database like field names
+most objects have these sections in this order
+- db const - const for the database like field names (moved to a *_db object)
+- preserved - const word names of a words used by the system
 - object vars - the variables of the object in order of the db const
 - construct and map - including the mapping of the db row to the object
 - set and get - interface for the object vars grouped by first set in order of db fields
 - preloaded - select e.g. types from cache
-- cast - create an api object and set the vars from an api json
 - load - database access object (DAO) functions
+- load sql - create the sql statements for database loading
+- sql fields - create the field names for sql statements
+- retrieval - get related objects assigned to this component
+- cast - create an api object and set the vars from an api json
+- api - create an api array for the frontend and set the vars based on a frontend api message
+- im- and export - create an export object and set the vars from an import object
 - save - manage to update the database
 - sql write fields - field list for writing to the database
 - debug - internal support functions for debugging that must include dsp_id()
+
+some sections are move to related classes to reduce the class size
+- db const (*_db) - const for the database like field names (moved to a *_db object)
+- preserved (shared\words) - const word names of a words used by the system
 
 
 database change setup

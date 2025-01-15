@@ -82,6 +82,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view_term_link.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -117,6 +118,7 @@ use cfg\view\view_term_link;
 use cfg\view\view_type;
 use shared\json_fields;
 use shared\library;
+use shared\types\api_type_list;
 
 class view extends sandbox_typed
 {
@@ -872,6 +874,34 @@ class view extends sandbox_typed
         // TODO implement
         $usr_msg->add_message('not yet implemented');
         return $usr_msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst): array
+    {
+        if ($this->is_excluded()) {
+            $vars = [];
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            $vars = parent::api_json_array($typ_lst);
+            $vars[json_fields::CODE_ID] = $this->code_id;
+            if ($this->cmp_lnk_lst != null) {
+                $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->api_json_array($typ_lst);
+            }
+        }
+
+        return $vars;
     }
 
 

@@ -11,10 +11,10 @@
     - construct and map: including the mapping of the db row to this component object
     - set and get:       to capsule the vars from unexpected changes
     - preloaded:         select e.g. types from cache
-    - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
     - sql fields:        field names for sql and other load helper functions
     - retrieval:         get related objects assigned to this component
+    - cast:              create an api object and set the vars from an api json
     - im- and export:    create an export object and set the vars from an import object
     - information:       functions to make code easier to read
     - log:               write the changes to the log
@@ -63,6 +63,7 @@ include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_COMPONENT_PATH . 'view_style.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
@@ -75,8 +76,8 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
-include_once MODEL_COMPONENT_PATH . 'view_style.php';
 
 use api\component\component as component_api;
 use cfg\db\sql;
@@ -101,6 +102,7 @@ use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\word;
 use shared\json_fields;
+use shared\types\api_type_list;
 
 class component extends sandbox_typed
 {
@@ -582,50 +584,6 @@ class component extends sandbox_typed
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return component_api the view component frontend api object
-     */
-    function api_obj(): component_api
-    {
-        $api_obj = new component_api();
-        if ($this->is_excluded()) {
-            $api_obj->set_id($this->id());
-            $api_obj->excluded = true;
-        } else {
-            parent::fill_api_obj($api_obj);
-            $api_obj->code_id = $this->code_id;
-            $api_obj->ui_msg_code_id = $this->ui_msg_code_id;
-        }
-        return $api_obj;
-    }
-
-    /**
-     * map a component api json to this model component object
-     * @param array $api_json the api array with the values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-            // TODO the code id might be not be mapped because this can never be changed by the user
-            if ($key == json_fields::CODE_ID) {
-                $this->code_id = $value;
-            }
-            if ($key == json_fields::UI_MSG_CODE_ID) {
-                $this->ui_msg_code_id = $value;
-            }
-        }
-
-        return $msg;
-    }
-
-
-    /*
      * load
      */
 
@@ -848,6 +806,80 @@ class component extends sandbox_typed
             self::FLD_NAMES_NUM_USR
         ));
         return parent::load_sql_user_changes($sc, $sc_par_lst);
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @return component_api the view component frontend api object
+     */
+    function api_obj(): component_api
+    {
+        $api_obj = new component_api();
+        if ($this->is_excluded()) {
+            $api_obj->set_id($this->id());
+            $api_obj->excluded = true;
+        } else {
+            parent::fill_api_obj($api_obj);
+            $api_obj->code_id = $this->code_id;
+            $api_obj->ui_msg_code_id = $this->ui_msg_code_id;
+        }
+        return $api_obj;
+    }
+
+    /**
+     * map a component api json to this model component object
+     * @param array $api_json the api array with the values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+            // TODO the code id might be not be mapped because this can never be changed by the user
+            if ($key == json_fields::CODE_ID) {
+                $this->code_id = $value;
+            }
+            if ($key == json_fields::UI_MSG_CODE_ID) {
+                $this->ui_msg_code_id = $value;
+            }
+        }
+
+        return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst): array
+    {
+        if ($this->is_excluded()) {
+            $vars = [];
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            $vars = parent::api_json_array($typ_lst);
+            if ($this->code_id != null) {
+                $vars[json_fields::CODE_ID] = $this->code_id;
+            }
+            if ($this->ui_msg_code_id != null) {
+                $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
+            }
+        }
+
+        return $vars;
     }
 
 

@@ -244,7 +244,7 @@ class ref extends db_object_dsp
         $vars = parent::api_array();
         $vars[json_fields::URL] = $this->url();
         $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
-        $vars[json_fields::PHRASE] = $this->phr->id();
+        $vars[json_fields::PHRASE] = $this->phr?->id();
         $vars[json_fields::SOURCE] = $this->source?->id();
         $vars[json_fields::PREDICATE] = $this->predicate_id();
         $vars[json_fields::DESCRIPTION] = $this->description();

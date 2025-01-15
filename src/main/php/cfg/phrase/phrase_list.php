@@ -167,51 +167,6 @@ class phrase_list extends sandbox_list_named
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return phrase_list_api the word list object with the display interface functions
-     */
-    function api_obj(): phrase_list_api
-    {
-        $api_obj = new phrase_list_api();
-        foreach ($this->lst() as $phr) {
-            $api_obj->add($phr->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json_array(): array
-    {
-        return json_decode($this->api_json(), true);
-    }
-
-    /**
-     * @return term_list filled with all phrases from this phrase list
-     */
-    function term_list(): term_list
-    {
-        $trm_lst = new term_list($this->user());
-        foreach ($this->lst() as $phr) {
-            $trm_lst->add($phr->term());
-        }
-        return $trm_lst;
-    }
-
-
-    /*
      * load
      */
 
@@ -467,6 +422,181 @@ class phrase_list extends sandbox_list_named
     function load_names(string $pattern = '', int $limit = 0, int $offset = 0): bool
     {
         return parent::load_sbx_names(new phrase($this->user()), $pattern, $limit, $offset);
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * @return phrase_list_api the word list object with the display interface functions
+     */
+    function api_obj(): phrase_list_api
+    {
+        $api_obj = new phrase_list_api();
+        foreach ($this->lst() as $phr) {
+            $api_obj->add($phr->api_obj());
+        }
+        return $api_obj;
+    }
+
+    /**
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(): string
+    {
+        return $this->api_obj()->get_json();
+    }
+
+    /**
+     * @return term_list filled with all phrases from this phrase list
+     */
+    function term_list(): term_list
+    {
+        $trm_lst = new term_list($this->user());
+        foreach ($this->lst() as $phr) {
+            $trm_lst->add($phr->term());
+        }
+        return $trm_lst;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * import a phrase list from an inner part of a JSON array object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_lst(array $json_obj, object $test_obj = null): user_message
+    {
+        global $phr_typ_cac;
+
+        $usr_msg = new user_message();
+        foreach ($json_obj as $phr_name) {
+            if ($phr_name != '') {
+                $phr = new phrase($this->user());
+                if ($usr_msg->is_ok()) {
+                    if (!$test_obj) {
+                        // TODO prevent that this happens at all
+                        if (is_array($phr_name)) {
+                            $lib = new library();
+                            log_err($lib->dsp_array($phr_name) . ' is expected to be a string');
+                            // TODO remove this fallback solution
+                            if (count($phr_name) == 1) {
+                                $phr_name = $phr_name[0];
+                            }
+                        }
+                        if (!is_array($phr_name)) {
+                            $phr->load_by_name($phr_name);
+                            if ($phr->id() == 0) {
+                                // for new phrase use the word object
+                                // TODO add a test case if a triple with the name exists but the triple is based on other phrases than the given phrase
+                                //      e.g. 1. create triple with "1967 "is a" "(year of definition)" but has the name "2019 (year of definition)" and a value with the phrase "1967 (year of definition)" is supposed to be added
+                                $wrd = new word($this->user());
+                                $wrd->load_by_name($phr_name);
+                                if ($wrd->id() == 0) {
+                                    $wrd->set_name($phr_name);
+                                    $wrd->type_id = $phr_typ_cac->default_id();
+                                    $usr_msg->add($wrd->save());
+                                }
+                                if ($wrd->id() == 0) {
+                                    log_err('Cannot add word "' . $phr_name . '" when importing ' . $this->dsp_id(), 'value->import_obj');
+                                } else {
+                                    $phr = $wrd->phrase();
+                                }
+                            }
+                        }
+                    } else {
+                        // fallback for unit tests
+                        $phr->set_name($phr_name, word::class);
+                        $phr->set_id($test_obj->seq_id());
+                    }
+                }
+                $this->add($phr);
+            }
+        }
+
+        // save the word in the database
+        // TODO check why this is needed
+        if ($usr_msg == '' and $test_obj == null) {
+            $usr_msg->add($this->save());
+        }
+
+        return $usr_msg;
+    }
+
+    /**
+     * import a word list object from a JSON array object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_names(array $json_obj): user_message
+    {
+        $usr_msg = new user_message();
+        foreach ($json_obj as $word_name) {
+            $wrd = new word($this->user());
+            $wrd->set_name($word_name);
+            $this->add($wrd->phrase());
+        }
+        $this->save();
+
+        return $usr_msg;
+    }
+
+    /**
+     * fill this list with the phrases of the given json without writing to the database
+     * @param array $json_array
+     * @return user_message
+     */
+    function import_context(array $json_array): user_message
+    {
+        global $usr;
+
+        $usr_msg = new user_message();
+        foreach ($json_array as $key => $json_obj) {
+            if ($key == export::WORDS) {
+                foreach ($json_obj as $word) {
+                    $wrd = new word($usr);
+                    $import_result = $wrd->import_obj_fill($word);
+                    $this->add_by_name($wrd->phrase());
+                    $usr_msg->add($import_result);
+                }
+            } elseif ($key == export::TRIPLES) {
+                foreach ($json_obj as $triple) {
+                    $trp = new triple($usr);
+                    $import_result = $trp->import_obj($triple);
+                    $this->add_by_name($trp->phrase());
+                    $usr_msg->add($import_result);
+                }
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * create an array with the export json phrases
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $phr_lst = [];
+
+        foreach ($this->lst() as $phr) {
+            if (get_class($phr) == word::class or get_class($phr) == triple::class) {
+                $phr_lst[] = $phr->export_json($do_load);
+            } else {
+                log_err('The function phrase_list->export_json returns ' . $phr->dsp_id() . ', which is ' . get_class($phr) . ', but not a word.', 'export->get');
+            }
+        }
+        return $phr_lst;
     }
 
 
@@ -815,144 +945,6 @@ class phrase_list extends sandbox_list_named
         $phr_lst = $this->all_children($vrb_cac->get_verb(verbs::IS_PART_OF));
         $phr_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $phr_lst->name());
-        return $phr_lst;
-    }
-
-
-    /*
-     * im- and export
-     */
-
-    /**
-     * import a phrase list from an inner part of a JSON array object
-     *
-     * @param array $json_obj an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_lst(array $json_obj, object $test_obj = null): user_message
-    {
-        global $phr_typ_cac;
-
-        $usr_msg = new user_message();
-        foreach ($json_obj as $phr_name) {
-            if ($phr_name != '') {
-                $phr = new phrase($this->user());
-                if ($usr_msg->is_ok()) {
-                    if (!$test_obj) {
-                        // TODO prevent that this happens at all
-                        if (is_array($phr_name)) {
-                            $lib = new library();
-                            log_err($lib->dsp_array($phr_name) . ' is expected to be a string');
-                            // TODO remove this fallback solution
-                            if (count($phr_name) == 1) {
-                                $phr_name = $phr_name[0];
-                            }
-                        }
-                        if (!is_array($phr_name)) {
-                            $phr->load_by_name($phr_name);
-                            if ($phr->id() == 0) {
-                                // for new phrase use the word object
-                                // TODO add a test case if a triple with the name exists but the triple is based on other phrases than the given phrase
-                                //      e.g. 1. create triple with "1967 "is a" "(year of definition)" but has the name "2019 (year of definition)" and a value with the phrase "1967 (year of definition)" is supposed to be added
-                                $wrd = new word($this->user());
-                                $wrd->load_by_name($phr_name);
-                                if ($wrd->id() == 0) {
-                                    $wrd->set_name($phr_name);
-                                    $wrd->type_id = $phr_typ_cac->default_id();
-                                    $usr_msg->add($wrd->save());
-                                }
-                                if ($wrd->id() == 0) {
-                                    log_err('Cannot add word "' . $phr_name . '" when importing ' . $this->dsp_id(), 'value->import_obj');
-                                } else {
-                                    $phr = $wrd->phrase();
-                                }
-                            }
-                        }
-                    } else {
-                        // fallback for unit tests
-                        $phr->set_name($phr_name, word::class);
-                        $phr->set_id($test_obj->seq_id());
-                    }
-                }
-                $this->add($phr);
-            }
-        }
-
-        // save the word in the database
-        // TODO check why this is needed
-        if ($usr_msg == '' and $test_obj == null) {
-            $usr_msg->add($this->save());
-        }
-
-        return $usr_msg;
-    }
-
-    /**
-     * import a word list object from a JSON array object
-     *
-     * @param array $json_obj an array with the data of the json object
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_names(array $json_obj): user_message
-    {
-        $usr_msg = new user_message();
-        foreach ($json_obj as $word_name) {
-            $wrd = new word($this->user());
-            $wrd->set_name($word_name);
-            $this->add($wrd->phrase());
-        }
-        $this->save();
-
-        return $usr_msg;
-    }
-
-    /**
-     * fill this list with the phrases of the given json without writing to the database
-     * @param array $json_array
-     * @return user_message
-     */
-    function import_context(array $json_array): user_message
-    {
-        global $usr;
-
-        $usr_msg = new user_message();
-        foreach ($json_array as $key => $json_obj) {
-            if ($key == export::WORDS) {
-                foreach ($json_obj as $word) {
-                    $wrd = new word($usr);
-                    $import_result = $wrd->import_obj_fill($word);
-                    $this->add_by_name($wrd->phrase());
-                    $usr_msg->add($import_result);
-                }
-            } elseif ($key == export::TRIPLES) {
-                foreach ($json_obj as $triple) {
-                    $trp = new triple($usr);
-                    $import_result = $trp->import_obj($triple);
-                    $this->add_by_name($trp->phrase());
-                    $usr_msg->add($import_result);
-                }
-            }
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * create an array with the export json phrases
-     * @param bool $do_load to switch off the database load for unit tests
-     * @return array the filled array used to create the user export json
-     */
-    function export_json(bool $do_load = true): array
-    {
-        $phr_lst = [];
-
-        foreach ($this->lst() as $phr) {
-            if (get_class($phr) == word::class or get_class($phr) == triple::class) {
-                $phr_lst[] = $phr->export_json($do_load);
-            } else {
-                log_err('The function phrase_list->export_json returns ' . $phr->dsp_id() . ', which is ' . get_class($phr) . ', but not a word.', 'export->get');
-            }
-        }
         return $phr_lst;
     }
 
