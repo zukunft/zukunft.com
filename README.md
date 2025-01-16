@@ -237,8 +237,11 @@ most objects have these sections in this order
 - cast - create an api object and set the vars from an api json
 - api - create an api array for the frontend and set the vars based on a frontend api message
 - im- and export - create an export object and set the vars from an import object
+- modify - change potentially all variables of this object
 - save - manage to update the database
 - sql write fields - field list for writing to the database
+- information - functions to make code easier to read
+- internal - private functions to make code easier to read
 - debug - internal support functions for debugging that must include dsp_id()
 
 some sections are move to related classes to reduce the class size

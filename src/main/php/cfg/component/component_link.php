@@ -533,7 +533,7 @@ class component_link extends sandbox_link
         global $db_con;
         $result = false;
 
-        $qp = $this->load_standard_sql($db_con->sql_creator(), $this::class);
+        $qp = $this->load_standard_sql($db_con->sql_creator());
 
         if ($qp->has_par()) {
             $db_dsl = $db_con->get1($qp);
@@ -814,6 +814,35 @@ class component_link extends sandbox_link
         }
 
         return $vars;
+    }
+
+    /**
+     * map a component api json to this model component link object
+     * @param array $api_json the api array with the values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+            if ($value != null) {
+                if ($key == json_fields::POS) {
+                    $this->order_nbr = $value;
+                }
+                if ($key == json_fields::TYPE) {
+                    $this->set_predicate_id($value);
+                }
+                if ($key == json_fields::POS_TYPE) {
+                    $this->set_pos_type_by_id($value);
+                }
+                if ($key == json_fields::STYLE) {
+                    $this->set_style_by_id($value);
+                }
+            }
+        }
+
+        return $msg;
     }
 
 

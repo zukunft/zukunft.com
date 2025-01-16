@@ -5,6 +5,15 @@
     model/view/component_list.php - list of predefined system components
     ------------------------
 
+    The main sections of this object are
+    - construct and map: including the mapping of the db row to this component link list object
+    - load:              database access object (DAO) functions
+    - load sql:          create the sql statements for loading from the db
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
+    - im- and export:    create an export object and set the vars from an import object
+    - modify:            change potentially all variables of this list object
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -86,99 +95,6 @@ class component_list extends sandbox_list
      */
 
     /**
-     * add system component filter to
-     * the SQL statement to load only the view id and name
-     * to exclude the system component from the user selection
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
-     * @param string $pattern the pattern to filter the views
-     * @param int $limit the number of rows to return
-     * @param int $offset jump over these number of pages
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_names(
-        sql_creator                                    $sc,
-        sandbox_named|sandbox_link_named|combine_named $sbx,
-        string                                         $pattern = '',
-        int                                            $limit = 0,
-        int                                            $offset = 0
-    ): sql_par
-    {
-        $qp = $this->load_sql_names_pre($sc, $sbx, $pattern, $limit, $offset);
-
-        $typ_lst = new type_list();
-        $sc->add_where(
-            component::FLD_TYPE,
-            implode(',', $typ_lst->component_id_list(comp_type_shared::SYSTEM_TYPES)),
-            sql_par_type::CONST_NOT_IN);
-
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * set the common SQL query parameters to load a list of components
-     * @param sql_creator $sc the db connection object as a function parameter for unit testing
-     * @param string $class the name of this class from where the call has been triggered
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql(sql_creator $sc, string $class = self::class): sql_par
-    {
-        $qp = new sql_par($class);
-        $sc->set_class(component::class);
-        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields(component::FLD_NAMES);
-        $sc->set_usr_fields(component::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(component::FLD_NAMES_NUM_USR);
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve a list of sources from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
-    {
-        $qp = $this->load_sql($sc, 'ids');
-        $sc->add_where(component::FLD_ID, $ids);
-        $sc->set_order(component::FLD_ID, sql::ORDER_ASC);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
-     * set the SQL query parameters to load a list of components by the view id
-     * @param sql_creator $sc the db connection object as a function parameter for unit testing
-     * @param int $id the id of the view to which the components should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_view_id(sql_creator $sc, int $id): sql_par
-    {
-        $qp = $this->load_sql($sc);
-        $qp->name .= 'view_id';
-        $sc->set_name($qp->name);
-        $sc->set_join_fields(
-            component_link::FLD_NAMES,
-            component_link::class,
-            component::FLD_ID,
-            component::FLD_ID);
-        $sc->add_where(view::FLD_ID, $id, null, sql_db::LNK_TBL);
-        $sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
-    }
-
-    /**
      * load a list of component names
      * @param string $pattern the pattern to filter the components
      * @param int $limit the number of rows to return
@@ -224,26 +140,107 @@ class component_list extends sandbox_list
         return parent::load($qp);
     }
 
-    /**
-     * TODO check if the position is set and if not set it
-     * add one component to the component list, but only if it is not yet part of the component list
-     * @param component $cmp_to_add the component that should be added to the list
+
+    /*
+     * load sql
      */
-    function add(component $cmp_to_add): void
+
+    /**
+     * add system component filter to
+     * the SQL statement to load only the view id and name
+     * to exclude the system component from the user selection
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sandbox_named|sandbox_link_named|combine_named $sbx the single child object
+     * @param string $pattern the pattern to filter the views
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_names(
+        sql_creator                                    $sc,
+        sandbox_named|sandbox_link_named|combine_named $sbx,
+        string                                         $pattern = '',
+        int                                            $limit = 0,
+        int                                            $offset = 0
+    ): sql_par
     {
-        log_debug($cmp_to_add->dsp_id());
-        if (!in_array($cmp_to_add->id(), $this->ids())) {
-            if ($cmp_to_add->id() <> 0) {
-                $this->add_obj($cmp_to_add);
-            }
-        } else {
-            log_debug($cmp_to_add->dsp_id() . ' not added, because it is already in the list');
-        }
+        $qp = $this->load_sql_names_pre($sc, $sbx, $pattern, $limit, $offset);
+
+        $typ_lst = new type_list();
+        $sc->add_where(
+            component_db::FLD_TYPE,
+            implode(',', $typ_lst->component_id_list(comp_type_shared::SYSTEM_TYPES)),
+            sql_par_type::CONST_NOT_IN);
+
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of sources from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    {
+        $qp = $this->load_sql($sc, 'ids');
+        $sc->add_where(component::FLD_ID, $ids);
+        $sc->set_order(component::FLD_ID, sql::ORDER_ASC);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of components by the view id
+     * @param sql_creator $sc the db connection object as a function parameter for unit testing
+     * @param int $id the id of the view to which the components should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_view_id(sql_creator $sc, int $id): sql_par
+    {
+        $qp = $this->load_sql($sc);
+        $qp->name .= 'view_id';
+        $sc->set_name($qp->name);
+        $sc->set_join_fields(
+            component_link::FLD_NAMES,
+            component_link::class,
+            component::FLD_ID,
+            component::FLD_ID);
+        $sc->add_where(view::FLD_ID, $id, null, sql_db::LNK_TBL);
+        $sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
+     * set the common SQL query parameters to load a list of components
+     * @param sql_creator $sc the db connection object as a function parameter for unit testing
+     * @param string $class the name of this class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_creator $sc, string $class = self::class): sql_par
+    {
+        $qp = new sql_par($class);
+        $sc->set_class(component::class);
+        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(component::FLD_NAMES);
+        $sc->set_usr_fields(component::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(component::FLD_NAMES_NUM_USR);
+        return $qp;
     }
 
 
     /*
-     * cast
+     * api
      */
 
     /**
@@ -302,6 +299,28 @@ class component_list extends sandbox_list
             $cmp_lst[] = $cmp->export_json($do_load);
         }
         return $cmp_lst;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * TODO check if the position is set and if not set it
+     * add one component to the component list, but only if it is not yet part of the component list
+     * @param component $cmp_to_add the component that should be added to the list
+     */
+    function add(component $cmp_to_add): void
+    {
+        log_debug($cmp_to_add->dsp_id());
+        if (!in_array($cmp_to_add->id(), $this->ids())) {
+            if ($cmp_to_add->id() <> 0) {
+                $this->add_obj($cmp_to_add);
+            }
+        } else {
+            log_debug($cmp_to_add->dsp_id() . ' not added, because it is already in the list');
+        }
     }
 
 }

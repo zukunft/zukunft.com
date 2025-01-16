@@ -41,8 +41,6 @@ use shared\types\component_type as comp_type_shared;
 use cfg\helper\type_list;
 use cfg\helper\type_object;
 
-global $cmp_typ_cac;
-
 class component_type_list extends type_list
 {
 

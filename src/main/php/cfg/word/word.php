@@ -145,7 +145,9 @@ class word extends sandbox_typed
 
     // comments used for the database creation
     const TBL_COMMENT = 'for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words';
-    const FLD_ID = 'word_id'; // TODO change the user_id field comment to 'the user who has changed the standard word'
+
+    // forward the const to enable usage of $this::CONST_NAME
+    const FLD_ID = word_db::FLD_ID;
     const FLD_LST_MUST_BE_IN_STD = word_db::FLD_LST_MUST_BE_IN_STD;
     const FLD_LST_MUST_BUT_USER_CAN_CHANGE = word_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
     const FLD_LST_USER_CAN_CHANGE = word_db::FLD_LST_USER_CAN_CHANGE;
