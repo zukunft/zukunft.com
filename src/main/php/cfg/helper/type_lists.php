@@ -32,8 +32,10 @@
 
 namespace cfg\helper;
 
+include_once API_OBJECT_PATH . 'api_message.php';
 include_once API_SYSTEM_PATH . 'type_object.php';
 include_once API_SYSTEM_PATH . 'type_lists.php';
+include_once API_OBJECT_PATH . 'controller.php';
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
 include_once MODEL_USER_PATH . 'user_list.php';
@@ -75,7 +77,7 @@ include_once MODEL_LOG_PATH . 'change_field_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_profile_list.php';
 include_once MODEL_USER_PATH . 'user_list.php';
-include_once API_OBJECT_PATH . 'controller.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 
 use api\system\type_lists as type_lists_api;
 use cfg\component\position_type_list;
@@ -104,7 +106,9 @@ use cfg\verb\verb_list;
 use cfg\view\view_link_type_list;
 use cfg\view\view_sys_list;
 use cfg\view\view_type_list;
+use controller\api_message;
 use controller\controller;
+use shared\types\api_type_list;
 
 class type_lists
 {
@@ -270,4 +274,93 @@ class type_lists
 
         return $result;
     }
+
+    /*
+     * api
+     */
+
+    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
+        // null values are not needed in the api message to the frontend
+        // but in the api message to the backend null values are relevant
+        // e.g. to remove empty string overwrites
+        $vars = $this->api_json_array();
+        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+
+        // add header if requested
+        if ($typ_lst->use_header()) {
+            global $db_con;
+            $class = $this::class;
+            $api_msg = new api_message($db_con, $class, $usr);
+            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
+        } else {
+            $msg = $vars;
+        }
+
+        return json_encode($msg);
+    }
+
+    function api_json_array(): array
+    {
+
+        log_debug();
+        $vars = [];
+        global $usr_pro_cac;
+        $vars[controller::API_LIST_USER_PROFILES] = $usr_pro_cac->api_json_array();
+        global $phr_typ_cac;
+        $vars[controller::API_LIST_PHRASE_TYPES] = $phr_typ_cac->api_json_array();
+        global $frm_typ_cac;
+        $vars[controller::API_LIST_FORMULA_TYPES] = $frm_typ_cac->api_json_array();
+        global $frm_lnk_typ_cac;
+        $vars[controller::API_LIST_FORMULA_LINK_TYPES] = $frm_lnk_typ_cac->api_json_array();
+        global $elm_typ_cac;
+        $vars[controller::API_LIST_ELEMENT_TYPES] = $elm_typ_cac->api_json_array();
+        global $msk_typ_cac;
+        $vars[controller::API_LIST_VIEW_TYPES] = $msk_typ_cac->api_json_array();
+        global $msk_sty_cac;
+        $vars[controller::API_LIST_VIEW_STYLES] = $msk_sty_cac->api_json_array();
+        global $msk_lnk_typ_cac;
+        $vars[controller::API_LIST_VIEW_LINK_TYPES] = $msk_lnk_typ_cac->api_json_array();
+        global $cmp_typ_cac;
+        $vars[controller::API_LIST_COMPONENT_TYPES] = $cmp_typ_cac->api_json_array();
+        // TODO activate
+        //global $cmp_lnk_typ_cac;
+        //$vars[controller::API_LIST_VIEW_COMPONENT_LINK_TYPES] = $cmp_lnk_typ_cac->api_json_array();
+        global $pos_typ_cac;
+        $vars[controller::API_LIST_COMPONENT_POSITION_TYPES] = $pos_typ_cac->api_json_array();
+        global $ref_typ_cac;
+        $vars[controller::API_LIST_REF_TYPES] = $ref_typ_cac->api_json_array();
+        global $src_typ_cac;
+        $vars[controller::API_LIST_SOURCE_TYPES] = $src_typ_cac->api_json_array();
+        global $shr_typ_cac;
+        $vars[controller::API_LIST_SHARE_TYPES] = $shr_typ_cac->api_json_array();
+        global $ptc_typ_cac;
+        $vars[controller::API_LIST_PROTECTION_TYPES] = $ptc_typ_cac->api_json_array();
+        global $lan_cac;
+        $vars[controller::API_LIST_LANGUAGES] = $lan_cac->api_json_array();
+        global $lan_for_cac;
+        $vars[controller::API_LIST_LANGUAGE_FORMS] = $lan_for_cac->api_json_array();
+        global $sys_log_sta_cac;
+        $vars[controller::API_LIST_SYS_LOG_STATI] = $sys_log_sta_cac->api_json_array();
+        global $job_typ_cac;
+        $vars[controller::API_LIST_JOB_TYPES] = $job_typ_cac->api_json_array();
+        global $cng_act_cac;
+        $vars[controller::API_LIST_CHANGE_LOG_ACTIONS] = $cng_act_cac->api_json_array();
+        global $cng_tbl_cac;
+        $vars[controller::API_LIST_CHANGE_LOG_TABLES] = $cng_tbl_cac->api_json_array();
+        global $cng_fld_cac;
+        $vars[controller::API_LIST_CHANGE_LOG_FIELDS] = $cng_fld_cac->api_json_array();
+        global $vrb_cac;
+        $vars[controller::API_LIST_VERBS] = $vrb_cac->api_json_array();
+        global $sys_msk_cac;
+        if ($sys_msk_cac != null) {
+            $vars[controller::API_LIST_SYSTEM_VIEWS] = $sys_msk_cac->api_json_array();
+        }
+        return $vars;
+    }
+
 }

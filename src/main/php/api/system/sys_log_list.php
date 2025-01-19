@@ -43,13 +43,12 @@ class sys_log_list extends api_message implements JsonSerializable
 {
 
     // field names used for JSON creation
-    public ?array $sys_log = null;      // a list of system error objects
+    public ?array $sys_log_list = null;      // a list of system error objects
 
     function __construct(sql_db $db_con, ?user $usr = null)
     {
-        parent::__construct($db_con, api::JSON_BODY_SYS_LOG, $usr);
-        $this->type = api_message::SYS_LOG;
-        $this->sys_log = null;
+        parent::__construct($db_con, self::class, $usr);
+        $this->sys_log_list = null;
         if ($usr != null) {
             $this->user_id = $usr->id();
             $this->user = $usr->name;

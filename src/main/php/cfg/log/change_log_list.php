@@ -53,6 +53,7 @@ include_once DB_PATH . 'sql_type.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
 include_once WEB_LOG_PATH . 'change_log_list.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
 use api\log\change_log_list as change_log_list_api;
@@ -76,6 +77,7 @@ use cfg\word\word;
 use cfg\word\triple;
 use html\log\change_log_list as change_log_list_dsp;
 use shared\library;
+use shared\types\api_type_list;
 
 class change_log_list extends base_list
 {
@@ -88,43 +90,6 @@ class change_log_list extends base_list
     // TODO add table view
     // TODO add table view unit test
     // TODO add table view db read test
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return change_log_list_api the word list object with the display interface functions
-     */
-    function api_obj(): change_log_list_api
-    {
-        $api_obj = new change_log_list_api();
-        foreach ($this->lst() as $chg) {
-            $api_obj->add($chg->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    /**
-     * @return change_log_list_dsp the word list object with the display interface functions
-     */
-    function dsp_obj(): change_log_list_dsp
-    {
-        $dsp_obj = new change_log_list_dsp();
-        foreach ($this->lst() as $chg) {
-            $dsp_obj->add($chg->dsp_obj());
-        }
-        return $dsp_obj;
-    }
 
 
     /*
@@ -606,6 +571,23 @@ class change_log_list extends base_list
             $msg = $first->dsp_last();
         }
         return $msg;
+    }
+
+
+    /*
+     * TODO deprecate
+     */
+
+    /**
+     * @return change_log_list_dsp the word list object with the display interface functions
+     */
+    function dsp_obj(): change_log_list_dsp
+    {
+        $dsp_obj = new change_log_list_dsp();
+        foreach ($this->lst() as $chg) {
+            $dsp_obj->add($chg->dsp_obj());
+        }
+        return $dsp_obj;
     }
 
 }

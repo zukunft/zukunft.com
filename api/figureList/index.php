@@ -40,18 +40,17 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_FORMULA_PATH . 'fig_ids.php';
 include_once MODEL_FORMULA_PATH . 'figure_list.php';
-include_once API_FORMULA_PATH . 'figure_list.php';
 
 use cfg\formula\fig_ids;
 use controller\controller;
 use cfg\user\user;
 use cfg\formula\figure_list;
-use api\formula\figure_list as figure_list_api;
 use shared\api;
 
 // open database
@@ -61,7 +60,7 @@ $db_con = prg_start("api/figureList", "", false);
 $frm_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
 
 $msg = '';
-$result = new figure_list_api(); // reset the html code var
+$result = ''; // reset the json message string
 
 // load the session user parameters
 $usr = new user;
@@ -73,14 +72,14 @@ if ($usr->id() > 0) {
     if ($frm_ids != '') {
         $lst = new figure_list($usr);
         $lst->load_by_ids(new fig_ids($frm_ids));
-        $result = $lst->api_obj();
+        $result = $lst->api_json();
     } else {
         $msg = 'formula id is missing';
     }
 }
 
 $ctrl = new controller();
-$ctrl->get_list($result, $msg);
+$ctrl->get_json($result, $msg);
 
 
 prg_end_api($db_con);

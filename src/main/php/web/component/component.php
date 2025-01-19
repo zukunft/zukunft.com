@@ -52,6 +52,7 @@ include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once WEB_VIEW_PATH . 'view_list.php';
 include_once WEB_TYPES_PATH . 'view_style_list.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
+include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -75,8 +76,9 @@ use html\phrase\phrase_list;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
 use html\view\view_list;
-use shared\types\view_styles;
 use shared\types\component_type;
+use shared\types\position_types;
+use shared\types\view_styles;
 use shared\views;
 use shared\json_fields;
 use shared\library;
@@ -108,7 +110,7 @@ class component extends sandbox_typed
 
     // vars from the link
     // TODO move these vars to the frontend component link object
-    public int $pos_type_id = 0;
+    public int $pos_type_id = position_types::DEFAULT_ID;
     public ?int $style_id = null;
 
 
@@ -750,7 +752,7 @@ class component extends sandbox_typed
         if (array_key_exists(json_fields::POS_TYPE, $json_array)) {
             $this->pos_type_id = $json_array[json_fields::POS_TYPE];
         } else {
-            $this->pos_type_id = 0;
+            $this->pos_type_id = position_types::DEFAULT_ID;
         }
         if (array_key_exists(json_fields::STYLE, $json_array)) {
             $this->style_id = $json_array[json_fields::STYLE];
@@ -777,9 +779,13 @@ class component extends sandbox_typed
         $vars = parent::api_array();
         $vars[json_fields::CODE_ID] = $this->code_id;
         $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
+        if ($this->position != 0 or $this->link_id != 0) {
         $vars[json_fields::POSITION] = $this->position;
-        $vars[json_fields::LINK_ID] = $this->link_id;
-        if ($this->pos_type_id != 0) {
+        }
+        if ($this->link_id != 0) {
+            $vars[json_fields::LINK_ID] = $this->link_id;
+        }
+        if ($this->pos_type_id != position_types::DEFAULT_ID or $this->link_id != 0) {
             $vars[json_fields::POS_TYPE] = $this->pos_type_id;
         }
         if ($this->style_id != 0) {

@@ -109,6 +109,10 @@ class component_link_tests
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
 
+        $t->subheader('component link base object handling');
+        $lnk = $t->component_link_filled();
+        $t->assert_reset($lnk);
+
     }
 
     /**

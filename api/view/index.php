@@ -37,16 +37,15 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VIEW_PATH . 'view.php';
-include_once API_VIEW_PATH . 'view.php';
 
 use controller\controller;
 use cfg\user\user;
 use cfg\view\view;
-use api\view\view as view_api;
 use shared\api;
 
 // open database
@@ -58,7 +57,7 @@ $dsp_name = $_GET[api::URL_VAR_NAME] ?? '';
 $cmp_lvl = $_GET[api::URL_VAR_CHILDREN] ?? 0;
 
 $msg = '';
-$result = new view_api(); // reset the html code var
+$result = ''; // reset the json message string
 
 // load the session user parameters
 $usr = new user;
@@ -73,20 +72,20 @@ if ($usr->id() > 0) {
         if ($cmp_lvl > 0) {
             $msk->load_components();
         }
-        $result = $msk->api_obj();
+        $result = $msk->api_json();
     } elseif ($dsp_name != '') {
         $msk->load_by_name($dsp_name);
         if ($cmp_lvl > 0) {
             $msk->load_components();
         }
-        $result = $msk->api_obj();
+        $result = $msk->api_json();
     } else {
         $msg = 'view id or name is missing';
     }
 }
 
 $ctrl = new controller();
-$ctrl->get($result, $msg);
+$ctrl->get_json($result, $msg);
 
 
 prg_end_api($db_con);

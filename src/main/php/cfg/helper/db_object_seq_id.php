@@ -12,13 +12,13 @@
     - object vars:       the variables of this object
     - construct and map: including the mapping of the db row to this word object
     - set and get:       to capsule the vars from unexpected changes
-    - cast:              create an api object and set the vars from an api json
     - sql create:        to create the database objects
     - load:              database access object (DAO) functions
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - im- and export:    create an export object and set the vars from an import object
+    - modify:            change potentially all variables of this word object
     - information:       functions to make code easier to read
     - to overwrite:      functions that should always be overwritten by the child objects
-    - interface:         to fill api messages
     - debug:             internal support functions for debugging
 
 
@@ -48,7 +48,7 @@
 
 namespace cfg\helper;
 
-include_once API_SYSTEM_PATH . 'db_object.php';
+//include_once API_OBJECT_PATH . 'api_message.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_field_default.php';
@@ -57,10 +57,11 @@ include_once DB_PATH . 'sql_field_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+//include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use api\system\db_object as db_object_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_field_default;
@@ -68,11 +69,13 @@ use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type_list;
 use cfg\sandbox\sandbox;
+use cfg\user\user;
 use cfg\user\user_message;
+use controller\api_message;
+use shared\types\api_type_list;
 use shared\json_fields;
-use JsonSerializable;
 
-class db_object_seq_id extends db_object implements JsonSerializable
+class db_object_seq_id extends db_object
 {
 
     /*
@@ -159,55 +162,6 @@ class db_object_seq_id extends db_object implements JsonSerializable
     function id(): int
     {
         return $this->id;
-    }
-
-
-    /*
-     * modify
-     */
-
-    /**
-     * fill this seq id object based on the given object
-     * if the given id is zero the id is never overwritten
-     * if the given id is not zero the id is set if not yet done
-     *
-     * @param db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
-     * @return user_message a warning in case of a conflict e.g. due to a missing change time
-     */
-    function fill(db_object_seq_id $sbx): user_message
-    {
-        $usr_msg = new user_message();
-        if ($sbx->id() != 0) {
-            if ($this->id() == 0) {
-                $this->set_id($sbx->id());
-            } elseif ($sbx->id() != $this->id()) {
-                $usr_msg->add_message(
-                    'Unexpected conflict of the database id. '
-                    . $this->dsp_id() . ' != ' . $this->dsp_id());
-            }
-        }
-        return $usr_msg;
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return db_object_api the source frontend api object
-     */
-    function api_db_obj(): db_object_api
-    {
-        return new db_object_api($this->id());
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_db_obj()->get_json();
     }
 
 
@@ -324,6 +278,17 @@ class db_object_seq_id extends db_object implements JsonSerializable
      */
 
     /**
+     * load one database row e.g. word, triple, value, formula, result, view, component or log entry from the database
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int the id of the object found and zero if nothing is found
+     */
+    protected function load(sql_par $qp): int
+    {
+        parent::load_without_id_return($qp);
+        return $this->id();
+    }
+
+    /**
      * create an SQL statement to retrieve a user sandbox object by id from the database
      *
      * @param sql_creator $sc with the target db_type set
@@ -335,15 +300,54 @@ class db_object_seq_id extends db_object implements JsonSerializable
         return parent::load_sql_by_id_str($sc, $id);
     }
 
-    /**
-     * load one database row e.g. word, triple, value, formula, result, view, component or log entry from the database
-     * @param sql_par $qp the query parameters created by the calling function
-     * @return int the id of the object found and zero if nothing is found
+
+    /*
+     * api
      */
-    protected function load(sql_par $qp): int
+
+    /**
+     * create the api json message string of this database object for the frontend
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
     {
-        parent::load_without_id_return($qp);
-        return $this->id();
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
+        // null values are not needed in the api message to the frontend
+        // but in the api message to the backend null values are relevant
+        // e.g. to remove empty string overwrites
+        $vars = $this->api_json_array($typ_lst, $usr);
+        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+
+        // add header if requested
+        if ($typ_lst->use_header()) {
+            global $db_con;
+            $class = $this::class;
+            $api_msg = new api_message($db_con, $class, $usr);
+            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
+        } else {
+            $msg = $vars;
+        }
+
+        return json_encode($msg);
+    }
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = [];
+        $vars[json_fields::ID] = $this->id();
+        return $vars;
     }
 
 
@@ -363,6 +367,34 @@ class db_object_seq_id extends db_object implements JsonSerializable
         // add a dummy id for unit testing
         if ($test_obj) {
             $db_obj->set_id($test_obj->seq_id());
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this seq id object based on the given object
+     * if the given id is zero the id is never overwritten
+     * if the given id is not zero the id is set if not yet done
+     *
+     * @param db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(db_object_seq_id $sbx): user_message
+    {
+        $usr_msg = new user_message();
+        if ($sbx->id() != 0) {
+            if ($this->id() == 0) {
+                $this->set_id($sbx->id());
+            } elseif ($sbx->id() != $this->id()) {
+                $usr_msg->add_message(
+                    'Unexpected conflict of the database id. '
+                    . $this->dsp_id() . ' != ' . $this->dsp_id());
+            }
         }
         return $usr_msg;
     }
@@ -428,21 +460,6 @@ class db_object_seq_id extends db_object implements JsonSerializable
         return 0;
     }
 
-
-    /*
-     * interface
-     */
-
-    /**
-     * for the message from the backend to the frontend
-     * @return array with the ID
-     */
-    function jsonSerialize(): array
-    {
-        $vars = [];
-        $vars[json_fields::ID] = $this->id();
-        return $vars;
-    }
 
     /*
      * debug

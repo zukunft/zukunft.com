@@ -88,11 +88,11 @@ class sheet
     <tr>
       <th scope="row">1</th>
       <td>';
-          // temp code
-          $wrd = new triple();
-          $wrd->load_by_name('climate warming');
-          $result .= $wrd->display_linked();
-          $result .= '</td>
+        // temp code
+        $trp = new triple();
+        $trp->load_by_name('climate warming');
+        $result .= $trp->display_linked();
+        $result .= '</td>
       <td class="text-right">31.5</td>
       <td>reduce climate gas emissions</td>
       <td class="text-right">35.2</td>
@@ -100,11 +100,11 @@ class sheet
     <tr>
       <th scope="row">2</th>
       <td>';
-          // temp code
-          $wrd = new word();
-          $wrd->load_by_name('populism');
-          $result .= $wrd->display_linked();
-          $result .= '</td>
+        // temp code
+        $wrd = new word();
+        $wrd->load_by_name('populism');
+        $result .= $wrd->display_linked();
+        $result .= '</td>
       <td class="text-right">23.8</td>
       <td>avoid wrong decisions</td>
       <td class="text-right">34.1</td>
@@ -112,11 +112,11 @@ class sheet
     <tr>
       <th scope="row">3</th>
       <td>';
-          // temp code
-          $wrd = new word();
-          $wrd->load_by_name('health');
-          $result .= $wrd->display_linked();
-          $result .= '</td>
+        // temp code
+        $wrd = new word();
+        $wrd->load_by_name('health');
+        $result .= $wrd->display_linked();
+        $result .= '</td>
       <td class="text-right">20.4</td>
       <td>research</td>
       <td class="text-right">34.1</td>
@@ -124,11 +124,11 @@ class sheet
     <tr>
       <th scope="row">4</th>
       <td>';
-          // temp code
-          $wrd = new word();
-          $wrd->load_by_name('poverty');
-          $result .= $wrd->display_linked();
-          $result .= '</td>
+        // temp code
+        $wrd = new word();
+        $wrd->load_by_name('poverty');
+        $result .= $wrd->display_linked();
+        $result .= '</td>
       <td class="text-right">13.6</td>
       <td>taxes</td>
       <td class="text-right">8.8</td>
@@ -136,11 +136,11 @@ class sheet
     <tr>
       <th scope="row">5</th>
       <td>';
-          // temp code
-          $wrd = new word();
-          $wrd->load_by_name('education');
-          $result .= $wrd->display_linked();
-          $result .= '</td>
+        // temp code
+        $wrd = new word();
+        $wrd->load_by_name('education');
+        $result .= $wrd->display_linked();
+        $result .= '</td>
       <td class="text-right">9.4</td>
       <td>spending</td>
       <td class="text-right">14.3</td>

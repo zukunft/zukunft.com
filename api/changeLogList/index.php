@@ -37,6 +37,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -59,7 +60,7 @@ $wrd_id = $_GET[api::URL_VAR_WORD_ID] ?? 0;
 $wrd_fld = $_GET[api::URL_VAR_WORD_FLD] ?? '';
 
 $msg = '';
-$result = new term_list_api(); // reset the html code var
+$result = ''; // reset the json message string
 
 // load the session user parameters
 $usr = new user;
@@ -73,14 +74,14 @@ if ($usr->id() > 0) {
         $wrd->load_by_id($wrd_id);
         $lst = new change_log_list();
         $lst->load_by_fld_of_wrd($wrd, $usr, $wrd_fld);
-        $result = $lst->api_obj();
+        $result = $lst->api_json();
     } else {
         $msg = 'word id missing';
     }
 }
 
 $ctrl = new controller();
-$ctrl->get_list($result, $msg);
+$ctrl->get_json($result, $msg);
 
 
 prg_end_api($db_con);

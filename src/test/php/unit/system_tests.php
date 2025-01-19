@@ -313,6 +313,7 @@ class system_tests
         $this->php_include_tests($t, MODEL_PATH);
         $this->php_include_tests($t, API_PATH);
         $this->php_include_tests($t, WEB_PATH);
+        $this->php_class_section_tests($t, MODEL_COMPONENT_PATH);
 
         // ... and check if the prepared sql name is unique
         if (!in_array($qp->name, $sql_names)) {
@@ -463,6 +464,7 @@ class system_tests
      * check if all used classes are also included once within the same file
      *
      * @param test_cleanup $t
+     * @param string $base_path path name of the folder with the php scripts that should be checked
      * @return void
      */
     function php_include_tests(test_cleanup $t, string $base_path): void
@@ -499,7 +501,7 @@ class system_tests
                         $sub_path = $lib->str_between($base_path, '../', '/');
                         $test_name = 'includes missing in ' . $path . '\\' . $class
                             . ' in ' . $sub_path . $code_file
-                            . ' (' . $pos . ' of ' .count($code_files) . ')';
+                            . ' (' . $pos . ' of ' . count($code_files) . ')';
                         $t->assert($test_name, '', $class);
                     }
                 } else {
@@ -507,6 +509,54 @@ class system_tests
                 }
             }
             $pos++;
+        }
+    }
+
+    /**
+     * check if the functions in the classes are grouped by sections
+     * if the sections are in the same order
+     * and if the sections are described in the class header
+     *
+     * @param test_cleanup $t
+     * @param string $base_path path name of the folder with the php scripts that should be checked
+     * @return void
+     */
+    function php_class_section_tests(test_cleanup $t, string $base_path): void
+    {
+        $lib = new library();
+        $file_array = $lib->dir_to_array($base_path);
+        $code_files = $lib->array_to_path($file_array);
+        $pos = 1;
+        foreach ($code_files as $code_file) {
+            log_debug($code_file);
+            $ctrl_code = file($base_path . $code_file);
+            $function_section_names = $lib->php_code_function($ctrl_code);
+            // TODO create
+            foreach ($function_section_names as $function_section_name) {
+                $function_name = $function_section_name[0];
+                $section_name = $function_section_name[1];
+                $section_expected = $lib->php_expected_function_section($function_name);
+                // if a class has more than 100 lines the functions should be grouped in sections
+                if (count($ctrl_code) > 100) {
+                    if ($section_name == '' and $function_name != '') {
+                        log_err('section for function ' . $function_name . ' missing');
+                    }
+                    if ($section_name != $section_expected) {
+                        if ($section_expected == '') {
+                            if ($section_name != '') {
+                                log_warning('section for function ' . $function_name
+                                    . ' not yet defined that it should be ' . $section_name . ' in ' . $code_file);
+                            } else {
+                                log_err('section for function ' . $function_name
+                                    . ' not yet defined' . ' in ' . $code_file);
+                            }
+                        } else {
+                            log_err('section for function ' . $function_name
+                                . ' is expected to be ' . $section_expected . ' in ' . $code_file);
+                        }
+                    }
+                }
+            }
         }
     }
 

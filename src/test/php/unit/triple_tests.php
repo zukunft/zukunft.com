@@ -81,6 +81,10 @@ class triple_tests
         $t->assert_sql_delete($sc, $trp, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $trp, [sql_type::USER, sql_type::EXCLUDE]);
 
+        $t->subheader('view base object handling');
+        $trp = $t->triple_filled_add();
+        $t->assert_reset($trp);
+
         $t->subheader('triple api unit tests');
         $trp = $t->triple();
         $t->assert_api_json($trp);

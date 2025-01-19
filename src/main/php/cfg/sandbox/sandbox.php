@@ -672,7 +672,7 @@ class sandbox extends db_object_seq_id_user
      */
     function api_json_old(): string
     {
-        return $this->api_obj()->get_json();
+        return $this->api_json();
     }
 
     /**
@@ -882,30 +882,13 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
-     * create the api json message
-     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(api_type_list|array $typ_lst = []): string
-    {
-        if (is_array($typ_lst)) {
-            $typ_lst = new api_type_list($typ_lst);
-        }
-
-        // null values are not needed in the api message to the frontend (but in the api message to the backend!)
-        $vars = $this->api_json_array($typ_lst);
-        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
-
-        return json_encode($vars);
-    }
-
-    /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
      * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst): array
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = [];
 

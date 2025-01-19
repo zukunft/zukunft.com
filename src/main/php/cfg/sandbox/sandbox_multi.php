@@ -872,9 +872,10 @@ class sandbox_multi extends db_object_multi_user
      * create the array for the api message
      * which is on this level the same as the export json array
      * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst): array
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         return $this->common_json();
     }

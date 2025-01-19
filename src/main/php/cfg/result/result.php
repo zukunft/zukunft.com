@@ -407,9 +407,14 @@ class result extends sandbox_value
         $this->src_grp = $grp;
     }
 
+    function source_group(): group
+    {
+        return $this->src_grp;
+    }
+
     function src_grp_id(): int|string
     {
-        return $this->src_grp->id();
+        return $this->source_group()->id();
     }
 
     function set_formula(formula $frm): void
@@ -417,7 +422,7 @@ class result extends sandbox_value
         $this->frm = $frm;
     }
 
-    function frm_id(): int
+    function formula_id(): int
     {
         return $this->frm->id();
     }
@@ -460,80 +465,6 @@ class result extends sandbox_value
     function phr_names(): array
     {
         return $this->grp()->phrase_list()->names();
-    }
-
-    /**
-     * map a result api json to this model result object
-     * @param array $api_json the api array with the values that should be mapped
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $usr_msg = new user_message();
-
-        // make sure that there are no unexpected leftovers but keep the user
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::ID) {
-                $this->set_id($value);
-            }
-
-            if ($key == json_fields::PHRASES) {
-                $phr_lst = new phrase_list($this->user());
-                $usr_msg->add($phr_lst->set_by_api_json($value));
-                if ($usr_msg->is_ok()) {
-                    $this->grp()->set_phrase_list($phr_lst);
-                }
-            }
-
-            if ($key == json_fields::NUMBER) {
-                if (is_numeric($value)) {
-                    $this->set_value($value);
-                } else {
-                    $usr_msg->add_message('Import result: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
-                }
-            }
-
-        }
-
-        return $usr_msg;
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return result_api the formula result frontend api object
-     */
-    function api_obj(bool $do_save = true): object
-    {
-        $api_obj = new result_api($this->id());
-        $api_obj->set_number($this->number());
-        if ($this->grp()->phrase_list() != null) {
-            $grp = $this->grp()->phrase_list()->get_grp_id($do_save);
-            $api_obj->set_grp($grp->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(api_type_list|array $typ_lst = []): string
-    {
-        if (is_array($typ_lst)) {
-            $typ_lst = new api_type_list($typ_lst);
-        }
-        $do_save = true;
-        if ($typ_lst->test_mode()) {
-            $do_save = false;
-        }
-        return $this->api_obj($do_save)->get_json();
     }
 
 
@@ -990,6 +921,93 @@ class result extends sandbox_value
 
 
     /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+
+        // add the source phrases if requested
+        if ($typ_lst->include_phrases()) {
+            $phr_lst = $this->source_group()->phrase_list();
+            $vars[json_fields::CONTEXT] = $phr_lst->api_json_array($typ_lst);
+        }
+
+        // add the formula that has created the result
+        if ($this->formula_id() != null) {
+            $vars[json_fields::FORMULA_ID] = $this->formula_id();
+        }
+
+        // add the numeric string itself
+        $vars[json_fields::NUMBER] = $this->value();
+
+        return $vars;
+    }
+
+    /**
+     * map a result api json to this model result object
+     * @param array $api_json the api array with the values that should be mapped
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        // make sure that there are no unexpected leftovers but keep the user
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::ID) {
+                $this->set_id($value);
+            }
+
+            if ($key == json_fields::PHRASES) {
+                $phr_lst = new phrase_list($this->user());
+                $usr_msg->add($phr_lst->set_by_api_json($value));
+                if ($usr_msg->is_ok()) {
+                    $this->grp()->set_phrase_list($phr_lst);
+                }
+            }
+
+            if ($key == json_fields::NUMBER) {
+                if (is_numeric($value)) {
+                    $this->set_value($value);
+                } else {
+                    $usr_msg->add_message('Import result: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
+                }
+            }
+
+        }
+
+        return $usr_msg;
+    }
+
+    /**
+     * @return result_api the formula result frontend api object
+     */
+    function api_obj(bool $do_save = true): object
+    {
+        $api_obj = new result_api($this->id());
+        $api_obj->set_number($this->number());
+        if ($this->grp()->phrase_list() != null) {
+            $grp = $this->grp()->phrase_list()->get_grp_id($do_save);
+            $api_obj->set_grp($grp->api_obj());
+        }
+        return $api_obj;
+    }
+
+
+    /*
      * im- and export
      */
 
@@ -1061,27 +1079,7 @@ class result extends sandbox_value
      */
     function export_json(bool $do_load = true): array
     {
-        $vars = [];
-
-        // reload the value parameters
-        if ($do_load) {
-            $this->load_by_id();
-            $this->load_phrases();
-        }
-
-        // add the phrases
-        $phr_lst = array();
-        // TODO use either word and triple export_obj function or phrase
-        if ($this->grp()->phrase_list() != null) {
-            if (!$this->grp()->phrase_list()->is_empty()) {
-                foreach ($this->grp()->phrase_list()->lst() as $phr) {
-                    $phr_lst[] = $phr->name();
-                }
-                if (count($phr_lst) > 0) {
-                    $vars[json_fields::WORDS] = $phr_lst;
-                }
-            }
-        }
+        $vars = parent::export_json($do_load);
 
         // add the value itself
         $vars[json_fields::NUMBER] = $this->number();
@@ -1711,10 +1709,10 @@ class result extends sandbox_value
                     sql_field_type::INT
                 );
             }
-            if ($sbx->frm_id() <> $this->frm_id()) {
+            if ($sbx->formula_id() <> $this->formula_id()) {
                 $lst->add_field(
                     formula::FLD_ID,
-                    $this->frm_id(),
+                    $this->formula_id(),
                     formula::FLD_ID_SQL_TYP
                 );
             }

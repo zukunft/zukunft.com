@@ -123,30 +123,6 @@ class triple_list extends sandbox_list_named
     }
 
 
-    /*
-     * cast
-     */
-
-    /**
-     * @return triple_list_api the triple list object with the display interface functions
-     */
-    function api_obj(): triple_list_api
-    {
-        $api_obj = new triple_list_api();
-        foreach ($this->lst() as $trp) {
-            $api_obj->add($trp->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
 
     /*
      * load

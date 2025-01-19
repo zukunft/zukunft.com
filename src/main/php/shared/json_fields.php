@@ -88,6 +88,12 @@ class json_fields
     const NAME_REVERSE = 'name_reverse';
     const NAME_PLURAL_REVERSE = 'name_plural_reverse';
 
+    // verbs
+    const REVERSE = 'reverse';
+    const REV_PLURAL = 'rev_plural';
+    const FRM_NAME = 'frm_name';
+    const USAGE = 'usage';
+
 
     /*
      * api - fields used only for the api json messages
@@ -106,6 +112,7 @@ class json_fields
     const SOURCE = 'source_id';
     const USER_ID = 'user_id';
     const GROUP_ID = 'group_id';
+    const FORMULA_ID = 'formula_id';
 
     // for link api objects the id of the preloaded link type
     const PREDICATE = 'predicate_id';
@@ -170,12 +177,65 @@ class json_fields
     // view to component link
     const POS_TYPE_CMP = 'pos_type';
 
+    // message header
+    const POD = 'pod';
+
+    // change log
+    const USR = 'usr';
+    const ACTION_ID = 'action_id';
+    const TABLE_ID = 'table_id';
+    const FIELD_ID = 'field_id';
+    const ROW_ID = 'row_id';
+    const CHANGE_TIME = 'change_time';
+    const OLD_VALUE = 'old_value';
+    const OLD_ID = 'old_id';
+    const NEW_VALUE = 'new_value';
+    const NEW_ID = 'new_id';
+    const STD_VALUE = 'std_value';
+    const STD_ID = 'std_id';
+
+    // message header
+    const TIMESTAMP = 'timestamp';
+    const VERSION = 'version';
+
+    // to review
+    const USER_NAME = 'user';
+
+
+    /*
+     * api type list
+     */
+
+    const TYPE_LISTS = 'type_lists';
+    const LIST_USER_PROFILES = 'user_profiles';
+    const LIST_PHRASE_TYPES = 'phrase_types';
+    const LIST_FORMULA_TYPES = 'formula_types';
+    const LIST_FORMULA_LINK_TYPES = 'formula_link_types';
+    const LIST_ELEMENT_TYPES = 'element_types';
+    const LIST_VIEW_TYPES = 'view_types';
+    const LIST_VIEW_STYLES = 'view_styles';
+    const LIST_VIEW_LINK_TYPES = 'view_link_types';
+    const LIST_COMPONENT_TYPES = 'component_types';
+    // const LIST_COMPONENT_LINK_TYPES = 'component_link_types';
+    const LIST_COMPONENT_POSITION_TYPES = 'position_types';
+    const LIST_REF_TYPES = 'ref_types';
+    const LIST_SOURCE_TYPES = 'source_types';
+    const LIST_SHARE_TYPES = 'share_types';
+    const LIST_PROTECTION_TYPES = 'protection_types';
+    const LIST_LANGUAGES = 'languages';
+    const LIST_LANGUAGE_FORMS = 'language_forms';
+    const LIST_SYS_LOG_STATI = 'sys_log_stati';
+    const LIST_JOB_TYPES = 'job_types';
+    const LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
+    const LIST_CHANGE_LOG_TABLES = 'change_table_list';
+    const LIST_CHANGE_LOG_FIELDS = 'change_field_list';
+    const LIST_VERBS = 'verbs';
+    const LIST_SYSTEM_VIEWS = 'system_views';
 
     /*
      * im- and export - fields used only for the im- and export json messages
      */
 
-    const TIMESTAMP = 'timestamp';
 
     // name of the view to show a word, triple or formula
     const VIEW = 'view';
@@ -201,12 +261,12 @@ class json_fields
     const REFS = 'refs';
 
     // for value lists
-    const CONTEXT = 'context';
     const VALUES = 'values';
 
     // for formulas
     const EXPRESSION = 'expression';
     const ASSIGNED_WORD = 'assigned_word';
+
 
     // for results
     const WORDS = 'words';
@@ -218,4 +278,8 @@ class json_fields
     const REASON = 'reason';
     const IS_ACTIVE = 'is_active';
 
+    // list of phrases
+    // for results to select the input values
+    // and for value lists to reduce the number of phrase for each value
+    const CONTEXT = 'context';
 }

@@ -135,34 +135,23 @@ class test_api extends create_test_objects
      * @return bool true if everything is fine
      */
     function assert_api(
-        object $usr_obj,
-        string $filename = '',
+        object              $usr_obj,
+        string              $filename = '',
         api_type_list|array $typ_lst = [],
-        bool $contains = false
+        bool                $contains = false
     ): bool
     {
-        $class = $usr_obj::class;
-        $class = $this->class_to_api($class);
-        // TODO Prio 0 switch all to api_json
-        if ($usr_obj::class == value::class
-            or $usr_obj::class == value_time::class
-            or $usr_obj::class == value_text::class
-            or $usr_obj::class == value_geo::class) {
-            if (is_array($typ_lst)) {
-                $typ_lst[] = api_type::TEST_MODE;
-            } else {
-                $typ_lst->add(api_type::TEST_MODE);
-            }
-            $actual = json_decode($usr_obj->api_json($typ_lst), true);
+        // check and norm the parameters
+        if (is_array($typ_lst)) {
+            $typ_lst[] = api_type::TEST_MODE;
         } else {
-            if ($usr_obj::class == sys_log_list::class
-                or $usr_obj::class == type_lists::class) {
-                $api_obj = $usr_obj->api_obj($this->usr1, false);
-            } else {
-                $api_obj = $usr_obj->api_obj(false);
-            }
-            $actual = json_decode($api_obj->get_json(), true);
+            $typ_lst->add(api_type::TEST_MODE);
         }
+        $class = $this->class_to_api($usr_obj::class);
+
+        // create the json api message and revert it to an array for better compare
+        $actual = json_decode($usr_obj->api_json($typ_lst, $this->usr1), true);
+
         return $this->assert_api_compare($class, $actual, null, $filename, $contains);
     }
 
@@ -446,10 +435,8 @@ class test_api extends create_test_objects
     {
         $class = $usr_obj::class;
         $class = $this->class_to_api($class);
-        $api_obj = $usr_obj->api_obj();
-        $api_msg = new api_message($db_con, $class, $this->usr1);
-        $api_msg->add_body($api_obj);
-        $actual = json_decode(json_encode($api_msg), true);
+        $api_msg = $usr_obj->api_json([api_type::HEADER], $this->usr1);
+        $actual = json_decode($api_msg, true);
         return $this->assert_api_compare($class, $actual, null, $filename, $contains);
     }
 
@@ -464,7 +451,13 @@ class test_api extends create_test_objects
      * @param bool $ignore_id true if the ids should be ignored e.g. because test records have been created
      * @return bool true if the json has no relevant differences
      */
-    function assert_api_get(string $class, int $id = 1, int $levels = 0, ?array $expected = null, bool $ignore_id = false): bool
+    function assert_api_get(
+        string $class,
+        int    $id = 1,
+        int    $levels = 0,
+        ?array $expected = null,
+        bool   $ignore_id = false
+    ): bool
     {
         // naming exception (to be removed?)
         $lib = new library();
@@ -559,7 +552,7 @@ class test_api extends create_test_objects
         if ($class == $lib->class_to_name(term_list::class)) {
             $lst = new term_list($this->usr1);
             $lst->load_by_ids((new trm_ids($ids)));
-            $result = $lst->api_obj();
+            $actual = json_decode($lst->api_json(), true);
             $filename = $class . '_without_link';
         }
 

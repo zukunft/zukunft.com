@@ -106,6 +106,10 @@ class ref_tests
         $t->assert_sql_delete($sc, $ref);
         $t->assert_sql_delete($sc, $ref, [sql_type::LOG, sql_type::USER]);
 
+        $t->subheader('reference base object handling');
+        $ref = $t->ref_filled();
+        $t->assert_reset($ref);
+
         $t->subheader('reference api unit tests');
         $ref = $t->reference1();
         $t->assert_api_json($ref);

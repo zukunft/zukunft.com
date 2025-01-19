@@ -740,18 +740,6 @@ class test_base
     }
 
     /**
-     * check if the
-     *
-     * @param object $usr_obj the api object used a a base for the message
-     * @return bool true if the generated message matches in relevant parts the expected message
-     */
-    function assert_api_json_msg(object $api_obj): bool
-    {
-        $json_api_msg = json_encode($api_obj);
-        return true;
-    }
-
-    /**
      * check if the REST GET call returns the expected export JSON message
      *
      * @param string $test_name the name of the object to test
@@ -936,16 +924,20 @@ class test_base
      * check if an object json file can be recreated by importing the object and recreating the json with the export function
      *
      * @param string $test_name (unique) description of the test
-     * @param array $result the actual json as array
+     * @param array|null $result the actual json as array
      * @param array $target the expected json as array
      * @return bool true if the json has no relevant differences
      */
-    function assert_json(string $test_name, array $result, array $target): bool
+    function assert_json(string $test_name, array|null $result, array $target): bool
     {
         $lib = new library();
         $diff = '';
-        if (!$lib->json_is_similar($result, $target)) {
-            $diff = $lib->diff_msg($result, $target);
+        if ($result == null) {
+            $diff = 'json is empty';
+        } else {
+            if (!$lib->json_is_similar($result, $target)) {
+                $diff = $lib->diff_msg($result, $target);
+            }
         }
         $result_str = json_encode($result);
         $target_str = json_encode($target);
@@ -3172,16 +3164,17 @@ class test_base
     }
 
     /**
-     * @param sandbox_named|sandbox_link $sbx
-     * @return bool
+     * check if calling the reset function clear all relevant vars of the object
+     * @param sandbox_named|sandbox_link|sandbox_value $sbx the object filled with all vars
+     * @return bool true if the reset object creates an empty api message
      */
-    function assert_reset(sandbox_named|sandbox_link $sbx): bool
+    function assert_reset(sandbox_named|sandbox_link|sandbox_value $sbx): bool
     {
         $lib = new library();
         $class = $lib->class_to_name($sbx::class);
         $test_name = $class . ' reset creates empty api json';
         $sbx->reset();
-        $api_json = $sbx->api_json();
+        $api_json = $sbx->api_json([api_type::TEST_MODE]);
         return $this->assert($test_name, $api_json, '{"id":0}');
     }
 

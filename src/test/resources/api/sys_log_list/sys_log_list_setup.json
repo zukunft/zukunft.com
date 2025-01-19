@@ -1,15 +1,15 @@
 {
   "pod": "zukunft.com",
-  "type": "sys_log",
-  "user_id": 2,
+  "type": "sys_log_list",
+  "user_id": 3,
   "user": "zukunft.com system test",
   "version": "0.0.3",
-  "sys_log": [
+  "sys_log_list": [
     {
       "id": 1,
-      "time": "2023-01-03 20:59:59",
       "user": "zukunft.com system test",
       "text": "'base setup'",
+      "description": "'import of the base setup'",
       "trace": "'import_base_config'",
       "prg_part": "import_base_config",
       "owner": "",

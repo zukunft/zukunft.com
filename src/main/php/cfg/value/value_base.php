@@ -541,51 +541,6 @@ class value_base extends sandbox_value
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return value_api the value frontend api object
-     */
-    function api_obj(): object
-    {
-        $api_obj = new value_api();
-        $this->fill_api_obj($api_obj);
-        $api_obj->set_number($this->number());
-        $api_obj->set_grp($this->grp()->api_obj());
-        $api_obj->set_is_std($this->is_std());
-        return $api_obj;
-    }
-
-    /**
-     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(api_type_list|array $typ_lst = []): string
-    {
-        if (is_array($typ_lst)) {
-            $typ_lst = new api_type_list($typ_lst);
-        }
-
-        // null values are not needed in the api message to the frontend (but in the api message to the backend!)
-        $vars = $this->api_json_array($typ_lst);
-        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
-
-        return json_encode($vars);
-    }
-
-    /**
-     * just to shorten the code
-     * @return value_dsp the value frontend object
-     */
-    function dsp_obj(): value_dsp
-    {
-        $api_json = $this->api_obj()->get_json();
-        return new value_dsp($api_json);
-    }
-
-
-    /*
      * load
      */
 
@@ -1143,11 +1098,12 @@ class value_base extends sandbox_value
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
      * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst): array
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst);
+        $vars = parent::api_json_array($typ_lst, $usr);
 
         // add the source
         if ($this->source != null) {
@@ -1156,6 +1112,7 @@ class value_base extends sandbox_value
 
         return $vars;
     }
+
 
     /*
      * im- and export
@@ -2204,6 +2161,21 @@ class value_base extends sandbox_value
             }
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+    }
+
+
+    /*
+     * TODO deprecate
+     */
+
+    /**
+     * just to shorten the code
+     * @return value_dsp the value frontend object
+     */
+    function dsp_obj(): value_dsp
+    {
+        $api_json = $this->api_json();
+        return new value_dsp($api_json);
     }
 
 }

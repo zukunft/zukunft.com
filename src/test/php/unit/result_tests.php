@@ -139,6 +139,11 @@ class result_tests
         $t->assert_sql_delete($sc, $res);
         $t->assert_sql_delete($sc, $res, [sql_type::USER]);
 
+        $t->subheader('result base object handling');
+        $res = $t->result_main_filled();
+        $t->assert_reset($res);
+
+
         $t->subheader('Display tests');
 
         // test phrase based default formatter

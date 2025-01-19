@@ -37,18 +37,17 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_PHRASE_PATH . 'trm_ids.php';
 include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once API_PHRASE_PATH . 'term_list.php';
 
 use controller\controller;
 use cfg\user\user;
 use cfg\phrase\trm_ids;
 use cfg\phrase\term_list;
-use api\phrase\term_list as term_list_api;
 use shared\api;
 
 // open database
@@ -59,7 +58,7 @@ $trm_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
 $pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
 $msg = '';
-$result = new term_list_api(); // reset the html code var
+$result = ''; // reset the json message string
 
 // load the session user parameters
 $usr = new user;
@@ -71,18 +70,18 @@ if ($usr->id() > 0) {
     if ($trm_ids != '') {
         $lst = new term_list($usr);
         $lst->load_by_ids((new trm_ids(explode(",", $trm_ids))));
-        $result = $lst->api_obj();
+        $result = $lst->api_json();
     } elseif ($pattern != '') {
         $lst = new term_list($usr);
         $lst->load_like($pattern);
-        $result = $lst->api_obj();
+        $result = $lst->api_json();
     } else {
         $msg = 'term ids and pattern missing';
     }
 }
 
 $ctrl = new controller();
-$ctrl->get_list($result, $msg);
+$ctrl->get_json($result, $msg);
 
 
 prg_end_api($db_con);

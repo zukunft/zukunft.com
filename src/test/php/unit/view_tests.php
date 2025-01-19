@@ -109,6 +109,10 @@ class view_tests
         $t->assert_sql_delete($sc, $msk, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $msk, [sql_type::USER, sql_type::EXCLUDE]);
 
+        $t->subheader('view base object handling');
+        $msk = $t->view_filled();
+        $t->assert_reset($msk);
+
         $t->subheader('view api unit tests');
         $msk = $t->view_filled();
         $t->assert_api_json($msk);

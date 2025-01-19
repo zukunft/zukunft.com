@@ -43,4 +43,8 @@ enum api_type: string
 
     // internal parameter for unit testing to switch off the database loading of missing objects
     case TEST_MODE = 'test_mode';
+
+    // include the message header
+    case HEADER = 'header';
+
 }

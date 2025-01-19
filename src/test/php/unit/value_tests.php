@@ -191,6 +191,10 @@ class value_tests
         $val->grp()->set_id(2);
         //$t->assert_load_sql_obj_vars($db_con, $val);
 
+        $t->subheader('value base object handling');
+        $val = $t->value_16_filled();
+        $t->assert_reset($val);
+
         $t->subheader('value im- and export tests');
         $t->assert_ex_and_import($t->value());
         $t->assert_ex_and_import($t->value_16_filled());

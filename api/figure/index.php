@@ -37,14 +37,13 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_VALUE_PATH . 'value.php';
-include_once API_FORMULA_PATH . 'figure.php';
 
-use api\formula\figure as figure_api;
 use cfg\value\value;
 use controller\controller;
 use cfg\result\result;
@@ -58,7 +57,7 @@ $db_con = prg_start("api/figure", "", false);
 $fig_id = $_GET[api::URL_VAR_ID] ?? 0;
 
 $msg = '';
-$result = new figure_api(); // reset the html code var
+$result = ''; // reset the json message string
 
 // load the session user parameters
 $usr = new user;
@@ -72,19 +71,19 @@ if ($usr->id() > 0) {
         $val->load_by_id($fig_id);
         $val->load_objects();
         $fig = $val->figure();
-        $result = $fig->api_obj();
+        $result = $fig->api_json();
     } elseif ($fig_id < 0) {
         $res = new result($usr);
         $res->load_by_id($fig_id);
         $fig = $res->figure();
-        $result = $fig->api_obj();
+        $result = $fig->api_json();
     } else {
         $msg = 'figure id is missing';
     }
 }
 
 $ctrl = new controller();
-$ctrl->get($result, $msg);
+$ctrl->get_json($result, $msg);
 
 
 prg_end_api($db_con);

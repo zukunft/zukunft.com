@@ -2,8 +2,8 @@
 
 /*
 
-    model/view/position_type_list.php - to link coded functionality to a view component position
-    ---------------------------------
+    shared/types/position_types.php - how view components can be placed for the user
+    -------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,34 +29,16 @@
   
 */
 
-namespace cfg\component;
+namespace shared\types;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_COMPONENT_PATH . 'position_type.php';
-include_once SHARED_TYPES_PATH . 'position_types.php';
-
-use cfg\helper\type_list;
-use shared\types\position_types;
-
-class position_type_list extends type_list
+class position_types
 {
 
-    /**
-     * adding the view component position types used for unit tests to the dummy list
-     */
-    function load_dummy(): void
-    {
-        $this->reset();
-        // read the corresponding names and description from the internal config csv files
-        $this->read_from_config_csv($this);
-    }
+    // list of the view component position types that have a coded functionality
+    const BELOW = "below";
+    const SIDE = "side";
 
-    /**
-     * return the database id of the default view component position type
-     */
-    function default_id(): int
-    {
-        return parent::id(position_types::DEFAULT);
-    }
+    const DEFAULT = self::BELOW;
+    const DEFAULT_ID = 1;
 
 }

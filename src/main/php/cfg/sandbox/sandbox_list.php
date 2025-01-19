@@ -307,26 +307,6 @@ class sandbox_list extends base_list
 
 
     /*
-     * api
-     */
-
-    /**
-     * create an array for the json api message
-     *
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @returns array with the json fields to create an api message
-     */
-    function api_json_array(api_type_list $typ_lst): array
-    {
-        $lst = [];
-        foreach ($this->lst() as $sbx) {
-            $lst[] = $sbx->api_json_array($typ_lst);
-        }
-        return $lst;
-    }
-
-
-    /*
      * im- and export
      */
 

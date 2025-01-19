@@ -35,6 +35,8 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -42,15 +44,16 @@ use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\helper\type_object;
+use cfg\user\user;
 use shared\json_fields;
 use shared\library;
-use JsonSerializable;
+use shared\types\api_type_list;
 
-class language extends type_object implements JsonSerializable
+class language extends type_object
 {
 
     /*
-     * database link
+     * db const
      */
 
     // database and JSON object field names
@@ -81,37 +84,22 @@ class language extends type_object implements JsonSerializable
 
 
     /*
-     * interface
+     * api
      */
 
     /**
-     * @returns string the api json message for the object as a string
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json(): string
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        return $this->get_json();
-    }
-
-    /**
-     * @return string the json api message as a text string
-     */
-    function get_json(): string
-    {
-        return json_encode($this->jsonSerialize());
-    }
-
-    /**
-     * @return array with the sandbox vars without empty values that are not needed
-     * the message from the backend to the frontend does not need to include empty fields
-     * the message from the frontend to the backend on the other side must include empty fields
-     * to be able to unset fields in the backend
-     */
-    function jsonSerialize(): array
-    {
-        $vars = parent::jsonSerialize();
+        $vars = parent::api_json_array($typ_lst, $usr);
         $vars = array_merge($vars, get_object_vars($this));
         $vars[json_fields::ID] = $this->id();
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+        return $vars;
     }
 
 

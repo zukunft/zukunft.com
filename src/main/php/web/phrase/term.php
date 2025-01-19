@@ -43,6 +43,7 @@ include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_VERB_PATH . 'verb.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use shared\api;
 use api\phrase\term as term_api;
@@ -54,6 +55,7 @@ use html\verb\verb as verb_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use shared\json_fields;
+use shared\library;
 
 class term extends combine_named_dsp
 {
@@ -152,6 +154,7 @@ class term extends combine_named_dsp
      */
 
     /**
+     * TODO review and use the api_array function of the objects
      * @return array the json message array to send the updated data to the backend
      * corresponding to the api jsonSerialize function:
      * use the object id not the term id because the class is included
@@ -159,37 +162,42 @@ class term extends combine_named_dsp
      */
     function api_array(): array
     {
+        $lib = new library();
         $vars = array();
-        if ($this->is_word()) {
-            $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_WORD;
-        } elseif ($this->is_triple()) {
-            $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_TRIPLE;
-            $trp = $this->obj();
-            $vars[json_fields::FROM] = $trp->from()->id();
-            $vars[json_fields::VERB] = $trp->verb()->id();
-            $vars[json_fields::TO] = $trp->to()->id();
-        } elseif ($this->is_formula()) {
-            $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_FORMULA;
-        } elseif ($this->is_verb()) {
-            $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_VERB;
+        if ($this->is_verb()) {
+            $vars = $this->obj()?->api_array();
+            $class = $lib->class_to_name($this->obj()::class);
+            $vars[json_fields::OBJECT_CLASS] = $class;
         } else {
-            log_err('cannot create api message for term ' . $this->dsp_id() . ' because class is unknown');
-        }
-        $vars[json_fields::ID] = $this->obj_id();
-        $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::DESCRIPTION] = $this->description();
-        if (!$this->is_verb()) {
+            if ($this->is_word()) {
+                $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_WORD;
+            } elseif ($this->is_triple()) {
+                $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_TRIPLE;
+                $trp = $this->obj();
+                $vars[json_fields::FROM] = $trp->from()->id();
+                $vars[json_fields::VERB] = $trp->verb()->id();
+                $vars[json_fields::TO] = $trp->to()->id();
+            } elseif ($this->is_formula()) {
+                $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_FORMULA;
+            } elseif ($this->is_verb()) {
+                $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_VERB;
+            } else {
+                log_err('cannot create api message for term ' . $this->dsp_id() . ' because class is unknown');
+            }
+            $vars[json_fields::ID] = $this->obj_id();
+            $vars[json_fields::NAME] = $this->name();
+            $vars[json_fields::DESCRIPTION] = $this->description();
             $vars[json_fields::TYPE] = $this->type_id();
-        }
-        if ($this->is_formula()) {
-            $vars[json_fields::USER_TEXT] = $this->obj()->usr_text();
-        }
-        // TODO add exclude field and move to a parent object?
-        if ($this->obj()?->share_id != null) {
-            $vars[json_fields::SHARE] = $this->obj()?->share_id;
-        }
-        if ($this->obj()?->protection_id != null) {
-            $vars[json_fields::PROTECTION] = $this->obj()?->protection_id;
+            if ($this->is_formula()) {
+                $vars[json_fields::USER_TEXT] = $this->obj()->usr_text();
+            }
+            // TODO add exclude field and move to a parent object?
+            if ($this->obj()?->share_id != null) {
+                $vars[json_fields::SHARE] = $this->obj()?->share_id;
+            }
+            if ($this->obj()?->protection_id != null) {
+                $vars[json_fields::PROTECTION] = $this->obj()?->protection_id;
+            }
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

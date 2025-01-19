@@ -104,36 +104,6 @@ class result_list extends sandbox_value_list
 {
 
     /*
-     * cast
-     */
-
-    /**
-     * @return result_list_api frontend API object filled with the relevant data of this object
-     */
-    function api_obj(bool $do_save = true): result_list_api
-    {
-        $api_obj = new result_list_api();
-        $api_obj->set_lst($this->api_lst($do_save));
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(api_type_list|array $typ_lst = []): string
-    {
-        if (is_array($typ_lst)) {
-            $typ_lst = new api_type_list($typ_lst);
-        }
-        $do_save = true;
-        if ($typ_lst->test_mode()) {
-            $do_save = false;
-        }
-        return $this->api_obj($do_save)->get_json();
-    }
-
-
-    /*
      * load
      */
 

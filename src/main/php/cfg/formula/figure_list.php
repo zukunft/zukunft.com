@@ -66,42 +66,10 @@ class figure_list extends sandbox_list
      * construct and map
      */
 
-    // the rows_mapper is not needed, because the figuresare not saved in the database
+    // the rows_mapper is not needed, because the figures are not saved in the database
 
 
     public ?bool $fig_missing = false; // true if at least one of the results is not set which means is NULL (but zero is a value)
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return figure_list_api the word list object with the display interface functions
-     */
-    function api_obj(bool $do_save = true): figure_list_api
-    {
-        $api_obj = new figure_list_api();
-        foreach ($this->lst() as $phr) {
-            $api_obj->add($phr->api_obj($do_save));
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(api_type_list|array $typ_lst = []): string
-    {
-        if (is_array($typ_lst)) {
-            $typ_lst = new api_type_list($typ_lst);
-        }
-        $do_save = true;
-        if ($typ_lst->test_mode()) {
-            $do_save = false;
-        }
-        return $this->api_obj($do_save)->get_json();
-    }
 
 
     /*
@@ -274,7 +242,7 @@ class figure_list extends sandbox_list
 
         foreach ($this->lst() as $fig) {
             $fig_dsp = new figure_dsp();
-            $api_json = $fig->api_obj()->get_json();
+            $api_json = $fig->api_json();
             $fig_dsp->set_from_json($api_json);
             $result .= $fig_dsp->display() . ' ';
         }

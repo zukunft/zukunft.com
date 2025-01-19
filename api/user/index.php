@@ -42,6 +42,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -59,7 +60,7 @@ $usr_name = $_GET[api::URL_VAR_NAME] ?? '';
 $usr_email = $_GET[api::URL_VAR_EMAIL] ?? '';
 
 $msg = '';
-$result = ''; // reset the html code var
+$result = ''; // reset the json message string
 
 // load the session user parameters
 $usr = new user;
@@ -71,20 +72,20 @@ if ($usr->id() > 0) {
     $db_usr = new user();
     if ($usr_id != 0) {
         $db_usr->load_by_id($usr_id);
-        $result = json_decode(json_encode($db_usr->api_obj()));
+        $result = $db_usr->api_json();
     } elseif ($usr_name != '') {
         $db_usr->load_by_name($usr_name);
-        $result = json_decode(json_encode($db_usr->api_obj()));
+        $result = $db_usr->api_json();
     } elseif ($usr_email != '') {
         $db_usr->load_by_email($usr_email);
-        $result = json_decode(json_encode($db_usr->api_obj()));
+        $result = $db_usr->api_json();
     } else {
         $msg = 'user id or name missing';
     }
 }
 
 $ctrl = new controller();
-$ctrl->get_export($result, $msg);
+$ctrl->get_json($result, $msg);
 
 
 prg_end_api($db_con);

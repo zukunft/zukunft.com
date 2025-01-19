@@ -28,6 +28,13 @@
   {
     "id": 1,
     "name": "not set",
-    "class": "verb"
+    "class": "verb",
+    "code_id": "not_set",
+    "description": "",
+    "plural": null,
+    "reverse": null,
+    "rev_plural": null,
+    "frm_name": null,
+    "usage": 0
   }
 ]

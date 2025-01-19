@@ -21,6 +21,19 @@
 
     the same ip can max 10 add 10 values and max 5 user a day, upon request the number of max user creation can be increased for an ip range
 
+    The main sections of this object are
+    - db const:          const for the database link
+    - preserved:         const user names used by the system
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - load:              database access object (DAO) functions
+    - load sql:          create the sql statements for loading from the db
+    - im- and export:    create an export object and set the vars from an import object
+    - information:       functions to make code easier to read
+    - save:              manage to update the database
+    - debug:             internal support functions for debugging
+
 
     This file is part of zukunft.com - calc with words
 
@@ -74,6 +87,7 @@ include_once MODEL_USER_PATH . 'user_type.php';
 //include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 include_once WEB_USER_PATH . 'user.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use api\user\user as user_api;
@@ -103,12 +117,13 @@ use cfg\word\word;
 use html\user\user as user_dsp;
 use shared\json_fields;
 use Exception;
+use shared\types\api_type_list;
 
 class user extends db_object_seq_id
 {
 
     /*
-     * database link
+     * db const
      */
 
     // database fields and comments only used for user
@@ -254,6 +269,7 @@ class user extends db_object_seq_id
      * predefined user linked to the program code
      */
 
+    // TODO move to a separate shared class named users
     // list of the system users that have a coded functionality as defined in src/main/resources/users.json
 
     // the system user that should only be used for internal processes and to log system tasks
@@ -469,59 +485,128 @@ class user extends db_object_seq_id
     }
 
 
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return user_api the user frontend api object with all fields filled
-     */
-    function api_obj(): user_api
-    {
-        $api_obj = new user_api();
-        return $this->api_obj_fields($api_obj);
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    /**
-     * @return user_dsp the user frontend display object with all fields filled
-     */
-    function dsp_obj(): user_dsp
-    {
-        $api_obj = new user_dsp();
-        return $this->api_obj_fields($api_obj);
-    }
-
-    /**
-     * @return user_api|user_dsp the user api or display object with all fields filled
-     */
-    private function api_obj_fields(user_api|user_dsp $api_obj): user_api|user_dsp
-    {
-        $api_obj->id = $this->id();
-        if ($this->name != null) {
-            $api_obj->name = $this->name;
-        } else {
-            $api_obj->name = '';
-        }
-        $api_obj->description = $this->description;
-        $api_obj->profile = $this->profile;
-        $api_obj->email = $this->email;
-        $api_obj->first_name = $this->first_name;
-        $api_obj->last_name = $this->last_name;
-        return $api_obj;
-    }
-
-
     /*
      * loading / database access object (DAO) functions
+     */
+
+    /**
+     * load a user by id from the database
+     *
+     * TODO make sure that it is always checked if the requesting user has the sufficient permissions
+     *  param user|null $request_usr the user who has requested the loading of the user data to prevent right gains
+     *
+     * @param int $id of the user that should be loaded
+     * @return int an id > 0 if the loading has been successful
+     */
+    function load_by_id(int $id): int
+    {
+        global $db_con;
+
+        log_debug($id);
+        $this->reset();
+        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
+        return $this->load($qp);
+    }
+
+    /**
+     * load one user by name
+     * @param string $name the username of the user
+     * @return int the id of the found user and zero if nothing is found
+     */
+    function load_by_name(string $name): int
+    {
+        global $db_con;
+
+        log_debug($name);
+        $this->reset();
+        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
+        return $this->load($qp);
+    }
+
+    /**
+     * load one user by name
+     * @param string $email the email of the user
+     * @return bool true if a user has been found
+     */
+    function load_by_email(string $email): bool
+    {
+        global $db_con;
+
+        log_debug($email);
+        $this->reset();
+        $qp = $this->load_sql_by_email($db_con->sql_creator(), $email);
+        return $this->load($qp);
+    }
+
+    /**
+     * load one user by name or email
+     * @param string $name the username of the user
+     * @param string $email the email of the user
+     * @return bool true if a user has been found
+     */
+    function load_by_name_or_email(string $name, string $email): bool
+    {
+        global $db_con;
+
+        log_debug($email);
+        $this->reset();
+        $qp = $this->load_sql_by_name_or_email($db_con, $name, $email);
+        return $this->load($qp);
+    }
+
+    /**
+     * load the first user with the given ip address
+     * @param string $ip the ip address with which the user has logged in
+     * @return bool true if a user has been found
+     */
+    function load_by_ip(string $ip): bool
+    {
+        global $db_con;
+
+        log_debug($ip);
+        $this->reset();
+        $qp = $this->load_sql_by_ip($db_con->sql_creator(), $ip);
+        return $this->load($qp);
+    }
+
+    /**
+     * load the first user with the given ip address
+     * @param int $profile_id the id of the profile of which the first matching user should be loaded
+     * @return bool true if a user has been found
+     */
+    function load_by_profile(int $profile_id): bool
+    {
+        global $db_con;
+
+        log_debug($profile_id);
+        $this->reset();
+        $qp = $this->load_sql_by_profile($db_con->sql_creator(), $profile_id);
+        return $this->load($qp);
+    }
+
+    function load_by_profile_code(string $profile_code_id): bool
+    {
+        global $usr_pro_cac;
+        return $this->load_by_profile($usr_pro_cac->id($profile_code_id));
+    }
+
+    /**
+     * load a user from the database view
+     * @param sql_par $qp the query parameters created by the calling function
+     * @return int the id of the object found and zero if nothing is found
+     */
+    protected function load(sql_par $qp): int
+    {
+        global $db_con;
+
+        $db_row = $db_con->get1($qp);
+        $this->row_mapper($db_row);
+        return $this->id();
+    }
+
+
+    /*
+     * load sql
      */
 
     /**
@@ -663,121 +748,6 @@ class user extends db_object_seq_id
     }
 
     /**
-     * load a user from the database view
-     * @param sql_par $qp the query parameters created by the calling function
-     * @return int the id of the object found and zero if nothing is found
-     */
-    protected function load(sql_par $qp): int
-    {
-        global $db_con;
-
-        $db_row = $db_con->get1($qp);
-        $this->row_mapper($db_row);
-        return $this->id();
-    }
-
-    /**
-     * load a user by id from the database
-     *
-     * TODO make sure that it is always checked if the requesting user has the sufficient permissions
-     *  param user|null $request_usr the user who has requested the loading of the user data to prevent right gains
-     *
-     * @param int $id of the user that should be loaded
-     * @return int an id > 0 if the loading has been successful
-     */
-    function load_by_id(int $id): int
-    {
-        global $db_con;
-
-        log_debug($id);
-        $this->reset();
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
-        return $this->load($qp);
-    }
-
-    /**
-     * load one user by name
-     * @param string $name the username of the user
-     * @return int the id of the found user and zero if nothing is found
-     */
-    function load_by_name(string $name): int
-    {
-        global $db_con;
-
-        log_debug($name);
-        $this->reset();
-        $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
-        return $this->load($qp);
-    }
-
-    /**
-     * load one user by name
-     * @param string $email the email of the user
-     * @return bool true if a user has been found
-     */
-    function load_by_email(string $email): bool
-    {
-        global $db_con;
-
-        log_debug($email);
-        $this->reset();
-        $qp = $this->load_sql_by_email($db_con->sql_creator(), $email);
-        return $this->load($qp);
-    }
-
-    /**
-     * load one user by name or email
-     * @param string $name the username of the user
-     * @param string $email the email of the user
-     * @return bool true if a user has been found
-     */
-    function load_by_name_or_email(string $name, string $email): bool
-    {
-        global $db_con;
-
-        log_debug($email);
-        $this->reset();
-        $qp = $this->load_sql_by_name_or_email($db_con, $name, $email);
-        return $this->load($qp);
-    }
-
-    /**
-     * load the first user with the given ip address
-     * @param string $ip the ip address with which the user has logged in
-     * @return bool true if a user has been found
-     */
-    function load_by_ip(string $ip): bool
-    {
-        global $db_con;
-
-        log_debug($ip);
-        $this->reset();
-        $qp = $this->load_sql_by_ip($db_con->sql_creator(), $ip);
-        return $this->load($qp);
-    }
-
-    /**
-     * load the first user with the given ip address
-     * @param int $profile_id the id of the profile of which the first matching user should be loaded
-     * @return bool true if a user has been found
-     */
-    function load_by_profile(int $profile_id): bool
-    {
-        global $db_con;
-
-        log_debug($profile_id);
-        $this->reset();
-        $qp = $this->load_sql_by_profile($db_con->sql_creator(), $profile_id);
-        return $this->load($qp);
-    }
-
-    function load_by_profile_code(string $profile_code_id): bool
-    {
-        global $usr_pro_cac;
-        return $this->load_by_profile($usr_pro_cac->id($profile_code_id));
-    }
-
-    /**
      * load the user specific data that is not supposed to be changed very rarely user
      * so if changed all data is reloaded once
      */
@@ -909,6 +879,35 @@ class user extends db_object_seq_id
         // add the local admin user to use it for the import
         return $this->save($db_con);
 
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+        if ($this->name != null) {
+            $vars[json_fields::NAME] = $this->name;
+        } else {
+            $vars[json_fields::NAME] = '';
+        }
+        $vars[json_fields::DESCRIPTION] = $this->description;
+        $vars[json_fields::PROFILE] = $this->profile;
+        $vars[json_fields::EMAIL] = $this->email;
+        $vars[json_fields::FIRST_NAME] = $this->first_name;
+        $vars[json_fields::LAST_NAME] = $this->last_name;
+
+        return $vars;
     }
 
 

@@ -109,7 +109,6 @@ class formula_link_tests
         $t->assert_sql_delete($sc, $lnk);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
 
-        // TODO Prio 1 add these test to all objects
         $t->subheader('formula link base object handling');
         $lnk = $t->formula_link();
         $t->assert_reset($lnk);

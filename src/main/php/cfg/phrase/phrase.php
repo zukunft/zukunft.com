@@ -509,37 +509,6 @@ class phrase extends combine_named
      */
 
     /**
-     * @return phrase_api the phrase frontend api object
-     */
-    function api_obj(): phrase_api
-    {
-        return $this->obj()->api_obj()->phrase();
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    /**
-     * TODO base this on the api message
-     * @return phrase_dsp the phrase object with the display interface functions
-     */
-    function dsp_obj(): phrase_dsp
-    {
-        if ($this->obj()::class == word::class) {
-            $wrd_dsp = new word_dsp($this->obj()->api_json());
-            $dsp_obj = $wrd_dsp->phrase();
-        } else {
-            $dsp_obj = $this->obj()->dsp_obj()->phrase();
-        }
-        return $dsp_obj;
-    }
-
-    /**
      * @return word|null
      */
     function word(): word|null
@@ -602,31 +571,6 @@ class phrase extends combine_named
         return $usr_msg;
     }
 
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst): array
-    {
-        $id = $this->obj_id();
-        $vars = $this->obj()->api_json_array($typ_lst);
-        if ($id != 0) {
-            if ($this->is_word()) {
-                $vars[json_fields::OBJECT_CLASS] = phrase_api::CLASS_WORD;
-            } else {
-                $vars[json_fields::OBJECT_CLASS] = phrase_api::CLASS_TRIPLE;
-            }
-        }
-
-        return $vars;
-    }
 
     /*
      * im- and export
@@ -1696,6 +1640,21 @@ class phrase extends combine_named
     {
         $wrd = $this->main_word();
         return $wrd->btn_add($back);
+    }
+
+    /**
+     * TODO base this on the api message
+     * @return phrase_dsp the phrase object with the display interface functions
+     */
+    function dsp_obj(): phrase_dsp
+    {
+        if ($this->obj()::class == word::class) {
+            $wrd_dsp = new word_dsp($this->obj()->api_json());
+            $dsp_obj = $wrd_dsp->phrase();
+        } else {
+            $dsp_obj = $this->obj()->dsp_obj()->phrase();
+        }
+        return $dsp_obj;
     }
 
 }

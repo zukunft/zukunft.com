@@ -100,6 +100,8 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_db.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
 use api\log\change_log as change_log_api;
@@ -131,10 +133,12 @@ use cfg\view\view;
 use cfg\view\view_term_link;
 use cfg\word\word;
 use cfg\word\word_db;
+use shared\json_fields;
 use shared\library;
 use DateTime;
 use DateTimeInterface;
 use Exception;
+use shared\types\api_type_list;
 
 class change_log extends db_object_seq_id_user
 {
@@ -217,24 +221,6 @@ class change_log extends db_object_seq_id_user
         $this->change_time = new DateTime();
     }
 
-
-    /*
-     * cast
-     */
-
-    function fill_api_obj(change_log_api $api_obj): change_log_api
-    {
-        if ($this->user() != null) {
-            $api_obj->usr = $this->user()->api_obj();
-        }
-        $api_obj->action_id = $this->action_id;
-        $api_obj->table_id = $this->table_id;
-        $api_obj->field_id = $this->field_id;
-        $api_obj->row_id = $this->row_id;
-        $api_obj->change_time = $this->time();
-        return $api_obj;
-
-    }
 
     /*
      * set and get
@@ -649,6 +635,32 @@ class change_log extends db_object_seq_id_user
         return $db_changed;
     }
 
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = [];
+        if ($this->user() != null) {
+            $vars[json_fields::USR] = $this->user()->api_json_array($typ_lst, $usr);
+        }
+        $vars[json_fields::ACTION_ID] = $this->action_id;
+        $vars[json_fields::TABLE_ID] = $this->table_id;
+        $vars[json_fields::FIELD_ID] = $this->field_id;
+        $vars[json_fields::ROW_ID] = $this->row_id;
+        $vars[json_fields::CHANGE_TIME] = $this->time();
+
+        return $vars;
+    }
 
 
     /*

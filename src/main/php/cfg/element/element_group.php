@@ -342,7 +342,7 @@ class element_group
         // build the html code to display the value with the link
         foreach ($fig_lst->lst() as $fig) {
             log_debug('display figure');
-            $api_json = $fig->api_obj()->get_json();
+            $api_json = $fig->api_json();
             $fig_dsp = new figure_dsp();
             $fig_dsp->set_from_json($api_json);
             $result .= $fig_dsp->display_linked($back);

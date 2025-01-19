@@ -109,13 +109,19 @@ class source_tests
         $t->assert_sql_delete($sc, $src, [sql_type::USER, sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $src, [sql_type::LOG, sql_type::USER, sql_type::EXCLUDE]);
 
+        $t->subheader('source base object handling');
+        $src = $t->source_filled();
+        $t->assert_reset($src);
+
         $t->subheader('source api unit tests');
         $src = $t->source();
         $t->assert_api_json($src);
         $db_con = new sql_db();
+        $src->code_id = source_api::TC_READ;
         $t->assert_api_msg($db_con, $src);
 
         $t->subheader('source frontend unit tests');
+        $src = $t->source();
         $t->assert_api_to_dsp($src, new source_dsp());
 
         $t->subheader('source import and export tests');

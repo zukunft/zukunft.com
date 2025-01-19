@@ -35,7 +35,10 @@ namespace unit_ui;
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 
 use html\html_base;
+use html\log\change_log_list;
 use html\system\back_trace;
+use shared\types\api_type;
+use shared\types\api_type_list;
 use test\test_cleanup;
 
 class change_log_ui_tests
@@ -52,16 +55,16 @@ class change_log_ui_tests
 
         // prepare test data
         $back = new back_trace();
+        $api_typ_lst = new api_type_list([api_type::TEST_MODE]);
 
         $test_page .= 'simple list of changes of a word<br>';
         $log_lst = $t->change_log_list_named();
-        $log_dsp = $log_lst->dsp_obj();
+        $log_dsp = new change_log_list($log_lst->api_json_array($api_typ_lst));
         $test_page .= $log_dsp->tbl($back);
 
         $test_page .= 'condensed list of changes of a word<br>';
         $log_lst = $t->change_log_list_named();
-        $log_dsp = $log_lst->dsp_obj();
-        $back = new back_trace();
+        $log_dsp = new change_log_list($log_lst->api_json_array($api_typ_lst));
         $test_page .= $log_dsp->tbl($back, true, true);
 
         $t->html_test($test_page, 'change_log', 'change_log', $t);

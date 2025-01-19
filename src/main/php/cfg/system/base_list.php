@@ -35,11 +35,17 @@ namespace cfg\system;
 
 include_once DB_PATH . 'sql_db.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once API_OBJECT_PATH . 'api_message.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_db;
 use cfg\sandbox\sandbox;
+use cfg\user\user;
+use controller\api_message;
 use shared\library;
+use shared\types\api_type_list;
 
 class base_list
 {
@@ -247,6 +253,58 @@ class base_list
             log_info($id . ' not found in ' . $lib->dsp_array_keys($key_lst));
             return null;
         }
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create the api json message string for this list
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
+        // null values are not needed in the api message to the frontend
+        // but in the api message to the backend null values are relevant
+        // e.g. to remove empty string overwrites
+        $vars = $this->api_json_array($typ_lst, $usr);
+        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+
+        // add header if requested
+        if ($typ_lst->use_header()) {
+            global $db_con;
+            $class = $this::class;
+            $api_msg = new api_message($db_con, $class, $usr);
+            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
+        } else {
+            $msg = $vars;
+        }
+
+        return json_encode($msg);
+    }
+
+    /**
+     * create an array for the json api message
+     *
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @returns array with the json fields to create an api message
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $lst = [];
+        foreach ($this->lst() as $sbx) {
+            $lst[] = $sbx->api_json_array($typ_lst, $usr);
+        }
+        return $lst;
     }
 
 

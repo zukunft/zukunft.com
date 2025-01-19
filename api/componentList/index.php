@@ -37,16 +37,15 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
-include_once API_COMPONENT_PATH . 'component_list.php';
 
 use controller\controller;
 use cfg\user\user;
 use cfg\component\component_list;
-use api\component\component_list as component_list_api;
 use shared\api;
 
 // open database
@@ -57,7 +56,7 @@ $msk_id = $_GET[api::URL_VAR_VIEW_ID] ?? '';
 $pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
 $msg = '';
-$result = new component_list_api(array());
+$result = ''; // reset the json message string
 
 // load the session user parameters
 $usr = new user;
@@ -69,18 +68,18 @@ if ($usr->id() > 0) {
     if ($msk_id != '') {
         $lst = new component_list($usr);
         $lst->load_by_view_id($msk_id);
-        $result = $lst->api_obj();
+        $result = $lst->api_json();
     } elseif ($pattern != '') {
         $lst = new component_list($usr);
         $lst->load_names(($pattern));
-        $result = $lst->api_obj();
+        $result = $lst->api_json();
     } else {
         $msg = 'view id and pattern missing';
     }
 }
 
 $ctrl = new controller();
-$ctrl->get_list($result, $msg);
+$ctrl->get_json($result, $msg);
 
 
 prg_end_api($db_con);

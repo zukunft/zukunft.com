@@ -42,6 +42,7 @@ use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
 use html\result\result as result_dsp;
 use html\rest_ctrl;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class figure_tests
@@ -88,10 +89,12 @@ class figure_tests
         $t->subheader('API unit tests');
 
         $fig = $t->figure_value();
-        $t->assert_api($fig);
+        $t->assert_api($fig, 'figure_value_without_phrases');
+        $t->assert_api($fig, 'figure_value_with_phrases', [api_type::INCL_PHRASES]);
 
         $fig = $t->figure_result();
-        $t->assert_api($fig, 'figure_result');
+        $t->assert_api($fig, 'figure_result_without_phrases');
+        $t->assert_api($fig, 'figure_result_with_phrases', [api_type::INCL_PHRASES]);
 
 
         $t->subheader('HTML frontend unit tests');

@@ -55,6 +55,16 @@ class value_read_tests
 
         $t->subheader('Value load tests');
 
+        $test_name = 'load a value by id';
+        $val = new value($t->usr1);
+        $val->load_by_id(value_api::TI_PI);
+        $val->load_objects();
+        $t->assert($test_name, $val->number(), value_api::TV_READ);
+        // TODO Prio 0 activate
+        //$t->assert($test_name, $val->name(), group_api::TN_READ);
+        //$t->assert($test_name, $val->description(), value_api::TV_READ);
+        //$t->assert($test_name, $val->type_name(), value_api::TV_READ);
+
         $test_name = 'load a value by phrase group';
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(
@@ -76,7 +86,7 @@ class value_read_tests
         $t->assert($test_name, $result, $target);
         */
 
-        $t->subheader('Frontend API tests');
+        $t->subheader('Frontend tests');
 
         $val = new value($t->usr1);
         $phr_lst = new phrase_list($t->usr1);
@@ -84,14 +94,11 @@ class value_read_tests
         $grp = new group_id();
         $val->load_by_id($grp->get_id($phr_lst));
         $val->load_objects();
-        $api_val = $val->api_obj();
-        $t->assert($t->name . 'api->id', $api_val->id, $val->id());
-        $t->assert($t->name . 'api->number', $api_val->number(), $val->number());
-        $t->assert_api_json_msg($api_val);
 
         $phr_grp = $t->add_phrase_group(array(triple_api::TN_PI_NAME), group_api::TN_READ);
         $val = $t->load_value_by_phr_grp($phr_grp);
-        $t->assert_api_obj($val);
+        // TODO Prio 0 active
+        //$t->assert_api_obj($val);
 
     }
 

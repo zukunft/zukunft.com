@@ -57,12 +57,12 @@ class sys_log_list_dsp_old extends sys_log_list_api
         $result = ''; // reset the html code var
         $rows = '';   // the html code of the rows
 
-        if (count($this->sys_log) > 0) {
+        if (count($this->sys_log_list) > 0) {
             // prepare to show a system log entry
-            $log_dsp = $this->sys_log[0];
+            $log_dsp = $this->sys_log_list[0];
             if ($log_dsp->time <> '') {
                 $row_nbr = 0;
-                foreach ($this->sys_log as $log_dsp) {
+                foreach ($this->sys_log_list as $log_dsp) {
                     $row_nbr++;
                     if ($row_nbr == 1) {
                         $rows .= $this->headline_html();

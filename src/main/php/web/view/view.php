@@ -52,6 +52,7 @@ include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_VIEW_PATH . 'view_list.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'triple.php';
+include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_TYPES_PATH . 'view_type.php';
 include_once SHARED_PATH . 'api.php';
@@ -81,6 +82,7 @@ use html\word\word as word_dsp;
 use shared\api;
 use shared\json_fields;
 use shared\library;
+use shared\types\position_types;
 use shared\types\view_styles;
 use shared\types\view_type;
 
@@ -290,7 +292,7 @@ class view extends sandbox_typed
             foreach ($this->cmp_lst->lst() as $cmp) {
                 // add previous collected components to the final result
                 if ($row != '') {
-                    if ($cmp->pos_type_code_id() == position_type::BELOW) {
+                    if ($cmp->pos_type_code_id() == position_types::BELOW) {
                         if ($button_only) {
                             $result .= $row;
                         } else {

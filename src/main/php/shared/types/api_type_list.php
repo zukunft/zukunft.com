@@ -114,5 +114,13 @@ class api_type_list
         return in_array(api_type::TEST_MODE, $this->lst);
     }
 
+    /**
+     * @return bool true if the message header should be included in the api message
+     */
+    public function use_header(): bool
+    {
+        return in_array(api_type::HEADER, $this->lst);
+    }
+
 }
 

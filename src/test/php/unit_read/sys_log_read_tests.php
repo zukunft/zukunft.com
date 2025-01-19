@@ -34,6 +34,7 @@ namespace unit_read;
 
 use cfg\system\sys_log_list;
 use cfg\user\user;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class sys_log_read_tests
@@ -66,7 +67,7 @@ class sys_log_read_tests
         $t->assert('system errors', $result, true);
 
         $t->subheader('API unit db tests');
-        $t->assert_api($err_lst, 'sys_log_list_setup', [], true);
+        $t->assert_api($err_lst, 'sys_log_list_setup', [api_type::HEADER], true);
 
     }
 

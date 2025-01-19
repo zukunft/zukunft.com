@@ -1,5 +1,6 @@
 {
   "id": 1,
   "name": "English",
-  "code_id": "en"
+  "code_id": "en",
+  "description": "the system language, so each word must be unique for all users in this language"
 }

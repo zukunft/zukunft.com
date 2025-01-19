@@ -37,16 +37,15 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
-include_once API_SYSTEM_PATH . 'sys_log_list.php';
 
 use cfg\system\sys_log_list;
 use cfg\user\user;
 use controller\controller;
-use controller\system\sys_log_list as sys_log_list_api;
 
 // open database
 $db_con = prg_start("api/log", "", false);
@@ -56,7 +55,7 @@ $db_con = prg_start("api/log", "", false);
 $usr = new user;
 $msg = $usr->get();
 
-$result = new sys_log_list_api($db_con, $usr);
+$result = ''; // reset the json message string
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
@@ -67,11 +66,11 @@ if ($usr->id() > 0) {
     $lst->page = 0;
     $lst->size = 20;
     $lst->load_all();
-    $result = $lst->api_obj($usr);
+    $result = $lst->api_json();
 }
 
 $ctrl = new controller();
-$ctrl->get_api_msg($result, $msg);
+$ctrl->get_json($result, $msg);
 
 
 prg_end_api($db_con);

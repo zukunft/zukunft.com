@@ -430,26 +430,6 @@ class phrase_list extends sandbox_list_named
      */
 
     /**
-     * @return phrase_list_api the word list object with the display interface functions
-     */
-    function api_obj(): phrase_list_api
-    {
-        $api_obj = new phrase_list_api();
-        foreach ($this->lst() as $phr) {
-            $api_obj->add($phr->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    /**
      * @return term_list filled with all phrases from this phrase list
      */
     function term_list(): term_list
@@ -1031,6 +1011,22 @@ class phrase_list extends sandbox_list_named
     function id_lst(): array
     {
         return $this->phrase_ids()->lst;
+    }
+
+    /**
+     * get the phrase ids as an array
+     * switch to ids() if possible
+     * @return array with the ids of theis phrase list
+     */
+    function obj_id_lst(): array
+    {
+        $result = array();
+        if (count($this->lst()) > 0) {
+            foreach ($this->lst() as $phr) {
+                $result[] = $phr->id();
+            }
+        }
+        return $result;
     }
 
     /**

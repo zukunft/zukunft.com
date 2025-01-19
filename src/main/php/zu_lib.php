@@ -131,7 +131,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
          sort load functions (done in: view
          group function within a class e.g. by load, save ....
          use $this::class for load functions
-    TODO make write tests autonomies (no prerequieries, no dependencies, no left overs)
+    TODO make write tests autonomies (no pre requires, no dependencies, no left overs)
     TODO check if MySQL create script is working
     TODO add unit test for all system views
     TODO convert from null e.g. to empty string at the last possible point e.g. to distinguish between not set
@@ -150,8 +150,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add the option to separate the user config to be able to move the user config to a separate database so that each user group can run its own databaser server
     TODO check that all vars that can be empty allow null and replace null e.g. with an empty string as late as possible
     TODO check that all relevant vars are forwarded from the backend object to the api and display object
-    TODO add a system execution time measurment that covers e.g. the import of words (values, ...) ber second
-    TODO validate the import bevor staring the import e.g. check if a triple has always from, verb and to
+    TODO add a system execution time measurement that covers e.g. the import of words (values, ...) ber second
+    TODO validate the import before staring the import e.g. check if a triple has always from, verb and to
     TODO create a word-list for import where just the names are listed without further indications
     TODO the first frontend should look like Excel wit a big empty sheet and file save and load and only a few suggestions while writing to a cell
     TODO remove the time phrase from result
@@ -324,7 +324,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add a date table to save dates in an efficient way
     TODO create a alternative backend based on Rust for better speed
     TODO all pods write change requests first to its own database
-    TODO if the local pod is not the master pod for the phrase, the change is transfered to the master pod
+    TODO if the local pod is not the master pod for the phrase, the change is transferred to the master pod
     TODO in case of a conflict, that later change wins and because all changes are user specific the probability of a ultimate conflict is nearly zero
     TODO use zeroMQ or Kafka to sync the insert and update statements between the pod
     TODO use separate kafka topics for values and results of each pod e.g. switzerland_values for all updates related to Switzerland
@@ -351,18 +351,24 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO because MySQL does not keep the interface stable (e.g. https://dev.mysql.com/doc/refman/8.4/en/charset-unicode-utf8.html) switch to postgres and MariaDB
     TODO use th principles of compression for database optimisation e.g. to sort phrases by usage to increase the number of prime value keys
     TODO use a universal type to create the value tables, so instead of prime, main and big use value 1,2 and 3
+    TODO allow to add screenshots to the import file to check if the recreated screen matches the given screenshot
+    TODO create a tool for rules base confirm of screen result changes
+    TODO create a related table with the phrase, the context as a group, the weight and the related phrase
+         for fast selection of phrases related to a given phrase within a given context
+         this related table should be automatically filled by a batch job based e.g. on the number and usage
+    TODO create different related tables for prime and big context and user specific
 
     TODO message handling
         in dought return a user message to the highest level, so that it can be shown to the user
         in case of an exception convert it to a user message as soon as all relevant information are availible
 
     TODO use cases:
-        create a sample how to create a personal pension plan for 1. 2. and 3. pillar independend from banks and pension funds
+        create a sample how to create a personal pension plan for 1. 2. and 3. pillar independent from banks and pension funds
         these the optimal tax rates are
             from -10% needed to fulfill the basic needed
             to 99% for everything more than the community is able to invest to save one live
             reason: this is the optimal combination between safety and prestige
-        Show the roof top potential solar potential of 120 Gigawatt vs. usage in persent of solar energy in turkey https://de.dsisolar.com/info/t-rkiye-s-rooftop-solar-potential-enough-to-me-89783977.html
+        Show the roof top potential solar potential of 120 Gigawatt vs. usage in percent of solar energy in turkey https://de.dsisolar.com/info/t-rkiye-s-rooftop-solar-potential-enough-to-me-89783977.html
 
     TODO because some changes e.g. a formula change might cause costly calculations estimate the cost upfront and ask the user to pay for it
 

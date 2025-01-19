@@ -40,6 +40,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -61,7 +62,7 @@ $db_con = prg_start("api/phraseType", "", false);
 $phr_typ_id = $_GET[api::URL_VAR_ID] ?? 0;
 
 $msg = '';
-$result = new phrase_list_api(); // reset the html code var
+$result = ''; // reset the json message string
 
 // load the session user parameters
 $usr = new user;
@@ -73,14 +74,14 @@ if ($usr->id() > 0) {
     if ($phr_typ_id != 0) {
         $phr_typ = new phrase_type(phrase_type_shared::NORMAL);
         $phr_typ->load_by_id($phr_typ_id);
-        $result = $phr_typ->api_obj();
+        $result = $phr_typ->api_json();
     } else {
         $msg = 'phrase type id is missing';
     }
 }
 
 $ctrl = new controller();
-$ctrl->get_export($result, $msg);
+$ctrl->get_json($result, $msg);
 
 
 prg_end_api($db_con);

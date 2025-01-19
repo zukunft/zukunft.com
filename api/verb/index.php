@@ -37,6 +37,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -69,17 +70,17 @@ if ($usr->id() > 0) {
     $vrb = new verb();
     if ($vrb_id > 0) {
         $vrb->load_by_id($vrb_id);
-        $result = $vrb->api_verb_obj();
+        $result = $vrb->api_json();
     } elseif ($vrb_name != '') {
         $vrb->load_by_name($vrb_name);
-        $result = $vrb->api_verb_obj();
+        $result = $vrb->api_json();
     } else {
         $msg = 'verb id or name is missing';
     }
 }
 
 $ctrl = new controller();
-$ctrl->get($result, $msg);
+$ctrl->get_json($result, $msg);
 
 
 prg_end_api($db_con);

@@ -32,6 +32,7 @@
 
 namespace unit_ui;
 
+use cfg\word\triple;
 use const test\TEST_UNIT_UI_PATH;
 
 include_once TEST_UNIT_UI_PATH . 'base_ui_tests.php';

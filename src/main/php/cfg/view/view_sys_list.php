@@ -88,23 +88,6 @@ class view_sys_list extends type_list
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return view_list_api the object type list frontend api object
-     */
-    function api_obj(): object
-    {
-        $api_obj = new view_list_api();
-        foreach ($this->lst() as $dsp) {
-            $api_obj->add($dsp->api_obj());
-        }
-        return $api_obj;
-    }
-
-
-    /*
      * loading functions
      */
 

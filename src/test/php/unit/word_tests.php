@@ -127,6 +127,10 @@ class word_tests
         $t->assert_sql_delete($sc, $wrd, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $wrd, [sql_type::USER, sql_type::EXCLUDE]);
 
+        $t->subheader('word base object handling');
+        $wrd = $t->word_filled();
+        $t->assert_reset($wrd);
+
         $t->subheader('word api unit tests');
         $wrd = $t->word();
         $t->assert_api_json($wrd);

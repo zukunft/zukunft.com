@@ -41,6 +41,7 @@ use cfg\db\sql_creator;
 use cfg\formula\fig_ids;
 use cfg\formula\figure_list;
 use html\figure\figure_list as figure_list_dsp;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class figure_list_tests
@@ -70,7 +71,8 @@ class figure_list_tests
         $t->subheader('API unit tests');
 
         $fig_lst = $t->figure_list();
-        $t->assert_api($fig_lst);
+        $t->assert_api($fig_lst, 'figure_list_without_phrases');
+        $t->assert_api($fig_lst, 'figure_list_with_phrases', [api_type::INCL_PHRASES]);
 
 
         $t->subheader('HTML frontend unit tests');

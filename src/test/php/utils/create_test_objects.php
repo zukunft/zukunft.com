@@ -59,6 +59,7 @@ include_once MODEL_VALUE_PATH . 'value_geo.php';
 include_once MODEL_VALUE_PATH . 'value_ts_data.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -106,6 +107,7 @@ use cfg\word\word_db;
 use cfg\word\word_list;
 use html\system\messages;
 use shared\json_fields;
+use shared\types\api_type_list;
 use shared\types\component_type as comp_type_shared;
 use controller\api_message;
 use api\component\component as component_api;
@@ -186,6 +188,7 @@ use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\word as word_dsp;
 use html\view\view_list as view_list_dsp;
 use shared\library;
+use shared\types\position_types;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use shared\types\view_styles;
@@ -297,7 +300,7 @@ class create_test_objects extends test_base
         $lst->add($vrb_cac->api_obj(), controller::API_LIST_VERBS);
 
         $sys_msk_cac = $this->view_list();
-        $lst->add($sys_msk_cac->api_obj(), controller::API_LIST_SYSTEM_VIEWS);
+        $lst->add($sys_msk_cac->api_json_array(new api_type_list([])), controller::API_LIST_SYSTEM_VIEWS);
 
         return $lst;
     }
@@ -1512,6 +1515,33 @@ class create_test_objects extends test_base
     /**
      * @return phrase_list the phrases relevant for testing the max number of prime phrases
      */
+    function phrase_list_canton_mio(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->word_zh()->phrase());
+        $lst->add($this->word_canton()->phrase());
+        $lst->add($this->word_inhabitant()->phrase());
+        $lst->add($this->word_2019()->phrase());
+        $lst->add($this->word_mio()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list the phrases relevant for testing the max number of prime phrases
+     */
+    function phrase_list_ch_mio(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->word_ch()->phrase());
+        $lst->add($this->word_inhabitant()->phrase());
+        $lst->add($this->word_2019()->phrase());
+        $lst->add($this->word_mio()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list the phrases relevant for testing the max number of prime phrases
+     */
     function phrase_list_zh_mio_2020(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
@@ -1697,6 +1727,18 @@ class create_test_objects extends test_base
         return $grp;
     }
 
+    function group_canton(): group
+    {
+        $lst = $this->phrase_list_canton_mio();
+        return $lst->get_grp_id(false);
+    }
+
+    function group_ch(): group
+    {
+        $lst = $this->phrase_list_ch_mio();
+        return $lst->get_grp_id(false);
+    }
+
     function group_list(): group_list
     {
         $lst = new group_list($this->usr1);
@@ -1876,6 +1918,18 @@ class create_test_objects extends test_base
     {
         $grp = $this->group_zh();
         return new value($this->usr1, value_api::TV_CITY_ZH_INHABITANTS_2019, $grp);
+    }
+
+    function value_canton(): value
+    {
+        $grp = $this->group_canton();
+        return new value($this->usr1, value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO, $grp);
+    }
+
+    function value_ch(): value
+    {
+        $grp = $this->group_ch();
+        return new value($this->usr1, value_api::TV_CH_INHABITANTS_2019_IN_MIO, $grp);
     }
 
     function value_list(): value_list
@@ -2636,7 +2690,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return component with all fields set to check if the save and load prozess is complete
+     * @return component with all fields set to check if the save and load process is complete
      */
     function component_filled(): component
     {
@@ -2823,7 +2877,7 @@ class create_test_objects extends test_base
         $lnk = new component_link($this->usr1);
         $lnk->set(1, $this->view(), $this->component(), 1);
         $lnk->set_predicate(component_link_type::EXPRESSION);
-        $lnk->set_pos_type(position_type::SIDE);
+        $lnk->set_pos_type(position_types::SIDE);
         $lnk->set_style(view_styles::COL_SM_4);
         $lnk->exclude();
         $lnk->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
@@ -3344,7 +3398,7 @@ class create_test_objects extends test_base
      */
     function dsp_obj(object $model_obj, object $dsp_obj, bool $do_save = true): object
     {
-        $api_json = $model_obj->api_obj($do_save)->get_json();
+        $api_json = $model_obj->api_json();
         $dsp_obj->set_from_json($api_json);
         return $dsp_obj;
     }

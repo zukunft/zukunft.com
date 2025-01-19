@@ -37,16 +37,15 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
-include_once API_WORD_PATH . 'word_list.php';
 
 use controller\controller;
 use cfg\user\user;
 use cfg\word\word_list;
-use api\word\word_list as word_list_api;
 use shared\api;
 
 // open database
@@ -57,7 +56,7 @@ $wrd_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
 $pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
 $msg = '';
-$result = new word_list_api(); // reset the html code var
+$result = ''; // reset the json message string
 
 // load the session user parameters
 $usr = new user;
@@ -69,18 +68,18 @@ if ($usr->id() > 0) {
     if ($wrd_ids != '') {
         $lst = new word_list($usr);
         $lst->load_by_ids(explode(",", $wrd_ids));
-        $result = $lst->api_obj();
+        $result = $lst->api_json();
     } elseif ($pattern != '') {
         $lst = new word_list($usr);
         $lst->load_like($pattern);
-        $result = $lst->api_obj();
+        $result = $lst->api_json();
     } else {
         $msg = 'word ids, pattern and related word is missing';
     }
 }
 
 $ctrl = new controller();
-$ctrl->get_list($result, $msg);
+$ctrl->get_json($result, $msg);
 
 
 prg_end_api($db_con);

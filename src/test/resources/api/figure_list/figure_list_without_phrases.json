@@ -1,0 +1,12 @@
+[
+  {
+    "id": 32770,
+    "number": 3.1415926535898,
+    "class": "value"
+  },
+  {
+    "id": 1,
+    "number": 123456,
+    "class": "result"
+  }
+]

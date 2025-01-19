@@ -327,30 +327,6 @@ class verb extends type_object
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return verb_api the verb frontend api object
-     */
-    function api_verb_obj(): verb_api
-    {
-        $api_obj = new verb_api();
-        $api_obj->set_id($this->id());
-        $api_obj->set_name($this->name());
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_verb_obj()->get_json();
-    }
-
-
-    /*
      * load
      */
 
@@ -473,16 +449,23 @@ class verb extends type_object
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst): array
+    function api_json_array(api_type_list|array $typ_lst = [], user|null $usr = null): array
     {
         $vars = [];
 
-        $vars[json_fields::ID] = $this->id();
         $vars[json_fields::NAME] = $this->name();
+        $vars[json_fields::CODE_ID] = $this->code_id();
         $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::PLURAL] = $this->plural;
+        $vars[json_fields::REVERSE] = $this->reverse;
+        $vars[json_fields::REV_PLURAL] = $this->rev_plural;
+        $vars[json_fields::FRM_NAME] = $this->frm_name;
+        $vars[json_fields::USAGE] = $this->usage();
+        $vars[json_fields::ID] = $this->id();
 
         return $vars;
     }

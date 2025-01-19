@@ -150,11 +150,12 @@ class value_time extends value_base
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
      * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst): array
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        $vars = parent::api_json_array($typ_lst);
+        $vars = parent::api_json_array($typ_lst, $usr);
 
         // add the datetime value itself
         $vars[json_fields::TIME_VALUE] = $this->value();

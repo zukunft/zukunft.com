@@ -46,11 +46,6 @@
 namespace cfg\phrase;
 
 include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once API_PHRASE_PATH . 'term.php';
-include_once API_WORD_PATH . 'word.php';
-include_once API_WORD_PATH . 'triple.php';
-include_once API_VERB_PATH . 'verb.php';
-include_once API_FORMULA_PATH . 'formula.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
@@ -68,15 +63,14 @@ include_once MODEL_WORD_PATH . 'word_db.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once HTML_PATH . 'html_base.php';
-include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\helper\combine_named;
-use api\phrase\term as term_api;
-use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -93,7 +87,8 @@ use cfg\word\word;
 use cfg\word\triple;
 use cfg\word\word_db;
 use html\html_base;
-use html\word\word as word_dsp;
+use shared\json_fields;
+use shared\types\api_type_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use shared\types\phrase_type as phrase_type_shared;
@@ -552,33 +547,6 @@ class term extends combine_named
      */
 
     /**
-     * @return term_api the term frontend api object
-     */
-    function api_obj(): term_api
-    {
-        if ($this->is_word()) {
-            return $this->get_word()->api_obj()->term();
-        } elseif ($this->is_triple()) {
-            return $this->get_triple()->api_obj()->term();
-        } elseif ($this->is_formula()) {
-            return $this->get_formula()->api_obj()->term();
-        } elseif ($this->is_verb()) {
-            return $this->get_verb()->api_verb_obj()->term();
-        } else {
-            log_warning('Term ' . $this->dsp_id() . ' is of unknown type');
-            return (new term_api(new word_api()));
-        }
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    /**
      * @return phrase the word or triple cast as a phrase
      */
     public
@@ -930,7 +898,7 @@ class term extends combine_named
     {
         $result = false;
         if (isset($this->obj)) {
-            if (get_class($this->obj) == word::class or get_class($this->obj) == word_dsp::class) {
+            if (get_class($this->obj) == word::class) {
                 $result = true;
             }
         }

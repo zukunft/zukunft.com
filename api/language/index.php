@@ -40,6 +40,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -69,14 +70,14 @@ if ($usr->id() > 0) {
     if ($lan_typ_id != '') {
         $lan_typ = new language(language::DEFAULT);
         $lan_typ->load_by_id($lan_typ_id);
-        $result = $lan_typ->api_obj();
+        $result = $lan_typ->api_json();
     } else {
         $msg = 'language id is missing';
     }
 }
 
 $ctrl = new controller();
-$ctrl->get_export($result, $msg);
+$ctrl->get_json($result, $msg);
 
 
 prg_end_api($db_con);

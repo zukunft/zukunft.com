@@ -40,6 +40,7 @@ use cfg\user\user;
 use DateTime;
 use DateTimeInterface;
 use html\html_base;
+use shared\json_fields;
 use shared\library;
 
 class api_message
@@ -115,6 +116,11 @@ class api_message
         $this->body = $api_obj;
     }
 
+    function add_json(string $api_obj): void
+    {
+        $this->body = $api_obj;
+    }
+
     /**
      * @return string the frontend API JSON string
      */
@@ -129,6 +135,40 @@ class api_message
     function get_json_array(): array
     {
         return json_decode(json_encode($this), true);
+    }
+
+    /**
+     * create and set the api message header information
+     * @param sql_db $db_con the active database link to get the configuration from the database
+     * @param string $class the class of the message
+     * @param user $usr the user view that the api message should contain
+     */
+    function api_header_array(
+        sql_db $db_con,
+        string $class,
+        user   $usr,
+        array  $vars
+    ): array
+    {
+        $lib = new library();
+        $cfg = new config();
+        $class = $lib->class_to_name($class);
+        $msg = [];
+        if ($db_con->connected()) {
+            $msg[json_fields::POD] = $cfg->get_db(config::SITE_NAME, $db_con);
+        } else {
+            // for unit tests use the default pod name
+            $msg[json_fields::POD] = POD_NAME;
+        }
+        $msg[json_fields::TYPE_NAME] = $class;
+        $msg[json_fields::USER_ID] = $usr->id();
+        $msg[json_fields::USER_NAME] = $usr->name();
+        $msg[json_fields::VERSION] = PRG_VERSION;
+        $msg[json_fields::TIMESTAMP] = (new DateTime())->format(DateTimeInterface::ATOM);
+        $msg[$class] = $vars;
+
+        return $msg;
+
     }
 
 

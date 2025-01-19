@@ -521,7 +521,7 @@ class group extends sandbox_multi
 
 
     /*
-     * cast
+     * api
      */
 
     /**
@@ -537,14 +537,6 @@ class group extends sandbox_multi
         $api_obj->set_id($this->id());
         $api_obj->set_name($this->name());
         return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
     }
 
 

@@ -106,6 +106,10 @@ class component_tests
         $t->assert_sql_delete($sc, $cmp);
         $t->assert_sql_delete($sc, $cmp, [sql_type::LOG]);
 
+        $t->subheader('component base object handling');
+        $cmp = $t->component_filled();
+        $t->assert_reset($cmp);
+
         $t->subheader('component api unit tests');
         $cmp = $t->component_filled();
         $t->assert_api_json($cmp);

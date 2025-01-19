@@ -77,6 +77,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once WEB_REF_PATH . 'source.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use api\ref\source as source_api;
@@ -97,6 +98,7 @@ use cfg\sandbox\sandbox_typed;
 use cfg\user\user;
 use cfg\user\user_message;
 use shared\json_fields;
+use shared\types\api_type_list;
 
 class source extends sandbox_typed
 {
@@ -428,6 +430,28 @@ class source extends sandbox_typed
     function all_sandbox_fields(): array
     {
         return self::ALL_SANDBOX_FLD_NAMES;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+        if ($this->code_id != null) {
+            $vars[json_fields::CODE_ID] = $this->code_id;
+        }
+        $vars[json_fields::URL] = $this->url;
+        return $vars;
     }
 
 

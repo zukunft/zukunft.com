@@ -237,24 +237,8 @@ class figure extends combine_object
 
 
     /*
-     * cast
+     * api
      */
-
-    /**
-     * @returns figure_api the cast object for the api
-     */
-    function api_obj(bool $do_save = true): figure_api
-    {
-        return new figure_api($this->obj->api_obj($do_save));
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
 
     /**
      * map a figure api json to this model figure object
@@ -280,7 +264,6 @@ class figure extends combine_object
         }
         return $usr_msg;
     }
-
 
 
     /*

@@ -48,6 +48,8 @@ include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once API_SYSTEM_PATH . 'sys_log.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
@@ -67,9 +69,11 @@ use cfg\system\sys_log_status;
 use cfg\system\sys_log_function;
 use cfg\user\user;
 use controller\system\sys_log as sys_log_api;
+use shared\json_fields;
 use shared\library;
 use DateTime;
 use DateTimeInterface;
+use shared\types\api_type_list;
 
 class sys_log extends db_object_seq_id
 {
@@ -212,28 +216,6 @@ class sys_log extends db_object_seq_id
         return $this->usr;
     }
 
-    /*
-     * cast
-     */
-
-    /**
-     * @return sys_log_api a filled frontend api object
-     */
-    function get_api_obj(): sys_log_api
-    {
-        $dsp_obj = new sys_log_api();
-        $dsp_obj->id = $this->id();
-        $dsp_obj->time = $this->log_time->format('Y-m-d H:i:s');
-        $dsp_obj->user = $this->usr_name;
-        $dsp_obj->text = $this->log_text;
-        $dsp_obj->description = $this->log_description;
-        $dsp_obj->trace = $this->log_trace;
-        $dsp_obj->prg_part = $this->function_name;
-        //$dsp_obj->owner = $this->solver_name;
-        $dsp_obj->status = $this->status_name;
-        return $dsp_obj;
-    }
-
 
     /*
      * sql create
@@ -363,6 +345,55 @@ class sys_log extends db_object_seq_id
     {
         return self::FLD_ID;
     }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create the array for the api message
+     * which is on this level the same as the export json array
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+
+        $vars[json_fields::ID] = $this->id();
+        $vars[json_fields::TIME] = $this->log_time->format('Y-m-d H:i:s');
+        $vars[json_fields::USER_NAME] = $this->usr_name;
+        $vars[json_fields::TEXT] = $this->log_text;
+        $vars[json_fields::DESCRIPTION] = $this->log_description;
+        $vars[json_fields::TRACE] = $this->log_trace;
+        $vars[json_fields::PRG_PART] = $this->function_name;
+        //$vars[json_fields::ID] = $this->solver_name;
+        $vars[json_fields::OWNER] = '';
+        $vars[json_fields::STATUS] = $this->status_name;
+
+        return $vars;
+    }
+
+    /**
+     * @return sys_log_api a filled frontend api object
+     */
+    function get_api_obj(): sys_log_api
+    {
+        $dsp_obj = new sys_log_api();
+        $dsp_obj->id = $this->id();
+        $dsp_obj->time = $this->log_time->format('Y-m-d H:i:s');
+        $dsp_obj->user = $this->usr_name;
+        $dsp_obj->text = $this->log_text;
+        $dsp_obj->description = $this->log_description;
+        $dsp_obj->trace = $this->log_trace;
+        $dsp_obj->prg_part = $this->function_name;
+        //$dsp_obj->owner = $this->solver_name;
+        $dsp_obj->status = $this->status_name;
+        return $dsp_obj;
+    }
+
 
     /**
      * actually update an error field in the main database record or the user sandbox

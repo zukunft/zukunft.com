@@ -85,31 +85,6 @@ class job_list extends base_list
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return job_list_api the job list object with the display interface functions
-     */
-    function api_obj(): job_list_api
-    {
-        $api_obj = new job_list_api();
-        foreach ($this->lst() as $job) {
-            $api_obj->add($job->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-
-    /*
      * load interface
      */
 

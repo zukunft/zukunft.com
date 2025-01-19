@@ -89,10 +89,11 @@ include_once MODEL_VIEW_PATH . 'view_link_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
 include_once WEB_USER_PATH . 'user_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
+include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use api\system\type_list as type_list_api;
 use cfg\component\component_link_type;
@@ -153,6 +154,7 @@ use cfg\view\view_type_list;
 use html\user\user_type_list as type_list_dsp;
 use shared\json_fields;
 use shared\library;
+use shared\types\api_type_list;
 use shared\types\protection_type;
 use shared\types\share_type;
 
@@ -200,35 +202,6 @@ class type_list
     function reset(): void
     {
         $this->set_lst(array());
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return type_list_api the object type list frontend api object
-     */
-    function api_obj(): object
-    {
-        return new type_list_api($this->lst);
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    /**
-     * @return type_list_dsp the word frontend api object
-     */
-    function dsp_obj(): object
-    {
-        return new type_list_dsp($this->lst);
     }
 
 
@@ -500,6 +473,36 @@ class type_list
         }
         return $result;
     }
+
+
+    /*
+     * api
+     */
+
+    function api_json_array(): array
+    {
+        $vars = [];
+        foreach ($this->lst() as $typ) {
+            // TODO undo this exception
+            if ($typ::class == ref_type::class
+                or $typ::class == verb::class
+                or $typ::class == view::class) {
+                $typ_vars = $typ->api_json_array(new api_type_list([]));
+            } else {
+                $typ_vars[json_fields::NAME] = $typ->name();
+                $typ_vars[json_fields::CODE_ID] = $typ->code_id();
+                $typ_vars[json_fields::DESCRIPTION] = $typ->description();
+                $typ_vars[json_fields::ID] = $typ->id();
+            }
+            $vars[] = $typ_vars;
+        }
+        return $vars;
+    }
+
+
+    /*
+     * im- and export
+     */
 
     /**
      * fill the list base on the csv resource file
@@ -805,6 +808,19 @@ class type_list
             }
         }
         return $names . ' (' . $ids . ')';
+    }
+
+
+    /*
+     * TODO deprecate
+     */
+
+    /**
+     * @return type_list_dsp the word frontend api object
+     */
+    function dsp_obj(): object
+    {
+        return new type_list_dsp($this->lst);
     }
 
 }

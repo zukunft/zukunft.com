@@ -112,6 +112,10 @@ class formula_tests
         $t->assert_sql_delete($sc, $frm, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $frm, [sql_type::LOG, sql_type::USER]);
 
+        $t->subheader('formula base object handling');
+        $frm = $t->formula_filled();
+        $t->assert_reset($frm);
+
         $t->subheader('formula api unit tests');
         $frm = $t->formula_filled();
         $t->assert_api_json($frm);

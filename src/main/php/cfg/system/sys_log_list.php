@@ -48,6 +48,7 @@ include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once WEB_SYSTEM_PATH . 'sys_log_list_dsp_old.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -62,6 +63,7 @@ use cfg\system\sys_log_status;
 use cfg\user\user;
 use controller\system\sys_log_list as sys_log_list_api;
 use html\system\sys_log_list_dsp_old;
+use shared\types\api_type_list;
 
 class sys_log_list extends base_list
 {
@@ -99,48 +101,6 @@ class sys_log_list extends base_list
     function user(): ?user
     {
         return $this->usr;
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return sys_log_list_api a filled frontend api object
-     */
-    function api_obj(user $usr): sys_log_list_api
-    {
-        global $db_con;
-        $api_obj = new sys_log_list_api($db_con, $usr);
-        foreach ($this->lst() as $log) {
-            //$api_obj->add($log->api_obj());
-            $api_obj->sys_log[] = $log->get_api_obj();
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(user $usr): string
-    {
-        return $this->api_obj($usr)->get_json();
-    }
-
-    /**
-     * @return sys_log_list_dsp_old a filled frontend display object
-     */
-    function dsp_obj(): sys_log_list_dsp_old
-    {
-        global $usr;
-        global $db_con;
-        $dsp_obj = new sys_log_list_dsp_old($db_con, $usr);
-        foreach ($this->lst() as $log) {
-            //$dsp_obj->add($log->dsp_obj());
-            $dsp_obj->sys_log[] = $log->get_api_obj();
-        }
-        return $dsp_obj;
     }
 
 
@@ -246,6 +206,25 @@ class sys_log_list extends base_list
     function add(sys_log $log_to_add): void
     {
         $this->add_obj($log_to_add);
+    }
+
+    /*
+     * TODO deprecate
+     */
+
+    /**
+     * @return sys_log_list_dsp_old a filled frontend display object
+     */
+    function dsp_obj(): sys_log_list_dsp_old
+    {
+        global $usr;
+        global $db_con;
+        $dsp_obj = new sys_log_list_dsp_old($db_con, $usr);
+        foreach ($this->lst() as $log) {
+            //$dsp_obj->add($log->dsp_obj());
+            $dsp_obj->sys_log_list[] = $log->get_api_obj();
+        }
+        return $dsp_obj;
     }
 
 }

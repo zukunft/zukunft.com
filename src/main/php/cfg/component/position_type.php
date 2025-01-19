@@ -37,9 +37,6 @@ use cfg\helper\type_object;
 
 class position_type extends type_object
 {
-    // list of the view component position types that have a coded functionality
-    const BELOW = "below";
-    const SIDE = "side";
 
     /*
      * database link

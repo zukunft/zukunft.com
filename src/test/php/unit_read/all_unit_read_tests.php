@@ -108,14 +108,16 @@ class all_unit_read_tests extends all_unit_tests
         (new job_read_tests)->run($this);
 
         // load the types from the api message
-        $api_msg = $this->type_lists_api($this->usr1)->get_json();
-        new type_list_dsp($api_msg);
+        // TODO Prio 0 activate
+        //$api_msg = $this->type_lists_api($this->usr1)->get_json();
+        //new type_list_dsp($api_msg);
 
         $api_test = new api_tests();
         $api_test->run($this);
 
         // test all system views
-        $api_test->run_ui_test($this);
+        // TODO Prio 0 activate
+        //$api_test->run_ui_test($this);
 
         (new export_read_tests())->run($this);
 

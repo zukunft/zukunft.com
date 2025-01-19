@@ -34,6 +34,7 @@ namespace unit_read;
 
 include_once MODEL_SYSTEM_PATH . 'sys_log.php';
 include_once DB_PATH . 'db_check.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 
 use cfg\formula\formula;
 use cfg\system\job_type_list;
@@ -42,6 +43,7 @@ use cfg\system\sys_log_status;
 use cfg\system\sys_log_status_list;
 use cfg\helper\type_lists;
 use cfg\db\sql_db;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class system_read_tests
@@ -101,7 +103,7 @@ class system_read_tests
         $t->subheader('API unit db tests of preloaded types');
         $sys_typ_lst = new type_lists();
         $sys_typ_lst->load($db_con, $t->usr1);
-        $t->assert_api($sys_typ_lst);
+        $t->assert_api($sys_typ_lst, '', [api_type::HEADER]);
 
     }
 

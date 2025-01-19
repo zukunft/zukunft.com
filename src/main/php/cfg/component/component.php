@@ -75,6 +75,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use api\component\component as component_api;
@@ -98,6 +99,7 @@ use cfg\user\user_message;
 use cfg\word\word;
 use shared\json_fields;
 use shared\types\api_type_list;
+use shared\types\position_types;
 
 class component extends sandbox_typed
 {
@@ -594,6 +596,10 @@ class component extends sandbox_typed
         return parent::load_standard_sql($sc);
     }
 
+    /*
+     * load sql
+     */
+
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view component from the database
      *
@@ -605,6 +611,26 @@ class component extends sandbox_typed
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
         return parent::load_sql_usr_num($sc, $this, $query_name);
+    }
+
+    /**
+     * create an SQL statement to retrieve the user changes of the current view component
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_user_changes(
+        sql_creator   $sc,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
+        $sc->set_fields(array_merge(
+            component_db::FLD_NAMES_USR,
+            component_db::FLD_NAMES_NUM_USR
+        ));
+        return parent::load_sql_user_changes($sc, $sc_par_lst);
     }
 
 
@@ -726,26 +752,6 @@ class component extends sandbox_typed
         return $result;
     }
 
-    /**
-     * create an SQL statement to retrieve the user changes of the current view component
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation e.g. standard for values and results
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_user_changes(
-        sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list()
-    ): sql_par
-    {
-        $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
-        $sc->set_fields(array_merge(
-            component_db::FLD_NAMES_USR,
-            component_db::FLD_NAMES_NUM_USR
-        ));
-        return parent::load_sql_user_changes($sc, $sc_par_lst);
-    }
-
 
     /*
      * cast
@@ -777,16 +783,17 @@ class component extends sandbox_typed
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
      * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst): array
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         if ($this->is_excluded()) {
             $vars = [];
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;
         } else {
-            $vars = parent::api_json_array($typ_lst);
+            $vars = parent::api_json_array($typ_lst, $usr);
             if ($this->code_id != null) {
                 $vars[json_fields::CODE_ID] = $this->code_id;
             }
@@ -1010,7 +1017,7 @@ class component extends sandbox_typed
         $dsp_lnk->set_view($dsp);
         $dsp_lnk->set_component($this);
         $dsp_lnk->order_nbr = $order_nbr;
-        $dsp_lnk->set_pos_type(position_type::BELOW);
+        $dsp_lnk->set_pos_type(position_types::BELOW);
         return $dsp_lnk->save()->get_last_message();
     }
 

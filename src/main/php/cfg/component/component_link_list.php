@@ -226,31 +226,6 @@ class component_link_list extends sandbox_list
 
 
     /*
-     * api
-     */
-
-    /**
-     * @return component_link_list_api the component list object with the display interface functions
-     */
-    function api_obj(): component_link_list_api
-    {
-        $api_obj = new component_link_list_api(array());
-        foreach ($this->lst() as $lnk) {
-            $api_obj->add($lnk->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-
-    /*
      * im- and export
      */
 

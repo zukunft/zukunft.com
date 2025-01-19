@@ -90,6 +90,8 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_REF_PATH . 'ref.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use api\system\job as job_api;
 use cfg\db\sql;
@@ -103,14 +105,14 @@ use cfg\helper\db_object_seq_id_user;
 use cfg\formula\formula;
 use cfg\helper\type_object;
 use cfg\ref\source;
-use cfg\system\job_type;
-use cfg\system\job_type_list;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\ref\ref;
 use cfg\user\user;
 use DateTime;
 use DateTimeInterface;
+use shared\json_fields;
+use shared\types\api_type_list;
 
 class job extends db_object_seq_id_user
 {
@@ -275,40 +277,6 @@ class job extends db_object_seq_id_user
     }
 
     /*
-     * cast
-     */
-
-    /**
-     * @return job_api the batch job frontend api object
-     */
-    function api_obj(): job_api
-    {
-        $api_obj = new job_api($this->user());
-        $api_obj->id = $this->id();
-        // TODO use time zone?
-        $api_obj->request_time = $this->request_time->format(DateTimeInterface::ATOM);
-        if ($this->start_time != null) {
-            $api_obj->start_time = $this->start_time->format(DateTimeInterface::ATOM);
-        }
-        if ($this->end_time != null) {
-            $api_obj->end_time = $this->end_time->format(DateTimeInterface::ATOM);
-        }
-        $api_obj->type_id = $this->type_id();
-        $api_obj->status = $this->status;
-        $api_obj->priority = $this->priority;
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-
-    /*
      * load
      */
 
@@ -365,6 +333,60 @@ class job extends db_object_seq_id_user
     function id_field(): string
     {
         return self::FLD_ID;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * @return job_api the batch job frontend api object
+     */
+    function api_obj(): job_api
+    {
+        $api_obj = new job_api($this->user());
+        $api_obj->id = $this->id();
+        // TODO use time zone?
+        $api_obj->request_time = $this->request_time->format(DateTimeInterface::ATOM);
+        if ($this->start_time != null) {
+            $api_obj->start_time = $this->start_time->format(DateTimeInterface::ATOM);
+        }
+        if ($this->end_time != null) {
+            $api_obj->end_time = $this->end_time->format(DateTimeInterface::ATOM);
+        }
+        $api_obj->type_id = $this->type_id();
+        $api_obj->status = $this->status;
+        $api_obj->priority = $this->priority;
+        return $api_obj;
+    }
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = [];
+
+        $vars[json_fields::ID] = $this->id();
+        $vars[json_fields::USER_NAME] = $this->user()->name();
+        // TODO use time zone?
+        $vars[json_fields::TIME_REQUEST] = $this->request_time->format(DateTimeInterface::ATOM);
+        if ($this->start_time != null) {
+            $vars[json_fields::TIME_START] = $this->start_time->format(DateTimeInterface::ATOM);
+        }
+        if ($this->end_time != null) {
+            $vars[json_fields::TIME_END] = $this->end_time->format(DateTimeInterface::ATOM);
+        }
+        $vars[json_fields::TYPE] = $this->type_id();
+        $vars[json_fields::STATUS] = $this->status;
+        $vars[json_fields::PRIORITY] = $this->priority;
+
+        return $vars;
     }
 
 

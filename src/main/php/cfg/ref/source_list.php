@@ -70,31 +70,6 @@ class source_list extends sandbox_list_named
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return source_list_api the word list object with the display interface functions
-     */
-    function api_obj(): source_list_api
-    {
-        $api_obj = new source_list_api(array());
-        foreach ($this->lst() as $src) {
-            $api_obj->add($src->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-
-    /*
      * load
      */
 

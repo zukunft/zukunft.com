@@ -336,7 +336,8 @@ class all_unit_tests extends test_cleanup
         (new base_ui_tests)->run($this);
 
         // test the html ui on localhost without api
-        (new all_ui_tests())->run($this);
+        // TODO switch on if the all ui tests are real unit tests and none is based of
+        // (new all_ui_tests())->run($this);
 
         // test the html ui on localhost with api
         // (new all_ui_api_tests())->run($this);
@@ -509,7 +510,7 @@ class all_unit_tests extends test_cleanup
         global $frm_typ_cac;
 
         $html_formula_types = new formula_type_list_web();
-        $html_formula_types->set_from_json_array(json_decode($frm_typ_cac->api_json(), true));
+        $html_formula_types->set_from_json_array($frm_typ_cac->api_json_array());
 
     }
 

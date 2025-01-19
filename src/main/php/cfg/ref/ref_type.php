@@ -35,10 +35,16 @@ namespace cfg\ref;
 include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\helper\type_object;
+use cfg\user\user;
+use shared\json_fields;
+use shared\types\api_type_list;
 
 class ref_type extends type_object
 {
@@ -63,5 +69,29 @@ class ref_type extends type_object
     const FLD_LST_EXTRA = array(
         [self::FLD_URL, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_URL_COM],
     );
+
+    /*
+     * api
+     */
+
+    /**
+     * TODO use parent function for setting the name, ...
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list|array $typ_lst = [], user|null $usr = null): array
+    {
+        $vars = [];
+        $vars[json_fields::NAME] = $this->name();
+        $vars[json_fields::CODE_ID] = $this->code_id();
+        $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::URL] = $this->url;
+        $vars[json_fields::ID] = $this->id();
+        return $vars;
+    }
+
 
 }

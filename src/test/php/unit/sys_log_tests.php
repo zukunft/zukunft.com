@@ -40,6 +40,7 @@ use cfg\system\sys_log;
 use cfg\system\system_time;
 use cfg\system\system_time_type;
 use shared\library;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class sys_log_tests
@@ -75,7 +76,7 @@ class sys_log_tests
         $t->subheader('API unit tests');
 
         $log_lst = $t->sys_log_list();
-        $t->assert_api($log_lst);
+        $t->assert_api($log_lst, '', [api_type::HEADER]);
 
 
         $t->subheader('System time type SQL setup statements');

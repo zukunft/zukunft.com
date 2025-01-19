@@ -40,6 +40,7 @@ include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use shared\api;
 use html\rest_ctrl as api_dsp;
@@ -48,6 +49,7 @@ use html\phrase\term as term_dsp;
 use html\sandbox\sandbox_named as sandbox_named_dsp;
 use html\user\user_message;
 use shared\json_fields;
+use shared\library;
 
 class verb extends sandbox_named_dsp
 {
@@ -56,7 +58,9 @@ class verb extends sandbox_named_dsp
      * object vars
      */
 
-    public string $code_id;        // this id text is unique for all code links and is used for system im- and export
+    // this id text is unique for all code links and is used for system im- and export
+    public string $code_id;
+    public int $usage = 0;
 
 
     /*
@@ -156,6 +160,10 @@ class verb extends sandbox_named_dsp
     {
         $vars = parent::api_array();
         $vars[json_fields::CODE_ID] = $this->code_id();
+        $vars[json_fields::USAGE] = $this->usage;
+        //$lib = new library();
+        //$class = $lib->class_to_name($this::class);
+        //$vars[json_fields::OBJECT_CLASS] = $class;
         return $vars;
     }
 

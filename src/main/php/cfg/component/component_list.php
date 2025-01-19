@@ -240,31 +240,6 @@ class component_list extends sandbox_list
 
 
     /*
-     * api
-     */
-
-    /**
-     * @return component_list_api the component list object with the display interface functions
-     */
-    function api_obj(): component_list_api
-    {
-        $api_obj = new component_list_api();
-        foreach ($this->lst() as $dsp) {
-            $api_obj->add($dsp->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-
-    /*
      * im- and export
      */
 

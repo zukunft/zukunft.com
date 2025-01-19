@@ -60,6 +60,8 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_LOG_PATH . 'change_table_field.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 //include_once MODEL_SYSTEM_PATH . 'pod.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use api\sandbox\type_object as type_object_api;
@@ -78,10 +80,11 @@ use cfg\log\change_table;
 use cfg\log\change_table_field;
 use cfg\sandbox\sandbox_named;
 use cfg\system\pod;
+use cfg\user\user;
 use shared\json_fields;
-use JsonSerializable;
+use shared\types\api_type_list;
 
-class type_object extends db_object_seq_id implements JsonSerializable
+class type_object extends db_object_seq_id
 {
 
     /*
@@ -418,28 +421,20 @@ class type_object extends db_object_seq_id implements JsonSerializable
 
 
     /*
-     * interface
+     * api
      */
 
     /**
-     * @return string the json api message as a text string
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
      */
-    function get_json(): string
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        return json_encode($this->jsonSerialize());
-    }
-
-    /**
-     * @return array with the sandbox vars without empty values that are not needed
-     * the message from the backend to the frontend does not need to include empty fields
-     * the message from the frontend to the backend on the other side must include empty fields
-     * to be able to unset fields in the backend
-     */
-    function jsonSerialize(): array
-    {
-        $vars = parent::jsonSerialize();
-        $vars = array_merge($vars, get_object_vars($this));
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+        $vars = parent::api_json_array($typ_lst, $usr);
+        return array_merge($vars, get_object_vars($this));
     }
 
 

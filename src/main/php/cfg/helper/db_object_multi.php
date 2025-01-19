@@ -35,20 +35,26 @@
 namespace cfg\helper;
 
 include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once API_OBJECT_PATH . 'api_message.php';
 include_once API_SYSTEM_PATH . 'db_object.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_type.php';
 //include_once MODEL_GROUP_PATH . 'group_id.php';
+include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_PATH . 'json_fields.php';
 
-use api\system\db_object as db_object_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
 use cfg\group\group_id;
-use cfg\helper\db_object;
+use cfg\user\user;
 use cfg\user\user_message;
+use controller\api_message;
+use shared\types\api_type_list;
+use shared\json_fields;
 
 class db_object_multi extends db_object
 {
@@ -132,27 +138,6 @@ class db_object_multi extends db_object
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return db_object_api the source frontend api object
-     */
-    function api_db_obj(): db_object_api
-    {
-        return new db_object_api($this->id());
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_db_obj()->get_json();
-    }
-
-
-    /*
      * load
      */
 
@@ -182,6 +167,56 @@ class db_object_multi extends db_object
     {
         parent::load_without_id_return($qp);
         return $this->id();
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create the api json message string of this database object based on more than one table for the frontend
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
+        // null values are not needed in the api message to the frontend
+        // but in the api message to the backend null values are relevant
+        // e.g. to remove empty string overwrites
+        $vars = $this->api_json_array($typ_lst, $usr);
+        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+
+        // add header if requested
+        if ($typ_lst->use_header()) {
+            global $db_con;
+            $class = $this::class;
+            $api_msg = new api_message($db_con, $class, $usr);
+            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
+        } else {
+            $msg = $vars;
+        }
+
+        return json_encode($msg);
+    }
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = [];
+        $vars[json_fields::ID] = $this->id();
+        return $vars;
     }
 
 

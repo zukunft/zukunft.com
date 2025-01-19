@@ -4,6 +4,7 @@
     "name": "wikidata",
     "description": "the base API link to wikidata",
     "type_id": 5,
+    "code_id": "wikidata",
     "url": "https:\/\/www.wikidata.org\/wiki\/"
   }
 ]

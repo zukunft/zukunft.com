@@ -115,23 +115,6 @@ class type_list extends list_api implements JsonSerializable
      * cast
      */
 
-    /**
-     * @returns type_list_dsp the cast object with the HTML code generating functions
-     */
-    function dsp_obj(): type_list_dsp
-    {
-        // cast the single list objects
-        $lst_dsp = array();
-        foreach ($this->lst() as $val) {
-            if ($val != null) {
-                $val_dsp = $val->dsp_obj();
-                $lst_dsp[] = $val_dsp;
-            }
-        }
-
-        return new type_list_dsp($lst_dsp);
-    }
-
 
     /*
      * interface
@@ -212,6 +195,27 @@ class type_list extends list_api implements JsonSerializable
             }
         }
         return $result;
+    }
+
+    /*
+     * TODO deprecate
+     */
+
+    /**
+     * @returns type_list_dsp the cast object with the HTML code generating functions
+     */
+    function dsp_obj(): type_list_dsp
+    {
+        // cast the single list objects
+        $lst_dsp = array();
+        foreach ($this->lst() as $val) {
+            if ($val != null) {
+                $val_dsp = $val->dsp_obj();
+                $lst_dsp[] = $val_dsp;
+            }
+        }
+
+        return new type_list_dsp($lst_dsp);
     }
 
 }

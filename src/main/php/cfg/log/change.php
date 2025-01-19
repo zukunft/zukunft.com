@@ -65,6 +65,8 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 include_once WEB_LOG_PATH . 'change_log_named.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use api\log\change_log_named as change_log_named_api;
 use api\sandbox\user_config;
@@ -90,6 +92,8 @@ use html\log\change_log_named as change_log_named_dsp;
 use DateTime;
 use DateTimeInterface;
 use Exception;
+use shared\json_fields;
+use shared\types\api_type_list;
 
 class change extends change_log
 {
@@ -208,46 +212,6 @@ class change extends change_log
             log_debug('Change ' . $this->id() . ' loaded', $debug - 8);
         }
         return $result;
-    }
-
-
-    /*
-     * cast
-     */
-
-    function api_obj(): change_log_named_api
-    {
-        $api_obj = new change_log_named_api();
-        $this->fill_obj($api_obj);
-        return $api_obj;
-
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    function dsp_obj(): change_log_named_dsp
-    {
-        $dsp_obj = new change_log_named_dsp();
-        $this->fill_obj($dsp_obj);
-        return $dsp_obj;
-
-    }
-
-    private function fill_obj(change_log_named_api|change_log_named_dsp $log_obj): void
-    {
-        parent::fill_api_obj($log_obj);
-        $log_obj->old_value = $this->old_value;
-        $log_obj->old_id = $this->old_id;
-        $log_obj->new_value = $this->new_value;
-        $log_obj->new_id = $this->new_id;
-        $log_obj->std_value = $this->std_value;
-        $log_obj->std_id = $this->std_id;
     }
 
 
@@ -420,6 +384,32 @@ class change extends change_log
             $db_con->usr_id = $this->user()->id();
         }
         return $qp;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the json api message
+     *
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars[json_fields::OLD_VALUE] = $this->old_value;
+        $vars[json_fields::OLD_ID] = $this->old_id;
+        $vars[json_fields::NEW_VALUE] = $this->new_value;
+        $vars[json_fields::NEW_ID] = $this->new_id;
+        $vars[json_fields::STD_VALUE] = $this->std_value;
+        $vars[json_fields::STD_ID] = $this->std_id;
+
+        return $vars;
     }
 
 
@@ -606,8 +596,47 @@ class change extends change_log
 
 
     /*
-     * display
+     * debug
      */
+
+    function dsp_id(): string
+    {
+        $result = 'log ' . $this->action() . ' ';
+        $result .= $this->table() . ',' . $this->field() . ' ';
+        if ($this->old_value != null) {
+            if ($this->new_value != null) {
+                $result .= 'from ' . $this->old_value . ' (id ' . $this->old_id . ')';
+                $result .= 'to ' . $this->new_value . ' (id ' . $this->new_id . ')';
+            } else {
+                $result .= $this->old_value . ' (id ' . $this->old_id . ')';
+            }
+        } else {
+            if ($this->new_value != null) {
+                $result .= $this->new_value . ' (id ' . $this->new_id . ')';
+            }
+        }
+        $result .= ' in row ' . $this->row_id;
+        $result .= ' at ' . $this->change_time->format(DateTimeInterface::ATOM);
+        return $result;
+    }
+
+
+    /*
+     * TODO deprecate
+     */
+
+    function dsp_obj(): change_log_named_dsp
+    {
+        $dsp_obj = new change_log_named_dsp();
+        $this->fill_obj($dsp_obj);
+        return $dsp_obj;
+
+    }
+
+
+    /*
+      * display
+      */
 
     // TODO to be move to frontend
 
@@ -682,32 +711,6 @@ class change extends change_log
                 $result .= self::MSG_ADD . ' "' . $this->new_value . '"';;
             }
         }
-        return $result;
-    }
-
-
-    /*
-     * debug
-     */
-
-    function dsp_id(): string
-    {
-        $result = 'log ' . $this->action() . ' ';
-        $result .= $this->table() . ',' . $this->field() . ' ';
-        if ($this->old_value != null) {
-            if ($this->new_value != null) {
-                $result .= 'from ' . $this->old_value . ' (id ' . $this->old_id . ')';
-                $result .= 'to ' . $this->new_value . ' (id ' . $this->new_id . ')';
-            } else {
-                $result .= $this->old_value . ' (id ' . $this->old_id . ')';
-            }
-        } else {
-            if ($this->new_value != null) {
-                $result .= $this->new_value . ' (id ' . $this->new_id . ')';
-            }
-        }
-        $result .= ' in row ' . $this->row_id;
-        $result .= ' at ' . $this->change_time->format(DateTimeInterface::ATOM);
         return $result;
     }
 

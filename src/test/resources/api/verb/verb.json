@@ -1,4 +1,7 @@
 {
   "id": 1,
-  "name": "not set"
+  "name": "not set",
+  "code_id": "not_set",
+  "description": "placeholder verb to enable foreign key checks in the database and for the selection",
+  "usage": 0
 }

@@ -72,7 +72,7 @@ class component_list_read_tests
 
         $test_name = 'loading the api message creation of the api index file for ';
         // TODO add this to all db read tests for all API call functions
-        $result = json_decode(json_encode($cmp_lst->api_obj()), true);
+        $result = json_decode($cmp_lst->api_json(), true);
         $class_for_file = $t->class_without_namespace(component_list::class);
         $target = json_decode($t->api_json_expected($class_for_file), true);
         $t->assert_json($test_name . $cmp_lst->dsp_id(), $result, $target);

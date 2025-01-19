@@ -885,6 +885,42 @@ class library
         return $result;
     }
 
+    /**
+     * get a list of functions used in a class with the corresponding class section
+     * @param array $lines
+     * @return array
+     */
+    function php_code_function(array $lines): array
+    {
+        $result = [];
+        $in_comment_part = false;
+        $section_name = '';
+        foreach ($lines as $line) {
+            if (str_starts_with(trim($line), '/*') and !str_starts_with(trim($line), '/**')) {
+                $in_comment_part = true;
+            }
+            if (str_starts_with(trim($line), '*/')) {
+                $in_comment_part = false;
+            }
+            if ($in_comment_part) {
+                if (str_starts_with(trim($line), '*')) {
+                    $section_name = trim($this->str_right_of($line, '* '));
+                    $in_comment_part = false;
+                }
+            }
+            if (str_starts_with(trim($line), 'function ')) {
+                $function_name = trim($this->str_between($line, 'function ', '('));
+                $use = [];
+                $use[] = $function_name;;
+                $use[] = $section_name;;
+                if ($function_name != '') {
+                    $result[] = $use;
+                }
+            }
+        }
+        return $result;
+    }
+
     function php_code_use_sorted(array $lines): array
     {
         $result = [];
@@ -1006,6 +1042,42 @@ class library
             'api\log' => 'API_LOG_PATH',
             default => 'missing path for ' . $use_path,
         };
+    }
+
+    /**
+     * get the expected class section name for a function
+     * @param string $fnc_name the name of the function
+     * @return string name of the expected class section
+     */
+    function php_expected_function_section(string $fnc_name): string
+    {
+        $result = match ($fnc_name) {
+            '__construct', 'reset', 'row_mapper_sandbox' => 'construct and map',
+            'load_standard' => 'load',
+            'api_json_array', 'set_by_api_json' => 'api',
+            'import_obj', 'export_json' => 'im- and export',
+            'db_fields_all', 'db_fields_changed' => 'sql write fields',
+            'dsp_id' => 'debug',
+            default => '',
+        };
+
+        if ($result == '') {
+            if (str_starts_with($fnc_name, 'set_')) {
+                $result = 'set and get';
+            } elseif (str_starts_with($fnc_name, 'load_by_')) {
+                $result = 'load';
+            } elseif (str_starts_with($fnc_name, 'load_sql')
+                and !(str_starts_with($fnc_name, 'load_sql_user_changes'))) {
+                $result = 'load sql';
+            } elseif (str_starts_with($fnc_name, 'log_')) {
+                $result = 'log';
+            } elseif (str_starts_with($fnc_name, 'save_')) {
+                $result = 'save';
+            } elseif (str_starts_with($fnc_name, 'del_')) {
+                $result = 'del';
+            }
+        }
+        return $result;
     }
 
 

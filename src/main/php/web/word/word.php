@@ -57,6 +57,7 @@ include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'views.php';
 include_once SHARED_PATH . 'words.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\verb\verb_list;
 use html\helper\config;
@@ -78,6 +79,7 @@ use html\view\view_list;
 use shared\api;
 use shared\enum\foaf_direction;
 use shared\json_fields;
+use shared\library;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\view_styles;
 use shared\views as view_shared;
@@ -109,6 +111,14 @@ class word extends sandbox_typed
      */
     function set_from_json_array(array $json_array): user_message
     {
+        // get body from message
+        $lib = new library();
+        $class = $lib->class_to_name($this::class);
+        if (key_exists(json_fields::POD, $json_array)
+            and key_exists($class, $json_array)) {
+            $json_array = $json_array[$class];
+        }
+
         $usr_msg = parent::set_from_json_array($json_array);
         if (array_key_exists(json_fields::PLURAL, $json_array)) {
             $this->set_plural($json_array[json_fields::PLURAL]);

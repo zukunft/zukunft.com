@@ -37,6 +37,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -52,7 +53,7 @@ $db_con = prg_start("api/typeLists", "", false);
 // no parameters needed
 
 $msg = '';
-$result = ''; // reset the html code var
+$result = ''; // reset the json message string
 
 // load the session user parameters
 $usr = new user;
@@ -62,11 +63,11 @@ $msg .= $usr->get();
 if ($usr->id() > 0) {
     $sys_typ_lst = new type_lists();
     $sys_typ_lst->load($db_con, $usr);
-    $result = $sys_typ_lst->api_obj($usr);
+    $result = $sys_typ_lst->api_json([api_type::HEADER], $usr);
 }
 
 $ctrl = new controller();
 
-$ctrl->get_types($result, $msg);
+$ctrl->get_json($result, $msg);
 
 prg_end_api($db_con);

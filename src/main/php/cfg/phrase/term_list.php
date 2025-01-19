@@ -87,58 +87,6 @@ class term_list extends sandbox_list_named
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return term_list_api the word list object with the display interface functions
-     */
-    function api_obj(): term_list_api
-    {
-        $api_obj = new term_list_api();
-        foreach ($this->lst() as $trm) {
-            $api_obj->add($trm->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    /**
-     * @return term_list_dsp the word object with the display interface functions
-     */
-    function dsp_obj(): term_list_dsp
-    {
-        $dsp_obj = new term_list_dsp();
-        foreach ($this->lst() as $trm) {
-            $dsp_obj->add($trm->dsp_obj());
-        }
-        return $dsp_obj;
-    }
-
-    /**
-     * get the phrases out of a term list
-     * @return phrase_list the list of phrases picked from the term list
-     */
-    function phrase_list(): phrase_list
-    {
-        $phr_lst = new phrase_list($this->user());
-        foreach ($this->lst() as $trm) {
-            if ($trm->is_word() or $trm->is_triple()) {
-                $phr_lst->add($trm->phrase());
-            }
-        }
-        return $phr_lst;
-    }
-
-
-    /*
      * load
      */
 
@@ -403,6 +351,26 @@ class term_list extends sandbox_list_named
             }
         }
         return $vrb;
+    }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * get the phrases out of a term list
+     * @return phrase_list the list of phrases picked from the term list
+     */
+    function phrase_list(): phrase_list
+    {
+        $phr_lst = new phrase_list($this->user());
+        foreach ($this->lst() as $trm) {
+            if ($trm->is_word() or $trm->is_triple()) {
+                $phr_lst->add($trm->phrase());
+            }
+        }
+        return $phr_lst;
     }
 
 

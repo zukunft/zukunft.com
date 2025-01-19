@@ -37,16 +37,18 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_REF_PATH . 'source.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 
-use controller\api_message;
 use controller\controller;
 use cfg\user\user;
 use cfg\ref\source;
 use shared\api;
+use shared\types\api_type;
 
 // open database
 $db_con = prg_start("api/ref", "", false);
@@ -62,7 +64,7 @@ $usr = new user;
 $msg .= $usr->get();
 
 $ctrl = new controller();
-$result = new api_message($db_con, source::class, $usr); // create the message header
+$result = ''; // reset the json message string
 
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
@@ -70,22 +72,21 @@ if ($usr->id() > 0) {
 
     // load the source from the database for GET, UPDATE and DELETE
     $src = new source($usr);
-    $result->set_user($usr);
     if ($src_id > 0) {
         $src->load_by_id($src_id);
-        $result->add_body($src->api_obj());
+        $result = $src->api_json([api_type::HEADER], $usr);
     } elseif ($src_name != '') {
         $src->load_by_name($src_name);
-        $result->add_body($src->api_obj());
+        $result = $src->api_json([api_type::HEADER], $usr);
     } elseif ($src_code_id != '') {
         $src->load_by_code_id($src_code_id);
-        $result->add_body($src->api_obj());
+        $result = $src->api_json([api_type::HEADER], $usr);
     } else {
         $msg = 'Cannot load source because id, name and code id is missing';
     }
 
     // add, update or delete the source
-    $ctrl->curl($result, $msg, $src_id, $src);
+    $ctrl->get_json($result, $msg);
 
 } else {
     $ctrl->not_permitted($msg);

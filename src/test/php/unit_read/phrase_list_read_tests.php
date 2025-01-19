@@ -44,6 +44,7 @@ use cfg\phrase\phrase_list;
 use cfg\phrase\phrase_type;
 use cfg\phrase\phrase;
 use cfg\word\word;
+use shared\types\api_type_list;
 use shared\words;
 use test\test_cleanup;
 
@@ -81,8 +82,8 @@ class phrase_list_read_tests
         $lst = new phrase_list($t->usr1);
         $id_lst = [1, 2, 3, -1, -2];
         $lst->load_names_by_ids((new phr_ids($id_lst)));
-        $result = $lst->api_obj();
-        $t->assert_contains($test_name, array_keys($result->db_id_list()), $id_lst);
+        $result = $lst->obj_id_lst();
+        $t->assert_contains($test_name, $result, $id_lst);
         $result = json_encode($result);
         $t->assert_text_contains($test_name, $result, '1');
         $test_name = 'Switzerland is part of the phrase list staring with S';
