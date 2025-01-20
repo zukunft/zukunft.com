@@ -32,6 +32,8 @@
 
 namespace unit_read;
 
+include_once SHARED_PATH . 'triples.php';
+
 use api\formula\formula as formula_api;
 use api\word\triple as triple_api;
 use api\verb\verb as verb_api;
@@ -42,6 +44,7 @@ use cfg\word\triple;
 use cfg\verb\verb;
 use cfg\word\word;
 use cfg\word\word_list;
+use shared\triples;
 use test\test_cleanup;
 
 class formula_list_read_tests
@@ -83,7 +86,7 @@ class formula_list_read_tests
         // test loading the formulas that use the results related to the triple "Zurich (City)"
         $test_name = 'formulas that use the word "Zurich" are at least "population in the biggest city"';
         $trp_zh = new triple($t->usr1);
-        $trp_zh->load_by_name(triple_api::TN_ZH_CITY);
+        $trp_zh->load_by_name(triples::TN_ZH_CITY);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_triple_ref($trp_zh);
         $t->assert_contains($test_name, $frm_lst->names(), [formula_api::TN_BIGGEST_CITY]);

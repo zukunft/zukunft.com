@@ -54,6 +54,7 @@ class log extends db_object_dsp
 
     private DateTime $time;
     private int $user_id;
+    private ?string $user_name = null;
     private string $text;
     private int $status;
 
@@ -89,6 +90,11 @@ class log extends db_object_dsp
         } else {
             $this->set_user_id(0);
         }
+        if (array_key_exists(json_fields::USER_NAME, $json_array)) {
+            $this->set_user_name($json_array[json_fields::USER_NAME]);
+        } else {
+            $this->set_user_name(null);
+        }
         if (array_key_exists(json_fields::TEXT, $json_array)) {
             $this->set_text($json_array[json_fields::TEXT]);
         } else {
@@ -120,6 +126,16 @@ class log extends db_object_dsp
     function user_id(): int
     {
         return $this->user_id;
+    }
+
+    function set_user_name(string|null $user_name): void
+    {
+        $this->user_name = $user_name;
+    }
+
+    function user_name(): string|null
+    {
+        return $this->user_name;
     }
 
     function set_text(string $text): void
@@ -155,7 +171,12 @@ class log extends db_object_dsp
     {
         $vars = parent::api_array();
         $vars[json_fields::TIME] = $this->time()->format(DateTimeInterface::ATOM);
-        $vars[json_fields::USER_ID] = $this->user_id();
+        if ($this->user_id() > 0) {
+            $vars[json_fields::USER_ID] = $this->user_id();
+        }
+        if ($this->user_name() != null) {
+            $vars[json_fields::USER_NAME] = $this->user_name();
+        }
         $vars[json_fields::TEXT] = $this->text();
         $vars[json_fields::STATUS] = $this->status();
         return $vars;

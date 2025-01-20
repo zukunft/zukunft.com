@@ -39,6 +39,7 @@ use controller\controller;
 use cfg\db\sql_db;
 use JsonSerializable;
 use cfg\user\user;
+use shared\json_fields;
 
 class type_lists extends api_message_old implements JsonSerializable
 {
@@ -49,7 +50,7 @@ class type_lists extends api_message_old implements JsonSerializable
     function __construct(sql_db $db_con, user $usr)
     {
         parent::__construct($db_con, 'type_lists', $usr);
-        $this->type = controller::API_TYPE_LISTS;
+        $this->type = json_fields::TYPE_LISTS;
     }
 
     function add(type_list_api|array $lst_to_add, string $api_name): void

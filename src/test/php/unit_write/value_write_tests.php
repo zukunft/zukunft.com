@@ -32,8 +32,9 @@
 
 namespace unit_write;
 
+include_once SHARED_PATH . 'triples.php';
+
 use api\value\value as value_api;
-use api\word\triple as triple_api;
 use api\word\word as word_api;
 use cfg\log\change;
 use cfg\log\change_field_list;
@@ -47,6 +48,7 @@ use cfg\value\value;
 use html\value\value as value_dsp;
 use html\figure\figure as figure_dsp;
 use shared\library;
+use shared\triples;
 use shared\types\api_type;
 use test\test_cleanup;
 
@@ -517,14 +519,14 @@ class value_write_tests
         // using the triple zurich (city) instead of two single words
         // used to test if requesting the value with the separate words returns the value
         $t->test_value(array(
-            triple_api::TN_ZH_CITY,
+            triples::TN_ZH_CITY,
             word_api::TN_INHABITANTS
         ),
             value_api::TV_CITY_ZH_INHABITANTS_2019);
 
         // ... same with the concrete year
         $t->test_value(array(
-            triple_api::TN_ZH_CITY,
+            triples::TN_ZH_CITY,
             word_api::TN_INHABITANTS,
             word_api::TN_2019
         ),

@@ -34,6 +34,7 @@ namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'triples.php';
 
 use api\formula\formula as formula_api;
 use api\word\triple as triple_api;
@@ -50,6 +51,7 @@ use cfg\verb\verb;
 use cfg\word\word;
 use html\word\word as word_dsp;
 use shared\library;
+use shared\triples;
 use shared\views;
 use test\all_tests;
 use test\test_cleanup;
@@ -306,7 +308,7 @@ class word_write_tests
 
         // ... triple
         $trp = new triple($t->usr1);
-        $trp->load_by_name(triple_api::TN_PI_NAME);
+        $trp->load_by_name(triples::TN_PI_NAME);
         $trp->set_name(word_api::TN_ADD);
         $result = $trp->save()->get_last_message();
         $target = '<style class="text-danger">A word with the name "System Test Word" already exists. '

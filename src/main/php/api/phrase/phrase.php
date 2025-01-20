@@ -37,6 +37,7 @@ include_once API_WORD_PATH . 'triple.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once SHARED_PATH . 'triples.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use api\sandbox\combine_named as combine_named_api;
@@ -48,6 +49,7 @@ use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
 use JsonSerializable;
 use shared\json_fields;
+use shared\triples;
 
 class phrase extends combine_named_api implements JsonSerializable
 {
@@ -59,12 +61,12 @@ class phrase extends combine_named_api implements JsonSerializable
     // TODO move to triple API
     // phrase names used for system testing
     const RESERVED_PHRASES = array(
-        triple_api::TN_ADD,
-        triple_api::TN_EXCLUDED
+        triples::TN_ADD,
+        triples::TN_EXCLUDED
     );
     const TEST_TRIPLE_STANDARD = array(
-        triple_api::TN_ADD,
-        triple_api::TN_EXCLUDED
+        triples::TN_ADD,
+        triples::TN_EXCLUDED
     );
 
 

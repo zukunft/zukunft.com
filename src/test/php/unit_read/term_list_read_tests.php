@@ -32,6 +32,8 @@
 
 namespace unit_read;
 
+include_once SHARED_PATH . 'triples.php';
+
 use api\formula\formula as formula_api;
 use api\verb\verb as verb_api;
 use api\word\triple as triple_api;
@@ -39,6 +41,7 @@ use api\word\word as word_api;
 use cfg\phrase\term_list;
 use cfg\phrase\trm_ids;
 use shared\library;
+use shared\triples;
 use test\test_cleanup;
 
 class term_list_read_tests
@@ -65,9 +68,9 @@ class term_list_read_tests
         $t->assert_contains($test_name, $lst->names(), verb_api::TN_READ);
         $test_name = 'loading phrase names with pattern return the expected triple';
         $lst = new term_list($t->usr1);
-        $pattern = substr(triple_api::TN_READ, 0, -1);
+        $pattern = substr(triples::TN_READ, 0, -1);
         $lst->load_names($pattern);
-        $t->assert_contains($test_name, $lst->names(), triple_api::TN_READ);
+        $t->assert_contains($test_name, $lst->names(), triples::TN_READ);
         $test_name = 'loading phrase names with pattern return the expected formula';
         $lst = new term_list($t->usr1);
         $pattern = substr(formula_api::TN_READ, 0, -1);
@@ -78,7 +81,7 @@ class term_list_read_tests
         $trm_lst = new term_list($t->usr1);
         $trm_lst->load_by_ids((new trm_ids([1, -1, 2, -2])));
         $result = $trm_lst->name();
-        $target = '"' . triple_api::TN_READ . '","' .
+        $target = '"' . triples::TN_READ . '","' .
             word_api::TN_READ . '","' .
             verb_api::TN_READ . '","' .
             formula_api::TN_READ . '"'; // order adjusted based on the number of usage

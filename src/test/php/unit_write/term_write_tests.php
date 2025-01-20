@@ -33,6 +33,7 @@
 namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'triples.php';
 
 use api\formula\formula as formula_api;
 use api\word\triple as triple_api;
@@ -41,6 +42,7 @@ use cfg\phrase\term;
 use cfg\verb\verb;
 use cfg\word\word;
 use shared\library;
+use shared\triples;
 use shared\types\verbs;
 use test\test_cleanup;
 
@@ -68,8 +70,8 @@ class term_write_tests
 
         // ... check also for a triple
         $term = new term($usr);
-        $term->load_by_obj_name(triple_api::TN_ZH_CITY);
-        $target = '<style class="text-danger">A triple with the name "' . triple_api::TN_ZH_CITY . '" already exists. '
+        $term->load_by_obj_name(triples::TN_ZH_CITY);
+        $target = '<style class="text-danger">A triple with the name "' . triples::TN_ZH_CITY . '" already exists. '
             . 'Please use another ' . $lib->class_to_name(word::class) . ' name.</style>';
         $result = $term->id_used_msg($wrd_zh);
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);

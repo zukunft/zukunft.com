@@ -32,6 +32,8 @@
 
 namespace unit_read;
 
+include_once SHARED_PATH . 'triples.php';
+
 use api\formula\formula as formula_api;
 use api\word\triple as triple_api;
 use api\verb\verb as verb_api;
@@ -43,6 +45,7 @@ use cfg\word\triple;
 use cfg\verb\verb;
 use cfg\word\word;
 use cfg\word\word_db;
+use shared\triples;
 use test\test_cleanup;
 
 class term_read_tests
@@ -80,10 +83,10 @@ class term_read_tests
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
         $trm->row_mapper_sandbox($db_row, triple::FLD_ID, triple::FLD_NAME, phrase::FLD_TYPE);
-        $t->assert($t->name . ' triple row mapper', $trm->name(), triple_api::TN_READ);
+        $t->assert($t->name . ' triple row mapper', $trm->name(), triples::TN_READ);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), triple::class);
-        $t->assert($t->name . ' triple by object id', $trm_by_obj_id->name(), triple_api::TN_READ);
+        $t->assert($t->name . ' triple by object id', $trm_by_obj_id->name(), triples::TN_READ);
 
         // test load by term by a formula db row
         $frm = new formula($t->usr1);

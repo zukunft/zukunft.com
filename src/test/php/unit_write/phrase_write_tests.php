@@ -33,6 +33,7 @@
 namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'triples.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
@@ -43,6 +44,7 @@ use cfg\word\word;
 use html\phrase\phrase as phrase_dsp;
 use shared\api;
 use shared\library;
+use shared\triples;
 use shared\views;
 use shared\types\verbs;
 use test\test_cleanup;
@@ -92,12 +94,12 @@ class phrase_write_tests
         $phr->set_id_from_obj($zh_company_id, triple::class);
         $phr->load_by_id($zh_company_id);
         $result = $phr->name();
-        $target = triple_api::TN_ZH_COMPANY;
+        $target = triples::TN_ZH_COMPANY;
         $t->assert('phrase->load triple by id ' . $zh_company_id, $result, $target);
 
         $result = $lib->trim_html($phr->dsp_tbl());
         $target = $lib->trim_html(' <td> <a href="/http/view.php?link=' . $trp->id() . '" title="' .
-            triple_api::TN_ZH_COMPANY . '">' . triple_api::TN_ZH_COMPANY . '</a></td> ');
+            triples::TN_ZH_COMPANY . '">' . triples::TN_ZH_COMPANY . '</a></td> ');
         $t->assert('phrase->dsp_tbl triple for ' . $zh_company_id, $result, $target);
 
         // test the phrase selector
@@ -107,22 +109,22 @@ class phrase_write_tests
         $phr = new phrase($usr);
         $phr->load_by_id($zh_company_id);
         $result = $phr->dsp_selector(Null, $form_name, $pos, '', $back);
-        $target = triple_api::TN_ZH_COMPANY;
+        $target = triples::TN_ZH_COMPANY;
         $t->dsp_contains(', phrase->dsp_selector ' . $result . ' with ' .
-            triple_api::TN_ZH_COMPANY . ' selected contains ' .
-            triple_api::TN_ZH_COMPANY, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+            triples::TN_ZH_COMPANY . ' selected contains ' .
+            triples::TN_ZH_COMPANY, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // test the phrase selector for the word company
         $wrd = new word($usr);
         $wrd->load_by_name(word_api::TN_COMPANY, word::class);
         $trp_ins = new triple($usr);
-        $trp_ins->load_by_name(triple_api::TN_ZH_COMPANY, triple::class);
+        $trp_ins->load_by_name(triples::TN_ZH_COMPANY, triple::class);
         $phr = $wrd->phrase();
         $phr_dsp = new phrase_dsp($phr->api_json());
         $result = $phr->dsp_selector($phr_dsp, $form_name, $pos, '', $back);
         $target = $trp_ins->name();
         $t->dsp_contains(', phrase->dsp_selector of type ' . word_api::TN_COMPANY . ' is : ' .
-            $result . ' which contains ' . triple_api::TN_ZH_COMPANY,
+            $result . ' which contains ' . triples::TN_ZH_COMPANY,
             $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
         // test getting the parent for phrase Vestas

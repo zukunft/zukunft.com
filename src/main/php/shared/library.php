@@ -818,6 +818,18 @@ class library
         return array_merge($num_array, $str_array);
     }
 
+    function implode_recursive(string $sep, array $array): string
+    {
+        $ret = '';
+        foreach ($array as $item) {
+            if (is_array($item)) {
+                $ret .= $this->implode_recursive($sep, $item) . $sep;
+            } else {
+                $ret .= $item . $sep;
+            }
+        }
+        return substr($ret, 0, 0 - strlen($sep));
+    }
 
     /*
      * file
@@ -1477,7 +1489,7 @@ class library
             if ($long_text) {
                 if ($type != self::STR_DIFF_UNCHANGED) {
                     if (is_array($diff_val[$i])) {
-                        $msg .= implode(',', $diff_val[$i]);
+                        $msg .= $this->implode_recursive(',', $diff_val[$i]);
                     } else {
                         $msg .= $diff_val[$i];
                     }
@@ -1693,22 +1705,24 @@ class library
     }
 
     /**
-     * @param string $from the part of the target string that should be found in the $to string array
+     * @param string|null $from the part of the target string that should be found in the $to string array
      * @param array $to the result string converted to an array
      * @param array $to_keys the array keys to the to array for the case they are not integer
      * @param int $start_pos the staring position in the to string array
      * @return int the position of the next match in the to array or -1 if nothing found
      */
     private
-    function str_diff_list_next_match(string $from, array $to, array $to_keys, int $start_pos): int
+    function str_diff_list_next_match(string|null $from, array $to, array $to_keys, int $start_pos): int
     {
         $check_pos = $start_pos;
         $found_pos = -1;
-        while ($check_pos < count($to) and $found_pos == -1) {
-            if ($from == $to[$to_keys[$check_pos]]) {
-                $found_pos = $check_pos;
+        if ($from != null) {
+            while ($check_pos < count($to) and $found_pos == -1) {
+                if ($from == $to[$to_keys[$check_pos]]) {
+                    $found_pos = $check_pos;
+                }
+                $check_pos++;
             }
-            $check_pos++;
         }
         return $found_pos;
     }

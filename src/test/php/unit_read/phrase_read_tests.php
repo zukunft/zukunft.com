@@ -33,12 +33,14 @@
 namespace unit_read;
 
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'triples.php';
 
 use api\word\word as word_api;
 use api\word\triple as triple_api;
 use api\phrase\phrase as phrase_api;
 use cfg\phrase\phrase_type;
 use cfg\phrase\phrase;
+use shared\triples;
 use test\test_cleanup;
 use shared\types\phrase_type as phrase_type_shared;
 
@@ -64,12 +66,12 @@ class phrase_read_tests
         $wrd_by_id->load_by_id($phr->id(), phrase::class);
         $t->assert($test_name, $wrd_by_id->name(), word_api::TN_READ);
 
-        $test_name = 'load phrase ' . triple_api::TN_PI . ' by triple name and id';
+        $test_name = 'load phrase ' . triples::TN_PI . ' by triple name and id';
         $phr = new phrase($t->usr1);
-        $phr->load_by_name(triple_api::TN_PI);
+        $phr->load_by_name(triples::TN_PI);
         $wrd_by_id = new phrase($t->usr1);
         $wrd_by_id->load_by_id($phr->id(), phrase::class);
-        $t->assert($test_name, $wrd_by_id->name(), triple_api::TN_PI);
+        $t->assert($test_name, $wrd_by_id->name(), triples::TN_PI);
 
 
         $t->subheader('Phrase type db read tests');

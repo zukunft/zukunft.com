@@ -63,6 +63,7 @@ use cfg\view\view;
 use cfg\word\word;
 use html\html_base;
 use shared\library;
+use shared\triples;
 use shared\types\verbs;
 
 class test_cleanup extends test_api
@@ -335,7 +336,7 @@ class test_cleanup extends test_api
         }
 
         // request to delete the added test phrases
-        foreach (triple_api::TEST_TRIPLE_STANDARD as $phr_name) {
+        foreach (triples::TEST_TRIPLE_STANDARD as $phr_name) {
             $phr = $this->load_phrase($phr_name);
             if ($phr->id() <> 0) {
                 $msg = $phr->del();
@@ -446,7 +447,7 @@ class test_cleanup extends test_api
         $pos = 1;
         foreach ($names as $name) {
             $class = match ($name) {
-                triple_api::TN_PI_NAME => triple::class,
+                triples::TN_PI_NAME => triple::class,
                 formula_api::TN_READ, formula_api::TN_READ_THIS, formula_api::TN_READ_PRIOR => formula::class,
                 verb_api::TN_READ, verbs::CAN_CONTAIN_NAME, verbs::CAN_CONTAIN_NAME_REVERSE => verb::class,
                 default => word::class,

@@ -31,6 +31,7 @@ namespace unit;
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'triples.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\word\triple as triple_api;
@@ -45,6 +46,7 @@ use cfg\verb\verb;
 use cfg\word\word;
 use html\phrase\phrase_list as phrase_list_dsp;
 use shared\enum\foaf_direction;
+use shared\triples;
 use test\test_cleanup;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
@@ -94,12 +96,12 @@ class phrase_list_tests
         $phr_ids = new phr_ids(array(3, -2, 4, -7));
         $t->assert_sql_by_ids($sc, $phr_lst, $phr_ids);
         $this->assert_sql_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
-        $phr_names = array(word_api::TN_READ, triple_api::TN_READ);
+        $phr_names = array(word_api::TN_READ, triples::TN_READ);
         $t->assert_sql_by_names($sc, $phr_lst, $phr_names);
 
         // to review
         $t->assert_sql_names($sc, $phr_lst, new phrase($usr));
-        $t->assert_sql_names($sc, $phr_lst, new phrase($usr), triple_api::TN_READ);
+        $t->assert_sql_names($sc, $phr_lst, new phrase($usr), triples::TN_READ);
 
         $this->test = $t;
 

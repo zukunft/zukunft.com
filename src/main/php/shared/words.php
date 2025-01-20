@@ -53,8 +53,6 @@ class words
     const THIS_SYSTEM = 'zukunft.com';
     const SYSTEM = 'system';
     const CONFIGURATION = 'configuration';
-    const SYSTEM_CONFIG = 'system configuration';
-    const SYSTEM_CONFIG_ID = 73;
 
     // words used to select parts of the system configuration where the normal name should not be changed
     const TOOLTIP_COMMENT_COM = 'keyword to read the word or triple description from the config.yaml';

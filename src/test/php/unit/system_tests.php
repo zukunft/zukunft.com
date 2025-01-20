@@ -53,6 +53,7 @@ use cfg\system\sys_log;
 use cfg\system\sys_log_status;
 use cfg\system\sys_log_status_list;
 use cfg\verb\verb;
+use html\system\sys_log as sys_log_dsp;
 use controller\system\sys_log as sys_log_api;
 use DateTime;
 use shared\library;
@@ -390,28 +391,21 @@ class system_tests
 
         $t->subheader('System log frontend API tests');
 
-        $log = new sys_log();
-        $log->set_id(1);
-        $log->log_time = new DateTime(sys_log_api::TV_TIME);
-        $log->usr_name = $usr->name;
-        $log->log_text = sys_log_api::TV_LOG_TEXT;
-        //$log->log_trace = (new Exception)->getTraceAsString();
-        $log->log_trace = sys_log_api::TV_LOG_TRACE;
-        $log->function_name = sys_log_api::TV_FUNC_NAME;
-        $log->solver_name = sys_log_api::TV_SOLVE_ID;
-        $log->status_name = $sys_log_sta_cac->id(sys_log_status::OPEN);
-        $log_dsp = $log->get_api_obj();
-        $created = $log_dsp->get_json();
+
+        $log = $t->sys_log();
+        $api_msg = $log->api_json();
+        $log_dsp = new sys_log_dsp($api_msg);
+        $created = $log_dsp->api_json();
         $expected = file_get_contents(PATH_TEST_FILES . 'api/system/sys_log.json');
         $t->assert('sys_log_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 
         // html code for the system log entry for normal users
-        $created = $log_dsp->get_html($usr_sys);
+        $created = $log_dsp->display();
         $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log.html');
         $t->assert('sys_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
 
         // ... and the same for admin users
-        $created = $log_dsp->get_html($usr_sys);
+        $created = $log_dsp->display_admin($usr_sys);
         $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log_admin.html');
         $t->assert('sys_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
 

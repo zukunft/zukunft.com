@@ -45,6 +45,7 @@ use cfg\word\triple_list;
 use cfg\verb\verb;
 use html\word\triple_list as triple_list_dsp;
 use shared\enum\foaf_direction;
+use shared\triples;
 use test\test_cleanup;
 
 class triple_list_tests
@@ -67,7 +68,7 @@ class triple_list_tests
         // load only the names
         $trp_lst = new triple_list($usr);
         $t->assert_sql_names($sc, $trp_lst, new triple($usr));
-        $t->assert_sql_names($sc, $trp_lst, new triple($usr), triple_api::TD_READ);
+        $t->assert_sql_names($sc, $trp_lst, new triple($usr), triples::TD_READ);
 
         // load by triple ids
         $trp_lst = new triple_list($usr);

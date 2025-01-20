@@ -99,6 +99,7 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'triples.php';
 include_once SHARED_PATH . 'library.php';
 
 use api\system\messages as msg_enum;
@@ -125,7 +126,6 @@ use cfg\view\view;
 use cfg\word\word;
 use cfg\word\word_list;
 use cfg\word\word_db;
-use shared\json_fields;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
@@ -139,12 +139,14 @@ use cfg\log\change_link;
 use cfg\log\change_table_list;
 use cfg\value\value_list;
 use html\html_base;
-use JsonSerializable;
-use shared\library;
 use shared\types\api_type_list;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
 use shared\types\view_styles;
+use shared\json_fields;
+use shared\triples;
+use shared\library;
+use JsonSerializable;
 
 
 class triple extends sandbox_link_named implements JsonSerializable
@@ -2449,7 +2451,7 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     protected function reserved_names(): array
     {
-        return triple_api::RESERVED_NAMES;
+        return triples::RESERVED_NAMES;
     }
 
     /**
@@ -2457,7 +2459,7 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
     protected function fixed_names(): array
     {
-        return triple_api::FIXED_NAMES;
+        return triples::FIXED_NAMES;
     }
 
     /**

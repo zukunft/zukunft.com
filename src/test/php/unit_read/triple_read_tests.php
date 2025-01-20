@@ -33,6 +33,7 @@
 namespace unit_read;
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'triples.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
@@ -42,6 +43,7 @@ use cfg\phrase\phrase_types;
 use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\word\triple_list;
+use shared\triples;
 use shared\types\verbs;
 use test\test_cleanup;
 
@@ -72,13 +74,13 @@ class triple_read_tests
         $wrd_company = $t->test_word(word_api::TN_COMPANY);
 
         $t->subheader('triple load tests');
-        $test_name = 'load triple ' . triple_api::TN_READ . ' by name and id';
+        $test_name = 'load triple ' . triples::TN_READ . ' by name and id';
         $trp = new triple($t->usr1);
-        $trp->load_by_name(triple_api::TN_READ);
+        $trp->load_by_name(triples::TN_READ);
         $trp_by_id = new triple($t->usr1);
         $trp_by_id->load_by_id($trp->id(), triple::class);
-        $t->assert($test_name, $trp_by_id->name(), triple_api::TN_READ);
-        $t->assert($test_name, $trp_by_id->description, triple_api::TD_READ);
+        $t->assert($test_name, $trp_by_id->name(), triples::TN_READ);
+        $t->assert($test_name, $trp_by_id->description, triples::TD_READ);
 
         $test_name = 'triple load ' . word_api::TN_CANTON . ' ' . word_api::TN_ZH . ' by link';
         $lnk_canton = new triple($t->usr1);
@@ -91,14 +93,14 @@ class triple_read_tests
         $result = $lnk_canton->name_generated();
         $t->assert($test_name, $result, $target);
 
-        $test_name = 'triple load ' . triple_api::TN_ZH_COMPANY . ' by link';
+        $test_name = 'triple load ' . triples::TN_ZH_COMPANY . ' by link';
         $lnk_company = new triple($t->usr1);
         $lnk_company->load_by_link_id($wrd_zh->id(), $is_id, $wrd_company->id());
-        $target = triple_api::TN_ZH_COMPANY;
+        $target = triples::TN_ZH_COMPANY;
         $result = $lnk_company->name();
         $t->assert($test_name, $result, $target);
 
-        $test_name = 'triple generated name of ' . triple_api::TN_ZH_COMPANY . ' via function';
+        $test_name = 'triple generated name of ' . triples::TN_ZH_COMPANY . ' via function';
         $target = 'Zurich (Company)';
         $result = $lnk_company->name_generated();
         $t->assert($test_name, $result, $target);

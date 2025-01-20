@@ -34,6 +34,7 @@ namespace unit_read;
 
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'triples.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
@@ -43,6 +44,7 @@ use cfg\phrase\phrase_types;
 use cfg\verb\verb;
 use cfg\word\word;
 use cfg\word\word_list;
+use shared\triples;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
 use test\test_cleanup;
@@ -108,8 +110,8 @@ class word_read_tests
         $wrd_scale = new word ($t->usr1);
         $wrd_scale->load_by_name(word_api::TN_MIO);
         $phr = new phrase ($t->usr1);
-        $phr->load_by_name(triple_api::TN_PI_NAME);
-        $phr_grp = $t->load_phrase_group(array(triple_api::TN_PI));
+        $phr->load_by_name(triples::TN_PI_NAME);
+        $phr_grp = $t->load_phrase_group(array(triples::TN_PI));
 
         // load a word list by the word id
         $wrd_lst = new word_list ($t->usr1);
@@ -135,7 +137,7 @@ class word_read_tests
         if ($phr_grp != null) {
             $wrd_lst = new word_list ($t->usr1);
             $wrd_lst->load_by_grp_id($phr_grp->id());
-            $t->assert('load_by_group', $wrd_lst->name(), '"' . triple_api::TN_PI . '"');
+            $t->assert('load_by_group', $wrd_lst->name(), '"' . triples::TN_PI . '"');
         }
 
         // load a word list by type

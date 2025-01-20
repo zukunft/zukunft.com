@@ -39,6 +39,7 @@ include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'changes_norm.php';
 include_once MODEL_LOG_PATH . 'changes_big.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
+include_once SHARED_PATH . 'triples.php';
 
 use api\word\triple as triple_api;
 use api\value\value as value_api;
@@ -67,6 +68,7 @@ use cfg\word\word_db;
 use html\log\user_log_display;
 use html\value\value as value_dsp;
 use shared\library;
+use shared\triples;
 use test\test_cleanup;
 use unit_ui\verb_ui_tests;
 
@@ -226,7 +228,7 @@ class change_log_tests
         // prepare the objects for the tests
         $wrd = $t->word();
         $trp = new triple($usr);
-        $trp->set(1, triple_api::TN_PI);
+        $trp->set(1, triples::TN_PI);
 
 
         $t->subheader('API unit tests');

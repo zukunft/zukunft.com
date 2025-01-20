@@ -467,7 +467,13 @@ class lib_tests
         $test_result = '{"user_id":2,"sys_log":[{"id":1,"user":"zukunft.com system test"},{"id":2,"user":"zukunft.com system test"}]}';
         $test_target = '{"user_id":3,"sys_log":[{"id":1,"user":"zukunft.com system test"},{"id":2,"user":"zukunft.com system test"}]}';
         $result = $lib->str_diff($test_result, $test_target);
-        $target = '//-2zukunft.com system test////+3Array,Array//';
+        $target = '//-2zukunft.com system test////+31,zukunft.com system test,2,zukunft.com system test//';
+        $t->assert("diff_msg, with position in long html string", $result, $target);
+        // json string
+        $test_result = '{"id":1,"time":"2023-01-03T20:59:59+00:00","user_id":0,"text":"the log text that describes the problem for the user or system admin","status":2,"trace":"the technical trace back description for debugging","prg_part":"name of the function that has caused the exception","owner":0}';
+        $test_target = '{"id":1,"time":"2023-01-03 20:59:59","user":"zukunft.com system test","text":"the log text that describes the problem for the user or system admin","description":null,"trace":"the technical trace back description for debugging","prg_part":"name of the function that has caused the exception","owner":"","status":"2"}';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '2//-2023-01-03 20:59:59zukunft.com system test////+2023-01-03T20:59:59+00:000//96//-////+2//197//-2////+0//';
         $t->assert("diff_msg, with position in long html string", $result, $target);
 
 

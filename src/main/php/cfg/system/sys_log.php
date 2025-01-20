@@ -363,7 +363,7 @@ class sys_log extends db_object_seq_id
         $vars = parent::api_json_array($typ_lst, $usr);
 
         $vars[json_fields::ID] = $this->id();
-        $vars[json_fields::TIME] = $this->log_time->format('Y-m-d H:i:s');
+        $vars[json_fields::TIME] = $this->log_time->format(DateTimeInterface::ATOM);
         $vars[json_fields::USER_NAME] = $this->usr_name;
         $vars[json_fields::TEXT] = $this->log_text;
         $vars[json_fields::DESCRIPTION] = $this->log_description;
@@ -383,7 +383,7 @@ class sys_log extends db_object_seq_id
     {
         $dsp_obj = new sys_log_api();
         $dsp_obj->id = $this->id();
-        $dsp_obj->time = $this->log_time->format('Y-m-d H:i:s');
+        $dsp_obj->time = $this->log_time->format(DateTimeInterface::ATOM);
         $dsp_obj->user = $this->usr_name;
         $dsp_obj->text = $this->log_text;
         $dsp_obj->description = $this->log_description;

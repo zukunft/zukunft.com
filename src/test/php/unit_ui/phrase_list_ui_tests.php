@@ -61,9 +61,9 @@ class phrase_list_ui_tests
 
         // create the phrase list test set
         $lst = new phrase_list_dsp();
-        $phr_city = $this->phrase_api_triple(1,  triple_api::TN_ZH_CITY_NAME,
+        $phr_city = $this->phrase_api_triple(1,  triples::TN_ZH_CITY_NAME,
             word_api::TN_ZH, verbs::IS, word_api::TN_CITY);
-        $phr_canton = $this->phrase_api_triple(2,  triple_api::TN_ZH_CANTON_NAME,
+        $phr_canton = $this->phrase_api_triple(2,  triples::TN_ZH_CANTON_NAME,
             word_api::TN_ZH, verbs::IS, word_api::TN_CANTON);
         $phr_ch = $this->phrase_api_word(1, word_api::TN_CH);
         $lst->add_phrase($phr_city);

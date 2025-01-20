@@ -44,6 +44,7 @@ include_once DB_PATH . 'sql_par.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'library.php';
 include_once SHARED_PATH . 'words.php';
+include_once SHARED_PATH . 'triples.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 include_once API_SYSTEM_PATH . 'type_list.php';
 include_once WEB_USER_PATH . 'user_type_list.php';
@@ -55,6 +56,7 @@ use cfg\user\user_message;
 use cfg\value\value_list;
 use cfg\word\word;
 use shared\api;
+use shared\triples;
 use shared\words;
 
 
@@ -190,7 +192,7 @@ class config_numbers extends value_list
     {
         $usr_msg = new user_message();
         $phr_sys_cfg = new phrase($usr);
-        $phr_sys_cfg->load_by_name(words::SYSTEM_CONFIG);
+        $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG);
         // TODO Prio 3 speed: loading the phrases upfront with $phr_lst = $root_phr->all_children(); may be faster
         $this->load_by_phr($phr_sys_cfg);
         // TODO Prio 2 speed: it may be faster if the phrase is included in the sql select

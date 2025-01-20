@@ -50,7 +50,6 @@ include_once API_PHRASE_PATH . 'phrase_type.php';
 include_once API_LANGUAGE_PATH . 'language.php';
 include_once API_LANGUAGE_PATH . 'language_form.php';
 
-use controller\api_message_old;
 use api\component\component as component_api;
 use api\language\language as language_api;
 use api\language\language_form as language_form_api;

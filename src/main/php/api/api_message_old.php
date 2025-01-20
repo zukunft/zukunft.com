@@ -47,14 +47,6 @@ class api_message_old
 {
 
     /*
-     * message types
-     */
-
-    // the message types for fast format detection
-    const SYS_LOG = 'sys_log';
-
-
-    /*
      * object vars
      */
 
@@ -135,52 +127,6 @@ class api_message_old
     function get_json_array(): array
     {
         return json_decode(json_encode($this), true);
-    }
-
-    /**
-     * create and set the api message header information
-     * @param sql_db $db_con the active database link to get the configuration from the database
-     * @param string $class the class of the message
-     * @param user $usr the user view that the api message should contain
-     */
-    function api_header_array(
-        sql_db $db_con,
-        string $class,
-        user   $usr,
-        array  $vars
-    ): array
-    {
-        $lib = new library();
-        $cfg = new config();
-        $class = $lib->class_to_name($class);
-        $msg = [];
-        if ($db_con->connected()) {
-            $msg[json_fields::POD] = $cfg->get_db(config::SITE_NAME, $db_con);
-        } else {
-            // for unit tests use the default pod name
-            $msg[json_fields::POD] = POD_NAME;
-        }
-        $msg[json_fields::TYPE_NAME] = $class;
-        $msg[json_fields::USER_ID] = $usr->id();
-        $msg[json_fields::USER_NAME] = $usr->name();
-        $msg[json_fields::VERSION] = PRG_VERSION;
-        $msg[json_fields::TIMESTAMP] = (new DateTime())->format(DateTimeInterface::ATOM);
-        $msg[$class] = $vars;
-
-        return $msg;
-
-    }
-
-    function get_body(array $json_array, string $class): array
-    {
-        $lib = new library();
-        $body = $json_array;
-        $class = $lib->class_to_name($this::class);
-        if (key_exists(json_fields::POD, $json_array)
-            and key_exists($class, $json_array)) {
-            $body = $json_array[$class];
-        }
-        return $body;
     }
 
 

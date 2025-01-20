@@ -33,6 +33,8 @@
 
 namespace unit_write;
 
+include_once SHARED_PATH . 'triples.php';
+
 use api\word\triple as triple_api;
 use api\word\word as word_api;
 use api\phrase\group as group_api;
@@ -41,6 +43,7 @@ use cfg\group\group;
 use cfg\phrase\phrase_list;
 use cfg\word\word;
 use cfg\word\word_list;
+use shared\triples;
 use test\all_tests;
 use test\test_cleanup;
 
@@ -140,7 +143,7 @@ class group_write_tests
 
         // test getting the phrase group id based on word and word link ids
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(triple_api::TN_ZH_CITY, word_api::TN_INHABITANTS));
+        $phr_lst->load_by_names(array(triples::TN_ZH_CITY, word_api::TN_INHABITANTS));
         $zh_city_grp = $phr_lst->get_grp_id();
         $result = $zh_city_grp->get_id();
         if ($result > 0) {
@@ -150,7 +153,7 @@ class group_write_tests
 
         // test names
         $result = implode(",", $zh_city_grp->names());
-        $target = triple_api::TN_ZH_CITY . ',' . word_api::TN_INHABITANTS;
+        $target = triples::TN_ZH_CITY . ',' . word_api::TN_INHABITANTS;
         $t->display('phrase_group->names', $target, $result);
 
         // test if the phrase group links are correctly recreated when a group is updated

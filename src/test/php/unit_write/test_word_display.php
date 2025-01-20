@@ -35,6 +35,7 @@
 // --------------------------------------
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'triples.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
@@ -43,6 +44,7 @@ use cfg\word\word;
 use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
 use shared\library;
+use shared\triples;
 use test\all_tests;
 use shared\types\verbs;
 
@@ -159,7 +161,7 @@ function run_word_display_test(all_tests $t): void
     // for testing the selector display a company selector and select ABB
     // TODO fix second run
     $phr_corp = $t->load_phrase(word_api::TN_COMPANY);
-    $phr_ZH_INS = $t->load_phrase(triple_api::TN_ZH_COMPANY);
+    $phr_ZH_INS = $t->load_phrase(triples::TN_ZH_COMPANY);
     /* TODO base it on the api
     $sel = new html_selector;
     $sel->form = 'test_form';
@@ -169,7 +171,7 @@ function run_word_display_test(all_tests $t): void
     $sel->selected = $phr_ZH_INS->id();
     $sel->dummy_text = '... please select';
     $result .= $sel->display_old();
-    $target = triple_api::TN_ZH_COMPANY;
+    $target = triples::TN_ZH_COMPANY;
     $t->dsp_contains(', display_selector->display of all ' . $phr_corp->name() . ' with ' . $phr_ZH_INS->dsp_name() . ' selected', $target, $result);
     */
 

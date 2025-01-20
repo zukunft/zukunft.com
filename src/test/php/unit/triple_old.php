@@ -32,6 +32,8 @@
 
 namespace unit;
 
+include_once SHARED_PATH . 'triples.php';
+
 // TODO combine with triple_unit_test
 
 use api\phrase\phrase as phrase_api;
@@ -41,6 +43,7 @@ use cfg\db\sql_db;
 use cfg\word\triple;
 use cfg\verb\verb;
 use cfg\word\word;
+use shared\triples;
 use test\test_cleanup;
 
 class triple_old
@@ -69,7 +72,7 @@ class triple_old
 
         // sql to load a triple by name
         $trp = new triple($usr);
-        $trp->set_name(triple_api::TN_ZH_COMPANY);
+        $trp->set_name(triples::TN_ZH_COMPANY);
         $t->assert_sql_by_obj_vars($db_con, $trp);
         $t->assert_sql_standard($sc, $trp);
 

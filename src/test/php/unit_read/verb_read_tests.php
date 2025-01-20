@@ -35,6 +35,7 @@ namespace unit_read;
 include_once API_WORD_PATH . 'word.php';
 include_once API_WORD_PATH . 'triple.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'triples.php';
 
 use api\verb\verb as verb_api;
 use api\word\word as word_api;
@@ -42,6 +43,7 @@ use api\word\triple as triple_api;
 use cfg\word\word;
 use cfg\verb\verb;
 use cfg\verb\verb_list;
+use shared\triples;
 use test\test_cleanup;
 use shared\types\verbs;
 
@@ -86,11 +88,11 @@ class verb_read_tests
         $parts = $switzerland->direct_parts();
         $t->assert_contains('direct parts of ' . word_api::TN_CH,
             $parts->names(),
-            array(triple_api::TN_ZH_CANTON)
+            array(triples::TN_ZH_CANTON)
         );
         $t->assert_contains_not('direct parts of ' . word_api::TN_CH,
             $parts->names(),
-            array(triple_api::TN_ZH_CITY)
+            array(triples::TN_ZH_CITY)
         );
 
         // 'is part of' - test the recursive selection of the members via 'is part of' verb
@@ -98,7 +100,7 @@ class verb_read_tests
         $parts = $switzerland->parts();
         $t->assert_contains('parts of ' . word_api::TN_CH . ' and parts of the parts',
             $parts->names(),
-            array(triple_api::TN_ZH_CANTON, triple_api::TN_ZH_CITY)
+            array(triples::TN_ZH_CANTON, triples::TN_ZH_CITY)
         );
 
 

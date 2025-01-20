@@ -56,14 +56,8 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\helper\type_object;
 use cfg\sandbox\sandbox;
-use cfg\system\base_list;
-use cfg\system\sys_log;
-use cfg\system\sys_log_function;
-use cfg\system\sys_log_status;
 use cfg\user\user;
-use controller\system\sys_log_list as sys_log_list_api;
 use html\system\sys_log_list_dsp_old;
-use shared\types\api_type_list;
 
 class sys_log_list extends base_list
 {

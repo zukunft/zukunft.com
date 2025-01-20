@@ -32,6 +32,8 @@
 
 namespace unit_read;
 
+include_once SHARED_PATH . 'triples.php';
+
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
 use api\ref\source as source_api;
@@ -43,6 +45,7 @@ use api\word\word as word_api;
 use cfg\log\change_field_list;
 use cfg\log\change_log_list;
 use cfg\word\word;
+use shared\triples;
 use test\test_cleanup;
 
 class change_log_read_tests
@@ -107,7 +110,7 @@ class change_log_read_tests
         // ... and if the first entry is the setting the given name of a triple
         $first_change = $lst->lst()[0];
         $t->assert('first triple change is setting', $first_change->old_value, '');
-        $t->assert('... the given name', $first_change->new_value, triple_api::TN_PI_NAME);
+        $t->assert('... the given name', $first_change->new_value, triples::TN_PI_NAME);
 
         // check loading of user value changes
         $lst = new change_log_list();

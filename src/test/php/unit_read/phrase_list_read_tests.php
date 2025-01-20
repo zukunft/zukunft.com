@@ -33,6 +33,7 @@
 namespace unit_read;
 
 include_once SERVICE_PATH . 'config.php';
+include_once SHARED_PATH . 'triples.php';
 
 use api\formula\formula as formula_api;
 use api\word\word as word_api;
@@ -44,6 +45,7 @@ use cfg\phrase\phrase_list;
 use cfg\phrase\phrase_type;
 use cfg\phrase\phrase;
 use cfg\word\word;
+use shared\triples;
 use shared\types\api_type_list;
 use shared\words;
 use test\test_cleanup;
@@ -70,9 +72,9 @@ class phrase_list_read_tests
         $t->assert_contains($test_name, $lst->names(), word_api::TN_READ);
         $test_name = 'loading phrase names with pattern return the expected triple';
         $lst = new phrase_list($t->usr1);
-        $pattern = substr(triple_api::TN_READ, 0, -1);
+        $pattern = substr(triples::TN_READ, 0, -1);
         $lst->load_names($pattern);
-        $t->assert_contains($test_name, $lst->names(), triple_api::TN_READ);
+        $t->assert_contains($test_name, $lst->names(), triples::TN_READ);
         $test_name = 'formula names are not included in the normal phrase list';
         $lst = new phrase_list($t->usr1);
         $lst->load_names(formula_api::TN_READ);
@@ -111,7 +113,7 @@ class phrase_list_read_tests
         // all children
         $test_name = 'The default number of forecast years is a system configuration parameter';
         $sys_cfg_root_phr = new phrase($t->usr1);
-        $sys_cfg_root_phr->load_by_name(words::SYSTEM_CONFIG);
+        $sys_cfg_root_phr->load_by_name(triples::SYSTEM_CONFIG);
         $sys_cfg_phr_lst = $sys_cfg_root_phr->all_children();
         $auto_years = new phrase($t->usr1);
         $auto_years->load_by_name(config::YEARS_AUTO_CREATE_DSP);

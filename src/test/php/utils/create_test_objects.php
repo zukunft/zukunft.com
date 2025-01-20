@@ -62,6 +62,7 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
+include_once SHARED_PATH . 'triples.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use api\system\type_lists;
@@ -108,9 +109,9 @@ use cfg\word\word_list;
 use controller\api_message;
 use html\system\messages;
 use shared\json_fields;
+use shared\triples;
 use shared\types\api_type_list;
 use shared\types\component_type as comp_type_shared;
-use controller\api_message_old;
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
 use api\phrase\group as group_api;
@@ -273,41 +274,41 @@ class create_test_objects extends test_base
         // read the corresponding names and description from the internal config csv files
         $this->read_all_names_from_config_csv($phr_typ_cac);
 
-        $vars[controller::API_LIST_USER_PROFILES] = $usr_pro_cac->api_json_array();
-        $vars[controller::API_LIST_PHRASE_TYPES] = $phr_typ_cac->api_json_array();
-        $vars[controller::API_LIST_FORMULA_TYPES] = $frm_typ_cac->api_json_array();
-        $vars[controller::API_LIST_FORMULA_LINK_TYPES] = $frm_lnk_typ_cac->api_json_array();
-        $vars[controller::API_LIST_ELEMENT_TYPES] = $elm_typ_cac->api_json_array();
-        $vars[controller::API_LIST_VIEW_TYPES] = $msk_typ_cac->api_json_array();
-        $vars[controller::API_LIST_VIEW_STYLES] = $msk_sty_cac->api_json_array();
-        $vars[controller::API_LIST_VIEW_LINK_TYPES] = $msk_lnk_typ_cac->api_json_array();
-        $vars[controller::API_LIST_COMPONENT_TYPES] = $cmp_typ_cac->api_json_array();
+        $vars[json_fields::LIST_USER_PROFILES] = $usr_pro_cac->api_json_array();
+        $vars[json_fields::LIST_PHRASE_TYPES] = $phr_typ_cac->api_json_array();
+        $vars[json_fields::LIST_FORMULA_TYPES] = $frm_typ_cac->api_json_array();
+        $vars[json_fields::LIST_FORMULA_LINK_TYPES] = $frm_lnk_typ_cac->api_json_array();
+        $vars[json_fields::LIST_ELEMENT_TYPES] = $elm_typ_cac->api_json_array();
+        $vars[json_fields::LIST_VIEW_TYPES] = $msk_typ_cac->api_json_array();
+        $vars[json_fields::LIST_VIEW_STYLES] = $msk_sty_cac->api_json_array();
+        $vars[json_fields::LIST_VIEW_LINK_TYPES] = $msk_lnk_typ_cac->api_json_array();
+        $vars[json_fields::LIST_COMPONENT_TYPES] = $cmp_typ_cac->api_json_array();
         // TODO activate
-        //$vars[controller::API_LIST_VIEW_COMPONENT_LINK_TYPES] = $cmp_lnk_typ_cac->api_json_array();
-        $vars[controller::API_LIST_COMPONENT_POSITION_TYPES] = $pos_typ_cac->api_json_array();
-        $vars[controller::API_LIST_REF_TYPES] = $ref_typ_cac->api_json_array();
-        $vars[controller::API_LIST_SOURCE_TYPES] = $src_typ_cac->api_json_array();
-        $vars[controller::API_LIST_SHARE_TYPES] = $shr_typ_cac->api_json_array();
-        $vars[controller::API_LIST_PROTECTION_TYPES] = $ptc_typ_cac->api_json_array();
-        $vars[controller::API_LIST_LANGUAGES] = $lan_cac->api_json_array();
-        $vars[controller::API_LIST_LANGUAGE_FORMS] = $lan_for_cac->api_json_array();
-        $vars[controller::API_LIST_SYS_LOG_STATI] = $sys_log_sta_cac->api_json_array();
-        $vars[controller::API_LIST_JOB_TYPES] = $job_typ_cac->api_json_array();
-        $vars[controller::API_LIST_CHANGE_LOG_ACTIONS] = $cng_act_cac->api_json_array();
-        $vars[controller::API_LIST_CHANGE_LOG_TABLES] = $cng_tbl_cac->api_json_array();
-        $vars[controller::API_LIST_CHANGE_LOG_FIELDS] = $cng_fld_cac->api_json_array();
-        $vars[controller::API_LIST_VERBS] = $vrb_cac->api_json_array();
+        //$vars[json_fields::LIST_VIEW_COMPONENT_LINK_TYPES] = $cmp_lnk_typ_cac->api_json_array();
+        $vars[json_fields::LIST_COMPONENT_POSITION_TYPES] = $pos_typ_cac->api_json_array();
+        $vars[json_fields::LIST_REF_TYPES] = $ref_typ_cac->api_json_array();
+        $vars[json_fields::LIST_SOURCE_TYPES] = $src_typ_cac->api_json_array();
+        $vars[json_fields::LIST_SHARE_TYPES] = $shr_typ_cac->api_json_array();
+        $vars[json_fields::LIST_PROTECTION_TYPES] = $ptc_typ_cac->api_json_array();
+        $vars[json_fields::LIST_LANGUAGES] = $lan_cac->api_json_array();
+        $vars[json_fields::LIST_LANGUAGE_FORMS] = $lan_for_cac->api_json_array();
+        $vars[json_fields::LIST_SYS_LOG_STATI] = $sys_log_sta_cac->api_json_array();
+        $vars[json_fields::LIST_JOB_TYPES] = $job_typ_cac->api_json_array();
+        $vars[json_fields::LIST_CHANGE_LOG_ACTIONS] = $cng_act_cac->api_json_array();
+        $vars[json_fields::LIST_CHANGE_LOG_TABLES] = $cng_tbl_cac->api_json_array();
+        $vars[json_fields::LIST_CHANGE_LOG_FIELDS] = $cng_fld_cac->api_json_array();
+        $vars[json_fields::LIST_VERBS] = $vrb_cac->api_json_array();
         $sys_msk_cac = $this->view_list();
-        $vars[controller::API_LIST_SYSTEM_VIEWS] = $sys_msk_cac->api_json_array(new api_type_list([]));
+        $vars[json_fields::LIST_SYSTEM_VIEWS] = $sys_msk_cac->api_json_array(new api_type_list([]));
 
         global $db_con;
         $api_msg = new api_message();
-        return json_encode($api_msg->api_header_array($db_con, type_lists::class, $usr, $vars));
+        return json_encode($api_msg->api_header_array($db_con, 'type_lists', $usr, $vars));
     }
 
     /**
      * reads the name and description from the csv resource file and changes the corresponding type list entry
-     * used to simplify the dummy list creation because this way only only a list of code_ids is needed to create a list
+     * used to simplify the dummy list creation because this way only a list of code_ids is needed to create a list
      *
      * @param type_list $list the type list that should be filled
      * @return bool true if the list has been updated
@@ -946,8 +947,8 @@ class create_test_objects extends test_base
     function triple(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triple_api::TI_READ, triple_api::TN_READ);
-        $trp->description = triple_api::TD_READ;
+        $trp->set(triples::TI_READ, triples::TN_READ);
+        $trp->description = triples::TD_READ;
         $trp->set_from($this->word_const()->phrase());
         $trp->set_verb($this->verb_part());
         $trp->set_to($this->word()->phrase());
@@ -965,7 +966,7 @@ class create_test_objects extends test_base
         $trp = $this->triple();
         $trp->include();
         $trp->set_id(0);
-        $trp->set_name(triple_api::TN_ADD);
+        $trp->set_name(triples::TN_ADD);
         $trp->set_from($this->word_filled_add()->phrase());
         $trp->set_to($this->word_filled_add_to()->phrase());
         return $trp;
@@ -977,7 +978,7 @@ class create_test_objects extends test_base
     function triple_name_only(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set_name(triple_api::TN_READ);
+        $trp->set_name(triples::TN_READ);
         return $trp;
     }
 
@@ -999,8 +1000,8 @@ class create_test_objects extends test_base
     function triple_pi(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triple_api::TI_PI, triple_api::TN_PI_NAME);
-        $trp->description = triple_api::TD_PI;
+        $trp->set(triples::TI_PI, triples::TN_PI_NAME);
+        $trp->description = triples::TD_PI;
         $trp->set_from($this->word_pi()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->triple()->phrase());
@@ -1014,7 +1015,7 @@ class create_test_objects extends test_base
     function triple_sys_config(): triple
     {
         $wrd = new triple($this->usr1);
-        $wrd->set(words::SYSTEM_CONFIG_ID, words::SYSTEM_CONFIG);
+        $wrd->set(triples::SYSTEM_CONFIG_ID, triples::SYSTEM_CONFIG);
         return $wrd;
     }
 
@@ -1024,8 +1025,8 @@ class create_test_objects extends test_base
     function triple_e(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triple_api::TI_E, triple_api::TN_E);
-        $trp->description = triple_api::TD_E;
+        $trp->set(triples::TI_E, triples::TN_E);
+        $trp->description = triples::TD_E;
         $trp->set_from($this->word_e()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->triple()->phrase());
@@ -1039,7 +1040,7 @@ class create_test_objects extends test_base
     function triple_add_by_func(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set_name(triple_api::TN_ADD_VIA_FUNC);
+        $trp->set_name(triples::TN_ADD_VIA_FUNC);
         $wrd_add_func = $this->load_word(word_api::TN_ADD_VIA_FUNC);
         $wrd_math = $this->load_word(word_api::TN_READ);
         $trp->set_from($wrd_add_func->phrase());
@@ -1054,7 +1055,7 @@ class create_test_objects extends test_base
     function triple_add_by_sql(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set_name(triple_api::TN_ADD_VIA_SQL);
+        $trp->set_name(triples::TN_ADD_VIA_SQL);
         $wrd_add_func = $this->load_word(word_api::TN_ADD_VIA_SQL);
         $wrd_math = $this->load_word(word_api::TN_READ);
         $trp->set_from($wrd_add_func->phrase());
@@ -1069,7 +1070,7 @@ class create_test_objects extends test_base
     function zh(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triple_api::TI_ZH_CITY, triple_api::TN_ZH_CITY);
+        $trp->set(triples::TI_ZH_CITY, triples::TN_ZH_CITY);
         $trp->set_from($this->word_zh()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->word_city()->phrase());
@@ -1082,7 +1083,7 @@ class create_test_objects extends test_base
     function zh_canton(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triple_api::TI_ZH_CITY, triple_api::TN_ZH_CITY);
+        $trp->set(triples::TI_ZH_CITY, triples::TN_ZH_CITY);
         $trp->set_from($this->word_zh()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->word_canton()->phrase());
@@ -1095,7 +1096,7 @@ class create_test_objects extends test_base
     function triple_bern(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triple_api::TI_BE_CITY, triple_api::TN_BE_CITY);
+        $trp->set(triples::TI_BE_CITY, triples::TN_BE_CITY);
         $trp->set_from($this->word_bern()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->word_city()->phrase());
@@ -1108,7 +1109,7 @@ class create_test_objects extends test_base
     function triple_ge(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triple_api::TI_GE_CITY, triple_api::TN_GE_CITY);
+        $trp->set(triples::TI_GE_CITY, triples::TN_GE_CITY);
         $trp->set_from($this->word_ge()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->word_city()->phrase());
@@ -3291,7 +3292,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return sys_log a system error entry
+     * @return sys_log a open system error log entry
      */
     function sys_log(): sys_log
     {
@@ -3309,7 +3310,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return sys_log a system error entry
+     * @return sys_log a closed system error log entry
      */
     function sys_log2(): sys_log
     {
@@ -4253,13 +4254,13 @@ class create_test_objects extends test_base
     {
         global $db_con;
         global $phr_typ_cac;
-        $msg = new api_message_old($db_con, word::class, $this->usr1);
-        $wrd = new word_api();
-        $wrd->name = word_api::TN_ADD_API;
+        $msg = new api_message();
+        $wrd = new word($this->usr1);
+        $wrd->set_name(word_api::TN_ADD_API);
         $wrd->description = word_api::TD_ADD_API;
         $wrd->type_id = $phr_typ_cac->id(phrase_type_shared::NORMAL);
-        $msg->add_body($wrd);
-        return $msg->get_json_array();
+        $body_array = $wrd->api_json_array(new api_type_list([]));
+        return $msg->api_header_array($db_con, word::class, $this->usr1, $body_array);
     }
 
     /**
@@ -4268,12 +4269,12 @@ class create_test_objects extends test_base
     function word_post_json(): array
     {
         global $db_con;
-        $msg = new api_message_old($db_con, word::class, $this->usr1);
-        $wrd = new word_api();
-        $wrd->name = word_api::TN_UPD_API;
+        $msg = new api_message();
+        $wrd = new word($this->usr1);
+        $wrd->set_name(word_api::TN_UPD_API);
         $wrd->description = word_api::TD_UPD_API;
-        $msg->add_body($wrd);
-        return $msg->get_json_array();
+        $body_array = $wrd->api_json_array(new api_type_list([]));
+        return $msg->api_header_array($db_con, word::class, $this->usr1, $body_array);
     }
 
     /**
@@ -4283,14 +4284,14 @@ class create_test_objects extends test_base
     {
         global $db_con;
         global $src_typ_cac;
-        $msg = new api_message_old($db_con, source::class, $this->usr1);
-        $src = new source_api();
-        $src->name = source_api::TN_ADD_API;
+        $msg = new api_message();
+        $src = new source($this->usr1);
+        $src->set_name(source_api::TN_ADD_API);
         $src->description = source_api::TD_ADD_API;
         $src->url = source_api::TU_ADD_API;
         $src->type_id = $src_typ_cac->id(source_type::PDF);
-        $msg->add_body($src);
-        return $msg->get_json_array();
+        $body_array = $src->api_json_array(new api_type_list([]));
+        return $msg->api_header_array($db_con, source::class, $this->usr1, $body_array);
     }
 
     /**
@@ -4299,12 +4300,12 @@ class create_test_objects extends test_base
     function source_post_json(): array
     {
         global $db_con;
-        $msg = new api_message_old($db_con, source::class, $this->usr1);
-        $src = new source_api();
-        $src->name = source_api::TN_UPD_API;
+        $msg = new api_message();
+        $src = new source($this->usr1);
+        $src->set_name(source_api::TN_UPD_API);
         $src->description = source_api::TD_UPD_API;
-        $msg->add_body($src);
-        return $msg->get_json_array();
+        $body_array = $src->api_json_array(new api_type_list([]));
+        return $msg->api_header_array($db_con, source::class, $this->usr1, $body_array);
     }
 
     /**
@@ -4314,15 +4315,15 @@ class create_test_objects extends test_base
     {
         global $db_con;
         global $reference_types;
-        $msg = new api_message_old($db_con, ref::class, $this->usr1);
-        $ref = new ref_api();
-        $ref->phrase_id = $this->word()->phrase()->id();
+        $msg = new api_message();
+        $ref = new ref($this->usr1);
+        $ref->set_phrase($this->word()->phrase());
         $ref->external_key = ref_api::TK_ADD_API;
         $ref->description = ref_api::TD_ADD_API;
         $ref->url = ref_api::TU_ADD_API;
         $ref->predicate_id = $reference_types->id(source_type::PDF);
-        $msg->add_body($ref);
-        return $msg->get_json_array();
+        $body_array = $ref->api_json_array(new api_type_list([]));
+        return $msg->api_header_array($db_con, ref::class, $this->usr1, $body_array);
     }
 
     /*

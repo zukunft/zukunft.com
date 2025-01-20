@@ -177,6 +177,14 @@ class db_object
         return $vars;
     }
 
+    /**
+     * @return string the jsom message to the backend as a string
+     */
+    function api_json(): string
+    {
+        return json_encode($this->api_array());
+    }
+
 
     /*
      * debug

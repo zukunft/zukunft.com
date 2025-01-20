@@ -33,16 +33,13 @@
 namespace unit_read;
 
 include_once SERVICE_PATH . 'config.php';
+include_once SHARED_PATH . 'triples.php';
 
-use api\word\word as word_api;
-use cfg\config;
 use cfg\phrase\phrase;
 use cfg\value\value;
-use cfg\value\value_base;
 use cfg\value\value_list;
 use api\value\value as value_api;
-use cfg\word\word;
-use shared\words;
+use shared\triples;
 use test\test_cleanup;
 
 class value_list_read_tests
@@ -113,7 +110,7 @@ class value_list_read_tests
 
         // load by phrase list
         $phr = new phrase($t->usr1);
-        $phr->load_by_name(words::SYSTEM_CONFIG);
+        $phr->load_by_name(triples::SYSTEM_CONFIG);
         $phr_lst = $phr->all_children();
         $val_lst = new value_list($t->usr1);
         // TODO activate Prio 2

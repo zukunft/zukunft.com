@@ -3,6 +3,7 @@
 namespace unit;
 
 include_once API_WORD_PATH . 'triple.php';
+include_once SHARED_PATH . 'triples.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
@@ -11,6 +12,7 @@ use cfg\db\sql_type;
 use html\word\triple as triple_dsp;
 use cfg\db\sql_db;
 use cfg\word\triple;
+use shared\triples;
 use test\test_cleanup;
 
 class triple_tests
@@ -48,7 +50,7 @@ class triple_tests
 
         $t->subheader('triple sql read standard by name');
         $trp = new triple($usr);
-        $trp->set_name(triple_api::TN_PI);
+        $trp->set_name(triples::TN_PI);
         $t->assert_sql_standard($sc, $trp);
 
         $t->subheader('triple sql write insert');

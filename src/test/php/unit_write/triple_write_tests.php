@@ -33,6 +33,7 @@
 namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'triples.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
@@ -45,6 +46,7 @@ use cfg\user\user;
 use cfg\verb\verb;
 use cfg\word\word;
 use shared\library;
+use shared\triples;
 use test\all_tests;
 use test\test_cleanup;
 use shared\types\verbs;
@@ -66,13 +68,13 @@ class triple_write_tests
         $t->test_word(word_api::TN_ADD_VIA_FUNC);
 
         $t->subheader('triple prepared write');
-        $test_name = 'add triple ' . triple_api::TN_ADD_VIA_SQL . ' via sql insert';
+        $test_name = 'add triple ' . triples::TN_ADD_VIA_SQL . ' via sql insert';
         $t->assert_write_via_func_or_sql($test_name, $t->triple_add_by_sql(), false);
-        $test_name = 'add triple ' . triple_api::TN_ADD_VIA_FUNC . ' via sql function';
+        $test_name = 'add triple ' . triples::TN_ADD_VIA_FUNC . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t->triple_add_by_func(), true);
 
-        $t->subheader('triple write sandbox tests for ' . triple_api::TN_ADD);
-        //$t->assert_write_link($t->triple_filled_add(), triple_api::TN_ADD);
+        $t->subheader('triple write sandbox tests for ' . triples::TN_ADD);
+        //$t->assert_write_link($t->triple_filled_add(), triples::TN_ADD);
 
 
         // create the related objects for link objects
@@ -111,7 +113,7 @@ class triple_write_tests
         $target = word_api::TN_RENAMED . ' (' . word_api::TN_PARENT . ')';
         $t->assert($test_name, $result, $target);
         $result = $trp->name();
-        // $target = triple_api::TN_ADD;
+        // $target = triples::TN_ADD;
         $target = word_api::TN_RENAMED . ' (' . word_api::TN_PARENT . ')';
         $t->assert($test_name, $result, $target);
         $test_name = ' ... check if the link is shown correctly also for the second user "' . $t->usr2->name . '"';
@@ -193,14 +195,14 @@ class triple_write_tests
 
         // check if the name of a triple can be changed
         $trp = $t->test_triple(word_api::TN_RENAMED, verbs::IS, word_api::TN_PARENT);
-        $trp->set_name(triple_api::TN_ADD);
+        $trp->set_name(triples::TN_ADD);
         $result = $trp->save()->get_last_message();
-        $t->assert('triple->save name to ' . triple_api::TN_ADD, $result);
+        $t->assert('triple->save name to ' . triples::TN_ADD, $result);
 
         // ... and if the name check if the name of a triple can be changed
         $trp = new triple($t->usr1);
-        $trp->load_by_name(triple_api::TN_ADD);
-        $t->assert('triple load changed name of ' . triple_api::TN_ADD, $trp->name(), triple_api::TN_ADD);
+        $trp->load_by_name(triples::TN_ADD);
+        $t->assert('triple load changed name of ' . triples::TN_ADD, $trp->name(), triples::TN_ADD);
 
         // check the correct logging
         $log = new change_link($t->usr1);
@@ -215,7 +217,7 @@ class triple_write_tests
 
         // check that even after renaming the triple no word with the standard name of the triple can be added
         $wrd = new word($t->usr1);
-        $wrd->set_name(triple_api::TN_ADD_AUTO);
+        $wrd->set_name(triples::TN_ADD_AUTO);
         $result = $wrd->save()->get_last_message();
         $target = 'A triple with the name "System Test Triple" already exists. ' .
             'Please use another word name.';
@@ -224,7 +226,7 @@ class triple_write_tests
         // ... and no verb either
         $vrb = new verb();
         $vrb->set_user($t->usr1);
-        $vrb->set_name(triple_api::TN_ADD_AUTO);
+        $vrb->set_name(triples::TN_ADD_AUTO);
         $result = $vrb->save()->get_last_message();
         $target = '<style class="text-danger">A triple with the name "System Test Triple" already exists. '
             . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.</style>';
@@ -232,7 +234,7 @@ class triple_write_tests
 
         // ... and no formula either
         $frm = new formula($t->usr1);
-        $frm->set_name(triple_api::TN_ADD_AUTO);
+        $frm->set_name(triples::TN_ADD_AUTO);
         $result = $frm->save()->get_last_message();
         $target = '<style class="text-danger">A triple with the name "System Test Triple" already exists. '
             . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.</style>';
@@ -292,34 +294,34 @@ class triple_write_tests
 
         // activate the excluded objects to check the setup
         $trp = new triple($t->usr2);
-        $trp->load_by_name(triple_api::TN_EXCLUDED);
+        $trp->load_by_name(triples::TN_EXCLUDED);
         if ($trp->id() != 0) {
             $trp->set_excluded(false);
             $trp->save();
         }
 
         // check if the standard samples for triples still exist and if not, create the samples
-        $t->test_triple(word_api::TN_ZH, verbs::IS, word_api::TN_CANTON, triple_api::TN_ZH_CANTON, triple_api::TN_ZH_CANTON);
-        $t->test_triple(word_api::TN_ZH, verbs::IS, word_api::TN_CITY, triple_api::TN_ZH_CITY, triple_api::TN_ZH_CITY);
-        $t->test_triple(word_api::TN_ZH, verbs::IS, word_api::TN_COMPANY, triple_api::TN_ZH_COMPANY, triple_api::TN_ZH_COMPANY);
-        $t->test_triple(triple_api::TN_ZH_CANTON, verbs::IS_PART_OF, word_api::TN_CH);
-        $t->test_triple(triple_api::TN_ZH_CITY, verbs::IS_PART_OF, triple_api::TN_ZH_CANTON);
-        $t->test_triple(triple_api::TN_ZH_COMPANY, verbs::IS_PART_OF, triple_api::TN_ZH_CITY, triple_api::TN_EXCLUDED, triple_api::TN_EXCLUDED);
+        $t->test_triple(word_api::TN_ZH, verbs::IS, word_api::TN_CANTON, triples::TN_ZH_CANTON, triples::TN_ZH_CANTON);
+        $t->test_triple(word_api::TN_ZH, verbs::IS, word_api::TN_CITY, triples::TN_ZH_CITY, triples::TN_ZH_CITY);
+        $t->test_triple(word_api::TN_ZH, verbs::IS, word_api::TN_COMPANY, triples::TN_ZH_COMPANY, triples::TN_ZH_COMPANY);
+        $t->test_triple(triples::TN_ZH_CANTON, verbs::IS_PART_OF, word_api::TN_CH);
+        $t->test_triple(triples::TN_ZH_CITY, verbs::IS_PART_OF, triples::TN_ZH_CANTON);
+        $t->test_triple(triples::TN_ZH_COMPANY, verbs::IS_PART_OF, triples::TN_ZH_CITY, triples::TN_EXCLUDED, triples::TN_EXCLUDED);
 
-        $t->test_triple(word_api::TN_ABB, verbs::IS, word_api::TN_COMPANY, triple_api::TN_ABB_COMPANY);
+        $t->test_triple(word_api::TN_ABB, verbs::IS, word_api::TN_COMPANY, triples::COMPANY_ABB);
         // TODO check why it is possible to create a triple with the same name as a word
         //$t->test_triple(word_api::TN_VESTAS, verbs::IS_A, TEST_WORD, word_api::TN_VESTAS, word_api::TN_VESTAS);
-        $t->test_triple(word_api::TN_VESTAS, verbs::IS, word_api::TN_COMPANY, triple_api::TN_VESTAS_COMPANY, triple_api::TN_VESTAS_COMPANY);
-        $t->test_triple(word_api::TN_2014, verbs::FOLLOW, word_api::TN_2013, triple_api::TN_2014_FOLLOW);
+        $t->test_triple(word_api::TN_VESTAS, verbs::IS, word_api::TN_COMPANY, triples::COMPANY_VESTAS, triples::COMPANY_VESTAS);
+        $t->test_triple(word_api::TN_2014, verbs::FOLLOW, word_api::TN_2013, triples::TN_2014_FOLLOW);
         // TODO check direction
-        $t->test_triple(word_api::TN_TAX, verbs::IS_PART_OF, word_api::TN_CASH_FLOW, triple_api::TN_TAXES_OF_CF);
+        $t->test_triple(word_api::TN_TAX, verbs::IS_PART_OF, word_api::TN_CASH_FLOW, triples::TN_TAXES_OF_CF);
 
         $t->header('Check if all base phrases are correct');
-        $t->test_phrase(triple_api::TN_ZH_COMPANY);
+        $t->test_phrase(triples::TN_ZH_COMPANY);
 
         // exclude some to test the handling of exclude objects
         $trp = new triple($t->usr2);
-        $trp->load_by_name(triple_api::TN_EXCLUDED);
+        $trp->load_by_name(triples::TN_EXCLUDED);
         $trp->set_excluded(true);
         $trp->save();
     }

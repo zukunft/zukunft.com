@@ -34,6 +34,7 @@ namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'triples.php';
 
 use api\word\triple as triple_api;
 use api\word\word as word_api;
@@ -44,6 +45,7 @@ use cfg\word\triple;
 use cfg\verb\verb;
 use cfg\word\word_list;
 use shared\library;
+use shared\triples;
 use shared\types\phrase_type as phrase_type_shared;
 use test\test_cleanup;
 use shared\types\verbs;
@@ -80,7 +82,7 @@ class phrase_list_write_tests
         $id_lst[] = $triple_sample_id * -1;
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_names_by_ids(new phr_ids($id_lst));
-        $target = '"' . word_api::TN_ABB . '","' . word_api::TN_VESTAS . '","' . triple_api::TN_ZH_COMPANY . '"';
+        $target = '"' . word_api::TN_ABB . '","' . word_api::TN_VESTAS . '","' . triples::TN_ZH_COMPANY . '"';
         $target = '"' . word_api::TN_ABB . '","' . word_api::TN_VESTAS . '"';
         $result = $phr_lst->dsp_name();
         $t->display('phrase->load via id', $target, $result);
