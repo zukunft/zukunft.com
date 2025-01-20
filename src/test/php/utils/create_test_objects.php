@@ -64,8 +64,8 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'json_fields.php';
 
+use api\system\type_lists;
 use cfg\component\component_link_type;
-use cfg\component\position_type;
 use cfg\component\view_style_list;
 use cfg\db\sql_db;
 use cfg\formula\figure;
@@ -105,18 +105,18 @@ use cfg\view\view_link_type_list;
 use cfg\view\view_term_link;
 use cfg\word\word_db;
 use cfg\word\word_list;
+use controller\api_message;
 use html\system\messages;
 use shared\json_fields;
 use shared\types\api_type_list;
 use shared\types\component_type as comp_type_shared;
-use controller\api_message;
+use controller\api_message_old;
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
 use api\phrase\group as group_api;
 use api\ref\ref as ref_api;
 use api\ref\source as source_api;
 use api\result\result as result_api;
-use api\system\type_lists as type_lists_api;
 use api\value\value as value_api;
 use api\verb\verb as verb_api;
 use api\view\view as view_api;
@@ -172,7 +172,6 @@ use cfg\helper\type_list;
 use cfg\helper\type_object;
 use cfg\user\user;
 use cfg\user\user_profile_list;
-use cfg\value\value_base;
 use cfg\value\value_list;
 use cfg\value\value_time_series;
 use cfg\value\value_ts_data;
@@ -217,7 +216,7 @@ class create_test_objects extends test_base
      * dummy objects for unit tests
      */
 
-    function type_lists_api(user $usr): type_lists_api
+    function type_lists_api(user $usr): string
     {
         global $db_con;
 
@@ -233,7 +232,7 @@ class create_test_objects extends test_base
         $msk_lnk_typ_cac = new view_link_type_list();
         $cmp_typ_cac = new component_type_list();
         //$cmp_lnk_typ_cac = new component_link_type_list();
-        $position_types = new position_type_list();
+        $pos_typ_cac = new position_type_list();
         $ref_typ_cac = new ref_type_list();
         $src_typ_cac = new source_type_list();
         $shr_typ_cac = new share_type_list();
@@ -257,7 +256,7 @@ class create_test_objects extends test_base
         $msk_lnk_typ_cac->load_dummy();
         $cmp_typ_cac->load_dummy();
         //$cmp_lnk_typ_cac->load_dummy();
-        $position_types->load_dummy();
+        $pos_typ_cac->load_dummy();
         $ref_typ_cac->load_dummy();
         $src_typ_cac->load_dummy();
         $shr_typ_cac->load_dummy();
@@ -274,35 +273,36 @@ class create_test_objects extends test_base
         // read the corresponding names and description from the internal config csv files
         $this->read_all_names_from_config_csv($phr_typ_cac);
 
-        $lst = new type_lists_api($db_con, $usr);
-        $lst->add($usr_pro_cac->api_obj(), controller::API_LIST_USER_PROFILES);
-        $lst->add($phr_typ_cac->api_obj(), controller::API_LIST_PHRASE_TYPES);
-        $lst->add($frm_typ_cac->api_obj(), controller::API_LIST_FORMULA_TYPES);
-        $lst->add($frm_lnk_typ_cac->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
-        $lst->add($elm_typ_cac->api_obj(), controller::API_LIST_ELEMENT_TYPES);
-        $lst->add($msk_typ_cac->api_obj(), controller::API_LIST_VIEW_TYPES);
-        $lst->add($msk_sty_cac->api_obj(), controller::API_LIST_VIEW_STYLES);
-        $lst->add($msk_lnk_typ_cac->api_obj(), controller::API_LIST_VIEW_LINK_TYPES);
-        $lst->add($cmp_typ_cac->api_obj(), controller::API_LIST_COMPONENT_TYPES);
-        //$lst->add($cmp_lnk_typ_cac->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
-        $lst->add($position_types->api_obj(), controller::API_LIST_COMPONENT_POSITION_TYPES);
-        $lst->add($ref_typ_cac->api_obj(), controller::API_LIST_REF_TYPES);
-        $lst->add($src_typ_cac->api_obj(), controller::API_LIST_SOURCE_TYPES);
-        $lst->add($shr_typ_cac->api_obj(), controller::API_LIST_SHARE_TYPES);
-        $lst->add($ptc_typ_cac->api_obj(), controller::API_LIST_PROTECTION_TYPES);
-        $lst->add($lan_cac->api_obj(), controller::API_LIST_LANGUAGES);
-        $lst->add($lan_for_cac->api_obj(), controller::API_LIST_LANGUAGE_FORMS);
-        $lst->add($sys_log_sta_cac->api_obj(), controller::API_LIST_SYS_LOG_STATI);
-        $lst->add($job_typ_cac->api_obj(), controller::API_LIST_JOB_TYPES);
-        $lst->add($cng_act_cac->api_obj(), controller::API_LIST_CHANGE_LOG_ACTIONS);
-        $lst->add($cng_tbl_cac->api_obj(), controller::API_LIST_CHANGE_LOG_TABLES);
-        $lst->add($cng_fld_cac->api_obj(), controller::API_LIST_CHANGE_LOG_FIELDS);
-        $lst->add($vrb_cac->api_obj(), controller::API_LIST_VERBS);
-
+        $vars[controller::API_LIST_USER_PROFILES] = $usr_pro_cac->api_json_array();
+        $vars[controller::API_LIST_PHRASE_TYPES] = $phr_typ_cac->api_json_array();
+        $vars[controller::API_LIST_FORMULA_TYPES] = $frm_typ_cac->api_json_array();
+        $vars[controller::API_LIST_FORMULA_LINK_TYPES] = $frm_lnk_typ_cac->api_json_array();
+        $vars[controller::API_LIST_ELEMENT_TYPES] = $elm_typ_cac->api_json_array();
+        $vars[controller::API_LIST_VIEW_TYPES] = $msk_typ_cac->api_json_array();
+        $vars[controller::API_LIST_VIEW_STYLES] = $msk_sty_cac->api_json_array();
+        $vars[controller::API_LIST_VIEW_LINK_TYPES] = $msk_lnk_typ_cac->api_json_array();
+        $vars[controller::API_LIST_COMPONENT_TYPES] = $cmp_typ_cac->api_json_array();
+        // TODO activate
+        //$vars[controller::API_LIST_VIEW_COMPONENT_LINK_TYPES] = $cmp_lnk_typ_cac->api_json_array();
+        $vars[controller::API_LIST_COMPONENT_POSITION_TYPES] = $pos_typ_cac->api_json_array();
+        $vars[controller::API_LIST_REF_TYPES] = $ref_typ_cac->api_json_array();
+        $vars[controller::API_LIST_SOURCE_TYPES] = $src_typ_cac->api_json_array();
+        $vars[controller::API_LIST_SHARE_TYPES] = $shr_typ_cac->api_json_array();
+        $vars[controller::API_LIST_PROTECTION_TYPES] = $ptc_typ_cac->api_json_array();
+        $vars[controller::API_LIST_LANGUAGES] = $lan_cac->api_json_array();
+        $vars[controller::API_LIST_LANGUAGE_FORMS] = $lan_for_cac->api_json_array();
+        $vars[controller::API_LIST_SYS_LOG_STATI] = $sys_log_sta_cac->api_json_array();
+        $vars[controller::API_LIST_JOB_TYPES] = $job_typ_cac->api_json_array();
+        $vars[controller::API_LIST_CHANGE_LOG_ACTIONS] = $cng_act_cac->api_json_array();
+        $vars[controller::API_LIST_CHANGE_LOG_TABLES] = $cng_tbl_cac->api_json_array();
+        $vars[controller::API_LIST_CHANGE_LOG_FIELDS] = $cng_fld_cac->api_json_array();
+        $vars[controller::API_LIST_VERBS] = $vrb_cac->api_json_array();
         $sys_msk_cac = $this->view_list();
-        $lst->add($sys_msk_cac->api_json_array(new api_type_list([])), controller::API_LIST_SYSTEM_VIEWS);
+        $vars[controller::API_LIST_SYSTEM_VIEWS] = $sys_msk_cac->api_json_array(new api_type_list([]));
 
-        return $lst;
+        global $db_con;
+        $api_msg = new api_message();
+        return json_encode($api_msg->api_header_array($db_con, type_lists::class, $usr, $vars));
     }
 
     /**
@@ -4253,7 +4253,7 @@ class create_test_objects extends test_base
     {
         global $db_con;
         global $phr_typ_cac;
-        $msg = new api_message($db_con, word::class, $this->usr1);
+        $msg = new api_message_old($db_con, word::class, $this->usr1);
         $wrd = new word_api();
         $wrd->name = word_api::TN_ADD_API;
         $wrd->description = word_api::TD_ADD_API;
@@ -4268,7 +4268,7 @@ class create_test_objects extends test_base
     function word_post_json(): array
     {
         global $db_con;
-        $msg = new api_message($db_con, word::class, $this->usr1);
+        $msg = new api_message_old($db_con, word::class, $this->usr1);
         $wrd = new word_api();
         $wrd->name = word_api::TN_UPD_API;
         $wrd->description = word_api::TD_UPD_API;
@@ -4283,7 +4283,7 @@ class create_test_objects extends test_base
     {
         global $db_con;
         global $src_typ_cac;
-        $msg = new api_message($db_con, source::class, $this->usr1);
+        $msg = new api_message_old($db_con, source::class, $this->usr1);
         $src = new source_api();
         $src->name = source_api::TN_ADD_API;
         $src->description = source_api::TD_ADD_API;
@@ -4299,7 +4299,7 @@ class create_test_objects extends test_base
     function source_post_json(): array
     {
         global $db_con;
-        $msg = new api_message($db_con, source::class, $this->usr1);
+        $msg = new api_message_old($db_con, source::class, $this->usr1);
         $src = new source_api();
         $src->name = source_api::TN_UPD_API;
         $src->description = source_api::TD_UPD_API;
@@ -4314,7 +4314,7 @@ class create_test_objects extends test_base
     {
         global $db_con;
         global $reference_types;
-        $msg = new api_message($db_con, ref::class, $this->usr1);
+        $msg = new api_message_old($db_con, ref::class, $this->usr1);
         $ref = new ref_api();
         $ref->phrase_id = $this->word()->phrase()->id();
         $ref->external_key = ref_api::TK_ADD_API;

@@ -498,7 +498,7 @@ class system_tests
                         }
                     }
                     if (!$found) {
-                        $sub_path = $lib->str_between($base_path, '../', '/');
+                        $sub_path = $lib->str_right_of($base_path, '../');
                         $test_name = 'includes missing in ' . $path . '\\' . $class
                             . ' in ' . $sub_path . $code_file
                             . ' (' . $pos . ' of ' . count($code_files) . ')';

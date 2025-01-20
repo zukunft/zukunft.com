@@ -14,6 +14,12 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO deprecate all api objects not needed any more
+    TODO move triple const to a separate class triples
+    TODO all api messages should be optional with or without header
+    TODO move common api code parts to a separate class
+    TODO include the field names in the openapi definition check
+    TODO check the order of the class sections
     TODO used different name for each type e.g. view_style_name instead of type_name to be able to log the name of the change
     TODO test the single html frontend function like $wrd->btn_edit() with the html_tests e.g. word_html_tests
     TODO create an test the html frontend masks using run_ui_test in unit/api_tests

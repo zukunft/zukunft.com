@@ -1026,7 +1026,7 @@ class library
             'html\component' => 'WEB_COMPONENT_PATH',
             'shared\types' => 'SHARED_TYPES_PATH',
             'shared\enum' => 'SHARED_ENUM_PATH',
-            'controller' => 'API_OBJECT_PATH',
+            'controller', 'api' => 'API_OBJECT_PATH',
             'controller\system', 'api\system' => 'API_SYSTEM_PATH',
             'api\result' => 'API_RESULT_PATH',
             'api\word' => 'API_WORD_PATH',

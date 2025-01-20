@@ -50,9 +50,9 @@ include_once MODEL_PHRASE_PATH . 'term_list.php';
 include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once WEB_FIGURE_PATH . 'figure.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\formula\figure_list;
@@ -63,10 +63,10 @@ use cfg\result\result;
 use cfg\phrase\term_list;
 use cfg\user\user;
 use cfg\value\value;
-use cfg\value\value_base;
 use cfg\word\word;
 use html\figure\figure as figure_dsp;
 use shared\library;
+use shared\types\api_type;
 
 class element_group
 {
@@ -342,7 +342,7 @@ class element_group
         // build the html code to display the value with the link
         foreach ($fig_lst->lst() as $fig) {
             log_debug('display figure');
-            $api_json = $fig->api_json();
+            $api_json = $fig->api_json([api_type::INCL_PHRASES]);
             $fig_dsp = new figure_dsp();
             $fig_dsp->set_from_json($api_json);
             $result .= $fig_dsp->display_linked($back);

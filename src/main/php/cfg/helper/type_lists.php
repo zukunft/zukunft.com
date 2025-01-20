@@ -294,8 +294,7 @@ class type_lists
         // add header if requested
         if ($typ_lst->use_header()) {
             global $db_con;
-            $class = $this::class;
-            $api_msg = new api_message($db_con, $class, $usr);
+            $api_msg = new api_message();
             $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
         } else {
             $msg = $vars;
@@ -304,6 +303,9 @@ class type_lists
         return json_encode($msg);
     }
 
+    /**
+     * @return array with all preloaded types
+     */
     function api_json_array(): array
     {
 

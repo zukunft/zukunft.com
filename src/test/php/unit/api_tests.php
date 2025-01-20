@@ -128,8 +128,7 @@ class api_tests
         //$t->assert_api_get_by_text(triple::class, triple_api::TN_READ);
         //$t->assert_api_get(phrase::class);
         // the value contains only the phrase id and name in the api message because the phrase are expected to be cached in the frontend
-        // TODO Prio 0 activate
-        //$t->assert_api_get(value::class, value_api::TI_PI);
+        $t->assert_api_get(value::class, value_api::TI_PI);
         $t->assert_api_get(formula::class);
         $t->assert_api_get_by_text(formula::class, formula_api::TN_READ);
         $t->assert_api_get(view::class);
@@ -143,11 +142,9 @@ class api_tests
         $t->assert_api_get(job::class);
         $t->assert_api_get(phrase_type::class);
         $t->assert_api_get(language::class);
-        // TODO Prio 0 activate
-        //$t->assert_api_get(language_form::class);
+        $t->assert_api_get(language_form::class);
 
-        // TODO Prio 0 activate
-        //$t->assert_api_get_list(type_lists::class);
+        $t->assert_api_get_list(type_lists::class);
         $t->assert_api_get_list(word_list::class, [1, 2, word_api::TI_PI]);
         $t->assert_api_get_list(word_list::class, word_api::TN_READ, api::URL_VAR_PATTERN);
         $t->assert_api_get_list(phrase_list::class, [1, 2, word_api::TI_PI, -1, -2]);
@@ -160,14 +157,11 @@ class api_tests
             change_log_list::class,
             api::URL_VAR_WORD_ID, 1,
             api::URL_VAR_WORD_FLD, change_field_list::FLD_WORD_NAME);
-        // TODO Prio 0 activate
-        /*
         $t->assert_api_get_list(
             sys_log_list::class,
             [1, 2], 'ids',
             'sys_log_list_api',
             true);
-        */
         // $t->assert_rest(new word($usr, word_api::TN_READ));
 
         $cfg = new config();
@@ -193,8 +187,7 @@ class api_tests
         $phr_zh = new phrase_dsp();
         $phr_zh->load_by_name(word_api::TN_ZH);
         $phr_zh->load_by_id($phr_zh->id());
-        // TODO Prio 0 activate
-        //$t->assert($test_name, $phr_zh->name(), word_api::TN_ZH);
+        $t->assert($test_name, $phr_zh->name(), word_api::TN_ZH);
 
     }
 

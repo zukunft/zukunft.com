@@ -118,7 +118,7 @@ class view_read_tests
         $t->subheader('View API object creation tests');
 
         $cmp = $t->load_word(view_api::TN_READ, $t->usr1);
-        $t->assert_api_obj($cmp);
+        $t->assert_export_reload($cmp);
 
 
         $t->subheader('System view tests');

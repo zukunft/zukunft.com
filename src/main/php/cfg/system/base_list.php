@@ -33,10 +33,10 @@
 
 namespace cfg\system;
 
+include_once API_OBJECT_PATH . 'api_message.php';
 include_once DB_PATH . 'sql_db.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once API_OBJECT_PATH . 'api_message.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -281,8 +281,7 @@ class base_list
         // add header if requested
         if ($typ_lst->use_header()) {
             global $db_con;
-            $class = $this::class;
-            $api_msg = new api_message($db_con, $class, $usr);
+            $api_msg = new api_message();
             $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
         } else {
             $msg = $vars;
@@ -302,7 +301,8 @@ class base_list
     {
         $lst = [];
         foreach ($this->lst() as $sbx) {
-            $lst[] = $sbx->api_json_array($typ_lst, $usr);
+            $vars = $sbx->api_json_array($typ_lst, $usr);
+            $lst[] = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
         }
         return $lst;
     }

@@ -33,6 +33,7 @@ namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once API_PHRASE_PATH . 'phrase.php';
+include_once API_OBJECT_PATH . 'api_message.php';
 include_once HTML_PATH . 'button.php';
 include_once HTML_PATH . 'html_base.php';
 include_once HTML_PATH . 'html_selector.php';
@@ -60,6 +61,7 @@ include_once SHARED_PATH . 'words.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\verb\verb_list;
+use controller\api_message;
 use html\helper\config;
 use html\button;
 use html\formula\formula as formula_dsp;
@@ -112,12 +114,8 @@ class word extends sandbox_typed
     function set_from_json_array(array $json_array): user_message
     {
         // get body from message
-        $lib = new library();
-        $class = $lib->class_to_name($this::class);
-        if (key_exists(json_fields::POD, $json_array)
-            and key_exists($class, $json_array)) {
-            $json_array = $json_array[$class];
-        }
+        $api_msg = new api_message();
+        $json_array = $api_msg->validate($json_array);
 
         $usr_msg = parent::set_from_json_array($json_array);
         if (array_key_exists(json_fields::PLURAL, $json_array)) {

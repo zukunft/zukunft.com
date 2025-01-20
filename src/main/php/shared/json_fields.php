@@ -197,6 +197,7 @@ class json_fields
     // message header
     const TIMESTAMP = 'timestamp';
     const VERSION = 'version';
+    const BODY = 'body';
 
     // to review
     const USER_NAME = 'user';

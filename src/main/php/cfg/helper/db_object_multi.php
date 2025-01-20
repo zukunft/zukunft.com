@@ -34,6 +34,7 @@
 
 namespace cfg\helper;
 
+include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once API_SYSTEM_PATH . 'db_object.php';
@@ -195,8 +196,7 @@ class db_object_multi extends db_object
         // add header if requested
         if ($typ_lst->use_header()) {
             global $db_con;
-            $class = $this::class;
-            $api_msg = new api_message($db_con, $class, $usr);
+            $api_msg = new api_message();
             $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
         } else {
             $msg = $vars;

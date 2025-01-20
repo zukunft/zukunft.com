@@ -86,7 +86,7 @@ class word_read_tests
         $t->subheader('word API object creation tests');
 
         $wrd = $t->load_word(word_api::TN_READ, $t->usr1);
-        $t->assert_api_obj($wrd);
+        $t->assert_export_reload($wrd);
 
         $t->subheader('Word frontend tests');
 
@@ -174,10 +174,10 @@ class word_read_tests
         $t->header('Unit database tests of the triple class (src/main/php/model/word/triple.php)');
         $t->name = 'triple read db->';
 
-        $t->subheader('Frontend API tests');
+        $t->subheader('triple export tests');
 
-        $trp = $t->load_triple(triple_api::TN_PI, verbs::IS, word_api::TN_READ);
-        $t->assert_api_obj($trp);
+        $trp = $t->triple_pi();
+        $t->assert_export_reload($trp);
     }
 
 }

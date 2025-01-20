@@ -42,10 +42,12 @@ include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
 
 use cfg\system\sys_log_list;
 use cfg\user\user;
 use controller\controller;
+use shared\types\api_type;
 
 // open database
 $db_con = prg_start("api/log", "", false);
@@ -66,7 +68,7 @@ if ($usr->id() > 0) {
     $lst->page = 0;
     $lst->size = 20;
     $lst->load_all();
-    $result = $lst->api_json();
+    $result = $lst->api_json([api_type::HEADER], $usr);
 }
 
 $ctrl = new controller();

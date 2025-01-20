@@ -797,6 +797,12 @@ class phrase extends combine_named
         return $result;
     }
 
+    function type_code_id(): string
+    {
+        global $phr_typ_cac;
+        return $phr_typ_cac->code_id($this->type_id());
+    }
+
     /**
      * if there is just one formula linked to the phrase, get it
      * TODO separate the query parameter creation and add a unit test

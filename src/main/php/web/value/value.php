@@ -356,6 +356,9 @@ class value extends sandbox_value
                         $result = round($this->number(), 2);
                     }
                 }
+            } else {
+                // use default settings
+                $result = round($this->number(), 2);
             }
         }
         return $result;

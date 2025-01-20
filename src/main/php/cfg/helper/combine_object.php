@@ -138,8 +138,7 @@ class combine_object
         // add header if requested
         if ($typ_lst->use_header()) {
             global $db_con;
-            $class = $this::class;
-            $api_msg = new api_message($db_con, $class, $usr);
+            $api_msg = new api_message();
             $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
         } else {
             $msg = $vars;

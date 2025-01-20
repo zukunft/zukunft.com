@@ -1,10 +1,10 @@
 {
   "pod": "zukunft.com",
-  "type": "sys_log",
+  "type": "sys_log_list",
   "user_id": 4,
   "user": "zukunft.com system test",
   "version": "0.0.3",
-  "sys_log": [
+  "body": [
     {
       "id": 1,
       "user": "zukunft.com system",

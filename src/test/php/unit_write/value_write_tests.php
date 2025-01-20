@@ -44,7 +44,6 @@ use cfg\log\change_values_prime;
 use cfg\phrase\phrase_list;
 use cfg\user\user;
 use cfg\value\value;
-use cfg\value\value_base;
 use html\value\value as value_dsp;
 use html\figure\figure as figure_dsp;
 use shared\library;
@@ -219,10 +218,11 @@ class value_write_tests
             word_api::TN_INHABITANTS,
             word_api::TN_PCT,
             word_api::TN_2020));
-        $result = $pct_val->dsp_obj()->display(0);
+        $api_msg = $pct_val->api_json([api_type::INCL_PHRASES]);
+        $val_dsp = new value_dsp($api_msg);
+        $result = $val_dsp->display(0);
         $target = number_format(round(value_api::TV_PCT * 100, 2), 2) . '%';
-        // TODO Prio 0 activate
-        //$t->display(', value->val_formatted for ' . $pct_val->dsp_id(), $target, $result);
+        $t->display(', value->val_formatted for ' . $pct_val->dsp_id(), $target, $result);
 
         // test the scaling of a value
         $phr_lst = $t->load_phrase_list(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
@@ -232,7 +232,7 @@ class value_write_tests
         $mio_val->load_by_grp($phr_lst->get_grp_id());
         $result = $mio_val->scale($dest_phr_lst);
         $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO * 1000000;
-        $t->display(', value->val_scaling for a word list ' . $phr_lst->dsp_id() . '', $target, $result);
+        $t->display(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $target, $result);
 
         // test the figure object creation
         $phr_lst = $t->load_phrase_list(array(word_api::TN_CANTON, word_api::TN_ZH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
@@ -244,8 +244,7 @@ class value_write_tests
         $fig_dsp = $t->dsp_obj($fig, new figure_dsp());
         $result = $fig_dsp->display_linked('1');
         $target = '<a href="/http/result_edit.php?id=' . $mio_val_dsp->id() . '&back=1" title="1.55">1.55</a>';
-        // TODO Prio 0 activate
-        //$t->assert(', value->figure->display_linked for word list ' . $phr_lst->dsp_id(), $result, $target);
+        $t->assert(', value->figure->display_linked for word list ' . $phr_lst->dsp_id(), $result, $target);
 
         // test the HTML code creation
         $result = $mio_val_dsp->display_value();

@@ -25,6 +25,7 @@
   {
     "id": 1,
     "name": "not set",
+    "description": "placeholder verb to enable foreign key checks in the database and for the selection",
     "class": "verb"
   }
 ]

@@ -699,22 +699,19 @@ class test_base
      * @param object $usr_obj the object which frontend API functions should be tested
      * @return bool true if the reloaded backend object has no relevant differences
      */
-    function assert_api_obj(object $usr_obj): bool
+    function assert_export_reload(object $usr_obj): bool
     {
         $lib = new library();
         $original_json = $usr_obj->export_json();
-        $recreated_json = json_decode("{}", true);
-        $api_obj = $usr_obj->api_obj();
-        if ($api_obj->id() == $usr_obj->id()) {
-            $db_obj = $this->db_obj($usr_obj->user(), $api_obj::class);
-            $db_obj->load_by_id($usr_obj->id());
-            $recreated_json = $db_obj->export_json();
-        }
+        $db_obj = clone $usr_obj;
+        $db_obj->reset();
+        $db_obj->load_by_id($usr_obj->id());
+        $recreated_json = $db_obj->export_json();
         $result = $lib->json_is_similar($original_json, $recreated_json);
         // TODO remove, for faster debugging only
         $json_in_txt = json_encode($original_json);
         $json_ex_txt = json_encode($recreated_json);
-        return $this->assert($this->name . 'API check', $result, true);
+        return $this->assert_json('reloaded export json of ' . $usr_obj::class, $recreated_json, $original_json);
     }
 
     /**

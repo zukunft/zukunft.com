@@ -63,6 +63,7 @@ include_once WEB_TYPES_PATH . 'position_type_list.php';
 include_once WEB_VIEW_PATH . 'view_list.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 // get the api const that are shared between the backend and the html frontend
 include_once SHARED_PATH . 'api.php';
@@ -71,6 +72,7 @@ use html\user\user_message;
 use html\view\view_list as view_list_dsp;
 use html\word\word as word_dsp;
 use shared\api;
+use shared\json_fields;
 
 class type_lists
 {
@@ -104,7 +106,7 @@ class type_lists
     {
         $ctrl = new api();
         $json_array = json_decode($json_api_msg, true);
-        $type_lists_json = $ctrl->check_api_msg($json_array, api::JSON_TYPE_LISTS);
+        $type_lists_json = $ctrl->check_api_msg($json_array, json_fields::BODY);
         $this->set_from_json_array($type_lists_json);
     }
 

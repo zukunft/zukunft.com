@@ -90,8 +90,7 @@ class term_list_read_tests
         $result = json_decode($json_txt, true);
         $class_for_file = $t->class_without_namespace(term_list::class);
         $target = json_decode($t->api_json_expected($class_for_file . '_without_link'), true);
-        // TODO Prio 0 active
-        // $t->assert_json($test_name . $trm_lst->dsp_id(), $result, $target);
+        $t->assert_json($test_name . $trm_lst->dsp_id(), $result, $target);
 
         $test_name = 'loading by term list by pattern ';
         $trm_lst = new term_list($t->usr1);

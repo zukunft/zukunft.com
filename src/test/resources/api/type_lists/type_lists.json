@@ -4,7 +4,7 @@
   "user_id": 3,
   "user": "zukunft.com system test",
   "version": "0.0.3",
-  "type_lists": {
+  "body": {
     "user_profiles": [
       {
         "name": "normal user",
@@ -774,7 +774,7 @@
       {
         "name": "plural",
         "code_id": "plural",
-        "description": "",
+        "description": "The noun denotes a quantity greater than the default quantity represented by that noun. This default quantity is most commonly one.",
         "id": 1
       }
     ],

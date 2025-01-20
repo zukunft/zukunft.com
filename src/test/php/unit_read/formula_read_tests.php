@@ -94,7 +94,7 @@ class formula_read_tests
 
         $frm = $t->load_formula(formula_api::TN_INCREASE);
         if ($frm->name() != '') {
-            $t->assert_api_obj($frm);
+            $t->assert_export_reload($frm);
         }
     }
 

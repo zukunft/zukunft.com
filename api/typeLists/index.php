@@ -46,6 +46,7 @@ include_once MODEL_HELPER_PATH . 'type_lists.php';
 use cfg\helper\type_lists;
 use controller\controller;
 use cfg\user\user;
+use shared\types\api_type;
 
 // open database
 $db_con = prg_start("api/typeLists", "", false);

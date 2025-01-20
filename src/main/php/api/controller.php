@@ -34,7 +34,7 @@
 
 namespace controller;
 
-include_once API_OBJECT_PATH . 'api_message.php';
+include_once API_OBJECT_PATH . 'api_message_old.php';
 include_once API_SYSTEM_PATH . 'type_lists.php';
 include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once API_SANDBOX_PATH . 'list_object.php';
@@ -44,7 +44,7 @@ include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_PATH . 'views.php';
 
-use controller\api_message;
+use controller\api_message_old;
 use api\sandbox\combine_object as combine_object_api;
 use api\sandbox\list_object as list_api;
 use api\system\type_lists as type_lists_api;
@@ -328,7 +328,7 @@ class controller
         }
     }
 
-    function get_api_msg(api_message $api_obj, string $msg): void
+    function get_api_msg(api_message_old $api_obj, string $msg): void
     {
         // return the api json or the error message
         if ($msg == '') {
@@ -409,13 +409,13 @@ class controller
      * encode a user sandbox object for the frontend api
      * and response to curl requests
      *
-     * @param api_message $api_msg the object that should be encoded
+     * @param api_message_old $api_msg the object that should be encoded
      * @param string $msg if filled the message that should be shown to the user instead of the object
      * @param int $id
      * @param sandbox|combine_object $obj
      * @return void
      */
-    function curl(api_message $api_msg, string $msg, int $id, sandbox|combine_object $obj): void
+    function curl(api_message_old $api_msg, string $msg, int $id, sandbox|combine_object $obj): void
     {
         // return the api json or the error message
         if ($msg == '') {

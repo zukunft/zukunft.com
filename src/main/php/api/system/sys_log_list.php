@@ -33,13 +33,13 @@ namespace controller\system;
 
 include_once API_OBJECT_PATH . 'api_message.php';
 
-use controller\api_message;
+use controller\api_message_old;
 use cfg\db\sql_db;
 use cfg\user\user;
 use JsonSerializable;
 use shared\api;
 
-class sys_log_list extends api_message implements JsonSerializable
+class sys_log_list extends api_message_old implements JsonSerializable
 {
 
     // field names used for JSON creation

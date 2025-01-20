@@ -1335,11 +1335,6 @@ class sandbox_value extends sandbox_multi
     {
         $vars = parent::api_json_array($typ_lst, $usr);
 
-        // reload the value parameters
-        if (!$typ_lst->test_mode()) {
-            $this->load_by_grp($this->grp());
-        }
-
         if ($typ_lst->no_key_fill()) {
             $vars[json_fields::ID] = $this->grp()->id(true);
         } else {

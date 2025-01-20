@@ -772,9 +772,9 @@ class value_base extends sandbox_value
     /**
      * called from the user sandbox
      */
-    function load_objects(): bool
+    function load_objects(bool $names_only = false): bool
     {
-        $this->load_phrases();
+        $this->load_phrases($names_only);
         return true;
     }
 
@@ -784,12 +784,12 @@ class value_base extends sandbox_value
      * maybe rename to load_objects
      * NEVER call the dsp_id function from this function or any called function, because this would lead to an endless loop
      */
-    function load_phrases(): void
+    function load_phrases(bool $names_only = false): void
     {
         log_debug();
         // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
         if ($this->grp()->is_id_set()) {
-            $this->load_grp_by_id();
+            $this->load_grp_by_id($names_only);
         }
         log_debug('done');
     }
@@ -822,7 +822,7 @@ class value_base extends sandbox_value
     /**
      * rebuild the word and triple list based on the group id
      */
-    function load_grp_by_id(): void
+    function load_grp_by_id(bool $names_only = true): void
     {
         // if the group object is missing
         if ($this->grp()->is_id_set()) {
@@ -835,8 +835,10 @@ class value_base extends sandbox_value
         }
 
         // if a list object is missing
-        if ($this->grp() != null) {
-            $this->grp()->load_phrase_list();
+        if ($names_only) {
+            $this->grp()->load_phrase_names();
+        } else {
+            $this->grp()->load_phrases();
         }
 
         log_debug('done');

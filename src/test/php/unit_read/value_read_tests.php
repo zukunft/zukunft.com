@@ -40,6 +40,7 @@ use cfg\group\group_id;
 use cfg\phrase\phrase_list;
 use cfg\value\value;
 use cfg\value\value_base;
+use shared\types\phrase_type;
 use test\test_cleanup;
 
 class value_read_tests
@@ -60,10 +61,13 @@ class value_read_tests
         $val->load_by_id(value_api::TI_PI);
         $val->load_objects();
         $t->assert($test_name, $val->number(), value_api::TV_READ);
-        // TODO Prio 0 activate
-        //$t->assert($test_name, $val->name(), group_api::TN_READ);
-        //$t->assert($test_name, $val->description(), value_api::TV_READ);
-        //$t->assert($test_name, $val->type_name(), value_api::TV_READ);
+        $t->assert($test_name, $val->name(), group_api::TN_READ);
+        $phr_lst = $val->grp()->phrase_list();
+        if ($phr_lst->count() > 0) {
+            $phr = $phr_lst->lst()[0];
+            $t->assert($test_name, $phr->description(), triple_api::TD_PI);
+            $t->assert($test_name, $phr->type_code_id(), phrase_type::TRIPLE_HIDDEN);
+        }
 
         $test_name = 'load a value by phrase group';
         $phr_lst = new phrase_list($t->usr1);
@@ -97,8 +101,7 @@ class value_read_tests
 
         $phr_grp = $t->add_phrase_group(array(triple_api::TN_PI_NAME), group_api::TN_READ);
         $val = $t->load_value_by_phr_grp($phr_grp);
-        // TODO Prio 0 active
-        //$t->assert_api_obj($val);
+        $t->assert_export_reload($val);
 
     }
 
