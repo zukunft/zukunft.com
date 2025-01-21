@@ -37,6 +37,7 @@ use api\ref\source as source_api;
 use cfg\phrase\phrase_type;
 use cfg\ref\source;
 use cfg\word\word;
+use shared\words;
 use test\all_tests;
 use shared\types\phrase_type as phrase_type_shared;
 
@@ -52,10 +53,10 @@ function run_sandbox_test(all_tests $t): void
     // a word is not the same as the same word that represents a formula
     $wrd1 = new word($t->usr1);
     $wrd1->type_id = $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK);
-    $wrd1->set_name(word_api::TN_MIO);
+    $wrd1->set_name(words::TN_MIO);
     $wrd2 = new word($t->usr1);
     $wrd2->type_id = $phr_typ_cac->default_id();
-    $wrd2->set_name(word_api::TN_MIO);
+    $wrd2->set_name(words::TN_MIO);
     $target = false;
     $result = $wrd1->is_same($wrd2);
     $t->display("a word is not the same as the same word that represents a formula", $target, $result);

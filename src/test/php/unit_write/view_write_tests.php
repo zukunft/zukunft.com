@@ -42,6 +42,7 @@ use cfg\log\change;
 use cfg\log\change_table_list;
 use cfg\sandbox\sandbox_named;
 use cfg\word\word;
+use shared\words;
 use test\test_cleanup;
 
 class view_write_tests
@@ -84,10 +85,10 @@ class view_write_tests
 
         // test the complete view for one word
         $wrd = new word($t->usr1);
-        $wrd->load_by_name(word_api::TN_CH);
+        $wrd->load_by_name(words::TN_CH);
         //$result = $msk->display($wrd, $back);
         // check if the view contains the word name
-        $target = word_api::TN_CH;
+        $target = words::TN_CH;
         // TODO review and activate
         //$t->dsp_contains(', view->display "' . $msk->name() . '" for "' . $wrd->name() . '" contains', $target, $result, $t::TIMEOUT_LIMIT_LONG);
         // check if the view contains at least one value

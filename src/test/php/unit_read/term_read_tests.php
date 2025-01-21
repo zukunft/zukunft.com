@@ -33,6 +33,7 @@
 namespace unit_read;
 
 include_once SHARED_PATH . 'triples.php';
+include_once SHARED_PATH . 'words.php';
 
 use api\formula\formula as formula_api;
 use api\word\triple as triple_api;
@@ -45,7 +46,9 @@ use cfg\word\triple;
 use cfg\verb\verb;
 use cfg\word\word;
 use cfg\word\word_db;
+use shared\formulas;
 use shared\triples;
+use shared\words;
 use test\test_cleanup;
 
 class term_read_tests
@@ -69,10 +72,10 @@ class term_read_tests
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
         $trm->row_mapper_sandbox($db_row, word_db::FLD_ID, word_db::FLD_NAME, phrase::FLD_TYPE);
-        $t->assert($t->name . ' word row mapper', $trm->name(), word_api::TN_READ);
+        $t->assert($t->name . ' word row mapper', $trm->name(), words::MATH);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), word::class);
-        $t->assert($t->name . ' word by object id', $trm_by_obj_id->name(), word_api::TN_READ);
+        $t->assert($t->name . ' word by object id', $trm_by_obj_id->name(), words::MATH);
 
         // test load by term by a triple db row
         $trp = new triple($t->usr1);
@@ -83,10 +86,10 @@ class term_read_tests
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
         $trm->row_mapper_sandbox($db_row, triple::FLD_ID, triple::FLD_NAME, phrase::FLD_TYPE);
-        $t->assert($t->name . ' triple row mapper', $trm->name(), triples::TN_READ);
+        $t->assert($t->name . ' triple row mapper', $trm->name(), triples::MATH_CONST);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), triple::class);
-        $t->assert($t->name . ' triple by object id', $trm_by_obj_id->name(), triples::TN_READ);
+        $t->assert($t->name . ' triple by object id', $trm_by_obj_id->name(), triples::MATH_CONST);
 
         // test load by term by a formula db row
         $frm = new formula($t->usr1);
@@ -97,10 +100,10 @@ class term_read_tests
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
         $trm->row_mapper_sandbox($db_row, formula::FLD_ID, formula::FLD_NAME, formula::FLD_TYPE);
-        $t->assert($t->name . ' formula row mapper', $trm->name(), formula_api::TN_READ);
+        $t->assert($t->name . ' formula row mapper', $trm->name(), formulas::SCALE_TO_SEC);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), formula::class);
-        $t->assert($t->name . ' formula by object id', $trm_by_obj_id->name(), formula_api::TN_READ);
+        $t->assert($t->name . ' formula by object id', $trm_by_obj_id->name(), formulas::SCALE_TO_SEC);
 
         // test load by term by a verb db row
         $vrb = new verb();
@@ -119,7 +122,7 @@ class term_read_tests
         // test loading by term by id and name
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(word::class);
-        $t->assert_load_combine($trm, word_api::TN_READ);
+        $t->assert_load_combine($trm, words::MATH);
 
 
     }

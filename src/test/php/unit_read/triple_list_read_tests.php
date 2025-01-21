@@ -56,17 +56,17 @@ class triple_list_read_tests
 
         // test loading triple names
         $test_name = 'loading triple names with pattern return the expected triple';
-        $pattern = substr(triples::TN_READ, 0, -1);
+        $pattern = substr(triples::MATH_CONST, 0, -1);
         $trp_lst = new triple_list($t->usr1);
         $trp_lst->load_names($pattern);
-        $t->assert_contains($test_name, $trp_lst->names(), triples::TN_READ);
+        $t->assert_contains($test_name, $trp_lst->names(), triples::MATH_CONST);
 
 
         // test load by triple list by ids
         $test_name = 'load triples by ids';
         $trp_lst = new triple_list($t->usr1);
         $trp_lst->load_by_ids(array(1,2));
-        $target = array(triples::TN_READ, triples::TN_PI_NAME); // order adjusted based on the number of usage
+        $target = array(triples::MATH_CONST, triples::PI_NAME); // order adjusted based on the number of usage
         $t->assert_contains($test_name, $trp_lst->names(), $target);
         /* TODO activate
         $test_name = 'load triples by names';

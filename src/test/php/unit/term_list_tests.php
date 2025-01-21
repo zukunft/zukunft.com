@@ -29,7 +29,9 @@
 namespace unit;
 
 include_once SHARED_PATH . 'triples.php';
+include_once SHARED_PATH . 'formulas.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'words.php';
 
 use api\formula\formula as formula_api;
 use api\word\triple as triple_api;
@@ -47,8 +49,10 @@ use cfg\phrase\term_list;
 use cfg\word\triple;
 use cfg\verb\verb;
 use cfg\word\word;
+use shared\formulas;
 use shared\triples;
 use shared\types\verbs;
+use shared\words;
 use test\test_cleanup;
 
 class term_list_tests
@@ -115,11 +119,11 @@ class term_list_tests
         global $usr;
 
         $lst = new term_list($usr);
-        $lst->add($this->t->new_word(word_api::TN_READ)->term());
+        $lst->add($this->t->new_word(words::MATH)->term());
         $lst->add($this->t->new_triple(
-            triples::TN_PI_NAME,
-            triples::TN_PI, verbs::IS, word_api::TN_READ)->term());
-        $lst->add($this->t->new_formula(formula_api::TN_INCREASE)->term());
+            triples::PI_NAME,
+            triples::PI, verbs::IS, words::MATH)->term());
+        $lst->add($this->t->new_formula(formulas::INCREASE)->term());
         $lst->add($this->t->new_verb(verbs::IS)->term());
         return $lst;
     }

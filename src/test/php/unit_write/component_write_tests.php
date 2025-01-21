@@ -75,11 +75,11 @@ class component_write_tests
         // test the complete component for one word
         $wrd = New word_dsp;
         $wrd->usr  = $t->usr1;
-        $wrd->set_name(word_api::TN_ABB);
+        $wrd->set_name(words::TN_ABB);
         $wrd->load();
         $result = $cmp->display($wrd);
         // check if the component contains the word name
-        $target = word_api::TN_ABB;
+        $target = words::TN_ABB;
         test_show_contains(', component->display "'.$cmp->name.'" for "'.$wrd->name.'" contains', $target, $result, $t::TIMEOUT_LIMIT_LONG);
         // check if the component contains at least one value
         $target = '45548';

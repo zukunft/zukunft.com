@@ -45,6 +45,7 @@ use cfg\word\triple;
 use cfg\word\triple_list;
 use shared\triples;
 use shared\types\verbs;
+use shared\words;
 use test\test_cleanup;
 
 class triple_read_tests
@@ -68,39 +69,39 @@ class triple_read_tests
         // load the verb used for testing
         $is_id = $vrb_cac->id(verbs::IS);
         // load the words used for testing the triples (Zurich (City) and Zurich (Canton)
-        $wrd_zh = $t->load_word(word_api::TN_ZH);
-        $wrd_canton = $t->load_word(word_api::TN_CANTON);
+        $wrd_zh = $t->load_word(words::TN_ZH);
+        $wrd_canton = $t->load_word(words::TN_CANTON);
         // create the group test word
-        $wrd_company = $t->test_word(word_api::TN_COMPANY);
+        $wrd_company = $t->test_word(words::TN_COMPANY);
 
         $t->subheader('triple load tests');
-        $test_name = 'load triple ' . triples::TN_READ . ' by name and id';
+        $test_name = 'load triple ' . triples::MATH_CONST . ' by name and id';
         $trp = new triple($t->usr1);
-        $trp->load_by_name(triples::TN_READ);
+        $trp->load_by_name(triples::MATH_CONST);
         $trp_by_id = new triple($t->usr1);
         $trp_by_id->load_by_id($trp->id(), triple::class);
-        $t->assert($test_name, $trp_by_id->name(), triples::TN_READ);
-        $t->assert($test_name, $trp_by_id->description, triples::TD_READ);
+        $t->assert($test_name, $trp_by_id->name(), triples::MATH_CONST);
+        $t->assert($test_name, $trp_by_id->description, triples::MATH_CONST_COM);
 
-        $test_name = 'triple load ' . word_api::TN_CANTON . ' ' . word_api::TN_ZH . ' by link';
+        $test_name = 'triple load ' . words::TN_CANTON . ' ' . words::TN_ZH . ' by link';
         $lnk_canton = new triple($t->usr1);
         $lnk_canton->load_by_link_id($wrd_zh->id(), $is_id, $wrd_canton->id());
-        $target = word_api::TN_ZH . ' (' . word_api::TN_CANTON . ')';
+        $target = words::TN_ZH . ' (' . words::TN_CANTON . ')';
         $result = $lnk_canton->name();
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB);
 
-        $test_name = 'triple generated name of ' . word_api::TN_CANTON . ' ' . word_api::TN_ZH . ' via function';
+        $test_name = 'triple generated name of ' . words::TN_CANTON . ' ' . words::TN_ZH . ' via function';
         $result = $lnk_canton->name_generated();
         $t->assert($test_name, $result, $target);
 
-        $test_name = 'triple load ' . triples::TN_ZH_COMPANY . ' by link';
+        $test_name = 'triple load ' . triples::COMPANY_ZURICH . ' by link';
         $lnk_company = new triple($t->usr1);
         $lnk_company->load_by_link_id($wrd_zh->id(), $is_id, $wrd_company->id());
-        $target = triples::TN_ZH_COMPANY;
+        $target = triples::COMPANY_ZURICH;
         $result = $lnk_company->name();
         $t->assert($test_name, $result, $target);
 
-        $test_name = 'triple generated name of ' . triples::TN_ZH_COMPANY . ' via function';
+        $test_name = 'triple generated name of ' . triples::COMPANY_ZURICH . ' via function';
         $target = 'Zurich (Company)';
         $result = $lnk_company->name_generated();
         $t->assert($test_name, $result, $target);

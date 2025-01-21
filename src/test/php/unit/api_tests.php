@@ -49,7 +49,9 @@ include_once API_SYSTEM_PATH . 'type_object.php';
 include_once API_PHRASE_PATH . 'phrase_type.php';
 include_once API_LANGUAGE_PATH . 'language.php';
 include_once API_LANGUAGE_PATH . 'language_form.php';
+include_once SHARED_PATH . 'formulas.php';
 include_once SHARED_PATH . 'views.php';
+include_once SHARED_PATH . 'words.php';
 include_once WEB_HELPER_PATH . 'data_object.php';
 
 use api\component\component as component_api;
@@ -90,6 +92,7 @@ use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use html\helper\data_object as data_object_dsp;
 use shared\api;
+use shared\formulas;
 use shared\library;
 use shared\views as view_shared;
 use shared\words;
@@ -121,7 +124,7 @@ class api_tests
         $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_EMAIL, api::URL_VAR_EMAIL);
         $t->assert_api_get(word::class);
         $t->assert_api_get_json(word::class, api::URL_VAR_WORD_ID);
-        $t->assert_api_get_by_text(word::class, word_api::TN_READ);
+        $t->assert_api_get_by_text(word::class, words::MATH);
         $t->assert_api_get(verb::class);
         $t->assert_api_get_by_text(verb::class, verb_api::TN_READ);
         $t->assert_api_get(triple::class);
@@ -130,7 +133,7 @@ class api_tests
         // the value contains only the phrase id and name in the api message because the phrase are expected to be cached in the frontend
         $t->assert_api_get(value::class, value_api::TI_PI);
         $t->assert_api_get(formula::class);
-        $t->assert_api_get_by_text(formula::class, formula_api::TN_READ);
+        $t->assert_api_get_by_text(formula::class, formulas::SCALE_TO_SEC);
         $t->assert_api_get(view::class);
         $t->assert_api_get(view::class, 1, 1);
         $t->assert_api_get_by_text(view::class, view_api::TN_READ);
@@ -145,10 +148,10 @@ class api_tests
         $t->assert_api_get(language_form::class);
 
         $t->assert_api_get_list(type_lists::class);
-        $t->assert_api_get_list(word_list::class, [1, 2, word_api::TI_PI]);
-        $t->assert_api_get_list(word_list::class, word_api::TN_READ, api::URL_VAR_PATTERN);
-        $t->assert_api_get_list(phrase_list::class, [1, 2, word_api::TI_PI, -1, -2]);
-        $t->assert_api_get_list(phrase_list::class, word_api::TN_READ, api::URL_VAR_PATTERN);
+        $t->assert_api_get_list(word_list::class, [1, 2, words::PI_ID]);
+        $t->assert_api_get_list(word_list::class, words::MATH, api::URL_VAR_PATTERN);
+        $t->assert_api_get_list(phrase_list::class, [1, 2, words::PI_ID, -1, -2]);
+        $t->assert_api_get_list(phrase_list::class, words::MATH, api::URL_VAR_PATTERN);
         $t->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $t->assert_api_get_list(formula_list::class, [1]);
         $t->assert_api_get_list(view_list::class, view_api::TN_READ, api::URL_VAR_PATTERN);
@@ -162,7 +165,7 @@ class api_tests
             [1, 2], 'ids',
             'sys_log_list_api',
             true);
-        // $t->assert_rest(new word($usr, word_api::TN_READ));
+        // $t->assert_rest(new word($usr, words::TN_READ));
 
         $cfg = new config();
         $cfg->load();
@@ -179,15 +182,15 @@ class api_tests
         // load the frontend objects via api call
         $test_name = 'api id and name call of a word';
         $wrd_zh = new word_dsp();
-        $wrd_zh->load_by_name(word_api::TN_ZH);
+        $wrd_zh->load_by_name(words::TN_ZH);
         $wrd_zh->load_by_id($wrd_zh->id());
-        $t->assert($test_name, $wrd_zh->name(), word_api::TN_ZH);
+        $t->assert($test_name, $wrd_zh->name(), words::TN_ZH);
 
         $test_name = 'api id and name call of a phrase';
         $phr_zh = new phrase_dsp();
-        $phr_zh->load_by_name(word_api::TN_ZH);
+        $phr_zh->load_by_name(words::TN_ZH);
         $phr_zh->load_by_id($phr_zh->id());
-        $t->assert($test_name, $phr_zh->name(), word_api::TN_ZH);
+        $t->assert($test_name, $phr_zh->name(), words::TN_ZH);
 
     }
 

@@ -44,6 +44,7 @@ use cfg\word\word;
 use cfg\verb\verb;
 use cfg\verb\verb_list;
 use shared\triples;
+use shared\words;
 use test\test_cleanup;
 use shared\types\verbs;
 
@@ -72,35 +73,35 @@ class verb_read_tests
 
         // prepare the words for testing
         $country = new word($t->usr1);
-        $country->load_by_name(word_api::TN_COUNTRY);
+        $country->load_by_name(words::TN_COUNTRY);
         $switzerland = new word($t->usr1);
-        $switzerland->load_by_name(word_api::TN_CH);
+        $switzerland->load_by_name(words::TN_CH);
 
         // 'is a' - test the selection of the members via 'is a' verb
         $countries = $country->children();
-        $t->assert_contains('is a based on ' . word_api::TN_COUNTRY,
+        $t->assert_contains('is a based on ' . words::TN_COUNTRY,
             $countries->names(),
-            array(word_api::TN_CH, word_api::TN_DE)
+            array(words::TN_CH, words::TN_DE)
         );
 
         // 'is part of' - test the direct selection of the members via 'is part of' verb
         //                e.g. for Switzerland get at least 'Zurich (Canton)' but not 'Zurich (City)'
         $parts = $switzerland->direct_parts();
-        $t->assert_contains('direct parts of ' . word_api::TN_CH,
+        $t->assert_contains('direct parts of ' . words::TN_CH,
             $parts->names(),
-            array(triples::TN_ZH_CANTON)
+            array(triples::CANTON_ZURICH)
         );
-        $t->assert_contains_not('direct parts of ' . word_api::TN_CH,
+        $t->assert_contains_not('direct parts of ' . words::TN_CH,
             $parts->names(),
-            array(triples::TN_ZH_CITY)
+            array(triples::CITY_ZH)
         );
 
         // 'is part of' - test the recursive selection of the members via 'is part of' verb
         //                e.g. for Switzerland get at least 'Zurich (Canton)' and 'Zurich (City)'
         $parts = $switzerland->parts();
-        $t->assert_contains('parts of ' . word_api::TN_CH . ' and parts of the parts',
+        $t->assert_contains('parts of ' . words::TN_CH . ' and parts of the parts',
             $parts->names(),
-            array(triples::TN_ZH_CANTON, triples::TN_ZH_CITY)
+            array(triples::CANTON_ZURICH, triples::CITY_ZH)
         );
 
 

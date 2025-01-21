@@ -46,6 +46,8 @@ use cfg\db\sql_db;
 use cfg\phrase\term_list;
 use cfg\word\word;
 use html\formula\formula as formula_dsp;
+use shared\formulas;
+use shared\words;
 use test\test_cleanup;
 
 class formula_tests
@@ -75,7 +77,7 @@ class formula_tests
 
         $t->subheader('formula sql read default and user changes by id');
         $frm = new formula($usr);
-        $frm->set_id(formula_api::TI_READ_ANOTHER);
+        $frm->set_id(formulas::SCALE_HOUR_ID);
         $t->assert_sql_standard($sc, $frm);
         $t->assert_sql_not_changed($sc, $frm);
         $t->assert_sql_user_changes($sc, $frm);
@@ -83,7 +85,7 @@ class formula_tests
 
         $t->subheader('formula sql read default by name');
         $frm = new formula($usr);
-        $frm->set_name(formula_api::TF_READ_SCALE_MIO);
+        $frm->set_name(formulas::SCALE_MIO_EXP);
         $t->assert_sql_standard($sc, $frm);
 
         $t->subheader('formula sql write insert');
@@ -100,7 +102,7 @@ class formula_tests
 
         $t->subheader('formula sql write update');
         $frm = $t->formula_name_only();
-        $frm_renamed = $frm->cloned(formula_api::TN_RENAMED);
+        $frm_renamed = $frm->cloned(formulas::SYSTEM_TEXT_RENAMED);
         $t->assert_sql_update($sc, $frm_renamed, $frm);
         $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::USER]);
         $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG]);
@@ -144,9 +146,9 @@ class formula_tests
         $target->add($frm->phrase());
         $trm_lst->add($frm->term());
         $exp = new expression($usr);
-        $exp->set_ref_text('{w' . word_api::TI_ONE . '}={w' . word_api::TI_MIO . '}*1000000', $t->term_list_scale());
+        $exp->set_ref_text('{w' . words::ONE_ID . '}={w' . words::TI_MIO . '}*1000000', $t->term_list_scale());
         $result = $exp->res_phr_lst($trm_lst);
-        $t->assert('Expression->res_phr_lst for ' . formula_api::TF_READ_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
+        $t->assert('Expression->res_phr_lst for ' . formulas::SCALE_MIO_EXP, $result->dsp_id(), $target->dsp_id());
 
         // get the special formulas used in a formula to calculate the result
         // e.g. "next" is a special formula to get the following values
@@ -157,14 +159,14 @@ class formula_tests
         $frm_next->id = 1;
         $frm_has_next = new formula($usr);
         $frm_has_next->usr_text = '=next';
-        $t->assert('Expression->res_phr_lst for ' . formula_api::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
+        $t->assert('Expression->res_phr_lst for ' . formulas::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
         */
 
         // test the calculation of one value
         $trm_lst = $t->term_list_for_tests(array(
-            word_api::TN_PCT,
-            formula_api::TN_READ_THIS,
-            formula_api::TN_READ_PRIOR
+            words::TN_PCT,
+            formulas::THIS_NAME,
+            formulas::PRIOR
         ));
         $phr_lst = $t->phrase_list_increase();
 

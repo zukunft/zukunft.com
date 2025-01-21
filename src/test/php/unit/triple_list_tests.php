@@ -68,7 +68,7 @@ class triple_list_tests
         // load only the names
         $trp_lst = new triple_list($usr);
         $t->assert_sql_names($sc, $trp_lst, new triple($usr));
-        $t->assert_sql_names($sc, $trp_lst, new triple($usr), triples::TD_READ);
+        $t->assert_sql_names($sc, $trp_lst, new triple($usr), triples::MATH_CONST_COM);
 
         // load by triple ids
         $trp_lst = new triple_list($usr);

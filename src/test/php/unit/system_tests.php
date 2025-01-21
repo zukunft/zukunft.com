@@ -37,6 +37,7 @@ include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
 include_once MODEL_SYSTEM_PATH . 'session.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
 include_once API_SYSTEM_PATH . 'sys_log.php';
+include_once SHARED_PATH . 'words.php';
 
 use api\word\word as word_api;
 use api\ref\ref as ref_api;
@@ -57,6 +58,7 @@ use html\system\sys_log as sys_log_dsp;
 use controller\system\sys_log as sys_log_api;
 use DateTime;
 use shared\library;
+use shared\words;
 use test\test_cleanup;
 
 class system_tests
@@ -114,15 +116,15 @@ class system_tests
         $t->assert_dsp_id($t->term(), '"Mathematics" (word_id 1) for user 1 (zukunft.com system test) as term');
         $t->assert_dsp_id($t->term_list(), '"Mathematical constant","Mathematics","not set","scale minute to sec" (-2,-1,1,2)');
         $t->assert_dsp_id($t->value(), '"Pi (math)" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->value_list(), '"Pi (math)" 3.1415926535898 / "inhabitants in the city of Zurich (2019)" 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / ' . word_api::TI_INHABITANT . ',' . word_api::TI_ZH . ',' . word_api::TI_2019 . ',) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->value_list(), '"Pi (math)" 3.1415926535898 / "inhabitants in the city of Zurich (2019)" 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / ' . words::TI_INHABITANT . ',' . words::TI_ZH . ',' . words::TI_2019 . ',) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->source(), '"The International System of Units" (source_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->reference(), 'ref of "Pi" to "wikidata" (' . ref_api::TI_PI . ')');
         $t->assert_dsp_id($t->formula(), '"scale minute to sec" (formula_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->formula_list(), 'scale minute to sec (formula_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->formula_link(), 'from "scale minute to sec" (formula_id 1) to "Mathematics" (word_id 1) as phrase as  (formula_link_id 1)');
-        $t->assert_dsp_id($t->element(), 'word "minute" (' . word_api::TI_MINUTE . ') for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->element_list(), '"minute" (element_id ' . word_api::TI_MINUTE . ') for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->expression(), '""second" = "minute" * 60" ({w' . word_api::TI_SECOND . '}={w' . word_api::TI_MINUTE . '}*60)');
+        $t->assert_dsp_id($t->element(), 'word "minute" (' . words::TI_MINUTE . ') for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->element_list(), '"minute" (element_id ' . words::TI_MINUTE . ') for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->expression(), '""second" = "minute" * 60" ({w' . words::SECOND_ID . '}={w' . words::TI_MINUTE . '}*60)');
         $t->assert_dsp_id($t->result_simple(), '"Mathematics" 123456 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->result_list(), '"Mathematics" 123456 / "percent" 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / 2,,,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->figure_value(), 'value figure "Pi (math)" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test) 2022-12-26 18:23:45');

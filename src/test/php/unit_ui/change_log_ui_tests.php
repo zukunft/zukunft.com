@@ -50,7 +50,7 @@ class change_log_ui_tests
 
         $t->subheader('Change log display unit tests');
 
-        //$wrd_pi = new word_dsp(2, word_api::TN_CONST);
+        //$wrd_pi = new word_dsp(2, words::TN_CONST);
         $test_page = $html->text_h2('Change log display test');
 
         // prepare test data

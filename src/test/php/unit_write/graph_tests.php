@@ -38,6 +38,7 @@ use cfg\value\value_list;
 use cfg\word\word;
 use html\word\triple_list as triple_list_dsp;
 use shared\enum\foaf_direction;
+use shared\words;
 use test\test_cleanup;
 
 class graph_tests
@@ -68,7 +69,7 @@ class graph_tests
         // step 1: define the phrase list e.g. in this case only the test word for city
 
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(word_api::TN_CITY));
+        $phr_lst->load_by_names(array(words::TN_CITY));
 
         // step 2: get all values related to the phrases
         $val_lst = new value_list($usr);
@@ -90,7 +91,7 @@ class graph_tests
         //$result = $lnk_lst->name();
         // check if at least the basic relations are in the database
         /*
-        $target = '' . word_api::TN_CITY_AS_CATEGORY . ' has a balance sheet';
+        $target = '' . words::TN_CITY_AS_CATEGORY . ' has a balance sheet';
         $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
         $target = 'Company has a forecast';
         $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
@@ -100,20 +101,20 @@ class graph_tests
 
         // similar to above, but just for the zurich
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_INHABITANTS, word_api::TN_MIO));
+        $phr_lst->load_by_names(array(words::TN_ZH, words::TN_INHABITANTS, words::TN_MIO));
         $lnk_lst = new triple_list($usr);
         $lnk_lst->load_by_phr_lst($phr_lst, null, foaf_direction::UP);
         //$lnk_lst->wrd_lst = $phr_lst->wrd_lst_all();
         $result = $lnk_lst->name();
         // TODO to be reviewed
-        $target = word_api::TN_ZH;
+        $target = words::TN_ZH;
         $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
 
         $test_name = 'load the types of Zurich from the database: Zurich is a ';
         // load the word Zurich from the database
         $ZH = new word($usr);
-        $ZH->load_by_name(word_api::TN_ZH);
+        $ZH->load_by_name(words::TN_ZH);
         // load all types of Zurich e.g. Zurich Insurance
         $zh_lst = new phrase_list($usr);
         $zh_lst->load_by_phr($ZH->phrase(), $t->verb_is(), foaf_direction::UP);
@@ -125,9 +126,9 @@ class graph_tests
         $dsp_trp_list = new triple_list_dsp();
         $dsp_trp_list->set_from_json_array($api_json);
         $result = $dsp_trp_list->tbl($back);
-        $t->assert_text_contains($test_name . word_api::TN_CITY, $result, word_api::TN_COMPANY);
-        $t->assert_text_contains($test_name . word_api::TN_CANTON, $result, word_api::TN_COMPANY);
-        $t->assert_text_contains($test_name . word_api::TN_COMPANY, $result, word_api::TN_COMPANY);
+        $t->assert_text_contains($test_name . words::TN_CITY, $result, words::TN_COMPANY);
+        $t->assert_text_contains($test_name . words::TN_CANTON, $result, words::TN_COMPANY);
+        $t->assert_text_contains($test_name . words::TN_COMPANY, $result, words::TN_COMPANY);
 
     }
 

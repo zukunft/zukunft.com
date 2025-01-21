@@ -34,6 +34,7 @@ use api\word\word as word_api;
 use api\user\user as user_api;
 use cfg\user\user;
 use cfg\user\user_list;
+use shared\words;
 use test\all_tests;
 
 function run_system_test(all_tests $t): void
@@ -44,7 +45,7 @@ function run_system_test(all_tests $t): void
     $t->header('Consistency check of the \"zukunft.com\" code');
 
     // load the main test word
-    $wrd_company = $t->test_word(word_api::TN_COMPANY);
+    $wrd_company = $t->test_word(words::TN_COMPANY);
 
     if ($t::TEST_EMAIL) {
         $t->header('est mail sending');

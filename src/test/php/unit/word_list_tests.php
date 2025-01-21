@@ -36,6 +36,7 @@ include_once MODEL_WORD_PATH . 'word_list.php';
 include_once WEB_WORD_PATH . 'word_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'words.php';
 
 use api\word\word as word_api;
 use cfg\db\sql_creator;
@@ -47,6 +48,7 @@ use html\word\word_list as word_list_dsp;
 use shared\enum\foaf_direction;
 use shared\library;
 use shared\types\phrase_type as phrase_type_shared;
+use shared\words;
 use test\test_cleanup;
 use shared\types\verbs;
 
@@ -72,7 +74,7 @@ class word_list_tests
         // load only the names
         $wrd_lst = new word_list($usr);
         $t->assert_sql_names($sc, $wrd_lst, new word($usr));
-        $t->assert_sql_names($sc, $wrd_lst, new word($usr), word_api::TN_READ);
+        $t->assert_sql_names($sc, $wrd_lst, new word($usr), words::MATH);
 
         // load by word ids
         $wrd_lst = new word_list($usr);
@@ -80,7 +82,7 @@ class word_list_tests
 
         // load by word names
         $wrd_lst = new word_list($usr);
-        $wrd_names = array(word_api::TN_READ, word_api::TN_ADD);
+        $wrd_names = array(words::MATH, words::TN_ADD);
         $this->assert_sql_by_names($t, $db_con, $wrd_lst, $wrd_names);
 
         // load by type
@@ -241,12 +243,12 @@ class word_list_tests
         $t->assert($t->name . '->sorted', $wrd_lst_filtered->name(), '"word3","word2"');
 
         // filter by name
-        $test_name = 'filtered word list by name does not contain ' . word_api::TN_E . ' any more';
+        $test_name = 'filtered word list by name does not contain ' . words::E . ' any more';
         $wrd_lst = $t->word_list();
-        $filtered = $wrd_lst->filter_by_name([word_api::TN_E]);
-        $t->assert_contains_not($test_name, $filtered->names(), word_api::TN_E);
-        $test_name = 'filtered word list by name still contains ' . word_api::TN_PI;
-        $t->assert_contains($test_name, $filtered->names(), word_api::TN_PI);
+        $filtered = $wrd_lst->filter_by_name([words::E]);
+        $t->assert_contains_not($test_name, $filtered->names(), words::E);
+        $test_name = 'filtered word list by name still contains ' . words::PI;
+        $t->assert_contains($test_name, $filtered->names(), words::PI);
 
         // time list
         $wrd_lst = new word_list($usr);

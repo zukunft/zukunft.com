@@ -46,7 +46,7 @@ class component_ui_tests
 
         $t->subheader('Component tests');
 
-        //$wrd_pi = new word_dsp(2, word_api::TN_CONST);
+        //$wrd_pi = new word_dsp(2, words::TN_CONST);
         $test_page = $html->text_h2('Component display test');
         /*
         $test_page .= 'with tooltip: ' . $wrd->display() . '<br>';

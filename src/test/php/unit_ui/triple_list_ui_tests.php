@@ -41,7 +41,9 @@ use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;
 use cfg\verb\verb;
+use shared\triples;
 use shared\types\verbs;
+use shared\words;
 use test\test_cleanup;
 
 class triple_list_ui_tests
@@ -60,10 +62,10 @@ class triple_list_ui_tests
 
         // create the triple list test set
         $lst = new triple_list_dsp();
-        $phr_city = $this->triple_api_triple(1,  triples::TN_ZH_CITY_NAME,
-            word_api::TN_ZH, verbs::IS, word_api::TN_CITY);
-        $phr_canton = $this->triple_api_triple(2,  triples::TN_ZH_CANTON_NAME,
-            word_api::TN_ZH, verbs::IS, word_api::TN_CANTON);
+        $phr_city = $this->triple_api_triple(1,  triples::CITY_ZH_NAME,
+            words::TN_ZH, verbs::IS, words::TN_CITY);
+        $phr_canton = $this->triple_api_triple(2,  triples::CANTON_ZURICH_NAME,
+            words::TN_ZH, verbs::IS, words::TN_CANTON);
         $lst->add($phr_city);
         $lst->add($phr_canton);
 

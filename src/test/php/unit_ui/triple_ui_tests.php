@@ -32,10 +32,13 @@
 
 namespace unit_ui;
 
+include_once SHARED_PATH . 'words.php';
+
 use api\word\word as word_api;
 use html\html_base;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
+use shared\words;
 use test\test_cleanup;
 
 class triple_ui_tests
@@ -47,8 +50,8 @@ class triple_ui_tests
 
         $t->subheader('Triple tests');
 
-        $trp = new triple_dsp('{"class":"triple","id":1,"name":"' . word_api::TN_READ . '"}');
-        $wrd = new word_dsp('{"class":"word","id":-1,"name":"' . word_api::TN_READ . '"}');
+        $trp = new triple_dsp('{"class":"triple","id":1,"name":"' . words::MATH . '"}');
+        $wrd = new word_dsp('{"class":"word","id":-1,"name":"' . words::MATH . '"}');
         $test_page = $html->text_h2('Triple display test');
         $test_page .= 'with tooltip: ' . $trp->display() . '<br>';
         $test_page .= 'edit button: ' . $trp->btn_edit($wrd->phrase()) . '<br>';

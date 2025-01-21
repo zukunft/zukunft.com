@@ -42,7 +42,9 @@ use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use cfg\verb\verb;
+use shared\triples;
 use shared\types\verbs;
+use shared\words;
 use test\test_cleanup;
 
 class phrase_list_ui_tests
@@ -61,11 +63,11 @@ class phrase_list_ui_tests
 
         // create the phrase list test set
         $lst = new phrase_list_dsp();
-        $phr_city = $this->phrase_api_triple(1,  triples::TN_ZH_CITY_NAME,
-            word_api::TN_ZH, verbs::IS, word_api::TN_CITY);
-        $phr_canton = $this->phrase_api_triple(2,  triples::TN_ZH_CANTON_NAME,
-            word_api::TN_ZH, verbs::IS, word_api::TN_CANTON);
-        $phr_ch = $this->phrase_api_word(1, word_api::TN_CH);
+        $phr_city = $this->phrase_api_triple(1,  triples::CITY_ZH_NAME,
+            words::TN_ZH, verbs::IS, words::TN_CITY);
+        $phr_canton = $this->phrase_api_triple(2,  triples::CANTON_ZURICH_NAME,
+            words::TN_ZH, verbs::IS, words::TN_CANTON);
+        $phr_ch = $this->phrase_api_word(1, words::TN_CH);
         $lst->add_phrase($phr_city);
         $lst->add_phrase($phr_canton);
         $lst->add_phrase($phr_ch);

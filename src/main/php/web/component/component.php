@@ -58,6 +58,7 @@ include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 include_once SHARED_PATH . 'views.php';
+include_once SHARED_PATH . 'words.php';
 include_once SHARED_PATH . 'library.php';
 
 use html\helper\data_object as data_object_dsp;
@@ -82,6 +83,7 @@ use shared\types\view_styles;
 use shared\views;
 use shared\json_fields;
 use shared\library;
+use shared\words;
 
 class component extends sandbox_typed
 {
@@ -516,7 +518,7 @@ class component extends sandbox_typed
         // TODO use a pattern base on user entry
         $pattern = '';
         if ($test_mode) {
-            $pattern = word_api::TN_READ;
+            $pattern = words::MATH;
         }
         // TODO activate Prio 3
         //if ($this->code_id == 'form_field_triple_phrase_from') {

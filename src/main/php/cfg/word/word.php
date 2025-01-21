@@ -101,6 +101,7 @@ include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'words.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -135,6 +136,7 @@ use shared\library;
 use shared\types\api_type_list;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
+use shared\words;
 
 class word extends sandbox_typed
 {
@@ -1753,7 +1755,7 @@ class word extends sandbox_typed
      */
     protected function reserved_names(): array
     {
-        return word_api::RESERVED_NAMES;
+        return words::RESERVED_NAMES;
     }
 
     /**
@@ -1761,7 +1763,7 @@ class word extends sandbox_typed
      */
     protected function fixed_names(): array
     {
-        return word_api::FIXED_NAMES;
+        return words::FIXED_NAMES;
     }
 
 

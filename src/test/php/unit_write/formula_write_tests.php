@@ -46,6 +46,8 @@ use cfg\log\change_table_list;
 use cfg\formula\formula;
 use cfg\phrase\phrase_list;
 use cfg\sandbox\sandbox_named;
+use shared\formulas;
+use shared\words;
 use test\test_cleanup;
 
 class formula_write_tests
@@ -63,32 +65,32 @@ class formula_write_tests
         $t->header('formula db write tests');
 
         $t->subheader('formula prepared write');
-        $test_name = 'add formula ' . formula_api::TN_ADD_VIA_SQL . ' via sql insert';
+        $test_name = 'add formula ' . formulas::SYSTEM_TEXT_ADD_VIA_SQL . ' via sql insert';
         $t->assert_write_via_func_or_sql($test_name, $t->formula_add_by_sql(), false);
-        $test_name = 'add formula ' . formula_api::TN_ADD_VIA_FUNC . ' via sql function';
+        $test_name = 'add formula ' . formulas::SYSTEM_TEXT_ADD_VIA_FUNC . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t->formula_add_by_func(), true);
 
         // TODO remove
-        $t->write_named_cleanup(new formula($t->usr1), formula_api::TN_ADD);
+        $t->write_named_cleanup(new formula($t->usr1), formulas::SYSTEM_TEXT_ADD);
 
-        $t->subheader('formula write sandbox tests for ' . formula_api::TN_ADD);
-        $t->assert_write_named($t->formula_filled_add(), formula_api::TN_ADD);
+        $t->subheader('formula write sandbox tests for ' . formulas::SYSTEM_TEXT_ADD);
+        $t->assert_write_named($t->formula_filled_add(), formulas::SYSTEM_TEXT_ADD);
 
         // TODO remove
-        $t->write_named_cleanup(new formula($t->usr1), formula_api::TN_ADD);
-        $t->write_named_cleanup(new word($t->usr1), formula_api::TN_ADD);
+        $t->write_named_cleanup(new formula($t->usr1), formulas::SYSTEM_TEXT_ADD);
+        $t->write_named_cleanup(new word($t->usr1), formulas::SYSTEM_TEXT_ADD);
 
         // prepare
         $this->create_test_formulas($t);
-        $frm = $t->add_formula(formula_api::TN_ADD, formula_api::TF_INCREASE);
-        $phr = $t->add_word(word_api::TN_YEAR)->phrase();
+        $frm = $t->add_formula(formulas::SYSTEM_TEXT_ADD, formulas::INCREASE_EXP);
+        $phr = $t->add_word(words::TN_YEAR)->phrase();
         $frm->link_phr($phr);
 
         // test loading of one formula
         $frm = new formula($t->usr1);
-        $frm->load_by_name(formula_api::TN_ADD, formula::class);
+        $frm->load_by_name(formulas::SYSTEM_TEXT_ADD, formula::class);
         $result = $frm->usr_text;
-        $target = formula_api::TF_INCREASE;
+        $target = formulas::INCREASE_EXP;
         $t->assert('load for "' . $frm->name() . '"', $result, $target);
 
         // test the formula type
@@ -106,11 +108,11 @@ class formula_write_tests
                 $target = zu_dsp_bool(true);
                 $t->display('formula->is_special for "' . $elm_frm->name() . '"', $target, $result);
 
-                $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2019));
+                $phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_2019));
                 $time_phr = $phr_lst->time_useful();
                 $val = $elm_frm->special_result($phr_lst, $time_phr);
                 $result = $val->number();
-                $target = word_api::TN_2019;
+                $target = words::TN_2019;
                 // TODO: get the best matching number
                 //$t->display('formula->special_result for "'.$elm_frm->name.'"', $target, $result);
 
@@ -122,7 +124,7 @@ class formula_write_tests
                 }
                 $time_phr = $elm_frm_next->special_time_phr($time_phr);
                 $result = $time_phr->name();
-                $target = word_api::TN_2019;
+                $target = words::TN_2019;
                 $t->display('formula->special_time_phr for "' . $elm_frm_next->name() . '"', $target, $result);
             }
         }
@@ -133,7 +135,7 @@ class formula_write_tests
         } else {
             $result = $phr_lst->name();
         }
-        $target = '"' . word_api::TN_2019 . '","' . word_api::TN_CH . '","' . word_api::TN_INHABITANTS . '"';
+        $target = '"' . words::TN_2019 . '","' . words::TN_CH . '","' . words::TN_INHABITANTS . '"';
         $t->display('formula->special_phr_lst for "' . $frm->name() . '"', $target, $result);
 
         $phr_lst = $frm->assign_phr_lst_direct();
@@ -155,35 +157,35 @@ class formula_write_tests
         $t->display('formula->assign_phr_ulst_direct for "' . $frm->name() . '"', $target, $result);
 
         // loading another formula (Price Earning ratio ) to have more test cases
-        $t->test_formula(formula_api::TN_RATIO, formula_api::TF_RATIO);
-        $t->test_formula_link(formula_api::TN_RATIO, word_api::TN_SHARE);
-        $frm_pe = $t->load_formula(formula_api::TN_RATIO);
+        $t->test_formula(formulas::SYSTEM_TEXT_RATIO, formulas::SYSTEM_TEXT_RATIO_EXP);
+        $t->test_formula_link(formulas::SYSTEM_TEXT_RATIO, words::TN_SHARE);
+        $frm_pe = $t->load_formula(formulas::SYSTEM_TEXT_RATIO);
 
-        $wrd_share = $t->test_word(word_api::TN_SHARE);
-        $wrd_chf = $t->test_word(word_api::TWN_CHF);
+        $wrd_share = $t->test_word(words::TN_SHARE);
+        $wrd_chf = $t->test_word(words::TWN_CHF);
 
         $frm_pe->assign_phrase($wrd_share->phrase());
 
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names(array(word_api::TN_SHARE, word_api::TWN_CHF));
+        $phr_lst->load_by_names(array(words::TN_SHARE, words::TWN_CHF));
 
         $phr_lst_all = $frm_pe->assign_phr_lst();
         $phr_lst = $phr_lst_all->del_list($phr_lst);
         $result = $phr_lst->dsp_name();
-        $target = '"' . word_api::TN_SHARE . '"';
+        $target = '"' . words::TN_SHARE . '"';
         $t->display('formula->assign_phr_lst for "' . $frm->name() . '"', $target, $result);
 
         $phr_lst_all = $frm_pe->assign_phr_ulst();
         $phr_lst = $phr_lst_all->del_list($phr_lst);
         $result = $phr_lst->dsp_name();
-        $target = '"' . word_api::TN_SHARE . '"';
+        $target = '"' . words::TN_SHARE . '"';
         $t->display('formula->assign_phr_ulst for "' . $frm->name() . '"', $target, $result);
 
         // test the calculation of one value
         $phr_lst = new phrase_list($t->usr1);
         // TODO check why is this word MIO is needed??
-        $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020, word_api::TN_MIO));
-        $frm = $t->load_formula(formula_api::TN_ADD);
+        $phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_2020, words::TN_MIO));
+        $frm = $t->load_formula(formulas::SYSTEM_TEXT_ADD);
         $res_lst = $frm->to_num($phr_lst);
         if ($res_lst->lst() != null) {
             $res = $res_lst->lst()[0];
@@ -214,7 +216,7 @@ class formula_write_tests
         // test the scaling mainly to check the scaling handling of the results later
         // TODO remove any scaling words from the phrase list if the result word is of type scaling
         // TODO automatically check the fastest way to scale and avoid double scaling calculations
-        $frm_scale_mio_to_one = $t->load_formula(formula_api::TN_SCALE_MIO);
+        $frm_scale_mio_to_one = $t->load_formula(formulas::SYSTEM_TEXT_SCALE_MIO);
         $res_lst = $frm_scale_mio_to_one->calc($phr_lst);
         if ($res_lst != null) {
             $result = $res_lst[0]->number();
@@ -227,9 +229,9 @@ class formula_write_tests
         // test the scaling back to a thousand
         $phr_lst = new phrase_list($t->usr1);
         // TODO check why is this word ONE needed?? scale shout assume one if no scaling word is set or implied
-        //$phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020));
-        $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_2020, word_api::TN_ONE));
-        $frm_scale_one_to_k = $t->load_formula(formula_api::TN_SCALE_TO_K);
+        //$phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_2020));
+        $phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_2020, words::ONE));
+        $frm_scale_one_to_k = $t->load_formula(formulas::SYSTEM_TEXT_SCALE_TO_K);
         // TODO activate Prio 1
         //$res_lst = $frm_scale_one_to_k->calc($phr_lst);
         if ($res_lst != null) {
@@ -243,11 +245,11 @@ class formula_write_tests
 
         // load the test ids
         $wrd_percent = $t->load_word('percent');
-        $frm_this = $t->load_formula(formula_api::TN_READ_THIS);
-        $frm_prior = $t->load_formula(formula_api::TN_READ_PRIOR);
+        $frm_this = $t->load_formula(formulas::THIS_NAME);
+        $frm_prior = $t->load_formula(formulas::PRIOR);
 
         // test the formula display functions
-        $frm = $t->load_formula(formula_api::TN_ADD);
+        $frm = $t->load_formula(formulas::SYSTEM_TEXT_ADD);
         $frm_html = new formula_dsp($frm->api_json());
         $exp = $frm->expression();
         $result = $exp->dsp_id();
@@ -265,15 +267,15 @@ class formula_write_tests
         $t->display('formula->dsp_text for ' . $frm->dsp_id(), $target, $result);
 
         // ... in HTML format with link
-        $frm_increase = $t->load_formula(formula_api::TN_ADD);
+        $frm_increase = $t->load_formula(formulas::SYSTEM_TEXT_ADD);
         $result = $frm_html->edit_link($back);
-        $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id() . '&back=0" title="' . formula_api::TN_ADD . '">' . formula_api::TN_ADD . '</a>';
+        $target = '<a href="/http/formula_edit.php?id=' . $frm_increase->id() . '&back=0" title="' . formulas::SYSTEM_TEXT_ADD . '">' . formulas::SYSTEM_TEXT_ADD . '</a>';
         $t->display('formula->display for ' . $frm->dsp_id(), $target, $result);
 
         // ... the formula result selected by the word and in percent
         // TODO defined the criteria for selecting the result
         $wrd = new word($t->usr1);
-        $wrd->load_by_name(word_api::TN_CH);
+        $wrd->load_by_name(words::TN_CH);
         /*
         $result = trim($frm_dsp->dsp_result($wrd, $back));
         $target = '0.79 %';
@@ -320,19 +322,19 @@ class formula_write_tests
 
         // test adding of one formula
         $frm = new formula($t->usr1);
-        $frm->set_name(formula_api::TN_ADD);
-        $frm->usr_text = formula_api::TF_INCREASE;
+        $frm->set_name(formulas::SYSTEM_TEXT_ADD);
+        $frm->usr_text = formulas::INCREASE_EXP;
         $result = $frm->save()->get_last_message();
         if ($frm->id() > 0) {
             $result = $frm->usr_text;
         }
-        $target = formula_api::TF_INCREASE;
+        $target = formulas::INCREASE_EXP;
         $t->display('formula->save for adding "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the formula name has been saved
-        $frm = $t->load_formula(formula_api::TN_ADD);
+        $frm = $t->load_formula(formulas::SYSTEM_TEXT_ADD);
         $result = $frm->usr_text;
-        $target = formula_api::TF_INCREASE;
+        $target = formulas::INCREASE_EXP;
         $t->display('formula->load the added "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI); // time limit???
 
         // ... check the correct logging
@@ -342,33 +344,33 @@ class formula_write_tests
         $log->row_id = $frm->id();
         $result = $log->dsp_last(true);
         $target = user::SYSTEM_TEST_NAME . ' added "System Test Formula"';
-        $t->display('formula->save adding logged for "' . formula_api::TN_ADD . '"', $target, $result);
+        $t->display('formula->save adding logged for "' . formulas::SYSTEM_TEXT_ADD . '"', $target, $result);
 
         // check if adding the same formula again creates a correct error message
         $frm = new formula($t->usr1);
-        $frm->set_name(formula_api::TN_ADD);
-        $frm->usr_text = formula_api::TF_INCREASE_ALTERNATIVE;
+        $frm->set_name(formulas::SYSTEM_TEXT_ADD);
+        $frm->usr_text = formulas::INCREASE_ALTERNATIVE_EXP;
         $result = $frm->save()->get_last_message();
         // use the next line if system config is non-standard
-        //$target = 'A formula with the name "'.formula_api::TN_ADD.'" already exists. Please use another name.';
+        //$target = 'A formula with the name "'.formulas::TN_ADD.'" already exists. Please use another name.';
         $target = '';
         $t->display('formula->save adding "' . $frm->name() . '" again', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the formula can be renamed
-        $frm = $t->load_formula(formula_api::TN_ADD);
-        $frm->set_name(formula_api::TN_RENAMED);
+        $frm = $t->load_formula(formulas::SYSTEM_TEXT_ADD);
+        $frm->set_name(formulas::SYSTEM_TEXT_RENAMED);
         $result = $frm->save()->get_last_message();
         $target = '';
-        $t->display('formula->save rename "' . formula_api::TN_ADD . '" to "' . formula_api::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('formula->save rename "' . formulas::SYSTEM_TEXT_ADD . '" to "' . formulas::SYSTEM_TEXT_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... and if the formula renaming was successful
         $frm_renamed = new formula($t->usr1);
-        $frm_renamed->load_by_name(formula_api::TN_RENAMED, formula::class);
+        $frm_renamed->load_by_name(formulas::SYSTEM_TEXT_RENAMED, formula::class);
         if ($frm_renamed->id() > 0) {
             $result = $frm_renamed->name();
         }
-        $target = formula_api::TN_RENAMED;
-        $t->display('formula->load renamed formula "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $target = formulas::SYSTEM_TEXT_RENAMED;
+        $t->display('formula->load renamed formula "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
 
         // ... and if the formula renaming has been logged
         $log = new change($t->usr1);
@@ -377,34 +379,34 @@ class formula_write_tests
         $log->row_id = $frm_renamed->id();
         $result = $log->dsp_last(true);
         $target = user::SYSTEM_TEST_NAME . ' changed "System Test Formula" to "System Test Formula Renamed"';
-        $t->display('formula->save rename logged for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->save rename logged for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
 
         // check if the formula parameters can be added
         $frm_renamed->usr_text = '= "this"';
-        $frm_renamed->description = formula_api::TN_RENAMED . ' description';
+        $frm_renamed->description = formulas::SYSTEM_TEXT_RENAMED . ' description';
         $frm_renamed->type_id = $frm_typ_cac->id(formula_type::THIS);
         $frm_renamed->need_all_val = True;
         $result = $frm_renamed->save()->get_last_message();
         $target = '';
-        $t->display('formula->save all formula fields beside the name for "' . formula_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('formula->save all formula fields beside the name for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... and if the formula parameters have been added
-        $frm_reloaded = $t->load_formula(formula_api::TN_RENAMED);
+        $frm_reloaded = $t->load_formula(formulas::SYSTEM_TEXT_RENAMED);
         $result = $frm_reloaded->usr_text;
         $target = '= "this"';
-        $t->display('formula->load usr_text for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->load usr_text for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_reloaded->ref_text;
         $target = '={f' . $frm_this->id() . '}';
-        $t->display('formula->load ref_text for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->load ref_text for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_reloaded->description;
-        $target = formula_api::TN_RENAMED . ' description';
-        $t->display('formula->load description for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $target = formulas::SYSTEM_TEXT_RENAMED . ' description';
+        $t->display('formula->load description for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_reloaded->type_id;
         $target = $frm_typ_cac->id(formula_type::THIS);
-        $t->display('formula->load type_id for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->load type_id for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_reloaded->need_all_val;
         $target = True;
-        $t->display('formula->load need_all_val for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->load need_all_val for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
 
         // ... and if the formula parameter adding have been logged
         $log = new change($t->usr1);
@@ -415,106 +417,106 @@ class formula_write_tests
         // use the next line if system config is non-standard
         $target = user::SYSTEM_TEST_NAME . ' changed "percent" = ( "this" - "prior" ) / "prior" to = "this"';
         $target = user::SYSTEM_TEST_NAME . ' changed ""percent" = 1 - ( "this" / "prior" )" to "= "this""';
-        $t->display('formula->load resolved_text for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
+        $t->display('formula->load resolved_text for "' . formulas::SYSTEM_TEXT_RENAMED . '" logged', $target, $result);
         $log->set_field(change_field_list::FLD_FORMULA_REF_TEXT);
         $result = $log->dsp_last(true);
         // use the next line if system config is non-standard
         $target = user::SYSTEM_TEST_NAME . ' changed {w' . $wrd_percent->id() . '}=( {f' . $frm_this->id() . '} - {f5} ) / {f5} to ={f3}';
         $target = user::SYSTEM_TEST_NAME . ' changed "{w' . $wrd_percent->id() . '}=1-({f' . $frm_this->id() . '}/{f' . $frm_prior->id() . '})" to "={f' . $frm_this->id() . '}"';
-        $t->display('formula->load formula_text for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
+        $t->display('formula->load formula_text for "' . formulas::SYSTEM_TEXT_RENAMED . '" logged', $target, $result);
         $log->set_field(sandbox_named::FLD_DESCRIPTION);
         $result = $log->dsp_last(true);
         $target = user::SYSTEM_TEST_NAME . ' added "System Test Formula Renamed description"';
-        $t->display('formula->load description for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
+        $t->display('formula->load description for "' . formulas::SYSTEM_TEXT_RENAMED . '" logged', $target, $result);
         $log->set_field(change_field_list::FLD_FORMULA_TYPE);
         $result = $log->dsp_last(true);
         // TODO review what is correct
         $target = user::SYSTEM_TEST_NAME . ' changed calc to this';
         $target = user::SYSTEM_TEST_NAME . ' added "this"';
         $target = user::SYSTEM_TEST_NAME . ' added "4"';
-        $t->display('formula->load formula_type_id for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
+        $t->display('formula->load formula_type_id for "' . formulas::SYSTEM_TEXT_RENAMED . '" logged', $target, $result);
         $log->set_field(change_field_list::FLD_FORMULA_ALL);
         $result = $log->dsp_last(true);
         $target = user::SYSTEM_TEST_NAME . ' changed "0" to "1"';
-        $t->display('formula->load all_values_needed for "' . formula_api::TN_RENAMED . '" logged', $target, $result);
+        $t->display('formula->load all_values_needed for "' . formulas::SYSTEM_TEXT_RENAMED . '" logged', $target, $result);
 
         // check if a user specific formula is created if another user changes the formula
         $frm_usr2 = new formula($t->usr2);
-        $frm_usr2->load_by_name(formula_api::TN_RENAMED, formula::class);
+        $frm_usr2->load_by_name(formulas::SYSTEM_TEXT_RENAMED, formula::class);
         $frm_usr2->usr_text = '"percent" = ( "this" - "prior" ) / "prior"';
-        $frm_usr2->description = formula_api::TN_RENAMED . ' description2';
+        $frm_usr2->description = formulas::SYSTEM_TEXT_RENAMED . ' description2';
         $frm_usr2->type_id = $frm_typ_cac->id(formula_type::NEXT);
         $frm_usr2->need_all_val = False;
         $result = $frm_usr2->save()->get_last_message();
         $target = '';
-        $t->display('formula->save all formula fields for user 2 beside the name for "' . formula_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('formula->save all formula fields for user 2 beside the name for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... and if a user specific formula changes have been saved
         $frm_usr2_reloaded = new formula($t->usr2);
-        $frm_usr2_reloaded->load_by_name(formula_api::TN_RENAMED, formula::class);
+        $frm_usr2_reloaded->load_by_name(formulas::SYSTEM_TEXT_RENAMED, formula::class);
         $result = $frm_usr2_reloaded->usr_text;
         $target = '"percent" = ( "this" - "prior" ) / "prior"';
-        $t->display('formula->load usr_text for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->load usr_text for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_usr2_reloaded->ref_text;
         $target = '{w' . $wrd_percent->id() . '}=({f' . $frm_this->id() . '}-{f' . $frm_prior->id() . '})/{f' . $frm_prior->id() . '}';
-        $t->display('formula->load ref_text for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->load ref_text for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_usr2_reloaded->description;
-        $target = formula_api::TN_RENAMED . ' description2';
-        $t->display('formula->load description for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $target = formulas::SYSTEM_TEXT_RENAMED . ' description2';
+        $t->display('formula->load description for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_usr2_reloaded->type_id;
         $target = $frm_typ_cac->id(formula_type::NEXT);
-        $t->display('formula->load type_id for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->load type_id for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_usr2_reloaded->need_all_val;
         $target = False;
-        $t->display('formula->load need_all_val for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->load need_all_val for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
 
         // ... and the formula for the original user remains unchanged
-        $frm_reloaded = $t->load_formula(formula_api::TN_RENAMED);
+        $frm_reloaded = $t->load_formula(formulas::SYSTEM_TEXT_RENAMED);
         $result = $frm_reloaded->usr_text;
         $target = '= "this"';
-        $t->display('formula->load usr_text for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->load usr_text for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_reloaded->ref_text;
         $target = '={f' . $frm_this->id() . '}';
-        $t->display('formula->load ref_text for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->load ref_text for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_reloaded->description;
-        $target = formula_api::TN_RENAMED . ' description';
-        $t->display('formula->load description for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $target = formulas::SYSTEM_TEXT_RENAMED . ' description';
+        $t->display('formula->load description for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_reloaded->type_id;
         $target = $frm_typ_cac->id(formula_type::THIS);
-        $t->display('formula->load type_id for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->load type_id for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_reloaded->need_all_val;
         $target = True;
-        $t->display('formula->load need_all_val for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->load need_all_val for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
 
         // check if undo all specific changes removes the user formula
         $frm_usr2 = new formula($t->usr2);
-        $frm_usr2->load_by_name(formula_api::TN_RENAMED, formula::class);
+        $frm_usr2->load_by_name(formulas::SYSTEM_TEXT_RENAMED, formula::class);
         $frm_usr2->usr_text = '= "this"';
-        $frm_usr2->description = formula_api::TN_RENAMED . ' description';
+        $frm_usr2->description = formulas::SYSTEM_TEXT_RENAMED . ' description';
         $frm_usr2->type_id = $frm_typ_cac->id(formula_type::THIS);
         $frm_usr2->need_all_val = True;
         $result = $frm_usr2->save()->get_last_message();
         $target = '';
-        $t->display('formula->save undo the user formula fields beside the name for "' . formula_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('formula->save undo the user formula fields beside the name for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // ... and if a user specific formula changes have been saved
         $frm_usr2_reloaded = new formula($t->usr2);
-        $frm_usr2_reloaded->load_by_name(formula_api::TN_RENAMED, formula::class);
+        $frm_usr2_reloaded->load_by_name(formulas::SYSTEM_TEXT_RENAMED, formula::class);
         $result = $frm_usr2_reloaded->usr_text;
         $target = '= "this"';
-        $t->display('formula->load usr_text for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->load usr_text for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_usr2_reloaded->ref_text;
         $target = '={f' . $frm_this->id() . '}';
-        $t->display('formula->load ref_text for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->load ref_text for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_usr2_reloaded->description;
-        $target = formula_api::TN_RENAMED . ' description';
-        $t->display('formula->load description for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $target = formulas::SYSTEM_TEXT_RENAMED . ' description';
+        $t->display('formula->load description for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_usr2_reloaded->type_id;
         $target = $frm_typ_cac->id(formula_type::THIS);
-        $t->display('formula->load type_id for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->load type_id for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_usr2_reloaded->need_all_val;
         $target = True;
-        $t->display('formula->load need_all_val for "' . formula_api::TN_RENAMED . '"', $target, $result);
+        $t->display('formula->load need_all_val for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
 
         // redo the user specific formula changes
         // check if the user specific changes can be removed with one click
@@ -525,7 +527,7 @@ class formula_write_tests
 
         // cleanup - fallback delete
         $frm = new formula($t->usr1);
-        foreach (formula_api::TEST_FORMULAS as $frm_name) {
+        foreach (formulas::TEST_FORMULAS as $frm_name) {
             $t->write_named_cleanup($frm, $frm_name);
         }
 
@@ -537,7 +539,7 @@ class formula_write_tests
         $t->header('est the formula list class (classes/formula_list.php)');
 
         // load the main test word
-        $wrd_share = $t->test_word(word_api::TN_SHARE);
+        $wrd_share = $t->test_word(words::TN_SHARE);
 
         $wrd = new word($t->usr1);
         $wrd->load_by_id($wrd_share->id(), word::class);
@@ -546,7 +548,7 @@ class formula_write_tests
         $frm_lst->load_by_phr($wrd->phrase());
         // TODO fix it
         //$result = $frm_lst->display();
-        //$target = formula_api::TN_RATIO;
+        //$target = formulas::TN_RATIO;
         // $t->dsp_contains(', formula_list->load formula for word "' . $wrd->dsp_id() . '" should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
     }
@@ -555,30 +557,30 @@ class formula_write_tests
     {
         $t->header('Check if all base formulas are correct');
 
-        $t->test_word(word_api::TN_EARNING);
-        $t->test_word(word_api::TN_PRICE);
-        $t->test_word(word_api::TN_PE);
-        $t->test_formula(formula_api::TN_RATIO, formula_api::TF_RATIO);
-        $t->test_word(word_api::TN_TOTAL);
-        $t->test_formula(formula_api::TN_SECTOR, formula_api::TF_SECTOR);
-        //$t->test_formula(formula_api::TN_THIS, formula_api::TF_THIS);
-        $t->test_word(word_api::TN_THIS);
-        $t->test_word(word_api::TN_PRIOR);
-        $t->test_formula(formula_api::TN_ADD, formula_api::TF_INCREASE);
-        $t->test_formula(formula_api::TN_EXCLUDED, formula_api::TF_INCREASE);
-        $t->test_word(word_api::TN_IN_K);
-        $t->test_word(word_api::TN_BIL);
-        $t->test_formula(formula_api::TN_SCALE_K, formula_api::TF_SCALE_K);
-        $t->test_formula(formula_api::TN_SCALE_TO_K, formula_api::TF_SCALE_TO_K);
-        $t->test_formula(formula_api::TN_SCALE_MIO, formula_api::TF_SCALE_MIO);
-        $t->test_formula(formula_api::TN_SCALE_BIL, formula_api::TF_SCALE_BIL);
+        $t->test_word(words::TN_EARNING);
+        $t->test_word(words::TN_PRICE);
+        $t->test_word(words::TN_PE);
+        $t->test_formula(formulas::SYSTEM_TEXT_RATIO, formulas::SYSTEM_TEXT_RATIO_EXP);
+        $t->test_word(words::TN_TOTAL);
+        $t->test_formula(formulas::SYSTEM_TEXT_SECTOR, formulas::SYSTEM_TEXT_SECTOR_EXP);
+        //$t->test_formula(formulas::TN_THIS, formulas::TF_THIS);
+        $t->test_word(words::TN_THIS);
+        $t->test_word(words::TN_PRIOR);
+        $t->test_formula(formulas::SYSTEM_TEXT_ADD, formulas::INCREASE_EXP);
+        $t->test_formula(formulas::SYSTEM_TEXT_EXCLUDED, formulas::INCREASE_EXP);
+        $t->test_word(words::TN_IN_K);
+        $t->test_word(words::TN_BIL);
+        $t->test_formula(formulas::SYSTEM_TEXT_SCALE_K, formulas::SYSTEM_TEXT_SCALE_K_EXP);
+        $t->test_formula(formulas::SYSTEM_TEXT_SCALE_TO_K, formulas::SYSTEM_TEXT_SCALE_TO_K_EXP);
+        $t->test_formula(formulas::SYSTEM_TEXT_SCALE_MIO, formulas::SYSTEM_TEXT_SCALE_MIO_EXP);
+        $t->test_formula(formulas::SYSTEM_TEXT_SCALE_BIL, formulas::SYSTEM_TEXT_SCALE_BIL_EXP);
 
         // modify the special test cases
         global $usr;
         $frm = new formula($usr);
-        $frm->load_by_name(formula_api::TN_EXCLUDED);
+        $frm->load_by_name(formulas::SYSTEM_TEXT_EXCLUDED);
         if ($frm->name() == '') {
-            log_err('formula ' . formula_api::TN_EXCLUDED . ' could not be loaded');
+            log_err('formula ' . formulas::SYSTEM_TEXT_EXCLUDED . ' could not be loaded');
         } else {
             $frm->set_excluded(true);
             $frm->save();

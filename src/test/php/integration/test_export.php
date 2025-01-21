@@ -31,10 +31,12 @@
 */
 
 include_once EXPORT_PATH . 'xml.php';
+include_once SHARED_PATH . 'words.php';
 
 use api\word\word as word_api;
 use im_export\json_io;
 use cfg\phrase\phrase_list;
+use shared\words;
 use test\test_cleanup;
 
 function run_export_test(test_cleanup $t): void
@@ -45,7 +47,7 @@ function run_export_test(test_cleanup $t): void
     $t->header('Test the xml export class (classes/xml.php)');
 
     $phr_lst = new phrase_list($usr);
-    $phr_lst->load_by_names(array(word_api::TN_READ));
+    $phr_lst->load_by_names(array(words::MATH));
     $xml_export = new xml_io;
     $xml_export->usr = $usr;
     $xml_export->phr_lst = $phr_lst;

@@ -32,6 +32,7 @@ include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_PATH . 'triples.php';
+include_once SHARED_PATH . 'words.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\word\triple as triple_api;
@@ -47,6 +48,7 @@ use cfg\word\word;
 use html\phrase\phrase_list as phrase_list_dsp;
 use shared\enum\foaf_direction;
 use shared\triples;
+use shared\words;
 use test\test_cleanup;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
@@ -96,19 +98,19 @@ class phrase_list_tests
         $phr_ids = new phr_ids(array(3, -2, 4, -7));
         $t->assert_sql_by_ids($sc, $phr_lst, $phr_ids);
         $this->assert_sql_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
-        $phr_names = array(word_api::TN_READ, triples::TN_READ);
+        $phr_names = array(words::MATH, triples::MATH_CONST);
         $t->assert_sql_by_names($sc, $phr_lst, $phr_names);
 
         // to review
         $t->assert_sql_names($sc, $phr_lst, new phrase($usr));
-        $t->assert_sql_names($sc, $phr_lst, new phrase($usr), triples::TN_READ);
+        $t->assert_sql_names($sc, $phr_lst, new phrase($usr), triples::MATH_CONST);
 
         $this->test = $t;
 
         // sql to load a list of phrases by a phrase list
         $phr_lst = new phrase_list($usr);
         $wrd = new word($usr);
-        $wrd->set(1, word_api::TN_CH);
+        $wrd->set(1, words::TN_CH);
         $phr_lst->add($wrd->phrase());
         $vrb = $vrb_cac->get_verb(verbs::IS_PART_OF);
         $this->assert_sql_linked_phrases($db_con->sql_creator(), $t, $phr_lst, $vrb, foaf_direction::UP);
@@ -160,7 +162,7 @@ class phrase_list_tests
         $phr_lst_dsp = $t->phrase_list_dsp();
         $phr = $phr_lst_dsp->mainly();
         if ($phr != null) {
-            $t->assert_text_contains('Main word is "math"', $phr->name(), word_api::TN_READ);
+            $t->assert_text_contains('Main word is "math"', $phr->name(), words::MATH);
         }
 
 
@@ -199,7 +201,7 @@ class phrase_list_tests
     {
         global $usr;
         $wrd = new word($usr);
-        $wrd->set(1, word_api::TN_ADD);
+        $wrd->set(1, words::TN_ADD);
         return $wrd->phrase();
     }
 
@@ -212,7 +214,7 @@ class phrase_list_tests
         global $phr_typ_cac;
 
         $wrd = new word($usr);
-        $wrd->set(2, word_api::TN_RENAMED);
+        $wrd->set(2, words::TN_RENAMED);
         $wrd->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         return $wrd->phrase();
     }

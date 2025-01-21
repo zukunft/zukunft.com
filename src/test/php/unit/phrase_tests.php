@@ -34,6 +34,7 @@ namespace unit;
 
 include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'words.php';
 
 use api\word\word as word_api;
 use cfg\db\sql_creator;
@@ -46,6 +47,7 @@ use html\phrase\phrase as phrase_dsp;
 use cfg\phrase\phrase;
 use cfg\db\sql_db;
 use cfg\word\word;
+use shared\words;
 use test\test_base;
 use test\test_cleanup;
 use shared\types\phrase_type as phrase_type_shared;
@@ -96,7 +98,7 @@ class phrase_tests
 
         // check the Postgres query syntax
         $wrd_company = new word($usr);
-        $wrd_company->set(2, word_api::TN_COMPANY);
+        $wrd_company->set(2, words::TN_COMPANY);
         $sql_name = 'phrase_list_related';
         $file_name = $t->resource_path . $sql_name . test_base::FILE_EXT;
         $created_sql = $phr->sql_list($wrd_company);

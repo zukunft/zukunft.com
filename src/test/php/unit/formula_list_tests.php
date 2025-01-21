@@ -41,6 +41,8 @@ use html\formula\formula_list as formula_list_dsp;
 use cfg\formula\formula_list;
 use cfg\db\sql_db;
 use cfg\word\word;
+use shared\formulas;
+use shared\words;
 use test\test_cleanup;
 
 class formula_list_tests
@@ -67,12 +69,12 @@ class formula_list_tests
         // load only the names
         $frm_lst = new formula_list($usr);
         $t->assert_sql_names($sc, $frm_lst, new formula($usr));
-        $t->assert_sql_names($sc, $frm_lst, new formula($usr), formula_api::TN_READ);
+        $t->assert_sql_names($sc, $frm_lst, new formula($usr), formulas::SCALE_TO_SEC);
 
         // sql to load a list of formulas by the id, name or ...
         $frm_lst = new formula_list($usr);
         $t->assert_sql_by_ids($sc, $frm_lst);
-        $t->assert_sql_by_names($sc, $frm_lst, array(formula_api::TN_INCREASE, formula_api::TN_INCREASE));
+        $t->assert_sql_by_names($sc, $frm_lst, array(formulas::INCREASE, formulas::INCREASE));
         $t->assert_sql_like($sc, $frm_lst, 'i');
         $t->assert_sql_all_paged($db_con, $frm_lst);
         $this->assert_sql_by_word_ref($t, $db_con, $frm_lst);
@@ -228,7 +230,7 @@ class formula_list_tests
     {
         // prepare
         $wrd = new word($t->usr1);
-        $wrd->set(1,word_api::TN_ADD);
+        $wrd->set(1,words::TN_ADD);
         $phr = $wrd->phrase();
 
         // check the Postgres query syntax

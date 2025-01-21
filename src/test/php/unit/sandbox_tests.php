@@ -38,6 +38,7 @@ include_once API_WORD_PATH . 'word.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_VALUE_PATH . 'value.php';
+include_once SHARED_PATH . 'words.php';
 
 use api\ref\source as source_api;
 use api\word\word as word_api;
@@ -55,6 +56,7 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
 use cfg\ref\source;
 use cfg\ref\source_type;
+use cfg\value\value;
 use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\user\user;
@@ -63,6 +65,7 @@ use cfg\view\view;
 use cfg\word\word;
 use cfg\word\word_db;
 use shared\library;
+use shared\words;
 use test\test_cleanup;
 
 global $db_con;
@@ -106,9 +109,9 @@ class sandbox_tests
 
         // but a formula should not have the same name as a word
         $wrd = new word($usr);
-        $wrd->set_name(word_api::TN_MIO);
+        $wrd->set_name(words::TN_MIO);
         $frm = new formula($usr);
-        $frm->set_name(word_api::TN_MIO);
+        $frm->set_name(words::TN_MIO);
         $result = $wrd->is_similar($frm);
         $t->assert("a formula should not have the same name as a word", $result, true);
 

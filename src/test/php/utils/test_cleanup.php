@@ -33,6 +33,7 @@
 namespace test;
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'words.php';
 
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
@@ -62,9 +63,11 @@ use cfg\verb\verb;
 use cfg\view\view;
 use cfg\word\word;
 use html\html_base;
+use shared\formulas;
 use shared\library;
 use shared\triples;
 use shared\types\verbs;
+use shared\words;
 
 class test_cleanup extends test_api
 {
@@ -108,7 +111,7 @@ class test_cleanup extends test_api
                         $msg = $val->del();
                         $result .= $msg->get_last_message();
                         $target = '';
-                        $this->display('value->del test value for "' . word_api::TN_RENAMED . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
+                        $this->display('value->del test value for "' . words::TN_RENAMED . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
                     }
                 }
             }
@@ -316,16 +319,16 @@ class test_cleanup extends test_api
         }
 
         // request to delete the added test reference
-        $ref = $this->load_ref(word_api::TN_ADD, ref_type::WIKIDATA);
+        $ref = $this->load_ref(words::TN_ADD, ref_type::WIKIDATA);
         if ($ref->id() > 0) {
             $msg = $ref->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('ref->del of "' . word_api::TN_ADD . '"', $target, $result);
+            $this->display('ref->del of "' . words::TN_ADD . '"', $target, $result);
         }
 
         // request to delete the added test formulas
-        foreach (formula_api::TEST_FORMULAS as $frm_name) {
+        foreach (formulas::TEST_FORMULAS as $frm_name) {
             $msk = $this->load_formula($frm_name);
             if ($msk->id() > 0) {
                 $msg = $msk->del();
@@ -347,43 +350,43 @@ class test_cleanup extends test_api
         }
 
         // request to delete some triples not yet covered by the other cleanup jobs
-        $this->del_triple(word_api::TN_2019, verbs::IS, word_api::TN_YEAR);
-        $this->del_triple(word_api::TN_2020, verbs::IS, word_api::TN_YEAR);
-        $this->del_triple(word_api::TN_2021, verbs::IS, word_api::TN_YEAR);
-        $this->del_triple(word_api::TN_2022, verbs::IS, word_api::TN_YEAR);
-        $this->del_triple(word_api::TN_2020, verbs::FOLLOW, word_api::TN_2019);
-        $this->del_triple(word_api::TN_2021, verbs::FOLLOW, word_api::TN_2020);
-        $this->del_triple(word_api::TN_2022, verbs::FOLLOW, word_api::TN_2021);
-        $this->del_triple(word_api::TWN_CASH_FLOW, verbs::IS, word_api::TN_FIN_REPORT);
-        $this->del_triple(word_api::TN_TAX_REPORT, verbs::IS_PART_OF, word_api::TWN_CASH_FLOW);
-        $this->del_triple(word_api::TN_CASH, verbs::IS_PART_OF, word_api::TN_ASSETS_CURRENT);
-        $this->del_triple(word_api::TN_ASSETS_CURRENT, verbs::IS_PART_OF, word_api::TN_ASSETS);
-        $this->del_triple(word_api::TN_SECTOR, verbs::CAN_CONTAIN, word_api::TN_ENERGY);
-        $this->del_triple(word_api::TN_ENERGY, verbs::CAN_CONTAIN, word_api::TN_WIND_ENERGY);
+        $this->del_triple(words::TN_2019, verbs::IS, words::TN_YEAR);
+        $this->del_triple(words::TN_2020, verbs::IS, words::TN_YEAR);
+        $this->del_triple(words::TN_2021, verbs::IS, words::TN_YEAR);
+        $this->del_triple(words::TN_2022, verbs::IS, words::TN_YEAR);
+        $this->del_triple(words::TN_2020, verbs::FOLLOW, words::TN_2019);
+        $this->del_triple(words::TN_2021, verbs::FOLLOW, words::TN_2020);
+        $this->del_triple(words::TN_2022, verbs::FOLLOW, words::TN_2021);
+        $this->del_triple(words::TWN_CASH_FLOW, verbs::IS, words::TN_FIN_REPORT);
+        $this->del_triple(words::TN_TAX_REPORT, verbs::IS_PART_OF, words::TWN_CASH_FLOW);
+        $this->del_triple(words::TN_CASH, verbs::IS_PART_OF, words::TN_ASSETS_CURRENT);
+        $this->del_triple(words::TN_ASSETS_CURRENT, verbs::IS_PART_OF, words::TN_ASSETS);
+        $this->del_triple(words::TN_SECTOR, verbs::CAN_CONTAIN, words::TN_ENERGY);
+        $this->del_triple(words::TN_ENERGY, verbs::CAN_CONTAIN, words::TN_WIND_ENERGY);
 
         // request to delete the added test word
         // TODO: if a user has changed the word during the test, delete also the user words
-        $wrd = $this->load_word(word_api::TN_ADD);
+        $wrd = $this->load_word(words::TN_ADD);
         if ($wrd->id() > 0) {
             $msg = $wrd->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('word->del of "' . word_api::TN_ADD . '"', $target, $result);
+            $this->display('word->del of "' . words::TN_ADD . '"', $target, $result);
         }
 
         // request to delete the renamed test word
-        $wrd = $this->load_word(word_api::TN_RENAMED);
+        $wrd = $this->load_word(words::TN_RENAMED);
         if ($wrd->id() > 0) {
             $msg = $wrd->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('word->del of "' . word_api::TN_RENAMED . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->display('word->del of "' . words::TN_RENAMED . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // request to delete the added test words
-        foreach (word_api::TEST_WORDS as $wrd_name) {
+        foreach (words::TEST_WORDS as $wrd_name) {
             // ... but keep the read only test word
-            if ($wrd_name != word_api::TN_READ) {
+            if ($wrd_name != words::MATH) {
                 $wrd = $this->load_word($wrd_name);
                 if ($wrd->id() > 0) {
                     $msg = $wrd->del();
@@ -447,8 +450,8 @@ class test_cleanup extends test_api
         $pos = 1;
         foreach ($names as $name) {
             $class = match ($name) {
-                triples::TN_PI_NAME => triple::class,
-                formula_api::TN_READ, formula_api::TN_READ_THIS, formula_api::TN_READ_PRIOR => formula::class,
+                triples::PI_NAME => triple::class,
+                formulas::SCALE_TO_SEC, formulas::THIS_NAME, formulas::PRIOR => formula::class,
                 verb_api::TN_READ, verbs::CAN_CONTAIN_NAME, verbs::CAN_CONTAIN_NAME_REVERSE => verb::class,
                 default => word::class,
             };
@@ -458,14 +461,14 @@ class test_cleanup extends test_api
             $trm->set_name($name);
 
             // ste types of some special terms
-            if ($name == formula_api::TN_READ_THIS) {
+            if ($name == formulas::THIS_NAME) {
                 $trm->obj()->type_cl = formula_type::THIS;
                 $trm->set_obj_id(18, $class);
                 $wrd = new word($usr);
                 $wrd->set(174, formula_type::THIS);
                 $trm->obj()->name_wrd = $wrd;
             }
-            if ($name == formula_api::TN_READ_PRIOR) {
+            if ($name == formulas::PRIOR) {
                 $trm->obj()->type_cl = formula_type::PREV;
                 $trm->set_obj_id(20, $class);
                 $wrd = new word($usr);

@@ -100,6 +100,7 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'formulas.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -134,6 +135,7 @@ use cfg\result\result_list;
 use cfg\value\value_base;
 use api\formula\formula as formula_api;
 use html\word\word as word_dsp;
+use shared\formulas;
 use shared\types\api_type_list;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\json_fields;
@@ -2605,7 +2607,7 @@ class formula extends sandbox_typed
      */
     protected function reserved_names(): array
     {
-        return formula_api::RESERVED_NAMES;
+        return formulas::RESERVED_NAMES;
     }
 
     /**
@@ -2613,7 +2615,7 @@ class formula extends sandbox_typed
      */
     protected function fixed_names(): array
     {
-        return formula_api::FIXED_NAMES;
+        return formulas::FIXED_NAMES;
     }
 
 

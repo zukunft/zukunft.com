@@ -41,6 +41,8 @@ use cfg\system\job_type_list;
 use cfg\phrase\phrase_list;
 use cfg\value\value;
 use cfg\value\value_base;
+use shared\formulas;
+use shared\words;
 use test\test_cleanup;
 
 class job_write_tests
@@ -56,17 +58,17 @@ class job_write_tests
 
         // make sure that the test value is set independent of any previous database tests
         $t->test_value(array(
-            word_api::TN_CH,
-            word_api::TN_INHABITANTS,
-            word_api::TN_MIO,
-            word_api::TN_2020
+            words::TN_CH,
+            words::TN_INHABITANTS,
+            words::TN_MIO,
+            words::TN_2020
         ),
             value_api::TV_CH_INHABITANTS_2020_IN_MIO);
 
 
         // prepare test adding a batch job via a list
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
+        $phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_MIO, words::TN_2020));
         $phr_lst->ex_time();
         $val = new value($usr);
         $val->load_by_grp($phr_lst->get_grp_id());
@@ -94,9 +96,9 @@ class job_write_tests
         $t->header('Test the batch job list class (classes/job_list.php)');
 
         // prepare test adding a batch job via a list
-        $frm = $t->load_formula(formula_api::TN_INCREASE);
+        $frm = $t->load_formula(formulas::INCREASE);
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
+        $phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_MIO, words::TN_2020));
 
         // test adding a batch job via a list
         $job_lst = new job_list($usr);

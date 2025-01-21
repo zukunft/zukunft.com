@@ -38,6 +38,8 @@ use api\word\word as word_api;
 use cfg\phrase\phrase_list;
 use cfg\value\value;
 use cfg\value\value_base;
+use shared\formulas;
+use shared\words;
 use test\test_cleanup;
 
 class formula_trigger_tests
@@ -51,20 +53,20 @@ class formula_trigger_tests
         $t->header('Test the formula calculation triggers');
 
         // prepare the calculation trigger test
-        $phr_names_ch_19 = [word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2019];
+        $phr_names_ch_19 = [words::TN_CH, words::TN_INHABITANTS, words::TN_MIO, words::TN_2019];
         $phr_ch_19 = new phrase_list($usr);
         $phr_ch_19->load_by_names($phr_names_ch_19);
-        $phr_names_ch_20 = [word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020];
+        $phr_names_ch_20 = [words::TN_CH, words::TN_INHABITANTS, words::TN_MIO, words::TN_2020];
         $phr_ch_20 = new phrase_list($usr);
         $phr_ch_20->load_by_names($phr_names_ch_20);
         $phr_lst1 = new phrase_list($usr);
-        $phr_lst1->add_name(word_api::TN_CH);
-        $phr_lst1->add_name(word_api::TN_INHABITANTS);
-        $phr_lst1->add_name(word_api::TN_MIO);
+        $phr_lst1->add_name(words::TN_CH);
+        $phr_lst1->add_name(words::TN_INHABITANTS);
+        $phr_lst1->add_name(words::TN_MIO);
         $phr_lst2 = clone $phr_lst1;
-        $phr_lst1->add_name(word_api::TN_2019);
-        $phr_lst2->add_name(word_api::TN_2020);
-        $frm = $t->load_formula(formula_api::TN_INCREASE);
+        $phr_lst1->add_name(words::TN_2019);
+        $phr_lst2->add_name(words::TN_2020);
+        $frm = $t->load_formula(formulas::INCREASE);
 
         // add a number to the test word
         $val_add1 = new value($usr);

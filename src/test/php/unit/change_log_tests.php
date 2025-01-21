@@ -228,7 +228,7 @@ class change_log_tests
         // prepare the objects for the tests
         $wrd = $t->word();
         $trp = new triple($usr);
-        $trp->set(1, triples::TN_PI);
+        $trp->set(1, triples::PI);
 
 
         $t->subheader('API unit tests');

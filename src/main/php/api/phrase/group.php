@@ -33,6 +33,7 @@
 namespace api\phrase;
 
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'words.php';
 include_once API_SANDBOX_PATH . 'sandbox_named.php';
 
 use api\word\word as word_api;
@@ -42,6 +43,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use JsonSerializable;
 use shared\json_fields;
+use shared\words;
 
 class group extends sandbox_named_api implements JsonSerializable
 {
@@ -62,10 +64,10 @@ class group extends sandbox_named_api implements JsonSerializable
     const TN_ADD_BIG_FUNC = 'System Test Group big added via sql function';
     const TN_ADD_BIG_SQL = 'System Test Group big added via sql insert';
 
-    const TN_ZH_2019 = word_api::TN_INHABITANT . 's in the city of ' . word_api::TN_ZH . ' (' . word_api::TN_2019 . ')';
-    const TN_CH_INCREASE_2020 = word_api::TN_INCREASE . ' in ' . word_api::TN_CH . '\'s ' . word_api::TN_INHABITANT . 's from ' . word_api::TN_2019 . ' to ' . word_api::TN_2020 . ' in ' . word_api::TN_PCT;
-    const TN_ZH_2019_IN_MIO = self::TN_ZH_2019 . ' in ' . word_api::TN_MIO;
-    const TN_CH_2019 = word_api::TN_INHABITANT . ' of ' . word_api::TN_CH . ' in Mio (' . word_api::TN_2019 . ')';
+    const TN_ZH_2019 = words::TN_INHABITANT . 's in the city of ' . words::TN_ZH . ' (' . words::TN_2019 . ')';
+    const TN_CH_INCREASE_2020 = words::TN_INCREASE . ' in ' . words::TN_CH . '\'s ' . words::TN_INHABITANT . 's from ' . words::TN_2019 . ' to ' . words::TN_2020 . ' in ' . words::TN_PCT;
+    const TN_ZH_2019_IN_MIO = self::TN_ZH_2019 . ' in ' . words::TN_MIO;
+    const TN_CH_2019 = words::TN_INHABITANT . ' of ' . words::TN_CH . ' in Mio (' . words::TN_2019 . ')';
 
     const TN_TIME_VALUE = 'zukunft.com beta launch date';
     const TD_TIME_VALUE = 'the expected launch date of the first beta version of zukunft.com';
@@ -86,9 +88,9 @@ class group extends sandbox_named_api implements JsonSerializable
     // and that should be created before the system test starts
     const TEST_GROUPS_CREATE = [
         [self::TN_READ,
-            [word_api::TN_PI, word_api::TN_READ]],
+            [words::PI, words::MATH]],
         [self::TN_CH_2019,
-            [word_api::TN_INHABITANTS, word_api::TN_COUNTRY, word_api::TN_CH, word_api::TN_2019, word_api::TN_MIO]]
+            [words::TN_INHABITANTS, words::TN_COUNTRY, words::TN_CH, words::TN_2019, words::TN_MIO]]
     ];
 
 

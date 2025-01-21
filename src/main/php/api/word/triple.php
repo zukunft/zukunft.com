@@ -34,6 +34,7 @@ namespace api\word;
 
 include_once API_SANDBOX_PATH . 'sandbox_typed.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'words.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use api\word\word as word_api;

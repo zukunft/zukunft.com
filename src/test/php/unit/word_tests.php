@@ -38,6 +38,7 @@ include_once MODEL_WORD_PATH . 'word_db.php';
 include_once API_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'words.php';
 
 use api\formula\formula as formula_api;
 use cfg\db\sql_creator;
@@ -49,6 +50,8 @@ use cfg\word\word;
 use api\word\word as word_api;
 use cfg\word\word_db;
 use html\word\word as word_dsp;
+use shared\formulas;
+use shared\words;
 use test\test_cleanup;
 use shared\types\phrase_type as phrase_type_shared;
 
@@ -83,7 +86,7 @@ class word_tests
 
         $t->subheader('word sql read default and user changes');
         $wrd = new word($usr);
-        $wrd->set_id(word_api::TI_CONST);
+        $wrd->set_id(words::CONST_ID);
         $t->assert_sql_standard($sc, $wrd);
         $t->assert_sql_not_changed($sc, $wrd);
         $t->assert_sql_user_changes($sc, $wrd);
@@ -98,7 +101,7 @@ class word_tests
         $t->assert_sql_insert($sc, $wrd, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('word sql write update');
-        $wrd_renamed = $wrd->cloned(word_api::TN_RENAMED);
+        $wrd_renamed = $wrd->cloned(words::TN_RENAMED);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::USER]);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG]);
@@ -106,11 +109,11 @@ class word_tests
 
         $t->subheader('word sql write update failed cases e.g. description update');
         $wrd = $t->word();
-        $wrd->description = word_api::TD_READ;
+        $wrd->description = words::MATH_COM;
         $wrd_updated = $t->word();
         $wrd_updated->set_user($usr_sys);
-        $wrd_updated->plural = word_api::TN_RENAMED;
-        $wrd_updated->description = word_api::TN_RENAMED;
+        $wrd_updated->plural = words::TN_RENAMED;
+        $wrd_updated->description = words::TN_RENAMED;
         $wrd_updated->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         $t->assert_sql_update($sc, $wrd_updated, $wrd, [sql_type::LOG, sql_type::USER]);
 
@@ -193,13 +196,13 @@ class word_tests
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $wrd->load_sql_by_formula_name($sc, formula_api::TN_READ);
+        $qp = $wrd->load_sql_by_formula_name($sc, formulas::SCALE_TO_SEC);
         $result = $t->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $wrd->load_sql_by_formula_name($sc, formula_api::TN_READ);
+            $qp = $wrd->load_sql_by_formula_name($sc, formulas::SCALE_TO_SEC);
             $t->assert_qp($qp, $sc->db_type);
         }
     }

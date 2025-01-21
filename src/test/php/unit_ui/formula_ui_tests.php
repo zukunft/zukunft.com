@@ -59,24 +59,24 @@ class formula_ui_tests
         $t->header('Test the formula frontend scripts (e.g. /formula_add.php)');
 
         // load the main test word
-        $wrd_company = $t->test_word(word_api::TN_COMPANY);
+        $wrd_company = $t->test_word(words::TN_COMPANY);
 
         // call the add formula page and check if at least some keywords are returned
-        $frm = $t->load_formula(formula_api::TN_INCREASE);
+        $frm = $t->load_formula(formulas::TN_INCREASE);
         $result = file_get_contents('https://zukunft.com/http/formula_add.php?word=' . $wrd_company->id() . '&back=' . $wrd_company->id() . '');
         $target = 'Add new formula for';
         $t->dsp_contains(', frontend formula_add.php ' . $result . ' contains at least the headline', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
-        $target = word_api::TN_COMPANY;
-        $t->dsp_contains(', frontend formula_add.php ' . $result . ' contains at least the linked word ' . word_api::TN_COMPANY, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        $target = words::TN_COMPANY;
+        $t->dsp_contains(', frontend formula_add.php ' . $result . ' contains at least the linked word ' . words::TN_COMPANY, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // test the edit formula frontend
         $result = file_get_contents('https://zukunft.com/http/formula_edit.php?id=' . $frm->id() . '&back=' . $wrd_company->id());
-        $target = formula_api::TN_INCREASE;
+        $target = formulas::TN_INCREASE;
         $t->dsp_contains(', frontend formula_edit.php ' . $result . ' contains at least ' . $frm->name(), $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
         // test the del formula frontend
         $result = file_get_contents('https://zukunft.com/http/formula_del.php?id=' . $frm->id() . '&back=' . $wrd_company->id());
-        $target = formula_api::TN_INCREASE;
+        $target = formulas::TN_INCREASE;
         $t->dsp_contains(', frontend formula_del.php ' . $result . ' contains at least ' . $frm->name(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
         */
 

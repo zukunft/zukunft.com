@@ -43,7 +43,9 @@ use api\formula\formula as formula_api;
 use api\word\word as word_api;
 use cfg\phrase\phrase_list;
 use html\figure\figure as figure_dsp;
+use shared\formulas;
 use shared\library;
+use shared\words;
 use test\test_api;
 use test\test_cleanup;
 
@@ -59,11 +61,11 @@ class element_group_write_tests
         $t->header('Test the formula element group list class (classes/element_group_list.php)');
 
         // load the test ids
-        $frm_this = $t->load_formula(formula_api::TN_READ_THIS);
-        $frm_prior = $t->load_formula(formula_api::TN_READ_PRIOR);
+        $frm_this = $t->load_formula(formulas::THIS_NAME);
+        $frm_prior = $t->load_formula(formulas::PRIOR);
 
         // load increase formula for testing
-        $frm = $t->load_formula(formula_api::TN_INCREASE);
+        $frm = $t->load_formula(formulas::INCREASE);
 
         // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
         $exp = $frm->expression();
@@ -71,7 +73,7 @@ class element_group_write_tests
         $elm_grp_lst = $exp->element_grp_lst();
 
         $result = $elm_grp_lst->dsp_id();
-        $target = '"' . formula_api::TN_READ_THIS . '" (' . $frm_this->id() . ') / "' . formula_api::TN_READ_PRIOR . '" (' . $frm_prior->id() . ') / "' . formula_api::TN_READ_PRIOR . '" (' . $frm_prior->id() . ')';
+        $target = '"' . formulas::THIS_NAME . '" (' . $frm_this->id() . ') / "' . formulas::PRIOR . '" (' . $frm_prior->id() . ') / "' . formulas::PRIOR . '" (' . $frm_prior->id() . ')';
         $t->dsp_contains(', element_group_list->dsp_id', $target, $result);
 
 
@@ -83,7 +85,7 @@ class element_group_write_tests
             // prepare the phrase list for the formula element selection
             // means "get all numbers related to the Swiss inhabitants for 2019 and 2020"
             $phr_lst = new phrase_list($usr);
-            $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO));
+            $phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_MIO));
 
             // get "this" from the formula element group list
             $elm_grp = $elm_grp_lst->lst()[0];
@@ -162,7 +164,7 @@ class element_group_write_tests
 
         } else {
             $result = 'formula element group list is empty';
-            $target = 'this (3) and "ABB","Sales","CHF","million","' . word_api::TN_2015 . '"@';
+            $target = 'this (3) and "ABB","Sales","CHF","million","' . words::TN_2015 . '"@';
             $t->display('element_group->dsp_names', $target, $result);
         }
 

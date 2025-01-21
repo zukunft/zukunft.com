@@ -39,6 +39,7 @@ use api\word\word as word_api;
 use cfg\verb\verb;
 use shared\enum\foaf_direction;
 use shared\types\verbs;
+use shared\words;
 use test\test_cleanup;
 
 class verb_write_tests
@@ -85,7 +86,7 @@ class verb_write_tests
         $t->header('Test the verb list class (classes/verb_list.php)');
 
         // check the loading of the "is a" verb
-        $wrd_ZH = $t->load_word(word_api::TN_ZH);
+        $wrd_ZH = $t->load_word(words::TN_ZH);
         $vrb_lst = $wrd_ZH->link_types(foaf_direction::UP);
         $t->assert_contains('verb_list->link_types ', $vrb_lst->db_id_list(), [verb_api::TN_IS]);
     }

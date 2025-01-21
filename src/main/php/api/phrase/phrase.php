@@ -61,12 +61,12 @@ class phrase extends combine_named_api implements JsonSerializable
     // TODO move to triple API
     // phrase names used for system testing
     const RESERVED_PHRASES = array(
-        triples::TN_ADD,
-        triples::TN_EXCLUDED
+        triples::SYSTEM_TEST_ADD,
+        triples::SYSTEM_TEST_EXCLUDED
     );
     const TEST_TRIPLE_STANDARD = array(
-        triples::TN_ADD,
-        triples::TN_EXCLUDED
+        triples::SYSTEM_TEST_ADD,
+        triples::SYSTEM_TEST_EXCLUDED
     );
 
 

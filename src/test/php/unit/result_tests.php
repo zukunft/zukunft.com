@@ -33,6 +33,7 @@
 namespace unit;
 
 include_once API_RESULT_PATH . 'result.php';
+include_once SHARED_PATH . 'words.php';
 
 use api\result\result as result_api;
 use api\word\word as word_api;
@@ -45,6 +46,7 @@ use cfg\phrase\phrase_list;
 use cfg\db\sql_db;
 use cfg\result\result;
 use html\result\result as result_dsp;
+use shared\words;
 use test\test_cleanup;
 
 class result_tests
@@ -148,7 +150,7 @@ class result_tests
 
         // test phrase based default formatter
         // ... for big values
-        $wrd_const = $t->new_word(word_api::TN_READ);
+        $wrd_const = $t->new_word(words::MATH);
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd_const->phrase());
         $res->grp()->set_phrase_list($phr_lst);

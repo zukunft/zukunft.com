@@ -61,6 +61,7 @@ use shared\library;
 use shared\types\component_type as comp_type_shared;
 use shared\types\verbs;
 use shared\views as view_shared;
+use shared\words;
 use test\test_cleanup;
 
 class base_ui_tests
@@ -129,14 +130,14 @@ class base_ui_tests
 
         // create a test set of phrase
         $phr_id = 1;
-        $phr_zh = $this->phrase_api_word( $phr_id, word_api::TN_ZH); $phr_id++;
-        $phr_city = $this->phrase_api_word($phr_id, word_api::TN_CITY); $phr_id++;
-        $phr_canton = $this->phrase_api_word($phr_id, word_api::TN_CANTON); $phr_id++;
-        $phr_ch = $this->phrase_api_word($phr_id, word_api::TN_CH); $phr_id++;
-        $phr_inhabitant = $this->phrase_api_word($phr_id, word_api::TN_INHABITANT); $phr_id++;
-        $phr_2019 = $this->phrase_api_word($phr_id, word_api::TN_2019); $phr_id++;
-        $phr_mio = $this->phrase_api_word($phr_id, word_api::TN_MIO_SHORT);
-        $phr_pct = $this->phrase_api_word($phr_id, word_api::TN_PCT);
+        $phr_zh = $this->phrase_api_word( $phr_id, words::TN_ZH); $phr_id++;
+        $phr_city = $this->phrase_api_word($phr_id, words::TN_CITY); $phr_id++;
+        $phr_canton = $this->phrase_api_word($phr_id, words::TN_CANTON); $phr_id++;
+        $phr_ch = $this->phrase_api_word($phr_id, words::TN_CH); $phr_id++;
+        $phr_inhabitant = $this->phrase_api_word($phr_id, words::TN_INHABITANT); $phr_id++;
+        $phr_2019 = $this->phrase_api_word($phr_id, words::TN_2019); $phr_id++;
+        $phr_mio = $this->phrase_api_word($phr_id, words::TN_MIO_SHORT);
+        $phr_pct = $this->phrase_api_word($phr_id, words::TN_PCT);
 
         // create a test set of phrase groups
         $grp_id = 1;
@@ -217,7 +218,7 @@ class base_ui_tests
         $t->html_test($cmp_dsp->html(), '', 'component_text', $t);
 
         $wrd = new word_api();
-        $wrd->set_name(word_api::TN_ADD);
+        $wrd->set_name(words::TN_ADD);
         $cmp->obj = $wrd;
 
 
@@ -233,7 +234,7 @@ class base_ui_tests
 
         // test the usage of a view to create the HTML code
         /*
-        $wrd = $t->load_word(word_api::TN_READ);
+        $wrd = $t->load_word(words::TN_READ);
         $msk = new view($usr);
         $msk->load_by_name(view_api::TN_READ_RATIO);
         //$result = $msk->display($wrd, $back);
@@ -332,8 +333,8 @@ class base_ui_tests
             'not permitted',
             ', frontend error_update.php contains at least', $is_connected);
         $t->dsp_web_test(
-            'http/find.php?pattern=' . word_api::TN_ABB,
-            word_api::TN_ABB,
+            'http/find.php?pattern=' . words::TN_ABB,
+            words::TN_ABB,
             ', frontend find.php contains at least', $is_connected);
 
 

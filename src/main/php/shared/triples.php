@@ -37,8 +37,8 @@ namespace shared;
 class triples
 {
 
-    // this list is included in all preserved triple names
-    // *_COM is the tooltip for the word; to have the comments on one place the yaml is the preferred place
+    // this list includes all preserved triple names
+    // *_COM is the tooltip for the triple; to have the comments on one place the yaml is the preferred place
     // *_ID is the expected database id only used for system testing
 
     // keyword to select the system configuration
@@ -46,61 +46,62 @@ class triples
     const SYSTEM_CONFIG_ID = 73;
 
     // triples included in the initial setup that are used for system testing
-    const TN_READ = 'Mathematical constant';
-    const TI_READ = 1;
-    const TD_READ = 'A mathematical constant that never changes e.g. Pi';
-    const TN_PI = 'Pi';
-    const TN_CUBIC_METER = 'm3';
-    const TN_PI_NAME = 'Pi (math)';
-    const TI_PI = 2;
-    const TD_PI = 'ratio of the circumference of a circle to its diameter';
-    const TN_E = '𝑒 (math)';
-    const TI_E = 3;
-    const TD_E = 'Is the limit of (1 + 1/n)^n as n approaches infinity';
-    const TN_ADD = 'System Test Triple';
-    const TN_ADD_AUTO = 'System Test Triple';
-    const TN_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
-    const TN_ADD_VIA_FUNC = 'System Test Triple added via sql function';
-    const TN_ADD_VIA_SQL = 'System Test Triple added via prepared sql insert';
+    const MATH_CONST = 'Mathematical constant';
+    const MATH_CONST_ID = 1;
+    const MATH_CONST_COM = 'A mathematical constant that never changes e.g. Pi';
+    const PI = 'Pi';
+    const PI_NAME = 'Pi (math)';
+    const PI_ID = 2;
+    const PI_COM = 'ratio of the circumference of a circle to its diameter';
+    const E = '𝑒 (math)';
+    const E_ID = 3;
+    const E_COM = 'Is the limit of (1 + 1/n)^n as n approaches infinity';
+    const SYSTEM_TEST_ADD = 'System Test Triple';
+    const SYSTEM_TEST_ADD_AUTO = 'System Test Triple';
+    const SYSTEM_TEST_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
+    const SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Triple added via sql function';
+    const SYSTEM_TEST_ADD_VIA_SQL = 'System Test Triple added via prepared sql insert';
 
-    const TN_ZH_CITY = 'Zurich (City)';
-    const TI_ZH_CITY = 38;
-    const TN_ZH_CITY_NAME = 'City of Zurich';
-    const TN_BE_CITY = 'Bern (City)';
-    const TI_BE_CITY = 39;
-    const TN_GE_CITY = 'Geneva (City)';
-    const TI_GE_CITY = 40;
-    const TN_ZH_CANTON = 'Zurich (Canton)';
-    const TN_ZH_CANTON_NAME = 'Canton Zurich';
-    const TN_ZH_COMPANY = "Zurich Insurance";
+    const TN_CUBIC_METER = 'm3';
+
+    const CITY_ZH = 'Zurich (City)';
+    const CITY_ZH_ID = 38;
+    const CITY_ZH_NAME = 'City of Zurich';
+    const CITY_BE = 'Bern (City)';
+    const CITY_BE_ID = 39;
+    const CITY_GE = 'Geneva (City)';
+    const CITY_GE_ID = 40;
+    const CANTON_ZURICH = 'Zurich (Canton)';
+    const CANTON_ZURICH_NAME = 'Canton Zurich';
+    const COMPANY_ZURICH = "Zurich Insurance";
     const COMPANY_VESTAS = "Vestas SA";
     const COMPANY_ABB = "ABB (Company)";
-    const TN_2014_FOLLOW = "2014 is follower of 2013";
-    const TN_TAXES_OF_CF = "Income taxes is part of cash flow statement";
+    const YEAR_2013_FOLLOW = "2014 is follower of 2013";
+    const TAXES_OF_CF = "Income taxes is part of cash flow statement";
 
     // list of predefined triple used for system testing that are expected to be never renamed
     const RESERVED_NAMES = array(
         self::SYSTEM_CONFIG,
-        self::TN_ADD,
-        self::TN_EXCLUDED
+        self::SYSTEM_TEST_ADD,
+        self::SYSTEM_TEST_EXCLUDED
     );
 
     // array of triple names that used for db read testing and that should not be renamed
     const FIXED_NAMES = array(
-        self::TN_READ
+        self::MATH_CONST
     );
 
     // list of triples that are used for system testing that should be removed are the system test has been completed
     // and that are never expected to be used by a user
     const TEST_TRIPLES = array(
-        self::TN_ADD,
-        self::TN_ADD_VIA_FUNC,
-        self::TN_ADD_VIA_SQL
+        self::SYSTEM_TEST_ADD,
+        self::SYSTEM_TEST_ADD_VIA_FUNC,
+        self::SYSTEM_TEST_ADD_VIA_SQL
     );
 
     const TEST_TRIPLE_STANDARD = array(
-        self::TN_ADD,
-        self::TN_EXCLUDED
+        self::SYSTEM_TEST_ADD,
+        self::SYSTEM_TEST_EXCLUDED
     );
 
 }

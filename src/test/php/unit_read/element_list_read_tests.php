@@ -52,7 +52,7 @@ class element_list_read_tests
         $test_name = 'load the elements of the scale minute to second formula and check if it contains the word second';
         $elm_lst->load_by_frm($t->formula()->id());
         // TODO activate
-        //$t->assert_contains($test_name, $elm_lst->names(), word_api::TN_SECOND);
+        //$t->assert_contains($test_name, $elm_lst->names(), words::TN_SECOND);
 
     }
 

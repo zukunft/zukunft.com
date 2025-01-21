@@ -35,6 +35,8 @@ namespace unit_write;
 use api\formula\formula as formula_api;
 use api\word\word as word_api;
 use cfg\formula\expression;
+use shared\formulas;
+use shared\words;
 use test\test_cleanup;
 
 class expression_write_tests
@@ -51,22 +53,22 @@ class expression_write_tests
         $t->header('Test the expression class (src/main/php/model/formula/expression.php)');
 
         $t->subheader('prepare expression write');
-        $wrd_price = $t->test_word(word_api::TN_PRICE);
-        $wrd_earning = $t->test_word(word_api::TN_EARNING);
-        $wrd_pe = $t->test_word(word_api::TN_PE);
-        $frm_ratio = $t->test_formula(formula_api::TN_RATIO, formula_api::TF_RATIO);
-        $wrd_total = $t->test_word(word_api::TN_TOTAL);
-        $frm_sector = $t->test_formula(formula_api::TN_SECTOR, formula_api::TF_SECTOR);
+        $wrd_price = $t->test_word(words::TN_PRICE);
+        $wrd_earning = $t->test_word(words::TN_EARNING);
+        $wrd_pe = $t->test_word(words::TN_PE);
+        $frm_ratio = $t->test_formula(formulas::SYSTEM_TEXT_RATIO, formulas::SYSTEM_TEXT_RATIO_EXP);
+        $wrd_total = $t->test_word(words::TN_TOTAL);
+        $frm_sector = $t->test_formula(formulas::SYSTEM_TEXT_SECTOR, formulas::SYSTEM_TEXT_SECTOR_EXP);
 
         $back = '';
 
         // load formulas for expression testing
-        $frm_this = $t->load_formula(formula_api::TN_THIS);
-        $frm = $t->load_formula(formula_api::TN_INCREASE);
-        $frm_pe = $t->load_formula(formula_api::TN_RATIO);
+        $frm_this = $t->load_formula(formulas::SYSTEM_TEXT_THIS);
+        $frm = $t->load_formula(formulas::INCREASE);
+        $frm_pe = $t->load_formula(formulas::SYSTEM_TEXT_RATIO);
 
         $result = $frm_sector->usr_text;
-        $target = '= "' . word_api::TN_COUNTRY . '" "differentiator" "' . word_api::TN_CANTON . '" / "' . word_api::TN_TOTAL . '"';
+        $target = '= "' . words::TN_COUNTRY . '" "differentiator" "' . words::TN_CANTON . '" / "' . words::TN_TOTAL . '"';
         $t->assert('user text', $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         // create expressions for testing
@@ -80,15 +82,15 @@ class expression_write_tests
         $exp_sector->set_user_text($frm_sector->usr_text);
 
         // load the test ids
-        $wrd_percent = $t->load_word(word_api::TN_PCT);
-        $frm_this = $t->load_formula(formula_api::TN_READ_THIS);
-        $frm_prior = $t->load_formula(formula_api::TN_READ_PRIOR);
+        $wrd_percent = $t->load_word(words::TN_PCT);
+        $frm_this = $t->load_formula(formulas::THIS_NAME);
+        $frm_prior = $t->load_formula(formulas::PRIOR);
 
         // test the expression processing of the user readable part
-        $target = '"' . word_api::TN_PCT . '"';
+        $target = '"' . words::TN_PCT . '"';
         $result = $exp->res_part_usr();
         $t->assert('res_part_usr for "' . $frm->usr_text . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG); // ??? why???
-        $target = '( "' . formula_api::TN_READ_THIS . '" - "' . formula_api::TN_READ_PRIOR . '" ) / "' . formula_api::TN_READ_PRIOR . '"';
+        $target = '( "' . formulas::THIS_NAME . '" - "' . formulas::PRIOR . '" ) / "' . formulas::PRIOR . '"';
         $result = $exp->r_part_usr();
         $t->assert('r_part_usr for "' . $frm->usr_text . '"', $result, $target);
         $target = 'true';
@@ -101,7 +103,7 @@ class expression_write_tests
         // test the expression processing of the database reference
         $exp_db = new expression($usr);
         $exp_db->set_ref_text('{w' . $wrd_percent->id() . '} = ( is.numeric( {f' . $frm_this->id() . '} ) & is.numeric( {f' . $frm_prior->id() . '} ) ) ( {f' . $frm_this->id() . '} - {f' . $frm_prior->id() . '} ) / {f' . $frm_prior->id() . '}');
-        $target = '"percent"=( is.numeric( "' . formula_api::TN_READ_THIS . '" ) & is.numeric( "' . formula_api::TN_READ_PRIOR . '" ) ) ( "' . formula_api::TN_READ_THIS . '" - "' . formula_api::TN_READ_PRIOR . '" ) / "' . formula_api::TN_READ_PRIOR . '"';
+        $target = '"percent"=( is.numeric( "' . formulas::THIS_NAME . '" ) & is.numeric( "' . formulas::PRIOR . '" ) ) ( "' . formulas::THIS_NAME . '" - "' . formulas::PRIOR . '" ) / "' . formulas::PRIOR . '"';
         $result = $exp_db->user_text();
         $t->assert('get_usr_text for "' . $exp_db->ref_text() . '"', $result, $target);
 
@@ -110,7 +112,7 @@ class expression_write_tests
         if ($phr_lst_res != null) {
             $result = $phr_lst_res->dsp_name();
         }
-        $target = '"' . word_api::TN_PCT . '"';
+        $target = '"' . words::TN_PCT . '"';
         $t->assert('res_phr_lst for "' . $exp->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG); // ??? why???
 
         // ... and the phrases used in the formula
@@ -118,7 +120,7 @@ class expression_write_tests
         if ($phr_lst_res != null) {
             $result = $phr_lst_res->dsp_name();
         }
-        $target = '"' . word_api::TN_EARNING . '","' . word_api::TN_PRICE . '"';
+        $target = '"' . words::TN_EARNING . '","' . words::TN_PRICE . '"';
         $t->assert('phr_lst for "' . $exp_pe->dsp_id() . '"', $result, $target);
 
         // ... and all elements used in the formula
@@ -143,13 +145,13 @@ class expression_write_tests
         // test getting special phrases
         $phr_lst = $exp->element_special_following();
         $result = $phr_lst->dsp_name();
-        $target = '"' . formula_api::TN_READ_THIS . '","' . formula_api::TN_READ_PRIOR . '"';
+        $target = '"' . formulas::THIS_NAME . '","' . formulas::PRIOR . '"';
         // TODO $t->assert('element_special_following for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // test getting for special phrases the related formula
         $frm_lst = $exp->element_special_following_frm();
         $result = $frm_lst->name();
-        $target = '' . formula_api::TN_READ_THIS . ',' . formula_api::TN_READ_PRIOR . '';
+        $target = '' . formulas::THIS_NAME . ',' . formulas::PRIOR . '';
         // TODO $t->assert('element_special_following_frm for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         $t->subheader('cleanup expression write');

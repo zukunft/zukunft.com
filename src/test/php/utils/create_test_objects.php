@@ -62,7 +62,9 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
+include_once SHARED_PATH . 'formulas.php';
 include_once SHARED_PATH . 'triples.php';
+include_once SHARED_PATH . 'words.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use api\system\type_lists;
@@ -108,6 +110,7 @@ use cfg\word\word_db;
 use cfg\word\word_list;
 use controller\api_message;
 use html\system\messages;
+use shared\formulas;
 use shared\json_fields;
 use shared\triples;
 use shared\types\api_type_list;
@@ -481,8 +484,8 @@ class create_test_objects extends test_base
     function word(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_MATH, word_api::TN_READ);
-        $wrd->description = word_api::TD_READ;
+        $wrd->set(words::MATH_ID, words::MATH);
+        $wrd->description = words::MATH_COM;
         $wrd->set_type(phrase_type_shared::NORMAL);
         global $ptc_typ_cac;
         $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
@@ -495,7 +498,7 @@ class create_test_objects extends test_base
     function word_name_only(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set_name(word_api::TN_READ);
+        $wrd->set_name(words::MATH);
         return $wrd;
     }
 
@@ -507,11 +510,11 @@ class create_test_objects extends test_base
         global $shr_typ_cac;
         global $ptc_typ_cac;
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_MATH, word_api::TN_READ);
-        $wrd->description = word_api::TD_READ;
+        $wrd->set(words::MATH_ID, words::MATH);
+        $wrd->description = words::MATH_COM;
         $wrd->set_type(phrase_type_shared::NORMAL);
-        $wrd->set_code_id(word_api::TN_READ);
-        $wrd->plural = word_api::TN_READ_PLURAL;
+        $wrd->set_code_id(words::MATH);
+        $wrd->plural = words::MATH_PLURAL;
         $wrd->set_view_id(view_api::TI_READ);
         $wrd->set_usage(2);
         $wrd->exclude();
@@ -528,7 +531,7 @@ class create_test_objects extends test_base
         $wrd = $this->word_filled();
         $wrd->include();
         $wrd->set_id(0);
-        $wrd->set_name(word_api::TN_ADD);
+        $wrd->set_name(words::TN_ADD);
         return $wrd;
     }
 
@@ -540,7 +543,7 @@ class create_test_objects extends test_base
         $wrd = $this->word_filled();
         $wrd->include();
         $wrd->set_id(0);
-        $wrd->set_name(word_api::TN_ADD_TO);
+        $wrd->set_name(words::TN_ADD_TO);
         return $wrd;
     }
 
@@ -550,7 +553,7 @@ class create_test_objects extends test_base
     function word_add_by_func(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set_name(word_api::TN_ADD_VIA_FUNC);
+        $wrd->set_name(words::TN_ADD_VIA_FUNC);
         return $wrd;
     }
 
@@ -560,7 +563,7 @@ class create_test_objects extends test_base
     function word_add_by_sql(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set_name(word_api::TN_ADD_VIA_SQL);
+        $wrd->set_name(words::TN_ADD_VIA_SQL);
         return $wrd;
     }
 
@@ -579,8 +582,8 @@ class create_test_objects extends test_base
     function word_const(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_CONST, word_api::TN_CONST);
-        $wrd->description = word_api::TD_CONST;
+        $wrd->set(words::CONST_ID, words::CONST_NAME);
+        $wrd->description = words::CONST_COM;
         $wrd->set_type(phrase_type_shared::MATH_CONST);
         global $ptc_typ_cac;
         $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
@@ -593,8 +596,8 @@ class create_test_objects extends test_base
     function word_pi(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_PI, word_api::TN_PI);
-        $wrd->description = word_api::TD_PI;
+        $wrd->set(words::PI_ID, words::PI);
+        $wrd->description = words::PI_COM;
         $wrd->set_type(phrase_type_shared::MATH_CONST);
         global $ptc_typ_cac;
         $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
@@ -607,7 +610,7 @@ class create_test_objects extends test_base
     function word_cf(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_CIRCUMFERENCE, word_api::TN_CIRCUMFERENCE);
+        $wrd->set(words::CIRCUMFERENCE_ID, words::CIRCUMFERENCE);
         return $wrd;
     }
 
@@ -617,7 +620,7 @@ class create_test_objects extends test_base
     function word_diameter(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_DIAMETER, word_api::TN_DIAMETER);
+        $wrd->set(words::DIAMETER_ID, words::DIAMETER);
         return $wrd;
     }
 
@@ -627,7 +630,7 @@ class create_test_objects extends test_base
     function word_e(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_E, word_api::TN_E);
+        $wrd->set(words::E_ID, words::E);
         $wrd->set_type(phrase_type_shared::MATH_CONST);
         return $wrd;
     }
@@ -638,7 +641,7 @@ class create_test_objects extends test_base
     function word_year(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_YEAR, word_api::TN_YEAR);
+        $wrd->set(words::TI_YEAR, words::TN_YEAR);
         $wrd->set_type(phrase_type_shared::TIME);
         return $wrd;
     }
@@ -649,7 +652,7 @@ class create_test_objects extends test_base
     function word_2019(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_2019, word_api::TN_2019);
+        $wrd->set(words::TI_2019, words::TN_2019);
         $wrd->set_type(phrase_type_shared::TIME);
         return $wrd;
     }
@@ -660,7 +663,7 @@ class create_test_objects extends test_base
     function word_2020(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_2020, word_api::TN_2020);
+        $wrd->set(words::TI_2020, words::TN_2020);
         $wrd->set_type(phrase_type_shared::TIME);
         return $wrd;
     }
@@ -671,7 +674,7 @@ class create_test_objects extends test_base
     function word_pct(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_PCT, word_api::TN_PCT);
+        $wrd->set(words::TI_PCT, words::TN_PCT);
         $wrd->set_type(phrase_type_shared::PERCENT);
         return $wrd;
     }
@@ -731,7 +734,7 @@ class create_test_objects extends test_base
     function word_this(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_THIS, word_api::TN_THIS_PRE);
+        $wrd->set(words::TI_THIS, words::TN_THIS_PRE);
         $wrd->set_type(phrase_type_shared::THIS);
         return $wrd;
     }
@@ -739,7 +742,7 @@ class create_test_objects extends test_base
     function word_prior(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_PRIOR, word_api::TN_PRIOR_PRE);
+        $wrd->set(words::TI_PRIOR, words::TN_PRIOR_PRE);
         $wrd->set_type(phrase_type_shared::PRIOR);
         return $wrd;
     }
@@ -747,7 +750,7 @@ class create_test_objects extends test_base
     function word_one(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_ONE, word_api::TN_ONE);
+        $wrd->set(words::ONE_ID, words::ONE);
         $wrd->set_type(phrase_type_shared::SCALING_HIDDEN);
         return $wrd;
     }
@@ -755,7 +758,7 @@ class create_test_objects extends test_base
     function word_mio(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_MIO, word_api::TN_MIO_SHORT);
+        $wrd->set(words::TI_MIO, words::TN_MIO_SHORT);
         $wrd->set_type(phrase_type_shared::SCALING);
         return $wrd;
     }
@@ -763,21 +766,21 @@ class create_test_objects extends test_base
     function word_minute(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_MINUTE, word_api::TN_MINUTE);
+        $wrd->set(words::TI_MINUTE, words::TN_MINUTE);
         return $wrd;
     }
 
     function word_second(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_SECOND, word_api::TN_SECOND);
+        $wrd->set(words::SECOND_ID, words::SECOND);
         return $wrd;
     }
 
     function word_ch(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_CH, word_api::TN_CH);
+        $wrd->set(words::TI_CH, words::TN_CH);
         return $wrd;
     }
 
@@ -787,7 +790,7 @@ class create_test_objects extends test_base
     function word_city(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_CITY, word_api::TN_CITY);
+        $wrd->set(words::TI_CITY, words::TN_CITY);
         return $wrd;
     }
 
@@ -797,7 +800,7 @@ class create_test_objects extends test_base
     function word_canton(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_CANTON, word_api::TN_CANTON);
+        $wrd->set(words::TI_CANTON, words::TN_CANTON);
         return $wrd;
     }
 
@@ -807,7 +810,7 @@ class create_test_objects extends test_base
     function word_zh(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_ZH, word_api::TN_ZH);
+        $wrd->set(words::TI_ZH, words::TN_ZH);
         return $wrd;
     }
 
@@ -817,7 +820,7 @@ class create_test_objects extends test_base
     function word_bern(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_BE, word_api::TN_BE);
+        $wrd->set(words::TI_BE, words::TN_BE);
         return $wrd;
     }
 
@@ -827,42 +830,42 @@ class create_test_objects extends test_base
     function word_ge(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_GE, word_api::TN_GE);
+        $wrd->set(words::TI_GE, words::TN_GE);
         return $wrd;
     }
 
     function word_inhabitant(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_INHABITANT, word_api::TN_INHABITANT);
-        $wrd->plural = word_api::TN_INHABITANTS;
+        $wrd->set(words::TI_INHABITANT, words::TN_INHABITANT);
+        $wrd->plural = words::TN_INHABITANTS;
         return $wrd;
     }
 
     function word_parts(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_PARTS, word_api::TN_PARTS);
+        $wrd->set(words::TI_PARTS, words::TN_PARTS);
         return $wrd;
     }
 
     function word_total(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_TOTAL, word_api::TN_TOTAL_PRE);
+        $wrd->set(words::TI_TOTAL, words::TN_TOTAL_PRE);
         return $wrd;
     }
 
     function word_gwp(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(word_api::TI_GWP, word_api::TN_GWP);
+        $wrd->set(words::TI_GWP, words::TN_GWP);
         return $wrd;
     }
 
     function words_canton_zh_inhabitants(): array
     {
-        return [word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_MIO];
+        return [words::TN_ZH, words::TN_CANTON, words::TN_INHABITANTS, words::TN_MIO];
     }
 
     /**
@@ -947,8 +950,8 @@ class create_test_objects extends test_base
     function triple(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triples::TI_READ, triples::TN_READ);
-        $trp->description = triples::TD_READ;
+        $trp->set(triples::MATH_CONST_ID, triples::MATH_CONST);
+        $trp->description = triples::MATH_CONST_COM;
         $trp->set_from($this->word_const()->phrase());
         $trp->set_verb($this->verb_part());
         $trp->set_to($this->word()->phrase());
@@ -966,7 +969,7 @@ class create_test_objects extends test_base
         $trp = $this->triple();
         $trp->include();
         $trp->set_id(0);
-        $trp->set_name(triples::TN_ADD);
+        $trp->set_name(triples::SYSTEM_TEST_ADD);
         $trp->set_from($this->word_filled_add()->phrase());
         $trp->set_to($this->word_filled_add_to()->phrase());
         return $trp;
@@ -978,7 +981,7 @@ class create_test_objects extends test_base
     function triple_name_only(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set_name(triples::TN_READ);
+        $trp->set_name(triples::MATH_CONST);
         return $trp;
     }
 
@@ -1000,8 +1003,8 @@ class create_test_objects extends test_base
     function triple_pi(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triples::TI_PI, triples::TN_PI_NAME);
-        $trp->description = triples::TD_PI;
+        $trp->set(triples::PI_ID, triples::PI_NAME);
+        $trp->description = triples::PI_COM;
         $trp->set_from($this->word_pi()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->triple()->phrase());
@@ -1025,8 +1028,8 @@ class create_test_objects extends test_base
     function triple_e(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triples::TI_E, triples::TN_E);
-        $trp->description = triples::TD_E;
+        $trp->set(triples::E_ID, triples::E);
+        $trp->description = triples::E_COM;
         $trp->set_from($this->word_e()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->triple()->phrase());
@@ -1040,9 +1043,9 @@ class create_test_objects extends test_base
     function triple_add_by_func(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set_name(triples::TN_ADD_VIA_FUNC);
-        $wrd_add_func = $this->load_word(word_api::TN_ADD_VIA_FUNC);
-        $wrd_math = $this->load_word(word_api::TN_READ);
+        $trp->set_name(triples::SYSTEM_TEST_ADD_VIA_FUNC);
+        $wrd_add_func = $this->load_word(words::TN_ADD_VIA_FUNC);
+        $wrd_math = $this->load_word(words::MATH);
         $trp->set_from($wrd_add_func->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($wrd_math->phrase());
@@ -1055,9 +1058,9 @@ class create_test_objects extends test_base
     function triple_add_by_sql(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set_name(triples::TN_ADD_VIA_SQL);
-        $wrd_add_func = $this->load_word(word_api::TN_ADD_VIA_SQL);
-        $wrd_math = $this->load_word(word_api::TN_READ);
+        $trp->set_name(triples::SYSTEM_TEST_ADD_VIA_SQL);
+        $wrd_add_func = $this->load_word(words::TN_ADD_VIA_SQL);
+        $wrd_math = $this->load_word(words::MATH);
         $trp->set_from($wrd_add_func->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($wrd_math->phrase());
@@ -1070,7 +1073,7 @@ class create_test_objects extends test_base
     function zh(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triples::TI_ZH_CITY, triples::TN_ZH_CITY);
+        $trp->set(triples::CITY_ZH_ID, triples::CITY_ZH);
         $trp->set_from($this->word_zh()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->word_city()->phrase());
@@ -1083,7 +1086,7 @@ class create_test_objects extends test_base
     function zh_canton(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triples::TI_ZH_CITY, triples::TN_ZH_CITY);
+        $trp->set(triples::CITY_ZH_ID, triples::CITY_ZH);
         $trp->set_from($this->word_zh()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->word_canton()->phrase());
@@ -1096,7 +1099,7 @@ class create_test_objects extends test_base
     function triple_bern(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triples::TI_BE_CITY, triples::TN_BE_CITY);
+        $trp->set(triples::CITY_BE_ID, triples::CITY_BE);
         $trp->set_from($this->word_bern()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->word_city()->phrase());
@@ -1109,7 +1112,7 @@ class create_test_objects extends test_base
     function triple_ge(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triples::TI_GE_CITY, triples::TN_GE_CITY);
+        $trp->set(triples::CITY_GE_ID, triples::CITY_GE);
         $trp->set_from($this->word_ge()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->word_city()->phrase());
@@ -1967,8 +1970,8 @@ class create_test_objects extends test_base
     function formula(): formula
     {
         $frm = new formula($this->usr1);
-        $frm->set(1, formula_api::TN_READ);
-        $frm->set_user_text(formula_api::TF_READ, $this->term_list_time());
+        $frm->set(1, formulas::SCALE_TO_SEC);
+        $frm->set_user_text(formulas::SCALE_TO_SEC_EXP, $this->term_list_time());
         $frm->set_type(formula_type::CALC);
         return $frm;
     }
@@ -1979,7 +1982,7 @@ class create_test_objects extends test_base
     function formula_name_only(): formula
     {
         $frm = new formula($this->usr1);
-        $frm->set(1, formula_api::TF_READ_SCALE_MIO);
+        $frm->set(1, formulas::SCALE_MIO_EXP);
         return $frm;
     }
 
@@ -1991,10 +1994,10 @@ class create_test_objects extends test_base
         global $shr_typ_cac;
         global $ptc_typ_cac;
         $frm = new formula($this->usr1);
-        $frm->set(1, formula_api::TN_READ);
-        $frm->set_user_text(formula_api::TF_READ, $this->term_list_time());
+        $frm->set(1, formulas::SCALE_TO_SEC);
+        $frm->set_user_text(formulas::SCALE_TO_SEC_EXP, $this->term_list_time());
         $frm->set_type(formula_type::CALC);
-        $frm->description = formula_api::TD_READ;
+        $frm->description = formulas::SCALE_TO_SEC_COM;
         $frm->need_all_val = true;
         $frm->last_update = new DateTime(sys_log_api::TV_TIME);
         $frm->set_view_id(view_api::TI_READ);
@@ -2013,7 +2016,7 @@ class create_test_objects extends test_base
         $frm = $this->formula_filled();
         $frm->include();
         $frm->set_id(0);
-        $frm->set_name(formula_api::TN_ADD);
+        $frm->set_name(formulas::SYSTEM_TEXT_ADD);
         return $frm;
     }
 
@@ -2023,8 +2026,8 @@ class create_test_objects extends test_base
     function formula_increase(): formula
     {
         $frm = new formula($this->usr1);
-        $frm->set(formula_api::TI_INCREASE, formula_api::TN_INCREASE);
-        $frm->set_user_text(formula_api::TF_INCREASE, $this->phrase_list_increase()->term_list());
+        $frm->set(formulas::INCREASE_ID, formulas::INCREASE);
+        $frm->set_user_text(formulas::INCREASE_EXP, $this->phrase_list_increase()->term_list());
         $frm->set_type(formula_type::CALC);
         return $frm;
     }
@@ -2073,8 +2076,8 @@ class create_test_objects extends test_base
     function formula_add_by_func(): formula
     {
         $frm = new formula($this->usr1);
-        $frm->set_name(formula_api::TN_ADD_VIA_FUNC);
-        $frm->set_user_text(formula_api::TF_INCREASE, $this->phrase_list_increase()->term_list());
+        $frm->set_name(formulas::SYSTEM_TEXT_ADD_VIA_FUNC);
+        $frm->set_user_text(formulas::INCREASE_EXP, $this->phrase_list_increase()->term_list());
         $frm->set_type(formula_type::CALC);
         return $frm;
     }
@@ -2085,8 +2088,8 @@ class create_test_objects extends test_base
     function formula_add_by_sql(): formula
     {
         $frm = new formula($this->usr1);
-        $frm->set_name(formula_api::TN_ADD_VIA_SQL);
-        $frm->set_user_text(formula_api::TF_INCREASE, $this->phrase_list_increase()->term_list());
+        $frm->set_name(formulas::SYSTEM_TEXT_ADD_VIA_SQL);
+        $frm->set_user_text(formulas::INCREASE_EXP, $this->phrase_list_increase()->term_list());
         $frm->set_type(formula_type::CALC);
         return $frm;
     }
@@ -2193,7 +2196,7 @@ class create_test_objects extends test_base
     function result_pct(): result
     {
         $res = new result($this->usr1);
-        $wrd_pct = $this->new_word(word_api::TN_PCT, 2, phrase_type_shared::PERCENT);
+        $wrd_pct = $this->new_word(words::TN_PCT, 2, phrase_type_shared::PERCENT);
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd_pct->phrase());
         $res->grp()->set_phrase_list($phr_lst);
@@ -2958,7 +2961,7 @@ class create_test_objects extends test_base
         $chg->set_action(change_action::ADD);
         $chg->set_table(change_table_list::WORD);
         $chg->set_field(change_field_list::FLD_WORD_NAME);
-        $chg->new_value = word_api::TN_READ;
+        $chg->new_value = words::MATH;
         $chg->row_id = 1;
         return $chg;
     }
@@ -2969,7 +2972,7 @@ class create_test_objects extends test_base
     function change_log_named_update(): change
     {
         $chg = $this->change_log_named();
-        $chg->old_value = word_api::TN_RENAMED;
+        $chg->old_value = words::TN_RENAMED;
         return $chg;
     }
 
@@ -3031,7 +3034,7 @@ class create_test_objects extends test_base
         $chg->set_action(change_action::ADD);
         $chg->set_table(change_table_list::WORD);
         $chg->set_field(change_field_list::FLD_WORD_NAME);
-        $chg->new_value = word_api::TN_READ;
+        $chg->new_value = words::MATH;
         $chg->row_id = 1;
         return $chg;
     }
@@ -3048,7 +3051,7 @@ class create_test_objects extends test_base
         $chg->set_action(change_action::ADD);
         $chg->set_table(change_table_list::WORD);
         $chg->set_field(change_field_list::FLD_WORD_NAME);
-        $chg->new_value = word_api::TN_READ;
+        $chg->new_value = words::MATH;
         $chg->row_id = 1;
         return $chg;
     }
@@ -3180,7 +3183,7 @@ class create_test_objects extends test_base
             change::class,
             changes_norm::class,
             changes_big::class
-            => word_api::TN_READ,
+            => words::MATH,
             change_values_prime::class,
             change_values_big::class,
             change_values_norm::class
@@ -3284,9 +3287,9 @@ class create_test_objects extends test_base
         $chg->set_time_str(self::DUMMY_DATETIME);
         $chg->set_action(change_action::ADD);
         $chg->set_table(change_table_list::TRIPLE);
-        $chg->new_from_id = word_api::TI_CONST;
+        $chg->new_from_id = words::CONST_ID;
         $chg->new_link_id = verb_api::TI_PART;
-        $chg->new_to_id = word_api::TI_MATH;
+        $chg->new_to_id = words::MATH_ID;
         $chg->row_id = 1;
         return $chg;
     }
@@ -4256,8 +4259,8 @@ class create_test_objects extends test_base
         global $phr_typ_cac;
         $msg = new api_message();
         $wrd = new word($this->usr1);
-        $wrd->set_name(word_api::TN_ADD_API);
-        $wrd->description = word_api::TD_ADD_API;
+        $wrd->set_name(words::TN_ADD_API);
+        $wrd->description = words::TD_ADD_API;
         $wrd->type_id = $phr_typ_cac->id(phrase_type_shared::NORMAL);
         $body_array = $wrd->api_json_array(new api_type_list([]));
         return $msg->api_header_array($db_con, word::class, $this->usr1, $body_array);
@@ -4271,8 +4274,8 @@ class create_test_objects extends test_base
         global $db_con;
         $msg = new api_message();
         $wrd = new word($this->usr1);
-        $wrd->set_name(word_api::TN_UPD_API);
-        $wrd->description = word_api::TD_UPD_API;
+        $wrd->set_name(words::TN_UPD_API);
+        $wrd->description = words::TD_UPD_API;
         $body_array = $wrd->api_json_array(new api_type_list([]));
         return $msg->api_header_array($db_con, word::class, $this->usr1, $body_array);
     }

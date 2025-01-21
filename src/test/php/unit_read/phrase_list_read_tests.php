@@ -33,7 +33,9 @@
 namespace unit_read;
 
 include_once SERVICE_PATH . 'config.php';
+include_once SHARED_PATH . 'formulas.php';
 include_once SHARED_PATH . 'triples.php';
+include_once SHARED_PATH . 'words.php';
 
 use api\formula\formula as formula_api;
 use api\word\word as word_api;
@@ -45,6 +47,7 @@ use cfg\phrase\phrase_list;
 use cfg\phrase\phrase_type;
 use cfg\phrase\phrase;
 use cfg\word\word;
+use shared\formulas;
 use shared\triples;
 use shared\types\api_type_list;
 use shared\words;
@@ -67,19 +70,19 @@ class phrase_list_read_tests
 
         $test_name = 'loading phrase names with pattern return the expected word';
         $lst = new phrase_list($t->usr1);
-        $pattern = substr(word_api::TN_READ, 0, -1);
+        $pattern = substr(words::MATH, 0, -1);
         $lst->load_names($pattern);
-        $t->assert_contains($test_name, $lst->names(), word_api::TN_READ);
+        $t->assert_contains($test_name, $lst->names(), words::MATH);
         $test_name = 'loading phrase names with pattern return the expected triple';
         $lst = new phrase_list($t->usr1);
-        $pattern = substr(triples::TN_READ, 0, -1);
+        $pattern = substr(triples::MATH_CONST, 0, -1);
         $lst->load_names($pattern);
-        $t->assert_contains($test_name, $lst->names(), triples::TN_READ);
+        $t->assert_contains($test_name, $lst->names(), triples::MATH_CONST);
         $test_name = 'formula names are not included in the normal phrase list';
         $lst = new phrase_list($t->usr1);
-        $lst->load_names(formula_api::TN_READ);
+        $lst->load_names(formulas::SCALE_TO_SEC);
         // TODO activate Prio 1
-        //$t->assert_contains_not($test_name, $lst->names(), formula_api::TN_READ);
+        //$t->assert_contains_not($test_name, $lst->names(), formulas::TN_READ);
         $test_name = 'api message of phrases list';
         $lst = new phrase_list($t->usr1);
         $id_lst = [1, 2, 3, -1, -2];
@@ -90,7 +93,7 @@ class phrase_list_read_tests
         $t->assert_text_contains($test_name, $result, '1');
         $test_name = 'Switzerland is part of the phrase list staring with S';
         $switzerland = new phrase($t->usr1);
-        $switzerland->load_by_name(word_api::TN_CH);
+        $switzerland->load_by_name(words::TN_CH);
         $lst->load_like('S');
         $t->assert_contains($test_name, $lst->names(), $switzerland->name());
 
@@ -100,12 +103,12 @@ class phrase_list_read_tests
         // direct children
         $test_name = 'Switzerland is a country';
         $country = new phrase($t->usr1);
-        $country->load_by_name(word_api::TN_COUNTRY);
+        $country->load_by_name(words::TN_COUNTRY);
         $country_lst = $country->direct_children();
         $t->assert_contains($test_name, $country_lst->names(), $switzerland->name());
         $test_name = 'Zurich is a country (even if it is part of a country)';
         $zurich = new phrase($t->usr1);
-        $zurich->load_by_name(word_api::TN_ZH);
+        $zurich->load_by_name(words::TN_ZH);
         $t->assert_contains_not($test_name, $country_lst->names(), $zurich->name());
         $test_name = 'The word country is not part of the country list';
         $t->assert_contains_not($test_name, $country_lst->names(), $country->name());
@@ -120,12 +123,12 @@ class phrase_list_read_tests
         $t->assert_contains($test_name, $sys_cfg_phr_lst->names(), $auto_years->name());
 
         // Canton is related to Switzerland and Zurich
-        $phr_canton = $t->load_phrase(word_api::TN_CANTON);
+        $phr_canton = $t->load_phrase(words::TN_CANTON);
         $phr_lst = $phr_canton->all_related();
         $test_name = 'The word Canton is related to Switzerland and Zurich';
         // TODO ABB is not expected to be related even if it is related via zurich and company
         //      but Switzerland is expected to be related
-        //$t->assert_contains($test_name, $phr_lst->names(), array(word_api::TN_ZH, word_api::TN_CH));
+        //$t->assert_contains($test_name, $phr_lst->names(), array(words::TN_ZH, words::TN_CH));
 
     }
 

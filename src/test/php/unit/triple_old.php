@@ -72,7 +72,7 @@ class triple_old
 
         // sql to load a triple by name
         $trp = new triple($usr);
-        $trp->set_name(triples::TN_ZH_COMPANY);
+        $trp->set_name(triples::COMPANY_ZURICH);
         $t->assert_sql_by_obj_vars($db_con, $trp);
         $t->assert_sql_standard($sc, $trp);
 

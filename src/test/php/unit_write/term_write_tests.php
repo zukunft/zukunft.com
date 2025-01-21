@@ -41,9 +41,11 @@ use api\word\word as word_api;
 use cfg\phrase\term;
 use cfg\verb\verb;
 use cfg\word\word;
+use shared\formulas;
 use shared\library;
 use shared\triples;
 use shared\types\verbs;
+use shared\words;
 use test\test_cleanup;
 
 class term_write_tests
@@ -58,20 +60,20 @@ class term_write_tests
         $t->header('est the term class (classes/term.php)');
 
         // load the main test word
-        $wrd_zh = $t->test_word(word_api::TN_ZH);
+        $wrd_zh = $t->test_word(words::TN_ZH);
 
         // check that adding the predefined word "Company" creates an error message
         $term = new term($usr);
-        $term->load_by_obj_name(word_api::TN_ZH);
-        $target = 'A word with the name "' . word_api::TN_ZH . '" already exists. '
+        $term->load_by_obj_name(words::TN_ZH);
+        $target = 'A word with the name "' . words::TN_ZH . '" already exists. '
             . 'Please use another ' . $lib->class_to_name(word::class) . ' name.';
         $result = $term->id_used_msg($wrd_zh);
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
         // ... check also for a triple
         $term = new term($usr);
-        $term->load_by_obj_name(triples::TN_ZH_CITY);
-        $target = '<style class="text-danger">A triple with the name "' . triples::TN_ZH_CITY . '" already exists. '
+        $term->load_by_obj_name(triples::CITY_ZH);
+        $target = '<style class="text-danger">A triple with the name "' . triples::CITY_ZH . '" already exists. '
             . 'Please use another ' . $lib->class_to_name(word::class) . ' name.</style>';
         $result = $term->id_used_msg($wrd_zh);
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
@@ -86,9 +88,9 @@ class term_write_tests
 
         // ... check also for a formula
         $term = new term($usr);
-        $term->load_by_obj_name(formula_api::TN_INCREASE);
+        $term->load_by_obj_name(formulas::INCREASE);
         // each formula name has also a word
-        $target = 'A formula with the name "' . formula_api::TN_INCREASE . '" already exists. '
+        $target = 'A formula with the name "' . formulas::INCREASE . '" already exists. '
             . 'Please use another ' . $lib->class_to_name(word::class) . ' name.';
         $result = $term->id_used_msg($wrd_zh);
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);

@@ -36,6 +36,7 @@ use api\word\word as word_api;
 use cfg\group\group;
 use cfg\phrase\phrase_list;
 use cfg\word\word_list;
+use shared\words;
 use test\test_cleanup;
 
 class group_read_tests
@@ -67,7 +68,7 @@ class group_read_tests
 
         $test_name = 'test if the phrase group links are correctly recreated when a group is updated';
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names([word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS]);
+        $phr_lst->load_by_names([words::TN_ZH, words::TN_CANTON, words::TN_INHABITANTS]);
         $test_name .= ' for phrases ' . $phr_lst->dsp_id();
         $grp = $phr_lst->get_grp_id();
         $grp_check = new group($t->usr1);
@@ -78,7 +79,7 @@ class group_read_tests
 
         $test_name = 'second test if the phrase group links are correctly recreated when a group is updated';
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names(array(word_api::TN_ZH, word_api::TN_CANTON, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
+        $phr_lst->load_by_names(array(words::TN_ZH, words::TN_CANTON, words::TN_INHABITANTS, words::TN_MIO, words::TN_2020));
         $test_name .= ' for phrases ' . $phr_lst->dsp_id();
         $grp = $phr_lst->get_grp_id();
         $grp_check = new group($t->usr1);

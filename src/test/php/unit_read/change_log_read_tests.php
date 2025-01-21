@@ -33,6 +33,7 @@
 namespace unit_read;
 
 include_once SHARED_PATH . 'triples.php';
+include_once SHARED_PATH . 'words.php';
 
 use api\component\component as component_api;
 use api\formula\formula as formula_api;
@@ -45,7 +46,9 @@ use api\word\word as word_api;
 use cfg\log\change_field_list;
 use cfg\log\change_log_list;
 use cfg\word\word;
+use shared\formulas;
 use shared\triples;
+use shared\words;
 use test\test_cleanup;
 
 class change_log_read_tests
@@ -84,7 +87,7 @@ class change_log_read_tests
         // ... and if the first entry is the adding of the word name
         $first_change = $lst->lst()[0];
         $t->assert('first word change is adding', $first_change->old_value, '');
-        $t->assert('... the name', $first_change->new_value, word_api::TN_READ);
+        $t->assert('... the name', $first_change->new_value, words::MATH);
 
         // check loading of verb name changes
         $lst = new change_log_list();
@@ -110,7 +113,7 @@ class change_log_read_tests
         // ... and if the first entry is the setting the given name of a triple
         $first_change = $lst->lst()[0];
         $t->assert('first triple change is setting', $first_change->old_value, '');
-        $t->assert('... the given name', $first_change->new_value, triples::TN_PI_NAME);
+        $t->assert('... the given name', $first_change->new_value, triples::PI_NAME);
 
         // check loading of user value changes
         $lst = new change_log_list();
@@ -133,7 +136,7 @@ class change_log_read_tests
         // ... and if the first entry is the adding the minute scale formula
         $first_change = $lst->lst()[0];
         $t->assert('first formula change is adding', $first_change->old_value, '');
-        $t->assert('... the minute scale formula', $first_change->new_value, formula_api::TF_READ);
+        $t->assert('... the minute scale formula', $first_change->new_value, formulas::SCALE_TO_SEC_EXP);
 
         // check loading of name changes of source
         $lst = new change_log_list();
