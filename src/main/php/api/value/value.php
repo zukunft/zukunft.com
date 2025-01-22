@@ -74,7 +74,7 @@ class value extends sandbox_value_api implements JsonSerializable
     CONST TV_SALES_INCREASE_2017_FORMATTED = '90.03 %';
     const TV_NESN_SALES_2016_FORMATTED = '89\'469';
 
-    CONST TV_TIME = '2025-06-07 12:30:00'; // to test time values
+    CONST TV_TIME = '2025-06-07 12:30:00 UTC'; // to test time values
     CONST TV_TEXT = POD_NAME; // to test text values
     CONST TV_GEO = '47.263179, 8.684730'; // to test geo values
     CONST TV_DB_TEXT = 'old db text sample value'; // to test updating text values

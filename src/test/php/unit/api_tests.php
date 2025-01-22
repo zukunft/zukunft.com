@@ -47,8 +47,6 @@ include_once MODEL_SYSTEM_PATH . 'job.php';
 include_once EXPORT_PATH . 'export.php';
 include_once API_SYSTEM_PATH . 'type_object.php';
 include_once API_PHRASE_PATH . 'phrase_type.php';
-include_once API_LANGUAGE_PATH . 'language.php';
-include_once API_LANGUAGE_PATH . 'language_form.php';
 include_once SHARED_PATH . 'formulas.php';
 include_once SHARED_PATH . 'views.php';
 include_once SHARED_PATH . 'words.php';

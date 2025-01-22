@@ -47,7 +47,7 @@ class language_tests
         $t->resource_path = 'db/language/';
 
 
-        $t->header('Unit tests of the language class (src/main/php/model/language/language.php)');
+        $t->header('language unit tests');
 
         $t->subheader('Language SQL setup statements');
         $lan = new language('');
@@ -68,7 +68,7 @@ class language_tests
         $t->assert_api($lan, 'language');
 
 
-        $t->header('Unit tests of the language form class (src/main/php/model/language/language_form.php)');
+        $t->header('language form unit tests');
 
         $t->subheader('API unit tests');
 

@@ -45,7 +45,7 @@ class language_read_tests
         global $usr;
 
         // init
-        $t->header('Unit database tests of the language class (src/main/php/model/language/language.php)');
+        $t->header('language database unit');
         $t->name = 'language read db->';
         $t->resource_path = 'db/language/';
 

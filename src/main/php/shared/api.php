@@ -128,12 +128,16 @@ class api
     const URL_VAR_SHARE = 'share';
     const URL_VAR_PROTECTION = 'protection';
     const URL_VAR_CONFIRM = 'confirm';
+    const URL_REF = 'reference';
 
     // used for the change log
     const URL_VAR_WORD_ID = 'word_id';
     const URL_VAR_WORD_FLD = 'word_field';
     const URL_VAR_LINK_PHRASE = 'link_phrase';
     const URL_VAR_UNLINK_PHRASE = 'unlink_phrase';
+
+    // used for languages
+    const URL_VAR_LANGUAGE_FORM = 'languageForm';
 
 
     /*

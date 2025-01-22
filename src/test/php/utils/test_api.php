@@ -47,12 +47,8 @@ include_once MODEL_SYSTEM_PATH . 'job.php';
 include_once EXPORT_PATH . 'export.php';
 include_once API_SYSTEM_PATH . 'type_object.php';
 include_once API_PHRASE_PATH . 'phrase_type.php';
-include_once API_LANGUAGE_PATH . 'language.php';
-include_once API_LANGUAGE_PATH . 'language_form.php';
 
 use api\component\component as component_api;
-use api\language\language as language_api;
-use api\language\language_form as language_form_api;
 use api\phrase\phrase_type as phrase_type_api;
 use api\ref\ref as ref_api;
 use api\system\job as job_api;
@@ -462,7 +458,7 @@ class test_api extends create_test_objects
         $lib = new library();
         $ctrl = new rest_ctrl();
         $class_api = $this->class_to_api($class);
-        $url = $this->class_to_url($class_api);
+        $url = $this->class_to_url($class);
         if ($levels > 0) {
             $url .= '?' . api::URL_VAR_ID . '=' . $id;
             $url .= '&' . api::URL_VAR_CHILDREN . '=' . $levels;
@@ -666,7 +662,7 @@ class test_api extends create_test_objects
             $result = component_api::API_NAME;
         }
         if ($class == ref::class) {
-            $result = ref_api::API_NAME;
+            $result = api::URL_REF;
         }
         if ($class == job::class) {
             $result = job_api::API_NAME;
@@ -676,12 +672,6 @@ class test_api extends create_test_objects
         }
         if ($class == phrase_type::class) {
             $result = phrase_type_api::API_NAME;
-        }
-        if ($class == language::class) {
-            $result = language_api::API_NAME;
-        }
-        if ($class == language_form::class) {
-            $result = language_form_api::API_NAME;
         }
         return $lib->class_to_name($result);
     }
@@ -693,12 +683,14 @@ class test_api extends create_test_objects
      */
     private function class_to_url(string $class): string
     {
-        $url = HOST_TESTING . api::URL_API_PATH . $class;
+        $lib = new library();
+        if ($class == ref::class) {
+            $class = api::URL_REF;
+        }
+        $url_class = $lib->camelize_ex_1($lib->class_to_name($class));
+        $url = HOST_TESTING . api::URL_API_PATH . $url_class;
         if ($class == phrase_type_api::API_NAME) {
             $url = HOST_TESTING . api::URL_API_PATH . phrase_type_api::URL_NAME;
-        }
-        if ($class == language_form_api::API_NAME) {
-            $url = HOST_TESTING . api::URL_API_PATH . language_form_api::URL_NAME;
         }
         return $url;
     }

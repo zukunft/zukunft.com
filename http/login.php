@@ -58,8 +58,8 @@ if ($usr->id() > 0) {
 
     $_SESSION['logged'] = FALSE;
     // the original calling page that should be shown after the login is finished
-    if (isset($_POST[controller::API_BACK])) {
-        $back = $_POST[controller::API_BACK];
+    if (isset($_POST[api::URL_VAR_BACK])) {
+        $back = $_POST[api::URL_VAR_BACK];
     } else {
         $back = $_GET[api::URL_VAR_BACK] = '';
     }
