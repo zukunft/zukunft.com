@@ -46,7 +46,6 @@ namespace test;
 
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
-include_once API_REF_PATH . 'ref.php';
 include_once API_PHRASE_PATH . 'group.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
@@ -67,7 +66,6 @@ include_once SHARED_PATH . 'triples.php';
 include_once SHARED_PATH . 'words.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use api\system\type_lists;
 use cfg\component\component_link_type;
 use cfg\component\view_style_list;
 use cfg\db\sql_db;
@@ -112,20 +110,17 @@ use controller\api_message;
 use html\system\messages;
 use shared\formulas;
 use shared\json_fields;
+use shared\refs;
 use shared\triples;
 use shared\types\api_type_list;
 use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
-use api\formula\formula as formula_api;
 use api\phrase\group as group_api;
-use api\ref\ref as ref_api;
 use api\ref\source as source_api;
 use api\result\result as result_api;
 use api\value\value as value_api;
 use api\verb\verb as verb_api;
 use api\view\view as view_api;
-use api\word\triple as triple_api;
-use api\word\word as word_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_list;
@@ -184,7 +179,6 @@ use cfg\view\view;
 use cfg\view\view_list;
 use cfg\view\view_type_list;
 use cfg\word\word;
-use controller\controller;
 use controller\system\sys_log as sys_log_api;
 use DateTime;
 use html\phrase\phrase_list as phrase_list_dsp;
@@ -2321,9 +2315,9 @@ class create_test_objects extends test_base
     {
         global $ref_typ_cac;
         $ref = new ref($this->usr1);
-        $ref->set(ref_api::TI_PI,
-            $this->word_pi()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), ref_api::TK_READ);
-        $ref->description = ref_api::TD_READ;
+        $ref->set(refs::PI_ID,
+            $this->word_pi()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), refs::PI_KEY);
+        $ref->description = refs::PI_COM;
         return $ref;
     }
 
@@ -2335,8 +2329,8 @@ class create_test_objects extends test_base
         global $ref_typ_cac;
         $ref = new ref($this->usr1);
         $ref->set(1,
-            $this->word()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), ref_api::TK_READ);
-        $ref->description = ref_api::TD_READ;
+            $this->word()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), refs::PI_KEY);
+        $ref->description = refs::PI_COM;
         return $ref;
     }
 
@@ -2347,7 +2341,7 @@ class create_test_objects extends test_base
     {
         $ref = $this->reference();
         $ref->source = $this->source_ref();
-        $ref->url = ref_api::TU_READ;
+        $ref->url = refs::PI_URL;
         return $ref;
     }
 
@@ -2358,7 +2352,7 @@ class create_test_objects extends test_base
     {
         $ref = new ref($this->usr1);
         $ref->set(4);
-        $ref->description = ref_api::TD_READ;
+        $ref->description = refs::PI_COM;
         return $ref;
     }
 
@@ -2370,8 +2364,8 @@ class create_test_objects extends test_base
         global $ref_typ_cac;
         $ref = new ref($this->usr1);
         $ref->set(12,
-            $this->word_gwp()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), ref_api::TK_CHANGED);
-        $ref->description = ref_api::TD_CHANGE;
+            $this->word_gwp()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), refs::CHANGE_NEW_KEY);
+        $ref->description = refs::CHANGE_OLD_KEY;
         return $ref;
     }
 
@@ -2384,7 +2378,7 @@ class create_test_objects extends test_base
         global $ptc_typ_cac;
         $ref = $this->reference();
         $ref->source = $this->source();
-        $ref->url = ref_api::TU_READ;
+        $ref->url = refs::PI_URL;
         $ref->include();
         $ref->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
         $ref->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
@@ -2399,10 +2393,10 @@ class create_test_objects extends test_base
         global $shr_typ_cac;
         global $ptc_typ_cac;
         $ref = $this->reference_user();
-        $ref->external_key = ref_api::TK_READ;
-        $ref->url = ref_api::TU_READ;
+        $ref->external_key = refs::PI_KEY;
+        $ref->url = refs::PI_URL;
         $ref->source = $this->source();
-        $ref->description = ref_api::TD_READ;
+        $ref->description = refs::PI_COM;
         $ref->exclude();
         $ref->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
         $ref->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
@@ -4321,9 +4315,9 @@ class create_test_objects extends test_base
         $msg = new api_message();
         $ref = new ref($this->usr1);
         $ref->set_phrase($this->word()->phrase());
-        $ref->external_key = ref_api::TK_ADD_API;
-        $ref->description = ref_api::TD_ADD_API;
-        $ref->url = ref_api::TU_ADD_API;
+        $ref->external_key = refs::SYSTEM_TEST_API_ADD_KEY;
+        $ref->description = refs::SYSTEM_TEST_API_ADD_COM;
+        $ref->url = refs::SYSTEM_TEST_API_ADD_URL;
         $ref->predicate_id = $reference_types->id(source_type::PDF);
         $body_array = $ref->api_json_array(new api_type_list([]));
         return $msg->api_header_array($db_con, ref::class, $this->usr1, $body_array);

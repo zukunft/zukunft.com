@@ -37,13 +37,14 @@ include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_REF_PATH . 'ref.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VERB_PATH . 'verb.php';
+include_once SHARED_PATH . 'refs.php';
 
-use api\ref\ref as ref_api;
 use cfg\db\sql_db;
 use cfg\helper\type_list;
 use cfg\ref\ref;
 use cfg\user\user;
 use cfg\verb\verb;
+use shared\refs;
 
 class ref_list extends type_list
 {
@@ -145,8 +146,8 @@ class ref_list extends type_list
         global $usr;
         $type = new ref($usr);
         $type->set_id(1);
-        $type->set_name(ref_api::TT_READ);
-        $type->code_id = ref_api::TT_READ;
+        $type->set_name(refs::WIKIDATA_TYPE);
+        $type->code_id = refs::WIKIDATA_TYPE;
         $this->add($type);
     }
 

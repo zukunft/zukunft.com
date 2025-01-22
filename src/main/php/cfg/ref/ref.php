@@ -96,7 +96,6 @@ include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 
-use api\ref\ref as ref_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -481,75 +480,6 @@ class ref extends sandbox_link
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return ref_api the ref frontend api object
-     */
-    function api_obj(): ref_api
-    {
-        $api_obj = new ref_api();
-        if ($this->is_excluded()) {
-            $api_obj->set_id($this->id());
-            $api_obj->excluded = true;
-        } else {
-            parent::fill_api_obj($api_obj);
-            if ($this->phrase_id() != 0) {
-                $api_obj->phrase_id = $this->phrase_id();
-            }
-            $api_obj->external_key = $this->external_key;
-            if ($this->source != null) {
-                $api_obj->source_id = $this->source->id();
-            }
-            $api_obj->url = $this->url;
-            $api_obj->description = $this->description;
-        }
-        return $api_obj;
-    }
-
-    /**
-     * map a ref api json to this model ref object
-     * similar to the import_obj function but using the database id instead of names as the unique key
-     * @param array $api_json the api array with the triple values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::PHRASE) {
-                if ($value != '' and $value != 0) {
-                    $phr = new phrase($this->user());
-                    $phr->set_id($value);
-                    $this->set_phrase($phr);
-                }
-            }
-            if ($key == json_fields::EXTERNAL_KEY) {
-                if ($value <> '') {
-                    $this->external_key = $value;
-                }
-            }
-            if ($key == json_fields::URL) {
-                if ($value <> '') {
-                    $this->url = $value;
-                }
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
-            }
-
-        }
-
-        return $msg;
-    }
-
-
-    /*
      * load
      */
 
@@ -766,6 +696,46 @@ class ref extends sandbox_link
         }
         $vars[json_fields::DESCRIPTION] = $this->description;
         return $vars;
+    }
+
+    /**
+     * map a ref api json to this model ref object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the triple values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::PHRASE) {
+                if ($value != '' and $value != 0) {
+                    $phr = new phrase($this->user());
+                    $phr->set_id($value);
+                    $this->set_phrase($phr);
+                }
+            }
+            if ($key == json_fields::EXTERNAL_KEY) {
+                if ($value <> '') {
+                    $this->external_key = $value;
+                }
+            }
+            if ($key == json_fields::URL) {
+                if ($value <> '') {
+                    $this->url = $value;
+                }
+            }
+            if ($key == json_fields::DESCRIPTION) {
+                if ($value <> '') {
+                    $this->description = $value;
+                }
+            }
+
+        }
+
+        return $msg;
     }
 
 

@@ -32,19 +32,15 @@
 
 namespace unit;
 
-use api\ref\source as source_api;
+include_once SHARED_PATH . 'refs.php';
+
 use cfg\db\sql_creator;
 use cfg\db\sql_type;
-use cfg\ref\ref_type;
 use cfg\ref\ref_type_list;
-use cfg\ref\source_list;
-use cfg\ref\source_type_list;
-use api\ref\ref as ref_api;
 use html\ref\ref as ref_dsp;
-use html\ref\source as source_dsp;
 use cfg\ref\ref;
-use cfg\ref\source;
 use cfg\db\sql_db;
+use shared\refs;
 use test\test_cleanup;
 
 class ref_tests
@@ -95,7 +91,7 @@ class ref_tests
 
         $t->subheader('reference sql write update');
         $ref = $t->reference_change();
-        $ref_changed = $ref->cloned_linked(ref_api::TK_CHANGED);
+        $ref_changed = $ref->cloned_linked(refs::CHANGE_NEW_KEY);
         $t->assert_sql_update($sc, $ref_changed, $ref);
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::USER]);
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG]);
