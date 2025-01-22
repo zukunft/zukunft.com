@@ -32,12 +32,12 @@
 
 namespace unit_read;
 
-use api\ref\source as source_api;
 use cfg\ref\source;
 use cfg\ref\source_type;
 use cfg\ref\source_list;
 use cfg\ref\source_type_list;
 use shared\library;
+use shared\sources;
 use test\test_cleanup;
 
 class source_read_tests
@@ -57,10 +57,10 @@ class source_read_tests
 
         $t->subheader('source load');
         $src = new source($t->usr1);
-        $t->assert_load($src, source_api::TN_READ);
-        $test_name = 'check description of source ' . source_api::TN_READ;
-        $t->assert($test_name, $src->description, source_api::TD_READ);
-        $t->assert_load_by_code_id($src, source_api::TC_READ);
+        $t->assert_load($src, sources::SIB);
+        $test_name = 'check description of source ' . sources::SIB;
+        $t->assert($test_name, $src->description, sources::SIB_COM);
+        $t->assert_load_by_code_id($src, sources::SIB_CODE);
 
         $t->subheader('source load types');
         $lst = new source_type_list();
@@ -72,8 +72,8 @@ class source_read_tests
         $t->subheader('source list tests');
         $test_name = 'loading by source list by ids ';
         $src_lst = new source_list($t->usr1);
-        $src_lst->load_by_ids([source_api::TI_READ_REF]);
-        $t->assert($test_name . $src_lst->dsp_id(), $src_lst->name(), '"' . source_api::TN_READ_REF . '"');
+        $src_lst->load_by_ids([sources::WIKIDATA_ID]);
+        $t->assert($test_name . $src_lst->dsp_id(), $src_lst->name(), '"' . sources::WIKIDATA . '"');
 
         $test_name = 'loading the api message creation of the api index file for ';
         // TODO add this to all db read tests for all API call functions
@@ -84,9 +84,9 @@ class source_read_tests
 
         $test_name = 'loading by source list by pattern ';
         $src_lst = new source_list($t->usr1);
-        $pattern = substr(source_api::TN_READ_REF, 0, -1);
+        $pattern = substr(sources::WIKIDATA, 0, -1);
         $src_lst->load_like($pattern);
-        $t->assert_contains($test_name, $src_lst->names(), source_api::TN_READ_REF);
+        $t->assert_contains($test_name, $src_lst->names(), sources::WIKIDATA);
 
     }
 

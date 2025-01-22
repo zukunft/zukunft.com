@@ -39,12 +39,10 @@ include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_REF_PATH . 'source.php';
 
-use api\ref\source_list as source_list_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\ref\source;
 use cfg\sandbox\sandbox_list_named;
 
 class source_list extends sandbox_list_named

@@ -32,12 +32,10 @@
 
 namespace unit_write;
 
-use api\ref\source as source_api;
-use cfg\log\change_field_list;
-use cfg\log\change;
-use cfg\log\change_table_list;
-use cfg\sandbox\sandbox_named;
+include_once SHARED_PATH . 'sources.php';
+
 use cfg\ref\source;
+use shared\sources;
 use test\test_cleanup;
 
 class source_write_tests
@@ -49,13 +47,13 @@ class source_write_tests
         $t->header('source db write tests');
 
         $t->subheader('source prepared write');
-        $test_name = 'add source ' . source_api::TN_ADD_VIA_SQL . ' via sql insert';
+        $test_name = 'add source ' . sources::SYSTEM_TEST_ADD_VIA_SQL . ' via sql insert';
         $t->assert_write_via_func_or_sql($test_name, $t->source_add_by_sql(), false);
-        $test_name = 'add source ' . source_api::TN_ADD_VIA_FUNC . ' via sql function';
+        $test_name = 'add source ' . sources::SYSTEM_TEST_ADD_VIA_FUNC . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t->source_add_by_func(), true);
 
-        $t->subheader('source write sandbox tests for ' . source_api::TN_ADD);
-        $t->assert_write_named($t->source_filled_add(), source_api::TN_ADD);
+        $t->subheader('source write sandbox tests for ' . sources::SYSTEM_TEST_ADD);
+        $t->assert_write_named($t->source_filled_add(), sources::SYSTEM_TEST_ADD);
 
         /*
         TODO remove but check upfront the replacement
@@ -63,22 +61,22 @@ class source_write_tests
 
         // check if undo all specific changes removes the user source
         $src_usr2 = new source($t->usr2);
-        $src_usr2->load_by_name(source_api::TN_RENAMED, source::class);
-        $src_usr2->url = source_api::TU_ADD;
-        $src_usr2->description = source_api::TD_ADD;
+        $src_usr2->load_by_name(sources::TN_RENAMED, source::class);
+        $src_usr2->url = sources::TU_ADD;
+        $src_usr2->description = sources::TD_ADD;
         $result = $src_usr2->save()->get_last_message();
         $target = '';
-        $t->display('source->save undo the user source fields beside the name for "' . source_api::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('source->save undo the user source fields beside the name for "' . sources::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific source changes have been saved
         $src_usr2_reloaded = new source($t->usr2);
-        $src_usr2_reloaded->load_by_name(source_api::TN_RENAMED, source::class);
+        $src_usr2_reloaded->load_by_name(sources::TN_RENAMED, source::class);
         $result = $src_usr2_reloaded->url;
-        $target = source_api::TU_ADD;
-        $t->display('source->load url for "' . source_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
+        $target = sources::TU_ADD;
+        $t->display('source->load url for "' . sources::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
         $result = $src_usr2_reloaded->description;
-        $target = source_api::TD_ADD;
-        $t->display('source->load description for "' . source_api::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
+        $target = sources::TD_ADD;
+        $t->display('source->load description for "' . sources::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
 
         // clean up by deleting all add test sources
         $src_usr2_reloaded->del();
@@ -93,7 +91,7 @@ class source_write_tests
 
         // cleanup - fallback delete
         $src = new source($t->usr1);
-        foreach (source_api::TEST_SOURCES as $src_name) {
+        foreach (sources::TEST_SOURCES as $src_name) {
             $t->write_named_cleanup($src, $src_name);
         }
 
@@ -104,7 +102,7 @@ class source_write_tests
 
         $t->header('Check if all base sources are exist');
 
-        $t->test_source(source_api::TN_READ_REF);
+        $t->test_source(sources::WIKIDATA);
 
     }
 

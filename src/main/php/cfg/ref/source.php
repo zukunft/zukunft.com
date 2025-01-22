@@ -78,9 +78,9 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once WEB_REF_PATH . 'source.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_PATH . 'sources.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use api\ref\source as source_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -98,6 +98,7 @@ use cfg\sandbox\sandbox_typed;
 use cfg\user\user;
 use cfg\user\user_message;
 use shared\json_fields;
+use shared\sources;
 use shared\types\api_type_list;
 
 class source extends sandbox_typed
@@ -285,50 +286,6 @@ class source extends sandbox_typed
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return source_api the filled source frontend api object
-     */
-    function api_obj(): source_api
-    {
-        $api_obj = new source_api();
-        if ($this->is_excluded()) {
-            $api_obj->set_id($this->id());
-            $api_obj->excluded = true;
-        } else {
-            parent::fill_api_obj($api_obj);
-            $api_obj->url = $this->url;
-        }
-        return $api_obj;
-    }
-
-    /**
-     * map a source api json to this model source object
-     * similar to the import_obj function but using the database id instead of names as the unique key
-     * @param array $api_json the api array with the triple values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::URL) {
-                if ($value <> '') {
-                    $this->url = $value;
-                }
-            }
-
-        }
-
-        return $msg;
-    }
-
-
-    /*
      * load
      */
 
@@ -452,6 +409,29 @@ class source extends sandbox_typed
         }
         $vars[json_fields::URL] = $this->url;
         return $vars;
+    }
+
+    /**
+     * map a source api json to this model source object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the triple values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::URL) {
+                if ($value <> '') {
+                    $this->url = $value;
+                }
+            }
+
+        }
+
+        return $msg;
     }
 
 
@@ -668,7 +648,7 @@ class source extends sandbox_typed
      */
     protected function reserved_names(): array
     {
-        return source_api::RESERVED_NAMES;
+        return sources::RESERVED_NAMES;
     }
 
     /**
@@ -676,7 +656,7 @@ class source extends sandbox_typed
      */
     protected function fixed_names(): array
     {
-        return source_api::FIXED_NAMES;
+        return sources::FIXED_NAMES;
     }
 
 

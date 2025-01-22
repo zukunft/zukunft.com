@@ -14,6 +14,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO api class section must always have the functions api_json_array and set_from_api_json
     TODO deprecate all api objects not needed any more
     TODO move triple const to a separate class triples
     TODO all api messages should be optional with or without header

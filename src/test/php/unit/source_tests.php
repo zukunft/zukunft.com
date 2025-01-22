@@ -32,13 +32,13 @@
 
 namespace unit;
 
-use api\ref\source as source_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use cfg\ref\source_type_list;
 use html\ref\source as source_dsp;
 use cfg\ref\source;
 use cfg\db\sql_db;
+use shared\sources;
 use test\test_cleanup;
 
 class source_tests
@@ -76,7 +76,7 @@ class source_tests
 
         $t->subheader('source sql read standard by name');
         $src = new source($usr);
-        $src->set_name(source_api::TN_READ_REF);
+        $src->set_name(sources::WIKIDATA);
         $t->assert_sql_standard($sc, $src);
 
         $t->subheader('source sql write insert');
@@ -88,7 +88,7 @@ class source_tests
         $t->assert_sql_insert($sc, $src, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('source sql write update');
-        $src_renamed = $src->cloned(source_api::TN_RENAMED);
+        $src_renamed = $src->cloned(sources::SYSTEM_TEST_RENAMED);
         $t->assert_sql_update($sc, $src_renamed, $src);
         $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::USER]);
         $t->assert_sql_update($sc, $src_renamed, $src, [sql_type::LOG]);
@@ -117,7 +117,7 @@ class source_tests
         $src = $t->source();
         $t->assert_api_json($src);
         $db_con = new sql_db();
-        $src->code_id = source_api::TC_READ;
+        $src->code_id = sources::SIB_CODE;
         $t->assert_api_msg($db_con, $src);
 
         $t->subheader('source frontend unit tests');

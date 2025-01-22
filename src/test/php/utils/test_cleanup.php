@@ -36,35 +36,27 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'words.php';
 
 use api\component\component as component_api;
-use api\formula\formula as formula_api;
-use api\phrase\phrase as phrase_api;
-use api\ref\source as source_api;
 use api\verb\verb as verb_api;
 use api\view\view as view_api;
-use api\word\triple as triple_api;
-use api\word\word as word_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\db\sql_par;
 use cfg\formula\formula;
 use cfg\formula\formula_link;
 use cfg\formula\formula_type;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\phrase\phrase_type;
 use cfg\ref\ref_type;
 use cfg\ref\source;
 use cfg\phrase\term;
 use cfg\phrase\term_list;
 use cfg\value\value;
 use cfg\word\triple;
-use cfg\value\value_base;
 use cfg\verb\verb;
 use cfg\view\view;
 use cfg\word\word;
 use html\html_base;
 use shared\formulas;
 use shared\library;
+use shared\sources;
 use shared\triples;
 use shared\types\verbs;
 use shared\words;
@@ -297,17 +289,17 @@ class test_cleanup extends test_api
         }
 
         // request to delete the renamed test source
-        $src = $this->load_source(source_api::TN_RENAMED);
+        $src = $this->load_source(sources::SYSTEM_TEST_RENAMED);
         if ($src->id() > 0) {
             $msg = $src->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('source->del of "' . source_api::TN_RENAMED . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->display('source->del of "' . sources::SYSTEM_TEST_RENAMED . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // request to delete the added test sources
-        foreach (source_api::TEST_SOURCES as $src_name) {
-            if ($src_name != source_api::TN_READ_REF) {
+        foreach (sources::TEST_SOURCES as $src_name) {
+            if ($src_name != sources::WIKIDATA) {
                 $src = $this->load_source($src_name);
                 if ($src->id() > 0) {
                     $msg = $src->del();

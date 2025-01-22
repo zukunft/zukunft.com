@@ -111,12 +111,12 @@ use html\system\messages;
 use shared\formulas;
 use shared\json_fields;
 use shared\refs;
+use shared\sources;
 use shared\triples;
 use shared\types\api_type_list;
 use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
 use api\phrase\group as group_api;
-use api\ref\source as source_api;
 use api\result\result as result_api;
 use api\value\value as value_api;
 use api\verb\verb as verb_api;
@@ -2236,9 +2236,9 @@ class create_test_objects extends test_base
     function source(): source
     {
         $src = new source($this->usr1);
-        $src->set(source_api::TI_READ, source_api::TN_READ, source_type::PDF);
-        $src->description = source_api::TD_READ;
-        $src->url = source_api::TU_READ;
+        $src->set(sources::SIB_ID, sources::SIB, source_type::PDF);
+        $src->description = sources::SIB_COM;
+        $src->url = sources::SIB_URL;
         return $src;
     }
 
@@ -2264,7 +2264,7 @@ class create_test_objects extends test_base
         $src = $this->source_filled();
         $src->include();
         $src->set_id(0);
-        $src->set_name(source_api::TN_ADD);
+        $src->set_name(sources::SYSTEM_TEST_ADD);
         return $src;
     }
 
@@ -2274,7 +2274,7 @@ class create_test_objects extends test_base
     function source_ref(): source
     {
         $src = new source($this->usr1);
-        $src->set(source_api::TI_READ_REF, source_api::TN_READ_REF, source_type::CSV);
+        $src->set(sources::WIKIDATA_ID, sources::WIKIDATA, source_type::CSV);
         return $src;
     }
 
@@ -2284,7 +2284,7 @@ class create_test_objects extends test_base
     function source_admin(): source
     {
         $src = $this->source();
-        $src->code_id = source_api::TC_READ;
+        $src->code_id = sources::SIB_CODE;
         return $src;
     }
 
@@ -2294,7 +2294,7 @@ class create_test_objects extends test_base
     function source_add_by_func(): source
     {
         $msk = new source($this->usr1);
-        $msk->set_name(source_api::TN_ADD_VIA_FUNC);
+        $msk->set_name(sources::SYSTEM_TEST_ADD_VIA_FUNC);
         return $msk;
     }
 
@@ -2304,7 +2304,7 @@ class create_test_objects extends test_base
     function source_add_by_sql(): source
     {
         $msk = new source($this->usr1);
-        $msk->set_name(source_api::TN_ADD_VIA_SQL);
+        $msk->set_name(sources::SYSTEM_TEST_ADD_VIA_SQL);
         return $msk;
     }
 
@@ -4283,9 +4283,9 @@ class create_test_objects extends test_base
         global $src_typ_cac;
         $msg = new api_message();
         $src = new source($this->usr1);
-        $src->set_name(source_api::TN_ADD_API);
-        $src->description = source_api::TD_ADD_API;
-        $src->url = source_api::TU_ADD_API;
+        $src->set_name(sources::SYSTEM_TEST_ADD_API);
+        $src->description = sources::SYSTEM_TEST_ADD_API_COM;
+        $src->url = sources::SYSTEM_TEST_ADD_API_URL;
         $src->type_id = $src_typ_cac->id(source_type::PDF);
         $body_array = $src->api_json_array(new api_type_list([]));
         return $msg->api_header_array($db_con, source::class, $this->usr1, $body_array);
@@ -4299,8 +4299,8 @@ class create_test_objects extends test_base
         global $db_con;
         $msg = new api_message();
         $src = new source($this->usr1);
-        $src->set_name(source_api::TN_UPD_API);
-        $src->description = source_api::TD_UPD_API;
+        $src->set_name(sources::SYSTEM_TEST_UPD_API);
+        $src->description = sources::SYSTEM_TEST_UPD_API_COM;
         $body_array = $src->api_json_array(new api_type_list([]));
         return $msg->api_header_array($db_con, source::class, $this->usr1, $body_array);
     }

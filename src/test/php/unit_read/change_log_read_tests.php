@@ -36,17 +36,13 @@ include_once SHARED_PATH . 'triples.php';
 include_once SHARED_PATH . 'words.php';
 
 use api\component\component as component_api;
-use api\formula\formula as formula_api;
-use api\ref\source as source_api;
-use api\word\triple as triple_api;
-use api\value\value as value_api;
 use api\verb\verb as verb_api;
 use api\view\view as view_api;
-use api\word\word as word_api;
 use cfg\log\change_field_list;
 use cfg\log\change_log_list;
 use cfg\word\word;
 use shared\formulas;
+use shared\sources;
 use shared\triples;
 use shared\words;
 use test\test_cleanup;
@@ -146,7 +142,7 @@ class change_log_read_tests
         // ... and if the first entry is the setting the source name
         $first_change = $lst->lst()[0];
         $t->assert('first source change is setting', $first_change->old_value, '');
-        $t->assert('... the name', $first_change->new_value, source_api::TN_READ);
+        $t->assert('... the name', $first_change->new_value, sources::SIB);
 
         // check loading of name changes of view
         $lst = new change_log_list();

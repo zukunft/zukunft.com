@@ -40,8 +40,6 @@ include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once SHARED_PATH . 'words.php';
 
-use api\ref\source as source_api;
-use api\word\word as word_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\config;
@@ -60,15 +58,13 @@ use cfg\value\value;
 use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\user\user;
-use cfg\value\value_base;
 use cfg\view\view;
 use cfg\word\word;
 use cfg\word\word_db;
 use shared\library;
+use shared\sources;
 use shared\words;
 use test\test_cleanup;
-
-global $db_con;
 
 class sandbox_tests
 {
@@ -86,9 +82,9 @@ class sandbox_tests
 
         // test if two sources are supposed to be the same
         $src1 = new source($usr);
-        $src1->set(1, source_api::TN_IPCC_AR6_SYNTHESIS);
+        $src1->set(1, sources::IPCC_AR6_SYNTHESIS);
         $src2 = new source($usr);
-        $src2->set(2, source_api::TN_IPCC_AR6_SYNTHESIS);
+        $src2->set(2, sources::IPCC_AR6_SYNTHESIS);
         $result = $src1->is_same($src2);
         $t->assert("are two sources supposed to be the same", $result, true);
 
@@ -100,10 +96,10 @@ class sandbox_tests
         // a source can have the same name as a word
         $wrd1 = new word($usr);
         $wrd1->set_id( 1);
-        $wrd1->set_name(source_api::TN_IPCC_AR6_SYNTHESIS);
+        $wrd1->set_name(sources::IPCC_AR6_SYNTHESIS);
         $src2 = new source($usr);
         $src2->set_id( 2);
-        $src2->set_name(source_api::TN_IPCC_AR6_SYNTHESIS);
+        $src2->set_name(sources::IPCC_AR6_SYNTHESIS);
         $result = $wrd1->is_same($src2);
         $t->assert("a source is not the same as a word even if they have the same name", $result, false);
 

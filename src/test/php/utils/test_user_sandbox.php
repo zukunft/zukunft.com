@@ -32,11 +32,9 @@
 
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 
-use api\word\word as word_api;
-use api\ref\source as source_api;
-use cfg\phrase\phrase_type;
 use cfg\ref\source;
 use cfg\word\word;
+use shared\sources;
 use shared\words;
 use test\all_tests;
 use shared\types\phrase_type as phrase_type_shared;
@@ -70,7 +68,7 @@ function run_sandbox_test(all_tests $t): void
 
     // create a new source (_sandbox->save case 1)
     $src = new source($t->usr1);
-    $src->set_name(source_api::TN_IPCC_AR6_SYNTHESIS);
+    $src->set_name(sources::IPCC_AR6_SYNTHESIS);
     $result = $src->save()->get_last_message();
     $target = '';
     $t->display('_sandbox->save create a new source', $target, $result);
@@ -86,13 +84,13 @@ function run_sandbox_test(all_tests $t): void
     if ($src->load_by_id($src_id)) {
         $result = $src->name();
     }
-    $target = source_api::TN_IPCC_AR6_SYNTHESIS;
+    $target = sources::IPCC_AR6_SYNTHESIS;
     $t->display('_sandbox->save check created source', $target, $result);
 
     // update the source url by name (_sandbox->save case 2)
     $src = new source($t->usr1);
-    $src->set_name(source_api::TN_IPCC_AR6_SYNTHESIS);
-    $src->url = source_api::TU_IPCC_AR6_SYNTHESIS;
+    $src->set_name(sources::IPCC_AR6_SYNTHESIS);
+    $src->url = sources::IPCC_AR6_SYNTHESIS_URL;
     $result = $src->save()->get_last_message();
     $target = '';
     $t->display('_sandbox->save update the source url by name', $target, $result);
@@ -108,7 +106,7 @@ function run_sandbox_test(all_tests $t): void
     if ($src->load_by_id($src_id)) {
         $result = $src->url;
     }
-    $target = source_api::TU_IPCC_AR6_SYNTHESIS;
+    $target = sources::IPCC_AR6_SYNTHESIS_URL;
     $t->display('_sandbox->save check if the source url has been updates', $target, $result);
 
 }
