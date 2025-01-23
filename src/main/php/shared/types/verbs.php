@@ -68,4 +68,31 @@ class verbs
     const DIRECTION_UP = 'up';        // or backward to get a list of 'from' phrases based on a given to phrase
 
 
+    // already coded verb names
+    // or persevered verbs names for unit and integration tests
+    // TN_* is the name of the verb
+    // TI_* is the database id based on the initial load
+    const TN_READ = "not set";
+    const TI_READ = 1;
+    const TN_IS = "is a";
+    const TI_IS = 2;
+    const TN_PART = "is part of";
+    const TI_PART = 3;
+    const TN_OF = "of";
+    const TI_OF = 4;
+    const TN_TIME_STEP = "time jump";
+    const TN_ADD = "System Test Verb";
+    const TN_SYMBOL = 'is symbol for';
+
+    // word groups for creating the test words and remove them after the test
+    const RESERVED_WORDS = array(
+        self::TN_READ,
+        self::TN_IS,
+        self::TN_PART,
+        self::TN_ADD,
+    );
+    const TEST_WORDS = array(
+        self::TN_ADD
+    );
+
 }

@@ -32,7 +32,6 @@
 namespace cfg\ref;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once API_REF_PATH . 'source_list.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par.php';

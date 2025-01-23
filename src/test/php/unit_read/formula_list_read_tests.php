@@ -34,18 +34,14 @@ namespace unit_read;
 
 include_once SHARED_PATH . 'triples.php';
 
-use api\formula\formula as formula_api;
-use api\word\triple as triple_api;
-use api\verb\verb as verb_api;
-use api\word\word as word_api;
 use cfg\formula\formula;
 use cfg\formula\formula_list;
 use cfg\word\triple;
 use cfg\verb\verb;
 use cfg\word\word;
-use cfg\word\word_list;
 use shared\formulas;
 use shared\triples;
+use shared\types\verbs;
 use shared\words;
 use test\test_cleanup;
 
@@ -96,7 +92,7 @@ class formula_list_read_tests
         // test loading the formulas that use the results related to the verb "time step"
         $test_name = 'formulas that use the verb "time step" are at least "prior"';
         $vrb_time_step = new verb();
-        $vrb_time_step->load_by_name(verb_api::TN_TIME_STEP);
+        $vrb_time_step->load_by_name(verbs::TN_TIME_STEP);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_verb_ref($vrb_time_step);
         $t->assert_contains($test_name, $frm_lst->names(), [formulas::PRIOR]);

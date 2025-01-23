@@ -160,11 +160,6 @@ class word extends sandbox_typed_api implements JsonSerializable
         return new phrase_api($this);
     }
 
-    function term(): term_api
-    {
-        return new term_api($this);
-    }
-
 
     /*
      * interface

@@ -32,13 +32,15 @@
 
 namespace unit;
 
-use api\formula\formula as formula_api;
-use api\verb\verb as verb_api;
-use api\word\word as word_api;
+include_once SHARED_PATH . 'formulas.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'words.php';
+
 use cfg\formula\expression;
 use cfg\phrase\term_list;
 use shared\formulas;
 use shared\library;
+use shared\types\verbs;
 use shared\words;
 use test\test_cleanup;
 
@@ -127,7 +129,7 @@ class expression_tests
         $exp->ref_text($trm_lst);
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
         $result = $elm_grp_lst->dsp_id();
-        $target = '"parts,of" (' . words::TI_PARTS . ',' . verb_api::TI_OF . ') / "total" (' . words::TI_TOTAL
+        $target = '"parts,of" (' . words::TI_PARTS . ',' . verbs::TI_OF . ') / "total" (' . words::TI_TOTAL
             . ') for user 1 (zukunft.com system test)';
         //$target = '"' . formulas::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
@@ -136,7 +138,7 @@ class expression_tests
         $elm_grp_lst = $exp->element_list($trm_lst);
         $result = $elm_grp_lst->dsp_id();
         $target = '"parts","of","total" (element_id '
-            . words::TI_PARTS . ',' . verb_api::TI_OF . ',' . words::TI_TOTAL
+            . words::TI_PARTS . ',' . verbs::TI_OF . ',' . words::TI_TOTAL
             . ') for user 1 (zukunft.com system test)';
         //$target = '"' . formulas::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);

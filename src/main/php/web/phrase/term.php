@@ -45,6 +45,10 @@ include_once WEB_VERB_PATH . 'verb.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
+use html\formula\formula;
+use html\verb\verb;
+use html\word\triple;
+use html\word\word;
 use shared\api;
 use api\phrase\term as term_api;
 use api\sandbox\combine_object as combine_object_api;
@@ -60,7 +64,6 @@ use shared\library;
 class term extends combine_named_dsp
 {
 
-
     /*
      * set and get
      */
@@ -72,24 +75,25 @@ class term extends combine_named_dsp
      */
     function set_from_json_array(array $json_array): user_message
     {
+        $lib = new library();
         $usr_msg = new user_message();
-        if ($json_array[json_fields::OBJECT_CLASS] == term_api::CLASS_WORD) {
+        if ($json_array[json_fields::OBJECT_CLASS] == $lib->class_to_name(word::class)) {
             $wrd = new word_dsp();
             $wrd->set_from_json_array($json_array);
             $this->set_obj($wrd);
             // unlike the cases below the switch of the term id to the object id not needed for words
-        } elseif ($json_array[json_fields::OBJECT_CLASS] == term_api::CLASS_TRIPLE) {
+        } elseif ($json_array[json_fields::OBJECT_CLASS] == $lib->class_to_name(triple::class)) {
             $trp = new triple_dsp();
             $trp->set_from_json_array($json_array);
             $this->set_obj($trp);
             // TODO check if needed
             //$this->set_id($trp->id());
-        } elseif ($json_array[json_fields::OBJECT_CLASS] == term_api::CLASS_VERB) {
+        } elseif ($json_array[json_fields::OBJECT_CLASS] == $lib->class_to_name(verb::class)) {
             $vrb = new verb_dsp();
             $vrb->set_from_json_array($json_array);
             $this->set_obj($vrb);
             //$this->set_id($vrb->id());
-        } elseif ($json_array[json_fields::OBJECT_CLASS] == term_api::CLASS_FORMULA) {
+        } elseif ($json_array[json_fields::OBJECT_CLASS] == $lib->class_to_name(formula::class)) {
             $frm = new formula_dsp();
             $frm->set_from_json_array($json_array);
             $this->set_obj($frm);
@@ -170,17 +174,17 @@ class term extends combine_named_dsp
             $vars[json_fields::OBJECT_CLASS] = $class;
         } else {
             if ($this->is_word()) {
-                $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_WORD;
+                $vars[json_fields::OBJECT_CLASS] = $lib->class_to_name(word::class);
             } elseif ($this->is_triple()) {
-                $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_TRIPLE;
+                $vars[json_fields::OBJECT_CLASS] = $lib->class_to_name(triple::class);
                 $trp = $this->obj();
                 $vars[json_fields::FROM] = $trp->from()->id();
                 $vars[json_fields::VERB] = $trp->verb()->id();
                 $vars[json_fields::TO] = $trp->to()->id();
             } elseif ($this->is_formula()) {
-                $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_FORMULA;
+                $vars[json_fields::OBJECT_CLASS] = $lib->class_to_name(formula::class);
             } elseif ($this->is_verb()) {
-                $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_VERB;
+                $vars[json_fields::OBJECT_CLASS] = $lib->class_to_name(verb::class);
             } else {
                 log_err('cannot create api message for term ' . $this->dsp_id() . ' because class is unknown');
             }

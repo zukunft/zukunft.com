@@ -36,7 +36,6 @@ include_once SHARED_PATH . 'triples.php';
 include_once SHARED_PATH . 'words.php';
 
 use api\component\component as component_api;
-use api\verb\verb as verb_api;
 use api\view\view as view_api;
 use cfg\log\change_field_list;
 use cfg\log\change_log_list;
@@ -44,6 +43,7 @@ use cfg\word\word;
 use shared\formulas;
 use shared\sources;
 use shared\triples;
+use shared\types\verbs;
 use shared\words;
 use test\test_cleanup;
 
@@ -93,7 +93,7 @@ class change_log_read_tests
         // ... and if the first entry is the adding a verb name
         $first_change = $lst->lst()[0];
         $t->assert('first verb change is adding', $first_change->old_value, '');
-        $t->assert('... the verb name', $first_change->new_value, verb_api::TN_READ);
+        $t->assert('... the verb name', $first_change->new_value, verbs::TN_READ);
 
         // check loading of triple name changes of triples
         $lst = new change_log_list();

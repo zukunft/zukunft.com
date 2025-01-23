@@ -33,12 +33,9 @@
 namespace unit_read;
 
 include_once SHARED_PATH . 'triples.php';
+include_once SHARED_PATH . 'verbs.php';
 include_once SHARED_PATH . 'words.php';
 
-use api\formula\formula as formula_api;
-use api\word\triple as triple_api;
-use api\verb\verb as verb_api;
-use api\word\word as word_api;
 use cfg\formula\formula;
 use cfg\phrase\phrase;
 use cfg\phrase\term;
@@ -48,6 +45,7 @@ use cfg\word\word;
 use cfg\word\word_db;
 use shared\formulas;
 use shared\triples;
+use shared\types\verbs;
 use shared\words;
 use test\test_cleanup;
 
@@ -114,10 +112,10 @@ class term_read_tests
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
         $trm->row_mapper_sandbox($db_row, verb::FLD_ID, verb::FLD_NAME);
-        $t->assert($t->name . ' verb row mapper', $trm->name(), verb_api::TN_READ);
+        $t->assert($t->name . ' verb row mapper', $trm->name(), verbs::TN_READ);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), verb::class);
-        $t->assert($t->name . ' verb by object id', $trm_by_obj_id->name(), verb_api::TN_READ);
+        $t->assert($t->name . ' verb by object id', $trm_by_obj_id->name(), verbs::TN_READ);
 
         // test loading by term by id and name
         $trm = new term($t->usr1);

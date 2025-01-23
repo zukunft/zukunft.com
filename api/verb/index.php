@@ -42,12 +42,10 @@ include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VERB_PATH . 'verb.php';
-include_once API_VERB_PATH . 'verb.php';
 
 use controller\controller;
 use cfg\user\user;
 use cfg\verb\verb;
-use api\verb\verb as verb_api;
 use shared\api;
 
 // open database
@@ -58,7 +56,7 @@ $vrb_id = $_GET[api::URL_VAR_ID] ?? 0;
 $vrb_name = $_GET[api::URL_VAR_NAME] ?? '';
 
 $msg = '';
-$result = new verb_api(); // reset the html code var
+$result = ''; // reset the json message string
 
 // load the session user parameters
 $usr = new user;

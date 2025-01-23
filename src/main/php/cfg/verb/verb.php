@@ -58,11 +58,11 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
 use api\system\messages as msg_enum;
-use api\verb\verb as verb_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -85,6 +85,7 @@ use html\html_base;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
+use shared\types\verbs;
 
 class verb extends type_object
 {
@@ -1070,7 +1071,7 @@ class verb extends type_object
         $class_name = $lib->class_to_name($this::class);
 
         if (!$usr->is_system()) {
-            if (in_array($this->name, verb_api::RESERVED_WORDS)) {
+            if (in_array($this->name, verbs::RESERVED_WORDS)) {
                 // the admin user needs to add the read test word during initial load
                 if (!$usr->is_admin()) {
                     $usr_msg->add_message('"' . $this->name() . '" ' . $msg_res . ' ' . $class_name . ' ' . $msg_for);

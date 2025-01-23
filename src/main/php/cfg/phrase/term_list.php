@@ -48,7 +48,6 @@ include_once MODEL_PHRASE_PATH . 'term.php';
 include_once WEB_PHRASE_PATH . 'term_list.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\phrase\term_list as term_list_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
@@ -372,6 +371,58 @@ class term_list extends sandbox_list_named
         }
         return $phr_lst;
     }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * removes all terms from this list that are not in the given list
+     * @param term_list $new_lst the terms that should remain in this list
+     * @returns term_list with the terms of this list and the new list
+     */
+    function intersect(term_list $new_lst): term_list
+    {
+        if (!$new_lst->is_empty()) {
+            if ($this->is_empty()) {
+                $this->set_lst($new_lst->lst());
+            } else {
+                // next line would work if array_intersect could handle objects
+                // $this->lst() = array_intersect($this->lst(), $new_lst->lst());
+                $found_lst = new term_list($this->user());
+                foreach ($new_lst->lst() as $trm) {
+                    if (in_array($trm->id(), $this->id_lst())) {
+                        $found_lst->add($trm);
+                    }
+                }
+                $this->set_lst($found_lst->lst());
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * remove all terms from the given list from this list
+     * @param term_list $del_lst the terms that should be removed
+     * @return term_list this
+     */
+    function remove(term_list $del_lst): term_list
+    {
+        if (!$del_lst->is_empty()) {
+            // next line would work if array_intersect could handle objects
+            // $this->lst() = array_intersect($this->lst(), $new_lst->lst());
+            $remain_lst = new term_list($this->user());
+            foreach ($this->lst() as $trm) {
+                if (!in_array($trm->id(), $del_lst->id_lst())) {
+                    $remain_lst->add($trm);
+                }
+            }
+            $this->set_lst($remain_lst->lst());
+        }
+        return $this;
+    }
+
 
 
     /*

@@ -65,7 +65,6 @@ namespace cfg\ref;
 // the order is first the extends and then in alphabetic order except word before triple
 // the order should in any case match the use order but with the additional files which does not need to be used
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once API_REF_PATH . 'ref.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';

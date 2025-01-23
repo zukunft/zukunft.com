@@ -58,7 +58,6 @@
 namespace cfg\ref;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
-include_once API_REF_PATH . 'source.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';

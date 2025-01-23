@@ -37,9 +37,6 @@ include_once API_WORD_PATH . 'triple.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'triples.php';
 
-use api\verb\verb as verb_api;
-use api\word\word as word_api;
-use api\word\triple as triple_api;
 use cfg\word\word;
 use cfg\verb\verb;
 use cfg\verb\verb_list;
@@ -133,8 +130,8 @@ class verb_read_tests
         // TODO check why this differs depending on the database used
         if ($result == 'is an acronym for') {
             $target = 'is an acronym for';
-        } elseif ($result == verb_api::TN_IS) {
-            $target = verb_api::TN_IS;
+        } elseif ($result == verbs::TN_IS) {
+            $target = verbs::TN_IS;
         } elseif ($result == 'uses') {
             $target = 'uses';
         } elseif ($result == 'is measure type for') {

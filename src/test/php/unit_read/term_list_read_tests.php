@@ -36,15 +36,12 @@ include_once SHARED_PATH . 'triples.php';
 include_once SHARED_PATH . 'formulas.php';
 include_once SHARED_PATH . 'words.php';
 
-use api\formula\formula as formula_api;
-use api\verb\verb as verb_api;
-use api\word\triple as triple_api;
-use api\word\word as word_api;
 use cfg\phrase\term_list;
 use cfg\phrase\trm_ids;
 use shared\formulas;
 use shared\library;
 use shared\triples;
+use shared\types\verbs;
 use shared\words;
 use test\test_cleanup;
 
@@ -58,7 +55,7 @@ class term_list_read_tests
         $lib = new library();
         $t->name = 'term list read db->';
 
-        $t->header('Test the term list class (classes/term_list.php)');
+        $t->header('term list database read unit tests');
 
         $test_name = 'loading phrase names with pattern return the expected word';
         $lst = new term_list($t->usr1);
@@ -67,9 +64,9 @@ class term_list_read_tests
         $t->assert_contains($test_name, $lst->names(), words::MATH);
         $test_name = 'loading phrase names with pattern return the expected verb';
         $lst = new term_list($t->usr1);
-        $pattern = substr(verb_api::TN_READ, 0, -1);
+        $pattern = substr(verbs::TN_READ, 0, -1);
         $lst->load_names($pattern);
-        $t->assert_contains($test_name, $lst->names(), verb_api::TN_READ);
+        $t->assert_contains($test_name, $lst->names(), verbs::TN_READ);
         $test_name = 'loading phrase names with pattern return the expected triple';
         $lst = new term_list($t->usr1);
         $pattern = substr(triples::MATH_CONST, 0, -1);
@@ -87,7 +84,7 @@ class term_list_read_tests
         $result = $trm_lst->name();
         $target = '"' . triples::MATH_CONST . '","' .
             words::MATH . '","' .
-            verb_api::TN_READ . '","' .
+            verbs::TN_READ . '","' .
             formulas::SCALE_TO_SEC . '"'; // order adjusted based on the number of usage
         $t->assert($test_name . $trm_lst->dsp_id(), $result, $target);
 

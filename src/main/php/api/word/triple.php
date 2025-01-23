@@ -142,11 +142,6 @@ class triple extends sandbox_typed_api
         return new phrase_api($this);
     }
 
-    function term(): term_api
-    {
-        return new term_api($this);
-    }
-
 
     /*
      * type functions

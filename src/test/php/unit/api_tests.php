@@ -53,7 +53,6 @@ include_once SHARED_PATH . 'words.php';
 include_once WEB_HELPER_PATH . 'data_object.php';
 
 use api\component\component as component_api;
-use api\verb\verb as verb_api;
 use api\value\value as value_api;
 use api\view\view as view_api;
 use cfg\component\component;
@@ -89,6 +88,7 @@ use shared\formulas;
 use shared\library;
 use shared\refs;
 use shared\sources;
+use shared\types\verbs;
 use shared\views as view_shared;
 use shared\words;
 use test\test_cleanup;
@@ -121,7 +121,7 @@ class api_tests
         $t->assert_api_get_json(word::class, api::URL_VAR_WORD_ID);
         $t->assert_api_get_by_text(word::class, words::MATH);
         $t->assert_api_get(verb::class);
-        $t->assert_api_get_by_text(verb::class, verb_api::TN_READ);
+        $t->assert_api_get_by_text(verb::class, verbs::TN_READ);
         $t->assert_api_get(triple::class);
         //$t->assert_api_get_by_text(triple::class, triples::TN_READ);
         //$t->assert_api_get(phrase::class);

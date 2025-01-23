@@ -43,13 +43,11 @@ include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_LOG_PATH . 'change_log_list.php';
 include_once MODEL_WORD_PATH . 'word.php';
-include_once API_PHRASE_PATH . 'term_list.php';
 
 use controller\controller;
 use cfg\user\user;
 use cfg\log\change_log_list;
 use cfg\word\word;
-use api\phrase\term_list as term_list_api;
 use shared\api;
 
 // open database

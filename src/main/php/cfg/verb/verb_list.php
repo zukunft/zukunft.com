@@ -48,7 +48,6 @@ include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\verb\verb as verb_api;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
@@ -63,8 +62,6 @@ use html\html_base;
 use shared\enum\foaf_direction;
 use shared\library;
 use shared\types\verbs;
-
-global $vrb_cac;
 
 class verb_list extends type_list
 {
@@ -245,7 +242,7 @@ class verb_list extends type_list
         $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(2);
-        $vrb->set_name(verb_api::TN_IS);
+        $vrb->set_name(verbs::TN_IS);
         $vrb->code_id = verbs::IS;
         $this->add_verb($vrb);
         $vrb = new verb();

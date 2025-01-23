@@ -35,9 +35,6 @@ namespace unit_write;
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'triples.php';
 
-use api\word\triple as triple_api;
-use api\word\word as word_api;
-use api\verb\verb as verb_api;
 use cfg\formula\formula;
 use cfg\log\change_link;
 use cfg\log\change_table_list;
@@ -64,7 +61,7 @@ class triple_write_tests
         $t->header('triple db write tests');
 
         $t->subheader('prepare triple write tests');
-        $vrb_is_id = $t->assert_verb_id(verbs::IS, verb_api::TI_IS, 'load the verb used for testing');
+        $vrb_is_id = $t->assert_verb_id(verbs::IS, verbs::TI_IS, 'load the verb used for testing');
         $t->test_word(words::TN_ADD_VIA_SQL);
         $t->test_word(words::TN_ADD_VIA_FUNC);
 

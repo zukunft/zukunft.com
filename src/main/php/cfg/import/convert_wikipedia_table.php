@@ -37,9 +37,9 @@ include_once EXPORT_PATH . 'export.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\verb\verb as verb_api;
 use cfg\export\export;
 use cfg\phrase\phrase_list;
 use cfg\user\user;
@@ -47,6 +47,7 @@ use shared\types\phrase_type as phrase_type_shared;
 use shared\library;
 use DateTime;
 use DateTimeInterface;
+use shared\types\verbs;
 
 class convert_wikipedia_table
 {
@@ -311,7 +312,7 @@ class convert_wikipedia_table
                             // assume that the row name has an "is a" relation to the column name
                             $trp = [];
                             $trp[export::FROM] = $phr_name;
-                            $trp[export::VERB] = verb_api::TN_IS;
+                            $trp[export::VERB] = verbs::TN_IS;
                             if ($row_name_out != '') {
                                 $trp[export::TO] = $row_name_out;
                             } else {
@@ -323,7 +324,7 @@ class convert_wikipedia_table
                             if (in_array($col_names[$i], $list_of_symbols)) {
                                 $trp = [];
                                 $trp[export::FROM] = $phr_name;
-                                $trp[export::VERB] = verb_api::TN_SYMBOL;
+                                $trp[export::VERB] = verbs::TN_SYMBOL;
                                 $trp[export::TO] = $row_key;
                                 $triples[] = $trp;
                             }
@@ -340,19 +341,19 @@ class convert_wikipedia_table
                     $row_key = $row_key[0];
                 }
                 $trp[export::FROM] = $row_key;
-                $trp[export::VERB] = verb_api::TN_IS;
+                $trp[export::VERB] = verbs::TN_IS;
                 $trp[export::TO] = $row_name_out;
                 $triples[] = $trp;
 
                 $trp = [];
                 $trp[export::FROM] = $wiki_row[$pos_col];
-                $trp[export::VERB] = verb_api::TN_IS;
+                $trp[export::VERB] = verbs::TN_IS;
                 $trp[export::TO] = $context_array[1] . ' ' . $col_name_out;
                 $triples[] = $trp;
 
                 $trp = [];
                 $trp[export::FROM] = $wiki_row[$pos_col];
-                $trp[export::VERB] = verb_api::TN_SYMBOL;
+                $trp[export::VERB] = verbs::TN_SYMBOL;
                 $trp[export::TO] = $row_key;
                 $triples[] = $trp;
             }

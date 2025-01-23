@@ -34,8 +34,6 @@ namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
-use api\verb\verb as verb_api;
-use api\word\word as word_api;
 use cfg\verb\verb;
 use shared\enum\foaf_direction;
 use shared\types\verbs;
@@ -56,12 +54,12 @@ class verb_write_tests
         $vrb = new verb;
         $vrb->set_user($t->usr1);
         $vrb->load_by_id($vrb_cac->id(verbs::IS));
-        $t->assert('verb->load ', $vrb->name(), verb_api::TN_IS);
+        $t->assert('verb->load ', $vrb->name(), verbs::TN_IS);
 
         // test the creation of a new verb
         $vrb = new verb;
         $vrb->set_user($t->usr1);
-        $vrb->set_name(verb_api::TN_ADD);
+        $vrb->set_name(verbs::TN_ADD);
         $result = $vrb->save()->get_last_message();
         $t->assert('verb->add', $result);
 
@@ -72,7 +70,7 @@ class verb_write_tests
         // test verb not yet used can be deleted
         $vrb = new verb;
         $vrb->set_user($t->usr1);
-        $vrb->load_by_name(verb_api::TN_ADD);
+        $vrb->load_by_name(verbs::TN_ADD);
         $result = $vrb->del();
         $t->assert('verb->del ', $result);
 
@@ -88,7 +86,7 @@ class verb_write_tests
         // check the loading of the "is a" verb
         $wrd_ZH = $t->load_word(words::TN_ZH);
         $vrb_lst = $wrd_ZH->link_types(foaf_direction::UP);
-        $t->assert_contains('verb_list->link_types ', $vrb_lst->db_id_list(), [verb_api::TN_IS]);
+        $t->assert_contains('verb_list->link_types ', $vrb_lst->db_id_list(), [verbs::TN_IS]);
     }
 
 }

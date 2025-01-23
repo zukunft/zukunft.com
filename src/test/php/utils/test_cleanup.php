@@ -36,7 +36,6 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'words.php';
 
 use api\component\component as component_api;
-use api\verb\verb as verb_api;
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_link;
@@ -444,7 +443,7 @@ class test_cleanup extends test_api
             $class = match ($name) {
                 triples::PI_NAME => triple::class,
                 formulas::SCALE_TO_SEC, formulas::THIS_NAME, formulas::PRIOR => formula::class,
-                verb_api::TN_READ, verbs::CAN_CONTAIN_NAME, verbs::CAN_CONTAIN_NAME_REVERSE => verb::class,
+                verbs::TN_READ, verbs::CAN_CONTAIN_NAME, verbs::CAN_CONTAIN_NAME_REVERSE => verb::class,
                 default => word::class,
             };
             $trm = new term($usr);

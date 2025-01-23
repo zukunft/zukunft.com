@@ -119,7 +119,6 @@ use api\component\component as component_api;
 use api\phrase\group as group_api;
 use api\result\result as result_api;
 use api\value\value as value_api;
-use api\verb\verb as verb_api;
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_link;
@@ -907,7 +906,7 @@ class create_test_objects extends test_base
      */
     function verb(): verb
     {
-        $vrb = new verb(verb_api::TI_READ, verb_api::TN_READ, verbs::NOT_SET);
+        $vrb = new verb(verbs::TI_READ, verbs::TN_READ, verbs::NOT_SET);
         $vrb->set_user($this->usr1);
         return $vrb;
     }
@@ -917,7 +916,7 @@ class create_test_objects extends test_base
      */
     function verb_is(): verb
     {
-        return new verb(verb_api::TI_IS, verb_api::TN_IS, verbs::IS);
+        return new verb(verbs::TI_IS, verbs::TN_IS, verbs::IS);
     }
 
     /**
@@ -925,7 +924,7 @@ class create_test_objects extends test_base
      */
     function verb_part(): verb
     {
-        return new verb(verb_api::TI_PART, verb_api::TN_PART, verbs::IS_PART_OF);
+        return new verb(verbs::TI_PART, verbs::TN_PART, verbs::IS_PART_OF);
     }
 
     /**
@@ -933,7 +932,7 @@ class create_test_objects extends test_base
      */
     function verb_of(): verb
     {
-        $vrb = new verb(verb_api::TI_OF, verb_api::TN_OF, verbs::CAN_CONTAIN_NAME_REVERSE);
+        $vrb = new verb(verbs::TI_OF, verbs::TN_OF, verbs::CAN_CONTAIN_NAME_REVERSE);
         $vrb->set_user($this->usr1);
         return $vrb;
     }
@@ -3282,7 +3281,7 @@ class create_test_objects extends test_base
         $chg->set_action(change_action::ADD);
         $chg->set_table(change_table_list::TRIPLE);
         $chg->new_from_id = words::CONST_ID;
-        $chg->new_link_id = verb_api::TI_PART;
+        $chg->new_link_id = verbs::TI_PART;
         $chg->new_to_id = words::MATH_ID;
         $chg->row_id = 1;
         return $chg;

@@ -41,9 +41,11 @@ namespace html\sandbox;
 
 include_once HTML_PATH . 'rest_ctrl.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_WORD_PATH . 'word.php';
 
 use html\rest_ctrl as api_dsp;
 use html\user\user_message;
+use html\word\word;
 
 class combine_object
 {
@@ -67,6 +69,8 @@ class combine_object
     {
         if ($api_json != null) {
             $this->set_from_json($api_json);
+        } else {
+            $this->set_obj(new word());
         }
     }
 

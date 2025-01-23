@@ -45,10 +45,13 @@ include_once SHARED_PATH . 'json_fields.php';
 
 use api\formula\formula as formula_api;
 use api\sandbox\combine_named as combine_named_api;
-use api\sandbox\combine_object as combine_object_api;
 use api\verb\verb as verb_api;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
+use cfg\formula\formula;
+use cfg\verb\verb;
+use cfg\word\triple;
+use cfg\word\word;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
@@ -59,13 +62,6 @@ use shared\json_fields;
 
 class term extends combine_named_api implements JsonSerializable
 {
-
-    // the json field name in the api json message to identify if the term is a word, triple, verb or formula
-    const CLASS_WORD = 'word';
-    const CLASS_TRIPLE = 'triple';
-    const CLASS_VERB = 'verb';
-    const CLASS_FORMULA = 'formula';
-
 
     /*
      * construct and map
@@ -80,11 +76,6 @@ class term extends combine_named_api implements JsonSerializable
     /*
      * set and get
      */
-
-    function set_term_obj(word_api|triple_api|verb_api|formula_api $obj): void
-    {
-        $this->obj = $obj;
-    }
 
     /**
      * TODO remove this logic from the API and keep it only in the model, the database view and the frontend
@@ -227,13 +218,13 @@ class term extends combine_named_api implements JsonSerializable
         $vars = parent::jsonSerialize();
         $vars[json_fields::ID] = $this->obj_id();
         if ($this->is_word()) {
-            $vars[json_fields::OBJECT_CLASS] = self::CLASS_WORD;
+            $vars[json_fields::OBJECT_CLASS] = word::class;
         } elseif ($this->is_triple()) {
-            $vars[json_fields::OBJECT_CLASS] = self::CLASS_TRIPLE;
+            $vars[json_fields::OBJECT_CLASS] = triple::class;
         } elseif ($this->is_formula()) {
-            $vars[json_fields::OBJECT_CLASS] = self::CLASS_FORMULA;
+            $vars[json_fields::OBJECT_CLASS] = formula::class;
         } elseif ($this->is_verb()) {
-            $vars[json_fields::OBJECT_CLASS] = self::CLASS_VERB;
+            $vars[json_fields::OBJECT_CLASS] = verb::class;
         } else {
             log_err('class ' . $this->obj()::class . ' of term ' . $this->name() . ' not expected');
         }

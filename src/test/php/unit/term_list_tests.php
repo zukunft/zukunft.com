@@ -33,12 +33,7 @@ include_once SHARED_PATH . 'formulas.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'words.php';
 
-use api\formula\formula as formula_api;
-use api\word\triple as triple_api;
-use api\verb\verb as verb_api;
-use api\word\word as word_api;
 use cfg\db\sql_creator;
-use cfg\phrase\phrase_list;
 use cfg\phrase\trm_ids;
 use html\html_base;
 use html\phrase\term_list as term_list_dsp;
@@ -75,7 +70,7 @@ class term_list_tests
         $t->name = 'term_list->';
         $t->resource_path = 'db/term/';
 
-        $t->header('Unit tests of the term list class (src/main/php/model/phrase/term_list.php)');
+        $t->header('term list unit tests');
 
         $html = new html_base();
 
@@ -89,7 +84,7 @@ class term_list_tests
         // load only the names
         $phr_lst = new term_list($usr);
         $t->assert_sql_names($sc, $phr_lst, new term($usr));
-        $t->assert_sql_names($sc, $phr_lst, new term($usr), verb_api::TN_IS);
+        $t->assert_sql_names($sc, $phr_lst, new term($usr), verbs::TN_IS);
 
         $trm_lst = new term_list($usr);
         $trm_ids = new trm_ids(array(3, -2, 4, -7));

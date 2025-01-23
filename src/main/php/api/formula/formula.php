@@ -38,11 +38,7 @@ include_once API_WORD_PATH . 'word.php';
 include_once API_VERB_PATH . 'verb.php';
 include_once SHARED_PATH . 'words.php';
 
-use api\phrase\term as term_api;
 use api\sandbox\sandbox_typed as sandbox_typed_api;
-use api\word\word as word_api;
-use api\verb\verb as verb_api;
-use shared\words;
 
 class formula extends sandbox_typed_api
 {
@@ -83,15 +79,6 @@ class formula extends sandbox_typed_api
         return $this->user_text;
     }
 
-
-    /*
-     * cast
-     */
-
-    function term(): term_api
-    {
-        return new term_api($this);
-    }
 
 
     /*
