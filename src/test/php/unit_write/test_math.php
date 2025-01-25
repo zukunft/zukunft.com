@@ -106,7 +106,7 @@ function run_math_test(all_tests $t): void
     // test zuc_is_math_symbol_or_num
     $formula_part_text = "/{f19}";
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(words::TN_ABB, words::TN_SALES, words::TN_MIO));
+    $wrd_lst->load_by_names(array(words::TN_ABB, words::TN_SALES, words::MIO));
     $target = 1;
     $result = $calc->is_math_symbol_or_num($formula_part_text);
     $t->display(", zuc_is_math_symbol_or_num: the result for formula \"" . $formula_part_text . "\"", $target, $result);

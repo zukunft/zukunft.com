@@ -107,13 +107,13 @@ class word_write_tests
         $t->assert('word->is_scaling for ' . words::TWN_CHF, $result, false);
 
         // is scaling
-        $wrd_scaling = $t->test_word(words::TN_MIO, phrase_type_shared::SCALING);
+        $wrd_scaling = $t->test_word(words::MIO, phrase_type_shared::SCALING);
         $result = $wrd_scaling->is_scaling();
-        $t->assert('word->is_scaling for ' . words::TN_MIO, $result, true);
+        $t->assert('word->is_scaling for ' . words::MIO, $result, true);
 
         // is not percent
         $result = $wrd_scaling->is_percent();
-        $t->assert('word->is_percent for ' . words::TN_MIO, $result, false);
+        $t->assert('word->is_percent for ' . words::MIO, $result, false);
 
         // is percent
         $wrd_pct = $t->test_word(words::TN_PCT, phrase_type_shared::PERCENT);
@@ -209,11 +209,11 @@ class word_write_tests
         // which implies that Canton contains Zurich and City contains Zurich
         // to avoid conflicts the test words actually used are 'System Test Word Category e.g. Canton' as category word
         // and 'System Test Word Member e.g. Zurich' as member
-        $wrd_canton = $t->test_word(words::TN_CANTON);
-        $wrd_city = $t->test_word(words::TN_CITY);
-        $wrd_ZH = $t->test_word(words::TN_ZH);
-        $t->test_triple(words::TN_ZH, verbs::IS, words::TN_CANTON);
-        $t->test_triple(words::TN_ZH, verbs::IS, words::TN_CITY);
+        $wrd_canton = $t->test_word(words::CANTON);
+        $wrd_city = $t->test_word(words::CITY);
+        $wrd_ZH = $t->test_word(words::ZH);
+        $t->test_triple(words::ZH, verbs::IS, words::CANTON);
+        $t->test_triple(words::ZH, verbs::IS, words::CITY);
 
         // word is e.g. Zurich as a Canton ...
         $target = $wrd_canton->name();
@@ -223,7 +223,7 @@ class word_write_tests
         } else {
             $result = '';
         }
-        $t->display('word->is "' . words::TN_ZH . '"', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->display('word->is "' . words::ZH . '"', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // ... and Zurich is a City
         $target = $wrd_city->name();
@@ -233,7 +233,7 @@ class word_write_tests
         } else {
             $result = '';
         }
-        $t->display('word->and is "' . words::TN_ZH . '"', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->display('word->and is "' . words::ZH . '"', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // ... word is including the start word
         $target = $wrd_ZH->name();
@@ -242,7 +242,7 @@ class word_write_tests
         } else {
             $result = '';
         }
-        $t->display('word->is for "' . words::TN_ZH . '" including the start word', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->display('word->is for "' . words::ZH . '" including the start word', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // create the test words and relations for a parent child relation without inheritance
         // e.g. ...
@@ -554,7 +554,7 @@ class word_write_tests
         }
         $prev_word_name = null;
         foreach (words::TEST_WORDS_TIME_YEAR as $word_name) {
-            $t->test_triple($word_name, verbs::IS, words::TN_YEAR);
+            $t->test_triple($word_name, verbs::IS, words::YEAR_CAP);
             $t->test_word($word_name, phrase_type_shared::TIME);
             if ($prev_word_name != null) {
                 $t->test_triple($word_name, verbs::FOLLOW, $prev_word_name);

@@ -40,24 +40,28 @@ include_once WEB_RESULT_PATH . 'result_list.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\component\component as component_api;
-use api\phrase\group as group_api;
 use api\phrase\phrase as phrase_api;
 use api\phrase\phrase_list as phrase_list_api;
-use api\result\result as result_api;
 use api\value\value as value_api;
 use api\view\view as view_api;
 use api\word\word as word_api;
 use cfg\component\component;
+use cfg\group\group;
+use cfg\phrase\phrase_list;
+use cfg\result\result;
+use cfg\value\value;
 use cfg\verb\verb;
 use cfg\verb\verb_list;
-use cfg\view\view;
+use html\value\value as value_dsp;
 use html\button;
 use html\component\component as component_dsp;
 use html\html_base;
+use html\phrase\phrase_list as phrase_list_dsp;
 use html\result\result as result_dsp;
 use html\result\result_list as result_list_dsp;
 use html\system\messages;
 use shared\library;
+use shared\types\api_type;
 use shared\types\component_type as comp_type_shared;
 use shared\types\verbs;
 use shared\views as view_shared;
@@ -128,86 +132,72 @@ class base_ui_tests
 
         $t->subheader('HTML table tests');
 
-        // create a test set of phrase
-        $phr_id = 1;
-        $phr_zh = $this->phrase_api_word( $phr_id, words::TN_ZH); $phr_id++;
-        $phr_city = $this->phrase_api_word($phr_id, words::TN_CITY); $phr_id++;
-        $phr_canton = $this->phrase_api_word($phr_id, words::TN_CANTON); $phr_id++;
-        $phr_ch = $this->phrase_api_word($phr_id, words::TN_CH); $phr_id++;
-        $phr_inhabitant = $this->phrase_api_word($phr_id, words::TN_INHABITANT); $phr_id++;
-        $phr_2019 = $this->phrase_api_word($phr_id, words::TN_2019); $phr_id++;
-        $phr_mio = $this->phrase_api_word($phr_id, words::TN_MIO_SHORT);
-        $phr_pct = $this->phrase_api_word($phr_id, words::TN_PCT);
-
         // create a test set of phrase groups
-        $grp_id = 1;
-        $phr_grp_city = new group_api($grp_id); $grp_id++;
-        $phr_grp_city->add($phr_zh);
-        $phr_grp_city->add($phr_city);
-        $phr_grp_city->add($phr_inhabitant);
-        $phr_grp_city->add($phr_2019);
-        $phr_grp_canton = new group_api($grp_id); $grp_id++;
-        $phr_grp_canton->add($phr_zh);
-        $phr_grp_canton->add($phr_canton);
-        $phr_grp_canton->add($phr_inhabitant);
-        $phr_grp_canton->add($phr_mio);
-        $phr_grp_canton->add($phr_2019);
-        $phr_grp_ch = new group_api($grp_id);
-        $phr_grp_ch->add($phr_ch);
-        $phr_grp_ch->add($phr_mio);
-        $phr_grp_ch->add($phr_inhabitant);
-        $phr_grp_ch->add($phr_2019);
-        $phr_grp_city_pct = new group_api($grp_id); $grp_id++;
-        $phr_grp_city_pct->add($phr_zh);
-        $phr_grp_city_pct->add($phr_city);
-        $phr_grp_city_pct->add($phr_inhabitant);
-        $phr_grp_city_pct->add($phr_2019);
-        $phr_grp_city_pct->add($phr_pct);
-        $phr_grp_canton_pct = new group_api($grp_id); $grp_id++;
-        $phr_grp_canton_pct->add($phr_zh);
-        $phr_grp_canton_pct->add($phr_canton);
-        $phr_grp_canton_pct->add($phr_inhabitant);
-        $phr_grp_canton_pct->add($phr_2019);
-        $phr_grp_canton_pct->add($phr_pct);
-        $phr_lst_context = new phrase_list_api();
-        $phr_lst_context->add($phr_inhabitant);
+        $t->phrase_list_zh_mio();
+        $grp_city = new group($t->usr1);
+        $grp_city->set_phrase_list($t->phrase_list_zh_city());
+        $grp_canton = new group($t->usr1);
+        $grp_canton->set_phrase_list($t->phrase_list_canton_mio());
+        $grp_ch = new group($t->usr1);
+        $grp_ch->set_phrase_list($t->phrase_list_ch_mio());
+        $grp_city_pct = new group($t->usr1);
+        $grp_city_pct->set_phrase_list($t->phrase_list_zh_city_pct());
+        $grp_canton_pct = new group($t->usr1);
+        $grp_canton_pct->set_phrase_list($t->phrase_list_canton_pct());
+        $phr_lst_context = new phrase_list($t->usr1);
+        $phr_lst_context->add($t->word_inhabitant()->phrase());
 
         // create the value for the inhabitants of the city of zurich
-        $val_id = 1;
-        $val_city = new value_api($val_id); $val_id++;
-        $val_city->set_grp($phr_grp_city);
+        $val_city = new value($t->usr1);
+        $val_city->set_grp($grp_city);
         $val_city->set_number(value_api::TV_CITY_ZH_INHABITANTS_2019);
+        $val_city_dsp = new value_dsp($val_city->api_json([api_type::INCL_PHRASES]));
+        $val_city_html = $val_city_dsp->name_and_value();
+        $t->assert_text_contains('', $val_city_html, words::CITY);
 
         // create the value for the inhabitants of the city of zurich
-        $val_canton = new value_api($val_id); $val_id++;
-        $val_canton->set_grp($phr_grp_canton);
+        $val_canton = new value($t->usr1);
+        $val_canton->set_grp($grp_canton);
         $val_canton->set_number(value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
+        $val_canton_dsp = new value_dsp($val_canton->api_json([api_type::INCL_PHRASES]));
+        $val_canton_html = $val_canton_dsp->name_and_value();
+        $t->assert_text_contains('', $val_canton_html, words::CANTON);
 
         // create the value for the inhabitants of Switzerland
-        $val_ch = new value_api($val_id);
-        $val_ch->set_grp($phr_grp_ch);
+        $val_ch = new value($t->usr1);
+        $val_ch->set_grp($grp_ch);
         $val_ch->set_number(value_api::TV_CH_INHABITANTS_2019_IN_MIO);
+        $val_ch_dsp = new value_dsp($val_ch->api_json([api_type::INCL_PHRASES]));
+        $val_ch_html = $val_ch_dsp->name_and_value();
+        $t->assert_text_contains('', $val_ch_html, round(value_api::TV_CH_INHABITANTS_2019_IN_MIO,2));
 
         // create the formula result for the inhabitants of the city of zurich
-        $res_id = 1;
-        $res_city = new result_api($res_id); $res_id++;
-        $res_city->set_grp($phr_grp_city_pct);
+        $res_city = new result($t->usr1);
+        $res_city->set_grp($grp_city_pct);
         $ch_val_scaled = value_api::TV_CH_INHABITANTS_2019_IN_MIO * 1000000;
         $res_city->set_number(value_api::TV_CITY_ZH_INHABITANTS_2019 / $ch_val_scaled);
+        $res_city_dsp = new value_dsp($res_city->api_json([api_type::INCL_PHRASES]));
+        $res_city_html = $res_city_dsp->name_and_value();
+        $t->assert_text_contains('', $res_city_html, words::CITY);
 
-        // create the formula result for the inhabitants of the city of zurich
-        $res_canton = new result_api($res_id); $res_id++;
-        $res_canton->set_grp($phr_grp_canton_pct);
+        // create the formula result for the inhabitants of the canton of zurich
+        $res_canton = new result($t->usr1);
+        $res_canton->set_grp($grp_canton_pct);
         $res_canton->set_number(value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO / value_api::TV_CH_INHABITANTS_2019_IN_MIO);
+        $res_canton_dsp = new value_dsp($res_canton->api_json([api_type::INCL_PHRASES]));
+        $res_canton_html = $res_canton_dsp->display_value_linked('');
+        $res_canton_number = round((value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO / value_api::TV_CH_INHABITANTS_2019_IN_MIO) * 100,2) . '%';
+        $t->assert_text_contains('', $res_canton_html, $res_canton_number);
 
         // create the formula result list and the table to display the results
         $res_lst = new result_list_dsp();
-        $res_lst->add(new result_dsp($res_city->get_json()));
-        $res_lst->add(new result_dsp($res_canton->get_json()));
+        $res_lst->add(new result_dsp($res_city->api_json([api_type::INCL_PHRASES])));
+        $res_lst->add(new result_dsp($res_canton->api_json([api_type::INCL_PHRASES])));
         $t->html_test($res_lst->table(), '', 'table_result', $t);
 
         // create the same table as above, but within a context
-        $t->html_test($res_lst->table($phr_lst_context->dsp_obj()), '', 'table_result_context', $t);
+        $phr_lst_context_dsp = new phrase_list_dsp($phr_lst_context->api_json([api_type::INCL_PHRASES]));
+        $t->html_test($res_lst->table($phr_lst_context_dsp), '', 'table_result_context', $t);
 
 
         $t->subheader('View component tests');

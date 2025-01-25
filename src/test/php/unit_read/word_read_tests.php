@@ -100,7 +100,8 @@ class word_read_tests
         $t->assert($test_name, $dsp_id, 0);
 
 
-        $t->header('Unit database tests of the word list class (src/main/php/model/word/word_list.php)');
+        // TODO move to the other word list tests
+        $t->header('word list database unit tests');
         $t->name = 'word list read db->';
 
 
@@ -110,7 +111,7 @@ class word_read_tests
         $wrd = new word ($t->usr1);
         $wrd->load_by_name(words::MATH);
         $wrd_scale = new word ($t->usr1);
-        $wrd_scale->load_by_name(words::TN_MIO);
+        $wrd_scale->load_by_name(words::MIO);
         $phr = new phrase ($t->usr1);
         $phr->load_by_name(triples::PI_NAME);
         $phr_grp = $t->load_phrase_group(array(triples::PI));
@@ -123,7 +124,7 @@ class word_read_tests
         // load a word list by the word ids
         $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_ids(array($wrd->id(), $wrd_scale->id()));
-        $t->assert('load_by_ids', $wrd_lst->name(), '"' . words::MATH . '","' . words::TN_MIO . '"');
+        $t->assert('load_by_ids', $wrd_lst->name(), '"' . words::MATH . '","' . words::MIO . '"');
 
         // load a word list by the word name
         $wrd_lst = new word_list ($t->usr1);
@@ -132,8 +133,8 @@ class word_read_tests
 
         // load a word list by the word ids
         $wrd_lst = new word_list ($t->usr1);
-        $wrd_lst->load_by_names(array(words::MATH, words::TN_MIO));
-        $t->assert('load_by_names', $wrd_lst->name(), '"' . words::MATH . '","' . words::TN_MIO . '"');
+        $wrd_lst->load_by_names(array(words::MATH, words::MIO));
+        $t->assert('load_by_names', $wrd_lst->name(), '"' . words::MATH . '","' . words::MIO . '"');
 
         // load a word list by the phrase group
         if ($phr_grp != null) {
@@ -157,13 +158,13 @@ class word_read_tests
         $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_ids(array($wrd->id()));
         $wrd_lst->add_id($wrd_scale->id());
-        $t->assert('add_id', $wrd_lst->name(), '"' . words::MATH . '","' . words::TN_MIO . '"');
+        $t->assert('add_id', $wrd_lst->name(), '"' . words::MATH . '","' . words::MIO . '"');
 
         // add a word to a list by the word name
         $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_ids(array($wrd->id()));
-        $wrd_lst->add_name(words::TN_MIO);
-        $t->assert('add_id', $wrd_lst->name(), '"' . words::MATH . '","' . words::TN_MIO . '"');
+        $wrd_lst->add_name(words::MIO);
+        $t->assert('add_id', $wrd_lst->name(), '"' . words::MATH . '","' . words::MIO . '"');
 
 
         $t->subheader('FOAF read tests');

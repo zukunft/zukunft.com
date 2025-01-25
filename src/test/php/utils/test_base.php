@@ -3675,7 +3675,7 @@ function zu_test_time_setup(test_cleanup $t): string
         for ($year = $start_year; $year <= $end_year; $year++) {
             $this_year = $year;
             $t->test_word(strval($this_year));
-            $wrd_lnk = $t->test_triple(words::TN_YEAR, verbs::IS, $this_year);
+            $wrd_lnk = $t->test_triple(words::YEAR_CAP, verbs::IS, $this_year);
             $result = $wrd_lnk->name();
             if ($prev_year <> '') {
                 $t->test_triple($prev_year, verbs::FOLLOW, $this_year);

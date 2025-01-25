@@ -82,11 +82,11 @@ class result_write_tests
 
         // test load result without time
         $phr_lst = new phrase_list($usr);
-        $phr_lst->add_name(words::TN_CH);
+        $phr_lst->add_name(words::CH);
         //$phr_lst->add_name(formulas::TN_ADD);
         $phr_lst->add_name(formulas::SYSTEM_TEXT_RENAMED);
         $phr_lst->add_name(words::TN_PCT);
-        $phr_lst->add_name(words::TN_INHABITANTS);
+        $phr_lst->add_name(words::INHABITANTS);
         $ch_up_grp = $phr_lst->get_grp_id();
         if ($ch_up_grp->is_id_set()) {
             $ch_increase = new result($usr);
@@ -96,7 +96,7 @@ class result_write_tests
                 $result = '';
             }
         } else {
-            $result = 'no ' . words::TN_INHABITANTS . ' ' . formulas::INCREASE. ' value found for ' . words::TN_CH;
+            $result = 'no ' . words::INHABITANTS . ' ' . formulas::INCREASE. ' value found for ' . words::CH;
         }
         // TODO review
         $target = result_api::TV_INCREASE_LONG;
@@ -116,7 +116,7 @@ class result_write_tests
                 $result = '';
             }
         } else {
-            $result = 'no ' . words::TN_2020 . ' ' . words::TN_INHABITANTS . ' ' . formulas::INCREASE . ' value found for ' . words::TN_CH;
+            $result = 'no ' . words::TN_2020 . ' ' . words::INHABITANTS . ' ' . formulas::INCREASE . ' value found for ' . words::CH;
         }
         //$result = $ch_increase->phr_grp_id;
         if (isset($time_phr)) {
@@ -129,7 +129,7 @@ class result_write_tests
         // test the scaling
         // test the scaling of a value
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_2020, words::TN_IN_K));
+        $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::TN_2020, words::TN_IN_K));
         $phr_lst->ex_time();
         $ch_k_grp = $phr_lst->get_grp_id();
         /*
@@ -158,7 +158,7 @@ class result_write_tests
         // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
         //      based
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_2020));
+        $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::TN_2020));
         $phr_lst->ex_time();
         $val_best_guess = new value($usr);
         $val_best_guess->load_by_grp($phr_lst->get_grp_id());
@@ -218,7 +218,7 @@ class result_write_tests
         $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // load results by phrase group
-        $grp = $t->load_phrase_group(array(words::TN_CH, words::TN_INHABITANTS, words::TN_IN_K));
+        $grp = $t->load_phrase_group(array(words::CH, words::INHABITANTS, words::TN_IN_K));
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($grp);
         $result = $res_lst->dsp_id();
@@ -226,14 +226,14 @@ class result_write_tests
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // ... and also with time selection
-        $grp = $t->load_phrase_group(array(words::TN_CH, words::TN_INHABITANTS, words::TN_IN_K, words::TN_2020));
+        $grp = $t->load_phrase_group(array(words::CH, words::INHABITANTS, words::TN_IN_K, words::TN_2020));
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($grp);
         $result = $res_lst->dsp_id();
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // load results by source phrase group
-        $grp = $t->load_phrase_group(array(words::TN_CH, words::TN_INHABITANTS, words::TN_MIO));
+        $grp = $t->load_phrase_group(array(words::CH, words::INHABITANTS, words::MIO));
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($grp, true);
         $result = $res_lst->dsp_id();
@@ -248,7 +248,7 @@ class result_write_tests
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' and ' . $time_phr->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // load results by word id
-        $wrd = $t->load_word(words::TN_INHABITANTS);
+        $wrd = $t->load_word(words::INHABITANTS);
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($wrd);
         $result = $res_lst->dsp_id();
@@ -262,7 +262,7 @@ class result_write_tests
         $res_lst->load_by_obj($frm);
         $result = $res_lst->dsp_id();
         $target = '"Sales","' . words::TN_PCT . '","increase","' . words::TN_RENAMED . '","2017"';
-        $target = words::TN_INHABITANTS;
+        $target = words::INHABITANTS;
         $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
     }

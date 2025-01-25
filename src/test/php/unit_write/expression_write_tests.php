@@ -68,7 +68,7 @@ class expression_write_tests
         $frm_pe = $t->load_formula(formulas::SYSTEM_TEXT_RATIO);
 
         $result = $frm_sector->usr_text;
-        $target = '= "' . words::TN_COUNTRY . '" "differentiator" "' . words::TN_CANTON . '" / "' . words::TN_TOTAL . '"';
+        $target = '= "' . words::COUNTRY . '" "differentiator" "' . words::CANTON . '" / "' . words::TN_TOTAL . '"';
         $t->assert('user text', $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         // create expressions for testing

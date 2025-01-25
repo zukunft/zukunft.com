@@ -341,10 +341,10 @@ class test_cleanup extends test_api
         }
 
         // request to delete some triples not yet covered by the other cleanup jobs
-        $this->del_triple(words::TN_2019, verbs::IS, words::TN_YEAR);
-        $this->del_triple(words::TN_2020, verbs::IS, words::TN_YEAR);
-        $this->del_triple(words::TN_2021, verbs::IS, words::TN_YEAR);
-        $this->del_triple(words::TN_2022, verbs::IS, words::TN_YEAR);
+        $this->del_triple(words::TN_2019, verbs::IS, words::YEAR_CAP);
+        $this->del_triple(words::TN_2020, verbs::IS, words::YEAR_CAP);
+        $this->del_triple(words::TN_2021, verbs::IS, words::YEAR_CAP);
+        $this->del_triple(words::TN_2022, verbs::IS, words::YEAR_CAP);
         $this->del_triple(words::TN_2020, verbs::FOLLOW, words::TN_2019);
         $this->del_triple(words::TN_2021, verbs::FOLLOW, words::TN_2020);
         $this->del_triple(words::TN_2022, verbs::FOLLOW, words::TN_2021);

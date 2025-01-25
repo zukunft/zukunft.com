@@ -83,7 +83,7 @@ class formula_write_tests
         // prepare
         $this->create_test_formulas($t);
         $frm = $t->add_formula(formulas::SYSTEM_TEXT_ADD, formulas::INCREASE_EXP);
-        $phr = $t->add_word(words::TN_YEAR)->phrase();
+        $phr = $t->add_word(words::YEAR_CAP)->phrase();
         $frm->link_phr($phr);
 
         // test loading of one formula
@@ -108,7 +108,7 @@ class formula_write_tests
                 $target = zu_dsp_bool(true);
                 $t->display('formula->is_special for "' . $elm_frm->name() . '"', $target, $result);
 
-                $phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_2019));
+                $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::TN_2019));
                 $time_phr = $phr_lst->time_useful();
                 $val = $elm_frm->special_result($phr_lst, $time_phr);
                 $result = $val->number();
@@ -135,7 +135,7 @@ class formula_write_tests
         } else {
             $result = $phr_lst->name();
         }
-        $target = '"' . words::TN_2019 . '","' . words::TN_CH . '","' . words::TN_INHABITANTS . '"';
+        $target = '"' . words::TN_2019 . '","' . words::CH . '","' . words::INHABITANTS . '"';
         $t->display('formula->special_phr_lst for "' . $frm->name() . '"', $target, $result);
 
         $phr_lst = $frm->assign_phr_lst_direct();
@@ -184,7 +184,7 @@ class formula_write_tests
         // test the calculation of one value
         $phr_lst = new phrase_list($t->usr1);
         // TODO check why is this word MIO is needed??
-        $phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_2020, words::TN_MIO));
+        $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::TN_2020, words::MIO));
         $frm = $t->load_formula(formulas::SYSTEM_TEXT_ADD);
         $res_lst = $frm->to_num($phr_lst);
         if ($res_lst->lst() != null) {
@@ -230,7 +230,7 @@ class formula_write_tests
         $phr_lst = new phrase_list($t->usr1);
         // TODO check why is this word ONE needed?? scale shout assume one if no scaling word is set or implied
         //$phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_2020));
-        $phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_2020, words::ONE));
+        $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::TN_2020, words::ONE));
         $frm_scale_one_to_k = $t->load_formula(formulas::SYSTEM_TEXT_SCALE_TO_K);
         // TODO activate Prio 1
         //$res_lst = $frm_scale_one_to_k->calc($phr_lst);
@@ -275,7 +275,7 @@ class formula_write_tests
         // ... the formula result selected by the word and in percent
         // TODO defined the criteria for selecting the result
         $wrd = new word($t->usr1);
-        $wrd->load_by_name(words::TN_CH);
+        $wrd->load_by_name(words::CH);
         /*
         $result = trim($frm_dsp->dsp_result($wrd, $back));
         $target = '0.79 %';

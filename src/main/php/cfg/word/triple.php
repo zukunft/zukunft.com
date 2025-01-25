@@ -822,150 +822,6 @@ class triple extends sandbox_link_named implements JsonSerializable
      */
 
     /**
-     * @return triple_api the filled triple frontend api object
-     */
-    function api_obj(): triple_api
-    {
-        $api_obj = new triple_api();
-        if ($this->is_excluded()) {
-            $api_obj->set_id($this->id());
-            $api_obj->excluded = true;
-        } else {
-            parent::fill_api_obj($api_obj);
-            if ($this->from()->obj() != null) {
-                if ($this->from()->obj()->id() <> 0 or $this->from()->obj()->name() != '') {
-                    $api_obj->set_from($this->from()->obj()->api_obj()->phrase());
-                }
-            }
-            if ($this->verb() != null) {
-                $api_obj->set_verb($this->verb()->api_verb_obj());
-            }
-            if ($this->to()->obj() != null) {
-                if ($this->to()->obj()->id() <> 0 or $this->to()->obj()->name() != '') {
-                    $api_obj->set_to($this->to()->obj()?->api_obj()->phrase());
-                }
-            }
-        }
-        return $api_obj;
-    }
-
-    /**
-     * map a triple api json to this model triple object
-     * similar to the import_obj function but using the database id instead of names as the unique key
-     * @param array $api_json the api array with the triple values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::FROM) {
-                $phr = $this->phrase_from_api_json($value);
-                $this->set_from($phr);
-            }
-            if ($key == json_fields::TO) {
-                $phr = $this->phrase_from_api_json($value);
-                $this->set_to($phr);
-            }
-            if ($key == json_fields::VERB) {
-                $vrb = $this->verb_from_api_json($value);
-                $this->set_verb($vrb);
-            }
-
-            /* TODO
-            if ($key == self::FLD_PLURAL) {
-                if ($value <> '') {
-                    $this->plural = $value;
-                }
-            }
-            if ($key == json_fields::SHARE) {
-                $this->share_id = $shr_typ_cac->id($value);
-            }
-            if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $ptc_typ_cac->id($value);
-            }
-            if ($key == exp_obj::FLD_VIEW) {
-                $wrd_view = new view($this->user());
-                if ($do_save) {
-                    $wrd_view->load_by_name($value);
-                    if ($wrd_view->id() == 0) {
-                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
-                    } else {
-                        $this->view_id = $wrd_view->id();
-                    }
-                } else {
-                    $wrd_view->set_name($value);
-                }
-                $this->view = $wrd_view;
-            }
-
-            if ($key == json_fields::PHRASES) {
-                $phr_lst = new phrase_list($this->user());
-                $msg->add($phr_lst->db_obj($value));
-                if ($msg->is_ok()) {
-                    $this->grp->phr_lst = $phr_lst;
-                }
-            }
-            */
-
-        }
-
-        return $msg;
-    }
-
-    /**
-     * select the id from a json array
-     * @param int|array $value either the id itself or an array with the id
-     * @return phrase
-     */
-    private function phrase_from_api_json(int|array $value): phrase
-    {
-        $phr = new phrase($this->user());
-        if (is_array($value)) {
-            $phr->set_by_api_json($value);
-        } elseif (is_int($value)) {
-            if ($value != 0) {
-                // TODO use phrase cache
-                $phr->set_id($value);
-            }
-        } else {
-            log_err('unexpected format of api message');
-        }
-        return $phr;
-    }
-
-    /**
-     * select the id from a json array
-     * @param int|array $value either the id itself or an array with the id
-     * @return verb
-     */
-    private function verb_from_api_json(int|array $value): verb
-    {
-        global $vrb_cac;
-        if (is_array($value)) {
-            if (key_exists(json_fields::ID, $value)) {
-                $id = $value[json_fields::ID];
-                $vrb = $vrb_cac->get($id);
-            } else {
-                $vrb = new verb();
-                log_err('id field missing in ' . implode(',', $value));
-            }
-        } elseif (is_int($value)) {
-            if ($value != 0) {
-                $vrb = $vrb_cac->get($value);
-            } else {
-                $vrb = new verb();
-            }
-        } else {
-            $vrb = new verb();
-            log_err('unexpected format of api message');
-        }
-        return $vrb;
-    }
-
-    /**
      * convert the word object into a phrase object
      */
     function phrase(): phrase
@@ -1529,6 +1385,122 @@ class triple extends sandbox_link_named implements JsonSerializable
         }
 
         return $vars;
+    }
+
+    /**
+     * map a triple api json to this model triple object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the triple values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::FROM) {
+                $phr = $this->phrase_from_api_json($value);
+                $this->set_from($phr);
+            }
+            if ($key == json_fields::TO) {
+                $phr = $this->phrase_from_api_json($value);
+                $this->set_to($phr);
+            }
+            if ($key == json_fields::VERB) {
+                $vrb = $this->verb_from_api_json($value);
+                $this->set_verb($vrb);
+            }
+
+            /* TODO
+            if ($key == self::FLD_PLURAL) {
+                if ($value <> '') {
+                    $this->plural = $value;
+                }
+            }
+            if ($key == json_fields::SHARE) {
+                $this->share_id = $shr_typ_cac->id($value);
+            }
+            if ($key == json_fields::PROTECTION) {
+                $this->protection_id = $ptc_typ_cac->id($value);
+            }
+            if ($key == exp_obj::FLD_VIEW) {
+                $wrd_view = new view($this->user());
+                if ($do_save) {
+                    $wrd_view->load_by_name($value);
+                    if ($wrd_view->id() == 0) {
+                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
+                    } else {
+                        $this->view_id = $wrd_view->id();
+                    }
+                } else {
+                    $wrd_view->set_name($value);
+                }
+                $this->view = $wrd_view;
+            }
+
+            if ($key == json_fields::PHRASES) {
+                $phr_lst = new phrase_list($this->user());
+                $msg->add($phr_lst->db_obj($value));
+                if ($msg->is_ok()) {
+                    $this->grp->phr_lst = $phr_lst;
+                }
+            }
+            */
+
+        }
+
+        return $msg;
+    }
+
+    /**
+     * select the id from a json array
+     * @param int|array $value either the id itself or an array with the id
+     * @return phrase
+     */
+    private function phrase_from_api_json(int|array $value): phrase
+    {
+        $phr = new phrase($this->user());
+        if (is_array($value)) {
+            $phr->set_by_api_json($value);
+        } elseif (is_int($value)) {
+            if ($value != 0) {
+                // TODO use phrase cache
+                $phr->set_id($value);
+            }
+        } else {
+            log_err('unexpected format of api message');
+        }
+        return $phr;
+    }
+
+    /**
+     * select the id from a json array
+     * @param int|array $value either the id itself or an array with the id
+     * @return verb
+     */
+    private function verb_from_api_json(int|array $value): verb
+    {
+        global $vrb_cac;
+        if (is_array($value)) {
+            if (key_exists(json_fields::ID, $value)) {
+                $id = $value[json_fields::ID];
+                $vrb = $vrb_cac->get($id);
+            } else {
+                $vrb = new verb();
+                log_err('id field missing in ' . implode(',', $value));
+            }
+        } elseif (is_int($value)) {
+            if ($value != 0) {
+                $vrb = $vrb_cac->get($value);
+            } else {
+                $vrb = new verb();
+            }
+        } else {
+            $vrb = new verb();
+            log_err('unexpected format of api message');
+        }
+        return $vrb;
     }
 
 

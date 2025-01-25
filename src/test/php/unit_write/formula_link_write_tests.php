@@ -247,9 +247,9 @@ class formula_link_write_tests
 
         // prepare
         $frm = $t->add_formula(formulas::INCREASE, formulas::INCREASE_EXP);
-        $phr = $t->add_word(words::TN_YEAR)->phrase();
+        $phr = $t->add_word(words::YEAR_CAP)->phrase();
         $frm->link_phr($phr);
-        $t->test_formula_link(formulas::INCREASE, words::TN_YEAR);
+        $t->test_formula_link(formulas::INCREASE, words::YEAR_CAP);
 
         // test
         $frm_lnk_lst = new formula_link_list($t->usr1);
@@ -258,7 +258,7 @@ class formula_link_write_tests
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_names_by_ids($phr_ids);
         $result = $phr_lst->dsp_id();
-        $target = words::TN_YEAR;
+        $target = words::YEAR_CAP;
         // TODO fix it
         // $t->dsp_contains(', formula_link_list->load phrase linked to ' . $frm->dsp_id() . '', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
@@ -270,12 +270,12 @@ class formula_link_write_tests
 
         $t->test_formula_link(formulas::SYSTEM_TEXT_RATIO, words::TN_SHARE);
         $t->test_formula_link(formulas::SYSTEM_TEXT_SECTOR, words::TN_SHARE);
-        $t->test_formula_link(formulas::SYSTEM_TEXT_ADD, words::TN_YEAR);
+        $t->test_formula_link(formulas::SYSTEM_TEXT_ADD, words::YEAR_CAP);
         $t->test_formula_link(formulas::SYSTEM_TEXT_SCALE_K, words::TN_IN_K);
         $t->test_formula_link(formulas::SYSTEM_TEXT_SCALE_TO_K, words::ONE);
-        $t->test_formula_link(formulas::SYSTEM_TEXT_SCALE_MIO, words::TN_MIO);
+        $t->test_formula_link(formulas::SYSTEM_TEXT_SCALE_MIO, words::MIO);
         $t->test_formula_link(formulas::SYSTEM_TEXT_SCALE_BIL, words::TN_BIL);
-        $t->test_formula_link(formulas::INCREASE, words::TN_YEAR);
+        $t->test_formula_link(formulas::INCREASE, words::YEAR_CAP);
 
     }
 

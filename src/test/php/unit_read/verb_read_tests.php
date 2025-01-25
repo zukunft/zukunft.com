@@ -70,25 +70,25 @@ class verb_read_tests
 
         // prepare the words for testing
         $country = new word($t->usr1);
-        $country->load_by_name(words::TN_COUNTRY);
+        $country->load_by_name(words::COUNTRY);
         $switzerland = new word($t->usr1);
-        $switzerland->load_by_name(words::TN_CH);
+        $switzerland->load_by_name(words::CH);
 
         // 'is a' - test the selection of the members via 'is a' verb
         $countries = $country->children();
-        $t->assert_contains('is a based on ' . words::TN_COUNTRY,
+        $t->assert_contains('is a based on ' . words::COUNTRY,
             $countries->names(),
-            array(words::TN_CH, words::TN_DE)
+            array(words::CH, words::GERMANY)
         );
 
         // 'is part of' - test the direct selection of the members via 'is part of' verb
         //                e.g. for Switzerland get at least 'Zurich (Canton)' but not 'Zurich (City)'
         $parts = $switzerland->direct_parts();
-        $t->assert_contains('direct parts of ' . words::TN_CH,
+        $t->assert_contains('direct parts of ' . words::CH,
             $parts->names(),
             array(triples::CANTON_ZURICH)
         );
-        $t->assert_contains_not('direct parts of ' . words::TN_CH,
+        $t->assert_contains_not('direct parts of ' . words::CH,
             $parts->names(),
             array(triples::CITY_ZH)
         );
@@ -96,7 +96,7 @@ class verb_read_tests
         // 'is part of' - test the recursive selection of the members via 'is part of' verb
         //                e.g. for Switzerland get at least 'Zurich (Canton)' and 'Zurich (City)'
         $parts = $switzerland->parts();
-        $t->assert_contains('parts of ' . words::TN_CH . ' and parts of the parts',
+        $t->assert_contains('parts of ' . words::CH . ' and parts of the parts',
             $parts->names(),
             array(triples::CANTON_ZURICH, triples::CITY_ZH)
         );

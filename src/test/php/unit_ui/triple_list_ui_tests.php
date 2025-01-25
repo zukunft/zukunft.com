@@ -63,9 +63,9 @@ class triple_list_ui_tests
         // create the triple list test set
         $lst = new triple_list_dsp();
         $phr_city = $this->triple_api_triple(1,  triples::CITY_ZH_NAME,
-            words::TN_ZH, verbs::IS, words::TN_CITY);
+            words::ZH, verbs::IS, words::CITY);
         $phr_canton = $this->triple_api_triple(2,  triples::CANTON_ZURICH_NAME,
-            words::TN_ZH, verbs::IS, words::TN_CANTON);
+            words::ZH, verbs::IS, words::CANTON);
         $lst->add($phr_city);
         $lst->add($phr_canton);
 

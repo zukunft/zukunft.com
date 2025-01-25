@@ -67,7 +67,7 @@ class phrase_write_tests
         $wrd = $t->test_word(words::TN_COMPANY);
         $company_id = $wrd->id();
         // load or create a word that can be parts of a group e.g. Zurich
-        $wrd = $t->test_word(words::TN_ZH);
+        $wrd = $t->test_word(words::ZH);
         $zh_id = $wrd->id();
         $is_id = $vrb_cac->id(verbs::IS);
         // load a triple that is parts of a group e.g. Zurich Insurance

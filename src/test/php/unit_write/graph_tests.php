@@ -69,7 +69,7 @@ class graph_tests
         // step 1: define the phrase list e.g. in this case only the test word for city
 
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::TN_CITY));
+        $phr_lst->load_by_names(array(words::CITY));
 
         // step 2: get all values related to the phrases
         $val_lst = new value_list($usr);
@@ -101,20 +101,20 @@ class graph_tests
 
         // similar to above, but just for the zurich
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::TN_ZH, words::TN_INHABITANTS, words::TN_MIO));
+        $phr_lst->load_by_names(array(words::ZH, words::INHABITANTS, words::MIO));
         $lnk_lst = new triple_list($usr);
         $lnk_lst->load_by_phr_lst($phr_lst, null, foaf_direction::UP);
         //$lnk_lst->wrd_lst = $phr_lst->wrd_lst_all();
         $result = $lnk_lst->name();
         // TODO to be reviewed
-        $target = words::TN_ZH;
+        $target = words::ZH;
         $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
 
         $test_name = 'load the types of Zurich from the database: Zurich is a ';
         // load the word Zurich from the database
         $ZH = new word($usr);
-        $ZH->load_by_name(words::TN_ZH);
+        $ZH->load_by_name(words::ZH);
         // load all types of Zurich e.g. Zurich Insurance
         $zh_lst = new phrase_list($usr);
         $zh_lst->load_by_phr($ZH->phrase(), $t->verb_is(), foaf_direction::UP);
@@ -126,8 +126,8 @@ class graph_tests
         $dsp_trp_list = new triple_list_dsp();
         $dsp_trp_list->set_from_json_array($api_json);
         $result = $dsp_trp_list->tbl($back);
-        $t->assert_text_contains($test_name . words::TN_CITY, $result, words::TN_COMPANY);
-        $t->assert_text_contains($test_name . words::TN_CANTON, $result, words::TN_COMPANY);
+        $t->assert_text_contains($test_name . words::CITY, $result, words::TN_COMPANY);
+        $t->assert_text_contains($test_name . words::CANTON, $result, words::TN_COMPANY);
         $t->assert_text_contains($test_name . words::TN_COMPANY, $result, words::TN_COMPANY);
 
     }

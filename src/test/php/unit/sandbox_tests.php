@@ -105,9 +105,9 @@ class sandbox_tests
 
         // but a formula should not have the same name as a word
         $wrd = new word($usr);
-        $wrd->set_name(words::TN_MIO);
+        $wrd->set_name(words::MIO);
         $frm = new formula($usr);
-        $frm->set_name(words::TN_MIO);
+        $frm->set_name(words::MIO);
         $result = $wrd->is_similar($frm);
         $t->assert("a formula should not have the same name as a word", $result, true);
 

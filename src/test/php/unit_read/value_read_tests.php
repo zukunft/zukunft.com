@@ -34,14 +34,11 @@ namespace unit_read;
 
 include_once SHARED_PATH . 'triples.php';
 
-use api\phrase\group as group_api;
-use api\word\triple as triple_api;
 use api\value\value as value_api;
-use api\word\word as word_api;
 use cfg\group\group_id;
 use cfg\phrase\phrase_list;
 use cfg\value\value;
-use cfg\value\value_base;
+use shared\groups;
 use shared\triples;
 use shared\types\phrase_type;
 use shared\words;
@@ -65,7 +62,7 @@ class value_read_tests
         $val->load_by_id(value_api::TI_PI);
         $val->load_objects();
         $t->assert($test_name, $val->number(), value_api::TV_READ);
-        $t->assert($test_name, $val->name(), group_api::TN_READ);
+        $t->assert($test_name, $val->name(), groups::TN_READ);
         $phr_lst = $val->grp()->phrase_list();
         if ($phr_lst->count() > 0) {
             $phr = $phr_lst->lst()[0];
@@ -76,7 +73,7 @@ class value_read_tests
         $test_name = 'load a value by phrase group';
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(
-            array(words::TN_CH, words::TN_INHABITANTS, words::TN_MIO, words::TN_2020)
+            array(words::CH, words::INHABITANTS, words::MIO, words::TN_2020)
         );
         $val = new value($t->usr1);
         $val->load_by_grp($phr_lst->get_grp_id());
@@ -103,7 +100,7 @@ class value_read_tests
         $val->load_by_id($grp->get_id($phr_lst));
         $val->load_objects();
 
-        $phr_grp = $t->add_phrase_group(array(triples::PI_NAME), group_api::TN_READ);
+        $phr_grp = $t->add_phrase_group(array(triples::PI_NAME), groups::TN_READ);
         $val = $t->load_value_by_phr_grp($phr_grp);
         $t->assert_export_reload($val);
 

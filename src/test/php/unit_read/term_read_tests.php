@@ -33,7 +33,7 @@
 namespace unit_read;
 
 include_once SHARED_PATH . 'triples.php';
-include_once SHARED_PATH . 'verbs.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'words.php';
 
 use cfg\formula\formula;

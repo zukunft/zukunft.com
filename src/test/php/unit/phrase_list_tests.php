@@ -110,7 +110,7 @@ class phrase_list_tests
         // sql to load a list of phrases by a phrase list
         $phr_lst = new phrase_list($usr);
         $wrd = new word($usr);
-        $wrd->set(1, words::TN_CH);
+        $wrd->set(1, words::CH);
         $phr_lst->add($wrd->phrase());
         $vrb = $vrb_cac->get_verb(verbs::IS_PART_OF);
         $this->assert_sql_linked_phrases($db_con->sql_creator(), $t, $phr_lst, $vrb, foaf_direction::UP);

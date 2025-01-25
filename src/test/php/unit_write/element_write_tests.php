@@ -65,8 +65,8 @@ class element_write_tests
         $elm_lst = $exp->element_list();
 
         // get the test word ids
-        $wrd_country = $t->load_word(words::TN_COUNTRY);
-        $wrd_canton = $t->load_word(words::TN_CANTON);
+        $wrd_country = $t->load_word(words::COUNTRY);
+        $wrd_canton = $t->load_word(words::CANTON);
         $vrb_id = $vrb_cac->id(verbs::CAN_CONTAIN);
 
         if (isset($elm_lst)) {

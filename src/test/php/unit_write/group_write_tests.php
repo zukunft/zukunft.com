@@ -35,14 +35,12 @@ namespace unit_write;
 
 include_once SHARED_PATH . 'triples.php';
 
-use api\word\triple as triple_api;
-use api\word\word as word_api;
-use api\phrase\group as group_api;
 use cfg\db\sql_type;
 use cfg\group\group;
 use cfg\phrase\phrase_list;
 use cfg\word\word;
 use cfg\word\word_list;
+use shared\groups;
 use shared\triples;
 use shared\words;
 use test\all_tests;
@@ -58,12 +56,12 @@ class group_write_tests
 
         // init
         $grp_add_lst = [
-            [group_api::TN_ADD_PRIME_FUNC, true, words::TN_ADD_GROUP_PRIME_FUNC, sql_type::PRIME, 'function', words::TN_RENAMED_GROUP_PRIME_FUNC],
-            [group_api::TN_ADD_PRIME_SQL, false, words::TN_ADD_GROUP_PRIME_SQL, sql_type::PRIME, 'insert', words::TN_RENAMED_GROUP_PRIME_SQL],
-            [group_api::TN_ADD_MOST_FUNC, true, words::TN_ADD_GROUP_MOST_FUNC, sql_type::MOST, 'function', words::TN_RENAMED_GROUP_MOST_FUNC],
-            [group_api::TN_ADD_MOST_SQL, false, words::TN_ADD_GROUP_MOST_SQL, sql_type::MOST, 'insert', words::TN_RENAMED_GROUP_MOST_SQL],
-            [group_api::TN_ADD_BIG_FUNC, true, words::TN_ADD_GROUP_BIG_FUNC, sql_type::BIG, 'function', words::TN_RENAMED_GROUP_BIG_FUNC],
-            [group_api::TN_ADD_BIG_SQL, false, words::TN_ADD_GROUP_BIG_SQL, sql_type::BIG, 'insert', words::TN_RENAMED_GROUP_BIG_SQL],
+            [groups::TN_ADD_PRIME_FUNC, true, words::TN_ADD_GROUP_PRIME_FUNC, sql_type::PRIME, 'function', words::TN_RENAMED_GROUP_PRIME_FUNC],
+            [groups::TN_ADD_PRIME_SQL, false, words::TN_ADD_GROUP_PRIME_SQL, sql_type::PRIME, 'insert', words::TN_RENAMED_GROUP_PRIME_SQL],
+            [groups::TN_ADD_MOST_FUNC, true, words::TN_ADD_GROUP_MOST_FUNC, sql_type::MOST, 'function', words::TN_RENAMED_GROUP_MOST_FUNC],
+            [groups::TN_ADD_MOST_SQL, false, words::TN_ADD_GROUP_MOST_SQL, sql_type::MOST, 'insert', words::TN_RENAMED_GROUP_MOST_SQL],
+            [groups::TN_ADD_BIG_FUNC, true, words::TN_ADD_GROUP_BIG_FUNC, sql_type::BIG, 'function', words::TN_RENAMED_GROUP_BIG_FUNC],
+            [groups::TN_ADD_BIG_SQL, false, words::TN_ADD_GROUP_BIG_SQL, sql_type::BIG, 'insert', words::TN_RENAMED_GROUP_BIG_SQL],
         ];
 
 
@@ -112,7 +110,7 @@ class group_write_tests
         // test if the time word is correctly excluded
         // TODO move to phrase list tests
         $wrd_lst = new word_list($usr);
-        $wrd_lst->load_by_names(array(words::TN_ZH, words::TN_CANTON, words::TN_INHABITANTS, words::TN_MIO, words::TN_2020));
+        $wrd_lst->load_by_names(array(words::ZH, words::CANTON, words::INHABITANTS, words::MIO, words::TN_2020));
         $phr_grp = new group($usr);
         $phr_grp->load_by_phr_lst($wrd_lst->phrase_lst());
         $result = $phr_grp->id();
@@ -135,16 +133,16 @@ class group_write_tests
             $phr_grp_reload->load_by_id($phr_grp->id());
             $wrd_lst_reloaded = $phr_grp_reload->phrase_list()->words();
             $result = array_diff(
-                array(words::TN_MIO, words::TN_ZH, words::TN_CANTON, words::TN_INHABITANTS, words::TN_CH),
+                array(words::MIO, words::ZH, words::CANTON, words::INHABITANTS, words::CH),
                 $wrd_lst_reloaded->names()
             );
         }
-        $target = array(4 => words::TN_CH);
+        $target = array(4 => words::CH);
         $t->display('phrase_group->load for id ' . $phr_grp->id(), $target, $result);
 
         // test getting the phrase group id based on word and word link ids
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(triples::CITY_ZH, words::TN_INHABITANTS));
+        $phr_lst->load_by_names(array(triples::CITY_ZH, words::INHABITANTS));
         $zh_city_grp = $phr_lst->get_grp_id();
         $result = $zh_city_grp->get_id();
         if ($result > 0) {
@@ -154,12 +152,12 @@ class group_write_tests
 
         // test names
         $result = implode(",", $zh_city_grp->names());
-        $target = triples::CITY_ZH . ',' . words::TN_INHABITANTS;
+        $target = triples::CITY_ZH . ',' . words::INHABITANTS;
         $t->display('phrase_group->names', $target, $result);
 
         // test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::TN_ZH, words::TN_CANTON, words::TN_INHABITANTS));
+        $phr_lst->load_by_names(array(words::ZH, words::CANTON, words::INHABITANTS));
         $grp = $phr_lst->get_grp_id();
         $grp_check = new group($usr);
         $grp_check->set_id($grp->id());
@@ -169,7 +167,7 @@ class group_write_tests
 
         // second test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::TN_ZH, words::TN_CANTON, words::TN_INHABITANTS, words::TN_MIO, words::TN_2020));
+        $phr_lst->load_by_names(array(words::ZH, words::CANTON, words::INHABITANTS, words::MIO, words::TN_2020));
         $grp = $phr_lst->get_grp_id();
         $grp_check = new group($usr);
         $grp_check->set_id($grp->id());
@@ -201,7 +199,7 @@ class group_write_tests
     {
         $t->header('group check test group names');
 
-        foreach (group_api::TEST_GROUPS_CREATE as $group) {
+        foreach (groups::TEST_GROUPS_CREATE as $group) {
             $grp_name = $group[0];
             $phr_names = $group[1];
             $t->test_group($phr_names, $grp_name, $t->usr1);

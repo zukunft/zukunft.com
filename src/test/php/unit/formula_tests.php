@@ -146,7 +146,7 @@ class formula_tests
         $target->add($frm->phrase());
         $trm_lst->add($frm->term());
         $exp = new expression($usr);
-        $exp->set_ref_text('{w' . words::ONE_ID . '}={w' . words::TI_MIO . '}*1000000', $t->term_list_scale());
+        $exp->set_ref_text('{w' . words::ONE_ID . '}={w' . words::MIO_ID . '}*1000000', $t->term_list_scale());
         $result = $exp->res_phr_lst($trm_lst);
         $t->assert('Expression->res_phr_lst for ' . formulas::SCALE_MIO_EXP, $result->dsp_id(), $target->dsp_id());
 

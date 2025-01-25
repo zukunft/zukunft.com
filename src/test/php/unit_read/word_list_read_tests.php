@@ -60,7 +60,7 @@ class word_list_read_tests
         // init
         $t->name = 'word list read db->';
 
-        $t->header('Test the word list class (classes/word_list.php)');
+        $t->header('word list database read unit tests');
 
         // test loading word names
         $wrd_lst = new word_list($t->usr1);

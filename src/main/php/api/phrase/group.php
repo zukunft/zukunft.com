@@ -49,52 +49,6 @@ class group extends sandbox_named_api implements JsonSerializable
 {
 
     /*
-     * const for system testing
-     */
-
-    // persevered phrase group names for unit and integration tests
-    const TN_READ = 'Pi (math)';
-    const TN_RENAMED = 'Pi';
-
-    // persevered group names for database write tests
-    const TN_ADD_PRIME_FUNC = 'System Test Group prime added via sql function';
-    const TN_ADD_PRIME_SQL = 'System Test Group prime added via sql insert';
-    const TN_ADD_MOST_FUNC = 'System Test Group main added via sql function';
-    const TN_ADD_MOST_SQL = 'System Test Group main added via sql insert';
-    const TN_ADD_BIG_FUNC = 'System Test Group big added via sql function';
-    const TN_ADD_BIG_SQL = 'System Test Group big added via sql insert';
-
-    const TN_ZH_2019 = words::TN_INHABITANT . 's in the city of ' . words::TN_ZH . ' (' . words::TN_2019 . ')';
-    const TN_CH_INCREASE_2020 = words::TN_INCREASE . ' in ' . words::TN_CH . '\'s ' . words::TN_INHABITANT . 's from ' . words::TN_2019 . ' to ' . words::TN_2020 . ' in ' . words::TN_PCT;
-    const TN_ZH_2019_IN_MIO = self::TN_ZH_2019 . ' in ' . words::TN_MIO;
-    const TN_CH_2019 = words::TN_INHABITANT . ' of ' . words::TN_CH . ' in Mio (' . words::TN_2019 . ')';
-
-    const TN_TIME_VALUE = 'zukunft.com beta launch date';
-    const TD_TIME_VALUE = 'the expected launch date of the first beta version of zukunft.com';
-    const TN_TEXT_VALUE = 'zukunft.com pod URL';
-    const TD_TEXT_VALUE = 'URL of this zukunft.com pod from the system configuration';
-
-    const TN_GEO_VALUE = 'zukunft.com development geolocation';
-    const TD_GEO_VALUE = 'the geolocation of the initial development of zukunft.com';
-
-    // list of predefined group names used for system testing that are expected to be never renamed
-    const RESERVED_GROUP_NAMES = [
-        self::TN_READ,
-        self::TN_ZH_2019,
-        self::TN_CH_2019
-    ];
-
-    // list of group names and the related phrases that are used for system testing
-    // and that should be created before the system test starts
-    const TEST_GROUPS_CREATE = [
-        [self::TN_READ,
-            [words::PI, words::MATH]],
-        [self::TN_CH_2019,
-            [words::TN_INHABITANTS, words::TN_COUNTRY, words::TN_CH, words::TN_2019, words::TN_MIO]]
-    ];
-
-
-    /*
      * object vars
      */
 
@@ -213,46 +167,6 @@ class group extends sandbox_named_api implements JsonSerializable
         $result = new phrase_list_api();
         $result->set_lst($this->lst());
         return $result;
-    }
-
-    /*
-     * info
-     */
-
-    function has_percent(): bool
-    {
-        return $this->phr_lst()->has_percent();
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @returns phrase_group_dsp the cast object with the HTML code generating functions
-     */
-    function dsp_obj(): phrase_group_dsp
-    {
-        $result = new phrase_group_dsp();
-        $result->set_id($this->id());
-        $result->set_lst_dsp($this->lst());
-        return $result;
-    }
-
-    /**
-     * @returns phrase_list_dsp the list of phrases as an object
-     */
-    function phr_lst_dsp(): phrase_list_dsp
-    {
-        $result = new phrase_list_dsp();
-        $result->set_lst($this->lst());
-        return $result;
-    }
-
-    function load_phrases(): bool
-    {
-        return $this->load_phrases();
     }
 
     /*

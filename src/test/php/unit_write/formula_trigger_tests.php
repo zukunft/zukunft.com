@@ -53,16 +53,16 @@ class formula_trigger_tests
         $t->header('Test the formula calculation triggers');
 
         // prepare the calculation trigger test
-        $phr_names_ch_19 = [words::TN_CH, words::TN_INHABITANTS, words::TN_MIO, words::TN_2019];
+        $phr_names_ch_19 = [words::CH, words::INHABITANTS, words::MIO, words::TN_2019];
         $phr_ch_19 = new phrase_list($usr);
         $phr_ch_19->load_by_names($phr_names_ch_19);
-        $phr_names_ch_20 = [words::TN_CH, words::TN_INHABITANTS, words::TN_MIO, words::TN_2020];
+        $phr_names_ch_20 = [words::CH, words::INHABITANTS, words::MIO, words::TN_2020];
         $phr_ch_20 = new phrase_list($usr);
         $phr_ch_20->load_by_names($phr_names_ch_20);
         $phr_lst1 = new phrase_list($usr);
-        $phr_lst1->add_name(words::TN_CH);
-        $phr_lst1->add_name(words::TN_INHABITANTS);
-        $phr_lst1->add_name(words::TN_MIO);
+        $phr_lst1->add_name(words::CH);
+        $phr_lst1->add_name(words::INHABITANTS);
+        $phr_lst1->add_name(words::MIO);
         $phr_lst2 = clone $phr_lst1;
         $phr_lst1->add_name(words::TN_2019);
         $phr_lst2->add_name(words::TN_2020);

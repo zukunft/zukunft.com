@@ -62,6 +62,7 @@ include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'formulas.php';
+include_once SHARED_PATH . 'groups.php';
 include_once SHARED_PATH . 'triples.php';
 include_once SHARED_PATH . 'words.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -109,6 +110,7 @@ use cfg\word\word_list;
 use controller\api_message;
 use html\system\messages;
 use shared\formulas;
+use shared\groups;
 use shared\json_fields;
 use shared\refs;
 use shared\sources;
@@ -116,7 +118,6 @@ use shared\triples;
 use shared\types\api_type_list;
 use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
-use api\phrase\group as group_api;
 use api\result\result as result_api;
 use api\value\value as value_api;
 use api\view\view as view_api;
@@ -634,7 +635,7 @@ class create_test_objects extends test_base
     function word_year(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_YEAR, words::TN_YEAR);
+        $wrd->set(words::YEAR_CAP_ID, words::YEAR_CAP);
         $wrd->set_type(phrase_type_shared::TIME);
         return $wrd;
     }
@@ -751,7 +752,7 @@ class create_test_objects extends test_base
     function word_mio(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_MIO, words::TN_MIO_SHORT);
+        $wrd->set(words::MIO_ID, words::MIO_SHORT);
         $wrd->set_type(phrase_type_shared::SCALING);
         return $wrd;
     }
@@ -759,7 +760,7 @@ class create_test_objects extends test_base
     function word_minute(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_MINUTE, words::TN_MINUTE);
+        $wrd->set(words::MINUTE_ID, words::MINUTE);
         return $wrd;
     }
 
@@ -773,7 +774,7 @@ class create_test_objects extends test_base
     function word_ch(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_CH, words::TN_CH);
+        $wrd->set(words::CH_ID, words::CH);
         return $wrd;
     }
 
@@ -783,7 +784,7 @@ class create_test_objects extends test_base
     function word_city(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_CITY, words::TN_CITY);
+        $wrd->set(words::CITY_ID, words::CITY);
         return $wrd;
     }
 
@@ -793,7 +794,7 @@ class create_test_objects extends test_base
     function word_canton(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_CANTON, words::TN_CANTON);
+        $wrd->set(words::CANTON_ID, words::CANTON);
         return $wrd;
     }
 
@@ -803,7 +804,7 @@ class create_test_objects extends test_base
     function word_zh(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_ZH, words::TN_ZH);
+        $wrd->set(words::ZH_ID, words::ZH);
         return $wrd;
     }
 
@@ -813,7 +814,7 @@ class create_test_objects extends test_base
     function word_bern(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_BE, words::TN_BE);
+        $wrd->set(words::BE_ID, words::BE);
         return $wrd;
     }
 
@@ -823,15 +824,15 @@ class create_test_objects extends test_base
     function word_ge(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_GE, words::TN_GE);
+        $wrd->set(words::GE_ID, words::GE);
         return $wrd;
     }
 
     function word_inhabitant(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_INHABITANT, words::TN_INHABITANT);
-        $wrd->plural = words::TN_INHABITANTS;
+        $wrd->set(words::INHABITANT_ID, words::INHABITANT);
+        $wrd->plural = words::INHABITANTS;
         return $wrd;
     }
 
@@ -858,7 +859,7 @@ class create_test_objects extends test_base
 
     function words_canton_zh_inhabitants(): array
     {
-        return [words::TN_ZH, words::TN_CANTON, words::TN_INHABITANTS, words::TN_MIO];
+        return [words::ZH, words::CANTON, words::INHABITANTS, words::MIO];
     }
 
     /**
@@ -1063,7 +1064,7 @@ class create_test_objects extends test_base
     /**
      * @return triple "Zurich (City)" used for unit testing
      */
-    function zh(): triple
+    function zh_city(): triple
     {
         $trp = new triple($this->usr1);
         $trp->set(triples::CITY_ZH_ID, triples::CITY_ZH);
@@ -1153,9 +1154,9 @@ class create_test_objects extends test_base
         return $this->word_city()->phrase();
     }
 
-    function phrase_zh(): phrase
+    function phrase_zh_city(): phrase
     {
-        return $this->zh()->phrase();
+        return $this->zh_city()->phrase();
     }
 
     function phrase_list(): phrase_list
@@ -1243,7 +1244,7 @@ class create_test_objects extends test_base
     function phrase_list_cities(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->zh()->phrase());
+        $lst->add($this->zh_city()->phrase());
         $lst->add($this->triple_bern()->phrase());
         $lst->add($this->triple_ge()->phrase());
         return $lst;
@@ -1255,7 +1256,7 @@ class create_test_objects extends test_base
     function zh_inhabitants_2020(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->zh()->phrase());
+        $lst->add($this->zh_city()->phrase());
         $lst->add($this->word_inhabitant()->phrase());
         $lst->add($this->word_2020()->phrase());
         return $lst;
@@ -1267,7 +1268,7 @@ class create_test_objects extends test_base
     function zh_ge_inhabitants_2020(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->zh()->phrase());
+        $lst->add($this->zh_city()->phrase());
         $lst->add($this->triple_ge()->phrase());
         $lst->add($this->word_inhabitant()->phrase());
         $lst->add($this->word_2020()->phrase());
@@ -1499,6 +1500,29 @@ class create_test_objects extends test_base
     /**
      * @return phrase_list the phrases relevant for testing the max number of prime phrases
      */
+    function phrase_list_zh_city(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->word_zh()->phrase());
+        $lst->add($this->word_city()->phrase());
+        $lst->add($this->word_inhabitant()->phrase());
+        $lst->add($this->word_2019()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list the phrases relevant for testing the max number of prime phrases
+     */
+    function phrase_list_zh_city_pct(): phrase_list
+    {
+        $lst = $this->phrase_list_zh_city();
+        $lst->add($this->word_pct()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list the phrases relevant for testing the max number of prime phrases
+     */
     function phrase_list_zh_mio(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
@@ -1520,6 +1544,20 @@ class create_test_objects extends test_base
         $lst->add($this->word_inhabitant()->phrase());
         $lst->add($this->word_2019()->phrase());
         $lst->add($this->word_mio()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list the phrases relevant for testing the max number of prime phrases
+     */
+    function phrase_list_canton_pct(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->word_zh()->phrase());
+        $lst->add($this->word_canton()->phrase());
+        $lst->add($this->word_inhabitant()->phrase());
+        $lst->add($this->word_2019()->phrase());
+        $lst->add($this->word_pct()->phrase());
         return $lst;
     }
 
@@ -1616,7 +1654,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_pi();
         $grp = $lst->get_grp_id(false);
-        $grp->name = group_api::TN_READ;
+        $grp->name = groups::TN_READ;
         return $grp;
     }
 
@@ -1627,8 +1665,8 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_pod_launch();
         $grp = $lst->get_grp_id(false);
-        $grp->name = group_api::TN_TIME_VALUE;
-        $grp->description = group_api::TD_TIME_VALUE;
+        $grp->name = groups::TN_TIME_VALUE;
+        $grp->description = groups::TD_TIME_VALUE;
         return $grp;
     }
 
@@ -1639,8 +1677,8 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_pod_url();
         $grp = $lst->get_grp_id(false);
-        $grp->name = group_api::TN_TEXT_VALUE;
-        $grp->description = group_api::TD_TEXT_VALUE;
+        $grp->name = groups::TN_TEXT_VALUE;
+        $grp->description = groups::TD_TEXT_VALUE;
         return $grp;
     }
 
@@ -1651,8 +1689,8 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_pod_point();
         $grp = $lst->get_grp_id(false);
-        $grp->name = group_api::TN_GEO_VALUE;
-        $grp->description = group_api::TD_GEO_VALUE;
+        $grp->name = groups::TN_GEO_VALUE;
+        $grp->description = groups::TD_GEO_VALUE;
         return $grp;
     }
 
@@ -1663,7 +1701,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_zh_2019();
         $grp = $lst->get_grp_id(false);
-        $grp->name = group_api::TN_ZH_2019;
+        $grp->name = groups::TN_ZH_2019;
         return $grp;
     }
 
@@ -1674,7 +1712,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_zh_mio();
         $grp = $lst->get_grp_id(false);
-        $grp->name = group_api::TN_ZH_2019_IN_MIO;
+        $grp->name = groups::TN_ZH_2019_IN_MIO;
         return $grp;
     }
 
@@ -1685,7 +1723,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_increase();
         $grp = $lst->get_grp_id(false);
-        $grp->name = group_api::TN_CH_INCREASE_2020;
+        $grp->name = groups::TN_CH_INCREASE_2020;
         return $grp;
     }
 
@@ -1693,7 +1731,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_16();
         $grp = $lst->get_grp_id(false);
-        $grp->name = group_api::TN_READ;
+        $grp->name = groups::TN_READ;
         return $grp;
     }
 
@@ -1701,7 +1739,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_17_plus();
         $grp = $lst->get_grp_id(false);
-        $grp->name = group_api::TN_READ;
+        $grp->name = groups::TN_READ;
         return $grp;
     }
 
@@ -1712,7 +1750,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_const();
         $grp = $lst->get_grp_id(false);
-        $grp->name = group_api::TN_READ;
+        $grp->name = groups::TN_READ;
         return $grp;
     }
 
@@ -1720,7 +1758,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_zh_2019();
         $grp = $lst->get_grp_id(false);
-        $grp->name = group_api::TN_ZH_2019;
+        $grp->name = groups::TN_ZH_2019;
         return $grp;
     }
 

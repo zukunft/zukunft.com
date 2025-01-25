@@ -85,7 +85,7 @@ class element_group_write_tests
             // prepare the phrase list for the formula element selection
             // means "get all numbers related to the Swiss inhabitants for 2019 and 2020"
             $phr_lst = new phrase_list($usr);
-            $phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_MIO));
+            $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::MIO));
 
             // get "this" from the formula element group list
             $elm_grp = $elm_grp_lst->lst()[0];

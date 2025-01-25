@@ -37,19 +37,18 @@ include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'group_link.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
 include_once MODEL_GROUP_PATH . 'result_id.php';
+include_once SHARED_PATH . 'groups.php';
 
-use api\phrase\group as group_api;
 use api\value\value as value_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
-use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_link;
 use cfg\group\result_id;
 use cfg\phrase\phrase_list;
-use shared\library;
+use shared\groups;
 use test\test_cleanup;
 
 class group_tests
@@ -191,7 +190,7 @@ class group_tests
         $t->assert_sql_insert($sc, $grp);
         $t->assert_sql_insert($sc, $grp, [sql_type::USER]);
         $db_grp = $t->group();
-        $grp = $grp->renamed(group_api::TN_RENAMED);
+        $grp = $grp->renamed(groups::TN_RENAMED);
         $t->assert_sql_update($sc, $grp, $db_grp);
         $t->assert_sql_update($sc, $grp, $db_grp, [sql_type::USER]);
         $grp->set_phrase_list($t->phrase_list_16());

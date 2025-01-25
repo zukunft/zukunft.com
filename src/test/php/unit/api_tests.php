@@ -177,15 +177,15 @@ class api_tests
         // load the frontend objects via api call
         $test_name = 'api id and name call of a word';
         $wrd_zh = new word_dsp();
-        $wrd_zh->load_by_name(words::TN_ZH);
+        $wrd_zh->load_by_name(words::ZH);
         $wrd_zh->load_by_id($wrd_zh->id());
-        $t->assert($test_name, $wrd_zh->name(), words::TN_ZH);
+        $t->assert($test_name, $wrd_zh->name(), words::ZH);
 
         $test_name = 'api id and name call of a phrase';
         $phr_zh = new phrase_dsp();
-        $phr_zh->load_by_name(words::TN_ZH);
+        $phr_zh->load_by_name(words::ZH);
         $phr_zh->load_by_id($phr_zh->id());
-        $t->assert($test_name, $phr_zh->name(), words::TN_ZH);
+        $t->assert($test_name, $phr_zh->name(), words::ZH);
 
     }
 

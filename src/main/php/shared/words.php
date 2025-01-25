@@ -93,6 +93,8 @@ class words
     const TIME_COM = 'Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future';
     const YEAR = 'year';
     const YEAR_COM = 'A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.';
+    const YEAR_CAP = 'Year';
+    const YEAR_CAP_ID = 137;
     const CALCULATION = 'calculation';
     const CALCULATION_COM = 'A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results';
     const MIN = 'min';
@@ -173,31 +175,29 @@ class words
     const E_ID = 6;
     const SECOND = 'second';
     const SECOND_ID = 19;
-    const TN_YEAR = 'Year';
-    const TI_YEAR = 137;
-    const TN_MINUTE = 'minute';
-    const TI_MINUTE = 101;
-    const TN_MIO = 'million';
-    const TI_MIO = 170;
-    const TN_MIO_SHORT = 'mio';
-    const TN_COUNTRY = 'Country';
-    const TN_CH = 'Switzerland';
-    const TI_CH = 197;
-    const TN_DE = 'Germany';
-    const TN_CANTON = 'Canton';
-    const TI_CANTON = 198;
-    const TN_CITY = 'City';
-    const TI_CITY = 199;
-    const TN_ZH = 'Zurich';
-    const TI_ZH = 200;
-    const TN_BE = 'Bern';
-    const TI_BE = 201;
-    const TN_GE = 'Geneva';
-    const TI_GE = 202;
-    const TN_INHABITANT = 'inhabitant';
-    const TI_INHABITANT = 204;
+    const MINUTE = 'minute';
+    const MINUTE_ID = 101;
+    const MIO = 'million';
+    const MIO_ID = 170;
+    const MIO_SHORT = 'mio';
+    const COUNTRY = 'Country';
+    const CH = 'Switzerland';
+    const CH_ID = 197;
+    const GERMANY = 'Germany';
+    const CANTON = 'Canton';
+    const CANTON_ID = 198;
+    const CITY = 'City';
+    const CITY_ID = 199;
+    const ZH = 'Zurich';
+    const ZH_ID = 200;
+    const BE = 'Bern';
+    const BE_ID = 201;
+    const GE = 'Geneva';
+    const GE_ID = 202;
+    const INHABITANT = 'inhabitant';
+    const INHABITANT_ID = 204;
     // TODO add test to search for words in all language forms e.g. plural
-    const TN_INHABITANTS = 'inhabitants';
+    const INHABITANTS = 'inhabitants';
     const TN_2013 = '2013';
     const TI_2013 = 326;
     const TN_2014 = '2014';
@@ -304,19 +304,19 @@ class words
         self::CONST_NAME,
         self::PI,
         self::ONE,
-        self::TN_MIO,
-        self::TN_MIO_SHORT,
-        self::TN_COUNTRY,
-        self::TN_CH,
-        self::TN_DE,
-        self::TN_CANTON,
-        self::TN_CITY,
-        self::TN_ZH,
-        self::TN_BE,
-        self::TN_GE,
-        self::TN_INHABITANT,
-        self::TN_INHABITANTS,
-        self::TN_YEAR,
+        self::MIO,
+        self::MIO_SHORT,
+        self::COUNTRY,
+        self::CH,
+        self::GERMANY,
+        self::CANTON,
+        self::CITY,
+        self::ZH,
+        self::BE,
+        self::GE,
+        self::INHABITANT,
+        self::INHABITANTS,
+        self::YEAR_CAP,
         self::TN_2015,
         self::TN_2016,
         self::TN_2017,
@@ -460,7 +460,7 @@ class words
     );
     const TEST_WORDS_MEASURE = array(self::TWN_CHF);
     const TEST_WORDS_SCALING_HIDDEN = array(self::ONE);
-    const TEST_WORDS_SCALING = array(self::TN_IN_K, self::TN_MIO, self::TN_MIO_SHORT, self::TN_BIL);
+    const TEST_WORDS_SCALING = array(self::TN_IN_K, self::MIO, self::MIO_SHORT, self::TN_BIL);
     const TEST_WORDS_PERCENT = array(self::TN_PCT);
     // the time words must be in correct order because the following is set during creation
     const TEST_WORDS_TIME_YEAR = array(

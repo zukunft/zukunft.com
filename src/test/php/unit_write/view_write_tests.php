@@ -85,10 +85,10 @@ class view_write_tests
 
         // test the complete view for one word
         $wrd = new word($t->usr1);
-        $wrd->load_by_name(words::TN_CH);
+        $wrd->load_by_name(words::CH);
         //$result = $msk->display($wrd, $back);
         // check if the view contains the word name
-        $target = words::TN_CH;
+        $target = words::CH;
         // TODO review and activate
         //$t->dsp_contains(', view->display "' . $msk->name() . '" for "' . $wrd->name() . '" contains', $target, $result, $t::TIMEOUT_LIMIT_LONG);
         // check if the view contains at least one value

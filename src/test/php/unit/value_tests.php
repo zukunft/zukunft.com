@@ -36,7 +36,6 @@ include_once DB_PATH . 'sql.php';
 include_once MODEL_VALUE_PATH . 'value_time_series.php';
 include_once MODEL_VALUE_PATH . 'value_obj.php';
 
-use api\phrase\group as group_api;
 use api\value\value as value_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;

@@ -133,24 +133,4 @@ class phrase_list extends list_api implements JsonSerializable
     }
 
 
-    /*
-     * modify
-     */
-
-    function remove(phrase_list $del_lst): phrase_list
-    {
-        if (!$del_lst->is_empty()) {
-            // next line would work if array_intersect could handle objects
-            // $this->lst() = array_intersect($this->lst(), $new_lst->lst());
-            $remain_lst = new phrase_list();
-            foreach ($this->lst() as $phr) {
-                if (!in_array($phr->id(), $del_lst->id_lst())) {
-                    $remain_lst->add($phr);
-                }
-            }
-            $this->set_lst($remain_lst->lst());
-        }
-        return $this;
-    }
-
 }

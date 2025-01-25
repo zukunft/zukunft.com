@@ -74,7 +74,7 @@ class formulas
     const BIGGEST_CITY = 'population in the city of Zurich in percent of Switzerland';
     const SCALE_MIO = 'scale millions to one';
     const SCALE_MIO_EXP = '"one" = "millions" * 1000000';
-    const SCALE_MIO_DB = '{w' . words::ONE_ID . '} = {w' . words::TI_MIO . '} * 1000000';
+    const SCALE_MIO_DB = '{w' . words::ONE_ID . '} = {w' . words::MIO_ID . '} * 1000000';
     const PARTS_IN_PERCENT = 'parts in percent';
     const PARTS_IN_PERCENT_EXP = '"percent" = "parts" "of" / "total"'; // TODO check if separate verb "of each" is needed
     const PARTS_IN_PERCENT_DB = '{w' . words::TI_PCT . '}={w' . words::TI_PARTS . '}{v' . verbs::TI_OF . '}/{w' . words::TI_TOTAL . '}';

@@ -84,7 +84,7 @@ class verb_write_tests
         $t->header('Test the verb list class (classes/verb_list.php)');
 
         // check the loading of the "is a" verb
-        $wrd_ZH = $t->load_word(words::TN_ZH);
+        $wrd_ZH = $t->load_word(words::ZH);
         $vrb_lst = $wrd_ZH->link_types(foaf_direction::UP);
         $t->assert_contains('verb_list->link_types ', $vrb_lst->db_id_list(), [verbs::TN_IS]);
     }

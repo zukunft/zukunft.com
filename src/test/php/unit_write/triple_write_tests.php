@@ -299,10 +299,10 @@ class triple_write_tests
         }
 
         // check if the standard samples for triples still exist and if not, create the samples
-        $t->test_triple(words::TN_ZH, verbs::IS, words::TN_CANTON, triples::CANTON_ZURICH, triples::CANTON_ZURICH);
-        $t->test_triple(words::TN_ZH, verbs::IS, words::TN_CITY, triples::CITY_ZH, triples::CITY_ZH);
-        $t->test_triple(words::TN_ZH, verbs::IS, words::TN_COMPANY, triples::COMPANY_ZURICH, triples::COMPANY_ZURICH);
-        $t->test_triple(triples::CANTON_ZURICH, verbs::IS_PART_OF, words::TN_CH);
+        $t->test_triple(words::ZH, verbs::IS, words::CANTON, triples::CANTON_ZURICH, triples::CANTON_ZURICH);
+        $t->test_triple(words::ZH, verbs::IS, words::CITY, triples::CITY_ZH, triples::CITY_ZH);
+        $t->test_triple(words::ZH, verbs::IS, words::TN_COMPANY, triples::COMPANY_ZURICH, triples::COMPANY_ZURICH);
+        $t->test_triple(triples::CANTON_ZURICH, verbs::IS_PART_OF, words::CH);
         $t->test_triple(triples::CITY_ZH, verbs::IS_PART_OF, triples::CANTON_ZURICH);
         $t->test_triple(triples::COMPANY_ZURICH, verbs::IS_PART_OF, triples::CITY_ZH, triples::SYSTEM_TEST_EXCLUDED, triples::SYSTEM_TEST_EXCLUDED);
 

@@ -69,8 +69,8 @@ class triple_read_tests
         // load the verb used for testing
         $is_id = $vrb_cac->id(verbs::IS);
         // load the words used for testing the triples (Zurich (City) and Zurich (Canton)
-        $wrd_zh = $t->load_word(words::TN_ZH);
-        $wrd_canton = $t->load_word(words::TN_CANTON);
+        $wrd_zh = $t->load_word(words::ZH);
+        $wrd_canton = $t->load_word(words::CANTON);
         // create the group test word
         $wrd_company = $t->test_word(words::TN_COMPANY);
 
@@ -83,14 +83,14 @@ class triple_read_tests
         $t->assert($test_name, $trp_by_id->name(), triples::MATH_CONST);
         $t->assert($test_name, $trp_by_id->description, triples::MATH_CONST_COM);
 
-        $test_name = 'triple load ' . words::TN_CANTON . ' ' . words::TN_ZH . ' by link';
+        $test_name = 'triple load ' . words::CANTON . ' ' . words::ZH . ' by link';
         $lnk_canton = new triple($t->usr1);
         $lnk_canton->load_by_link_id($wrd_zh->id(), $is_id, $wrd_canton->id());
-        $target = words::TN_ZH . ' (' . words::TN_CANTON . ')';
+        $target = words::ZH . ' (' . words::CANTON . ')';
         $result = $lnk_canton->name();
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB);
 
-        $test_name = 'triple generated name of ' . words::TN_CANTON . ' ' . words::TN_ZH . ' via function';
+        $test_name = 'triple generated name of ' . words::CANTON . ' ' . words::ZH . ' via function';
         $result = $lnk_canton->name_generated();
         $t->assert($test_name, $result, $target);
 

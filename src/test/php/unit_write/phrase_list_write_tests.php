@@ -72,7 +72,7 @@ class phrase_list_write_tests
         $is_id = $vrb_cac->id(verbs::IS);
 
         // prepare test by loading Insurance Zurich
-        $wrd_zh = $t->load_word(words::TN_ZH);
+        $wrd_zh = $t->load_word(words::ZH);
         $lnk_company = new triple($usr);
         $lnk_company->load_by_link_id($wrd_zh->id(), $is_id, $wrd_company->id());
         $triple_sample_id = $lnk_company->id();
@@ -91,7 +91,7 @@ class phrase_list_write_tests
 
         // ... the complete word list, which means split the triples into single words
         $wrd_lst_all = $phr_lst->wrd_lst_all();
-        $target = '"' . words::TN_ABB . '","' . words::TN_VESTAS . '","' . words::TN_ZH . '","' . words::TN_COMPANY . '"';
+        $target = '"' . words::TN_ABB . '","' . words::TN_VESTAS . '","' . words::ZH . '","' . words::TN_COMPANY . '"';
         $target = '"' . words::TN_ABB . '","' . words::TN_VESTAS . '"';
         $result = $wrd_lst_all->name();
         $t->display('phrase->wrd_lst_all of list above', $target, $result);
@@ -124,11 +124,11 @@ class phrase_list_write_tests
 
         // test the excluding function
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::TN_ABB, words::TN_SALES, words::TN_CHF, words::TN_MIO, words::TN_2017));
+        $phr_lst->load_by_names(array(words::TN_ABB, words::TN_SALES, words::TN_CHF, words::MIO, words::TN_2017));
         $phr_lst_ex = clone $phr_lst;
         $phr_lst_ex->ex_time();
         $result = $phr_lst_ex->names();
-        $target = [words::TN_ABB, words::TN_SALES, words::TN_CHF, words::TN_MIO];
+        $target = [words::TN_ABB, words::TN_SALES, words::TN_CHF, words::MIO];
         $t->assert_contains('phrase_list->ex_time of ' . $phr_lst->dsp_name(), $result, $target);
         $result = $phr_lst_ex->names();
         $target = [words::TN_2017];
@@ -137,7 +137,7 @@ class phrase_list_write_tests
         $phr_lst_ex = clone $phr_lst;
         $phr_lst_ex->ex_measure();
         $result = $phr_lst_ex->names();
-        $target = [words::TN_ABB, words::TN_SALES, words::TN_MIO, words::TN_2017];
+        $target = [words::TN_ABB, words::TN_SALES, words::MIO, words::TN_2017];
         $t->assert_contains('phrase_list->ex_measure of ' . $phr_lst->dsp_name(), $target, $result);
         $result = $phr_lst_ex->names();
         $target = [words::TN_CHF];
@@ -149,7 +149,7 @@ class phrase_list_write_tests
         $target = [words::TN_ABB, words::TN_SALES, words::TN_CHF, words::TN_2017];
         $t->assert_contains('phrase_list->ex_scaling of ' . $phr_lst->dsp_name(), $result, $target);
         $result = $phr_lst_ex->names();
-        $target = [words::TN_MIO];
+        $target = [words::MIO];
         $t->assert_contains_not('phrase_list->ex_scaling ex ' . $phr_lst->dsp_name(), $result, $target);
 
     }

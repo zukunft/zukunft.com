@@ -32,10 +32,6 @@
 
 namespace unit_ui;
 
-use api\phrase\group as group_api;
-use api\phrase\phrase_list as phrase_list_api;
-use api\value\value as value_api;
-use api\value\value_list as value_list_api;
 use cfg\value\value_list;
 use html\html_base;
 use cfg\phrase\phrase_list;

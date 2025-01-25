@@ -82,7 +82,7 @@ class value_list_tests
         $test_names = 'sql to load a list of value by ... ';
         $val_lst = new value_list($usr);
         $test_name = $test_names . 'a related to a phrase e.g. all value related to the City of Zurich';
-        $phr = $t->phrase_zh();
+        $phr = $t->phrase_zh_city();
         $this->assert_sql_by_phr($t, $db_con, $val_lst, $phr);
         $test_name = $test_names . 'a list of ids';
         $val_ids = $t->value_list()->id_lst();

@@ -93,7 +93,7 @@ class phrase_list_read_tests
         $t->assert_text_contains($test_name, $result, '1');
         $test_name = 'Switzerland is part of the phrase list staring with S';
         $switzerland = new phrase($t->usr1);
-        $switzerland->load_by_name(words::TN_CH);
+        $switzerland->load_by_name(words::CH);
         $lst->load_like('S');
         $t->assert_contains($test_name, $lst->names(), $switzerland->name());
 
@@ -103,12 +103,12 @@ class phrase_list_read_tests
         // direct children
         $test_name = 'Switzerland is a country';
         $country = new phrase($t->usr1);
-        $country->load_by_name(words::TN_COUNTRY);
+        $country->load_by_name(words::COUNTRY);
         $country_lst = $country->direct_children();
         $t->assert_contains($test_name, $country_lst->names(), $switzerland->name());
         $test_name = 'Zurich is a country (even if it is part of a country)';
         $zurich = new phrase($t->usr1);
-        $zurich->load_by_name(words::TN_ZH);
+        $zurich->load_by_name(words::ZH);
         $t->assert_contains_not($test_name, $country_lst->names(), $zurich->name());
         $test_name = 'The word country is not part of the country list';
         $t->assert_contains_not($test_name, $country_lst->names(), $country->name());
@@ -123,7 +123,7 @@ class phrase_list_read_tests
         $t->assert_contains($test_name, $sys_cfg_phr_lst->names(), $auto_years->name());
 
         // Canton is related to Switzerland and Zurich
-        $phr_canton = $t->load_phrase(words::TN_CANTON);
+        $phr_canton = $t->load_phrase(words::CANTON);
         $phr_lst = $phr_canton->all_related();
         $test_name = 'The word Canton is related to Switzerland and Zurich';
         // TODO ABB is not expected to be related even if it is related via zurich and company

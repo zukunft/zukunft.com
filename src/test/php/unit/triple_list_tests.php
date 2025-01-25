@@ -61,7 +61,7 @@ class triple_list_tests
         $t->name = 'triple_list->';
         $t->resource_path = 'db/triple/';
 
-        $t->header('Unit tests of the word link list class (src/main/php/model/word/triple_list.php)');
+        $t->header('triple list unit tests');
 
         $t->subheader('Database query creation tests');
 

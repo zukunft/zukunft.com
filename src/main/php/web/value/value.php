@@ -74,6 +74,17 @@ class value extends sandbox_value
 
 
     /**
+     * create the HTML code to show the value name and the formatted value to the user
+     *
+     * @param phrase_list_dsp|null $phr_lst_exclude usually the context phrases that does not need to be repeated
+     * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
+     */
+    function name_and_value(phrase_list_dsp|null $phr_lst_exclude = null): string
+    {
+        return $this->name_linked($phr_lst_exclude) . $this->display_value_linked('');
+    }
+
+    /**
      * create the HTML code to show the value name to the user
      *
      * @param phrase_list_dsp|null $phr_lst_exclude usually the context phrases that does not need to be repeated

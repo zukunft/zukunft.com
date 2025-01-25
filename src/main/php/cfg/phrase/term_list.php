@@ -33,7 +33,6 @@
 namespace cfg\phrase;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once API_PHRASE_PATH . 'term_list.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par.php';
@@ -57,7 +56,6 @@ use cfg\sandbox\sandbox_list_named;
 use cfg\word\triple;
 use cfg\verb\verb;
 use cfg\word\word;
-use html\phrase\term_list as term_list_dsp;
 use shared\library;
 
 class term_list extends sandbox_list_named

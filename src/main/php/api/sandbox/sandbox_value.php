@@ -96,10 +96,6 @@ class sandbox_value extends sandbox_api
      * cast
      */
 
-    function grp_dsp(): phrase_group_dsp
-    {
-        return $this->grp()->dsp_obj();
-    }
 
     /**
      * @returns phrase_list_api the list of phrases as an object

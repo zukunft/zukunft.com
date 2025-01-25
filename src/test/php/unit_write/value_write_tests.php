@@ -81,10 +81,10 @@ class value_write_tests
         // should be returned if requested with the phrase canton of zurich
         // TODO activate Prio 2
         $val = $t->load_value(array(
-            words::TN_CANTON,
-            words::TN_ZH,
-            words::TN_INHABITANTS,
-            words::TN_MIO,
+            words::CANTON,
+            words::ZH,
+            words::INHABITANTS,
+            words::MIO,
             words::TN_2020
         ));
         //$t->assert('Check if loading the latest value works',
@@ -92,9 +92,9 @@ class value_write_tests
 
         // test load by phrase list first to get the value id
         $ch_inhabitants = $t->test_value(array(
-            words::TN_CH,
-            words::TN_INHABITANTS,
-            words::TN_MIO,
+            words::CH,
+            words::INHABITANTS,
+            words::MIO,
             words::TN_2019
         ),
             value_api::TV_CH_INHABITANTS_2019_IN_MIO);
@@ -109,7 +109,7 @@ class value_write_tests
             $t->assert(', value->load for value id "' . $ch_inhabitants->id() . '"', $result, $target);
 
             // test load by phrase list first to get the value id
-            $phr_lst = $t->load_phrase_list(array(words::TN_CH, words::TN_INHABITANTS, words::TN_MIO, words::TN_2020));
+            $phr_lst = $t->load_phrase_list(array(words::CH, words::INHABITANTS, words::MIO, words::TN_2020));
             $val_by_phr_lst = new value($t->usr1);
             $val_by_phr_lst->load_by_grp($phr_lst->get_grp_id());
             $result = $val_by_phr_lst->number();
@@ -133,10 +133,10 @@ class value_write_tests
 
         // test another rebuild_grp_id by value id
         $chk_phr_grp = $t->load_word_list(array(
-            words::TN_CANTON,
-            words::TN_ZH,
-            words::TN_INHABITANTS,
-            words::TN_MIO,
+            words::CANTON,
+            words::ZH,
+            words::INHABITANTS,
+            words::MIO,
             words::TN_2020))->get_grp();
         $chk_val = new value($t->usr1);
         if ($chk_phr_grp != null) {
@@ -145,10 +145,10 @@ class value_write_tests
         $target = true;
         if (!$chk_val->is_id_set()) {
             $chk_phr_grp = $t->load_word_list(array(
-                words::TN_CANTON,
-                words::TN_ZH,
-                words::TN_INHABITANTS,
-                words::TN_MIO))->get_grp();
+                words::CANTON,
+                words::ZH,
+                words::INHABITANTS,
+                words::MIO))->get_grp();
             $chk_val = new value($t->usr1);
             if ($chk_phr_grp != null) {
                 $chk_val->load_by_grp($chk_phr_grp);
@@ -186,10 +186,10 @@ class value_write_tests
 
         // test load the word list object
         $phr_lst = $t->load_word_list(array(
-            words::TN_CANTON,
-            words::TN_ZH,
-            words::TN_INHABITANTS,
-            words::TN_MIO,
+            words::CANTON,
+            words::ZH,
+            words::INHABITANTS,
+            words::MIO,
             words::TN_2020));
         //$phr_lst->ex_time();
         $grp = $phr_lst->get_grp();
@@ -215,10 +215,10 @@ class value_write_tests
 
         // test the formatting of a value (percent)
         $pct_val = $t->load_value(array(
-            words::TN_CANTON,
-            words::TN_ZH,
-            words::TN_CH,
-            words::TN_INHABITANTS,
+            words::CANTON,
+            words::ZH,
+            words::CH,
+            words::INHABITANTS,
             words::TN_PCT,
             words::TN_2020));
         $api_msg = $pct_val->api_json([api_type::INCL_PHRASES]);
@@ -228,9 +228,9 @@ class value_write_tests
         $t->display(', value->val_formatted for ' . $pct_val->dsp_id(), $target, $result);
 
         // test the scaling of a value
-        $phr_lst = $t->load_phrase_list(array(words::TN_CH, words::TN_INHABITANTS, words::TN_MIO, words::TN_2020));
+        $phr_lst = $t->load_phrase_list(array(words::CH, words::INHABITANTS, words::MIO, words::TN_2020));
         $dest_phr_lst = new phrase_list($t->usr1);
-        $dest_phr_lst->load_by_names(array(words::TN_INHABITANTS, words::ONE));
+        $dest_phr_lst->load_by_names(array(words::INHABITANTS, words::ONE));
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
         $result = $mio_val->scale($dest_phr_lst);
@@ -238,7 +238,7 @@ class value_write_tests
         $t->display(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $target, $result);
 
         // test the figure object creation
-        $phr_lst = $t->load_phrase_list(array(words::TN_CANTON, words::TN_ZH, words::TN_INHABITANTS, words::TN_MIO, words::TN_2020));
+        $phr_lst = $t->load_phrase_list(array(words::CANTON, words::ZH, words::INHABITANTS, words::MIO, words::TN_2020));
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
         $mio_val_dsp = new value_dsp();
@@ -282,7 +282,7 @@ class value_write_tests
         // test adding a value in the database
         // as it is call from value_add.php with all phrases in an id list including the time phrase,
         // so the time phrase must be excluded
-        $phr_grp = $t->load_phrase_group(array(words::TN_RENAMED, words::TN_INHABITANTS, words::TN_MIO, words::TN_2020));
+        $phr_grp = $t->load_phrase_group(array(words::TN_RENAMED, words::INHABITANTS, words::MIO, words::TN_2020));
         $add_val = new value($t->usr1);
         $add_val->set_grp($phr_grp);
         $add_val->set_number(value_api::TV_BIG);
@@ -321,7 +321,7 @@ class value_write_tests
         $test_val_lst[] = $added_val->id();
 
         // test if a value with the same phrases, but different time can be added
-        $phr_grp2 = $t->load_phrase_group(array(words::TN_RENAMED, words::TN_INHABITANTS, words::TN_MIO, words::TN_2019));
+        $phr_grp2 = $t->load_phrase_group(array(words::TN_RENAMED, words::INHABITANTS, words::MIO, words::TN_2019));
         $add_val2 = new value($t->usr1);
         $add_val2->set_grp($phr_grp2);
         $add_val2->set_number(value_api::TV_BIGGER);
@@ -507,10 +507,10 @@ class value_write_tests
         // e.g. inhabitants in the canton of zurich in the year 2020
         // used to test if loading the value without time returns this value a the last available
         $t->test_value(array(
-            words::TN_CANTON,
-            words::TN_ZH,
-            words::TN_INHABITANTS,
-            words::TN_MIO,
+            words::CANTON,
+            words::ZH,
+            words::INHABITANTS,
+            words::MIO,
             words::TN_2020
         ),
             value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
@@ -521,50 +521,50 @@ class value_write_tests
         // used to test if requesting the value with the separate words returns the value
         $t->test_value(array(
             triples::CITY_ZH,
-            words::TN_INHABITANTS
+            words::INHABITANTS
         ),
             value_api::TV_CITY_ZH_INHABITANTS_2019);
 
         // ... same with the concrete year
         $t->test_value(array(
             triples::CITY_ZH,
-            words::TN_INHABITANTS,
+            words::INHABITANTS,
             words::TN_2019
         ),
             value_api::TV_CITY_ZH_INHABITANTS_2019);
 
         // add the number of inhabitants in switzerland without time definition
         $t->test_value(array(
-            words::TN_CH,
-            words::TN_INHABITANTS,
-            words::TN_MIO
+            words::CH,
+            words::INHABITANTS,
+            words::MIO
         ),
             value_api::TV_CH_INHABITANTS_2020_IN_MIO);
 
         // ... same with the concrete year
         $t->test_value(array(
-            words::TN_CH,
-            words::TN_INHABITANTS,
-            words::TN_MIO,
+            words::CH,
+            words::INHABITANTS,
+            words::MIO,
             words::TN_2020
         ),
             value_api::TV_CH_INHABITANTS_2020_IN_MIO);
 
         // ... same with the previous year
         $t->test_value(array(
-            words::TN_CH,
-            words::TN_INHABITANTS,
-            words::TN_MIO,
+            words::CH,
+            words::INHABITANTS,
+            words::MIO,
             words::TN_2019
         ),
             value_api::TV_CH_INHABITANTS_2019_IN_MIO);
 
         // add the percentage of inhabitants in Canton Zurich compared to Switzerland for calculation validation
         $t->test_value(array(
-            words::TN_CANTON,
-            words::TN_ZH,
-            words::TN_CH,
-            words::TN_INHABITANTS,
+            words::CANTON,
+            words::ZH,
+            words::CH,
+            words::INHABITANTS,
             words::TN_PCT,
             words::TN_2020
         ),
@@ -572,8 +572,8 @@ class value_write_tests
 
         // add the increase of inhabitants in Switzerland from 2019 to 2020 for calculation validation
         $t->test_value(array(
-            words::TN_CH,
-            words::TN_INHABITANTS,
+            words::CH,
+            words::INHABITANTS,
             words::TN_INCREASE,
             words::TN_PCT,
             words::TN_2020

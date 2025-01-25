@@ -60,12 +60,12 @@ class term_write_tests
         $t->header('est the term class (classes/term.php)');
 
         // load the main test word
-        $wrd_zh = $t->test_word(words::TN_ZH);
+        $wrd_zh = $t->test_word(words::ZH);
 
         // check that adding the predefined word "Company" creates an error message
         $term = new term($usr);
-        $term->load_by_obj_name(words::TN_ZH);
-        $target = 'A word with the name "' . words::TN_ZH . '" already exists. '
+        $term->load_by_obj_name(words::ZH);
+        $target = 'A word with the name "' . words::ZH . '" already exists. '
             . 'Please use another ' . $lib->class_to_name(word::class) . ' name.';
         $result = $term->id_used_msg($wrd_zh);
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);

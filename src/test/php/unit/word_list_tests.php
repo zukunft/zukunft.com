@@ -67,7 +67,7 @@ class word_list_tests
         $t->name = 'word_list->';
         $t->resource_path = 'db/word/';
 
-        $t->header('Unit tests of the word list class (src/main/php/model/word/word_list.php)');
+        $t->header('word list unit tests');
 
         $t->subheader('Database query creation tests');
 

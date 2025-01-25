@@ -992,20 +992,6 @@ class result extends sandbox_value
         return $usr_msg;
     }
 
-    /**
-     * @return result_api the formula result frontend api object
-     */
-    function api_obj(bool $do_save = true): object
-    {
-        $api_obj = new result_api($this->id());
-        $api_obj->set_number($this->number());
-        if ($this->grp()->phrase_list() != null) {
-            $grp = $this->grp()->phrase_list()->get_grp_id($do_save);
-            $api_obj->set_grp($grp->api_obj());
-        }
-        return $api_obj;
-    }
-
 
     /*
      * im- and export

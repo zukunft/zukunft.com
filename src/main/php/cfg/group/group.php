@@ -78,11 +78,11 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_PATH . 'groups.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
 use api\system\messages as msg_enum;
-use api\phrase\group as group_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -105,6 +105,7 @@ use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_base;
 use cfg\word\word;
+use shared\groups;
 use shared\json_fields;
 use shared\library;
 
@@ -517,26 +518,6 @@ class group extends sandbox_multi
     function set_saved(): void
     {
         $this->is_saved = true;
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * @return group_api the phrase group frontend API object
-     */
-    function api_obj(): group_api
-    {
-        $api_obj = new group_api();
-        $api_obj->reset_lst();
-        foreach ($this->phrase_list()->lst() as $phr) {
-            $api_obj->add($phr->api_obj());
-        }
-        $api_obj->set_id($this->id());
-        $api_obj->set_name($this->name());
-        return $api_obj;
     }
 
 
@@ -1206,7 +1187,7 @@ class group extends sandbox_multi
      */
     protected function reserved_names(): array
     {
-        return group_api::RESERVED_GROUP_NAMES;
+        return groups::RESERVED_GROUP_NAMES;
     }
 
     /*
