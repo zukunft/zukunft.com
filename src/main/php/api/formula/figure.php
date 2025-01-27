@@ -35,10 +35,8 @@ namespace api\formula;
 include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use api\result\result as result_api;
 use api\sandbox\combine_object as combine_object_api;
 use JsonSerializable;
-use shared\json_fields;
 
 class figure extends combine_object_api implements JsonSerializable
 {
@@ -47,19 +45,6 @@ class figure extends combine_object_api implements JsonSerializable
     const CLASS_VALUE = 'value';
     const CLASS_RESULT = 'result';
 
-
-    /*
-     * set and get
-     */
-
-    function id(): int
-    {
-        if ($this->is_result()) {
-            return $this->obj_id() * -1;
-        } else {
-            return  $this->obj_id();
-        }
-    }
 
     /**
      * @return int the id of the containing object
@@ -81,39 +66,6 @@ class figure extends combine_object_api implements JsonSerializable
     function obj_id(): ?int
     {
         return $this->obj()?->id();
-    }
-
-    /**
-     * @return bool true if this figure has been calculated based on other numbers
-     *              false if this figure has been defined by a user
-     */
-    function is_result(): bool
-    {
-        if ($this->obj()::class == result_api::class) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    /*
-     * interface
-     */
-
-    /**
-     * @return array with the value vars including the private vars
-     */
-    function jsonSerialize(): array
-    {
-        $vars = parent::jsonSerialize();
-        $vars = array_merge($vars, $this->obj()->jsonSerialize());
-        if ($this->is_result()) {
-            $vars[json_fields::OBJECT_CLASS] = self::CLASS_RESULT;
-        } else {
-            $vars[json_fields::OBJECT_CLASS] = self::CLASS_VALUE;
-        }
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 }

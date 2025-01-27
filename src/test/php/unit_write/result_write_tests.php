@@ -34,16 +34,12 @@
 
 namespace unit_write;
 
-use api\formula\formula as formula_api;
-use api\result\result as result_api;
-use api\word\word as word_api;
 use cfg\formula\formula;
 use cfg\phrase\phrase_list;
 use cfg\result\result;
 use cfg\result\result_list;
 use cfg\result\results;
 use cfg\value\value;
-use cfg\value\value_base;
 use shared\formulas;
 use shared\words;
 use test\test_cleanup;
@@ -56,7 +52,7 @@ class result_write_tests
 
         global $usr;
 
-        $t->header('Test the result class (classes/result.php)');
+        $t->header('result database write tests');
 
         /*
          * prepare

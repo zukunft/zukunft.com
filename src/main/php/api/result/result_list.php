@@ -34,7 +34,6 @@ namespace api\result;
 
 include_once API_SANDBOX_PATH . 'list_value.php';
 
-use api\result\result as result_api;
 use api\sandbox\list_value as list_value_api;
 use html\result\result_list as result_list_dsp;
 
@@ -48,21 +47,6 @@ class result_list extends list_value_api
     function __construct(array $lst = array())
     {
         parent::__construct($lst);
-    }
-
-    /**
-     * add a formula result to the list
-     * @returns bool true if the formula result has been added
-     */
-    function add(result_api $res): bool
-    {
-        $result = false;
-        if (!in_array($res->id(), $this->id_lst())) {
-            $this->lst[] = $res;
-            $this->set_lst_dirty();
-            $result = true;
-        }
-        return $result;
     }
 
 

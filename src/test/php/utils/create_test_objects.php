@@ -120,7 +120,6 @@ use shared\triples;
 use shared\types\api_type_list;
 use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
-use api\result\result as result_api;
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_link;

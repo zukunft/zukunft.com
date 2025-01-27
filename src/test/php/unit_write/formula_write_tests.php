@@ -32,9 +32,6 @@
 
 namespace unit_write;
 
-use api\formula\formula as formula_api;
-use api\result\result as result_api;
-use api\word\word as word_api;
 use cfg\formula\formula_list;
 use cfg\formula\formula_type;
 use cfg\result\results;

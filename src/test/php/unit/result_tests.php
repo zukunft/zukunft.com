@@ -32,11 +32,8 @@
 
 namespace unit;
 
-include_once API_RESULT_PATH . 'result.php';
 include_once SHARED_PATH . 'words.php';
 
-use api\result\result as result_api;
-use api\word\word as word_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use cfg\formula\formula;
@@ -65,7 +62,7 @@ class result_tests
         $t->resource_path = 'db/result/';
 
 
-        $t->header('Unit tests of the result class (src/main/php/model/formula/result.php)');
+        $t->header('result unit tests');
 
         $t->subheader('SQL creation tests');
         $res = $t->result_simple();

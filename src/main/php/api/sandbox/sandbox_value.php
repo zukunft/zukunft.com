@@ -65,27 +65,6 @@ class sandbox_value extends sandbox_api
         return $this->number;
     }
 
-
-    /*
-     * cast
-     */
-
-    /**
-     * @returns string the html code to display the value with reference links
-     * TODO create a popup with the details e.g. the values of other users
-     */
-    function value_linked(): string
-    {
-        return $this->number;
-    }
-
-    /*
-    function load_phrases(): bool
-    {
-        return $this->grp->load_phrases();
-    }
-    */
-
 }
 
 

@@ -32,10 +32,8 @@
 
 namespace unit;
 
-include_once API_RESULT_PATH . 'result.php';
 include_once WEB_FIGURE_PATH . 'figure.php';
 
-use api\result\result as result_api;
 use cfg\result\results;
 use html\figure\figure as figure_dsp;
 use html\rest_ctrl;

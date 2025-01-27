@@ -45,7 +45,6 @@
 namespace cfg\result;
 
 //include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once API_RESULT_PATH . 'result.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
@@ -78,7 +77,6 @@ include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\result\result as result_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
