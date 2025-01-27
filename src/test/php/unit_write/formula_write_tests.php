@@ -37,6 +37,7 @@ use api\result\result as result_api;
 use api\word\word as word_api;
 use cfg\formula\formula_list;
 use cfg\formula\formula_type;
+use cfg\result\results;
 use cfg\user\user;
 use cfg\word\word;
 use html\formula\formula as formula_dsp;
@@ -200,7 +201,7 @@ class formula_write_tests
         if ($res_lst->lst() != null) {
             $res->save_if_updated();
             $result = $res->number();
-            $target = result_api::TV_INCREASE_LONG;
+            $target = results::TV_INCREASE_LONG;
             $t->display('result->save_if_updated "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
         }
 
@@ -210,7 +211,7 @@ class formula_write_tests
         } else {
             $result = '';
         }
-        $target = result_api::TV_INCREASE_LONG;
+        $target = results::TV_INCREASE_LONG;
         $t->display('formula->calc "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
 
         // test the scaling mainly to check the scaling handling of the results later

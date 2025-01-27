@@ -46,11 +46,11 @@ namespace test;
 
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
-include_once API_PHRASE_PATH . 'group.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
+include_once MODEL_RESULT_PATH . 'results.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_VALUE_PATH . 'value_time.php';
 include_once MODEL_VALUE_PATH . 'value_text.php';
@@ -94,6 +94,7 @@ use cfg\log\changes_norm;
 use cfg\phrase\phrase_list;
 use cfg\phrase\phrase_types;
 use cfg\ref\ref_type;
+use cfg\result\results;
 use cfg\sandbox\protection_type_list;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\share_type_list;
@@ -2153,7 +2154,7 @@ class create_test_objects extends test_base
         $phr_lst->add($wrd->phrase());
         $res->set_id(1);
         $res->grp()->set_phrase_list($phr_lst);
-        $res->set_number(result_api::TV_INT);
+        $res->set_number(results::TV_INT);
         return $res;
     }
 
@@ -2162,7 +2163,7 @@ class create_test_objects extends test_base
         $res = new result($this->usr1);
         $res->set_grp($this->group());
         $res->set_src_grp($this->group_const());
-        $res->set_number(result_api::TV_INT);
+        $res->set_number(results::TV_INT);
         return $res;
     }
 
@@ -2171,7 +2172,7 @@ class create_test_objects extends test_base
         $res = new result($this->usr1);
         $res->set_grp($this->group_prime_3());
         $res->set_src_grp($this->group_const());
-        $res->set_number(result_api::TV_INT);
+        $res->set_number(results::TV_INT);
         return $res;
     }
 
@@ -2180,7 +2181,7 @@ class create_test_objects extends test_base
         $res = new result($this->usr1);
         $res->set_grp($this->group_prime_max());
         $res->set_src_grp($this->group_const());
-        $res->set_number(result_api::TV_INT);
+        $res->set_number(results::TV_INT);
         return $res;
     }
 
@@ -2190,7 +2191,7 @@ class create_test_objects extends test_base
         $res->set_formula($this->formula());
         $res->set_grp($this->group_main_max());
         $res->set_src_grp($this->group_const());
-        $res->set_number(result_api::TV_INT);
+        $res->set_number(results::TV_INT);
         return $res;
     }
 
@@ -2212,7 +2213,7 @@ class create_test_objects extends test_base
     {
         $res = new result($this->usr1);
         $res->set_grp($this->group_16());
-        $res->set_number(result_api::TV_INT);
+        $res->set_number(results::TV_INT);
         return $res;
     }
 
@@ -2220,7 +2221,7 @@ class create_test_objects extends test_base
     {
         $res = new result($this->usr1);
         $res->set_grp($this->group_17_plus());
-        $res->set_number(result_api::TV_INT);
+        $res->set_number(results::TV_INT);
         return $res;
     }
 
@@ -2232,7 +2233,7 @@ class create_test_objects extends test_base
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd_pct->phrase());
         $res->grp()->set_phrase_list($phr_lst);
-        $res->set_number(result_api::TV_PCT);
+        $res->set_number(results::TV_PCT);
         return $res;
     }
 

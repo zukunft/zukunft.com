@@ -36,6 +36,7 @@ include_once API_RESULT_PATH . 'result.php';
 include_once WEB_FIGURE_PATH . 'figure.php';
 
 use api\result\result as result_api;
+use cfg\result\results;
 use html\figure\figure as figure_dsp;
 use html\rest_ctrl;
 use shared\types\api_type;
@@ -74,7 +75,7 @@ class figure_tests
         $fig = $t->figure_result();
         $t->assert('figure result id', $fig->id(), -1);
         $t->assert('figure result obj id', $fig->obj_id(), 1);
-        $t->assert('figure result number', $fig->number(), result_api::TV_INT);
+        $t->assert('figure result number', $fig->number(), results::TV_INT);
 
         $fig = $t->figure_value();
         $t->assert('figure value symbol', $fig->symbol(), "");

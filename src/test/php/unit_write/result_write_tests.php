@@ -41,6 +41,7 @@ use cfg\formula\formula;
 use cfg\phrase\phrase_list;
 use cfg\result\result;
 use cfg\result\result_list;
+use cfg\result\results;
 use cfg\value\value;
 use cfg\value\value_base;
 use shared\formulas;
@@ -99,7 +100,7 @@ class result_write_tests
             $result = 'no ' . words::INHABITANTS . ' ' . formulas::INCREASE. ' value found for ' . words::CH;
         }
         // TODO review
-        $target = result_api::TV_INCREASE_LONG;
+        $target = results::TV_INCREASE_LONG;
         // TODO activate Prio 1
         //$t->display('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result, $t::TIMEOUT_LIMIT_LONG);
 

@@ -36,31 +36,15 @@ namespace api\sandbox;
 
 include_once API_SANDBOX_PATH . 'sandbox.php';
 include_once API_PHRASE_PATH . 'phrase_list.php';
-include_once API_PHRASE_PATH . 'group.php';
 include_once WEB_PHRASE_PATH . 'phrase_group.php';
 
 use api\sandbox\sandbox as sandbox_api;
-use api\phrase\group as group_api;
-use api\phrase\phrase_list as phrase_list_api;
-use html\phrase\phrase_group as phrase_group_dsp;
 
 class sandbox_value extends sandbox_api
 {
 
-    private group_api $grp; // the phrase group with the list of words and triples (not the source words and triples)
     private ?float $number; // the number calculated by the system
 
-    /*
-     * construct and map
-     */
-
-    function __construct(int|string $id = 0)
-    {
-        parent::__construct($id);
-
-        $this->grp = new group_api();
-        $this->number = null;
-    }
 
     /*
      * set and get
@@ -71,19 +55,9 @@ class sandbox_value extends sandbox_api
         return $this->id;
     }
 
-    function set_grp(group_api $grp): void
-    {
-        $this->grp = $grp;
-    }
-
     function set_number(?float $number): void
     {
         $this->number = $number;
-    }
-
-    function grp(): group_api
-    {
-        return $this->grp;
     }
 
     function number(): ?float
@@ -95,15 +69,6 @@ class sandbox_value extends sandbox_api
     /*
      * cast
      */
-
-
-    /**
-     * @returns phrase_list_api the list of phrases as an object
-     */
-    function phr_lst(): phrase_list_api
-    {
-        return $this->grp->phr_lst();
-    }
 
     /**
      * @returns string the html code to display the value with reference links

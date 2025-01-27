@@ -32,7 +32,6 @@
 
 namespace unit;
 
-include_once API_PHRASE_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'group_link.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
@@ -64,7 +63,7 @@ class group_tests
         $t->name = 'group->';
         $t->resource_path = 'db/group/';
 
-        $t->header('Unit tests of the phrase group class (src/main/php/model/group/group.php)');
+        $t->header('group unit tests');
 
         $t->subheader('Group id tests');
         $grp_id = new group_id();

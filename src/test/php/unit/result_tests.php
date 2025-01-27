@@ -45,6 +45,7 @@ use cfg\group\group_list;
 use cfg\phrase\phrase_list;
 use cfg\db\sql_db;
 use cfg\result\result;
+use cfg\result\results;
 use html\result\result as result_dsp;
 use shared\words;
 use test\test_cleanup;
@@ -118,12 +119,12 @@ class result_tests
         $t->assert_sql_insert($sc, $res_big);
         // TODO activate db write
         // TODO add tests for text, time and geo values
-        $db_res_prime = $res_prime->cloned(result_api::TV_FLOAT);
-        $db_res_prime_max = $res_prime_max->cloned(result_api::TV_FLOAT);
-        $db_res_main = $res_main->cloned(result_api::TV_FLOAT);
-        $db_res_filled = $res_filled->cloned(result_api::TV_FLOAT);
-        $db_res = $res->cloned(result_api::TV_FLOAT);
-        $db_res_big = $res_big->cloned(result_api::TV_FLOAT);
+        $db_res_prime = $res_prime->cloned(results::TV_FLOAT);
+        $db_res_prime_max = $res_prime_max->cloned(results::TV_FLOAT);
+        $db_res_main = $res_main->cloned(results::TV_FLOAT);
+        $db_res_filled = $res_filled->cloned(results::TV_FLOAT);
+        $db_res = $res->cloned(results::TV_FLOAT);
+        $db_res_big = $res_big->cloned(results::TV_FLOAT);
         // TODO activate db write
         $t->assert_sql_update($sc, $res_prime, $db_res_prime, [sql_type::STANDARD]);
         $t->assert_sql_update($sc, $res_prime, $db_res_prime);
@@ -154,11 +155,11 @@ class result_tests
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd_const->phrase());
         $res->grp()->set_phrase_list($phr_lst);
-        $res->set_number(result_api::TV_INT);
+        $res->set_number(results::TV_INT);
         $t->assert('result->val_formatted test big numbers', $res->val_formatted(), "123'456");
 
         // ... for small values 12.35 instead of 12.34 due to rounding
-        $res->set_number(result_api::TV_FLOAT);
+        $res->set_number(results::TV_FLOAT);
         $t->assert('result->val_formatted test small numbers', $res->val_formatted(), "12.35");
 
         // ... for percent values

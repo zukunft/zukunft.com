@@ -46,31 +46,11 @@ class result extends sandbox_value_api implements JsonSerializable
 {
 
     /*
-     * const for system testing
-     */
-
-    CONST TV_INT = 123456;
-    CONST TV_FLOAT = 12.3456;
-    CONST TV_PCT = 0.01234;
-    CONST TV_INCREASE_LONG = '0.0078718332961637'; // the increase of the swiss inhabitants from 2019 to 2020
-
-    /*
      * object vars
      */
 
     // true if the user has done no personal overwrites which is the default case
     public bool $is_std;
-
-
-    /*
-     * construct and map
-     */
-
-    function __construct(int|string $id = 0)
-    {
-        parent::__construct($id);
-        $this->is_std = true;
-    }
 
 
     /*
@@ -91,31 +71,5 @@ class result extends sandbox_value_api implements JsonSerializable
     /*
      * interface
      */
-
-    /**
-     * an array of the value vars including the private vars
-     */
-    function jsonSerialize(): array
-    {
-        $vars = parent::jsonSerialize();
-        $vars = array_merge($vars, get_object_vars($this));
-
-        // add the var of the parent object
-        $vars[json_fields::NUMBER] = $this->number();
-
-        // remove vars from the json that have the default value
-        if ($this->is_std) {
-            if (array_key_exists(json_fields::IS_STD, $vars)) {
-                unset($vars[json_fields::IS_STD]);
-            }
-        }
-
-        // add the phrase list to the api object because this is always needed to display the value
-        // the phrase group is not used in the api because this is always created dynamically based on the phrase
-        // and only used to speed up the database and reduce the size
-        $vars[json_fields::PHRASES] = json_decode(json_encode($this->phr_lst()));
-
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
-    }
 
 }
