@@ -38,8 +38,8 @@ include_once SHARED_PATH . 'triples.php';
 use cfg\phrase\phrase;
 use cfg\value\value;
 use cfg\value\value_list;
-use api\value\value as value_api;
 use shared\triples;
+use shared\values;
 use test\test_cleanup;
 
 class value_list_read_tests
@@ -92,8 +92,8 @@ class value_list_read_tests
         $val_lst->load_by_phr_lst($phr_lst);
         $result = $val_lst->dsp_id();
         // TODO check why not all years are loaded
-        //$target = value_api::TV_CH_INHABITANTS_2019_IN_MIO;
-        $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
+        //$target = values::TV_CH_INHABITANTS_2019_IN_MIO;
+        $target = values::CH_INHABITANTS_2020_IN_MIO;
         $t->assert_text_contains($test_name, $result, $target);
 
         // load values related to any phrase of a list

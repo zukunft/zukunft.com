@@ -36,7 +36,6 @@ include_once DB_PATH . 'sql.php';
 include_once MODEL_VALUE_PATH . 'value_time_series.php';
 include_once MODEL_VALUE_PATH . 'value_obj.php';
 
-use api\value\value as value_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_type;
@@ -52,7 +51,7 @@ use cfg\value\value_time_series;
 use DateTime;
 use html\value\value as value_dsp;
 use shared\types\api_type;
-use shared\types\api_type_list;
+use shared\values;
 use test\test_cleanup;
 
 class value_tests
@@ -74,16 +73,16 @@ class value_tests
 
         $t->subheader('value object selection');
         $test_name = 'create a numeric value object';
-        $val = (new value_obj())->get($usr, value_api::TV_READ);
+        $val = (new value_obj())->get($usr, values::PI_LONG);
         $t->assert($test_name, $val::class, value::class);
         $test_name = 'create a time value object';
-        $val = (new value_obj())->get($usr, (new DateTime(value_api::TV_TIME)));
+        $val = (new value_obj())->get($usr, (new DateTime(values::TIME)));
         $t->assert($test_name, $val::class, value_time::class);
         $test_name = 'create a text value object';
-        $val = (new value_obj())->get($usr, value_api::TV_TEXT);
+        $val = (new value_obj())->get($usr, values::TEXT);
         $t->assert($test_name, $val::class, value_text::class);
         $test_name = 'create a geolocation value object';
-        $val = (new value_obj())->get($usr, value_api::TV_GEO);
+        $val = (new value_obj())->get($usr, values::GEO);
         $t->assert($test_name, $val::class, value_geo::class);
 
         $t->subheader('value sql setup');
@@ -124,19 +123,19 @@ class value_tests
         // TODO activate db write
         $t->subheader('value sql write');
         $val = $t->value();
-        $db_val = $val->cloned(value_api::TV_FLOAT);
+        $db_val = $val->cloned(values::SAMPLE_FLOAT);
         $val_upd = $val->updated();
         $val_0 = $t->value_zero();
         $val_3 = $t->value_prime_3();
-        $db_val_3 = $val_3->cloned(value_api::TV_FLOAT);
+        $db_val_3 = $val_3->cloned(values::SAMPLE_FLOAT);
         $val_4 = $t->value_prime_max();
         $val_16 = $t->value_16();
-        $db_val_16 = $val_16->cloned(value_api::TV_FLOAT);
+        $db_val_16 = $val_16->cloned(values::SAMPLE_FLOAT);
         $val_fill = $t->value_16_filled();
         $val_17 = $t->value_17_plus();
-        $db_val_17 = $val_17->cloned(value_api::TV_FLOAT);
+        $db_val_17 = $val_17->cloned(values::SAMPLE_FLOAT);
         $val_txt = $t->text_value();
-        $db_val_txt = $val_txt->cloned(value_api::TV_DB_TEXT);
+        $db_val_txt = $val_txt->cloned(values::DB_TEXT);
         $t->assert_sql_insert($sc, $val_0, [sql_type::USER]);
         $t->assert_sql_insert($sc, $val);
         $t->assert_sql_insert($sc, $val, [sql_type::LOG]);
@@ -215,7 +214,7 @@ class value_tests
 
         // casting API
         $grp = $t->group();
-        $val = new value($usr, round(value_api::TV_READ, 13), $grp);
+        $val = new value($usr, round(values::PI_LONG, 13), $grp);
         $t->assert_api($val, 'value_without_phrases');
         $t->assert_api($val, 'value_with_phrases', [api_type::INCL_PHRASES]);
         $val = $t->time_value();
@@ -230,7 +229,7 @@ class value_tests
 
         // casting figure
         $val = new value($usr);
-        $val->set_number(value_api::TV_PCT);
+        $val->set_number(values::SAMPLE_PCT);
         $fig = $val->figure();
         $t->assert($t->name . ' get figure', $fig->number(), $val->number());
 

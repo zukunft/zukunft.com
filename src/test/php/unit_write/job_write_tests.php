@@ -32,16 +32,13 @@
 
 namespace unit_write;
 
-use api\formula\formula as formula_api;
-use api\value\value as value_api;
-use api\word\word as word_api;
 use cfg\system\job;
 use cfg\system\job_list;
 use cfg\system\job_type_list;
 use cfg\phrase\phrase_list;
 use cfg\value\value;
-use cfg\value\value_base;
 use shared\formulas;
+use shared\values;
 use shared\words;
 use test\test_cleanup;
 
@@ -63,7 +60,7 @@ class job_write_tests
             words::MIO,
             words::TN_2020
         ),
-            value_api::TV_CH_INHABITANTS_2020_IN_MIO);
+            values::CH_INHABITANTS_2020_IN_MIO);
 
 
         // prepare test adding a batch job via a list
@@ -73,7 +70,7 @@ class job_write_tests
         $val = new value($usr);
         $val->load_by_grp($phr_lst->get_grp_id());
         $result = $val->number();
-        $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
+        $target = values::CH_INHABITANTS_2020_IN_MIO;
         $t->display('job->value to link', $target, $result);
 
         // test adding a batch job

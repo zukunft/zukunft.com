@@ -41,13 +41,9 @@ include_once MODEL_LOG_PATH . 'changes_big.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
 include_once SHARED_PATH . 'triples.php';
 
-use api\word\triple as triple_api;
-use api\value\value as value_api;
-use api\word\word as word_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
-use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\log\change;
 use cfg\log\change_action;
@@ -57,20 +53,16 @@ use cfg\log\change_log;
 use cfg\log\change_log_list;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
-use cfg\log\change_value;
 use cfg\sandbox\sandbox_value;
 use cfg\value\value;
 use cfg\word\triple;
 use cfg\user\user;
-use cfg\value\value_base;
 use cfg\word\word;
 use cfg\word\word_db;
 use html\log\user_log_display;
-use html\value\value as value_dsp;
 use shared\library;
 use shared\triples;
 use test\test_cleanup;
-use unit_ui\verb_ui_tests;
 
 class change_log_tests
 {

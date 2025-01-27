@@ -33,16 +33,13 @@
 namespace unit;
 
 include_once API_RESULT_PATH . 'result.php';
-include_once API_VALUE_PATH . 'value.php';
 include_once WEB_FIGURE_PATH . 'figure.php';
 
 use api\result\result as result_api;
-use api\value\value as value_api;
 use html\figure\figure as figure_dsp;
-use html\value\value as value_dsp;
-use html\result\result as result_dsp;
 use html\rest_ctrl;
 use shared\types\api_type;
+use shared\values;
 use test\test_cleanup;
 
 class figure_tests
@@ -71,9 +68,9 @@ class figure_tests
         $t->subheader('set and get unit tests');
 
         $fig = $t->figure_value();
-        $t->assert('figure value id', $fig->id(), value_api::TI_PI);
-        $t->assert('figure value obj id', $fig->obj_id(), value_api::TI_PI);
-        $t->assert('figure value number', $fig->number(), value_api::TV_READ_SHORTEST);
+        $t->assert('figure value id', $fig->id(), values::PI_ID);
+        $t->assert('figure value obj id', $fig->obj_id(), values::PI_ID);
+        $t->assert('figure value number', $fig->number(), values::PI_SHORT);
         $fig = $t->figure_result();
         $t->assert('figure result id', $fig->id(), -1);
         $t->assert('figure result obj id', $fig->obj_id(), 1);

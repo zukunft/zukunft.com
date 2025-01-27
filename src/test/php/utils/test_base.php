@@ -59,10 +59,6 @@ include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\sandbox\sandbox as sandbox_api;
-use api\word\word as word_api;
-use api\word\triple as triple_api;
-use api\value\value as value_api;
-use api\formula\formula as formula_api;
 use cfg\formula\fig_ids;
 use cfg\helper\combine_named;
 use cfg\helper\combine_object;
@@ -716,28 +712,6 @@ class test_base
     }
 
     /**
-     * helper function for unit testing to create an empty model object from an api object
-     * fill the model / db object based on the api json message
-     * should be part of the save_from_api_msg functions
-     */
-    private function db_obj(user $usr, string $class): sandbox|sandbox_value
-    {
-        $db_obj = null;
-        if ($class == word_api::class) {
-            $db_obj = new word($usr);
-        } elseif ($class == triple_api::class) {
-            $db_obj = new triple($usr);
-        } elseif ($class == value_api::class) {
-            $db_obj = new value($usr);
-        } elseif ($class == formula_api::class) {
-            $db_obj = new formula($usr);
-        } else {
-            log_err('API class "' . $class . '" not yet implemented');
-        }
-        return $db_obj;
-    }
-
-    /**
      * check if the REST GET call returns the expected export JSON message
      *
      * @param string $test_name the name of the object to test
@@ -760,28 +734,6 @@ class test_base
         return $this->assert($test_name . ' API GET', $lib->json_is_similar($actual, $expected), true);
     }
 
-
-    /**
-     * check if the REST curl calls are possible
-     *
-     * @param object $usr_obj the object to enrich which REST curl calls should be tested
-     * @return bool true if the reloaded backend object has no relevant differences
-     */
-    function assert_rest(object $usr_obj): bool
-    {
-        $lib = new library();
-        $obj_name = get_class($usr_obj);
-        $url_read = 'api/' . $obj_name . '/index.php';
-        $original_json = json_decode(json_encode($usr_obj->$usr_obj()), true);
-        $recreated_json = '';
-        $api_obj = $usr_obj->api_obj();
-        if ($api_obj->id == $usr_obj->id) {
-            $db_obj = $this->db_obj($usr_obj->usr, $api_obj::class);
-            $recreated_json = $db_obj->export_json();
-        }
-        $result = $lib->json_is_similar($original_json, $recreated_json);
-        return $this->assert($this->name . 'REST check', $result, true);
-    }
 
     /**
      * test a system view with a sample user object

@@ -53,7 +53,6 @@ include_once SHARED_PATH . 'words.php';
 include_once WEB_HELPER_PATH . 'data_object.php';
 
 use api\component\component as component_api;
-use api\value\value as value_api;
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_list;
@@ -89,6 +88,7 @@ use shared\library;
 use shared\refs;
 use shared\sources;
 use shared\types\verbs;
+use shared\values;
 use shared\views as view_shared;
 use shared\words;
 use test\test_cleanup;
@@ -126,7 +126,7 @@ class api_tests
         //$t->assert_api_get_by_text(triple::class, triples::TN_READ);
         //$t->assert_api_get(phrase::class);
         // the value contains only the phrase id and name in the api message because the phrase are expected to be cached in the frontend
-        $t->assert_api_get(value::class, value_api::TI_PI);
+        $t->assert_api_get(value::class, values::PI_ID);
         $t->assert_api_get(formula::class);
         $t->assert_api_get_by_text(formula::class, formulas::SCALE_TO_SEC);
         $t->assert_api_get(view::class);

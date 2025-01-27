@@ -34,13 +34,13 @@ namespace unit_read;
 
 include_once SHARED_PATH . 'triples.php';
 
-use api\value\value as value_api;
 use cfg\group\group_id;
 use cfg\phrase\phrase_list;
 use cfg\value\value;
 use shared\groups;
 use shared\triples;
 use shared\types\phrase_type;
+use shared\values;
 use shared\words;
 use test\test_cleanup;
 
@@ -53,15 +53,15 @@ class value_read_tests
         // init
         $t->name = 'value->';
 
-        $t->header('Unit database tests of the value class (src/main/php/model/value/value.php)');
+        $t->header('value unit database read tests');
 
         $t->subheader('Value load tests');
 
         $test_name = 'load a value by id';
         $val = new value($t->usr1);
-        $val->load_by_id(value_api::TI_PI);
+        $val->load_by_id(values::PI_ID);
         $val->load_objects();
-        $t->assert($test_name, $val->number(), value_api::TV_READ);
+        $t->assert($test_name, $val->number(), values::PI_LONG);
         $t->assert($test_name, $val->name(), groups::TN_READ);
         $phr_lst = $val->grp()->phrase_list();
         if ($phr_lst->count() > 0) {
@@ -78,7 +78,7 @@ class value_read_tests
         $val = new value($t->usr1);
         $val->load_by_grp($phr_lst->get_grp_id());
         $result = $val->number();
-        $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
+        $target = values::CH_INHABITANTS_2020_IN_MIO;
         $t->assert($test_name, $result, $target);
 
         /*
@@ -87,7 +87,7 @@ class value_read_tests
         $val = new value($t->usr1);
         $val->load_by_grp($phr_lst->get_grp());
         $result = $val->number();
-        $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
+        $target = values::TV_CH_INHABITANTS_2020_IN_MIO;
         $t->assert($test_name, $result, $target);
         */
 

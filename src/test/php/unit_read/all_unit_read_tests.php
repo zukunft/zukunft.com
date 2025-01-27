@@ -39,10 +39,10 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'triples.php';
 include_once SHARED_PATH . 'words.php';
 
-use api\value\value as value_api;
 use html\types\type_lists as type_list_dsp;
 use shared\groups;
 use shared\triples;
+use shared\values;
 use shared\words;
 use test\all_tests;
 use unit\api_tests;
@@ -132,14 +132,14 @@ class all_unit_read_tests extends all_unit_tests
             triples::PI_NAME, triples::PI_NAME
         );
         $phr_grp = $this->add_phrase_group(array(triples::PI_NAME), groups::TN_READ);
-        $this->test_value_by_phr_grp($phr_grp, value_api::TV_READ);
+        $this->test_value_by_phr_grp($phr_grp, values::PI_LONG);
 
         $this->test_triple(
             triples::E, verbs::IS, words::MATH,
             triples::E, triples::E
         );
         $phr_grp = $this->add_phrase_group(array(triples::E), groups::TN_READ);
-        $this->test_value_by_phr_grp($phr_grp, value_api::TV_E);
+        $this->test_value_by_phr_grp($phr_grp, values::E);
     }
 
     /**

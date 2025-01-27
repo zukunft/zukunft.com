@@ -64,6 +64,7 @@ include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'formulas.php';
 include_once SHARED_PATH . 'groups.php';
 include_once SHARED_PATH . 'triples.php';
+include_once SHARED_PATH . 'values.php';
 include_once SHARED_PATH . 'words.php';
 include_once SHARED_PATH . 'json_fields.php';
 
@@ -119,7 +120,6 @@ use shared\types\api_type_list;
 use shared\types\component_type as comp_type_shared;
 use api\component\component as component_api;
 use api\result\result as result_api;
-use api\value\value as value_api;
 use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_link;
@@ -190,6 +190,7 @@ use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use shared\types\view_styles;
 use shared\types\view_type;
+use shared\values;
 use shared\words;
 use unit_write\component_link_write_tests;
 use unit_write\component_write_tests;
@@ -1876,25 +1877,25 @@ class create_test_objects extends test_base
     function value(): value
     {
         $grp = $this->group();
-        return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
+        return new value($this->usr1, round(values::PI_LONG, 13), $grp);
     }
 
     function time_value(): value_time
     {
         $grp = $this->group_pod_launch();
-        return new value_time($this->usr1, new DateTime(value_api::TV_TIME), $grp);
+        return new value_time($this->usr1, new DateTime(values::TIME), $grp);
     }
 
     function text_value(): value_text
     {
         $grp = $this->group_pod_url();
-        return new value_text($this->usr1, value_api::TV_TEXT, $grp);
+        return new value_text($this->usr1, values::TEXT, $grp);
     }
 
     function geo_value(): value_geo
     {
         $grp = $this->group_pod_point();
-        return new value_geo($this->usr1, value_api::TV_GEO, $grp);
+        return new value_geo($this->usr1, values::GEO, $grp);
     }
 
     /**
@@ -1903,7 +1904,7 @@ class create_test_objects extends test_base
     function value_zero(): value
     {
         $grp = $this->group();
-        return new value($this->usr1, value_api::TV_ZERO, $grp);
+        return new value($this->usr1, values::SAMPLE_ZERO, $grp);
     }
 
     /**
@@ -1912,7 +1913,7 @@ class create_test_objects extends test_base
     function value_prime_3(): value
     {
         $grp = $this->group_prime_3();
-        return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
+        return new value($this->usr1, round(values::PI_LONG, 13), $grp);
     }
 
     /**
@@ -1921,13 +1922,13 @@ class create_test_objects extends test_base
     function value_prime_max(): value
     {
         $grp = $this->group_prime_max();
-        return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
+        return new value($this->usr1, round(values::PI_LONG, 13), $grp);
     }
 
     function value_16(): value
     {
         $grp = $this->group_16();
-        return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
+        return new value($this->usr1, round(values::PI_LONG, 13), $grp);
     }
 
     function value_16_filled(): value
@@ -1935,7 +1936,7 @@ class create_test_objects extends test_base
         global $shr_typ_cac;
         global $ptc_typ_cac;
         $grp = $this->group_16();
-        $val = new value($this->usr1, round(value_api::TV_READ, 13), $grp);
+        $val = new value($this->usr1, round(values::PI_LONG, 13), $grp);
         $val->set_source_id($this->source()->id());
         $val->exclude();
         $val->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
@@ -1946,25 +1947,25 @@ class create_test_objects extends test_base
     function value_17_plus(): value
     {
         $grp = $this->group_17_plus();
-        return new value($this->usr1, round(value_api::TV_READ, 13), $grp);
+        return new value($this->usr1, round(values::PI_LONG, 13), $grp);
     }
 
     function value_zh(): value
     {
         $grp = $this->group_zh();
-        return new value($this->usr1, value_api::TV_CITY_ZH_INHABITANTS_2019, $grp);
+        return new value($this->usr1, values::CITY_ZH_INHABITANTS_2019, $grp);
     }
 
     function value_canton(): value
     {
         $grp = $this->group_canton();
-        return new value($this->usr1, value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO, $grp);
+        return new value($this->usr1, values::CANTON_ZH_INHABITANTS_2020_IN_MIO, $grp);
     }
 
     function value_ch(): value
     {
         $grp = $this->group_ch();
-        return new value($this->usr1, value_api::TV_CH_INHABITANTS_2019_IN_MIO, $grp);
+        return new value($this->usr1, values::CH_INHABITANTS_2019_IN_MIO, $grp);
     }
 
     function value_list(): value_list
@@ -1991,7 +1992,7 @@ class create_test_objects extends test_base
     function value_ts_data(): value_ts_data
     {
         $ts = new value_ts_data();
-        $ts->value = round(value_api::TV_READ, 13);
+        $ts->value = round(values::PI_LONG, 13);
         return $ts;
     }
 
@@ -3218,19 +3219,19 @@ class create_test_objects extends test_base
             change_values_prime::class,
             change_values_big::class,
             change_values_norm::class
-            => value_api::TV_READ_SHORTEST,
+            => values::PI_SHORT,
             change_values_time_prime::class,
             change_values_time_big::class,
             change_values_time_norm::class
-            => (new DateTime(value_api::TV_TIME)),
+            => (new DateTime(values::TIME)),
             change_values_text_prime::class,
             change_values_text_norm::class,
             change_values_text_big::class
-            => value_api::TV_TEXT,
+            => values::TEXT,
             change_values_geo_prime::class,
             change_values_geo_norm::class,
             change_values_geo_big::class
-            => value_api::TV_GEO,
+            => values::GEO,
             change_link::class => triple::class,
         };
     }
@@ -3248,7 +3249,7 @@ class create_test_objects extends test_base
         $chg->set_table(change_table_list::VALUE);
         $chg->set_field(change_field_list::FLD_NUMERIC_VALUE);
         $chg->group_id = $this->group()->id();
-        $chg->new_value = value_api::TV_READ_SHORTEST;
+        $chg->new_value = values::PI_SHORT;
         $chg->row_id = 1;
         return $chg;
     }
@@ -3265,7 +3266,7 @@ class create_test_objects extends test_base
         $chg->set_action(change_action::ADD);
         $chg->set_table(change_table_list::WORD);
         $chg->set_field(change_field_list::FLD_WORD_NAME);
-        $chg->new_value = value_api::TV_READ_SHORTEST;
+        $chg->new_value = values::PI_SHORT;
         $chg->row_id = 1;
         return $chg;
     }
@@ -3282,7 +3283,7 @@ class create_test_objects extends test_base
         $chg->set_action(change_action::ADD);
         $chg->set_table(change_table_list::WORD);
         $chg->set_field(change_field_list::FLD_WORD_NAME);
-        $chg->new_value = value_api::TV_READ_SHORTEST;
+        $chg->new_value = values::PI_SHORT;
         $chg->row_id = 1;
         return $chg;
     }
@@ -3293,7 +3294,7 @@ class create_test_objects extends test_base
     function change_log_value_update(): change_values_norm
     {
         $chg = $this->change_log_value();
-        $chg->old_value = value_api::TV_INT;
+        $chg->old_value = values::SAMPLE_INT;
         return $chg;
     }
 

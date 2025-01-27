@@ -37,7 +37,6 @@ include_once SHARED_PATH . 'json_fields.php';
 
 use api\result\result as result_api;
 use api\sandbox\combine_object as combine_object_api;
-use api\value\value as value_api;
 use JsonSerializable;
 use shared\json_fields;
 
@@ -47,16 +46,6 @@ class figure extends combine_object_api implements JsonSerializable
     // the json field name in the api json message to identify if the figure is a value or result
     const CLASS_VALUE = 'value';
     const CLASS_RESULT = 'result';
-
-
-    /*
-     * construct and map
-     */
-
-    function __construct(value_api|result_api|null $val_obj = null)
-    {
-        $this->set_obj($val_obj);
-    }
 
 
     /*

@@ -142,7 +142,6 @@ use cfg\system\log;
 use shared\json_fields;
 use shared\types\api_type_list;
 use shared\types\protection_type as protect_type_shared;
-use api\value\value as value_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;

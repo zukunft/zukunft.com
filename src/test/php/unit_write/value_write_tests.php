@@ -34,8 +34,6 @@ namespace unit_write;
 
 include_once SHARED_PATH . 'triples.php';
 
-use api\value\value as value_api;
-use api\word\word as word_api;
 use cfg\log\change;
 use cfg\log\change_field_list;
 use cfg\log\change_table_list;
@@ -50,6 +48,7 @@ use html\figure\figure as figure_dsp;
 use shared\library;
 use shared\triples;
 use shared\types\api_type;
+use shared\values;
 use shared\words;
 use test\test_cleanup;
 
@@ -62,7 +61,7 @@ class value_write_tests
         global $test_val_lst;
         $lib = new library();
 
-        $t->header('Test the value class (classes/value.php)');
+        $t->header('value database write tests');
 
         // check if loading the value without time still returns the value
         /* TODO fix and activate
@@ -73,7 +72,7 @@ class value_write_tests
             words::TN_MIO
         ));
         $t->assert('Check if loading the latest value works',
-            $val->number(), value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
+            $val->number(), values::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
         */
 
         // check if loading value with a phrase returns a value created with the phrase parts
@@ -88,7 +87,7 @@ class value_write_tests
             words::TN_2020
         ));
         //$t->assert('Check if loading the latest value works',
-        //    $val->number(), value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
+        //    $val->number(), values::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
         // test load by phrase list first to get the value id
         $ch_inhabitants = $t->test_value(array(
@@ -97,7 +96,7 @@ class value_write_tests
             words::MIO,
             words::TN_2019
         ),
-            value_api::TV_CH_INHABITANTS_2019_IN_MIO);
+            values::CH_INHABITANTS_2019_IN_MIO);
 
         if (!$ch_inhabitants->is_id_set()) {
             log_err('Loading of test value ' . $ch_inhabitants->dsp_id() . ' failed');
@@ -105,7 +104,7 @@ class value_write_tests
             // test load by value id
             $val = $t->load_value_by_id($t->usr1, $ch_inhabitants->id());
             $result = $val->number();
-            $target = value_api::TV_CH_INHABITANTS_2019_IN_MIO;
+            $target = values::CH_INHABITANTS_2019_IN_MIO;
             $t->assert(', value->load for value id "' . $ch_inhabitants->id() . '"', $result, $target);
 
             // test load by phrase list first to get the value id
@@ -113,7 +112,7 @@ class value_write_tests
             $val_by_phr_lst = new value($t->usr1);
             $val_by_phr_lst->load_by_grp($phr_lst->get_grp_id());
             $result = $val_by_phr_lst->number();
-            $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
+            $target = values::CH_INHABITANTS_2020_IN_MIO;
             $t->display(', value->load for another word list ' . $phr_lst->dsp_name(), $target, $result);
 
             // test load by value id
@@ -121,7 +120,7 @@ class value_write_tests
             if ($val_by_phr_lst->is_id_set()) {
                 $val->load_by_id($val_by_phr_lst->id());
                 $result = $val->number();
-                $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
+                $target = values::CH_INHABITANTS_2020_IN_MIO;
                 $t->display(', value->load for value id "' . $ch_inhabitants->id() . '"', $target, $result);
 
                 // test rebuild_grp_id by value id
@@ -163,7 +162,7 @@ class value_write_tests
 
             // ... and check the number
             $result = $chk_val->number();
-            $target = value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO;
+            $target = values::CANTON_ZH_INHABITANTS_2020_IN_MIO;
             $t->display(', value->load for "' . $chk_phr_grp->dsp_id() . '"', $target, $result);
 
             // ... and check the words loaded
@@ -224,7 +223,7 @@ class value_write_tests
         $api_msg = $pct_val->api_json([api_type::INCL_PHRASES]);
         $val_dsp = new value_dsp($api_msg);
         $result = $val_dsp->display(0);
-        $target = number_format(round(value_api::TV_PCT * 100, 2), 2) . '%';
+        $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2) . '%';
         $t->display(', value->val_formatted for ' . $pct_val->dsp_id(), $target, $result);
 
         // test the scaling of a value
@@ -234,7 +233,7 @@ class value_write_tests
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
         $result = $mio_val->scale($dest_phr_lst);
-        $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO * 1000000;
+        $target = values::CH_INHABITANTS_2020_IN_MIO * 1000000;
         $t->display(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $target, $result);
 
         // test the figure object creation
@@ -251,7 +250,7 @@ class value_write_tests
 
         // test the HTML code creation
         $result = $mio_val_dsp->display_value();
-        $target = number_format(value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO, 2, DEFAULT_DEC_POINT, DEFAULT_THOUSAND_SEP);
+        $target = number_format(values::CANTON_ZH_INHABITANTS_2020_IN_MIO, 2, DEFAULT_DEC_POINT, DEFAULT_THOUSAND_SEP);
         $t->display(', value->display', $target, $result);
 
         // test the HTML code creation including the hyperlink
@@ -261,22 +260,22 @@ class value_write_tests
         $t->assert(', value->display_linked', $result, $target);
 
         // change the number to force using the thousand separator
-        $mio_val_dsp->set_number(value_api::TV_INT);
+        $mio_val_dsp->set_number(values::SAMPLE_INT);
         $result = $mio_val_dsp->display_value_linked('1');
         //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
         $target = '<a href="/http/value_edit.php?id=' . $mio_val_dsp->id() . '&back=1"  >123\'456</a>';
         $t->assert(', value->display_linked', $result, $target);
 
         // convert the user input for the database
-        $mio_val->usr_value = value_api::TV_USER_HIGH_QUOTE;
+        $mio_val->usr_value = values::SAMPLE_FLOAT_HIGH_QUOTE_FORM;
         $result = $mio_val->convert();
-        $target = value_api::TV_INT;
+        $target = values::SAMPLE_INT;
         $t->display(', value->convert user input', $target, $result);
 
         // convert the user input with space for the database
-        $mio_val->usr_value = value_api::TV_USER_SPACE;
+        $mio_val->usr_value = values::SAMPLE_FLOAT_SPACE_FORM;
         $result = $mio_val->convert();
-        $target = value_api::TV_INT;
+        $target = values::SAMPLE_INT;
         $t->display(', value->convert user input', $target, $result);
 
         // test adding a value in the database
@@ -285,7 +284,7 @@ class value_write_tests
         $phr_grp = $t->load_phrase_group(array(words::TN_RENAMED, words::INHABITANTS, words::MIO, words::TN_2020));
         $add_val = new value($t->usr1);
         $add_val->set_grp($phr_grp);
-        $add_val->set_number(value_api::TV_BIG);
+        $add_val->set_number(values::SAMPLE_BIG);
         $result = $add_val->save()->get_last_message();
         $target = '';
         $t->display(', value->save ' . $add_val->number() . ' for ' . $phr_grp->dsp_id() . ' by user "' . $t->usr1->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -324,7 +323,7 @@ class value_write_tests
         $phr_grp2 = $t->load_phrase_group(array(words::TN_RENAMED, words::INHABITANTS, words::MIO, words::TN_2019));
         $add_val2 = new value($t->usr1);
         $add_val2->set_grp($phr_grp2);
-        $add_val2->set_number(value_api::TV_BIGGER);
+        $add_val2->set_number(values::SAMPLE_BIGGER);
         $result = $add_val2->save()->get_last_message();
         $target = '';
         $t->display(', value->save ' . $add_val2->number() . ' for ' . $phr_grp2->name() . ' by user "' . $t->usr1->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -513,7 +512,7 @@ class value_write_tests
             words::MIO,
             words::TN_2020
         ),
-            value_api::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
+            values::CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
         // add a number with a triple without time definition
         // e.g. the inhabitants in the city of zurich
@@ -523,7 +522,7 @@ class value_write_tests
             triples::CITY_ZH,
             words::INHABITANTS
         ),
-            value_api::TV_CITY_ZH_INHABITANTS_2019);
+            values::CITY_ZH_INHABITANTS_2019);
 
         // ... same with the concrete year
         $t->test_value(array(
@@ -531,7 +530,7 @@ class value_write_tests
             words::INHABITANTS,
             words::TN_2019
         ),
-            value_api::TV_CITY_ZH_INHABITANTS_2019);
+            values::CITY_ZH_INHABITANTS_2019);
 
         // add the number of inhabitants in switzerland without time definition
         $t->test_value(array(
@@ -539,7 +538,7 @@ class value_write_tests
             words::INHABITANTS,
             words::MIO
         ),
-            value_api::TV_CH_INHABITANTS_2020_IN_MIO);
+            values::CH_INHABITANTS_2020_IN_MIO);
 
         // ... same with the concrete year
         $t->test_value(array(
@@ -548,7 +547,7 @@ class value_write_tests
             words::MIO,
             words::TN_2020
         ),
-            value_api::TV_CH_INHABITANTS_2020_IN_MIO);
+            values::CH_INHABITANTS_2020_IN_MIO);
 
         // ... same with the previous year
         $t->test_value(array(
@@ -557,7 +556,7 @@ class value_write_tests
             words::MIO,
             words::TN_2019
         ),
-            value_api::TV_CH_INHABITANTS_2019_IN_MIO);
+            values::CH_INHABITANTS_2019_IN_MIO);
 
         // add the percentage of inhabitants in Canton Zurich compared to Switzerland for calculation validation
         $t->test_value(array(
@@ -568,7 +567,7 @@ class value_write_tests
             words::TN_PCT,
             words::TN_2020
         ),
-            value_api::TV_PCT);
+            values::SAMPLE_PCT);
 
         // add the increase of inhabitants in Switzerland from 2019 to 2020 for calculation validation
         $t->test_value(array(
@@ -578,20 +577,20 @@ class value_write_tests
             words::TN_PCT,
             words::TN_2020
         ),
-            value_api::TV_INCREASE);
+            values::INCREASE);
 
         // add some simple number for formula testing
         $t->test_value(array(
             words::TN_SHARE,
             words::TWN_CHF
         ),
-            value_api::TV_SHARE_PRICE);
+            values::SHARE_PRICE);
 
         $t->test_value(array(
             words::TN_EARNING,
             words::TWN_CHF
         ),
-            value_api::TV_EARNINGS_PER_SHARE);
+            values::EARNINGS_PER_SHARE);
 
     }
 }

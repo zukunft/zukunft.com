@@ -34,9 +34,6 @@ namespace unit;
 
 include_once MODEL_FORMULA_PATH . 'expression.php';
 
-use api\formula\formula as formula_api;
-use api\value\value as value_api;
-use api\word\word as word_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use cfg\formula\expression;
@@ -44,9 +41,9 @@ use cfg\formula\formula;
 use cfg\phrase\phrase_list;
 use cfg\db\sql_db;
 use cfg\phrase\term_list;
-use cfg\word\word;
 use html\formula\formula as formula_dsp;
 use shared\formulas;
+use shared\values;
 use shared\words;
 use test\test_cleanup;
 
@@ -175,9 +172,9 @@ class formula_tests
         // $res_lst = $frm->to_num($phr_lst);
         //$res = $res_lst->lst[0];
         //$result = $res->num_text;
-        $target = '=(' . value_api::TV_CH_INHABITANTS_2020_IN_MIO . '-' .
-            value_api::TV_CH_INHABITANTS_2019_IN_MIO . ')/' .
-            value_api::TV_CH_INHABITANTS_2019_IN_MIO;
+        $target = '=(' . values::CH_INHABITANTS_2020_IN_MIO . '-' .
+            values::CH_INHABITANTS_2019_IN_MIO . ')/' .
+            values::CH_INHABITANTS_2019_IN_MIO;
         //$t->assert('get numbers for formula ' . $frm->dsp_id() . ' based on term list ' . $trm_lst->dsp_id(), $result, $target);
 
     }

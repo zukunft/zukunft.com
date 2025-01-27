@@ -35,16 +35,13 @@ namespace unit_write;
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
-use api\value\value as value_api;
-use api\word\word as word_api;
 use cfg\group\group;
-use cfg\phrase\phrase_type;
-use cfg\verb\verb;
 use cfg\word\word_list;
 use shared\enum\foaf_direction;
 use shared\library;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
+use shared\values;
 use shared\words;
 use test\test_cleanup;
 
@@ -107,8 +104,8 @@ class word_list_write_tests
         $t->assert('word->is_measure for ' . words::TWN_CHF, $result, true);
 
         // add a test value
-        $t->test_value(array(words::ZH, words::TN_2021, words::TWN_CHF, words::MIO), value_api::TV_INT);
-        $t->test_value(array(words::CANTON, words::TN_2021, words::TWN_CHF, words::MIO), value_api::TV_FLOAT);
+        $t->test_value(array(words::ZH, words::TN_2021, words::TWN_CHF, words::MIO), values::SAMPLE_INT);
+        $t->test_value(array(words::CANTON, words::TN_2021, words::TWN_CHF, words::MIO), values::SAMPLE_FLOAT);
 
         /*
          * load
@@ -324,8 +321,8 @@ class word_list_write_tests
         $t->display('word_list->ex_time for ' . $wrd_lst->name(), $target, $result);
 
         // add a test value
-        $t->test_value(array(words::ZH, words::TN_2021, words::TWN_CHF, words::MIO), value_api::TV_INT);
-        $t->test_value(array(words::CANTON, words::TN_2021, words::TWN_CHF, words::MIO), value_api::TV_FLOAT);
+        $t->test_value(array(words::ZH, words::TN_2021, words::TWN_CHF, words::MIO), values::SAMPLE_INT);
+        $t->test_value(array(words::CANTON, words::TN_2021, words::TWN_CHF, words::MIO), values::SAMPLE_FLOAT);
 
         // test group id
         $wrd_lst = new word_list($usr);
@@ -342,20 +339,20 @@ class word_list_write_tests
         // test word list value
         $val = $wrd_lst->value();
         $result = $val->number();
-        $t->assert('word_list->value for ' . $wrd_lst->dsp_id(), $result, value_api::TV_INT);
+        $t->assert('word_list->value for ' . $wrd_lst->dsp_id(), $result, values::SAMPLE_INT);
 
         // test word list value scaled
         // TODO review !!!
         $val = $wrd_lst->value_scaled();
         $result = $val->number();
-        $t->assert('word_list->value_scaled for ' . $wrd_lst->dsp_id(), $result, value_api::TV_INT);
+        $t->assert('word_list->value_scaled for ' . $wrd_lst->dsp_id(), $result, values::SAMPLE_INT);
 
         // test another group value
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(words::CANTON, words::TN_2021, words::TWN_CHF, words::MIO));
         $val = $wrd_lst->value();
         $result = $val->number();
-        $target = value_api::TV_FLOAT;
+        $target = values::SAMPLE_FLOAT;
         $t->display('word_list->value for ' . $wrd_lst->dsp_id(), $target, $result);
 
         // test assume time

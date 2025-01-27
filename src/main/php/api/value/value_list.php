@@ -34,7 +34,6 @@ namespace api\value;
 
 include_once API_SANDBOX_PATH . 'list_value.php';
 
-use api\value\value as value_api;
 use api\sandbox\list_value as list_value_api;
 use html\value\value_list as value_list_dsp;
 
@@ -44,21 +43,6 @@ class value_list extends list_value_api
     function __construct(array $lst = array())
     {
         parent::__construct($lst);
-    }
-
-    /**
-     * add a value to the list
-     * @returns bool true if the value has been added
-     */
-    function add(value_api $val): bool
-    {
-        $result = false;
-        if (!in_array($val->id(), $this->id_lst())) {
-            $this->add_obj($val);
-            $this->set_lst_dirty();
-            $result = true;
-        }
-        return $result;
     }
 
     /**

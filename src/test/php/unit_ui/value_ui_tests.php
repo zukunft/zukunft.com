@@ -32,14 +32,6 @@
 
 namespace unit_ui;
 
-use api\word\word as word_api;
-use api\value\value as value_api;
-use cfg\word\word;
-use cfg\word\word_list;
-use cfg\value\value_base;
-use cfg\value\value_list;
-use html\value\value_list as value_list_dsp;
-use cfg\phrase\phrase_list;
 use html\html_base;
 use html\value\value as value_dsp;
 use shared\types\api_type;
@@ -134,7 +126,7 @@ class value_ui_tests
         if ($val != null) {
             $result = $val->number();
         }
-        $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
+        $target = values::TV_CH_INHABITANTS_2020_IN_MIO;
         $t->display('value_list->get_by_grp for ' . $wrd_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // ... get all times of the Switzerland values
@@ -207,7 +199,7 @@ class value_ui_tests
         // TODO review
         //$val_lst->set_phr($wrd->phrase());
         $result = $val_lst->dsp_table($wrd_col, $wrd->id());
-        $target = value_api::TV_NESN_SALES_2016_FORMATTED;
+        $target = values::TV_NESN_SALES_2016_FORMATTED;
         $t->dsp_contains(', value_list_dsp->dsp_table for "' . $wrd->name() . '" (' . $result . ') contains ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
         //$result = $val_lst->dsp_table($wrd_col, $wrd->id);
         //$target = zuv_table ($wrd->id, $wrd_col->id, $usr->id());
