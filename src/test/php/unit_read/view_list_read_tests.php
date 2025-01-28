@@ -32,7 +32,6 @@
 
 namespace unit_read;
 
-use api\view\view as view_api;
 use cfg\view\view_list;
 use shared\library;
 use shared\views;

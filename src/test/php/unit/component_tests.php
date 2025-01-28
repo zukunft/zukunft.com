@@ -34,11 +34,9 @@ namespace unit;
 
 include_once MODEL_COMPONENT_PATH . 'component.php';
 
-use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_type;
 use cfg\db\sql_creator;
-use cfg\db\sql_db;
 use cfg\db\sql_type;
 use html\component\component as component_dsp;
 use api\component\component as component_api;

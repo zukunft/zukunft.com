@@ -54,7 +54,7 @@ class component_link_list_tests
         $t->name = 'component_link_list->';
         $t->resource_path = 'db/component/';
 
-        $t->header('Unit tests of the view component link list class (src/main/php/model/component/component_link_list.php)');
+        $t->header('component link list unit tests');
 
         $t->subheader('Database query creation tests');
 

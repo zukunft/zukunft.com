@@ -41,7 +41,6 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\component\component as component_api;
 use api\phrase\phrase as phrase_api;
-use api\view\view as view_api;
 use api\word\word as word_api;
 use cfg\component\component;
 use cfg\group\group;

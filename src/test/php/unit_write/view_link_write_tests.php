@@ -32,7 +32,6 @@
 
 namespace unit_write;
 
-use api\view\view as view_api;
 use shared\views;
 use test\test_cleanup;
 

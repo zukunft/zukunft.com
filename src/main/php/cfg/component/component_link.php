@@ -73,7 +73,6 @@ include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\view\component_link as component_link_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;

@@ -32,7 +32,6 @@
 
 namespace unit;
 
-use api\view\view as view_api;
 use cfg\db\sql_creator;
 use cfg\view\view;
 use cfg\view\view_sys_list;

@@ -36,7 +36,6 @@ include_once SHARED_PATH . 'triples.php';
 include_once SHARED_PATH . 'words.php';
 
 use api\component\component as component_api;
-use api\view\view as view_api;
 use cfg\log\change_field_list;
 use cfg\log\change_log_list;
 use cfg\word\word;

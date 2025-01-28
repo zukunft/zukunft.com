@@ -56,7 +56,6 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 
-use api\view\component_link_list as component_link_list_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;

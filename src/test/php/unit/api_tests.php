@@ -53,7 +53,6 @@ include_once SHARED_PATH . 'words.php';
 include_once WEB_HELPER_PATH . 'data_object.php';
 
 use api\component\component as component_api;
-use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_list;
 use cfg\formula\formula;

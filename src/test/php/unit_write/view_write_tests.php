@@ -32,8 +32,6 @@
 
 namespace unit_write;
 
-use api\view\view as view_api;
-use api\word\word as word_api;
 use cfg\user\user;
 use cfg\view\view_type;
 use cfg\view\view;
