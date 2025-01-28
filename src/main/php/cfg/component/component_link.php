@@ -49,7 +49,6 @@
 
 namespace cfg\component;
 
-include_once API_VIEW_PATH . 'component_link.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';

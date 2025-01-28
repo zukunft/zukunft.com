@@ -103,7 +103,6 @@ include_once SHARED_PATH . 'triples.php';
 include_once SHARED_PATH . 'library.php';
 
 use api\system\messages as msg_enum;
-use api\word\triple as triple_api;
 use cfg\db\sql;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
@@ -123,9 +122,6 @@ use cfg\user\user;
 use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\view\view;
-use cfg\word\word;
-use cfg\word\word_list;
-use cfg\word\word_db;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_default;
@@ -775,6 +771,57 @@ class triple extends sandbox_link_named implements JsonSerializable
         } else {
             return false;
         }
+    }
+
+    /**
+     * @return bool true if the word has the type "time" e.g. "monthly"
+     */
+    function is_time_jump(): bool
+    {
+        return $this->is_type(phrase_type_shared::TIME_JUMP);
+    }
+
+    /**
+     * @return bool true if the word has the type "measure" (e.g. "meter" or "CHF")
+     * in case of a division, these words are excluded from the result
+     * in case of add, it is checked that the added value does not have a different measure
+     */
+    function is_measure(): bool
+    {
+        return $this->is_type(phrase_type_shared::MEASURE);
+    }
+
+    /**
+     * @return bool true if the word has the type "scaling" (e.g. "a million", "a million" or "one"; "one" is a hidden scaling type)
+     */
+    function is_scaling(): bool
+    {
+        $result = false;
+        if ($this->is_type(phrase_type_shared::SCALING)
+            or $this->is_type(phrase_type_shared::SCALING_HIDDEN)) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool true if the word has the type "scaling_percent" (e.g. "percent")
+     */
+    function is_percent(): bool
+    {
+        return $this->is_type(phrase_type_shared::PERCENT);
+    }
+
+    /**
+     * @return bool true if the word is normally not shown to the user e.g. scaling of one is assumed
+     */
+    function is_hidden(): bool
+    {
+        $result = false;
+        if ($this->is_type(phrase_type_shared::SCALING_HIDDEN)) {
+            $result = true;
+        }
+        return $result;
     }
 
     /**

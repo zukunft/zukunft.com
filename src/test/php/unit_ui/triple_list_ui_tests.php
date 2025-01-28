@@ -35,12 +35,9 @@ namespace unit_ui;
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use api\word\triple as triple_api;
-use api\word\word as word_api;
 use html\html_base;
-use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;
-use cfg\verb\verb;
 use shared\triples;
 use shared\types\verbs;
 use shared\words;

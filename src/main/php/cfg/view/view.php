@@ -52,7 +52,6 @@
 namespace cfg\view;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
-include_once API_VIEW_PATH . 'view.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';

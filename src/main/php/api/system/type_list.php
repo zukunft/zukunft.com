@@ -33,7 +33,6 @@
 namespace api\system;
 
 include_once API_VERB_PATH . 'verb.php';
-include_once API_VIEW_PATH . 'view.php';
 include_once API_SANDBOX_PATH . 'list_object.php';
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once SHARED_PATH . 'json_fields.php';

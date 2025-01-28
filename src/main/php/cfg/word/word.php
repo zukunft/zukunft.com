@@ -580,24 +580,28 @@ class word extends sandbox_typed
 
 
     /*
-     * cast
+     * api
      */
 
     /**
-     * create word the api object and map the fields
-     * @return word_api the word frontend api object with all vars set
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
      */
-    function api_obj(): word_api
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        $api_obj = new word_api();
         if ($this->is_excluded()) {
-            $api_obj->set_id($this->id());
-            $api_obj->excluded = true;
+            $vars = [];
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
         } else {
-            parent::fill_api_obj($api_obj);
-            $api_obj->set_plural($this->plural);
+            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars[json_fields::PLURAL] = $this->plural;
         }
-        return $api_obj;
+
+        return $vars;
     }
 
     /**
@@ -648,32 +652,6 @@ class word extends sandbox_typed
         }
 
         return $msg;
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        if ($this->is_excluded()) {
-            $vars = [];
-            $vars[json_fields::ID] = $this->id();
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
-            $vars = parent::api_json_array($typ_lst, $usr);
-            $vars[json_fields::PLURAL] = $this->plural;
-        }
-
-        return $vars;
     }
 
 
