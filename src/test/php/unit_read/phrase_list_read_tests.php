@@ -37,19 +37,12 @@ include_once SHARED_PATH . 'formulas.php';
 include_once SHARED_PATH . 'triples.php';
 include_once SHARED_PATH . 'words.php';
 
-use api\formula\formula as formula_api;
-use api\word\word as word_api;
-use api\word\triple as triple_api;
-use api\phrase\phrase as phrase_api;
 use cfg\config;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase_list;
-use cfg\phrase\phrase_type;
 use cfg\phrase\phrase;
-use cfg\word\word;
 use shared\formulas;
 use shared\triples;
-use shared\types\api_type_list;
 use shared\words;
 use test\test_cleanup;
 

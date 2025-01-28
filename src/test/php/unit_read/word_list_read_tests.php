@@ -35,9 +35,6 @@ namespace unit_read;
 include_once SHARED_PATH . 'formulas.php';
 include_once SHARED_PATH . 'words.php';
 
-use api\formula\formula as formula_api;
-use api\word\word as word_api;
-use cfg\formula\formula;
 use cfg\word\word_list;
 use shared\formulas;
 use shared\words;

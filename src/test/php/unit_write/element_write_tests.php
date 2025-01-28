@@ -34,9 +34,6 @@ namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
-use api\formula\formula as formula_api;
-use api\word\word as word_api;
-use cfg\verb\verb;
 use shared\api;
 use shared\formulas;
 use shared\views;

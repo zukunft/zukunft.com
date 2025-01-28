@@ -33,8 +33,6 @@
 namespace unit_ui;
 
 use html\formula\formula as formula_dsp;
-use api\formula\formula as formula_api;
-use api\word\word as word_api;
 use html\html_base;
 use test\test_cleanup;
 

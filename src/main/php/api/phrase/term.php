@@ -34,7 +34,6 @@ namespace api\phrase;
 include_once API_SANDBOX_PATH . 'combine_named.php';
 include_once API_WORD_PATH . 'word.php';
 include_once API_WORD_PATH . 'triple.php';
-include_once API_FORMULA_PATH . 'formula.php';
 include_once API_VERB_PATH . 'verb.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'triple.php';
@@ -43,35 +42,13 @@ include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use api\formula\formula as formula_api;
 use api\sandbox\combine_named as combine_named_api;
-use api\verb\verb as verb_api;
-use api\word\triple as triple_api;
-use api\word\word as word_api;
-use cfg\formula\formula;
-use cfg\verb\verb;
-use cfg\word\triple;
-use cfg\word\word;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
-use html\word\triple as triple_dsp;
-use html\formula\formula as formula_dsp;
-use html\verb\verb as verb_dsp;
 use JsonSerializable;
-use shared\json_fields;
 
 class term extends combine_named_api implements JsonSerializable
 {
-
-    /*
-     * construct and map
-     */
-
-    function __construct(word_api|triple_api|formula_api|verb_api $obj)
-    {
-        $this->set_obj($obj);
-    }
-
 
     /*
      * set and get
@@ -94,25 +71,6 @@ class term extends combine_named_api implements JsonSerializable
         }
     }
 
-    /**
-     * @return int the id of the term generated from the object id
-     * e.g 1 for a word 1, -1 for a triple 1, 2 for a formula 1 and -2 for a verb 1
-     */
-    function id(): int
-    {
-        if ($this->is_word()) {
-            return ($this->obj_id() * 2) - 1;
-        } elseif ($this->is_triple()) {
-            return ($this->obj_id() * -2) + 1;
-        } elseif ($this->is_formula()) {
-            return ($this->obj_id() * 2);
-        } elseif ($this->is_verb()) {
-            return ($this->obj_id() * -2);
-        } else {
-            return 0;
-        }
-    }
-
 
     /*
      * cast
@@ -132,103 +90,6 @@ class term extends combine_named_api implements JsonSerializable
     protected function wrd_dsp(): word_dsp
     {
         return new word_dsp($this->obj_id(), $this->name());
-    }
-
-    protected function trp_dsp(): triple_dsp
-    {
-        return new triple_dsp($this->obj_id(), $this->name());
-    }
-
-    protected function frm_dsp(): formula_dsp
-    {
-        return new formula_dsp($this->obj_id(), $this->name());
-    }
-
-    protected function vrb_dsp(): verb_dsp
-    {
-        return new verb_dsp($this->obj_id(), $this->name());
-    }
-
-
-    /*
-     * classifications
-     */
-
-    /**
-     * @return bool true if this term is a word or supposed to be a word
-     */
-    function is_word(): bool
-    {
-        if ($this->obj()::class == word_api::class) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * @return bool true if this term is a triple
-     */
-    function is_triple(): bool
-    {
-        if ($this->obj()::class == triple_api::class) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * @return bool true if this term is a formula
-     */
-    function is_formula(): bool
-    {
-        if ($this->obj()::class == formula_api::class) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * @return bool true if this term is a verb
-     */
-    function is_verb(): bool
-    {
-        if ($this->obj()::class == verb_api::class) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    /*
-     * interface
-     */
-
-    /**
-     * @return array with the value vars including the private vars
-     * corresponding to the web api_array function:
-     * use the object id not the term id because the class is included
-     * maybe to reduce traffic remove the class but than the term id needs to be used
-     */
-    function jsonSerialize(): array
-    {
-        $vars = parent::jsonSerialize();
-        $vars[json_fields::ID] = $this->obj_id();
-        if ($this->is_word()) {
-            $vars[json_fields::OBJECT_CLASS] = word::class;
-        } elseif ($this->is_triple()) {
-            $vars[json_fields::OBJECT_CLASS] = triple::class;
-        } elseif ($this->is_formula()) {
-            $vars[json_fields::OBJECT_CLASS] = formula::class;
-        } elseif ($this->is_verb()) {
-            $vars[json_fields::OBJECT_CLASS] = verb::class;
-        } else {
-            log_err('class ' . $this->obj()::class . ' of term ' . $this->name() . ' not expected');
-        }
-        return $vars;
     }
 
 }

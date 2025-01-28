@@ -31,8 +31,6 @@ namespace unit;
 include_once MODEL_FORMULA_PATH . 'formula_list.php';
 include_once WEB_FORMULA_PATH . 'formula_list.php';
 
-use api\formula\formula as formula_api;
-use api\word\word as word_api;
 use cfg\db\sql_creator;
 use cfg\formula\formula;
 use cfg\word\triple;

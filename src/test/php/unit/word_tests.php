@@ -40,14 +40,12 @@ include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_PATH . 'words.php';
 
-use api\formula\formula as formula_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
 use cfg\word\word;
-use api\word\word as word_api;
 use cfg\word\word_db;
 use html\word\word as word_dsp;
 use shared\formulas;

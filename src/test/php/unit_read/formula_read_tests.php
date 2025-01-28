@@ -34,7 +34,6 @@ namespace unit_read;
 
 include_once SHARED_PATH . 'formulas.php';
 
-use api\formula\formula as formula_api;
 use cfg\formula\formula;
 use cfg\formula\formula_type;
 use cfg\formula\formula_type_list;

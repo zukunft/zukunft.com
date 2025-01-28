@@ -35,11 +35,7 @@ namespace unit_write;
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'triples.php';
 
-use api\formula\formula as formula_api;
-use api\word\triple as triple_api;
-use api\word\word as word_api;
 use cfg\phrase\term;
-use cfg\verb\verb;
 use cfg\word\word;
 use shared\formulas;
 use shared\library;

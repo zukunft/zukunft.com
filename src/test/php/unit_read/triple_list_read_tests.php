@@ -34,9 +34,6 @@ namespace unit_read;
 
 include_once SHARED_PATH . 'triples.php';
 
-use api\formula\formula as formula_api;
-use api\word\triple as triple_api;
-use cfg\formula\formula;
 use cfg\word\triple_list;
 use shared\triples;
 use test\test_cleanup;

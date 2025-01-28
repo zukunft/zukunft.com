@@ -44,7 +44,6 @@ include_once WEB_FIGURE_PATH . 'figure.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\formula\figure_list as figure_list_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
 use cfg\phrase\term_list;
@@ -52,10 +51,8 @@ use cfg\result\result;
 use cfg\sandbox\sandbox_list;
 use cfg\user\user_message;
 use cfg\value\value;
-use cfg\value\value_base;
 use html\figure\figure as figure_dsp;
 use shared\library;
-use shared\types\api_type_list;
 
 class figure_list extends sandbox_list
 {

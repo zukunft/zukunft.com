@@ -32,8 +32,6 @@
 
 namespace unit_write;
 
-use api\formula\formula as formula_api;
-use api\word\word as word_api;
 use cfg\user\user;
 use cfg\word\word;
 use html\formula\formula as formula_dsp;

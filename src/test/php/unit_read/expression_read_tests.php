@@ -32,7 +32,6 @@
 
 namespace unit_read;
 
-use api\formula\formula as formula_api;
 use test\test_cleanup;
 
 class expression_read_tests

@@ -37,14 +37,10 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'words.php';
 include_once SHARED_PATH . 'triples.php';
 
-use api\formula\formula as formula_api;
-use api\word\triple as triple_api;
-use api\word\word as word_api;
 use cfg\formula\formula;
 use cfg\log\change;
 use cfg\log\change_field_list;
 use cfg\log\change_table_list;
-use cfg\phrase\phrase_type;
 use cfg\sandbox\sandbox_named;
 use cfg\word\triple;
 use cfg\user\user;

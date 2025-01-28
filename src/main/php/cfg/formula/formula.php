@@ -132,8 +132,6 @@ use cfg\view\view;
 use cfg\word\word;
 use cfg\result\result;
 use cfg\result\result_list;
-use cfg\value\value_base;
-use api\formula\formula as formula_api;
 use html\word\word as word_dsp;
 use shared\formulas;
 use shared\types\api_type_list;
@@ -1422,22 +1420,6 @@ class formula extends sandbox_typed
         $trm = new term($this->user());
         $trm->set_obj($this);
         return $trm;
-    }
-
-    /**
-     * @return formula_api the formula frontend api object
-     */
-    function api_obj(): formula_api
-    {
-        $api_obj = new formula_api();
-        if ($this->is_excluded()) {
-            $api_obj->set_id($this->id());
-            $api_obj->excluded = true;
-        } else {
-            parent::fill_api_obj($api_obj);
-            $api_obj->set_usr_text($this->usr_text);
-        }
-        return $api_obj;
     }
 
     /**

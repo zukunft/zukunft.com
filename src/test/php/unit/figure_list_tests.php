@@ -59,7 +59,7 @@ class figure_list_tests
         $json_file = 'unit/figure/figure_list_import.json';
 
 
-        $t->header('Unit tests of the figure list class (src/main/php/model/figure/figure_list.php)');
+        $t->header('figure list unit tests');
 
         $t->subheader('SQL statement creation tests');
 
