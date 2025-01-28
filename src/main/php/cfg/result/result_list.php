@@ -32,7 +32,6 @@
 namespace cfg\result;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_value_list.php';
-include_once API_RESULT_PATH . 'result_list.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_field_list.php';
@@ -66,7 +65,6 @@ include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\sandbox\sandbox_value_list;
-use api\result\result_list as result_list_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_list;

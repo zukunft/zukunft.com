@@ -204,7 +204,7 @@ class result_write_tests
 
         global $usr;
 
-        $t->header('Test the result list class (classes/result_list.php)');
+        $t->header('result list database write tests');
 
         // load results by formula
         $frm = $t->load_formula(formulas::SYSTEM_TEXT_RENAMED);

@@ -60,7 +60,7 @@ class result_list_tests
         $res_lst = new result_list($usr);
 
 
-        $t->header('Unit tests of the result list class (src/main/php/model/formula/result_list.php)');
+        $t->header('result list unit tests');
 
         $t->subheader('SQL creation tests');
 
