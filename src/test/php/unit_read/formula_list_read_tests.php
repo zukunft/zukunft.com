@@ -54,7 +54,7 @@ class formula_list_read_tests
         // init
         $t->name = 'formula list read db->';
 
-        $t->header('Test the formula list class (classes/formula_list.php)');
+        $t->header('formula list database read tests');
 
         // test loading formula names
         $test_name = 'loading formula names with pattern return the expected formula';

@@ -534,7 +534,7 @@ class formula_write_tests
     function run_list(test_cleanup $t): void
     {
 
-        $t->header('est the formula list class (classes/formula_list.php)');
+        $t->header('formula list database write tests');
 
         // load the main test word
         $wrd_share = $t->test_word(words::TN_SHARE);

@@ -584,6 +584,49 @@ class formula_list extends sandbox_list
 
 
     /*
+     * select
+     */
+
+    /**
+     * @param string $type the ENUM string of the fixed type
+     * @return formula_list with the all formulas of the give type
+     */
+    private function filter(string $type): formula_list
+    {
+        $result = new formula_list($this->user());
+        foreach ($this->lst() as $frm) {
+            if ($frm->is_type($type)) {
+                $result->add($frm);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * diff as a function, because the array_diff does not seem to work for an object list
+     *
+     * e.g. for "2014", "2015", "2016", "2017"
+     * and delete list of "2016", "2017","2018"
+     * the result is "2014", "2015"
+     *
+     * @param formula_list $del_lst is the list of phrases that should be removed from this list object
+     */
+    private function diff(formula_list $del_lst): void
+    {
+        if (!$this->is_empty()) {
+            $result = array();
+            $lst_ids = $del_lst->ids();
+            foreach ($this->lst() as $frm) {
+                if (!in_array($frm->id(), $lst_ids)) {
+                    $result[] = $frm;
+                }
+            }
+            $this->set_lst($result);
+        }
+    }
+
+
+    /*
      * information
      */
 

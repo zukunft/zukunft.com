@@ -62,7 +62,7 @@ class formula_list_tests
         $t->name = 'formula_list->';
         $t->resource_path = 'db/formula/';
 
-        $t->header('Unit tests of the formula list class (src/main/php/model/formula/formula_list.php)');
+        $t->header('formula list unit tests');
 
         $t->subheader('SQL statement creation tests');
 
