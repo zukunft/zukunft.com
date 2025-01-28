@@ -31,7 +31,6 @@
 
 namespace cfg\formula;
 
-include_once API_FORMULA_PATH . 'formula_list.php';
 include_once SERVICE_PATH . 'config.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
@@ -50,7 +49,6 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula_list.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\formula\formula_list as formula_list_api;
 use cfg\config;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;

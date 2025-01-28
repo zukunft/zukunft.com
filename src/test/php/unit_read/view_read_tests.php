@@ -47,6 +47,7 @@ use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_type_list;
 use cfg\view\view;
+use shared\views;
 use shared\views as view_shared;
 use test\test_cleanup;
 
@@ -71,28 +72,28 @@ class view_read_tests
 
         $t->subheader('view load');
         $msk = new view($t->usr1);
-        $t->assert_load($msk, view_api::TN_READ);
+        $t->assert_load($msk, views::START_NAME);
 
-        $test_name = 'load the components of view ' . view_api::TN_READ . ' contains ' . component_api::TN_READ;
+        $test_name = 'load the components of view ' . views::START_NAME . ' contains ' . component_api::TN_READ;
         $msk->load_components();
         $t->assert_contains($test_name, $msk->component_link_list()->names(), component_api::TN_READ);
 
-        $test_name = 'load view by code id "' . view_shared::MC_WORD_ADD . '"';
+        $test_name = 'load view by code id "' . view_shared::WORD_ADD . '"';
         $msk = new view($t->usr1);
-        $msk->load_by_code_id(view_shared::MC_WORD_ADD);
-        $t->assert($test_name, $msk->name(), view_api::TN_FORM_NEW);
+        $msk->load_by_code_id(view_shared::WORD_ADD);
+        $t->assert($test_name, $msk->name(), views::TEST_FORM_NEW_NAME);
 
-        $test_name = 'load view by phrase "' . view_shared::MC_WORD_ADD . '"';
+        $test_name = 'load view by phrase "' . view_shared::WORD_ADD . '"';
         $msk = new view($t->usr1);
         // TODO activate
         //$msk->load_by_phrase($t->phrase_pi());
-        //$t->assert($test_name, $msk->name(), view_api::TN_FORM_NEW);
+        //$t->assert($test_name, $msk->name(), views::TN_FORM_NEW);
 
-        $test_name = 'load view by term "' . view_shared::MC_WORD_ADD . '"';
+        $test_name = 'load view by term "' . view_shared::WORD_ADD . '"';
         $msk = new view($t->usr1);
         // TODO activate
         //$msk->load_by_term($t->formula()->term());
-        //$t->assert($test_name, $msk->name(), view_api::TN_FORM_NEW);
+        //$t->assert($test_name, $msk->name(), views::TN_FORM_NEW);
 
         $t->subheader('View types tests');
 
@@ -117,7 +118,7 @@ class view_read_tests
 
         $t->subheader('View API object creation tests');
 
-        $cmp = $t->load_word(view_api::TN_READ, $t->usr1);
+        $cmp = $t->load_word(views::START_NAME, $t->usr1);
         $t->assert_export_reload($cmp);
 
 
@@ -131,12 +132,12 @@ class view_read_tests
         $t->assert('load', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $sys_msk_cac->id(view_shared::MC_WORD);
+        $result = $sys_msk_cac->id(view_shared::WORD);
         $target = 0;
         if ($result > 0) {
             $target = $result; // just check if the id is found
         }
-        $t->assert('check' . view_shared::MC_WORD, $result, $target);
+        $t->assert('check' . view_shared::WORD, $result, $target);
 
         // check all system views
         // TODO activate Prio 2

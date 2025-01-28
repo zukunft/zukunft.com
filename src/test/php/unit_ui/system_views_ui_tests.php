@@ -56,11 +56,11 @@ class system_views_ui_tests
         $wrd = $t->word_dsp();
 
         // check if the system views have set
-        $msk = $html_system_views->get(view_shared::MC_WORD_ADD);
+        $msk = $html_system_views->get(view_shared::WORD_ADD);
         $test_page .= $msk->show($wrd, null, $back) . '<br>';
 
         // TODO review and combine with read db tests
-        $t->html_view_test($test_page, view_shared::MC_WORD_ADD, $t);
+        $t->html_view_test($test_page, view_shared::WORD_ADD, $t);
     }
 
 }

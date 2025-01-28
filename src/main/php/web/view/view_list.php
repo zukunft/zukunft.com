@@ -200,11 +200,11 @@ class view_list extends list_dsp
     function default_id(sandbox $sbx): int
     {
         return match ($sbx::class) {
-            word::class => views::MI_WORD,
-            verb::class => views::MI_VERB,
-            triple::class => views::MI_TRIPLE,
-            source::class => views::MI_SOURCE,
-            default => views::MI_START
+            word::class => views::WORD_ID,
+            verb::class => views::VERB_ID,
+            triple::class => views::TRIPLE_ID,
+            source::class => views::SOURCE_ID,
+            default => views::START_ID
         };
     }
 

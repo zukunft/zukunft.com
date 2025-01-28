@@ -40,6 +40,7 @@ use cfg\db\sql_type;
 use cfg\view\view;
 use html\view\view as view_dsp;
 use shared\library;
+use shared\views;
 use test\test_cleanup;
 
 class view_tests
@@ -78,7 +79,7 @@ class view_tests
 
         $t->subheader('view sql read standard and user changes by name');
         $msk = new view($usr);
-        $msk->set_name(view_api::TN_READ);
+        $msk->set_name(views::START_NAME);
         //$t->assert_load_sql($db_con, $msk);
         $t->assert_sql_standard($sc, $msk);
 
@@ -95,7 +96,7 @@ class view_tests
 
         $t->subheader('view sql write update');
         $msk = $t->view_added();
-        $msk_renamed = $msk->cloned(view_api::TN_RENAMED);
+        $msk_renamed = $msk->cloned(views::TEST_RENAMED_NAME);
         $t->assert_sql_update($sc, $msk_renamed, $msk);
         $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::USER]);
         $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::LOG]);

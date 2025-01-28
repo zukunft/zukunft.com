@@ -63,7 +63,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_VALUE_EDIT);
+    $msk->load_by_code_id(view_shared::VALUE_EDIT);
     $back = $_GET[api::URL_VAR_BACK] = '';     // the word id from which this value change has been called (maybe later any page)
 
     // create the value object to store the parameters so that if the edit form is shown again it is already filled

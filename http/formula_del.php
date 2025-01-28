@@ -64,7 +64,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($sys_msk_cac->id(view_shared::MC_FORMULA_DEL));
+    $msk->load_by_id($sys_msk_cac->id(view_shared::FORMULA_DEL));
     $back = $_GET[api::URL_VAR_BACK] = '';
 
     // get the parameters

@@ -64,7 +64,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_WORD_EDIT);
+    $msk->load_by_code_id(view_shared::WORD_EDIT);
     $back = $_GET[api::URL_VAR_BACK] = ''; // the word id from which this value change has been called (maybe later any page)
 
     // create the word object to have a place to update the parameters

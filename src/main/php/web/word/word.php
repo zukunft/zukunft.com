@@ -235,7 +235,7 @@ class word extends sandbox_typed
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(view_shared::MI_WORD, $this->id(), '', $back);
+        $url = $html->url_new(view_shared::WORD_ID, $this->id(), '', $back);
         return $html->ref($url, $this->name(), $this->description(), $style);
     }
 
@@ -250,7 +250,7 @@ class word extends sandbox_typed
     function btn_add(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(view_shared::MI_WORD_ADD, $this->id(), '', $back);
+        $url = $html->url_new(view_shared::WORD_ADD_ID, $this->id(), '', $back);
         $btn = new button($url, $back);
         return $btn->add(messages::WORD_ADD);
     }
@@ -261,7 +261,7 @@ class word extends sandbox_typed
     function btn_edit(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(view_shared::MI_WORD_EDIT, $this->id(), '', $back);
+        $url = $html->url_new(view_shared::WORD_EDIT_ID, $this->id(), '', $back);
         $btn = new button($url, $back);
         return $btn->edit(messages::WORD_EDIT);
     }
@@ -273,7 +273,7 @@ class word extends sandbox_typed
     function btn_del(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(view_shared::MI_WORD_DEL, $this->id(), '', $back);
+        $url = $html->url_new(view_shared::WORD_DEL_ID, $this->id(), '', $back);
         $btn = new button($url, $back);
         return $btn->del(messages::WORD_DEL);
     }
@@ -421,7 +421,7 @@ class word extends sandbox_typed
             $detail_fields .= $dsp_type;
             $detail_row = $html->fr($detail_fields) . '<br>';
             $result = $header
-                . $html->form(view_shared::MC_WORD_EDIT, $hidden_fields . $detail_row)
+                . $html->form(view_shared::WORD_EDIT, $hidden_fields . $detail_row)
                 . '<br>' . $dsp_graph;
         }
 
@@ -664,7 +664,7 @@ class word extends sandbox_typed
             $dsp_graph,
             $dsp_log,
             $this->dsp_formula($back),
-            $this->dsp_type_selector(view_shared::MC_WORD_EDIT, $back),
+            $this->dsp_type_selector(view_shared::WORD_EDIT, $back),
             $back);
     }
 

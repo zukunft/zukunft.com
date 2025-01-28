@@ -89,6 +89,7 @@ use shared\refs;
 use shared\sources;
 use shared\types\verbs;
 use shared\values;
+use shared\views;
 use shared\views as view_shared;
 use shared\words;
 use test\test_cleanup;
@@ -131,7 +132,7 @@ class api_tests
         $t->assert_api_get_by_text(formula::class, formulas::SCALE_TO_SEC);
         $t->assert_api_get(view::class);
         $t->assert_api_get(view::class, 1, 1);
-        $t->assert_api_get_by_text(view::class, view_api::TN_READ);
+        $t->assert_api_get_by_text(view::class, views::START_NAME);
         $t->assert_api_get(component::class);
         $t->assert_api_get_by_text(component::class, component_api::TN_READ);
         $t->assert_api_get(source::class, sources::SIB_ID);
@@ -149,7 +150,7 @@ class api_tests
         $t->assert_api_get_list(phrase_list::class, words::MATH, api::URL_VAR_PATTERN);
         $t->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $t->assert_api_get_list(formula_list::class, [1]);
-        $t->assert_api_get_list(view_list::class, view_api::TN_READ, api::URL_VAR_PATTERN);
+        $t->assert_api_get_list(view_list::class, views::START_NAME, api::URL_VAR_PATTERN);
         $t->assert_api_get_list(component_list::class, 2, 'view_id');
         $t->assert_api_chg_list(
             change_log_list::class,
@@ -202,19 +203,19 @@ class api_tests
         $cfg = new data_object_dsp();
         $cfg->set_view_list($t->view_list_dsp());
         // create the test pages
-        $t->assert_view(view_shared::MC_WORD, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(view_shared::MC_WORD_ADD, $t->usr1, new word($t->usr1));
-        $t->assert_view(view_shared::MC_WORD_EDIT, $t->usr1, new word($t->usr1), 1, $cfg);
-        $t->assert_view(view_shared::MC_WORD_DEL, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(view_shared::MC_VERB_ADD, $t->usr1, new verb());
-        $t->assert_view(view_shared::MC_VERB_EDIT, $t->usr1, new verb(), 1);
-        $t->assert_view(view_shared::MC_VERB_DEL, $t->usr1, new verb(), 1);
-        $t->assert_view(view_shared::MC_TRIPLE_ADD, $t->usr1, new triple($t->usr1));
-        $t->assert_view(view_shared::MC_TRIPLE_EDIT, $t->usr1, new triple($t->usr1), 1);
-        $t->assert_view(view_shared::MC_TRIPLE_DEL, $t->usr1, new triple($t->usr1), 1);
-        $t->assert_view(view_shared::MC_SOURCE_ADD, $t->usr1, new source($t->usr1));
-        $t->assert_view(view_shared::MC_SOURCE_EDIT, $t->usr1, new source($t->usr1), 1);
-        $t->assert_view(view_shared::MC_SOURCE_DEL, $t->usr1, new source($t->usr1), 1);
+        $t->assert_view(view_shared::WORD, $t->usr1, new word($t->usr1), 1);
+        $t->assert_view(view_shared::WORD_ADD, $t->usr1, new word($t->usr1));
+        $t->assert_view(view_shared::WORD_EDIT, $t->usr1, new word($t->usr1), 1, $cfg);
+        $t->assert_view(view_shared::WORD_DEL, $t->usr1, new word($t->usr1), 1);
+        $t->assert_view(view_shared::VERB_ADD, $t->usr1, new verb());
+        $t->assert_view(view_shared::VERB_EDIT, $t->usr1, new verb(), 1);
+        $t->assert_view(view_shared::VERB_DEL, $t->usr1, new verb(), 1);
+        $t->assert_view(view_shared::TRIPLE_ADD, $t->usr1, new triple($t->usr1));
+        $t->assert_view(view_shared::TRIPLE_EDIT, $t->usr1, new triple($t->usr1), 1);
+        $t->assert_view(view_shared::TRIPLE_DEL, $t->usr1, new triple($t->usr1), 1);
+        $t->assert_view(view_shared::SOURCE_ADD, $t->usr1, new source($t->usr1));
+        $t->assert_view(view_shared::SOURCE_EDIT, $t->usr1, new source($t->usr1), 1);
+        $t->assert_view(view_shared::SOURCE_DEL, $t->usr1, new source($t->usr1), 1);
         //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1);
         // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
     }

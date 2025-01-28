@@ -65,7 +65,7 @@ if ($usr->id() > 0) {
 
     // prepare the display to edit the view
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_VIEW_ADD);
+    $msk->load_by_code_id(view_shared::VIEW_ADD);
     $back = $_GET[api::URL_VAR_BACK] = '';
 
     // create the view object that the user can change

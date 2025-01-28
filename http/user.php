@@ -88,7 +88,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_USER);
+    $msk->load_by_code_id(view_shared::USER);
 
     // do user change
     $result .= $usr->upd_pars($_GET);

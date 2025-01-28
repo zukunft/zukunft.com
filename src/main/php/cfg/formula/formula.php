@@ -95,7 +95,6 @@ include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
 include_once MODEL_FORMULA_PATH . 'expression.php';
 include_once MODEL_FORMULA_PATH . 'parameter_type.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once API_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';

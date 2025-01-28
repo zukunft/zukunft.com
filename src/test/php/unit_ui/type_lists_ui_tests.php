@@ -54,6 +54,7 @@ use html\types\user_profiles;
 use html\types\view_style_list;
 use html\types\view_type_list;
 use html\types\verbs;
+use shared\views;
 use test\test_cleanup;
 
 class type_lists_ui_tests
@@ -71,7 +72,7 @@ class type_lists_ui_tests
 
         // use the system view to start the HTML test page
         global $html_system_views;
-        $msk = $html_system_views->get(view_api::TC_READ);
+        $msk = $html_system_views->get(views::START_CODE);
         $wrd = $t->word_dsp();
         $wrd->set_name('All type selectors');
         $test_page = $msk->show($wrd, null, '') . '<br><br>';

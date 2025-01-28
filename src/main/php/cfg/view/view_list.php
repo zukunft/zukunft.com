@@ -32,7 +32,6 @@
 namespace cfg\view;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once API_VIEW_PATH . 'view_list.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
@@ -49,7 +48,6 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 
-use api\view\view_list as view_list_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\db\sql_creator;
@@ -63,8 +61,6 @@ use cfg\sandbox\sandbox_list;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\user\user_message;
-use cfg\view\view;
-use cfg\view\view_type;
 
 global $sys_msk_cac;
 

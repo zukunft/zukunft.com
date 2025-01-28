@@ -73,7 +73,7 @@ if (!$db_con->connected()) {
         $usr->load_usr_data();
 
         // show view header
-        $view_id = $sys_msk_cac->id(view_shared::MC_WORD_FIND);
+        $view_id = $sys_msk_cac->id(view_shared::WORD_FIND);
         $msk = new view($usr);
         $msk->load_by_id($view_id);
         $msk->load_components();

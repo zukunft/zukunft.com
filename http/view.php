@@ -102,7 +102,7 @@ if ($usr->id() > 0) {
 
     // use default view if nothing is set
     if ($view_id == 0 and $id == 0) {
-        $view_id = view_shared::MI_START;
+        $view_id = view_shared::START_ID;
     }
 
     // select the main object to display
@@ -163,7 +163,7 @@ if ($usr->id() > 0) {
                         $view_id = $dbo_dsp->calc_view_id();
                         if ($view_id <= 0) {
                             // if no one has set a view for this word, use the fallback view
-                            $view_id = $sys_msk_cac->id(view_shared::MC_WORD);
+                            $view_id = $sys_msk_cac->id(view_shared::WORD);
                         }
                     }
                 }
@@ -186,7 +186,7 @@ if ($usr->id() > 0) {
 
         // use a fallback if the view is empty
         if ($dsp_text == '' or $msk_dsp->name() == '') {
-            $view_id = $sys_msk_cac->id(view_shared::MC_START);
+            $view_id = $sys_msk_cac->id(view_shared::START);
             $msk_dsp->load_by_id_with($view_id);
             $dsp_text = $msk_dsp->display($dbo_dsp, $back);
         }

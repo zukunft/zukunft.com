@@ -70,7 +70,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_IMPORT);
+    $msk->load_by_code_id(view_shared::IMPORT);
 
     if ($usr->is_admin()) {
 

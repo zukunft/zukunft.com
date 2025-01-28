@@ -68,7 +68,7 @@ use shared\api;
 use shared\views as view_shared;
 
 /* open database */
-$db_con = prg_start(view_shared::MC_WORD_ADD);
+$db_con = prg_start(view_shared::WORD_ADD);
 $html = new html_base();
 
 $result = ''; // reset the html code var
@@ -85,7 +85,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_WORD_ADD);
+    $msk->load_by_code_id(view_shared::WORD_ADD);
     $back = $_GET[api::URL_VAR_BACK] = ''; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters

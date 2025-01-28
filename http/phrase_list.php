@@ -66,7 +66,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk_db = new view($usr);
-    $msk_db->load_by_code_id(view_shared::MC_WORD_ADD);
+    $msk_db->load_by_code_id(view_shared::WORD_ADD);
     $msk = new view_dsp($msk_db->api_json());
     $back = $_GET[api::URL_VAR_BACK] = ''; // the calling page which should be displayed after saving
 

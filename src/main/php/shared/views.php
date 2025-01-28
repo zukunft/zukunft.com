@@ -35,99 +35,190 @@ namespace shared;
 class views
 {
 
-    // code_id and database id of internal views used by the system
+    // code_id, database id and name of internal views used by the system
     // these views used by the program that are never supposed to be changed
-    // MC_* is the Mask Code id that is expected never to change
-    // MI_* is the Mask ID that is expected never to change
-    const MC_START = 'start';
-    const MI_START = 1;
+    // *_CODE or * is the Mask Code id that is expected never to change
+    // *_ID is the Mask ID that is expected never to change
+    // *_NAME is the name of the view if it differs from the code id
+    // *_COM is the comment or description used for the tooltip
+    const START = 'start';
+    const START_CODE = 'entry_view'; // TODO combine
+    const START_NAME = 'Start view';
+    const START_COM = 'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.';
+    const START_ID = 1;
 
     // curl views
-    const MC_WORD_ADD = 'word_add';
-    const MI_WORD_ADD = 2;
-    const MC_WORD_EDIT = 'word_edit';
-    const MI_WORD_EDIT = 3;
-    const MC_WORD_DEL = 'word_del';
-    const MI_WORD_DEL = 4;
-    const MC_VERB_ADD = 'verb_add';
-    const MI_VERB_ADD = 4;
-    const MC_VERB_EDIT = 'verb_edit';
-    const MI_VERB_EDIT = 4;
-    const MC_VERB_DEL = 'verb_del';
-    const MI_VERB_DEL = 4;
-    const MC_TRIPLE_ADD = 'triple_add';
-    const MI_TRIPLE_ADD = 4;
-    const MC_TRIPLE_EDIT = 'triple_edit';
-    const MI_TRIPLE_EDIT = 4;
-    const MC_TRIPLE_DEL = 'triple_del';
-    const MI_TRIPLE_DEL = 4;
-    const MC_VALUE_DISPLAY = 'value';
-    const MC_VALUE_ADD = 'value_add';
-    const MC_VALUE_EDIT = 'value_edit';
-    const MC_VALUE_DEL = 'value_del';
-    const MC_FORMULA_ADD = 'formula_add';
-    const MC_FORMULA_EDIT = 'formula_edit';
-    const MC_FORMULA_DEL = 'formula_del';
-    const MC_FORMULA_EXPLAIN = 'formula_explain';
-    const MC_FORMULA_TEST = 'formula_test';
-    const MC_SOURCE_ADD = 'source_add';
-    const MI_SOURCE_ADD = 11;
-    const MC_SOURCE_EDIT = 'source_edit';
-    const MI_SOURCE_EDIT = 12;
-    const MC_SOURCE_DEL = 'source_del';
-    const MI_SOURCE_DEL = 13;
-    const MC_VERBS = 'verbs';
-    const MC_USER = 'user';
-    const MC_ERR_LOG = 'error_log';
-    const MC_ERR_UPD = 'error_update';
-    const MC_IMPORT = 'import';
+    const WORD_ADD = 'word_add';
+    const WORD_ADD_ID = 2;
+    const WORD_EDIT = 'word_edit';
+    const WORD_EDIT_ID = 3;
+    const WORD_DEL = 'word_del';
+    const WORD_DEL_ID = 4;
+    const VERB_ADD = 'verb_add';
+    const VERB_ADD_ID = 4;
+    const VERB_EDIT = 'verb_edit';
+    const VERB_EDIT_ID = 4;
+    const VERB_DEL = 'verb_del';
+    const VERB_DEL_ID = 4;
+    const TRIPLE_ADD = 'triple_add';
+    const TRIPLE_ADD_ID = 4;
+    const TRIPLE_EDIT = 'triple_edit';
+    const TRIPLE_EDIT_ID = 4;
+    const TRIPLE_DEL = 'triple_del';
+    const TRIPLE_DEL_ID = 4;
+    const VALUE_ADD = 'value_add';
+    const VALUE_EDIT = 'value_edit';
+    const VALUE_DEL = 'value_del';
+    const FORMULA_ADD = 'formula_add';
+    const FORMULA_EDIT = 'formula_edit';
+    const FORMULA_DEL = 'formula_del';
+    const FORMULA_EXPLAIN = 'formula_explain';
+    const FORMULA_TEST = 'formula_test';
+    const SOURCE_ADD = 'source_add';
+    const SOURCE_ADD_ID = 11;
+    const SOURCE_EDIT = 'source_edit';
+    const SOURCE_EDIT_ID = 12;
+    const SOURCE_DEL = 'source_del';
+    const SOURCE_DEL_ID = 13;
+    const VERBS = 'verbs';
+    const USER = 'user';
+    const ERR_LOG = 'error_log';
+    const ERR_UPD = 'error_update';
+    const IMPORT = 'import';
     // views to edit views
-    const MC_VIEW_ADD = 'view_add';
-    const MI_VIEW_ADD = 25;
-    const MC_VIEW_EDIT = 'view_edit';
-    const MI_VIEW_EDIT = 26;
-    const MC_VIEW_DEL = 'view_del';
-    const MI_VIEW_DEL = 27;
-    const MC_COMPONENT_ADD = 'component_add';
-    const MC_COMPONENT_EDIT = 'component_edit';
-    const MC_COMPONENT_DEL = 'component_del';
-    const MC_COMPONENT_LINK = 'component_link';
-    const MC_COMPONENT_UNLINK = 'component_unlink';
+    const VIEW_ADD = 'view_add';
+    const VIEW_ADD_ID = 25;
+    const VIEW_EDIT = 'view_edit';
+    const VIEW_EDIT_ID = 26;
+    const VIEW_DEL = 'view_del';
+    const VIEW_DEL_ID = 27;
+    const COMPONENT_ADD = 'component_add';
+    const COMPONENT_EDIT = 'component_edit';
+    const COMPONENT_DEL = 'component_del';
+    const COMPONENT_LINK = 'component_link';
+    const COMPONENT_UNLINK = 'component_unlink';
 
     // default views
     // TODO easy add missing default views e.g. for formula
-    const MC_WORD = 'word';
-    const MI_WORD = 41;
-    const MC_VERB = 'verb';
-    const MI_VERB = 42;
-    const MC_TRIPLE = 'triple';
-    const MI_TRIPLE = 43;
-    const MC_SOURCE = 'source';
-    const MI_SOURCE = 44;
+    const WORD = 'word';
+    const WORD_ID = 41;
+    const VERB = 'verb';
+    const VERB_ID = 42;
+    const TRIPLE = 'triple';
+    const TRIPLE_ID = 43;
+    const SOURCE = 'source';
+    const SOURCE_ID = 44;
+    const VALUE_DISPLAY = 'value';
 
     // functional views
-    const MC_WORD_FIND = 'word_find';
+    const WORD_FIND = 'word_find';
+
+    /*
+     * const for system testing
+     */
+
+    // persevered view names for unit and integration tests
+    // TN_* means 'test name'
+    // TD_* means 'test description'
+    // TC_* means 'test code id'
+    // TI_* means 'test id'
+    const TEST_ADD_NAME = 'System Test View';
+    const TEST_ADD_VIA_FUNC_NAME = 'System Test View added via sql function';
+    const TEST_ADD_VIA_SQL_NAME = 'System Test View added via sql insert';
+    const TEST_ADD = 'System Test View Code Id';
+    const TEST_RENAMED_NAME = 'System Test View Renamed';
+    const TEST_COMPLETE_NAME = 'System Test View Complete';
+    const TEST_EXCLUDED_NAME = 'System Test View Excluded';
+    const TEST_TABLE_NAME = 'System Test View Table';
+    const TEST_ALL_NAME = 'complete';
+
+    // to test a system view (add word) as unit test without database
+    const TEST_FORM_NAME = 'Add word';
+    const TEST_FORM_NEW_NAME = 'Add new word';
+    const TEST_FORM_COM = 'system form to add a word';
+    const TEST_FORM = 'word_add';
+    const TEST_FORM_ID = 3;
+    const SCIENCE = 'Science';
+    const SCIENCE_NAME = 'show mainly related words that are relevant in sciences';
+    const SCIENCE_ID = 50;
+    const HISTORIC_NAME = 'Historic';
+    const HISTORIC_COM = 'show mainly related words that are relevant in sciences';
+    const HISTORIC_ID = 51;
+    const BIOLOGICAL_NAME = 'Biological';
+    const BIOLOGICAL_COM = 'show what is relevant from the biological point of view';
+    const BIOLOGICAL_ID = 52;
+    const EDUCATION_NAME = 'Education';
+    const EDUCATION_COM = 'show mainly related words that are relevant in sciences';
+    const EDUCATION_ID = 53;
+    const TOURISTIC_NAME = 'Touristic';
+    const TOURISTIC_COM = 'show mainly related words that are relevant in sciences';
+    const TOURISTIC_ID = 54;
+    const GRAPH_NAME = 'Graph';
+    const GRAPH_COM = 'show mainly related words that are relevant in sciences';
+    const GRAPH_ID = 55;
+    const SIMPLE_NAME = 'Simple';
+    const SIMPLE_COM = 'show mainly related words that are relevant in sciences';
+    const SIMPLE_ID = 56;
+
+    const COMPANY_RATIO_NAME = 'Company ratios';
+    const NESN_2016_FS_NAME = 'Nestlé Financial Statement 2016';
+    const LINK_COM = 'System Test description for a view term link';
+
+    // array of view names that used for testing and remove them after the test
+    const RESERVED_NAMES = array(
+        self::START_NAME,
+        self::TEST_ADD_NAME,
+        self::TEST_ADD_VIA_SQL_NAME,
+        self::TEST_ADD_VIA_FUNC_NAME,
+        self::TEST_RENAMED_NAME,
+        self::TEST_COMPLETE_NAME,
+        self::TEST_EXCLUDED_NAME,
+        self::TEST_TABLE_NAME
+    );
+
+    // array of view names that used for db read testing and that should not be renamed
+    const FIXED_NAMES = array(
+        self::START_NAME
+    );
+
+    // array of test view names create before the test
+    const TEST_VIEWS = array(
+        self::TEST_ADD_NAME,
+        self::TEST_ADD_VIA_SQL_NAME,
+        self::TEST_ADD_VIA_FUNC_NAME,
+        self::TEST_RENAMED_NAME,
+        self::TEST_COMPLETE_NAME,
+        self::TEST_EXCLUDED_NAME,
+        self::TEST_TABLE_NAME
+    );
+
+    const TEST_VIEWS_AUTO_CREATE = array(
+        self::TEST_COMPLETE_NAME,
+        self::TEST_EXCLUDED_NAME,
+        self::TEST_TABLE_NAME
+    );
+
 
     // system masks that have a word as the main object
     const WORD_MASKS_IDS = [
-        self::MI_WORD_ADD,
-        self::MI_WORD_EDIT,
-        self::MI_WORD_DEL
+        self::WORD_ADD_ID,
+        self::WORD_EDIT_ID,
+        self::WORD_DEL_ID
     ];
 
     // system masks that have a word as the main object
     const SOURCE_MASKS_IDS = [
-        self::MI_SOURCE_ADD,
-        self::MI_SOURCE_EDIT,
-        self::MI_SOURCE_DEL
+        self::SOURCE_ADD_ID,
+        self::SOURCE_EDIT_ID,
+        self::SOURCE_DEL_ID
     ];
 
     // system masks that have a word as the main object
     const EDIT_DEL_MASKS_IDS = [
-        self::MI_WORD_EDIT,
-        self::MI_WORD_DEL,
-        self::MI_SOURCE_EDIT,
-        self::MI_SOURCE_DEL,
+        self::WORD_EDIT_ID,
+        self::WORD_DEL_ID,
+        self::SOURCE_EDIT_ID,
+        self::SOURCE_DEL_ID,
     ];
 
     /**
@@ -140,10 +231,10 @@ class views
     function system_to_base(string $msk_ci): string
     {
         return match ($msk_ci) {
-            self::MC_WORD_ADD, self::MC_WORD_EDIT, self::MC_WORD_DEL => self::MC_WORD,
-            self::MC_VERB_ADD, self::MC_VERB_EDIT, self::MC_VERB_DEL => self::MC_VERB,
-            self::MC_TRIPLE_ADD, self::MC_TRIPLE_EDIT, self::MC_TRIPLE_DEL => self::MC_TRIPLE,
-            self::MC_SOURCE_ADD, self::MC_SOURCE_EDIT, self::MC_SOURCE_DEL => self::MC_SOURCE,
+            self::WORD_ADD, self::WORD_EDIT, self::WORD_DEL => self::WORD,
+            self::VERB_ADD, self::VERB_EDIT, self::VERB_DEL => self::VERB,
+            self::TRIPLE_ADD, self::TRIPLE_EDIT, self::TRIPLE_DEL => self::TRIPLE,
+            self::SOURCE_ADD, self::SOURCE_EDIT, self::SOURCE_DEL => self::SOURCE,
             default => ''
         };
     }
@@ -151,23 +242,23 @@ class views
     function code_id_to_id(string $code_id): int
     {
         return match ($code_id) {
-            self::MC_START => self::MI_START,
-            self::MC_WORD_ADD => self::MI_WORD_ADD,
-            self::MC_WORD_EDIT => self::MI_WORD_EDIT,
-            self::MC_WORD_DEL => self::MI_WORD_DEL,
-            self::MC_VERB_ADD => self::MI_VERB_ADD,
-            self::MC_VERB_EDIT => self::MI_VERB_EDIT,
-            self::MC_VERB_DEL => self::MI_VERB_DEL,
-            self::MC_TRIPLE_ADD => self::MI_TRIPLE_ADD,
-            self::MC_TRIPLE_EDIT => self::MI_TRIPLE_EDIT,
-            self::MC_TRIPLE_DEL => self::MI_TRIPLE_DEL,
-            self::MC_SOURCE_ADD => self::MI_SOURCE_ADD,
-            self::MC_SOURCE_EDIT => self::MI_SOURCE_EDIT,
-            self::MC_SOURCE_DEL => self::MI_SOURCE_DEL,
-            self::MC_WORD => self::MI_WORD,
-            self::MC_VERB => self::MI_VERB,
-            self::MC_TRIPLE => self::MI_TRIPLE,
-            self::MC_SOURCE => self::MI_SOURCE,
+            self::START => self::START_ID,
+            self::WORD_ADD => self::WORD_ADD_ID,
+            self::WORD_EDIT => self::WORD_EDIT_ID,
+            self::WORD_DEL => self::WORD_DEL_ID,
+            self::VERB_ADD => self::VERB_ADD_ID,
+            self::VERB_EDIT => self::VERB_EDIT_ID,
+            self::VERB_DEL => self::VERB_DEL_ID,
+            self::TRIPLE_ADD => self::TRIPLE_ADD_ID,
+            self::TRIPLE_EDIT => self::TRIPLE_EDIT_ID,
+            self::TRIPLE_DEL => self::TRIPLE_DEL_ID,
+            self::SOURCE_ADD => self::SOURCE_ADD_ID,
+            self::SOURCE_EDIT => self::SOURCE_EDIT_ID,
+            self::SOURCE_DEL => self::SOURCE_DEL_ID,
+            self::WORD => self::WORD_ID,
+            self::VERB => self::VERB_ID,
+            self::TRIPLE => self::TRIPLE_ID,
+            self::SOURCE => self::SOURCE_ID,
             default => 0
         };
     }
@@ -175,23 +266,23 @@ class views
     function id_to_code_id(int $id): string
     {
         return match ($id) {
-            self::MI_START => self::MC_START,
-            self::MI_WORD_ADD => self::MC_WORD_ADD,
-            self::MI_WORD_EDIT => self::MC_WORD_EDIT,
-            self::MI_WORD_DEL => self::MC_WORD_DEL,
-            self::MI_VERB_ADD => self::MC_VERB_ADD,
-            self::MI_VERB_EDIT => self::MC_VERB_EDIT,
-            self::MI_VERB_DEL => self::MC_VERB_DEL,
-            self::MI_TRIPLE_ADD => self::MC_TRIPLE_ADD,
-            self::MI_TRIPLE_EDIT => self::MC_TRIPLE_EDIT,
-            self::MI_TRIPLE_DEL => self::MC_TRIPLE_DEL,
-            self::MI_SOURCE_ADD => self::MC_SOURCE_ADD,
-            self::MI_SOURCE_EDIT => self::MC_SOURCE_EDIT,
-            self::MI_SOURCE_DEL => self::MC_SOURCE_DEL,
-            self::MI_WORD => self::MC_WORD,
-            self::MI_VERB => self::MC_VERB,
-            self::MI_TRIPLE => self::MC_TRIPLE,
-            self::MI_SOURCE => self::MC_SOURCE,
+            self::START_ID => self::START,
+            self::WORD_ADD_ID => self::WORD_ADD,
+            self::WORD_EDIT_ID => self::WORD_EDIT,
+            self::WORD_DEL_ID => self::WORD_DEL,
+            self::VERB_ADD_ID => self::VERB_ADD,
+            self::VERB_EDIT_ID => self::VERB_EDIT,
+            self::VERB_DEL_ID => self::VERB_DEL,
+            self::TRIPLE_ADD_ID => self::TRIPLE_ADD,
+            self::TRIPLE_EDIT_ID => self::TRIPLE_EDIT,
+            self::TRIPLE_DEL_ID => self::TRIPLE_DEL,
+            self::SOURCE_ADD_ID => self::SOURCE_ADD,
+            self::SOURCE_EDIT_ID => self::SOURCE_EDIT,
+            self::SOURCE_DEL_ID => self::SOURCE_DEL,
+            self::WORD_ID => self::WORD,
+            self::VERB_ID => self::VERB,
+            self::TRIPLE_ID => self::TRIPLE,
+            self::SOURCE_ID => self::SOURCE,
             default => ''
         };
     }

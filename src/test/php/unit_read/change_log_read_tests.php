@@ -44,6 +44,7 @@ use shared\formulas;
 use shared\sources;
 use shared\triples;
 use shared\types\verbs;
+use shared\views;
 use shared\words;
 use test\test_cleanup;
 
@@ -152,7 +153,7 @@ class change_log_read_tests
         // ... and if the first entry is the setting the view name
         $first_change = $lst->lst()[0];
         $t->assert('first view change is setting', $first_change->old_value, '');
-        $t->assert('... the name', $first_change->new_value, view_api::TN_READ);
+        $t->assert('... the name', $first_change->new_value, views::START_NAME);
 
         // check loading of name changes of view component
         $lst = new change_log_list();

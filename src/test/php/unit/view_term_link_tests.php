@@ -42,6 +42,7 @@ use cfg\view\view_term_link;
 use cfg\view_type;
 use html\view\view as view_dsp;
 use shared\library;
+use shared\views;
 use test\test_cleanup;
 
 class view_term_link_tests
@@ -77,13 +78,13 @@ class view_term_link_tests
         $lnk = $t->view_term_link();
         $t->assert_sql_insert($sc, $lnk);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
-        $lnk->description = view_api::TD_LINK;
+        $lnk->description = views::LINK_COM;
         $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('view_term_link sql write update');
         $lnk_described = $lnk->cloned();
-        $lnk_described->description = view_api::TD_LINK;
+        $lnk_described->description = views::LINK_COM;
         $t->assert_sql_update($sc, $lnk_described, $lnk);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::USER]);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG]);

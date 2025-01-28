@@ -38,6 +38,7 @@ use cfg\view\view;
 use cfg\view\view_sys_list;
 use cfg\db\sql_db;
 use cfg\view\view_list;
+use shared\views;
 use test\test_cleanup;
 
 class view_list_tests
@@ -53,7 +54,7 @@ class view_list_tests
         $t->name = 'view_list->';
         $t->resource_path = 'db/view/';
 
-        $t->header('Unit tests of the view list class (src/main/php/model/view/view_list.php)');
+        $t->header('view list unit tests');
 
         $t->subheader('Database query creation tests');
 
@@ -64,7 +65,7 @@ class view_list_tests
         // load of non system view
         $msk_lst = new view_list($usr);
         $t->assert_sql_names($sc, $msk_lst, new view($usr));
-        $t->assert_sql_names($sc, $msk_lst, new view($usr), view_api::TN_READ);
+        $t->assert_sql_names($sc, $msk_lst, new view($usr), views::START_NAME);
 
         $msk_lst = new view_list($usr);
         $this->assert_sql_by_component_id($t, $db_con, $msk_lst);

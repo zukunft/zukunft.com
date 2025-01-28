@@ -67,7 +67,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_VALUE_DEL);
+    $msk->load_by_code_id(view_shared::VALUE_DEL);
     $back = $_GET[api::URL_VAR_BACK] = '';  // the page from which the value deletion has been called
 
     // get the parameters

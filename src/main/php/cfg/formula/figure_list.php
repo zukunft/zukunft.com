@@ -31,7 +31,6 @@
 
 namespace cfg\formula;
 
-include_once API_FORMULA_PATH . 'figure_list.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par.php';
 include_once MODEL_PHRASE_PATH . 'term_list.php';

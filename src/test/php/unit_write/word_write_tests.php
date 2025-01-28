@@ -463,7 +463,7 @@ class word_write_tests
 
         // display
         $back = 1;
-        $target = '<a href="/http/view.php?m=' . views::MI_WORD . '&id=' . $wrd_read->id() . '&back=1" title="' . words::MATH_COM . '">' . words::MATH . '</a>';
+        $target = '<a href="/http/view.php?m=' . views::WORD_ID . '&id=' . $wrd_read->id() . '&back=1" title="' . words::MATH_COM . '">' . words::MATH . '</a>';
         $wrd_read_dsp = new word_dsp($wrd_read->api_json());
         $result = $wrd_read_dsp->display_linked($back);
         $t->display('word->display "' . words::MATH . '"', $target, $result);

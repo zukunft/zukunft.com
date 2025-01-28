@@ -229,7 +229,7 @@ class formula extends sandbox_typed
      */
     function edit_link(?string $back = ''): string
     {
-        $url = $this->obj_url(view_shared::MC_FORMULA_EDIT, $back);
+        $url = $this->obj_url(view_shared::FORMULA_EDIT, $back);
         return (new html_base())->ref($url, $this->name(), $this->name());
     }
 
@@ -240,7 +240,7 @@ class formula extends sandbox_typed
      */
     function btn_add(string $back = ''): string
     {
-        $url = $this->obj_url(view_shared::MC_FORMULA_ADD);
+        $url = $this->obj_url(view_shared::FORMULA_ADD);
         return (new button($url, $back))->add(messages::FORMULA_ADD, $this->name);
     }
 
@@ -251,7 +251,7 @@ class formula extends sandbox_typed
      */
     function btn_edit(string $back = ''): string
     {
-        $url = $this->obj_url(view_shared::MC_FORMULA_EDIT);
+        $url = $this->obj_url(view_shared::FORMULA_EDIT);
         return (new button($url, $back))->edit(messages::FORMULA_EDIT, messages::FOR . $this->name);
     }
 
@@ -262,7 +262,7 @@ class formula extends sandbox_typed
      */
     function btn_del(string $back = ''): string
     {
-        $url = $this->obj_url(view_shared::MC_FORMULA_DEL);
+        $url = $this->obj_url(view_shared::FORMULA_DEL);
         return (new button($url, $back))->del(messages::FORMULA_DEL, messages::OF . $this->name);
     }
 
@@ -478,7 +478,7 @@ class formula extends sandbox_typed
                     '', $selected) . ' ';
         } else {
             if ($this->id() > 0) {
-                $url = $this->obj_url(view_shared::MC_FORMULA_ADD);
+                $url = $this->obj_url(view_shared::FORMULA_ADD);
                 // TODO check if 'add_link=1' is needed
                 $result .= (new button($url, $back))->add(messages::FORMULA_ADD);
             }

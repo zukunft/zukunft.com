@@ -58,6 +58,7 @@ use shared\library;
 use shared\sources;
 use shared\triples;
 use shared\types\verbs;
+use shared\views;
 use shared\words;
 
 class test_cleanup extends test_api
@@ -111,23 +112,23 @@ class test_cleanup extends test_api
         // secure cleanup the test views
         // TODO: if a user has changed the view during the test, delete also the user views
 
-        $result .= $this->test_component_unlink(view_api::TN_COMPLETE, component_api::TN_TITLE);
-        $result .= $this->test_component_unlink(view_api::TN_COMPLETE, component_api::TN_VALUES);
-        $result .= $this->test_component_unlink(view_api::TN_COMPLETE, component_api::TN_RESULTS);
-        $result .= $this->test_component_unlink(view_api::TN_EXCLUDED, component_api::TN_EXCLUDED);
-        $result .= $this->test_component_unlink(view_api::TN_TABLE, component_api::TN_TITLE);
-        $result .= $this->test_component_unlink(view_api::TN_TABLE, component_api::TN_TABLE);
+        $result .= $this->test_component_unlink(views::TEST_COMPLETE_NAME, component_api::TN_TITLE);
+        $result .= $this->test_component_unlink(views::TEST_COMPLETE_NAME, component_api::TN_VALUES);
+        $result .= $this->test_component_unlink(views::TEST_COMPLETE_NAME, component_api::TN_RESULTS);
+        $result .= $this->test_component_unlink(views::TEST_EXCLUDED_NAME, component_api::TN_EXCLUDED);
+        $result .= $this->test_component_unlink(views::TEST_TABLE_NAME, component_api::TN_TITLE);
+        $result .= $this->test_component_unlink(views::TEST_TABLE_NAME, component_api::TN_TABLE);
 
         // load the test view
-        $msk = $this->load_view(view_api::TN_ADD);
+        $msk = $this->load_view(views::TEST_ADD_NAME);
         if ($msk->id() <= 0) {
-            $msk = $this->load_view(view_api::TN_RENAMED);
+            $msk = $this->load_view(views::TEST_RENAMED_NAME);
         }
 
         // load the test view for user 2
-        $dsp_usr2 = $this->load_view(view_api::TN_ADD, $this->usr2);
+        $dsp_usr2 = $this->load_view(views::TEST_ADD_NAME, $this->usr2);
         if ($dsp_usr2->id() <= 0) {
-            $dsp_usr2 = $this->load_view(view_api::TN_RENAMED, $this->usr2);
+            $dsp_usr2 = $this->load_view(views::TEST_RENAMED_NAME, $this->usr2);
         }
 
         // load the first test view component
@@ -191,7 +192,7 @@ class test_cleanup extends test_api
         }
 
         // request to delete the added test views
-        foreach (view_api::TEST_VIEWS as $dsp_name) {
+        foreach (views::TEST_VIEWS as $dsp_name) {
             $msk = $this->load_view($dsp_name);
             if ($msk->id() > 0) {
                 $msg = $msk->del();
@@ -249,9 +250,9 @@ class test_cleanup extends test_api
         }
 
         // reload the test view for user 2
-        $dsp_usr2 = $this->load_view(view_api::TN_ADD, $this->usr2);
+        $dsp_usr2 = $this->load_view(views::TEST_ADD_NAME, $this->usr2);
         if ($dsp_usr2->id() <= 0) {
-            $dsp_usr2 = $this->load_view(view_api::TN_RENAMED, $this->usr2);
+            $dsp_usr2 = $this->load_view(views::TEST_RENAMED_NAME, $this->usr2);
         }
 
         // request to delete the added test view for user 2 first
@@ -259,13 +260,13 @@ class test_cleanup extends test_api
             $msg = $dsp_usr2->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of view "' . view_api::TN_ADD . '" for user 2', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->display('cleanup: del of view "' . views::TEST_ADD_NAME . '" for user 2', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // reload the test view
-        $msk = $this->load_view(view_api::TN_ADD);
+        $msk = $this->load_view(views::TEST_ADD_NAME);
         if ($msk->id() <= 0) {
-            $msk = $this->load_view(view_api::TN_RENAMED);
+            $msk = $this->load_view(views::TEST_RENAMED_NAME);
         }
 
         // request to delete the added test view
@@ -273,11 +274,11 @@ class test_cleanup extends test_api
             $msg = $msk->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of view "' . view_api::TN_ADD . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->display('cleanup: del of view "' . views::TEST_ADD_NAME . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // request to delete the added test views
-        foreach (view_api::TEST_VIEWS as $dsp_name) {
+        foreach (views::TEST_VIEWS as $dsp_name) {
             $msk = $this->load_view($dsp_name);
             if ($msk->id() > 0) {
                 $msg = $msk->del();

@@ -64,7 +64,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_TRIPLE_DEL);
+    $msk->load_by_code_id(view_shared::TRIPLE_DEL);
     $back = $_GET[api::URL_VAR_BACK] = ''; // the original calling page that should be shown after the change if finished
 
     // get the parameters

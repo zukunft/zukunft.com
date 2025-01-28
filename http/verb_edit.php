@@ -63,7 +63,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_VERB_EDIT);
+    $msk->load_by_code_id(view_shared::VERB_EDIT);
     $back = $_GET[api::URL_VAR_BACK] = ''; // the original calling page that should be shown after the change is finished
 
     // create the verb object to have an place to update the parameters

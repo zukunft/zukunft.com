@@ -84,6 +84,7 @@ include_once MODEL_VIEW_PATH . 'view_term_link.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
+include_once SHARED_PATH . 'views.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -121,6 +122,7 @@ use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
 use shared\types\position_types;
+use shared\views;
 
 class view extends sandbox_typed
 {
@@ -1166,7 +1168,7 @@ class view extends sandbox_typed
      */
     protected function reserved_names(): array
     {
-        return view_api::RESERVED_NAMES;
+        return views::RESERVED_NAMES;
     }
 
     /**
@@ -1174,7 +1176,7 @@ class view extends sandbox_typed
      */
     protected function fixed_names(): array
     {
-        return view_api::FIXED_NAMES;
+        return views::FIXED_NAMES;
     }
 
     /**

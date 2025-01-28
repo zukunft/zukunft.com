@@ -42,6 +42,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_type;
 use html\component\component as component_dsp;
 use api\component\component as component_api;
+use shared\views;
 use test\test_cleanup;
 
 class component_tests
@@ -81,7 +82,7 @@ class component_tests
 
         $t->subheader('component sql read standard by name');
         $cmp = new component($usr);
-        $cmp->set_name(view_api::TN_READ);
+        $cmp->set_name(views::START_NAME);
         //$t->assert_sql_all($db_con, $cmp);
         $t->assert_sql_standard($sc, $cmp);
 

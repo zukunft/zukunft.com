@@ -191,6 +191,7 @@ use shared\types\share_type as share_type_shared;
 use shared\types\view_styles;
 use shared\types\view_type;
 use shared\values;
+use shared\views;
 use shared\words;
 use unit_write\component_link_write_tests;
 use unit_write\component_write_tests;
@@ -510,7 +511,7 @@ class create_test_objects extends test_base
         $wrd->set_type(phrase_type_shared::NORMAL);
         $wrd->set_code_id(words::MATH);
         $wrd->plural = words::MATH_PLURAL;
-        $wrd->set_view_id(view_api::TI_READ);
+        $wrd->set_view_id(views::START_ID);
         $wrd->set_usage(2);
         $wrd->exclude();
         $wrd->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
@@ -2032,7 +2033,7 @@ class create_test_objects extends test_base
         $frm->description = formulas::SCALE_TO_SEC_COM;
         $frm->need_all_val = true;
         $frm->last_update = new DateTime(sys_log_api::TV_TIME);
-        $frm->set_view_id(view_api::TI_READ);
+        $frm->set_view_id(views::START_ID);
         $frm->set_usage(2);
         $frm->exclude();
         $frm->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
@@ -2453,9 +2454,9 @@ class create_test_objects extends test_base
     function view(): view
     {
         $msk = new view($this->usr1);
-        $msk->set(1, view_api::TN_READ);
-        $msk->description = view_api::TD_READ;
-        $msk->code_id = view_api::TC_READ;
+        $msk->set(1, views::START_NAME);
+        $msk->description = views::START_COM;
+        $msk->code_id = views::START_CODE;
         return $msk;
     }
 
@@ -2463,9 +2464,9 @@ class create_test_objects extends test_base
     {
         global $ptc_typ_cac;
         $msk = new view($this->usr1);
-        $msk->set(1, view_api::TN_READ);
-        $msk->description = view_api::TD_READ;
-        $msk->code_id = view_api::TC_READ;
+        $msk->set(1, views::START_NAME);
+        $msk->description = views::START_COM;
+        $msk->code_id = views::START_CODE;
         $msk->set_type(view_type::ENTRY);
         $msk->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
         return $msk;
@@ -2477,8 +2478,8 @@ class create_test_objects extends test_base
     function view_science(): view
     {
         $msk = new view($this->usr1);
-        $msk->set(view_api::TI_SCIENCE, view_api::TN_SCIENCE);
-        $msk->description = view_api::TD_SCIENCE;
+        $msk->set(views::SCIENCE_ID, views::SCIENCE);
+        $msk->description = views::SCIENCE_NAME;
         return $msk;
     }
 
@@ -2488,8 +2489,8 @@ class create_test_objects extends test_base
     function view_historic(): view
     {
         $msk = new view($this->usr1);
-        $msk->set(view_api::TI_HISTORIC, view_api::TN_HISTORIC);
-        $msk->description = view_api::TD_HISTORIC;
+        $msk->set(views::HISTORIC_ID, views::HISTORIC_NAME);
+        $msk->description = views::HISTORIC_COM;
         return $msk;
     }
 
@@ -2499,8 +2500,8 @@ class create_test_objects extends test_base
     function view_biological(): view
     {
         $msk = new view($this->usr1);
-        $msk->set(view_api::TI_BIOLOGICAL, view_api::TN_BIOLOGICAL);
-        $msk->description = view_api::TD_BIOLOGICAL;
+        $msk->set(views::BIOLOGICAL_ID, views::BIOLOGICAL_NAME);
+        $msk->description = views::BIOLOGICAL_COM;
         return $msk;
     }
 
@@ -2510,8 +2511,8 @@ class create_test_objects extends test_base
     function view_education(): view
     {
         $msk = new view($this->usr1);
-        $msk->set(view_api::TI_EDUCATION, view_api::TN_EDUCATION);
-        $msk->description = view_api::TD_EDUCATION;
+        $msk->set(views::EDUCATION_ID, views::EDUCATION_NAME);
+        $msk->description = views::EDUCATION_COM;
         return $msk;
     }
 
@@ -2521,8 +2522,8 @@ class create_test_objects extends test_base
     function view_touristic(): view
     {
         $msk = new view($this->usr1);
-        $msk->set(view_api::TI_TOURISTIC, view_api::TN_TOURISTIC);
-        $msk->description = view_api::TD_TOURISTIC;
+        $msk->set(views::TOURISTIC_ID, views::TOURISTIC_NAME);
+        $msk->description = views::TOURISTIC_COM;
         return $msk;
     }
 
@@ -2532,8 +2533,8 @@ class create_test_objects extends test_base
     function view_graph(): view
     {
         $msk = new view($this->usr1);
-        $msk->set(view_api::TI_GRAPH, view_api::TN_GRAPH);
-        $msk->description = view_api::TD_GRAPH;
+        $msk->set(views::GRAPH_ID, views::GRAPH_NAME);
+        $msk->description = views::GRAPH_COM;
         return $msk;
     }
 
@@ -2543,8 +2544,8 @@ class create_test_objects extends test_base
     function view_simple(): view
     {
         $msk = new view($this->usr1);
-        $msk->set(view_api::TI_SIMPLE, view_api::TN_SIMPLE);
-        $msk->description = view_api::TD_SIMPLE;
+        $msk->set(views::SIMPLE_ID, views::SIMPLE_NAME);
+        $msk->description = views::SIMPLE_COM;
         return $msk;
     }
 
@@ -2554,8 +2555,8 @@ class create_test_objects extends test_base
     function view_added(): view
     {
         $msk = new view($this->usr1);
-        $msk->set(1, view_api::TN_READ);
-        $msk->description = view_api::TD_READ;
+        $msk->set(1, views::START_NAME);
+        $msk->description = views::START_COM;
         return $msk;
     }
 
@@ -2567,9 +2568,9 @@ class create_test_objects extends test_base
         global $shr_typ_cac;
         global $ptc_typ_cac;
         $msk = new view($this->usr1);
-        $msk->set(1, view_api::TN_READ);
-        $msk->description = view_api::TD_READ;
-        $msk->code_id = view_api::TC_READ;
+        $msk->set(1, views::START_NAME);
+        $msk->description = views::START_COM;
+        $msk->code_id = views::START_CODE;
         $msk->set_type(view_type::DETAIL);
         $msk->set_style(view_styles::COL_SM_4);
         $msk->exclude();
@@ -2586,8 +2587,8 @@ class create_test_objects extends test_base
         $msk = $this->view_filled();
         $msk->include();
         $msk->set_id(0);
-        $msk->code_id = view_api::TC_ADD;
-        $msk->set_name(view_api::TN_ADD);
+        $msk->code_id = views::TEST_ADD;
+        $msk->set_name(views::TEST_ADD_NAME);
         return $msk;
     }
 
@@ -2597,7 +2598,7 @@ class create_test_objects extends test_base
     function view_add_by_func(): view
     {
         $msk = new view($this->usr1);
-        $msk->set_name(view_api::TN_ADD_VIA_FUNC);
+        $msk->set_name(views::TEST_ADD_VIA_FUNC_NAME);
         return $msk;
     }
 
@@ -2607,7 +2608,7 @@ class create_test_objects extends test_base
     function view_add_by_sql(): view
     {
         $msk = new view($this->usr1);
-        $msk->set_name(view_api::TN_ADD_VIA_SQL);
+        $msk->set_name(views::TEST_ADD_VIA_SQL_NAME);
         return $msk;
     }
 
@@ -2621,9 +2622,9 @@ class create_test_objects extends test_base
     function view_word_add(): view
     {
         $msk = new view($this->usr1);
-        $msk->set(view_api::TI_FORM, view_api::TN_FORM);
-        $msk->description = view_api::TD_FORM;
-        $msk->code_id = view_api::TC_FORM;
+        $msk->set(views::TEST_FORM_ID, views::TEST_FORM_NAME);
+        $msk->description = views::TEST_FORM_COM;
+        $msk->code_id = views::TEST_FORM;
         $msk->cmp_lnk_lst = $this->components_word_add($msk);
         return $msk;
     }

@@ -85,7 +85,7 @@ class phrase_write_tests
         $t->assert('phrase->load word by id ' . $company_id, $result, $target);
 
         $result = $lib->trim_html($phr->dsp_tbl());
-        $url = '<td><a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::MI_WORD . '&' . api::URL_VAR_ID . '=';
+        $url = '<td><a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::WORD_ID . '&' . api::URL_VAR_ID . '=';
         $target = $lib->trim_html($url . $company_id . '" title="' .
             words::TN_COMPANY . '">' . words::TN_COMPANY . '</a></td> ');
         $t->assert('phrase->dsp_tbl word for ' . words::TN_COMPANY, $result, $target);

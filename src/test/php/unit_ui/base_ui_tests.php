@@ -63,6 +63,7 @@ use shared\types\api_type;
 use shared\types\component_type as comp_type_shared;
 use shared\types\verbs;
 use shared\values;
+use shared\views;
 use shared\views as view_shared;
 use shared\words;
 use test\test_cleanup;
@@ -112,7 +113,7 @@ class base_ui_tests
         //$t->assert_sql_name_unique($log_dsp->dsp_hist_links_sql($db_con, true));
 
         // button add
-        $url = $html->url(view_shared::MC_WORD_ADD);
+        $url = $html->url(view_shared::WORD_ADD);
         $t->html_test((new button($url))->add(messages::WORD_ADD), '', 'button_add', $t);
 
 
@@ -225,7 +226,7 @@ class base_ui_tests
         /*
         $wrd = $t->load_word(words::TN_READ);
         $msk = new view($usr);
-        $msk->load_by_name(view_api::TN_READ_RATIO);
+        $msk->load_by_name(views::TN_READ_RATIO);
         //$result = $msk->display($wrd, $back);
         $target = true;
         //$t->dsp_contains(', view_dsp->display is "'.$result.'" which should contain '.$wrd_abb->name.'', $target, $result);
@@ -238,16 +239,16 @@ class base_ui_tests
         $cmp = new component($usr);
         $cmp->type_id = $cmp_typ_cac->id(comp_type_shared::TEXT);
         $cmp->set_id(1);
-        $cmp->set_name(view_api::TN_READ_NESN_2016);
+        $cmp->set_name(views::NESN_2016_FS_NAME);
         $cmp_dsp = new component_dsp($cmp->api_json());
         $result = $cmp_dsp->html();
-        $target = view_api::TN_READ_NESN_2016;
+        $target = views::NESN_2016_FS_NAME;
         $t->display('component_dsp->text', $target, $result);
 
 
         $t->header('Test the display button class (src/main/php/web/html/button.php )');
 
-        $url = $html->url(view_shared::MC_WORD_ADD);
+        $url = $html->url(view_shared::WORD_ADD);
         $back = '1';
         $target = '<a href="/http/word_add.php" title="Add test"><img src="/images/button_add.svg" alt="Add test"></a>';
         $target = '<a href="/http/word_add.php" title="add new word">';
@@ -256,37 +257,37 @@ class base_ui_tests
 
         // TODO move e.g. because the edit word button is tested already in the unit tests of the object
 
-        $url = $html->url(view_shared::MC_WORD_DEL);
+        $url = $html->url(view_shared::WORD_DEL);
         $target = '<a href="/http/view.php" title="Del test"><img src="/images/button_del.svg" alt="Del test"></a>';
         $target = '<a href="/http/word_del.php" title="delete word"><i class="far fa-times-circle"></i></a>';
         $result = (new button($url, $back))->del(messages::WORD_DEL);
         $t->dsp_contains(", btn_del", $target, $result);
 
-        $url = $html->url(view_shared::MC_WORD);
+        $url = $html->url(view_shared::WORD);
         $target = '<a href="/http/view.php" title="Undo test"><img src="/images/button_undo.svg" alt="Undo test"></a>';
         $target = '<a href="/http/word.php" title="undo"><img src="/images/button_undo.svg" alt="undo"></a>';
         $result = (new button($url, $back))->undo(messages::UNDO);
         //$t->display(", btn_undo", $target, $result);
 
-        $url = $html->url(view_shared::MC_WORD_ADD);
+        $url = $html->url(view_shared::WORD_ADD);
         $target = '<a href="/http/view.php" title="Find test"><img src="/images/button_find.svg" alt="Find test"></a>';
         $target = '<a href="/http/word_add.php" title=""><img src="/images/button_find.svg" alt=""></a>';
         $result = (new button($url, $back))->find();
         //$t->display(", btn_find", $target, $result);
 
-        $url = $html->url(view_shared::MC_WORD_ADD);
+        $url = $html->url(view_shared::WORD_ADD);
         $target = '<a href="/http/view.php" title="Show all test"><img src="/images/button_filter_off.svg" alt="Show all test"></a>';
         $target = '<a href="/http/word_add.php" title=""><img src="/images/button_filter_off.svg" alt=""></a>';
         $result = (new button($url, $back))->un_filter();
         //$t->display(", btn_unfilter", $target, $result);
 
-        $url = $html->url(view_shared::MC_WORD_ADD);
+        $url = $html->url(view_shared::WORD_ADD);
         $target = '<h6>YesNo test</h6><a href="/http/view.php&confirm=1" title="Yes">Yes</a>/<a href="/http/view.php&confirm=-1" title="No">No</a>';
         $target = '<h6></h6><a href="/http/word_add.php&confirm=1" title="Yes">Yes</a>/<a href="/http/word_add.php&confirm=-1" title="No">No</a>';
         $result = (new button($url, $back))->yes_no();
         $t->display(", btn_yesno", $target, $result);
 
-        $url = $html->url(view_shared::MC_WORD_ADD);
+        $url = $html->url(view_shared::WORD_ADD);
         $target = '<a href="/http/view.php?words=1" title="back"><img src="/images/button_back.svg" alt="back"></a>';
         $result = (new button($url, $back))->back();
         //$t->display(", btn_back", $target, $result);

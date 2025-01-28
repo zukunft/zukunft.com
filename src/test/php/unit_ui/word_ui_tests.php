@@ -58,9 +58,9 @@ class word_ui_tests
         $test_page .= 'del button: ' . $wrd->btn_del() . '<br>';
         $test_page .= 'unlink button: ' . $wrd->btn_unlink(1) . '<br>';
         $test_page .= $html->text_h2('select');
-        $test_page .= $wrd->dsp_type_selector(view_shared::MC_WORD_EDIT) . '<br>';
-        $test_page .= $wrd->view_selector(view_shared::MC_WORD_EDIT, $t->view_list_dsp()) . '<br>';
-        $test_page .= $wrd->view_selector(view_shared::MC_WORD_EDIT, $t->view_list_long_dsp()) . '<br>';
+        $test_page .= $wrd->dsp_type_selector(view_shared::WORD_EDIT) . '<br>';
+        $test_page .= $wrd->view_selector(view_shared::WORD_EDIT, $t->view_list_dsp()) . '<br>';
+        $test_page .= $wrd->view_selector(view_shared::WORD_EDIT, $t->view_list_long_dsp()) . '<br>';
         $test_page .= $html->text_h2('table');
         $test_page .= $html->tbl($wrd->th() . $wrd_pi->tr());
         $test_page .= 'del in columns: ' . $wrd->dsp_del() . '<br>';

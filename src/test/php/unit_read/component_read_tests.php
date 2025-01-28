@@ -37,6 +37,7 @@ use api\view\view as view_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\view\view;
+use shared\views;
 use test\test_cleanup;
 
 class component_read_tests
@@ -53,12 +54,12 @@ class component_read_tests
 
         $t->subheader('component load');
         $msk = new view($t->usr1);
-        $t->assert_load($msk, view_api::TN_READ);
+        $t->assert_load($msk, views::START_NAME);
 
         $t->subheader('Component link db read tests');
-        $test_name = 'load component link ' . view_api::TN_READ . ' to ' . component_api::TN_READ . ' by id';
+        $test_name = 'load component link ' . views::START_NAME . ' to ' . component_api::TN_READ . ' by id';
         $msk = new view($t->usr1);
-        $msk->load_by_name(view_api::TN_READ);
+        $msk->load_by_name(views::START_NAME);
         $cmp = new component($t->usr1);
         $cmp->load_by_name(component_api::TN_READ);
         $cmp_lnk = new component_link($t->usr1);

@@ -35,6 +35,7 @@ namespace unit_read;
 use api\view\view as view_api;
 use cfg\view\view_list;
 use shared\library;
+use shared\views;
 use test\test_cleanup;
 
 class view_list_read_tests
@@ -49,28 +50,28 @@ class view_list_read_tests
         // init
         $t->name = 'view list read db->';
 
-        $t->header('Test the view list class (classes/view_list.php)');
+        $t->header('view list database read unit tests');
 
         // test loading view names
         $test_name = 'loading view names with pattern return the expected view';
-        $pattern = substr(view_api::TN_ALL, 0, -1);
+        $pattern = substr(views::TEST_ALL_NAME, 0, -1);
         $dsp_lst = new view_list($t->usr1);
         $dsp_lst->load_names($pattern);
-        $t->assert_contains($test_name, $dsp_lst->names(), view_api::TN_ALL);
+        $t->assert_contains($test_name, $dsp_lst->names(), views::TEST_ALL_NAME);
         // TODO do not exclude all system views
         //      e.g. allow the user to select the system default view Word aka TN_READ
         //      but do not allow to select system forms aka TN_FORM
         $test_name = 'system view are not included in the normal view list';
         $dsp_lst = new view_list($t->usr1);
-        $dsp_lst->load_names(view_api::TN_FORM);
-        $t->assert_contains_not($test_name, $dsp_lst->names(), view_api::TN_FORM);
+        $dsp_lst->load_names(views::TEST_FORM_NAME);
+        $t->assert_contains_not($test_name, $dsp_lst->names(), views::TEST_FORM_NAME);
 
 
         $test_name = 'loading by view list by component id ';
         $msk_lst = new view_list($t->usr1);
         $msk_lst->load_by_component_id(1);
         $result = $msk_lst->names();
-        $target = view_api::TN_READ;
+        $target = views::START_NAME;
         $t->assert_contains($test_name . '1', $result, $target);
 
         $test_name = 'loading the api message creation of the api index file for ';
@@ -83,25 +84,25 @@ class view_list_read_tests
 
         $test_name = 'loading by component list by pattern ';
         $msk_lst = new view_list($t->usr1);
-        $pattern = substr(view_api::TN_READ, 0, -1);
+        $pattern = substr(views::START_NAME, 0, -1);
         $msk_lst->load_names($pattern);
-        $t->assert_contains($test_name, $msk_lst->names(), view_api::TN_READ);
+        $t->assert_contains($test_name, $msk_lst->names(), views::START_NAME);
 
         // test load by view list by ids
         /* TODO activate
         $test_name = 'load views by ids';
         $wrd_lst = new view_list($t->usr1);
         $wrd_lst->load_by_ids(array(1,3));
-        $target = '"' . view_api::TN_READ . '","' . view_api::TN_READ . '"'; // order adjusted based on the number of usage
+        $target = '"' . views::TN_READ . '","' . views::TN_READ . '"'; // order adjusted based on the number of usage
         $t->assert($test_name, $wrd_lst->name(), $target);
         $test_name = 'load views by names';
         $wrd_lst = new view_list($t->usr1);
-        $wrd_lst->load_by_names(array(view_api::TN_READ,view_api::TN_READ_RATIO));
+        $wrd_lst->load_by_names(array(views::TN_READ,views::TN_READ_RATIO));
         $t->assert_contains($test_name, $wrd_lst->ids(), array(1,3));
         $test_name = 'load views staring with P';
         $wrd_lst = new view_list($t->usr1);
         $wrd_lst->load_like('W');
-        $t->assert_contains($test_name, $wrd_lst->names(), view_api::TN_READ);
+        $t->assert_contains($test_name, $wrd_lst->names(), views::TN_READ);
         */
 
     }

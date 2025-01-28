@@ -66,7 +66,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_IMPORT);
+    $msk->load_by_code_id(view_shared::IMPORT);
 
     // get the filepath of the data that are supposed to be imported
     $fileName = $_FILES["fileToUpload"]["name"];

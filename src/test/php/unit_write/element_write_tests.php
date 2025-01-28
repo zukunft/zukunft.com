@@ -101,7 +101,7 @@ class element_write_tests
                 $t->display('element->dsp_id', $target, $result);
 
                 $result = $elm->name_linked($back);
-                $url = '<a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::MI_WORD . '&' . api::URL_VAR_ID . '=';
+                $url = '<a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::WORD_ID . '&' . api::URL_VAR_ID . '=';
                 if ($pos == 0) {
                     $target = $url . $wrd_country->id() . '&back=0" title="Country">Country</a>';
                 } elseif ($pos == 1) {

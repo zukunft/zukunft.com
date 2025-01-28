@@ -40,6 +40,7 @@ use cfg\log\change_link;
 use cfg\log\change_table_list;
 use cfg\user\user;
 use cfg\view\view;
+use shared\views;
 use test\test_cleanup;
 
 class component_link_write_tests
@@ -51,13 +52,13 @@ class component_link_write_tests
 
         $t->header('component link db write tests');
 
-        $t->subheader('component link write sandbox tests for ' . view_api::TN_ADD . ' and ' . component_api::TN_ADD);
+        $t->subheader('component link write sandbox tests for ' . views::TEST_ADD_NAME . ' and ' . component_api::TN_ADD);
         // TODO activate (set object id instead of id)
         // $t->assert_write_link($t->component_link_filled_add());
 
 
         $t->subheader('prepare component link write');
-        $msk = $t->test_view(view_api::TN_ADD);
+        $msk = $t->test_view(views::TEST_ADD_NAME);
         $cmp = $t->test_component(component_api::TN_ADD);
 
         $test_name = 'link the test view component "' . $cmp->name() . '" to view  (' . $msk->name() . ')';
@@ -72,7 +73,7 @@ class component_link_write_tests
         $log->new_from_id = $msk->id();
         $log->new_to_id = $cmp->id();
         $result = $log->dsp_last(true);
-        $target = user::SYSTEM_TEST_NAME . ' linked ' . view_api::TN_ADD . ' to ' . component_api::TN_ADD;
+        $target = user::SYSTEM_TEST_NAME . ' linked ' . views::TEST_ADD_NAME . ' to ' . component_api::TN_ADD;
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check list of linked views contains the added view for user "' . $t->usr1->dsp_id() . '"';
@@ -92,7 +93,7 @@ class component_link_write_tests
         // if second user removes the new link
         $cmp = $t->load_component(component_api::TN_ADD, $t->usr2);
         $msk = new view($t->usr2);
-        $msk->load_by_name(view_api::TN_ADD, view::class);
+        $msk->load_by_name(views::TEST_ADD_NAME, view::class);
         $result = $cmp->unlink($msk);
         $target = '';
         $t->display('view component_link->unlink "' . $msk->name() . '" from "' . $cmp->name() . '" by user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -104,7 +105,7 @@ class component_link_write_tests
         $log->old_to_id = $cmp->id();
         $result = $log->dsp_last(true);
         // TODO activate
-        $target = $t->usr2->name() . ' unlinked ' . view_api::TN_ADD . ' from ' . component_api::TN_ADD;
+        $target = $t->usr2->name() . ' unlinked ' . views::TEST_ADD_NAME . ' from ' . component_api::TN_ADD;
         $target = $t->usr2->name() . ' ';
         $t->display('view component_link->unlink_dsp logged for "' . $msk->name() . '" to "' . $cmp->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
 
@@ -139,7 +140,7 @@ class component_link_write_tests
         $log->old_from_id = $msk->id();
         $log->old_to_id = $cmp->id();
         $result = $log->dsp_last(true);
-        $target = user::SYSTEM_TEST_NAME . ' unlinked ' . view_api::TN_ADD . ' from ' . component_api::TN_ADD;
+        $target = user::SYSTEM_TEST_NAME . ' unlinked ' . views::TEST_ADD_NAME . ' from ' . component_api::TN_ADD;
         $t->display('view component_link->unlink_dsp logged of "' . $msk->name() . '" from "' . $cmp->name() . '"', $target, $result);
 
         // check if the view component is not used any more for both users
@@ -154,8 +155,8 @@ class component_link_write_tests
         // --------------------------------------------------------------------
 
         // load the view and view component objects
-        $msk = $t->load_view(view_api::TN_ADD);
-        $dsp2 = $t->load_view(view_api::TN_ADD, $t->usr2);
+        $msk = $t->load_view(views::TEST_ADD_NAME);
+        $dsp2 = $t->load_view(views::TEST_ADD_NAME, $t->usr2);
         $cmp = $t->load_component(component_api::TN_ADD,);
         // create a second view element to be able to test the change of the view order
         $cmp2 = new component($t->usr1);
@@ -304,14 +305,14 @@ class component_link_write_tests
     {
         $t->header('Check if all base view component links are existing');
 
-        $t->test_component_lnk(view_api::TN_COMPLETE, component_api::TN_TITLE, 1);
-        $t->test_component_lnk(view_api::TN_COMPLETE, component_api::TN_VALUES, 2);
-        $t->test_component_lnk(view_api::TN_COMPLETE, component_api::TN_RESULTS, 3);
+        $t->test_component_lnk(views::TEST_COMPLETE_NAME, component_api::TN_TITLE, 1);
+        $t->test_component_lnk(views::TEST_COMPLETE_NAME, component_api::TN_VALUES, 2);
+        $t->test_component_lnk(views::TEST_COMPLETE_NAME, component_api::TN_RESULTS, 3);
 
-        $t->test_component_lnk(view_api::TN_EXCLUDED, component_api::TN_EXCLUDED, 1);
+        $t->test_component_lnk(views::TEST_EXCLUDED_NAME, component_api::TN_EXCLUDED, 1);
 
-        $t->test_component_lnk(view_api::TN_TABLE, component_api::TN_TITLE, 1);
-        $t->test_component_lnk(view_api::TN_TABLE, component_api::TN_TABLE, 2);
+        $t->test_component_lnk(views::TEST_TABLE_NAME, component_api::TN_TITLE, 1);
+        $t->test_component_lnk(views::TEST_TABLE_NAME, component_api::TN_TABLE, 2);
     }
 
 }
