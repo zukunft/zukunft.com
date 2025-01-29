@@ -71,14 +71,13 @@ class figure extends combine_named_dsp
      */
     function set_from_json_array(array $json_array): user_message
     {
-        $lib = new library();
         $usr_msg = new user_message();
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
-            if ($json_array[json_fields::OBJECT_CLASS] == $lib->class_to_name(result::class)) {
+            if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_RESULT) {
                 $res_dsp = new result();
                 $res_dsp->set_from_json_array($json_array);
                 $this->set_obj($res_dsp);
-            } elseif ($json_array[json_fields::OBJECT_CLASS] == $lib->class_to_name(value::class)) {
+            } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VALUE) {
                 $val = new value();
                 $val->set_from_json_array($json_array);
                 $this->set_obj($val);
@@ -145,9 +144,9 @@ class figure extends combine_named_dsp
         $lib = new library();
         $vars = array();
         if ($this->is_result()) {
-            $vars[json_fields::OBJECT_CLASS] = $lib->class_to_name(result::class);
+            $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_RESULT;
         } else {
-            $vars[json_fields::OBJECT_CLASS] = $lib->class_to_name(value::class);
+            $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_VALUE;
         }
         $vars[json_fields::ID] = $this->obj_id();
         $vars[json_fields::NUMBER] = $this->number();

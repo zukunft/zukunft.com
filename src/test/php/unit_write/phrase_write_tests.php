@@ -57,7 +57,7 @@ class phrase_write_tests
         global $vrb_cac;
         $lib = new library();
 
-        $t->header('Test the phrase class (src/main/php/model/phrase/phrase.php)');
+        $t->header('phrase database write tests');
 
         // load or create the test objects and remember the vars used for testing
         // load or create a word used to group phrases e.g. company

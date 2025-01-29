@@ -34,13 +34,9 @@ namespace unit_ui;
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
-use api\word\triple as triple_api;
 use html\html_base;
-use html\word\triple as triple_dsp;
+use html\word\triple;
 use html\word\triple_list as triple_list_dsp;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\verbs;
 use test\test_cleanup;
 
 class triple_list_ui_tests
@@ -59,12 +55,12 @@ class triple_list_ui_tests
 
         // create the triple list test set
         $lst = new triple_list_dsp();
-        $phr_city = $this->triple_api_triple(1,  triples::CITY_ZH_NAME,
-            words::ZH, verbs::IS, words::CITY);
-        $phr_canton = $this->triple_api_triple(2,  triples::CANTON_ZURICH_NAME,
-            words::ZH, verbs::IS, words::CANTON);
-        $lst->add($phr_city);
-        $lst->add($phr_canton);
+        $phr_city = $t->zh_city();
+        $phr_canton = $t->zh_canton();
+        $phr_city_dsp = new triple($phr_city->api_json());
+        $phr_canton_dsp = new triple($phr_canton->api_json());
+        $lst->add($phr_city_dsp);
+        $lst->add($phr_canton_dsp);
 
         // test the triple list display functions
         $test_page = $html->text_h2('triple list display test');
@@ -78,17 +74,6 @@ class triple_list_ui_tests
         $test_page .= $lst->selector('', 0, 'triple list test selector', 'please select') . '<br>';
 
         $t->html_test($test_page, 'triple_list', 'triple_list', $t);
-    }
-
-    function triple_api_triple(
-        int $id,
-        string $name,
-        string $from = '',
-        string $verb = '',
-        string $to = ''
-    ): triple_dsp {
-        $trp = new triple_api($id, $name, $from, $verb, $to);
-        return new triple_dsp($trp->get_json());
     }
 
 }

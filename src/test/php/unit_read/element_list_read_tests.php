@@ -32,7 +32,6 @@
 
 namespace unit_read;
 
-use api\word\word as word_api;
 use cfg\element\element_list;
 use test\test_cleanup;
 

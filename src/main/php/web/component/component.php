@@ -35,7 +35,6 @@
 namespace html\component;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once API_WORD_PATH . 'word.php';
 include_once DB_PATH . 'sql_db.php';
 include_once HTML_PATH . 'html_base.php';
 include_once HTML_PATH . 'html_selector.php';

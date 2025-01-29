@@ -32,7 +32,6 @@
 namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once API_PHRASE_PATH . 'phrase.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once HTML_PATH . 'button.php';
 include_once HTML_PATH . 'html_base.php';

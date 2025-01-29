@@ -57,7 +57,7 @@ class triple_old
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
 
-        $t->header('Unit tests of the word class (src/main/php/model/word/triple.php)');
+        $t->header('triple unit tests');
 
 
         $t->subheader('SQL statement tests');

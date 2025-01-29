@@ -2,8 +2,8 @@
 
 /*
 
-  triple.php - display a RDF triple
-  ----------
+    triple.php - display a RDF triple
+    ----------
 
 
     This file is part of zukunft.com - calc with words

@@ -171,7 +171,7 @@ class word_read_tests
         $t->assert_contains($test_name, $foaf_lst, $fixed_lst);
 
 
-        $t->header('Unit database tests of the triple class (src/main/php/model/word/triple.php)');
+        $t->header('triple database read tests');
         $t->name = 'triple read db->';
 
         $t->subheader('triple export tests');

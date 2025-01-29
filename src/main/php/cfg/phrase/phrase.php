@@ -67,9 +67,6 @@
 namespace cfg\phrase;
 
 include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once API_PHRASE_PATH . 'phrase.php';
-include_once API_WORD_PATH . 'word.php';
-include_once API_WORD_PATH . 'triple.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_field_type.php';
@@ -102,7 +99,6 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\phrase\phrase as phrase_api;
 use cfg\helper\combine_named;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -131,7 +127,6 @@ use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
 use shared\json_fields;
 use shared\library;
-use shared\types\api_type_list;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
 

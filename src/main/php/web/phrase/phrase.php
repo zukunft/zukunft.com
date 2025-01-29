@@ -34,7 +34,6 @@ namespace html\phrase;
 
 include_once WEB_SANDBOX_PATH . 'combine_named.php';
 include_once API_SANDBOX_PATH . 'combine_object.php';
-include_once API_PHRASE_PATH . 'phrase.php';
 include_once HTML_PATH . 'button.php';
 include_once HTML_PATH . 'html_base.php';
 include_once HTML_PATH . 'rest_ctrl.php';
@@ -47,7 +46,6 @@ include_once WEB_WORD_PATH . 'triple.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use api\phrase\phrase as phrase_api;
 use cfg\verb\verb_list;
 use html\button;
 use html\html_base;
@@ -87,11 +85,11 @@ class phrase extends combine_named_dsp
     {
         $usr_msg = new user_message();
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
-            if ($json_array[json_fields::OBJECT_CLASS] == phrase_api::CLASS_WORD) {
+            if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
                 $wrd_dsp = new word_dsp();
                 $wrd_dsp->set_from_json_array($json_array);
                 $this->set_obj($wrd_dsp);
-            } elseif ($json_array[json_fields::OBJECT_CLASS] == phrase_api::CLASS_TRIPLE) {
+            } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
                 $trp_dsp = new triple_dsp();
                 $trp_dsp->set_from_json_array($json_array);
                 $this->set_obj($trp_dsp);
@@ -156,11 +154,11 @@ class phrase extends combine_named_dsp
     {
         $vars = array();
         if ($this->is_word()) {
-            $vars[json_fields::OBJECT_CLASS] = phrase_api::CLASS_WORD;
+            $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
         } else {
             $trp = $this->obj();
             if ($trp != null) {
-                $vars[json_fields::OBJECT_CLASS] = phrase_api::CLASS_TRIPLE;
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
                 $vars[json_fields::FROM] = $trp->from()->id();
                 $vars[json_fields::VERB] = $trp->verb()->id();
                 $vars[json_fields::TO] = $trp->to()->id();
@@ -290,14 +288,14 @@ class phrase extends combine_named_dsp
      * create a selector that contains the words and triples
      * if one form contains more than one selector, $pos is used for identification
      *
-     * @param phrase_api $type is a word to preselect the list to only those phrases matching this type
+     * @param phrase $type is a word to preselect the list to only those phrases matching this type
      * @param string $form_name
      * @param int $pos
      * @param string $class
      * @param string $back
      * @return string
      */
-    function dsp_selector(phrase_api $type, string $form_name, int $pos, string $class, string $back = ''): string
+    function dsp_selector(phrase $type, string $form_name, int $pos, string $class, string $back = ''): string
     {
         // TODO include pattern in the call
         $pattern = '';

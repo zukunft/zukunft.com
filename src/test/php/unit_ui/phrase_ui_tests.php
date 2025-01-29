@@ -32,7 +32,6 @@
 
 namespace unit_ui;
 
-use api\word\word as word_api;
 use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use test\test_cleanup;

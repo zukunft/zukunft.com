@@ -35,7 +35,6 @@ namespace unit;
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_db.php';
-include_once API_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_CONST_PATH . 'words.php';

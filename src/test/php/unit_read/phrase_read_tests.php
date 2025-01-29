@@ -52,7 +52,7 @@ class phrase_read_tests
         global $usr;
 
         // init
-        $t->header('Unit database tests of the phrase class (src/main/php/model/phrase/phrase.php)');
+        $t->header('phrase database read tests');
         $t->name = 'phrase read db->';
         $t->resource_path = 'db/phrase/';
 

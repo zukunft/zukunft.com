@@ -34,7 +34,6 @@ namespace unit;
 
 include_once SERVICE_PATH . 'config.php';
 include_once DB_PATH . 'sql.php';
-include_once API_WORD_PATH . 'word.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_VALUE_PATH . 'value.php';

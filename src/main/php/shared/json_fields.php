@@ -177,6 +177,16 @@ class json_fields
     // the json field name in the api json message to identify if the term is a word, triple, verb or formula
     const OBJECT_CLASS = 'class';
 
+    // the json field name in the api json message to identify if the
+    // phrase, term or figure is a word, triple, verb, formula, value or result
+    // to allow renaming the class in backend and frontend without changing the api
+    const CLASS_WORD = 'word';
+    const CLASS_TRIPLE = 'triple';
+    const CLASS_VERB = 'verb';
+    const CLASS_FORMULA = 'formula';
+    const CLASS_VALUE = 'value';
+    const CLASS_RESULT = 'result';
+
     // view to component link
     const POS_TYPE_CMP = 'pos_type';
 

@@ -42,7 +42,6 @@ include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_WORD_PATH . 'triple.php';
-include_once API_WORD_PATH . 'triple.php';
 
 use controller\controller;
 use cfg\user\user;

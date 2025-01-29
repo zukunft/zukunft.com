@@ -2,7 +2,6 @@
 
 namespace unit;
 
-include_once API_WORD_PATH . 'triple.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_CONST_PATH . 'words.php';
 

@@ -34,16 +34,9 @@ namespace unit_ui;
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
-use api\word\triple as triple_api;
-use api\word\word as word_api;
 use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
-use html\word\triple as triple_dsp;
-use html\word\word as word_dsp;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\verbs;
 use test\test_cleanup;
 
 class phrase_list_ui_tests
@@ -84,27 +77,6 @@ class phrase_list_ui_tests
         $test_page .= $lst->selector('', 0, 'phrase list test selector', 'please select') . '<br>';
 
         $t->html_test($test_page, 'phrase_list', 'phrase_list', $t);
-    }
-
-    function phrase_api_word(
-        int $id,
-        string $name
-    ): phrase_dsp {
-        $wrd = new word_api($id, $name);
-        $wrd_dsp = new word_dsp($wrd->get_json());
-        return $wrd_dsp->phrase();
-    }
-
-    function phrase_api_triple(
-        int $id,
-        string $name,
-        string $from = '',
-        string $verb = '',
-        string $to = ''
-    ): phrase_dsp {
-        $trp = new triple_api($id, $name, $from, $verb, $to);
-        $trp_dsp = new triple_dsp($trp->get_json());
-        return $trp_dsp->phrase();
     }
 
 }

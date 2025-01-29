@@ -71,25 +71,24 @@ class term extends combine_named_dsp
      */
     function set_from_json_array(array $json_array): user_message
     {
-        $lib = new library();
         $usr_msg = new user_message();
-        if ($json_array[json_fields::OBJECT_CLASS] == $lib->class_to_name(word::class)) {
+        if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
             $wrd = new word_dsp();
             $wrd->set_from_json_array($json_array);
             $this->set_obj($wrd);
             // unlike the cases below the switch of the term id to the object id not needed for words
-        } elseif ($json_array[json_fields::OBJECT_CLASS] == $lib->class_to_name(triple::class)) {
+        } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
             $trp = new triple_dsp();
             $trp->set_from_json_array($json_array);
             $this->set_obj($trp);
             // TODO check if needed
             //$this->set_id($trp->id());
-        } elseif ($json_array[json_fields::OBJECT_CLASS] == $lib->class_to_name(verb::class)) {
+        } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
             $vrb = new verb_dsp();
             $vrb->set_from_json_array($json_array);
             $this->set_obj($vrb);
             //$this->set_id($vrb->id());
-        } elseif ($json_array[json_fields::OBJECT_CLASS] == $lib->class_to_name(formula::class)) {
+        } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
             $frm = new formula_dsp();
             $frm->set_from_json_array($json_array);
             $this->set_obj($frm);
@@ -170,17 +169,17 @@ class term extends combine_named_dsp
             $vars[json_fields::OBJECT_CLASS] = $class;
         } else {
             if ($this->is_word()) {
-                $vars[json_fields::OBJECT_CLASS] = $lib->class_to_name(word::class);
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
             } elseif ($this->is_triple()) {
-                $vars[json_fields::OBJECT_CLASS] = $lib->class_to_name(triple::class);
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
                 $trp = $this->obj();
                 $vars[json_fields::FROM] = $trp->from()->id();
                 $vars[json_fields::VERB] = $trp->verb()->id();
                 $vars[json_fields::TO] = $trp->to()->id();
             } elseif ($this->is_formula()) {
-                $vars[json_fields::OBJECT_CLASS] = $lib->class_to_name(formula::class);
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_FORMULA;
             } elseif ($this->is_verb()) {
-                $vars[json_fields::OBJECT_CLASS] = $lib->class_to_name(verb::class);
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_VERB;
             } else {
                 log_err('cannot create api message for term ' . $this->dsp_id() . ' because class is unknown');
             }

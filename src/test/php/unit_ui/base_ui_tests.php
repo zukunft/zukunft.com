@@ -39,8 +39,6 @@ include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_RESULT_PATH . 'result_list.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
-use api\phrase\phrase as phrase_api;
-use api\word\word as word_api;
 use cfg\component\component;
 use cfg\group\group;
 use cfg\phrase\phrase_list;
@@ -205,10 +203,6 @@ class base_ui_tests
         $cmp->set(1, components::TEST_ADD_NAME, comp_type_shared::TEXT);
         $cmp_dsp = new component_dsp($cmp->api_json());
         $t->html_test($cmp_dsp->html(), '', 'component_text', $t);
-
-        $wrd = new word_api();
-        $wrd->set_name(words::TN_ADD);
-        $cmp->obj = $wrd;
 
 
         // TODO review
