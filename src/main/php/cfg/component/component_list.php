@@ -40,7 +40,6 @@
 
 namespace cfg\component;
 
-include_once API_COMPONENT_PATH . 'component_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
@@ -55,7 +54,6 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
 
-use api\component\component_list as component_list_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;

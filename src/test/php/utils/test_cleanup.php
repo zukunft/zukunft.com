@@ -35,7 +35,6 @@ namespace test;
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'words.php';
 
-use api\component\component as component_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\db\sql_par;
@@ -52,6 +51,7 @@ use cfg\verb\verb;
 use cfg\view\view;
 use cfg\word\word;
 use html\html_base;
+use shared\components;
 use shared\formulas;
 use shared\library;
 use shared\sources;
@@ -111,12 +111,12 @@ class test_cleanup extends test_api
         // secure cleanup the test views
         // TODO: if a user has changed the view during the test, delete also the user views
 
-        $result .= $this->test_component_unlink(views::TEST_COMPLETE_NAME, component_api::TN_TITLE);
-        $result .= $this->test_component_unlink(views::TEST_COMPLETE_NAME, component_api::TN_VALUES);
-        $result .= $this->test_component_unlink(views::TEST_COMPLETE_NAME, component_api::TN_RESULTS);
-        $result .= $this->test_component_unlink(views::TEST_EXCLUDED_NAME, component_api::TN_EXCLUDED);
-        $result .= $this->test_component_unlink(views::TEST_TABLE_NAME, component_api::TN_TITLE);
-        $result .= $this->test_component_unlink(views::TEST_TABLE_NAME, component_api::TN_TABLE);
+        $result .= $this->test_component_unlink(views::TEST_COMPLETE_NAME, components::TEST_TITLE_NAME);
+        $result .= $this->test_component_unlink(views::TEST_COMPLETE_NAME, components::TEST_VALUES_NAME);
+        $result .= $this->test_component_unlink(views::TEST_COMPLETE_NAME, components::TEST_RESULTS_NAME);
+        $result .= $this->test_component_unlink(views::TEST_EXCLUDED_NAME, components::TEST_EXCLUDED_NAME);
+        $result .= $this->test_component_unlink(views::TEST_TABLE_NAME, components::TEST_TITLE_NAME);
+        $result .= $this->test_component_unlink(views::TEST_TABLE_NAME, components::TEST_TABLE_NAME);
 
         // load the test view
         $msk = $this->load_view(views::TEST_ADD_NAME);
@@ -131,22 +131,22 @@ class test_cleanup extends test_api
         }
 
         // load the first test view component
-        $cmp = $this->load_component(component_api::TN_ADD);
+        $cmp = $this->load_component(components::TEST_ADD_NAME);
         if ($cmp->id() <= 0) {
-            $cmp = $this->load_component(component_api::TN_RENAMED);
+            $cmp = $this->load_component(components::TEST_RENAMED_NAME);
         }
 
         // load the first test view component for user 2
-        $cmp_usr2 = $this->load_component(component_api::TN_ADD, $this->usr2);
+        $cmp_usr2 = $this->load_component(components::TEST_ADD_NAME, $this->usr2);
         if ($cmp_usr2->id() <= 0) {
-            $cmp_usr2 = $this->load_component(component_api::TN_RENAMED, $this->usr2);
+            $cmp_usr2 = $this->load_component(components::TEST_RENAMED_NAME, $this->usr2);
         }
 
         // load the second test view component
-        $cmp2 = $this->load_component(component_api::TN_ADD2);
+        $cmp2 = $this->load_component(components::TEST_ADD_2_NAME);
 
         // load the second test view component for user 2
-        $cmp2_usr2 = $this->load_component(component_api::TN_ADD2, $this->usr2);
+        $cmp2_usr2 = $this->load_component(components::TEST_ADD_2_NAME, $this->usr2);
 
         // check if the test components have been unlinked for user 2
         if ($dsp_usr2->id() > 0 and $cmp_usr2->id() > 0) {
@@ -180,7 +180,7 @@ class test_cleanup extends test_api
         }
 
         // request to delete the added test views
-        foreach (component_api::TEST_COMPONENTS as $cmp_name) {
+        foreach (components::TEST_COMPONENTS as $cmp_name) {
             $cmp = $this->load_component($cmp_name);
             if ($cmp->id() > 0) {
                 $msg = $cmp->del();
@@ -202,9 +202,9 @@ class test_cleanup extends test_api
         }
 
         // reload the first test view component for user 2
-        $cmp_usr2 = $this->load_component(component_api::TN_ADD, $this->usr2);
+        $cmp_usr2 = $this->load_component(components::TEST_ADD_NAME, $this->usr2);
         if ($cmp_usr2->id() <= 0) {
-            $cmp_usr2 = $this->load_component(component_api::TN_RENAMED, $this->usr2);
+            $cmp_usr2 = $this->load_component(components::TEST_RENAMED_NAME, $this->usr2);
         }
 
         // request to delete the test view component for user 2
@@ -212,13 +212,13 @@ class test_cleanup extends test_api
             $msg = $cmp_usr2->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of first component "' . component_api::TN_ADD . '" for user 2', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->display('cleanup: del of first component "' . components::TEST_ADD_NAME . '" for user 2', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // reload the first test view component
-        $cmp = $this->load_component(component_api::TN_ADD);
+        $cmp = $this->load_component(components::TEST_ADD_NAME);
         if ($cmp->id() <= 0) {
-            $cmp = $this->load_component(component_api::TN_RENAMED);
+            $cmp = $this->load_component(components::TEST_RENAMED_NAME);
         }
 
         // request to delete the test view component
@@ -226,18 +226,18 @@ class test_cleanup extends test_api
             $msg = $cmp->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of first component "' . component_api::TN_ADD . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->display('cleanup: del of first component "' . components::TEST_ADD_NAME . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // reload the second test view component
-        $cmp2 = $this->load_component(component_api::TN_ADD2);
+        $cmp2 = $this->load_component(components::TEST_ADD_2_NAME);
 
         // request to delete the second added test view component
         if ($cmp2->id() > 0) {
             $msg = $cmp2->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of second component "' . component_api::TN_ADD2 . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->display('cleanup: del of second component "' . components::TEST_ADD_2_NAME . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // request to delete the second added test view component for user 2
@@ -245,7 +245,7 @@ class test_cleanup extends test_api
             $msg = $cmp2_usr2->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('cleanup: del of second component "' . component_api::TN_ADD2 . '" for user 2', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->display('cleanup: del of second component "' . components::TEST_ADD_2_NAME . '" for user 2', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // reload the test view for user 2

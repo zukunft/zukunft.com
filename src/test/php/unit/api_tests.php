@@ -52,7 +52,6 @@ include_once SHARED_PATH . 'views.php';
 include_once SHARED_PATH . 'words.php';
 include_once WEB_HELPER_PATH . 'data_object.php';
 
-use api\component\component as component_api;
 use cfg\component\component;
 use cfg\component\component_list;
 use cfg\formula\formula;
@@ -82,6 +81,7 @@ use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use html\helper\data_object as data_object_dsp;
 use shared\api;
+use shared\components;
 use shared\formulas;
 use shared\library;
 use shared\refs;
@@ -133,7 +133,7 @@ class api_tests
         $t->assert_api_get(view::class, 1, 1);
         $t->assert_api_get_by_text(view::class, views::START_NAME);
         $t->assert_api_get(component::class);
-        $t->assert_api_get_by_text(component::class, component_api::TN_READ);
+        $t->assert_api_get_by_text(component::class, components::WORD_NAME);
         $t->assert_api_get(source::class, sources::SIB_ID);
         $t->assert_api_get_by_text(source::class, sources::SIB);
         $t->assert_api_get(ref::class, refs::PI_ID);

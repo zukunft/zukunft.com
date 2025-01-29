@@ -40,9 +40,9 @@ use cfg\view\view_link_type;
 use cfg\view\view_link_type_list;
 use cfg\view\view_sys_list;
 use cfg\view\view_type_list;
+use shared\components;
 use shared\types\view_type as view_type_shared;
 use shared\types\component_type as comp_type_shared;
-use api\component\component as component_api;
 use cfg\component\component;
 use cfg\component\component_type_list;
 use cfg\view\view;
@@ -73,9 +73,9 @@ class view_read_tests
         $msk = new view($t->usr1);
         $t->assert_load($msk, views::START_NAME);
 
-        $test_name = 'load the components of view ' . views::START_NAME . ' contains ' . component_api::TN_READ;
+        $test_name = 'load the components of view ' . views::START_NAME . ' contains ' . components::WORD_NAME;
         $msk->load_components();
-        $t->assert_contains($test_name, $msk->component_link_list()->names(), component_api::TN_READ);
+        $t->assert_contains($test_name, $msk->component_link_list()->names(), components::WORD_NAME);
 
         $test_name = 'load view by code id "' . view_shared::WORD_ADD . '"';
         $msk = new view($t->usr1);
@@ -148,13 +148,13 @@ class view_read_tests
 
         $t->subheader('View component db read tests');
 
-        $test_name = 'load view component ' . component_api::TN_READ . ' by name and id';
+        $test_name = 'load view component ' . components::WORD_NAME . ' by name and id';
         $cmp = new component($t->usr1);
-        $cmp->load_by_name(component_api::TN_READ);
+        $cmp->load_by_name(components::WORD_NAME);
         $cmp_by_id = new component($t->usr1);
         $cmp_by_id->load_by_id($cmp->id());
-        $t->assert($test_name, $cmp_by_id->name(), component_api::TN_READ);
-        $t->assert($test_name, $cmp_by_id->description, component_api::TD_READ);
+        $t->assert($test_name, $cmp_by_id->name(), components::WORD_NAME);
+        $t->assert($test_name, $cmp_by_id->description, components::WORD_COM);
 
 
         $t->subheader('View component types tests');

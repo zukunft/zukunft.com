@@ -35,7 +35,6 @@
 namespace html\view;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once API_COMPONENT_PATH . 'component.php';
 include_once HTML_PATH . 'button.php';
 include_once HTML_PATH . 'display_list.php';
 include_once HTML_PATH . 'html_base.php';
@@ -56,13 +55,12 @@ include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_TYPES_PATH . 'view_type.php';
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_PATH . 'components.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
 
 // TODO remove model classes
-use api\component\component as component_api;
-use cfg\component\position_type;
 use html\helper\config;
 use html\button as button_dsp;
 use html\component\component as component_dsp;
@@ -80,6 +78,7 @@ use html\view\view_list as view_list_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use shared\api;
+use shared\components;
 use shared\json_fields;
 use shared\library;
 use shared\types\position_types;
@@ -622,8 +621,8 @@ class view extends sandbox_typed
                 break;
             case api::DSP_COMPONENT_EDIT:
                 $cmp = new component_dsp();
-                $cmp->set_id(component_api::TI_READ);
-                $cmp->set_name(component_api::TN_READ);
+                $cmp->set_id(components::WORD_ID);
+                $cmp->set_name(components::WORD_NAME);
                 $result = $cmp->form_edit_new('', '', '', '', '');
                 break;
             case api::DSP_COMPONENT_DEL:

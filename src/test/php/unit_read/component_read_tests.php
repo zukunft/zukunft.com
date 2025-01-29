@@ -32,10 +32,10 @@
 
 namespace unit_read;
 
-use api\component\component as component_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\view\view;
+use shared\components;
 use shared\views;
 use test\test_cleanup;
 
@@ -56,11 +56,11 @@ class component_read_tests
         $t->assert_load($msk, views::START_NAME);
 
         $t->subheader('Component link db read tests');
-        $test_name = 'load component link ' . views::START_NAME . ' to ' . component_api::TN_READ . ' by id';
+        $test_name = 'load component link ' . views::START_NAME . ' to ' . components::WORD_NAME . ' by id';
         $msk = new view($t->usr1);
         $msk->load_by_name(views::START_NAME);
         $cmp = new component($t->usr1);
-        $cmp->load_by_name(component_api::TN_READ);
+        $cmp->load_by_name(components::WORD_NAME);
         $cmp_lnk = new component_link($t->usr1);
         $cmp_lnk->load_by_link_and_type(1, 1, 1);
         $test_name .= ' view id';

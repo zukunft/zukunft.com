@@ -48,24 +48,18 @@ include_once EXPORT_PATH . 'export.php';
 include_once API_SYSTEM_PATH . 'type_object.php';
 include_once API_PHRASE_PATH . 'phrase_type.php';
 
-use api\component\component as component_api;
 use api\phrase\phrase_type as phrase_type_api;
-use api\system\job as job_api;
-use api\system\type_object as type_api;
-use cfg\component\component;
 use cfg\db\sql_db;
 use cfg\export\export;
 use cfg\formula\formula;
 use cfg\system\job;
 use cfg\log\change_log;
 use cfg\phrase\phrase_list;
-use cfg\phrase\phrase_type;
 use cfg\ref\ref;
 use cfg\ref\source;
 use cfg\system\sys_log;
 use cfg\phrase\term_list;
 use cfg\phrase\trm_ids;
-use cfg\helper\type_object;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
@@ -76,6 +70,7 @@ use DateTime;
 use Exception;
 use html\rest_ctrl;
 use shared\api;
+use shared\json_fields;
 use shared\library;
 use shared\types\api_type;
 use shared\types\api_type_list;
@@ -649,20 +644,8 @@ class test_api extends create_test_objects
     {
         $lib = new library();
         $result = $class;
-        if ($class == component::class) {
-            $result = component_api::API_NAME;
-        }
         if ($class == ref::class) {
-            $result = api::URL_REF;
-        }
-        if ($class == job::class) {
-            $result = job_api::API_NAME;
-        }
-        if ($class == type_object::class) {
-            $result = type_api::API_NAME;
-        }
-        if ($class == phrase_type::class) {
-            $result = phrase_type_api::API_NAME;
+            $result = json_fields::REFERENCE;
         }
         return $lib->class_to_name($result);
     }

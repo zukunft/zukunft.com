@@ -52,7 +52,6 @@
 
 namespace cfg\component;
 
-include_once API_COMPONENT_PATH . 'component.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
@@ -76,9 +75,9 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
+include_once SHARED_PATH . 'components.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use api\component\component as component_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -97,6 +96,7 @@ use cfg\helper\type_object;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\word;
+use shared\components;
 use shared\json_fields;
 use shared\types\api_type_list;
 use shared\types\position_types;
@@ -754,28 +754,6 @@ class component extends sandbox_typed
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return component_api the view component frontend api object
-     */
-    function api_obj(): component_api
-    {
-        $api_obj = new component_api();
-        if ($this->is_excluded()) {
-            $api_obj->set_id($this->id());
-            $api_obj->excluded = true;
-        } else {
-            parent::fill_api_obj($api_obj);
-            $api_obj->code_id = $this->code_id;
-            $api_obj->ui_msg_code_id = $this->ui_msg_code_id;
-        }
-        return $api_obj;
-    }
-
-
-    /*
      * api
      */
 
@@ -1224,7 +1202,7 @@ class component extends sandbox_typed
      */
     protected function reserved_names(): array
     {
-        return component_api::RESERVED_COMPONENTS;
+        return components::RESERVED_COMPONENTS;
     }
 
     /**
@@ -1232,7 +1210,7 @@ class component extends sandbox_typed
      */
     protected function fixed_names(): array
     {
-        return component_api::FIXED_NAMES;
+        return components::FIXED_NAMES;
     }
 
 

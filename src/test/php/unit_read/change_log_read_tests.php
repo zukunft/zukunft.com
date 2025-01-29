@@ -35,10 +35,10 @@ namespace unit_read;
 include_once SHARED_PATH . 'triples.php';
 include_once SHARED_PATH . 'words.php';
 
-use api\component\component as component_api;
 use cfg\log\change_field_list;
 use cfg\log\change_log_list;
 use cfg\word\word;
+use shared\components;
 use shared\formulas;
 use shared\sources;
 use shared\triples;
@@ -162,7 +162,7 @@ class change_log_read_tests
         // ... and if the first entry is the setting the view component name
         $first_change = $lst->lst()[0];
         $t->assert('first view component change is setting', $first_change->old_value, '');
-        $t->assert('... the name', $first_change->new_value, component_api::TN_READ);
+        $t->assert('... the name', $first_change->new_value, components::WORD_NAME);
 
         // TODO add ref
 

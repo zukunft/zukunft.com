@@ -39,7 +39,7 @@ use cfg\component\component_type;
 use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use html\component\component as component_dsp;
-use api\component\component as component_api;
+use shared\components;
 use shared\views;
 use test\test_cleanup;
 
@@ -97,7 +97,7 @@ class component_tests
 
         $t->subheader('component sql write update');
         $cmp = $t->component();
-        $cmp_renamed = $cmp->cloned(component_api::TN_RENAMED);
+        $cmp_renamed = $cmp->cloned(components::TEST_RENAMED_NAME);
         $t->assert_sql_update($sc, $cmp_renamed, $cmp);
         $t->assert_sql_update($sc, $cmp_renamed, $cmp, [sql_type::LOG, sql_type::USER]);
 

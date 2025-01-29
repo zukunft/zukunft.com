@@ -62,6 +62,9 @@ class json_fields
     const PHRASES = 'phrases';
     const COMPONENTS = 'components';
 
+    // single objects
+    const REFERENCE = 'reference';
+
     // object specific fields
     const NUMBER = 'number'; // a float number used for values and results
     const TIME_VALUE = 'time_value'; // a date and time value or result

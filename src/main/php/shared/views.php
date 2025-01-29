@@ -37,8 +37,8 @@ class views
 
     // code_id, database id and name of internal views used by the system
     // these views used by the program that are never supposed to be changed
-    // *_CODE or * is the Mask Code id that is expected never to change
-    // *_ID is the Mask ID that is expected never to change
+    // *_CODE or * is the view / mask code id that is expected never to change
+    // *_ID is the view / mask id that is expected never to change
     // *_NAME is the name of the view if it differs from the code id
     // *_COM is the comment or description used for the tooltip
     const START = 'start';

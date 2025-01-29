@@ -39,7 +39,6 @@ include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_RESULT_PATH . 'result_list.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
-use api\component\component as component_api;
 use api\phrase\phrase as phrase_api;
 use api\word\word as word_api;
 use cfg\component\component;
@@ -57,6 +56,7 @@ use html\phrase\phrase_list as phrase_list_dsp;
 use html\result\result as result_dsp;
 use html\result\result_list as result_list_dsp;
 use html\system\messages;
+use shared\components;
 use shared\library;
 use shared\types\api_type;
 use shared\types\component_type as comp_type_shared;
@@ -202,7 +202,7 @@ class base_ui_tests
         $t->subheader('View component tests');
 
         $cmp = new component($usr);
-        $cmp->set(1, component_api::TN_ADD, comp_type_shared::TEXT);
+        $cmp->set(1, components::TEST_ADD_NAME, comp_type_shared::TEXT);
         $cmp_dsp = new component_dsp($cmp->api_json());
         $t->html_test($cmp_dsp->html(), '', 'component_text', $t);
 
@@ -232,7 +232,7 @@ class base_ui_tests
         */
 
 
-        $t->header('Test the view component display class (classes/component.php)');
+        $t->header('view component unit test');
 
         // test if a simple text component can be created
         $cmp = new component($usr);

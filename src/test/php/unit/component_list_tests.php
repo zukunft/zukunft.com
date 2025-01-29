@@ -32,11 +32,11 @@
 
 namespace unit;
 
-use api\component\component as component_api;
 use cfg\component\component;
 use cfg\component\component_list;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
+use shared\components;
 use test\test_cleanup;
 
 class component_list_tests
@@ -52,7 +52,7 @@ class component_list_tests
         $t->name = 'component_list->';
         $t->resource_path = 'db/component/';
 
-        $t->header('Unit tests of the component list class (src/main/php/model/component/component_list.php)');
+        $t->header('component list unit tests');
 
 
         $t->subheader('Database query creation tests');
@@ -60,7 +60,7 @@ class component_list_tests
         // load only the names
         $phr_lst = new component_list($usr);
         $t->assert_sql_names($sc, $phr_lst, new component($usr));
-        $t->assert_sql_names($sc, $phr_lst, new component($usr), component_api::TN_READ);
+        $t->assert_sql_names($sc, $phr_lst, new component($usr), components::WORD_NAME);
 
         $cmp_lst = new component_list($usr);
         $this->assert_sql_by_view_id($t, $db_con, $cmp_lst);

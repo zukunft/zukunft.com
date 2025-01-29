@@ -61,6 +61,7 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
+include_once SHARED_PATH . 'components.php';
 include_once SHARED_PATH . 'formulas.php';
 include_once SHARED_PATH . 'groups.php';
 include_once SHARED_PATH . 'triples.php';
@@ -111,6 +112,7 @@ use cfg\word\word_db;
 use cfg\word\word_list;
 use controller\api_message;
 use html\system\messages;
+use shared\components;
 use shared\formulas;
 use shared\groups;
 use shared\json_fields;
@@ -119,7 +121,6 @@ use shared\sources;
 use shared\triples;
 use shared\types\api_type_list;
 use shared\types\component_type as comp_type_shared;
-use api\component\component as component_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_list;
@@ -2712,16 +2713,16 @@ class create_test_objects extends test_base
     function component(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(component_api::TI_READ, component_api::TN_READ, comp_type_shared::PHRASE_NAME);
-        $cmp->description = component_api::TD_READ;
+        $cmp->set(components::WORD_ID, components::WORD_NAME, comp_type_shared::PHRASE_NAME);
+        $cmp->description = components::WORD_COM;
         return $cmp;
     }
 
     function component_matrix(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(component_api::TI_MATRIX, component_api::TN_MATRIX, comp_type_shared::CALC_SHEET);
-        $cmp->description = component_api::TD_MATRIX;
+        $cmp->set(components::MATRIX_ID, components::MATRIX_NAME, comp_type_shared::CALC_SHEET);
+        $cmp->description = components::MATRIX_COM;
         return $cmp;
     }
 
@@ -2733,11 +2734,11 @@ class create_test_objects extends test_base
         global $shr_typ_cac;
         global $ptc_typ_cac;
         $cmp = new component($this->usr1);
-        $cmp->set(1, component_api::TN_READ, comp_type_shared::PHRASE_NAME);
-        $cmp->description = component_api::TD_READ;
+        $cmp->set(1, components::WORD_NAME, comp_type_shared::PHRASE_NAME);
+        $cmp->description = components::WORD_COM;
         $cmp->set_type(comp_type_shared::TEXT);
         $cmp->set_style(view_styles::COL_SM_4);
-        $cmp->code_id = component_api::TC_FORM_TITLE;
+        $cmp->code_id = components::FORM_TITLE;
         $cmp->ui_msg_code_id = messages::PLEASE_SELECT;
         $cmp->set_row_phrase($this->year());
         $cmp->set_col_phrase($this->canton());
@@ -2758,7 +2759,7 @@ class create_test_objects extends test_base
         $cmp = $this->component_filled();
         $cmp->include();
         $cmp->set_id(0);
-        $cmp->set_name(component_api::TN_ADD);
+        $cmp->set_name(components::TEST_ADD_NAME);
         return $cmp;
     }
 
@@ -2768,7 +2769,7 @@ class create_test_objects extends test_base
     function component_add_by_func(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set_name(component_api::TN_ADD_VIA_FUNC);
+        $cmp->set_name(components::TEST_ADD_VIA_FUNC_NAME);
         $cmp->set_type(comp_type_shared::TEXT);
         return $cmp;
     }
@@ -2779,7 +2780,7 @@ class create_test_objects extends test_base
     function component_add_by_sql(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set_name(component_api::TN_ADD_VIA_SQL);
+        $cmp->set_name(components::TEST_ADD_VIA_SQL_NAME);
         $cmp->set_type(comp_type_shared::TEXT);
         return $cmp;
     }
@@ -2787,99 +2788,99 @@ class create_test_objects extends test_base
     function component_word_add_title(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(1, component_api::TN_FORM_TITLE, comp_type_shared::FORM_TITLE);
-        $cmp->description = component_api::TD_FORM_TITLE;
-        $cmp->code_id = component_api::TC_FORM_TITLE;
+        $cmp->set(1, components::FORM_TITLE_NAME, comp_type_shared::FORM_TITLE);
+        $cmp->description = components::FORM_TITLE_COM;
+        $cmp->code_id = components::FORM_TITLE;
         return $cmp;
     }
 
     function component_word_add_back_stack(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(2, component_api::TN_FORM_BACK, comp_type_shared::FORM_BACK);
-        $cmp->description = component_api::TD_FORM_BACK;
-        $cmp->code_id = component_api::TC_FORM_BACK;
+        $cmp->set(2, components::FORM_BACK_NAME, comp_type_shared::FORM_BACK);
+        $cmp->description = components::FORM_BACK_COM;
+        $cmp->code_id = components::FORM_BACK;
         return $cmp;
     }
 
     function component_word_add_button_confirm(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(3, component_api::TN_FORM_CONFIRM, comp_type_shared::FORM_CONFIRM);
-        $cmp->description = component_api::TD_FORM_CONFIRM;
-        $cmp->code_id = component_api::TC_FORM_CONFIRM;
+        $cmp->set(3, components::FORM_CONFIRM_NAME, comp_type_shared::FORM_CONFIRM);
+        $cmp->description = components::FORM_CONFIRM_COM;
+        $cmp->code_id = components::FORM_CONFIRM;
         return $cmp;
     }
 
     function component_word_add_name(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(4, component_api::TN_FORM_NAME, comp_type_shared::FORM_NAME);
-        $cmp->description = component_api::TD_FORM_NAME;
-        $cmp->code_id = component_api::TC_FORM_NAME;
+        $cmp->set(4, components::FORM_NAME_NAME, comp_type_shared::FORM_NAME);
+        $cmp->description = components::FORM_NAME_COM;
+        $cmp->code_id = components::FORM_NAME;
         return $cmp;
     }
 
     function component_word_add_description(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(5, component_api::TN_FORM_DESCRIPTION, comp_type_shared::FORM_DESCRIPTION);
-        $cmp->description = component_api::TD_FORM_DESCRIPTION;
-        $cmp->code_id = component_api::TC_FORM_DESCRIPTION;
+        $cmp->set(5, components::FORM_DESCRIPTION_NAME, comp_type_shared::FORM_DESCRIPTION);
+        $cmp->description = components::FORM_DESCRIPTION_COM;
+        $cmp->code_id = components::FORM_DESCRIPTION;
         return $cmp;
     }
 
     function component_word_add_phrase_type(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(6, component_api::TN_FORM_PHRASE_TYPE, comp_type_shared::FORM_PHRASE_TYPE);
-        $cmp->description = component_api::TD_FORM_PHRASE_TYPE;
-        $cmp->code_id = component_api::TC_FORM_PHRASE_TYPE;
+        $cmp->set(6, components::FORM_PHRASE_TYPE_NAME, comp_type_shared::FORM_PHRASE_TYPE);
+        $cmp->description = components::FORM_PHRASE_TYPE_COM;
+        $cmp->code_id = components::FORM_PHRASE_TYPE;
         return $cmp;
     }
 
     function component_word_add_share_type(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(7, component_api::TN_FORM_SHARE_TYPE, comp_type_shared::FORM_SHARE_TYPE);
-        $cmp->description = component_api::TD_FORM_SHARE_TYPE;
-        $cmp->code_id = component_api::TC_FORM_SHARE_TYPE;
+        $cmp->set(7, components::FORM_SHARE_TYPE_NAME, comp_type_shared::FORM_SHARE_TYPE);
+        $cmp->description = components::FORM_SHARE_TYPE_COM;
+        $cmp->code_id = components::FORM_SHARE_TYPE;
         return $cmp;
     }
 
     function component_word_add_protection_type(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(8, component_api::TN_FORM_PROTECTION_TYPE, comp_type_shared::FORM_PROTECTION_TYPE);
-        $cmp->description = component_api::TD_FORM_PROTECTION_TYPE;
-        $cmp->code_id = component_api::TC_FORM_PROTECTION_TYPE;
+        $cmp->set(8, components::FORM_PROTECTION_TYPE_NAME, comp_type_shared::FORM_PROTECTION_TYPE);
+        $cmp->description = components::FORM_PROTECTION_TYPE_COM;
+        $cmp->code_id = components::FORM_PROTECTION_TYPE;
         return $cmp;
     }
 
     function component_word_add_cancel(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(9, component_api::TN_FORM_CANCEL, comp_type_shared::FORM_CANCEL);
-        $cmp->description = component_api::TD_FORM_CANCEL;
-        $cmp->code_id = component_api::TC_FORM_CANCEL;
+        $cmp->set(9, components::FORM_CANCEL_NAME, comp_type_shared::FORM_CANCEL);
+        $cmp->description = components::FORM_CANCEL_COM;
+        $cmp->code_id = components::FORM_CANCEL;
         return $cmp;
     }
 
     function component_word_add_save(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(10, component_api::TN_FORM_SAVE, comp_type_shared::FORM_SAVE);
-        $cmp->description = component_api::TD_FORM_SAVE;
-        $cmp->code_id = component_api::TC_FORM_SAVE;
+        $cmp->set(10, components::FORM_SAVE_NAME, comp_type_shared::FORM_SAVE);
+        $cmp->description = components::FORM_SAVE_COM;
+        $cmp->code_id = components::FORM_SAVE;
         return $cmp;
     }
 
     function component_word_add_form_end(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(11, component_api::TN_FORM_END, comp_type_shared::FORM_END);
-        $cmp->description = component_api::TD_FORM_END;
-        $cmp->code_id = component_api::TC_FORM_END;
+        $cmp->set(11, components::FORM_END_NAME, comp_type_shared::FORM_END);
+        $cmp->description = components::FORM_END_COM;
+        $cmp->code_id = components::FORM_END;
         return $cmp;
     }
 
