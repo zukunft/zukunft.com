@@ -71,7 +71,6 @@ TODO    rename to change_base
 
 namespace cfg\log;
 
-include_once API_LOG_PATH . 'change_log.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 //include_once MODEL_COMPONENT_PATH . 'component.php';

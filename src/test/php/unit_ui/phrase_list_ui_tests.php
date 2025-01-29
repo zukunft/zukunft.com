@@ -62,14 +62,15 @@ class phrase_list_ui_tests
 
         // create the phrase list test set
         $lst = new phrase_list_dsp();
-        $phr_city = $this->phrase_api_triple(1,  triples::CITY_ZH_NAME,
-            words::ZH, verbs::IS, words::CITY);
-        $phr_canton = $this->phrase_api_triple(2,  triples::CANTON_ZURICH_NAME,
-            words::ZH, verbs::IS, words::CANTON);
-        $phr_ch = $this->phrase_api_word(1, words::CH);
-        $lst->add_phrase($phr_city);
-        $lst->add_phrase($phr_canton);
-        $lst->add_phrase($phr_ch);
+        $phr_city = $t->zh_city()->phrase();
+        $phr_canton = $t->zh_canton()->phrase();
+        $phr_ch = $t->word_ch()->phrase();
+        $phr_city_dsp = new phrase_dsp($phr_city->api_json());
+        $phr_canton_dsp = new phrase_dsp($phr_canton->api_json());
+        $phr_ch_dsp = new phrase_dsp($phr_ch->api_json());
+        $lst->add_phrase($phr_city_dsp);
+        $lst->add_phrase($phr_canton_dsp);
+        $lst->add_phrase($phr_ch_dsp);
 
         // test the phrase list display functions
         $test_page = $html->text_h2('phrase list display test');

@@ -33,7 +33,6 @@
 namespace html\phrase;
 
 include_once WEB_SANDBOX_PATH . 'combine_named.php';
-include_once API_PHRASE_PATH . 'term.php';
 include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once SHARED_PATH . 'api.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
@@ -49,9 +48,6 @@ use html\formula\formula;
 use html\verb\verb;
 use html\word\triple;
 use html\word\word;
-use shared\api;
-use api\phrase\term as term_api;
-use api\sandbox\combine_object as combine_object_api;
 use html\sandbox\combine_named as combine_named_dsp;
 use html\formula\formula as formula_dsp;
 use html\user\user_message;
@@ -332,14 +328,14 @@ class term extends combine_named_dsp
      * create a selector that contains the words and triples
      * if one form contains more than one selector, $pos is used for identification
      *
-     * @param term_api $type is a word to preselect the list to only those phrases matching this type
+     * @param term $type is a word to preselect the list to only those phrases matching this type
      * @param string $form_name
      * @param int $pos
      * @param string $class
      * @param string $back
      * @return string
      */
-    function dsp_selector(term_api $type, string $form_name, int $pos, string $class, string $back = ''): string
+    function dsp_selector(term $type, string $form_name, int $pos, string $class, string $back = ''): string
     {
         // TODO include pattern in the call
         $pattern = '';

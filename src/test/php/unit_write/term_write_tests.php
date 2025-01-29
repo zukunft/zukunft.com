@@ -53,7 +53,7 @@ class term_write_tests
         global $usr;
         $lib = new library();
 
-        $t->header('est the term class (classes/term.php)');
+        $t->header('term database write tests');
 
         // load the main test word
         $wrd_zh = $t->test_word(words::ZH);

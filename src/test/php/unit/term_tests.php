@@ -55,7 +55,7 @@ class term_tests
         $t->name = 'term->';
         $t->resource_path = 'db/term/';
 
-        $t->header('Unit tests of the term class (src/main/php/model/phrase/term.php)');
+        $t->header('term unit tests');
 
         $t->subheader('Set and get of the grouped object tests');
 
