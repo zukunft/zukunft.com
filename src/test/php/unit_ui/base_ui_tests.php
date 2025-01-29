@@ -330,10 +330,4 @@ class base_ui_tests
 
     }
 
-    function phrase_api_word($id, $name): phrase_api
-    {
-        $wrd = new word_api($id, $name);
-        return new phrase_api($wrd);
-    }
-
 }

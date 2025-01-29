@@ -46,7 +46,6 @@ include_once MODEL_LOG_PATH . 'change_log_list.php';
 include_once MODEL_SYSTEM_PATH . 'job.php';
 include_once EXPORT_PATH . 'export.php';
 include_once API_SYSTEM_PATH . 'type_object.php';
-include_once API_PHRASE_PATH . 'phrase_type.php';
 include_once SHARED_CONST_PATH . 'formulas.php';
 include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_CONST_PATH . 'words.php';

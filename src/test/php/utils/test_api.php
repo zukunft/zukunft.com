@@ -46,9 +46,7 @@ include_once MODEL_LOG_PATH . 'change_log_list.php';
 include_once MODEL_SYSTEM_PATH . 'job.php';
 include_once EXPORT_PATH . 'export.php';
 include_once API_SYSTEM_PATH . 'type_object.php';
-include_once API_PHRASE_PATH . 'phrase_type.php';
 
-use api\phrase\phrase_type as phrase_type_api;
 use cfg\db\sql_db;
 use cfg\export\export;
 use cfg\formula\formula;
@@ -663,9 +661,6 @@ class test_api extends create_test_objects
         }
         $url_class = $lib->camelize_ex_1($lib->class_to_name($class));
         $url = HOST_TESTING . api::URL_API_PATH . $url_class;
-        if ($class == phrase_type_api::API_NAME) {
-            $url = HOST_TESTING . api::URL_API_PATH . phrase_type_api::URL_NAME;
-        }
         return $url;
     }
 

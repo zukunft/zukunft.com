@@ -103,7 +103,7 @@ class phrase_tests
 
 
 
-        $t->header('Unit tests of the phrase type class (src/main/php/model/phrase/phrase_type.php)');
+        $t->header('phrase type unit tests');
 
         $t->subheader('phrase type api unit tests');
         global $phr_typ_cac;
