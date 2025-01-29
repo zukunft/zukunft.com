@@ -33,7 +33,6 @@
 
 namespace cfg\log;
 
-include_once API_LOG_PATH . 'change_log_list.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 //include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once DB_PATH . 'sql.php';
@@ -56,7 +55,6 @@ include_once WEB_LOG_PATH . 'change_log_list.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\log\change_log_list as change_log_list_api;
 use cfg\system\base_list;
 use cfg\component\component;
 use cfg\db\sql;
@@ -75,9 +73,7 @@ use cfg\verb\verb;
 use cfg\view\view;
 use cfg\word\word;
 use cfg\word\triple;
-use html\log\change_log_list as change_log_list_dsp;
 use shared\library;
-use shared\types\api_type_list;
 
 class change_log_list extends base_list
 {

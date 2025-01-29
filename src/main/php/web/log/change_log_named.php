@@ -31,18 +31,18 @@
 
 namespace html\log;
 
-include_once API_LOG_PATH . 'change_log_named.php';
 include_once API_SANDBOX_PATH . 'user_config.php';
 include_once HTML_PATH . 'button.php';
 include_once HTML_PATH . 'html_base.php';
 include_once HTML_PATH . 'rest_ctrl.php';
 //include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_LOG_PATH . 'change_log.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
 //include_once MODEL_LOG_PATH . 'change_table_list.php';
+include_once WEB_LOG_PATH . 'change_log.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
 
-use api\log\change_log_named as change_log_named_api;
 use api\sandbox\user_config;
 use cfg\log\change_action;
 use html\rest_ctrl;
@@ -53,8 +53,19 @@ use cfg\log\change_table_list;
 use cfg\formula\formula;
 use html\system\messages;
 
-class change_log_named extends change_log_named_api
+class change_log_named extends change_log
 {
+
+    /*
+     * object vars
+     */
+
+    public ?string $old_value = null;      // the field value before the user change
+    public ?int $old_id = null;            // the reference id before the user change e.g. for fields using a sub table such as status
+    public ?string $new_value = null;      // the field value after the user change
+    public ?int $new_id = null;            // the reference id after the user change e.g. for fields using a sub table such as status
+    public ?string $std_value = null;  // the standard field value for all users that does not have changed it
+    public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
 
 
     /**

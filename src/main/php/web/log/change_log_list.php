@@ -31,15 +31,15 @@
 
 namespace html\log;
 
-include_once API_LOG_PATH . 'change_log_list.php';
 include_once HTML_PATH . 'html_base.php';
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 
-use api\log\change_log_list as change_log_list_api;
 use html\html_base;
+use html\sandbox\list_dsp;
 use html\system\back_trace;
 
-class change_log_list extends change_log_list_api
+class change_log_list extends list_dsp
 {
 
     /**

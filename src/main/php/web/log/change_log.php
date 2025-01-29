@@ -2,8 +2,8 @@
 
 /*
 
-    api/log/change_log_list.php - a list changes that can be shown in the frontend
-    ---------------------------
+    web/user/user_log.php - the common change log object for the frontend API
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,38 +30,28 @@
 
 */
 
-namespace api\log;
+namespace html\log;
 
-use api\log\change_log_named as change_log_named_api;
-use api\sandbox\list_object as list_api;
-use JsonSerializable;
+include_once WEB_SANDBOX_PATH . 'sandbox.php';
+include_once WEB_USER_PATH . 'user.php';
 
-class change_log_list extends list_api implements JsonSerializable
+use html\user\user as user;
+use html\sandbox\sandbox;
+use DateTime;
+
+class change_log extends sandbox
 {
 
-    /*
-     * construct and map
-     */
-
-    function __construct(array $lst = array())
-    {
-        parent::__construct($lst);
-    }
 
     /*
-     * interface
+     * object vars
      */
 
-    /**
-     * an array of the value vars including the private vars
-     */
-    function jsonSerialize(): array
-    {
-        $vars = [];
-        foreach ($this->lst() as $chg) {
-            $vars[] = json_decode(json_encode($chg));
-        }
-        return $vars;
-    }
+    public ?user $usr = null;  // the user who has done the change
+    public ?int $action_id;        // database id for the change type (add, change or del)
+    public ?int $table_id;         // database id of the table used to get the name from the preloaded hash
+    public ?int $field_id;         // database id of the table used to get the name from the preloaded hash
+    public ?int $row_id;           // prime database key of the row that has been changed
+    public DateTime $change_time;  // the time of the change
 
 }

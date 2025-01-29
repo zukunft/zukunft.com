@@ -104,7 +104,6 @@ include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\log\change_log as change_log_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\db\sql;

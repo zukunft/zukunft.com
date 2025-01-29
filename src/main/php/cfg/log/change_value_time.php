@@ -44,7 +44,6 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once API_LOG_PATH . 'change_log_named.php';
 include_once WEB_LOG_PATH . 'change_log_named.php';
 
 use cfg\db\sql;

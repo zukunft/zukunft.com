@@ -44,7 +44,6 @@
 namespace cfg\log;
 
 include_once MODEL_LOG_PATH . 'change_log.php';
-include_once API_LOG_PATH . 'change_log_named.php';
 include_once API_SANDBOX_PATH . 'user_config.php';
 //include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once DB_PATH . 'sql.php';
@@ -68,7 +67,6 @@ include_once WEB_LOG_PATH . 'change_log_named.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use api\log\change_log_named as change_log_named_api;
 use api\sandbox\user_config;
 use cfg\component\component;
 use cfg\db\sql;
