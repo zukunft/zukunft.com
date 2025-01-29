@@ -34,7 +34,7 @@ namespace unit_read;
 
 use cfg\view\view_list;
 use shared\library;
-use shared\views;
+use shared\const\views;
 use test\test_cleanup;
 
 class view_list_read_tests

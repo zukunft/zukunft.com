@@ -36,23 +36,22 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'views.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\db\sql_db;
 use cfg\formula\formula;
 use cfg\formula\formula_link;
-use cfg\word\triple;
 use cfg\user\user;
 use cfg\user_profile;
-use cfg\value\value_base;
 use cfg\view\view;
+use cfg\word\triple;
 use cfg\word\word;
 use html\html_base;
 use html\view\view as view_dsp;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 $db_con = prg_start("user");
 $html = new html_base();

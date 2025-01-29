@@ -33,12 +33,12 @@
 namespace unit;
 
 use cfg\db\sql_creator;
+use cfg\db\sql_db;
 use cfg\db\sql_type;
+use cfg\ref\source;
 use cfg\ref\source_type_list;
 use html\ref\source as source_dsp;
-use cfg\ref\source;
-use cfg\db\sql_db;
-use shared\sources;
+use shared\const\sources;
 use test\test_cleanup;
 
 class source_tests

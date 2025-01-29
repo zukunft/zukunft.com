@@ -34,23 +34,19 @@ namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'words.php';
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 
-use api\word\triple as triple_api;
-use api\word\word as word_api;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase_list;
-use cfg\phrase\phrase_type;
 use cfg\word\triple;
-use cfg\verb\verb;
 use cfg\word\word_list;
 use shared\library;
-use shared\triples;
+use shared\const\triples;
+use shared\const\words;
 use shared\types\phrase_type as phrase_type_shared;
-use shared\words;
-use test\test_cleanup;
 use shared\types\verbs;
+use test\test_cleanup;
 
 class phrase_list_write_tests
 {

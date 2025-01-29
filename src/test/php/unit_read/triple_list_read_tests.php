@@ -32,10 +32,10 @@
 
 namespace unit_read;
 
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 
 use cfg\word\triple_list;
-use shared\triples;
+use shared\const\triples;
 use test\test_cleanup;
 
 class triple_list_read_tests

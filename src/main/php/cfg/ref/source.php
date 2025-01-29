@@ -77,7 +77,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once WEB_REF_PATH . 'source.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'sources.php';
+include_once SHARED_CONST_PATH . 'sources.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql;
@@ -97,7 +97,7 @@ use cfg\sandbox\sandbox_typed;
 use cfg\user\user;
 use cfg\user\user_message;
 use shared\json_fields;
-use shared\sources;
+use shared\const\sources;
 use shared\types\api_type_list;
 
 class source extends sandbox_typed

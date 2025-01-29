@@ -35,19 +35,16 @@
 // --------------------------------------
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 
-use api\word\triple as triple_api;
-use api\word\word as word_api;
-use cfg\verb\verb;
 use cfg\word\word;
 use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
 use shared\library;
-use shared\triples;
-use shared\words;
-use test\all_tests;
+use shared\const\triples;
+use shared\const\words;
 use shared\types\verbs;
+use test\all_tests;
 
 function run_word_display_test(all_tests $t): void
 {

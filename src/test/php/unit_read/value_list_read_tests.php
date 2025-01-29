@@ -33,13 +33,13 @@
 namespace unit_read;
 
 include_once SERVICE_PATH . 'config.php';
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 
 use cfg\phrase\phrase;
 use cfg\value\value;
 use cfg\value\value_list;
-use shared\triples;
-use shared\values;
+use shared\const\triples;
+use shared\const\values;
 use test\test_cleanup;
 
 class value_list_read_tests

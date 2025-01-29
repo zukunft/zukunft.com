@@ -35,15 +35,15 @@ namespace unit_read;
 include_once API_WORD_PATH . 'word.php';
 include_once API_WORD_PATH . 'triple.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 
-use cfg\word\word;
 use cfg\verb\verb;
 use cfg\verb\verb_list;
-use shared\triples;
-use shared\words;
-use test\test_cleanup;
+use cfg\word\word;
+use shared\const\triples;
+use shared\const\words;
 use shared\types\verbs;
+use test\test_cleanup;
 
 class verb_read_tests
 {

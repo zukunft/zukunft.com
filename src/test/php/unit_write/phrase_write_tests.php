@@ -33,21 +33,18 @@
 namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 
-use api\word\triple as triple_api;
-use api\word\word as word_api;
 use cfg\phrase\phrase;
 use cfg\word\triple;
-use cfg\verb\verb;
 use cfg\word\word;
 use html\phrase\phrase as phrase_dsp;
 use shared\api;
 use shared\library;
-use shared\triples;
-use shared\views;
+use shared\const\triples;
+use shared\const\views;
+use shared\const\words;
 use shared\types\verbs;
-use shared\words;
 use test\test_cleanup;
 
 class phrase_write_tests

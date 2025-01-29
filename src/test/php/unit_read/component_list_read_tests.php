@@ -33,8 +33,8 @@
 namespace unit_read;
 
 use cfg\component\component_list;
-use shared\components;
 use shared\library;
+use shared\const\components;
 use test\test_cleanup;
 
 class component_list_read_tests

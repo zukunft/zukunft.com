@@ -42,7 +42,7 @@ include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'views.php';
 
 use html\ref\source;
 use html\rest_ctrl;
@@ -54,8 +54,8 @@ use html\view\view as view_dsp;
 use html\word\triple;
 use html\word\word;
 use shared\api;
+use shared\const\views;
 use shared\types\view_styles;
-use shared\views;
 
 class view_list extends list_dsp
 {

@@ -32,20 +32,20 @@
 
 namespace unit_write;
 
+use cfg\formula\formula;
 use cfg\formula\formula_list;
 use cfg\formula\formula_type;
+use cfg\log\change;
+use cfg\log\change_field_list;
+use cfg\log\change_table_list;
+use cfg\phrase\phrase_list;
 use cfg\result\results;
+use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\word\word;
 use html\formula\formula as formula_dsp;
-use cfg\log\change_field_list;
-use cfg\log\change;
-use cfg\log\change_table_list;
-use cfg\formula\formula;
-use cfg\phrase\phrase_list;
-use cfg\sandbox\sandbox_named;
-use shared\formulas;
-use shared\words;
+use shared\const\formulas;
+use shared\const\words;
 use test\test_cleanup;
 
 class formula_write_tests

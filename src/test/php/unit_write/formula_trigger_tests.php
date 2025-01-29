@@ -34,9 +34,9 @@ namespace unit_write;
 
 use cfg\phrase\phrase_list;
 use cfg\value\value;
-use shared\formulas;
-use shared\values;
-use shared\words;
+use shared\const\formulas;
+use shared\const\values;
+use shared\const\words;
 use test\test_cleanup;
 
 class formula_trigger_tests

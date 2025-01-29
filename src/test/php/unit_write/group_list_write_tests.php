@@ -32,11 +32,10 @@
 
 namespace unit_write;
 
-use api\word\word as word_api;
 use cfg\group\group_list;
 use cfg\phrase\phrase_list;
 use cfg\word\word_list;
-use shared\words;
+use shared\const\words;
 use test\test_cleanup;
 
 class group_list_write_tests

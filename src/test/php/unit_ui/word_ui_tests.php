@@ -34,8 +34,7 @@ namespace unit_ui;
 
 use html\html_base;
 use html\word\word as word_dsp;
-use shared\types\view_styles;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 use test\test_cleanup;
 
 class word_ui_tests

@@ -32,10 +32,10 @@
 
 namespace unit_write;
 
-include_once SHARED_PATH . 'sources.php';
+include_once SHARED_CONST_PATH . 'sources.php';
 
 use cfg\ref\source;
-use shared\sources;
+use shared\const\sources;
 use test\test_cleanup;
 
 class source_write_tests

@@ -77,7 +77,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_PATH . 'groups.php';
+include_once SHARED_CONST_PATH . 'groups.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -92,21 +92,20 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\system\message_translator;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\result\result;
 use cfg\sandbox\sandbox_multi;
 use cfg\sandbox\sandbox_value;
+use cfg\system\message_translator;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
-use cfg\value\value_base;
 use cfg\word\word;
-use shared\groups;
 use shared\json_fields;
 use shared\library;
+use shared\const\groups;
 
 class group extends sandbox_multi
 {

@@ -39,7 +39,7 @@ include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'changes_norm.php';
 include_once MODEL_LOG_PATH . 'changes_big.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -54,14 +54,14 @@ use cfg\log\change_log_list;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
 use cfg\sandbox\sandbox_value;
+use cfg\user\user;
 use cfg\value\value;
 use cfg\word\triple;
-use cfg\user\user;
 use cfg\word\word;
 use cfg\word\word_db;
 use html\log\user_log_display;
 use shared\library;
-use shared\triples;
+use shared\const\triples;
 use test\test_cleanup;
 
 class change_log_tests

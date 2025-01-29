@@ -43,8 +43,8 @@ include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'library.php';
-include_once SHARED_PATH . 'words.php';
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 include_once API_SYSTEM_PATH . 'type_list.php';
 include_once WEB_USER_PATH . 'user_type_list.php';
@@ -54,10 +54,9 @@ use cfg\phrase\phrase;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value_list;
-use cfg\word\word;
 use shared\api;
-use shared\triples;
-use shared\words;
+use shared\const\triples;
+use shared\const\words;
 
 
 class config_numbers extends value_list

@@ -36,7 +36,7 @@ use cfg\component\component;
 use cfg\component\component_list;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use shared\components;
+use shared\const\components;
 use test\test_cleanup;
 
 class component_list_tests

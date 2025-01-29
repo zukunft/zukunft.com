@@ -37,14 +37,14 @@ include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_REF_PATH . 'ref.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VERB_PATH . 'verb.php';
-include_once SHARED_PATH . 'refs.php';
+include_once SHARED_CONST_PATH . 'refs.php';
 
 use cfg\db\sql_db;
 use cfg\helper\type_list;
 use cfg\ref\ref;
 use cfg\user\user;
 use cfg\verb\verb;
-use shared\refs;
+use shared\const\refs;
 
 class ref_list extends type_list
 {

@@ -54,18 +54,18 @@ Delete a word (check if nothing is depending on the word to delete)
 
 /* standard zukunft header for callable php files to allow debugging and lib loading */
 
-include_once SHARED_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'views.php';
 
+use cfg\phrase\term;
+use cfg\user\user;
+use cfg\view\view;
+use cfg\word\triple;
+use cfg\word\word;
 use html\html_base;
 use html\view\view as view_dsp;
 use html\word\word as word_dsp;
-use cfg\phrase\term;
-use cfg\word\triple;
-use cfg\user\user;
-use cfg\view\view;
-use cfg\word\word;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 /* open database */
 $db_con = prg_start(view_shared::WORD_ADD);

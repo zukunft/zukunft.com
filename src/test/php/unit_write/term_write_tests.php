@@ -33,15 +33,15 @@
 namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 
 use cfg\phrase\term;
 use cfg\word\word;
-use shared\formulas;
 use shared\library;
-use shared\triples;
+use shared\const\formulas;
+use shared\const\triples;
+use shared\const\words;
 use shared\types\verbs;
-use shared\words;
 use test\test_cleanup;
 
 class term_write_tests

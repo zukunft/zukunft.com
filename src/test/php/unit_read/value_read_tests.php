@@ -32,16 +32,16 @@
 
 namespace unit_read;
 
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 
 use cfg\group\group_id;
 use cfg\phrase\phrase_list;
 use cfg\value\value;
-use shared\groups;
-use shared\triples;
+use shared\const\groups;
+use shared\const\triples;
+use shared\const\values;
+use shared\const\words;
 use shared\types\phrase_type;
-use shared\values;
-use shared\words;
 use test\test_cleanup;
 
 class value_read_tests

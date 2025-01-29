@@ -34,23 +34,18 @@ namespace unit;
 
 include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
-use api\word\word as word_api;
 use cfg\db\sql_creator;
+use cfg\phrase\phrase;
 use cfg\phrase\phrase_table;
 use cfg\phrase\phrase_table_status;
-use cfg\phrase\phrase_type;
-use html\word\word as word_dsp;
-use html\word\triple as triple_dsp;
-use html\phrase\phrase as phrase_dsp;
-use cfg\phrase\phrase;
-use cfg\db\sql_db;
 use cfg\word\word;
-use shared\words;
+use html\phrase\phrase as phrase_dsp;
+use shared\const\words;
+use shared\types\phrase_type as phrase_type_shared;
 use test\test_base;
 use test\test_cleanup;
-use shared\types\phrase_type as phrase_type_shared;
 
 class phrase_tests
 {

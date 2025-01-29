@@ -56,15 +56,15 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'views.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\verb\verb_list;
 use controller\api_message;
-use html\helper\config;
 use html\button;
 use html\formula\formula as formula_dsp;
+use html\helper\config;
 use html\html_base;
 use html\html_selector;
 use html\log\change_log_named as change_log_named_dsp;
@@ -81,11 +81,10 @@ use html\view\view_list;
 use shared\api;
 use shared\enum\foaf_direction;
 use shared\json_fields;
-use shared\library;
+use shared\const\views as view_shared;
+use shared\const\words;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\view_styles;
-use shared\views as view_shared;
-use shared\words;
 
 class word extends sandbox_typed
 {

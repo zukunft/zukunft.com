@@ -32,13 +32,13 @@
 
 namespace unit_read;
 
-include_once SHARED_PATH . 'formulas.php';
+include_once SHARED_CONST_PATH . 'formulas.php';
 
 use cfg\formula\formula;
+use cfg\formula\formula_list;
 use cfg\formula\formula_type;
 use cfg\formula\formula_type_list;
-use cfg\formula\formula_list;
-use shared\formulas;
+use shared\const\formulas;
 use test\test_cleanup;
 
 class formula_read_tests

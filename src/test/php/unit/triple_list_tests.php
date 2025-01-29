@@ -35,17 +35,16 @@ namespace unit;
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once WEB_WORD_PATH . 'triple_list.php';
 
-use api\word\triple as triple_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
+use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\word\triple_list;
-use cfg\verb\verb;
 use html\word\triple_list as triple_list_dsp;
 use shared\enum\foaf_direction;
-use shared\triples;
+use shared\const\triples;
 use test\test_cleanup;
 
 class triple_list_tests

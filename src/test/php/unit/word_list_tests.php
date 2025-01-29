@@ -36,9 +36,8 @@ include_once MODEL_WORD_PATH . 'word_list.php';
 include_once WEB_WORD_PATH . 'word_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
-use api\word\word as word_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\verb\verb;
@@ -47,10 +46,10 @@ use cfg\word\word_list;
 use html\word\word_list as word_list_dsp;
 use shared\enum\foaf_direction;
 use shared\library;
+use shared\const\words;
 use shared\types\phrase_type as phrase_type_shared;
-use shared\words;
-use test\test_cleanup;
 use shared\types\verbs;
+use test\test_cleanup;
 
 class word_list_tests
 {

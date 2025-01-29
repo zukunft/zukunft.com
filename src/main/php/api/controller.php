@@ -42,16 +42,15 @@ include_once API_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'views.php';
 
 use api\sandbox\combine_object as combine_object_api;
 use api\sandbox\sandbox as sandbox_api;
 use cfg\helper\combine_object;
-use cfg\sandbox\sandbox;
 use cfg\ref\source;
+use cfg\sandbox\sandbox;
 use cfg\word\word;
 use shared\api;
-use shared\views as view_shared;
 
 class controller
 {

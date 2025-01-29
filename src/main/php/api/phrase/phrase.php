@@ -37,19 +37,18 @@ include_once API_WORD_PATH . 'triple.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use api\sandbox\combine_named as combine_named_api;
-use api\sandbox\combine_object as combine_object_api;
 use api\word\triple as triple_api;
 use api\word\word as word_api;
-use html\word\word as word_dsp;
-use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
+use html\word\triple as triple_dsp;
+use html\word\word as word_dsp;
 use JsonSerializable;
 use shared\json_fields;
-use shared\triples;
+use shared\const\triples;
 
 class phrase extends combine_named_api implements JsonSerializable
 {

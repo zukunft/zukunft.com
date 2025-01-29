@@ -35,8 +35,8 @@ namespace unit_read;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\view\view;
-use shared\components;
-use shared\views;
+use shared\const\components;
+use shared\const\views;
 use test\test_cleanup;
 
 class component_read_tests

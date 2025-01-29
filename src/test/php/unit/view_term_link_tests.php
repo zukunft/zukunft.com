@@ -35,7 +35,7 @@ namespace unit;
 use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use cfg\view\view_term_link;
-use shared\views;
+use shared\const\views;
 use test\test_cleanup;
 
 class view_term_link_tests

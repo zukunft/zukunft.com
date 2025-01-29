@@ -39,10 +39,10 @@ use cfg\group\group;
 use cfg\word\word_list;
 use shared\enum\foaf_direction;
 use shared\library;
+use shared\const\values;
+use shared\const\words;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
-use shared\values;
-use shared\words;
 use test\test_cleanup;
 
 class word_list_write_tests

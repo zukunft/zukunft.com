@@ -38,7 +38,7 @@ include_once API_WORD_PATH . 'word.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_VALUE_PATH . 'value.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -50,20 +50,20 @@ use cfg\formula\formula;
 use cfg\formula\formula_link;
 use cfg\formula\formula_link_type;
 use cfg\phrase\phrase;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
 use cfg\ref\source;
 use cfg\ref\source_type;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
+use cfg\user\user;
 use cfg\value\value;
 use cfg\verb\verb;
-use cfg\word\triple;
-use cfg\user\user;
 use cfg\view\view;
+use cfg\word\triple;
 use cfg\word\word;
 use cfg\word\word_db;
 use shared\library;
-use shared\sources;
-use shared\words;
+use shared\const\sources;
+use shared\const\words;
 use test\test_cleanup;
 
 class sandbox_tests

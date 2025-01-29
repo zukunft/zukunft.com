@@ -38,8 +38,8 @@ use cfg\log\change_link;
 use cfg\log\change_table_list;
 use cfg\user\user;
 use cfg\view\view;
-use shared\components;
-use shared\views;
+use shared\const\components;
+use shared\const\views;
 use test\test_cleanup;
 
 class component_link_write_tests

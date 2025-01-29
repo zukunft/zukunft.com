@@ -32,7 +32,7 @@
 
 namespace unit_write;
 
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 
 use cfg\log\change;
 use cfg\log\change_field_list;
@@ -43,13 +43,13 @@ use cfg\log\change_values_prime;
 use cfg\phrase\phrase_list;
 use cfg\user\user;
 use cfg\value\value;
-use html\value\value as value_dsp;
 use html\figure\figure as figure_dsp;
+use html\value\value as value_dsp;
 use shared\library;
-use shared\triples;
+use shared\const\triples;
+use shared\const\values;
+use shared\const\words;
 use shared\types\api_type;
-use shared\values;
-use shared\words;
 use test\test_cleanup;
 
 class value_write_tests

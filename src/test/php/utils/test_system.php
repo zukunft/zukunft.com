@@ -30,11 +30,10 @@
 
 */
 
-use api\word\word as word_api;
 use api\user\user as user_api;
 use cfg\user\user;
 use cfg\user\user_list;
-use shared\words;
+use shared\const\words;
 use test\all_tests;
 
 function run_system_test(all_tests $t): void

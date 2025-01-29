@@ -32,17 +32,17 @@
 
 namespace unit_read;
 
-include_once SHARED_PATH . 'triples.php';
-include_once SHARED_PATH . 'formulas.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'formulas.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
 use cfg\phrase\term_list;
 use cfg\phrase\trm_ids;
-use shared\formulas;
 use shared\library;
-use shared\triples;
+use shared\const\formulas;
+use shared\const\triples;
+use shared\const\words;
 use shared\types\verbs;
-use shared\words;
 use test\test_cleanup;
 
 class term_list_read_tests

@@ -38,7 +38,7 @@ include_once MODEL_WORD_PATH . 'word_db.php';
 include_once API_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -48,10 +48,10 @@ use cfg\sandbox\sandbox_named;
 use cfg\word\word;
 use cfg\word\word_db;
 use html\word\word as word_dsp;
-use shared\formulas;
-use shared\words;
-use test\test_cleanup;
+use shared\const\formulas;
+use shared\const\words;
 use shared\types\phrase_type as phrase_type_shared;
+use test\test_cleanup;
 
 class word_tests
 {

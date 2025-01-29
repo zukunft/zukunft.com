@@ -37,8 +37,8 @@ include_once WEB_FIGURE_PATH . 'figure.php';
 use cfg\result\results;
 use html\figure\figure as figure_dsp;
 use html\rest_ctrl;
+use shared\const\values;
 use shared\types\api_type;
-use shared\values;
 use test\test_cleanup;
 
 class figure_tests

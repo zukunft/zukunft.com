@@ -32,12 +32,11 @@
 
 namespace unit_ui;
 
-include_once SHARED_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'views.php';
 
 use html\html_base;
-use html\word\word as word_dsp;
+use shared\const\views as view_shared;
 use test\test_cleanup;
-use shared\views as view_shared;
 
 class system_views_ui_tests
 {

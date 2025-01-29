@@ -34,20 +34,20 @@ namespace unit_read;
 
 include_once SHARED_TYPES_PATH . 'view_type.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
-include_once SHARED_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'views.php';
 
+use cfg\component\component;
+use cfg\component\component_type_list;
+use cfg\view\view;
 use cfg\view\view_link_type;
 use cfg\view\view_link_type_list;
 use cfg\view\view_sys_list;
 use cfg\view\view_type_list;
-use shared\components;
-use shared\types\view_type as view_type_shared;
+use shared\const\components;
+use shared\const\views;
+use shared\const\views as view_shared;
 use shared\types\component_type as comp_type_shared;
-use cfg\component\component;
-use cfg\component\component_type_list;
-use cfg\view\view;
-use shared\views;
-use shared\views as view_shared;
+use shared\types\view_type as view_type_shared;
 use test\test_cleanup;
 
 class view_read_tests

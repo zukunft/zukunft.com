@@ -35,16 +35,16 @@ namespace unit;
 include_once MODEL_FORMULA_PATH . 'expression.php';
 
 use cfg\db\sql_creator;
+use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\formula\expression;
 use cfg\formula\formula;
 use cfg\phrase\phrase_list;
-use cfg\db\sql_db;
 use cfg\phrase\term_list;
 use html\formula\formula as formula_dsp;
-use shared\formulas;
-use shared\values;
-use shared\words;
+use shared\const\formulas;
+use shared\const\values;
+use shared\const\words;
 use test\test_cleanup;
 
 class formula_tests

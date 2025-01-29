@@ -50,7 +50,7 @@ include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_VALUE_PATH . 'value.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_PATH . 'library.php';
-include_once SHARED_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'views.php';
 
 use cfg\group\group;
 use cfg\phrase\phr_ids;
@@ -58,17 +58,17 @@ use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\result\result_list;
 use cfg\word\word_list;
-use html\rest_ctrl;
 use html\button;
 use html\html_base;
-use html\sandbox\list_dsp;
 use html\phrase\phrase_group_list as phrase_group_list_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
+use html\rest_ctrl;
+use html\sandbox\list_dsp;
 use html\user\user_message;
 use html\value\value as value_dsp;
 use html\word\word as word_dsp;
 use shared\library;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 class value_list extends list_dsp
 {

@@ -40,8 +40,8 @@ use cfg\result\result;
 use cfg\result\result_list;
 use cfg\result\results;
 use cfg\value\value;
-use shared\formulas;
-use shared\words;
+use shared\const\formulas;
+use shared\const\words;
 use test\test_cleanup;
 
 class result_write_tests

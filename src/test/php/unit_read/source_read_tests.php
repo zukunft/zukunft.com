@@ -33,11 +33,11 @@
 namespace unit_read;
 
 use cfg\ref\source;
-use cfg\ref\source_type;
 use cfg\ref\source_list;
+use cfg\ref\source_type;
 use cfg\ref\source_type_list;
 use shared\library;
-use shared\sources;
+use shared\const\sources;
 use test\test_cleanup;
 
 class source_read_tests

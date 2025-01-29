@@ -32,14 +32,14 @@
 
 namespace unit_write;
 
+use cfg\phrase\phrase_list;
 use cfg\system\job;
 use cfg\system\job_list;
 use cfg\system\job_type_list;
-use cfg\phrase\phrase_list;
 use cfg\value\value;
-use shared\formulas;
-use shared\values;
-use shared\words;
+use shared\const\formulas;
+use shared\const\values;
+use shared\const\words;
 use test\test_cleanup;
 
 class job_write_tests

@@ -32,19 +32,19 @@
 
 namespace unit_read;
 
-include_once SHARED_PATH . 'triples.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
 use cfg\log\change_field_list;
 use cfg\log\change_log_list;
 use cfg\word\word;
-use shared\components;
-use shared\formulas;
-use shared\sources;
-use shared\triples;
+use shared\const\components;
+use shared\const\formulas;
+use shared\const\sources;
+use shared\const\triples;
+use shared\const\views;
+use shared\const\words;
 use shared\types\verbs;
-use shared\views;
-use shared\words;
 use test\test_cleanup;
 
 class change_log_read_tests

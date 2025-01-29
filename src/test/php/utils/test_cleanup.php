@@ -33,7 +33,7 @@
 namespace test;
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -41,24 +41,24 @@ use cfg\db\sql_par;
 use cfg\formula\formula;
 use cfg\formula\formula_link;
 use cfg\formula\formula_type;
-use cfg\ref\ref_type;
-use cfg\ref\source;
 use cfg\phrase\term;
 use cfg\phrase\term_list;
+use cfg\ref\ref_type;
+use cfg\ref\source;
 use cfg\value\value;
-use cfg\word\triple;
 use cfg\verb\verb;
 use cfg\view\view;
+use cfg\word\triple;
 use cfg\word\word;
 use html\html_base;
-use shared\components;
-use shared\formulas;
 use shared\library;
-use shared\sources;
-use shared\triples;
+use shared\const\components;
+use shared\const\formulas;
+use shared\const\sources;
+use shared\const\triples;
+use shared\const\views;
+use shared\const\words;
 use shared\types\verbs;
-use shared\views;
-use shared\words;
 
 class test_cleanup extends test_api
 {

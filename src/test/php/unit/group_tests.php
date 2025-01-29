@@ -36,7 +36,7 @@ include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'group_link.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
 include_once MODEL_GROUP_PATH . 'result_id.php';
-include_once SHARED_PATH . 'groups.php';
+include_once SHARED_CONST_PATH . 'groups.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -46,8 +46,8 @@ use cfg\group\group_id;
 use cfg\group\group_link;
 use cfg\group\result_id;
 use cfg\phrase\phrase_list;
-use shared\groups;
-use shared\values;
+use shared\const\groups;
+use shared\const\values;
 use test\test_cleanup;
 
 class group_tests

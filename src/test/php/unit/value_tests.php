@@ -38,20 +38,20 @@ include_once MODEL_VALUE_PATH . 'value_obj.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
+use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\group\group;
-use cfg\db\sql_db;
 use cfg\sandbox\sandbox_value;
-use cfg\value\value_geo;
 use cfg\value\value;
+use cfg\value\value_geo;
 use cfg\value\value_obj;
 use cfg\value\value_text;
 use cfg\value\value_time;
 use cfg\value\value_time_series;
 use DateTime;
 use html\value\value as value_dsp;
+use shared\const\values;
 use shared\types\api_type;
-use shared\values;
 use test\test_cleanup;
 
 class value_tests

@@ -33,16 +33,16 @@
 
 namespace unit_write;
 
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 
 use cfg\db\sql_type;
 use cfg\group\group;
 use cfg\phrase\phrase_list;
 use cfg\word\word;
 use cfg\word\word_list;
-use shared\groups;
-use shared\triples;
-use shared\words;
+use shared\const\groups;
+use shared\const\triples;
+use shared\const\words;
 use test\all_tests;
 use test\test_cleanup;
 

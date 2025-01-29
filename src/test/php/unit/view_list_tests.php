@@ -33,11 +33,11 @@
 namespace unit;
 
 use cfg\db\sql_creator;
-use cfg\view\view;
-use cfg\view\view_sys_list;
 use cfg\db\sql_db;
+use cfg\view\view;
 use cfg\view\view_list;
-use shared\views;
+use cfg\view\view_sys_list;
+use shared\const\views;
 use test\test_cleanup;
 
 class view_list_tests

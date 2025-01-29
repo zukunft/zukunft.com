@@ -41,9 +41,9 @@ namespace unit_write;
 
 use cfg\phrase\phrase_list;
 use html\figure\figure as figure_dsp;
-use shared\formulas;
 use shared\library;
-use shared\words;
+use shared\const\formulas;
+use shared\const\words;
 use test\test_api;
 use test\test_cleanup;
 

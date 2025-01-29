@@ -3,18 +3,16 @@
 namespace unit;
 
 include_once API_WORD_PATH . 'triple.php';
-include_once SHARED_PATH . 'triples.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
-use api\word\triple as triple_api;
-use api\word\word as word_api;
 use cfg\db\sql_creator;
-use cfg\db\sql_type;
-use html\word\triple as triple_dsp;
 use cfg\db\sql_db;
+use cfg\db\sql_type;
 use cfg\word\triple;
-use shared\triples;
-use shared\words;
+use html\word\triple as triple_dsp;
+use shared\const\triples;
+use shared\const\words;
 use test\test_cleanup;
 
 class triple_tests

@@ -36,18 +36,18 @@ namespace unit_read;
 
 include_once WEB_PATH . 'frontend.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'triples.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
 use html\types\type_lists as type_list_dsp;
-use shared\groups;
-use shared\triples;
-use shared\values;
-use shared\words;
-use test\all_tests;
-use unit\api_tests;
-use unit\all_unit_tests;
+use shared\const\groups;
+use shared\const\triples;
+use shared\const\values;
+use shared\const\words;
 use shared\types\verbs;
+use test\all_tests;
+use unit\all_unit_tests;
+use unit\api_tests;
 
 class all_unit_read_tests extends all_unit_tests
 {

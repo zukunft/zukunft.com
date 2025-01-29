@@ -32,19 +32,19 @@
 
 namespace unit;
 
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
 use cfg\db\sql_creator;
+use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\formula\formula;
 use cfg\group\group;
 use cfg\group\group_list;
 use cfg\phrase\phrase_list;
-use cfg\db\sql_db;
 use cfg\result\result;
 use cfg\result\results;
 use html\result\result as result_dsp;
-use shared\words;
+use shared\const\words;
 use test\test_cleanup;
 
 class result_tests

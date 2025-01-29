@@ -58,20 +58,18 @@ include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use shared\api;
 use cfg\db\sql_db;
 use cfg\formula\expression;
 use cfg\formula\formula_link_list;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
+use cfg\phrase\term_list;
 use cfg\result\result;
 use cfg\result\result_list;
-use cfg\phrase\term_list;
-use html\rest_ctrl as api_dsp;
 use html\button;
 use html\html_base;
 use html\html_selector;
@@ -79,15 +77,17 @@ use html\log\user_log_display;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\term as term_dsp;
+use html\rest_ctrl as api_dsp;
 use html\result\result as result_dsp;
 use html\sandbox\sandbox_typed;
 use html\system\messages;
 use html\user\user_message;
 use html\word\word as word_dsp;
+use shared\api;
 use shared\json_fields;
 use shared\library;
+use shared\const\views as view_shared;
 use shared\types\view_styles;
-use shared\views as view_shared;
 
 class formula extends sandbox_typed
 {

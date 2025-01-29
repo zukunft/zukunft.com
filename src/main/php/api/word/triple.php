@@ -34,19 +34,13 @@ namespace api\word;
 
 include_once API_SANDBOX_PATH . 'sandbox_typed.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use api\word\word as word_api;
 use api\phrase\phrase as phrase_api;
-use api\phrase\term as term_api;
 use api\sandbox\sandbox_typed as sandbox_typed_api;
 use api\verb\verb as verb_api;
-use cfg\word\word as word_cfg;
-use shared\json_fields;
-use shared\triples;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\words;
+use api\word\word as word_api;
 
 class triple extends sandbox_typed_api
 {

@@ -2,8 +2,8 @@
 
 /*
 
-    shared/views.php - system views with name and id
-    ----------------
+    shared/const/views.php - system view const with name and id
+    ----------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,14 +23,14 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
 
-namespace shared;
+namespace shared\const;
 
 class components
 {

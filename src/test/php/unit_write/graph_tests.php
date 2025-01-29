@@ -31,14 +31,13 @@
 
 namespace unit_write;
 
-use api\word\word as word_api;
 use cfg\phrase\phrase_list;
-use cfg\word\triple_list;
 use cfg\value\value_list;
+use cfg\word\triple_list;
 use cfg\word\word;
 use html\word\triple_list as triple_list_dsp;
 use shared\enum\foaf_direction;
-use shared\words;
+use shared\const\words;
 use test\test_cleanup;
 
 class graph_tests

@@ -32,15 +32,15 @@ include_once MODEL_FORMULA_PATH . 'formula_list.php';
 include_once WEB_FORMULA_PATH . 'formula_list.php';
 
 use cfg\db\sql_creator;
-use cfg\formula\formula;
-use cfg\word\triple;
-use cfg\verb\verb;
-use html\formula\formula_list as formula_list_dsp;
-use cfg\formula\formula_list;
 use cfg\db\sql_db;
+use cfg\formula\formula;
+use cfg\formula\formula_list;
+use cfg\verb\verb;
+use cfg\word\triple;
 use cfg\word\word;
-use shared\formulas;
-use shared\words;
+use html\formula\formula_list as formula_list_dsp;
+use shared\const\formulas;
+use shared\const\words;
 use test\test_cleanup;
 
 class formula_list_tests

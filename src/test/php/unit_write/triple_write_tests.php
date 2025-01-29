@@ -33,21 +33,21 @@
 namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 
 use cfg\formula\formula;
 use cfg\log\change_link;
 use cfg\log\change_table_list;
-use cfg\word\triple;
 use cfg\user\user;
 use cfg\verb\verb;
+use cfg\word\triple;
 use cfg\word\word;
 use shared\library;
-use shared\triples;
-use shared\words;
+use shared\const\triples;
+use shared\const\words;
+use shared\types\verbs;
 use test\all_tests;
 use test\test_cleanup;
-use shared\types\verbs;
 use function test\zu_test_time_setup;
 
 class triple_write_tests

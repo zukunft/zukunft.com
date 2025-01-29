@@ -35,19 +35,19 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\component\component;
 use cfg\user\user;
 use cfg\view\view;
 use cfg\word\word;
+use html\component\component as component_dsp;
 use html\html_base;
 use html\view\view as view_dsp;
-use html\component\component as component_dsp;
 use shared\api;
 use shared\json_fields;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("component_add");

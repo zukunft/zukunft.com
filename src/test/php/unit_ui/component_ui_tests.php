@@ -34,7 +34,7 @@ namespace unit_ui;
 
 use html\component\component as component_dsp;
 use html\html_base;
-use shared\components;
+use shared\const\components;
 use test\test_cleanup;
 
 class component_ui_tests

@@ -36,8 +36,8 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use cfg\verb\verb;
 use shared\enum\foaf_direction;
+use shared\const\words;
 use shared\types\verbs;
-use shared\words;
 use test\test_cleanup;
 
 class verb_write_tests

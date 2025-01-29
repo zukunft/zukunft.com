@@ -101,11 +101,10 @@ include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\word\word as word_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -113,9 +112,9 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type_list;
-use cfg\helper\db_object_seq_id;
 use cfg\formula\formula;
 use cfg\formula\formula_link;
+use cfg\helper\db_object_seq_id;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\phrase\phrase;
@@ -133,10 +132,10 @@ use cfg\view\view;
 use shared\enum\foaf_direction;
 use shared\json_fields;
 use shared\library;
+use shared\const\words;
 use shared\types\api_type_list;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
-use shared\words;
 
 class word extends sandbox_typed
 {

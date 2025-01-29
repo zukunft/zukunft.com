@@ -55,17 +55,17 @@ include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_TYPES_PATH . 'view_type.php';
 include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'components.php';
+include_once SHARED_CONST_PATH . 'components.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
 
 // TODO remove model classes
-use html\helper\config;
 use html\button as button_dsp;
 use html\component\component as component_dsp;
 use html\component\component_list as component_list_dsp;
 use html\display_list;
+use html\helper\config;
 use html\helper\data_object as data_object_dsp;
 use html\html_base;
 use html\log\user_log_display;
@@ -78,9 +78,9 @@ use html\view\view_list as view_list_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use shared\api;
-use shared\components;
 use shared\json_fields;
 use shared\library;
+use shared\const\components;
 use shared\types\position_types;
 use shared\types\view_styles;
 use shared\types\view_type;

@@ -37,13 +37,13 @@ include_once DB_PATH . 'sql_par.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
-include_once SHARED_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'views.php';
 
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\helper\type_list;
 use cfg\user\user;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 global $sys_msk_cac;
 

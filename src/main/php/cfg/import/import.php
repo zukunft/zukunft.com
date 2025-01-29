@@ -65,31 +65,31 @@ include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
 use cfg\component\component;
-use cfg\helper\data_object;
 use cfg\export\export;
 use cfg\formula\formula;
 use cfg\formula\formula_list;
-use cfg\system\ip_range;
+use cfg\helper\data_object;
 use cfg\phrase\phrase_list;
 use cfg\ref\ref;
+use cfg\ref\source;
 use cfg\result\result;
 use cfg\result\result_list;
-use cfg\ref\source;
-use cfg\value\value;
-use cfg\word\triple;
+use cfg\system\ip_range;
 use cfg\user\user;
 use cfg\user\user_message;
+use cfg\value\value;
 use cfg\value\value_base;
 use cfg\value\value_list;
 use cfg\verb\verb;
 use cfg\view\view;
 use cfg\view\view_list;
+use cfg\word\triple;
 use cfg\word\word;
 use shared\library;
-use shared\words;
+use shared\const\words;
 
 class import
 {

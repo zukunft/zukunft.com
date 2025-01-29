@@ -32,9 +32,9 @@
 
 namespace unit_write;
 
-use cfg\ref\ref_type;
 use cfg\ref\ref;
-use shared\words;
+use cfg\ref\ref_type;
+use shared\const\words;
 use test\test_cleanup;
 
 class ref_write_tests

@@ -45,7 +45,7 @@ include_once WEB_VIEW_PATH . 'view.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'views.php';
 
 use cfg\system\sys_log;
 use cfg\user\user;

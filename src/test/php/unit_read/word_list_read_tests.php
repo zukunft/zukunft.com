@@ -32,12 +32,12 @@
 
 namespace unit_read;
 
-include_once SHARED_PATH . 'formulas.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'formulas.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
 use cfg\word\word_list;
-use shared\formulas;
-use shared\words;
+use shared\const\formulas;
+use shared\const\words;
 use test\test_cleanup;
 
 class word_list_read_tests

@@ -32,16 +32,16 @@
 
 namespace unit_write;
 
-use cfg\user\user;
-use cfg\view\view_type;
-use cfg\view\view;
-use html\view\view as view_dsp;
 use cfg\log\change;
 use cfg\log\change_table_list;
 use cfg\sandbox\sandbox_named;
+use cfg\user\user;
+use cfg\view\view;
+use cfg\view\view_type;
 use cfg\word\word;
-use shared\views;
-use shared\words;
+use html\view\view as view_dsp;
+use shared\const\views;
+use shared\const\words;
 use test\test_cleanup;
 
 class view_write_tests

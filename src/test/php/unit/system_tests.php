@@ -37,28 +37,28 @@ include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
 include_once MODEL_SYSTEM_PATH . 'session.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
 include_once API_SYSTEM_PATH . 'sys_log.php';
-include_once SHARED_PATH . 'refs.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'refs.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
 use cfg\config;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\formula\formula;
-use cfg\system\sys_log_list;
 use cfg\system\ip_range;
 use cfg\system\ip_range_list;
 use cfg\system\session;
 use cfg\system\sys_log;
+use cfg\system\sys_log_list;
 use cfg\system\sys_log_status;
 use cfg\system\sys_log_status_list;
 use cfg\verb\verb;
-use html\system\sys_log as sys_log_dsp;
 use controller\system\sys_log as sys_log_api;
 use DateTime;
+use html\system\sys_log as sys_log_dsp;
 use shared\library;
-use shared\refs;
-use shared\words;
+use shared\const\refs;
+use shared\const\words;
 use test\test_cleanup;
 
 class system_tests

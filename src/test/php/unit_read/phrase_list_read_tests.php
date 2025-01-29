@@ -33,17 +33,17 @@
 namespace unit_read;
 
 include_once SERVICE_PATH . 'config.php';
-include_once SHARED_PATH . 'formulas.php';
-include_once SHARED_PATH . 'triples.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'formulas.php';
+include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
 use cfg\config;
 use cfg\phrase\phr_ids;
-use cfg\phrase\phrase_list;
 use cfg\phrase\phrase;
-use shared\formulas;
-use shared\triples;
-use shared\words;
+use cfg\phrase\phrase_list;
+use shared\const\formulas;
+use shared\const\triples;
+use shared\const\words;
 use test\test_cleanup;
 
 class phrase_list_read_tests

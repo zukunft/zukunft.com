@@ -35,16 +35,15 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'views.php';
 
-use cfg\value\value_base;
-use html\html_base;
-use html\view\view as view_dsp;
-use html\value\value as value_dsp;
 use cfg\user\user;
 use cfg\view\view;
+use html\html_base;
+use html\value\value as value_dsp;
+use html\view\view as view_dsp;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("value_add");

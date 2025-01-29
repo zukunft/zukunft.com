@@ -38,7 +38,7 @@ use cfg\db\sql_type;
 use cfg\view\view;
 use html\view\view as view_dsp;
 use shared\library;
-use shared\views;
+use shared\const\views;
 use test\test_cleanup;
 
 class view_tests

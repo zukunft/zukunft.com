@@ -53,20 +53,20 @@ include_once WEB_VIEW_PATH . 'view.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'views.php';
 
 use cfg\ref\source;
+use cfg\user\user;
 use cfg\word\word;
 use html\frontend;
 use html\html_base;
-use html\rest_ctrl;
-use html\view\view as view_dsp;
 use html\ref\source as source_dsp;
-use cfg\user\user;
+use html\rest_ctrl;
 use html\types\type_lists as type_lists_dsp;
+use html\view\view as view_dsp;
 use html\word\word as word_dsp;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("view", '', false);

@@ -32,13 +32,12 @@
 
 namespace unit_ui;
 
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
-use api\word\word as word_api;
 use html\html_base;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
-use shared\words;
+use shared\const\words;
 use test\test_cleanup;
 
 class triple_ui_tests

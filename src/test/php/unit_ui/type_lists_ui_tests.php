@@ -50,10 +50,10 @@ use html\types\share;
 use html\types\source_type_list;
 use html\types\type_lists as type_list_dsp;
 use html\types\user_profiles;
+use html\types\verbs;
 use html\types\view_style_list;
 use html\types\view_type_list;
-use html\types\verbs;
-use shared\views;
+use shared\const\views;
 use test\test_cleanup;
 
 class type_lists_ui_tests

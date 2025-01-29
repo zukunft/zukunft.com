@@ -30,9 +30,8 @@
 
 */
 
-use api\word\word as word_api;
 use cfg\word\word_list;
-use shared\words;
+use shared\const\words;
 use test\all_tests;
 
 function run_math_test(all_tests $t): void

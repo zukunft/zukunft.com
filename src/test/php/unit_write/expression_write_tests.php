@@ -33,8 +33,8 @@
 namespace unit_write;
 
 use cfg\formula\expression;
-use shared\formulas;
-use shared\words;
+use shared\const\formulas;
+use shared\const\words;
 use test\test_cleanup;
 
 class expression_write_tests

@@ -34,28 +34,28 @@ namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'words.php';
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 
 use cfg\formula\formula;
 use cfg\log\change;
 use cfg\log\change_field_list;
 use cfg\log\change_table_list;
 use cfg\sandbox\sandbox_named;
-use cfg\word\triple;
 use cfg\user\user;
 use cfg\verb\verb;
+use cfg\word\triple;
 use cfg\word\word;
 use html\word\word as word_dsp;
-use shared\formulas;
 use shared\library;
-use shared\triples;
-use shared\views;
-use shared\words;
-use test\all_tests;
-use test\test_cleanup;
+use shared\const\formulas;
+use shared\const\triples;
+use shared\const\views;
+use shared\const\words;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
+use test\all_tests;
+use test\test_cleanup;
 
 class word_write_tests
 {

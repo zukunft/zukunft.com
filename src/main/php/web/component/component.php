@@ -57,18 +57,13 @@ include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
-include_once SHARED_PATH . 'views.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_PATH . 'library.php';
 
-use html\helper\data_object as data_object_dsp;
-use html\system\messages;
-use shared\api;
-use api\word\word as word_api;
-use html\sheet;
-use html\user\user_message;
 use cfg\db\sql_db;
 use cfg\word\word;
+use html\helper\data_object as data_object_dsp;
 use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;
@@ -76,14 +71,18 @@ use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
+use html\sheet;
+use html\system\messages;
+use html\user\user_message;
 use html\view\view_list;
+use shared\api;
+use shared\json_fields;
+use shared\library;
+use shared\const\views;
+use shared\const\words;
 use shared\types\component_type;
 use shared\types\position_types;
 use shared\types\view_styles;
-use shared\views;
-use shared\json_fields;
-use shared\library;
-use shared\words;
 
 class component extends sandbox_typed
 {

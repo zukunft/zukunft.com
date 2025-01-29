@@ -33,12 +33,12 @@
 namespace unit_read;
 
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_PATH . 'refs.php';
+include_once SHARED_CONST_PATH . 'refs.php';
 
 use cfg\ref\ref;
 use cfg\ref\ref_type_list;
 use shared\library;
-use shared\refs;
+use shared\const\refs;
 use shared\types\phrase_type as phrase_type_shared;
 use test\test_cleanup;
 

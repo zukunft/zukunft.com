@@ -38,9 +38,9 @@ use api\word\triple as triple_api;
 use html\html_base;
 use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;
-use shared\triples;
+use shared\const\triples;
+use shared\const\words;
 use shared\types\verbs;
-use shared\words;
 use test\test_cleanup;
 
 class triple_list_ui_tests

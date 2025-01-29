@@ -32,21 +32,21 @@
 
 namespace unit_read;
 
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
 use cfg\formula\formula;
 use cfg\phrase\phrase;
 use cfg\phrase\term;
-use cfg\word\triple;
 use cfg\verb\verb;
+use cfg\word\triple;
 use cfg\word\word;
 use cfg\word\word_db;
-use shared\formulas;
-use shared\triples;
+use shared\const\formulas;
+use shared\const\triples;
+use shared\const\words;
 use shared\types\verbs;
-use shared\words;
 use test\test_cleanup;
 
 class term_read_tests

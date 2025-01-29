@@ -39,8 +39,8 @@ use cfg\component\component_type;
 use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use html\component\component as component_dsp;
-use shared\components;
-use shared\views;
+use shared\const\components;
+use shared\const\views;
 use test\test_cleanup;
 
 class component_tests

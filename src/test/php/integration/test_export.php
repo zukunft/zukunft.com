@@ -31,12 +31,11 @@
 */
 
 include_once EXPORT_PATH . 'xml.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
-use api\word\word as word_api;
-use im_export\json_io;
 use cfg\phrase\phrase_list;
-use shared\words;
+use im_export\json_io;
+use shared\const\words;
 use test\test_cleanup;
 
 function run_export_test(test_cleanup $t): void

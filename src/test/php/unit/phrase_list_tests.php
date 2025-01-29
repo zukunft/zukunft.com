@@ -31,27 +31,24 @@ namespace unit;
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_PATH . 'triples.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
-use api\word\triple as triple_api;
-use api\word\word as word_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
-use cfg\phrase\phrase_type;
 use cfg\verb\verb;
 use cfg\word\word;
 use html\phrase\phrase_list as phrase_list_dsp;
 use shared\enum\foaf_direction;
-use shared\triples;
-use shared\words;
-use test\test_cleanup;
+use shared\const\triples;
+use shared\const\words;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
+use test\test_cleanup;
 
 class phrase_list_tests
 {

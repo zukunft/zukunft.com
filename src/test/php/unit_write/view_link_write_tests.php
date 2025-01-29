@@ -32,7 +32,7 @@
 
 namespace unit_write;
 
-use shared\views;
+use shared\const\views;
 use test\test_cleanup;
 
 class view_link_write_tests

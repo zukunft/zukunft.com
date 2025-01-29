@@ -33,7 +33,7 @@
 namespace unit_ui;
 
 include_once SHARED_TYPES_PATH . 'component_type.php';
-include_once SHARED_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'views.php';
 include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_RESULT_PATH . 'result_list.php';
@@ -48,7 +48,6 @@ use cfg\result\result;
 use cfg\value\value;
 use cfg\verb\verb;
 use cfg\verb\verb_list;
-use html\value\value as value_dsp;
 use html\button;
 use html\component\component as component_dsp;
 use html\html_base;
@@ -56,15 +55,16 @@ use html\phrase\phrase_list as phrase_list_dsp;
 use html\result\result as result_dsp;
 use html\result\result_list as result_list_dsp;
 use html\system\messages;
-use shared\components;
+use html\value\value as value_dsp;
 use shared\library;
+use shared\const\components;
+use shared\const\values;
+use shared\const\views;
+use shared\const\views as view_shared;
+use shared\const\words;
 use shared\types\api_type;
 use shared\types\component_type as comp_type_shared;
 use shared\types\verbs;
-use shared\values;
-use shared\views;
-use shared\views as view_shared;
-use shared\words;
 use test\test_cleanup;
 
 class base_ui_tests

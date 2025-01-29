@@ -83,15 +83,15 @@ include_once MODEL_VIEW_PATH . 'view_term_link.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
-include_once SHARED_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use cfg\component\view_style;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_list;
 use cfg\component\component_list;
+use cfg\component\view_style;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -113,13 +113,11 @@ use cfg\sandbox\sandbox_named;
 use cfg\sandbox\sandbox_typed;
 use cfg\user\user;
 use cfg\user\user_message;
-use cfg\view\view_term_link;
-use cfg\view\view_type;
 use shared\json_fields;
 use shared\library;
+use shared\const\views;
 use shared\types\api_type_list;
 use shared\types\position_types;
-use shared\views;
 
 class view extends sandbox_typed
 {

@@ -2,8 +2,8 @@
 
 /*
 
-    shared/formulas.php - predefined formulas used in the backend and frontend as code id
-    ------------------
+    shared/const/formulas.php - predefined formulas used in the backend and frontend as code id
+    -------------------------
 
     all preserved words must always be owned by an administrator so that the standard cannot be renamed
 
@@ -25,14 +25,14 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
 
-namespace shared;
+namespace shared\const;
 
 use shared\types\verbs;
 

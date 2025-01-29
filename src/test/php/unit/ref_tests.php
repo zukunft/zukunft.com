@@ -32,15 +32,15 @@
 
 namespace unit;
 
-include_once SHARED_PATH . 'refs.php';
+include_once SHARED_CONST_PATH . 'refs.php';
 
 use cfg\db\sql_creator;
+use cfg\db\sql_db;
 use cfg\db\sql_type;
+use cfg\ref\ref;
 use cfg\ref\ref_type_list;
 use html\ref\ref as ref_dsp;
-use cfg\ref\ref;
-use cfg\db\sql_db;
-use shared\refs;
+use shared\const\refs;
 use test\test_cleanup;
 
 class ref_tests

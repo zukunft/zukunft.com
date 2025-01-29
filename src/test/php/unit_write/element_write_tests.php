@@ -35,11 +35,11 @@ namespace unit_write;
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use shared\api;
-use shared\formulas;
-use shared\views;
-use shared\words;
-use test\test_cleanup;
+use shared\const\formulas;
+use shared\const\views;
+use shared\const\words;
 use shared\types\verbs;
+use test\test_cleanup;
 
 class element_write_tests
 {

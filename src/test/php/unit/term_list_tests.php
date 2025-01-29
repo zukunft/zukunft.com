@@ -28,26 +28,26 @@
 
 namespace unit;
 
-include_once SHARED_PATH . 'triples.php';
-include_once SHARED_PATH . 'formulas.php';
+include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'formulas.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'words.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
 use cfg\db\sql_creator;
-use cfg\phrase\trm_ids;
-use html\html_base;
-use html\phrase\term_list as term_list_dsp;
-use cfg\formula\formula;
 use cfg\db\sql_db;
+use cfg\formula\formula;
 use cfg\phrase\term;
 use cfg\phrase\term_list;
-use cfg\word\triple;
+use cfg\phrase\trm_ids;
 use cfg\verb\verb;
+use cfg\word\triple;
 use cfg\word\word;
-use shared\formulas;
-use shared\triples;
+use html\html_base;
+use html\phrase\term_list as term_list_dsp;
+use shared\const\formulas;
+use shared\const\triples;
+use shared\const\words;
 use shared\types\verbs;
-use shared\words;
 use test\test_cleanup;
 
 class term_list_tests

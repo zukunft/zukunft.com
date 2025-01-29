@@ -32,18 +32,16 @@
 
 namespace unit;
 
-include_once SHARED_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 
 // TODO combine with triple_unit_test
 
-use api\phrase\phrase as phrase_api;
-use api\word\triple as triple_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\word\triple;
 use cfg\verb\verb;
+use cfg\word\triple;
 use cfg\word\word;
-use shared\triples;
+use shared\const\triples;
 use test\test_cleanup;
 
 class triple_old
