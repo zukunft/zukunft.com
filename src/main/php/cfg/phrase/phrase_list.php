@@ -61,7 +61,6 @@
 namespace cfg\phrase;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once API_PHRASE_PATH . 'phrase_list.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
@@ -89,7 +88,6 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\phrase\phrase_list as phrase_list_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;

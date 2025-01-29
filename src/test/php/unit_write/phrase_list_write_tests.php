@@ -57,7 +57,7 @@ class phrase_list_write_tests
         global $usr;
         global $vrb_cac;
 
-        $t->header('Test the phrase list class (src/main/php/model/phrase/phrase_list.php)');
+        $t->header('phrase list database write tests');
 
         // TODO make prepare not needed any more
         $t->test_word(words::TN_CHF, phrase_type_shared::MEASURE);

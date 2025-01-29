@@ -44,7 +44,6 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once API_PHRASE_PATH . 'phrase_list.php';
 
 use cfg\phrase\phrase;
 use controller\controller;

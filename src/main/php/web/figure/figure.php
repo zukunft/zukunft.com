@@ -33,11 +33,11 @@
 namespace html\figure;
 
 include_once API_SANDBOX_PATH . 'combine_object.php';
-include_once API_PHRASE_PATH . 'phrase_list.php';
 include_once HTML_PATH . 'html_base.php';
 include_once HTML_PATH . 'rest_ctrl.php';
 include_once SHARED_PATH . 'api.php';
 include_once API_OBJECT_PATH . 'controller.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_PHRASE_PATH . 'phrase_group.php';
 include_once WEB_RESULT_PATH . 'result.php';
 include_once WEB_SANDBOX_PATH . 'combine_named.php';
@@ -46,7 +46,7 @@ include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\phrase\phrase_list as phrase_list_api;
+use html\phrase\phrase_list;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\combine_named as combine_named_dsp;
 use html\html_base;
@@ -188,10 +188,10 @@ class figure extends combine_named_dsp
     }
 
     /**
-     * @param phrase_list_api|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
+     * @param phrase_list|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
      * @returns string the html code to display the phrase group with reference links
      */
-    function name_linked(phrase_list_api $phr_lst_header = null): string
+    function name_linked(phrase_list $phr_lst_header = null): string
     {
         return $this->grp()->display_linked($phr_lst_header);
     }

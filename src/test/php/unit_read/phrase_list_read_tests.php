@@ -55,7 +55,7 @@ class phrase_list_read_tests
         global $usr;
 
         // init
-        $t->header('Phrase list unit database tests to test src/main/php/model/phrase/phrase_list.php');
+        $t->header('phrase list database read tests');
         $t->name = 'phrase list_read db->';
         $t->resource_path = 'db/phrase/';
 
