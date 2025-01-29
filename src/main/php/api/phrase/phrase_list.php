@@ -51,42 +51,6 @@ class phrase_list extends list_api implements JsonSerializable
         parent::__construct($lst);
     }
 
-    /**
-     * add a phrase to the list
-     * dublicate id is allowed because the phrase and term objects have an extra field for the class
-     * @returns bool true if the phrase has been added
-     */
-    function add(phrase $phr): bool
-    {
-        return parent::add_obj($phr, true);
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @returns phrase_list_dsp the cast object with the HTML code generating functions
-     */
-    function dsp_obj(): phrase_list_dsp
-    {
-        $dsp_obj = new phrase_list_dsp();
-
-        // cast the single list objects
-        $lst_dsp = array();
-        foreach ($this->lst() as $phr) {
-            if ($phr != null) {
-                $phr_dsp = $phr->dsp_obj();
-                $lst_dsp[] = $phr_dsp;
-            }
-        }
-
-        $dsp_obj->set_lst($lst_dsp);
-        $dsp_obj->set_lst_dirty();
-
-        return $dsp_obj;
-    }
 
 
     /*

@@ -90,7 +90,7 @@ class job_write_tests
 
         global $usr;
 
-        $t->header('Test the batch job list class (classes/job_list.php)');
+        $t->header('job list database write tests');
 
         // prepare test adding a batch job via a list
         $frm = $t->load_formula(formulas::INCREASE);

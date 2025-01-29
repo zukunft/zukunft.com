@@ -41,7 +41,6 @@
 namespace cfg\value;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_value_list.php';
-include_once API_VALUE_PATH . 'value_list.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_field_list.php';
@@ -73,10 +72,8 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_value_list;
 use cfg\user\user;
 use shared\json_fields;
-use shared\types\api_type_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
-use api\value\value_list as value_list_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;

@@ -48,16 +48,6 @@ class change_log_list extends list_api implements JsonSerializable
         parent::__construct($lst);
     }
 
-    /**
-     * add a change log entry to the list
-     * @param change_log_named_api $chg one change of a user sandbox object
-     * @returns bool true if the log entry has been added
-     */
-    function add(change_log_named_api $chg): bool
-    {
-        return list_api::add_obj($chg);
-    }
-
     /*
      * interface
      */

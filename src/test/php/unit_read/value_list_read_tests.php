@@ -49,7 +49,7 @@ class value_list_read_tests
     {
 
         // init
-        $t->header('Value list unit database tests to test src/main/php/model/value/value_list.php');
+        $t->header('value list database read tests');
         $t->name = 'value list_read db->';
         $t->resource_path = 'db/value/';
 

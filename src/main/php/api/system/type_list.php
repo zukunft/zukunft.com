@@ -133,25 +133,6 @@ class type_list extends list_api implements JsonSerializable
         return $vars;
     }
 
-    /**
-     * @returns array with all unique code ids of this list
-     */
-    protected function code_id_lst(): array
-    {
-        $result = array();
-        if ($this->code_lst_dirty) {
-            foreach ($this->lst() as $type) {
-                if (!in_array($type->code_id(), $result)) {
-                    $result[] = $type->code_id();
-                }
-            }
-            $this->code_id_lst = $result;
-            $this->code_lst_dirty = false;
-        } else {
-            $result = $this->code_id_lst;
-        }
-        return $result;
-    }
 
     /**
      * @returns bool true if the list contains elements of type user_type_api (and not user_type)
@@ -166,55 +147,6 @@ class type_list extends list_api implements JsonSerializable
             }
         }
         return $result;
-    }
-
-
-    /*
-     * modify
-     */
-
-    /**
-     * add a type to the list
-     * @returns bool true if the type has been added
-     */
-    function add(type_api $type): bool
-    {
-        $result = false;
-        if ($type->id == 0) {
-            if (!in_array($type->code_id, $this->code_id_lst())) {
-                $this->add_obj($type);
-                $this->set_lst_dirty();
-                $result = true;
-            }
-        } else {
-            if (!in_array($type->id, $this->id_lst())) {
-                $this->lst()[$type->id] = $type;
-                $this->set_lst_dirty();
-                $result = true;
-            }
-        }
-        return $result;
-    }
-
-    /*
-     * TODO deprecate
-     */
-
-    /**
-     * @returns type_list_dsp the cast object with the HTML code generating functions
-     */
-    function dsp_obj(): type_list_dsp
-    {
-        // cast the single list objects
-        $lst_dsp = array();
-        foreach ($this->lst() as $val) {
-            if ($val != null) {
-                $val_dsp = $val->dsp_obj();
-                $lst_dsp[] = $val_dsp;
-            }
-        }
-
-        return new type_list_dsp($lst_dsp);
     }
 
 }

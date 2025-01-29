@@ -35,7 +35,6 @@ include_once API_OBJECT_PATH . 'api_message.php';
 
 use api\system\type_list as type_list_api;
 use controller\api_message_old;
-use controller\controller;
 use cfg\db\sql_db;
 use JsonSerializable;
 use cfg\user\user;

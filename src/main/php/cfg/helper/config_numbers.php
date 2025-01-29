@@ -33,7 +33,6 @@
 namespace cfg\helper;
 
 include_once API_SYSTEM_PATH . 'type_list.php';
-include_once API_VALUE_PATH . 'value_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
@@ -49,7 +48,6 @@ include_once MODEL_VERB_PATH . 'verb.php';
 include_once API_SYSTEM_PATH . 'type_list.php';
 include_once WEB_USER_PATH . 'user_type_list.php';
 
-use api\value\value_list as value_list_api;
 use cfg\phrase\phrase;
 use cfg\user\user;
 use cfg\user\user_message;
@@ -161,19 +159,6 @@ class config_numbers extends value_list
         [words::DEFAULT_COM, words::DEFAULT],
         [words::DATABASE_COM, words::DATABASE],
     ];
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return value_list_api the object type list frontend api object
-     */
-    function api_obj(): value_list_api
-    {
-        return parent::api_obj();
-    }
 
 
     /*

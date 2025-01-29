@@ -33,7 +33,6 @@
 namespace html\figure;
 
 include_once API_SANDBOX_PATH . 'combine_object.php';
-include_once API_FORMULA_PATH . 'figure.php';
 include_once API_PHRASE_PATH . 'phrase_list.php';
 include_once HTML_PATH . 'html_base.php';
 include_once HTML_PATH . 'rest_ctrl.php';
@@ -45,17 +44,18 @@ include_once WEB_SANDBOX_PATH . 'combine_named.php';
 include_once WEB_VALUE_PATH . 'value.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
-use api\formula\figure as figure_api;
 use api\phrase\phrase_list as phrase_list_api;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\combine_named as combine_named_dsp;
 use html\html_base;
 use html\phrase\phrase_group as phrase_group_dsp;
-use html\result\result as result_dsp;
+use html\result\result;
 use html\user\user_message;
-use html\value\value as value_dsp;
+use html\value\value;
 use shared\json_fields;
+use shared\library;
 
 class figure extends combine_named_dsp
 {
@@ -71,14 +71,15 @@ class figure extends combine_named_dsp
      */
     function set_from_json_array(array $json_array): user_message
     {
+        $lib = new library();
         $usr_msg = new user_message();
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
-            if ($json_array[json_fields::OBJECT_CLASS] == figure_api::CLASS_RESULT) {
-                $res_dsp = new result_dsp();
+            if ($json_array[json_fields::OBJECT_CLASS] == $lib->class_to_name(result::class)) {
+                $res_dsp = new result();
                 $res_dsp->set_from_json_array($json_array);
                 $this->set_obj($res_dsp);
-            } elseif ($json_array[json_fields::OBJECT_CLASS] == figure_api::CLASS_VALUE) {
-                $val = new value_dsp();
+            } elseif ($json_array[json_fields::OBJECT_CLASS] == $lib->class_to_name(value::class)) {
+                $val = new value();
                 $val->set_from_json_array($json_array);
                 $this->set_obj($val);
             } else {
@@ -141,11 +142,12 @@ class figure extends combine_named_dsp
      */
     function api_array(): array
     {
+        $lib = new library();
         $vars = array();
         if ($this->is_result()) {
-            $vars[json_fields::OBJECT_CLASS] = figure_api::CLASS_RESULT;
+            $vars[json_fields::OBJECT_CLASS] = $lib->class_to_name(result::class);
         } else {
-            $vars[json_fields::OBJECT_CLASS] = figure_api::CLASS_VALUE;
+            $vars[json_fields::OBJECT_CLASS] = $lib->class_to_name(value::class);
         }
         $vars[json_fields::ID] = $this->obj_id();
         $vars[json_fields::NUMBER] = $this->number();
@@ -167,7 +169,7 @@ class figure extends combine_named_dsp
         if ($this->obj() == null) {
             return false;
         } else {
-            if ($this->obj()::class == result_dsp::class) {
+            if ($this->obj()::class == result::class) {
                 return true;
             } else {
                 return false;

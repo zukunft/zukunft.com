@@ -33,9 +33,6 @@
 
 namespace api\sandbox;
 
-use api\formula\figure;
-use api\phrase\phrase;
-use api\phrase\term;
 use JsonSerializable;
 
 class list_object implements JsonSerializable
@@ -135,28 +132,6 @@ class list_object implements JsonSerializable
     /*
      * modify functions
      */
-
-    /**
-     * add a phrase or ... to the list
-     * @param object $obj the api object that should be added
-     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @returns bool true if the object has been added
-     */
-    protected function add_obj(object $obj, bool $allow_duplicates = false): bool
-    {
-        $result = false;
-        if ($obj::class == phrase::class or $obj::class == term::class or $obj::class == figure::class) {
-            $id = $obj->obj_id();
-        } else {
-            $id = $obj->id;
-        }
-        if (!in_array($id, $this->id_lst()) or $allow_duplicates) {
-            $this->lst[] = $obj;
-            $this->lst_dirty = true;
-            $result = true;
-        }
-        return $result;
-    }
 
     /**
      * @returns array with all unique ids of this list

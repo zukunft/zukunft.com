@@ -574,20 +574,4 @@ class change_log_list extends base_list
     }
 
 
-    /*
-     * TODO deprecate
-     */
-
-    /**
-     * @return change_log_list_dsp the word list object with the display interface functions
-     */
-    function dsp_obj(): change_log_list_dsp
-    {
-        $dsp_obj = new change_log_list_dsp();
-        foreach ($this->lst() as $chg) {
-            $dsp_obj->add($chg->dsp_obj());
-        }
-        return $dsp_obj;
-    }
-
 }

@@ -34,7 +34,6 @@
 
 namespace cfg\formula;
 
-include_once API_FORMULA_PATH . 'figure.php';
 include_once MODEL_HELPER_PATH . 'combine_object.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_RESULT_PATH . 'result.php';
@@ -45,7 +44,6 @@ include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use api\formula\figure as figure_api;
 use cfg\helper\combine_object;
 use cfg\group\group;
 use cfg\result\result;

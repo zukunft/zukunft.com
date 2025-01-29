@@ -113,7 +113,7 @@ class element_group_write_tests
             // remember the figure list for the figure and figure list class test
             $fig_lst = $elm_grp->figures();
 
-            $t->header('Test the figure class (classes/figure.php)');
+            $t->header('figure database write tests');
 
             // get the figures (a value added by a user or a calculated formula result) for this element group and a context defined by a phrase list
             $fig_count = 0;

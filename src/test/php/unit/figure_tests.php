@@ -48,7 +48,7 @@ class figure_tests
 
         global $usr;
 
-        $t->header('Unit tests of the formula class (src/main/php/model/formula/figure.php)');
+        $t->header('figure unit tests');
 
 
         $t->subheader('SQL statement tests');

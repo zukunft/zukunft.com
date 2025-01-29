@@ -2,7 +2,7 @@
 
 /*
 
-    model/system/job_list.php - a list of calculation request
+    model/system/ob_list.php - a list of calculation request
     -------------------------
 
     This list in "in memory only" to wrap the communication between the classes
@@ -37,7 +37,6 @@
 namespace cfg\system;
 
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once API_SYSTEM_PATH . 'job_list.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
@@ -46,12 +45,8 @@ include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 
-use api\system\job_list as job_list_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
-use cfg\system\base_list;
-use cfg\system\job;
-use cfg\system\job_type_list;
 use cfg\user\user;
 use cfg\user\user_message;
 use DateTime;
