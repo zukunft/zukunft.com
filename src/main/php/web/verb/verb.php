@@ -32,7 +32,6 @@
 namespace html\verb;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
-include_once API_VERB_PATH . 'verb.php';
 include_once HTML_PATH . 'html_base.php';
 include_once HTML_PATH . 'rest_ctrl.php';
 include_once WEB_PHRASE_PATH . 'term.php';

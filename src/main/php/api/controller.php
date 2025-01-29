@@ -36,16 +36,12 @@ namespace controller;
 
 include_once API_OBJECT_PATH . 'api_message_old.php';
 include_once API_SYSTEM_PATH . 'type_lists.php';
-include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once API_SANDBOX_PATH . 'list_object.php';
-include_once API_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_CONST_PATH . 'views.php';
 
-use api\sandbox\combine_object as combine_object_api;
-use api\sandbox\sandbox as sandbox_api;
 use cfg\helper\combine_object;
 use cfg\ref\source;
 use cfg\sandbox\sandbox;
@@ -243,24 +239,6 @@ class controller
         $this->curl_response('', $msg);
     }
 
-    /**
-     * encode an user sandbox object for the frontend api
-     * and response to a get request
-     *
-     * @param sandbox_api|combine_object_api $api_obj the object that should be encoded
-     * @param string $msg if filled the message that should be shown to the user instead of the object
-     * @return void
-     */
-    function get(sandbox_api|combine_object_api $api_obj, string $msg): void
-    {
-        // return the api json or the error message
-        if ($msg == '') {
-            $this->get_response(json_encode($api_obj), $msg);
-        } else {
-            // tell the user e.g. that no products found
-            $this->get_response('', $msg);
-        }
-    }
     function get_json(string $api_json, string $msg): void
     {
         // return the api json or the error message

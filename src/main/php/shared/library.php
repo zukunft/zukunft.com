@@ -54,8 +54,6 @@ use cfg\system\system_time;
 use cfg\user\user_official_type;
 use cfg\view\view_link_type;
 use cfg\word\word_db;
-use shared\api;
-use api\sandbox\combine_object as combine_object_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_type;

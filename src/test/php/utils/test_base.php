@@ -58,7 +58,6 @@ include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
-use api\sandbox\sandbox as sandbox_api;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_list;
@@ -2184,7 +2183,7 @@ class test_base
 
         // update the name
         if ($result) {
-            $sbx->set_name($name . sandbox_api::TN_RENAMED_EXT);
+            $sbx->set_name($name . self::EXT_RENAME);
             $sbx->save($use_func);
             $sbx->reset();
             $sbx->load_by_id($id);

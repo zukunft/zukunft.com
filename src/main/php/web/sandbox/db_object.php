@@ -34,7 +34,6 @@
 
 namespace html\sandbox;
 
-include_once API_SANDBOX_PATH . 'sandbox.php';
 include_once HTML_PATH . 'html_base.php';
 include_once HTML_PATH . 'rest_ctrl.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';

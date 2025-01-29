@@ -32,7 +32,6 @@
 
 namespace html\figure;
 
-include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once HTML_PATH . 'html_base.php';
 include_once HTML_PATH . 'rest_ctrl.php';
 include_once SHARED_PATH . 'api.php';

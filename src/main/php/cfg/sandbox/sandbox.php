@@ -70,7 +70,6 @@ namespace cfg\sandbox;
 
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-include_once API_SANDBOX_PATH . 'sandbox.php';
 include_once API_SYSTEM_PATH . 'messages.php';
 //include_once MODEL_COMPONENT_PATH . 'component.php';
 //include_once MODEL_COMPONENT_PATH . 'component_link.php';

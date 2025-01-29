@@ -35,8 +35,6 @@
 namespace html\value;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
-include_once API_SANDBOX_PATH . 'sandbox.php';
-include_once API_SANDBOX_PATH . 'sandbox_value.php';
 include_once DB_PATH . 'sql_db.php';
 include_once HTML_PATH . 'html_base.php';
 include_once HTML_PATH . 'rest_ctrl.php';

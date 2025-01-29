@@ -44,7 +44,7 @@ function run_sandbox_test(all_tests $t): void
 
     global $phr_typ_cac;
 
-    $t->header('Test the user sandbox class (classes/sandbox.php)');
+    $t->header('sandbox unit tests');
 
     $t->subheader('Test the is_same and is_similar function');
 

@@ -33,7 +33,6 @@
 namespace html\phrase;
 
 include_once WEB_SANDBOX_PATH . 'combine_named.php';
-include_once API_SANDBOX_PATH . 'combine_object.php';
 include_once SHARED_PATH . 'api.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_SANDBOX_PATH . 'combine_named.php';

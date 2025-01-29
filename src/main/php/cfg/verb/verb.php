@@ -35,7 +35,6 @@ namespace cfg\verb;
 
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once API_SYSTEM_PATH . 'messages.php';
-include_once API_VERB_PATH . 'verb.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';

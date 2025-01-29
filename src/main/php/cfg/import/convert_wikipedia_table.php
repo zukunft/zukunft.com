@@ -32,7 +32,6 @@
 
 namespace cfg\import;
 
-include_once API_VERB_PATH . 'verb.php';
 include_once EXPORT_PATH . 'export.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_USER_PATH . 'user.php';

@@ -48,7 +48,7 @@ class verb_write_tests
 
         global $vrb_cac;
 
-        $t->header('Test the verb class (classes/verb.php)');
+        $t->header('verb database write tests');
 
         // check the loading of the "is a" verb
         $vrb = new verb;

@@ -55,7 +55,7 @@ class verb_read_tests
         // init
         $t->name = 'verb read db->';
 
-        $t->header('Unit database tests of the verb class (src/main/php/model/verb/verb.php)');
+        $t->header('verb database read tests');
 
         $t->subheader('Verb tests');
 
