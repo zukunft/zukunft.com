@@ -32,20 +32,51 @@
 namespace html\user;
 
 // get the api const that are shared between the backend and the html frontend
-include_once SHARED_PATH . 'api.php';
 // get the pure html frontend objects
 include_once HTML_PATH . 'html_base.php';
-include_once API_USER_PATH . 'user.php';
+include_once WEB_SANDBOX_PATH . 'db_object.php';
+include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use api\user\user as user_api;
 use html\html_base;
+use html\sandbox\db_object;
+use shared\const\views;
 use shared\json_fields;
 
-class user extends user_api
+class user extends db_object
 {
 
-    const FORM_EDIT = 'user_edit';
+    /*
+     * object vars
+     */
+
+    public ?string $name;
+    public ?string $description;
+    public ?string $profile;
+    public ?string $email;
+    public ?string $first_name;
+    public ?string $last_name;
+
+
+    /*
+     * construct and map
+     */
+
+    function __construct(?string $api_json = null)
+    {
+        $this->reset();
+        parent::__construct($api_json);
+    }
+
+    function reset(): void
+    {
+        $this->name = '';
+        $this->description = null;
+        $this->profile = null;
+        $this->email = null;
+        $this->first_name = null;
+        $this->last_name = null;
+    }
 
 
     /*
@@ -55,11 +86,11 @@ class user extends user_api
     /**
      * set the vars of this object bases on the api json string
      * @param string $json_api_msg an api json message as a string
-     * @return void
+     * @return user_message
      */
-    function set_from_json(string $json_api_msg): void
+    function set_from_json(string $json_api_msg): user_message
     {
-        $this->set_from_json_array(json_decode($json_api_msg, true));
+        return $this->set_from_json_array(json_decode($json_api_msg, true));
     }
 
     /**
@@ -149,7 +180,7 @@ class user extends user_api
             $detail_fields .= $html->form_text("last name", $this->last_name);
             $detail_row = $html->fr($detail_fields) . '<br>';
             $result = $header
-                . $html->form(self::FORM_EDIT, $hidden_fields . $detail_row)
+                . $html->form(views::USER_EDIT, $hidden_fields . $detail_row)
                 . '<br>';
         }
 

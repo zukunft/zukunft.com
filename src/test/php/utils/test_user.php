@@ -63,7 +63,7 @@ function run_user_test(all_tests $t): void
     }
     echo 'user id: ' . $usr->id() . '<br>';
 
-    $t->header('Test the user permission scripts (e.g. /user/user.php)');
+    $t->header('user permission tests');
 
     $ip_addr = '2.204.210.217';
     $result = $usr->ip_check($ip_addr);

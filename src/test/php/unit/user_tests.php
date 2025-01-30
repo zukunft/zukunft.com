@@ -53,7 +53,7 @@ class user_tests
         $t->name = 'user->';
         $t->resource_path = 'db/user/';
 
-        $t->header('Unit tests of the user class (src/main/php/model/user/user.php)');
+        $t->header('user unit tests');
 
 
         $t->subheader('Job time SQL setup statements');

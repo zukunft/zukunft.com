@@ -82,6 +82,7 @@ class views
     const SOURCE_DEL_ID = 13;
     const VERBS = 'verbs';
     const USER = 'user';
+    const USER_EDIT = 'user_edit';
     const ERR_LOG = 'error_log';
     const ERR_UPD = 'error_update';
     const IMPORT = 'import';

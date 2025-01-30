@@ -31,7 +31,6 @@
 
 namespace controller\system;
 
-include_once API_USER_PATH . 'user.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 

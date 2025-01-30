@@ -69,6 +69,7 @@ class db_object
      */
     function __construct(?string $api_json = null)
     {
+        $this->set_id(0);
         if ($api_json != null) {
             $this->set_from_json($api_json);
         }
