@@ -63,7 +63,6 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use api\sandbox\type_object as type_object_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -221,23 +220,6 @@ class type_object extends db_object_seq_id
     function description(): string
     {
         return $this->description;
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return type_object_api the code link frontend api object
-     */
-    function api_obj(): type_object_api
-    {
-        $api_obj = new type_object_api();
-        $api_obj->id = $this->id();
-        $api_obj->name = $this->name;
-        $api_obj->code_id = $this->code_id;
-        return $api_obj;
     }
 
 

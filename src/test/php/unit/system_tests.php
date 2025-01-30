@@ -36,7 +36,6 @@ include_once MODEL_SYSTEM_PATH . 'ip_range.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
 include_once MODEL_SYSTEM_PATH . 'session.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
-include_once API_SYSTEM_PATH . 'sys_log.php';
 include_once SHARED_CONST_PATH . 'refs.php';
 include_once SHARED_CONST_PATH . 'words.php';
 
@@ -53,7 +52,6 @@ use cfg\system\sys_log_list;
 use cfg\system\sys_log_status;
 use cfg\system\sys_log_status_list;
 use cfg\verb\verb;
-use controller\system\sys_log as sys_log_api;
 use DateTime;
 use html\system\sys_log as sys_log_dsp;
 use html\system\sys_log_list as sys_log_list_dsp;
@@ -416,13 +414,13 @@ class system_tests
         // create a second system log entry to create a list
         $log2 = new sys_log();
         $log2->set_id(2);
-        $log2->log_time = new DateTime(sys_log_api::TV_TIME);
+        $log2->log_time = new DateTime(sys_log_tests::TV_TIME);
         $log2->usr_name = $usr->name;
-        $log2->log_text = sys_log_api::T2_LOG_TEXT;
+        $log2->log_text = sys_log_tests::T2_LOG_TEXT;
         //$log2->log_trace = (new Exception)->getTraceAsString();
-        $log2->log_trace = sys_log_api::T2_LOG_TRACE;
-        $log2->function_name = sys_log_api::T2_FUNC_NAME;
-        $log2->solver_name = sys_log_api::TV_SOLVE_ID;
+        $log2->log_trace = sys_log_tests::T2_LOG_TRACE;
+        $log2->function_name = sys_log_tests::T2_FUNC_NAME;
+        $log2->solver_name = sys_log_tests::TV_SOLVE_ID;
         $log2->status_name = $sys_log_sta_cac->id(sys_log_status::CLOSED);
 
         $log_lst = new sys_log_list();

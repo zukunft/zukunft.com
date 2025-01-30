@@ -34,7 +34,7 @@
 namespace cfg\verb;
 
 include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once API_SYSTEM_PATH . 'messages.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
@@ -61,7 +61,6 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\system\messages as msg_enum;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -73,14 +72,15 @@ use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_table_list;
-use cfg\system\message_translator;
 use cfg\phrase\term;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
+use cfg\system\message_translator;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\word;
 use html\html_base;
+use shared\enum\messages as msg_enum;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;

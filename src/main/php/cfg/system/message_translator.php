@@ -32,11 +32,11 @@
 
 namespace cfg\system;
 
-include_once API_SYSTEM_PATH . 'messages.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once MODEL_LANGUAGE_PATH . 'language.php';
 
-use api\system\messages as msg_enum;
 use cfg\language\language;
+use shared\enum\messages as msg_enum;
 
 class message_translator
 {

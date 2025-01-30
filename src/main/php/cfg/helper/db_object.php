@@ -57,7 +57,6 @@ use cfg\result\result;
 use cfg\sandbox\sandbox;
 use cfg\user\user;
 use cfg\value\value;
-use cfg\value\value_base;
 use shared\library;
 
 class db_object

@@ -2,8 +2,8 @@
 
 /*
 
-    /api/system/messages.php - enum of the backend user message ids and the text in the default language
-    ------------------------
+    /shared/enum/messages.php - enum of the backend user message ids and the text in the default language
+    -------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,7 +29,7 @@
 
 */
 
-namespace api\system;
+namespace shared\enum;
 
 enum messages: string
 {

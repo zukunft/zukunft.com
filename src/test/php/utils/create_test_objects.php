@@ -169,7 +169,6 @@ use cfg\word\word;
 use cfg\word\word_db;
 use cfg\word\word_list;
 use controller\api_message;
-use controller\system\sys_log as sys_log_api;
 use DateTime;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\system\messages;
@@ -195,6 +194,7 @@ use shared\types\share_type as share_type_shared;
 use shared\types\verbs;
 use shared\types\view_styles;
 use shared\types\view_type;
+use unit\sys_log_tests;
 use unit_write\component_link_write_tests;
 use unit_write\component_write_tests;
 use unit_write\formula_link_write_tests;
@@ -2032,7 +2032,7 @@ class create_test_objects extends test_base
         $frm->set_type(formula_type::CALC);
         $frm->description = formulas::SCALE_TO_SEC_COM;
         $frm->need_all_val = true;
-        $frm->last_update = new DateTime(sys_log_api::TV_TIME);
+        $frm->last_update = new DateTime(sys_log_tests::TV_TIME);
         $frm->set_view_id(views::START_ID);
         $frm->set_usage(2);
         $frm->exclude();
@@ -3335,12 +3335,12 @@ class create_test_objects extends test_base
         global $sys_log_sta_cac;
         $sys = new sys_log();
         $sys->set_id(1);
-        $sys->log_time = new DateTime(sys_log_api::TV_TIME);
+        $sys->log_time = new DateTime(sys_log_tests::TV_TIME);
         $sys->usr_name = user::SYSTEM_TEST_NAME;
-        $sys->log_text = sys_log_api::TV_LOG_TEXT;
-        $sys->log_trace = sys_log_api::TV_LOG_TRACE;
-        $sys->function_name = sys_log_api::TV_FUNC_NAME;
-        $sys->solver_name = sys_log_api::TV_SOLVE_ID;
+        $sys->log_text = sys_log_tests::TV_LOG_TEXT;
+        $sys->log_trace = sys_log_tests::TV_LOG_TRACE;
+        $sys->function_name = sys_log_tests::TV_FUNC_NAME;
+        $sys->solver_name = sys_log_tests::TV_SOLVE_ID;
         $sys->status_name = $sys_log_sta_cac->id(sys_log_status::OPEN);
         return $sys;
     }
@@ -3353,12 +3353,12 @@ class create_test_objects extends test_base
         global $sys_log_sta_cac;
         $sys = new sys_log();
         $sys->set_id(2);
-        $sys->log_time = new DateTime(sys_log_api::TV_TIME);
+        $sys->log_time = new DateTime(sys_log_tests::TV_TIME);
         $sys->usr_name = user::SYSTEM_TEST_NAME;
-        $sys->log_text = sys_log_api::T2_LOG_TEXT;
-        $sys->log_trace = sys_log_api::T2_LOG_TRACE;
-        $sys->function_name = sys_log_api::T2_FUNC_NAME;
-        $sys->solver_name = sys_log_api::TV_SOLVE_ID;
+        $sys->log_text = sys_log_tests::T2_LOG_TEXT;
+        $sys->log_trace = sys_log_tests::T2_LOG_TRACE;
+        $sys->function_name = sys_log_tests::T2_FUNC_NAME;
+        $sys->solver_name = sys_log_tests::TV_SOLVE_ID;
         $sys->status_name = $sys_log_sta_cac->id(sys_log_status::CLOSED);
         return $sys;
     }
@@ -3369,9 +3369,9 @@ class create_test_objects extends test_base
     function job(): job
     {
         $sys_usr = $this->system_user();
-        $job = new job($sys_usr, new DateTime(sys_log_api::TV_TIME));
+        $job = new job($sys_usr, new DateTime(sys_log_tests::TV_TIME));
         $job->set_id(1);
-        $job->start_time = new DateTime(sys_log_api::TV_TIME);
+        $job->start_time = new DateTime(sys_log_tests::TV_TIME);
         $job->set_type(job_type_list::BASE_IMPORT);
         $job->row_id = 1;
         return $job;

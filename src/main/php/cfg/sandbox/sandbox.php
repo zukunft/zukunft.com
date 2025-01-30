@@ -70,7 +70,7 @@ namespace cfg\sandbox;
 
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-include_once API_SYSTEM_PATH . 'messages.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 //include_once MODEL_COMPONENT_PATH . 'component.php';
 //include_once MODEL_COMPONENT_PATH . 'component_link.php';
 //include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
@@ -115,7 +115,6 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\system\messages as msg_enum;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_type;
@@ -129,37 +128,38 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\helper\combine_named;
-use cfg\helper\type_object;
-use cfg\helper\db_object_seq_id;
-use cfg\helper\db_object_seq_id_user;
 use cfg\formula\formula;
 use cfg\formula\formula_link;
 use cfg\formula\formula_link_type;
+use cfg\helper\combine_named;
+use cfg\helper\db_object_seq_id;
+use cfg\helper\db_object_seq_id_user;
+use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\log\change_link;
 use cfg\log\change_log;
 use cfg\log\change_table;
+use cfg\phrase\phrase;
 use cfg\ref\ref;
 use cfg\ref\source;
 use cfg\system\message_translator;
-use cfg\phrase\phrase;
 use cfg\user\user;
 use cfg\user\user_list;
 use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\view\view;
 use cfg\view\view_term_link;
-use cfg\word\word;
 use cfg\word\triple;
-use shared\types\api_type_list;
-use shared\types\protection_type as protect_type_shared;
-use shared\types\share_type as share_type_shared;
-use shared\types\phrase_type as phrase_type_shared;
+use cfg\word\word;
+use Exception;
+use shared\enum\messages as msg_enum;
 use shared\json_fields;
 use shared\library;
-use Exception;
+use shared\types\api_type_list;
+use shared\types\phrase_type as phrase_type_shared;
+use shared\types\protection_type as protect_type_shared;
+use shared\types\share_type as share_type_shared;
 
 class sandbox extends db_object_seq_id_user
 {

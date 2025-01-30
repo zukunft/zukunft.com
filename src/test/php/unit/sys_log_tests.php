@@ -45,6 +45,19 @@ use test\test_cleanup;
 
 class sys_log_tests
 {
+
+    // const used for system testing
+    CONST TV_TIME = '2023-01-03T20:59:59+0100'; // time for unit tests
+    CONST TV_LOG_TEXT = 'the log text that describes the problem for the user or system admin';
+    CONST TV_LOG_TRACE = 'the technical trace back description for debugging';
+    CONST TV_FUNC_NAME = 'name of the function that has caused the exception';
+    CONST TV_SOLVE_ID = 'code id of the suggested solver of the problem';
+    CONST T2_TIME = '2023-01-03T21:45:01+0100'; // time for unit tests
+    CONST T2_LOG_TEXT = 'the log 2 text that describes the problem for the user or system admin';
+    CONST T2_LOG_TRACE = 'the technical trace 2 back description for debugging';
+    CONST T2_FUNC_NAME = 'name 2 of the function that has caused the exception';
+    CONST T2_SOLVE_ID = 'code id 2 of the suggested solver of the problem';
+
     function run(test_cleanup $t): void
     {
 

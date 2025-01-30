@@ -57,7 +57,7 @@
 namespace cfg\word;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-include_once API_SYSTEM_PATH . 'messages.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
@@ -101,7 +101,6 @@ include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\system\messages as msg_enum;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -135,16 +134,17 @@ use cfg\verb\verb;
 use cfg\view\view;
 use html\html_base;
 use JsonSerializable;
+use shared\const\triples;
+use shared\enum\messages as msg_enum;
 use shared\json_fields;
 use shared\library;
-use shared\const\triples;
 use shared\types\api_type_list;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
 use shared\types\view_styles;
 
 
-class triple extends sandbox_link_named implements JsonSerializable
+class triple extends sandbox_link_named
 {
 
     /*
@@ -1553,22 +1553,6 @@ class triple extends sandbox_link_named implements JsonSerializable
     /*
      * im- and export
      */
-
-    /**
-     * an array of the value vars including the private vars
-     */
-    function jsonSerialize(): array
-    {
-        $vars = parent::jsonSerialize();
-        $vars = array_merge($vars, get_object_vars($this));
-        if ($this->from()->obj() != null) {
-            $vars[json_fields::EX_FROM] = $this->from()->obj()->name_dsp();
-        }
-        if ($this->to()->obj() != null) {
-            $vars[json_fields::EX_TO] = $this->to()->obj()->name_dsp();
-        }
-        return $vars;
-    }
 
     /**
      * get a phrase based on the name (and save it if needed and requested)

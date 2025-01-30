@@ -45,7 +45,6 @@ include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log.php';
-include_once API_SYSTEM_PATH . 'sys_log.php';
 include_once WEB_SYSTEM_PATH . 'sys_log_list.php';
 
 use cfg\user\user_message;

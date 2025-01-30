@@ -47,7 +47,6 @@ include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once API_SYSTEM_PATH . 'sys_log.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -65,10 +64,7 @@ use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_action;
 use cfg\sandbox\sandbox;
-use cfg\system\sys_log_status;
-use cfg\system\sys_log_function;
 use cfg\user\user;
-use controller\system\sys_log as sys_log_api;
 use shared\json_fields;
 use shared\library;
 use DateTime;
@@ -375,25 +371,6 @@ class sys_log extends db_object_seq_id
 
         return $vars;
     }
-
-    /**
-     * @return sys_log_api a filled frontend api object
-     */
-    function get_api_obj(): sys_log_api
-    {
-        $dsp_obj = new sys_log_api();
-        $dsp_obj->id = $this->id();
-        $dsp_obj->time = $this->log_time->format(DateTimeInterface::ATOM);
-        $dsp_obj->user = $this->usr_name;
-        $dsp_obj->text = $this->log_text;
-        $dsp_obj->description = $this->log_description;
-        $dsp_obj->trace = $this->log_trace;
-        $dsp_obj->prg_part = $this->function_name;
-        //$dsp_obj->owner = $this->solver_name;
-        $dsp_obj->status = $this->status_name;
-        return $dsp_obj;
-    }
-
 
     /**
      * actually update an error field in the main database record or the user sandbox

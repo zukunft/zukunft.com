@@ -62,7 +62,6 @@ use cfg\user\user_message;
 use cfg\value\value;
 use cfg\word\word;
 use controller\controller;
-use controller\system\sys_log as sys_log_api;
 use DateTime;
 use Exception;
 use html\rest_ctrl;
@@ -71,6 +70,7 @@ use shared\json_fields;
 use shared\library;
 use shared\types\api_type;
 use shared\types\api_type_list;
+use unit\sys_log_tests;
 
 class test_api extends create_test_objects
 {
@@ -819,7 +819,7 @@ class test_api extends create_test_objects
                 $json = $this->json_remove_volatile_unset_field($json, $fld_name);
                 unset($json[$fld_name]);
             } else {
-                $new_value = (new DateTime(sys_log_api::TV_TIME))->format('Y-m-d H:i:s');
+                $new_value = (new DateTime(sys_log_tests::TV_TIME))->format('Y-m-d H:i:s');
                 $json = $this->json_remove_volatile_replace_field($json, $fld_name, $new_value);
             }
         }

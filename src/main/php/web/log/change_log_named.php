@@ -31,7 +31,6 @@
 
 namespace html\log;
 
-include_once API_SANDBOX_PATH . 'user_config.php';
 include_once HTML_PATH . 'button.php';
 include_once HTML_PATH . 'html_base.php';
 include_once HTML_PATH . 'rest_ctrl.php';
@@ -40,11 +39,12 @@ include_once MODEL_LOG_PATH . 'change_log.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
 //include_once MODEL_LOG_PATH . 'change_table_list.php';
 include_once WEB_LOG_PATH . 'change_log.php';
+//include_once WEB_HELPER_PATH . 'config.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
 
-use api\sandbox\user_config;
 use cfg\log\change_action;
+use html\helper\config;
 use html\rest_ctrl;
 use html\button;
 use html\html_base;
@@ -129,7 +129,7 @@ class change_log_named extends change_log
         }
         */
 
-        $usr_cfg = new user_config();
+        $usr_cfg = new config();
         $time_text = date_format($this->change_time, $usr_cfg->date_time_format());
         if (!$user_changes) {
             $time_text .= ' by ' . $this->usr->name;

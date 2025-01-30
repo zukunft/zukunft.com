@@ -55,22 +55,31 @@ class config extends value_list
     const ROW_LIMIT = 20;
     const DEFAULT_DEC_POINT = ".";
     const DEFAULT_PERCENT_DECIMALS = 2;
+    const DEFAULT_THOUSAND_SEP = "'";
+    const DEFAULT_DATE_TIME_FORMAT = 'd-m-Y H:i';
 
     function percent_decimals(): int
     {
-        return DEFAULT_PERCENT_DECIMALS;
+        return self::DEFAULT_PERCENT_DECIMALS;
     }
 
     function dec_point(): string
     {
-        return DEFAULT_DEC_POINT;
+        return self::DEFAULT_DEC_POINT;
     }
 
     function thousand_sep(): string
     {
-        return DEFAULT_THOUSAND_SEP;
+        return self::DEFAULT_THOUSAND_SEP;
     }
 
+    /**
+     * @return string with the date format as requested by the user
+     */
+    function date_time_format(): string
+    {
+        return self::DEFAULT_DATE_TIME_FORMAT;
+    }
     /**
      * request the user specific frontend configuration from the backend
      * @return user_message if it fails the reason why

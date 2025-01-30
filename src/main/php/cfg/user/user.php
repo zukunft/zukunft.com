@@ -86,9 +86,11 @@ include_once MODEL_USER_PATH . 'user_type.php';
 //include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 //include_once WEB_USER_PATH . 'user.php';
+//include_once WEB_HELPER_PATH . 'config.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
+use html\helper\config;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -380,8 +382,8 @@ class user extends db_object_seq_id
         $this->last_name = null;
         $this->code_id = null;
         $this->dec_point = null;
-        $this->thousand_sep = DEFAULT_THOUSAND_SEP;
-        $this->percent_decimals = DEFAULT_PERCENT_DECIMALS;
+        $this->thousand_sep = config::DEFAULT_THOUSAND_SEP;
+        $this->percent_decimals = config::DEFAULT_PERCENT_DECIMALS;
         $this->profile_id = null;
         $this->source_id = null;
 

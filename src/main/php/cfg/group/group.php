@@ -54,7 +54,7 @@
 
 namespace cfg\group;
 
-include_once API_SYSTEM_PATH . 'messages.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
@@ -81,7 +81,6 @@ include_once SHARED_CONST_PATH . 'groups.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\system\messages as msg_enum;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -103,9 +102,10 @@ use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
 use cfg\word\word;
+use shared\const\groups;
+use shared\enum\messages as msg_enum;
 use shared\json_fields;
 use shared\library;
-use shared\const\groups;
 
 class group extends sandbox_multi
 {
