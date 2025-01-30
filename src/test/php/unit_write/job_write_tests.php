@@ -51,7 +51,7 @@ class job_write_tests
         global $usr;
         global $job_typ_cac;
 
-        $t->header('Test the batch job class (classes/job.php)');
+        $t->header('job database write tests');
 
         // make sure that the test value is set independent of any previous database tests
         $t->test_value(array(

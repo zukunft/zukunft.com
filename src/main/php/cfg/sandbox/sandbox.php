@@ -115,7 +115,6 @@ include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\sandbox\sandbox as sandbox_api;
 use api\system\messages as msg_enum;
 use cfg\component\component;
 use cfg\component\component_link;
@@ -652,29 +651,6 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
-     * create and fill the related api object
-     * overwritten by the child objects with the object specific fields
-     * @return sandbox_api any frontend api object e.g. word_api
-     */
-    function api_obj(): sandbox_api
-    {
-        $api_obj = new sandbox_api();
-        if ($this->is_excluded()) {
-            $api_obj->set_id($this->id());
-            $api_obj->excluded = true;
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for any child object as a string
-     */
-    function api_json_old(): string
-    {
-        return $this->api_json();
-    }
-
-    /**
      * @param object $api_obj frontend API object filled with the database id
      */
     function fill_api_obj(object $api_obj): void
@@ -682,37 +658,6 @@ class sandbox extends db_object_seq_id_user
         $api_obj->set_id($this->id());
         $api_obj->share = $this->share_id;
         $api_obj->protection = $this->protection_id;
-    }
-
-    /**
-     * fill the vars with this sandbox object based on the given api json array
-     * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $usr_msg = new user_message();
-
-        // make sure that there are no unexpected leftovers
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::ID) {
-                $this->set_id($value);
-            }
-            if ($key == json_fields::SHARE) {
-                $this->share_id = $value;
-            }
-            if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $value;
-            }
-
-        }
-
-        return $usr_msg;
     }
 
 
@@ -905,6 +850,37 @@ class sandbox extends db_object_seq_id_user
         }
 
         return $vars;
+    }
+
+    /**
+     * fill the vars with this sandbox object based on the given api json array
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        // make sure that there are no unexpected leftovers
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::ID) {
+                $this->set_id($value);
+            }
+            if ($key == json_fields::SHARE) {
+                $this->share_id = $value;
+            }
+            if ($key == json_fields::PROTECTION) {
+                $this->protection_id = $value;
+            }
+
+        }
+
+        return $usr_msg;
     }
 
 

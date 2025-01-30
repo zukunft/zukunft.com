@@ -54,7 +54,7 @@ class job_tests
         $t->name = 'job->';
         $t->resource_path = 'db/job/';
 
-        $t->header('Unit tests of the batch job class (src/main/php/log/job.php)');
+        $t->header('job unit tests');
 
         $t->subheader('Job time SQL setup statements');
         $job_tim = new job_time('');

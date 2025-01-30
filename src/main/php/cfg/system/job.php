@@ -72,7 +72,6 @@ A user updates a formula
 namespace cfg\system;
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-include_once API_SYSTEM_PATH . 'job.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_field_default.php';
@@ -93,7 +92,6 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use api\system\job as job_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_field_default;
@@ -339,27 +337,6 @@ class job extends db_object_seq_id_user
     /*
      * api
      */
-
-    /**
-     * @return job_api the batch job frontend api object
-     */
-    function api_obj(): job_api
-    {
-        $api_obj = new job_api($this->user());
-        $api_obj->id = $this->id();
-        // TODO use time zone?
-        $api_obj->request_time = $this->request_time->format(DateTimeInterface::ATOM);
-        if ($this->start_time != null) {
-            $api_obj->start_time = $this->start_time->format(DateTimeInterface::ATOM);
-        }
-        if ($this->end_time != null) {
-            $api_obj->end_time = $this->end_time->format(DateTimeInterface::ATOM);
-        }
-        $api_obj->type_id = $this->type_id();
-        $api_obj->status = $this->status;
-        $api_obj->priority = $this->priority;
-        return $api_obj;
-    }
 
     /**
      * create an array for the api json creation
