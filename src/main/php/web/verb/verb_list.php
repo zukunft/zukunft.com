@@ -2,11 +2,8 @@
 
 /*
 
-    /web/user/user_type_list.php - the display extension of the user specific api type list object
-    ---------------------------
-
-    to create the HTML code to display a list of object types
-
+    web/verb/verb_list.php - al list of verb objects
+    ----------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -25,27 +22,29 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2023 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-
+  
 */
 
-namespace html\user;
+namespace html\verb;
 
-include_once WEB_TYPES_PATH . 'type_list.php';
 include_once HTML_PATH . 'html_base.php';
-include_once HTML_PATH . 'html_selector.php';
+include_once WEB_TYPES_PATH . 'type_list.php';
+include_once WEB_USER_PATH . 'user.php';
 include_once SHARED_PATH . 'library.php';
 
 use html\html_base;
-use html\html_selector;
 use html\types\type_list;
+use html\user\user;
 use shared\library;
 
-class user_type_list extends type_list
+class verb_list extends type_list
 {
+
+    private ?user $usr = null; // the user object of the person for whom the verb list is loaded, so to say the viewer
 
     function list(string $class, string $title = ''): string
     {
@@ -58,17 +57,5 @@ class user_type_list extends type_list
         return $title . $html->list($this->lst(), $class);
     }
 
-    /**
-     * @returns string the html code to select a type from this list
-     */
-    function selector(string $name = '', string $form = '', int $selected = 0): string
-    {
-        $sel = new html_selector();
-        $sel->name = $name;
-        $sel->form = $form;
-        $sel->lst = $this->db_id_list();
-        $sel->selected = $selected;
-        return $sel->display();
-    }
 
 }

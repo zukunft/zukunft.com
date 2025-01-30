@@ -41,8 +41,6 @@
 
 namespace html\types;
 
-include_once API_SANDBOX_PATH . 'type_object.php';
-
 class type_object
 {
 

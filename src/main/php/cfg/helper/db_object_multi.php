@@ -37,7 +37,6 @@ namespace cfg\helper;
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once API_OBJECT_PATH . 'api_message.php';
-include_once API_SYSTEM_PATH . 'db_object.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_type.php';

@@ -104,6 +104,26 @@ class type_list
     }
 
     /**
+     * @returns array the protected list of values or formula results
+     */
+    function lst(): array
+    {
+        return $this->lst;
+    }
+
+    /**
+     * @returns array with the names on the db keys
+     */
+    function db_id_list(): array
+    {
+        $result = array();
+        foreach ($this->lst as $obj) {
+            $result[$obj->id()] = $obj->name();
+        }
+        return $result;
+    }
+
+    /**
      * return the database row id based on the code_id
      *
      * @param string $code_id

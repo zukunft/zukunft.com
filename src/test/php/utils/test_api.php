@@ -45,7 +45,6 @@ include_once MODEL_LOG_PATH . 'change_field_list.php';
 include_once MODEL_LOG_PATH . 'change_log_list.php';
 include_once MODEL_SYSTEM_PATH . 'job.php';
 include_once EXPORT_PATH . 'export.php';
-include_once API_SYSTEM_PATH . 'type_object.php';
 
 use cfg\db\sql_db;
 use cfg\export\export;

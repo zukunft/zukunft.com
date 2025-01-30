@@ -37,6 +37,7 @@ include_once SHARED_CONST_PATH . 'views.php';
 include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_RESULT_PATH . 'result_list.php';
+include_once WEB_VERB_PATH . 'verb_list.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use cfg\component\component;
@@ -46,6 +47,7 @@ use cfg\result\result;
 use cfg\value\value;
 use cfg\verb\verb;
 use cfg\verb\verb_list;
+use html\verb\verb_list as verb_list_dsp;
 use html\button;
 use html\component\component as component_dsp;
 use html\html_base;
@@ -124,7 +126,9 @@ class base_ui_tests
         $lst->add_verb(new verb(1, verbs::IS));
         $lst->add_verb(new verb(2, verbs::IS_PART_OF));
         // TODO use set_from_json to set the display object
-        $t->html_test($lst->dsp_obj()->list(verb::class, 'Verbs'), '', 'list_verbs', $t);
+        $vrb_lst_dsp = new verb_list_dsp();
+        $vrb_lst_dsp->set_from_json_array($lst->api_json_array());
+        $t->html_test($vrb_lst_dsp->list(verb::class, 'Verbs'), '', 'list_verbs', $t);
 
 
         $t->subheader('HTML table tests');

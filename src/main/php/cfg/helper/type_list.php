@@ -32,7 +32,7 @@
 
 namespace cfg\helper;
 
-include_once API_SYSTEM_PATH . 'type_list.php';
+include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_type.php';
@@ -88,6 +88,7 @@ include_once MODEL_VIEW_PATH . 'view_link_type.php';
 include_once MODEL_VIEW_PATH . 'view_link_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
+include_once MODEL_USER_PATH . 'user.php';
 include_once WEB_USER_PATH . 'user_type_list.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
@@ -95,7 +96,6 @@ include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use api\system\type_list as type_list_api;
 use cfg\component\component_link_type;
 use cfg\component\component_link_type_list;
 use cfg\component\component_type;
@@ -142,6 +142,7 @@ use cfg\system\sys_log_function;
 use cfg\system\sys_log_function_list;
 use cfg\system\sys_log_status_list;
 use cfg\system\sys_log_status;
+use cfg\user\user;
 use cfg\user\user_profile;
 use cfg\user\user_profile_list;
 use cfg\verb\verb;
@@ -151,6 +152,7 @@ use cfg\view\view_link_type;
 use cfg\view\view_link_type_list;
 use cfg\view\view_type;
 use cfg\view\view_type_list;
+use controller\api_message;
 use html\user\user_type_list as type_list_dsp;
 use shared\json_fields;
 use shared\library;
@@ -478,6 +480,36 @@ class type_list
     /*
      * api
      */
+
+    /**
+     * create the api json message string for this list
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
+        // null values are not needed in the api message to the frontend
+        // but in the api message to the backend null values are relevant
+        // e.g. to remove empty string overwrites
+        $vars = $this->api_json_array($typ_lst, $usr);
+        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+
+        // add header if requested
+        if ($typ_lst->use_header()) {
+            global $db_con;
+            $api_msg = new api_message();
+            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
+        } else {
+            $msg = $vars;
+        }
+
+        return json_encode($msg);
+    }
 
     function api_json_array(): array
     {

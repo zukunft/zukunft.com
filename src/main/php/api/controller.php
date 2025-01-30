@@ -35,8 +35,6 @@
 namespace controller;
 
 include_once API_OBJECT_PATH . 'api_message_old.php';
-include_once API_SYSTEM_PATH . 'type_lists.php';
-include_once API_SANDBOX_PATH . 'list_object.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_WORD_PATH . 'word.php';

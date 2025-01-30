@@ -32,7 +32,6 @@
 
 namespace cfg\helper;
 
-include_once API_SYSTEM_PATH . 'type_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
@@ -45,7 +44,6 @@ include_once SHARED_PATH . 'library.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once MODEL_VERB_PATH . 'verb.php';
-include_once API_SYSTEM_PATH . 'type_list.php';
 include_once WEB_USER_PATH . 'user_type_list.php';
 
 use cfg\phrase\phrase;

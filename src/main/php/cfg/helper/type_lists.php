@@ -33,8 +33,6 @@
 namespace cfg\helper;
 
 include_once API_OBJECT_PATH . 'api_message.php';
-include_once API_SYSTEM_PATH . 'type_object.php';
-include_once API_SYSTEM_PATH . 'type_lists.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
@@ -80,7 +78,6 @@ include_once MODEL_USER_PATH . 'user_list.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use api\system\type_lists as type_lists_api;
 use cfg\component\position_type_list;
 use cfg\component\component_type_list;
 use cfg\component\view_style_list;
@@ -108,76 +105,12 @@ use cfg\view\view_link_type_list;
 use cfg\view\view_sys_list;
 use cfg\view\view_type_list;
 use controller\api_message;
-use controller\controller;
 use shared\json_fields;
 use shared\types\api_type_list;
 
 class type_lists
 {
 
-    /*
-     * cast
-     */
-
-    function api_obj(user $usr): type_lists_api
-    {
-        global $db_con;
-        global $usr_pro_cac;
-        global $phr_typ_cac;
-        global $frm_typ_cac;
-        global $frm_lnk_typ_cac;
-        global $elm_typ_cac;
-        global $msk_typ_cac;
-        global $msk_sty_cac;
-        global $msk_lnk_typ_cac;
-        global $cmp_typ_cac;
-        global $cmp_lnk_typ_cac;
-        global $pos_typ_cac;
-        global $ref_typ_cac;
-        global $src_typ_cac;
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
-        global $lan_cac;
-        global $lan_for_cac;
-        global $vrb_cac;
-        global $sys_msk_cac;
-        global $sys_log_sta_cac;
-        global $job_typ_cac;
-        global $cng_act_cac;
-        global $cng_tbl_cac;
-        global $cng_fld_cac;
-
-        log_debug();
-        $lst = new type_lists_api($db_con, $usr);
-        $lst->add($usr_pro_cac->api_obj(), json_fields::LIST_USER_PROFILES);
-        $lst->add($phr_typ_cac->api_obj(), json_fields::LIST_PHRASE_TYPES);
-        $lst->add($frm_typ_cac->api_obj(), json_fields::LIST_FORMULA_TYPES);
-        $lst->add($frm_lnk_typ_cac->api_obj(), json_fields::LIST_FORMULA_LINK_TYPES);
-        $lst->add($elm_typ_cac->api_obj(), json_fields::LIST_ELEMENT_TYPES);
-        $lst->add($msk_typ_cac->api_obj(), json_fields::LIST_VIEW_TYPES);
-        $lst->add($msk_sty_cac->api_obj(), json_fields::LIST_VIEW_STYLES);
-        $lst->add($msk_lnk_typ_cac->api_obj(), json_fields::LIST_VIEW_LINK_TYPES);
-        $lst->add($cmp_typ_cac->api_obj(), json_fields::LIST_COMPONENT_TYPES);
-        //$lst->add($cmp_lnk_typ_cac->api_obj(), json_fields::LIST_VIEW_COMPONENT_LINK_TYPES);
-        $lst->add($pos_typ_cac->api_obj(), json_fields::LIST_COMPONENT_POSITION_TYPES);
-        $lst->add($ref_typ_cac->api_obj(), json_fields::LIST_REF_TYPES);
-        $lst->add($src_typ_cac->api_obj(), json_fields::LIST_SOURCE_TYPES);
-        $lst->add($shr_typ_cac->api_obj(), json_fields::LIST_SHARE_TYPES);
-        $lst->add($ptc_typ_cac->api_obj(), json_fields::LIST_PROTECTION_TYPES);
-        $lst->add($lan_cac->api_obj(), json_fields::LIST_LANGUAGES);
-        $lst->add($lan_for_cac->api_obj(), json_fields::LIST_LANGUAGE_FORMS);
-        $lst->add($sys_log_sta_cac->api_obj(), json_fields::LIST_SYS_LOG_STATI);
-        $lst->add($job_typ_cac->api_obj(), json_fields::LIST_JOB_TYPES);
-        $lst->add($cng_act_cac->api_obj(), json_fields::LIST_CHANGE_LOG_ACTIONS);
-        $lst->add($cng_tbl_cac->api_obj(), json_fields::LIST_CHANGE_LOG_TABLES);
-        $lst->add($cng_fld_cac->api_obj(), json_fields::LIST_CHANGE_LOG_FIELDS);
-        $lst->add($vrb_cac->api_obj(), json_fields::LIST_VERBS);
-        if ($sys_msk_cac != null) {
-            $lst->add($sys_msk_cac->api_obj(), json_fields::LIST_SYSTEM_VIEWS);
-        }
-        log_debug('done');
-        return $lst;
-    }
 
     /*
      * load

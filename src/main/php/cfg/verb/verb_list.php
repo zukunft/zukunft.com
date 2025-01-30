@@ -79,7 +79,7 @@ class verb_list extends type_list
     /**
      * define the settings for this verb list object
      * @param user|null $usr the user who requested to see the verb list
-     * @param bool $usr_can_add true by default to allow seariching by name for new added verbs
+     * @param bool $usr_can_add true by default to allow searching by name for new added verbs
      */
     function __construct(?user $usr = null, bool $usr_can_add = true)
     {
