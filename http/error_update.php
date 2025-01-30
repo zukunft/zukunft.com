@@ -94,7 +94,8 @@ if ($usr->id() > 0) {
         $err_lst->size = 20;
         $err_lst->back = $back;
         if ($err_lst->load()) {
-            $errors_all = $err_lst->dsp_obj()->get_html();
+            $err_lst_dsp = new sys_log_list($err_lst->api_json());
+            $errors_all = $err_lst_dsp->get_html();
         }
         //$errors_all .= dsp_errors  ($usr->id(), $usr->profile_id, "all", $back);
         if ($errors_all <> "") {

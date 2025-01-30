@@ -46,16 +46,9 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log.php';
 include_once API_SYSTEM_PATH . 'sys_log.php';
-include_once API_SYSTEM_PATH . 'sys_log_list.php';
 include_once WEB_SYSTEM_PATH . 'sys_log_list.php';
-include_once WEB_SYSTEM_PATH . 'sys_log_list_dsp_old.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
 use cfg\user\user_message;
-use DateTime;
 
 class system_time_list
 {

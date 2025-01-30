@@ -52,11 +52,11 @@ class log extends db_object_dsp
      * object vars
      */
 
-    private DateTime $time;
-    private int $user_id;
+    protected DateTime $time;
+    protected int $user_id;
     private ?string $user_name = null;
-    private string $text;
-    private int $status;
+    protected string $text;
+    protected int $status;
 
 
     /*

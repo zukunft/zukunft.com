@@ -34,12 +34,14 @@ namespace html\system;
 
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once API_OBJECT_PATH . 'controller.php';
+include_once MODEL_USER_PATH . 'user.php';
 include_once HTML_PATH . 'html_base.php';
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_SYSTEM_PATH . 'sys_log.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'api.php';
 
+use cfg\user\user;
 use controller\controller;
 use html\html_base;
 use html\sandbox\list_dsp;
@@ -119,6 +121,80 @@ class sys_log_list extends list_dsp
             $result .= $html->tr($sys_log->display_admin($back, $style));
         }
         return $html->tbl($result);
+    }
+
+    /**
+     * display the error that are related to the user, so that he can track when they are closed
+     * or display the error that are related to the user, so that he can track when they are closed
+     * called also from user_display.php/dsp_errors
+     * @param user|null $usr e.g. an admin user to allow updating the system errors
+     * @param string $back
+     * @return string the html code of the system log
+     */
+    function get_html(user $usr = null, string $back = ''): string
+    {
+        $html = new html_base();
+        $result = ''; // reset the html code var
+        $rows = '';   // the html code of the rows
+
+        if (count($this->lst) > 0) {
+            // prepare to show a system log entry
+            $row_nbr = 0;
+            foreach ($this->lst as $log_dsp) {
+                $row_nbr++;
+                if ($row_nbr == 1) {
+                    $rows .= $this->headline_html();
+                }
+                $rows .= $log_dsp->get_html($usr, $back);
+            }
+            $result = $html->tbl($rows);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return string the HTML code for the table headline
+     * should be corresponding to system_error_log_dsp::get_html
+     */
+    private function headline_html(): string
+    {
+        $result = '<tr>';
+        $result .= '<th> creation time     </th>';
+        $result .= '<th> user              </th>';
+        $result .= '<th> issue description </th>';
+        $result .= '<th> trace             </th>';
+        $result .= '<th> program part      </th>';
+        $result .= '<th> owner             </th>';
+        $result .= '<th> status            </th>';
+        $result .= '</tr>';
+        return $result;
+    }
+
+    function get_html_page(user $usr = null, string $back = ''): string
+    {
+        return $this->get_html_header('System log') . $this->get_html($usr, $back) . $this->get_html_footer();
+    }
+
+    /*
+     * to review
+     */
+
+    function get_html_header(string $title): string
+    {
+        if ($title == null) {
+            $title = 'api message';
+        } elseif ($title == '') {
+            $title = 'api message';
+        }
+        $html = new html_base();
+        return $html->header($title);
+    }
+
+    function get_html_footer(): string
+    {
+        $html = new html_base();
+        return $html->footer();
     }
 
 }

@@ -32,7 +32,6 @@
 namespace cfg\system;
 
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once API_SYSTEM_PATH . 'sys_log_list.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
@@ -47,7 +46,6 @@ include_once MODEL_SYSTEM_PATH . 'sys_log_type.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once WEB_SYSTEM_PATH . 'sys_log_list_dsp_old.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 
 use cfg\db\sql;
@@ -57,7 +55,6 @@ use cfg\db\sql_par_type;
 use cfg\helper\type_object;
 use cfg\sandbox\sandbox;
 use cfg\user\user;
-use html\system\sys_log_list_dsp_old;
 
 class sys_log_list extends base_list
 {
@@ -200,25 +197,6 @@ class sys_log_list extends base_list
     function add(sys_log $log_to_add): void
     {
         $this->add_obj($log_to_add);
-    }
-
-    /*
-     * TODO deprecate
-     */
-
-    /**
-     * @return sys_log_list_dsp_old a filled frontend display object
-     */
-    function dsp_obj(): sys_log_list_dsp_old
-    {
-        global $usr;
-        global $db_con;
-        $dsp_obj = new sys_log_list_dsp_old($db_con, $usr);
-        foreach ($this->lst() as $log) {
-            //$dsp_obj->add($log->dsp_obj());
-            $dsp_obj->sys_log_list[] = $log->get_api_obj();
-        }
-        return $dsp_obj;
     }
 
 }

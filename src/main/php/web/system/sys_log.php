@@ -246,6 +246,58 @@ class sys_log extends log_dsp
         return $html->tr($result);
     }
 
+    function get_html(user $usr = null, string $back = ''): string
+    {
+        global $sys_log_sta_cac;
+
+        $html = new html_base();
+        $row_text = $html->td($this->time->format(DateTimeInterface::ATOM));
+        if ($this->user_id() > 0) {
+            $row_text .= $html->td($this->user()->name());
+        } else {
+            $row_text .= $html->td('');
+        }
+        $row_text .= $html->td($this->text);
+        $row_text .= $html->td($this->description);
+        $row_text .= $html->td($this->trace);
+        $row_text .= $html->td($this->prg_part);
+        if ($this->owner_id() > 0) {
+            $row_text .= $html->td($this->owner()->name());
+        } else {
+            $row_text .= $html->td('');
+        }
+        $row_text .= $html->td($this->status_name());
+        if ($usr != null) {
+            if ($usr->is_admin() or $usr->is_system()) {
+                $par_status = rest_ctrl::PAR_LOG_STATUS. '=' . $sys_log_sta_cac->id(sys_log_status::CLOSED);
+                $url = $html->url(rest_ctrl::ERROR_UPDATE, $this->id, $back, '', $par_status);
+                $row_text .= $html->td($html->ref($url, 'close'));
+            }
+        }
+
+        return $html->tr($row_text);
+    }
+
+    function user(): user
+    {
+        $usr = new user();
+        $usr->load_by_id($this->user_id);
+        return $usr;
+    }
+
+    function owner(): user
+    {
+        $usr = new user();
+        $usr->load_by_id($this->owner_id);
+        return $usr;
+    }
+
+    // TODO review
+    function status_name(): string
+    {
+        return '"'. $this->status . '"';
+    }
+
 
     /*
      * interface

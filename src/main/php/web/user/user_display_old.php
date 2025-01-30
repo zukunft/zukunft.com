@@ -46,6 +46,7 @@ include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'triple.php';
+include_once WEB_SYSTEM_PATH . 'sys_log_list.php';
 include_once WEB_LOG_PATH . 'user_log_display.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_VIEW_PATH . 'view.php';
@@ -67,6 +68,7 @@ use cfg\verb\verb;
 use cfg\view\view;
 use html\html_base;
 use html\log\user_log_display;
+use html\system\sys_log_list as sys_log_list_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\view\view as view_dsp;
 
@@ -121,7 +123,8 @@ class user_dsp_old extends user
         $err_lst->dsp_type = $dsp_type;
         $err_lst->back = $back;
         if ($err_lst->load()) {
-            $result = $err_lst->dsp_obj()->get_html();
+            $err_lst_dsp = new sys_log_list_dsp($err_lst->api_json());
+            $result = $err_lst_dsp->get_html();
         }
 
         log_debug('done');

@@ -49,13 +49,15 @@ class api_message
      * create and set the api message header information
      * @param sql_db $db_con the active database link to get the configuration from the database
      * @param string $class the class of the message
-     * @param user $usr the user view that the api message should contain
+     * @param user|null $usr the user view that the api message should contain
+     * @param array $vars the json array for the message body
+     * @return array the json array including the message header
      */
     function api_header_array(
-        sql_db $db_con,
-        string $class,
-        user   $usr,
-        array  $vars
+        sql_db    $db_con,
+        string    $class,
+        user|null $usr,
+        array     $vars
     ): array
     {
         $lib = new library();
@@ -69,8 +71,10 @@ class api_message
             $msg[json_fields::POD] = POD_NAME;
         }
         $msg[json_fields::TYPE_NAME] = $class;
-        $msg[json_fields::USER_ID] = $usr->id();
-        $msg[json_fields::USER_NAME] = $usr->name();
+        if ($usr != null) {
+            $msg[json_fields::USER_ID] = $usr->id();
+            $msg[json_fields::USER_NAME] = $usr->name();
+        }
         $msg[json_fields::VERSION] = PRG_VERSION;
         $msg[json_fields::TIMESTAMP] = (new DateTime())->format(DateTimeInterface::ATOM);
         $msg[json_fields::BODY] = $vars;

@@ -33,16 +33,22 @@
 
 namespace html\sandbox;
 
+include_once API_OBJECT_PATH . 'api_message.php';
 include_once HTML_PATH . 'html_selector.php';
 include_once HTML_PATH . 'rest_ctrl.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
+include_once MODEL_USER_PATH . 'user.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_TYPES_PATH . 'view_styles.php';
+include_once SHARED_PATH . 'api.php';
 
+use cfg\user\user;
+use controller\api_message;
 use html\rest_ctrl as api_dsp;
 use html\html_selector;
 use html\user\user_message;
 use shared\api;
+use shared\types\api_type_list;
 use shared\types\view_styles;
 
 class list_dsp
@@ -152,7 +158,7 @@ class list_dsp
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array() calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = []): array
     {
         $result = array();
         foreach ($this->lst as $obj) {
@@ -164,11 +170,29 @@ class list_dsp
     }
 
     /**
-     * @return string with the api json string that should be send to the backend
+     * create the api json message string of this list that can be sent to the backend
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return string with the api json string that should be sent to the backend
      */
-    function api_json(): string
+    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
     {
-        return json_encode($this->api_array());
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
+        $vars = $this->api_array($typ_lst);
+
+        // add header if requested
+        if ($typ_lst->use_header()) {
+            global $db_con;
+            $api_msg = new api_message();
+            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
+        } else {
+            $msg = $vars;
+        }
+
+        return json_encode($msg);
     }
 
 
