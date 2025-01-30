@@ -2,8 +2,8 @@
 
 /*
 
-    /web/phrase/term_list_dsp.php - the display extension of the api phrase list object
-    -----------------------------
+    web/phrase/term_list_dsp.php - the display extension of the api phrase list object
+    ----------------------------
 
     mainly links to the word and triple display functions
 

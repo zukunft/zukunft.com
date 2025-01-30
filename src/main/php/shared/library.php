@@ -52,6 +52,7 @@ use cfg\system\sys_log_status_list;
 use cfg\system\sys_log_type;
 use cfg\system\system_time;
 use cfg\user\user_official_type;
+use cfg\value\value;
 use cfg\view\view_link_type;
 use cfg\word\word_db;
 use cfg\component\component;

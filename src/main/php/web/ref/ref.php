@@ -2,8 +2,8 @@
 
 /*
 
-    /web/ref/ref.php - the extension of the reference API objects to create ref base html code
-    ----------------
+    web/ref/ref.php - the extension of the reference API objects to create ref base html code
+    ---------------
 
     extends db_object_dsp because this is the only display object that does not have an explicit name but has a type
 

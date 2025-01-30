@@ -2,8 +2,8 @@
 
 /*
 
-    /web/phrase/phrase_list.php - create the html code to display a phrase list
-    ---------------------------
+    web/phrase/phrase_list.php - create the html code to display a phrase list
+    --------------------------
 
     TODO create a value matrix based on this phrase list
 

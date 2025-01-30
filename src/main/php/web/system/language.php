@@ -2,8 +2,8 @@
 
 /*
 
-    /web/system/language.php - the extension of the language API objects to create language base html code
-    ------------------------
+    web/system/language.php - the extension of the language API objects to create language base html code
+    -----------------------
 
     This file is part of the frontend of zukunft.com - calc with words
 

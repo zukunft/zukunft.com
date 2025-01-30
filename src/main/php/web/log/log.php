@@ -2,8 +2,8 @@
 
 /*
 
-    /web/log/log.php - base log object to create the html code to display a change of system log entry
-    ----------------
+    web/log/log.php - base log object to create the html code to display a change of system log entry
+    ---------------
 
     This file is part of the frontend of zukunft.com - calc with words
 

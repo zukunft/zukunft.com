@@ -2,8 +2,8 @@
 
 /*
 
-    /web/view/component.php - the display extension of the api component object
-    -----------------------
+    web/view/component.php - the display extension of the api component object
+    ----------------------
 
     to creat the HTML code to display a component
 

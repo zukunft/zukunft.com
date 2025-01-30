@@ -2,8 +2,8 @@
 
 /*
 
-    /web/view/view.php - the display extension of the api view object
-    ------------------
+    web/view/view.php - the display extension of the api view object
+    -----------------
 
     to creat the HTML code to display a view
 

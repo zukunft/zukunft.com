@@ -2,8 +2,8 @@
 
 /*
 
-    /web/figure/figure_list.php - the display extension of the api figure list object
-    ---------------------------
+    web/figure/figure_list.php - the display extension of the api figure list object
+    --------------------------
 
     to creat the HTML code to display a list of figures
 

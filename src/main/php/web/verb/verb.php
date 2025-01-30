@@ -2,7 +2,7 @@
 
 /*
 
-    /web/verb/verb.php - the display extension of the api verb object
+    web/verb/verb.php - the display extension of the api verb object
     -----------------
 
     This file is part of zukunft.com - calc with words

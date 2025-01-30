@@ -2,8 +2,8 @@
 
 /*
 
-    /web/log/sys_log.php - create the html code to display on system log entry
-    --------------------
+    web/log/sys_log.php - create the html code to display on system log entry
+    -------------------
 
     This file is part of the frontend of zukunft.com - calc with words
 

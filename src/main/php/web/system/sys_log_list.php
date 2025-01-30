@@ -2,8 +2,8 @@
 
 /*
 
-    /web/log/sys_log_list.php - the display extension of the system error log api object
-    -------------------------
+    web/log/sys_log_list.php - the display extension of the system error log api object
+    ------------------------
 
 
     This file is part of zukunft.com - calc with words

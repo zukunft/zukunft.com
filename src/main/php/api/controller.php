@@ -49,15 +49,6 @@ class controller
 {
 
     /*
-     * API
-     */
-
-    // to include the url that should be call after an action has been finished into the url
-    const API_BACK = 'back';
-
-
-
-    /*
      * functions
      */
 
@@ -102,9 +93,15 @@ class controller
      * @param string $api_obj the object as a json string that should be returned
      * @param string $msg the message as a json string that should be returned
      * @param int $id the id of object that should be deleted
+     * @param sandbox|combine_object|null $obj
      * @return void
      */
-    private function curl_response(string $api_obj, string $msg, int $id = 0, sandbox|combine_object|null $obj = null): void
+    private function curl_response(
+        string                      $api_obj,
+        string                      $msg,
+        int                         $id = 0,
+        sandbox|combine_object|null $obj = null
+    ): void
     {
         // required headers
         header("Access-Control-Allow-Origin: *");
@@ -229,8 +226,7 @@ class controller
         }
     }
 
-    public
-    function not_permitted(string $msg): void
+    public function not_permitted(string $msg): void
     {
         http_response_code(401);
         $this->curl_response('', $msg);

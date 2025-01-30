@@ -2,7 +2,7 @@
 
 /*
 
-    /web/system/messages.php - the language specific UI messages
+    web/system/messages.php - the language specific UI messages
     -----------------------
 
 

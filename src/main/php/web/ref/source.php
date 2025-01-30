@@ -2,8 +2,8 @@
 
 /*
 
-    /web/ref/source.php - the extension of the source API objects to create source base html code
-    -------------------
+    web/ref/source.php - the extension of the source API objects to create source base html code
+    ------------------
 
     This file is part of the frontend of zukunft.com - calc with words
 

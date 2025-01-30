@@ -2,7 +2,7 @@
 
 /*
 
-    /web/user/user_type_list.php - the display extension of the user specific api type list object
+    web/user/user_type_list.php - the display extension of the user specific api type list object
     ---------------------------
 
     to create the HTML code to display a list of object types

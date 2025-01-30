@@ -2,8 +2,8 @@
 
 /*
 
-    /web/system/job.php - the extension of the batch task API objects to create job base html code
-    -------------------
+    web/system/job.php - the extension of the batch task API objects to create job base html code
+    ------------------
 
     This file is part of the frontend of zukunft.com - calc with words
 

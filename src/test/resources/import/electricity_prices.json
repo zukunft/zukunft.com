@@ -1,0 +1,284 @@
+{
+  "version": "0.0.3",
+  "time": "2025-01-30 22:04:00",
+  "user": "tageloehner",
+  "selection": [
+    "electricity prices"
+  ],
+  "words": [
+    {
+      "name": "electricity",
+      "refs": [
+        {
+          "name": "Electricity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Euro",
+      "refs": [
+        {
+          "name": "Euro",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cent",
+      "refs": [
+        {
+          "name": "Cent (currency)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "€",
+      "refs": [
+        {
+          "name": "Euro_sign",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "kWh",
+      "type": "measure",
+      "refs": [
+        {
+          "name": "Kilowatt-hour",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "joule",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Joule",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "expected",
+      "refs": [
+        {
+          "name": "Expected_value",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "change",
+      "refs": [
+        {
+          "name": "Addition",
+          "type": "wikipedia"
+        }
+      ]
+    }
+  ],
+  "triples": [
+    {
+      "from": "Euro",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "cent",
+      "verb": "is used by",
+      "to": "Euro"
+    },
+    {
+      "from": "€",
+      "verb": "is symbol for",
+      "to": "Euro"
+    },
+    {
+      "name": "cent/kWh",
+      "from": "cent",
+      "verb": "per",
+      "to": "kWh",
+      "type": "measure"
+    }
+  ],
+  "value-time-series": [
+    {
+      "context": [
+        "electricity",
+        "price",
+        "cent/kWh"
+      ],
+      "time-values": [
+        {
+          "date": "2024-12-26T01:00:00+00:00",
+          "value": 12.26
+        },
+        {
+          "date": "2024-12-26T01:04:00+00:00",
+          "value": 12.26
+        },
+        {
+          "date": "2024-12-26T02:00:00+00:00",
+          "value": 11.407
+        },
+        {
+          "date": "2024-12-26T02:02:00+00:00",
+          "value": 11.407
+        },
+        {
+          "date": "2024-12-26T03:00:00+00:00",
+          "value": 11.353
+        },
+        {
+          "date": "2024-12-26T04:30:00+00:00",
+          "value": 10.757
+        },
+        {
+          "date": "2024-12-26T05:00:00+00:00",
+          "value": 10.904
+        },
+        {
+          "date": "2024-12-26T06:00:00+00:00",
+          "value": 11.412
+        },
+        {
+          "date": "2024-12-26T07:00:00+00:00",
+          "value": 11.88
+        },
+        {
+          "date": "2024-12-26T08:00:00+00:00",
+          "value": 13.538
+        },
+        {
+          "date": "2024-12-26T08:33:00+00:00",
+          "value": 13.538
+        },
+        {
+          "date": "2024-12-26T09:00:00+00:00",
+          "value": 14.566
+        },
+        {
+          "date": "2024-12-26T09:15:00+00:00",
+          "value": 14.566
+        },
+        {
+          "date": "2024-12-26T09:55:00+00:00",
+          "value": 14.566
+        },
+        {
+          "date": "2024-12-26T10:00:00+00:00",
+          "value": 14.188
+        },
+        {
+          "date": "2024-12-26T10:50:00+00:00",
+          "value": 14.188
+        },
+        {
+          "date": "2024-12-26T11:00:00+00:00",
+          "value": 13.59
+        }
+      ]
+    },
+    {
+      "context": [
+        "electricity",
+        "price",
+        "cent/kWh",
+        "expected",
+        "change"
+      ],
+      "time-values": [
+        {
+          "date": "2024-12-26T01:00:00+00:00",
+          "value": 1
+        },
+        {
+          "date": "2024-12-26T01:04:00+00:00",
+          "value": 0.5
+        },
+        {
+          "date": "2024-12-26T02:00:00+00:00",
+          "value": 1
+        },
+        {
+          "date": "2024-12-26T02:02:00+00:00",
+          "value": 1.5
+        },
+        {
+          "date": "2024-12-26T03:00:00+00:00",
+          "value": 1.5
+        },
+        {
+          "date": "2024-12-26T04:30:00+00:00",
+          "value": 1.5
+        },
+        {
+          "date": "2024-12-26T05:00:00+00:00",
+          "value": 1.5
+        },
+        {
+          "date": "2024-12-26T06:00:00+00:00",
+          "value": 1.5
+        },
+        {
+          "date": "2024-12-26T07:00:00+00:00",
+          "value": 1.5
+        },
+        {
+          "date": "2024-12-26T08:00:00+00:00",
+          "value": 1
+        },
+        {
+          "date": "2024-12-26T08:33:00+00:00",
+          "value": 0.5
+        },
+        {
+          "date": "2024-12-26T09:00:00+00:00",
+          "value": 0.5
+        },
+        {
+          "date": "2024-12-26T09:15:00+00:00",
+          "value": 0
+        },
+        {
+          "date": "2024-12-26T09:55:00+00:00",
+          "value": -0.5
+        },
+        {
+          "date": "2024-12-26T10:00:00+00:00",
+          "value": -0.5
+        },
+        {
+          "date": "2024-12-26T10:50:00+00:00",
+          "value": 0
+        },
+        {
+          "date": "2024-12-26T11:00:00+00:00",
+          "value": 0.5
+        }
+      ]
+    }
+  ],
+  "formulas": [
+    {
+      "name": "scale cent to Euro",
+      "expression": "\"Euro\" = \"cent\" * 100",
+      "assigned_word": "cent"
+    },
+    {
+      "name": "scale kWh to joule",
+      "expression": "\"joule\" = \"kWh\" * 3600000",
+      "assigned_word": "kWh"
+    },
+    {
+      "name": "definition of joule",
+      "expression": "\"joule\" = ( \"kg\" * \"metre\" * \"metre\" ) / \"second\" * \"second\"",
+      "assigned_word": "joule"
+    }
+  ]
+}

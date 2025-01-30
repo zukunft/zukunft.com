@@ -65,7 +65,7 @@ class component_link_dsp extends component_link
 
         $this->load_objects();
         if ($this->view() != null and $this->component() != null) {
-            $result = $this->view()->name_linked(NULL, $back) . ' to ' . $this->component()->name_linked($back);
+            $result = $this->view()->name_linked(NULL, $back) . ' to ' . $this->component()->name_linked(NULL, $back);
         } else {
             $result .= log_err("The view name or the component name cannot be loaded.", "component_link->name");
         }
