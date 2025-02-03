@@ -34,17 +34,17 @@
 
 namespace html\phrase;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_list_named.php';
 include_once WEB_SANDBOX_PATH . 'sandbox.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'library.php';
 
-use html\sandbox\list_dsp;
+use html\sandbox\sandbox_list_named;
 use html\sandbox\sandbox;
 use html\user\user_message;
 use shared\library;
 
-class term_list extends list_dsp
+class term_list extends sandbox_list_named
 {
 
 
@@ -95,11 +95,6 @@ class term_list extends list_dsp
             $result .= $trm->display_linked();
         }
         return $result;
-    }
-
-    function add(object $obj): bool
-    {
-        return $this->add_obj($obj);
     }
 
     /**

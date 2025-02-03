@@ -97,42 +97,16 @@ class figure_list extends sandbox_list
      */
 
     /**
-     * set the SQL query parameters to load a list of figure objects
-     * @param sql_creator $sc with the target db_type set
-     * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql(sql_creator $sc, string $query_name): sql_par
-    {
-        $qp = new sql_par(self::class);
-        $qp->name .= $query_name;
-
-        $sc->set_class(figure::class);
-        $sc->set_name($qp->name);
-
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields(figure::FLD_NAMES);
-        //$db_con->set_usr_fields(figure::FLD_NAMES_USR_NO_NAME);
-        //$db_con->set_usr_num_fields(figure::FLD_NAMES_NUM_USR);
-        //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(figure::FLD_VALUES) . ' DESC, ' . figure::FLD_NAME);
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve a list of phrase objects by the id from the database
+     * load the figures including the related value or result object by the given id list from the database
      *
-     * @param sql_creator $sc with the target db_type set
      * @param fig_ids $ids figure ids that should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return bool true if at least one phrase has been loaded
      */
-    function load_sql_by_ids(sql_creator $sc, fig_ids $ids): sql_par
+    function load_by_ids(fig_ids $ids): bool
     {
-        $qp = $this->load_sql($sc, 'ids');
-        $sc->add_where(figure::FLD_ID, $ids->lst);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
+        global $db_con;
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
+        return $this->load($qp);
     }
 
     /**
@@ -170,17 +144,44 @@ class figure_list extends sandbox_list
     }
 
     /**
-     * load the figures including the related value or result object by the given id list from the database
+     * create an SQL statement to retrieve a list of phrase objects by the id from the database
      *
+     * @param sql_creator $sc with the target db_type set
      * @param fig_ids $ids figure ids that should be loaded
-     * @return bool true if at least one phrase has been loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_ids(fig_ids $ids): bool
+    function load_sql_by_ids(sql_creator $sc, fig_ids $ids): sql_par
     {
-        global $db_con;
-        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
-        return $this->load($qp);
+        $qp = $this->load_sql($sc, 'ids');
+        $sc->add_where(figure::FLD_ID, $ids->lst);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
     }
+
+    /**
+     * set the SQL query parameters to load a list of figure objects
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_creator $sc, string $query_name): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
+
+        $sc->set_class(figure::class);
+        $sc->set_name($qp->name);
+
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(figure::FLD_NAMES);
+        //$db_con->set_usr_fields(figure::FLD_NAMES_USR_NO_NAME);
+        //$db_con->set_usr_num_fields(figure::FLD_NAMES_NUM_USR);
+        //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(figure::FLD_VALUES) . ' DESC, ' . figure::FLD_NAME);
+        return $qp;
+    }
+
 
     /*
      * modify

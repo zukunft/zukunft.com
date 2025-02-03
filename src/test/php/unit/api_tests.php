@@ -68,6 +68,7 @@ use cfg\system\job;
 use cfg\system\sys_log_list;
 use cfg\user\user;
 use cfg\value\value;
+use cfg\value\value_list;
 use cfg\verb\verb;
 use cfg\view\view;
 use cfg\view\view_list;
@@ -159,6 +160,11 @@ class api_tests
             'sys_log_list_api',
             true);
         // $t->assert_rest(new word($usr, words::TN_READ));
+        // TODO add value_list tests for prime, normal and big value tables
+        // TODO add a test case for empty list, no key found, and more  values than the page size
+        $t->assert_api_get_list(value_list::class, values::PI_ID);
+        // TODO add result_list tests
+        // TODO add figure_list tests
 
         $cfg = new config();
         $cfg->load();

@@ -39,15 +39,13 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_FORMULA_PATH . 'fig_ids.php';
-include_once MODEL_FORMULA_PATH . 'result_list.php';
+include_once MODEL_RESULT_PATH . 'result_list.php';
+include_once SHARED_TYPES_PATH . 'api_type.php';
+include_once SHARED_PATH . 'api.php';
 
-use cfg\formula\fig_ids;
 use controller\controller;
 use cfg\user\user;
 use cfg\result\result_list;
@@ -57,7 +55,10 @@ use shared\api;
 $db_con = prg_start("api/resultList", "", false);
 
 // get the parameters
-$frm_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
+// TODO use a json with the ids
+// TODO add load by phrase list, formula and source
+$ids = $_GET[api::URL_VAR_ID_LST] ?? '';
+$ids = explode(",", $ids);
 
 $msg = '';
 $result = ''; // reset the json message string
@@ -69,9 +70,9 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    if ($frm_ids != '') {
+    if ($ids != '') {
         $lst = new result_list($usr);
-        $lst->load_by_ids(new fig_ids($frm_ids));
+        $lst->load_by_ids($ids);
         $result = $lst->api_json();
     } else {
         $msg = 'formula id is missing';

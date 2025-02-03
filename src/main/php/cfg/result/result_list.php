@@ -182,6 +182,19 @@ class result_list extends sandbox_value_list
         return $this->load($qp);
     }
 
+    /**
+     * load the result objects by the given complete id list from the database
+     *
+     * @param array $ids result ids that should be loaded
+     * @return bool true if at least one phrase has been loaded
+     */
+    function load_by_ids(array $ids): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
+        return $this->load($qp);
+    }
+
     // internal load
 
     /**
@@ -379,7 +392,28 @@ class result_list extends sandbox_value_list
         return $qp;
     }
 
-    // to review
+    /**
+     * create an SQL statement to retrieve a list of result objects by the complete id from the database
+     * TODO Prio 1 load also from prime and big tables
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids result ids that should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    {
+        $qp = $this->load_sql($sc, 'ids');
+        $sc->add_where(result::FLD_ID, $ids);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+
+    /*
+     * to review
+     */
 
     /**
      * the common query parameter to get a list of results
