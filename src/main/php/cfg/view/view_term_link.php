@@ -12,6 +12,7 @@
     - load:              database access object (DAO) functions
     - sql write fields:  field list for writing to the database
 
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it

@@ -31,7 +31,7 @@
 
 namespace html\verb;
 
-include_once HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_TYPES_PATH . 'type_list.php';
 include_once WEB_USER_PATH . 'user.php';
 include_once SHARED_PATH . 'library.php';

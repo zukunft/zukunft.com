@@ -153,7 +153,7 @@ class expression_tests
 
         $test_name = 'test getting the phrase ids';
         $result = implode(",", $exp->phr_id_lst($exp->ref_text())->lst);
-        $target = implode(",", array(words::TI_PCT, words::TI_THIS, words::TI_PRIOR));
+        $target = implode(",", array(words::TI_PCT, words::THIS_ID, words::PRIOR_ID));
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test the conversion of the database reference text to the user text';
@@ -164,15 +164,15 @@ class expression_tests
         $test_name = 'test the formula element list';
         $elm_lst = $exp->element_list($trm_lst);
         $result = $elm_lst->dsp_id();
-        $target = '"this","prior","prior" (element_id '
-            . words::TI_THIS . ',' . words::TI_PRIOR . ',' . words::TI_PRIOR
+        $target = '"this","' . words::PRIOR_NAME . '","' . words::PRIOR_NAME . '" (element_id '
+            . words::THIS_ID . ',' . words::PRIOR_ID . ',' . words::PRIOR_ID
             . ') for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         // element_special_following
         $phr_lst = $exp->element_special_following($trm_lst);
         $result = $phr_lst->dsp_name();
-        $target = '"prior","this"';
+        $target = '"' . words::PRIOR_NAME . '","' . words::THIS_NAME . '"';
         $t->assert('element_special_following for "' . $exp->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // TODO element_special_following_frm
@@ -186,7 +186,7 @@ class expression_tests
         $frm_prior = $trm_lst->get_by_name(formulas::PRIOR);
 
         $result = $elm_grp_lst->dsp_id();
-        $target = '"this" (' . $frm_this->id_obj() . ') / "prior" (' . $frm_prior->id_obj() . ') / "prior" ('
+        $target = '"' . words::THIS_NAME . '" (' . $frm_this->id_obj() . ') / "' . words::PRIOR_NAME . '" (' . $frm_prior->id_obj() . ') / "' . words::PRIOR_NAME . '" ('
             . $frm_prior->id_obj() . ')';
         $t->dsp_contains($test_name, $target, $result);
 

@@ -2,8 +2,9 @@
 
 /*
 
-    /cfg/db/sql_par_type.php - enum of the sql where parameter types
+    model/db/sql_par_type.php - enum of the sql where parameter types
     ------------------------
+
 
     This file is part of zukunft.com - calc with words
 

@@ -2,8 +2,8 @@
 
 /*
 
-    cfg/formula/component_link_type.php - db based ENUM of the component view link types
-    ---------------------------------
+    model/formula/component_link_type.php - db based ENUM of the component view link types
+    -----------------------------------
 
     This file is part of zukunft.com - calc with words
 

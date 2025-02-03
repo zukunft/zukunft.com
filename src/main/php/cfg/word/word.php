@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/word/word.php - the main word object
+    model/word/word.php - the main word object
     -----------------
 
     TODO move plural to a linked word?

@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/log/change_field.php - the field where a user has done a change including deprecated field names
+    model/log/change_field.php - the field where a user has done a change including deprecated field names
     ------------------------
 
 

@@ -2,8 +2,9 @@
 
 /*
 
-    /cfg/dp/sql_field_type.php - enum of the sql field types used e.g. for creating the table
+    model/dp/sql_field_type.php - enum of the sql field types used e.g. for creating the table
     --------------------------
+
 
     This file is part of zukunft.com - calc with words
 

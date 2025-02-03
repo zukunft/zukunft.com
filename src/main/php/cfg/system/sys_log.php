@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/system/sys_log.php - object to handle a system errors
+    model/system/sys_log.php - object to handle a system errors
     ----------------------
 
     This file is part of zukunft.com - calc with words

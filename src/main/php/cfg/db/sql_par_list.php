@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/db/sql_par_list.php - a list of sql parameters and calls
+    model/db/sql_par_list.php - a list of sql parameters and calls
     -----------------------
 
     The list of sql calls with the related parameters are used for block writes to the database

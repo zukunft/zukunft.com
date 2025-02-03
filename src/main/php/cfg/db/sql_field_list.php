@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/db/sql_field_list.php - a list of sql parameter fields
+    model/db/sql_field_list.php - a list of sql parameter fields
     -------------------------
 
     The list of the parameters used for one query or function on order of usage
@@ -15,6 +15,7 @@
         name of the db field
         assign type ( = / in / AND / OR / ... )
         the position of the related parameter
+
 
     This file is part of zukunft.com - calc with words
 

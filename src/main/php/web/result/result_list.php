@@ -35,7 +35,7 @@
 namespace html\result;
 
 include_once WEB_SANDBOX_PATH . 'list_value.php';
-include_once HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_RESULT_PATH . 'result.php';
 include_once WEB_USER_PATH . 'user_message.php';
@@ -81,6 +81,26 @@ class result_list extends list_value
             $result = true;
         }
         return $result;
+    }
+
+    /**
+     * load a list of results linked to
+     * a formula
+     * a phrase group
+     *   either of the source or the result
+     *   and with or without time selection
+     * a word or a triple
+     *
+     * @param object $obj a named object used for selection e.g. a formula
+     * @param bool $by_source set to true to force the selection e.g. by source phrase group id
+     * @return bool true if value or phrases are found
+     */
+    function load_by_obj(object $obj, bool $by_source = false): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_by_obj_old($db_con, $obj, $by_source);
+        return $this->load($qp);
     }
 
 

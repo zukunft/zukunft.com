@@ -5,6 +5,7 @@
     model/verb/verb_list.php - al list of verb objects
     ------------------------
 
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -35,7 +36,7 @@ include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
-include_once HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'html_base.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';

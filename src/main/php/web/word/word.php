@@ -33,10 +33,10 @@ namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once API_OBJECT_PATH . 'api_message.php';
-include_once HTML_PATH . 'button.php';
-include_once HTML_PATH . 'html_base.php';
-include_once HTML_PATH . 'html_selector.php';
-include_once HTML_PATH . 'rest_ctrl.php';
+include_once WEB_HTML_PATH . 'button.php';
+include_once WEB_HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'html_selector.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
 //include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 //include_once WEB_FORMULA_PATH . 'formula.php';

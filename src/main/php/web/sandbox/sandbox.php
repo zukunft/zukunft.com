@@ -33,7 +33,7 @@
 namespace html\sandbox;
 
 include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'html_base.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once WEB_USER_PATH . 'user.php';

@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/component/sheet/position.php - the position of a data_object within a sheet
+    model/component/sheet/position.php - the position of a data_object within a sheet
     --------------------------------
 
 

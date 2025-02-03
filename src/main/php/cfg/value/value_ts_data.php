@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/value/value_ts_data.php - for a single time series value data entry
+    model/value/value_ts_data.php - for a single time series value data entry
     ---------------------------
 
 

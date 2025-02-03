@@ -32,8 +32,8 @@
 namespace html\system;
 
 include_once WEB_LOG_PATH . 'log.php';
-include_once HTML_PATH . 'html_base.php';
-include_once HTML_PATH . 'rest_ctrl.php';
+include_once WEB_HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
 include_once MODEL_USER_PATH . 'user.php';

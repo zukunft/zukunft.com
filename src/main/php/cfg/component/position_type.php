@@ -2,7 +2,7 @@
 
 /*
 
-  cfg/component/position_type.php - db based ENUM of the view component position types
+  model/component/position_type.php - db based ENUM of the view component position types
   -------------------------------
   
   This file is part of zukunft.com - calc with words

@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/helper/config_numbers.php - additional behavior for the system and user config graph value tree
+    model/helper/config_numbers.php - additional behavior for the system and user config graph value tree
     -----------------------------
 
 

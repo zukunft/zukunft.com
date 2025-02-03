@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/component/component.php - a single display object like a headline or a table
+    model/component/component.php - a single display object like a headline or a table
     ---------------------------
 
     The main sections of this object are

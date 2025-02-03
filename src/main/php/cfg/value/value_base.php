@@ -1042,8 +1042,8 @@ class value_base extends sandbox_value
                                 $formula_text = $frm->ref_text;
                                 log_debug('scaling formula "' . $frm->name() . '" (' . $frm->id() . '): ' . $formula_text);
                                 if ($formula_text <> "") {
-                                    $l_part = $lib->str_left_of($formula_text, expression::CHAR_CALC);
-                                    $r_part = $lib->str_right_of($formula_text, expression::CHAR_CALC);
+                                    $l_part = $lib->str_left_of($formula_text, chars::CHAR_CALC);
+                                    $r_part = $lib->str_right_of($formula_text, chars::CHAR_CALC);
                                     $exp = new expression($this->user());
                                     $exp->set_ref_text($frm->ref_text);
                                     $res_phr_lst = $exp->res_phr_lst();
@@ -1058,7 +1058,7 @@ class value_base extends sandbox_value
                                             // test if it is a valid scale formula
                                             if ($res_wrd->is_type(phrase_type_shared::SCALING_HIDDEN)
                                                 and $r_wrd->is_type(phrase_type_shared::SCALING)) {
-                                                $wrd_symbol = expression::WORD_START . $r_wrd->id() . expression::WORD_END;
+                                                $wrd_symbol = chars::WORD_START . $r_wrd->id() . chars::WORD_END;
                                                 log_debug('replace (' . $wrd_symbol . ' in ' . $r_part . ' with ' . $this->value() . ')');
                                                 $r_part = str_replace($wrd_symbol, $this->value(), $r_part);
                                                 log_debug('replace done (' . $r_part . ')');
@@ -1112,6 +1112,7 @@ class value_base extends sandbox_value
 
         return $vars;
     }
+    // TODO test set_by_api_json
 
 
     /*

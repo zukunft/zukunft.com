@@ -126,7 +126,7 @@ class system_tests
         $t->assert_dsp_id($t->element_list(), '"minute" (element_id ' . words::MINUTE_ID . ') for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->expression(), '""second" = "minute" * 60" ({w' . words::SECOND_ID . '}={w' . words::MINUTE_ID . '}*60)');
         $t->assert_dsp_id($t->result_simple(), '"Mathematics" 123456 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->result_list(), '"Mathematics" 123456 / "percent" 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / 2,,,) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->result_list(), '"Mathematics" 123456 / "' . words::PERCENT . '" 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / 2,,,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->figure_value(), 'value figure "Pi (math)" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test) 2022-12-26 18:23:45');
         $t->assert_dsp_id($t->figure_list(), ' 3.1415926535898 Pi (math)  123456 "Mathematics"  (32770,-1)');
         $t->assert_dsp_id($t->view(), '"Start view" (view_id 1) for user 1 (zukunft.com system test)');
@@ -512,6 +512,10 @@ class system_tests
      * check if the functions in the classes are grouped by sections
      * if the sections are in the same order
      * and if the sections are described in the class header
+     * TODO check that all sections have a description in the header
+     * TODO check that the sections match the order in the header
+     * TODO check that the header section list match the general order
+     * TODO check that no function is in an unexpected section
      *
      * @param test_cleanup $t
      * @param string $base_path path name of the folder with the php scripts that should be checked
@@ -522,12 +526,12 @@ class system_tests
         $lib = new library();
         $file_array = $lib->dir_to_array($base_path);
         $code_files = $lib->array_to_path($file_array);
-        $pos = 1;
+        // loop over the code files
         foreach ($code_files as $code_file) {
             log_debug($code_file);
             $ctrl_code = file($base_path . $code_file);
             $function_section_names = $lib->php_code_function($ctrl_code);
-            // TODO create
+            // check the mandatory function are in the correct section
             foreach ($function_section_names as $function_section_name) {
                 $function_name = $function_section_name[0];
                 $section_name = $function_section_name[1];
@@ -537,6 +541,7 @@ class system_tests
                     if ($section_name == '' and $function_name != '') {
                         log_err('section for function ' . $function_name . ' missing');
                     }
+                    // check if the function is in the expected section
                     if ($section_name != $section_expected) {
                         if ($section_expected == '') {
                             if ($section_name != '') {

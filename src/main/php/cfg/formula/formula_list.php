@@ -47,6 +47,7 @@ include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_FORMULA_PATH . 'formula_list.php';
+include_once SHARED_CALC_PATH . 'parameter_type.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\config;
@@ -65,6 +66,7 @@ use cfg\word\triple;
 use cfg\word\word;
 use html\formula\formula as formula_dsp;
 use html\formula\formula_list as formula_list_dsp;
+use shared\calc\parameter_type;
 use shared\library;
 
 class formula_list extends sandbox_list

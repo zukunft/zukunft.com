@@ -2,8 +2,8 @@
 
 /*
 
-    model/formula/element_type.php - enum to link the class string to a db id for a formula element
-    --------------------------------------
+    shared/formula/parameter_type.php - enum to link the class string to a db id for a formula element
+    ---------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,16 +29,17 @@
 
 */
 
-namespace cfg\formula;
+namespace shared\calc;
 
 include_once MODEL_SYSTEM_PATH . 'BasicEnum.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 
+use cfg\formula\formula;
 use cfg\system\BasicEnum;
-use cfg\word\triple;
 use cfg\verb\verb;
+use cfg\word\triple;
 use cfg\word\word;
 
 class parameter_type extends BasicEnum

@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/system/system_time_type.php - the areas of execution times
+    model/system/system_time_type.php - the areas of execution times
     -------------------------------
 
     This file is part of zukunft.com - calc with words

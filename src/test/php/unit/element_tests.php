@@ -53,9 +53,9 @@ class element_tests
         $t->name = 'element->';
         $t->resource_path = 'db/element/';
 
-        $t->header('Unit tests of the formula element class (src/main/php/model/formula/element.php)');
+        $t->header('element unit tests');
 
-        $t->subheader('Element SQL setup statements');
+        $t->subheader('element sql setup');
         $elm_typ = new element_type('');
         $t->assert_sql_table_create($elm_typ);
         $t->assert_sql_index_create($elm_typ);
@@ -64,7 +64,7 @@ class element_tests
         $t->assert_sql_index_create($elm);
         $t->assert_sql_foreign_key_create($elm);
 
-        $t->subheader('SQL creation tests');
+        $t->subheader('formula sql read');
 
         $elm = $t->element();
         $t->assert_sql_by_id($sc, $elm);
@@ -80,6 +80,10 @@ class element_tests
         //$t->assert_sql_delete($sc, $elm);
         //$t->assert_sql_delete($sc, $elm, [sql_type::USER]);
 
+
+        $t->subheader('element api unit tests');
+        $elm = $t->element();
+        $t->assert_api_json($elm);
 
         // JSON export list
         /*

@@ -153,7 +153,7 @@ include_once MODEL_VIEW_PATH . 'view_term_link.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
 include_once MODEL_WORD_PATH . 'word.php';
-include_once HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'html_base.php';
 include_once SHARED_PATH . 'library.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';

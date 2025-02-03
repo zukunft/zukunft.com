@@ -37,7 +37,7 @@ namespace html\types;
 
 include_once SHARED_PATH . 'api.php';
 include_once WEB_TYPES_PATH . 'protection.php';
-include_once HTML_PATH . 'html_selector.php';
+include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_TYPES_PATH . 'type_object.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';

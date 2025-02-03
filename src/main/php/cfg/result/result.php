@@ -60,7 +60,6 @@ include_once SERVICE_EXPORT_PATH . 'result_exp.php';
 include_once MODEL_FORMULA_PATH . 'expression.php';
 include_once MODEL_FORMULA_PATH . 'figure.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'parameter_type.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
@@ -72,7 +71,8 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
-include_once HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'html_base.php';
+include_once SHARED_CALC_PATH . 'parameter_type.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -88,10 +88,8 @@ use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\element\element_list;
 use cfg\export\export;
-use cfg\formula\expression;
 use cfg\formula\figure;
 use cfg\formula\formula;
-use cfg\formula\parameter_type;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_list;
@@ -102,11 +100,12 @@ use cfg\sandbox\sandbox_value;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value_base;
+use DateTime;
 use html\formula\formula as formula_dsp;
 use html\html_base;
+use shared\calc\parameter_type;
 use shared\json_fields;
 use shared\library;
-use DateTime;
 use shared\types\api_type_list;
 
 class result extends sandbox_value
@@ -1485,7 +1484,7 @@ class result extends sandbox_value
 
                 // e.g. if the formula is a division and the values used have a measure word like meter or CHF, the result is only in percent, but not in meter or CHF
                 // simplified version, that needs to be review to handle more complex formulas
-                if (strpos($this->frm->ref_text_r, expression::DIV) !== false) {
+                if (strpos($this->frm->ref_text_r, chars::DIV) !== false) {
                     log_debug('check measure ' . $this->grp()->phrase_list()->dsp_id());
                     if ($this->grp()->phrase_list()->has_measure()) {
                         $this->grp()->phrase_list()->ex_measure();

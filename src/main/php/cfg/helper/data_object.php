@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/helper/data_object.php - a header object for all data objects e.g. phrase_list, values, formulas
+    model/helper/data_object.php - a header object for all data objects e.g. phrase_list, values, formulas
     --------------------------
 
     the views are only added here for selection boxes

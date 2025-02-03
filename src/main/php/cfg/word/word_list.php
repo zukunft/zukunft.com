@@ -17,7 +17,7 @@
     - construct and map: including the mapping of the db row to this word object
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
-    - sql:               to create sql statments e.g. for load word from the sql database
+    - sql:               to create sql statements e.g. for load word from the sql database
     - tree building      create foaf trees
     - im- and export:    create an export object and set the vars from an import object
     - modify:            change potentially all object and all variables of this list with one function call

@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/element/element_group_list.php - simply a list of formula element groups to place the name function
+    model/element/element_group_list.php - simply a list of formula element groups to place the name function
     ----------------------------------
 
     This file is part of zukunft.com - calc with words

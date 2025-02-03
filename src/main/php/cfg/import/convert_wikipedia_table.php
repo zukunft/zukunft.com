@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/import/convert_wikipedia_table.php - convert a wikipedia table to a
+    model/import/convert_wikipedia_table.php - convert a wikipedia table to a
     --------------------------------------
 
 

@@ -34,6 +34,7 @@ namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
+use html\element\element;
 use shared\api;
 use shared\const\formulas;
 use shared\const\views;
@@ -100,7 +101,8 @@ class element_write_tests
                 }
                 $t->display('element->dsp_id', $target, $result);
 
-                $result = $elm->name_linked($back);
+                $elm_dsp = new element($elm->api_json());
+                $result = $elm_dsp->link($back);
                 $url = '<a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::WORD_ID . '&' . api::URL_VAR_ID . '=';
                 if ($pos == 0) {
                     $target = $url . $wrd_country->id() . '&back=0" title="Country">Country</a>';

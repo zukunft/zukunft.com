@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/log/change_table_field.php - helper class to create the database view with the log table and field name
+    model/log/change_table_field.php - helper class to create the database view with the log table and field name
     ------------------------------
 
 

@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/system/sys_log_type.php - to link coded functionality to a system log status
+    model/system/sys_log_type.php - to link coded functionality to a system log status
     ---------------------------
 
     TODO to be combined with sys_log_level

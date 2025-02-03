@@ -39,7 +39,7 @@
 
 namespace html\sandbox;
 
-include_once HTML_PATH . 'rest_ctrl.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_WORD_PATH . 'word.php';
 

@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/sandbox/sandbox.php - the superclass for handling user specific objects including the database saving
+    model/sandbox/sandbox.php - the superclass for handling user specific objects including the database saving
     -----------------------
 
     TODO check if all function overwrite are really needed

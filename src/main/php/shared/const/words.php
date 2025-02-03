@@ -217,10 +217,10 @@ class words
     const TN_PCT = 'percent';
     const TI_PCT = 172;
     // _PRE are the predefined words
-    const TN_THIS_PRE = 'this'; // the test name for the predefined word 'this'
-    const TI_THIS = 192;
-    const TN_PRIOR_PRE = 'prior';
-    const TI_PRIOR = 194;
+    const THIS_NAME = 'this'; // the test name for the predefined word 'this'
+    const THIS_ID = 192;
+    const PRIOR_NAME = 'prior';
+    const PRIOR_ID = 194;
     const TN_PARTS = 'parts';
     const TI_PARTS = 265;
     const TN_TOTAL_PRE = 'total';

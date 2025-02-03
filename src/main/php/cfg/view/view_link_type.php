@@ -2,8 +2,9 @@
 
 /*
 
-    cfg/view/view_link_type.php - to define the behaviour of the link between a term and a view
+    model/view/view_link_type.php - to define the behaviour of the link between a term and a view
     ---------------------------
+
 
     This file is part of zukunft.com - calc with words
 

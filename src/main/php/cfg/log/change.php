@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/log/change.php - for logging changes in named objects such as words and formulas
+    model/log/change.php - for logging changes in named objects such as words and formulas
     ------------------
 
     The main sections of this object are

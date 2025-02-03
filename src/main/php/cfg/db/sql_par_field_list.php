@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/db/sql_par_field_list.php - a list of sql parameter fields
+    model/db/sql_par_field_list.php - a list of sql parameter fields
     -----------------------------
 
     TODO split this list into

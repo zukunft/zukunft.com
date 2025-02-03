@@ -35,7 +35,7 @@
 namespace html\helper;
 
 include_once WEB_VALUE_PATH . 'value_list.php';
-include_once HTML_PATH . 'rest_ctrl.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';

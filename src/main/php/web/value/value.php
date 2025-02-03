@@ -36,8 +36,8 @@ namespace html\value;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
 include_once DB_PATH . 'sql_db.php';
-include_once HTML_PATH . 'html_base.php';
-include_once HTML_PATH . 'rest_ctrl.php';
+include_once WEB_HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once WEB_FIGURE_PATH . 'figure.php';

@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/phrase/phrase.php - either a word or a triple
+    model/phrase/phrase.php - either a word or a triple
     ---------------------
 
     this object is not stored in the database in a separate table

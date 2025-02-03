@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/formula/formula.php - the main formula object
+    model/formula/formula.php - the main formula object
     -----------------------
 
     The main sections of this object are
@@ -93,13 +93,13 @@ include_once MODEL_FORMULA_PATH . 'formula_type.php';
 include_once MODEL_FORMULA_PATH . 'formula_link.php';
 include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
 include_once MODEL_FORMULA_PATH . 'expression.php';
-include_once MODEL_FORMULA_PATH . 'parameter_type.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_CALC_PATH . 'parameter_type.php';
+include_once SHARED_CONST_PATH . 'formulas.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_CONST_PATH . 'formulas.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -135,9 +135,10 @@ use DateTime;
 use Exception;
 use html\word\word as word_dsp;
 use math;
+use shared\calc\parameter_type;
+use shared\const\formulas;
 use shared\json_fields;
 use shared\library;
-use shared\const\formulas;
 use shared\types\api_type_list;
 use shared\types\phrase_type as phrase_type_shared;
 
@@ -1006,7 +1007,7 @@ class formula extends sandbox_typed
         if ($this->ref_text_r == '' and $this->ref_text <> '') {
             $exp = new expression($this->user());
             $exp->set_ref_text($this->ref_text, $pre_trm_lst);
-            $this->ref_text_r = expression::CHAR_CALC . $exp->r_part();
+            $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
         }
 
         // create the result list
@@ -1280,7 +1281,7 @@ class formula extends sandbox_typed
                 $has_result_phrases = true;
             }
             // use only the part right of the equation sign for the result calculation
-            $this->ref_text_r = expression::CHAR_CALC . $exp->r_part();
+            $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
             log_debug('->calc got result words of ' . $this->ref_text_r);
 
             // get the list of the numeric results
@@ -1421,27 +1422,6 @@ class formula extends sandbox_typed
         return $trm;
     }
 
-    /**
-     * map a formula api json to this model formula object
-     * similar to the import_obj function but using the database id instead of names as the unique key
-     * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-            if ($key == json_fields::USR_TEXT) {
-                if ($value <> '') {
-                    $this->set_user_text($value);
-                }
-            }
-        }
-
-        return $msg;
-    }
-
 
     /*
      * api
@@ -1466,6 +1446,27 @@ class formula extends sandbox_typed
         }
 
         return $vars;
+    }
+
+    /**
+     * map a formula api json to this model formula object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $msg = parent::set_by_api_json($api_json);
+
+        foreach ($api_json as $key => $value) {
+            if ($key == json_fields::USR_TEXT) {
+                if ($value <> '') {
+                    $this->set_user_text($value);
+                }
+            }
+        }
+
+        return $msg;
     }
 
 
@@ -1662,7 +1663,7 @@ class formula extends sandbox_typed
      */
     function wrd_ids(string $frm_text): array
     {
-        return $this->trm_ids($frm_text, expression::WORD_START, expression::WORD_END);
+        return $this->trm_ids($frm_text, chars::WORD_START, chars::WORD_END);
     }
 
     /**
@@ -1671,7 +1672,7 @@ class formula extends sandbox_typed
      */
     function trp_ids(string $frm_text): array
     {
-        return $this->trm_ids($frm_text, expression::TRIPLE_START, expression::TRIPLE_END);
+        return $this->trm_ids($frm_text, chars::TRIPLE_START, chars::TRIPLE_END);
     }
 
     /**
@@ -1680,7 +1681,7 @@ class formula extends sandbox_typed
      */
     function vrb_ids(string $frm_text): array
     {
-        return $this->trm_ids($frm_text, expression::VERB_START, expression::VERB_END);
+        return $this->trm_ids($frm_text, chars::VERB_START, chars::VERB_END);
     }
 
     /**
@@ -1689,7 +1690,7 @@ class formula extends sandbox_typed
      */
     function frm_ids(string $frm_text): array
     {
-        return $this->trm_ids($frm_text, expression::FORMULA_START, expression::FORMULA_END);
+        return $this->trm_ids($frm_text, chars::FORMULA_START, chars::FORMULA_END);
     }
 
     /**

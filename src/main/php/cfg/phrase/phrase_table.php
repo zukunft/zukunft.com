@@ -2,8 +2,9 @@
 
 /*
 
-    cfg/phrase/phrase_table.php - remember which phrases are stored in which table and pod
+    model/phrase/phrase_table.php - remember which phrases are stored in which table and pod
     ---------------------------
+
 
     This file is part of zukunft.com - calc with words
 

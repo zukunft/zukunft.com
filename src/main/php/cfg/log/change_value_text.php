@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/log/change_value.php - log object for changes of all kind of values (table, prime, big and standard)
+    model/log/change_value.php - log object for changes of all kind of values (table, prime, big and standard)
     ------------------------
 
     This file is part of zukunft.com - calc with words

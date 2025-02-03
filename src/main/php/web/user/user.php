@@ -33,7 +33,7 @@ namespace html\user;
 
 // get the api const that are shared between the backend and the html frontend
 // get the pure html frontend objects
-include_once HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_PATH . 'json_fields.php';

@@ -67,6 +67,7 @@
 include_once SHARED_PATH . 'library.php';
 
 use cfg\formula\expression;
+use shared\const\chars;
 use shared\library;
 
 class math
@@ -89,7 +90,7 @@ class math
         $result = $formula;
 
         if ($result <> "") {
-            if ($result[0] == expression::CHAR_CALC) {
+            if ($result[0] == chars::CHAR_CALC) {
                 $result = substr($result, 1);
             }
 
@@ -135,7 +136,7 @@ class math
         do {
             // don't look into text that is a high quotes
             if ($open_brackets == 0) {
-                if (substr($formula, $pos, strlen(expression::TXT_FIELD)) == expression::TXT_FIELD) {
+                if (substr($formula, $pos, strlen(chars::TXT_FIELD)) == chars::TXT_FIELD) {
                     if ($text_linked) {
                         $text_linked = False;
                     } else {
@@ -151,10 +152,10 @@ class math
                         $found = true;
                     }
                 }
-                if (substr($formula, $pos, strlen(expression::BRACKET_OPEN)) == expression::BRACKET_OPEN) {
+                if (substr($formula, $pos, strlen(chars::BRACKET_OPEN)) == chars::BRACKET_OPEN) {
                     $open_brackets = $open_brackets + 1;
                 }
-                if (substr($formula, $pos, strlen(expression::BRACKET_CLOSE)) == expression::BRACKET_CLOSE && $open_brackets > 0) {
+                if (substr($formula, $pos, strlen(chars::BRACKET_CLOSE)) == chars::BRACKET_CLOSE && $open_brackets > 0) {
                     $open_brackets = $open_brackets - 1;
                 }
             }
@@ -185,13 +186,13 @@ class math
         $pos = -1;
 
         if ($pos < 0) {
-            $pos = $this->pos_separator($formula, expression::FUNC_IF, 0);
+            $pos = $this->pos_separator($formula, chars::FUNC_IF, 0);
         }
         if ($pos < 0) {
-            $pos = $this->pos_separator($formula, expression::FUNC_SUM, 0);
+            $pos = $this->pos_separator($formula, chars::FUNC_SUM, 0);
         }
         if ($pos < 0) {
-            $pos = $this->pos_separator($formula, expression::FUNC_IS_NUM, 0);
+            $pos = $this->pos_separator($formula, chars::FUNC_IS_NUM, 0);
         }
 
         log_debug($pos);
@@ -224,14 +225,14 @@ class math
         // if not found return -1 because the separator can also be on position 0
         $result = '';
 
-        if (str_starts_with($formula, expression::FUNC_IF)) {
-            $result = expression::FUNC_IF;
+        if (str_starts_with($formula, chars::FUNC_IF)) {
+            $result = chars::FUNC_IF;
         }
-        if (str_starts_with($formula, expression::FUNC_SUM)) {
-            $result = expression::FUNC_SUM;
+        if (str_starts_with($formula, chars::FUNC_SUM)) {
+            $result = chars::FUNC_SUM;
         }
-        if (str_starts_with($formula, expression::FUNC_IS_NUM)) {
-            $result = expression::FUNC_IS_NUM;
+        if (str_starts_with($formula, chars::FUNC_IS_NUM)) {
+            $result = chars::FUNC_IS_NUM;
         }
 
         log_debug($result);
@@ -248,28 +249,28 @@ class math
         // if not found return -1 because the separator can also be on position 0
         $next_pos = -1;
 
-        $pos = $this->pos_separator($formula, expression::ADD, 0);
+        $pos = $this->pos_separator($formula, chars::ADD, 0);
         if ($pos >= 0 and ($pos < $next_pos or $next_pos < 0)) {
             $next_pos = $pos;
         }
-        $pos = $this->pos_separator($formula, expression::SUB, 0);
+        $pos = $this->pos_separator($formula, chars::SUB, 0);
         if ($pos >= 0 and ($pos < $next_pos or $next_pos < 0)) {
             $next_pos = $pos;
         }
-        $pos = $this->pos_separator($formula, expression::MUL, 0);
+        $pos = $this->pos_separator($formula, chars::MUL, 0);
         if ($pos >= 0 and ($pos < $next_pos or $next_pos < 0)) {
             $next_pos = $pos;
         }
-        $pos = $this->pos_separator($formula, expression::DIV, 0);
+        $pos = $this->pos_separator($formula, chars::DIV, 0);
         if ($pos >= 0 and ($pos < $next_pos or $next_pos < 0)) {
             $next_pos = $pos;
         }
 
-        $pos = $this->pos_separator($formula, expression::AND, 0);
+        $pos = $this->pos_separator($formula, chars::AND, 0);
         if ($pos >= 0 and ($pos < $next_pos or $next_pos < 0)) {
             $next_pos = $pos;
         }
-        $pos = $this->pos_separator($formula, expression::OR, 0);
+        $pos = $this->pos_separator($formula, chars::OR, 0);
         if ($pos >= 0 and ($pos < $next_pos or $next_pos < 0)) {
             $next_pos = $pos;
         }
@@ -302,23 +303,23 @@ class math
         log_debug($formula);
 
         $result = '';
-        if ($formula[0] == expression::ADD) {
-            $result = expression::ADD;
+        if ($formula[0] == chars::ADD) {
+            $result = chars::ADD;
         } else {
-            if ($formula[0] == expression::SUB) {
-                $result = expression::SUB;
+            if ($formula[0] == chars::SUB) {
+                $result = chars::SUB;
             } else {
-                if ($formula[0] == expression::MUL) {
-                    $result = expression::MUL;
+                if ($formula[0] == chars::MUL) {
+                    $result = chars::MUL;
                 } else {
-                    if ($formula[0] == expression::DIV) {
-                        $result = expression::DIV;
+                    if ($formula[0] == chars::DIV) {
+                        $result = chars::DIV;
                     } else {
-                        if ($formula[0] == expression::AND) {
-                            $result = expression::AND;
+                        if ($formula[0] == chars::AND) {
+                            $result = chars::AND;
                         } else {
-                            if ($formula[0] == expression::OR) {
-                                $result = expression::OR;
+                            if ($formula[0] == chars::OR) {
+                                $result = chars::OR;
                             }
                         }
                     }
@@ -337,18 +338,18 @@ class math
 
         $result = '';
         $pos = $this->pos_operator($formula);
-        if ($formula[$pos] == expression::ADD) {
-            $result = expression::ADD;
-        } elseif ($formula[$pos] == expression::SUB) {
-            $result = expression::SUB;
-        } elseif ($formula[$pos] == expression::MUL) {
-            $result = expression::MUL;
-        } elseif ($formula[$pos] == expression::DIV) {
-            $result = expression::DIV;
-        } elseif ($formula[$pos] == expression::AND) {
-            $result = expression::AND;
-        } elseif ($formula[$pos] == expression::OR) {
-            $result = expression::OR;
+        if ($formula[$pos] == chars::ADD) {
+            $result = chars::ADD;
+        } elseif ($formula[$pos] == chars::SUB) {
+            $result = chars::SUB;
+        } elseif ($formula[$pos] == chars::MUL) {
+            $result = chars::MUL;
+        } elseif ($formula[$pos] == chars::DIV) {
+            $result = chars::DIV;
+        } elseif ($formula[$pos] == chars::AND) {
+            $result = chars::AND;
+        } elseif ($formula[$pos] == chars::OR) {
+            $result = chars::OR;
         }
         return $result;
     }
@@ -363,11 +364,11 @@ class math
         // if not found return -1 because the separator can also be on position 0
         $result = '';
 
-        if (str_starts_with($formula, expression::BRACKET_OPEN)) {
-            $result = expression::BRACKET_OPEN;
+        if (str_starts_with($formula, chars::BRACKET_OPEN)) {
+            $result = chars::BRACKET_OPEN;
         }
-        if (str_starts_with($formula, expression::BRACKET_CLOSE)) {
-            $result = expression::BRACKET_CLOSE;
+        if (str_starts_with($formula, chars::BRACKET_CLOSE)) {
+            $result = chars::BRACKET_CLOSE;
         }
 
         log_debug( $result);
@@ -381,7 +382,7 @@ class math
     {
         log_debug($formula);
 
-        if (str_starts_with($formula, expression::BRACKET_OPEN)) {
+        if (str_starts_with($formula, chars::BRACKET_OPEN)) {
             return true;
         } else {
             return false;
@@ -393,7 +394,7 @@ class math
      */
     private function has_bracket_close(string $formula): bool
     {
-        if (str_starts_with($formula, expression::BRACKET_CLOSE)) {
+        if (str_starts_with($formula, chars::BRACKET_CLOSE)) {
             return true;
         } else {
             return false;
@@ -405,7 +406,7 @@ class math
      */
     function has_formula(string $formula): bool
     {
-        if (str_starts_with($formula, expression::FORMULA_START)) {
+        if (str_starts_with($formula, chars::FORMULA_START)) {
             return true;
         } else {
             return false;
@@ -417,7 +418,7 @@ class math
      */
     function is_text_only(string $formula): bool
     {
-        if ($formula[0] == expression::TXT_FIELD && substr($formula, -1) == expression::TXT_FIELD) {
+        if ($formula[0] == chars::TXT_FIELD && substr($formula, -1) == chars::TXT_FIELD) {
             return true;
         } else {
             return false;
@@ -446,8 +447,8 @@ class math
 
         $calc = new math();
 
-        $pos = $calc->pos_separator($formula, expression::WORD_START, 0,);
-        $end = $calc->pos_separator($formula, expression::WORD_END, $pos);
+        $pos = $calc->pos_separator($formula, chars::WORD_START, 0,);
+        $end = $calc->pos_separator($formula, chars::WORD_END, $pos);
         if ($pos >= 0 and $end > $pos) {
             $result = $pos;
         }
@@ -498,10 +499,10 @@ class math
 
                 //echo "calc op ".$operator."<br>";
                 switch ($operator) {
-                    case expression::MUL:
+                    case chars::MUL:
                         $result = $result_l * $result_r;
                         break;
-                    case expression::DIV:
+                    case chars::DIV:
                         if ($result_r <> 0) {
                             log_debug("result " . $result_l . " / " . $result_r);
                             $result = $result_l / $result_r;
@@ -509,10 +510,10 @@ class math
                             $result = 0;
                         }
                         break;
-                    case expression::ADD:
+                    case chars::ADD:
                         $result = $result_l + $result_r;
                         break;
-                    case expression::SUB:
+                    case chars::SUB:
                         log_debug("result " . $result_l . " / " . $result_r);
                         $result = $result_l - $result_r;
                         break;
@@ -534,7 +535,7 @@ class math
      */
     private function math_mul(string $formula): string
     {
-        return $this->calc($formula, expression::MUL);
+        return $this->calc($formula, chars::MUL);
     }
 
     /**
@@ -542,7 +543,7 @@ class math
      */
     private function math_div(string $formula): string
     {
-        return $this->calc($formula, expression::DIV);
+        return $this->calc($formula, chars::DIV);
     }
 
     /**
@@ -550,7 +551,7 @@ class math
      */
     private function math_add(string $formula): string
     {
-        return $this->calc($formula, expression::ADD);
+        return $this->calc($formula, chars::ADD);
     }
 
     /**
@@ -558,7 +559,7 @@ class math
      */
     private function math_sub(string $formula): string
     {
-        return $this->calc($formula, expression::SUB);
+        return $this->calc($formula, chars::SUB);
     }
 
     /**
@@ -571,11 +572,11 @@ class math
         $lib = new library();
 
         // get the position of the next bracket
-        $inner_start_pos = $this->pos_separator($result, expression::BRACKET_OPEN, 0);
+        $inner_start_pos = $this->pos_separator($result, chars::BRACKET_OPEN, 0);
         // if there is a bracket ...
         if ($inner_start_pos >= 0) {
             // ... and a closing bracket ...
-            $inner_end_pos = $this->pos_separator($result, expression::BRACKET_CLOSE, $inner_start_pos + 1);
+            $inner_end_pos = $this->pos_separator($result, chars::BRACKET_CLOSE, $inner_start_pos + 1);
 
             // ... separate the formula
 
@@ -587,7 +588,7 @@ class math
             log_debug("inner_part " . $inner_part);
 
             // get the right part, but don't get the result of the right part because will be done by the calling function
-            $right_part = $lib->str_right_of($result, $left_part . expression::BRACKET_OPEN . $inner_part . expression::BRACKET_CLOSE);
+            $right_part = $lib->str_right_of($result, $left_part . chars::BRACKET_OPEN . $inner_part . chars::BRACKET_CLOSE);
             log_debug("right_part " . $right_part);
 
             // ... and something needs to be calculated
@@ -618,13 +619,13 @@ class math
 
         // get the position of the next bracket
         log_debug("separate ");
-        $if_start_pos = $this->pos_separator($result, expression::FUNC_IF, 0);
-        $inner_start_pos = $this->pos_separator($result, expression::BRACKET_OPEN, 0);
+        $if_start_pos = $this->pos_separator($result, chars::FUNC_IF, 0);
+        $inner_start_pos = $this->pos_separator($result, chars::BRACKET_OPEN, 0);
         log_debug("separate ");
         // if there is a bracket ...
         if ($if_start_pos >= 0 and $inner_start_pos >= 0 and $if_start_pos < $inner_start_pos) {
             // ... and a closing bracket ...
-            $inner_end_pos = $this->pos_separator($result, expression::BRACKET_CLOSE, $inner_start_pos + 1);
+            $inner_end_pos = $this->pos_separator($result, chars::BRACKET_CLOSE, $inner_start_pos + 1);
 
             // ... separate the formula
 
@@ -636,7 +637,7 @@ class math
             log_debug('inner_part "' . $inner_part . '"');
 
             // get the right part, but don't get the result of the right part because will be done by the calling function
-            $right_part = $lib->str_right_of($result, $left_part . expression::BRACKET_OPEN . $inner_part . expression::BRACKET_CLOSE);
+            $right_part = $lib->str_right_of($result, $left_part . chars::BRACKET_OPEN . $inner_part . chars::BRACKET_CLOSE);
             log_debug("right_part " . $right_part);
 
             // ... and something needs to be looked at
@@ -645,19 +646,19 @@ class math
                 // depending on the operator split the inner part if needed
                 $operator = $this->get_operator_pos($inner_part);
                 log_debug('operator "' . $operator . '" in "' . $inner_part . '"');
-                if ($operator == expression::AND or $operator == expression::OR) {
+                if ($operator == chars::AND or $operator == chars::OR) {
                     $result = null; // by default no result
                     $inner_left_part = $lib->str_left_of($inner_part, $operator);
                     $inner_right_part = $lib->str_right_of($inner_part, $operator);
                     $inner_left_part = $this->parse($inner_left_part);
                     $inner_right_part = $this->parse($inner_right_part);
-                    if ($operator == expression::AND) {
+                    if ($operator == chars::AND) {
                         if ($inner_left_part and $inner_right_part) {
                             log_debug('if: get logical result for "' . $inner_part . '" is "true"');
                             $result = $this->parse($right_part);
                         }
                     }
-                    if ($operator == expression::OR) {
+                    if ($operator == chars::OR) {
                         if ($inner_left_part or $inner_right_part) {
                             log_debug('if: get logical result for "' . $inner_part . '" is "true"');
                             $result = $this->parse($right_part);

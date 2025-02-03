@@ -34,8 +34,8 @@
 namespace html\sandbox;
 
 include_once API_OBJECT_PATH . 'api_message.php';
-include_once HTML_PATH . 'html_selector.php';
-include_once HTML_PATH . 'rest_ctrl.php';
+include_once WEB_HTML_PATH . 'html_selector.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
@@ -255,7 +255,7 @@ class list_dsp
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @returns bool true if the object has been added
      */
-    protected function add_obj(object $obj, bool $allow_duplicates = false): bool
+    public function add_obj(object $obj, bool $allow_duplicates = false): bool
     {
         $result = false;
         if (!in_array($obj->id(), $this->id_lst()) or $allow_duplicates) {

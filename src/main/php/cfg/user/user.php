@@ -906,6 +906,8 @@ class user extends db_object_seq_id
         return $vars;
     }
 
+    // TODO test set_by_api_json
+
 
     /*
      * im- and export

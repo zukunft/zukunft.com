@@ -5,6 +5,7 @@
     model/formula/result_list.php - a list of formula results
     ------------------------------------
 
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -56,7 +57,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_db.php';
-include_once HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';

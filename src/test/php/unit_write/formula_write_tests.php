@@ -239,6 +239,7 @@ class formula_write_tests
         }
         $target = 8505.251;
         // TODO activate Prio 1
+        // TODO if possible move as many tests as possible to unit tests
         //$t->display('formula->calc "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $target, $result);
 
         // load the test ids
@@ -251,7 +252,7 @@ class formula_write_tests
         $frm_html = new formula_dsp($frm->api_json());
         $exp = $frm->expression();
         $result = $exp->dsp_id();
-        $target = '""percent" = ( "this" - "prior" ) / "prior"" ({w' . $wrd_percent->id() . '}=({f' . $frm_this->id() . '}-{f' . $frm_prior->id() . '})/{f' . $frm_prior->id() . '})';
+        $target = '""percent" = ( "' . words::THIS_NAME . '" - "' . words::PRIOR_NAME . '" ) / "' . words::PRIOR_NAME . '"" ({w' . $wrd_percent->id() . '}=({f' . $frm_this->id() . '}-{f' . $frm_prior->id() . '})/{f' . $frm_prior->id() . '})';
         $t->display('formula->expression for ' . $frm->dsp_id(), $target, $result);
 
         // ... the formula name
@@ -261,7 +262,7 @@ class formula_write_tests
 
         // ... in HTML format
         $result = $frm_html->dsp_text($back);
-        $target = '"percent" = ( <a href="/http/formula_edit.php?id=' . $frm_this->id() . '&back=0" title="this">this</a> - <a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title=<a href="/http/formula_edit.php?id=20&back=0" title="prior">prior</a>>prior</a> ) / <a href="/http/formula_edit.php?id=20&back=0" title=<a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title="prior">prior</a>>prior</a>';
+        $target = '"' . words::PERCENT . '" = ( <a href="/http/formula_edit.php?id=' . $frm_this->id() . '&back=0" title="' . words::THIS_NAME . '">this</a> - <a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title=<a href="/http/formula_edit.php?id=20&back=0" title="' . words::PRIOR_NAME . '">prior</a>>prior</a> ) / <a href="/http/formula_edit.php?id=20&back=0" title=<a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title="' . words::PRIOR_NAME . '">prior</a>>prior</a>';
         $t->display('formula->dsp_text for ' . $frm->dsp_id(), $target, $result);
 
         // ... in HTML format with link
@@ -380,7 +381,7 @@ class formula_write_tests
         $t->display('formula->save rename logged for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
 
         // check if the formula parameters can be added
-        $frm_renamed->usr_text = '= "this"';
+        $frm_renamed->usr_text = '= "' . words::THIS_NAME . '"';
         $frm_renamed->description = formulas::SYSTEM_TEXT_RENAMED . ' description';
         $frm_renamed->type_id = $frm_typ_cac->id(formula_type::THIS);
         $frm_renamed->need_all_val = True;
@@ -391,7 +392,7 @@ class formula_write_tests
         // ... and if the formula parameters have been added
         $frm_reloaded = $t->load_formula(formulas::SYSTEM_TEXT_RENAMED);
         $result = $frm_reloaded->usr_text;
-        $target = '= "this"';
+        $target = '= "' . words::THIS_NAME . '"';
         $t->display('formula->load usr_text for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_reloaded->ref_text;
         $target = '={f' . $frm_this->id() . '}';
@@ -413,8 +414,8 @@ class formula_write_tests
         $log->row_id = $frm_reloaded->id();
         $result = $log->dsp_last(true);
         // use the next line if system config is non-standard
-        $target = user::SYSTEM_TEST_NAME . ' changed "percent" = ( "this" - "prior" ) / "prior" to = "this"';
-        $target = user::SYSTEM_TEST_NAME . ' changed ""percent" = 1 - ( "this" / "prior" )" to "= "this""';
+        $target = user::SYSTEM_TEST_NAME . ' changed "' . words::PERCENT . '" = ( "' . words::THIS_NAME . '" - "' . words::PRIOR_NAME . '" ) / "' . words::PRIOR_NAME . '" to = "' . words::THIS_NAME . '"';
+        $target = user::SYSTEM_TEST_NAME . ' changed ""' . words::PERCENT . '" = 1 - ( "' . words::THIS_NAME . '" / "' . words::PRIOR_NAME . '" )" to "= "' . words::THIS_NAME . '""';
         $t->display('formula->load resolved_text for "' . formulas::SYSTEM_TEXT_RENAMED . '" logged', $target, $result);
         $log->set_field(change_field_list::FLD_FORMULA_REF_TEXT);
         $result = $log->dsp_last(true);
@@ -430,7 +431,7 @@ class formula_write_tests
         $result = $log->dsp_last(true);
         // TODO review what is correct
         $target = user::SYSTEM_TEST_NAME . ' changed calc to this';
-        $target = user::SYSTEM_TEST_NAME . ' added "this"';
+        $target = user::SYSTEM_TEST_NAME . ' added "' . words::THIS_NAME . '"';
         $target = user::SYSTEM_TEST_NAME . ' added "4"';
         $t->display('formula->load formula_type_id for "' . formulas::SYSTEM_TEXT_RENAMED . '" logged', $target, $result);
         $log->set_field(change_field_list::FLD_FORMULA_ALL);
@@ -441,7 +442,7 @@ class formula_write_tests
         // check if a user specific formula is created if another user changes the formula
         $frm_usr2 = new formula($t->usr2);
         $frm_usr2->load_by_name(formulas::SYSTEM_TEXT_RENAMED, formula::class);
-        $frm_usr2->usr_text = '"percent" = ( "this" - "prior" ) / "prior"';
+        $frm_usr2->usr_text = '"' . words::PERCENT . '" = ( "' . words::THIS_NAME . '" - "' . words::PRIOR_NAME . '" ) / "' . words::PRIOR_NAME . '"';
         $frm_usr2->description = formulas::SYSTEM_TEXT_RENAMED . ' description2';
         $frm_usr2->type_id = $frm_typ_cac->id(formula_type::NEXT);
         $frm_usr2->need_all_val = False;
@@ -453,7 +454,7 @@ class formula_write_tests
         $frm_usr2_reloaded = new formula($t->usr2);
         $frm_usr2_reloaded->load_by_name(formulas::SYSTEM_TEXT_RENAMED, formula::class);
         $result = $frm_usr2_reloaded->usr_text;
-        $target = '"percent" = ( "this" - "prior" ) / "prior"';
+        $target = '"' . words::PERCENT . '" = ( "' . words::THIS_NAME . '" - "' . words::PRIOR_NAME . '" ) / "' . words::PRIOR_NAME . '"';
         $t->display('formula->load usr_text for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_usr2_reloaded->ref_text;
         $target = '{w' . $wrd_percent->id() . '}=({f' . $frm_this->id() . '}-{f' . $frm_prior->id() . '})/{f' . $frm_prior->id() . '}';
@@ -471,7 +472,7 @@ class formula_write_tests
         // ... and the formula for the original user remains unchanged
         $frm_reloaded = $t->load_formula(formulas::SYSTEM_TEXT_RENAMED);
         $result = $frm_reloaded->usr_text;
-        $target = '= "this"';
+        $target = '= "' . words::THIS_NAME . '"';
         $t->display('formula->load usr_text for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_reloaded->ref_text;
         $target = '={f' . $frm_this->id() . '}';
@@ -489,7 +490,7 @@ class formula_write_tests
         // check if undo all specific changes removes the user formula
         $frm_usr2 = new formula($t->usr2);
         $frm_usr2->load_by_name(formulas::SYSTEM_TEXT_RENAMED, formula::class);
-        $frm_usr2->usr_text = '= "this"';
+        $frm_usr2->usr_text = '= "' . words::THIS_NAME . '"';
         $frm_usr2->description = formulas::SYSTEM_TEXT_RENAMED . ' description';
         $frm_usr2->type_id = $frm_typ_cac->id(formula_type::THIS);
         $frm_usr2->need_all_val = True;
@@ -501,7 +502,7 @@ class formula_write_tests
         $frm_usr2_reloaded = new formula($t->usr2);
         $frm_usr2_reloaded->load_by_name(formulas::SYSTEM_TEXT_RENAMED, formula::class);
         $result = $frm_usr2_reloaded->usr_text;
-        $target = '= "this"';
+        $target = '= "' . words::THIS_NAME . '"';
         $t->display('formula->load usr_text for "' . formulas::SYSTEM_TEXT_RENAMED . '"', $target, $result);
         $result = $frm_usr2_reloaded->ref_text;
         $target = '={f' . $frm_this->id() . '}';

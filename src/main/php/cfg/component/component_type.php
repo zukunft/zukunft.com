@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/component/component_type.php - db based ENUM of the component types
+    model/component/component_type.php - db based ENUM of the component types
     --------------------------------
 
     This file is part of zukunft.com - calc with words

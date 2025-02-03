@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/db/sql_type_list.php - a list of parameters to define which sql statement should be created
+    model/db/sql_type_list.php - a list of parameters to define which sql statement should be created
     ------------------------
 
 

@@ -91,7 +91,7 @@ class element_group_write_tests
 
             // test debug id first
             $result = $elm_grp->dsp_id();
-            $target = '"this" (' . $frm_this->id() . ') and "Switzerland","inhabitants","million"';
+            $target = '"' . words::THIS_NAME . '" (' . $frm_this->id() . ') and "Switzerland","inhabitants","million"';
             $t->display('element_group->dsp_id', $target, $result);
 
             // test symbol for text replacement in the formula expression text
@@ -101,7 +101,7 @@ class element_group_write_tests
 
             // test the display name that can be used for user debugging
             $result = trim($elm_grp->dsp_names());
-            $target = trim('<a href="/http/formula_edit.php?id=' . $frm_this->id() . '" title="this">this</a>');
+            $target = trim('<a href="/http/formula_edit.php?id=' . $frm_this->id() . '" title="' . words::THIS_NAME . '">this</a>');
             $t->display('element_group->dsp_names', $target, $result);
 
             // test if the values for an element group are displayed correctly

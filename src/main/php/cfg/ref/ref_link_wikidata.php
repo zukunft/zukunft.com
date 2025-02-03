@@ -5,6 +5,7 @@
     model/ref/ref_link_wikidata.php - link for the reference type wikidata
     -------------------------------
 
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it

@@ -2,8 +2,9 @@
 
 /*
 
-    cfg/log/change_value.php - log object for changes of values with a big group id
+    model/log/change_value.php - log object for changes of values with a big group id
     ------------------------
+
 
     This file is part of zukunft.com - calc with words
 

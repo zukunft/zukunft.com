@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/phrase/term.php - either a word, verb, triple or formula
+    model/phrase/term.php - either a word, verb, triple or formula
     -------------------
 
     TODO: load formula word
@@ -62,7 +62,7 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_db.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'html_base.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';

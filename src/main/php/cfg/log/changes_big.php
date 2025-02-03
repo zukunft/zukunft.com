@@ -2,8 +2,9 @@
 
 /*
 
-    cfg/log/changes_big.php - log group changes for values with more than 16 phrases
+    model/log/changes_big.php - log group changes for values with more than 16 phrases
     -----------------------
+
 
     This file is part of zukunft.com - calc with words
 

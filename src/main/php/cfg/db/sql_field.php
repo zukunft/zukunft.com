@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/db/sql_field.php - to combine a sql field name with a value and a sql column type
+    model/db/sql_field.php - to combine a sql field name with a value and a sql column type
     --------------------
 
 

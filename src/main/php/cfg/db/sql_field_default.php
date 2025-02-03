@@ -5,6 +5,7 @@
     model/dp/sql_field_default.php - enum of the sql default value types used
     ------------------------------
 
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it

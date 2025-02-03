@@ -63,20 +63,24 @@ class formulas
     const DIAMETER = '= "circumference" / "Pi"';
     const DIAMETER_DB = '={w' . words::CIRCUMFERENCE_ID . '}/{w' . words::PI_ID . '}';
     const THIS_NAME = 'this';
+    const THIS_ID = 18;
+    const THIS_EXP = '="Now"';
     const PRIOR = 'prior';
+    const PRIOR_ID = 20;
+    const PRIOR_EXP = '=value["time jump"->,"Now"->"follower"]';
     const PERCENT = 'percent';
     const INCREASE = 'increase';
     const INCREASE_ID = 21;
-    const INCREASE_EXP = '"percent" = ( "this" - "prior" ) / "prior"';
-    const INCREASE_ALTERNATIVE_EXP = '"percent" = 1 - ( "this" / "prior" )';
-    const INCREASE_DB = '{w' . words::TI_PCT . '}=({w' . words::TI_THIS . '}-{w' . words::TI_PRIOR . '})/{w' . words::TI_PRIOR . '}';
+    const INCREASE_EXP = '"' . words::PERCENT . '" = ( "' . words::THIS_NAME . '" - "' . words::PRIOR_NAME . '" ) / "' . words::PRIOR_NAME . '"';
+    const INCREASE_ALTERNATIVE_EXP = '"' . words::PERCENT . '" = 1 - ( "' . words::THIS_NAME . '" / "' . words::PRIOR_NAME . '" )';
+    const INCREASE_DB = '{w' . words::TI_PCT . '}=({w' . words::THIS_ID . '}-{w' . words::PRIOR_ID . '})/{w' . words::PRIOR_ID . '}';
     const LITRE_TO_M3 = 'scale litre to m3';
     const BIGGEST_CITY = 'population in the city of Zurich in percent of Switzerland';
     const SCALE_MIO = 'scale millions to one';
     const SCALE_MIO_EXP = '"one" = "millions" * 1000000';
     const SCALE_MIO_DB = '{w' . words::ONE_ID . '} = {w' . words::MIO_ID . '} * 1000000';
     const PARTS_IN_PERCENT = 'parts in percent';
-    const PARTS_IN_PERCENT_EXP = '"percent" = "parts" "of" / "total"'; // TODO check if separate verb "of each" is needed
+    const PARTS_IN_PERCENT_EXP = '"' . words::PERCENT . '" = "parts" "of" / "total"'; // TODO check if separate verb "of each" is needed
     const PARTS_IN_PERCENT_DB = '{w' . words::TI_PCT . '}={w' . words::TI_PARTS . '}{v' . verbs::TI_OF . '}/{w' . words::TI_TOTAL . '}';
 
     // persevered formula names for unit and integration tests

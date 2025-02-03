@@ -7,6 +7,7 @@
 
     for writing the user change to the database the classes model/user/user_log* are used
 
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -51,7 +52,6 @@ include_once DB_PATH . 'sql_type.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
-include_once WEB_LOG_PATH . 'change_log_list.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 

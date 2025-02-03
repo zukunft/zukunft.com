@@ -32,7 +32,7 @@
 namespace html\view;
 
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once HTML_PATH . 'rest_ctrl.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_REF_PATH . 'source.php';
 include_once WEB_SANDBOX_PATH . 'sandbox.php';
 include_once WEB_USER_PATH . 'user_message.php';

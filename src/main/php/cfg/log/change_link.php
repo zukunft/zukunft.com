@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/log/change_link.php - object to save updates of references (links) by the user in the database in a format, so that it can fast be displayed to the user
+    model/log/change_link.php - object to save updates of references (links) by the user in the database in a format, so that it can fast be displayed to the user
     -----------------------
 
     A requirement for the expected behaviour of this setup is the strict adherence of these rules in all classes:

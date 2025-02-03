@@ -11,6 +11,7 @@
     it should be possible to translate types on the fly
     on each program start the types are loaded once into an array, because they are not supposed to change during execution
 
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it

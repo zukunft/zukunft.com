@@ -34,7 +34,7 @@
 
 namespace html;
 
-include_once HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'html_base.php';
 include_once SHARED_PATH . 'library.php';
 
 use shared\library;

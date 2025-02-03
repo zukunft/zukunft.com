@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/component/view_style.php - db based ENUM of the view and component display styles e.g. the width
+    model/component/view_style.php - db based ENUM of the view and component display styles e.g. the width
     ----------------------------
 
     This file is part of zukunft.com - calc with words

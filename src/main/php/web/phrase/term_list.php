@@ -35,10 +35,14 @@
 namespace html\phrase;
 
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once WEB_SANDBOX_PATH . 'sandbox.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'library.php';
 
 use html\sandbox\list_dsp;
+use html\sandbox\sandbox;
 use html\user\user_message;
+use shared\library;
 
 class term_list extends list_dsp
 {
@@ -97,4 +101,49 @@ class term_list extends list_dsp
     {
         return $this->add_obj($obj);
     }
+
+    /**
+     * get a term from the term list selected by the word, triple, formula or verb id
+     *
+     * @param int $id the word, triple, formula or verb id (not the term id!)
+     * @param string $class the word, triple, formula or verb class name
+     * @return term|null the word object from the list or null
+     */
+    function term_by_obj_id(int $id, string $class): ?term
+    {
+        $trm = new term();
+        $trm->set_obj_from_class($class);
+        $trm->set_obj_id($id);
+        $trm_id = $trm->id();
+        if ($trm_id != 0) {
+            $trm = $this->get_by_id($trm_id);
+        }
+        return $trm;
+    }
+
+
+    /*
+     * search
+     */
+
+    /**
+     * select an item by id
+     * TODO add unit tests
+     *
+     * @param int $id the unique database id of the object that should be returned
+     * @return sandbox|null the found user sandbox object or null if no id is found
+     */
+    function get_by_id(int $id): ?object
+    {
+        $lib = new library();
+        $key_lst = $this->id_pos_lst();
+        if (array_key_exists($id, $key_lst)) {
+            $pos = $key_lst[$id];
+            return $this->lst[$pos];
+        } else {
+            log_info($id . ' not found in ' . $lib->dsp_array_keys($key_lst));
+            return null;
+        }
+    }
+
 }

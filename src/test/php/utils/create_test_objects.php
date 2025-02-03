@@ -667,7 +667,7 @@ class create_test_objects extends test_base
     /**
      * @return word percent to test percent related rules e.g. to remove measure at division
      */
-    function word_pct(): word
+    function word_percent(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::TI_PCT, words::TN_PCT);
@@ -730,7 +730,7 @@ class create_test_objects extends test_base
     function word_this(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_THIS, words::TN_THIS_PRE);
+        $wrd->set(words::THIS_ID, words::THIS_NAME);
         $wrd->set_type(phrase_type_shared::THIS);
         return $wrd;
     }
@@ -738,7 +738,7 @@ class create_test_objects extends test_base
     function word_prior(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_PRIOR, words::TN_PRIOR_PRE);
+        $wrd->set(words::PRIOR_ID, words::PRIOR_NAME);
         $wrd->set_type(phrase_type_shared::PRIOR);
         return $wrd;
     }
@@ -900,7 +900,7 @@ class create_test_objects extends test_base
         $lst->add($this->word_2019());
         $lst->add($this->word_one());
         $lst->add($this->word_mio());
-        $lst->add($this->word_pct());
+        $lst->add($this->word_percent());
         return $lst;
     }
 
@@ -1206,7 +1206,7 @@ class create_test_objects extends test_base
         $lst->add($this->word_2019()->phrase());
         $lst->add($this->word_one()->phrase());
         $lst->add($this->word_mio()->phrase());
-        $lst->add($this->word_pct()->phrase());
+        $lst->add($this->word_percent()->phrase());
         $lst->add($this->triple()->phrase());
         $lst->add($this->triple_pi()->phrase());
         $lst->add($this->zh_canton()->phrase());
@@ -1518,7 +1518,7 @@ class create_test_objects extends test_base
     function phrase_list_zh_city_pct(): phrase_list
     {
         $lst = $this->phrase_list_zh_city();
-        $lst->add($this->word_pct()->phrase());
+        $lst->add($this->word_percent()->phrase());
         return $lst;
     }
 
@@ -1559,7 +1559,7 @@ class create_test_objects extends test_base
         $lst->add($this->word_canton()->phrase());
         $lst->add($this->word_inhabitant()->phrase());
         $lst->add($this->word_2019()->phrase());
-        $lst->add($this->word_pct()->phrase());
+        $lst->add($this->word_percent()->phrase());
         return $lst;
     }
 
@@ -1595,7 +1595,7 @@ class create_test_objects extends test_base
     function phrase_list_increase(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->word_pct()->phrase());
+        $lst->add($this->word_percent()->phrase());
         $lst->add($this->word_this()->phrase());
         $lst->add($this->word_prior()->phrase());
         $lst->add($this->word_ch()->phrase());
@@ -1842,7 +1842,7 @@ class create_test_objects extends test_base
         $lst->add($this->triple_pi()->term());
         $lst->add($this->word_pi()->term());
         $lst->add($this->word_cf()->term());
-        $lst->add($this->word_pct()->term());
+        $lst->add($this->word_percent()->term());
         $lst->add($this->word_prior()->term());
         $lst->add($this->word_this()->term());
         $lst->add($this->word_parts()->term());
@@ -1861,6 +1861,22 @@ class create_test_objects extends test_base
         $lst = new term_list($this->usr1);
         $lst->add($this->word_second()->term());
         $lst->add($this->word_minute()->term());
+        return $lst;
+    }
+
+    /**
+     * @return term_list the terms relevant for testing the increase formula
+     */
+    function term_list_increase(): term_list
+    {
+        $lst = new term_list($this->usr1);
+        $lst->add($this->word_percent()->term());
+        $lst->add($this->formula_this()->term());
+        $lst->add($this->formula_prior()->term());
+        $lst->add($this->word_ch()->term());
+        $lst->add($this->word_inhabitant()->term());
+        $lst->add($this->word_2020()->term());
+        $lst->add($this->word_mio()->term());
         return $lst;
     }
 
@@ -2042,7 +2058,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return formula with all fields set and a reseved test name for testing the db write function
+     * @return formula with all fields set and a reserved test name for testing the db write function
      */
     function formula_filled_add(): formula
     {
@@ -2060,8 +2076,32 @@ class create_test_objects extends test_base
     {
         $frm = new formula($this->usr1);
         $frm->set(formulas::INCREASE_ID, formulas::INCREASE);
-        $frm->set_user_text(formulas::INCREASE_EXP, $this->phrase_list_increase()->term_list());
+        $frm->set_user_text(formulas::INCREASE_EXP, $this->term_list_increase());
         $frm->set_type(formula_type::CALC);
+        return $frm;
+    }
+
+    /**
+     * @return formula to select the actual value related to the given context
+     */
+    function formula_this(): formula
+    {
+        $frm = new formula($this->usr1);
+        $frm->set(formulas::THIS_ID, formulas::THIS_NAME);
+        $frm->set_user_text(formulas::THIS_EXP, $this->phrase_list_increase()->term_list());
+        $frm->set_type(formula_type::THIS);
+        return $frm;
+    }
+
+    /**
+     * @return formula to select the last value previous the actual value related to the given context
+     */
+    function formula_prior(): formula
+    {
+        $frm = new formula($this->usr1);
+        $frm->set(formulas::PRIOR_ID, formulas::PRIOR);
+        $frm->set_user_text(formulas::PRIOR_EXP, $this->phrase_list_increase()->term_list());
+        $frm->set_type(formula_type::PREV);
         return $frm;
     }
 
@@ -2110,12 +2150,13 @@ class create_test_objects extends test_base
     {
         $frm = new formula($this->usr1);
         $frm->set_name(formulas::SYSTEM_TEXT_ADD_VIA_FUNC);
-        $frm->set_user_text(formulas::INCREASE_EXP, $this->phrase_list_increase()->term_list());
+        $frm->set_user_text(formulas::INCREASE_EXP, $this->term_list_increase());
         $frm->set_type(formula_type::CALC);
         return $frm;
     }
 
     /**
+     * based on the phrase list by intention to test what happens if the formulas are missing
      * @return formula to test the sql insert without use of function
      */
     function formula_add_by_sql(): formula
@@ -2135,8 +2176,8 @@ class create_test_objects extends test_base
 
     function element(): element
     {
-        $lst = $this->element_list();
-        return $lst->lst()[0];
+        $elm_lst = $this->element_list();
+        return $elm_lst->lst()[0];
     }
 
     function element_list(): element_list

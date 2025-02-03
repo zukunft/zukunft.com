@@ -39,6 +39,7 @@ class protection_type
     const USER = "user_protection";
     const ADMIN = "admin_protection";
     const ADMIN_ID = 3;
+    // TODO Prio 2 add a test case to force the usage of the parent protection type
     const NO_CHANGE = "no_change";
 
 }

@@ -132,7 +132,7 @@ if ($usr->id() > 0) {
             if ($trm->id_obj() > 0) {
                 /*
                 // TODO: if a formula exists, suggest to create a word as a formula link, so that the formula results can be shown in parallel to the entered values
-                if (substr($id_txt, 0, strlen(expression::MAKER_FORMULA_START)) == expression::MAKER_FORMULA_START) {
+                if (substr($id_txt, 0, strlen(chars::MAKER_FORMULA_START)) == chars::MAKER_FORMULA_START) {
                   // maybe ask for confirmation
                   // change the link type to "formula link"
                   $wrd->type_id = cl(SQL_WORD_TYPE_FORMULA_LINK);

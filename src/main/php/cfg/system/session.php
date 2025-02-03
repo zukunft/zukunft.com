@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/system/session.php - to control the user frontend sessions
+    model/system/session.php - to control the user frontend sessions
     ----------------------
 
 

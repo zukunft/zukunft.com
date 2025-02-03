@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/log/change_action.php - the change type done by a user
+    model/log/change_action.php - the change type done by a user
     -------------------------
 
 

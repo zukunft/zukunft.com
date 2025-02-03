@@ -34,9 +34,9 @@ namespace html\log;
 
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_db.php';
-include_once HTML_PATH . 'button.php';
-include_once HTML_PATH . 'html_base.php';
-include_once HTML_PATH . 'rest_ctrl.php';
+include_once WEB_HTML_PATH . 'button.php';
+include_once WEB_HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_LOG_PATH . 'change_table_list.php';

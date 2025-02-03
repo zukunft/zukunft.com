@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/element/element_list.php - a list of formula elements to place the name function
+    model/element/element_list.php - a list of formula elements to place the name function
     ----------------------------
 
     The main sections of this object are

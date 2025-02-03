@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/view/view.php - the main display object
+    model/view/view.php - the main display object
     -----------------
 
     The main sections of this object are
@@ -853,7 +853,7 @@ class view extends sandbox_typed
                     $this->code_id = $value;
                 }
             }
-            /*
+            /* TODO review
             if ($key == exp_obj::FLD_VIEW) {
                 $wrd_view = new view($this->user());
                 if ($do_save) {

@@ -2,8 +2,9 @@
 
 /*
 
-    cfg/log/change_action_list.php - the const for the change log action table
+    model/log/change_action_list.php - the const for the change log action table
     -----------------------------
+
 
     This file is part of zukunft.com - calc with words
 

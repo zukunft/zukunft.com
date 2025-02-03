@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/db/sql_par.php - combine the query name, the sql statement and the parameters in one object
+    model/db/sql_par.php - combine the query name, the sql statement and the parameters in one object
     ------------------
 
 

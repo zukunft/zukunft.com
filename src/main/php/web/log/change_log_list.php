@@ -31,7 +31,7 @@
 
 namespace html\log;
 
-include_once HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 

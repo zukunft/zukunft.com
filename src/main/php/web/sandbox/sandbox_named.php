@@ -34,7 +34,7 @@ namespace html\sandbox;
 
 include_once WEB_SANDBOX_PATH . 'sandbox.php';
 include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once HTML_PATH . 'rest_ctrl.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';

@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/element/element_group.php - a group of formula elements that, in combination, return a value or a list of values
+    model/element/element_group.php - a group of formula elements that, in combination, return a value or a list of values
     -----------------------------
 
     e.g. for for "ABB", "differentiator" and "Sector" (or "Sectors" "of" "ABB")
@@ -132,7 +132,7 @@ class element_group
 
         foreach ($this->lst as $frm_elm) {
             // display the formula element name
-            $result .= $frm_elm->name_linked($back) . ' ';
+            $result .= $frm_elm->link($back) . ' ';
         }
 
         return $result;

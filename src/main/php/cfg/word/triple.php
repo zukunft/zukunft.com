@@ -68,7 +68,7 @@ include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
-include_once HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'html_base.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_LANGUAGE_PATH . 'language.php';
@@ -1458,7 +1458,7 @@ class triple extends sandbox_link_named
                 $this->set_verb($vrb);
             }
 
-            /* TODO
+            /* TODO review
             if ($key == self::FLD_PLURAL) {
                 if ($value <> '') {
                     $this->plural = $value;

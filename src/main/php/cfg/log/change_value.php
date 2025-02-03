@@ -2,8 +2,9 @@
 
 /*
 
-    cfg/log/change_value.php - log object for changes of all kind of values (table, prime, big and standard)
+    model/log/change_value.php - log object for changes of all kind of values (table, prime, big and standard)
     ------------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -44,7 +45,6 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once WEB_LOG_PATH . 'change_log_named.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;

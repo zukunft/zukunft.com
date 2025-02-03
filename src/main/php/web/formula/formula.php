@@ -36,17 +36,17 @@ namespace html\formula;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once DB_PATH . 'sql_db.php';
-include_once HTML_PATH . 'button.php';
-include_once HTML_PATH . 'html_base.php';
-include_once HTML_PATH . 'html_selector.php';
-include_once HTML_PATH . 'rest_ctrl.php';
-include_once MODEL_FORMULA_PATH . 'expression.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_RESULT_PATH . 'result_list.php';
+include_once WEB_HTML_PATH . 'button.php';
+include_once WEB_HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'html_selector.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
+include_once WEB_FORMULA_PATH . 'expression.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_PHRASE_PATH . 'term_list.php';
+include_once WEB_RESULT_PATH . 'result.php';
+include_once WEB_RESULT_PATH . 'result_list.php';
+include_once WEB_ELEMENT_PATH . 'element.php';
 include_once WEB_LOG_PATH . 'user_log_display.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
@@ -56,20 +56,18 @@ include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'api.php';
-include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_db;
-use cfg\formula\expression;
-use cfg\formula\formula_link_list;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\phrase\term_list;
-use cfg\result\result;
-use cfg\result\result_list;
+use html\phrase\phrase;
+use html\phrase\phrase_list;
+use html\phrase\term_list;
+use html\result\result;
+use html\result\result_list;
 use html\button;
 use html\html_base;
 use html\html_selector;
@@ -287,16 +285,16 @@ class formula extends sandbox_typed
      */
 
     // create the HTML code to display the formula text in the human-readable format including links to the formula elements
-    function dsp_text(string $back = ''): string
+    function dsp_text(string $back = '', term_list|null $trm_lst = null): string
     {
         log_debug();
         $result = $this->usr_text;
 
-        $exp = $this->expression();
-        $elm_lst = $exp->element_list();
+        $exp = $this->expression($trm_lst);
+        $elm_lst = $exp->element_list($trm_lst);
         foreach ($elm_lst->lst() as $elm) {
-            log_debug("replace " . $elm->name() . " with " . $elm->name_linked($back) . ".");
-            $result = str_replace('"' . $elm->name() . '"', $elm->name_linked($back), $result);
+            log_debug("replace " . $elm->name() . " with " . $elm->link($back) . ".");
+            $result = str_replace('"' . $elm->name() . '"', $elm->link($back), $result);
         }
 
         log_debug($result);
@@ -558,11 +556,10 @@ class formula extends sandbox_typed
      */
     function expression(?term_list $trm_lst = null): expression
     {
-        global $usr;
-        $exp = new expression($usr);
+        $exp = new expression();
         $exp->set_ref_text($this->ref_text(), $trm_lst);
         $exp->set_user_text($this->usr_text(), $trm_lst);
-        log_debug('->expression ' . $exp->ref_text() . ' for user ' . $exp->usr->name);
+        log_debug('->expression ' . $exp->ref_text());
         return $exp;
     }
 

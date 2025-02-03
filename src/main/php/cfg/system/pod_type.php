@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/system/pod_type.php - to assign predefined code to a some pods
+    model/system/pod_type.php - to assign predefined code to a some pods
     -----------------------
 
     type versus status

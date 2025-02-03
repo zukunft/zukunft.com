@@ -14,14 +14,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
-    TODO api class section must always have the functions api_json_array and set_from_api_json
-    TODO deprecate all api objects not needed any more
-    TODO move triple const to a separate class triples
-    TODO all api messages should be optional with or without header
-    TODO move common api code parts to a separate class
-    TODO include the field names in the openapi definition check
-    TODO check the order of the class sections
-    TODO used different name for each type e.g. view_style_name instead of type_name to be able to log the name of the change
+    TODO move all user configuration settings to the config yaml
+    TODO check the no frontend class is used in the backend
+    TODO check the no backend class is used in the frontend
     TODO test the single html frontend function like $wrd->btn_edit() with the html_tests e.g. word_html_tests
     TODO create an test the html frontend masks using run_ui_test in unit/api_tests
     TODO remove all other frontend tests
@@ -60,6 +55,15 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
     TODO set the vars of the backend objects to private e.g. to make sure that missing db updates can be detected
     TODO set vars in the frontend object to public and reduce the set and get function because frontend objects never save directly to the database
+
+    TODO api review
+    TODO all api messages should be optional with or without header
+    TODO move common api code parts to a separate class
+    TODO include the field names in the openapi definition check
+
+    TODO code review
+    TODO check the order of the class sections
+    TODO used different name for each type e.g. view_style_name instead of type_name to be able to log the name of the change
 
     TODO for user_values allow a source 0=not set or exclude the source_id from the prime index?
     TODO test if a table with 1, 2, 4, 8, 16, 32 or 64 smallint key is faster and more efficient than a table with one bigger index
@@ -360,6 +364,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO use a universal type to create the value tables, so instead of prime, main and big use value 1,2 and 3
     TODO allow to add screenshots to the import file to check if the recreated screen matches the given screenshot
     TODO create a tool for rules base confirm of screen result changes
+    TODO create a smart-vote for initiatives path where the first question is yes or no and if the answer is yes,
+         the next question is based on an argument against it. if the argument is denied the answer if moving more the to yes path
+         and another argument against is presented and so on ...
     TODO create a related table with the phrase, the context as a group, the weight and the related phrase
          for fast selection of phrases related to a given phrase within a given context
          this related table should be automatically filled by a batch job based e.g. on the number and usage
@@ -367,7 +374,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
     TODO message handling
         in dought return a user message to the highest level, so that it can be shown to the user
-        in case of an exception convert it to a user message as soon as all relevant information are availible
+        in case of an exception convert it to a user message as soon as all relevant information are available
 
     TODO use cases:
         create a sample how to create a personal pension plan for 1. 2. and 3. pillar independent from banks and pension funds
@@ -707,6 +714,7 @@ const MODEL_COMPONENT_PATH = MODEL_PATH . 'component' . DIRECTORY_SEPARATOR;
 const MODEL_SHEET_PATH = MODEL_COMPONENT_PATH . 'sheet' . DIRECTORY_SEPARATOR;
 
 const SHARED_PATH = PHP_PATH_LIB . 'shared' . DIRECTORY_SEPARATOR;
+const SHARED_CALC_PATH = SHARED_PATH . 'calc' . DIRECTORY_SEPARATOR;
 const SHARED_CONST_PATH = SHARED_PATH . 'const' . DIRECTORY_SEPARATOR;
 const SHARED_ENUM_PATH = SHARED_PATH . 'enum' . DIRECTORY_SEPARATOR;
 const SHARED_TYPES_PATH = SHARED_PATH . 'types' . DIRECTORY_SEPARATOR;
@@ -729,6 +737,7 @@ const API_VIEW_PATH = API_OBJECT_PATH . 'view' . DIRECTORY_SEPARATOR;
 const API_COMPONENT_PATH = API_OBJECT_PATH . 'component' . DIRECTORY_SEPARATOR;
 const API_REF_PATH = API_OBJECT_PATH . 'ref' . DIRECTORY_SEPARATOR;
 const WEB_PATH = PHP_PATH_LIB . 'web' . DIRECTORY_SEPARATOR; // path of the pure html frontend objects
+const WEB_ELEMENT_PATH = WEB_PATH . 'element' . DIRECTORY_SEPARATOR;
 const WEB_LOG_PATH = WEB_PATH . 'log' . DIRECTORY_SEPARATOR;
 const WEB_USER_PATH = WEB_PATH . 'user' . DIRECTORY_SEPARATOR;
 const WEB_SYSTEM_PATH = WEB_PATH . 'system' . DIRECTORY_SEPARATOR;
@@ -760,8 +769,6 @@ const REL_SRC_PATH = REL_ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
 const REL_MAIN_PATH = REL_SRC_PATH . 'main' . DIRECTORY_SEPARATOR;
 const REL_RES_PATH = REL_MAIN_PATH . 'resources' . DIRECTORY_SEPARATOR;
 const REL_IMAGE_PATH = REL_RES_PATH . 'images' . DIRECTORY_SEPARATOR;
-
-const HTML_PATH = WEB_PATH . 'html' . DIRECTORY_SEPARATOR;
 
 
 const DB_SETUP_SQL_FILE = 'zukunft_structure.sql';

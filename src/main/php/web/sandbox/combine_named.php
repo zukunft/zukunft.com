@@ -35,7 +35,7 @@
 namespace html\sandbox;
 
 include_once WEB_SANDBOX_PATH . 'combine_object.php';
-include_once HTML_PATH . 'rest_ctrl.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use html\rest_ctrl as api_dsp;

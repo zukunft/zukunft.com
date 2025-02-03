@@ -40,6 +40,7 @@ include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_VERB_PATH . 'verb.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -53,6 +54,7 @@ use html\user\user_message;
 use html\verb\verb as verb_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
+use shared\types\phrase_type;
 use shared\json_fields;
 use shared\library;
 
@@ -104,6 +106,25 @@ class term extends combine_named_dsp
     }
 
     /**
+     * create the expected object based on the class name
+     * must have the same logic as the database view and the frontend
+     * @param string $class the term id as received e.g. from the database view
+     * @return void
+     */
+    function set_obj_from_class(string $class): void
+    {
+        if ($class == triple::class) {
+            $this->obj = new triple();
+        } elseif ($class == formula::class) {
+            $this->obj = new formula();
+        } elseif ($class == verb::class) {
+            $this->obj = new verb();
+        } else {
+            $this->obj = new word();
+        }
+    }
+
+    /**
      * set the object id based on the given term id
      * must have the same logic as the database view and the api
      * @param int $id the term id that is converted to the object id
@@ -144,6 +165,158 @@ class term extends combine_named_dsp
     function obj_id(): int|string|null
     {
         return $this->obj()->id();
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load the term object by the word or triple id (not the phrase id)
+     * @param int $id the id of the term object e.g. for a triple "-1"
+     * @param string $class not used for this term object just to be compatible with the db base object
+     * @param bool $including_triples to include the words or triple of a triple (not recursive)
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_obj_id(int $id, string $class, bool $including_triples = true): int
+    {
+        log_debug($this->name());
+        $result = 0;
+
+        if ($class == word::class) {
+            if ($this->load_word_by_id($id)) {
+                $result = $this->obj_id();
+            }
+        } elseif ($class == triple::class) {
+            if ($this->load_triple_by_id($id, $including_triples)) {
+                $result = $this->obj_id();
+            }
+        } elseif ($class == formula::class) {
+            if ($this->load_formula_by_id($id)) {
+                $result = $this->obj_id();
+            }
+        } elseif ($class == verb::class) {
+            if ($this->load_verb_by_id($id)) {
+                $result = $this->obj_id();
+            }
+        } else {
+            log_err('Unexpected class ' . $class . ' when creating term ' . $this->dsp_id());
+        }
+
+        log_debug('term->load loaded id "' . $this->id() . '" for ' . $this->name());
+
+        return $result;
+    }
+
+    /**
+     * simply load a word
+     * (separate functions for loading  for a better overview)
+     */
+    private
+    function load_word_by_id(int $id): bool
+    {
+        global $phr_typ_cac;
+
+        $result = false;
+        $wrd = new word();
+        if ($wrd->load_by_id($id)) {
+            if ($wrd->type_id() == $phr_typ_cac->id(phrase_type::FORMULA_LINK)) {
+                $result = $this->load_formula_by_id($id);
+            } else {
+                $this->set_id_from_obj($wrd->id(), word::class);
+                $this->obj = $wrd;
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * simply load a triple
+     */
+    private
+    function load_triple_by_id(int $id, bool $including_triples): bool
+    {
+        $result = false;
+        if ($including_triples) {
+            $trp = new triple();
+            if ($trp->load_by_id($id)) {
+                $this->set_id_from_obj($trp->id(), triple::class);
+                $this->obj = $trp;
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * simply load a formula
+     * without fixing any missing related word issues
+     */
+    private function load_formula_by_id(int $id): bool
+    {
+        $result = false;
+        $frm = new formula();
+        if ($frm->load_by_id($id)) {
+            $this->set_id_from_obj($frm->id(), formula::class);
+            $this->obj = $frm;
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * simply load a verb
+     */
+    private function load_verb_by_id(int $id): bool
+    {
+        $result = false;
+        $vrb = new verb;
+        $vrb->set_name($this->name());
+        if ($vrb->load_by_id($id)) {
+            $this->set_id_from_obj($vrb->id(), verb::class);
+            $this->obj = $vrb;
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * set the term id based id the word, triple, verb or formula id
+     * must have the same logic as the database view and the frontend
+     * TODO deprecate?
+     *
+     * @param int $id the object id that is converted to the term id
+     * @param string $class the class of the term object
+     * @return void
+     */
+    function set_id_from_obj(int $id, string $class): void
+    {
+        if ($id != null) {
+            if ($class == word::class) {
+                if ($this->obj == null) {
+                    $this->obj = new word();
+                    $this->obj->set_id($id);
+                }
+            } elseif ($class == triple::class) {
+                if ($this->obj == null) {
+                    $this->obj = new triple();
+                    $this->obj->set_id($id);
+                }
+            } elseif ($class == formula::class) {
+                if ($this->obj == null) {
+                    $this->obj = new formula();
+                    $this->obj->set_id($id);
+                }
+            } elseif ($class == verb::class) {
+                if ($this->obj == null) {
+                    $this->obj = new verb();
+                    $this->obj->set_id($id);
+                }
+            }
+            $this->obj->set_id($id);
+        }
     }
 
 

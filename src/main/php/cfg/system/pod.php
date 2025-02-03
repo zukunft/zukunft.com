@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/system/pod.php - the technical details of the mash network pods
+    model/system/pod.php - the technical details of the mash network pods
     ------------------
 
 

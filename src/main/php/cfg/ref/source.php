@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/ref/source.php - the source object to define a source for values
+    model/ref/source.php - the source object to define a source for values
     ------------------
 
     a source is always unidirectional

@@ -60,7 +60,7 @@ function run_math_test(all_tests $t): void
     $t->display(", zuc_parse: the result for formula with id ".$formula_id, $target, $result); */
 
     // test zuc_is_text_only
-    $formula = "\"this is just a text\"";
+    $formula = "\"' . words::THIS_NAME . ' is just a text\"";
     $target = true;
     $result = $calc->is_text_only($formula);
     $t->display(", zuc_is_text_only: a text like " . $formula, $target, $result);

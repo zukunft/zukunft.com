@@ -42,6 +42,7 @@ use cfg\formula\formula;
 use cfg\phrase\phrase_list;
 use cfg\phrase\term_list;
 use html\formula\formula as formula_dsp;
+use html\phrase\term_list as term_list_dsp;
 use shared\const\formulas;
 use shared\const\values;
 use shared\const\words;
@@ -132,6 +133,33 @@ class formula_tests
         $t->assert_json_file(new formula($usr), $json_file);
 
         $t->subheader('Expression tests');
+
+        $test_name = 'formula increase expression';
+        $frm = $t->formula_increase();
+        $frm_this = $t->formula_this();
+        $frm_prior = $t->formula_prior();
+        $wrd_pct = $t->word_percent();
+        $trm_lst = $t->term_list_increase();
+        $exp = $frm->expression($trm_lst);
+        $result = $exp->dsp_id();
+        $target = '""' . words::PERCENT . '" = ( "'
+            . words::THIS_NAME . '" - "'
+            . words::PRIOR_NAME . '" ) / "'
+            . words::PRIOR_NAME . '"" ({w'
+            . $wrd_pct->id() . '}=({f'
+            . $frm_this->id() . '}-{f'
+            . $frm_prior->id() . '})/{f'
+            . $frm_prior->id() . '})';
+        $t->assert($test_name . ' for ' . $frm->dsp_id(), $result, $target);
+
+        $frm_html = new formula_dsp($frm->api_json());
+        $trm_lst_dsp = new term_list_dsp($trm_lst->api_json());
+        $back = 0;
+        $result = $frm_html->dsp_text($back, $trm_lst_dsp);
+        $target = '"' . words::PERCENT . '" = ( <a href="/http/formula_edit.php?id=' . $frm_this->id() . '&back=0" title="' . words::THIS_NAME . '">this</a> - <a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title=<a href="/http/formula_edit.php?id=20&back=0" title="' . words::PRIOR_NAME . '">prior</a>>prior</a> ) / <a href="/http/formula_edit.php?id=20&back=0" title=<a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title="' . words::PRIOR_NAME . '">prior</a>>prior</a>';
+        $t->assert('formula->dsp_text for ' . $frm->dsp_id(), $result, $target);
+
+
         // TODO activate
         //$t->assert_true('formula with at least one predefined formula', $t->formula_increase()->is_special());
         $t->assert_false('formula without predefined formula', $t->formula()->is_special());

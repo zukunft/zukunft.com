@@ -2,7 +2,7 @@
 
 /*
 
-    /cfg/system/messages.php - the language specific backend messages
+    model/system/messages.php - the language specific backend messages
     ------------------------
 
 

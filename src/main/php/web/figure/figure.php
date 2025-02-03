@@ -32,8 +32,8 @@
 
 namespace html\figure;
 
-include_once HTML_PATH . 'html_base.php';
-include_once HTML_PATH . 'rest_ctrl.php';
+include_once WEB_HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once SHARED_PATH . 'api.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';

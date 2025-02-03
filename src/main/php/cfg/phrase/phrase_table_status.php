@@ -1,7 +1,7 @@
 <?php
 /*
 
-    cfg/system/phrase_table_status.php - the status of a phrase table
+    model/system/phrase_table_status.php - the status of a phrase table
     ----------------------------------
 
 

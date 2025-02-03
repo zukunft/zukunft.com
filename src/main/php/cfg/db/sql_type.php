@@ -5,6 +5,7 @@
     model/dp/sql_type.php - enum of the sql statement creation parameters
     ---------------------
 
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it

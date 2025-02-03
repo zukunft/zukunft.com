@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/system/pod_status.php - the status of a pod
+    model/system/pod_status.php - the status of a pod
     -------------------------
 
     type versus status

@@ -2,7 +2,7 @@
 
 /*
 
-  cfg/system/sys_log_list.php - a list of system error objects
+  model/system/sys_log_list.php - a list of system error objects
   ---------------------------
   
   This file is part of zukunft.com - calc with words

@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/element/element_type_list.php - to link coded functionality to a formula element type
+    model/element/element_type_list.php - to link coded functionality to a formula element type
     ---------------------------------
 
     TODO review and merge with parameter_type because this will never change, so a fixed enum can be used
