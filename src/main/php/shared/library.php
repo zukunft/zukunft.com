@@ -1039,6 +1039,7 @@ class library
             'html\result' => 'WEB_RESULT_PATH',
             'html\word' => 'WEB_WORD_PATH',
             'html\figure' => 'WEB_FIGURE_PATH',
+            'html\group' => 'WEB_GROUP_PATH',
             'html\phrase' => 'WEB_PHRASE_PATH',
             'html\verb' => 'WEB_VERB_PATH',
             'html\value' => 'WEB_VALUE_PATH',
@@ -1053,6 +1054,7 @@ class library
             'shared\calc' => 'SHARED_CALC_PATH',
             'shared\const' => 'SHARED_CONST_PATH',
             'shared\enum' => 'SHARED_ENUM_PATH',
+            'shared\helper' => 'SHARED_HELPER_PATH',
             'shared\types' => 'SHARED_TYPES_PATH',
             default => 'missing path for ' . $use_path,
         };

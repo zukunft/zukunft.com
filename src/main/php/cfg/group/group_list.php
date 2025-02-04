@@ -2,10 +2,9 @@
 
 /*
 
-    model/phrase/group_list.php - a list of word and triple groups
-    ----------------------------------
+    model/group/group_list.php - a list of word and triple groups
+    --------------------------
 
-    TODO base on sandbox_list
 
     This file is part of zukunft.com - calc with words
 
@@ -636,21 +635,6 @@ class group_list extends sandbox_list
             $pos++;
         }
         log_debug($lib->dsp_count($result->lst()));
-        return $result;
-    }
-
-    /**
-     * @return array with the database ids of all objects of this list
-     */
-    function ids(int $limit = null): array
-    {
-        $result = array();
-        foreach ($this->lst() as $sbx_obj) {
-            // use only valid ids
-            if ($sbx_obj->id() <> 0) {
-                $result[] = $sbx_obj->id();
-            }
-        }
         return $result;
     }
 

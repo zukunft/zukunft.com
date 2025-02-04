@@ -14,6 +14,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO make sure that unit tests does not start any api call
     TODO move all user configuration settings to the config yaml
     TODO check the no frontend class is used in the backend
     TODO check the no backend class is used in the frontend
@@ -216,7 +217,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO create db id sync tables (with this_pod_db_id, foreign_pod, foreign_db_id)
          each pod can create its own database id for words, triple, formulas and users
          if the id request from the master pod takes too long
-         or if the word or triple should be a prefered / prime phrase for the pod
+         or if the word or triple should be a preferred / prime phrase for the pod
+    TODO use the PHPUnit test coverage check
     TODO move all sample SQL statements from the unit test to separate files for auto syntax check
     TODO check that all sample SQL statements are checked for the unique name and for mysql syntax
     TODO cleanup the objects and remove all vars not needed any more e.g. id arrays
@@ -717,6 +719,7 @@ const SHARED_PATH = PHP_PATH_LIB . 'shared' . DIRECTORY_SEPARATOR;
 const SHARED_CALC_PATH = SHARED_PATH . 'calc' . DIRECTORY_SEPARATOR;
 const SHARED_CONST_PATH = SHARED_PATH . 'const' . DIRECTORY_SEPARATOR;
 const SHARED_ENUM_PATH = SHARED_PATH . 'enum' . DIRECTORY_SEPARATOR;
+const SHARED_HELPER_PATH = SHARED_PATH . 'helper' . DIRECTORY_SEPARATOR;
 const SHARED_TYPES_PATH = SHARED_PATH . 'types' . DIRECTORY_SEPARATOR;
 
 const API_PATH = ROOT_PATH . 'api' . DIRECTORY_SEPARATOR; // path of the api objects for the message creation to the frontend
@@ -748,6 +751,7 @@ const WEB_HTML_PATH = WEB_PATH . 'html' . DIRECTORY_SEPARATOR;
 const WEB_HIST_PATH = WEB_PATH . 'hist' . DIRECTORY_SEPARATOR;
 const WEB_WORD_PATH = WEB_PATH . 'word' . DIRECTORY_SEPARATOR;
 const WEB_PHRASE_PATH = WEB_PATH . 'phrase' . DIRECTORY_SEPARATOR;
+const WEB_GROUP_PATH = WEB_PATH . 'group' . DIRECTORY_SEPARATOR;
 const WEB_VERB_PATH = WEB_PATH . 'verb' . DIRECTORY_SEPARATOR;
 const WEB_VALUE_PATH = WEB_PATH . 'value' . DIRECTORY_SEPARATOR;
 const WEB_FORMULA_PATH = WEB_PATH . 'formula' . DIRECTORY_SEPARATOR;

@@ -187,6 +187,8 @@ class formula_tests
         $t->assert('Expression->res_phr_lst for ' . formulas::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
         */
 
+        // TODO add result display test
+
         // test the calculation of one value
         $trm_lst = $t->term_list_for_tests(array(
             words::TN_PCT,

@@ -105,7 +105,7 @@ class triple_list extends list_dsp
     function names_linked(string $back = ''): array
     {
         $result = array();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if (!$wrd->is_hidden()) {
                 $result[] = $wrd->display_linked($back);
             }
@@ -126,7 +126,7 @@ class triple_list extends list_dsp
         $last_trp = null;
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
-        foreach ($this->lst as $trp) {
+        foreach ($this->lst() as $trp) {
             $lnk = $trp->display_linked($back);
             $cols .= $html->td($lnk);
             $last_trp = $trp;
@@ -153,7 +153,7 @@ class triple_list extends list_dsp
 
         // check the all minimal input parameters
         if (isset($this->wrd)) {
-            log_debug('graph->display for ' . $this->wrd->name() . ' ' . $this->direction->value . ' and user ' . $this->user()->name . ' called from ' . $back);
+            log_debug('graph->display for ' . $this->wrd->name() . ' called from ' . $back);
         }
         $prev_verb_id = 0;
 
@@ -289,12 +289,12 @@ class triple_list extends list_dsp
         if (!$this->is_empty()) {
             $result = array();
             $lst_ids = $del_lst->id_lst();
-            foreach ($this->lst as $wrd) {
+            foreach ($this->lst() as $wrd) {
                 if (!in_array($wrd->id(), $lst_ids)) {
                     $result[] = $wrd;
                 }
             }
-            $this->lst = $result;
+            $this->set_lst($result);
         }
     }
 
@@ -304,7 +304,7 @@ class triple_list extends list_dsp
      */
     function merge(triple_list_dsp $new_wrd_lst): void
     {
-        foreach ($new_wrd_lst->lst as $new_wrd) {
+        foreach ($new_wrd_lst->lst() as $new_wrd) {
             $this->add($new_wrd);
         }
     }
@@ -316,7 +316,7 @@ class triple_list extends list_dsp
     private function filter(string $type): triple_list_dsp
     {
         $result = new triple_list_dsp();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if ($wrd->is_type($type)) {
                 $result->add($wrd);
             }
@@ -346,7 +346,7 @@ class triple_list extends list_dsp
     function scaling_lst(): triple_list_dsp
     {
         $result = new triple_list_dsp();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if ($wrd->is_scaling()) {
                 $result->add($wrd);
             }
@@ -471,7 +471,7 @@ class triple_list extends list_dsp
     function names(): array
     {
         $name_lst = array();
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if ($phr != null) {
                 $name_lst[] = $phr->name();
             }

@@ -32,7 +32,7 @@
 
 namespace cfg\value;
 
-include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_no_id.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
@@ -47,10 +47,10 @@ use cfg\db\sql_creator;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_type_list;
-use cfg\helper\db_object;
+use cfg\helper\db_object_no_id;
 use DateTime;
 
-class value_ts_data extends db_object
+class value_ts_data extends db_object_no_id
 {
 
     /*

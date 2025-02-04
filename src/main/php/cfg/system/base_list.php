@@ -35,36 +35,39 @@ namespace cfg\system;
 
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once DB_PATH . 'sql_db.php';
+include_once MODEL_HELPER_PATH . 'combine_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
+include_once SHARED_HELPER_PATH . 'IdObject.php';
+include_once SHARED_HELPER_PATH . 'TextIdObject.php';
+include_once SHARED_HELPER_PATH . 'ListOfIdObjects.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_db;
-use cfg\sandbox\sandbox;
+use cfg\helper\combine_object;
+use cfg\helper\db_object_seq_id;
 use cfg\user\user;
 use controller\api_message;
-use shared\library;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\ListOfIdObjects;
+use shared\helper\TextIdObject;
 use shared\types\api_type_list;
 
-class base_list
+class base_list extends ListOfIdObjects
 {
 
     /*
      *  object vars
      */
 
-    // the protected main var
-    private array $lst;
-
     // paging vars
     // display and select fields to increase the response time
     private int $offset; // start to display with this id
     public int $limit;   // if not defined, use the default page size
-
-    // memory vs speed optimize vars for faster finding the list position by the database id
-    private array $id_pos_lst;
-    private bool $lst_dirty;
 
 
     /*
@@ -73,22 +76,10 @@ class base_list
 
     function __construct(array $lst = array())
     {
-        $this->lst = array();
+        parent::__construct($lst);
 
         $this->offset = 0;
         $this->limit = sql_db::ROW_LIMIT;
-
-        $this->id_pos_lst = array();
-        $this->lst_dirty = false;
-
-        if (count($lst) > 0) {
-            $this->set_lst($lst);
-        }
-    }
-
-    function reset(): void
-    {
-        $this->set_lst(array());
     }
 
 
@@ -96,14 +87,6 @@ class base_list
      * set and get
      */
 
-    /**
-     * @param string|int $key the key of the lst array
-     * @return sandbox|null the found user sandbox object or null if no id is found
-     */
-    function get(string|int $key): ?object
-    {
-        return $this->lst[$key];
-    }
 
     /**
      * @return array with the API object of the values
@@ -111,7 +94,7 @@ class base_list
     function api_lst(bool $do_save = true): array
     {
         $api_lst = array();
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             $api_lst[] = $val->api_obj($do_save);
         }
 
@@ -129,130 +112,45 @@ class base_list
     }
 
     /**
-     * @return true if the list has been replaced
-     */
-    function set_lst(array $lst): bool
-    {
-        $this->lst = $lst;
-        $this->set_lst_dirty();
-        return true;
-    }
-
-    /**
-     * @returns array the list of items
-     * which is private to make sure the dirty handling always works
-     */
-    function lst(): array
-    {
-        return $this->lst;
-    }
-
-    /**
      * @returns array with the names on the db keys
      */
     function lst_key(): array
     {
         $result = array();
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             $result[$val->id()] = $val->name();
         }
         return $result;
     }
 
 
-    /**
-     * to be called after the lists have been updated
-     * but the index list have not yet been updated
-     * is overwritten by the child _sandbox_list_named
-     */
-    protected function set_lst_dirty(): void
-    {
-        $this->lst_dirty = true;
-    }
-
-    /**
-     * to be called after the index lists have been updated
-     * is overwritten by the child _sandbox_list_named
-     */
-    protected function set_lst_clean(): void
-    {
-        $this->lst_dirty = false;
-    }
-
-
     /*
-     * information
+     * modify
      */
 
     /**
-     * @returns int the number of elements in the list
-     */
-    function count(): int
-    {
-        if ($this->lst() == null) {
-            return 0;
-        } else {
-            return count($this->lst);
-        }
-    }
-
-    /**
-     * @return bool true if the list is already empty
-     */
-    function is_empty(): bool
-    {
-        $result = true;
-        if ($this->lst() != null) {
-            if (count($this->lst) > 0) {
-                $result = false;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * @param ?int $limit the max number of ids to show
-     * @return array with the database ids of all objects of this list
-     */
-    function ids(int $limit = null): array
-    {
-        $result = array();
-        $pos = 0;
-        foreach ($this->lst as $sbx_obj) {
-            if ($pos <= $limit or $limit == null) {
-                // use only valid ids
-                if ($sbx_obj->id() <> 0) {
-                    $result[] = $sbx_obj->id();
-                    $pos++;
-                }
-            }
-        }
-        return $result;
-    }
-
-
-    /*
-     * search
-     */
-
-    /**
-     * select an item by id
-     * TODO add unit tests
+     * add an object to the list
      *
-     * @param int $id the unique database id of the object that should be returned
-     * @return sandbox|null the found user sandbox object or null if no id is found
+     * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|combine_object $obj_to_add an object with a unique database id that should be added to the list
+     * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
+     * @returns bool true if the object has been added
      */
-    function get_by_id(int $id): ?object
+    function add_obj(IdObject|TextIdObject|CombineObject|db_object_seq_id|combine_object $obj_to_add, bool $allow_duplicates = false): bool
     {
-        $lib = new library();
-        $key_lst = $this->id_pos_lst();
-        if (array_key_exists($id, $key_lst)) {
-            $pos = $key_lst[$id];
-            return $this->lst[$pos];
+        $result = false;
+        // check boolean first because in_array might take longer
+        if ($allow_duplicates) {
+            $this->add_direct($obj_to_add);
+            $this->set_lst_dirty();
+            $result = true;
         } else {
-            log_info($id . ' not found in ' . $lib->dsp_array_keys($key_lst));
-            return null;
+            if (!in_array($obj_to_add->id(), $this->ids())) {
+                $this->add_direct($obj_to_add);
+                $this->set_lst_dirty();
+                $result = true;
+            }
         }
+        return $result;
     }
 
 
@@ -305,118 +203,6 @@ class base_list
             $lst[] = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
         }
         return $lst;
-    }
-
-
-    /*
-     * modify
-     */
-
-    /**
-     * add an object to the list
-     * @returns bool true if the object has been added
-     */
-    protected function add_obj(object $obj_to_add, bool $allow_duplicates = false): bool
-    {
-        $result = false;
-        if ($allow_duplicates) {
-            $this->lst[] = $obj_to_add;
-            $this->set_lst_dirty();
-            $result = true;
-        } else {
-            if (!in_array($obj_to_add->id(), $this->ids())) {
-                $this->lst[] = $obj_to_add;
-                $this->set_lst_dirty();
-                $result = true;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * unset an object of the list
-     * @param int|string $id the unique id of the entry
-     * @returns bool true if the object has been added
-     */
-    protected function unset(int|string $id): bool
-    {
-        $result = false;
-        $key_lst = $this->id_pos_lst();
-        if (array_key_exists($id, $key_lst)) {
-            unset ($this->lst[$id]);
-            $result = true;
-        }
-        return $result;
-    }
-
-    /**
-     * TODO add a unit test
-     * @returns array with all unique ids of this list with the keys within this list
-     */
-    protected function id_pos_lst(): array
-    {
-        $result = array();
-        if ($this->lst_dirty) {
-            foreach ($this->lst as $key => $obj) {
-                if (!array_key_exists($obj->id(), $result)) {
-                    $result[$obj->id()] = $key;
-                }
-            }
-            $this->id_pos_lst = $result;
-            $this->lst_dirty = false;
-        } else {
-            $result = $this->id_pos_lst;
-        }
-        return $result;
-    }
-
-
-    /*
-     * debug
-     */
-
-    /**
-     * @return string with the first unique id of the list elements
-     */
-    function dsp_id(): string
-    {
-        global $debug;
-        $result = '';
-
-        // show at least 4 elements by name
-        $min_names = $debug;
-        if ($min_names < LIST_MIN_NAMES) {
-            $min_names = LIST_MIN_NAMES;
-        }
-
-
-        if ($this->lst() != null) {
-            $pos = 0;
-            foreach ($this->lst() as $db_obj) {
-                if ($pos < $min_names) {
-                    if ($result <> '') $result .= ' / ';
-                    $result .= $db_obj->dsp_id();
-                    $pos++;
-                }
-            }
-            $result .= $this->dsp_id_remaining($pos);
-        }
-        return $result;
-    }
-
-    /**
-     * @param int $pos the first list id that has not yet been shown
-     * @return string a short summary of the remaining ids
-     */
-    protected function dsp_id_remaining(int $pos): string
-    {
-        $lib = new library();
-        $result = '';
-
-        if (count($this->lst()) > $pos) {
-            $result .= ' ... total ' . $lib->dsp_count($this->lst());
-        }
-        return $result;
     }
 
 }

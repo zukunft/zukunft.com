@@ -96,7 +96,7 @@ class word_list extends list_dsp
     function names_linked(string $back = ''): array
     {
         $result = array();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if (!$wrd->is_hidden()) {
                 $result[] = $wrd->display_linked($back);
             }
@@ -115,7 +115,7 @@ class word_list extends list_dsp
         $cols = '';
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             $lnk = $wrd->display_linked($back);
             $cols .= $html->td($lnk);
         }
@@ -141,12 +141,12 @@ class word_list extends list_dsp
         if (!$this->is_empty()) {
             $result = array();
             $lst_ids = $del_lst->id_lst();
-            foreach ($this->lst as $wrd) {
+            foreach ($this->lst() as $wrd) {
                 if (!in_array($wrd->id(), $lst_ids)) {
                     $result[] = $wrd;
                 }
             }
-            $this->lst = $result;
+            $this->set_lst($result);
         }
     }
 
@@ -156,7 +156,7 @@ class word_list extends list_dsp
      */
     function merge(word_list $new_wrd_lst): void
     {
-        foreach ($new_wrd_lst->lst as $new_wrd) {
+        foreach ($new_wrd_lst->lst() as $new_wrd) {
             $this->add($new_wrd);
         }
     }
@@ -168,7 +168,7 @@ class word_list extends list_dsp
     private function filter(string $type): word_list
     {
         $result = new word_list();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if ($wrd->is_type($type)) {
                 $result->add($wrd);
             }
@@ -198,7 +198,7 @@ class word_list extends list_dsp
     function scaling_lst(): word_list
     {
         $result = new word_list();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if ($wrd->is_scaling()) {
                 $result->add($wrd);
             }

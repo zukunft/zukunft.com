@@ -44,13 +44,16 @@ include_once API_OBJECT_PATH . 'api_message.php';
 include_once DB_PATH . 'sql_db.php';
 //include_once MODEL_FORMULA_PATH . 'formula.php';
 //include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+//include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_VERB_PATH . 'verb.php';
+//include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'triple.php';
+//include_once MODEL_WORD_PATH . 'triple.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
+include_once SHARED_HELPER_PATH . 'IdObject.php';
+include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -64,19 +67,15 @@ use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\word\word;
 use controller\api_message;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
 
-class combine_object
+class combine_object extends CombineObject
 {
-
-    /*
-     * object vars
-     */
-
-    protected word|triple|verb|formula|value_base|result|sandbox_named|null $obj;
-
 
     /*
      * construct and map
@@ -85,11 +84,11 @@ class combine_object
     /**
      * a combine object always covers an existing object
      * e.g. used to combine word and triple to a phrase
-     * @param word|triple|verb|formula|value_base|result|sandbox_named|null $obj the object that should be covered by a common interface
+     * @param IdObject|TextIdObject|word|triple|verb|formula|value_base|result|sandbox_named|null $obj the object that should be covered by a common interface
      */
-    function __construct(word|triple|verb|formula|value_base|result|sandbox_named|null $obj)
+    function __construct(IdObject|TextIdObject|word|triple|verb|formula|value_base|result|sandbox_named|null $obj)
     {
-        $this->set_obj($obj);
+        parent::__construct($obj);
     }
 
 
@@ -97,7 +96,7 @@ class combine_object
      * set and get
      */
 
-    function set_obj(word|triple|verb|formula|value_base|result|sandbox_named|null $obj): void
+    function set_obj(IdObject|TextIdObject|word|triple|verb|formula|value_base|result|sandbox_named|null $obj): void
     {
         $this->obj = $obj;
     }

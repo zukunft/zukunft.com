@@ -35,16 +35,23 @@
 namespace html\result;
 
 include_once WEB_SANDBOX_PATH . 'list_value.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_HTML_PATH . 'html_base.php';
+//include_once WEB_FORMULA_PATH . 'formula.php';
+include_once WEB_GROUP_PATH . 'group_list.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_RESULT_PATH . 'result.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_list.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'api.php';
 
+use html\rest_ctrl as api_dsp;
 use html\html_base;
+use html\formula\formula;
+use html\group\group_list;
+use html\phrase\phrase_list;
 use html\sandbox\list_value;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\result\result as result_dsp;
 use html\user\user_message;
+use shared\api;
 
 class result_list extends list_value
 {
@@ -60,8 +67,37 @@ class result_list extends list_value
      */
     function set_from_json_array(array $json_array): user_message
     {
-        return parent::set_list_from_json($json_array, new result_dsp());
+        return parent::set_list_from_json($json_array, new result());
     }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load all a result by the phrase group id and time phrase
+     *
+     * @param formula $frm to select the result
+     * @param group_list $lst the group used for the selection
+     * @return bool true if result has been loaded
+     */
+    function load_by_formula_and_group_list(formula $frm, group_list $lst): bool
+    {
+        $result = false;
+
+        $api = new api_dsp();
+        $data = array();
+        $data[api::URL_VAR_FORMULA] = $frm->id();
+        $data[api::URL_VAR_GROUP] = $lst->ids();
+        $json_body = $api->api_get(self::class, $data);
+        $this->set_from_json_array($json_body);
+        if (!$this->is_empty()) {
+            $result = true;
+        }
+        return $result;
+    }
+
 
 
     /*
@@ -72,11 +108,11 @@ class result_list extends list_value
      * add a formula result to the list
      * @returns bool true if the formula result has been added
      */
-    function add(result_dsp $res): bool
+    function add(result $res): bool
     {
         $result = false;
         if (!in_array($res->id(), $this->id_lst())) {
-            $this->lst[] = $res;
+            $this->add_direct($res);
             $this->set_lst_dirty();
             $result = true;
         }
@@ -115,7 +151,7 @@ class result_list extends list_value
     function display(): string
     {
         $results = array();
-        foreach ($this->lst as $res) {
+        foreach ($this->lst() as $res) {
             $results[] = $res->display();
         }
         return implode(', ', $results);
@@ -138,7 +174,7 @@ class result_list extends list_value
     function names_linked(string $back = ''): array
     {
         $result = array();
-        foreach ($this->lst as $res) {
+        foreach ($this->lst() as $res) {
             $result[] = $res->display_linked();
         }
         return $result;
@@ -147,7 +183,7 @@ class result_list extends list_value
     /**
      * @return string the html code to show the results as a table to the user
      */
-    function table(phrase_list_dsp $context_phr_lst = null, string $back = ''): string
+    function table(phrase_list $context_phr_lst = null, string $back = ''): string
     {
         $html = new html_base();
 

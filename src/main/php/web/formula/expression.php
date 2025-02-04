@@ -101,10 +101,10 @@ class expression extends shared_expression
     {
         $elm = new element();
         $elm->type = match ($obj_sym[0]) {
-            chars::WORD_SYMBOL => parameter_type::WORD_CLASS,
-            chars::TRIPLE_SYMBOL => parameter_type::TRIPLE_CLASS,
-            chars::FORMULA_SYMBOL => parameter_type::FORMULA_CLASS,
-            chars::VERB_SYMBOL => parameter_type::VERB_CLASS,
+            chars::WORD_SYMBOL => parameter_type::WORD_WEB_CLASS,
+            chars::TRIPLE_SYMBOL => parameter_type::TRIPLE_WEB_CLASS,
+            chars::FORMULA_SYMBOL => parameter_type::FORMULA_WEB_CLASS,
+            chars::VERB_SYMBOL => parameter_type::VERB_WEB_CLASS,
         };
         $id = substr($obj_sym, 1);
         $trm = $trm_lst?->term_by_obj_id($id, $elm->type);

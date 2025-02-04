@@ -708,23 +708,6 @@ class result_list extends sandbox_value_list
     }
 
     /**
-     * return a list of the formula result ids
-     */
-    function ids(int $limit = null): array
-    {
-        $result = array();
-        if (!$this->is_empty()) {
-            foreach ($this->lst() as $res) {
-                // use only valid ids
-                if ($res->id() <> 0) {
-                    $result[] = $res->id();
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
      * return a list of the formula result names
      */
     function names(int $limit = null): array

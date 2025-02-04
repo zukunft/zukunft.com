@@ -2,8 +2,11 @@
 
 /*
 
-    model/helper/db_object.php - a base object for all model database objects contains the table and index creation
-    --------------------------
+    model/helper/db_object_key.php - a base object for all model database objects contains the table and index creation
+    ------------------------------
+
+    similar to db_object but based on the TextIdObject
+    combine with db_object as soon as php allows extends db_object, TextIdObject
 
 
     This file is part of zukunft.com - calc with words
@@ -32,7 +35,7 @@
 
 namespace cfg\helper;
 
-include_once SHARED_HELPER_PATH . 'IdObject.php';
+include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
@@ -58,10 +61,10 @@ use cfg\result\result;
 use cfg\sandbox\sandbox;
 use cfg\user\user;
 use cfg\value\value;
-use shared\helper\IdObject;
+use shared\helper\TextIdObject;
 use shared\library;
 
-class db_object extends IdObject
+class db_object_key extends TextIdObject
 {
 
     // dummy const to be overwritten by the child objects

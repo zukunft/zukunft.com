@@ -505,20 +505,6 @@ class triple_list extends sandbox_list_named
      */
 
     /**
-     * @return bool true if the list has no entry
-     */
-    function is_empty(): bool
-    {
-        $result = true;
-        if ($this->lst() != null) {
-            if ($this->count() > 0) {
-                $result = false;
-            }
-        }
-        return $result;
-    }
-
-    /**
      * @return bool true if the list contains at least one triple
      */
     function has_values(): bool

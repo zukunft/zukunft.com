@@ -44,6 +44,7 @@ use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\word\word;
 use html\formula\formula as formula_dsp;
+use html\phrase\term_list as term_list_dsp;
 use shared\const\formulas;
 use shared\const\words;
 use test\test_cleanup;
@@ -261,7 +262,10 @@ class formula_write_tests
         $t->display('formula->name for ' . $frm->dsp_id(), $target, $result);
 
         // ... in HTML format
-        $result = $frm_html->dsp_text($back);
+        // TODO test without preloaded term list
+        $trm_lst = $t->term_list_increase();
+        $trm_lst_dsp = new term_list_dsp($trm_lst->api_json());
+        $result = $frm_html->dsp_text($back, $trm_lst_dsp);
         $target = '"' . words::PERCENT . '" = ( <a href="/http/formula_edit.php?id=' . $frm_this->id() . '&back=0" title="' . words::THIS_NAME . '">this</a> - <a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title=<a href="/http/formula_edit.php?id=20&back=0" title="' . words::PRIOR_NAME . '">prior</a>>prior</a> ) / <a href="/http/formula_edit.php?id=20&back=0" title=<a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title="' . words::PRIOR_NAME . '">prior</a>>prior</a>';
         $t->display('formula->dsp_text for ' . $frm->dsp_id(), $target, $result);
 

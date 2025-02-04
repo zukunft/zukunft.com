@@ -60,10 +60,10 @@ class list_value extends list_dsp
     {
         // get common words
         $common_phr_lst = new phrase_list_dsp();
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             if ($val != null) {
                 if ($val->phr_lst() != null) {
-                    if ($val->phr_lst()->lst != null) {
+                    if ($val->phr_lst()->lst() != null) {
                         $common_phr_lst->intersect($val->phr_lst());
                     }
                 }

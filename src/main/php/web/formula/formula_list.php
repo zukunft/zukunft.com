@@ -84,7 +84,7 @@ class formula_list extends list_dsp
     function display(): string
     {
         $names = array();
-        foreach ($this->lst as $frm) {
+        foreach ($this->lst() as $frm) {
             $names[] = $frm->display();
         }
         return implode(', ', $names);
@@ -107,7 +107,7 @@ class formula_list extends list_dsp
     function names_linked(string $back = ''): array
     {
         $result = array();
-        foreach ($this->lst as $frm) {
+        foreach ($this->lst() as $frm) {
             $result[] = $frm->display_linked($back);
         }
         return $result;
@@ -124,7 +124,7 @@ class formula_list extends list_dsp
         $cols = '';
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             $lnk = $wrd->dsp_obj()->display_linked($back);
             $cols .= $html->td($lnk);
         }

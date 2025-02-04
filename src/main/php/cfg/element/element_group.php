@@ -51,6 +51,7 @@ include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_WORD_PATH . 'word.php';
+include_once WEB_ELEMENT_PATH . 'element.php';
 include_once WEB_FIGURE_PATH . 'figure.php';
 include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once SHARED_PATH . 'library.php';
@@ -64,6 +65,7 @@ use cfg\phrase\term_list;
 use cfg\user\user;
 use cfg\value\value;
 use cfg\word\word;
+use html\element\element as element_dsp;
 use html\figure\figure as figure_dsp;
 use shared\library;
 use shared\types\api_type;
@@ -132,7 +134,8 @@ class element_group
 
         foreach ($this->lst as $frm_elm) {
             // display the formula element name
-            $result .= $frm_elm->link($back) . ' ';
+            $elm_dsp = new element_dsp($frm_elm->api_json());
+            $result .= $elm_dsp->link($back) . ' ';
         }
 
         return $result;

@@ -40,12 +40,16 @@ include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_WORD_PATH . 'word.php';
+include_once WEB_USER_PATH . 'user_message.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use html\sandbox\db_object;
 use html\formula\formula;
+use html\user\user_message;
 use html\verb\verb;
 use html\word\triple;
 use html\word\word;
+use shared\json_fields;
 
 class element extends db_object
 {
@@ -64,8 +68,48 @@ class element extends db_object
 
 
     /*
+     * api
+     */
+
+    /**
+     * set the vars of this object bases on the api json array
+     * @param array $json_array an api json message
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_from_json_array(array $json_array): user_message
+    {
+        $usr_msg = parent::set_from_json_array($json_array);
+        if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
+            if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
+                $wrd = new word();
+                $wrd->set_from_json_array($json_array);
+                $this->obj = $wrd;
+            } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
+                $trp = new triple();
+                $trp->set_from_json_array($json_array);
+                $this->obj = $trp;
+            } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
+                $vrb = new verb();
+                $vrb->set_from_json_array($json_array);
+                $this->obj = $vrb;
+            } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
+                $frm = new formula();
+                $frm->set_from_json_array($json_array);
+                $this->obj = $frm;
+            }
+        }
+        return $usr_msg;
+    }
+
+
+    /*
      * html
      */
+
+    function name(): string
+    {
+        return $this->obj->name;
+    }
 
     /**
      * return the HTML code for the element name including a link to inspect the element

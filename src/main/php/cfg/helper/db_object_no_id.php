@@ -2,8 +2,10 @@
 
 /*
 
-    model/helper/db_object.php - a base object for all model database objects contains the table and index creation
-    --------------------------
+    model/helper/dbobjectnoid.php - a base object for database objects that does not have a single db key
+    -----------------------------
+
+    used to create the database tables for the time_series_data, log amd formula elements
 
 
     This file is part of zukunft.com - calc with words
@@ -32,7 +34,6 @@
 
 namespace cfg\helper;
 
-include_once SHARED_HELPER_PATH . 'IdObject.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
@@ -58,10 +59,9 @@ use cfg\result\result;
 use cfg\sandbox\sandbox;
 use cfg\user\user;
 use cfg\value\value;
-use shared\helper\IdObject;
 use shared\library;
 
-class db_object extends IdObject
+class db_object_no_id
 {
 
     // dummy const to be overwritten by the child objects

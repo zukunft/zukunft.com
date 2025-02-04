@@ -103,7 +103,7 @@ class config extends value_list
      * @param array $names with the phrase names to select the config value
      * @return int|float|string|null with the user specific config value
      */
-    function get(array $names): int|float|string|null
+    function get_by_names(array $names): int|float|string|null
     {
         $phr_lst = new phrase_list();
         $val = null;

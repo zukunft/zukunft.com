@@ -80,7 +80,7 @@ class component_list extends list_dsp
     function display(): string
     {
         $components = array();
-        foreach ($this->lst as $cmp) {
+        foreach ($this->lst() as $cmp) {
             $components[] = $cmp->name();
         }
         return implode(', ', $components);
@@ -103,7 +103,7 @@ class component_list extends list_dsp
     function names_linked(string $back = ''): array
     {
         $result = array();
-        foreach ($this->lst as $cmp) {
+        foreach ($this->lst() as $cmp) {
             $result[] = $cmp->display_linked($back);
         }
         return $result;

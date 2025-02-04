@@ -90,7 +90,7 @@ class job_list extends list_dsp
     {
         $html = new html_base();
         $result = '';
-        foreach ($this->lst as $job) {
+        foreach ($this->lst() as $job) {
             if ($result == '') {
                 $result .= $job->header();
             }
@@ -114,7 +114,7 @@ class job_list extends list_dsp
         $cols = '';
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             $lnk = $wrd->dsp_obj()->display_linked($back);
             $cols .= $html->td($lnk);
         }

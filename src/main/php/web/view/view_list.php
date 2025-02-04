@@ -74,11 +74,11 @@ class view_list extends list_dsp
         return parent::set_list_from_json($json_array, new view_dsp());
     }
 
-    function get(string $code_id): view_dsp
+    function get_by_code_id(string $code_id): view_dsp
     {
         // TODO use a hash list
         $result = new view_dsp();
-        foreach ($this->lst as $dsp) {
+        foreach ($this->lst() as $dsp) {
             if ($dsp->code_id() == $code_id) {
                 $result = $dsp;
             }
@@ -86,17 +86,6 @@ class view_list extends list_dsp
         return $result;
     }
 
-    function get_by_id(int $id): view_dsp
-    {
-        // TODO use a hash list
-        $result = new view_dsp();
-        foreach ($this->lst as $msk) {
-            if ($msk->id() == $id) {
-                $result = $msk;
-            }
-        }
-        return $result;
-    }
 
     /*
      * load
@@ -162,7 +151,7 @@ class view_list extends list_dsp
     function display(): string
     {
         $views = array();
-        foreach ($this->lst as $fig) {
+        foreach ($this->lst() as $fig) {
             $views[] = $fig->display();
         }
         return implode(', ', $views);
@@ -185,7 +174,7 @@ class view_list extends list_dsp
     function names_linked(string $back = ''): array
     {
         $views = array();
-        foreach ($this->lst as $fig) {
+        foreach ($this->lst() as $fig) {
             $views[] = $fig->display_linked();
         }
         return $views;

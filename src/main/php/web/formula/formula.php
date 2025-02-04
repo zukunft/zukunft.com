@@ -327,7 +327,9 @@ class formula extends sandbox_typed
         return $log_dsp;
     }
 
-    // display the link history of a formula
+    /**
+     * display the link history of a formula
+     */
     function dsp_hist_links($page, $size, $call, $back): string
     {
         log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
@@ -438,7 +440,9 @@ class formula extends sandbox_typed
         return $result;
     }
 
-    // list all words linked to the formula and allow to unlink or add new words
+    /**
+     * list all words linked to the formula and allow to unlink or add new words
+     */
     function dsp_used4words($add, $wrd, $back): string
     {
         global $usr;
@@ -447,7 +451,7 @@ class formula extends sandbox_typed
 
         $html = new html_base();
 
-        $phr_lst = $this->assign_phr_ulst_direct();
+        $phr_lst = $this->direct_assigned_phrases();
         log_debug("words linked loaded");
 
         // list all linked words
@@ -539,7 +543,7 @@ class formula extends sandbox_typed
         $sample_val = $res_lst->display($back);
         if (trim($sample_val) <> "") {
             if ($this->name_wrd != null) {
-                $name_wrd_dsp = new word_dsp($this->name_wrd->api_json());
+                $name_wrd_dsp = $this->name_wrd;
                 $result .= $html->dsp_text_h3("Results for " . $name_wrd_dsp->display_linked($back), "change_hist");
             }
             $result .= $sample_val;
@@ -566,37 +570,13 @@ class formula extends sandbox_typed
     /**
      * the user specific list of a phrases assigned to a formula
      */
-    function assign_phr_ulst_direct(): ?phrase_list
+    function direct_assigned_phrases(): ?phrase_list
     {
-        return $this->assign_phr_glst_direct(true);
-    }
-
-    /**
-     * lists of all words directly assigned to a formula and where the formula should be used
-     */
-    function assign_phr_glst_direct($sbx): ?phrase_list
-    {
-        global $usr;
-        $phr_lst = null;
-        $lib = new library();
-
-        if ($this->id() > 0 and $usr != null) {
-            log_debug('for formula ' . $this->dsp_id() . ' and user "' . $usr->name . '"');
-            $frm_lnk_lst = new formula_link_list($usr);
-            $frm_lnk_lst->load_by_frm_id($this->id());
-            $phr_ids = $frm_lnk_lst->phrase_ids($sbx);
-
-            if (count($phr_ids->lst) > 0) {
-                $phr_lst = new phrase_list($usr);
-                $phr_lst->load_names_by_ids($phr_ids);
-                log_debug("number of words " . $lib->dsp_count($phr_lst->lst()));
-            }
-        } else {
-            log_err("The user id must be set to list the formula links.", "formula->assign_phr_glst_direct");
-        }
-
+        $phr_lst = new phrase_list();
+        $phr_lst->load_by_formula($this);
         return $phr_lst;
     }
+
 
     // allow the user to unlink a word
     function dsp_unlink_phr($phr_id, $back): string
@@ -617,13 +597,12 @@ class formula extends sandbox_typed
      * display the most interesting formula result for one word
      * TODO define the criteria and review the result loading
      */
-    function dsp_result(phrase $phr, $back): string
+    function dsp_result(phrase $phr, string $back): string
     {
         log_debug('for "' . $phr->name() . '" and formula ' . $this->dsp_id());
-        $res = new result($this->user());
-        $res->load_by_formula_and_group_list($this, $phr->groups());
-        $dsp_res = new result_dsp($res->api_json());
-        return $dsp_res->display($back);
+        $res_lst = new result_list();
+        $res_lst->load_by_formula_and_group_list($this, $phr->groups());
+        return $res_lst->display();
     }
 
 

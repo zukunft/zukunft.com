@@ -38,6 +38,7 @@ include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_multi.php';
 //include_once MODEL_FORMULA_PATH . 'formula.php';
 //include_once MODEL_REF_PATH . 'ref.php';
 //include_once MODEL_REF_PATH . 'source.php';
@@ -60,6 +61,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\formula\formula;
 use cfg\helper\db_object;
+use cfg\helper\db_object_multi;
 use cfg\ref\ref;
 use cfg\ref\source;
 use cfg\user\user;
@@ -190,7 +192,7 @@ class user_list
         return $qp;
     }
 
-    private function load_sql_count_changes_dbo(db_object $dbo): string
+    private function load_sql_count_changes_dbo(db_object|db_object_multi $dbo): string
     {
         $lib = new library();
         $class = $lib->class_to_name($dbo::class);

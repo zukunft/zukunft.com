@@ -639,7 +639,7 @@ class word extends sandbox_typed
     function dsp_edit(string $back = ''): string
     {
         $cfg = new config();
-        $row_limit = $cfg->get([words::ROW, words::LIMIT]);
+        $row_limit = $cfg->get_by_names([words::ROW, words::LIMIT]);
         $html = new html_base();
         $phr_lst_up = $this->parents();
         $phr_lst_down = $this->children();

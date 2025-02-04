@@ -291,19 +291,4 @@ class figure_list extends sandbox_list
         return $lib->dsp_array($this->ids());
     }
 
-    /**
-     * this function is called from dsp_id, so no other call is allowed
-     */
-    function ids(int $limit = null): array
-    {
-        $result = array();
-        foreach ($this->lst() as $fig) {
-            // use only valid ids
-            if ($fig->id() <> 0) {
-                $result[] = $fig->id();
-            }
-        }
-        return $result;
-    }
-
 }

@@ -87,36 +87,10 @@ class db_object_seq_id extends db_object
     const FLD_ID_SQL_TYP = sql_field_type::INT; // this default type is changed e.g. if the id is part of and index
 
 
-    /*
-     * object vars
-     */
-
-    // database fields that are used in all model objects
-    // the database id is the unique prime key
-    // is private because some objects like group have a complex id which needs a id() function
-    private int $id;
-
 
     /*
      * construct and map
      */
-
-    /**
-     * reset the id to null to indicate that the database object has not been loaded
-     */
-    function __construct()
-    {
-        $this->set_id(0);
-    }
-
-    /**
-     * reset the vars of this object
-     * used to search for the standard object, because the search is word, value, formula or ... specific
-     */
-    function reset(): void
-    {
-        $this->set_id(0);
-    }
 
     /**
      * map the database fields to the object fields
@@ -139,29 +113,6 @@ class db_object_seq_id extends db_object
             }
         }
         return $result;
-    }
-
-
-    /*
-     * set and get
-     */
-
-    /**
-     * set the unique database id of a database object
-     * @param int $id used in the row mapper and to set a dummy database id for unit tests
-     */
-    function set_id(int $id): void
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return int the database id which is not 0 if the object has been saved
-     * the internal null value is used to detect if database saving has been tried
-     */
-    function id(): int
-    {
-        return $this->id;
     }
 
 

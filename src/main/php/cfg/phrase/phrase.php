@@ -424,10 +424,10 @@ class phrase extends combine_named
     }
 
     /**
-     * @return int|null the id of the phrase witch is (corresponding to id_obj())
+     * @return int the id of the phrase witch is (corresponding to id_obj())
      * e.g 1 for a word, -1 for a triple
      */
-    function id(): ?int
+    function id(): int
     {
         if ($this->is_word()) {
             return $this->obj_id();

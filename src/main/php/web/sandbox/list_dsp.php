@@ -40,6 +40,10 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
+include_once SHARED_HELPER_PATH . 'IdObject.php';
+include_once SHARED_HELPER_PATH . 'TextIdObject.php';
+include_once SHARED_HELPER_PATH . 'ListOfIdObjects.php';
 include_once SHARED_PATH . 'api.php';
 
 use cfg\user\user;
@@ -48,19 +52,15 @@ use html\rest_ctrl as api_dsp;
 use html\html_selector;
 use html\user\user_message;
 use shared\api;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\ListOfIdObjects;
+use shared\helper\TextIdObject;
 use shared\types\api_type_list;
 use shared\types\view_styles;
 
-class list_dsp
+class list_dsp extends ListOfIdObjects
 {
-
-    // the protected main var
-    protected array $lst;
-
-    // memory vs speed optimize vars
-    private array $id_lst;
-    private bool $lst_dirty;
-
 
     /*
      * construct and map
@@ -68,11 +68,7 @@ class list_dsp
 
     function __construct(?string $api_json = null)
     {
-        $this->lst = array();
-
-        $this->id_lst = array();
-        $this->lst_dirty = false;
-
+        parent::__construct();
         if ($api_json != null) {
             $this->set_from_json($api_json);
         }
@@ -94,11 +90,22 @@ class list_dsp
     }
 
     /**
-     * set the vars of these list display objects bases on the api json array
-     * @param array $json_array an api list json message
+     * set the vars of this figure list based on the given json
+     * @param array $json_array an api single object json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_list_from_json(array $json_array, db_object|combine_object $dbo): user_message
+    function set_from_json_array(array $json_array): user_message
+    {
+        return new user_message('set_from_json_array not overwritten by child object ' . $this::class);
+    }
+
+    /**
+     * set the vars of these list display objects bases on the api json array
+     * @param array $json_array an api list json message
+     * @param IdObject|TextIdObject|CombineObject $dbo an object with a unique database id that should be added to the list
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_list_from_json(array $json_array, IdObject|TextIdObject|CombineObject $dbo): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_array as $value) {
@@ -111,42 +118,15 @@ class list_dsp
     }
 
     /**
-     * @returns true if the list has been replaced
-     */
-    function set_lst(array $lst): bool
-    {
-        $this->lst = $lst;
-        $this->set_lst_dirty();
-        return true;
-    }
-
-    /**
-     * @returns array the protected list of values or formula results
-     */
-    function lst(): array
-    {
-        return $this->lst;
-    }
-
-    /**
      * @returns array with the names on the db keys
      */
     function lst_key(): array
     {
         $result = array();
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             $result[$val->id()] = $val->name();
         }
         return $result;
-    }
-
-    /**
-     * @returns true if the list has been replaced
-     */
-    function set_lst_dirty(): bool
-    {
-        $this->lst_dirty = true;
-        return true;
     }
 
 
@@ -161,7 +141,7 @@ class list_dsp
     function api_array(api_type_list|array $typ_lst = []): array
     {
         $result = array();
-        foreach ($this->lst as $obj) {
+        foreach ($this->lst() as $obj) {
             if ($obj != null) {
                 $result[] = $obj->api_array();
             }
@@ -187,7 +167,7 @@ class list_dsp
         if ($typ_lst->use_header()) {
             global $db_con;
             $api_msg = new api_message();
-            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
+            $msg = $api_msg->api_header_array($db_con, $this::class, $usr, $vars);
         } else {
             $msg = $vars;
         }
@@ -222,77 +202,15 @@ class list_dsp
 
 
     /*
-     * info
-     */
-
-    /**
-     * @returns int the number of objects of the protected list
-     */
-    function count(): int
-    {
-        return count($this->lst);
-    }
-
-    /**
-     * @returns true if the list does not contain any object
-     */
-    function is_empty(): bool
-    {
-        if ($this->count() <= 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /*
      * modify functions
      */
-
-    /**
-     * add a phrase or ... to the list but only if it does not exist
-     * @param object $obj the frontend object that should be added
-     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @returns bool true if the object has been added
-     */
-    public function add_obj(object $obj, bool $allow_duplicates = false): bool
-    {
-        $result = false;
-        if (!in_array($obj->id(), $this->id_lst()) or $allow_duplicates) {
-            $this->lst[] = $obj;
-            $this->lst_dirty = true;
-            $result = true;
-        }
-        return $result;
-    }
-
-    /**
-     * add a phrase or ... to the list also if it is already part of the list
-     */
-    protected function add_always(object $obj): void
-    {
-        $this->lst[] = $obj;
-        $this->lst_dirty = true;
-    }
 
     /**
      * @returns array with all unique ids of this list
      */
     function id_lst(): array
     {
-        $result = array();
-        if ($this->lst_dirty) {
-            foreach ($this->lst as $val) {
-                if (!in_array($val->id(), $result)) {
-                    $result[] = $val->id();
-                }
-            }
-            $this->id_lst = $result;
-            $this->lst_dirty = false;
-        } else {
-            $result = $this->id_lst;
-        }
-        return $result;
+        return parent::ids();
     }
 
 
@@ -319,7 +237,7 @@ class list_dsp
      */
     function selector(
         string $form = '',
-        int $selected = 0,
+        int    $selected = 0,
         string $name = '',
         string $label = '',
         string $col_class = view_styles::COL_SM_4,

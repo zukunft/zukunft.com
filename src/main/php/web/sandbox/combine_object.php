@@ -42,20 +42,15 @@ namespace html\sandbox;
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 
 use html\rest_ctrl as api_dsp;
 use html\user\user_message;
 use html\word\word;
+use shared\helper\CombineObject;
 
-class combine_object
+class combine_object extends CombineObject
 {
-
-    /*
-     * object vars
-     */
-
-    protected ?object $obj = null;
-
 
     /*
      * construct and map
@@ -100,16 +95,6 @@ class combine_object
         $usr_msg = new user_message();
         $usr_msg->add_err('This set_from_json_array function should have been overwritten by the child object');
         return $usr_msg;
-    }
-
-    function set_obj(object $obj): void
-    {
-        $this->obj = $obj;
-    }
-
-    function obj(): object|null
-    {
-        return $this->obj;
     }
 
 

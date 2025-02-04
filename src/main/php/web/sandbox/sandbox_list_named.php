@@ -34,23 +34,18 @@ namespace html\sandbox;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_list.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'term.php';
-include_once WEB_WORD_PATH . 'triple_list.php';
-include_once WEB_USER_PATH . 'user.php';
+//include_once WEB_PHRASE_PATH . 'term.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_WORD_PATH . 'word_list.php';
 
 use html\phrase\phrase;
 use html\phrase\term;
-use html\word\triple_list;
 use html\user\user_message;
 use html\word\triple;
 use html\word\word;
-use html\word\word_list;
 
-class sandbox_list_named extends list_dsp
+class sandbox_list_named extends sandbox_list
 {
 
     // memory vs speed optimize vars for faster finding the list position by the object name
@@ -67,7 +62,7 @@ class sandbox_list_named extends list_dsp
      */
     function __construct(?string $api_json = null)
     {
-        $this->name_pos_lst = array();
+        $this->name_pos_lst = [];
         $this->lst_name_dirty = false;
 
         parent::__construct($api_json);
@@ -82,11 +77,21 @@ class sandbox_list_named extends list_dsp
      * to be called after the lists have been updated
      * but the index list have not yet been updated
      */
-    public function set_lst_dirty(): bool
+    public function set_lst_dirty(): void
     {
         parent::set_lst_dirty();
         $this->lst_name_dirty = true;
-        return true;
+    }
+
+    /**
+     * set the vars of these list display objects bases on the api message
+     * @param string $json_api_msg an api json message as a string
+     * @return void
+     */
+    function set_from_json(string $json_api_msg): void
+    {
+        $this->set_from_json_array(json_decode($json_api_msg, true));
+        $this->set_lst_dirty();
     }
 
     /**
@@ -182,9 +187,8 @@ class sandbox_list_named extends list_dsp
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
                 $sbx_old = $this->get_by_name($sbx_new->name());
-                if ($sbx_old != null) {
-                    $sbx_old->fill($sbx_new);
-                } else {
+                // TODO check if and how a sync of the objects can be done
+                if ($sbx_old == null) {
                     $this->add($sbx_new);
                 }
             } else {
@@ -218,66 +222,6 @@ class sandbox_list_named extends list_dsp
         } else {
             return null;
         }
-    }
-
-    /**
-     * filters a word list by names
-     *
-     * e.g. out of "2014", "2015", "2016", "2017"
-     * with the filter "2016", "2017","2018"
-     * the result is "2014", "2015"
-     *
-     * @param array $names with the words that should be removed
-     * @returns sandbox_list_named with only the remaining words
-     */
-    function filter_by_name(array $names): sandbox_list_named
-    {
-        log_debug('->filter_by_name ' . $this->dsp_id());
-        $result = clone $this;
-        $result->reset();
-
-        // check and adjust the parameters
-        if (count($names) <= 0) {
-            log_warning('Phrases to delete are missing.', 'word_list->filter');
-        }
-
-        foreach ($this->lst() as $wrd) {
-            if (!in_array($wrd->name(), $names)) {
-                $result->add_by_name($wrd);
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * select a word list by names
-     *
-     * e.g. out of "2014", "2015", "2016", "2017"
-     * with the filter "2016", "2017","2018"
-     * the result is "2016", "2017"
-     *
-     * @param array $names with the words that should be removed
-     * @returns sandbox_list_named with only the remaining words
-     */
-    function select_by_name(array $names): sandbox_list_named
-    {
-        log_debug('->filter_by_name ' . $this->dsp_id());
-        $result = clone $this;
-        $result->reset();
-
-        // check and adjust the parameters
-        if (count($names) <= 0) {
-            log_warning('Phrases to delete are missing.', 'word_list->filter');
-        }
-
-        foreach ($this->lst() as $wrd) {
-            if (in_array($wrd->name(), $names)) {
-                $result->add_by_name($wrd);
-            }
-        }
-
-        return $result;
     }
 
 

@@ -73,7 +73,7 @@ class term_list extends sandbox_list_named
     function display(): string
     {
         $result = '';
-        foreach ($this->lst as $trm) {
+        foreach ($this->lst() as $trm) {
             if ($result != '' and $trm->display() != '') {
                 $result .= ', ';
             }
@@ -88,7 +88,7 @@ class term_list extends sandbox_list_named
     function display_linked(): string
     {
         $result = '';
-        foreach ($this->lst as $trm) {
+        foreach ($this->lst() as $trm) {
             if ($result != '' and $trm->display_linked() != '') {
                 $result .= ', ';
             }
@@ -114,31 +114,6 @@ class term_list extends sandbox_list_named
             $trm = $this->get_by_id($trm_id);
         }
         return $trm;
-    }
-
-
-    /*
-     * search
-     */
-
-    /**
-     * select an item by id
-     * TODO add unit tests
-     *
-     * @param int $id the unique database id of the object that should be returned
-     * @return sandbox|null the found user sandbox object or null if no id is found
-     */
-    function get_by_id(int $id): ?object
-    {
-        $lib = new library();
-        $key_lst = $this->id_pos_lst();
-        if (array_key_exists($id, $key_lst)) {
-            $pos = $key_lst[$id];
-            return $this->lst[$pos];
-        } else {
-            log_info($id . ' not found in ' . $lib->dsp_array_keys($key_lst));
-            return null;
-        }
     }
 
 }

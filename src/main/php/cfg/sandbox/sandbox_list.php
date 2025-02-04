@@ -44,6 +44,7 @@ namespace cfg\sandbox;
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 include_once MODEL_SYSTEM_PATH . 'base_list.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
@@ -54,9 +55,13 @@ include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_RESULT_PATH . 'result_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 //include_once MODEL_VALUE_PATH . 'value_list.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
+include_once SHARED_HELPER_PATH . 'IdObject.php';
+include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
+use cfg\helper\db_object_seq_id;
 use cfg\system\base_list;
 use cfg\helper\combine_named;
 use cfg\db\sql_creator;
@@ -69,8 +74,10 @@ use cfg\phrase\term_list;
 use cfg\result\result_list;
 use cfg\user\user;
 use cfg\value\value_list;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
 use shared\library;
-use shared\types\api_type_list;
 
 class sandbox_list extends base_list
 {
@@ -331,11 +338,11 @@ class sandbox_list extends base_list
 
     /**
      * add one object to the list of user sandbox objects, but only if it is not yet part of the list
-     * @param object $obj_to_add the backend object that should be added
+     * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add the backend object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @returns bool true the formula has been added
      */
-    function add_obj(object $obj_to_add, bool $allow_duplicates = false): bool
+    function add_obj(IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add, bool $allow_duplicates = false): bool
     {
         $result = false;
 

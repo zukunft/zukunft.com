@@ -39,22 +39,55 @@ include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_SYSTEM_PATH . 'sys_log.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once API_OBJECT_PATH . 'api_message.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'api.php';
 
 use cfg\user\user;
+use controller\api_message;
 use controller\controller;
 use html\html_base;
-use html\sandbox\list_dsp;
 use html\system\sys_log as sys_log_dsp;
 use html\user\user_message;
 use shared\api;
+use shared\types\api_type_list;
 
-class sys_log_list extends list_dsp
+class sys_log_list
 {
+
+    /*
+     *  object vars
+     */
+
+    // the list of log entries
+    private array $lst = [];
+
+
+    /*
+     * construct and map
+     */
+
+    function __construct(?string $api_json = null)
+    {
+        if ($api_json != null) {
+            $this->set_from_json($api_json);
+        }
+    }
+
 
     /*
      * set and get
      */
+
+    /**
+     * set the vars of these list display objects bases on the api message
+     * @param string $json_api_msg an api json message as a string
+     * @return void
+     */
+    function set_from_json(string $json_api_msg): void
+    {
+        $this->set_from_json_array(json_decode($json_api_msg, true));
+    }
 
     /**
      * set the vars of these list display objects bases on the api json array
@@ -66,7 +99,60 @@ class sys_log_list extends list_dsp
     {
         $ctrl = new controller();
         $json_array = $ctrl->check_api_msg($json_array, api::JSON_BODY_SYS_LOG);
-        return parent::set_list_from_json($json_array, new sys_log());
+        $usr_msg = new user_message();
+        foreach ($json_array as $value) {
+            $new = new sys_log();
+            $msg = $new->set_from_json_array($value);
+            $usr_msg->add($msg);
+            $this->add($new);
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create the api json message string of this list that can be sent to the backend
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return string with the api json string that should be sent to the backend
+     */
+    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
+        $vars = $this->api_array($typ_lst);
+
+        // add header if requested
+        if ($typ_lst->use_header()) {
+            global $db_con;
+            $api_msg = new api_message();
+            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
+        } else {
+            $msg = $vars;
+        }
+
+        return json_encode($msg);
+    }
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(api_type_list|array $typ_lst = []): array
+    {
+        $result = array();
+        foreach ($this->lst as $obj) {
+            if ($obj != null) {
+                $result[] = $obj->api_array($typ_lst);
+            }
+        }
+        return $result;
     }
 
 
@@ -81,7 +167,8 @@ class sys_log_list extends list_dsp
      */
     function add(sys_log_dsp $sys_log): bool
     {
-        return parent::add_obj($sys_log);
+        $this->lst[] = $sys_log;
+        return true;
     }
 
 

@@ -40,6 +40,7 @@ include_once WEB_PHRASE_PATH . 'phrase.php';
 //include_once WEB_PHRASE_PATH . 'term.php';
 include_once WEB_USER_PATH . 'user_message.php';
 //include_once WEB_VIEW_PATH . 'view_list.php';
+include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 
@@ -50,9 +51,10 @@ use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\term as term_dsp;
 use html\user\user_message;
+use shared\helper\TextIdObject;
 use shared\json_fields;
 
-class db_object
+class db_object extends TextIdObject
 {
 
     // fields for the backend link
@@ -69,7 +71,7 @@ class db_object
      */
     function __construct(?string $api_json = null)
     {
-        $this->set_id(0);
+        parent::__construct();
         if ($api_json != null) {
             $this->set_from_json($api_json);
         }
@@ -223,12 +225,12 @@ class db_object
 
     function name(): string
     {
-        return '';
+        return 'name not overwritten by ' . $this::class;
     }
 
     function description(): string
     {
-        return '';
+        return 'description not overwritten by ' . $this::class;
     }
 
     function phrase(): phrase_dsp

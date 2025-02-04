@@ -1192,25 +1192,6 @@ class word_list extends sandbox_list_named
 
 
     /*
-     * extract
-     */
-
-    /**
-     * @return array list of the word ids
-     */
-    function ids(int $limit = null): array
-    {
-        $result = array();
-        foreach ($this->lst() as $wrd) {
-            if ($wrd->id() > 0) {
-                $result[] = $wrd->id();
-            }
-        }
-        return $result;
-    }
-
-
-    /*
      *  convert
      */
 

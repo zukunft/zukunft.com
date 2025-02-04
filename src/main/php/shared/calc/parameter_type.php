@@ -32,15 +32,24 @@
 namespace shared\calc;
 
 include_once MODEL_SYSTEM_PATH . 'BasicEnum.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_VERB_PATH . 'verb.php';
+include_once WEB_FORMULA_PATH . 'formula.php';
+include_once WEB_VERB_PATH . 'verb.php';
+include_once WEB_WORD_PATH . 'triple.php';
+include_once WEB_WORD_PATH . 'word.php';
 
 use cfg\formula\formula;
 use cfg\system\BasicEnum;
 use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\word\word;
+use html\formula\formula as formula_dsp;
+use html\verb\verb as verb_dsp;
+use html\word\triple as triple_dsp;
+use html\word\word as word_dsp;
 
 class parameter_type extends BasicEnum
 {
@@ -56,6 +65,12 @@ class parameter_type extends BasicEnum
     const TRIPLE_CLASS = triple::class;    // a triple is used for an AND selection of values
     const VERB_CLASS = verb::class;        // a verb is used for dynamic usage of linked words for an AND selection
     const FORMULA_CLASS = formula::class;  // a formula is used to include formula results of another formula
+
+    // for the frontend
+    const WORD_WEB_CLASS = word_dsp::class;        // a word is used for an AND selection of values
+    const TRIPLE_WEB_CLASS = triple_dsp::class;    // a triple is used for an AND selection of values
+    const VERB_WEB_CLASS = verb_dsp::class;        // a verb is used for dynamic usage of linked words for an AND selection
+    const FORMULA_WEB_CLASS = formula_dsp::class;  // a formula is used to include formula results of another formula
 
     protected static function get_description($value): string
     {

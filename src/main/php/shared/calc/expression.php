@@ -291,7 +291,7 @@ class expression
                 if ($trm_lst != null) {
                     $trm = $trm_lst->get_by_name($name);
                     if ($trm != null) {
-                        if ($trm->id_obj() > 0) {
+                        if ($trm->obj_id() > 0) {
                             $db_sym = $this->get_db_sym($trm);
                         }
                     }
@@ -364,6 +364,12 @@ class expression
 
         $lib = new library();
 
+        /*
+        if ($trm_lst == null) {
+            $trm_lst = new term_list_dsp();
+        }
+        */
+
         // get a word
         $id = $lib->str_between($frm_part_ref_text, chars::WORD_START, chars::WORD_END);
         if ($id > 0) {
@@ -376,7 +382,8 @@ class expression
                 log_warning('Word with id ' . $id . ' not found');
             } else {
                 $trm = $wrd->term();
-                $trm_lst->add($trm);
+                // TODO remember the word to avoid double load
+                //$trm_lst->add($trm);
             }
         }
 
@@ -393,7 +400,7 @@ class expression
                     log_warning('Triple with id ' . $id . ' not found');
                 } else {
                     $trm = $trp->term();
-                    $trm_lst->add($trm);
+                    //$trm_lst->add($trm);
                 }
             }
         }
@@ -411,7 +418,7 @@ class expression
                     log_warning('Formula with id ' . $id . ' not found');
                 } else {
                     $trm = $frm->term();
-                    $trm_lst->add($trm);
+                    //$trm_lst->add($trm);
                 }
             }
         }
@@ -429,7 +436,7 @@ class expression
                     log_warning('Verb with id ' . $id . ' not found');
                 } else {
                     $trm = $vrb->term();
-                    $trm_lst->add($trm);
+                    //$trm_lst->add($trm);
                 }
             }
         }
@@ -446,13 +453,13 @@ class expression
     {
         $db_sym = '';
         if ($trm->is_word()) {
-            $db_sym = chars::WORD_START . $trm->id_obj() . chars::WORD_END;
+            $db_sym = chars::WORD_START . $trm->obj_id() . chars::WORD_END;
         } elseif ($trm->is_triple()) {
-            $db_sym = chars::TRIPLE_START . $trm->id_obj() . chars::TRIPLE_END;
+            $db_sym = chars::TRIPLE_START . $trm->obj_id() . chars::TRIPLE_END;
         } elseif ($trm->is_formula()) {
-            $db_sym = chars::FORMULA_START . $trm->id_obj() . chars::FORMULA_END;
+            $db_sym = chars::FORMULA_START . $trm->obj_id() . chars::FORMULA_END;
         } elseif ($trm->is_verb()) {
-            $db_sym = chars::VERB_START . $trm->id_obj() . chars::VERB_END;
+            $db_sym = chars::VERB_START . $trm->obj_id() . chars::VERB_END;
         }
         return $db_sym;
     }

@@ -22,7 +22,7 @@
     - set and get:       to capsule the vars from unexpected changes
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
-    - sql:               to create sql statments e.g. for load
+    - sql:               to create sql statements e.g. for load
     - tree building      create foaf trees
     - im- and export:    create an export object and set the vars from an import object
     - information:       functions to make code easier to read
@@ -100,7 +100,6 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_list_named;
 use cfg\user\user_message;
 use cfg\value\value;
-use cfg\value\value_base;
 use cfg\value\value_list;
 use cfg\verb\verb;
 use cfg\word\word;
@@ -137,30 +136,6 @@ class phrase_list extends sandbox_list_named
     protected function rows_mapper(?array $db_rows, bool $load_all = false): bool
     {
         return parent::rows_mapper_obj(new phrase($this->user()), $db_rows, $load_all);
-    }
-
-
-    /*
-     * set and get
-     */
-
-    /**
-     * map a phrase list api json to this model phrase list object
-     * @param array $api_json the api array with the phrases that should be mapped
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $usr_msg = new user_message();
-
-        foreach ($api_json as $json_phr) {
-            $phr = new phrase($this->user());
-            $usr_msg->add($phr->set_by_api_json($json_phr));
-            if ($usr_msg->is_ok()) {
-                $this->add($phr);
-            }
-        }
-
-        return $usr_msg;
     }
 
 
@@ -437,6 +412,30 @@ class phrase_list extends sandbox_list_named
             $trm_lst->add($phr->term());
         }
         return $trm_lst;
+    }
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * map a phrase list api json to this model phrase list object
+     * @param array $api_json the api array with the phrases that should be mapped
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        foreach ($api_json as $json_phr) {
+            $phr = new phrase($this->user());
+            $usr_msg->add($phr->set_by_api_json($json_phr));
+            if ($usr_msg->is_ok()) {
+                $this->add($phr);
+            }
+        }
+
+        return $usr_msg;
     }
 
 
