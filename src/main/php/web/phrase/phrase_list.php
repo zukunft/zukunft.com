@@ -47,6 +47,9 @@ include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_WORD_PATH . 'triple.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once WEB_WORD_PATH . 'word_list.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'library.php';
@@ -63,6 +66,9 @@ use html\phrase\phrase_list as phrase_list_dsp;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\sandbox_list_named;
 use html\user\user_message;
+use html\word\triple;
+use html\word\word;
+use html\word\word_list;
 use shared\api;
 use shared\enum\foaf_direction;
 use shared\library;
@@ -133,6 +139,75 @@ class phrase_list extends sandbox_list_named
             $result = true;
         }
         return $result;
+    }
+
+
+    /*
+     * select
+     */
+
+    /**
+     * get the most useful time for the given phrases
+     * similar to the backend function with the same name
+     * TODO: review
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return phrase|null with the most useful time phrase
+     */
+    function assume_time(?term_list $trm_lst = null): ?phrase
+    {
+        $time_phr = null;
+        $wrd_lst = $this->wrd_lst_all();
+        $time_wrd = $wrd_lst->assume_time($trm_lst);
+        if (isset($time_wrd)) {
+            $time_phr = $time_wrd;
+        }
+        return $time_phr;
+    }
+
+    /**
+     * build a word list including the triple words or in other words flatten the list e.g. for parent inclusions
+     * @return word_list with all words of the phrases split into single words
+     */
+    function wrd_lst_all(): word_list
+    {
+        log_debug('phrase_list->wrd_lst_all for ' . $this->dsp_id());
+
+        $wrd_lst = new word_list();
+
+        // fill the word list
+        foreach ($this->lst() as $phr) {
+            if ($phr->obj() == null) {
+                log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
+            } else {
+                if ($phr->obj()->id() == 0) {
+                    log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
+                } else {
+                    if ($phr->name() == '') {
+                        $phr->load();
+                        log_warning('Phrase ' . $phr->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
+                    }
+                    // TODO check if old can ge removed: if ($phr->id() > 0) {
+                    if (get_class($phr->obj()) == word::class) {
+                        $wrd_lst->add($phr->obj());
+                    } elseif (get_class($phr->obj()) == triple::class) {
+                        // use the recursive triple function to include the foaf words
+                        $sub_wrd_lst = $phr->obj()->wrd_lst();
+                        foreach ($sub_wrd_lst->lst() as $wrd) {
+                            if ($wrd->name() == '') {
+                                $wrd->load();
+                                log_warning('Word ' . $wrd->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
+                            }
+                            $wrd_lst->add($wrd);
+                        }
+                    } else {
+                        log_err('The phrase list ' . $this->dsp_id() . ' contains ' . $phr->obj()->dsp_id() . ', which is neither a word nor a phrase, but it is a ' . get_class($phr->obj), 'phrase_list->wrd_lst_all');
+                    }
+                }
+            }
+        }
+
+        log_debug($wrd_lst->dsp_id());
+        return $wrd_lst;
     }
 
 

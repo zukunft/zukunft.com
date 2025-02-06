@@ -2,19 +2,9 @@
 
 /*
 
-    model/element/element_group.php - a group of formula elements that, in combination, return a value or a list of values
+    web/element/element_group.php - a group of formula elements that, in combination, return a value or a list of values
     -----------------------------
 
-    e.g. for for "ABB", "differentiator" and "Sector" (or "Sectors" "of" "ABB")
-       a list of all sector values is returned
-    or in other words for each element group a where clause for value retrieval is created
-
-    phrases are always used to select the smallest set of value (in SQL by using "AND" in the where clause)
-    e.g. "ABB" "Sales" excludes the values for "ABB income tax" and "Danone Sales"
-
-    verbs are always used to add a set of values
-    e.g. "ABB", "Sales", "differentiator" and "Sector" will return a list of Sector sales for ABB
-       so the SQL statement would be "... WHERE ("ABB" AND "Sales" AND "Sector1") OR ("ABB" AND "Sales" AND "Sector2") OR ....
 
     This file is part of zukunft.com - calc with words
 
@@ -40,44 +30,55 @@
   
 */
 
-namespace cfg\element;
+namespace html\element;
 
-include_once MODEL_FORMULA_PATH . 'figure_list.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_WORD_PATH . 'word.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_FIGURE_PATH . 'figure.php';
+include_once WEB_FIGURE_PATH . 'figure_list.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_PHRASE_PATH . 'term_list.php';
+include_once WEB_RESULT_PATH . 'result.php';
+include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_VALUE_PATH . 'value.php';
+include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once SHARED_PATH . 'library.php';
 
-use cfg\formula\figure_list;
-use cfg\formula\formula;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\result\result;
-use cfg\phrase\term_list;
-use cfg\system\base_list;
-use cfg\user\user;
-use cfg\value\value;
-use cfg\word\word;
-use html\figure\figure as figure_dsp;
+use html\figure\figure as figure;
+use html\figure\figure_list;
+use html\formula\formula;
+use html\phrase\phrase;
+use html\phrase\phrase_list;
+use html\phrase\term_list;
+use html\result\result;
+use html\sandbox\list_dsp;
+use html\user\user_message;
+use html\value\value;
+use html\word\word;
 use shared\library;
 use shared\types\api_type;
 
-class element_group extends base_list
+class element_group extends list_dsp
 {
 
+    // $lst is here an array of formula elements such as a word, verb or formula
     public ?phrase_list $phr_lst = null; // phrase list object with the context to retrieve the element number
-    public ?user $usr = null;            // the results can differ for each user; this is the user who wants to see the result
 
     public ?string $symbol = null; // the formula reference text for this element group; used to fill in the numbers into the formula
 
+
+    /**
+     * set the vars of this element_group list based on the given json
+     * @param array $json_array an api single object json message
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_from_json_array(array $json_array): user_message
+    {
+        return parent::set_list_from_json($json_array, new element());
+    }
 
     /*
      * display
@@ -102,79 +103,64 @@ class element_group extends base_list
         }
     }
 
-    // recreate the element group symbol based on the element list ($this->lst)
-    function build_symbol(): string
+    /**
+     * list of the formula element names independent of the element type
+     * this function is called from dsp_id, so no other call is allowed
+     */
+    private function names(): array
     {
-        $this->symbol = '';
+        $result = array();
 
-        foreach ($this->lst() as $elm) {
-            // build the symbol for the number replacement
-            if ($this->symbol == '') {
-                if ($elm->symbol != null) {
-                    $this->symbol = $elm->symbol;
-                }
-            } else {
-                if ($elm->symbol != null) {
-                    $this->symbol .= ' ' . $elm->symbol;
-                }
-            }
-            log_debug('symbol "' . $elm->symbol . '" added to "' . $this->symbol . '"');
+        foreach ($this->lst() as $frm_elm) {
+            // display the formula element name
+            $result[] .= $frm_elm->name();
         }
 
-        return $this->symbol;
+        return $result;
     }
 
     /**
-     * set the time phrase based on a predefined formula such as "prior" or "next"
-     * e.g. if the predefined formula "prior" is used and the time is 2017 than 2016 should be used
+     * list of the formula element names independent of the element type
      */
-    private function set_formula_time_phrase(element $frm_elm, phrase_list $val_phr_lst): ?phrase
+    function dsp_names(string $back = ''): string
     {
-        log_debug('for ' . $frm_elm->dsp_id() . ' and ' . $val_phr_lst->dsp_id());
+        $result = '';
 
-        $val_time_phr = new phrase($this->usr);
-
-        // guess the time word if needed
-        log_debug('assume time for ' . $val_phr_lst->dsp_id());
-        $val_time_phr = $val_phr_lst->assume_time();
-
-        // adjust the element time word if forced by the special formula
-        if (isset($val_time_phr)) {
-            if ($val_time_phr->id() == 0) {
-                // switched off because it is not working for "this"
-                log_err('No time found for "' . $frm_elm->obj->name . '".', 'element_group->figures');
-            } else {
-                log_debug('get predefined time result');
-                if (isset($frm_elm->obj)) {
-                    $val_time = $frm_elm->obj->special_time_phr($val_time_phr);
-                    if ($val_time->id() > 0) {
-                        $val_time_phr = $val_time;
-                        if ($val_time_phr->id() == 0) {
-                            $val_time_phr->load_by_name($val_time_phr->name());
-                        }
-                        if ($val_time_phr->name() == '') {
-                            $val_time_phr->load_by_id($val_time_phr->id());
-                        }
-                        log_debug('add element word for special formula result ' . $val_phr_lst->dsp_id() . ' taken from the result');
-                    }
-                }
-            }
-        }
-        if (isset($val_time_phr)) {
-            // before adding a special time word, remove all other time words from the word list
-            $val_phr_lst->ex_time();
-            $val_phr_lst->add($val_time_phr);
-            $this->phr_lst = $val_phr_lst;
-            log_debug('got the special formula word "' . $val_time_phr->name() . '" (' . $val_time_phr->id() . ')');
+        foreach ($this->lst() as $frm_elm) {
+            // display the formula element name
+            $result .= $frm_elm->link($back) . ' ';
         }
 
-        if (isset($val_time_phr)) {
-            log_debug('got ' . $val_time_phr->dsp_id());
-        }
-
-        return $val_time_phr;
+        return $result;
     }
 
+
+    /**
+     * the HTML code to display a figure list
+     */
+    function dsp_values(string $back = ''): string
+    {
+        $result = '';
+
+        $fig_lst = $this->figures();
+        log_debug('got figures');
+
+        // show the time if adjusted by a special formula element
+        // build the html code to display the value with the link
+        foreach ($fig_lst->lst() as $fig) {
+            log_debug('display figure');
+            $api_json = $fig->api_json([api_type::INCL_PHRASES]);
+            $fig_dsp = new figure();
+            $fig_dsp->set_from_json($api_json);
+            $result .= $fig_dsp->display_linked($back);
+        }
+
+        // TODO: show the time phrase only if it differs from the main time phrase
+
+        // display alternative values
+
+        return $result;
+    }
 
     /**
      *  get a list of figures related to the formula element group and a context defined by a list of words
@@ -192,11 +178,10 @@ class element_group extends base_list
      */
     function figures(?term_list $trm_lst = null): figure_list
     {
-        log_debug('figures ' . $this->dsp_id());
         $lib = new library();
 
         // init the resulting figure list
-        $fig_lst = new figure_list($this->usr);
+        $fig_lst = new figure_list();
 
         // add the words of the formula element group to the value selection
         // e.g. 1: for the formula "this" and the phrases "Switzerland" and "inhabitants" the Swiss inhabitants are requested
@@ -261,7 +246,7 @@ class element_group extends base_list
             // display the word group value and offer the user to change it
             // e.g. if the user has overwritten a result use the user overwrite
             log_debug('load word value for ' . $val_phr_lst->dsp_id());
-            $wrd_val = new value($this->usr);
+            $wrd_val = new value();
             // TODO create $wrd_val->load_best();
             $wrd_val->load_by_grp($val_phr_grp);
 
@@ -282,7 +267,7 @@ class element_group extends base_list
 
                 // get the word group result, which means a formula result
                 log_debug('load result for ' . $val_phr_lst->dsp_name());
-                $grp_res = new result($this->usr);
+                $grp_res = new result();
                 /* TODO review
                 $grp_res->load_by_grp($val_phr_grp);
                 */
@@ -299,7 +284,7 @@ class element_group extends base_list
                     $fig->set_symbol($this->symbol);
                     $fig_lst->add($fig);
 
-                    log_debug('result for ' . $val_phr_lst->dsp_name() . ', time ' . $val_time_phr->name() . '" (word group ' . $val_phr_grp->id() . ', user ' . $this->usr->id() . ') = ' . $grp_res->number());
+                    log_debug('result for ' . $val_phr_lst->dsp_name() . ', time ' . $val_time_phr->name() . '" (word group ' . $val_phr_grp->id() . ') = ' . $grp_res->number());
                 } else {
                     // if there is also not a formula result at least one number of the formula is not valid
                     $fig_lst->fig_missing = True;
@@ -311,103 +296,4 @@ class element_group extends base_list
         log_debug($lib->dsp_count($fig_lst->lst()) . ' found');
         return $fig_lst;
     }
-
-    /**
-     * the HTML code to display a figure list
-     */
-    function dsp_values(string $back = ''): string
-    {
-        log_debug();
-
-        $result = '';
-
-        $fig_lst = $this->figures();
-        log_debug('got figures');
-
-        // show the time if adjusted by a special formula element
-        // build the html code to display the value with the link
-        foreach ($fig_lst->lst() as $fig) {
-            log_debug('display figure');
-            $api_json = $fig->api_json([api_type::INCL_PHRASES]);
-            $fig_dsp = new figure_dsp();
-            $fig_dsp->set_from_json($api_json);
-            $result .= $fig_dsp->display_linked($back);
-        }
-
-        // TODO: show the time phrase only if it differs from the main time phrase
-
-        // display alternative values
-
-
-        log_debug('result "' . $result . '"');
-        return $result;
-    }
-
-
-    /*
-     * debug
-     */
-
-    /**
-     * @return string with the unique id fields
-     */
-    function dsp_id(): string
-    {
-        $lib = new library();
-        $id = $lib->dsp_array($this->ids());
-        $name = $lib->dsp_array($this->names());
-        $phr_name = '';
-        if (isset($this->phr_lst)) {
-            $phr_name = $this->phr_lst->dsp_name();
-        }
-        if ($name <> '') {
-            $result = '"' . $name . '" (' . $id . ')';
-        } else {
-            $result = 'id (' . $id . ')';
-        }
-        if ($phr_name <> '') {
-            $result .= ' and ' . $phr_name;
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param ?int $limit the max number of ids to show
-     * @return array with the database ids of all objects of this list
-     */
-    function ids(int $limit = null): array
-    {
-        $result = array();
-        foreach ($this->lst() as $frm_elm) {
-            // use only valid ids
-            if ($frm_elm->id() <> 0) {
-                $result[] = $frm_elm->id();
-            } else {
-                if ($frm_elm->obj != null) {
-                    if ($frm_elm->obj->id() <> 0) {
-                        $result[] = $frm_elm->obj->id();
-                    }
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * list of the formula element names independent of the element type
-     * this function is called from dsp_id, so no other call is allowed
-     */
-    private function names(): array
-    {
-        $result = array();
-
-        foreach ($this->lst() as $frm_elm) {
-            // display the formula element name
-            $result[] .= $frm_elm->name();
-        }
-
-        return $result;
-    }
-
 }

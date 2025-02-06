@@ -33,6 +33,7 @@
 namespace unit;
 
 include_once MODEL_FORMULA_PATH . 'expression.php';
+include_once WEB_ELEMENT_PATH . 'element_group.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -41,6 +42,7 @@ use cfg\formula\expression;
 use cfg\formula\formula;
 use cfg\phrase\phrase_list;
 use cfg\phrase\term_list;
+use html\element\element_group as element_group_dsp;
 use html\formula\formula as formula_dsp;
 use html\phrase\term_list as term_list_dsp;
 use shared\const\formulas;
@@ -140,7 +142,10 @@ class formula_tests
         $frm_prior = $t->formula_prior();
         $wrd_pct = $t->word_percent();
         $trm_lst = $t->term_list_increase();
+
+        // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
         $exp = $frm->expression($trm_lst);
+
         $result = $exp->dsp_id();
         $target = '""' . words::PERCENT . '" = ( "'
             . words::THIS_NAME . '" - "'
@@ -152,12 +157,70 @@ class formula_tests
             . $frm_prior->id() . '})';
         $t->assert($test_name . ' for ' . $frm->dsp_id(), $result, $target);
 
+        // build the element group list which is in this case "this" and "prior", but an element group can contain more than one word
+        $test_name = 'formula increase: test the element group creation';
+        $elm_grp_lst = $exp->element_grp_lst($trm_lst);
+        $result = $elm_grp_lst->dsp_id();
+        $target = '"'
+            . formulas::THIS_NAME . '" ('
+            . $frm_this->id() . ') / "'
+            . formulas::PRIOR . '" ('
+            . $frm_prior->id() . ') / "'
+            . formulas::PRIOR . '" ('
+            . $frm_prior->id() . ')';
+        $t->dsp_contains($test_name, $target, $result);
+
+        $test_name = 'formula increase; test the display name that can be used for user debugging';
         $frm_html = new formula_dsp($frm->api_json());
         $trm_lst_dsp = new term_list_dsp($trm_lst->api_json());
         $back = 0;
         $result = $frm_html->dsp_text($back, $trm_lst_dsp);
-        $target = '"' . words::PERCENT . '" = ( <a href="/http/formula_edit.php?id=' . $frm_this->id() . '&back=0" title="' . words::THIS_NAME . '">this</a> - <a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title=<a href="/http/formula_edit.php?id=20&back=0" title="' . words::PRIOR_NAME . '">prior</a>>prior</a> ) / <a href="/http/formula_edit.php?id=20&back=0" title=<a href="/http/formula_edit.php?id=' . $frm_prior->id() . '&back=0" title="' . words::PRIOR_NAME . '">prior</a>>prior</a>';
-        $t->assert('formula->dsp_text for ' . $frm->dsp_id(), $result, $target);
+        $target = '"' . words::PERCENT
+            . '" = ( <a href="/http/formula_edit.php?id='
+            . $frm_this->id() . '&back=0" title="'
+            . words::THIS_NAME . '">'
+            . words::THIS_NAME
+            . '</a> - <a href="/http/formula_edit.php?id='
+            . $frm_prior->id()
+            . '&back=0" title=<a href="/http/formula_edit.php?id=20&back=0" title="'
+            . words::PRIOR_NAME . '">'
+            . words::PRIOR_NAME . '</a>>'
+            . words::PRIOR_NAME
+            . '</a> ) / <a href="/http/formula_edit.php?id=20&back=0" title=<a href="/http/formula_edit.php?id='
+            . $frm_prior->id() . '&back=0" title="'
+            . words::PRIOR_NAME . '">'
+            . words::PRIOR_NAME . '</a>>'
+            . words::PRIOR_NAME . '</a>';
+        $t->assert($test_name, $result, $target);
+
+        // define the element group object to retrieve the value
+        // test the display name that can be used for user debugging
+        if (count($elm_grp_lst->lst()) > 0) {
+            // get "this" from the formula element group list
+            $elm_grp = $elm_grp_lst->lst()[0];
+            $elm_grp_dsp = new element_group_dsp($elm_grp->api_json());
+            $result = $elm_grp_dsp->dsp_names();
+            $target = '<a href="/http/formula_edit.php?id='
+                . $frm_this->id() . '" title="'
+                . words::THIS_NAME . '">'
+                . words::THIS_NAME . '</a>';
+            $t->display('element_group->dsp_names', trim($target), trim($result));
+        }
+        /*
+        if (count($elm_grp_lst->lst()) > 0) {
+            // get "this" from the formula element group list
+            $elm_grp = $elm_grp_lst->lst()[0];
+            $fig_lst = $elm_grp->figures($trm_lst);
+
+            $test_name = 'formula increase; test if the values for an element group are displayed correctly';
+            $frm_html = new formula_dsp($frm->api_json());
+            $trm_lst_dsp = new term_list_dsp($trm_lst->api_json());
+            $back = 0;
+            $result = $frm_html->dsp_text($back, $trm_lst_dsp);
+            $target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
+            $t->assert($test_name, $result, $target);
+        }
+        */
 
 
         // TODO activate

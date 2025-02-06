@@ -639,7 +639,7 @@ class expression extends shared_expression
 
                         // group the references if needed
                         if ($group_it) {
-                            $elm_grp->lst[] = $elm;
+                            $elm_grp->add_obj($elm);
                             log_debug('new group element "' . $elm->name() . '"');
 
                             // find the next term reference
@@ -664,7 +664,7 @@ class expression extends shared_expression
 
             // add last element group
             if ($group_it) {
-                if (!empty($elm_grp->lst)) {
+                if (!$elm_grp->is_empty()) {
                     $lst[] = $elm_grp;
                 }
             }

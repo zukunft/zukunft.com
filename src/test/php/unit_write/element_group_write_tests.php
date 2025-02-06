@@ -99,11 +99,6 @@ class element_group_write_tests
             $target = '{f' . $frm_this->id() . '}';
             $t->display('element_group->build_symbol', $target, $result);
 
-            // test the display name that can be used for user debugging
-            $result = trim($elm_grp->dsp_names());
-            $target = trim('<a href="/http/formula_edit.php?id=' . $frm_this->id() . '" title="' . words::THIS_NAME . '">this</a>');
-            $t->display('element_group->dsp_names', $target, $result);
-
             // test if the values for an element group are displayed correctly
             $result = $elm_grp->dsp_values();
             $fig_lst = $elm_grp->figures();

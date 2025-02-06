@@ -33,14 +33,23 @@ namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_HTML_PATH . 'html_base.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_PHRASE_PATH . 'term_list.php';
+//include_once WEB_VALUE_PATH . 'value_list.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_PATH . 'library.php';
 
+use html\phrase\phrase;
+use html\phrase\phrase_list;
+use html\phrase\term_list;
 use html\user\user_message;
-use html\word\word as word_dsp;
+use html\value\value_list;
 use html\html_base;
 use html\sandbox\list_dsp;
+use shared\library;
 use shared\types\phrase_type as phrase_type_shared;
 
 class word_list extends list_dsp
@@ -57,7 +66,7 @@ class word_list extends list_dsp
      */
     function set_from_json_array(array $json_array): user_message
     {
-        return parent::set_list_from_json($json_array, new word_dsp());
+        return parent::set_list_from_json($json_array, new word());
     }
 
 
@@ -69,10 +78,39 @@ class word_list extends list_dsp
      * add a word to the list
      * @returns bool true if the word has been added
      */
-    function add(word_dsp $wrd): bool
+    function add(word $wrd): bool
     {
         return parent::add_obj($wrd);
     }
+
+
+    /*
+     * cast
+     */
+
+    /**
+     * convert the word list object into a phrase list object
+     * @return phrase_list with all words of this list
+     */
+    function phrase_lst(): phrase_list
+    {
+        log_debug($this->dsp_id());
+        $lib = new library();
+        $phr_lst = new phrase_list();
+        foreach ($this->lst() as $phr) {
+            if (get_class($phr) == word::class) {
+                $phr_lst->add($phr->phrase());
+            } elseif (get_class($phr) == phrase::class) {
+                $phr_lst->add($phr);
+            } else {
+                log_err('unexpected object type ' . get_class($phr));
+            }
+        }
+        $phr_lst->id_lst();
+        log_debug('done ' . $lib->dsp_count($phr_lst->lst()));
+        return $phr_lst;
+    }
+
 
 
     /*
@@ -177,6 +215,168 @@ class word_list extends list_dsp
     }
 
     /**
+     * get the most useful time for the given list
+     * so either the last time from the word list
+     * or the time of the last "real" (reported) value for the word list
+     *
+     * always returns a phrase to avoid converting in the calling function
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return phrase|null a time phrase
+     */
+    function assume_time(?term_list $trm_lst = null): ?phrase
+    {
+        log_debug('for ' . $this->dsp_id());
+        $result = null;
+        $phr = null;
+
+        if ($this->has_time()) {
+            // get the last time from the word list
+            $time_phr_lst = $this->time_lst();
+            // shortcut, replace with a most_useful function
+            foreach ($time_phr_lst->lst() as $time_wrd) {
+                if (is_null($phr)) {
+                    $phr = $time_wrd;
+                    $phr->set_user();
+                } else {
+                    log_warning("The word list contains more time word than supported by the program.", "word_list->assume_time");
+                }
+            }
+            log_debug('time ' . $phr->name() . ' assumed for ' . $this->name());
+        } else {
+            // get the time of the last "real" (reported) value for the word list
+            $wrd_max_time = $this->max_val_time($trm_lst);
+            $phr = $wrd_max_time?->phrase();
+        }
+
+        if ($phr != null) {
+            log_debug('time used "' . $phr->name() . '" (' . $phr->id() . ')');
+            if (get_class($phr) == word::class or get_class($phr) == word::class) {
+                $result = $phr->phrase();
+            } else {
+                $result = $phr;
+            }
+        } else {
+            log_debug('no time found');
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool true if a word lst contains a time word
+     */
+    function has_time(): bool
+    {
+        $result = false;
+        // loop over the word ids and add only the time ids to the result array
+        foreach ($this->lst() as $wrd) {
+            if (!$result) {
+                if ($wrd->is_time()) {
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get the time of the last value related to a word and assigned to a phrase list
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return word|null a time word (or phrase?)
+     */
+    function max_val_time(?term_list $trm_lst = null): ?word
+    {
+        $lib = new library();
+        $wrd = null;
+
+        if ($trm_lst == null) {
+            // load the list of all value related to the word list
+            $val_lst = new value_list();
+            $val_lst->load_by_phr_lst($this->phrase_lst());
+            log_debug($lib->dsp_count($val_lst->lst()) . ' values for ' . $this->dsp_id());
+
+            $time_ids = array();
+            foreach ($val_lst->lst() as $val) {
+                $val->load_phrases();
+                if (isset($val->time_phr)) {
+                    log_debug('value (' . $val->number() . ' @ ' . $val->time_phr->name() . ')');
+                    if ($val->time_phr->id() > 0) {
+                        if (!in_array($val->time_phr->id(), $time_ids)) {
+                            $time_ids[] = $val->time_phr->id();
+                            log_debug('add word id (' . $val->time_phr->id() . ')');
+                        }
+                    }
+                }
+            }
+
+            $time_lst = new word_list();
+            if (count($time_ids) > 0) {
+                $time_lst->load_by_ids($time_ids);
+                $wrd = $time_lst->max_time();
+            }
+        } else {
+            $time_lst = new word_list();
+            foreach ($trm_lst->lst() as $trm) {
+                if ($trm->is_time()) {
+                    $time_lst->add($trm->word());
+                }
+            }
+            $wrd = $time_lst->max_time();
+        }
+
+        /*
+        // get all values related to the selecting word, because this is probably strongest selection and to save time reduce the number of records asap
+        $val = New value;
+        $val->wrd_lst = $this;
+        $val->usr = $this->user();
+        $val->load_by_wrd_lst();
+        $value_lst = array();
+        $value_lst[$val->id] = $val->number();
+        zu_debug('word_list->max_val_time -> ('.implode(",",$value_lst).')');
+
+        if (sizeof($value_lst) > 0) {
+
+          // get all words related to the value list
+          $all_word_lst = zu_sql_value_lst_words($value_lst, $this->user()->id());
+
+          // get the time words
+          $time_lst = zut_time_lst($all_word_lst);
+
+          // get the most useful (last) time words (replace by a "followed by" sorted list
+          ar sort($time_lst);
+          $time_keys = array_keys($time_lst);
+          $wrd_id = $time_keys[0];
+          $wrd = New word;
+          if ($wrd_id > 0) {
+            $wrd->id = $wrd_id;
+            $wrd->usr = $this->user();
+            $wrd->load();
+          }
+        }
+        */
+        if ($wrd != null) {
+            log_debug('done (' . $wrd->name() . ')');
+        }
+        return $wrd;
+    }
+
+    /**
+     * @return word the last time word of the word list
+     */
+    function max_time(): word
+    {
+        $max_wrd = new word();
+        if (count($this->lst()) > 0) {
+            foreach ($this->lst() as $wrd) {
+                // TODO replaced by "is following"
+                if ($wrd->name() > $max_wrd->name()) {
+                    $max_wrd = clone $wrd;
+                }
+            }
+        }
+        return $max_wrd;
+    }
+
+    /**
      * get all time words from this list of words
      */
     function time_lst(): word_list
@@ -272,6 +472,35 @@ class word_list extends list_dsp
     function ex_percent(): void
     {
         $this->diff($this->percent_lst());
+    }
+
+    /**
+     * to show the list name to the user in the most simple form (without any ids)
+     * this function is called from dsp_id, so no other call is allowed
+     *
+     * @param ?int $limit the max number of ids to show
+     * @return string a simple name of the list
+     */
+    function name(int $limit = null): string
+    {
+        return '"' . implode('","', $this->names($limit)) . '"';
+    }
+
+    /**
+     * @param ?int $limit the max number of ids to show
+     * @return array with all names of the list
+     */
+    function names(int $limit = null): array
+    {
+        $result = [];
+        $pos = 0;
+        foreach ($this->lst() as $sbx_obj) {
+            if ($pos <= $limit or $limit == null) {
+                $result[] = $sbx_obj->name();
+                $pos++;
+            }
+        }
+        return $result;
     }
 
 }
