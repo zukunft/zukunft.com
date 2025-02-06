@@ -119,6 +119,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once WEB_VALUE_PATH . 'value.php';
 include_once SHARED_CONST_PATH . 'chars.php';
+include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
@@ -140,6 +141,7 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_multi;
 use cfg\system\log;
 use shared\const\chars;
+use shared\enum\change_actions;
 use shared\json_fields;
 use shared\types\api_type_list;
 use shared\types\protection_type as protect_type_shared;
@@ -1557,7 +1559,7 @@ class value_base extends sandbox_value
         } else {
             $log = new change_values_norm($this->user());
         }
-        $log->set_action(change_action::UPDATE);
+        $log->set_action(change_actions::UPDATE);
         if ($this->can_change()) {
             $log->set_table(change_table_list::VALUE);
         } else {
@@ -1582,7 +1584,7 @@ class value_base extends sandbox_value
         } else {
             $log = new changes_norm($this->user());
         }
-        $log->set_action(change_action::UPDATE);
+        $log->set_action(change_actions::UPDATE);
         if ($this->can_change()) {
             $log->set_table(change_table_list::VALUE);
         } else {

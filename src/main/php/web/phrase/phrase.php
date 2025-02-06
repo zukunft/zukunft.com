@@ -36,16 +36,16 @@ include_once WEB_SANDBOX_PATH . 'combine_named.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
-//include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_VERB_PATH . 'verb_list.php';
 include_once WEB_WORD_PATH . 'word.php';
+//include_once WEB_WORD_PATH . 'word_list.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use cfg\verb\verb_list;
 use html\button;
 use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
@@ -53,8 +53,10 @@ use html\rest_ctrl as api_dsp;
 use html\sandbox\combine_named as combine_named_dsp;
 use html\system\messages;
 use html\user\user_message;
+use html\verb\verb_list;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
+use html\word\word_list;
 use shared\enum\foaf_direction;
 use shared\json_fields;
 
@@ -351,6 +353,26 @@ class phrase extends combine_named_dsp
     {
         $wrd = $this->main_word();
         return $wrd->btn_add($back);
+    }
+
+    /**
+     * to enable the recursive function in work_link
+     * TODO add a list of triple already split to detect endless loops
+     */
+    function wrd_lst(): word_list
+    {
+        $wrd_lst = new word_list();
+        if (!$this->is_word()) {
+            $trp = $this->obj();
+            $sub_wrd_lst = $trp->wrd_lst();
+            foreach ($sub_wrd_lst->lst() as $wrd) {
+                $wrd_lst->add($wrd);
+            }
+        } else {
+            $wrd = $this->obj();
+            $wrd_lst->add($wrd);
+        }
+        return $wrd_lst;
     }
 
 }

@@ -56,9 +56,15 @@ class type_list
     const CODE_ID_NOT_FOUND = -1;
 
     // the protected main var without id list because this is only loaded once
-    private array $lst = array();
+    private array $lst = [];
     private array $hash = []; // hash list with the code id for fast selection
 
+
+    function reset(): void
+    {
+        $this->lst = [];
+        $this->hash = [];
+    }
 
     /**
      * set the vars of these list display objects bases on the api json array

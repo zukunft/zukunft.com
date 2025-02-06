@@ -36,25 +36,22 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
+include_once SHARED_ENUM_PATH . 'change_actions.php';
 
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\helper\type_object;
+use shared\enum\change_actions;
 
 class change_action extends type_object
 {
 
-    // the basic change types that are logged
-    const ADD = 'add';
-    const UPDATE = 'update';
-    const DELETE = 'del';
-
     // list of all log actions allowed in this program version
     const ACTION_LIST = array(
-        self::ADD,
-        self::UPDATE,
-        self::DELETE
+        change_actions::ADD,
+        change_actions::UPDATE,
+        change_actions::DELETE
     );
 
 

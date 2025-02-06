@@ -99,4 +99,13 @@ class CombineObject
         return $this->obj()->id();
     }
 
+
+    /*
+     * debug
+     */
+
+    function dsp_id(): string
+    {
+        return $this->id();
+    }
 }

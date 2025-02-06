@@ -120,4 +120,21 @@ class combine_object extends CombineObject
         return $result;
     }
 
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string the unique id fields
+     */
+    function dsp_id(): string
+    {
+        if ($this->obj() != null) {
+            return $this->obj()->dsp_id() . ' as term';
+        } else {
+            return 'term with null object';
+        }
+    }
+
 }

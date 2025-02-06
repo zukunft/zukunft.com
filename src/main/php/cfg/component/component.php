@@ -73,6 +73,7 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_CONST_PATH . 'components.php';
@@ -88,7 +89,6 @@ use cfg\db\sql_type_list;
 use cfg\formula\formula;
 use cfg\helper\type_object;
 use cfg\log\change;
-use cfg\log\change_action;
 use cfg\log\change_link;
 use cfg\phrase\phrase;
 use cfg\sandbox\sandbox;
@@ -96,6 +96,7 @@ use cfg\sandbox\sandbox_typed;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\word;
+use shared\enum\change_actions;
 use shared\json_fields;
 use shared\const\components;
 use shared\types\api_type_list;
@@ -951,7 +952,7 @@ class component extends sandbox_typed
     {
         log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id());
         $log = new change_link($this->user());
-        $log->set_action(change_action::ADD);
+        $log->set_action(change_actions::ADD);
         $log->set_class(component_link::class);
         $log->new_from = clone $this;
         $log->new_to = clone $dsp;
@@ -967,7 +968,7 @@ class component extends sandbox_typed
     {
         log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id());
         $log = new change_link($this->user());
-        $log->set_action(change_action::DELETE);
+        $log->set_action(change_actions::DELETE);
         $log->set_class(component_link::class);
         $log->old_from = clone $this;
         $log->old_to = clone $dsp;

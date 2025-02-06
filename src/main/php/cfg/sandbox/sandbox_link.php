@@ -71,6 +71,7 @@ include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -88,13 +89,13 @@ use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\helper\db_object_seq_id;
 use cfg\log\change;
-use cfg\log\change_action;
 use cfg\log\change_link;
 use cfg\ref\ref;
 use cfg\word\triple;
 use cfg\user\user;
 use cfg\user\user_message;
 use Exception;
+use shared\enum\change_actions;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -577,7 +578,7 @@ class sandbox_link extends sandbox
         $log->new_from = $this->fob;
         $log->new_to = $this->tob;
 
-        $log->set_action(change_action::ADD);
+        $log->set_action(change_actions::ADD);
         // TODO add the table exceptions from sql_db
         $tbl_name = $lib->class_to_name($this::class);
         $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
@@ -597,7 +598,7 @@ class sandbox_link extends sandbox
         $lib = new library();
 
         $log = new change_link($this->user());
-        $log->set_action(change_action::DELETE);
+        $log->set_action(change_actions::DELETE);
         $tbl_name = $lib->class_to_name($this::class);
         $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
         $log->old_from = $this->fob();

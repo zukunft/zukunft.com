@@ -99,6 +99,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
+include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
@@ -152,11 +153,11 @@ use cfg\user\user;
 use cfg\user\user_list;
 use cfg\user\user_message;
 use cfg\value\value;
-use cfg\value\value_base;
 use cfg\verb\verb;
 use cfg\view\view;
 use cfg\word\word;
 use cfg\word\triple;
+use shared\enum\change_actions;
 use shared\types\api_type_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
@@ -1580,7 +1581,7 @@ class sandbox_multi extends db_object_multi_user
     protected function log_add_common(change|change_value $log): change|change_value
     {
         $lib = new library();
-        $log->set_action(change_action::ADD);
+        $log->set_action(change_actions::ADD);
         // a value, result or group is always identified by the group name
         $log->set_field($lib->class_to_name(group::class) . '_name');
         $log->old_value = null;
@@ -1725,7 +1726,7 @@ class sandbox_multi extends db_object_multi_user
         $class = $lib->class_to_name($this::class);
         log_debug($this->dsp_id());
         $log->set_user($this->user());
-        $log->set_action(change_action::UPDATE);
+        $log->set_action(change_actions::UPDATE);
         if ($this->can_change()) {
             // TODO add the table exceptions from sql_db
             $log->set_table($class . sql_db::TABLE_EXTENSION);
@@ -1806,7 +1807,7 @@ class sandbox_multi extends db_object_multi_user
         $log->old_value = $this->name();
         $log->new_value = null;
         $log->row_id = 0;
-        $log->set_action(change_action::DELETE);
+        $log->set_action(change_actions::DELETE);
         $log->add();
         return $log;
     }
@@ -2059,7 +2060,7 @@ class sandbox_multi extends db_object_multi_user
         // add the change_action_id if needed
         $fvt_lst_out->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_action::DELETE),
+            $cng_act_cac->id(change_actions::DELETE),
             sql_par_type::INT_SMALL);
 
         if ($this->is_named_obj()) {
@@ -3284,7 +3285,7 @@ class sandbox_multi extends db_object_multi_user
         global $cng_act_cac;
         $fvt_lst->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_action::ADD),
+            $cng_act_cac->id(change_actions::ADD),
             type_object::FLD_ID_SQL_TYP
         );
 
@@ -3415,7 +3416,7 @@ class sandbox_multi extends db_object_multi_user
         global $cng_act_cac;
         $fvt_lst->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_action::UPDATE),
+            $cng_act_cac->id(change_actions::UPDATE),
             type_object::FLD_ID_SQL_TYP
         );
 

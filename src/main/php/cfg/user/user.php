@@ -87,6 +87,7 @@ include_once MODEL_USER_PATH . 'user_type.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 //include_once WEB_USER_PATH . 'user.php';
 //include_once WEB_HELPER_PATH . 'config.php';
+include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
@@ -101,7 +102,6 @@ use cfg\db\sql_par_type;
 use cfg\helper\db_object_seq_id;
 use cfg\system\ip_range_list;
 use cfg\log\change;
-use cfg\log\change_action;
 use cfg\log\change_table_list;
 use cfg\sandbox\sandbox_named;
 use cfg\ref\source;
@@ -111,6 +111,7 @@ use cfg\view\view;
 use cfg\view\view_sys_list;
 use cfg\word\word;
 use html\user\user as user_dsp;
+use shared\enum\change_actions;
 use shared\json_fields;
 use Exception;
 use shared\types\api_type_list;
@@ -1163,7 +1164,7 @@ class user extends db_object_seq_id
     {
         log_debug(' user ' . $this->name);
         $log = new change($this);
-        $log->set_action(change_action::UPDATE);
+        $log->set_action(change_actions::UPDATE);
         $log->set_table(change_table_list::USER);
 
         return $log;

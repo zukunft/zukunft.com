@@ -45,6 +45,7 @@ include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -57,9 +58,9 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\helper\db_object_seq_id;
 use cfg\log\change;
-use cfg\log\change_action;
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\enum\change_actions;
 use shared\json_fields;
 use shared\library;
 
@@ -412,7 +413,7 @@ class ip_range extends db_object_seq_id
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->user());
-        $log->set_action(change_action::ADD);
+        $log->set_action(change_actions::ADD);
         $log->set_table($tbl_name);
         $log->set_field(self::FLD_FROM . '_' . self::FLD_TO);
         $log->new_value = $this->name();
@@ -433,7 +434,7 @@ class ip_range extends db_object_seq_id
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->user());
-        $log->set_action(change_action::UPDATE);
+        $log->set_action(change_actions::UPDATE);
         $log->set_table($tbl_name);
 
         return $log;

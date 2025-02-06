@@ -68,6 +68,7 @@ include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VALUE_PATH . 'value_geo.php';
 //include_once MODEL_VALUE_PATH . 'value_time_series.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
+include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -105,6 +106,7 @@ use cfg\word\triple_list;
 use cfg\user\user;
 use cfg\value\value_base;
 use cfg\word\word_list;
+use shared\enum\change_actions;
 use shared\json_fields;
 use shared\library;
 use DateTime;
@@ -1417,7 +1419,7 @@ class sandbox_value extends sandbox_multi
     protected function log_add_common(change|change_value $log): change|change_value
     {
         log_debug($this->dsp_id());
-        $log->set_action(change_action::ADD);
+        $log->set_action(change_actions::ADD);
         $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
         $log->group_id = $this->grp_id();
         $log->old_value = null;
@@ -1448,7 +1450,7 @@ class sandbox_value extends sandbox_multi
         $lib = new library();
 
         $log = new change($this->user());
-        $log->set_action(change_action::DELETE);
+        $log->set_action(change_actions::DELETE);
         $class = $lib->class_to_name($this::class);
         $log->set_table($class . sql_db::TABLE_EXTENSION);
         $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
@@ -1747,7 +1749,7 @@ class sandbox_value extends sandbox_multi
         global $cng_act_cac;
         $fvt_lst->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_action::ADD),
+            $cng_act_cac->id(change_actions::ADD),
             type_object::FLD_ID_SQL_TYP
         );
 
@@ -1994,7 +1996,7 @@ class sandbox_value extends sandbox_multi
         global $cng_act_cac;
         $fvt_lst_log->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_action::DELETE),
+            $cng_act_cac->id(change_actions::DELETE),
             type_object::FLD_ID_SQL_TYP
         );
 

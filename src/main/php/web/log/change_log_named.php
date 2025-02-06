@@ -42,6 +42,7 @@ include_once WEB_LOG_PATH . 'change_log.php';
 //include_once WEB_HELPER_PATH . 'config.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
+include_once SHARED_ENUM_PATH . 'change_actions.php';
 
 use cfg\log\change_action;
 use html\helper\config;
@@ -52,6 +53,7 @@ use html\system\back_trace;
 use cfg\log\change_table_list;
 use cfg\formula\formula;
 use html\system\messages;
+use shared\enum\change_actions;
 
 class change_log_named extends change_log
 {
@@ -153,17 +155,17 @@ class change_log_named extends change_log
         $undo_call = '';
         $undo_btn = '';
         if ($this->table_name() == change_table_list::WORD) {
-            if ($this->action_code_id() == change_action::ADD) {
+            if ($this->action_code_id() == change_actions::ADD) {
                 $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
                 $undo_btn = (new button($undo_call))->undo(messages::UNDO_ADD);
             }
         } elseif ($this->table_name() == change_table_list::VIEW) {
-            if ($this->action_code_id() == change_action::ADD) {
+            if ($this->action_code_id() == change_actions::ADD) {
                 $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
                 $undo_btn = (new button($undo_call))->undo(messages::UNDO_EDIT);
             }
         } elseif ($this->table_name() == change_table_list::FORMULA) {
-            if ($this->action_code_id() == change_action::UPDATE) {
+            if ($this->action_code_id() == change_actions::UPDATE) {
                 $undo_call = $html->url(
                     formula::class . rest_ctrl::UPDATE, $this->row_id,
                     $back->url_encode() . '&undo_change=' . $this->id());

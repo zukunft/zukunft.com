@@ -93,6 +93,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_db.php';
 //include_once MODEL_WORD_PATH . 'word_list.php';
+include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
@@ -135,6 +136,7 @@ use cfg\view\view;
 use html\html_base;
 use JsonSerializable;
 use shared\const\triples;
+use shared\enum\change_actions;
 use shared\enum\messages as msg_enum;
 use shared\json_fields;
 use shared\library;
@@ -1880,7 +1882,7 @@ class triple extends sandbox_link_named
     {
         log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
         $log = new change_link($this->user());
-        $log->set_action(change_action::ADD);
+        $log->set_action(change_actions::ADD);
         $log->set_table(change_table_list::TRIPLE);
         $log->new_from = $this->from();
         $log->new_link = $this->verb();
@@ -1897,7 +1899,7 @@ class triple extends sandbox_link_named
     function log_upd(): change_link
     {
         $log = new change_link($this->user());
-        $log->set_action(change_action::UPDATE);
+        $log->set_action(change_actions::UPDATE);
         if ($this->can_change()) {
             $log->set_table(change_table_list::TRIPLE);
         } else {
@@ -1915,7 +1917,7 @@ class triple extends sandbox_link_named
     {
         log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
         $log = new change_link($this->user());
-        $log->set_action(change_action::DELETE);
+        $log->set_action(change_actions::DELETE);
         $log->set_table(change_table_list::TRIPLE);
         $log->old_from = $this->from();
         $log->old_link = $this->verb();
@@ -1932,7 +1934,7 @@ class triple extends sandbox_link_named
     function log_upd_field(): change
     {
         $log = new change($this->user());
-        $log->set_action(change_action::UPDATE);
+        $log->set_action(change_actions::UPDATE);
         if ($this->can_change()) {
             $log->set_table(change_table_list::TRIPLE);
         } else {

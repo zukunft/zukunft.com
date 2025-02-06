@@ -57,6 +57,8 @@ include_once MODEL_VALUE_PATH . 'value_text.php';
 include_once MODEL_VALUE_PATH . 'value_geo.php';
 include_once MODEL_VALUE_PATH . 'value_ts_data.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
+include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_ENUM_PATH . 'sys_log_statuus.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
@@ -144,7 +146,6 @@ use cfg\system\job_list;
 use cfg\system\job_type_list;
 use cfg\system\sys_log;
 use cfg\system\sys_log_list;
-use cfg\system\sys_log_status;
 use cfg\system\sys_log_status_list;
 use cfg\user\user;
 use cfg\user\user_profile_list;
@@ -174,6 +175,8 @@ use html\phrase\phrase_list as phrase_list_dsp;
 use html\system\messages;
 use html\view\view_list as view_list_dsp;
 use html\word\word as word_dsp;
+use shared\enum\change_actions;
+use shared\enum\sys_log_statuus;
 use shared\json_fields;
 use shared\library;
 use shared\const\components;
@@ -218,8 +221,6 @@ class create_test_objects extends test_base
 
     function type_lists_api(user $usr): string
     {
-        global $db_con;
-
         $is_ok = true;
 
         $usr_pro_cac = new user_profile_list();
@@ -958,7 +959,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return triple with all fields set and a reseved test name for testing the db write function
+     * @return triple with all fields set and a reserved test name for testing the db write function
      */
     function triple_filled_add(): triple
     {
@@ -3032,7 +3033,7 @@ class create_test_objects extends test_base
 
         $chg = new change($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
-        $chg->set_action(change_action::ADD);
+        $chg->set_action(change_actions::ADD);
         $chg->set_table(change_table_list::WORD);
         $chg->set_field(change_field_list::FLD_WORD_NAME);
         $chg->new_value = words::MATH;
@@ -3105,7 +3106,7 @@ class create_test_objects extends test_base
 
         $chg = new changes_norm($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
-        $chg->set_action(change_action::ADD);
+        $chg->set_action(change_actions::ADD);
         $chg->set_table(change_table_list::WORD);
         $chg->set_field(change_field_list::FLD_WORD_NAME);
         $chg->new_value = words::MATH;
@@ -3122,7 +3123,7 @@ class create_test_objects extends test_base
 
         $chg = new changes_big($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
-        $chg->set_action(change_action::ADD);
+        $chg->set_action(change_actions::ADD);
         $chg->set_table(change_table_list::WORD);
         $chg->set_field(change_field_list::FLD_WORD_NAME);
         $chg->new_value = words::MATH;
@@ -3142,7 +3143,7 @@ class create_test_objects extends test_base
         $val_fld = $this->log_class_to_value_field($class);
         $val = $this->log_class_to_value($class);
         $log->set_time_str(self::DUMMY_DATETIME);
-        $log->set_action(change_action::ADD);
+        $log->set_action(change_actions::ADD);
         $log->set_table($lib->class_to_table($val_class));
         $log->set_field($val_fld);
         $log->group_id = $this->group()->id();
@@ -3287,7 +3288,7 @@ class create_test_objects extends test_base
 
         $chg = new change_values_norm($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
-        $chg->set_action(change_action::ADD);
+        $chg->set_action(change_actions::ADD);
         $chg->set_table(change_table_list::VALUE);
         $chg->set_field(change_field_list::FLD_NUMERIC_VALUE);
         $chg->group_id = $this->group()->id();
@@ -3305,7 +3306,7 @@ class create_test_objects extends test_base
 
         $chg = new change_values_prime($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
-        $chg->set_action(change_action::ADD);
+        $chg->set_action(change_actions::ADD);
         $chg->set_table(change_table_list::WORD);
         $chg->set_field(change_field_list::FLD_WORD_NAME);
         $chg->new_value = values::PI_SHORT;
@@ -3322,7 +3323,7 @@ class create_test_objects extends test_base
 
         $chg = new change_values_big($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
-        $chg->set_action(change_action::ADD);
+        $chg->set_action(change_actions::ADD);
         $chg->set_table(change_table_list::WORD);
         $chg->set_field(change_field_list::FLD_WORD_NAME);
         $chg->new_value = values::PI_SHORT;
@@ -3359,7 +3360,7 @@ class create_test_objects extends test_base
 
         $chg = new change_link($usr_sys);
         $chg->set_time_str(self::DUMMY_DATETIME);
-        $chg->set_action(change_action::ADD);
+        $chg->set_action(change_actions::ADD);
         $chg->set_table(change_table_list::TRIPLE);
         $chg->new_from_id = words::CONST_ID;
         $chg->new_link_id = verbs::TI_PART;
@@ -3382,7 +3383,7 @@ class create_test_objects extends test_base
         $sys->log_trace = sys_log_tests::TV_LOG_TRACE;
         $sys->function_name = sys_log_tests::TV_FUNC_NAME;
         $sys->solver_name = sys_log_tests::TV_SOLVE_ID;
-        $sys->status_name = $sys_log_sta_cac->id(sys_log_status::OPEN);
+        $sys->status_name = $sys_log_sta_cac->id(sys_log_statuus::OPEN);
         return $sys;
     }
 
@@ -3400,7 +3401,7 @@ class create_test_objects extends test_base
         $sys->log_trace = sys_log_tests::T2_LOG_TRACE;
         $sys->function_name = sys_log_tests::T2_FUNC_NAME;
         $sys->solver_name = sys_log_tests::TV_SOLVE_ID;
-        $sys->status_name = $sys_log_sta_cac->id(sys_log_status::CLOSED);
+        $sys->status_name = $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
         return $sys;
     }
 

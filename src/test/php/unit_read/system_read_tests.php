@@ -35,14 +35,13 @@ namespace unit_read;
 include_once MODEL_SYSTEM_PATH . 'sys_log.php';
 include_once DB_PATH . 'db_check.php';
 include_once SHARED_TYPES_PATH . 'api_type.php';
+include_once SHARED_ENUM_PATH . 'sys_log_statuus.php';
 
 use cfg\formula\formula;
 use cfg\system\job_type_list;
-use cfg\db\db_check;
-use cfg\system\sys_log_status;
 use cfg\system\sys_log_status_list;
 use cfg\helper\type_lists;
-use cfg\db\sql_db;
+use shared\enum\sys_log_statuus;
 use shared\types\api_type;
 use test\test_cleanup;
 
@@ -68,8 +67,8 @@ class system_read_tests
         $t->assert('load status', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $sys_log_sta_cac->id(sys_log_status::OPEN);
-        $t->assert('check status ' . sys_log_status::OPEN, $result, 1);
+        $result = $sys_log_sta_cac->id(sys_log_statuus::OPEN);
+        $t->assert('check status ' . sys_log_statuus::OPEN, $result, 1);
 
         $t->subheader('System batch job type tests');
 

@@ -64,6 +64,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
@@ -79,7 +80,6 @@ use cfg\db\sql_type_list;
 use cfg\helper\combine_named;
 use cfg\helper\type_object;
 use cfg\log\change;
-use cfg\log\change_action;
 use cfg\log\change_table_list;
 use cfg\phrase\phrase;
 use cfg\sandbox\sandbox;
@@ -87,6 +87,7 @@ use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\enum\change_actions;
 use shared\library;
 
 class formula_link extends sandbox_link
@@ -554,7 +555,7 @@ class formula_link extends sandbox_link
     function log_upd_field(): change
     {
         $log = new change($this->user());
-        $log->set_action(change_action::UPDATE);
+        $log->set_action(change_actions::UPDATE);
         if ($this->can_change()) {
             $log->set_class(formula_link::class);
         } else {

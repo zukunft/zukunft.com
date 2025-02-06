@@ -108,6 +108,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_VIEW_PATH . 'view_term_link.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
+include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
@@ -153,6 +154,7 @@ use cfg\view\view_term_link;
 use cfg\word\triple;
 use cfg\word\word;
 use Exception;
+use shared\enum\change_actions;
 use shared\enum\messages as msg_enum;
 use shared\json_fields;
 use shared\library;
@@ -1548,7 +1550,7 @@ class sandbox extends db_object_seq_id_user
 
         $log = new change($this->user());
 
-        $log->set_action(change_action::ADD);
+        $log->set_action(change_actions::ADD);
         // TODO add the table exceptions from sql_db
         $log->set_table($class_name . sql_db::TABLE_EXTENSION);
         $log->row_id = 0;
@@ -1575,7 +1577,7 @@ class sandbox extends db_object_seq_id_user
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         $log->set_user($this->user());
-        $log->set_action(change_action::UPDATE);
+        $log->set_action(change_actions::UPDATE);
         if ($this->can_change()) {
             // TODO add the table exceptions from sql_db
             $log->set_table($class_name . sql_db::TABLE_EXTENSION);
@@ -3022,7 +3024,7 @@ class sandbox extends db_object_seq_id_user
         // add the change_action_id if needed
         $fvt_lst_out->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_action::DELETE),
+            $cng_act_cac->id(change_actions::DELETE),
             sql_par_type::INT_SMALL);
 
         if ($this->is_named_obj()) {
@@ -3369,7 +3371,7 @@ class sandbox extends db_object_seq_id_user
         global $cng_act_cac;
         $fvt_lst->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_action::ADD),
+            $cng_act_cac->id(change_actions::ADD),
             type_object::FLD_ID_SQL_TYP
         );
         if ($this->is_link_obj()) {
@@ -3624,7 +3626,7 @@ class sandbox extends db_object_seq_id_user
         global $cng_act_cac;
         $fvt_lst->add_field(
             change_action::FLD_ID,
-            $cng_act_cac->id(change_action::UPDATE),
+            $cng_act_cac->id(change_actions::UPDATE),
             type_object::FLD_ID_SQL_TYP
         );
 

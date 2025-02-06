@@ -96,6 +96,7 @@ include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
+include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
@@ -115,7 +116,6 @@ use cfg\formula\formula;
 use cfg\formula\formula_link;
 use cfg\helper\db_object_seq_id;
 use cfg\log\change;
-use cfg\log\change_action;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\phrase\term;
@@ -128,6 +128,7 @@ use cfg\value\value_list;
 use cfg\verb\verb;
 use cfg\verb\verb_list;
 use cfg\view\view;
+use shared\enum\change_actions;
 use shared\enum\foaf_direction;
 use shared\json_fields;
 use shared\library;
@@ -1553,7 +1554,7 @@ class word extends sandbox_typed
         $msk_new->load_by_id($view_id);
 
         $log = new change($this->user());
-        $log->set_action(change_action::UPDATE);
+        $log->set_action(change_actions::UPDATE);
         $log->set_class(word::class);
         $log->set_field(word_db::FLD_VIEW);
         if ($this->view_id() > 0) {

@@ -176,4 +176,9 @@ class combine_named extends combine_object
         return $vars;
     }
 
+
+    /*
+     * debug
+     */
+
 }

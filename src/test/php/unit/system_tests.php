@@ -36,6 +36,7 @@ include_once MODEL_SYSTEM_PATH . 'ip_range.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
 include_once MODEL_SYSTEM_PATH . 'session.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
+include_once SHARED_ENUM_PATH . 'sys_log_statuus.php';
 include_once SHARED_CONST_PATH . 'refs.php';
 include_once SHARED_CONST_PATH . 'words.php';
 
@@ -49,12 +50,12 @@ use cfg\system\ip_range_list;
 use cfg\system\session;
 use cfg\system\sys_log;
 use cfg\system\sys_log_list;
-use cfg\system\sys_log_status;
 use cfg\system\sys_log_status_list;
 use cfg\verb\verb;
 use DateTime;
 use html\system\sys_log as sys_log_dsp;
 use html\system\sys_log_list as sys_log_list_dsp;
+use shared\enum\sys_log_statuus;
 use shared\library;
 use shared\const\refs;
 use shared\const\words;
@@ -421,7 +422,7 @@ class system_tests
         $log2->log_trace = sys_log_tests::T2_LOG_TRACE;
         $log2->function_name = sys_log_tests::T2_FUNC_NAME;
         $log2->solver_name = sys_log_tests::TV_SOLVE_ID;
-        $log2->status_name = $sys_log_sta_cac->id(sys_log_status::CLOSED);
+        $log2->status_name = $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
 
         $log_lst = new sys_log_list();
         $log_lst->add($log);

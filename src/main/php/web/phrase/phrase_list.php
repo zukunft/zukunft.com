@@ -35,11 +35,7 @@
 namespace html\phrase;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_list_named.php';
-//include_once MODEL_PHRASE_PATH . 'phrase.php';
-//include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_VERB_PATH . 'verb_list.php';
-include_once SERVICE_PATH . 'config.php';
+//include_once WEB_HELPER_PATH . 'config.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 //include_once WEB_FORMULA_PATH . 'formula.php';
@@ -47,6 +43,7 @@ include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_VERB_PATH . 'verb_list.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'word_list.php';
@@ -54,18 +51,15 @@ include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'library.php';
 
-use cfg\config;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list as phrase_list_db;
-use cfg\user\user;
-use cfg\verb\verb_list;
 use html\formula\formula;
+use html\helper\config;
 use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\sandbox_list_named;
 use html\user\user_message;
+use html\verb\verb_list;
 use html\word\triple;
 use html\word\word;
 use html\word\word_list;
@@ -194,7 +188,7 @@ class phrase_list extends sandbox_list_named
                         $sub_wrd_lst = $phr->obj()->wrd_lst();
                         foreach ($sub_wrd_lst->lst() as $wrd) {
                             if ($wrd->name() == '') {
-                                $wrd->load();
+                                $wrd->load_by_id($wrd->id());
                                 log_warning('Word ' . $wrd->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                             }
                             $wrd_lst->add($wrd);
@@ -476,11 +470,10 @@ class phrase_list extends sandbox_list_named
         if ($this->lst() == null) {
             $result .= 'Nothing linked to ' . $root_phr->name() . ' until now. Click here to link it.';
         } else {
-            $phr_lst = new phrase_list_db(new user());
-            $phr_lst->set_by_api_json($this->api_array());
+            $phr_lst = new phrase_list();
+            $phr_lst->set_from_json($this->api_json());
             $wrd_lst = $phr_lst->wrd_lst_all();
-            $wrd_lst_dsp = $wrd_lst->dsp_obj();
-            $result .= $wrd_lst_dsp->tbl($back);
+            $result .= $wrd_lst->tbl($back);
             foreach ($this->lst() as $phr) {
                 // show the RDF graph for this verb
                 $phr->name();

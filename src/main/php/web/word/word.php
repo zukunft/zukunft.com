@@ -37,7 +37,6 @@ include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
-//include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 //include_once WEB_FORMULA_PATH . 'formula.php';
 //include_once WEB_HELPER_PATH . 'config.php';
@@ -50,6 +49,7 @@ include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_VERB_PATH . 'verb_list.php';
 //include_once WEB_VIEW_PATH . 'view_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
@@ -59,7 +59,6 @@ include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_PATH . 'library.php';
 
-use cfg\verb\verb_list;
 use controller\api_message;
 use html\button;
 use html\formula\formula as formula_dsp;
@@ -76,6 +75,7 @@ use html\sandbox\sandbox_typed;
 use html\system\back_trace;
 use html\system\messages;
 use html\user\user_message;
+use html\verb\verb_list;
 use html\view\view_list;
 use shared\api;
 use shared\enum\foaf_direction;
@@ -861,6 +861,19 @@ class word extends sandbox_typed
             $result .= $html->dsp_form_text("name", $this->name, "Name:", view_styles::COL_SM_4);
         }
         return $result;
+    }
+
+    /*
+     * cast
+     */
+
+    /**
+     * to have a similar cast function in word that in triple for the phrase
+     * @return $this
+     */
+    function word(): word
+    {
+        return $this;
     }
 
 

@@ -37,16 +37,17 @@ include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once SHARED_ENUM_PATH . 'sys_log_statuus.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use cfg\system\sys_log_status;
 use cfg\user\user;
 use DateTimeInterface;
 use html\html_base;
 use html\log\log as log_dsp;
 use html\rest_ctrl;
 use html\user\user_message;
+use shared\enum\sys_log_statuus;
 use shared\json_fields;
 
 class sys_log extends log_dsp
@@ -207,7 +208,7 @@ class sys_log extends log_dsp
         $row .= $html->td($this->owner_id());
         $row .= $html->td($this->status());
         if ($usr->is_admin() or $usr->is_system()) {
-            $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys_log_sta_cac->id(sys_log_status::CLOSED);
+            $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
             $url = $html->url(rest_ctrl::ERROR_UPDATE, $this->id, $back, '', $par_status);
             $row .= $html->td($html->ref($url, 'close'));
         }
@@ -255,7 +256,7 @@ class sys_log extends log_dsp
         if ($this->user_id() > 0) {
             $row_text .= $html->td($this->user()->name());
         } else {
-            $row_text .= $html->td('');
+            $row_text .= $html->td();
         }
         $row_text .= $html->td($this->text);
         $row_text .= $html->td($this->description);
@@ -264,12 +265,12 @@ class sys_log extends log_dsp
         if ($this->owner_id() > 0) {
             $row_text .= $html->td($this->owner()->name());
         } else {
-            $row_text .= $html->td('');
+            $row_text .= $html->td();
         }
         $row_text .= $html->td($this->status_name());
         if ($usr != null) {
             if ($usr->is_admin() or $usr->is_system()) {
-                $par_status = rest_ctrl::PAR_LOG_STATUS. '=' . $sys_log_sta_cac->id(sys_log_status::CLOSED);
+                $par_status = rest_ctrl::PAR_LOG_STATUS. '=' . $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
                 $url = $html->url(rest_ctrl::ERROR_UPDATE, $this->id, $back, '', $par_status);
                 $row_text .= $html->td($html->ref($url, 'close'));
             }

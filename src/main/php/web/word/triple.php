@@ -432,6 +432,46 @@ class triple extends sandbox_typed
         return $trm;
     }
 
+    /**
+     * recursive function to include the foaf words for this triple
+     */
+    function wrd_lst(): word_list
+    {
+        log_debug('triple->wrd_lst ' . $this->dsp_id());
+        $wrd_lst = new word_list();
+
+        // add the "from" side
+        if ($this->from() != null) {
+            if ($this->from()->id() > 0) {
+                $wrd_lst->add($this->from()->obj()->word());
+            } elseif ($this->from->id() < 0) {
+                $sub_wrd_lst = $this->from()->wrd_lst();
+                foreach ($sub_wrd_lst->lst() as $wrd) {
+                    $wrd_lst->add($wrd);
+                }
+            } else {
+                log_err('The from phrase ' . $this->from()->dsp_id() . ' should not have the id 0', 'triple->wrd_lst');
+            }
+        }
+
+        // add the "to" side
+        if ($this->to() != null) {
+            if ($this->to->id() > 0) {
+                $wrd_lst->add($this->to()->obj()->word());
+            } elseif ($this->to->id() < 0) {
+                $sub_wrd_lst = $this->to()->wrd_lst();
+                foreach ($sub_wrd_lst->lst() as $wrd) {
+                    $wrd_lst->add($wrd);
+                }
+            } else {
+                log_err('The to phrase ' . $this->to()->dsp_id() . ' should not have the id 0', 'triple->wrd_lst');
+            }
+        }
+
+        log_debug($wrd_lst->name());
+        return $wrd_lst;
+    }
+
 
     /*
      * type functions

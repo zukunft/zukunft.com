@@ -81,6 +81,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -97,7 +98,6 @@ use cfg\db\sql_type_list;
 use cfg\formula\formula;
 use cfg\helper\db_object_seq_id;
 use cfg\log\change;
-use cfg\log\change_action;
 use cfg\log\change_link;
 use cfg\log\change_log_list;
 use cfg\phrase\phrase;
@@ -109,6 +109,7 @@ use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\word\word;
 use Exception;
+use shared\enum\change_actions;
 use shared\enum\messages as msg_enum;
 use shared\json_fields;
 use shared\library;
@@ -597,7 +598,7 @@ class sandbox_named extends sandbox
 
         $log = new change($this->user());
         // TODO add the table exceptions from sql_db
-        $log->set_action(change_action::ADD);
+        $log->set_action(change_actions::ADD);
         $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
         $log->set_field($tbl_name . '_name');
         $log->set_user($this->user());
@@ -620,7 +621,7 @@ class sandbox_named extends sandbox
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->user());
-        $log->set_action(change_action::DELETE);
+        $log->set_action(change_actions::DELETE);
         $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
         $log->set_field($tbl_name . '_name');
         $log->old_value = $this->name();

@@ -43,17 +43,6 @@ class sys_log_status extends type_object
 {
 
     /*
-     * code links
-     */
-
-    // list of all possible log stati
-    const OPEN = "new";
-    const ASSIGNED = "assigned";
-    const RESOLVED = "resolved";
-    const CLOSED = "closed";
-
-
-    /*
      * database link
      */
 
