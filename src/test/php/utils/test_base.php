@@ -54,6 +54,7 @@ namespace test;
 include_once SERVICE_PATH . 'config.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once DB_PATH . 'sql_type.php';
+include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
@@ -93,7 +94,6 @@ use cfg\sandbox\sandbox_multi;
 use cfg\sandbox\sandbox_named;
 use cfg\sandbox\sandbox_value;
 use cfg\user\user;
-use cfg\user\user_profile;
 use cfg\value\value;
 use cfg\value\value_base;
 use cfg\value\value_list;
@@ -121,6 +121,7 @@ use html\view\view as view_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use shared\api;
+use shared\enum\user_profiles;
 use shared\library;
 use shared\const\words;
 use shared\types\api_type;
@@ -837,7 +838,7 @@ class test_base
         $file_text = $this->file($json_file_name);
         $json_in = json_decode($file_text, true);
         if ($usr_obj::class == user::class) {
-            $usr_obj->import_obj($json_in, $usr_pro_cac->id(user_profile::ADMIN), $this);
+            $usr_obj->import_obj($json_in, $usr_pro_cac->id(user_profiles::ADMIN), $this);
         } else {
             $usr_obj->import_obj($json_in, $this);
         }

@@ -2,8 +2,8 @@
 
 /*
 
-    model/user/user_profile_list.php - a list of possible user profiles with the database id
-    --------------------------------
+    web/types/user_profiles.php - the preloaded user profiles used for the html frontend
+    ---------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,33 +30,20 @@
   
 */
 
-namespace cfg\user;
+namespace html\types;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
-
-use cfg\helper\type_list;
-use shared\enum\user_profiles;
-
-class user_profile_list extends type_list
+class user_profile extends type_list
 {
 
-    /**
-     * create dummy type list for the unit tests without database connection
-     */
-    function load_dummy(): void
-    {
-        $this->reset();
-        // read the corresponding names and description from the internal config csv files
-        $this->read_from_config_csv($this);
-    }
+    const NAME = 'user profile';
 
     /**
-     * return the database id of the default user profile
+     * @returns string the html code to select a type from this list
      */
-    function default_id(): int
+    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
     {
-        return parent::id(user_profiles::NORMAL);
+        global $html_user_profiles;
+        return parent::type_selector($html_user_profiles->lst_key(), $name, $form, $selected);
     }
 
 }

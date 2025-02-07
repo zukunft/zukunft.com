@@ -49,7 +49,7 @@ use html\types\ref_type_list;
 use html\types\share;
 use html\types\source_type_list;
 use html\types\type_lists as type_list_dsp;
-use html\types\user_profiles;
+use html\types\user_profile;
 use html\types\verbs;
 use html\types\view_style_list;
 use html\types\view_type_list;
@@ -81,7 +81,7 @@ class type_lists_ui_tests
         $test_page .= $html->form_start($form_name);
 
         global $html_user_profiles;
-        $test_page .= $html->label(user_profiles::NAME, user_profiles::NAME);
+        $test_page .= $html->label(user_profile::NAME, user_profile::NAME);
         $test_page .= $html_user_profiles->selector($form_name) . '<br>';
 
         global $html_verbs;

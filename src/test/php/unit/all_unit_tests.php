@@ -82,6 +82,7 @@ include_once MODEL_LOG_PATH . 'change_field_list.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
+include_once SHARED_ENUM_PATH . 'user_profiles.php';
 
 use cfg\component\component_link_type_list;
 use cfg\component\component_type_list;
@@ -104,7 +105,6 @@ use cfg\sandbox\share_type_list;
 use cfg\ref\source_type_list;
 use cfg\system\sys_log_status_list;
 use cfg\user\user;
-use cfg\user\user_profile;
 use cfg\user\user_list;
 use cfg\user\user_profile_list;
 use cfg\verb\verb_list;
@@ -112,6 +112,7 @@ use cfg\view\view_link_type_list;
 use cfg\view\view_sys_list;
 use cfg\view\view_type_list;
 use html\types\formula_type_list as formula_type_list_web;
+use shared\enum\user_profiles;
 use test\all_tests;
 use test\test_cleanup;
 use unit\import_tests as import_tests;
@@ -399,8 +400,8 @@ class all_unit_tests extends test_cleanup
         $this->init_job_types();
 
         // set the profile of the test users
-        $usr->profile_id = $usr_pro_cac->id(user_profile::NORMAL);
-        $usr_sys->profile_id = $usr_pro_cac->id(user_profile::SYSTEM);
+        $usr->profile_id = $usr_pro_cac->id(user_profiles::NORMAL);
+        $usr_sys->profile_id = $usr_pro_cac->id(user_profiles::SYSTEM);
         $usr->set_id(1);
 
         // continue with preparing unit tests

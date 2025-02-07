@@ -35,12 +35,14 @@ namespace html\user;
 // get the pure html frontend objects
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_SANDBOX_PATH . 'db_object.php';
+include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use html\html_base;
 use html\sandbox\db_object;
 use shared\const\views;
+use shared\enum\user_profiles;
 use shared\json_fields;
 
 class user extends db_object
@@ -53,6 +55,8 @@ class user extends db_object
     public ?string $name;
     public ?string $description;
     public ?string $profile;
+    // id of the user profile
+    private int $profile_id;
     public ?string $email;
     public ?string $first_name;
     public ?string $last_name;
@@ -73,6 +77,7 @@ class user extends db_object
         $this->name = '';
         $this->description = null;
         $this->profile = null;
+        $this->profile_id = 0;
         $this->email = null;
         $this->first_name = null;
         $this->last_name = null;
@@ -82,6 +87,16 @@ class user extends db_object
     /*
      * set and get
      */
+
+    function set_profile_id(int $profile_id): void
+    {
+        $this->profile_id = $profile_id;
+    }
+
+    function profile_id(int $profile_id): int
+    {
+        return $this->profile_id;
+    }
 
     /**
      * set the vars of this object bases on the api json string
@@ -112,32 +127,89 @@ class user extends db_object
         } else {
             $this->name = null;
         }
-        if (array_key_exists(json_fields::NAME, $json_array)) {
-            $this->description = $json_array[json_fields::NAME];
+        if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
+            $this->description = $json_array[json_fields::DESCRIPTION];
         } else {
             $this->description = null;
         }
-        if (array_key_exists(json_fields::NAME, $json_array)) {
-            $this->profile = $json_array[json_fields::NAME];
+        if (array_key_exists(json_fields::PROFILE, $json_array)) {
+            $this->profile = $json_array[json_fields::PROFILE];
         } else {
             $this->profile = null;
         }
-        if (array_key_exists(json_fields::NAME, $json_array)) {
-            $this->email = $json_array[json_fields::NAME];
+        if (array_key_exists(json_fields::PROFILE_ID, $json_array)) {
+            $this->set_profile_id($json_array[json_fields::PROFILE_ID]);
+        } else {
+            $this->profile = 0;
+        }
+        if (array_key_exists(json_fields::EMAIL, $json_array)) {
+            $this->email = $json_array[json_fields::EMAIL];
         } else {
             $this->email = null;
         }
-        if (array_key_exists(json_fields::NAME, $json_array)) {
-            $this->first_name = $json_array[json_fields::NAME];
+        if (array_key_exists(json_fields::FIRST_NAME, $json_array)) {
+            $this->first_name = $json_array[json_fields::FIRST_NAME];
         } else {
             $this->first_name = null;
         }
-        if (array_key_exists(json_fields::NAME, $json_array)) {
-            $this->last_name = $json_array[json_fields::NAME];
+        if (array_key_exists(json_fields::LAST_NAME, $json_array)) {
+            $this->last_name = $json_array[json_fields::LAST_NAME];
         } else {
             $this->last_name = null;
         }
         return $usr_msg;
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * @returns bool true if the user has admin rights
+     */
+    function is_admin(): bool
+    {
+        global $usr_pro_cac;
+        log_debug();
+        $result = false;
+
+        if ($this->is_profile_valid()) {
+            if ($this->profile_id == $usr_pro_cac->id(user_profiles::ADMIN)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @returns bool true if the user is a system user e.g. the reserved word names can be used
+     */
+    function is_system(): bool
+    {
+        global $usr_pro_cac;
+        log_debug();
+        $result = false;
+
+        if ($this->is_profile_valid()) {
+            if ($this->profile_id == $usr_pro_cac->id(user_profiles::TEST)
+                or $this->profile_id == $usr_pro_cac->id(user_profiles::SYSTEM)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return bool false if the profile is not set or is not found
+     */
+    private function is_profile_valid(): bool
+    {
+        if ($this->profile_id > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

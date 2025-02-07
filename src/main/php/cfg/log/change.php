@@ -177,7 +177,7 @@ class change extends change_log
      * @param string $id_fld the name of the id field as set in the child class
      * @return bool true if a change log entry is found
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper(?array $db_row, string $id_fld = '', ?user $usr = null): bool
     {
         global $debug;
         global $cng_fld_cac;
@@ -203,10 +203,19 @@ class change extends change_log
             $fld_tbl = $cng_fld_cac->get($this->field_id);
             $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
             // TODO check if not the complete user should be loaded
-            $usr = new user();
-            $usr->set_id($db_row[user::FLD_ID]);
-            $usr->name = $db_row[user::FLD_NAME];
-            $this->set_user($usr);
+            $usr_set = false;
+            if ($usr != null) {
+                if ($db_row[user::FLD_ID] == $usr->id()) {
+                    $this->set_user($usr);
+                    $usr_set = true;
+                }
+            }
+            if (!$usr_set) {
+                $row_usr = new user();
+                $row_usr->set_id($db_row[user::FLD_ID]);
+                $row_usr->name = $db_row[user::FLD_NAME];
+                $this->set_user($row_usr);
+            }
             log_debug('Change ' . $this->id() . ' loaded', $debug - 8);
         }
         return $result;

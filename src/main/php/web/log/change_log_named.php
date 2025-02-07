@@ -44,7 +44,6 @@ include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 
-use cfg\log\change_action;
 use html\helper\config;
 use html\rest_ctrl;
 use html\button;

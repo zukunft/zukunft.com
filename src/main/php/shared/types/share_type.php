@@ -2,7 +2,7 @@
 
 /*
 
-    model/sandbox/share_type.php - to define if an object can be shared between the users
+    shared/types/share_type.php - to define if an object can be shared between the users
     ----------------------------
 
     This file is part of zukunft.com - calc with words

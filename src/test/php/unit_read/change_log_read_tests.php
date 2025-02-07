@@ -53,7 +53,7 @@ class change_log_read_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
+        global $usr_sys;
 
         // init
         $t->name = 'user log read db->';
@@ -171,7 +171,7 @@ class change_log_read_tests
         $wrd = new word($t->usr1);
         $wrd->load_by_id(1);
         $log_lst = new change_log_list();
-        $log_lst->load_by_fld_of_wrd($wrd, $t->usr1, change_field_list::FLD_WORD_NAME);
+        $log_lst->load_by_fld_of_wrd($wrd, $usr_sys, change_field_list::FLD_WORD_NAME);
         $t->assert_api($log_lst);
 
     }

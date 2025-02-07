@@ -1,9 +1,6 @@
 {
-  "id": "3",
+  "id": 3,
   "name": "zukunft.com system test",
-  "description": null,
-  "profile": null,
-  "email": "test@zukunft.com",
-  "first_name": null,
-  "last_name": null
+  "profile_id": 4,
+  "email": "test@zukunft.com"
 }

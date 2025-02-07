@@ -37,16 +37,17 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_CONST_PATH . 'views.php';
+include_once SHARED_ENUM_PATH . 'user_profiles.php';
 
 use cfg\system\sys_log;
 use cfg\system\sys_log_list;
 use cfg\user\user;
-use cfg\user\user_profile;
 use cfg\view\view;
 use html\html_base;
 use html\view\view as view_dsp;
 use shared\api;
 use shared\const\views as view_shared;
+use shared\enum\user_profiles;
 
 $db_con = prg_start("error_update");
 $html = new html_base();
@@ -75,7 +76,7 @@ if ($usr->id() > 0) {
     $msk_dsp = new view_dsp($msk->api_json());
     $result .= $msk_dsp->dsp_navbar($back);
 
-    if ($usr->id() > 0 and $usr->profile_id == $usr_pro_cac->id(user_profile::ADMIN)) {
+    if ($usr->id() > 0 and $usr->is_admin()) {
         // update the error if requested
         if ($log_id > 0 and $status_id > 0) {
             $err_entry = new sys_log;

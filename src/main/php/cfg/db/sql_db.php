@@ -154,10 +154,11 @@ include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once WEB_HTML_PATH . 'html_base.php';
-include_once SHARED_PATH . 'library.php';
+include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -274,6 +275,7 @@ use html\html_base;
 use mysqli;
 use mysqli_result;
 use PDOException;
+use shared\enum\user_profiles;
 use shared\library;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\phrase_type as phrase_type_shared;
@@ -5581,10 +5583,10 @@ class sql_db
 
             // check if there is really no user in the database with a system profile
             $check_usr = new user();
-            if (!$check_usr->has_any_user_this_profile(user_profile::SYSTEM)) {
+            if (!$check_usr->has_any_user_this_profile(user_profiles::SYSTEM)) {
                 // if the system users are missing always reset all users as a double line of defence to prevent system
                 $this->load_user_profiles();
-                $usr->set_profile(user_profile::SYSTEM);
+                $usr->set_profile(user_profiles::SYSTEM);
                 $imf = new import_file();
                 $import_result = $imf->json_file(SYSTEM_USER_CONFIG_FILE, $usr);
                 if (str_starts_with($import_result, ' done ')) {

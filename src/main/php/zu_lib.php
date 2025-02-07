@@ -373,6 +373,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
          for fast selection of phrases related to a given phrase within a given context
          this related table should be automatically filled by a batch job based e.g. on the number and usage
     TODO create different related tables for prime and big context and user specific
+    TODO move code id const to a code_id.yaml file for better sharing between the different code languages
+    TODO add a test case to check missing or invalid code id const e.g. in php, java, JavaScript, python
 
     TODO message handling
         in dought return a user message to the highest level, so that it can be shown to the user
@@ -1293,6 +1295,7 @@ define("TEST_IMPORT_FILE_LIST_QUICK", serialize(array('car_costs.json')));
  * for internal functions debugging
  * each complex function should call this at the beginning with the parameters and with -1 at the end with the result
  * called function should use $debug-1
+ * TODO focus debug on time consuming function calls e.g. all database accesses
  *
  * @param string $msg_text debug information additional to the class and function
  * @param int|null $debug_overwrite used to force the output

@@ -651,7 +651,7 @@ class change_log extends db_object_seq_id_user
     {
         $vars = [];
         if ($this->user() != null) {
-            $vars[json_fields::USR] = $this->user()->api_json_array($typ_lst, $usr);
+            $vars[json_fields::USR] = $this->user()->api_json_array_core($typ_lst, $usr);
         }
         $vars[json_fields::ACTION_ID] = $this->action_id;
         $vars[json_fields::TABLE_ID] = $this->table_id;

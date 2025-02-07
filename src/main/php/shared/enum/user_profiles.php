@@ -2,8 +2,8 @@
 
 /*
 
-    web/types/user_profiles.php - the preloaded user profiles used for the html frontend
-    ---------------------------
+    shared/enum/user_profiles.php - a shared database based enum for the user profiles
+    -----------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -23,27 +23,23 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
-namespace html\types;
+namespace shared\enum;
 
-class user_profiles extends type_list
+enum user_profiles: string
 {
 
-    const NAME = 'user profile';
-
-    /**
-     * @returns string the html code to select a type from this list
-     */
-    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
-    {
-        global $html_user_profiles;
-        return parent::type_selector($html_user_profiles->lst_key(), $name, $form, $selected);
-    }
+    // list of the user profiles that have a coded functionality
+    const NORMAL = "normal";
+    const ADMIN = "admin";
+    const DEV = "dev";       // reserved for developers which are supposed to code the verb functionality
+    const TEST = "test";     // reserved for the system test user e.g. for internal unit and integration tests
+    const SYSTEM = "system"; // reserved for the system user which is executing cleanup tasks
 
 }

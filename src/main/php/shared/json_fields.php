@@ -265,6 +265,7 @@ class json_fields
     const FIRST_NAME = 'first_name';
     const LAST_NAME = 'last_name';
     const PROFILE = 'profile';
+    const PROFILE_ID = 'profile_id';
 
     // the phrase to select the row name of a view component
     const ROW = 'row';

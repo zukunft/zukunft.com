@@ -34,6 +34,7 @@
 
 namespace unit_write;
 
+include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SERVICE_PATH . 'config.php';
 
 use cfg\component\component;
@@ -89,15 +90,9 @@ use cfg\system\sys_log_function;
 use cfg\sys_log_status;
 use cfg\word\triple;
 use cfg\user\user;
-use cfg\user\user_profile;
-use cfg\value\value_base;
-use cfg\verb\verb;
-use cfg\view\view;
 use cfg\view_type;
 use cfg\view_type_list;
-use cfg\word\word;
-use Exception;
-use html\html_base;
+use shared\enum\user_profiles;
 use shared\library;
 use test\all_tests;
 use unit\lib_tests;
@@ -117,7 +112,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // switch to the test user
         // create the system user before the local user and admin to get the desired database id
-        $usr->load_by_profile_code(user_profile::TEST);
+        $usr->load_by_profile_code(user_profiles::TEST);
         if ($usr->id() <= 0) {
 
             // but only from localhost
@@ -129,7 +124,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 $db_con->import_system_users();
             }
 
-            $usr->load_by_profile_code(user_profile::TEST);
+            $usr->load_by_profile_code(user_profiles::TEST);
         }
 
         if ($usr->id() > 0) {
@@ -249,7 +244,7 @@ class all_unit_write_tests extends all_unit_read_tests
             $result = $usr->get();
         } else {
             $usr->set_id(SYSTEM_USER_ID);
-            $usr->set_profile(user_profile::ADMIN);
+            $usr->set_profile(user_profiles::ADMIN);
         }
 
         // remember the user
@@ -260,7 +255,7 @@ class all_unit_write_tests extends all_unit_read_tests
             $usr->load_by_id(SYSTEM_USER_ID);
         } else {
             $usr->set_id(SYSTEM_USER_ID);
-            $usr->set_profile(user_profile::ADMIN);
+            $usr->set_profile(user_profiles::ADMIN);
         }
 
         // drop all old database tables

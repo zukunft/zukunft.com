@@ -37,6 +37,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_CONST_PATH . 'views.php';
+include_once SHARED_ENUM_PATH . 'user_profiles.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -52,6 +53,7 @@ use html\html_base;
 use html\view\view as view_dsp;
 use shared\api;
 use shared\const\views as view_shared;
+use shared\enum\user_profiles;
 
 $db_con = prg_start("user");
 $html = new html_base();
@@ -193,7 +195,7 @@ if ($usr->id() > 0) {
     }
 
     // display all program issues if the user is an admin
-    if ($usr->profile_id == $usr_pro_cac->id(user_profile::ADMIN)) {
+    if ($usr->profile_id == $usr_pro_cac->id(user_profiles::ADMIN)) {
         $errors_all = $dsp_usr_old->dsp_errors("other", sql_db::ROW_LIMIT, 1, $back);
         if (trim($errors_all) <> "") {
             $result .= $html->dsp_text_h2("Program issues that other user have found, that have not yet been solved.");

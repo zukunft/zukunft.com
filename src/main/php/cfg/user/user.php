@@ -88,6 +88,7 @@ include_once MODEL_USER_PATH . 'user_type.php';
 //include_once WEB_USER_PATH . 'user.php';
 //include_once WEB_HELPER_PATH . 'config.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
@@ -112,6 +113,7 @@ use cfg\view\view_sys_list;
 use cfg\word\word;
 use html\user\user as user_dsp;
 use shared\enum\change_actions;
+use shared\enum\user_profiles;
 use shared\json_fields;
 use Exception;
 use shared\types\api_type_list;
@@ -340,7 +342,7 @@ class user extends db_object_seq_id
 
     // in memory only fields
     public ?word $wrd = null;             // the last word viewed by the user
-    public ?user_profile $profile = null; //
+    public ?user_profile $profile = null; // to define the base rights of a user which can be further restricted but not expanded
     public ?user $viewer = null;          // the user who wants to access this user
     // e.g. only admin are allowed to see other user parameters
 
@@ -367,8 +369,8 @@ class user extends db_object_seq_id
         }
 
         //global $usr_pro_cac;
-        //$this->profile = $usr_pro_cac->get_by_code_id(user_profile::NORMAL);
-        //$this->profile = cl(db_cl::USER_PROFILE, user_profile::NORMAL);
+        //$this->profile = $usr_pro_cac->get_by_code_id(user_profiles::NORMAL);
+        //$this->profile = cl(db_cl::USER_PROFILE, user_profiles::NORMAL);
 
     }
 
@@ -392,7 +394,6 @@ class user extends db_object_seq_id
         $this->vrb_id = null;
 
         $this->wrd = null;
-        $this->profile = null;
         $this->viewer = null;
 
         $this->activation_key = '';
@@ -869,8 +870,8 @@ class user extends db_object_seq_id
     {
         // create the local admin users but only if there are no other admins
         $check_usr = new user();
-        if (!$check_usr->has_any_user_this_profile(user_profile::ADMIN)) {
-            $this->set_profile(user_profile::ADMIN);
+        if (!$check_usr->has_any_user_this_profile(user_profiles::ADMIN)) {
+            $this->set_profile(user_profiles::ADMIN);
         }
 
         // add the local admin user to use it for the import
@@ -892,17 +893,41 @@ class user extends db_object_seq_id
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
+        $vars = $this->api_json_array_core($typ_lst, $usr);
+        if ($this->description != null) {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        if ($this->profile_id > 0) {
+            $vars[json_fields::PROFILE_ID] = $this->profile_id;
+        }
+        if ($this->email != null) {
+            $vars[json_fields::EMAIL] = $this->email;
+        }
+        if ($this->first_name != null) {
+            $vars[json_fields::FIRST_NAME] = $this->first_name;
+        }
+        if ($this->first_name != null) {
+            $vars[json_fields::LAST_NAME] = $this->last_name;
+        }
+
+        return $vars;
+    }
+
+    /**
+     * create an array for the api json creation with only the core user fields
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array_core(api_type_list $typ_lst, user|null $usr = null): array
+    {
         $vars = parent::api_json_array($typ_lst, $usr);
         if ($this->name != null) {
             $vars[json_fields::NAME] = $this->name;
         } else {
             $vars[json_fields::NAME] = '';
         }
-        $vars[json_fields::DESCRIPTION] = $this->description;
-        $vars[json_fields::PROFILE] = $this->profile;
-        $vars[json_fields::EMAIL] = $this->email;
-        $vars[json_fields::FIRST_NAME] = $this->first_name;
-        $vars[json_fields::LAST_NAME] = $this->last_name;
 
         return $vars;
     }
@@ -954,8 +979,8 @@ class user extends db_object_seq_id
                 $this->profile_id = $usr_pro_cac->id($value);
             }
             if ($key == json_fields::CODE_ID) {
-                if ($profile_id == $usr_pro_cac->id(user_profile::ADMIN)
-                    or $profile_id == $usr_pro_cac->id(user_profile::SYSTEM)) {
+                if ($profile_id == $usr_pro_cac->id(user_profiles::ADMIN)
+                    or $profile_id == $usr_pro_cac->id(user_profiles::SYSTEM)) {
                     $this->code_id = $value;
                 }
             }
@@ -1003,8 +1028,8 @@ class user extends db_object_seq_id
         if ($this->code_id <> '') {
             $vars[json_fields::CODE_ID] = $this->code_id;
         }
-        if ($this->profile <> '') {
-            $vars[json_fields::PROFILE] = $this->profile;
+        if ($this->is_profile_valid()) {
+            $vars[json_fields::PROFILE] = $this->profile_code_id();
         }
 
         return $vars;
@@ -1028,6 +1053,20 @@ class user extends db_object_seq_id
     }
 
     /**
+     * @return string the profile code id
+     */
+    function profile_code_id(): string
+    {
+        global $usr_pro_cac;
+
+        $result = '';
+        if ($this->is_profile_valid()) {
+            $result = $usr_pro_cac->code_id($this->profile_id);
+        }
+        return $result;
+    }
+
+    /**
      * @returns bool true if the user has admin rights
      */
     function is_admin(): bool
@@ -1037,7 +1076,7 @@ class user extends db_object_seq_id
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $usr_pro_cac->id(user_profile::ADMIN)) {
+            if ($this->profile_id == $usr_pro_cac->id(user_profiles::ADMIN)) {
                 $result = true;
             }
         }
@@ -1054,8 +1093,8 @@ class user extends db_object_seq_id
         $result = false;
 
         if ($this->is_profile_valid()) {
-            if ($this->profile_id == $usr_pro_cac->id(user_profile::TEST)
-                or $this->profile_id == $usr_pro_cac->id(user_profile::SYSTEM)) {
+            if ($this->profile_id == $usr_pro_cac->id(user_profiles::TEST)
+                or $this->profile_id == $usr_pro_cac->id(user_profiles::SYSTEM)) {
                 $result = true;
             }
         }
@@ -1081,9 +1120,9 @@ class user extends db_object_seq_id
         log_debug();
         $result = false;
 
-        if ($this->profile_id == $usr_pro_cac->id(user_profile::ADMIN)
-            or $this->profile_id == $usr_pro_cac->id(user_profile::TEST)
-            or $this->profile_id == $usr_pro_cac->id(user_profile::SYSTEM)) {
+        if ($this->profile_id == $usr_pro_cac->id(user_profiles::ADMIN)
+            or $this->profile_id == $usr_pro_cac->id(user_profiles::TEST)
+            or $this->profile_id == $usr_pro_cac->id(user_profiles::SYSTEM)) {
             $result = true;
         }
         return $result;
@@ -1280,8 +1319,8 @@ class user extends db_object_seq_id
                     $result = 'Saving of user profile ' . $this->id() . ' failed.';
                 }
                 // add the ip address to the user, but never for system users
-                if ($this->profile_id != $usr_pro_cac->id(user_profile::SYSTEM)
-                    and $this->profile_id != $usr_pro_cac->id(user_profile::TEST)) {
+                if ($this->profile_id != $usr_pro_cac->id(user_profiles::SYSTEM)
+                    and $this->profile_id != $usr_pro_cac->id(user_profiles::TEST)) {
                     if (!$db_con->update_old($this->id(), self::FLD_IP_ADDR, $this->get_ip())) {
                         $result = 'Saving of user ' . $this->id() . ' failed.';
                     }

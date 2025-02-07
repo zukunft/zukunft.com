@@ -177,6 +177,7 @@ use html\view\view_list as view_list_dsp;
 use html\word\word as word_dsp;
 use shared\enum\change_actions;
 use shared\enum\sys_log_statuus;
+use shared\enum\user_profiles;
 use shared\json_fields;
 use shared\library;
 use shared\const\components;
@@ -472,6 +473,7 @@ class create_test_objects extends test_base
     {
         $usr = new user();
         $usr->set(3, user::SYSTEM_TEST_NAME, user::SYSTEM_TEST_EMAIL);
+        $usr->set_profile(user_profiles::TEST);
         return $usr;
     }
 

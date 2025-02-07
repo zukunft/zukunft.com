@@ -71,7 +71,6 @@ include_once WEB_TYPES_PATH . 'change_action_list.php';
 include_once WEB_TYPES_PATH . 'change_table_list.php';
 include_once WEB_TYPES_PATH . 'change_field_list.php';
 include_once WEB_TYPES_PATH . 'sys_log_status_list.php';
-include_once WEB_TYPES_PATH . 'user_profiles.php';
 include_once WEB_TYPES_PATH . 'job_type_list.php';
 include_once WEB_TYPES_PATH . 'languages.php';
 include_once WEB_TYPES_PATH . 'language_forms.php';

@@ -37,6 +37,7 @@ namespace controller;
 use cfg\config;
 use cfg\db\sql_db;
 use cfg\user\user;
+use html\user\user as user_dsp;
 use DateTime;
 use DateTimeInterface;
 use shared\json_fields;
@@ -49,15 +50,15 @@ class api_message
      * create and set the api message header information
      * @param sql_db $db_con the active database link to get the configuration from the database
      * @param string $class the class of the message
-     * @param user|null $usr the user view that the api message should contain
+     * @param user|user_dsp|null $usr the user view that the api message should contain
      * @param array $vars the json array for the message body
      * @return array the json array including the message header
      */
     function api_header_array(
-        sql_db    $db_con,
-        string    $class,
-        user|null $usr,
-        array     $vars
+        sql_db             $db_con,
+        string             $class,
+        user|user_dsp|null $usr,
+        array              $vars
     ): array
     {
         $lib = new library();

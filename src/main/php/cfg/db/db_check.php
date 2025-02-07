@@ -43,11 +43,11 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
 include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_profile.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_USER_PATH . 'user_profile_list.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
+include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\component\component;
@@ -61,11 +61,11 @@ use cfg\sandbox\sandbox_named;
 use cfg\system\sys_log_function;
 use cfg\system\system_time_type;
 use cfg\user\user;
-use cfg\user\user_profile;
 use cfg\user\user_message;
 use cfg\user\user_profile_list;
 use cfg\value\value;
 use cfg\value\value_base;
+use shared\enum\user_profiles;
 use shared\library;
 
 class db_check
@@ -369,36 +369,36 @@ class db_check
 
             // add missing system users if needed
             $sys_usr = new user();
-            if (!$sys_usr->has_any_user_this_profile(user_profile::SYSTEM)) {
+            if (!$sys_usr->has_any_user_this_profile(user_profiles::SYSTEM)) {
                 $sys_usr->load_by_name(user::SYSTEM_NAME);
-                $sys_usr->set_profile(user_profile::SYSTEM);
+                $sys_usr->set_profile(user_profiles::SYSTEM);
                 $sys_usr->save($db_con);
             }
             // add missing system users if needed
             $usr_admin = new user();
-            if (!$usr_admin->has_any_user_this_profile(user_profile::ADMIN)) {
+            if (!$usr_admin->has_any_user_this_profile(user_profiles::ADMIN)) {
                 $usr_admin->load_by_name(user::SYSTEM_ADMIN_NAME);
-                $usr_admin->set_profile(user_profile::ADMIN);
+                $usr_admin->set_profile(user_profiles::ADMIN);
                 $usr_admin->save($db_con);
             }
 
             // add missing system test users if needed
             $test_usr = new user();
-            if (!$test_usr->has_any_user_this_profile(user_profile::TEST)) {
+            if (!$test_usr->has_any_user_this_profile(user_profiles::TEST)) {
                 $test_usr->load_by_name(user::SYSTEM_TEST_NAME);
-                $test_usr->set_profile(user_profile::TEST);
+                $test_usr->set_profile(user_profiles::TEST);
                 $test_usr->save($db_con);
                 $test_usr2 = new user();
                 $test_usr2->load_by_name(user::SYSTEM_TEST_PARTNER_NAME);
-                $test_usr2->set_profile(user_profile::TEST);
+                $test_usr2->set_profile(user_profiles::TEST);
                 $test_usr2->save($db_con);
             }
 
             $test_usr_normal = new user();
-            if (!$test_usr_normal->has_any_user_this_profile(user_profile::NORMAL)) {
+            if (!$test_usr_normal->has_any_user_this_profile(user_profiles::NORMAL)) {
                 $test_usr_normal = new user();
                 $test_usr_normal->load_by_name(user::SYSTEM_TEST_NORMAL_NAME);
-                $test_usr_normal->set_profile(user_profile::NORMAL);
+                $test_usr_normal->set_profile(user_profiles::NORMAL);
                 $test_usr_normal->save($db_con);
             }
         }

@@ -32,9 +32,11 @@
 
 namespace unit_read;
 
-use cfg\user\user_profile;
+include_once SHARED_ENUM_PATH . 'user_profiles.php';
+
 use cfg\user\user_profile_list;
 use cfg\user\user;
+use shared\enum\user_profiles;
 use test\test_cleanup;
 
 class user_read_tests
@@ -79,8 +81,8 @@ class user_read_tests
 
         // ... and check if at least the most critical is loaded
         global $usr_pro_cac;
-        $result = $usr_pro_cac->id(user_profile::NORMAL);
-        $t->assert('user profile check ' . user_profile::NORMAL, $result, 1);
+        $result = $usr_pro_cac->id(user_profiles::NORMAL);
+        $t->assert('user profile check ' . user_profiles::NORMAL, $result, 1);
     }
 
 }

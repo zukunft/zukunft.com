@@ -55,6 +55,7 @@ use cfg\verb\verb;
 use DateTime;
 use html\system\sys_log as sys_log_dsp;
 use html\system\sys_log_list as sys_log_list_dsp;
+use html\user\user;
 use shared\enum\sys_log_statuus;
 use shared\library;
 use shared\const\refs;
@@ -408,7 +409,8 @@ class system_tests
         $t->assert('sys_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
 
         // ... and the same for admin users
-        $created = $log_dsp->display_admin($usr_sys);
+        $usr_sys_dsp = new user($usr_sys->api_json());
+        $created = $log_dsp->display_admin($usr_sys_dsp);
         $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log_admin.html');
         $t->assert('sys_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
 
@@ -429,16 +431,17 @@ class system_tests
         $log_lst->add($log2);
 
         $log_lst_dsp = new sys_log_list_dsp($log_lst->api_json());
-        $created = $log_lst_dsp->api_json([api_type::HEADER], $t->usr1);
+        $usr1_dsp = new user($t->usr1->api_json());
+        $created = $log_lst_dsp->api_json([api_type::HEADER], $usr1_dsp);
         $expected = file_get_contents(PATH_TEST_FILES . 'api/sys_log_list/sys_log_list.json');
         $created = json_encode($t->json_remove_volatile(json_decode($created, true)));
         $t->assert('sys_log_list_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 
-        $created = $log_lst_dsp->get_html($t->usr1);
+        $created = $log_lst_dsp->get_html($usr1_dsp);
         $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log_list.html');
         $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
 
-        $created = $log_lst_dsp->get_html_page($t->usr1);
+        $created = $log_lst_dsp->get_html_page($usr1_dsp);
         $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log_list_page.html');
         $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
 

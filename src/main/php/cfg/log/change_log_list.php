@@ -521,7 +521,7 @@ class change_log_list extends base_list
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $chg = new change($usr);
-                    $chg->row_mapper($db_row);
+                    $chg->row_mapper($db_row, '', $usr);
                     $this->add_obj($chg);
                     $result = true;
                 }

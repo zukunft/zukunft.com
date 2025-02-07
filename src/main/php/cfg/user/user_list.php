@@ -52,6 +52,7 @@ include_once MODEL_USER_PATH . 'user_profile.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 //include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
@@ -64,16 +65,11 @@ use cfg\helper\db_object;
 use cfg\helper\db_object_multi;
 use cfg\ref\ref;
 use cfg\ref\source;
-use cfg\user\user;
-use cfg\user\user_profile;
-use cfg\value\value_base;
-use cfg\value\value_geo;
 use cfg\value\value;
-use cfg\value\value_text;
-use cfg\value\value_time;
 use cfg\view\view;
 use cfg\word\triple;
 use cfg\word\word;
+use shared\enum\user_profiles;
 use shared\library;
 
 global $system_users;
@@ -456,31 +452,31 @@ class user_list
 
         $usr = new user(user::SYSTEM_NAME, user::SYSTEM_EMAIL);
         $usr->code_id = user::SYSTEM_CODE_ID;
-        $usr->profile_id = $usr_pro_cac->id(user_profile::SYSTEM);
+        $usr->profile_id = $usr_pro_cac->id(user_profiles::SYSTEM);
         $this->lst[user::SYSTEM_ID] = $usr;
         $this->code_id_hash[user::SYSTEM_CODE_ID] = user::SYSTEM_ID;
 
         $usr = new user(user::SYSTEM_ADMIN_NAME, user::SYSTEM_ADMIN_EMAIL);
         $usr->code_id = user::SYSTEM_ADMIN_CODE_ID;
-        $usr->profile_id = $usr_pro_cac->id(user_profile::ADMIN);
+        $usr->profile_id = $usr_pro_cac->id(user_profiles::ADMIN);
         $this->lst[user::SYSTEM_ADMIN_ID] = $usr;
         $this->code_id_hash[user::SYSTEM_ADMIN_CODE_ID] = user::SYSTEM_ADMIN_ID;
 
         $usr = new user(user::SYSTEM_TEST_NAME, user::SYSTEM_TEST_EMAIL);
         $usr->code_id = user::SYSTEM_TEST_CODE_ID;
-        $usr->profile_id = $usr_pro_cac->id(user_profile::TEST);
+        $usr->profile_id = $usr_pro_cac->id(user_profiles::TEST);
         $this->lst[user::SYSTEM_TEST_ID] = $usr;
         $this->code_id_hash[user::SYSTEM_TEST_CODE_ID] = user::SYSTEM_TEST_ID;
 
         $usr = new user(user::SYSTEM_TEST_PARTNER_NAME, user::SYSTEM_TEST_PARTNER_EMAIL);
         $usr->code_id = user::SYSTEM_TEST_PARTNER_CODE_ID;
-        $usr->profile_id = $usr_pro_cac->id(user_profile::TEST);
+        $usr->profile_id = $usr_pro_cac->id(user_profiles::TEST);
         $this->lst[user::SYSTEM_TEST_PARTNER_ID] = $usr;
         $this->code_id_hash[user::SYSTEM_TEST_PARTNER_CODE_ID] = user::SYSTEM_TEST_PARTNER_ID;
 
         $usr = new user(user::SYSTEM_TEST_NORMAL_NAME, user::SYSTEM_TEST_NORMAL_EMAIL);
         $usr->code_id = user::SYSTEM_TEST_NORMAL_CODE_ID;
-        $usr->profile_id = $usr_pro_cac->id(user_profile::NORMAL);
+        $usr->profile_id = $usr_pro_cac->id(user_profiles::NORMAL);
         $this->lst[user::SYSTEM_TEST_NORMAL_ID] = $usr;
         $this->code_id_hash[user::SYSTEM_TEST_NORMAL_CODE_ID] = user::SYSTEM_TEST_NORMAL_ID;
 
