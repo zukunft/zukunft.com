@@ -44,11 +44,12 @@ include_once MODEL_LOG_PATH . 'change_field.php';
 include_once MODEL_LOG_PATH . 'change_field_list.php';
 include_once MODEL_LOG_PATH . 'change_log_list.php';
 include_once MODEL_SYSTEM_PATH . 'job.php';
+include_once WEB_HELPER_PATH . 'data_object.php';
 include_once EXPORT_PATH . 'export.php';
 include_once SHARED_CONST_PATH . 'formulas.php';
 include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_CONST_PATH . 'words.php';
-include_once WEB_HELPER_PATH . 'data_object.php';
+include_once SHARED_ENUM_PATH . 'change_fields.php';
 
 use cfg\component\component;
 use cfg\component\component_list;
@@ -57,7 +58,6 @@ use cfg\formula\formula_list;
 use cfg\helper\type_lists;
 use cfg\language\language;
 use cfg\language\language_form;
-use cfg\log\change_field_list;
 use cfg\log\change_log_list;
 use cfg\phrase\phrase_list;
 use cfg\phrase\phrase_type;
@@ -68,7 +68,6 @@ use cfg\system\job;
 use cfg\system\sys_log_list;
 use cfg\user\user;
 use cfg\value\value;
-use cfg\value\value_list;
 use cfg\verb\verb;
 use cfg\view\view;
 use cfg\view\view_list;
@@ -80,6 +79,7 @@ use html\helper\data_object as data_object_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use shared\api;
+use shared\enum\change_fields;
 use shared\library;
 use shared\const\components;
 use shared\const\formulas;
@@ -153,7 +153,7 @@ class api_tests
         $t->assert_api_chg_list(
             change_log_list::class,
             api::URL_VAR_WORD_ID, 1,
-            api::URL_VAR_WORD_FLD, change_field_list::FLD_WORD_NAME);
+            api::URL_VAR_WORD_FLD, change_fields::FLD_WORD_NAME);
         $t->assert_api_get_list(
             sys_log_list::class,
             [1, 2], 'ids',

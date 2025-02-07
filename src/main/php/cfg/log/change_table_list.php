@@ -36,69 +36,39 @@ include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_LOG_PATH . 'change_table.php';
 include_once MODEL_LOG_PATH . 'change_table_list.php';
+include_once SHARED_ENUM_PATH . 'change_tables.php';
 
 use cfg\helper\type_list;
+use shared\enum\change_tables;
 
 class change_table_list extends type_list
 {
-    // list of the log table with linked functionalities
-    // unlike the table const in sql_db this contains also table names of previous versions
-    // and an assignment of the deprecated tables names to the table names of this version
-    // this list contains only tables where a direct change by the user is possible
-    // so the phrase, term and figure tables are not included here, but in the sql_db list
-    // TODO should only contain the table names of past program versions
-    //      to combine the log in case of a renamed class
-    const USER = 'users';
-    const WORD = 'words';
-    const WORD_USR = 'user_words';
-    const VERB = 'verbs';
-    const TRIPLE = 'triples';
-    const TRIPLE_USR = 'user_triples';
-    const VALUE = 'values';
-    const VALUE_USR = 'user_values';
-    const VALUE_LINK = 'value_links';
-    const FORMULA = 'formulas';
-    const FORMULA_USR = 'user_formulas';
-    const FORMULA_LINK = 'formula_links';
-    const FORMULA_LINK_USR = 'user_formula_links';
-    const VIEW = 'views';
-    const VIEW_USR = 'user_views';
-    const VIEW_TERM_LINK = 'view_term_links';
-    //const VIEW_TERM_LINK_USR = 'user_view_term_links';
-    const VIEW_COMPONENT = 'components';
-    const VIEW_COMPONENT_USR = 'user_components';
-    const VIEW_LINK = 'component_links';
-    const VIEW_LINK_USR = 'user_component_links';
-    const REF = 'refs';
-    const REF_USR = 'user_refs';
-    const SOURCE = 'sources';
-    const SOURCE_USR = 'user_sources';
 
     // list of all log tables allowed in this program version
     const TABLE_LIST = array(
-        self::USER,
-        self::WORD,
-        self::WORD_USR,
-        self::VERB,
-        self::TRIPLE,
-        self::TRIPLE_USR,
-        self::VALUE,
-        self::VALUE_USR,
-        self::VALUE_LINK,
-        self::FORMULA,
-        self::FORMULA_USR,
-        self::FORMULA_LINK,
-        self::FORMULA_LINK_USR,
-        self::VIEW,
-        self::VIEW_USR,
-        self::VIEW_LINK,
-        self::VIEW_LINK_USR,
-        self::VIEW_COMPONENT,
-        self::VIEW_COMPONENT_USR,
-        self::REF,
-        self::REF_USR,
-        self::SOURCE,
-        self::SOURCE_USR,
+        change_tables::USER,
+        change_tables::WORD,
+        change_tables::WORD_USR,
+        change_tables::VERB,
+        change_tables::TRIPLE,
+        change_tables::TRIPLE_USR,
+        change_tables::VALUE,
+        change_tables::VALUE_USR,
+        change_tables::VALUE_LINK,
+        change_tables::FORMULA,
+        change_tables::FORMULA_USR,
+        change_tables::FORMULA_LINK,
+        change_tables::FORMULA_LINK_USR,
+        change_tables::VIEW,
+        change_tables::VIEW_USR,
+        change_tables::VIEW_LINK,
+        change_tables::VIEW_LINK_USR,
+        change_tables::VIEW_COMPONENT,
+        change_tables::VIEW_COMPONENT_USR,
+        change_tables::REF,
+        change_tables::REF_USR,
+        change_tables::SOURCE,
+        change_tables::SOURCE_USR,
     );
 
     /**
@@ -116,7 +86,7 @@ class change_table_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(change_table_list::VALUE);
+        return parent::id(change_tables::VALUE);
     }
 
 }

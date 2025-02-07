@@ -33,14 +33,16 @@
 namespace unit_write;
 
 include_once SHARED_TYPES_PATH . 'component_type.php';
+include_once SHARED_ENUM_PATH . 'change_tables.php';
+include_once SHARED_ENUM_PATH . 'change_fields.php';
 
 use cfg\component\component;
 use cfg\log\change;
-use cfg\log\change_field_list;
-use cfg\log\change_table_list;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use shared\const\components;
+use shared\enum\change_fields;
+use shared\enum\change_tables;
 use shared\types\component_type as comp_type_shared;
 use test\test_cleanup;
 
@@ -148,7 +150,7 @@ class component_write_tests
 
         // check if the component renaming has been logged
         $log = new change($t->usr1);
-        $log->set_table(change_table_list::VIEW_COMPONENT);
+        $log->set_table(change_tables::VIEW_COMPONENT);
         $log->set_field(component::FLD_NAME);
         $log->row_id = $cmp_renamed->id();
         $result = $log->dsp_last(true);
@@ -176,7 +178,7 @@ class component_write_tests
 
         // check if the component parameter adding have been logged
         $log = new change($t->usr1);
-        $log->set_table(change_table_list::VIEW_COMPONENT);
+        $log->set_table(change_tables::VIEW_COMPONENT);
         $log->set_field(sandbox_named::FLD_DESCRIPTION);
         $log->row_id = $cmp_reloaded->id();
         $result = $log->dsp_last(true);
@@ -186,7 +188,7 @@ class component_write_tests
             $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed "Just added for testing the user sandbox" to "Just changed for testing the user sandbox"';
         }
         $t->display('component->load comment for "' . components::TEST_RENAMED_NAME . '" logged', $target, $result);
-        $log->set_field(change_field_list::FLD_COMPONENT_TYPE);
+        $log->set_field(change_fields::FLD_COMPONENT_TYPE);
         $result = $log->dsp_last(true);
         // TODO fix it
         $target = user::SYSTEM_TEST_NAME . ' added "word name"';

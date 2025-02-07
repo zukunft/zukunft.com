@@ -34,8 +34,8 @@ namespace unit_read;
 
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_CONST_PATH . 'words.php';
+include_once SHARED_ENUM_PATH . 'change_fields.php';
 
-use cfg\log\change_field_list;
 use cfg\log\change_log_list;
 use cfg\word\word;
 use shared\const\components;
@@ -44,6 +44,7 @@ use shared\const\sources;
 use shared\const\triples;
 use shared\const\views;
 use shared\const\words;
+use shared\enum\change_fields;
 use shared\types\verbs;
 use test\test_cleanup;
 
@@ -77,7 +78,7 @@ class change_log_read_tests
 
         // check if loading the changes technically works
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_wrd($wrd, $t->usr1, change_field_list::FLD_WORD_NAME);
+        $result = $lst->load_by_fld_of_wrd($wrd, $t->usr1, change_fields::FLD_WORD_NAME);
         $t->assert('word name change', $result, true);
 
         // ... and if the first entry is the adding of the word name
@@ -87,7 +88,7 @@ class change_log_read_tests
 
         // check loading of verb name changes
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_vrb($vrb, $t->usr1, change_field_list::FLD_VERB_NAME);
+        $result = $lst->load_by_fld_of_vrb($vrb, $t->usr1, change_fields::FLD_VERB_NAME);
         $t->assert('verb name change', $result, true);
 
         // ... and if the first entry is the adding a verb name
@@ -97,13 +98,13 @@ class change_log_read_tests
 
         // check loading of triple name changes of triples
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_trp($trp, $t->usr1, change_field_list::FLD_TRIPLE_NAME);
+        $result = $lst->load_by_fld_of_trp($trp, $t->usr1, change_fields::FLD_TRIPLE_NAME);
         $t->assert('triple name change', $result, true);
 
         // check loading of given name changes of triples
         // TODO replace with triple name ?
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_trp($trp, $t->usr1, change_field_list::FLD_GIVEN_NAME);
+        $result = $lst->load_by_fld_of_trp($trp, $t->usr1, change_fields::FLD_GIVEN_NAME);
         $t->assert('given name change', $result, true);
 
         // ... and if the first entry is the setting the given name of a triple
@@ -113,7 +114,7 @@ class change_log_read_tests
 
         // check loading of user value changes
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_val($val, $t->usr1, change_field_list::FLD_NUMERIC_VALUE);
+        $result = $lst->load_by_fld_of_val($val, $t->usr1, change_fields::FLD_NUMERIC_VALUE);
         $t->assert('value change', $result, true);
 
         // ... and if the first entry is the update Pi probably because not all decimals can be saved in the database
@@ -126,7 +127,7 @@ class change_log_read_tests
 
         // check loading of user formula changes
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_frm($frm, $t->usr1, change_field_list::FLD_FORMULA_USR_TEXT);
+        $result = $lst->load_by_fld_of_frm($frm, $t->usr1, change_fields::FLD_FORMULA_USR_TEXT);
         $t->assert('formula expression change', $result, true);
 
         // ... and if the first entry is the adding the minute scale formula
@@ -136,7 +137,7 @@ class change_log_read_tests
 
         // check loading of name changes of source
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_src($src, $t->usr1, change_field_list::FLD_SOURCE_NAME);
+        $result = $lst->load_by_fld_of_src($src, $t->usr1, change_fields::FLD_SOURCE_NAME);
         $t->assert('source name change', $result, true);
 
         // ... and if the first entry is the setting the source name
@@ -146,7 +147,7 @@ class change_log_read_tests
 
         // check loading of name changes of view
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_dsp($msk, $t->usr1, change_field_list::FLD_VIEW_NAME);
+        $result = $lst->load_by_fld_of_dsp($msk, $t->usr1, change_fields::FLD_VIEW_NAME);
         $t->assert('view name change', $result, true);
 
         // ... and if the first entry is the setting the view name
@@ -156,7 +157,7 @@ class change_log_read_tests
 
         // check loading of name changes of view component
         $lst = new change_log_list();
-        $result = $lst->load_by_fld_of_cmp($cmp, $t->usr1, change_field_list::FLD_COMPONENT_NAME);
+        $result = $lst->load_by_fld_of_cmp($cmp, $t->usr1, change_fields::FLD_COMPONENT_NAME);
         $t->assert('view component name change', $result, true);
 
         // ... and if the first entry is the setting the view component name
@@ -171,7 +172,7 @@ class change_log_read_tests
         $wrd = new word($t->usr1);
         $wrd->load_by_id(1);
         $log_lst = new change_log_list();
-        $log_lst->load_by_fld_of_wrd($wrd, $usr_sys, change_field_list::FLD_WORD_NAME);
+        $log_lst->load_by_fld_of_wrd($wrd, $usr_sys, change_fields::FLD_WORD_NAME);
         $t->assert_api($log_lst);
 
     }

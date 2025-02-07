@@ -33,10 +33,10 @@
 namespace unit_write;
 
 include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_ENUM_PATH . 'change_tables.php';
+include_once SHARED_ENUM_PATH . 'change_fields.php';
 
 use cfg\log\change;
-use cfg\log\change_field_list;
-use cfg\log\change_table_list;
 use cfg\log\change_values_big;
 use cfg\log\change_values_norm;
 use cfg\log\change_values_prime;
@@ -45,6 +45,8 @@ use cfg\user\user;
 use cfg\value\value;
 use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
+use shared\enum\change_fields;
+use shared\enum\change_tables;
 use shared\library;
 use shared\const\triples;
 use shared\const\values;
@@ -301,7 +303,7 @@ class value_write_tests
             }
             $log = new change($t->usr1);
             $log->set_class($val_class);
-            $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
+            $log->set_field(change_fields::FLD_NUMERIC_VALUE);
             $log->row_id = $add_val->id();
             $result = $log->dsp_last(true);
         }
@@ -343,8 +345,8 @@ class value_write_tests
         // ... check if the value adding has been logged
         if ($add_val->is_id_set()) {
             $log = new change($t->usr1);
-            $log->set_table(change_table_list::VALUE);
-            $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
+            $log->set_table(change_tables::VALUE);
+            $log->set_field(change_fields::FLD_NUMERIC_VALUE);
             $log->row_id = $add_val2->id();
             $result = $log->dsp_last(true);
         }
@@ -372,8 +374,8 @@ class value_write_tests
         // ... check if the value change has been logged
         if ($added_val->is_id_set()) {
             $log = new change($t->usr1);
-            $log->set_table(change_table_list::VALUE);
-            $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
+            $log->set_table(change_tables::VALUE);
+            $log->set_field(change_fields::FLD_NUMERIC_VALUE);
             $log->row_id = $added_val->id();
             $result = $log->dsp_last(true);
         }
@@ -405,8 +407,8 @@ class value_write_tests
         $val_usr2->load_by_id($added_val_id);
         if ($val_usr2->is_id_set()) {
             $log = new change($t->usr2);
-            $log->set_table(change_table_list::VALUE_USR);
-            $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
+            $log->set_table(change_tables::VALUE_USR);
+            $log->set_field(change_fields::FLD_NUMERIC_VALUE);
             $log->row_id = $val_usr2->id();
             $result = $log->dsp_last(true);
         }
@@ -444,8 +446,8 @@ class value_write_tests
         $val_usr2->load_by_grp($phr_grp);
         if ($val_usr2->is_id_set()) {
             $log = new change($t->usr2);
-            $log->set_table(change_table_list::VALUE_USR);
-            $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
+            $log->set_table(change_tables::VALUE_USR);
+            $log->set_field(change_fields::FLD_NUMERIC_VALUE);
             $log->row_id = $val_usr2->id();
             $result = $log->dsp_last(true);
         }

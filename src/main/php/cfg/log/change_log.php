@@ -100,6 +100,7 @@ include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_WORD_PATH . 'word_db.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -133,6 +134,7 @@ use cfg\view\view_term_link;
 use cfg\word\word;
 use cfg\word\word_db;
 use shared\enum\change_actions;
+use shared\enum\change_tables;
 use shared\json_fields;
 use shared\library;
 use DateTime;
@@ -509,117 +511,117 @@ class change_log extends db_object_seq_id_user
         }
         foreach (change_table_list::TABLE_LIST as $table_name) {
             $db_changed = $this->set_table($table_name, $db_con);
-            if ($table_name == change_table_list::USER) {
+            if ($table_name == change_tables::USER) {
                 $db_con->set_class(user::class);
                 foreach (user::FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::WORD) {
+            } elseif ($table_name == change_tables::WORD) {
                 $db_con->set_class(word::class);
                 foreach (word_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::WORD_USR) {
+            } elseif ($table_name == change_tables::WORD_USR) {
                 $db_con->set_class(word::class, true);
                 foreach (word_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::VERB) {
+            } elseif ($table_name == change_tables::VERB) {
                 $db_con->set_class(verb::class);
                 foreach (verb::FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::TRIPLE) {
+            } elseif ($table_name == change_tables::TRIPLE) {
                 $db_con->set_class(triple::class);
                 foreach (triple::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::TRIPLE_USR) {
+            } elseif ($table_name == change_tables::TRIPLE_USR) {
                 $db_con->set_class(triple::class, true);
                 foreach (triple::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::VALUE) {
+            } elseif ($table_name == change_tables::VALUE) {
                 $db_con->set_class(value::class);
                 foreach (value_base::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::VALUE_USR) {
+            } elseif ($table_name == change_tables::VALUE_USR) {
                 $db_con->set_class(value::class, true);
                 foreach (value_base::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::FORMULA) {
+            } elseif ($table_name == change_tables::FORMULA) {
                 $db_con->set_class(formula::class);
                 foreach (formula::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::FORMULA_USR) {
+            } elseif ($table_name == change_tables::FORMULA_USR) {
                 $db_con->set_class(formula::class, true);
                 foreach (formula::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::FORMULA_LINK) {
+            } elseif ($table_name == change_tables::FORMULA_LINK) {
                 $db_con->set_class(formula_link::class);
                 foreach (formula_link::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::FORMULA_LINK_USR) {
+            } elseif ($table_name == change_tables::FORMULA_LINK_USR) {
                 $db_con->set_class(formula_link::class, true);
                 foreach (formula_link::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::VIEW) {
+            } elseif ($table_name == change_tables::VIEW) {
                 $db_con->set_class(view::class);
                 foreach (view::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::VIEW_USR) {
+            } elseif ($table_name == change_tables::VIEW_USR) {
                 $db_con->set_class(view::class, true);
                 foreach (view::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::VIEW_TERM_LINK) {
+            } elseif ($table_name == change_tables::VIEW_TERM_LINK) {
                 $db_con->set_class(view_term_link::class);
                 foreach (view_term_link::FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::VIEW_COMPONENT) {
+            } elseif ($table_name == change_tables::VIEW_COMPONENT) {
                 $db_con->set_class(component::class);
                 foreach (component::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::VIEW_COMPONENT_USR) {
+            } elseif ($table_name == change_tables::VIEW_COMPONENT_USR) {
                 $db_con->set_class(component::class, true);
                 foreach (component::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::VIEW_LINK) {
+            } elseif ($table_name == change_tables::VIEW_LINK) {
                 $db_con->set_class(component_link::class);
                 foreach (component_link::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::VIEW_LINK_USR) {
+            } elseif ($table_name == change_tables::VIEW_LINK_USR) {
                 $db_con->set_class(component_link::class, true);
                 foreach (component_link::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::REF) {
+            } elseif ($table_name == change_tables::REF) {
                 $db_con->set_class(ref::class);
                 foreach (ref::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::REF_USR) {
+            } elseif ($table_name == change_tables::REF_USR) {
                 $db_con->set_class(ref::class, true);
                 foreach (ref::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::SOURCE) {
+            } elseif ($table_name == change_tables::SOURCE) {
                 $db_con->set_class(source::class);
                 foreach (source::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
-            } elseif ($table_name == change_table_list::SOURCE_USR) {
+            } elseif ($table_name == change_tables::SOURCE_USR) {
                 $db_con->set_class(source::class, true);
                 foreach (source::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);

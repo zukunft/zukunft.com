@@ -32,12 +32,13 @@
 
 namespace unit_write;
 
+include_once SHARED_ENUM_PATH . 'change_tables.php';
+include_once SHARED_ENUM_PATH . 'change_fields.php';
+
 use cfg\formula\formula;
 use cfg\formula\formula_list;
 use cfg\formula\formula_type;
 use cfg\log\change;
-use cfg\log\change_field_list;
-use cfg\log\change_table_list;
 use cfg\phrase\phrase_list;
 use cfg\result\results;
 use cfg\sandbox\sandbox_named;
@@ -47,6 +48,8 @@ use html\formula\formula as formula_dsp;
 use html\phrase\term_list as term_list_dsp;
 use shared\const\formulas;
 use shared\const\words;
+use shared\enum\change_fields;
+use shared\enum\change_tables;
 use test\test_cleanup;
 
 class formula_write_tests
@@ -342,8 +345,8 @@ class formula_write_tests
 
         // ... check the correct logging
         $log = new change($t->usr1);
-        $log->set_table(change_table_list::FORMULA);
-        $log->set_field(change_field_list::FLD_FORMULA_NAME);
+        $log->set_table(change_tables::FORMULA);
+        $log->set_field(change_fields::FLD_FORMULA_NAME);
         $log->row_id = $frm->id();
         $result = $log->dsp_last(true);
         $target = user::SYSTEM_TEST_NAME . ' added "System Test Formula"';
@@ -377,8 +380,8 @@ class formula_write_tests
 
         // ... and if the formula renaming has been logged
         $log = new change($t->usr1);
-        $log->set_table(change_table_list::FORMULA);
-        $log->set_field(change_field_list::FLD_FORMULA_NAME);
+        $log->set_table(change_tables::FORMULA);
+        $log->set_field(change_fields::FLD_FORMULA_NAME);
         $log->row_id = $frm_renamed->id();
         $result = $log->dsp_last(true);
         $target = user::SYSTEM_TEST_NAME . ' changed "System Test Formula" to "System Test Formula Renamed"';
@@ -413,15 +416,15 @@ class formula_write_tests
 
         // ... and if the formula parameter adding have been logged
         $log = new change($t->usr1);
-        $log->set_table(change_table_list::FORMULA);
-        $log->set_field(change_field_list::FLD_FORMULA_USR_TEXT);
+        $log->set_table(change_tables::FORMULA);
+        $log->set_field(change_fields::FLD_FORMULA_USR_TEXT);
         $log->row_id = $frm_reloaded->id();
         $result = $log->dsp_last(true);
         // use the next line if system config is non-standard
         $target = user::SYSTEM_TEST_NAME . ' changed "' . words::PERCENT . '" = ( "' . words::THIS_NAME . '" - "' . words::PRIOR_NAME . '" ) / "' . words::PRIOR_NAME . '" to = "' . words::THIS_NAME . '"';
         $target = user::SYSTEM_TEST_NAME . ' changed ""' . words::PERCENT . '" = 1 - ( "' . words::THIS_NAME . '" / "' . words::PRIOR_NAME . '" )" to "= "' . words::THIS_NAME . '""';
         $t->display('formula->load resolved_text for "' . formulas::SYSTEM_TEXT_RENAMED . '" logged', $target, $result);
-        $log->set_field(change_field_list::FLD_FORMULA_REF_TEXT);
+        $log->set_field(change_fields::FLD_FORMULA_REF_TEXT);
         $result = $log->dsp_last(true);
         // use the next line if system config is non-standard
         $target = user::SYSTEM_TEST_NAME . ' changed {w' . $wrd_percent->id() . '}=( {f' . $frm_this->id() . '} - {f5} ) / {f5} to ={f3}';
@@ -431,14 +434,14 @@ class formula_write_tests
         $result = $log->dsp_last(true);
         $target = user::SYSTEM_TEST_NAME . ' added "System Test Formula Renamed description"';
         $t->display('formula->load description for "' . formulas::SYSTEM_TEXT_RENAMED . '" logged', $target, $result);
-        $log->set_field(change_field_list::FLD_FORMULA_TYPE);
+        $log->set_field(change_fields::FLD_FORMULA_TYPE);
         $result = $log->dsp_last(true);
         // TODO review what is correct
         $target = user::SYSTEM_TEST_NAME . ' changed calc to this';
         $target = user::SYSTEM_TEST_NAME . ' added "' . words::THIS_NAME . '"';
         $target = user::SYSTEM_TEST_NAME . ' added "4"';
         $t->display('formula->load formula_type_id for "' . formulas::SYSTEM_TEXT_RENAMED . '" logged', $target, $result);
-        $log->set_field(change_field_list::FLD_FORMULA_ALL);
+        $log->set_field(change_fields::FLD_FORMULA_ALL);
         $result = $log->dsp_last(true);
         $target = user::SYSTEM_TEST_NAME . ' changed "0" to "1"';
         $t->display('formula->load all_values_needed for "' . formulas::SYSTEM_TEXT_RENAMED . '" logged', $target, $result);

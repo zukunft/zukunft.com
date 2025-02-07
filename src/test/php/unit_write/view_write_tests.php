@@ -32,8 +32,9 @@
 
 namespace unit_write;
 
+include_once SHARED_ENUM_PATH . 'change_tables.php';
+
 use cfg\log\change;
-use cfg\log\change_table_list;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\view\view;
@@ -42,6 +43,7 @@ use cfg\word\word;
 use html\view\view as view_dsp;
 use shared\const\views;
 use shared\const\words;
+use shared\enum\change_tables;
 use test\test_cleanup;
 
 class view_write_tests
@@ -123,7 +125,7 @@ class view_write_tests
 
         // check if the view adding has been logged
         $log = new change($t->usr1);
-        $log->set_table(change_table_list::VIEW);
+        $log->set_table(change_tables::VIEW);
         $log->set_field(view::FLD_NAME);
         $log->row_id = $msk->id();
         $result = $log->dsp_last(true);
@@ -159,7 +161,7 @@ class view_write_tests
 
         // check if the view renaming has been logged
         $log = new change($t->usr1);
-        $log->set_table(change_table_list::VIEW);
+        $log->set_table(change_tables::VIEW);
         $log->set_field(view::FLD_NAME);
         $log->row_id = $dsp_renamed->id();
         $result = $log->dsp_last(true);
@@ -185,7 +187,7 @@ class view_write_tests
 
         // check if the view parameter adding have been logged
         $log = new change($t->usr1);
-        $log->set_table(change_table_list::VIEW);
+        $log->set_table(change_tables::VIEW);
         $log->set_field(sandbox_named::FLD_DESCRIPTION);
         $log->row_id = $dsp_reloaded->id();
         $result = $log->dsp_last(true);

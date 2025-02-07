@@ -65,6 +65,8 @@ include_once MODEL_LOG_PATH . 'change_log.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 include_once WEB_LOG_PATH . 'change_log_named.php';
 //include_once WEB_HELPER_PATH . 'config.php';
+include_once SHARED_ENUM_PATH . 'change_tables.php';
+include_once SHARED_ENUM_PATH . 'change_fields.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
@@ -90,6 +92,8 @@ use html\log\change_log_named as change_log_named_dsp;
 use DateTime;
 use DateTimeInterface;
 use Exception;
+use shared\enum\change_fields;
+use shared\enum\change_tables;
 use shared\json_fields;
 use shared\types\api_type_list;
 
@@ -247,7 +251,7 @@ class change extends change_log
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_join_fields(array(user::FLD_NAME), user::class);
-        $sc->set_join_fields(array(change_field_list::FLD_TABLE), change_field::class);
+        $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
         $sc->set_order(self::FLD_TIME, sql::ORDER_DESC);
 
         return $qp;
@@ -342,27 +346,27 @@ class change extends change_log
         $sql_row = ' s.row_id  = $2 ';
         // the class specific settings
         if ($type == user::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::WORD) . " 
-                   OR f.table_id = " . $cng_tbl_cac->id(change_table_list::WORD_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::WORD) . " 
+                   OR f.table_id = " . $cng_tbl_cac->id(change_tables::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 's.user_id = u.user_id
                 AND s.user_id = ' . $this->user()->id() . ' ';
         } elseif ($type == word::class) {
-            //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_table_list::WORD));
-            //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_table_list::WORD_USR));
+            //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_tables::WORD));
+            //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_tables::WORD_USR));
             $sql_where = " s.change_field_id = $1 ";
         } elseif ($type == value::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::VALUE) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::VALUE_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VALUE) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VALUE_USR) . ") AND ";
         } elseif ($type == formula::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::FORMULA) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::FORMULA_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::FORMULA) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::FORMULA_USR) . ") AND ";
         } elseif ($type == view::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::VIEW) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_USR) . ") AND ";
         } elseif ($type == component::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_COMPONENT) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_COMPONENT_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_COMPONENT) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_COMPONENT_USR) . ") AND ";
         }
 
         if ($sql_where == '') {

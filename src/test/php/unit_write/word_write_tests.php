@@ -32,21 +32,24 @@
 
 namespace unit_write;
 
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_ENUM_PATH . 'change_tables.php';
+include_once SHARED_ENUM_PATH . 'change_fields.php';
+include_once SHARED_TYPES_PATH . 'phrase_type.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use cfg\formula\formula;
 use cfg\log\change;
 use cfg\log\change_field_list;
-use cfg\log\change_table_list;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\word\word;
 use html\word\word as word_dsp;
+use shared\enum\change_fields;
+use shared\enum\change_tables;
 use shared\library;
 use shared\const\formulas;
 use shared\const\triples;
@@ -330,7 +333,7 @@ class word_write_tests
         if ($wrd_add->id() > 0) {
             $log = new change($t->usr1);
             $log->set_class(word::class);
-            $log->set_field(change_field_list::FLD_WORD_NAME);
+            $log->set_field(change_fields::FLD_WORD_NAME);
             $log->row_id = $wrd_add->id();
             $result = $log->dsp_last(true);
         }
@@ -385,8 +388,8 @@ class word_write_tests
 
         // check if the word parameter adding have been logged
         $log = new change($t->usr1);
-        $log->set_table(change_table_list::WORD);
-        $log->set_field(change_field_list::FLD_WORD_PLURAL);
+        $log->set_table(change_tables::WORD);
+        $log->set_field(change_fields::FLD_WORD_PLURAL);
         $log->row_id = $wrd_reloaded->id();
         $result = $log->dsp_last(true);
         $target = user::SYSTEM_TEST_NAME . ' added "' . words::TN_RENAMED . 's"';
@@ -396,7 +399,7 @@ class word_write_tests
         $target = user::SYSTEM_TEST_NAME . ' added "' . words::TN_RENAMED . ' description"';
         $t->display('word->load description for "' . words::TN_RENAMED . '" logged', $target, $result);
         $t->display('word->load ref_2 for "' . words::TN_RENAMED . '" logged', $target, $result);
-        $log->set_field(change_field_list::FLD_PHRASE_TYPE);
+        $log->set_field(change_fields::FLD_PHRASE_TYPE);
         $result = $log->dsp_last(true);
         $target = user::SYSTEM_TEST_NAME . ' added "differentiator filler"';
         $t->display('word->load type_id for "' . words::TN_RENAMED . '" logged', $target, $result);

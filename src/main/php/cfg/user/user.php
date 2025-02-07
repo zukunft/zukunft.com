@@ -1204,7 +1204,7 @@ class user extends db_object_seq_id
         log_debug(' user ' . $this->name);
         $log = new change($this);
         $log->set_action(change_actions::UPDATE);
-        $log->set_table(change_table_list::USER);
+        $log->set_table(change_tables::USER);
 
         return $log;
     }

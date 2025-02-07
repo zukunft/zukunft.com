@@ -32,11 +32,12 @@
 
 namespace unit_write;
 
+include_once SHARED_ENUM_PATH . 'change_tables.php';
+
 use cfg\formula\formula;
 use cfg\formula\formula_link;
 use cfg\formula\formula_link_list;
 use cfg\log\change_link;
-use cfg\log\change_table_list;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\user\user;
@@ -44,6 +45,7 @@ use cfg\word\word;
 use html\formula\formula as formula_dsp;
 use shared\const\formulas;
 use shared\const\words;
+use shared\enum\change_tables;
 use test\test_cleanup;
 
 class formula_link_write_tests
@@ -73,7 +75,7 @@ class formula_link_write_tests
         $phr = new phrase($t->usr1);
         $phr->load_by_name(words::TN_ADD);
         $log = new change_link($t->usr1);
-        $log->set_table(change_table_list::FORMULA_LINK);
+        $log->set_table(change_tables::FORMULA_LINK);
         $log->new_from_id = $frm->id();
         $log->new_to_id = $phr->id();
         $result = $log->dsp_last(true);
@@ -141,7 +143,7 @@ class formula_link_write_tests
 
         // ... check if the removal of the link for the second user has been logged
         $log = new change_link($t->usr2);
-        $log->set_table(change_table_list::FORMULA_LINK);
+        $log->set_table(change_tables::FORMULA_LINK);
         $log->old_from_id = $frm->id();
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last(true);
@@ -179,7 +181,7 @@ class formula_link_write_tests
 
         // check the correct logging
         $log = new change_link($t->usr1);
-        $log->set_table(change_table_list::FORMULA_LINK);
+        $log->set_table(change_tables::FORMULA_LINK);
         $log->old_from_id = $frm->id();
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last(true);

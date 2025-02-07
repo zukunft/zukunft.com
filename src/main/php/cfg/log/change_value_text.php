@@ -45,6 +45,7 @@ include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once WEB_LOG_PATH . 'change_log_named.php';
+include_once SHARED_ENUM_PATH . 'change_fields.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -53,11 +54,10 @@ use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
-use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\group\group;
 use cfg\helper\type_object;
 use cfg\user\user;
+use shared\enum\change_fields;
 
 class change_value_text extends change_value
 {
@@ -102,7 +102,7 @@ class change_value_text extends change_value
         $sc->set_name($qp->name);
         $sc->set_fields($this::FLD_NAMES);
         $sc->set_join_fields(array(user::FLD_NAME), user::class);
-        $sc->set_join_fields(array(change_field_list::FLD_TABLE), change_field::class);
+        $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
         $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC);
 
         return $qp;

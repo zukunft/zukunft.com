@@ -52,6 +52,7 @@ include_once DB_PATH . 'sql_type.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
+include_once SHARED_ENUM_PATH . 'change_fields.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -73,6 +74,7 @@ use cfg\verb\verb;
 use cfg\view\view;
 use cfg\word\word;
 use cfg\word\triple;
+use shared\enum\change_fields;
 use shared\library;
 
 class change_log_list extends base_list
@@ -166,7 +168,7 @@ class change_log_list extends base_list
         $sc->set_name($qp->name);
         $sc->set_fields(change::FLD_NAMES);
         $sc->set_join_fields(array(user::FLD_NAME), user::class);
-        $sc->set_join_fields(array(change_field_list::FLD_TABLE), change_field::class);
+        $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
         $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC);
 
         return $qp;
@@ -334,14 +336,14 @@ class change_log_list extends base_list
     {
         $result = '';
         if ($class == word::class) {
-            if ($field_name == change_field_list::FLD_WORD_VIEW) {
+            if ($field_name == change_fields::FLD_WORD_VIEW) {
                 $result = 'dsp_of_wrd';
             } else {
                 $result = $field_name . '_of_wrd';
                 log_info('field name ' . $field_name . ' not expected for table ' . $class);
             }
         } elseif ($class == triple::class) {
-            if ($field_name == change_field_list::FLD_TRIPLE_VIEW) {
+            if ($field_name == change_fields::FLD_TRIPLE_VIEW) {
                 $result = 'dsp_of_trp';
             } else {
                 $result = $field_name . '_of_trp';

@@ -69,6 +69,7 @@ include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VALUE_PATH . 'value_time_series.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_ENUM_PATH . 'change_fields.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -90,7 +91,6 @@ use cfg\group\result_id;
 use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_action;
-use cfg\log\change_field_list;
 use cfg\log\change_link;
 use cfg\log\change_value;
 use cfg\phrase\phrase;
@@ -107,6 +107,7 @@ use cfg\user\user;
 use cfg\value\value_base;
 use cfg\word\word_list;
 use shared\enum\change_actions;
+use shared\enum\change_fields;
 use shared\json_fields;
 use shared\library;
 use DateTime;
@@ -1420,7 +1421,7 @@ class sandbox_value extends sandbox_multi
     {
         log_debug($this->dsp_id());
         $log->set_action(change_actions::ADD);
-        $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
+        $log->set_field(change_fields::FLD_NUMERIC_VALUE);
         $log->group_id = $this->grp_id();
         $log->old_value = null;
         $log->new_value = $this->value();
@@ -1453,7 +1454,7 @@ class sandbox_value extends sandbox_multi
         $log->set_action(change_actions::DELETE);
         $class = $lib->class_to_name($this::class);
         $log->set_table($class . sql_db::TABLE_EXTENSION);
-        $log->set_field(change_field_list::FLD_NUMERIC_VALUE);
+        $log->set_field(change_fields::FLD_NUMERIC_VALUE);
         $log->old_value = $this->value();
         $log->new_value = null;
 

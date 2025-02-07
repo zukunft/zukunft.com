@@ -94,6 +94,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_WORD_PATH . 'word_db.php';
 //include_once MODEL_WORD_PATH . 'word_list.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
@@ -116,9 +117,7 @@ use cfg\helper\combine_named;
 use cfg\helper\db_object_seq_id;
 use cfg\language\language;
 use cfg\log\change;
-use cfg\log\change_action;
 use cfg\log\change_link;
-use cfg\log\change_table_list;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_type;
 use cfg\phrase\term;
@@ -137,6 +136,7 @@ use html\html_base;
 use JsonSerializable;
 use shared\const\triples;
 use shared\enum\change_actions;
+use shared\enum\change_tables;
 use shared\enum\messages as msg_enum;
 use shared\json_fields;
 use shared\library;
@@ -1883,7 +1883,7 @@ class triple extends sandbox_link_named
         log_debug('triple->log_link_add for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
         $log = new change_link($this->user());
         $log->set_action(change_actions::ADD);
-        $log->set_table(change_table_list::TRIPLE);
+        $log->set_table(change_tables::TRIPLE);
         $log->new_from = $this->from();
         $log->new_link = $this->verb();
         $log->new_to = $this->to();
@@ -1901,9 +1901,9 @@ class triple extends sandbox_link_named
         $log = new change_link($this->user());
         $log->set_action(change_actions::UPDATE);
         if ($this->can_change()) {
-            $log->set_table(change_table_list::TRIPLE);
+            $log->set_table(change_tables::TRIPLE);
         } else {
-            $log->set_table(change_table_list::TRIPLE_USR);
+            $log->set_table(change_tables::TRIPLE_USR);
         }
 
         return $log;
@@ -1918,7 +1918,7 @@ class triple extends sandbox_link_named
         log_debug('triple->log_link_del for ' . $this->dsp_id() . ' by user "' . $this->user()->name . '"');
         $log = new change_link($this->user());
         $log->set_action(change_actions::DELETE);
-        $log->set_table(change_table_list::TRIPLE);
+        $log->set_table(change_tables::TRIPLE);
         $log->old_from = $this->from();
         $log->old_link = $this->verb();
         $log->old_to = $this->to();
@@ -1936,9 +1936,9 @@ class triple extends sandbox_link_named
         $log = new change($this->user());
         $log->set_action(change_actions::UPDATE);
         if ($this->can_change()) {
-            $log->set_table(change_table_list::TRIPLE);
+            $log->set_table(change_tables::TRIPLE);
         } else {
-            $log->set_table(change_table_list::TRIPLE_USR);
+            $log->set_table(change_tables::TRIPLE_USR);
         }
 
         return $log;

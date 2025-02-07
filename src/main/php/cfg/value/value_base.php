@@ -120,6 +120,8 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once WEB_VALUE_PATH . 'value.php';
 include_once SHARED_CONST_PATH . 'chars.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_ENUM_PATH . 'change_tables.php';
+include_once SHARED_ENUM_PATH . 'change_fields.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
@@ -142,6 +144,8 @@ use cfg\sandbox\sandbox_multi;
 use cfg\system\log;
 use shared\const\chars;
 use shared\enum\change_actions;
+use shared\enum\change_fields;
+use shared\enum\change_tables;
 use shared\json_fields;
 use shared\types\api_type_list;
 use shared\types\protection_type as protect_type_shared;
@@ -1561,9 +1565,9 @@ class value_base extends sandbox_value
         }
         $log->set_action(change_actions::UPDATE);
         if ($this->can_change()) {
-            $log->set_table(change_table_list::VALUE);
+            $log->set_table(change_tables::VALUE);
         } else {
-            $log->set_table(change_table_list::VALUE_USR);
+            $log->set_table(change_tables::VALUE_USR);
         }
         $log->group_id = $this->grp_id();
 
@@ -1586,9 +1590,9 @@ class value_base extends sandbox_value
         }
         $log->set_action(change_actions::UPDATE);
         if ($this->can_change()) {
-            $log->set_table(change_table_list::VALUE);
+            $log->set_table(change_tables::VALUE);
         } else {
-            $log->set_table(change_table_list::VALUE_USR);
+            $log->set_table(change_tables::VALUE_USR);
         }
         $log->row_id = $this->grp_id();
 
@@ -1885,7 +1889,7 @@ class value_base extends sandbox_value
             $log->new_id = $this->grp()->id();
             $log->std_id = $std_rec->grp()->id();
             $log->row_id = $this->id();
-            $log->set_field(change_field_list::FLD_VALUE_GROUP);
+            $log->set_field(change_fields::FLD_VALUE_GROUP);
             if ($log->add()) {
                 $ext = $this->grp()->table_extension();
                 $db_con->set_class(self::class, false, $ext);

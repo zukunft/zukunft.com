@@ -34,25 +34,25 @@ namespace html\log;
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-//include_once MODEL_LOG_PATH . 'change_table_list.php';
+//include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_LOG_PATH . 'change_log.php';
 //include_once WEB_HELPER_PATH . 'config.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_ENUM_PATH . 'change_tables.php';
+include_once SHARED_ENUM_PATH . 'change_fields.php';
 
+use html\formula\formula;
 use html\helper\config;
 use html\rest_ctrl;
 use html\button;
 use html\html_base;
 use html\system\back_trace;
-use cfg\log\change_table_list;
-use cfg\formula\formula;
 use html\system\messages;
 use shared\enum\change_actions;
+use shared\enum\change_fields;
+use shared\enum\change_tables;
 
 class change_log_named extends change_log
 {
@@ -80,7 +80,7 @@ class change_log_named extends change_log
 
         // pick the useful field name
         $txt_fld = '';
-        if ($this->table_name() == change_table_list::VALUE) {
+        if ($this->table_name() == change_tables::VALUE) {
             $txt_fld .= $this->action_name() . ' value';
             // because changing the words creates a new value there is no need to display the words here
         /*
@@ -111,7 +111,7 @@ class change_log_named extends change_log
         $txt_old = $this->old_value;
         $txt_new = $this->new_value;
         // encode of text
-        if ($this->field_code_id() == formula::FLD_ALL_NEEDED) {
+        if ($this->field_code_id() == change_fields::FLD_ALL_NEEDED) {
             if ($txt_old == "1") {
                 $txt_old = "all values needed for calculation";
             } else {
@@ -153,17 +153,17 @@ class change_log_named extends change_log
         // $undo_text = '';
         $undo_call = '';
         $undo_btn = '';
-        if ($this->table_name() == change_table_list::WORD) {
+        if ($this->table_name() == change_tables::WORD) {
             if ($this->action_code_id() == change_actions::ADD) {
                 $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
                 $undo_btn = (new button($undo_call))->undo(messages::UNDO_ADD);
             }
-        } elseif ($this->table_name() == change_table_list::VIEW) {
+        } elseif ($this->table_name() == change_tables::VIEW) {
             if ($this->action_code_id() == change_actions::ADD) {
                 $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
                 $undo_btn = (new button($undo_call))->undo(messages::UNDO_EDIT);
             }
-        } elseif ($this->table_name() == change_table_list::FORMULA) {
+        } elseif ($this->table_name() == change_tables::FORMULA) {
             if ($this->action_code_id() == change_actions::UPDATE) {
                 $undo_call = $html->url(
                     formula::class . rest_ctrl::UPDATE, $this->row_id,

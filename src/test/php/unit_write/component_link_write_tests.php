@@ -32,14 +32,16 @@
 
 namespace unit_write;
 
+include_once SHARED_ENUM_PATH . 'change_tables.php';
+
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\log\change_link;
-use cfg\log\change_table_list;
 use cfg\user\user;
 use cfg\view\view;
 use shared\const\components;
 use shared\const\views;
+use shared\enum\change_tables;
 use test\test_cleanup;
 
 class component_link_write_tests
@@ -68,7 +70,7 @@ class component_link_write_tests
 
         $test_name = 'check log of linking the component "' . $cmp->name() . '" to the view "' . $msk->name() . '"';
         $log = new change_link($t->usr1);
-        $log->set_table(change_table_list::VIEW_LINK);
+        $log->set_table(change_tables::VIEW_LINK);
         $log->new_from_id = $msk->id();
         $log->new_to_id = $cmp->id();
         $result = $log->dsp_last(true);
@@ -99,7 +101,7 @@ class component_link_write_tests
 
         // ... check if the removal of the link for the second user has been logged
         $log = new change_link($t->usr2);
-        $log->set_table(change_table_list::VIEW_LINK);
+        $log->set_table(change_tables::VIEW_LINK);
         $log->old_from_id = $msk->id();
         $log->old_to_id = $cmp->id();
         $result = $log->dsp_last(true);
@@ -135,7 +137,7 @@ class component_link_write_tests
 
         // check the correct logging
         $log = new change_link($t->usr1);
-        $log->set_table(change_table_list::VIEW_LINK);
+        $log->set_table(change_tables::VIEW_LINK);
         $log->old_from_id = $msk->id();
         $log->old_to_id = $cmp->id();
         $result = $log->dsp_last(true);

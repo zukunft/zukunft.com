@@ -92,6 +92,7 @@ include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once WEB_REF_PATH . 'ref.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
@@ -109,7 +110,6 @@ use cfg\helper\combine_named;
 use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_link;
-use cfg\log\change_table_list;
 use cfg\phrase\phrase;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link;
@@ -117,6 +117,7 @@ use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\user\user_message;
 use shared\enum\change_actions;
+use shared\enum\change_tables;
 use shared\json_fields;
 use shared\types\api_type_list;
 
@@ -847,7 +848,7 @@ class ref extends sandbox_link
 
         $log = new change_link($this->user());
         $log->set_action(change_actions::ADD);
-        $log->set_table(change_table_list::REF);
+        $log->set_table(change_tables::REF);
         // TODO review in log_link
         // TODO object must be loaded before it can be logged
         $log->new_from = $this->phrase();
@@ -867,7 +868,7 @@ class ref extends sandbox_link
         log_debug('ref->log_upd ' . $this->dsp_id());
         $log = new change_link($this->user());
         $log->set_action(change_actions::UPDATE);
-        $log->set_table(change_table_list::REF);
+        $log->set_table(change_tables::REF);
         $log->old_from = $db_rec->phrase();
         $log->old_link = $db_rec->type();
         $log->old_to = $db_rec;
@@ -897,7 +898,7 @@ class ref extends sandbox_link
 
         $log = new change_link($this->user());
         $log->set_action(change_actions::DELETE);
-        $log->set_table(change_table_list::REF);
+        $log->set_table(change_tables::REF);
         $log->old_from = $this->phrase();
         $log->old_link = $this->type();
         $log->old_to = $this;

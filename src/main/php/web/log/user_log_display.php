@@ -37,21 +37,22 @@ include_once DB_PATH . 'sql_db.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
+include_once WEB_FORMULA_PATH . 'formula.php';
+include_once WEB_SYSTEM_PATH . 'messages.php';
+include_once WEB_VALUE_PATH . 'value.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_LOG_PATH . 'change_table_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_PATH . 'library.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_SYSTEM_PATH . 'messages.php';
 
 use cfg\component\component;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\formula\formula;
-use cfg\log\change_table_list;
 use cfg\user\user;
 use cfg\view\view;
 use cfg\word\word;
@@ -60,6 +61,8 @@ use html\button;
 use html\formula\formula as formula_dsp;
 use html\html_base;
 use html\system\messages;
+use html\value\value;
+use shared\enum\change_tables;
 use shared\library;
 
 class user_log_display
@@ -115,26 +118,26 @@ class user_log_display
         $sql_user = 'c.user_id = u.user_id';
         // the class specific settings
         if ($this->type == user::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::WORD) . " 
-                   OR f.table_id = " . $cng_tbl_cac->id(change_table_list::WORD_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::WORD) . " 
+                   OR f.table_id = " . $cng_tbl_cac->id(change_tables::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 'c.user_id = u.user_id
                 AND c.user_id = ' . $this->usr->id() . ' ';
         } elseif ($this->type == word::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::WORD) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::WORD_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::WORD) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::WORD_USR) . ") AND ";
         } elseif ($this->type == value::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::VALUE) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::VALUE_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VALUE) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VALUE_USR) . ") AND ";
         } elseif ($this->type == formula_dsp::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::FORMULA) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::FORMULA_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::FORMULA) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::FORMULA_USR) . ") AND ";
         } elseif ($this->type == view::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::VIEW) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_USR) . ") AND ";
         } elseif ($this->type == component::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_COMPONENT) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_COMPONENT_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_COMPONENT) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_COMPONENT_USR) . ") AND ";
         }
 
         if ($sql_where == '') {
@@ -325,53 +328,53 @@ class user_log_display
         $sql_row = '';
         $sql_user = '';
         if ($class == 'user') {
-            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_table_list::USER) . " ) AND ";
+            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_tables::USER) . " ) AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = '';
             $sql_user = 'c.user_id = u.user_id
                 AND c.user_id = ' . $this->usr->id() . ' ';
         } elseif ($class == 'word') {
-            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_table_list::WORD) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_table_list::WORD_USR) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_table_list::TRIPLE) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_table_list::TRIPLE_USR) . " ) AND ";
+            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_tables::WORD) . " 
+                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::WORD_USR) . " 
+                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::TRIPLE) . " 
+                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::TRIPLE_USR) . " ) AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.old_to_id = ' . $this->id . ' OR
                        c.new_from_id = ' . $this->id . ' OR c.new_to_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
         } elseif ($class == 'value') {
-            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_table_list::VALUE) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_table_list::VALUE_USR) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_table_list::VALUE_LINK) . ") AND ";
+            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_tables::VALUE) . " 
+                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::VALUE_USR) . " 
+                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::VALUE_LINK) . ") AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.new_from_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
         } elseif ($class == 'formula') {
-            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_table_list::FORMULA) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_table_list::FORMULA_USR) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_table_list::FORMULA_LINK) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_table_list::FORMULA_LINK_USR) . " ) AND ";
+            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_tables::FORMULA) . " 
+                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::FORMULA_USR) . " 
+                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::FORMULA_LINK) . " 
+                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::FORMULA_LINK_USR) . " ) AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.new_from_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
         } elseif ($class == 'view') {
-            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_table_list::VIEW) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_USR) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_LINK) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_LINK_USR) . " ) AND ";
+            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_tables::VIEW) . " 
+                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::VIEW_USR) . " 
+                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::VIEW_LINK) . " 
+                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::VIEW_LINK_USR) . " ) AND ";
             $sql_field = 'c.old_text_to AS old, 
                     c.new_text_to AS new';
             $sql_row = ' (c.old_from_id = ' . $this->id . ' OR c.new_from_id = ' . $this->id . ') AND ';
             $sql_user = 'c.user_id = u.user_id';
         } elseif ($class == 'view_cmp') {
-            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_COMPONENT) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_COMPONENT_USR) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_LINK) . " 
-                    OR c.change_table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_LINK_USR) . " ) AND ";
+            $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_tables::VIEW_COMPONENT) . " 
+                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::VIEW_COMPONENT_USR) . " 
+                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::VIEW_LINK) . " 
+                    OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::VIEW_LINK_USR) . " ) AND ";
             $sql_field = 'c.old_text_from AS old, 
                     c.new_text_from AS new';
             $sql_row = ' (c.old_to_id = ' . $this->id . ' OR c.new_to_id = ' . $this->id . ') AND ';

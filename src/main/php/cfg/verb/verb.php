@@ -58,6 +58,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -72,7 +73,6 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\helper\type_object;
 use cfg\log\change;
-use cfg\log\change_table_list;
 use cfg\phrase\term;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
@@ -82,6 +82,7 @@ use cfg\user\user_message;
 use cfg\word\word;
 use html\html_base;
 use shared\enum\change_actions;
+use shared\enum\change_tables;
 use shared\enum\messages as msg_enum;
 use shared\json_fields;
 use shared\library;
@@ -775,7 +776,7 @@ class verb extends type_object
         log_debug('verb->log_add ' . $this->dsp_id());
         $log = new change($this->usr);
         $log->set_action(change_actions::ADD);
-        $log->set_table(change_table_list::VERB);
+        $log->set_table(change_tables::VERB);
         $log->set_field(self::FLD_NAME);
         $log->old_value = null;
         $log->new_value = $this->name;
@@ -791,7 +792,7 @@ class verb extends type_object
         log_debug('verb->log_upd ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $log = new change($this->usr);
         $log->set_action(change_actions::UPDATE);
-        $log->set_table(change_table_list::VERB);
+        $log->set_table(change_tables::VERB);
 
         return $log;
     }
@@ -802,7 +803,7 @@ class verb extends type_object
         log_debug('verb->log_del ' . $this->dsp_id() . ' for user ' . $this->user()->name);
         $log = new change($this->usr);
         $log->set_action(change_actions::DELETE);
-        $log->set_table(change_table_list::VERB);
+        $log->set_table(change_tables::VERB);
         $log->set_field(self::FLD_NAME);
         $log->old_value = $this->name;
         $log->new_value = null;

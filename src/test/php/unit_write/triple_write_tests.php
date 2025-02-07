@@ -32,16 +32,17 @@
 
 namespace unit_write;
 
+include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 
 use cfg\formula\formula;
 use cfg\log\change_link;
-use cfg\log\change_table_list;
 use cfg\user\user;
 use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\word\word;
+use shared\enum\change_tables;
 use shared\library;
 use shared\const\triples;
 use shared\const\words;
@@ -96,7 +97,7 @@ class triple_write_tests
         $t->subheader("... and also testing the user log link class (classes/user_log_link.php)");
         $test_name = 'check the correct logging of adding a triple  "' . words::TN_RENAMED . '" ' . verbs::IS . ' "' . words::TN_PARENT . '" based on the id of the added test word, verb and the parent test word';
         $log = new change_link($t->usr1);
-        $log->set_table(change_table_list::TRIPLE);
+        $log->set_table(change_tables::TRIPLE);
         $log->new_from_id = $wrd_from->id();
         $log->new_link_id = $vrb_is_id;
         $log->new_to_id = $wrd_to->id();
@@ -136,7 +137,7 @@ class triple_write_tests
 
         $test_name = 'check if the removal of the link "' . $wrd_from->name() . '" ' . verbs::IS . ' "' . $wrd_to->name() . '" for the second user "' . $t->usr2->name . '" has been logged';
         $log = new change_link($t->usr2);
-        $log->set_table(change_table_list::TRIPLE);
+        $log->set_table(change_tables::TRIPLE);
         $log->old_from_id = $wrd_from->id();
         $log->old_link_id = $vrb_is_id;
         $log->old_to_id = $wrd_to->id();
@@ -175,7 +176,7 @@ class triple_write_tests
 
         // check the correct logging
         $log = new change_link($t->usr1);
-        $log->set_table(change_table_list::TRIPLE);
+        $log->set_table(change_tables::TRIPLE);
         $log->old_from_id = $wrd_from->id();
         $log->old_link_id = $vrb_is_id;
         $log->old_to_id = $wrd_to->id();
@@ -204,7 +205,7 @@ class triple_write_tests
 
         // check the correct logging
         $log = new change_link($t->usr1);
-        $log->set_table(change_table_list::TRIPLE);
+        $log->set_table(change_tables::TRIPLE);
         $log->old_from_id = $wrd_from->id();
         $log->old_link_id = $vrb_is_id;
         $log->old_to_id = $wrd_to->id();
