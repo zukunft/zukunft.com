@@ -33,6 +33,7 @@
 namespace unit_ui;
 
 use cfg\word\triple;
+use shared\api;
 use const test\TEST_UNIT_UI_PATH;
 
 include_once TEST_UNIT_UI_PATH . 'base_ui_tests.php';
@@ -118,7 +119,7 @@ class all_ui_tests extends all_unit_tests
         $t->subheader('check about page e.g. to check the library');
 
         $test_name = 'check about page e.g. to check the library';
-        $result = file_get_contents('http://localhost/http/about.php');
+        $result = file_get_contents(api::HOST_TESTING .  'http/about.php');
         $target = 'zukunft.com AG';
         $t->assert_text_contains($test_name, $result, $target);
 

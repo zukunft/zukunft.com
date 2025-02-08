@@ -37,6 +37,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_PATH . 'library.php';
 include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
@@ -49,11 +50,17 @@ use cfg\user\user;
 use cfg\log\change_log_list;
 use cfg\word\word;
 use shared\api;
+use shared\library;
 
 // open database
 $db_con = prg_start("api/log", "", false);
 
 // get the parameters
+$class = $_GET[api::URL_VAR_CLASS] ?? '';
+$id = $_GET[api::URL_VAR_ID] ?? 0;
+$fld = $_GET[api::URL_VAR_FIELD] ?? '';
+
+// TODO deprecate
 $wrd_id = $_GET[api::URL_VAR_WORD_ID] ?? 0;
 $wrd_fld = $_GET[api::URL_VAR_WORD_FLD] ?? '';
 
@@ -67,14 +74,26 @@ $msg .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    if ($wrd_id != 0) {
-        $wrd = new word($usr);
-        $wrd->load_by_id($wrd_id);
+    if ($class != '') {
+        $lib = new library();
+        $class = $lib->api_name_to_class($class);
         $lst = new change_log_list();
-        $lst->load_by_fld_of_wrd($wrd, $usr, $wrd_fld);
+        if (is_numeric($id)) {
+            $id = (int)$id;
+        }
+        $lst->load_by_obj_fld($class, $id, $usr, $fld);
         $result = $lst->api_json();
     } else {
-        $msg = 'word id missing';
+        // TODO deprecate
+        if ($wrd_id != 0) {
+            $wrd = new word($usr);
+            $wrd->load_by_id($wrd_id);
+            $lst = new change_log_list();
+            $lst->load_by_fld_of_wrd($wrd, $usr, $wrd_fld);
+            $result = $lst->api_json();
+        } else {
+            $msg = 'word id missing';
+        }
     }
 }
 

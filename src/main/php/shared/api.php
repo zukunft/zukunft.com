@@ -40,6 +40,7 @@ class api
      */
 
     // TODO review (move to application.yaml)
+    const HOST_TESTING = 'http://localhost/';
     const HOST_DEV = 'http://localhost/';
     const HOST_DEV_RELATIVE = '/';
     const HOST_UAT = 'https://test.zukunft.com/';
@@ -131,6 +132,10 @@ class api
     const URL_REF = 'reference';
 
     // used for the change log
+    // the short name of the object class name e.g. word instead of cfg/word
+    const URL_VAR_CLASS = 'class';
+    // the name of the field to filter the changes which might be more than one database field
+    const URL_VAR_FIELD = 'field';
     const URL_VAR_WORD_ID = 'word_id';
     const URL_VAR_WORD_FLD = 'word_field';
     const URL_VAR_LINK_PHRASE = 'link_phrase';

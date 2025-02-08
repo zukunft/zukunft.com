@@ -308,7 +308,7 @@ class formula extends sandbox_typed
         $result = ''; // reset the html code var
 
         $log_dsp = $this->dsp_hist_log($page, $size, $call, $back);
-        $result .= $log_dsp->dsp_hist();
+        $result .= $log_dsp->dsp_hist_old();
 
         log_debug("done");
         return $result;

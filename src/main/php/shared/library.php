@@ -886,8 +886,8 @@ class library
                 $path = $this->str_left_of_last($class_with_path, '\\' . $class);
                 $class = $this->str_left_of_or_all($class, ' as ');
                 $use = [];
-                $use[] = $class;;
-                $use[] = $path;;
+                $use[] = $class;
+                $use[] = $path;
                 if ($class != '') {
                     $result[] = $use;
                 }
@@ -922,8 +922,8 @@ class library
             if (str_starts_with(trim($line), 'function ')) {
                 $function_name = trim($this->str_between($line, 'function ', '('));
                 $use = [];
-                $use[] = $function_name;;
-                $use[] = $section_name;;
+                $use[] = $function_name;
+                $use[] = $section_name;
                 if ($function_name != '') {
                     $result[] = $use;
                 }
@@ -971,8 +971,8 @@ class library
                 $path = trim($this->str_left_of_or_all($class, '.'));
                 $class = $this->str_right_of_or_all($class, " . '");
                 $include = [];
-                $include[] = $class;;
-                $include[] = $path;;
+                $include[] = $class;
+                $include[] = $path;
                 if ($class != '') {
                     $result[] = $include;
                 }
@@ -2017,6 +2017,7 @@ class library
     /**
      * remove the namespace from the class name
      * same as class_to_name but without backend exceptions
+     * TODO make it static
      * @param string $class including the namespace
      * @return string class name without the namespace
      */
@@ -2043,6 +2044,53 @@ class library
             case sys_log_status_list::class;
                 $result = str_replace('_list', '', $result);
                 break;
+        }
+        return $result;
+    }
+
+    /**
+     * get the fixed api name of an object class
+     * to allow changing the internal object name without changing the api
+     *
+     * @param string $class including the namespace
+     * @return string class name without the namespace
+     */
+    function class_to_api_name(string $class): string
+    {
+        // activate to add api exceptions
+        /*
+        switch ($class) {
+            case phrase_types::class;
+                $class = json_fields::CLASS_PHRASE_TYPE;
+                break;
+            case sys_log_status_list::class;
+                $class = json_fields::CLASS_LOG_STATUS;
+                break;
+        }
+        */
+        return $this->class_to_name_pur($class);
+    }
+
+    /**
+     * get the object class name from the fixed api name
+     * to allow changing the internal object name without changing the api
+     *
+     * @param string $class_name the fixed class name without the namespace as used in the api
+     * @return string class name without the namespace
+     */
+    function api_name_to_class(string $class_name): string
+    {
+        $result = 'api class name match missing';
+        $i = 0;
+        $found = false;
+        while ($i < count(API_CLASSES) and !$found) {
+            $class = API_CLASSES[$i];
+            $api_name = $this->class_to_api_name($class);
+            if ($api_name == $class_name) {
+                $result = $class;
+                $found = true;
+            }
+            $i++;
         }
         return $result;
     }

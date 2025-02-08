@@ -130,9 +130,6 @@ use shared\types\verbs;
 // TODO activate
 //use html\group\group as group_dsp;
 
-const HOST_TESTING = 'http://localhost/';
-
-
 // set all paths of the testing code
 const TEST_UNIT_PATH = TEST_PHP_PATH . 'unit' . DIRECTORY_SEPARATOR;               // for unit tests
 const TEST_UNIT_READ_PATH = TEST_PHP_PATH . 'unit_read' . DIRECTORY_SEPARATOR;     // for the unit tests with database read only
@@ -723,7 +720,7 @@ class test_base
     {
         $lib = new library();
         $test_name = $lib->class_to_name($test_name);
-        $url = HOST_TESTING . api::URL_API_PATH . 'json';
+        $url = api::HOST_TESTING . api::URL_API_PATH . 'json';
         $data = array($fld => $id);
         $ctrl = new rest_ctrl();
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);

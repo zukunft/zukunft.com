@@ -103,7 +103,7 @@ class user_dsp_old extends user
         $log_dsp->size = $size;
         $log_dsp->call = $call;
         $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist();
+        $result .= $log_dsp->dsp_hist_old();
 
         log_debug('done');
         return $result;

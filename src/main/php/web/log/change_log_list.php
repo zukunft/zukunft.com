@@ -34,13 +34,87 @@ namespace html\log;
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
+include_once WEB_USER_PATH . 'user.php';
+include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
+include_once SHARED_PATH . 'api.php';
+include_once SHARED_PATH . 'library.php';
 
 use html\html_base;
+use html\rest_ctrl;
 use html\sandbox\list_dsp;
 use html\system\back_trace;
+use html\user\user;
+use html\user\user_message;
+use shared\api;
+use shared\library;
 
 class change_log_list extends list_dsp
 {
+
+    /*
+     * load
+     */
+
+    /**
+     * load a list of changes from the api
+     *
+     * @param string $class the class name of the object to test
+     * @param int|string $id the database id of the object to which the changes should be listed
+     * @param string $fld the url api field name to select only some changes e.g. 'word_field'
+     * @param user|null $usr to select only the changes of this user
+     * @param int $limit to set a page size that is different from the default page size
+     * @param int $page offset the number of pages
+     * @return user_message to report any problems to the user
+     */
+    function load_by_object_field(
+        string     $class,
+        int|string $id = 1,
+        string     $fld = '',
+        user|null  $usr = null,
+        int        $limit = 0,
+        int        $page = 0
+    ): user_message
+    {
+        $usr_msg = new user_message();
+        $json = $this->load_api_by_object_field($class, $id, $fld, $usr, $limit, $page);
+        $actual = json_decode($json, true);
+
+        return $usr_msg;
+    }
+
+    /**
+     * get the json of a list of changes from the api
+     *
+     * @param string $class the class name of the object to test
+     * @param int|string $id the database id of the object to which the changes should be listed
+     * @param string $fld the url api field name to select only some changes e.g. 'word_field'
+     * @param user|null $usr to select only the changes of this user
+     * @param int $limit to set a page size that is different from the default page size
+     * @param int $page offset the number of pages
+     * @return string the api json as a string
+     */
+    function load_api_by_object_field(
+        string     $class,
+        int|string $id = 1,
+        string     $fld = '',
+        user|null  $usr = null,
+        int        $limit = 0,
+        int        $page = 0
+    ): string
+    {
+        $lib = new library();
+        $log_class = $lib->class_to_name(change_log_list::class);
+        $url = api::HOST_TESTING . api::URL_API_PATH . $lib->camelize_ex_1($log_class);
+        $class = $lib->class_to_api_name($class);
+        $data = [];
+        $data[api::URL_VAR_CLASS] = $class;
+        $data[api::URL_VAR_ID] = $id;
+        $data[api::URL_VAR_FIELD] = $fld;
+        $ctrl = new rest_ctrl();
+        return $ctrl->api_call(rest_ctrl::GET, $url, $data);
+    }
+
 
     /**
      * show all changes of a named user sandbox object e.g. a word as table

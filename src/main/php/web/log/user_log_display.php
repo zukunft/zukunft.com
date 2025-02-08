@@ -2,30 +2,30 @@
 
 /*
 
-  user_log_display.php - a combined object to display single value changes or changes of links by the user
-  --------------------
-  
-  This file is part of zukunft.com - calc with words
+    user_log_display.php - a combined object to display single value changes or changes of links by the user
+    --------------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
   
 */
 
@@ -37,32 +37,29 @@ include_once DB_PATH . 'sql_db.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
+include_once WEB_COMPONENT_PATH . 'component.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
+include_once WEB_USER_PATH . 'user.php';
 include_once WEB_VALUE_PATH . 'value.php';
-include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_WORD_PATH . 'word.php';
+include_once WEB_VIEW_PATH . 'view.php';
+include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
+include_once SHARED_ENUM_PATH . 'change_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use cfg\component\component;
-use cfg\db\sql;
-use cfg\db\sql_db;
-use cfg\formula\formula;
-use cfg\user\user;
-use cfg\view\view;
-use cfg\word\word;
+use html\component\component;
+use html\formula\formula;
 use html\rest_ctrl;
 use html\button;
-use html\formula\formula as formula_dsp;
 use html\html_base;
 use html\system\messages;
+use html\user\user;
 use html\value\value;
+use html\view\view;
+use html\word\word;
 use shared\enum\change_tables;
+use shared\enum\change_fields;
 use shared\library;
 
 class user_log_display
@@ -86,10 +83,16 @@ class user_log_display
         //$this->usr = $usr;
     }
 
+    function dsp_hist(): string
+    {
+        $lst = new change_log_list();
+        return '';
+    }
+
     /**
      * display the history of a word, phrase, value or formula
      */
-    function dsp_hist(): string
+    function dsp_hist_old(): string
     {
         log_debug('user_log_display->dsp_hist ' . $this->type . ' id ' . $this->id . ' size ' . $this->size . ' page ' . $this->page . ' call from ' . $this->call . ' original call from ' . $this->back);
 
@@ -129,7 +132,7 @@ class user_log_display
         } elseif ($this->type == value::class) {
             $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VALUE) . " 
                      OR f.table_id = " . $cng_tbl_cac->id(change_tables::VALUE_USR) . ") AND ";
-        } elseif ($this->type == formula_dsp::class) {
+        } elseif ($this->type == formula::class) {
             $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::FORMULA) . " 
                      OR f.table_id = " . $cng_tbl_cac->id(change_tables::FORMULA_USR) . ") AND ";
         } elseif ($this->type == view::class) {
@@ -228,7 +231,7 @@ class user_log_display
                 $txt_old = $db_row["old"];
                 $txt_new = $db_row["new"];
                 // encode of text
-                if ($db_row["code_id"] == formula::FLD_ALL_NEEDED) {
+                if ($db_row["code_id"] == change_fields::FLD_ALL_NEEDED) {
                     if ($txt_old == "1") {
                         $txt_old = "all values needed for calculation";
                     } else {

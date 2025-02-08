@@ -634,11 +634,15 @@ use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\element\element;
 use cfg\element\element_type;
+use cfg\formula\formula;
 use cfg\formula\formula_link_type;
 use cfg\formula\formula_type;
 use cfg\helper\type_lists;
+use cfg\ref\ref;
 use cfg\ref\ref_type;
+use cfg\ref\source;
 use cfg\ref\source_type;
+use cfg\result\result;
 use cfg\system\job;
 use cfg\system\job_type;
 use cfg\language\language;
@@ -665,9 +669,14 @@ use cfg\user\user_profile;
 use cfg\user\user_type;
 use cfg\user\user_official_type;
 use cfg\user\user_profile_list;
+use cfg\value\value;
+use cfg\verb\verb;
 use cfg\view\view;
 use cfg\view\view_link_type;
 use cfg\view\view_type;
+use cfg\word\triple;
+use cfg\word\word;
+use html\component\component;
 use html\html_base;
 use html\view\view as view_dsp;
 use shared\library;
@@ -1003,6 +1012,20 @@ const CLASSES_NO_CHANGE_LOG = [
     'user_prime_term*',
     'result*',
     'user_result*',
+];
+
+// list of classes that are used in the api e.g. to receive the user changes
+const API_CLASSES = [
+    word::class,
+    verb::class,
+    triple::class,
+    source::class,
+    ref::class,
+    value::class,
+    formula::class,
+    result::class,
+    view::class,
+    component::class
 ];
 
 const USER_CODE_LINK_FILES = [

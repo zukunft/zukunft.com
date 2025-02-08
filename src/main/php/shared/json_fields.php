@@ -187,6 +187,10 @@ class json_fields
     const CLASS_VALUE = 'value';
     const CLASS_RESULT = 'result';
 
+    // activate to handle differences between the api class name and the code class name
+    //const CLASS_PHRASE_TYPE = 'phrase_type';
+    //const CLASS_LOG_STATUS = 'sys_log_status';
+
     // view to component link
     const POS_TYPE_CMP = 'pos_type';
 

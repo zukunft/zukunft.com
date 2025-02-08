@@ -184,7 +184,14 @@ class change_log_tests
         // TODO activate
         //$t->assert_sql_by_user($sc, $log_lst);
         //$this->assert_sql_list_last(word::class, word_db::FLD_NAME, $log_lst, $db_con, $t);
-        $this->assert_sql_list_by_field(word::class, word_db::FLD_NAME, 1, $log_lst, $db_con, $t);
+        $test_name = 'get the latest changes of an user';
+        $test_name = 'get the latest 5 changes of an user';
+        $test_name = 'get the second last change of an user';
+        $test_name = 'get the first changes of an user';
+        $test_name = 'get the latest changes related to a word';
+        $this->assert_sql_list_by_field(word::class, '', 1, $log_lst, $db_con, $t, $test_name);
+        $test_name = 'get the name changes of a word';
+        $this->assert_sql_list_by_field(word::class, word_db::FLD_NAME, 1, $log_lst, $db_con, $t, $test_name);
         $this->assert_sql_list_by_field(triple::class, triple::FLD_NAME_GIVEN, 1, $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group_16()->id(), $log_lst, $db_con, $t);
@@ -290,7 +297,9 @@ class change_log_tests
         int|string      $id,
         change_log_list $log_lst,
         sql_db          $db_con,
-        test_cleanup    $t): void
+        test_cleanup    $t,
+        string          $test_name = ''
+    ): void
     {
         $sc = $db_con->sql_creator();
 
@@ -302,7 +311,7 @@ class change_log_tests
             $field_name,
             $id,
             $t->usr1);
-        $result = $t->assert_qp($qp, $sc->db_type);
+        $result = $t->assert_qp($qp, $sc->db_type, $test_name);
 
         // ... and check the MySQL query syntax
         if ($result) {
@@ -313,7 +322,7 @@ class change_log_tests
                 $field_name,
                 $id,
                 $t->usr1);
-            $t->assert_qp($qp, $sc->db_type);
+            $t->assert_qp($qp, $sc->db_type, $test_name);
         }
     }
 

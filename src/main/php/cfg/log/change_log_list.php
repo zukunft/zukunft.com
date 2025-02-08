@@ -91,7 +91,7 @@ class change_log_list extends base_list
 
 
     /*
-     * load interface
+     * load
      */
 
     /**
@@ -136,42 +136,30 @@ class change_log_list extends base_list
     }
 
     /**
-     * create an SQL statement to retrieve the changes done by the given user
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param user $usr the user sandbox object
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * load a list of sandbox object changes
+     * e.g. the change of a value
+     * @param string $class the name of the class
+     * @param int|string|null $id the unique database id of the sandbox object to filter the changes
+     * @param user|null $usr if set load only the changes of the given user
+     * @param string|null $field_name the field that has been change e.g. 'view_id'
+     *                                if not set, all changes are returned
+     * @return bool true if at least one change found
      */
-    function load_sql_by_user(sql_creator $sc, user $usr): sql_par
+    function load_by_obj_fld(
+        string          $class,
+        int|string|null $id = null,
+        user|null       $usr = null,
+        string|null     $field_name = ''
+    ): bool
     {
-        $qp = $this->load_sql($sc, 'user_last', self::class);
-
-        $sc->add_where(user::FLD_ID, $usr->id());
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-        return $qp;
-    }
-
-    /**
-     * create the common part of an SQL statement to retrieve the parameters of the change log
-     * TODO use class name instead of TBL_CHANGE
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql(sql_creator $sc, string $query_name): sql_par
-    {
-        $qp = new sql_par($this::class);
-        $sc->set_class(change::class);
-        $qp->name .= $query_name;
-        $sc->set_name($qp->name);
-        $sc->set_fields(change::FLD_NAMES);
-        $sc->set_join_fields(array(user::FLD_NAME), user::class);
-        $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
-        $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC);
-
-        return $qp;
+        global $db_con;
+        $qp = $this->load_sql_obj_fld(
+            $db_con->sql_creator(),
+            $class,
+            $field_name,
+            $id,
+            $usr);
+        return $this->load($qp, $usr);
     }
 
     /**
@@ -329,6 +317,50 @@ class change_log_list extends base_list
 
 
     /*
+     * load sql
+     */
+
+    /**
+     * create an SQL statement to retrieve the changes done by the given user
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user $usr the user sandbox object
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_user(sql_creator $sc, user $usr): sql_par
+    {
+        $qp = $this->load_sql($sc, 'user_last', self::class);
+
+        $sc->add_where(user::FLD_ID, $usr->id());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * create the common part of an SQL statement to retrieve the parameters of the change log
+     * TODO use class name instead of TBL_CHANGE
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    private function load_sql(sql_creator $sc, string $query_name): sql_par
+    {
+        $qp = new sql_par($this::class);
+        $sc->set_class(change::class);
+        $qp->name .= $query_name;
+        $sc->set_name($qp->name);
+        $sc->set_fields(change::FLD_NAMES);
+        $sc->set_join_fields(array(user::FLD_NAME), user::class);
+        $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
+        $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC);
+
+        return $qp;
+    }
+
+
+    /*
      * load internals
      */
 
@@ -339,7 +371,11 @@ class change_log_list extends base_list
             if ($field_name == change_fields::FLD_WORD_VIEW) {
                 $result = 'dsp_of_wrd';
             } else {
-                $result = $field_name . '_of_wrd';
+                if ($field_name != '') {
+                    $result = $field_name . '_of_wrd';
+                } else {
+                    $result = 'wrd';
+                }
                 log_info('field name ' . $field_name . ' not expected for table ' . $class);
             }
         } elseif ($class == triple::class) {
@@ -402,8 +438,12 @@ class change_log_list extends base_list
         $lib = new library();
         $table_name = $lib->class_to_table($class);
         $table_id = $cng_tbl_cac->id($table_name);
-        $table_field_name = $table_id . $field_name;
-        $field_id = $cng_fld_cac->id($table_field_name);
+        if ($field_name != '') {
+            $table_field_name = $table_id . $field_name;
+            $table_field_id = $cng_fld_cac->id($table_field_name);
+        } else {
+            $table_field_id = $table_id;
+        }
         $log_named = new change($usr);
         $query_ext = $this->table_field_to_query_name($class, $field_name);
         if ($class == value::class) {
@@ -434,7 +474,12 @@ class change_log_list extends base_list
             }
         }
         $qp = $log_named->load_sql($sc, $query_ext);
-        $sc->add_where(change::FLD_FIELD_ID, $field_id);
+        if ($field_name != '') {
+            $sc->add_where(change::FLD_FIELD_ID, $table_field_id);
+        } else {
+            // TODO replace 'l2' with a var or const
+            $sc->add_where(change_field::FLD_TABLE, $table_field_id, null, 'l2');
+        }
         if ($class == value::class) {
             $sc->add_where(group::FLD_ID, $id);
         } else {

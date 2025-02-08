@@ -150,10 +150,10 @@ class api_tests
         $t->assert_api_get_list(formula_list::class, [1]);
         $t->assert_api_get_list(view_list::class, views::START_NAME, api::URL_VAR_PATTERN);
         $t->assert_api_get_list(component_list::class, 2, 'view_id');
-        $t->assert_api_chg_list(
-            change_log_list::class,
-            api::URL_VAR_WORD_ID, 1,
-            api::URL_VAR_WORD_FLD, change_fields::FLD_WORD_NAME);
+
+        $t->assert_api_chg_list(word::class,words::MATH_ID);
+        $t->assert_api_chg_list(word::class,words::MATH_ID, change_fields::FLD_WORD_NAME);
+
         $t->assert_api_get_list(
             sys_log_list::class,
             [1, 2], 'ids',

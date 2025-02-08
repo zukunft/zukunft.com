@@ -891,7 +891,7 @@ class view extends sandbox_typed
         $log_dsp->size = $size;
         $log_dsp->call = $call;
         $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist();
+        $result .= $log_dsp->dsp_hist_old();
 
         $this->log_debug("done");
         return $result;

@@ -44,12 +44,14 @@ include_once MODEL_LOG_PATH . 'change_field.php';
 include_once MODEL_LOG_PATH . 'change_field_list.php';
 include_once MODEL_LOG_PATH . 'change_log_list.php';
 include_once MODEL_SYSTEM_PATH . 'job.php';
+include_once WEB_LOG_PATH . 'change_log_list.php';
 include_once EXPORT_PATH . 'export.php';
 
 use cfg\db\sql_db;
 use cfg\element\element;
 use cfg\export\export;
 use cfg\formula\formula;
+use cfg\log\change_log_list;
 use cfg\system\job;
 use cfg\log\change_log;
 use cfg\phrase\phrase_list;
@@ -66,6 +68,7 @@ use controller\controller;
 use DateTime;
 use Exception;
 use html\rest_ctrl;
+use html\log\change_log_list as change_log_list_dsp;
 use shared\api;
 use shared\json_fields;
 use shared\library;
@@ -131,7 +134,7 @@ class test_api extends create_test_objects
         // create the json api message and revert it to an array for better compare
         $actual = json_decode($usr_obj->api_json($typ_lst, $this->usr1), true);
 
-        return $this->assert_api_compare($class, $actual, null, $filename, $contains);
+        return $this->assert_api_compare($class, $actual, null, $filename, '', $contains);
     }
 
     /**
@@ -430,7 +433,7 @@ class test_api extends create_test_objects
         $class = $this->class_to_api($class);
         $api_msg = $usr_obj->api_json([api_type::HEADER], $this->usr1);
         $actual = json_decode($api_msg, true);
-        return $this->assert_api_compare($class, $actual, null, $filename, $contains);
+        return $this->assert_api_compare($class, $actual, null, $filename, '', $contains);
     }
 
     /**
@@ -483,7 +486,7 @@ class test_api extends create_test_objects
         if ($levels > 0) {
             $filename = $class_api . '_with_components';
         }
-        return $this->assert_api_compare($class_api, $actual, $expected, $filename, false, $ignore_id);
+        return $this->assert_api_compare($class_api, $actual, $expected, $filename, '', false, $ignore_id);
     }
 
     /**
@@ -525,7 +528,7 @@ class test_api extends create_test_objects
     {
         $lib = new library();
         $class = $lib->class_to_name($class);
-        $url = HOST_TESTING . api::URL_API_PATH . $lib->camelize_ex_1($class);
+        $url = api::HOST_TESTING . api::URL_API_PATH . $lib->camelize_ex_1($class);
         if (is_array($ids)) {
             $data = array($id_fld => implode(",", $ids));
         } else {
@@ -553,7 +556,7 @@ class test_api extends create_test_objects
             $filename = $class . '_by_' . $id_fld;
         }
 
-        return $this->assert_api_compare($class, $actual, null, $filename, $contains);
+        return $this->assert_api_compare($class, $actual, null, $filename, '', $contains);
     }
 
     /**
@@ -561,26 +564,50 @@ class test_api extends create_test_objects
      * for testing the local deployments needs to be updated using an external script
      *
      * @param string $class the class name of the object to test
-     * @param string $id_fld the field name for the object id e.g. word_id
-     * @param int $id the database id of the object to which the changes should be listed
-     * @param string $fld_name the url api field name to select only some changes e.g. 'word_field'
-     * @param string $fld_value the database field name to select only some changes e.g. 'view_id'
+     * @param int|string $id the database id of the object to which the changes should be listed
+     * @param string $fld the url api field name to select only some changes e.g. 'word_field'
+     * @param user|null $usr to select only the changes of this user
+     * @param int $limit to set a page size that is different from the default page size
+     * @param int $page offset the number of pages
      * @return bool true if the json has no relevant differences
      */
-    function assert_api_chg_list(string $class, string $id_fld = '', int $id = 1, string $fld_name = '', string $fld_value = ''): bool
+    function assert_api_chg_list(
+        string     $class,
+        int|string $id = 1,
+        string     $fld = '',
+        user|null  $usr = null,
+        int        $limit = 0,
+        int        $page = 0
+    ): bool
     {
-        $lib = new library();
-        $class = $lib->class_to_name($class);
-        $url = HOST_TESTING . api::URL_API_PATH . $lib->camelize_ex_1($class);
-        if ($fld_name != '') {
-            $data = array($id_fld => $id, $fld_name => $fld_value);
-        } else {
-            $data = array($id_fld => $id);
-        }
-        $ctrl = new rest_ctrl();
-        $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
+        $log_lst = new change_log_list_dsp();
+        $json = $log_lst->load_api_by_object_field($class, $id, $fld, $usr, $limit, $page);
+        $actual = json_decode($json, true);
 
-        return $this->assert_api_compare($class, $actual);
+        $lib = new library();
+        $log_class = $lib->class_to_name(change_log_list::class);
+        $filename = $log_class;
+        $class = $lib->class_to_api_name($class);
+        if ($class != '') {
+            $filename .= '_' . $class;
+        }
+        if ($id != 0) {
+            $filename .= '_' . $id;
+        }
+        if ($fld != '') {
+            $filename .= '_' . $fld;
+        }
+        if ($usr != null) {
+            $filename .= '_u' . $usr->id();
+        }
+        if ($page != 0) {
+            $filename .= '_p' . $page;
+        }
+        if ($limit != 0) {
+            $filename .= '_l' . $limit;
+        }
+
+        return $this->assert_api_compare($class, $actual, null, $filename, change_log_list::class);
     }
 
 
@@ -604,11 +631,15 @@ class test_api extends create_test_objects
         ?array $actual,
         ?array $expected = null,
         string $filename = '',
+        string $class_for_file = '',
         bool   $contains = false,
         bool   $ignore_id = false): bool
     {
         $lib = new library();
-        $class_for_file = $this->class_without_namespace($class);
+        if ($class_for_file == '') {
+            $class_for_file = $class;
+        }
+        $class_for_file = $this->class_without_namespace($class_for_file);
         if ($expected == null) {
             $expected = json_decode($this->api_json_expected($class_for_file, $filename), true);
         }
@@ -674,8 +705,7 @@ class test_api extends create_test_objects
             $class = api::URL_REF;
         }
         $url_class = $lib->camelize_ex_1($lib->class_to_name($class));
-        $url = HOST_TESTING . api::URL_API_PATH . $url_class;
-        return $url;
+        return api::HOST_TESTING . api::URL_API_PATH . $url_class;
     }
 
     /**
