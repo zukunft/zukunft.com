@@ -36,7 +36,6 @@ include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 //include_once WEB_PHRASE_PATH . 'term.php';

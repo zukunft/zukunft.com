@@ -31,46 +31,29 @@
 
 include_once DB_PATH . 'sql_db.php';
 include_once WEB_HTML_PATH . 'html_base.php';
-include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'formula_link.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_VALUE_PATH . 'value_base.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_WORD_PATH . 'triple.php';
+include_once WEB_COMPONENT_PATH . 'component.php';
+include_once WEB_FORMULA_PATH . 'formula.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WEB_SANDBOX_PATH . 'sandbox.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
+include_once WEB_SYSTEM_PATH . 'sys_log_list.php';
+include_once WEB_USER_PATH . 'user.php';
+include_once WEB_VERB_PATH . 'verb.php';
+include_once WEB_VIEW_PATH . 'view.php';
+include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_SYSTEM_PATH . 'sys_log_list.php';
 include_once WEB_LOG_PATH . 'user_log_display.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_VIEW_PATH . 'view.php';
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\db\sql_db;
-use cfg\formula\formula;
-use cfg\formula\formula_link;
-use cfg\group\group;
-use cfg\phrase\phrase;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
-use cfg\ref\source;
-use cfg\system\sys_log_list;
-use cfg\word\triple;
-use cfg\user\user;
-use cfg\verb\verb;
-use cfg\view\view;
 use html\html_base;
 use html\log\user_log_display;
 use html\system\sys_log_list as sys_log_list_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
+use html\user\user;
+use html\verb\verb;
 use html\view\view as view_dsp;
+use html\word\triple;
 
 class user_dsp_old extends user
 {

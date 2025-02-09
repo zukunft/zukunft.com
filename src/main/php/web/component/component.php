@@ -39,7 +39,6 @@ include_once DB_PATH . 'sql_db.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_HTML_PATH . 'sheet.php';
-include_once MODEL_WORD_PATH . 'word.php';
 include_once WEB_LOG_PATH . 'user_log_display.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';

@@ -32,7 +32,6 @@
 
 namespace html\types;
 
-include_once MODEL_REF_PATH . 'source_type.php';
 include_once SHARED_ENUM_PATH . 'source_types.php';
 
 use shared\enum\source_types;

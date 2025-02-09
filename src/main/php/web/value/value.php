@@ -38,8 +38,8 @@ include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
 include_once DB_PATH . 'sql_db.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_USER_PATH . 'user_message.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_FIGURE_PATH . 'figure.php';
 include_once WEB_HELPER_PATH . 'config.php';
 include_once WEB_LOG_PATH . 'user_log_display.php';
@@ -51,18 +51,17 @@ include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use cfg\db\sql_db;
-use cfg\phrase\phrase;
-use cfg\user\user_message;
 use html\helper\config as config_html;
 use html\figure\figure as figure_dsp;
 use html\html_base;
 use html\log\user_log_display;
+use html\phrase\phrase;
 use html\phrase\phrase_group;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\ref\source as source_dsp;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\sandbox_value;
+use html\user\user_message;
 use html\word\word as word_dsp;
 use shared\json_fields;
 use shared\library;
@@ -420,7 +419,7 @@ class value extends sandbox_value
         log_debug("value->dsp_hist for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display($this->user());
+        $log_dsp = new user_log_display();
         $log_dsp->id = $this->id();
         $log_dsp->obj = $this;
         $log_dsp->type = \cfg\value\value::class;
@@ -440,7 +439,7 @@ class value extends sandbox_value
         log_debug($this->id() . ",size" . $size . ",b" . $size);
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display($this->user());
+        $log_dsp = new user_log_display();
         $log_dsp->id = $this->id();
         $log_dsp->type = value::class;
         $log_dsp->page = $page;
@@ -783,7 +782,7 @@ class value extends sandbox_value
                 if ($phr_id == 0) {
                     $result .= '    <td colspan="2">';
 
-                    $phr_new = new phrase($this->user());
+                    $phr_new = new phrase();
                     $result .= $phr_new->dsp_selector(null, $script, $url_pos, '', $back);
                     $url_pos++;
 
@@ -834,12 +833,12 @@ class value extends sandbox_value
         // display the user changes
         log_debug('user changes');
         if ($this->id() > 0) {
-            $changes = $this->dsp_hist(0, sql_db::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist(0, 0, '', $back);
             if (trim($changes) <> "") {
                 $result .= $html->dsp_text_h3("Latest changes related to this value", "change_hist");
                 $result .= $changes;
             }
-            $changes = $this->dsp_hist_links(0, sql_db::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist_links(0, 0, '', $back);
             if (trim($changes) <> "") {
                 $result .= $html->dsp_text_h3("Latest link changes related to this value", "change_hist");
                 $result .= $changes;

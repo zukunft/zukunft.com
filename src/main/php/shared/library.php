@@ -1050,6 +1050,7 @@ class library
             'html\sandbox' => 'WEB_SANDBOX_PATH',
             'html\view' => 'WEB_VIEW_PATH',
             'html\component' => 'WEB_COMPONENT_PATH',
+            'html\component\sheet' => 'WEB_SHEET_PATH',
             'shared' => 'SHARED_PATH',
             'shared\calc' => 'SHARED_CALC_PATH',
             'shared\const' => 'SHARED_CONST_PATH',

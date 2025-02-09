@@ -45,6 +45,10 @@ class word_ui_tests
 
         $t->subheader('html ui unit page word tests');
 
+        // TODO add a list of differences between the user word and the standard word
+        //      with an undo button to change back to the standard
+        // TODO add this ui test for all main sandbox objects
+
         $wrd = new word_dsp($t->word()->api_json());
         $wrd_pi = new word_dsp($t->word_pi()->api_json());
         $test_page = $html->text_h1('Word display test');

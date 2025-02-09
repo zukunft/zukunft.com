@@ -31,7 +31,6 @@
 
 namespace html\phrase;
 
-include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once WEB_USER_PATH . 'user.php';
 include_once SHARED_PATH . 'library.php';
 include_once WEB_PHRASE_PATH . 'phrase_group.php';
