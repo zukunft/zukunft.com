@@ -2,11 +2,8 @@
 
 /*
 
-    model/ref/source_type.php - the base object for external source type such as pubmed
-    -------------------------
-
-    the source type is used for all external sources that have some coded functionality
-    but does not allow a full bidirectional synchronisation like a reference type
+    shared/enum/source_types.php - enum of the source types
+    ----------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -26,30 +23,24 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-   
+
 */
 
-namespace cfg\ref;
+namespace shared\enum;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-
-use cfg\helper\type_object;
-
-class source_type extends type_object
+enum source_types: string
 {
 
-    // the url that can be used to receive data if the external key is added
-    // public ?string $url = null;
-
-    /*
-     * database link
-     */
-
-    // comments used for the database creation
-    const TBL_COMMENT = 'to link predefined behaviour to a source';
+    // list of the source types that have a coded functionality
+    const XBRL = "xbrl";
+    const XBRL_ID = 2; // the fixed database ID for testing
+    const CSV = "csv";
+    const CSV_ID = 3; // the fixed database ID for testing
+    const PDF = "pdf";
+    const PDF_ID = 4; // the fixed database ID for testing
 
 }

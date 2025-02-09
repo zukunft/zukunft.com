@@ -63,6 +63,7 @@ include_once SHARED_ENUM_PATH . 'change_fields.php';
 include_once SHARED_ENUM_PATH . 'sys_log_statuus.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
+include_once SHARED_ENUM_PATH . 'source_types.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_CONST_PATH . 'components.php';
@@ -134,7 +135,6 @@ use cfg\ref\ref;
 use cfg\ref\ref_type;
 use cfg\ref\ref_type_list;
 use cfg\ref\source;
-use cfg\ref\source_type;
 use cfg\ref\source_type_list;
 use cfg\result\result;
 use cfg\result\result_list;
@@ -179,6 +179,7 @@ use html\word\word as word_dsp;
 use shared\enum\change_actions;
 use shared\enum\change_fields;
 use shared\enum\change_tables;
+use shared\enum\source_types;
 use shared\enum\sys_log_statuus;
 use shared\enum\user_profiles;
 use shared\json_fields;
@@ -2322,7 +2323,7 @@ class create_test_objects extends test_base
     function source(): source
     {
         $src = new source($this->usr1);
-        $src->set(sources::SIB_ID, sources::SIB, source_type::PDF);
+        $src->set(sources::SIB_ID, sources::SIB, source_types::PDF);
         $src->description = sources::SIB_COM;
         $src->url = sources::SIB_URL;
         return $src;
@@ -2360,7 +2361,7 @@ class create_test_objects extends test_base
     function source_ref(): source
     {
         $src = new source($this->usr1);
-        $src->set(sources::WIKIDATA_ID, sources::WIKIDATA, source_type::CSV);
+        $src->set(sources::WIKIDATA_ID, sources::WIKIDATA, source_types::CSV);
         return $src;
     }
 
@@ -4372,7 +4373,7 @@ class create_test_objects extends test_base
         $src->set_name(sources::SYSTEM_TEST_ADD_API);
         $src->description = sources::SYSTEM_TEST_ADD_API_COM;
         $src->url = sources::SYSTEM_TEST_ADD_API_URL;
-        $src->type_id = $src_typ_cac->id(source_type::PDF);
+        $src->type_id = $src_typ_cac->id(source_types::PDF);
         $body_array = $src->api_json_array(new api_type_list([]));
         return $msg->api_header_array($db_con, source::class, $this->usr1, $body_array);
     }
@@ -4404,7 +4405,7 @@ class create_test_objects extends test_base
         $ref->external_key = refs::SYSTEM_TEST_API_ADD_KEY;
         $ref->description = refs::SYSTEM_TEST_API_ADD_COM;
         $ref->url = refs::SYSTEM_TEST_API_ADD_URL;
-        $ref->predicate_id = $reference_types->id(source_type::PDF);
+        $ref->predicate_id = $reference_types->id(source_types::PDF);
         $body_array = $ref->api_json_array(new api_type_list([]));
         return $msg->api_header_array($db_con, ref::class, $this->usr1, $body_array);
     }

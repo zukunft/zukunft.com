@@ -33,8 +33,10 @@
 namespace html\types;
 
 include_once MODEL_REF_PATH . 'source_type.php';
+include_once SHARED_ENUM_PATH . 'source_types.php';
 
-use cfg\ref\source_type;
+use shared\enum\source_types;
+
 class source_type_list extends type_list
 {
 
@@ -62,7 +64,7 @@ class source_type_list extends type_list
 
     function default_id(): int
     {
-        return parent::id(source_type::CSV);
+        return parent::id(source_types::CSV);
     }
 
 }

@@ -32,10 +32,12 @@
 
 namespace unit_read;
 
+include_once SHARED_ENUM_PATH . 'source_types.php';
+
 use cfg\ref\source;
 use cfg\ref\source_list;
-use cfg\ref\source_type;
 use cfg\ref\source_type_list;
+use shared\enum\source_types;
 use shared\library;
 use shared\const\sources;
 use test\test_cleanup;
@@ -66,8 +68,8 @@ class source_read_tests
         $lst = new source_type_list();
         $result = $lst->load($db_con);
         $t->assert('load_source_types', $result, true);
-        $test_name = '... and check if at least ' . source_type::XBRL . ' is loaded';
-        $t->assert($test_name, $src_typ_cac->id(source_type::XBRL), source_type::XBRL_ID);
+        $test_name = '... and check if at least ' . source_types::XBRL . ' is loaded';
+        $t->assert($test_name, $src_typ_cac->id(source_types::XBRL), source_types::XBRL_ID);
 
         $t->subheader('source list tests');
         $test_name = 'loading by source list by ids ';
