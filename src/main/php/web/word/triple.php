@@ -51,7 +51,6 @@ include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use cfg\phrase\phrase_type;
 use html\rest_ctrl;
 use html\button;
 use html\html_base;

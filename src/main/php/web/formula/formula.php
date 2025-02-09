@@ -54,6 +54,7 @@ include_once WEB_PHRASE_PATH . 'term.php';
 include_once WEB_RESULT_PATH . 'result.php';
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
+include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_CONST_PATH . 'views.php';
@@ -62,11 +63,9 @@ include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use cfg\db\sql_db;
 use html\phrase\phrase;
 use html\phrase\phrase_list;
 use html\phrase\term_list;
-use html\result\result;
 use html\result\result_list;
 use html\button;
 use html\html_base;
@@ -76,14 +75,12 @@ use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\phrase\term as term_dsp;
 use html\rest_ctrl as api_dsp;
-use html\result\result as result_dsp;
 use html\sandbox\sandbox_typed;
+use html\system\back_trace;
 use html\system\messages;
 use html\user\user_message;
-use html\word\word as word_dsp;
 use shared\api;
 use shared\json_fields;
-use shared\library;
 use shared\const\views as view_shared;
 use shared\types\view_styles;
 
@@ -301,17 +298,18 @@ class formula extends sandbox_typed
         return $result;
     }
 
-    // display the history of a formula
-    function dsp_hist($page, $size, $call, $back): string
+    /**
+     * display the history of a formula
+     */
+    function dsp_hist(
+        int        $page,
+        int        $size,
+        string     $call,
+        back_trace $back = null
+    ): string
     {
-        log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
-        $result = ''; // reset the html code var
-
-        $log_dsp = $this->dsp_hist_log($page, $size, $call, $back);
-        $result .= $log_dsp->dsp_hist_old();
-
-        log_debug("done");
-        return $result;
+        $log_dsp = new user_log_display();
+        return $log_dsp->dsp_hist(formula::class, $this->id(), $size, $page, '', $back);
     }
 
     // display the history of a formula

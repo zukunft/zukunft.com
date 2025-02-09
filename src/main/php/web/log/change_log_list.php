@@ -53,6 +53,21 @@ class change_log_list extends list_dsp
 {
 
     /*
+     * set and get
+     */
+
+    /**
+     * set the vars of a word object based on the given json
+     * @param array $json_array an api single object json message
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_from_json_array(array $json_array): user_message
+    {
+        return parent::set_list_from_json($json_array, new change_log_named());
+    }
+
+
+    /*
      * load
      */
 
@@ -63,7 +78,7 @@ class change_log_list extends list_dsp
      * @param int|string $id the database id of the object to which the changes should be listed
      * @param string $fld the url api field name to select only some changes e.g. 'word_field'
      * @param user|null $usr to select only the changes of this user
-     * @param int $limit to set a page size that is different from the default page size
+     * @param int $size to set a page size that is different from the default page size
      * @param int $page offset the number of pages
      * @return user_message to report any problems to the user
      */
@@ -72,13 +87,15 @@ class change_log_list extends list_dsp
         int|string $id = 1,
         string     $fld = '',
         user|null  $usr = null,
-        int        $limit = 0,
+        int        $size = 0,
         int        $page = 0
     ): user_message
     {
         $usr_msg = new user_message();
-        $json = $this->load_api_by_object_field($class, $id, $fld, $usr, $limit, $page);
+        $json = $this->load_api_by_object_field($class, $id, $fld, $usr, $size, $page);
         $actual = json_decode($json, true);
+
+        $this->set_from_json($actual);
 
         return $usr_msg;
     }
@@ -115,6 +132,10 @@ class change_log_list extends list_dsp
         return $ctrl->api_call(rest_ctrl::GET, $url, $data);
     }
 
+
+    /*
+     * table
+     */
 
     /**
      * show all changes of a named user sandbox object e.g. a word as table

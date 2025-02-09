@@ -88,25 +88,13 @@ class user_dsp_old extends user
     }
 
     /**
-     * display the latest changes by the user
+     * display the latest changes of the user
+     * TODO add display the latest changes by a user
      */
     function dsp_changes($call, $size, $page, $back): string
     {
-        log_debug('user_dsp->dsp_changes (u' . $this->id() . ',b' . $back . ')');
-        $result = ''; // reset the html code var
-
-        // get value changes by the user that are not standard
-        $log_dsp = new user_log_display($this);
-        $log_dsp->id = $this->id();
-        $log_dsp->type = user::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist_old();
-
-        log_debug('done');
-        return $result;
+        $log_dsp = new user_log_display();
+        return $log_dsp->dsp_hist(user::class, $this->id(), $size, $page, '', $back);
     }
 
     // display the error that are related to the user, so that he can track when they are closed

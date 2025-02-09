@@ -39,9 +39,11 @@ include_once WEB_LOG_PATH . 'change_log.php';
 //include_once WEB_HELPER_PATH . 'config.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
+include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_ENUM_PATH . 'change_fields.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use html\formula\formula;
 use html\helper\config;
@@ -50,9 +52,11 @@ use html\button;
 use html\html_base;
 use html\system\back_trace;
 use html\system\messages;
+use html\user\user_message;
 use shared\enum\change_actions;
 use shared\enum\change_fields;
 use shared\enum\change_tables;
+use shared\json_fields;
 
 class change_log_named extends change_log
 {
@@ -68,6 +72,47 @@ class change_log_named extends change_log
     public ?string $std_value = null;  // the standard field value for all users that does not have changed it
     public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
 
+
+    /*
+     * api
+     */
+
+    /**
+     * set the vars of this object bases on the api json array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $json_array an api json message
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_from_json_array(array $json_array): user_message
+    {
+        $usr_msg = parent::set_from_json_array($json_array);
+        if (array_key_exists(json_fields::OLD_VALUE, $json_array)) {
+            $this->old_value = $json_array[json_fields::OLD_VALUE];
+        } else {
+            $this->old_value = null;
+        }
+        if (array_key_exists(json_fields::OLD_ID, $json_array)) {
+            $this->old_id = $json_array[json_fields::OLD_ID];
+        } else {
+            $this->old_id = null;
+        }
+        if (array_key_exists(json_fields::NEW_VALUE, $json_array)) {
+            $this->new_value = $json_array[json_fields::NEW_VALUE];
+        } else {
+            $this->new_value = null;
+        }
+        if (array_key_exists(json_fields::NEW_ID, $json_array)) {
+            $this->new_id = $json_array[json_fields::NEW_ID];
+        } else {
+            $this->new_id = null;
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+     * table
+     */
 
     /**
      * @return string with the html code to show one row of the changes of sandbox objects e.g. a words

@@ -47,6 +47,7 @@ include_once WEB_HELPER_PATH . 'data_object.php';
 include_once WEB_LOG_PATH . 'user_log_display.php';
 include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
+include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_VIEW_PATH . 'view_list.php';
 include_once WEB_WORD_PATH . 'word.php';
@@ -72,6 +73,7 @@ use html\log\user_log_display;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
+use html\system\back_trace;
 use html\system\messages;
 use html\user\user_message;
 use html\view\view_list as view_list_dsp;
@@ -878,23 +880,15 @@ class view extends sandbox_typed
     /**
      * display the history of a view
      */
-    function dsp_hist($page, $size, $call, $back): string
+    function dsp_hist(
+        int        $page,
+        int        $size,
+        string     $call,
+        back_trace $back = null
+    ): string
     {
-        global $usr;
-        $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
-        $result = ''; // reset the html code var
-
-        $log_dsp = new user_log_display($usr);
-        $log_dsp->id = $this->id();
-        $log_dsp->type = view::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist_old();
-
-        $this->log_debug("done");
-        return $result;
+        $log_dsp = new user_log_display();
+        return $log_dsp->dsp_hist(view::class, $this->id(), $size, $page, '', $back);
     }
 
     /**

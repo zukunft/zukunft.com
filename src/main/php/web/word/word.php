@@ -807,20 +807,8 @@ class word extends sandbox_typed
      */
     function dsp_hist(int $page = 1, int $size = 20, string $call = '', string $back = ''): string
     {
-        log_debug("word_dsp->dsp_hist for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
-        $result = ''; // reset the html code var
-
         $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        $log_dsp->type = word::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist_old();
-
-        log_debug('done');
-        return $result;
+        return $log_dsp->dsp_hist(word::class, $this->id(), $size, $page, '', null);
     }
 
     /**

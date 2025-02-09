@@ -179,7 +179,7 @@ if ($usr->id() > 0) {
     }
 
     // display the user changes 
-    $changes = $dsp_usr_old->dsp_changes(0, sql_db::ROW_LIMIT, 1, $back);
+    $changes = $dsp_usr_old->dsp_changes(0, 0, 1, $back);
     if (trim($changes) <> "") {
         $result .= $html->dsp_text_h2("Your latest changes");
         $result .= $changes;
@@ -187,7 +187,7 @@ if ($usr->id() > 0) {
     }
 
     // display the program issues that the user has found if there are some
-    $errors = $dsp_usr_old->dsp_errors("", sql_db::ROW_LIMIT, 1, $back);
+    $errors = $dsp_usr_old->dsp_errors("", 0, 1, $back);
     if (trim($errors) <> "") {
         $result .= $html->dsp_text_h2("Program issues that you found, that have not yet been solved.");
         $result .= $errors;
@@ -196,7 +196,7 @@ if ($usr->id() > 0) {
 
     // display all program issues if the user is an admin
     if ($usr->profile_id == $usr_pro_cac->id(user_profiles::ADMIN)) {
-        $errors_all = $dsp_usr_old->dsp_errors("other", sql_db::ROW_LIMIT, 1, $back);
+        $errors_all = $dsp_usr_old->dsp_errors("other", 0, 1, $back);
         if (trim($errors_all) <> "") {
             $result .= $html->dsp_text_h2("Program issues that other user have found, that have not yet been solved.");
             $result .= $errors_all;

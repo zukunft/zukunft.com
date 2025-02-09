@@ -40,6 +40,7 @@ include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_COMPONENT_PATH . 'component.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
+include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_USER_PATH . 'user.php';
 include_once WEB_VALUE_PATH . 'value.php';
 include_once WEB_VIEW_PATH . 'view.php';
@@ -53,6 +54,7 @@ use html\formula\formula;
 use html\rest_ctrl;
 use html\button;
 use html\html_base;
+use html\system\back_trace;
 use html\system\messages;
 use html\user\user;
 use html\value\value;
@@ -83,9 +85,18 @@ class user_log_display
         //$this->usr = $usr;
     }
 
-    function dsp_hist(): string
+    function dsp_hist(
+        string     $class,
+        int|string $id,
+        int        $size,
+        int        $page,
+        string     $call = '',
+        back_trace $back = null
+    ): string
     {
         $lst = new change_log_list();
+        $lst->load_by_object_field($class, $id, '', null, $size, $page);
+        $result = $lst->tbl($back, $this->condensed);
         return '';
     }
 

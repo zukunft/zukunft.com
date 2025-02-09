@@ -43,25 +43,25 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once WEB_LOG_PATH . 'user_log_display.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_HELPER_PATH . 'data_object.php';
 include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once WEB_SYSTEM_PATH . 'back_trace.php';
+include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_VIEW_PATH . 'view_list.php';
 include_once WEB_TYPES_PATH . 'view_style_list.php';
+include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_CONST_PATH . 'views.php';
+include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_PATH . 'library.php';
 
-use cfg\db\sql_db;
-use cfg\word\word;
 use html\helper\data_object as data_object_dsp;
 use html\html_base;
 use html\html_selector;
@@ -71,9 +71,11 @@ use html\phrase\phrase_list;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_typed;
 use html\sheet;
+use html\system\back_trace;
 use html\system\messages;
 use html\user\user_message;
 use html\view\view_list;
+use html\word\word;
 use shared\api;
 use shared\json_fields;
 use shared\library;
@@ -334,7 +336,7 @@ class component extends sandbox_typed
      * TODO move code from component_dsp_old
      * @return string the html code to show a list of values
      */
-    function table(db_object_dsp $dbo, ?data_object_dsp $cfg): string
+    function table(?db_object_dsp $dbo = null, ?data_object_dsp $cfg = null): string
     {
         return 'values related to ' . $this->name() . ' ';
     }
@@ -780,7 +782,7 @@ class component extends sandbox_typed
         $vars[json_fields::CODE_ID] = $this->code_id;
         $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
         if ($this->position != 0 or $this->link_id != 0) {
-        $vars[json_fields::POSITION] = $this->position;
+            $vars[json_fields::POSITION] = $this->position;
         }
         if ($this->link_id != 0) {
             $vars[json_fields::LINK_ID] = $this->link_id;
@@ -916,11 +918,12 @@ class component extends sandbox_typed
     /**
      * HTML code to edit all word fields
      * @param int $add_link the id of the view that should be linked to the word
+     * @param back_trace|null $back
      * @param word $wrd
      */
-    function dsp_edit(int $add_link, word $wrd, string $back): string
+    function dsp_edit(int $add_link, word $wrd, back_trace $back = null): string
     {
-        $this->log_debug($this->dsp_id() . ' (called from ' . $back . ')');
+        $this->log_debug($this->dsp_id() . ' (called from ' . $back->url_encode() . ')');
         $result = '';
         $html = new html_base();
 
@@ -944,7 +947,7 @@ class component extends sandbox_typed
             $result .= $html->dsp_form_id($this->id());
         }
         $result .= $html->dsp_form_hidden("word", $wrd->id());
-        $result .= $html->dsp_form_hidden("back", $back);
+        $result .= $html->dsp_form_hidden("back", $wrd->id());
         $result .= $html->dsp_form_hidden("confirm", 1);
         $result .= '<div class="form-row">';
         $result .= $html->dsp_form_fld("name", $this->name, "Component name:", view_styles::COL_SM_8);
@@ -957,7 +960,7 @@ class component extends sandbox_typed
         $result .= $html->dsp_form_fld("comment", $this->description, "Comment:");
         if ($add_link <= 0) {
             if ($this->id() > 0) {
-                $result .= $html->dsp_form_end('', $back, "/http/component_del.php?id=" . $this->id() . "&back=" . $back);
+                $result .= $html->dsp_form_end('', $back, "/http/component_del.php?id=" . $this->id() . "&back=" . $back->url_encode());
             } else {
                 $result .= $html->dsp_form_end('', $back, '');
             }
@@ -967,13 +970,13 @@ class component extends sandbox_typed
             $result .= '</div>';
 
             $view_html = $this->linked_views($add_link, $wrd, $back);
-            $changes = $this->dsp_hist(0, sql_db::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist(0, 0, '', $back);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, sql_db::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist_links(0, 0, '', $back);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {
@@ -1042,13 +1045,13 @@ class component extends sandbox_typed
     /**
      * @returns string the html code to display this view component
      */
-    function html(?phrase_dsp $phr = null): string
+    function html(?phrase_dsp $phr = null, ?db_object_dsp $dbo = null, ?data_object_dsp $cfg = null): string
     {
         global $cmp_typ_cac;
         return match ($cmp_typ_cac->code_id($this->type_id())) {
             component_type::TEXT => $this->text(),
             component_type::PHRASE_NAME => $this->word_name($phr),
-            component_type::VALUES_RELATED => $this->table(),
+            component_type::VALUES_RELATED => $this->table($dbo, $cfg),
             default => 'ERROR: unknown type ',
         };
     }
@@ -1175,21 +1178,26 @@ class component extends sandbox_typed
         return $result;
     }
 
-    // display the history of a view component
-    function dsp_hist($page, $size, $call, $back): string
+    function btn_unlink(): string
     {
-        $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        return '';
+    }
+
+    /**
+     * display the history of a view component
+     */
+    function dsp_hist(
+        int        $page,
+        int        $size,
+        string     $call,
+        back_trace $back = null
+    ): string
+    {
+        $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back->url_encode() . ".");
         $result = ''; // reset the html code var
 
         $log_dsp = new user_log_display();
-        $log_dsp->id = $this->id();
-        //$log_dsp->usr = $this->user();
-        $log_dsp->type = component::class;
-        $log_dsp->page = $page;
-        $log_dsp->size = $size;
-        $log_dsp->call = $call;
-        $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist_old();
+        $result .= $log_dsp->dsp_hist(component::class, $this->id(), $size, $page);
 
         $this->log_debug("done");
         return $result;

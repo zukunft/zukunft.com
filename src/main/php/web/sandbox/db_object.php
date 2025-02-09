@@ -34,6 +34,7 @@
 
 namespace html\sandbox;
 
+include_once API_OBJECT_PATH . 'api_message.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
@@ -44,6 +45,7 @@ include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 
+use controller\api_message;
 use html\view\view_list;
 use shared\api;
 use html\rest_ctrl as api_dsp;
@@ -94,12 +96,19 @@ class db_object extends TextIdObject
 
     /**
      * set the vars of this object bases on the api json array
+     * this function is expected to be extended by each child object that has additional object vars
+     *
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
     function set_from_json_array(array $json_array): user_message
     {
         $usr_msg = new user_message();
+
+        // get body from message
+        $api_msg = new api_message();
+        $json_array = $api_msg->validate($json_array);
+
         if (array_key_exists(json_fields::ID, $json_array)) {
             $this->set_id($json_array[json_fields::ID]);
         } else {
