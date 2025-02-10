@@ -66,12 +66,12 @@ class type_lists_ui_tests
         $t->Header('Test the HTML functions for the list preloaded in the Frontend');
 
         // load the types from the api message
-        $api_msg = $t->type_lists_api($t->usr1)->get_json();
+        $api_msg = $t->type_lists_api($t->usr1);
         new type_list_dsp($api_msg);
 
         // use the system view to start the HTML test page
         global $html_system_views;
-        $msk = $html_system_views->get(views::START_CODE);
+        $msk = $html_system_views->get_by_code_id(views::START_CODE);
         $wrd = $t->word_dsp();
         $wrd->set_name('All type selectors');
         $test_page = $msk->show($wrd, null, '') . '<br><br>';

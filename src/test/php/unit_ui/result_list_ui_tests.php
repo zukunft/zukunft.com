@@ -49,7 +49,7 @@ class result_list_ui_tests
         $t->subheader('result list tests');
 
         // test the result list display functions
-        $lst = new result_list_dsp($t->result_list()->api_json([api_type::TEST_MODE]));
+        $lst = new result_list_dsp($t->result_list()->api_json([api_type::TEST_MODE, api_type::INCL_PHRASES]));
         $test_page = $html->text_h2('result list display test');
         $test_page .= 'result list with tooltip: ' . $lst->display() . '<br>';
         $test_page .= 'result list with link: ' . $lst->display_linked() . '<br>';

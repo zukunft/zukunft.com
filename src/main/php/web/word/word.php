@@ -5,6 +5,23 @@
     web/word/word.php - create HTML code to display a words based on the api json message
     -----------------
 
+    The main sections of this object are
+    - object vars:       the variables of this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - api:               set the object vars based on the api json message and create a json for the backend
+    - cast:              create related frontend objects e.g. the phrase of a triple
+    - load:              get an api json from the backend and
+    - related:           load related objects from the backend
+    - base:              html code for the single object vars
+    - buttons:           html code for the buttons e.g. to add, edit, del, link or unlink
+    - select:            html code to select parameter like the type
+    - table:             html code for object vars within a table
+    - actions:           send change messages to the backend
+    - log:               show the hist changes related to this object
+    - type:              link to code actions
+    - views:             system view to add, change or delete the word (to be deprecated)
+
+
     This file is part of the frontend of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -22,7 +39,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -80,7 +97,7 @@ use html\view\view_list;
 use shared\api;
 use shared\enum\foaf_direction;
 use shared\json_fields;
-use shared\const\views as view_shared;
+use shared\const\views;
 use shared\const\words;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\view_styles;
@@ -97,6 +114,44 @@ class word extends sandbox_typed
 
     // the main parent phrase
     private ?phrase_dsp $parent = null;
+
+
+    /*
+     * set and get
+     */
+
+    function set_plural(?string $plural): void
+    {
+        $this->plural = $plural;
+    }
+
+    function plural(): ?string
+    {
+        return $this->plural;
+    }
+
+    function set_parent(?phrase_dsp $parent): void
+    {
+        $this->parent = $parent;
+    }
+
+    function parent(): ?phrase_dsp
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @param string|null $code_id the code id of the phrase type
+     */
+    function set_type(?string $code_id): void
+    {
+        global $phr_typ_cac;
+        if ($code_id == null) {
+            $this->set_type_id();
+        } else {
+            $this->set_type_id($phr_typ_cac->id($code_id));
+        }
+    }
 
 
     /*
@@ -164,45 +219,45 @@ class word extends sandbox_typed
 
 
     /*
-     * set and get
+     * cast
      */
 
-    function set_plural(?string $plural): void
+    /**
+     * to have a similar cast function in word that in triple for the phrase
+     * @return $this
+     */
+    function word(): word
     {
-        $this->plural = $plural;
-    }
-
-    function plural(): ?string
-    {
-        return $this->plural;
-    }
-
-    function set_parent(?phrase_dsp $parent): void
-    {
-        $this->parent = $parent;
-    }
-
-    function parent(): ?phrase_dsp
-    {
-        return $this->parent;
+        return $this;
     }
 
     /**
-     * @param string|null $code_id the code id of the phrase type
+     * @returns phrase_dsp the phrase display object base on this word object
      */
-    function set_type(?string $code_id): void
+    function phrase(): phrase_dsp
     {
-        global $phr_typ_cac;
-        if ($code_id == null) {
-            $this->set_type_id();
-        } else {
-            $this->set_type_id($phr_typ_cac->id($code_id));
-        }
+        $phr = new phrase_dsp();
+        $phr->set_obj($this);
+        return $phr;
+    }
+
+    /**
+     * @returns term_dsp the word object cast into a term object
+     */
+    function term(): term_dsp
+    {
+        $trm = new term_dsp();
+        $trm->set_obj($this);
+        return $trm;
     }
 
 
     /*
      * load
+     */
+
+    /*
+     * related
      */
 
     function view_list(?string $pattern = null): view_list
@@ -212,8 +267,23 @@ class word extends sandbox_typed
         return $msk_lst;
     }
 
+    function parents(): phrase_list_dsp
+    {
+        $lst = new phrase_list_dsp();
+        // TODO get the json from the backend
+        return $lst;
+    }
+
+    function children(): phrase_list_dsp
+    {
+        $lst = new phrase_list_dsp();
+        // TODO get the json from the backend
+        return $lst;
+    }
+
+
     /*
-     * names
+     * base
      */
 
     /**
@@ -233,7 +303,7 @@ class word extends sandbox_typed
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(view_shared::WORD_ID, $this->id(), '', $back);
+        $url = $html->url_new(views::WORD_ID, $this->id(), '', $back);
         return $html->ref($url, $this->name(), $this->description(), $style);
     }
 
@@ -248,7 +318,7 @@ class word extends sandbox_typed
     function btn_add(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(view_shared::WORD_ADD_ID, $this->id(), '', $back);
+        $url = $html->url_new(views::WORD_ADD_ID, $this->id(), '', $back);
         $btn = new button($url, $back);
         return $btn->add(messages::WORD_ADD);
     }
@@ -259,7 +329,7 @@ class word extends sandbox_typed
     function btn_edit(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(view_shared::WORD_EDIT_ID, $this->id(), '', $back);
+        $url = $html->url_new(views::WORD_EDIT_ID, $this->id(), '', $back);
         $btn = new button($url, $back);
         return $btn->edit(messages::WORD_EDIT);
     }
@@ -271,7 +341,7 @@ class word extends sandbox_typed
     function btn_del(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(view_shared::WORD_DEL_ID, $this->id(), '', $back);
+        $url = $html->url_new(views::WORD_DEL_ID, $this->id(), '', $back);
         $btn = new button($url, $back);
         return $btn->del(messages::WORD_DEL);
     }
@@ -354,82 +424,6 @@ class word extends sandbox_typed
 
 
     /*
-     * views
-     */
-
-    /**
-     * display a word as the view header
-     * @param phrase_dsp|null $is_part_of the word group as a hint to the user
-     *        e.g. City Zurich because in many cases if just the word Zurich is given the assumption is,
-     *             that the Zurich (City) is the phrase to select
-     * @returns string the HTML code to display a word
-     */
-    function header(?phrase_dsp $is_part_of = null): string
-    {
-        $html = new html_base();
-
-        $result = '';
-
-        if ($this->id() <= 0) {
-            $result .= 'no word selected';
-        } else {
-            // load the word parameters if not yet done
-            if ($this->name == "") {
-                log_err('Name for word with id ' . $this->id() . ' is empty', 'word_dsp->dsp_header');
-            }
-
-            //$default_view_id = cl(DBL_VIEW_WORD);
-            $title = '';
-            if ($is_part_of != null) {
-                if ($is_part_of->name() <> '' and $is_part_of->name() <> 'not set') {
-                    $url = $html->url(rest_ctrl::VIEW, $is_part_of->id(), '', api::URL_VAR_WORDS);
-                    $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
-                }
-            }
-            $url = $html->url(rest_ctrl::WORD . rest_ctrl::UPDATE, $this->id(), $this->id());
-            $title .= $html->ref($url, $html->span($this->name(), rest_ctrl::STYLE_GLYPH), 'Rename word');
-            $result .= $html->dsp_text_h1($title);
-        }
-
-        return $result;
-    }
-
-    /**
-     * HTML code to edit all word fields
-     * @param string $dsp_graph the html code of the related phrases
-     * @param string $dsp_log the html code of the change log
-     * @param string $dsp_frm the html code of the linked formulas
-     * @param string $dsp_type the html code of the type selector formulas
-     * @param string $back the html code to be opened in case of a back action
-     * @return string the html code to display the edit page
-     */
-    function form_edit(string $dsp_graph, string $dsp_log, string $dsp_frm, string $dsp_type, string $back = ''): string
-    {
-        $html = new html_base();
-        $result = '';
-
-        if ($this->id() > 0) {
-            $header = $html->text_h2('Change "' . $this->name . '"');
-            $hidden_fields = $html->form_hidden("id", $this->id());
-            $hidden_fields .= $html->form_hidden("back", $back);
-            $hidden_fields .= $html->form_hidden("confirm", '1');
-            $detail_fields = $dsp_frm;
-            $detail_fields .= $html->form_text("plural", $this->plural());
-            $detail_fields .= $html->form_text("description", $this->description());
-            $detail_fields .= $dsp_type;
-            $detail_row = $html->fr($detail_fields) . '<br>';
-            $result = $header
-                . $html->form(view_shared::WORD_EDIT, $hidden_fields . $detail_row)
-                . '<br>' . $dsp_graph;
-        }
-
-        $result .= $dsp_log;
-
-        return $result;
-    }
-
-
-    /*
      * change action
      */
 
@@ -457,7 +451,7 @@ class word extends sandbox_typed
 
 
     /*
-     * change log
+     * log
      */
 
     /**
@@ -472,51 +466,7 @@ class word extends sandbox_typed
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @returns phrase_dsp the phrase display object base on this word object
-     */
-    function phrase(): phrase_dsp
-    {
-        $phr = new phrase_dsp();
-        $phr->set_obj($this);
-        return $phr;
-    }
-
-    /**
-     * @returns term_dsp the word object cast into a term object
-     */
-    function term(): term_dsp
-    {
-        $trm = new term_dsp();
-        $trm->set_obj($this);
-        return $trm;
-    }
-
-
-    /*
-     * load
-     */
-
-    function parents(): phrase_list_dsp
-    {
-        $lst = new phrase_list_dsp();
-        // TODO get the json from the backend
-        return $lst;
-    }
-
-    function children(): phrase_list_dsp
-    {
-        $lst = new phrase_list_dsp();
-        // TODO get the json from the backend
-        return $lst;
-    }
-
-
-    /*
-     * type functions
+     * type
      */
 
     /**
@@ -600,8 +550,89 @@ class word extends sandbox_typed
     }
 
     /*
+     * TODO deprecate the following functions
+     */
+
+
+    /*
+     * views
+     */
+
+    /**
+     * display a word as the view header
+     * @param phrase_dsp|null $is_part_of the word group as a hint to the user
+     *        e.g. City Zurich because in many cases if just the word Zurich is given the assumption is,
+     *             that the Zurich (City) is the phrase to select
+     * @returns string the HTML code to display a word
+     */
+    function header(?phrase_dsp $is_part_of = null): string
+    {
+        $html = new html_base();
+
+        $result = '';
+
+        if ($this->id() <= 0) {
+            $result .= 'no word selected';
+        } else {
+            // load the word parameters if not yet done
+            if ($this->name == "") {
+                log_err('Name for word with id ' . $this->id() . ' is empty', 'word_dsp->dsp_header');
+            }
+
+            //$default_view_id = cl(DBL_VIEW_WORD);
+            $title = '';
+            if ($is_part_of != null) {
+                if ($is_part_of->name() <> '' and $is_part_of->name() <> 'not set') {
+                    $url = $html->url(rest_ctrl::VIEW, $is_part_of->id(), '', api::URL_VAR_WORDS);
+                    $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
+                }
+            }
+            $url = $html->url(rest_ctrl::WORD . rest_ctrl::UPDATE, $this->id(), $this->id());
+            $title .= $html->ref($url, $html->span($this->name(), rest_ctrl::STYLE_GLYPH), 'Rename word');
+            $result .= $html->dsp_text_h1($title);
+        }
+
+        return $result;
+    }
+
+    /*
      * TODO to be replaced by a system view
      */
+
+    /**
+     * HTML code to edit all word fields
+     * @param string $dsp_graph the html code of the related phrases
+     * @param string $dsp_log the html code of the change log
+     * @param string $dsp_frm the html code of the linked formulas
+     * @param string $dsp_type the html code of the type selector formulas
+     * @param string $back the html code to be opened in case of a back action
+     * @return string the html code to display the edit page
+     */
+    function form_edit(string $dsp_graph, string $dsp_log, string $dsp_frm, string $dsp_type, string $back = ''): string
+    {
+        $html = new html_base();
+        $result = '';
+
+        if ($this->id() > 0) {
+            $header = $html->text_h2('Change "' . $this->name . '"');
+            $hidden_fields = $html->form_hidden("id", $this->id());
+            $hidden_fields .= $html->form_hidden("back", $back);
+            $hidden_fields .= $html->form_hidden("confirm", '1');
+            $detail_fields = $dsp_frm;
+            $detail_fields .= $html->form_text("plural", $this->plural());
+            $detail_fields .= $html->form_text("description", $this->description());
+            $detail_fields .= $dsp_type;
+            $detail_row = $html->fr($detail_fields) . '<br>';
+            $result = $header
+                . $html->form(views::WORD_EDIT, $hidden_fields . $detail_row)
+                . '<br>' . $dsp_graph;
+        }
+
+        $result .= $dsp_log;
+
+        return $result;
+    }
+
 
     /**
      * @return string HTML code to edit all word fields
@@ -662,7 +693,7 @@ class word extends sandbox_typed
             $dsp_graph,
             $dsp_log,
             $this->dsp_formula($back),
-            $this->dsp_type_selector(view_shared::WORD_EDIT, $back),
+            $this->dsp_type_selector(views::WORD_EDIT, $back),
             $back);
     }
 
@@ -850,20 +881,6 @@ class word extends sandbox_typed
         }
         return $result;
     }
-
-    /*
-     * cast
-     */
-
-    /**
-     * to have a similar cast function in word that in triple for the phrase
-     * @return $this
-     */
-    function word(): word
-    {
-        return $this;
-    }
-
 
     /*
      * internal

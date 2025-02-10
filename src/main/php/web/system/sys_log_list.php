@@ -187,7 +187,7 @@ class sys_log_list
             if ($result == '') {
                 $result .= $sys_log->header();
             }
-            $result .= $html->tr($sys_log->display());
+            $result .= $sys_log->display();
         }
         return $html->tbl($result);
     }
@@ -197,7 +197,7 @@ class sys_log_list
      * @return string with a list of the sys_log names with html links
      * ex. names_linked
      */
-    function display_admin(string $back = '', string $style = ''): string
+    function display_admin(user $usr, string $back = '', string $style = ''): string
     {
         $html = new html_base();
         $result = '';
@@ -205,7 +205,7 @@ class sys_log_list
             if ($result == '') {
                 $result .= $sys_log->header_admin();
             }
-            $result .= $html->tr($sys_log->display_admin($back, $style));
+            $result .= $sys_log->display_admin($usr, $back, $style);
         }
         return $html->tbl($result);
     }

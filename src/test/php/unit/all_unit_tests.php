@@ -336,8 +336,7 @@ class all_unit_tests extends test_cleanup
         (new base_ui_tests)->run($this);
 
         // test the html ui on localhost without api
-        // TODO switch on if the all ui tests are real unit tests and none is based of
-        // (new all_ui_tests())->run($this);
+        (new all_ui_tests())->run($this);
 
         // test the html ui on localhost with api
         // (new all_ui_api_tests())->run($this);

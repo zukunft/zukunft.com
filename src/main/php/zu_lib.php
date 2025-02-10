@@ -1669,6 +1669,17 @@ function log_fatal(string $msg_text,
 }
 
 /**
+ * display a message immediately to the user
+ * @param string $txt the text that should be should to the user
+ */
+function log_echo(string $txt): void
+{
+    echo $txt;
+    echo "\n";
+}
+
+
+/**
  * should be called from all code that can be accessed by an url
  * return null if the db connection fails or the db is not compatible
  * TODO create a separate class for starting the backend and frontend

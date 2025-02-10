@@ -64,8 +64,6 @@ use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\word\word;
-use html\formula\formula as formula_dsp;
-use html\formula\formula_list as formula_list_dsp;
 use shared\calc\parameter_type;
 use shared\library;
 
@@ -691,54 +689,6 @@ class formula_list extends sandbox_list
     }
 
     /**
-     * lists all formulas with results related to a word
-     */
-    function display($type = 'short'): string
-    {
-        log_debug('formula_list->display ' . $this->dsp_id());
-        $result = '';
-
-        // list all related formula results
-        if ($this->lst() != null) {
-            // TODO add usort to base_list
-            $lst = $this->lst();
-            usort($lst, array(formula::class, "cmp"));
-            $this->set_lst($lst);
-            if ($this->lst() != null) {
-                foreach ($this->lst() as $frm) {
-                    // formatting should be moved
-                    //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
-                    //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($this->back));
-                    $frm_dsp = $frm->dsp_obj_old();
-                    $frm_html = new formula_dsp($frm->api_json());
-                    $result = '';
-                    if ($frm->name_wrd != null) {
-                        $result = $frm_dsp->dsp_result($frm->name_wrd->phrase(), $this->back);
-                    }
-                    // if the result is empty use the id to be able to select the formula
-                    if ($result == '') {
-                        $result .= $frm_dsp->id();
-                    } else {
-                        $result .= ' value ' . $result;
-                    }
-                    $result .= ' ' . $frm_html->edit_link($this->back);
-                    if ($type == 'short') {
-                        $result .= ' ' . $frm_dsp->btn_del($this->back);
-                        $result .= ', ';
-                    } else {
-                        $result .= ' (' . $frm_dsp->dsp_text($this->back) . ')';
-                        $result .= ' ' . $frm_dsp->btn_del($this->back);
-                        $result .= ' <br> ';
-                    }
-                }
-            }
-        }
-
-        log_debug("formula_list->display ... done (" . $result . ")");
-        return $result;
-    }
-
-    /**
      * @return int the number of suggested calculation blocks to update all formulas
      */
     function calc_blocks(sql_db $db_con, int $total_formulas = 0): int
@@ -765,23 +715,6 @@ class formula_list extends sandbox_list
             $result->add($frm->save());
         }
         return $result;
-    }
-
-
-    /*
-     * TODO deprecate
-     */
-
-    /**
-     * @return formula_list_dsp the formula list object with the display interface functions
-     */
-    function dsp_obj(): formula_list_dsp
-    {
-        $dsp_obj = new formula_list_dsp();
-        foreach ($this->lst() as $wrd) {
-            $dsp_obj->add($wrd->dsp_obj());
-        }
-        return $dsp_obj;
     }
 
 }

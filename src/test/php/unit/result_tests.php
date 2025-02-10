@@ -65,7 +65,7 @@ class result_tests
         $t->header('result unit tests');
 
         $t->subheader('SQL creation tests');
-        $res = $t->result_simple();
+        $res = $t->result_simple_1();
         $t->assert_sql_table_create($res);
         $t->assert_sql_index_create($res);
         $t->assert_sql_foreign_key_create($res);
@@ -173,7 +173,7 @@ class result_tests
 
         $t->subheader('HTML frontend unit tests');
 
-        $res = $t->result_simple();
+        $res = $t->result_simple_1();
         $t->assert_api_to_dsp($res, new result_dsp());
 
     }

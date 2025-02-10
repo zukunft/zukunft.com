@@ -131,4 +131,53 @@ class formula_list extends list_dsp
         return $html->tbl($html->tr($cols), html_base::STYLE_BORDERLESS);
     }
 
+    /**
+     * lists all formulas with results related to a word
+     */
+    function display_old($type = 'short'): string
+    {
+        log_debug('formula_list->display ' . $this->dsp_id());
+        $result = '';
+        $back = '';
+
+        // list all related formula results
+        if ($this->lst() != null) {
+            // TODO add usort to base_list
+            $lst = $this->lst();
+            usort($lst, array(formula::class, "cmp"));
+            $this->set_lst($lst);
+            if ($this->lst() != null) {
+                foreach ($this->lst() as $frm) {
+                    // formatting should be moved
+                    //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
+                    //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($back));
+                    $frm_dsp = $frm->dsp_obj_old();
+                    $frm_html = new formula_dsp($frm->api_json());
+                    $result = '';
+                    if ($frm->name_wrd != null) {
+                        $result = $frm_dsp->dsp_result($frm->name_wrd->phrase(), $back);
+                    }
+                    // if the result is empty use the id to be able to select the formula
+                    if ($result == '') {
+                        $result .= $frm_dsp->id();
+                    } else {
+                        $result .= ' value ' . $result;
+                    }
+                    $result .= ' ' . $frm_html->edit_link($back);
+                    if ($type == 'short') {
+                        $result .= ' ' . $frm_dsp->btn_del($back);
+                        $result .= ', ';
+                    } else {
+                        $result .= ' (' . $frm_dsp->dsp_text($back) . ')';
+                        $result .= ' ' . $frm_dsp->btn_del($back);
+                        $result .= ' <br> ';
+                    }
+                }
+            }
+        }
+
+        log_debug("formula_list->display ... done (" . $result . ")");
+        return $result;
+    }
+
 }

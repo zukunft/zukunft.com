@@ -37,6 +37,7 @@ use html\html_base;
 use cfg\phrase\phrase_list;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\value\value_list as value_list_dsp;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class value_list_ui_tests
@@ -81,7 +82,7 @@ class value_list_ui_tests
         // TODO add a sample to show a list of words and some values related to the words e.g. all companies with the main ratios
 
         $test_page = $html->text_h2('Value list display test');
-        $lst_dsp = new value_list_dsp($val_lst->api_json());
+        $lst_dsp = new value_list_dsp($val_lst->api_json([api_type::INCL_PHRASES]));
         $test_page .= 'without context: ' . $lst_dsp->table() . '<br>';
         // create the same table as above, but within a context
         $header_html = $phr_lst_context_dsp->headline();

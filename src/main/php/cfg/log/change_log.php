@@ -659,7 +659,7 @@ class change_log extends db_object_seq_id_user
         $vars[json_fields::TABLE_ID] = $this->table_id;
         $vars[json_fields::FIELD_ID] = $this->field_id;
         $vars[json_fields::ROW_ID] = $this->row_id;
-        $vars[json_fields::CHANGE_TIME] = $this->time();
+        $vars[json_fields::CHANGE_TIME] = $this->time()->format("c");
 
         return $vars;
     }

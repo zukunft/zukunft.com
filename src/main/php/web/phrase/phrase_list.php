@@ -422,7 +422,7 @@ class phrase_list extends sandbox_list_named
                     }
                 }
             }
-            $this->set_lst($result());
+            $this->set_lst($result);
             $this->id_lst();
         }
         log_debug($lib->dsp_count($this->lst()));

@@ -257,7 +257,6 @@ use cfg\user\user_type;
 use cfg\user\user_message;
 use cfg\user\user_official_type;
 use cfg\user\user_profile_list;
-use cfg\value\value_base;
 use cfg\value\value_time_series;
 use cfg\value\value_ts_data;
 use cfg\verb\verb;
@@ -271,7 +270,6 @@ use cfg\view\view_type;
 use cfg\view\view_type_list;
 use cfg\word\word;
 use Exception;
-use html\html_base;
 use mysqli;
 use mysqli_result;
 use PDOException;
@@ -960,13 +958,13 @@ class sql_db
     {
         global $sys_times;
 
-        $html = new html_base();
+
         $usr_msg = new user_message();
 
         // create the tables, db indexes and foreign keys
         $sql = resource_file(DB_RES_SUB_PATH . DB_SETUP_SUB_PATH . $this->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
         try {
-            $html->echo('Run db setup sql script');
+            log_echo('Run db setup sql script');
             $sys_times->switch(system_time_type::DB_SETUP);
             $sql_msg = $this->exe_script($sql);
             $sys_times->switch();
@@ -990,7 +988,7 @@ class sql_db
 
         // fill the tables with the essential data
         if ($usr_msg->is_ok()) {
-            $html->echo('Create system users');
+            log_echo('Create system users');
             $this->reset_config();
             $this->import_system_users();
 
@@ -1000,7 +998,7 @@ class sql_db
             $usr->load_by_id(SYSTEM_USER_ID);
 
             // recreate the code link database rows
-            $html->echo('Create the code links');
+            log_echo('Create the code links');
             $this->db_fill_code_links();
             $sys_typ_lst = new type_lists();
             $sys_typ_lst->load($this, $usr);
@@ -1080,10 +1078,10 @@ class sql_db
 
         // the tables in order to avoid the usage of CASCADE
         $table_names = sql_db::DB_TABLE_CLASSES_DESC_DEPENDING;
-        $html = new html_base();
-        $html->echo("\n");
-        $html->echo('truncate ');
-        $html->echo("\n");
+
+        log_echo("\n");
+        log_echo('truncate ');
+        log_echo("\n");
 
         // truncate tables that have already a build in truncate statement creation
         $sql = '';
@@ -5483,8 +5481,8 @@ class sql_db
     function truncate_table_all(): void
     {
         // the sequence names of the tables to reset
-        $html = new html_base();
-        $html->echo('truncate all tables ');
+
+        log_echo('truncate all tables ');
         foreach (DB_SEQ_LIST as $seq_name) {
             $this->reset_seq($seq_name);
         }
@@ -5492,8 +5490,8 @@ class sql_db
 
     function truncate_table(string $table_name): void
     {
-        $html = new html_base();
-        $html->echo('truncate table ' . $table_name);
+
+        log_echo('truncate table ' . $table_name);
         $sql = sql::TRUNCATE . ' ' . $this->get_table_name_esc($table_name) . ' ' . sql::CASCADE . '; ';
         try {
             $this->exe($sql);
@@ -5507,8 +5505,8 @@ class sql_db
         global $sys_times;
         $sys_times->switch(system_time_type::DB_WRITE);
 
-        $html = new html_base();
-        $html->echo('DROP TABLE ' . $table_name);
+
+        log_echo('DROP TABLE ' . $table_name);
         if ($this->has_table($table_name)) {
             $sql = 'drop table ' . $table_name . ' cascade;';
             try {
@@ -5533,8 +5531,8 @@ class sql_db
         global $sys_times;
         $sys_times->switch(system_time_type::DB_WRITE);
 
-        $html = new html_base();
-        $html->echo('RESET SEQUENCE ' . $seq_name);
+
+        log_echo('RESET SEQUENCE ' . $seq_name);
         $sql = 'ALTER SEQUENCE ' . $seq_name . ' RESTART ' . $start_id . ';';
         try {
             $this->exe($sql);

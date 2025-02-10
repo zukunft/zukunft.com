@@ -194,7 +194,7 @@ class element_group extends list_dsp
             // the word list for the figure selection ($val_phr_lst) may differ from the requesting word list ($this->phr_lst) because
             // e.g. 1: $val_phr_lst is Swiss inhabitants
             // e.g. if "percent" is requested and a measure word is part of the request, the measure words are ignored
-            $val_phr_lst = clone $this->phr_lst;
+            $val_phr_lst = $this->phr_lst;
             $val_time_phr = $val_phr_lst->assume_time($trm_lst);
             if (isset($val_time_phr)) {
                 log_debug('for time ' . $val_time_phr->dsp_id());
@@ -296,4 +296,37 @@ class element_group extends list_dsp
         log_debug($lib->dsp_count($fig_lst->lst()) . ' found');
         return $fig_lst;
     }
+
+    /**
+     * the HTML code to display a figure list
+     */
+    function dsp_values_old(string $back = ''): string
+    {
+        log_debug();
+
+        $result = '';
+
+        $fig_lst = $this->figures();
+        log_debug('got figures');
+
+        // show the time if adjusted by a special formula element
+        // build the html code to display the value with the link
+        foreach ($fig_lst->lst() as $fig) {
+            log_debug('display figure');
+            $api_json = $fig->api_json([api_type::INCL_PHRASES]);
+            $fig_dsp = new figure();
+            $fig_dsp->set_from_json($api_json);
+            $result .= $fig_dsp->display_linked($back);
+        }
+
+        // TODO: show the time phrase only if it differs from the main time phrase
+
+        // display alternative values
+
+
+        log_debug('result "' . $result . '"');
+        return $result;
+    }
+
+
 }

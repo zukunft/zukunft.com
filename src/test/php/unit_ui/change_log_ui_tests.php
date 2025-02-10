@@ -59,12 +59,12 @@ class change_log_ui_tests
 
         $test_page .= 'simple list of changes of a word<br>';
         $log_lst = $t->change_log_list_named();
-        $log_dsp = new change_log_list($log_lst->api_json_array($api_typ_lst));
+        $log_dsp = new change_log_list($log_lst->api_json($api_typ_lst));
         $test_page .= $log_dsp->tbl($back);
 
         $test_page .= 'condensed list of changes of a word<br>';
         $log_lst = $t->change_log_list_named();
-        $log_dsp = new change_log_list($log_lst->api_json_array($api_typ_lst));
+        $log_dsp = new change_log_list($log_lst->api_json($api_typ_lst));
         $test_page .= $log_dsp->tbl($back, true, true);
 
         $t->html_test($test_page, 'change_log', 'change_log', $t);

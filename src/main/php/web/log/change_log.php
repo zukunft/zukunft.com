@@ -38,7 +38,7 @@ include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use html\sandbox\sandbox;
-use html\user\user as user;
+use html\user\user;
 use html\user\user_message;
 use shared\json_fields;
 use DateTime;
@@ -82,6 +82,10 @@ class change_log extends sandbox
             }
         } else {
             $this->change_time = new DateTime();
+        }
+        if (array_key_exists(json_fields::USR, $json_array)) {
+            $usr = new user(json_encode($json_array[json_fields::USR]));
+            $this->usr = $usr;
         }
         if (array_key_exists(json_fields::ACTION_ID, $json_array)) {
             $this->action_id = $json_array[json_fields::ACTION_ID];

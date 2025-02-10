@@ -71,7 +71,8 @@ class triple_list_ui_tests
         */
 
         $test_page .= 'selector: ' . '<br>';
-        $test_page .= $lst->selector('', 0, 'triple list test selector', 'please select') . '<br>';
+        $test_page .= $lst->selector('', 0,
+                'triple list test selector', 'please select') . '<br>';
 
         $t->html_test($test_page, 'triple_list', 'triple_list', $t);
     }

@@ -52,8 +52,6 @@ include_once MODEL_SYSTEM_PATH . 'base_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_WORD_PATH . 'word.php';
-include_once WEB_FIGURE_PATH . 'figure.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\formula\figure_list;
@@ -66,9 +64,7 @@ use cfg\system\base_list;
 use cfg\user\user;
 use cfg\value\value;
 use cfg\word\word;
-use html\figure\figure as figure_dsp;
 use shared\library;
-use shared\types\api_type;
 
 class element_group extends base_list
 {
@@ -310,37 +306,6 @@ class element_group extends base_list
 
         log_debug($lib->dsp_count($fig_lst->lst()) . ' found');
         return $fig_lst;
-    }
-
-    /**
-     * the HTML code to display a figure list
-     */
-    function dsp_values(string $back = ''): string
-    {
-        log_debug();
-
-        $result = '';
-
-        $fig_lst = $this->figures();
-        log_debug('got figures');
-
-        // show the time if adjusted by a special formula element
-        // build the html code to display the value with the link
-        foreach ($fig_lst->lst() as $fig) {
-            log_debug('display figure');
-            $api_json = $fig->api_json([api_type::INCL_PHRASES]);
-            $fig_dsp = new figure_dsp();
-            $fig_dsp->set_from_json($api_json);
-            $result .= $fig_dsp->display_linked($back);
-        }
-
-        // TODO: show the time phrase only if it differs from the main time phrase
-
-        // display alternative values
-
-
-        log_debug('result "' . $result . '"');
-        return $result;
     }
 
 

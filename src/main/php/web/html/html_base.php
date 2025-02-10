@@ -45,6 +45,14 @@ class html_base
 
     // html const used in zukunft.com
 
+    // html base elements
+    const SPAN = 'span';
+    const HTML_CLASS = 'class';
+    const TITLE = 'title';
+
+    // fixed elements
+    const TOGGLE_TOOLTIP = 'data-toggle="tooltip"';
+
     // the html input types used
     const INPUT_TEXT = 'text';
     const INPUT_SUBMIT = 'submit';
@@ -266,9 +274,17 @@ class html_base
      * @param string $style the CSS class names
      * @return string the html code
      */
-    function span(string $text, string $style = ''): string
+    function span(string $text, string $style = '', string $title = ''): string
     {
-        return '<span class="' . $style . '">' . $text . '</span>';
+        $result = '<' . self::SPAN;
+        if ($style != '') {
+            $result .= ' ' . self::HTML_CLASS . '="' . $style . '"';
+        }
+        if ($title != '') {
+            $result .= ' ' . self::TITLE . '="' . $title . '" ' . self::TOGGLE_TOOLTIP;
+        }
+        $result .= '>' . $text . '</' . self::SPAN . '>';
+        return $result;
     }
 
     /*

@@ -73,7 +73,7 @@ class figure_list extends list_dsp
     {
         $result = false;
         if (!in_array($fig->id(), $this->id_lst())) {
-            $this->lst[] = $fig;
+            $this->add_direct($fig);
             $this->set_lst_dirty();
             $result = true;
         }
@@ -91,7 +91,7 @@ class figure_list extends list_dsp
     function display(): string
     {
         $figures = array();
-        foreach ($this->lst as $fig) {
+        foreach ($this->lst() as $fig) {
             $figures[] = $fig->display();
         }
         return implode(', ', $figures);
@@ -114,7 +114,7 @@ class figure_list extends list_dsp
     function names_linked(string $back = ''): array
     {
         $names = array();
-        foreach ($this->lst as $fig) {
+        foreach ($this->lst() as $fig) {
             $names[] = $fig->display_linked();
         }
         return $names;
@@ -127,7 +127,7 @@ class figure_list extends list_dsp
     {
         // cast the single list objects
         $lst_dsp = array();
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             if ($val != null) {
                 $val_dsp = $val->dsp_obj();
                 $lst_dsp[] = $val_dsp;

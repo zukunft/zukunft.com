@@ -47,7 +47,8 @@ class result_ui_tests
 
         $t->subheader('result tests');
 
-        $res = new result_dsp($t->result_simple()->api_json([api_type::TEST_MODE]));
+        $api_json = $t->result_simple()->api_json([api_type::TEST_MODE, api_type::INCL_PHRASES]);
+        $res = new result_dsp($api_json);
         $test_page = $html->text_h2('result display test');
         $test_page .= 'with tooltip: ' . $res->display() . '<br>';
         $test_page .= 'with link: ' . $res->display_linked() . '<br>';

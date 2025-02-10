@@ -53,7 +53,7 @@ class word_ui_tests
         $wrd_pi = new word_dsp($t->word_pi()->api_json());
         $test_page = $html->text_h1('Word display test');
         $test_page .= $html->text_h2('names');
-        $test_page .= 'pur: ' . $wrd->display() . '<br>';
+        $test_page .= 'with tooltip: ' . $wrd->name_html() . '<br>';
         $test_page .= 'with link: ' . $wrd->display_linked() . '<br>';
         $test_page .= $html->text_h2('buttons');
         $test_page .= 'add button: ' . $wrd->btn_add() . '<br>';

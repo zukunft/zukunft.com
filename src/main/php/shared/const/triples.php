@@ -72,6 +72,7 @@ class triples
     const CITY_GE = 'Geneva (City)';
     const CITY_GE_ID = 40;
     const CANTON_ZURICH = 'Zurich (Canton)';
+    const CANTON_ZURICH_ID = 37;
     const CANTON_ZURICH_NAME = 'Canton Zurich';
     const COMPANY_ZURICH = "Zurich Insurance";
     const COMPANY_VESTAS = "Vestas SA";

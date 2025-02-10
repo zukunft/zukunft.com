@@ -32,6 +32,7 @@
 
 namespace html\sandbox;
 
+include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_SANDBOX_PATH . 'sandbox.php';
 include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
@@ -39,6 +40,7 @@ include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 
+use html\html_base;
 use shared\api;
 use html\rest_ctrl as api_dsp;
 use html\user\user_message;
@@ -172,6 +174,20 @@ class sandbox_named extends sandbox
     function calc_view_id(): int
     {
         return 0;
+    }
+
+
+    /*
+     * base
+     */
+
+    /**
+     * @return string with the html code to show the name of the object with the tooltip
+     */
+    function name_html(): string
+    {
+        $html = new html_base();
+        return $html->span($this->name(), '', $this->description());
     }
 
 

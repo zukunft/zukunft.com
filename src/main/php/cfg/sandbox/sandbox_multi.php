@@ -881,6 +881,34 @@ class sandbox_multi extends db_object_multi_user
         return $this->common_json();
     }
 
+    /**
+     * fill the vars with this sandbox object based on the given api json array
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message
+     */
+    function set_by_api_json(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        // make sure that there are no unexpected leftovers
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::SHARE) {
+                $this->share_id = $value;
+            }
+            if ($key == json_fields::PROTECTION) {
+                $this->protection_id = $value;
+            }
+
+        }
+
+        return $usr_msg;
+    }
+
 
     /*
      * im- and export

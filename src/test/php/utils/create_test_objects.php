@@ -224,6 +224,11 @@ class create_test_objects extends test_base
      * dummy objects for unit tests
      */
 
+    /**
+     * create the api json message for all types
+     * @param user $usr the user who wants to see his types
+     * @return string api json string with the types of the given user
+     */
     function type_lists_api(user $usr): string
     {
         $is_ok = true;
@@ -1076,7 +1081,7 @@ class create_test_objects extends test_base
     function zh_city(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triples::CITY_ZH_ID, triples::CITY_ZH);
+        $trp->set(triples::CITY_ZH_ID, triples::CITY_ZH_NAME);
         $trp->set_from($this->word_zh()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->word_city()->phrase());
@@ -1089,7 +1094,7 @@ class create_test_objects extends test_base
     function zh_canton(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triples::CITY_ZH_ID, triples::CITY_ZH);
+        $trp->set(triples::CANTON_ZURICH_ID, triples::CANTON_ZURICH_NAME);
         $trp->set_from($this->word_zh()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->word_canton()->phrase());
@@ -2194,13 +2199,24 @@ class create_test_objects extends test_base
         return $exp->element_list($trm_lst);
     }
 
-    function result_simple(): result
+    function result_simple_1(): result
     {
         $res = new result($this->usr1);
         $wrd = $this->word();
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd->phrase());
         $res->set_id(1);
+        $res->grp()->set_phrase_list($phr_lst);
+        $res->set_number(results::TV_INT);
+        return $res;
+    }
+
+    function result_simple(): result
+    {
+        $res = new result($this->usr1);
+        $wrd = $this->word();
+        $phr_lst = new phrase_list($this->usr1);
+        $phr_lst->add($wrd->phrase());
         $res->grp()->set_phrase_list($phr_lst);
         $res->set_number(results::TV_INT);
         return $res;
@@ -2288,7 +2304,7 @@ class create_test_objects extends test_base
     function result_list(): result_list
     {
         $lst = new result_list($this->usr1);
-        $lst->add($this->result_simple());
+        $lst->add($this->result_simple_1());
         $lst->add($this->result_pct());
         return $lst;
     }
@@ -2308,7 +2324,7 @@ class create_test_objects extends test_base
      */
     function figure_result(): figure
     {
-        $res = $this->result_simple();
+        $res = $this->result_simple_1();
         return $res->figure();
     }
 
