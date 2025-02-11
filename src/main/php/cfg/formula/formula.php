@@ -134,7 +134,6 @@ use cfg\view\view;
 use cfg\word\word;
 use DateTime;
 use Exception;
-use html\word\word as word_dsp;
 use math;
 use shared\calc\parameter_type;
 use shared\const\chars;
@@ -2304,7 +2303,7 @@ class formula extends sandbox_typed
         if ($trm->type() == formula::class) {
             //$result = $trm;
             $result = true;
-        } elseif ($trm->type() == word::class or $trm->type() == word_dsp::class) {
+        } elseif ($trm->type() == word::class) {
             if ($trm->obj() == null) {
                 log_warning('The object of the term has been expected to be loaded');
             } else {

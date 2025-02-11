@@ -103,7 +103,6 @@ use cfg\db\sql_par_type;
 use cfg\helper\db_object_seq_id;
 use cfg\system\ip_range_list;
 use cfg\log\change;
-use cfg\log\change_table_list;
 use cfg\sandbox\sandbox_named;
 use cfg\ref\source;
 use cfg\word\triple;

@@ -46,6 +46,7 @@ use html\html_base;
 use html\view\view as view_dsp;
 use html\word\word as word_dsp;
 use shared\api;
+use shared\const\views;
 use shared\const\views as view_shared;
 
 /* open database */
@@ -185,6 +186,8 @@ if ($usr->id() > 0) {
         $result .= $html->dsp_err($msg);
 
         $wrd_dsp = new word_dsp($wrd->api_json());
+        //$msk_dsp = new view_dsp();
+        //$msk_dsp->load_by_id_with(views::WORD_ADD_ID);
         $result .= $wrd_dsp->dsp_add($phr_id, $phr_to, $vrb_id, $back);
     }
 }

@@ -260,24 +260,27 @@ class word extends sandbox_typed
      * related
      */
 
-    function view_list(?string $pattern = null): view_list
-    {
-        $msk_lst = new view_list();
-        $msk_lst->load_by_pattern($pattern);
-        return $msk_lst;
-    }
-
-    function parents(): phrase_list
+    /**
+     * get the parent phrases of the given phrase
+     * if a phrase list is given get only the parent phrases within the list
+     * if no phrase list is given get the phrases from the api
+     * e.g. for Zurich the list is City and Canton based on a phrase list with City, Canton and Country
+     * but  for Zurich the list is City, Canton and Company based on a phrase list with Company, City, Canton and Country
+     * @param phrase_list|null $phr_lst
+     * @param int $levels the number of parent levels
+     * @return phrase_list
+     */
+    function parents(?phrase_list $phr_lst = null, int $levels = 1): phrase_list
     {
         $lst = new phrase_list();
-        // TODO get the json from the backend
+        $lst->load_related($this->phrase(), foaf_direction::UP);
         return $lst;
     }
 
     function children(): phrase_list
     {
         $lst = new phrase_list();
-        // TODO get the json from the backend
+        $lst->load_related($this->phrase(), foaf_direction::DOWN);
         return $lst;
     }
 

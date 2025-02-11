@@ -51,6 +51,8 @@ class word_ui_tests
 
         $wrd = new word_dsp($t->word()->api_json());
         $wrd_pi = new word_dsp($t->word_pi()->api_json());
+        $wrd_zh = new word_dsp($t->word_zh()->api_json());
+        $wrd_city = new word_dsp($t->word_city()->api_json());
         $test_page = $html->text_h1('Word display test');
         $test_page .= $html->text_h2('names');
         $test_page .= 'with tooltip: ' . $wrd->name_tip() . '<br>';
@@ -61,15 +63,20 @@ class word_ui_tests
         $test_page .= 'del button: ' . $wrd->btn_del() . '<br>';
         $test_page .= 'unlink button: ' . $wrd->btn_unlink(1) . '<br>';
         $test_page .= $html->text_h2('select');
-        $test_page .= $wrd->dsp_type_selector(view_shared::WORD_EDIT) . '<br>';
-        $test_page .= $wrd->view_selector(view_shared::WORD_EDIT, $t->view_list_dsp()) . '<br>';
-        $test_page .= $wrd->view_selector(view_shared::WORD_EDIT, $t->view_list_long_dsp()) . '<br>';
+        $from_rows = $wrd->dsp_type_selector(view_shared::WORD_EDIT) . '<br>';
+        $from_rows .= $wrd->view_selector(view_shared::WORD_EDIT, $t->view_list_dsp()) . '<br>';
+        $from_rows .= $wrd->view_selector(view_shared::WORD_EDIT, $t->view_list_long_dsp(), 'view_long') . '<br>';
+        $test_page .= $html->form(view_shared::WORD_EDIT, $from_rows);
         $test_page .= $html->text_h2('table');
-        $test_page .= $html->tbl($wrd->th() . $wrd_pi->tr());
-        $test_page .= 'del in columns: ' . $wrd->dsp_del() . '<br>';
-        $test_page .= 'unlink in columns: ' . $wrd_pi->dsp_unlink($wrd->id()) . '<br>';
+        $test_page .= $html->tbl($html->tr($wrd->th()) . $wrd_pi->tr());
+        $test_page .= 'del in columns: ' . $html->tbl($wrd->dsp_del()) . '<br>';
+        $test_page .= 'unlink in columns: ' . $html->tbl($wrd_pi->dsp_unlink($wrd->id())) . '<br>';
         $test_page .= $html->text_h2('view header');
         $test_page .= $wrd->header() . '<br>';
+        $test_page .= $html->text_h2('parents');
+        $test_page .= $wrd_zh->parents()->name_link() . '<br>';
+        $test_page .= $html->text_h2('children');
+        $test_page .= $wrd_city->children()->name_link() . '<br>';
         $t->html_test($test_page, 'word html components', 'word', $t);
 
     }

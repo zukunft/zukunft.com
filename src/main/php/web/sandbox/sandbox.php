@@ -151,13 +151,17 @@ class sandbox extends db_object_dsp
      * @param view_list $msk_lst with the suggested views
      * @return string the html code to select a view
      */
-    public function view_selector(string $form, view_list $msk_lst): string
+    public function view_selector(string $form, view_list $msk_lst, string $name = null): string
     {
         $view_id = $this->view_id();
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        return $msk_lst->selector($form, $view_id);
+        if ($name == null) {
+            return $msk_lst->selector($form, $view_id);
+        } else {
+            return $msk_lst->selector($form, $view_id, $name);
+        }
     }
 
     /**

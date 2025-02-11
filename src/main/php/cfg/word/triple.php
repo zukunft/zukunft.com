@@ -133,7 +133,6 @@ use cfg\value\value_list;
 use cfg\verb\verb;
 use cfg\view\view;
 use html\html_base;
-use JsonSerializable;
 use shared\const\triples;
 use shared\enum\change_actions;
 use shared\enum\change_tables;

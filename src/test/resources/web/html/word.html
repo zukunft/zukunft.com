@@ -7,91 +7,111 @@
     <link rel="stylesheet" href="/lib_external/fontawesome/css/all.css">
 </head>
 <body>
-<div class="container"><h2>Word display test</h2><h4>names</h4>with tooltip: <span title="Mathematics is an area of knowledge that includes the topics of numbers and formulas"
-                                                                                  data-toggle="tooltip">Mathematics</span><br>with
-    link:<a href="/http/view.php?m=41&id=1"
-            title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">Mathematics</a><br>
+<div class="container"><h2>Word display test</h2><h4>names</h4>with tooltip:<span
+        title="Mathematics is an area of knowledge that includes the topics of numbers and formulas"
+        data-toggle="tooltip">Mathematics</span><br>with link:<a href="/http/view.php?m=41&id=1"
+                                                                 title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">Mathematics</a><br>
     <h4>buttons</h4>add button:<a href="/http/view.php?m=2&id=1" title="add new word"><i class="far fa-plus-square"></i></a><br>edit
     button:<a href="/http/view.php?m=3&id=1" title="rename word"><i class="far fa-edit"></i></a><br>del button:<a
             href="/http/view.php?m=4&id=1" title="delete word"><i class="far fa-times-circle"></i></a><br>unlink button:<a
             href="/http/link_del.php?id=1&back=1" title="Unlink word"><i class="far fa-times-circle"></i></a><br><h4>
         select</h4>
-    <div class="form-group col-md-4"><label for="phrase type">type:</label><select class="form-control"
-                                                                                   name="phrase type" form="word_edit"
-                                                                                   id="phrase type">
-        <option value="1" selected>standard</option>
-        <option value="2">time</option>
-        <option value="3">measure type</option>
-        <option value="4">time jump</option>
-        <option value="5">calc</option>
-        <option value="6">format percent</option>
-        <option value="7">scaling</option>
-        <option value="8">hidden scaling</option>
-        <option value="9">view / layer</option>
-        <option value="10">formula link</option>
-        <option value="11">differentiator filler</option>
-        <option value="12">this</option>
-        <option value="13">next</option>
-        <option value="14">prior</option>
-        <option value="15">scaling word percent</option>
-        <option value="16">scaled measure</option>
-        <option value="17">math constant</option>
-        <option value="18">measure divisor</option>
-        <option value="19">latest</option>
-        <option value="20">key</option>
-        <option value="21">information</option>
-        <option value="22">hidden triple</option>
-        <option value="23">hidden system</option>
-        <option value="24">group and select</option>
-        <option value="25">symbol</option>
-        <option value="26">rank</option>
-        <option value="27">ignore</option>
-    </select></div>
-    <br>
-    <div class="form-group col-md-4"><label for="view">view:</label><select class="form-control" name="view"
-                                                                            form="word_edit" id="view">
-        <option value="50">Science</option>
-        <option value="51">Historic</option>
-        <option value="53">Education</option>
-        <option value="54">Touristic</option>
-    </select></div>
-    <br>
-    <div class="form-group col-md-4"><label for="view">view:</label><select class="form-control" name="view"
-                                                                            form="word_edit" id="view">
-        <option value="50">Science</option>
-        <option value="51">Historic</option>
-        <option value="53">Education</option>
-        <option value="54">Touristic</option>
-        <option value="52">Biological</option>
-        <option value="55">Graph</option>
-        <option value="56">Simple</option>
-    </select></div>
-    <br><h4>table</h4>
+    <form action="/http/view.php" id="word_edit">
+        <div class="form-group col-md-4"><label for="phrase type">type:</label><select class="form-control"
+                                                                                       name="phrase type"
+                                                                                       form="word_edit"
+                                                                                       id="phrase type">
+            <option value="1" selected>standard</option>
+            <option value="2">time</option>
+            <option value="3">measure type</option>
+            <option value="4">time jump</option>
+            <option value="5">calc</option>
+            <option value="6">format percent</option>
+            <option value="7">scaling</option>
+            <option value="8">hidden scaling</option>
+            <option value="9">view / layer</option>
+            <option value="10">formula link</option>
+            <option value="11">differentiator filler</option>
+            <option value="12">this</option>
+            <option value="13">next</option>
+            <option value="14">prior</option>
+            <option value="15">scaling word percent</option>
+            <option value="16">scaled measure</option>
+            <option value="17">math constant</option>
+            <option value="18">measure divisor</option>
+            <option value="19">latest</option>
+            <option value="20">key</option>
+            <option value="21">information</option>
+            <option value="22">hidden triple</option>
+            <option value="23">hidden system</option>
+            <option value="24">group and select</option>
+            <option value="25">symbol</option>
+            <option value="26">rank</option>
+            <option value="27">ignore</option>
+        </select></div>
+        <br>
+        <div class="form-group col-md-4"><label for="view">view:</label><select class="form-control" name="view"
+                                                                                form="word_edit" id="view">
+            <option value="50">Science</option>
+            <option value="51">Historic</option>
+            <option value="53">Education</option>
+            <option value="54">Touristic</option>
+        </select></div>
+        <br>
+        <div class="form-group col-md-4"><label for="view_long">view:</label><select class="form-control"
+                                                                                     name="view_long" form="word_edit"
+                                                                                     id="view_long">
+            <option value="50">Science</option>
+            <option value="51">Historic</option>
+            <option value="53">Education</option>
+            <option value="54">Touristic</option>
+            <option value="52">Biological</option>
+            <option value="55">Graph</option>
+            <option value="56">Simple</option>
+        </select></div>
+        <br>
+        <button type="submit" class="btn btn-outline-success btn-space">Save</button>
+    </form>
+    <h4>table</h4>
     <table class="table table-striped table-bordered">
-        <th><a href="/http/view.php?m=41&id=1"
-               title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">Mathematics</a>
-        </th>
+        <tr>
+            <th><a href="/http/view.php?m=41&id=1"
+                   title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">Mathematics</a>
+            </th>
+        </tr>
         <tr>
             <td><a href="/http/view.php?m=41&id=4" title="ratio of the circumference of a circle to its diameter">Pi</a>
             </td>
         </tr>
     </table>
     del in columns:
-    <tr>
-        <td><a href="/http/view.php?m=41&id=1"
-               title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">Mathematics</a>
-        </td>
-        <td><a href="/http/view.php?m=4&id=1" title="delete word"><i class="far fa-times-circle"></i></a></td>
-    </tr>
+    <table class="table table-striped table-bordered">
+        <tr>
+            <td><a href="/http/view.php?m=41&id=1"
+                   title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">Mathematics</a>
+            </td>
+            <td><a href="/http/view.php?m=4&id=1" title="delete word"><i class="far fa-times-circle"></i></a></td>
+        </tr>
+    </table>
     <br>unlink in columns:
-    <tr>
-        <td><a href="/http/view.php?m=41&id=4" title="ratio of the circumference of a circle to its diameter">Pi</a>
-        </td>
-        <td><a href="/http/link_del.php?id=1&back=4" title="Unlink word"><i class="far fa-times-circle"></i></a></td>
-    </tr>
+    <table class="table table-striped table-bordered">
+        <tr>
+            <td><a href="/http/view.php?m=41&id=4" title="ratio of the circumference of a circle to its diameter">Pi</a>
+            </td>
+            <td><a href="/http/link_del.php?id=1&back=4" title="Unlink word"><i class="far fa-times-circle"></i></a>
+            </td>
+        </tr>
+    </table>
     <br><h4>view header</h4>
     <h2><a href="/http/word_edit.php?id=1&back=1" title="Rename word"><span class="glyphicon glyphicon-pencil">Mathematics</span></a>
-    </h2><br></div>
+    </h2><br><h4>parents</h4><a href="/http/view.php?m=43&id=120" title="Zurich Insurance">Zurich Insurance</a>,<a
+            href="/http/view.php?m=43&id=38" title="Zurich (City)">Zurich (City)</a>,<a href="/http/view.php?m=43&id=37"
+                                                                                        title="Zurich (Canton)">Zurich
+        (Canton)</a>,<a href="/http/view.php?m=43&id=43" title="ZU is an acronym for Zurich">ZU is an acronym for
+        Zurich</a><br><h4>children</h4><a href="/http/view.php?m=43&id=40" title="Geneva (City)">Geneva (City)</a>,<a
+            href="/http/view.php?m=43&id=38" title="Zurich (City)">Zurich (City)</a>,<a href="/http/view.php?m=43&id=39"
+                                                                                        title="Bern (City)">Bern
+        (City)</a><br></div>
 <footer>
     <div class="text-center"><small><a href="/http/about.php" title="About">About</a> &middot;<a
             href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; All structured data is
