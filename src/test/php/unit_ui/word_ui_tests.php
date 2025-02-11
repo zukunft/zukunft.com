@@ -33,8 +33,8 @@
 namespace unit_ui;
 
 use html\html_base;
-use html\word\word as word_dsp;
-use shared\const\views as view_shared;
+use html\word\word;
+use shared\const\views;
 use test\test_cleanup;
 
 class word_ui_tests
@@ -49,10 +49,10 @@ class word_ui_tests
         //      with an undo button to change back to the standard
         // TODO add this ui test for all main sandbox objects
 
-        $wrd = new word_dsp($t->word()->api_json());
-        $wrd_pi = new word_dsp($t->word_pi()->api_json());
-        $wrd_zh = new word_dsp($t->word_zh()->api_json());
-        $wrd_city = new word_dsp($t->word_city()->api_json());
+        $wrd = new word($t->word()->api_json());
+        $wrd_pi = new word($t->word_pi()->api_json());
+        $wrd_zh = new word($t->word_zh()->api_json());
+        $wrd_city = new word($t->word_city()->api_json());
         $test_page = $html->text_h1('Word display test');
         $test_page .= $html->text_h2('names');
         $test_page .= 'with tooltip: ' . $wrd->name_tip() . '<br>';
@@ -63,10 +63,10 @@ class word_ui_tests
         $test_page .= 'del button: ' . $wrd->btn_del() . '<br>';
         $test_page .= 'unlink button: ' . $wrd->btn_unlink(1) . '<br>';
         $test_page .= $html->text_h2('select');
-        $from_rows = $wrd->dsp_type_selector(view_shared::WORD_EDIT) . '<br>';
-        $from_rows .= $wrd->view_selector(view_shared::WORD_EDIT, $t->view_list_dsp()) . '<br>';
-        $from_rows .= $wrd->view_selector(view_shared::WORD_EDIT, $t->view_list_long_dsp(), 'view_long') . '<br>';
-        $test_page .= $html->form(view_shared::WORD_EDIT, $from_rows);
+        $from_rows = $wrd->dsp_type_selector(views::WORD_EDIT) . '<br>';
+        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t->view_list_dsp()) . '<br>';
+        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t->view_list_long_dsp(), 'view_long') . '<br>';
+        $test_page .= $html->form(views::WORD_EDIT, $from_rows);
         $test_page .= $html->text_h2('table');
         $test_page .= $html->tbl($html->tr($wrd->th()) . $wrd_pi->tr());
         $test_page .= 'del in columns: ' . $html->tbl($wrd->dsp_del()) . '<br>';

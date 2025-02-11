@@ -42,7 +42,6 @@ class triple_ui_tests
 {
     function run(test_cleanup $t): void
     {
-        global $usr;
         $html = new html_base();
 
         $t->subheader('triple html ui unit tests');
@@ -51,6 +50,8 @@ class triple_ui_tests
         $test_page = $html->text_h1('Triple display test');
         $test_page .= $html->text_h2('names');
         $test_page .= 'with tooltip: ' . $trp->name_tip() . '<br>';
+        $test_page .= 'with link: ' . $trp->name_link() . '<br>';
+        $test_page .= $html->text_h2('buttons');
         $test_page .= 'edit button: ' . $trp->btn_edit($trp->phrase()) . '<br>';
         $t->html_test($test_page, 'triple', 'triple', $t);
     }

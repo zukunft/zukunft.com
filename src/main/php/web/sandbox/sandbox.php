@@ -33,22 +33,27 @@
 namespace html\sandbox;
 
 include_once WEB_SANDBOX_PATH . 'db_object.php';
+include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once WEB_SANDBOX_PATH . 'db_object.php';
+include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_USER_PATH . 'user.php';
 include_once WEB_USER_PATH . 'user_message.php';
 //include_once WEB_VIEW_PATH . 'view_list.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 
+use html\button;
+use html\html_base;
+use html\system\messages;
 use html\view\view_list;
 use shared\api;
 use html\sandbox\db_object as db_object_dsp;
 use html\user\user as user_dsp;
 use html\user\user_message;
-use shared\json_fields;
 use shared\types\view_styles;
+use shared\json_fields;
 
 class sandbox extends db_object_dsp
 {
@@ -120,7 +125,7 @@ class sandbox extends db_object_dsp
 
 
     /*
-     * interface
+     * api
      */
 
     /**
@@ -138,6 +143,46 @@ class sandbox extends db_object_dsp
             $vars[json_fields::PROTECTION] = $this->protection_id;
         }
         return $vars;
+    }
+
+
+    /*
+     * buttons
+     */
+
+    /**
+     * @returns string the html code to display a bottom to create anew word for the current user
+     */
+    function btn_add_sbx(int $msk_id, string $msg_code_id, string $back = ''): string
+    {
+        $btn = $this->btn_sbx($msk_id, $back);
+        return $btn->add($msg_code_id);
+    }
+
+    /**
+     * @returns string the html code to display a bottom to create anew word for the current user
+     */
+    function btn_edit_sbx(int $msk_id, string $msg_code_id, string $back = ''): string
+    {
+        $btn = $this->btn_sbx($msk_id, $back);
+        return $btn->edit(messages::WORD_EDIT);
+    }
+
+    /**
+     * @returns string the html code to display a bottom to exclude the word for the current user
+     *                 or if no one uses the word delete the complete word
+     */
+    function btn_del_sbx(int $msk_id, string $msg_code_id, string $back = ''): string
+    {
+        $btn = $this->btn_sbx($msk_id, $back);
+        return $btn->del(messages::WORD_DEL);
+    }
+
+    private function btn_sbx(int $msk_id, string $back = ''): button
+    {
+        $html = new html_base();
+        $url = $html->url_new($msk_id, $this->id(), '', $back);
+        return new button($url, $back);
     }
 
 

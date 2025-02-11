@@ -311,10 +311,7 @@ class word extends sandbox_typed
      */
     function btn_add(string $back = ''): string
     {
-        $html = new html_base();
-        $url = $html->url_new(views::WORD_ADD_ID, $this->id(), '', $back);
-        $btn = new button($url, $back);
-        return $btn->add(messages::WORD_ADD);
+        return parent::btn_add_sbx(views::WORD_ADD_ID, messages::WORD_ADD, $back);
     }
 
     /**
@@ -322,10 +319,7 @@ class word extends sandbox_typed
      */
     function btn_edit(string $back = ''): string
     {
-        $html = new html_base();
-        $url = $html->url_new(views::WORD_EDIT_ID, $this->id(), '', $back);
-        $btn = new button($url, $back);
-        return $btn->edit(messages::WORD_EDIT);
+        return parent::btn_edit_sbx(views::WORD_EDIT_ID, messages::WORD_EDIT, $back);
     }
 
     /**
@@ -334,10 +328,7 @@ class word extends sandbox_typed
      */
     function btn_del(string $back = ''): string
     {
-        $html = new html_base();
-        $url = $html->url_new(views::WORD_DEL_ID, $this->id(), '', $back);
-        $btn = new button($url, $back);
-        return $btn->del(messages::WORD_DEL);
+        return parent::btn_del_sbx(views::WORD_DEL_ID, messages::WORD_DEL, $back);
     }
 
     /**

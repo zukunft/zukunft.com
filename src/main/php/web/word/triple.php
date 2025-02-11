@@ -362,12 +362,10 @@ class triple extends sandbox_typed
      */
     function btn_add(string $back = ''): string
     {
-
         $html = new html_base();
-        $url = $html->url(rest_ctrl::PATH_FIXED . 'link' . rest_ctrl::CREATE . rest_ctrl::EXT, $this->id(), $this->id());
-        $btn = (new button($url . $back))->edit(messages::TRIPLE_ADD);
-
-        return $html->td($btn);
+        $url = $html->url_new(views::TRIPLE_ADD_ID, $this->id(), '', $back);
+        $btn = new button($url, $back);
+        return $btn->add(messages::TRIPLE_ADD);
     }
 
     /**
