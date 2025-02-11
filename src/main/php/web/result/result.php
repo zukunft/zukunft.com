@@ -84,7 +84,7 @@ class result extends sandbox_value
      */
     function display(phrase_list_dsp $phr_lst_header = null): string
     {
-        return $this->grp()->display($phr_lst_header);
+        return $this->grp()->name_tip($phr_lst_header);
     }
 
     /**
@@ -93,7 +93,7 @@ class result extends sandbox_value
      */
     function display_linked(phrase_list_dsp $phr_lst_header = null): string
     {
-        return $this->grp()->display_linked($phr_lst_header);
+        return $this->grp()->name_link_list($phr_lst_header);
     }
 
 

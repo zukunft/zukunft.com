@@ -107,7 +107,7 @@ class triple_list extends list_dsp
         $result = array();
         foreach ($this->lst() as $wrd) {
             if (!$wrd->is_hidden()) {
-                $result[] = $wrd->display_linked($back);
+                $result[] = $wrd->name_linked($back);
             }
         }
         return $result;
@@ -127,7 +127,7 @@ class triple_list extends list_dsp
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
         foreach ($this->lst() as $trp) {
-            $lnk = $trp->display_linked($back);
+            $lnk = $trp->name_link($back);
             $cols .= $html->td($lnk);
             $last_trp = $trp;
         }

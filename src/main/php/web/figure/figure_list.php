@@ -80,8 +80,9 @@ class figure_list extends list_dsp
         return $result;
     }
 
+
     /*
-     * display
+     * base
      */
 
     /**

@@ -149,7 +149,7 @@ class value_list extends list_dsp
         if ($header_phrases->count() <= 0) {
             $head_text = 'description';
         } else {
-            $head_text = $header_phrases->display_linked();
+            $head_text = $header_phrases->name_link();
         }
 
         // TODO add a button to add a new value using

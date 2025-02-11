@@ -126,7 +126,7 @@ class element extends db_object
                 // TODO replace with phrase
                 if ($this->obj::class == word::class
                     or $this->obj::class == triple::class) {
-                    $result = $this->obj->display_linked($back);
+                    $result = $this->obj->name_link($back);
                 }
                 if ($this->obj::class == verb::class) {
                     $result = $this->obj->name();

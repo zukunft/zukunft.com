@@ -134,7 +134,7 @@ class view_tests
         $test_name = 'view create from json string';
         $json = '{"id":1,"name":"Word","description":"the default view for words","code_id":"word"}';
         $msk_dsp = new view_dsp($json);
-        $dsp_text = $msk_dsp->display();
+        $dsp_text = $msk_dsp->name_tip();
         $target = 'Word';
         $t->assert($test_name, $dsp_text, $target);
 

@@ -43,7 +43,7 @@ class word_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('html ui unit page word tests');
+        $t->subheader('word html ui unit tests');
 
         // TODO add a list of differences between the user word and the standard word
         //      with an undo button to change back to the standard
@@ -53,8 +53,8 @@ class word_ui_tests
         $wrd_pi = new word_dsp($t->word_pi()->api_json());
         $test_page = $html->text_h1('Word display test');
         $test_page .= $html->text_h2('names');
-        $test_page .= 'with tooltip: ' . $wrd->name_html() . '<br>';
-        $test_page .= 'with link: ' . $wrd->display_linked() . '<br>';
+        $test_page .= 'with tooltip: ' . $wrd->name_tip() . '<br>';
+        $test_page .= 'with link: ' . $wrd->name_link() . '<br>';
         $test_page .= $html->text_h2('buttons');
         $test_page .= 'add button: ' . $wrd->btn_add() . '<br>';
         $test_page .= 'edit button: ' . $wrd->btn_edit() . '<br>';

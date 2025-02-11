@@ -77,7 +77,7 @@ if ($usr->id() > 0) {
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(explode(",", $wrd_names));
 
-        $result .= $wrd_lst->dsp_obj()->display();
+        $result .= $wrd_lst->dsp_obj()->name_link();
         $result .= ' = ';
         $val = $wrd_lst->value();
         $val_dsp = new value_dsp($val->api_json());

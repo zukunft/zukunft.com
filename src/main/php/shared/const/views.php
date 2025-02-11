@@ -95,9 +95,18 @@ class views
     const VIEW_DEL_ID = 27;
     const COMPONENT_ADD = 'component_add';
     const COMPONENT_EDIT = 'component_edit';
+    const COMPONENT_EDIT_ID = 29;
     const COMPONENT_DEL = 'component_del';
     const COMPONENT_LINK = 'component_link';
     const COMPONENT_UNLINK = 'component_unlink';
+
+    // types
+    const LANGUAGE_ADD = 'language_add';
+    const LANGUAGE_ADD_ID = 29;
+    const LANGUAGE_EDIT = 'language_edit';
+    const LANGUAGE_EDIT_ID = 29;
+    const LANGUAGE_DEL = 'language_del';
+    const LANGUAGE_DEL_ID = 29;
 
     // default views
     // TODO easy add missing default views e.g. for formula
@@ -110,6 +119,10 @@ class views
     const SOURCE = 'source';
     const SOURCE_ID = 44;
     const VALUE_DISPLAY = 'value';
+    const FORMULA = 'source';
+    const FORMULA_ID = 47;
+    const LANGUAGE = 'language';
+    const LANGUAGE_ID = 29;
 
     // functional views
     const WORD_FIND = 'word_find';

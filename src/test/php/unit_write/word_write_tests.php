@@ -468,7 +468,7 @@ class word_write_tests
         $back = 1;
         $target = '<a href="/http/view.php?m=' . views::WORD_ID . '&id=' . $wrd_read->id() . '&back=1" title="' . words::MATH_COM . '">' . words::MATH . '</a>';
         $wrd_read_dsp = new word_dsp($wrd_read->api_json());
-        $result = $wrd_read_dsp->display_linked($back);
+        $result = $wrd_read_dsp->name_link($back);
         $t->display('word->display "' . words::MATH . '"', $target, $result);
 
         // check if user 2 can exclude a word without influencing user 1

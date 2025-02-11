@@ -7,6 +7,9 @@
 
     to creat the HTML code to display a component
 
+    The main sections of this object are
+    - object vars:       the variables of this word object
+
 
     This file is part of zukunft.com - calc with words
 
@@ -87,12 +90,6 @@ use shared\types\view_styles;
 class component extends sandbox_typed
 {
 
-    const FORM_ADD = 'component_add';
-    const FORM_EDIT = 'component_edit';
-
-    // TODO to be move to
-    const FLD_ID = 'component_id';
-
     /*
      * object vars
      */
@@ -113,6 +110,23 @@ class component extends sandbox_typed
     // TODO move these vars to the frontend component link object
     public int $pos_type_id = position_types::DEFAULT_ID;
     public ?int $style_id = null;
+
+
+    /*
+     * base
+     */
+
+    /**
+     * create the html code to show the component name with the link to change the component parameters
+     * @param string|null $back the back trace url for the undo functionality
+     * @param string $style the CSS style that should be used
+     * @param int $msk_id database id of the view that should be shown
+     * @returns string the html code
+     */
+    function name_link(?string $back = '', string $style = '', int $msk_id = views::COMPONENT_EDIT_ID): string
+    {
+        return parent::name_link($back, $style, $msk_id);
+    }
 
 
     /*
@@ -180,7 +194,7 @@ class component extends sandbox_typed
             component_type::SYSTEM_CHANGE_LOG => $this->system_change_log($dbo, $form_name),
 
             // base
-            component_type::PHRASE => $this->display_name(),
+            component_type::PHRASE => $this->name_tip(),
             component_type::PHRASE_NAME => $this->phrase_name($dbo),
             component_type::LINK => $this->phrase_link($dbo, $form_name),
 
@@ -211,24 +225,6 @@ class component extends sandbox_typed
         $this->log_debug($this->dsp_id() . ' created');
 
         return $result;
-    }
-
-    /**
-     * TODO review these simplified function
-     * @return string
-     */
-    function display_name(): string
-    {
-        return $this->name();
-    }
-
-    /**
-     * TODO review these simplified function
-     * @return string
-     */
-    function display_linked(): string
-    {
-        return $this->name();
     }
 
     /**
@@ -1016,11 +1012,11 @@ class component extends sandbox_typed
 
         $hidden_fields = '';
         if ($this->id() <= 0) {
-            $script = self::FORM_ADD;
+            $script = views::COMPONENT_ADD;
             $fld_ext = '_add';
             $header = $html->text_h2('Create a view element');
         } else {
-            $script = self::FORM_EDIT;
+            $script = views::COMPONENT_EDIT;
             $fld_ext = '';
             $header = $html->text_h2('Change "' . $this->name . '"');
             $hidden_fields .= $html->form_hidden("id", $this->id());
@@ -1079,7 +1075,7 @@ class component extends sandbox_typed
         if ($this->phr_row != null) {
             //$phr_dsp = new word_dsp($this->phr_row->api_json());
             $phr_dsp = $this->phr_row;
-            $label = "Rows taken from " . $phr_dsp->display_linked() . ":";
+            $label = "Rows taken from " . $phr_dsp->name_link() . ":";
         }
         return $this->phrase_selector('word_row', $script, $label, $col_class, $this->phr_row->id()) . ' ';
     }
@@ -1096,7 +1092,7 @@ class component extends sandbox_typed
         if (isset($this->phr_col)) {
             //$phr_dsp = new word_dsp($this->phr_col->api_json());
             $phr_dsp = $this->phr_col;
-            $label = "Columns taken from " . $phr_dsp->display_linked() . ":";
+            $label = "Columns taken from " . $phr_dsp->name_link() . ":";
         }
         return $this->phrase_selector('word_col', $script, $label, $col_class, $this->phr_row->id()) . ' ';
     }

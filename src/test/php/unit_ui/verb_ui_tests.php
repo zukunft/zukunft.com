@@ -46,8 +46,8 @@ class verb_ui_tests
 
         $vrb = new verb_dsp($t->verb()->api_json());
         $test_page = $html->text_h2('Verb display test');
-        $test_page .= 'with tooltip: ' . $vrb->display() . '<br>';
-        $test_page .= 'with link: ' . $vrb->display_linked() . '<br>';
+        $test_page .= 'with tooltip: ' . $vrb->name_tip() . '<br>';
+        $test_page .= 'with link: ' . $vrb->name_link() . '<br>';
         $t->html_test($test_page, 'verb', 'verb', $t);
     }
 

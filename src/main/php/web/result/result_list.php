@@ -201,7 +201,7 @@ class result_list extends list_value
         if ($header_phrases->count() <= 0) {
             $head_text = 'description';
         } else {
-            $head_text = $header_phrases->display_linked();
+            $head_text = $header_phrases->name_link();
         }
         $header_rows = '';
         $rows = '';

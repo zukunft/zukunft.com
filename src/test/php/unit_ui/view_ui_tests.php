@@ -46,8 +46,8 @@ class view_ui_tests
 
         $vrb = new view_dsp($t->view()->api_json());
         $test_page = $html->text_h2('view display test');
-        $test_page .= 'with tooltip: ' . $vrb->display() . '<br>';
-        $test_page .= 'with link: ' . $vrb->display_linked() . '<br>';
+        $test_page .= 'with tooltip: ' . $vrb->name_tip() . '<br>';
+        $test_page .= 'with link: ' . $vrb->name_link() . '<br>';
         $t->html_test($test_page, 'view', 'view', $t);
     }
 

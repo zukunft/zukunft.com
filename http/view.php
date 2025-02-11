@@ -188,7 +188,7 @@ if ($usr->id() > 0) {
         if ($dsp_text == '' or $msk_dsp->name() == '') {
             $view_id = $sys_msk_cac->id(view_shared::START);
             $msk_dsp->load_by_id_with($view_id);
-            $dsp_text = $msk_dsp->display($dbo_dsp, $back);
+            $dsp_text = $msk_dsp->name_tip($dbo_dsp, $back);
         }
         if ($dsp_text == '') {
             $result .= 'Please add a component to the view by clicking on Edit on the top right.';

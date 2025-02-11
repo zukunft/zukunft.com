@@ -45,12 +45,12 @@ class triple_ui_tests
         global $usr;
         $html = new html_base();
 
-        $t->subheader('Triple tests');
+        $t->subheader('triple html ui unit tests');
 
         $trp = new triple($t->triple()->api_json());
         $test_page = $html->text_h1('Triple display test');
         $test_page .= $html->text_h2('names');
-        $test_page .= 'with tooltip: ' . $trp->name_html() . '<br>';
+        $test_page .= 'with tooltip: ' . $trp->name_tip() . '<br>';
         $test_page .= 'edit button: ' . $trp->btn_edit($trp->phrase()) . '<br>';
         $t->html_test($test_page, 'triple', 'triple', $t);
     }

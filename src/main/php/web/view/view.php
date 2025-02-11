@@ -5,7 +5,18 @@
     web/view/view.php - the display extension of the api view object
     -----------------
 
-    to creat the HTML code to display a view
+    to create the HTML code to display a view
+
+    The main sections of this object are
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - api:               set the object vars based on the api json message and create a json for the backend
+    - load:              get an api json from the backend and
+    - base:              html code for the single object vars
+    - buttons:           html code for the buttons e.g. to add, edit, del, link or unlink
+    - select:            html code to select parameter like the type
+    - execute:           create the html code for an object view
 
 
     This file is part of zukunft.com - calc with words
@@ -51,11 +62,12 @@ include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_VIEW_PATH . 'view_list.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'triple.php';
+include_once SHARED_CONST_PATH . 'components.php';
+include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_TYPES_PATH . 'view_type.php';
 include_once SHARED_PATH . 'api.php';
-include_once SHARED_CONST_PATH . 'components.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -79,6 +91,7 @@ use html\view\view_list as view_list_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use shared\api;
+use shared\const\views;
 use shared\json_fields;
 use shared\library;
 use shared\const\components;
@@ -117,6 +130,21 @@ class view extends sandbox_typed
 
     /*
      * set and get
+     */
+
+    function component_list(): component_list_dsp
+    {
+        return $this->cmp_lst;
+    }
+
+    function code_id(): ?string
+    {
+        return $this->code_id;
+    }
+
+
+    /*
+     * api
      */
 
     /**
@@ -166,16 +194,6 @@ class view extends sandbox_typed
         return $usr_msg;
     }
 
-    function component_list(): component_list_dsp
-    {
-        return $this->cmp_lst;
-    }
-
-    function code_id(): ?string
-    {
-        return $this->code_id;
-    }
-
 
     /*
      * load
@@ -195,31 +213,105 @@ class view extends sandbox_typed
 
 
     /*
-     * display
+     * base
      */
 
     /**
      * TODO review these simplified function
      * @return string
      */
-    function display(): string
+    function name_tip(): string
     {
         return $this->name();
     }
 
     /**
-     * TODO review these simplified function
-     * @return string
+     * create the html code to show the component name with the link to change the component parameters
+     * @param string|null $back the back trace url for the undo functionality
+     * @param string $style the CSS style that should be used
+     * @param int $msk_id database id of the view that should be shown
+     * @returns string the html code
      */
-    function display_linked(): string
+    function name_link(?string $back = '', string $style = '', int $msk_id = views::VIEW_EDIT_ID): string
     {
-        return $this->name();
+        return parent::name_link($back, $style, $msk_id);
     }
 
     function title(db_object_dsp $dbo): string
     {
         return $this->name() . ' ' . $dbo->name();
     }
+
+
+    /*
+     * buttons
+     */
+
+    /**
+     * temp version to debug a frontend bug
+     * @param string $ui_msg_id
+     * @param string $url
+     * @return string
+     */
+    private function btn_add(string $ui_msg_id, string $url): string
+    {
+        $icon = 'fa-plus-square';
+
+        $ui_msg = new messages();
+        $title = $ui_msg->txt($ui_msg_id);
+
+        return '<a href="' . $url . '" title="' . $title . '"><i class="far ' . $icon . '"></i></a>';
+    }
+
+    /**
+     * temp version to debug a frontend bug
+     * @param string $ui_msg_id
+     * @param string $url
+     * @return string
+     */
+    private function btn_edit(string $ui_msg_id, string $url): string
+    {
+        $icon = 'fa-edit';
+
+        $ui_msg = new messages();
+        $title = $ui_msg->txt($ui_msg_id);
+
+        return '<a href="' . $url . '" title="' . $title . '"><i class="far ' . $icon . '"></i></a>';
+    }
+
+
+    /*
+     * select
+     */
+
+    /**
+     * @param string $form_name
+     * @param string $pattern
+     * @param int $id
+     * @return string
+     */
+    private function component_selector(string $form_name, string $pattern, int $id): string
+    {
+        $cmp_lst = new component_list_dsp;
+        $cmp_lst->load_like($pattern);
+        return $cmp_lst->selector($form_name, $id, 'add_component', 'please define a component', '');
+    }
+
+    /**
+     * @param string $form_name
+     * @param int $id the id of the type that should be preselected
+     * @return string
+     */
+    private function component_type_selector(string $form_name, int $id): string
+    {
+        global $html_component_types;
+        return $html_component_types->selector($form_name, $id);
+    }
+
+
+    /*
+     * execute
+     */
 
     /**
      * create the html code to view a sandbox object
@@ -435,38 +527,6 @@ class view extends sandbox_typed
         return $result;
     }
 
-    /**
-     * temp version to debug a frontend bug
-     * @param string $ui_msg_id
-     * @param string $url
-     * @return string
-     */
-    private function btn_add(string $ui_msg_id, string $url): string
-    {
-        $icon = 'fa-plus-square';
-
-        $ui_msg = new messages();
-        $title = $ui_msg->txt($ui_msg_id);
-
-        return '<a href="' . $url . '" title="' . $title . '"><i class="far ' . $icon . '"></i></a>';
-    }
-
-    /**
-     * temp version to debug a frontend bug
-     * @param string $ui_msg_id
-     * @param string $url
-     * @return string
-     */
-    private function btn_edit(string $ui_msg_id, string $url): string
-    {
-        $icon = 'fa-edit';
-
-        $ui_msg = new messages();
-        $title = $ui_msg->txt($ui_msg_id);
-
-        return '<a href="' . $url . '" title="' . $title . '"><i class="far ' . $icon . '"></i></a>';
-    }
-
     private function input_search_pattern(): string
     {
         $html = new html_base();
@@ -670,29 +730,6 @@ class view extends sandbox_typed
         return $result;
     }
 
-    /**
-     * @param string $form_name
-     * @param string $pattern
-     * @return string
-     */
-    private function component_selector(string $form_name, string $pattern, int $id): string
-    {
-        $cmp_lst = new component_list_dsp;
-        $cmp_lst->load_like($pattern);
-        return $cmp_lst->selector($form_name, $id, 'add_component', 'please define a component', '');
-    }
-
-    /**
-     * @param string $form_name
-     * @param int $id the id of the type that should be preselected
-     * @return string
-     */
-    private function component_type_selector(string $form_name, int $id): string
-    {
-        global $html_component_types;
-        return $html_component_types->selector($form_name, $id);
-    }
-
 
     /*
      * to review
@@ -835,7 +872,6 @@ class view extends sandbox_typed
             $this->log_debug('loaded');
             $dsp_list = new display_list;
             $dsp_list->lst = $this->cmp_lst->lst();
-            $dsp_list->id_field = component_dsp::FLD_ID;
             $dsp_list->script_name = "view_edit.php";
             $dsp_list->class_edit = view::class;
             $dsp_list->script_parameter = $this->id() . "&back=" . $back . "&word=" . $wrd->id();

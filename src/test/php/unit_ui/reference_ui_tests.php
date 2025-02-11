@@ -47,8 +47,8 @@ class reference_ui_tests
 
         $ref = new ref_dsp($t->reference()->api_json());
         $test_page = $html->text_h2('reference display test');
-        $test_page .= 'with tooltip: ' . $ref->display() . '<br>';
-        $test_page .= 'with link: ' . $ref->display_linked() . '<br>';
+        $test_page .= 'with tooltip: ' . $ref->name_tip() . '<br>';
+        $test_page .= 'with link: ' . $ref->name_link() . '<br>';
         $t->html_test($test_page, 'reference', 'reference', $t);
     }
 

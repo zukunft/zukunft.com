@@ -78,15 +78,15 @@ include_once SHARED_PATH . 'library.php';
 
 use controller\api_message;
 use html\button;
-use html\formula\formula as formula_dsp;
+use html\formula\formula;
 use html\helper\config;
 use html\html_base;
 use html\html_selector;
-use html\log\change_log_named as change_log_named_dsp;
+use html\log\change_log_named;
 use html\log\user_log_display;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\phrase\term as term_dsp;
+use html\phrase\phrase;
+use html\phrase\phrase_list;
+use html\phrase\term;
 use html\rest_ctrl;
 use html\sandbox\sandbox_typed;
 use html\system\back_trace;
@@ -99,7 +99,7 @@ use shared\enum\foaf_direction;
 use shared\json_fields;
 use shared\const\views;
 use shared\const\words;
-use shared\types\phrase_type as phrase_type_shared;
+use shared\types\phrase_type;
 use shared\types\view_styles;
 
 class word extends sandbox_typed
@@ -113,7 +113,7 @@ class word extends sandbox_typed
     private ?string $plural = null;
 
     // the main parent phrase
-    private ?phrase_dsp $parent = null;
+    private ?phrase $parent = null;
 
 
     /*
@@ -130,12 +130,12 @@ class word extends sandbox_typed
         return $this->plural;
     }
 
-    function set_parent(?phrase_dsp $parent): void
+    function set_parent(?phrase $parent): void
     {
         $this->parent = $parent;
     }
 
-    function parent(): ?phrase_dsp
+    function parent(): ?phrase
     {
         return $this->parent;
     }
@@ -232,21 +232,21 @@ class word extends sandbox_typed
     }
 
     /**
-     * @returns phrase_dsp the phrase display object base on this word object
+     * @returns phrase the phrase display object base on this word object
      */
-    function phrase(): phrase_dsp
+    function phrase(): phrase
     {
-        $phr = new phrase_dsp();
+        $phr = new phrase();
         $phr->set_obj($this);
         return $phr;
     }
 
     /**
-     * @returns term_dsp the word object cast into a term object
+     * @returns term the word object cast into a term object
      */
-    function term(): term_dsp
+    function term(): term
     {
-        $trm = new term_dsp();
+        $trm = new term();
         $trm->set_obj($this);
         return $trm;
     }
@@ -263,20 +263,20 @@ class word extends sandbox_typed
     function view_list(?string $pattern = null): view_list
     {
         $msk_lst = new view_list();
-        $msk_lst->load_by_pattern();
+        $msk_lst->load_by_pattern($pattern);
         return $msk_lst;
     }
 
-    function parents(): phrase_list_dsp
+    function parents(): phrase_list
     {
-        $lst = new phrase_list_dsp();
+        $lst = new phrase_list();
         // TODO get the json from the backend
         return $lst;
     }
 
-    function children(): phrase_list_dsp
+    function children(): phrase_list
     {
-        $lst = new phrase_list_dsp();
+        $lst = new phrase_list();
         // TODO get the json from the backend
         return $lst;
     }
@@ -287,24 +287,15 @@ class word extends sandbox_typed
      */
 
     /**
-     * @returns string simply the word name, but later with mouse over that shows the description
-     */
-    function display(): string
-    {
-        return $this->name;
-    }
-
-    /**
      * display a word with a link to the main page for the word
      * @param string|null $back the back trace url for the undo functionality
      * @param string $style the CSS style that should be used
+     * @param int $msk_id database id of the view that should be shown
      * @returns string the html code
      */
-    function display_linked(?string $back = '', string $style = ''): string
+    function name_link(?string $back = '', string $style = '', int $msk_id = views::WORD_ID): string
     {
-        $html = new html_base();
-        $url = $html->url_new(views::WORD_ID, $this->id(), '', $back);
-        return $html->ref($url, $this->name(), $this->description(), $style);
+        return parent::name_link($back, $style, $msk_id);
     }
 
 
@@ -380,7 +371,7 @@ class word extends sandbox_typed
     {
         global $phr_typ_cac;
         $result = '';
-        if ($phr_typ_cac->code_id($this->type_id()) == phrase_type_shared::FORMULA_LINK) {
+        if ($phr_typ_cac->code_id($this->type_id()) == phrase_type::FORMULA_LINK) {
             $result .= ' type: ' . $phr_typ_cac->name($this->type_id());
         } else {
             $result .= $this->phrase_type_selector($form);
@@ -400,7 +391,7 @@ class word extends sandbox_typed
      */
     function th(string $back = '', string $style = ''): string
     {
-        return (new html_base)->th($this->display_linked($back, $style));
+        return (new html_base)->th($this->name_link($back, $style));
     }
 
     /**
@@ -418,7 +409,7 @@ class word extends sandbox_typed
      */
     function td(string $back = '', string $style = '', int $intent = 0): string
     {
-        $cell_text = $this->display_linked($back, $style);
+        $cell_text = $this->name_link($back, $style);
         return (new html_base)->td($cell_text, $intent);
     }
 
@@ -460,7 +451,7 @@ class word extends sandbox_typed
      */
     function log_view(back_trace $back): string
     {
-        $log_dsp = new change_log_named_dsp();
+        $log_dsp = new change_log_named();
         return '';
     }
 
@@ -495,7 +486,7 @@ class word extends sandbox_typed
      */
     function is_time(): bool
     {
-        return $this->is_type(phrase_type_shared::TIME);
+        return $this->is_type(phrase_type::TIME);
     }
 
     /**
@@ -503,7 +494,7 @@ class word extends sandbox_typed
      */
     function is_time_jump(): bool
     {
-        return $this->is_type(phrase_type_shared::TIME_JUMP);
+        return $this->is_type(phrase_type::TIME_JUMP);
     }
 
     /**
@@ -513,7 +504,7 @@ class word extends sandbox_typed
      */
     function is_measure(): bool
     {
-        return $this->is_type(phrase_type_shared::MEASURE);
+        return $this->is_type(phrase_type::MEASURE);
     }
 
     /**
@@ -522,8 +513,8 @@ class word extends sandbox_typed
     function is_scaling(): bool
     {
         $result = false;
-        if ($this->is_type(phrase_type_shared::SCALING)
-            or $this->is_type(phrase_type_shared::SCALING_HIDDEN)) {
+        if ($this->is_type(phrase_type::SCALING)
+            or $this->is_type(phrase_type::SCALING_HIDDEN)) {
             $result = true;
         }
         return $result;
@@ -534,7 +525,7 @@ class word extends sandbox_typed
      */
     function is_percent(): bool
     {
-        return $this->is_type(phrase_type_shared::PERCENT);
+        return $this->is_type(phrase_type::PERCENT);
     }
 
     /**
@@ -543,7 +534,7 @@ class word extends sandbox_typed
     function is_hidden(): bool
     {
         $result = false;
-        if ($this->is_type(phrase_type_shared::SCALING_HIDDEN)) {
+        if ($this->is_type(phrase_type::SCALING_HIDDEN)) {
             $result = true;
         }
         return $result;
@@ -560,12 +551,12 @@ class word extends sandbox_typed
 
     /**
      * display a word as the view header
-     * @param phrase_dsp|null $is_part_of the word group as a hint to the user
+     * @param phrase|null $is_part_of the word group as a hint to the user
      *        e.g. City Zurich because in many cases if just the word Zurich is given the assumption is,
      *             that the Zurich (City) is the phrase to select
      * @returns string the HTML code to display a word
      */
-    function header(?phrase_dsp $is_part_of = null): string
+    function header(?phrase $is_part_of = null): string
     {
         $html = new html_base();
 
@@ -790,7 +781,7 @@ class word extends sandbox_typed
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
      * @param string $pattern the pattern to filter the phrases
-     * @param phrase_dsp|null $phr the context to select the phrases, which is until now just the phrase
+     * @param phrase|null $phr the context to select the phrases, which is until now just the phrase
      * @return string the html code to select a phrase
      */
     protected function phrase_selector(
@@ -800,11 +791,11 @@ class word extends sandbox_typed
         string      $col_class = '',
         int         $selected = 0,
         string      $pattern = '',
-        ?phrase_dsp $phr = null
+        ?phrase $phr = null
     ): string
     {
         $result = '';
-        $phr_lst = new phrase_list_dsp();
+        $phr_lst = new phrase_list();
         if ($pattern != '') {
             $phr_lst->load_like($pattern);
             $result = $phr_lst->selector($form, $selected, $name, $label, view_styles::COL_SM_4, html_selector::TYPE_DATALIST);
@@ -869,12 +860,12 @@ class word extends sandbox_typed
         $html = new html_base();
 
         $result = '';
-        if ($this->type_id() == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
+        if ($this->type_id() == $phr_typ_cac->id(phrase_type::FORMULA_LINK)) {
             $result .= $html->dsp_form_hidden("name", $this->name);
             $result .= '  to change the name of "' . $this->name . '" rename the ';
-            $frm = new formula_dsp();
+            $frm = new formula();
             $frm->load_by_name($this->name());
-            $result .= $frm->display_linked($back);
+            $result .= $frm->name_link($back);
             $result .= '.<br> ';
         } else {
             $result .= $html->dsp_form_text("name", $this->name, "Name:", view_styles::COL_SM_4);

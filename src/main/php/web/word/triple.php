@@ -75,7 +75,6 @@ use html\phrase\phrase as phrase_dsp;
 use html\sandbox\sandbox_typed;
 use html\phrase\term as term_dsp;
 use html\verb\verb as verb_dsp;
-use shared\api as api_shared;
 use shared\const\views;
 use shared\json_fields;
 use shared\types\phrase_type;
@@ -343,24 +342,14 @@ class triple extends sandbox_typed
      */
 
     /**
-     * @returns string simply the word name, but later with mouse over that shows the description
-     */
-    function display(): string
-    {
-        return $this->name();
-    }
-
-    /**
      * display a triple with a link to the main page for the triple
      * @param string|null $back the back trace url for the undo functionality
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
-    function display_linked(?string $back = '', string $style = ''): string
+    function name_link(?string $back = '', string $style = '', int $msk_id = views::TRIPLE_ID): string
     {
-        $html = new html_base();
-        $url = $html->url(rest_ctrl::TRIPLE, $this->id(), $back, api_shared::URL_VAR_TRIPLES);
-        return $html->ref($url, $this->name(), $this->name(), $style);
+        return parent::name_link($back, $style, $msk_id);
     }
 
 
@@ -490,6 +479,30 @@ class triple extends sandbox_typed
     function is_percent(): bool
     {
         return $this->is_type(phrase_type_shared::PERCENT);
+    }
+
+
+    /*
+     * table
+     */
+
+    /**
+     * @return string the html code for a table row with the word
+     */
+    function tr(): string
+    {
+        return (new html_base())->tr($this->td());
+    }
+
+    /**
+     * @param string $back the back trace url for the undo functionality
+     * @param string $style the CSS style that should be used
+     * @returns string the word as a table cell
+     */
+    function td(string $back = '', string $style = '', int $intent = 0): string
+    {
+        $cell_text = $this->name_link($back, $style);
+        return (new html_base)->td($cell_text, $intent);
     }
 
 

@@ -2907,16 +2907,8 @@ class triple extends sandbox_link_named
             $result .= '&nbsp;';
             $intent = $intent - 1;
         }
-        $result .= '      ' . $this->display_linked() . "\n";
+        $result .= '      ' . $this->name_link() . "\n";
         $result .= '    </td>' . "\n";
-        return $result;
-    }
-
-    function dsp_tbl_row(): string
-    {
-        $result = '  <tr>' . "\n";
-        $result .= $this->dsp_tbl(0);
-        $result .= '  </tr>' . "\n";
         return $result;
     }
 

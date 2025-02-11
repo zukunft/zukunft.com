@@ -47,8 +47,8 @@ class phrase_group_ui_tests
         $api_msg = $t->group()->api_json();
         $grp = new phrase_group_dsp($api_msg);
         $test_page = $html->text_h2('Phrase group display test');
-        $test_page .= 'phrase group with tooltip: ' . $grp->display() . '<br>';
-        $test_page .= 'phrase group with link: ' . $grp->display_linked() . '<br>';
+        $test_page .= 'phrase group with tooltip: ' . $grp->name_tip() . '<br>';
+        $test_page .= 'phrase group with link: ' . $grp->name_link_list() . '<br>';
         $t->html_test($test_page, 'phrase_group', 'phrase_group', $t);
     }
 

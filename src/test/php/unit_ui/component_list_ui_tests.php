@@ -50,8 +50,8 @@ class component_list_ui_tests
         // test the component list display functions
         $lst = new component_list_dsp($t->component_list()->api_json());
         $test_page = $html->text_h2('component list display test');
-        $test_page .= 'component list with tooltip: ' . $lst->display() . '<br>';
-        $test_page .= 'component list with link: ' . $lst->display_linked() . '<br>';
+        $test_page .= 'component list with tooltip: ' . $lst->name_tip() . '<br>';
+        $test_page .= 'component list with link: ' . $lst->name_link() . '<br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
         $test_page .= $lst->selector('', 0, 'test_selector', 'No component selected') . '<br>';

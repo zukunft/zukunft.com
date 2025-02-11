@@ -134,6 +134,21 @@
       ]
     },
     {
+      "name": "Language",
+      "description": "the default view for languages",
+      "code_id": "language",
+      "components": [
+        {
+          "position": "1",
+          "name": "Language"
+        },
+        {
+          "position": "2",
+          "name": "related values"
+        }
+      ]
+    },
+    {
       "name": "Display Number",
       "description": "the default view for values",
       "code_id": "value",

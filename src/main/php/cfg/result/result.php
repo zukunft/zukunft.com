@@ -1286,7 +1286,7 @@ class result extends sandbox_value
         $frm = new formula($this->user());
         $frm->load_by_id($this->frm->id());
         $frm_html = new formula_dsp($frm->api_json());
-        $result .= ' based on</br>' . $frm_html->display_linked($back);
+        $result .= ' based on</br>' . $frm_html->name_link($back);
         $result .= ' ' . $frm_html->dsp_text($back) . "\n";
         $result .= ' ' . $frm_html->btn_edit($back) . "\n";
         $result .= '</br></br>' . "\n";

@@ -212,27 +212,7 @@ class ref extends db_object_dsp
 
 
     /*
-     * display
-     */
-
-    /**
-     * @returns string simply the ref name, but later with mouse over that shows the description
-     */
-    function display(): string
-    {
-        return $this->type_name() . ' ' . $this->external_key;
-    }
-
-    /**
-     * @returns string simply the ref name, but later with mouse over that shows the description
-     */
-    function display_linked(): string
-    {
-        return $this->type_name() . ' ' . $this->external_key;
-    }
-
-    /*
-     * interface
+     * api
      */
 
     /**
@@ -249,6 +229,27 @@ class ref extends db_object_dsp
         $vars[json_fields::PREDICATE] = $this->predicate_id();
         $vars[json_fields::DESCRIPTION] = $this->description();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+
+    /*
+     * base
+     */
+
+    /**
+     * @returns string simply the ref name, but later with mouse over that shows the description
+     */
+    function name_tip(): string
+    {
+        return $this->type_name() . ' ' . $this->external_key;
+    }
+
+    /**
+     * @returns string simply the ref name, but later with mouse over that shows the description
+     */
+    function name_link(): string
+    {
+        return $this->type_name() . ' ' . $this->external_key;
     }
 
 }

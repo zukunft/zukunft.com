@@ -47,10 +47,10 @@ class phrase_ui_tests
         $wrd = new phrase_dsp($t->word()->phrase()->api_json());
         $trp = new phrase_dsp($t->triple_pi()->phrase()->api_json());
         $test_page = $html->text_h2('Phrase display test');
-        $test_page .= 'word phrase with tooltip: ' . $wrd->display() . '<br>';
-        $test_page .= 'word phrase with link: ' . $wrd->display_linked() . '<br>';
-        $test_page .= 'triple phrase with tooltip: ' . $trp->display() . '<br>';
-        $test_page .= 'triple phrase with link: ' . $trp->display_linked() . '<br>';
+        $test_page .= 'word phrase with tooltip: ' . $wrd->name_tip() . '<br>';
+        $test_page .= 'word phrase with link: ' . $wrd->name_link() . '<br>';
+        $test_page .= 'triple phrase with tooltip: ' . $trp->name_tip() . '<br>';
+        $test_page .= 'triple phrase with link: ' . $trp->name_link() . '<br>';
         $t->html_test($test_page, 'phrase', 'phrase', $t);
     }
 

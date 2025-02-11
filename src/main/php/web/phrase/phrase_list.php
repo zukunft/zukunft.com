@@ -212,14 +212,14 @@ class phrase_list extends sandbox_list_named
     /**
      * @returns string the html code to display the phrases with the most useful link
      */
-    function display_linked(): string
+    function name_link(): string
     {
         $result = '';
         foreach ($this->lst() as $phr) {
-            if ($result != '' and $phr->display_linked() != '') {
+            if ($result != '' and $phr->name_link() != '') {
                 $result .= ', ';
             }
-            $result .= $phr->display_linked();
+            $result .= $phr->name_link();
         }
         return $result;
     }
@@ -230,7 +230,7 @@ class phrase_list extends sandbox_list_named
      */
     private function plural(): string
     {
-        return $this->display_linked() . 's';
+        return $this->name_link() . 's';
     }
 
     /**

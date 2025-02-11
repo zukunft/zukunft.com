@@ -442,24 +442,24 @@ class term extends combine_named_dsp
     /**
      * @returns string the html code to display with mouse over that shows the description
      */
-    function display(): string
+    function name_tip(): string
     {
-        return $this->obj()->display();
+        return $this->obj()->name_tip();
     }
 
     /**
      * @returns string the html code to display the phrase with reference links
      */
-    function display_linked(): string
+    function name_link(): string
     {
         if ($this->is_word()) {
-            return $this->obj()->display_linked();
+            return $this->obj()->name_link();
         } elseif ($this->is_triple()) {
-            return $this->obj()->display_linked();
+            return $this->obj()->name_link();
         } elseif ($this->is_formula()) {
-            return $this->obj()->display_linked();
+            return $this->obj()->name_link();
         } elseif ($this->is_verb()) {
-            return $this->obj()->display_linked();
+            return $this->obj()->name_link();
         } else {
             $msg = 'Unexpected term type ' . $this->dsp_id();
             log_err($msg);

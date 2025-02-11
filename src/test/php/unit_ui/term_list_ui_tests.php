@@ -48,8 +48,8 @@ class term_list_ui_tests
         // test the term list display functions
         $lst = new term_list_dsp($t->term_list()->api_json());
         $test_page = $html->text_h2('term list display test');
-        $test_page .= 'term list with tooltip: ' . $lst->display() . '<br>';
-        $test_page .= 'term list with link: ' . $lst->display_linked() . '<br>';
+        $test_page .= 'term list with tooltip: ' . $lst->name_tip() . '<br>';
+        $test_page .= 'term list with link: ' . $lst->name_link() . '<br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
         $test_page .= $lst->selector('', 0, 'test_selector', 'No term selected') . '<br>';

@@ -48,67 +48,23 @@ include_once SHARED_PATH . 'json_fields.php';
 
 use html\button;
 use html\html_base;
-use html\phrase\phrase_list as phrase_list_dsp;
 use html\rest_ctrl as api_dsp;
-use html\sandbox\combine_named as combine_named_dsp;
+use html\sandbox\combine_named;
 use html\system\messages;
 use html\user\user_message;
 use html\verb\verb_list;
-use html\word\triple as triple_dsp;
-use html\word\word as word_dsp;
+use html\word\triple;
+use html\word\word;
 use html\word\word_list;
 use shared\enum\foaf_direction;
 use shared\json_fields;
 
-class phrase extends combine_named_dsp
+class phrase extends combine_named
 {
 
     /*
      * set and get
      */
-
-    /**
-     * set the vars of this phrase html display object bases on the api message
-     * @param string $json_api_msg an api json message as a string
-     * @return user_message ok or a warning e.g. if the server version does not match
-     */
-    function set_from_json(string $json_api_msg): user_message
-    {
-        return $this->set_from_json_array(json_decode($json_api_msg, true));
-    }
-
-    /**
-     * set the vars of this phrase frontend object bases on the api json array
-     * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
-     */
-    function set_from_json_array(array $json_array): user_message
-    {
-        $usr_msg = new user_message();
-        if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
-            if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
-                $wrd_dsp = new word_dsp();
-                $wrd_dsp->set_from_json_array($json_array);
-                $this->set_obj($wrd_dsp);
-            } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
-                $trp_dsp = new triple_dsp();
-                $trp_dsp->set_from_json_array($json_array);
-                $this->set_obj($trp_dsp);
-                // switch the phrase id to the object id
-                $this->set_id($trp_dsp->id());
-            } else {
-                $usr_msg->add_err('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a phrase');
-            }
-        } else {
-            $usr_msg->add_err('Json class missing, but expected for a phrase');
-        }
-        return $usr_msg;
-    }
-
-    function set_phrase_obj(word_dsp|triple_dsp|null $obj = null): void
-    {
-        $this->obj = $obj;
-    }
 
     /**
      * set the object id based on the given phrase id
@@ -145,7 +101,7 @@ class phrase extends combine_named_dsp
 
 
     /*
-     * interface
+     * api
      */
 
     /**
@@ -180,6 +136,44 @@ class phrase extends combine_named_dsp
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
+    /**
+     * set the vars of this phrase html display object bases on the api message
+     * @param string $json_api_msg an api json message as a string
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_from_json(string $json_api_msg): user_message
+    {
+        return $this->set_from_json_array(json_decode($json_api_msg, true));
+    }
+
+    /**
+     * set the vars of this phrase frontend object bases on the api json array
+     * @param array $json_array an api json message
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_from_json_array(array $json_array): user_message
+    {
+        $usr_msg = new user_message();
+        if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
+            if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
+                $wrd_dsp = new word();
+                $wrd_dsp->set_from_json_array($json_array);
+                $this->set_obj($wrd_dsp);
+            } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
+                $trp_dsp = new triple();
+                $trp_dsp->set_from_json_array($json_array);
+                $this->set_obj($trp_dsp);
+                // switch the phrase id to the object id
+                $this->set_id($trp_dsp->id());
+            } else {
+                $usr_msg->add_err('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a phrase');
+            }
+        } else {
+            $usr_msg->add_err('Json class missing, but expected for a phrase');
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * classifications
@@ -191,7 +185,7 @@ class phrase extends combine_named_dsp
     function is_word(): bool
     {
         if ($this->obj() != null) {
-            if ($this->obj()::class == word_dsp::class) {
+            if ($this->obj()::class == word::class) {
                 return true;
             } else {
                 return false;
@@ -216,23 +210,23 @@ class phrase extends combine_named_dsp
 
 
     /*
-     * display
+     * base
      */
 
     /**
      * @returns string the html code to display with mouse over that shows the description
      */
-    function display(): string
+    function name_tip(): string
     {
-        return $this->obj()->display();
+        return $this->obj()->name_tip();
     }
 
     /**
      * @returns string the html code to display the phrase with reference links
      */
-    function display_linked(): string
+    function name_link(): string
     {
-        return $this->obj()->name();
+        return $this->obj()->name_link();
     }
 
     /**
@@ -326,7 +320,7 @@ class phrase extends combine_named_dsp
 
     function dsp_graph(foaf_direction $direction, ?verb_list $link_types = null, string $back = ''): string
     {
-        $phr_lst = new phrase_list_dsp();
+        $phr_lst = new phrase_list();
         if ($phr_lst->load_related($this, $direction, $link_types)) {
             return $phr_lst->dsp_graph($this, $back);
         } else {
@@ -335,9 +329,9 @@ class phrase extends combine_named_dsp
     }
 
     /**
-     * @return word_dsp the most relevant
+     * @return word the most relevant
      */
-    function main_word(): word_dsp
+    function main_word(): word
     {
         if ($this->is_word()) {
             return $this->obj()->word();
@@ -375,4 +369,21 @@ class phrase extends combine_named_dsp
         return $wrd_lst;
     }
 
+    function dsp_tbl(int $intent = 0): string
+    {
+        $result = '';
+        if ($this != null) {
+            if ($this->obj != null) {
+                // the function dsp_tbl should exist for words and triples
+                $dsp_obj = $this->obj();
+                if ($this->is_word() == word::class) {
+                    $result = $dsp_obj->td('', '', $intent);
+                } else {
+                    $result = $dsp_obj->tr('', '', $intent);
+                }
+            }
+        }
+        log_debug('for ' . $this->dsp_id());
+        return $result;
+    }
 }

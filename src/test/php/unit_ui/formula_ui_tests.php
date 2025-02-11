@@ -47,8 +47,8 @@ class formula_ui_tests
 
         $frm = new formula_dsp($t->formula()->api_json());
         $test_page = $html->text_h2('formula display test');
-        $test_page .= 'with tooltip: ' . $frm->display() . '<br>';
-        $test_page .= 'with link: ' . $frm->display_linked() . '<br>';
+        $test_page .= 'with tooltip: ' . $frm->name_tip() . '<br>';
+        $test_page .= 'with link: ' . $frm->name_link() . '<br>';
         $t->html_test($test_page, 'formula', 'formula', $t);
 
         // TODO review

@@ -89,7 +89,7 @@ class value extends sandbox_value
      */
     function name_linked(phrase_list_dsp|null $phr_lst_exclude = null): string
     {
-        return $this->grp()->display_linked($phr_lst_exclude);
+        return $this->grp()->name_link_list($phr_lst_exclude);
     }
 
     /**
@@ -522,10 +522,10 @@ class value extends sandbox_value
                 }
                 // prepare a new value display
                 $row_value = $db_row["numeric_value"];
-                $word_names = $wrd->display_linked(rest_ctrl::STYLE_GREY);
+                $word_names = $wrd->name_linked(rest_ctrl::STYLE_GREY);
                 $group_id = $new_group_id;
             } else {
-                $word_names .= ", " . $wrd->display_linked(rest_ctrl::STYLE_GREY);
+                $word_names .= ", " . $wrd->name_linked(rest_ctrl::STYLE_GREY);
             }
         }
         // display the last row if there has been at least one word
@@ -852,7 +852,7 @@ class value extends sandbox_value
                 $samples = $this->dsp_samples($main_wrd->id, $this->ids(), 10, $back);
                 log_debug("value->dsp_edit samples.");
                 if (trim($samples) <> "") {
-                    $result .= $html->dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_obj()->display_linked(rest_ctrl::STYLE_GREY) . '" values as an indication', 'change_hist');
+                    $result .= $html->dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_obj()->name_linked(rest_ctrl::STYLE_GREY) . '" values as an indication', 'change_hist');
                     $result .= $samples;
                 }
                 */

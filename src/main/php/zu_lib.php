@@ -14,6 +14,11 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
+    TODO cleanup frontend class and add unit tests
+    TODO use the config object in the frontend
+    TODO create the missing system views
+    TODO move the remaining html function from the backend to the frontend
+
     TODO make sure that unit tests does not start any api call
     TODO move all user configuration settings to the config yaml
     TODO check the no frontend class is used in the backend
@@ -375,6 +380,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO create different related tables for prime and big context and user specific
     TODO move code id const to a code_id.yaml file for better sharing between the different code languages
     TODO add a test case to check missing or invalid code id const e.g. in php, java, JavaScript, python
+    TODO check if all backend api calls are actually called from the frontend
 
     TODO message handling
         in dought return a user message to the highest level, so that it can be shown to the user

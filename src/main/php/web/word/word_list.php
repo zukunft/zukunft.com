@@ -114,7 +114,7 @@ class word_list extends list_dsp
 
 
     /*
-     * display
+     * base
      */
 
     /**
@@ -122,7 +122,7 @@ class word_list extends list_dsp
      * @return string with a list of the word names with html links
      * ex. names_linked
      */
-    function display(string $back = ''): string
+    function name_link(string $back = ''): string
     {
         return implode(', ', $this->names_linked($back));
     }
@@ -136,7 +136,7 @@ class word_list extends list_dsp
         $result = array();
         foreach ($this->lst() as $wrd) {
             if (!$wrd->is_hidden()) {
-                $result[] = $wrd->display_linked($back);
+                $result[] = $wrd->name_link($back);
             }
         }
         return $result;
@@ -154,7 +154,7 @@ class word_list extends list_dsp
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
         foreach ($this->lst() as $wrd) {
-            $lnk = $wrd->display_linked($back);
+            $lnk = $wrd->name_link($back);
             $cols .= $html->td($lnk);
         }
         return $html->tbl($html->tr($cols), html_base::STYLE_BORDERLESS);

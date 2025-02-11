@@ -141,18 +141,18 @@ class view_list extends list_dsp
 
 
     /*
-     * display
+     * base
      */
 
     /**
      * @return string with a list of the view names with html links
      * ex. names_linked
      */
-    function display(): string
+    function name_tip(): string
     {
         $views = array();
-        foreach ($this->lst() as $fig) {
-            $views[] = $fig->display();
+        foreach ($this->lst() as $msk) {
+            $views[] = $msk->name_tip();
         }
         return implode(', ', $views);
     }
@@ -162,7 +162,7 @@ class view_list extends list_dsp
      * @return string with a list of the view names with html links
      * ex. names_linked
      */
-    function display_linked(string $back = ''): string
+    function name_link(string $back = ''): string
     {
         return implode(', ', $this->names_linked($back));
     }
@@ -171,14 +171,19 @@ class view_list extends list_dsp
      * @param string $back the back trace url for the undo functionality
      * @return array with a list of the view names with html links
      */
-    function names_linked(string $back = ''): array
+    private function names_linked(string $back = ''): array
     {
         $views = array();
-        foreach ($this->lst() as $fig) {
-            $views[] = $fig->display_linked();
+        foreach ($this->lst() as $msk) {
+            $views[] = $msk->name_link();
         }
         return $views;
     }
+
+
+    /*
+     * info
+     */
 
     /**
      * get the default view
@@ -197,6 +202,10 @@ class view_list extends list_dsp
         };
     }
 
+
+    /*
+     * select
+     */
 
     /**
      * HTML code of a view selector

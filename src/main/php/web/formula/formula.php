@@ -7,6 +7,15 @@
 
     to creat the HTML code to display a formula
 
+    The main sections of this object are
+    - object vars:       the variables of this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - api:               set the object vars based on the api json message and create a json for the backend
+    - cast:              create related frontend objects e.g. the phrase of a triple
+    - base:              html code for the single object vars
+    - buttons:           html code for the buttons e.g. to add, edit, del, link or unlink
+    - select:            html code to select parameter like the type
+
 
     This file is part of zukunft.com - calc with words
 
@@ -71,17 +80,14 @@ use html\button;
 use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\phrase\term as term_dsp;
+use html\phrase\term;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\sandbox_typed;
 use html\system\back_trace;
 use html\system\messages;
 use html\user\user_message;
-use shared\api;
+use shared\const\views;
 use shared\json_fields;
-use shared\const\views as view_shared;
 use shared\types\view_styles;
 
 class formula extends sandbox_typed
@@ -95,44 +101,12 @@ class formula extends sandbox_typed
     private string $usr_text = '';
     private string $ref_text = '';
     public ?bool $need_all_val = false;    // calculate and save the result only if all used values are not null
-    public ?phrase_dsp $name_wrd = null;         // the triple object for the formula name:
+    public ?phrase $name_wrd = null;         // the triple object for the formula name:
 
 
     /*
      * set and get
      */
-
-    /**
-     * set the vars this formula bases on the api json array
-     * public because it is reused e.g. by the phrase group display object
-     * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
-     */
-    function set_from_json_array(array $json_array): user_message
-    {
-        $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(json_fields::USER_TEXT, $json_array)) {
-            $this->set_usr_text($json_array[json_fields::USER_TEXT]);
-        } else {
-            $this->set_usr_text(null);
-        }
-        if (array_key_exists(json_fields::REF_TEXT, $json_array)) {
-            $this->set_ref_text($json_array[json_fields::REF_TEXT]);
-        } else {
-            $this->set_ref_text(null);
-        }
-        if (array_key_exists(json_fields::NEED_ALL_VAL, $json_array)) {
-            $this->need_all_val = $json_array[json_fields::NEED_ALL_VAL];
-        } else {
-            $this->need_all_val = false;
-        }
-        if (array_key_exists(json_fields::FORMULA_NAME_PHRASE, $json_array)) {
-            $this->name_wrd = new phrase_dsp($json_array[json_fields::FORMULA_NAME_PHRASE]);
-        } else {
-            $this->name_wrd = null;
-        }
-        return $usr_msg;
-    }
 
     function set_usr_text(?string $usr_text): void
     {
@@ -160,8 +134,40 @@ class formula extends sandbox_typed
 
 
     /*
-     * interface
+     * api
      */
+
+    /**
+     * set the vars this formula bases on the api json array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $json_array an api json message
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_from_json_array(array $json_array): user_message
+    {
+        $usr_msg = parent::set_from_json_array($json_array);
+        if (array_key_exists(json_fields::USER_TEXT, $json_array)) {
+            $this->set_usr_text($json_array[json_fields::USER_TEXT]);
+        } else {
+            $this->set_usr_text(null);
+        }
+        if (array_key_exists(json_fields::REF_TEXT, $json_array)) {
+            $this->set_ref_text($json_array[json_fields::REF_TEXT]);
+        } else {
+            $this->set_ref_text(null);
+        }
+        if (array_key_exists(json_fields::NEED_ALL_VAL, $json_array)) {
+            $this->need_all_val = $json_array[json_fields::NEED_ALL_VAL];
+        } else {
+            $this->need_all_val = false;
+        }
+        if (array_key_exists(json_fields::FORMULA_NAME_PHRASE, $json_array)) {
+            $this->name_wrd = new phrase($json_array[json_fields::FORMULA_NAME_PHRASE]);
+        } else {
+            $this->name_wrd = null;
+        }
+        return $usr_msg;
+    }
 
     /**
      * @return array the json message array to send the updated data to the backend
@@ -180,26 +186,17 @@ class formula extends sandbox_typed
      * cast
      */
 
-    function term(): term_dsp
+    function term(): term
     {
-        $trm = new term_dsp();
+        $trm = new term();
         $trm->set_obj($this);
         return $trm;
     }
 
 
     /*
-     * display
+     * base
      */
-
-    /**
-     * display the formula name with the tooltip
-     * @returns string the html code
-     */
-    function display(): string
-    {
-        return $this->name();
-    }
 
     /**
      * display the formula name with a link to the main page for the formula
@@ -207,14 +204,9 @@ class formula extends sandbox_typed
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
-    function display_linked(?string $back = '', string $style = ''): string
+    function name_link(?string $back = '', string $style = '', int $msk_id = views::FORMULA_ID): string
     {
-        //$html = new html_base();
-        //$url = $html->url_new(view_shared::MI_WORD, $this->id(), api_shared::URL_VAR_FORMULAS, $back);
-        //return $html->ref($url, $this->name(), $this->description(), $style);
-        $html = new html_base();
-        $url = $html->url(api_dsp::FORMULA, $this->id(), $back, api::URL_VAR_FORMULAS);
-        return $html->ref($url, $this->name(), $this->name(), $style);
+        return parent::name_link($back, $style, $msk_id);
     }
 
     /**
@@ -224,9 +216,14 @@ class formula extends sandbox_typed
      */
     function edit_link(?string $back = ''): string
     {
-        $url = $this->obj_url(view_shared::FORMULA_EDIT, $back);
+        $url = $this->obj_url(views::FORMULA_EDIT, $back);
         return (new html_base())->ref($url, $this->name(), $this->name());
     }
+
+
+    /*
+     * buttons
+     */
 
     /**
      * create the HTML code for a button to create a new formula
@@ -235,7 +232,7 @@ class formula extends sandbox_typed
      */
     function btn_add(string $back = ''): string
     {
-        $url = $this->obj_url(view_shared::FORMULA_ADD);
+        $url = $this->obj_url(views::FORMULA_ADD);
         return (new button($url, $back))->add(messages::FORMULA_ADD, $this->name);
     }
 
@@ -246,7 +243,7 @@ class formula extends sandbox_typed
      */
     function btn_edit(string $back = ''): string
     {
-        $url = $this->obj_url(view_shared::FORMULA_EDIT);
+        $url = $this->obj_url(views::FORMULA_EDIT);
         return (new button($url, $back))->edit(messages::FORMULA_EDIT, messages::FOR . $this->name);
     }
 
@@ -257,13 +254,13 @@ class formula extends sandbox_typed
      */
     function btn_del(string $back = ''): string
     {
-        $url = $this->obj_url(view_shared::FORMULA_DEL);
+        $url = $this->obj_url(views::FORMULA_DEL);
         return (new button($url, $back))->del(messages::FORMULA_DEL, messages::OF . $this->name);
     }
 
 
     /*
-     * internal
+     * select
      */
 
     /**
@@ -478,7 +475,7 @@ class formula extends sandbox_typed
                     '', $selected) . ' ';
         } else {
             if ($this->id() > 0) {
-                $url = $this->obj_url(view_shared::FORMULA_ADD);
+                $url = $this->obj_url(views::FORMULA_ADD);
                 // TODO check if 'add_link=1' is needed
                 $result .= (new button($url, $back))->add(messages::FORMULA_ADD);
             }
@@ -502,7 +499,7 @@ class formula extends sandbox_typed
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
      * @param string $pattern the pattern to filter the phrases
-     * @param phrase_dsp|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
+     * @param phrase|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
      * @return string with the HTML code to show the phrase selector
      */
     protected function phrase_selector(
@@ -512,10 +509,10 @@ class formula extends sandbox_typed
         string      $col_class = '',
         int         $selected = 0,
         string      $pattern = '',
-        ?phrase_dsp $phr = null
+        ?phrase $phr = null
     ): string
     {
-        $phr_lst = new phrase_list_dsp();
+        $phr_lst = new phrase_list();
         $phr_lst->load_like($pattern);
         return $phr_lst->selector($form, $selected, $name, $label, '', html_selector::TYPE_DATALIST);
     }
@@ -542,7 +539,7 @@ class formula extends sandbox_typed
         if (trim($sample_val) <> "") {
             if ($this->name_wrd != null) {
                 $name_wrd_dsp = $this->name_wrd;
-                $result .= $html->dsp_text_h3("Results for " . $name_wrd_dsp->display_linked($back), "change_hist");
+                $result .= $html->dsp_text_h3("Results for " . $name_wrd_dsp->name_link($back), "change_hist");
             }
             $result .= $sample_val;
         }

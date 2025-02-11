@@ -7,6 +7,14 @@
 
     mainly links to the word and triple display functions
 
+    The main sections of this object are
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - api:               set the object vars based on the api json message and create a json for the backend
+    - modify:            change potentially all object and all variables of this list with one function call
+    - info:              functions to make code easier to read
+
 
     This file is part of zukunft.com - calc with words
 
@@ -88,49 +96,6 @@ class phrase_group extends sandbox_named_dsp
      * set and get
      */
 
-    /**
-     * set the vars of this phrase list bases on the api json array
-     * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
-     */
-    function set_from_json_array(array $json_array): user_message
-    {
-        if (array_key_exists(json_fields::ID, $json_array)) {
-            $usr_msg = parent::set_from_json_array($json_array);
-            if (array_key_exists(json_fields::PHRASES, $json_array)) {
-                $phr_lst = $json_array[json_fields::PHRASES];
-                foreach ($phr_lst as $phr_json) {
-                    $this->set_phrase_from_json_array($phr_json);
-                }
-            }
-        } else {
-            $usr_msg = new user_message();
-            // create phrase group based on the phrase list as fallback
-            foreach ($json_array as $phr_json) {
-                $this->set_phrase_from_json_array($phr_json);
-            }
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * @param array $phr_json the json array of a phrase
-     * @return void
-     */
-    private function set_phrase_from_json_array(array $phr_json): void
-    {
-        $wrd_or_trp = new word_dsp();
-        if (array_key_exists(json_fields::OBJECT_CLASS, $phr_json)) {
-            if ($phr_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
-                $wrd_or_trp = new triple_dsp();
-            }
-        }
-        $wrd_or_trp->set_from_json_array($phr_json);
-        $phr = new phrase_dsp();
-        $phr->set_obj($wrd_or_trp);
-        $this->lst[] = $phr;
-    }
-
     function set_lst($lst): void
     {
         $this->lst = $lst;
@@ -207,6 +172,69 @@ class phrase_group extends sandbox_named_dsp
 
 
     /*
+     * api
+     */
+
+    /**
+     * set the vars of this phrase list bases on the api json array
+     * @param array $json_array an api json message
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_from_json_array(array $json_array): user_message
+    {
+        if (array_key_exists(json_fields::ID, $json_array)) {
+            $usr_msg = parent::set_from_json_array($json_array);
+            if (array_key_exists(json_fields::PHRASES, $json_array)) {
+                $phr_lst = $json_array[json_fields::PHRASES];
+                foreach ($phr_lst as $phr_json) {
+                    $this->set_phrase_from_json_array($phr_json);
+                }
+            }
+        } else {
+            $usr_msg = new user_message();
+            // create phrase group based on the phrase list as fallback
+            foreach ($json_array as $phr_json) {
+                $this->set_phrase_from_json_array($phr_json);
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * @param array $phr_json the json array of a phrase
+     * @return void
+     */
+    private function set_phrase_from_json_array(array $phr_json): void
+    {
+        $wrd_or_trp = new word_dsp();
+        if (array_key_exists(json_fields::OBJECT_CLASS, $phr_json)) {
+            if ($phr_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
+                $wrd_or_trp = new triple_dsp();
+            }
+        }
+        $wrd_or_trp->set_from_json_array($phr_json);
+        $phr = new phrase_dsp();
+        $phr->set_obj($wrd_or_trp);
+        $this->lst[] = $phr;
+    }
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     */
+    function api_array(): array
+    {
+        //$vars = array();
+        $phr_lst_vars = array();
+        //$vars[json_fields::ID] = $this->id();
+        foreach ($this->lst as $phr) {
+            $phr_lst_vars[] = $phr->api_array();
+        }
+        //$vars[json_fields::PHRASES] = $phr_lst_vars;
+        return $phr_lst_vars;
+    }
+
+
+    /*
      * modify
      */
 
@@ -235,16 +263,28 @@ class phrase_group extends sandbox_named_dsp
         return $this->phr_lst()->has_percent();
     }
 
+    /**
+     * @return bool if the id of the group is valid
+     */
+    function is_id_set(): bool
+    {
+        if ($this->id() != 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     /*
-     * display
+     * base
      */
 
     /**
      * @param phrase_list_dsp|null $phr_lst_header list of phrases already shown in the header
      * @return string
      */
-    function display(phrase_list_dsp $phr_lst_header = null): string
+    function name_tip(phrase_list_dsp $phr_lst_header = null): string
     {
         $result = '';
         if ($this->name_dirty() or $phr_lst_header != null) {
@@ -261,7 +301,7 @@ class phrase_group extends sandbox_named_dsp
                     if ($result <> '') {
                         $result .= ', ';
                     }
-                    $result .= $phr->display();
+                    $result .= $phr->name_tip();
                 }
             }
             $this->unset_name_dirty();
@@ -275,7 +315,7 @@ class phrase_group extends sandbox_named_dsp
      * @param phrase_list_dsp|null $phr_lst_header list of phrases already shown in the header and don't need to be include in the result
      * @return string
      */
-    function display_linked(phrase_list_dsp $phr_lst_header = null): string
+    function name_link_list(phrase_list_dsp $phr_lst_header = null): string
     {
         $result = '';
         if ($this->name_dirty() or $phr_lst_header != null) {
@@ -292,7 +332,7 @@ class phrase_group extends sandbox_named_dsp
                     if ($result <> '') {
                         $result .= ', ';
                     }
-                    $result .= $phr->display_linked();
+                    $result .= $phr->name_link();
                 }
             }
             $this->unset_name_dirty();
@@ -300,43 +340,6 @@ class phrase_group extends sandbox_named_dsp
             $result = $this->name();
         }
         return $result;
-    }
-
-
-    /*
-     * interface
-     */
-
-    /**
-     * @return array the json message array to send the updated data to the backend
-     */
-    function api_array(): array
-    {
-        //$vars = array();
-        $phr_lst_vars = array();
-        //$vars[json_fields::ID] = $this->id();
-        foreach ($this->lst as $phr) {
-            $phr_lst_vars[] = $phr->api_array();
-        }
-        //$vars[json_fields::PHRASES] = $phr_lst_vars;
-        return $phr_lst_vars;
-    }
-
-
-    /*
-     * info
-     */
-
-    /**
-     * @return bool if the id of the group is valid
-     */
-    function is_id_set(): bool
-    {
-        if ($this->id() != 0) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
 }

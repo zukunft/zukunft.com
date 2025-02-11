@@ -177,7 +177,7 @@ class figure extends combine_named_dsp
 
 
     /*
-     * display
+     * base
      */
 
     function val_formatted(): string
@@ -191,7 +191,7 @@ class figure extends combine_named_dsp
      */
     function name_linked(phrase_list $phr_lst_header = null): string
     {
-        return $this->grp()->display_linked($phr_lst_header);
+        return $this->grp()->name_link_list($phr_lst_header);
     }
 
 

@@ -96,7 +96,7 @@ if (!$db_con->connected()) {
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_like($find_str);
         $dsp_lst = new word_list_dsp($wrd_lst->api_json());
-        $result .= $dsp_lst->display();
+        $result .= $dsp_lst->name_link();
 
         // show the matching terms to select
         // TODO create a term list object

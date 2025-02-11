@@ -60,20 +60,20 @@ class term_list extends sandbox_list_named
 
 
     /*
-     * display
+     * base
      */
 
     /**
      * @returns string the html code to display the phrases with the most useful link
      */
-    function display(): string
+    function name_tip(): string
     {
         $result = '';
         foreach ($this->lst() as $trm) {
-            if ($result != '' and $trm->display() != '') {
+            if ($result != '' and $trm->name_tip() != '') {
                 $result .= ', ';
             }
-            $result .= $trm->display();
+            $result .= $trm->name_tip();
         }
         return $result;
     }
@@ -81,14 +81,14 @@ class term_list extends sandbox_list_named
     /**
      * @returns string the html code to display the phrases with the most useful link
      */
-    function display_linked(): string
+    function name_link(): string
     {
         $result = '';
         foreach ($this->lst() as $trm) {
-            if ($result != '' and $trm->display_linked() != '') {
+            if ($result != '' and $trm->name_link() != '') {
                 $result .= ', ';
             }
-            $result .= $trm->display_linked();
+            $result .= $trm->name_link();
         }
         return $result;
     }

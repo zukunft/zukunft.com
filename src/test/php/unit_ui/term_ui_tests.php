@@ -49,14 +49,14 @@ class term_ui_tests
         $vrb = new term_dsp($t->verb()->term()->api_json());
         $frm = new term_dsp($t->formula()->term()->api_json());
         $test_page = $html->text_h2('term display test');
-        $test_page .= 'word term with tooltip: ' . $wrd->display() . '<br>';
-        $test_page .= 'word term with link: ' . $wrd->display_linked() . '<br>';
-        $test_page .= 'triple term with tooltip: ' . $trp->display() . '<br>';
-        $test_page .= 'triple term with link: ' . $trp->display_linked() . '<br>';
-        $test_page .= 'verb term with tooltip: ' . $vrb->display() . '<br>';
-        $test_page .= 'verb term with link: ' . $vrb->display_linked() . '<br>';
-        $test_page .= 'formula term with tooltip: ' . $frm->display() . '<br>';
-        $test_page .= 'formula term with link: ' . $frm->display_linked() . '<br>';
+        $test_page .= 'word term with tooltip: ' . $wrd->name_tip() . '<br>';
+        $test_page .= 'word term with link: ' . $wrd->name_link() . '<br>';
+        $test_page .= 'triple term with tooltip: ' . $trp->name_tip() . '<br>';
+        $test_page .= 'triple term with link: ' . $trp->name_link() . '<br>';
+        $test_page .= 'verb term with tooltip: ' . $vrb->name_tip() . '<br>';
+        $test_page .= 'verb term with link: ' . $vrb->name_link() . '<br>';
+        $test_page .= 'formula term with tooltip: ' . $frm->name_tip() . '<br>';
+        $test_page .= 'formula term with link: ' . $frm->name_link() . '<br>';
         $t->html_test($test_page, 'term', 'term', $t);
     }
 

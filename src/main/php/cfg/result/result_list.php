@@ -761,7 +761,7 @@ class result_list extends sandbox_value_list
                 }
                 $phr_lst_dsp = new phrase_list_dsp($phr_lst->api_json());
                 $result .= '</tr><tr>';
-                $result .= '<td>' . $phr_lst_dsp->display_linked() . '</td>';
+                $result .= '<td>' . $phr_lst_dsp->name_link() . '</td>';
                 $result .= '<td>' . $res->display_linked($back) . '</td>';
                 $result .= '</tr>';
             }

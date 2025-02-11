@@ -443,7 +443,7 @@ class user_dsp_old extends user
                     if ($frm_usr->is_excluded()) {
                         $sandbox_usr_txt = "deleted";
                     } else {
-                        $sandbox_usr_txt = $frm_usr->phrase()->display_linked();
+                        $sandbox_usr_txt = $frm_usr->phrase()->name_linked();
                         //$sandbox_usr_txt = $frm_usr->link_name;
                     }
 
@@ -451,7 +451,7 @@ class user_dsp_old extends user
                     if ($frm_std->is_excluded()) {
                         $sandbox_std_txt = "deleted";
                     } else {
-                        $sandbox_std_txt = $frm_std->phrase()->display_linked();
+                        $sandbox_std_txt = $frm_std->phrase()->name_linked();
                         //$sandbox_std_txt = $frm_std->link_name;
                     }
 
@@ -482,7 +482,7 @@ class user_dsp_old extends user
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
-                        $sandbox_other .= $frm_lnk_other->tob()->display_linked();
+                        $sandbox_other .= $frm_lnk_other->tob()->name_linked();
                     }
                     $sandbox_other = '<a href="/http/user_formula_link.php?id=' . $this->id() . '&back=' . $back . '">' . $sandbox_other . '</a> ';
 
@@ -605,7 +605,7 @@ class user_dsp_old extends user
                     $sandbox_item_name = '';
                     if (!$val_usr->grp->phrase_list()->is_empty()) {
                         $phr_lst_dsp = new phrase_list_dsp($val_usr->grp->phrase_list()->api_json());
-                        $sandbox_item_name = $phr_lst_dsp->display_linked();
+                        $sandbox_item_name = $phr_lst_dsp->name_linked();
                     }
 
                     // format the user value

@@ -81,7 +81,8 @@ class phrase_write_tests
         $target = words::TN_COMPANY;
         $t->assert('phrase->load word by id ' . $company_id, $result, $target);
 
-        $result = $lib->trim_html($phr->dsp_tbl());
+        $phr_dsp = new phrase_dsp($phr->api_json());
+        $result = $lib->trim_html($phr_dsp->dsp_tbl());
         $url = '<td><a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::WORD_ID . '&' . api::URL_VAR_ID . '=';
         $target = $lib->trim_html($url . $company_id . '" title="' .
             words::TN_COMPANY . '">' . words::TN_COMPANY . '</a></td> ');
@@ -95,9 +96,10 @@ class phrase_write_tests
         $target = triples::COMPANY_ZURICH;
         $t->assert('phrase->load triple by id ' . $zh_company_id, $result, $target);
 
-        $result = $lib->trim_html($phr->dsp_tbl());
-        $target = $lib->trim_html(' <td> <a href="/http/view.php?link=' . $trp->id() . '" title="' .
-            triples::COMPANY_ZURICH . '">' . triples::COMPANY_ZURICH . '</a></td> ');
+        $phr_dsp = new phrase_dsp($phr->api_json());
+        $result = $lib->trim_html($phr_dsp->dsp_tbl());
+        $target = $lib->trim_html(' <tr> <td> <a href="/http/view.php?m=' . VIEWS::TRIPLE_ID . '&id=' . $trp->id() . '" title="' .
+            triples::COMPANY_ZURICH . '">' . triples::COMPANY_ZURICH . '</a></td></tr> ');
         $t->assert('phrase->dsp_tbl triple for ' . $zh_company_id, $result, $target);
 
         // test the phrase selector

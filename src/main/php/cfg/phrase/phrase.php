@@ -1538,36 +1538,6 @@ class phrase extends combine_named
         return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '">' . $this->name() . '</a>';
     }
 
-    function dsp_tbl(int $intent = 0): string
-    {
-        $result = '';
-        if ($this != null) {
-            if ($this->obj != null) {
-                // the function dsp_tbl should exist for words and triples
-                if (get_class($this->obj) == word::class) {
-                    $dsp_obj = new word_dsp($this->obj->api_json());
-                    $result = $dsp_obj->td('', '', $intent);
-                } else {
-                    $result = $this->obj->dsp_tbl($intent);
-                }
-            }
-        }
-        log_debug('for ' . $this->dsp_id());
-        return $result;
-    }
-
-    function dsp_tbl_row(): string
-    {
-        $result = '';
-        // the function dsp_tbl_row should exist for words and triples
-        if (isset($this->obj)) {
-            $result = $this->obj->dsp_tbl_row();
-        } else {
-            log_err('The phrase object is missing for ' . $this->dsp_id() . '.', "result->load");
-        }
-        return $result;
-    }
-
     /**
      * get the related phrases
      * @param foaf_direction $direction up to select the parent phrases and dow for the children

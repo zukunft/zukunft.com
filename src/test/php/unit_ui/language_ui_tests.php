@@ -54,8 +54,8 @@ class language_ui_tests
 
         $src = new language_dsp($t->language()->api_json());
         $test_page = $html->text_h2('language display test');
-        $test_page .= 'with tooltip: ' . $src->display() . '<br>';
-        $test_page .= 'with link: ' . $src->display_linked() . '<br>';
+        $test_page .= 'with tooltip: ' . $src->name_tip() . '<br>';
+        $test_page .= 'with link: ' . $src->name_link() . '<br>';
         $t->html_test($test_page, 'language', 'language', $t);
     }
 

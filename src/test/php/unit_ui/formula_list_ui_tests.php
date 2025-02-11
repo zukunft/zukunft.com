@@ -48,8 +48,8 @@ class formula_list_ui_tests
         // test the formula list display functions
         $lst = new formula_list_dsp($t->formula_list()->api_json());
         $test_page = $html->text_h2('formula list display test');
-        $test_page .= 'formula list with tooltip: ' . $lst->display() . '<br>';
-        $test_page .= 'formula list with link: ' . $lst->display_linked() . '<br>';
+        $test_page .= 'formula list with tooltip: ' . $lst->name_tip() . '<br>';
+        $test_page .= 'formula list with link: ' . $lst->name_link() . '<br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
         $test_page .= $lst->selector('', 0, 'test_selector', 'No formula selected') . '<br>';
