@@ -327,7 +327,7 @@ class db_object extends TextIdObject
      * @param phrase_dsp|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
      * @return string with the HTML code to show the phrase selector
      */
-    protected function phrase_selector(
+    protected function phrase_selector_old(
         string      $name,
         string      $form,
         string      $label = '',

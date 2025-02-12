@@ -307,28 +307,40 @@ class word extends sandbox_typed
      */
 
     /**
-     * @returns string the html code to display a bottom to create anew word for the current user
+     * @return string the html code for a bottom
+     * to create a new word for the current user
      */
     function btn_add(string $back = ''): string
     {
-        return parent::btn_add_sbx(views::WORD_ADD_ID, messages::WORD_ADD, $back);
+        return parent::btn_add_sbx(
+            views::WORD_ADD_ID,
+            messages::WORD_ADD,
+            $back);
     }
 
     /**
-     * @returns string the html code to display a bottom to create anew word for the current user
+     * @return string the html code for a bottom
+     * to change a word e.g. the name or the type
      */
     function btn_edit(string $back = ''): string
     {
-        return parent::btn_edit_sbx(views::WORD_EDIT_ID, messages::WORD_EDIT, $back);
+        return parent::btn_edit_sbx(
+            views::WORD_EDIT_ID,
+            messages::WORD_EDIT,
+            $back);
     }
 
     /**
-     * @returns string the html code to display a bottom to exclude the word for the current user
-     *                 or if no one uses the word delete the complete word
+     * @return string the html code for a bottom
+     * to exclude the word for the current user
+     * or if no one uses the word delete the complete word
      */
     function btn_del(string $back = ''): string
     {
-        return parent::btn_del_sbx(views::WORD_DEL_ID, messages::WORD_DEL, $back);
+        return parent::btn_del_sbx(
+            views::WORD_DEL_ID,
+            messages::WORD_DEL,
+            $back);
     }
 
     /**
@@ -346,6 +358,25 @@ class word extends sandbox_typed
      */
 
     /**
+     * wrapper for the word type selector
+     * to prevent type changes of internal formula words
+     * as a second line of defence
+     * @param string $form the name of the html form
+     * @return string the html code to select the phrase type
+     */
+    function dsp_type_selector(string $form): string
+    {
+        global $phr_typ_cac;
+        $result = '';
+        if ($phr_typ_cac->code_id($this->type_id()) == phrase_type::FORMULA_LINK) {
+            $result .= ' type: ' . $phr_typ_cac->name($this->type_id());
+        } else {
+            $result .= $this->phrase_type_selector($form);
+        }
+        return $result;
+    }
+
+    /**
      * create the HTML code to select a phrase type
      * and select the phrase type of this word
      * @param string $form the name of the html form
@@ -359,18 +390,6 @@ class word extends sandbox_typed
             $used_phrase_id = $html_phrase_types->default_id();
         }
         return $html_phrase_types->selector($form, $used_phrase_id);
-    }
-
-    function dsp_type_selector(string $form): string
-    {
-        global $phr_typ_cac;
-        $result = '';
-        if ($phr_typ_cac->code_id($this->type_id()) == phrase_type::FORMULA_LINK) {
-            $result .= ' type: ' . $phr_typ_cac->name($this->type_id());
-        } else {
-            $result .= $this->phrase_type_selector($form);
-        }
-        return $result;
     }
 
 
@@ -778,7 +797,7 @@ class word extends sandbox_typed
      * @param phrase|null $phr the context to select the phrases, which is until now just the phrase
      * @return string the html code to select a phrase
      */
-    protected function phrase_selector(
+    protected function phrase_selector_old(
         string      $name,
         string      $form,
         string      $label = '',

@@ -11,9 +11,86 @@
         title="A mathematical constant that never changes e.g. Pi"
         data-toggle="tooltip">Mathematical constant</span><br>with link:<a href="/http/view.php?m=43&id=1"
                                                                            title="A mathematical constant that never changes e.g. Pi">Mathematical
-    constant</a><br><h4>buttons</h4>edit button:
-    <td><a href="/http//http/link_edit.php.php?id=1&back=-1" title="rename word"><i class="far fa-edit"></i></a></td>
-    <br></div>
+    constant</a><br><h4>buttons</h4>add button:<a href="/http/view.php?m=4&id=1" title="add new word"><i
+        class="far fa-plus-square"></i></a><br>edit button:<a href="/http/view.php?m=4&id=1" title="rename word"><i
+        class="far fa-edit"></i></a><br>del button:<a href="/http/view.php?m=4&id=1" title="delete word"><i
+        class="far fa-times-circle"></i></a><br><h4>select</h4>
+    <form action="/http/view.php" id="triple_edit">
+        <div class="form-group col-md-4"><label for="phrase type">type:</label><select class="form-control"
+                                                                                       name="phrase type"
+                                                                                       form="triple_edit"
+                                                                                       id="phrase type">
+            <option value="1">standard</option>
+            <option value="2">time</option>
+            <option value="3">measure type</option>
+            <option value="4">time jump</option>
+            <option value="5">calc</option>
+            <option value="6">format percent</option>
+            <option value="7">scaling</option>
+            <option value="8">hidden scaling</option>
+            <option value="9">view / layer</option>
+            <option value="10">formula link</option>
+            <option value="11">differentiator filler</option>
+            <option value="12">this</option>
+            <option value="13">next</option>
+            <option value="14">prior</option>
+            <option value="15">scaling word percent</option>
+            <option value="16">scaled measure</option>
+            <option value="17" selected>math constant</option>
+            <option value="18">measure divisor</option>
+            <option value="19">latest</option>
+            <option value="20">key</option>
+            <option value="21">information</option>
+            <option value="22">hidden triple</option>
+            <option value="23">hidden system</option>
+            <option value="24">group and select</option>
+            <option value="25">symbol</option>
+            <option value="26">rank</option>
+            <option value="27">ignore</option>
+        </select></div>
+        <br>
+        <div class="form-group col-md-4"><label for="verb:">verb</label><select class="form-control" name="verb:"
+                                                                                form="triple_edit" id="verb:">
+            <option value="1">not_set</option>
+            <option value="2">is a</option>
+            <option value="3" selected>is part of</option>
+            <option value="4">with</option>
+            <option value="9">follow</option>
+        </select></div>
+        <br>
+        <div class="form-group col-md-4"><input type="text" list="phrase_from_list" class="form-control"
+                                                name="phrase_from" form="triple_edit" id="phrase_from">
+            <datalist id="phrase_from_list">
+                <option data-value="1">Mathematics</option>
+                <option data-value="2" selected>constant</option>
+                <option data-value="4">Pi</option>
+                <option data-value="-1">Mathematical constant</option>
+                <option data-value="-2">Pi (math)</option>
+            </datalist>
+        </div>
+        <br>
+        <div class="form-group col-md-4"><input type="text" list="phrase_to_list" class="form-control" name="phrase_to"
+                                                form="triple_edit" id="phrase_to">
+            <datalist id="phrase_to_list">
+                <option data-value="1" selected>Mathematics</option>
+                <option data-value="2">constant</option>
+                <option data-value="4">Pi</option>
+                <option data-value="-1">Mathematical constant</option>
+                <option data-value="-2">Pi (math)</option>
+            </datalist>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-outline-success btn-space">Save</button>
+    </form>
+    <h4>table</h4>
+    <table class="table table-striped table-bordered">
+        <tr>
+        <tr>
+            <td><a href="/http/view.php?m=43&id=1" title="A mathematical constant that never changes e.g. Pi">Mathematical
+                constant</a></td>
+        </tr>
+        </tr></table>
+</div>
 <footer>
     <div class="text-center"><small><a href="/http/about.php" title="About">About</a> &middot;<a
             href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; All structured data is

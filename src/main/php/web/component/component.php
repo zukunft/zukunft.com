@@ -248,7 +248,7 @@ class component extends sandbox_typed
      */
     function phrase_select(db_object_dsp $phr, string $form_name): string
     {
-        return $phr->phrase_selector('phrase', $form_name, 'word:', '', $phr->id());
+        return $phr->phrase_selector_old('phrase', $form_name, 'word:', '', $phr->id());
     }
 
     /**
@@ -256,7 +256,7 @@ class component extends sandbox_typed
      */
     function phrase_link(db_object_dsp $phr, string $form_name): string
     {
-        return $phr->phrase_selector('phrase', $form_name, 'word:', '', $phr->id());
+        return $phr->phrase_selector_old('phrase', $form_name, 'word:', '', $phr->id());
     }
 
     /**
@@ -518,9 +518,9 @@ class component extends sandbox_typed
         // TODO activate Prio 3
         //if ($this->code_id == 'form_field_triple_phrase_from') {
         if ($this->name == 'system form triple phrase from') {
-            return $dbo->phrase_selector('from', $form_name, 'from:', '', $dbo->id(), $pattern);
+            return $dbo->phrase_selector_old('from', $form_name, 'from:', '', $dbo->id(), $pattern);
         } else {
-            return $dbo->phrase_selector('to', $form_name, 'to:', '', $dbo->id(), $pattern);
+            return $dbo->phrase_selector_old('to', $form_name, 'to:', '', $dbo->id(), $pattern);
         }
     }
 
@@ -1077,7 +1077,7 @@ class component extends sandbox_typed
             $phr_dsp = $this->phr_row;
             $label = "Rows taken from " . $phr_dsp->name_link() . ":";
         }
-        return $this->phrase_selector('word_row', $script, $label, $col_class, $this->phr_row->id()) . ' ';
+        return $this->phrase_selector_old('word_row', $script, $label, $col_class, $this->phr_row->id()) . ' ';
     }
 
     /**
@@ -1094,7 +1094,7 @@ class component extends sandbox_typed
             $phr_dsp = $this->phr_col;
             $label = "Columns taken from " . $phr_dsp->name_link() . ":";
         }
-        return $this->phrase_selector('word_col', $script, $label, $col_class, $this->phr_row->id()) . ' ';
+        return $this->phrase_selector_old('word_col', $script, $label, $col_class, $this->phr_row->id()) . ' ';
     }
 
     /**
@@ -1108,7 +1108,7 @@ class component extends sandbox_typed
      * @param phrase_dsp|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
      * @return string with the HTML code to show the phrase selector
      */
-    protected function phrase_selector(
+    protected function phrase_selector_old(
         string      $name,
         string      $form,
         string      $label = '',

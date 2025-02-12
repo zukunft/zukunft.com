@@ -471,7 +471,7 @@ class formula extends sandbox_typed
             } else {
                 $selected = 0;
             }
-            $result .= $this->phrase_selector('link_phrase', "formula_edit",
+            $result .= $this->phrase_selector_old('link_phrase', "formula_edit",
                     '', $selected) . ' ';
         } else {
             if ($this->id() > 0) {
@@ -502,7 +502,7 @@ class formula extends sandbox_typed
      * @param phrase|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
      * @return string with the HTML code to show the phrase selector
      */
-    protected function phrase_selector(
+    protected function phrase_selector_old(
         string      $name,
         string      $form,
         string      $label = '',

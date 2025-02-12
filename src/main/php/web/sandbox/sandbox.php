@@ -151,7 +151,8 @@ class sandbox extends db_object_dsp
      */
 
     /**
-     * @returns string the html code to display a bottom to create anew word for the current user
+     * @return string the html code for a bottom
+     * to create a new sandbox object for the current user
      */
     function btn_add_sbx(int $msk_id, string $msg_code_id, string $back = ''): string
     {
@@ -160,7 +161,8 @@ class sandbox extends db_object_dsp
     }
 
     /**
-     * @returns string the html code to display a bottom to create anew word for the current user
+     * @return string the html code for a bottom
+     * to change a sandbox object e.g. the name or the type
      */
     function btn_edit_sbx(int $msk_id, string $msg_code_id, string $back = ''): string
     {
@@ -169,8 +171,9 @@ class sandbox extends db_object_dsp
     }
 
     /**
-     * @returns string the html code to display a bottom to exclude the word for the current user
-     *                 or if no one uses the word delete the complete word
+     * @return string the html code for a bottom
+     * to exclude the sandbox object for the current user
+     * or if no one uses the word delete the complete word
      */
     function btn_del_sbx(int $msk_id, string $msg_code_id, string $back = ''): string
     {

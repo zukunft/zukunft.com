@@ -45,6 +45,7 @@ namespace html\word;
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'html_names.php';
 include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
@@ -62,6 +63,8 @@ include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 
+use html\html_names;
+use html\phrase\phrase_list;
 use html\rest_ctrl;
 use html\button;
 use html\html_base;
@@ -358,27 +361,40 @@ class triple extends sandbox_typed
      */
 
     /**
-     * @returns string the html code to display a bottom to edit this triple in a table cell
+     * @return string the html code for a bottom
+     * to create a new word for the current user
      */
     function btn_add(string $back = ''): string
     {
-        $html = new html_base();
-        $url = $html->url_new(views::TRIPLE_ADD_ID, $this->id(), '', $back);
-        $btn = new button($url, $back);
-        return $btn->add(messages::TRIPLE_ADD);
+        return parent::btn_add_sbx(
+            views::TRIPLE_ADD_ID,
+            messages::TRIPLE_ADD,
+            $back);
     }
 
     /**
-     * @returns string the html code to display a bottom to edit this triple in a table cell
+     * @return string the html code for a bottom
+     * to change a triple e.g. the name or the type
      */
-    function btn_edit(phrase_dsp $trp, string $back = ''): string
+    function btn_edit(string $back = ''): string
     {
+        return parent::btn_edit_sbx(
+            views::TRIPLE_EDIT_ID,
+            messages::TRIPLE_EDIT,
+            $back);
+    }
 
-        $html = new html_base();
-        $url = $html->url(rest_ctrl::PATH_FIXED . 'link' . rest_ctrl::UPDATE . rest_ctrl::EXT, $this->id(), $trp->id());
-        $btn = (new button($url . $back))->edit(messages::TRIPLE_EDIT);
-
-        return $html->td($btn);
+    /**
+     * @return string the html code for a bottom
+     * to exclude the triple for the current user
+     * or if no one uses the word delete the complete word
+     */
+    function btn_del(string $back = ''): string
+    {
+        return parent::btn_del_sbx(
+            views::TRIPLE_DEL_ID,
+            messages::TRIPLE_DEL,
+            $back);
     }
 
 
@@ -392,7 +408,7 @@ class triple extends sandbox_typed
      * @param string $form the name of the html form
      * @return string the html code to select the phrase type
      */
-    protected function phrase_type_selector(string $form): string
+    function phrase_type_selector(string $form): string
     {
         global $html_phrase_types;
         $used_phrase_id = $this->type_id();
@@ -400,6 +416,62 @@ class triple extends sandbox_typed
             $used_phrase_id = $html_phrase_types->default_id();
         }
         return $html_phrase_types->selector($form, $used_phrase_id);
+    }
+
+    /**
+     * to select the from phrase
+     * @param string $form the name of the html form
+     * @param phrase_list_dsp|null $phr_lst a preloaded phrase list for the selection
+     * @return string the html code to select the phrase
+     */
+    function phrase_selector_from(
+        string $form,
+        ?phrase_list $phr_lst = null,
+        string $name = ''
+    ): string
+    {
+        $name = html_names::PHRASE . html_names::SEP . html_names::FROM;
+        return $this->phrase_selector(
+            $form, $this->from()->id(), $phr_lst, $name);
+    }
+
+    /**
+     * to select the to phrase
+     * @param string $form the name of the html form
+     * @param phrase_list_dsp|null $phr_lst a preloaded phrase list for the selection
+     * @return string the html code to select the phrase
+     */
+    function phrase_selector_to(
+        string $form,
+        ?phrase_list $phr_lst = null
+    ): string
+    {
+        $name = html_names::PHRASE . html_names::SEP . html_names::TO;
+        return $this->phrase_selector(
+            $form, $this->to()->id(), $phr_lst, $name);
+    }
+
+    /**
+     * to select the from phrase
+     * @param string $form the name of the html form
+     * @param phrase_list_dsp|null $phr_lst a preloaded phrase list for the selection
+     * @param string $name the unique name within the html form for this selector
+     * @return string the html code to select the phrase
+     */
+    private function phrase_selector(
+        string $form,
+        int $id,
+        ?phrase_list $phr_lst = null,
+        string $name = ''
+    ): string
+    {
+        if ($phr_lst == null) {
+            $phr_lst = new phrase_list();
+        }
+        return $phr_lst->selector(
+            $form, $id, $name,
+            '', view_styles::COL_SM_4,
+            html_selector::TYPE_DATALIST);
     }
 
     /**
@@ -416,7 +488,7 @@ class triple extends sandbox_typed
      * @param phrase_dsp|null $phr the context to select the phrases, which is until now just the phrase
      * @return string the html code to select a phrase
      */
-    protected function phrase_selector(
+    protected function phrase_selector_old(
         string      $name,
         string      $form,
         string      $label = '',
@@ -435,7 +507,7 @@ class triple extends sandbox_typed
      * @param string $form the name of the html form
      * @return string the html code to select a phrase
      */
-    protected function verb_selector(string $form): string
+    function verb_selector(string $form): string
     {
         global $html_verbs;
         if ($this->verb != null) {
@@ -524,14 +596,14 @@ class triple extends sandbox_typed
             $hidden_fields .= $html->form_hidden("confirm", '1');
             $detail_fields = $html->form_text("name", $this->name());
             $detail_fields .= $html->form_text("description", $this->description);
-            $detail_fields .= 'from: ' . $this->phrase_selector(
+            $detail_fields .= 'from: ' . $this->phrase_selector_old(
                     'from', views::TRIPLE_EDIT, 'from:', '', $this->from()->id(), '', $this->from());
             /* TODO
             if (isset($this->verb)) {
                 $result .= $this->verb->dsp_selector('forward', $form_name, view_styles::COL_SM_4, $back);
             }
             */
-            $detail_fields .= 'to: ' . $this->phrase_selector(
+            $detail_fields .= 'to: ' . $this->phrase_selector_old(
                     'to', views::TRIPLE_EDIT, 'to:', '', $this->to()->id(), '', $this->to());
             $detail_row = $html->fr($detail_fields) . '<br>';
             $result = $header . $html->form(views::TRIPLE_EDIT, $hidden_fields . $detail_row);

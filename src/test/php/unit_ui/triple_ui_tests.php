@@ -35,7 +35,9 @@ namespace unit_ui;
 include_once SHARED_CONST_PATH . 'words.php';
 
 use html\html_base;
+use html\phrase\phrase_list;
 use html\word\triple;
+use shared\const\views;
 use test\test_cleanup;
 
 class triple_ui_tests
@@ -47,12 +49,23 @@ class triple_ui_tests
         $t->subheader('triple html ui unit tests');
 
         $trp = new triple($t->triple()->api_json());
+        $phr_lst = new phrase_list($t->phrase_list()->api_json());
         $test_page = $html->text_h1('Triple display test');
         $test_page .= $html->text_h2('names');
         $test_page .= 'with tooltip: ' . $trp->name_tip() . '<br>';
         $test_page .= 'with link: ' . $trp->name_link() . '<br>';
         $test_page .= $html->text_h2('buttons');
-        $test_page .= 'edit button: ' . $trp->btn_edit($trp->phrase()) . '<br>';
+        $test_page .= 'add button: ' . $trp->btn_add() . '<br>';
+        $test_page .= 'edit button: ' . $trp->btn_edit() . '<br>';
+        $test_page .= 'del button: ' . $trp->btn_del() . '<br>';
+        $test_page .= $html->text_h2('select');
+        $from_rows = $trp->phrase_type_selector(views::TRIPLE_EDIT) . '<br>';
+        $from_rows .= $trp->verb_selector(views::TRIPLE_EDIT) . '<br>';
+        $from_rows .= $trp->phrase_selector_from(views::TRIPLE_EDIT, $phr_lst) . '<br>';
+        $from_rows .= $trp->phrase_selector_to(views::TRIPLE_EDIT, $phr_lst) . '<br>';
+        $test_page .= $html->form(views::TRIPLE_EDIT, $from_rows);
+        $test_page .= $html->text_h2('table');
+        $test_page .= $html->tbl($html->tr($trp->tr()));
         $t->html_test($test_page, 'triple', 'triple', $t);
     }
 
