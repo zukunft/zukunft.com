@@ -8,7 +8,7 @@
   "verbs": [
     {
       "name": "not set",
-      "description": "placeholder verb to enable foreign key checks in the database and for the selection",
+      "description": "no verb / predicate selected",
       "code_id": "not_set"
     },
     {

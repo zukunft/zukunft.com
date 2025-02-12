@@ -75,8 +75,8 @@ class word_list_write_tests
         $t->test_word(words::TN_ASSETS);
         $t->test_word(words::TN_ASSETS_CURRENT);
         $t->test_word(words::TN_CASH);
-        $t->test_triple(words::TN_CASH, verbs::IS_PART_OF, words::TN_ASSETS_CURRENT);
-        $t->test_triple(words::TN_ASSETS_CURRENT, verbs::IS_PART_OF, words::TN_ASSETS);
+        $t->test_triple(words::TN_CASH, verbs::PART_NAME, words::TN_ASSETS_CURRENT);
+        $t->test_triple(words::TN_ASSETS_CURRENT, verbs::PART_NAME, words::TN_ASSETS);
 
         // create the test words and relations for differentiators
         // e.g. energy can be a sector
@@ -91,7 +91,7 @@ class word_list_write_tests
         $wrd_cf = $t->test_word(words::TWN_CASH_FLOW);
         $wrd_tax = $t->test_word(words::TN_TAX_REPORT);
         $wrd_time = $t->test_word(words::TN_2021, phrase_type_shared::TIME);
-        $t->test_triple(words::TN_TAX_REPORT, verbs::IS_PART_OF, words::TWN_CASH_FLOW);
+        $t->test_triple(words::TN_TAX_REPORT, verbs::PART_NAME, words::TWN_CASH_FLOW);
 
         // create the test words and relations many mixed relations
         // e.g. a financial report
@@ -140,7 +140,7 @@ class word_list_write_tests
         // test getting all parents e.g. "Cash" is part of "Current Assets" and "Assets"
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(words::TN_CASH));
-        $parents = $wrd_lst->foaf_parents($vrb_cac->get_verb(verbs::IS_PART_OF));
+        $parents = $wrd_lst->foaf_parents($vrb_cac->get_verb(verbs::PART_NAME));
         $result = $lib->dsp_array($parents->names());
         $target = words::TN_ASSETS_CURRENT . "," . words::TN_ASSETS;
         $t->assert('word_list->foaf_parent for "' . words::ZH . '" "' . verbs::IS . '" up', $result, $target);
@@ -148,18 +148,18 @@ class word_list_write_tests
         // test add parent step 1
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(words::TN_CASH));
-        $parents = $wrd_lst->parents($vrb_cac->get_verb(verbs::IS_PART_OF), 1);
+        $parents = $wrd_lst->parents($vrb_cac->get_verb(verbs::PART_NAME), 1);
         $result = $lib->dsp_array($parents->names());
         $target = words::TN_ASSETS_CURRENT;
-        $t->assert('word_list->parents for "' . words::TN_CASH . '" "' . verbs::IS_PART_OF . '" up', $result, $target);
+        $t->assert('word_list->parents for "' . words::TN_CASH . '" "' . verbs::PART_NAME . '" up', $result, $target);
 
         // test add parent step 2
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(words::TN_CASH));
-        $parents = $wrd_lst->parents($vrb_cac->get_verb(verbs::IS_PART_OF), 2);
+        $parents = $wrd_lst->parents($vrb_cac->get_verb(verbs::PART_NAME), 2);
         $result = $lib->dsp_array($parents->names());
         $target = words::TN_ASSETS_CURRENT . "," . words::TN_ASSETS;
-        $t->assert('word_list->parents for "' . words::TN_CASH . '" "' . verbs::IS_PART_OF . '" up', $result, $target);
+        $t->assert('word_list->parents for "' . words::TN_CASH . '" "' . verbs::PART_NAME . '" up', $result, $target);
 
         // test add child and contains
         $wrd_lst = new word_list($usr);

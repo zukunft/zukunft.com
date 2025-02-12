@@ -64,9 +64,9 @@ class term_list_read_tests
         $t->assert_contains($test_name, $lst->names(), words::MATH);
         $test_name = 'loading phrase names with pattern return the expected verb';
         $lst = new term_list($t->usr1);
-        $pattern = substr(verbs::TN_READ, 0, -1);
+        $pattern = substr(verbs::NOT_SET, 0, -1);
         $lst->load_names($pattern);
-        $t->assert_contains($test_name, $lst->names(), verbs::TN_READ);
+        $t->assert_contains($test_name, $lst->names(), verbs::NOT_SET_NAME);
         $test_name = 'loading phrase names with pattern return the expected triple';
         $lst = new term_list($t->usr1);
         $pattern = substr(triples::MATH_CONST, 0, -1);
@@ -84,7 +84,7 @@ class term_list_read_tests
         $result = $trm_lst->name();
         $target = '"' . triples::MATH_CONST . '","' .
             words::MATH . '","' .
-            verbs::TN_READ . '","' .
+            verbs::NOT_SET_NAME . '","' .
             formulas::SCALE_TO_SEC . '"'; // order adjusted based on the number of usage
         $t->assert($test_name . $trm_lst->dsp_id(), $result, $target);
 

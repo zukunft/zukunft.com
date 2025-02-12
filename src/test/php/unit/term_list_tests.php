@@ -84,7 +84,7 @@ class term_list_tests
         // load only the names
         $phr_lst = new term_list($usr);
         $t->assert_sql_names($sc, $phr_lst, new term($usr));
-        $t->assert_sql_names($sc, $phr_lst, new term($usr), verbs::TN_IS);
+        $t->assert_sql_names($sc, $phr_lst, new term($usr), verbs::IS_NAME);
 
         $trm_lst = new term_list($usr);
         $trm_ids = new trm_ids(array(3, -2, 4, -7));

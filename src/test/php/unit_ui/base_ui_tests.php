@@ -124,7 +124,7 @@ class base_ui_tests
 
         $lst = new verb_list($usr);
         $lst->add_verb(new verb(1, verbs::IS));
-        $lst->add_verb(new verb(2, verbs::IS_PART_OF));
+        $lst->add_verb(new verb(2, verbs::PART_NAME));
         // TODO use set_from_json to set the display object
         $vrb_lst_dsp = new verb_list_dsp();
         $vrb_lst_dsp->set_from_json_array($lst->api_json_array());

@@ -112,10 +112,10 @@ class term_read_tests
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
         $trm->row_mapper_sandbox($db_row, verb::FLD_ID, verb::FLD_NAME);
-        $t->assert($t->name . ' verb row mapper', $trm->name(), verbs::TN_READ);
+        $t->assert($t->name . ' verb row mapper', $trm->name(), verbs::NOT_SET_NAME);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), verb::class);
-        $t->assert($t->name . ' verb by object id', $trm_by_obj_id->name(), verbs::TN_READ);
+        $t->assert($t->name . ' verb by object id', $trm_by_obj_id->name(), verbs::NOT_SET_NAME);
 
         // test loading by term by id and name
         $trm = new term($t->usr1);

@@ -716,7 +716,7 @@ class word_list extends sandbox_list_named
     function contains(): word_list
     {
         global $vrb_cac;
-        $wrd_lst = $this->children($vrb_cac->get_verb(verbs::IS_PART_OF));
+        $wrd_lst = $this->children($vrb_cac->get_verb(verbs::PART_NAME));
         $wrd_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $wrd_lst->name());
         return $wrd_lst;

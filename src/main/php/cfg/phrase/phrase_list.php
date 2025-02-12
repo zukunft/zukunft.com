@@ -919,7 +919,7 @@ class phrase_list extends sandbox_list_named
     function contains(): phrase_list
     {
         global $vrb_cac;
-        $phr_lst = $this->all_children($vrb_cac->get_verb(verbs::IS_PART_OF));
+        $phr_lst = $this->all_children($vrb_cac->get_verb(verbs::PART_NAME));
         $phr_lst->merge($this);
         log_debug($this->dsp_id() . ' contains ' . $phr_lst->name());
         return $phr_lst;

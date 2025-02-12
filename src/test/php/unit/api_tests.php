@@ -120,7 +120,7 @@ class api_tests
         $t->assert_api_get_json(word::class, api::URL_VAR_WORD_ID);
         $t->assert_api_get_by_text(word::class, words::MATH);
         $t->assert_api_get(verb::class);
-        $t->assert_api_get_by_text(verb::class, verbs::TN_READ);
+        $t->assert_api_get_by_text(verb::class, verbs::NOT_SET_NAME);
         $t->assert_api_get(triple::class);
         //$t->assert_api_get_by_text(triple::class, triples::TN_READ);
         //$t->assert_api_get(phrase::class);

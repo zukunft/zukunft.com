@@ -237,18 +237,18 @@ class verb_list extends type_list
     {
         $vrb = new verb();
         $vrb->set_id(1);
-        $vrb->set_name(verbs::NOT_SET);
+        $vrb->set_name(verbs::NOT_SET_NAME);
         $vrb->code_id = verbs::NOT_SET;
         $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(2);
-        $vrb->set_name(verbs::TN_IS);
+        $vrb->set_name(verbs::IS_NAME);
         $vrb->code_id = verbs::IS;
         $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(3);
-        $vrb->set_name(verbs::IS_PART_OF);
-        $vrb->code_id = verbs::IS_PART_OF;
+        $vrb->set_name(verbs::PART_NAME);
+        $vrb->code_id = verbs::PART_NAME;
         $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(4);

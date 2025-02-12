@@ -128,8 +128,8 @@ class verb_read_tests
         // TODO check why this differs depending on the database used
         if ($result == 'is an acronym for') {
             $target = 'is an acronym for';
-        } elseif ($result == verbs::TN_IS) {
-            $target = verbs::TN_IS;
+        } elseif ($result == verbs::IS_NAME) {
+            $target = verbs::IS_NAME;
         } elseif ($result == 'uses') {
             $target = 'uses';
         } elseif ($result == 'is measure type for') {

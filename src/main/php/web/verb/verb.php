@@ -48,13 +48,13 @@ include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use html\phrase\term as term_dsp;
-use html\sandbox\sandbox_named as sandbox_named_dsp;
+use html\phrase\term;
+use html\sandbox\sandbox_named;
 use html\user\user_message;
 use shared\const\views;
 use shared\json_fields;
 
-class verb extends sandbox_named_dsp
+class verb extends sandbox_named
 {
 
     /*
@@ -132,9 +132,9 @@ class verb extends sandbox_named_dsp
      * cast
      */
 
-    function term(): term_dsp
+    function term(): term
     {
-        $trm = new term_dsp();
+        $trm = new term();
         $trm->set_obj($this);
         return $trm;
     }
@@ -143,15 +143,6 @@ class verb extends sandbox_named_dsp
     /*
      * base
      */
-
-    /**
-     * display the verb with the tooltip
-     * @returns string the html code
-     */
-    function name_tip(): string
-    {
-        return $this->name();
-    }
 
     /**
      * display the verb with a link to the main page for the verb

@@ -349,9 +349,9 @@ class test_cleanup extends test_api
         $this->del_triple(words::TN_2021, verbs::FOLLOW, words::TN_2020);
         $this->del_triple(words::TN_2022, verbs::FOLLOW, words::TN_2021);
         $this->del_triple(words::TWN_CASH_FLOW, verbs::IS, words::TN_FIN_REPORT);
-        $this->del_triple(words::TN_TAX_REPORT, verbs::IS_PART_OF, words::TWN_CASH_FLOW);
-        $this->del_triple(words::TN_CASH, verbs::IS_PART_OF, words::TN_ASSETS_CURRENT);
-        $this->del_triple(words::TN_ASSETS_CURRENT, verbs::IS_PART_OF, words::TN_ASSETS);
+        $this->del_triple(words::TN_TAX_REPORT, verbs::PART_NAME, words::TWN_CASH_FLOW);
+        $this->del_triple(words::TN_CASH, verbs::PART_NAME, words::TN_ASSETS_CURRENT);
+        $this->del_triple(words::TN_ASSETS_CURRENT, verbs::PART_NAME, words::TN_ASSETS);
         $this->del_triple(words::TN_SECTOR, verbs::CAN_CONTAIN, words::TN_ENERGY);
         $this->del_triple(words::TN_ENERGY, verbs::CAN_CONTAIN, words::TN_WIND_ENERGY);
 
@@ -443,7 +443,7 @@ class test_cleanup extends test_api
             $class = match ($name) {
                 triples::PI_NAME => triple::class,
                 formulas::SCALE_TO_SEC, formulas::THIS_NAME, formulas::PRIOR => formula::class,
-                verbs::TN_READ, verbs::CAN_CONTAIN_NAME, verbs::CAN_CONTAIN_NAME_REVERSE => verb::class,
+                verbs::NOT_SET, verbs::CAN_CONTAIN_NAME, verbs::CAN_CONTAIN_NAME_REVERSE => verb::class,
                 default => word::class,
             };
             $trm = new term($usr);

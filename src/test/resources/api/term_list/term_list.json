@@ -1,21 +1,21 @@
 [
   {
     "id": 1,
+    "protection": 3,
     "name": "Mathematics",
     "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
     "type_id": 1,
-    "protection": 3,
     "class": "word"
   },
   {
     "id": 1,
+    "protection": 3,
     "name": "Mathematical constant",
     "description": "A mathematical constant that never changes e.g. Pi",
     "type_id": 17,
     "from_id": 2,
     "verb_id": 3,
     "to_id": 1,
-    "protection": 3,
     "class": "triple"
   },
   {
@@ -26,15 +26,11 @@
     "class": "formula"
   },
   {
-    "id": 1,
     "name": "not set",
-    "class": "verb",
     "code_id": "not_set",
-    "description": "",
-    "plural": null,
-    "reverse": null,
-    "rev_plural": null,
-    "frm_name": null,
-    "usage": 0
+    "description": "no verb \/ predicate selected",
+    "usage": 0,
+    "id": 1,
+    "class": "verb"
   }
 ]

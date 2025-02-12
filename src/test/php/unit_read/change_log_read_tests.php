@@ -94,7 +94,7 @@ class change_log_read_tests
         // ... and if the first entry is the adding a verb name
         $first_change = $lst->lst()[0];
         $t->assert('first verb change is adding', $first_change->old_value, '');
-        $t->assert('... the verb name', $first_change->new_value, verbs::TN_READ);
+        $t->assert('... the verb name', $first_change->new_value, verbs::NOT_SET_NAME);
 
         // check loading of triple name changes of triples
         $lst = new change_log_list();

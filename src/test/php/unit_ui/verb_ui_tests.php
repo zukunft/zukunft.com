@@ -33,7 +33,7 @@
 namespace unit_ui;
 
 use html\html_base;
-use html\verb\verb as verb_dsp;
+use html\verb\verb;
 use test\test_cleanup;
 
 class verb_ui_tests
@@ -44,7 +44,7 @@ class verb_ui_tests
 
         $t->subheader('Verb tests');
 
-        $vrb = new verb_dsp($t->verb()->api_json());
+        $vrb = new verb($t->verb()->api_json());
         $test_page = $html->text_h2('Verb display test');
         $test_page .= 'with tooltip: ' . $vrb->name_tip() . '<br>';
         $test_page .= 'with link: ' . $vrb->name_link() . '<br>';

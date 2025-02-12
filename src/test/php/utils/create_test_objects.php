@@ -921,7 +921,8 @@ class create_test_objects extends test_base
      */
     function verb(): verb
     {
-        $vrb = new verb(verbs::TI_READ, verbs::TN_READ, verbs::NOT_SET);
+        $vrb = new verb(verbs::NOT_SET_ID, verbs::NOT_SET_NAME, verbs::NOT_SET);
+        $vrb->set_description(verbs::NOT_SET_COM);
         $vrb->set_user($this->usr1);
         return $vrb;
     }
@@ -931,7 +932,7 @@ class create_test_objects extends test_base
      */
     function verb_is(): verb
     {
-        return new verb(verbs::TI_IS, verbs::TN_IS, verbs::IS);
+        return new verb(verbs::IS_ID, verbs::IS_NAME, verbs::IS);
     }
 
     /**
@@ -939,7 +940,7 @@ class create_test_objects extends test_base
      */
     function verb_part(): verb
     {
-        return new verb(verbs::TI_PART, verbs::TN_PART, verbs::IS_PART_OF);
+        return new verb(verbs::PART_ID, verbs::PART_NAME, verbs::PART_NAME);
     }
 
     /**
@@ -947,7 +948,7 @@ class create_test_objects extends test_base
      */
     function verb_of(): verb
     {
-        $vrb = new verb(verbs::TI_OF, verbs::TN_OF, verbs::CAN_CONTAIN_NAME_REVERSE);
+        $vrb = new verb(verbs::OF_ID, verbs::OF, verbs::CAN_CONTAIN_NAME_REVERSE);
         $vrb->set_user($this->usr1);
         return $vrb;
     }
@@ -3385,7 +3386,7 @@ class create_test_objects extends test_base
         $chg->set_action(change_actions::ADD);
         $chg->set_table(change_tables::TRIPLE);
         $chg->new_from_id = words::CONST_ID;
-        $chg->new_link_id = verbs::TI_PART;
+        $chg->new_link_id = verbs::PART_ID;
         $chg->new_to_id = words::MATH_ID;
         $chg->row_id = 1;
         return $chg;

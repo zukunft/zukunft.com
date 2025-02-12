@@ -62,7 +62,7 @@ class triple_write_tests
         $t->header('triple db write tests');
 
         $t->subheader('prepare triple write tests');
-        $vrb_is_id = $t->assert_verb_id(verbs::IS, verbs::TI_IS, 'load the verb used for testing');
+        $vrb_is_id = $t->assert_verb_id(verbs::IS, verbs::IS_ID, 'load the verb used for testing');
         $t->test_word(words::TN_ADD_VIA_SQL);
         $t->test_word(words::TN_ADD_VIA_FUNC);
 
@@ -303,9 +303,9 @@ class triple_write_tests
         $t->test_triple(words::ZH, verbs::IS, words::CANTON, triples::CANTON_ZURICH, triples::CANTON_ZURICH);
         $t->test_triple(words::ZH, verbs::IS, words::CITY, triples::CITY_ZH, triples::CITY_ZH);
         $t->test_triple(words::ZH, verbs::IS, words::TN_COMPANY, triples::COMPANY_ZURICH, triples::COMPANY_ZURICH);
-        $t->test_triple(triples::CANTON_ZURICH, verbs::IS_PART_OF, words::CH);
-        $t->test_triple(triples::CITY_ZH, verbs::IS_PART_OF, triples::CANTON_ZURICH);
-        $t->test_triple(triples::COMPANY_ZURICH, verbs::IS_PART_OF, triples::CITY_ZH, triples::SYSTEM_TEST_EXCLUDED, triples::SYSTEM_TEST_EXCLUDED);
+        $t->test_triple(triples::CANTON_ZURICH, verbs::PART_NAME, words::CH);
+        $t->test_triple(triples::CITY_ZH, verbs::PART_NAME, triples::CANTON_ZURICH);
+        $t->test_triple(triples::COMPANY_ZURICH, verbs::PART_NAME, triples::CITY_ZH, triples::SYSTEM_TEST_EXCLUDED, triples::SYSTEM_TEST_EXCLUDED);
 
         $t->test_triple(words::TN_ABB, verbs::IS, words::TN_COMPANY, triples::COMPANY_ABB);
         // TODO check why it is possible to create a triple with the same name as a word
@@ -313,7 +313,7 @@ class triple_write_tests
         $t->test_triple(words::TN_VESTAS, verbs::IS, words::TN_COMPANY, triples::COMPANY_VESTAS, triples::COMPANY_VESTAS);
         $t->test_triple(words::TN_2014, verbs::FOLLOW, words::TN_2013, triples::YEAR_2013_FOLLOW);
         // TODO check direction
-        $t->test_triple(words::TN_TAX, verbs::IS_PART_OF, words::TN_CASH_FLOW, triples::TAXES_OF_CF);
+        $t->test_triple(words::TN_TAX, verbs::PART_NAME, words::TN_CASH_FLOW, triples::TAXES_OF_CF);
 
         $t->header('Check if all base phrases are correct');
         $t->test_phrase(triples::COMPANY_ZURICH);

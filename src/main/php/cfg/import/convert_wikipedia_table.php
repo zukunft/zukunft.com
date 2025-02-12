@@ -311,7 +311,7 @@ class convert_wikipedia_table
                             // assume that the row name has an "is a" relation to the column name
                             $trp = [];
                             $trp[export::FROM] = $phr_name;
-                            $trp[export::VERB] = verbs::TN_IS;
+                            $trp[export::VERB] = verbs::IS_NAME;
                             if ($row_name_out != '') {
                                 $trp[export::TO] = $row_name_out;
                             } else {
@@ -323,7 +323,7 @@ class convert_wikipedia_table
                             if (in_array($col_names[$i], $list_of_symbols)) {
                                 $trp = [];
                                 $trp[export::FROM] = $phr_name;
-                                $trp[export::VERB] = verbs::TN_SYMBOL;
+                                $trp[export::VERB] = verbs::SYMBOL_NAME;
                                 $trp[export::TO] = $row_key;
                                 $triples[] = $trp;
                             }
@@ -340,19 +340,19 @@ class convert_wikipedia_table
                     $row_key = $row_key[0];
                 }
                 $trp[export::FROM] = $row_key;
-                $trp[export::VERB] = verbs::TN_IS;
+                $trp[export::VERB] = verbs::IS_NAME;
                 $trp[export::TO] = $row_name_out;
                 $triples[] = $trp;
 
                 $trp = [];
                 $trp[export::FROM] = $wiki_row[$pos_col];
-                $trp[export::VERB] = verbs::TN_IS;
+                $trp[export::VERB] = verbs::IS_NAME;
                 $trp[export::TO] = $context_array[1] . ' ' . $col_name_out;
                 $triples[] = $trp;
 
                 $trp = [];
                 $trp[export::FROM] = $wiki_row[$pos_col];
-                $trp[export::VERB] = verbs::TN_SYMBOL;
+                $trp[export::VERB] = verbs::SYMBOL_NAME;
                 $trp[export::TO] = $row_key;
                 $triples[] = $trp;
             }

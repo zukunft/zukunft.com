@@ -275,6 +275,9 @@ class all_unit_tests extends test_cleanup
         // prepare the unit tests
         $this->init_unit_tests();
 
+        // TODO remove these pre tests
+        (new all_ui_tests())->run($this);
+
         // do the general unit tests
         $all = new all_tests();
         (new lib_tests)->run($all); // test functions not yet split into single unit tests

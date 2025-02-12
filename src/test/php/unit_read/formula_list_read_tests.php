@@ -92,7 +92,7 @@ class formula_list_read_tests
         // test loading the formulas that use the results related to the verb "time step"
         $test_name = 'formulas that use the verb "time step" are at least "prior"';
         $vrb_time_step = new verb();
-        $vrb_time_step->load_by_name(verbs::TN_TIME_STEP);
+        $vrb_time_step->load_by_name(verbs::TIME_STEP);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_verb_ref($vrb_time_step);
         $t->assert_contains($test_name, $frm_lst->names(), [formulas::PRIOR]);

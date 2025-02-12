@@ -81,7 +81,7 @@ class formulas
     const SCALE_MIO_DB = '{w' . words::ONE_ID . '} = {w' . words::MIO_ID . '} * 1000000';
     const PARTS_IN_PERCENT = 'parts in percent';
     const PARTS_IN_PERCENT_EXP = '"' . words::PERCENT . '" = "parts" "of" / "total"'; // TODO check if separate verb "of each" is needed
-    const PARTS_IN_PERCENT_DB = '{w' . words::TI_PCT . '}={w' . words::TI_PARTS . '}{v' . verbs::TI_OF . '}/{w' . words::TI_TOTAL . '}';
+    const PARTS_IN_PERCENT_DB = '{w' . words::TI_PCT . '}={w' . words::TI_PARTS . '}{v' . verbs::OF_ID . '}/{w' . words::TI_TOTAL . '}';
 
     // persevered formula names for unit and integration tests
     const SYSTEM_TEXT_ADD = 'System Test Formula'; // to test adding a new formula to the database and using the increase formula

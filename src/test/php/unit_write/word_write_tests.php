@@ -247,7 +247,7 @@ class word_write_tests
         // e.g. ...
         $wrd_cf = $t->test_word(words::TWN_CASH_FLOW);
         $wrd_tax = $t->test_word(words::TN_TAX_REPORT);
-        $t->test_triple(words::TN_TAX_REPORT, verbs::IS_PART_OF, words::TWN_CASH_FLOW);
+        $t->test_triple(words::TN_TAX_REPORT, verbs::PART_NAME, words::TWN_CASH_FLOW);
 
         // create the test words and relations many mixed relations
         // e.g. a financial report
@@ -259,8 +259,8 @@ class word_write_tests
         $t->test_word(words::TN_ASSETS);
         $t->test_word(words::TN_ASSETS_CURRENT);
         $t->test_word(words::TN_CASH);
-        $t->test_triple(words::TN_CASH, verbs::IS_PART_OF, words::TN_ASSETS_CURRENT);
-        $t->test_triple(words::TN_ASSETS_CURRENT, verbs::IS_PART_OF, words::TN_ASSETS);
+        $t->test_triple(words::TN_CASH, verbs::PART_NAME, words::TN_ASSETS_CURRENT);
+        $t->test_triple(words::TN_ASSETS_CURRENT, verbs::PART_NAME, words::TN_ASSETS);
 
         // create the test words and relations for differentiators
         // e.g. energy can be a sector

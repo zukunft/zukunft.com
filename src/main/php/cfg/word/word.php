@@ -1174,7 +1174,7 @@ class word extends sandbox_typed
     {
         global $vrb_cac;
         $phr_lst = $this->lst();
-        return $phr_lst->foaf_children($vrb_cac->get_verb(verbs::IS_PART_OF));
+        return $phr_lst->foaf_children($vrb_cac->get_verb(verbs::PART_NAME));
     }
 
     /**
@@ -1185,7 +1185,7 @@ class word extends sandbox_typed
     {
         global $vrb_cac;
         $phr_lst = $this->lst();
-        return $phr_lst->foaf_children($vrb_cac->get_verb(verbs::IS_PART_OF), 1);
+        return $phr_lst->foaf_children($vrb_cac->get_verb(verbs::PART_NAME), 1);
     }
 
     /**
@@ -1386,7 +1386,7 @@ class word extends sandbox_typed
         global $vrb_cac;
         log_debug($this->dsp_id() . ', user ' . $this->user()->id());
         $phr_lst = $this->lst();
-        $is_phr_lst = $phr_lst->foaf_parents($vrb_cac->get_verb(verbs::IS_PART_OF));
+        $is_phr_lst = $phr_lst->foaf_parents($vrb_cac->get_verb(verbs::PART_NAME));
 
         log_debug($this->dsp_id() . ' is a ' . $is_phr_lst->dsp_name());
         return $is_phr_lst;
