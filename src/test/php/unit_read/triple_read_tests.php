@@ -65,7 +65,7 @@ class triple_read_tests
         $wrd_zh = $t->load_word(words::ZH);
         $wrd_canton = $t->load_word(words::CANTON);
         // create the group test word
-        $wrd_company = $t->test_word(words::TN_COMPANY);
+        $wrd_company = $t->test_word(words::COMPANY);
 
         $t->subheader('triple load tests');
         $test_name = 'load triple ' . triples::MATH_CONST . ' by name and id';

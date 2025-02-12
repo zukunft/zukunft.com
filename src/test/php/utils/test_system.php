@@ -46,7 +46,7 @@ function run_system_test(all_tests $t): void
     $t->header('Consistency check of the \"zukunft.com\" code');
 
     // load the main test word
-    $wrd_company = $t->test_word(words::TN_COMPANY);
+    $wrd_company = $t->test_word(words::COMPANY);
 
     if ($t::TEST_EMAIL) {
         $t->header('est mail sending');

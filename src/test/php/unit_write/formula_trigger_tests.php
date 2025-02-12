@@ -50,10 +50,10 @@ class formula_trigger_tests
         $t->header('Test the formula calculation triggers');
 
         // prepare the calculation trigger test
-        $phr_names_ch_19 = [words::CH, words::INHABITANTS, words::MIO, words::TN_2019];
+        $phr_names_ch_19 = [words::CH, words::INHABITANTS, words::MIO, words::YEAR_2019];
         $phr_ch_19 = new phrase_list($usr);
         $phr_ch_19->load_by_names($phr_names_ch_19);
-        $phr_names_ch_20 = [words::CH, words::INHABITANTS, words::MIO, words::TN_2020];
+        $phr_names_ch_20 = [words::CH, words::INHABITANTS, words::MIO, words::YEAR_2020];
         $phr_ch_20 = new phrase_list($usr);
         $phr_ch_20->load_by_names($phr_names_ch_20);
         $phr_lst1 = new phrase_list($usr);
@@ -61,8 +61,8 @@ class formula_trigger_tests
         $phr_lst1->add_name(words::INHABITANTS);
         $phr_lst1->add_name(words::MIO);
         $phr_lst2 = clone $phr_lst1;
-        $phr_lst1->add_name(words::TN_2019);
-        $phr_lst2->add_name(words::TN_2020);
+        $phr_lst1->add_name(words::YEAR_2019);
+        $phr_lst2->add_name(words::YEAR_2020);
         $frm = $t->load_formula(formulas::INCREASE);
 
         // add a number to the test word

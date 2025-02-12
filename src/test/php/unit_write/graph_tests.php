@@ -125,9 +125,9 @@ class graph_tests
         $dsp_trp_list = new triple_list_dsp();
         $dsp_trp_list->set_from_json_array($api_json);
         $result = $dsp_trp_list->tbl($back);
-        $t->assert_text_contains($test_name . words::CITY, $result, words::TN_COMPANY);
-        $t->assert_text_contains($test_name . words::CANTON, $result, words::TN_COMPANY);
-        $t->assert_text_contains($test_name . words::TN_COMPANY, $result, words::TN_COMPANY);
+        $t->assert_text_contains($test_name . words::CITY, $result, words::COMPANY);
+        $t->assert_text_contains($test_name . words::CANTON, $result, words::COMPANY);
+        $t->assert_text_contains($test_name . words::COMPANY, $result, words::COMPANY);
 
     }
 

@@ -254,7 +254,7 @@ class formula_tests
 
         // test the calculation of one value
         $trm_lst = $t->term_list_for_tests(array(
-            words::TN_PCT,
+            words::PCT,
             formulas::THIS_NAME,
             formulas::PRIOR
         ));

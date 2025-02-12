@@ -110,11 +110,11 @@ class formula_write_tests
                 $target = zu_dsp_bool(true);
                 $t->display('formula->is_special for "' . $elm_frm->name() . '"', $target, $result);
 
-                $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::TN_2019));
+                $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::YEAR_2019));
                 $time_phr = $phr_lst->time_useful();
                 $val = $elm_frm->special_result($phr_lst, $time_phr);
                 $result = $val->number();
-                $target = words::TN_2019;
+                $target = words::YEAR_2019;
                 // TODO: get the best matching number
                 //$t->display('formula->special_result for "'.$elm_frm->name.'"', $target, $result);
 
@@ -126,7 +126,7 @@ class formula_write_tests
                 }
                 $time_phr = $elm_frm_next->special_time_phr($time_phr);
                 $result = $time_phr->name();
-                $target = words::TN_2019;
+                $target = words::YEAR_2019;
                 $t->display('formula->special_time_phr for "' . $elm_frm_next->name() . '"', $target, $result);
             }
         }
@@ -137,7 +137,7 @@ class formula_write_tests
         } else {
             $result = $phr_lst->name();
         }
-        $target = '"' . words::TN_2019 . '","' . words::CH . '","' . words::INHABITANTS . '"';
+        $target = '"' . words::YEAR_2019 . '","' . words::CH . '","' . words::INHABITANTS . '"';
         $t->display('formula->special_phr_lst for "' . $frm->name() . '"', $target, $result);
 
         $phr_lst = $frm->assign_phr_lst_direct();
@@ -160,33 +160,33 @@ class formula_write_tests
 
         // loading another formula (Price Earning ratio ) to have more test cases
         $t->test_formula(formulas::SYSTEM_TEXT_RATIO, formulas::SYSTEM_TEXT_RATIO_EXP);
-        $t->test_formula_link(formulas::SYSTEM_TEXT_RATIO, words::TN_SHARE);
+        $t->test_formula_link(formulas::SYSTEM_TEXT_RATIO, words::TEST_SHARE);
         $frm_pe = $t->load_formula(formulas::SYSTEM_TEXT_RATIO);
 
-        $wrd_share = $t->test_word(words::TN_SHARE);
-        $wrd_chf = $t->test_word(words::TWN_CHF);
+        $wrd_share = $t->test_word(words::TEST_SHARE);
+        $wrd_chf = $t->test_word(words::TEST_CHF);
 
         $frm_pe->assign_phrase($wrd_share->phrase());
 
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names(array(words::TN_SHARE, words::TWN_CHF));
+        $phr_lst->load_by_names(array(words::TEST_SHARE, words::TEST_CHF));
 
         $phr_lst_all = $frm_pe->assign_phr_lst();
         $phr_lst = $phr_lst_all->del_list($phr_lst);
         $result = $phr_lst->dsp_name();
-        $target = '"' . words::TN_SHARE . '"';
+        $target = '"' . words::TEST_SHARE . '"';
         $t->display('formula->assign_phr_lst for "' . $frm->name() . '"', $target, $result);
 
         $phr_lst_all = $frm_pe->assign_phr_ulst();
         $phr_lst = $phr_lst_all->del_list($phr_lst);
         $result = $phr_lst->dsp_name();
-        $target = '"' . words::TN_SHARE . '"';
+        $target = '"' . words::TEST_SHARE . '"';
         $t->display('formula->assign_phr_ulst for "' . $frm->name() . '"', $target, $result);
 
         // test the calculation of one value
         $phr_lst = new phrase_list($t->usr1);
         // TODO check why is this word MIO is needed??
-        $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::TN_2020, words::MIO));
+        $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::YEAR_2020, words::MIO));
         $frm = $t->load_formula(formulas::SYSTEM_TEXT_ADD);
         $res_lst = $frm->to_num($phr_lst);
         if ($res_lst->lst() != null) {
@@ -232,7 +232,7 @@ class formula_write_tests
         $phr_lst = new phrase_list($t->usr1);
         // TODO check why is this word ONE needed?? scale shout assume one if no scaling word is set or implied
         //$phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_2020));
-        $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::TN_2020, words::ONE));
+        $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::YEAR_2020, words::ONE));
         $frm_scale_one_to_k = $t->load_formula(formulas::SYSTEM_TEXT_SCALE_TO_K);
         // TODO activate Prio 1
         //$res_lst = $frm_scale_one_to_k->calc($phr_lst);
@@ -545,7 +545,7 @@ class formula_write_tests
         $t->header('formula list database write tests');
 
         // load the main test word
-        $wrd_share = $t->test_word(words::TN_SHARE);
+        $wrd_share = $t->test_word(words::TEST_SHARE);
 
         $wrd = new word($t->usr1);
         $wrd->load_by_id($wrd_share->id(), word::class);
@@ -563,19 +563,19 @@ class formula_write_tests
     {
         $t->header('Check if all base formulas are correct');
 
-        $t->test_word(words::TN_EARNING);
-        $t->test_word(words::TN_PRICE);
-        $t->test_word(words::TN_PE);
+        $t->test_word(words::TEST_EARNING);
+        $t->test_word(words::TEST_PRICE);
+        $t->test_word(words::TEST_PE);
         $t->test_formula(formulas::SYSTEM_TEXT_RATIO, formulas::SYSTEM_TEXT_RATIO_EXP);
-        $t->test_word(words::TN_TOTAL);
+        $t->test_word(words::TEST_TOTAL);
         $t->test_formula(formulas::SYSTEM_TEXT_SECTOR, formulas::SYSTEM_TEXT_SECTOR_EXP);
         //$t->test_formula(formulas::TN_THIS, formulas::TF_THIS);
-        $t->test_word(words::TN_THIS);
-        $t->test_word(words::TN_PRIOR);
+        $t->test_word(words::TEST_THIS);
+        $t->test_word(words::TEST_PRIOR);
         $t->test_formula(formulas::SYSTEM_TEXT_ADD, formulas::INCREASE_EXP);
         $t->test_formula(formulas::SYSTEM_TEXT_EXCLUDED, formulas::INCREASE_EXP);
-        $t->test_word(words::TN_IN_K);
-        $t->test_word(words::TN_BIL);
+        $t->test_word(words::TEST_IN_K);
+        $t->test_word(words::TEST_BIL);
         $t->test_formula(formulas::SYSTEM_TEXT_SCALE_K, formulas::SYSTEM_TEXT_SCALE_K_EXP);
         $t->test_formula(formulas::SYSTEM_TEXT_SCALE_TO_K, formulas::SYSTEM_TEXT_SCALE_TO_K_EXP);
         $t->test_formula(formulas::SYSTEM_TEXT_SCALE_MIO, formulas::SYSTEM_TEXT_SCALE_MIO_EXP);

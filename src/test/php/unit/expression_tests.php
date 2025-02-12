@@ -104,7 +104,7 @@ class expression_tests
         $phr_lst = $exp->res_phr_lst($trm_lst);
         $result = $phr_lst->dsp_id();
         $target = '"' . formulas::PERCENT
-            . '" (phrase_id ' . words::TI_PCT . ') for user 1 (zukunft.com system test)';
+            . '" (phrase_id ' . words::PCT_ID . ') for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         // the phrase list for the calc part should be empty, because it contains only formulas
@@ -129,7 +129,7 @@ class expression_tests
         $exp->ref_text($trm_lst);
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
         $result = $elm_grp_lst->dsp_id();
-        $target = '"parts,of" (' . words::TI_PARTS . ',' . verbs::OF_ID . ') / "total" (' . words::TI_TOTAL
+        $target = '"parts,of" (' . words::PARTS_ID . ',' . verbs::OF_ID . ') / "total" (' . words::TOTAL_ID
             . ') for user 1 (zukunft.com system test)';
         //$target = '"' . formulas::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
@@ -138,7 +138,7 @@ class expression_tests
         $elm_grp_lst = $exp->element_list($trm_lst);
         $result = $elm_grp_lst->dsp_id();
         $target = '"parts","of","total" (element_id '
-            . words::TI_PARTS . ',' . verbs::OF_ID . ',' . words::TI_TOTAL
+            . words::PARTS_ID . ',' . verbs::OF_ID . ',' . words::TOTAL_ID
             . ') for user 1 (zukunft.com system test)';
         //$target = '"' . formulas::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
@@ -153,7 +153,7 @@ class expression_tests
 
         $test_name = 'test getting the phrase ids';
         $result = implode(",", $exp->phr_id_lst($exp->ref_text())->lst);
-        $target = implode(",", array(words::TI_PCT, words::THIS_ID, words::PRIOR_ID));
+        $target = implode(",", array(words::PCT_ID, words::THIS_ID, words::PRIOR_ID));
         $t->assert($test_name, $result, $target);
 
         $test_name = 'test the conversion of the database reference text to the user text';
@@ -193,7 +193,7 @@ class expression_tests
         $test_name = 'getting phrases that should be added to the result of a formula for "' . $exp->dsp_id() . '"';
         $phr_lst_res = $exp->res_phr_lst($trm_lst);
         $result = $phr_lst_res->dsp_name();
-        $target = '"' . words::TN_PCT . '"';
+        $target = '"' . words::PCT . '"';
         $t->assert($test_name, $result, $target);
 
         // tests based on the pi formula
@@ -211,7 +211,7 @@ class expression_tests
         $exp_sector->set_ref_text(formulas::PARTS_IN_PERCENT_DB, $trm_lst);
         $phr_lst = $exp_sector->phr_id_lst_as_phr_lst($exp_sector->r_part());
         $result = $phr_lst->dsp_id();
-        $target = '"","" (phrase_id ' . words::TI_PARTS . ',' . words::TI_TOTAL
+        $target = '"","" (phrase_id ' . words::PARTS_ID . ',' . words::TOTAL_ID
             . ') for user 1 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 

@@ -78,7 +78,7 @@ class group_read_tests
 
         $test_name = 'second test if the phrase group links are correctly recreated when a group is updated';
         $phr_lst = new phrase_list($t->usr1);
-        $phr_lst->load_by_names(array(words::ZH, words::CANTON, words::INHABITANTS, words::MIO, words::TN_2020));
+        $phr_lst->load_by_names(array(words::ZH, words::CANTON, words::INHABITANTS, words::MIO, words::YEAR_2020));
         $test_name .= ' for phrases ' . $phr_lst->dsp_id();
         $grp = $phr_lst->get_grp_id();
         $grp_check = new group($t->usr1);

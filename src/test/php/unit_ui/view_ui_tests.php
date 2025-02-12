@@ -42,12 +42,16 @@ class view_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('view tests');
+        $t->subheader('view html ui unit tests');
 
-        $vrb = new view_dsp($t->view()->api_json());
+        $msk = new view_dsp($t->view()->api_json());
         $test_page = $html->text_h2('view display test');
-        $test_page .= 'with tooltip: ' . $vrb->name_tip() . '<br>';
-        $test_page .= 'with link: ' . $vrb->name_link() . '<br>';
+        $test_page .= 'with tooltip: ' . $msk->name_tip() . '<br>';
+        $test_page .= 'with link: ' . $msk->name_link() . '<br>';
+        $test_page .= $html->text_h2('buttons');
+        $test_page .= 'add button: ' . $msk->btn_add() . '<br>';
+        $test_page .= 'edit button: ' . $msk->btn_edit() . '<br>';
+        $test_page .= 'del button: ' . $msk->btn_del() . '<br>';
         $t->html_test($test_page, 'view', 'view', $t);
     }
 

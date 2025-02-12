@@ -198,7 +198,7 @@ class phrase_list_tests
     {
         global $usr;
         $wrd = new word($usr);
-        $wrd->set(1, words::TN_ADD);
+        $wrd->set(1, words::TEST_ADD);
         return $wrd->phrase();
     }
 
@@ -211,7 +211,7 @@ class phrase_list_tests
         global $phr_typ_cac;
 
         $wrd = new word($usr);
-        $wrd->set(2, words::TN_RENAMED);
+        $wrd->set(2, words::TEST_RENAMED);
         $wrd->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         return $wrd->phrase();
     }

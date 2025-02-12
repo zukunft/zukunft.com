@@ -61,7 +61,7 @@ class phrase_write_tests
 
         // load or create the test objects and remember the vars used for testing
         // load or create a word used to group phrases e.g. company
-        $wrd = $t->test_word(words::TN_COMPANY);
+        $wrd = $t->test_word(words::COMPANY);
         $company_id = $wrd->id();
         // load or create a word that can be parts of a group e.g. Zurich
         $wrd = $t->test_word(words::ZH);
@@ -78,15 +78,15 @@ class phrase_write_tests
         $phr->set_user($usr);
         $phr->load_by_id($company_id);
         $result = $phr->name();
-        $target = words::TN_COMPANY;
+        $target = words::COMPANY;
         $t->assert('phrase->load word by id ' . $company_id, $result, $target);
 
         $phr_dsp = new phrase_dsp($phr->api_json());
         $result = $lib->trim_html($phr_dsp->dsp_tbl());
         $url = '<td><a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::WORD_ID . '&' . api::URL_VAR_ID . '=';
         $target = $lib->trim_html($url . $company_id . '" title="' .
-            words::TN_COMPANY . '">' . words::TN_COMPANY . '</a></td> ');
-        $t->assert('phrase->dsp_tbl word for ' . words::TN_COMPANY, $result, $target);
+            words::COMPANY . '">' . words::COMPANY . '</a></td> ');
+        $t->assert('phrase->dsp_tbl word for ' . words::COMPANY, $result, $target);
 
         // test the phrase display functions for triples
         $phr = new phrase($usr);
@@ -116,19 +116,19 @@ class phrase_write_tests
 
         // test the phrase selector for the word company
         $wrd = new word($usr);
-        $wrd->load_by_name(words::TN_COMPANY, word::class);
+        $wrd->load_by_name(words::COMPANY, word::class);
         $trp_ins = new triple($usr);
         $trp_ins->load_by_name(triples::COMPANY_ZURICH, triple::class);
         $phr = $wrd->phrase();
         $phr_dsp = new phrase_dsp($phr->api_json());
         $result = $phr->dsp_selector($phr_dsp, $form_name, $pos, '', $back);
         $target = $trp_ins->name();
-        $t->dsp_contains(', phrase->dsp_selector of type ' . words::TN_COMPANY . ' is : ' .
+        $t->dsp_contains(', phrase->dsp_selector of type ' . words::COMPANY . ' is : ' .
             $result . ' which contains ' . triples::COMPANY_ZURICH,
             $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
         // test getting the parent for phrase Vestas
-        $phr = $t->load_phrase(words::TN_VESTAS);
+        $phr = $t->load_phrase(words::VESTAS);
         $is_phr = $phr->is_mainly();
         if ($is_phr != null) {
             $result = $is_phr->name();
@@ -137,7 +137,7 @@ class phrase_write_tests
             //log_err('Vestas type test failed');
             log_warning('Vestas type test failed');
         }
-        $target = words::TN_COMPANY;
+        $target = words::COMPANY;
         $t->display('phrase->is_mainly for ' . $phr->name(), $target, $result);
 
     }

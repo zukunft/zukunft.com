@@ -98,7 +98,7 @@ class word_tests
         $t->assert_sql_insert($sc, $wrd, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('word sql write update');
-        $wrd_renamed = $wrd->cloned(words::TN_RENAMED);
+        $wrd_renamed = $wrd->cloned(words::TEST_RENAMED);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::USER]);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG]);
@@ -109,8 +109,8 @@ class word_tests
         $wrd->description = words::MATH_COM;
         $wrd_updated = $t->word();
         $wrd_updated->set_user($usr_sys);
-        $wrd_updated->plural = words::TN_RENAMED;
-        $wrd_updated->description = words::TN_RENAMED;
+        $wrd_updated->plural = words::TEST_RENAMED;
+        $wrd_updated->description = words::TEST_RENAMED;
         $wrd_updated->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         $t->assert_sql_update($sc, $wrd_updated, $wrd, [sql_type::LOG, sql_type::USER]);
 

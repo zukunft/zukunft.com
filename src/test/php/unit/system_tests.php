@@ -118,7 +118,7 @@ class system_tests
         $t->assert_dsp_id($t->term(), '"Mathematics" (word_id 1) for user 1 (zukunft.com system test) as term');
         $t->assert_dsp_id($t->term_list(), '"Mathematical constant","Mathematics","not set","scale minute to sec" (-2,-1,1,2)');
         $t->assert_dsp_id($t->value(), '"Pi (math)" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->value_list(), '"Pi (math)" 3.1415926535898 / "inhabitants in the city of Zurich (2019)" 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / ' . words::INHABITANT_ID . ',' . words::ZH_ID . ',' . words::TI_2019 . ',) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->value_list(), '"Pi (math)" 3.1415926535898 / "inhabitants in the city of Zurich (2019)" 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / ' . words::INHABITANT_ID . ',' . words::ZH_ID . ',' . words::YEAR_2019_ID . ',) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->source(), '"The International System of Units" (source_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->reference(), 'ref of "Pi" to "wikidata" (' . refs::PI_ID . ')');
         $t->assert_dsp_id($t->formula(), '"scale minute to sec" (formula_id 1) for user 1 (zukunft.com system test)');

@@ -160,7 +160,7 @@ class element_group_write_tests
 
         } else {
             $result = 'formula element group list is empty';
-            $target = 'this (3) and "ABB","Sales","CHF","million","' . words::TN_2015 . '"@';
+            $target = 'this (3) and "ABB","Sales","CHF","million","' . words::YEAR_2015 . '"@';
             $t->display('element_group->dsp_names', $target, $result);
         }
 

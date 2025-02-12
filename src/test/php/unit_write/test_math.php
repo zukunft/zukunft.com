@@ -100,12 +100,12 @@ function run_math_test(all_tests $t): void
     $t->display(", zut_keep_only_specific: the result for word array \"".implode(",",$word_array)."\"", $target, $result);
     */
 
-    $time_phr = $t->load_phrase(words::TN_2020);
+    $time_phr = $t->load_phrase(words::YEAR_2020);
 
     // test zuc_is_math_symbol_or_num
     $formula_part_text = "/{f19}";
     $wrd_lst = new word_list($usr);
-    $wrd_lst->load_by_names(array(words::TN_ABB, words::TN_SALES, words::MIO));
+    $wrd_lst->load_by_names(array(words::ABB, words::SALES, words::MIO));
     $target = 1;
     $result = $calc->is_math_symbol_or_num($formula_part_text);
     $t->display(", zuc_is_math_symbol_or_num: the result for formula \"" . $formula_part_text . "\"", $target, $result);

@@ -102,7 +102,7 @@ class test_cleanup extends test_api
                         $msg = $val->del();
                         $result .= $msg->get_last_message();
                         $target = '';
-                        $this->display('value->del test value for "' . words::TN_RENAMED . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
+                        $this->display('value->del test value for "' . words::TEST_RENAMED . '"', $target, $result, self::TIMEOUT_LIMIT_DB_MULTI);
                     }
                 }
             }
@@ -310,12 +310,12 @@ class test_cleanup extends test_api
         }
 
         // request to delete the added test reference
-        $ref = $this->load_ref(words::TN_ADD, ref_type::WIKIDATA);
+        $ref = $this->load_ref(words::TEST_ADD, ref_type::WIKIDATA);
         if ($ref->id() > 0) {
             $msg = $ref->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('ref->del of "' . words::TN_ADD . '"', $target, $result);
+            $this->display('ref->del of "' . words::TEST_ADD . '"', $target, $result);
         }
 
         // request to delete the added test formulas
@@ -341,37 +341,37 @@ class test_cleanup extends test_api
         }
 
         // request to delete some triples not yet covered by the other cleanup jobs
-        $this->del_triple(words::TN_2019, verbs::IS, words::YEAR_CAP);
-        $this->del_triple(words::TN_2020, verbs::IS, words::YEAR_CAP);
-        $this->del_triple(words::TN_2021, verbs::IS, words::YEAR_CAP);
-        $this->del_triple(words::TN_2022, verbs::IS, words::YEAR_CAP);
-        $this->del_triple(words::TN_2020, verbs::FOLLOW, words::TN_2019);
-        $this->del_triple(words::TN_2021, verbs::FOLLOW, words::TN_2020);
-        $this->del_triple(words::TN_2022, verbs::FOLLOW, words::TN_2021);
-        $this->del_triple(words::TWN_CASH_FLOW, verbs::IS, words::TN_FIN_REPORT);
-        $this->del_triple(words::TN_TAX_REPORT, verbs::PART_NAME, words::TWN_CASH_FLOW);
-        $this->del_triple(words::TN_CASH, verbs::PART_NAME, words::TN_ASSETS_CURRENT);
-        $this->del_triple(words::TN_ASSETS_CURRENT, verbs::PART_NAME, words::TN_ASSETS);
-        $this->del_triple(words::TN_SECTOR, verbs::CAN_CONTAIN, words::TN_ENERGY);
-        $this->del_triple(words::TN_ENERGY, verbs::CAN_CONTAIN, words::TN_WIND_ENERGY);
+        $this->del_triple(words::YEAR_2019, verbs::IS, words::YEAR_CAP);
+        $this->del_triple(words::YEAR_2020, verbs::IS, words::YEAR_CAP);
+        $this->del_triple(words::TEST_2021, verbs::IS, words::YEAR_CAP);
+        $this->del_triple(words::TEST_2022, verbs::IS, words::YEAR_CAP);
+        $this->del_triple(words::YEAR_2020, verbs::FOLLOW, words::YEAR_2019);
+        $this->del_triple(words::TEST_2021, verbs::FOLLOW, words::YEAR_2020);
+        $this->del_triple(words::TEST_2022, verbs::FOLLOW, words::TEST_2021);
+        $this->del_triple(words::TEST_CASH_FLOW, verbs::IS, words::TEST_FIN_REPORT);
+        $this->del_triple(words::TEST_TAX_REPORT, verbs::PART_NAME, words::TEST_CASH_FLOW);
+        $this->del_triple(words::TEST_CASH, verbs::PART_NAME, words::TEST_ASSETS_CURRENT);
+        $this->del_triple(words::TEST_ASSETS_CURRENT, verbs::PART_NAME, words::TEST_ASSETS);
+        $this->del_triple(words::TEST_SECTOR, verbs::CAN_CONTAIN, words::TEST_ENERGY);
+        $this->del_triple(words::TEST_ENERGY, verbs::CAN_CONTAIN, words::TEST_WIND_ENERGY);
 
         // request to delete the added test word
         // TODO: if a user has changed the word during the test, delete also the user words
-        $wrd = $this->load_word(words::TN_ADD);
+        $wrd = $this->load_word(words::TEST_ADD);
         if ($wrd->id() > 0) {
             $msg = $wrd->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('word->del of "' . words::TN_ADD . '"', $target, $result);
+            $this->display('word->del of "' . words::TEST_ADD . '"', $target, $result);
         }
 
         // request to delete the renamed test word
-        $wrd = $this->load_word(words::TN_RENAMED);
+        $wrd = $this->load_word(words::TEST_RENAMED);
         if ($wrd->id() > 0) {
             $msg = $wrd->del();
             $result .= $msg->get_last_message();
             $target = '';
-            $this->display('word->del of "' . words::TN_RENAMED . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
+            $this->display('word->del of "' . words::TEST_RENAMED . '"', $target, $result, self::TIMEOUT_LIMIT_DB);
         }
 
         // request to delete the added test words

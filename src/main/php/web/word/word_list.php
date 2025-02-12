@@ -31,7 +31,7 @@
 
 namespace html\word;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+include_once WEB_SANDBOX_PATH . 'list_named.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
@@ -45,14 +45,14 @@ include_once SHARED_PATH . 'library.php';
 use html\phrase\phrase;
 use html\phrase\phrase_list;
 use html\phrase\term_list;
+use html\sandbox\list_named;
 use html\user\user_message;
 use html\value\value_list;
 use html\html_base;
-use html\sandbox\list_dsp;
 use shared\library;
 use shared\types\phrase_type as phrase_type_shared;
 
-class word_list extends list_dsp
+class word_list extends list_named
 {
 
     /*
@@ -112,35 +112,9 @@ class word_list extends list_dsp
     }
 
 
-
     /*
-     * base
+     * table
      */
-
-    /**
-     * @param string $back the back trace url for the undo functionality
-     * @return string with a list of the word names with html links
-     * ex. names_linked
-     */
-    function name_link(string $back = ''): string
-    {
-        return implode(', ', $this->names_linked($back));
-    }
-
-    /**
-     * @param string $back the back trace url for the undo functionality
-     * @return array with a list of the word names with html links
-     */
-    function names_linked(string $back = ''): array
-    {
-        $result = array();
-        foreach ($this->lst() as $wrd) {
-            if (!$wrd->is_hidden()) {
-                $result[] = $wrd->name_link($back);
-            }
-        }
-        return $result;
-    }
 
     /**
      * show all words of the list as table row (ex display)
@@ -241,7 +215,7 @@ class word_list extends list_dsp
                     log_warning("The word list contains more time word than supported by the program.", "word_list->assume_time");
                 }
             }
-            log_debug('time ' . $phr->name() . ' assumed for ' . $this->name());
+            log_debug('time ' . $phr->name() . ' assumed for ' . $this->name_tip());
         } else {
             // get the time of the last "real" (reported) value for the word list
             $wrd_max_time = $this->max_val_time($trm_lst);
@@ -472,35 +446,6 @@ class word_list extends list_dsp
     function ex_percent(): void
     {
         $this->diff($this->percent_lst());
-    }
-
-    /**
-     * to show the list name to the user in the most simple form (without any ids)
-     * this function is called from dsp_id, so no other call is allowed
-     *
-     * @param ?int $limit the max number of ids to show
-     * @return string a simple name of the list
-     */
-    function name(int $limit = null): string
-    {
-        return '"' . implode('","', $this->names($limit)) . '"';
-    }
-
-    /**
-     * @param ?int $limit the max number of ids to show
-     * @return array with all names of the list
-     */
-    function names(int $limit = null): array
-    {
-        $result = [];
-        $pos = 0;
-        foreach ($this->lst() as $sbx_obj) {
-            if ($pos <= $limit or $limit == null) {
-                $result[] = $sbx_obj->name();
-                $pos++;
-            }
-        }
-        return $result;
     }
 
 }

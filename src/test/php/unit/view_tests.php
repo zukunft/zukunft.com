@@ -135,7 +135,7 @@ class view_tests
         $json = '{"id":1,"name":"Word","description":"the default view for words","code_id":"word"}';
         $msk_dsp = new view_dsp($json);
         $dsp_text = $msk_dsp->name_tip();
-        $target = 'Word';
+        $target = '<span title="the default view for words" data-toggle="tooltip">Word</span>';
         $t->assert($test_name, $dsp_text, $target);
 
         // sql to load the view components

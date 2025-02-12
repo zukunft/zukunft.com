@@ -141,7 +141,7 @@ class word_read_tests
         // load a word list by type
         $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_by_type($phr_typ_cac->id(phrase_type_shared::PERCENT));
-        $t->assert('load_by_type', $wrd_lst->name(), '"' . words::TN_PCT . '"');
+        $t->assert('load_by_type', $wrd_lst->name(), '"' . words::PCT . '"');
 
         // load a word list by name pattern
         $wrd_lst = new word_list ($t->usr1);

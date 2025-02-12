@@ -54,7 +54,7 @@ class element_write_tests
         $t->header('Test the formula element class (classes/element.php)');
 
         $t->subheader('prepare formula element write');
-        $wrd_total = $t->test_word(words::TN_TOTAL);
+        $wrd_total = $t->test_word(words::TEST_TOTAL);
         $frm_sector = $t->test_formula(formulas::SYSTEM_TEXT_SECTOR, formulas::SYSTEM_TEXT_SECTOR_EXP);
 
         // load increase formula for testing
@@ -137,7 +137,7 @@ class element_write_tests
         $t->header('Test the formula element list class (classes/element_list.php)');
 
         $t->subheader('prepare formula element write');
-        $wrd_total = $t->test_word(words::TN_TOTAL);
+        $wrd_total = $t->test_word(words::TEST_TOTAL);
         $frm_sector = $t->test_formula(formulas::SYSTEM_TEXT_SECTOR, formulas::SYSTEM_TEXT_SECTOR_EXP);
 
         // load increase formula for testing

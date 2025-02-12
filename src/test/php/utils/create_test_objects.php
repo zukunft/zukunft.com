@@ -539,7 +539,7 @@ class create_test_objects extends test_base
         $wrd = $this->word_filled();
         $wrd->include();
         $wrd->set_id(0);
-        $wrd->set_name(words::TN_ADD);
+        $wrd->set_name(words::TEST_ADD);
         return $wrd;
     }
 
@@ -551,7 +551,7 @@ class create_test_objects extends test_base
         $wrd = $this->word_filled();
         $wrd->include();
         $wrd->set_id(0);
-        $wrd->set_name(words::TN_ADD_TO);
+        $wrd->set_name(words::TEST_ADD_TO);
         return $wrd;
     }
 
@@ -561,7 +561,7 @@ class create_test_objects extends test_base
     function word_add_by_func(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set_name(words::TN_ADD_VIA_FUNC);
+        $wrd->set_name(words::TEST_ADD_VIA_FUNC);
         return $wrd;
     }
 
@@ -571,7 +571,7 @@ class create_test_objects extends test_base
     function word_add_by_sql(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set_name(words::TN_ADD_VIA_SQL);
+        $wrd->set_name(words::TEST_ADD_VIA_SQL);
         return $wrd;
     }
 
@@ -660,7 +660,7 @@ class create_test_objects extends test_base
     function word_2019(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_2019, words::TN_2019);
+        $wrd->set(words::YEAR_2019_ID, words::YEAR_2019);
         $wrd->set_type(phrase_type_shared::TIME);
         return $wrd;
     }
@@ -671,7 +671,7 @@ class create_test_objects extends test_base
     function word_2020(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_2020, words::TN_2020);
+        $wrd->set(words::YEAR_2020_ID, words::YEAR_2020);
         $wrd->set_type(phrase_type_shared::TIME);
         return $wrd;
     }
@@ -682,7 +682,7 @@ class create_test_objects extends test_base
     function word_percent(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_PCT, words::TN_PCT);
+        $wrd->set(words::PCT_ID, words::PCT);
         $wrd->set_type(phrase_type_shared::PERCENT);
         return $wrd;
     }
@@ -853,21 +853,21 @@ class create_test_objects extends test_base
     function word_parts(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_PARTS, words::TN_PARTS);
+        $wrd->set(words::PARTS_ID, words::PARTS);
         return $wrd;
     }
 
     function word_total(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_TOTAL, words::TN_TOTAL_PRE);
+        $wrd->set(words::TOTAL_ID, words::TOTAL_PRE);
         return $wrd;
     }
 
     function word_gwp(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::TI_GWP, words::TN_GWP);
+        $wrd->set(words::GWP_ID, words::GWP);
         return $wrd;
     }
 
@@ -1053,7 +1053,7 @@ class create_test_objects extends test_base
     {
         $trp = new triple($this->usr1);
         $trp->set_name(triples::SYSTEM_TEST_ADD_VIA_FUNC);
-        $wrd_add_func = $this->load_word(words::TN_ADD_VIA_FUNC);
+        $wrd_add_func = $this->load_word(words::TEST_ADD_VIA_FUNC);
         $wrd_math = $this->load_word(words::MATH);
         $trp->set_from($wrd_add_func->phrase());
         $trp->set_verb($this->verb_is());
@@ -1068,7 +1068,7 @@ class create_test_objects extends test_base
     {
         $trp = new triple($this->usr1);
         $trp->set_name(triples::SYSTEM_TEST_ADD_VIA_SQL);
-        $wrd_add_func = $this->load_word(words::TN_ADD_VIA_SQL);
+        $wrd_add_func = $this->load_word(words::TEST_ADD_VIA_SQL);
         $wrd_math = $this->load_word(words::MATH);
         $trp->set_from($wrd_add_func->phrase());
         $trp->set_verb($this->verb_is());
@@ -2294,7 +2294,7 @@ class create_test_objects extends test_base
     function result_pct(): result
     {
         $res = new result($this->usr1);
-        $wrd_pct = $this->new_word(words::TN_PCT, 2, phrase_type_shared::PERCENT);
+        $wrd_pct = $this->new_word(words::PCT, 2, phrase_type_shared::PERCENT);
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd_pct->phrase());
         $res->grp()->set_phrase_list($phr_lst);
@@ -3070,7 +3070,7 @@ class create_test_objects extends test_base
     function change_log_named_update(): change
     {
         $chg = $this->change_log_named();
-        $chg->old_value = words::TN_RENAMED;
+        $chg->old_value = words::TEST_RENAMED;
         return $chg;
     }
 
@@ -4357,8 +4357,8 @@ class create_test_objects extends test_base
         global $phr_typ_cac;
         $msg = new api_message();
         $wrd = new word($this->usr1);
-        $wrd->set_name(words::TN_ADD_API);
-        $wrd->description = words::TD_ADD_API;
+        $wrd->set_name(words::TEST_ADD_API);
+        $wrd->description = words::TEST_ADD_API_COM;
         $wrd->type_id = $phr_typ_cac->id(phrase_type_shared::NORMAL);
         $body_array = $wrd->api_json_array(new api_type_list([]));
         return $msg->api_header_array($db_con, word::class, $this->usr1, $body_array);
@@ -4372,8 +4372,8 @@ class create_test_objects extends test_base
         global $db_con;
         $msg = new api_message();
         $wrd = new word($this->usr1);
-        $wrd->set_name(words::TN_UPD_API);
-        $wrd->description = words::TD_UPD_API;
+        $wrd->set_name(words::TEST_UPD_API);
+        $wrd->description = words::TEST_UPD_API_COM;
         $body_array = $wrd->api_json_array(new api_type_list([]));
         return $msg->api_header_array($db_con, word::class, $this->usr1, $body_array);
     }

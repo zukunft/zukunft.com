@@ -51,11 +51,11 @@ class expression_write_tests
         $t->header('Test the expression class (src/main/php/model/formula/expression.php)');
 
         $t->subheader('prepare expression write');
-        $wrd_price = $t->test_word(words::TN_PRICE);
-        $wrd_earning = $t->test_word(words::TN_EARNING);
-        $wrd_pe = $t->test_word(words::TN_PE);
+        $wrd_price = $t->test_word(words::TEST_PRICE);
+        $wrd_earning = $t->test_word(words::TEST_EARNING);
+        $wrd_pe = $t->test_word(words::TEST_PE);
         $frm_ratio = $t->test_formula(formulas::SYSTEM_TEXT_RATIO, formulas::SYSTEM_TEXT_RATIO_EXP);
-        $wrd_total = $t->test_word(words::TN_TOTAL);
+        $wrd_total = $t->test_word(words::TEST_TOTAL);
         $frm_sector = $t->test_formula(formulas::SYSTEM_TEXT_SECTOR, formulas::SYSTEM_TEXT_SECTOR_EXP);
 
         $back = '';
@@ -66,7 +66,7 @@ class expression_write_tests
         $frm_pe = $t->load_formula(formulas::SYSTEM_TEXT_RATIO);
 
         $result = $frm_sector->usr_text;
-        $target = '= "' . words::COUNTRY . '" "differentiator" "' . words::CANTON . '" / "' . words::TN_TOTAL . '"';
+        $target = '= "' . words::COUNTRY . '" "differentiator" "' . words::CANTON . '" / "' . words::TEST_TOTAL . '"';
         $t->assert('user text', $result, $target, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         // create expressions for testing
@@ -80,12 +80,12 @@ class expression_write_tests
         $exp_sector->set_user_text($frm_sector->usr_text);
 
         // load the test ids
-        $wrd_percent = $t->load_word(words::TN_PCT);
+        $wrd_percent = $t->load_word(words::PCT);
         $frm_this = $t->load_formula(formulas::THIS_NAME);
         $frm_prior = $t->load_formula(formulas::PRIOR);
 
         // test the expression processing of the user readable part
-        $target = '"' . words::TN_PCT . '"';
+        $target = '"' . words::PCT . '"';
         $result = $exp->res_part_usr();
         $t->assert('res_part_usr for "' . $frm->usr_text . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG); // ??? why???
         $target = '( "' . formulas::THIS_NAME . '" - "' . formulas::PRIOR . '" ) / "' . formulas::PRIOR . '"';
@@ -110,7 +110,7 @@ class expression_write_tests
         if ($phr_lst_res != null) {
             $result = $phr_lst_res->dsp_name();
         }
-        $target = '"' . words::TN_PCT . '"';
+        $target = '"' . words::PCT . '"';
         $t->assert('res_phr_lst for "' . $exp->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG); // ??? why???
 
         // ... and the phrases used in the formula
@@ -118,7 +118,7 @@ class expression_write_tests
         if ($phr_lst_res != null) {
             $result = $phr_lst_res->dsp_name();
         }
-        $target = '"' . words::TN_EARNING . '","' . words::TN_PRICE . '"';
+        $target = '"' . words::TEST_EARNING . '","' . words::TEST_PRICE . '"';
         $t->assert('phr_lst for "' . $exp_pe->dsp_id() . '"', $result, $target);
 
         // ... and all elements used in the formula

@@ -56,12 +56,12 @@ class group_write_tests
 
         // init
         $grp_add_lst = [
-            [groups::TN_ADD_PRIME_FUNC, true, words::TN_ADD_GROUP_PRIME_FUNC, sql_type::PRIME, 'function', words::TN_RENAMED_GROUP_PRIME_FUNC],
-            [groups::TN_ADD_PRIME_SQL, false, words::TN_ADD_GROUP_PRIME_SQL, sql_type::PRIME, 'insert', words::TN_RENAMED_GROUP_PRIME_SQL],
-            [groups::TN_ADD_MOST_FUNC, true, words::TN_ADD_GROUP_MOST_FUNC, sql_type::MOST, 'function', words::TN_RENAMED_GROUP_MOST_FUNC],
-            [groups::TN_ADD_MOST_SQL, false, words::TN_ADD_GROUP_MOST_SQL, sql_type::MOST, 'insert', words::TN_RENAMED_GROUP_MOST_SQL],
-            [groups::TN_ADD_BIG_FUNC, true, words::TN_ADD_GROUP_BIG_FUNC, sql_type::BIG, 'function', words::TN_RENAMED_GROUP_BIG_FUNC],
-            [groups::TN_ADD_BIG_SQL, false, words::TN_ADD_GROUP_BIG_SQL, sql_type::BIG, 'insert', words::TN_RENAMED_GROUP_BIG_SQL],
+            [groups::TN_ADD_PRIME_FUNC, true, words::TEST_ADD_GROUP_PRIME_FUNC, sql_type::PRIME, 'function', words::TEST_RENAMED_GROUP_PRIME_FUNC],
+            [groups::TN_ADD_PRIME_SQL, false, words::TEST_ADD_GROUP_PRIME_SQL, sql_type::PRIME, 'insert', words::TEST_RENAMED_GROUP_PRIME_SQL],
+            [groups::TN_ADD_MOST_FUNC, true, words::TEST_ADD_GROUP_MOST_FUNC, sql_type::MOST, 'function', words::TEST_RENAMED_GROUP_MOST_FUNC],
+            [groups::TN_ADD_MOST_SQL, false, words::TEST_ADD_GROUP_MOST_SQL, sql_type::MOST, 'insert', words::TEST_RENAMED_GROUP_MOST_SQL],
+            [groups::TN_ADD_BIG_FUNC, true, words::TEST_ADD_GROUP_BIG_FUNC, sql_type::BIG, 'function', words::TEST_RENAMED_GROUP_BIG_FUNC],
+            [groups::TN_ADD_BIG_SQL, false, words::TEST_ADD_GROUP_BIG_SQL, sql_type::BIG, 'insert', words::TEST_RENAMED_GROUP_BIG_SQL],
         ];
 
 
@@ -110,7 +110,7 @@ class group_write_tests
         // test if the time word is correctly excluded
         // TODO move to phrase list tests
         $wrd_lst = new word_list($usr);
-        $wrd_lst->load_by_names(array(words::ZH, words::CANTON, words::INHABITANTS, words::MIO, words::TN_2020));
+        $wrd_lst->load_by_names(array(words::ZH, words::CANTON, words::INHABITANTS, words::MIO, words::YEAR_2020));
         $phr_grp = new group($usr);
         $phr_grp->load_by_phr_lst($wrd_lst->phrase_lst());
         $result = $phr_grp->id();
@@ -167,7 +167,7 @@ class group_write_tests
 
         // second test if the phrase group links are correctly recreated when a group is updated
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::ZH, words::CANTON, words::INHABITANTS, words::MIO, words::TN_2020));
+        $phr_lst->load_by_names(array(words::ZH, words::CANTON, words::INHABITANTS, words::MIO, words::YEAR_2020));
         $grp = $phr_lst->get_grp_id();
         $grp_check = new group($usr);
         $grp_check->set_id($grp->id());

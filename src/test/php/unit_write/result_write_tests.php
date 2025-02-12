@@ -82,7 +82,7 @@ class result_write_tests
         $phr_lst->add_name(words::CH);
         //$phr_lst->add_name(formulas::TN_ADD);
         $phr_lst->add_name(formulas::SYSTEM_TEXT_RENAMED);
-        $phr_lst->add_name(words::TN_PCT);
+        $phr_lst->add_name(words::PCT);
         $phr_lst->add_name(words::INHABITANTS);
         $ch_up_grp = $phr_lst->get_grp_id();
         if ($ch_up_grp->is_id_set()) {
@@ -101,7 +101,7 @@ class result_write_tests
         //$t->display('value->val_formatted ex time for ' . $phr_lst->dsp_id() . ' (group id ' . $ch_up_grp->id() . ')', $target, $result, $t::TIMEOUT_LIMIT_LONG);
 
         // test load result with time
-        $phr_lst->add_name(words::TN_2020);
+        $phr_lst->add_name(words::YEAR_2020);
         $time_phr = $phr_lst->time_useful();
         $phr_lst->ex_time();
         $ch_up_grp = $phr_lst->get_grp_id();
@@ -113,7 +113,7 @@ class result_write_tests
                 $result = '';
             }
         } else {
-            $result = 'no ' . words::TN_2020 . ' ' . words::INHABITANTS . ' ' . formulas::INCREASE . ' value found for ' . words::CH;
+            $result = 'no ' . words::YEAR_2020 . ' ' . words::INHABITANTS . ' ' . formulas::INCREASE . ' value found for ' . words::CH;
         }
         //$result = $ch_increase->phr_grp_id;
         if (isset($time_phr)) {
@@ -126,7 +126,7 @@ class result_write_tests
         // test the scaling
         // test the scaling of a value
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::TN_2020, words::TN_IN_K));
+        $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::YEAR_2020, words::TEST_IN_K));
         $phr_lst->ex_time();
         $ch_k_grp = $phr_lst->get_grp_id();
         /*
@@ -155,7 +155,7 @@ class result_write_tests
         // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
         //      based
         $phr_lst = new phrase_list($usr);
-        $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::TN_2020));
+        $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::YEAR_2020));
         $phr_lst->ex_time();
         $val_best_guess = new value($usr);
         $val_best_guess->load_by_grp($phr_lst->get_grp_id());
@@ -215,7 +215,7 @@ class result_write_tests
         $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // load results by phrase group
-        $grp = $t->load_phrase_group(array(words::CH, words::INHABITANTS, words::TN_IN_K));
+        $grp = $t->load_phrase_group(array(words::CH, words::INHABITANTS, words::TEST_IN_K));
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($grp);
         $result = $res_lst->dsp_id();
@@ -223,7 +223,7 @@ class result_write_tests
         $t->dsp_contains(', result_list->load of the formula results for ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // ... and also with time selection
-        $grp = $t->load_phrase_group(array(words::CH, words::INHABITANTS, words::TN_IN_K, words::TN_2020));
+        $grp = $t->load_phrase_group(array(words::CH, words::INHABITANTS, words::TEST_IN_K, words::YEAR_2020));
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($grp);
         $result = $res_lst->dsp_id();
@@ -238,7 +238,7 @@ class result_write_tests
         $t->dsp_contains(', result_list->load of the formula results for source ' . $grp->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // ... and also with time selection
-        $time_phr = $t->load_phrase(words::TN_2020);
+        $time_phr = $t->load_phrase(words::YEAR_2020);
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($grp, true);
         $result = $res_lst->dsp_id();
@@ -258,7 +258,7 @@ class result_write_tests
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($frm);
         $result = $res_lst->dsp_id();
-        $target = '"Sales","' . words::TN_PCT . '","increase","' . words::TN_RENAMED . '","2017"';
+        $target = '"Sales","' . words::PCT . '","increase","' . words::TEST_RENAMED . '","2017"';
         $target = words::INHABITANTS;
         $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 

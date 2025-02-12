@@ -217,15 +217,6 @@ class view extends sandbox_typed
      */
 
     /**
-     * TODO review these simplified function
-     * @return string
-     */
-    function name_tip(): string
-    {
-        return $this->name();
-    }
-
-    /**
      * create the html code to show the component name with the link to change the component parameters
      * @param string|null $back the back trace url for the undo functionality
      * @param string $style the CSS style that should be used
@@ -248,35 +239,40 @@ class view extends sandbox_typed
      */
 
     /**
-     * temp version to debug a frontend bug
-     * @param string $ui_msg_id
-     * @param string $url
-     * @return string
+     * @return string the html code for a bottom
+     * to create a new view for the current user
      */
-    private function btn_add(string $ui_msg_id, string $url): string
+    function btn_add(string $back = ''): string
     {
-        $icon = 'fa-plus-square';
-
-        $ui_msg = new messages();
-        $title = $ui_msg->txt($ui_msg_id);
-
-        return '<a href="' . $url . '" title="' . $title . '"><i class="far ' . $icon . '"></i></a>';
+        return parent::btn_add_sbx(
+            views::VIEW_ADD_ID,
+            messages::VIEW_ADD,
+            $back);
     }
 
     /**
-     * temp version to debug a frontend bug
-     * @param string $ui_msg_id
-     * @param string $url
-     * @return string
+     * @return string the html code for a bottom
+     * to change a view e.g. the name or the type
      */
-    private function btn_edit(string $ui_msg_id, string $url): string
+    function btn_edit(string $back = ''): string
     {
-        $icon = 'fa-edit';
+        return parent::btn_edit_sbx(
+            views::VIEW_EDIT_ID,
+            messages::VIEW_EDIT,
+            $back);
+    }
 
-        $ui_msg = new messages();
-        $title = $ui_msg->txt($ui_msg_id);
-
-        return '<a href="' . $url . '" title="' . $title . '"><i class="far ' . $icon . '"></i></a>';
+    /**
+     * @return string the html code for a bottom
+     * to exclude the view for the current user
+     * or if no one uses the view delete the complete view
+     */
+    function btn_del(string $back = ''): string
+    {
+        return parent::btn_del_sbx(
+            views::VERB_DEL_ID,
+            messages::VALUE_DEL,
+            $back);
     }
 
 
@@ -482,7 +478,7 @@ class view extends sandbox_typed
             $url_edit = $html->url($class . api_dsp::UPDATE, $this->id(), '', '');
             // TODO fix for frontend based version
             //echo 'button init';
-            $result .= $this->btn_edit(messages::VIEW_EDIT, $url_edit);
+            $result .= $this->btn_edit();
             //echo 'button_dsp init' . $url_edit;
             //$btn = new button_dsp($url_edit, '');
             // TODO fix for frontend based version
@@ -491,7 +487,7 @@ class view extends sandbox_typed
             $url_add = $html->url($class . api_dsp::CREATE, 0, '', '');
             // TODO fix for frontend based version
             //$result .= (new button_dsp($url_add))->add(messages::VIEW_ADD);
-            $result .= $this->btn_add(messages::VIEW_ADD, $url_add);
+            $result .= $this->btn_add();
             $result .= '      </li>';
         }
         $result .= '    </ul>';

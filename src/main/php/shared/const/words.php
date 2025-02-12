@@ -198,103 +198,103 @@ class words
     const INHABITANT_ID = 204;
     // TODO add test to search for words in all language forms e.g. plural
     const INHABITANTS = 'inhabitants';
-    const TN_2013 = '2013';
-    const TI_2013 = 326;
-    const TN_2014 = '2014';
-    const TI_2014 = 325;
-    const TN_2015 = '2015';
-    const TI_2015 = 205;
-    const TN_2016 = '2016';
-    const TI_2016 = 206;
-    const TN_2017 = '2017';
-    const TI_2017 = 207;
-    const TN_2018 = '2018';
-    const TI_2018 = 208;
-    const TN_2019 = '2019';
-    const TI_2019 = 142;
-    const TN_2020 = '2020';
-    const TI_2020 = 209;
-    const TN_PCT = 'percent';
-    const TI_PCT = 172;
+    const YEAR_2013 = '2013';
+    const YEAR_2013_ID = 326;
+    const YEAR_2014 = '2014';
+    const YEAR_2014_ID = 325;
+    const YEAR_2015 = '2015';
+    const YEAR_2015_ID = 205;
+    const YEAR_2016 = '2016';
+    const YEAR_2016_ID = 206;
+    const YEAR_2017 = '2017';
+    const YEAR_2017_ID = 207;
+    const YEAR_2018 = '2018';
+    const YEAR_2018_ID = 208;
+    const YEAR_2019 = '2019';
+    const YEAR_2019_ID = 142;
+    const YEAR_2020 = '2020';
+    const YEAR_2020_ID = 209;
+    const PCT = 'percent';
+    const PCT_ID = 172;
     // _PRE are the predefined words
     const THIS_NAME = 'this'; // the test name for the predefined word 'this'
     const THIS_ID = 192;
     const PRIOR_NAME = 'prior';
     const PRIOR_ID = 194;
-    const TN_PARTS = 'parts';
-    const TI_PARTS = 265;
-    const TN_TOTAL_PRE = 'total';
-    const TI_TOTAL = 266;
-    const TN_COMPANY = 'Company';
-    const TI_COMPANY = 322;
-    const TN_ABB = 'ABB';
-    const TI_ABB = 323;
-    const TN_VESTAS = 'Vestas';
-    const TI_VESTAS = 324;
-    const TN_CHF = 'CHF';
-    const TI_CHF = 316;
-    const TN_SALES = 'Sales';
-    const TI_SALES = 317;
-    const TN_CASH_FLOW = 'cash flow statement';
-    const TI_CASH_FLOW = 274;
-    const TN_TAX = 'Income taxes';
-    const TI_TAX = 273;
-    const TN_GWP = 'global warming potential';
-    const TI_GWP = 1070;
+    const PARTS = 'parts';
+    const PARTS_ID = 265;
+    const TOTAL_PRE = 'total';
+    const TOTAL_ID = 266;
+    const COMPANY = 'Company';
+    const COMPANY_ID = 322;
+    const ABB = 'ABB';
+    const ABB_ID = 323;
+    const VESTAS = 'Vestas';
+    const VESTAS_ID = 324;
+    const CHF = 'CHF';
+    const CHF_ID = 316;
+    const SALES = 'Sales';
+    const SALES_ID = 317;
+    const CASH_FLOW = 'cash flow statement';
+    const CASH_FLOW_ID = 274;
+    const TAX = 'Income taxes';
+    const TAX_ID = 273;
+    const GWP = 'global warming potential';
+    const GWP_ID = 1070;
 
     // persevered word names for unit and integration tests based on the database
     // TWN_* - is a Test Word Name for words created only for testing (see also TN_*)
-    const TN_ADD = 'System Test Word';
-    const TN_ADD_TO = 'System Test Word To';
-    const TN_ADD_VIA_FUNC = 'System Test Word added via sql function';
-    const TN_ADD_VIA_SQL = 'System Test Word added via sql insert';
-    const TN_ADD_GROUP_PRIME_FUNC = 'System Test Word for prime group add via sql function';
-    const TN_ADD_GROUP_PRIME_SQL = 'System Test Word for prime group add via sql insert';
-    const TN_ADD_GROUP_MOST_FUNC = 'System Test Word for main group add via sql function';
-    const TN_ADD_GROUP_MOST_SQL = 'System Test Word for main group add via sql insert';
-    const TN_ADD_GROUP_BIG_FUNC = 'System Test Word for big group add via sql function';
-    const TN_ADD_GROUP_BIG_SQL = 'System Test Word for big group add via sql insert';
-    const TN_RENAMED = 'System Test Word Renamed';
-    const TN_RENAMED_GROUP_PRIME_FUNC = 'System Test Word for prime group RENAMED via sql function';
-    const TN_RENAMED_GROUP_PRIME_SQL = 'System Test Word for prime group RENAMED via sql insert';
-    const TN_RENAMED_GROUP_MOST_FUNC = 'System Test Word for main group RENAMED via sql function';
-    const TN_RENAMED_GROUP_MOST_SQL = 'System Test Word for main group RENAMED via sql insert';
-    const TN_RENAMED_GROUP_BIG_FUNC = 'System Test Word for big group RENAMED via sql function';
-    const TN_RENAMED_GROUP_BIG_SQL = 'System Test Word for big group RENAMED via sql insert';
-    const TN_PARENT = 'System Test Word Parent';
-    const TN_FIN_REPORT = 'System Test Word with many relations e.g. Financial Report';
-    const TWN_CASH_FLOW = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
-    const TN_TAX_REPORT = 'System Test Word Child without Inheritance e.g. Income Taxes';
-    const TN_ASSETS = 'System Test Word containing multi levels e.g. Assets';
-    const TN_ASSETS_CURRENT = 'System Test Word multi levels e.g. Current Assets';
-    const TN_SECTOR = 'System Test Word with differentiator e.g. Sector';
-    const TN_ENERGY = 'System Test Word usage as differentiator e.g. Energy';
-    const TN_WIND_ENERGY = 'System Test Word usage as differentiator e.g. Wind Energy';
-    const TN_CASH = 'System Test Word multi levels e.g. Cash';
-    const TN_2021 = 'System Test Time Word e.g. 2021';
-    const TN_2022 = 'System Test Another Time Word e.g. 2022';
-    const TWN_CHF = 'System Test Measure Word e.g. CHF';
-    const TN_SHARE = 'System Test Word Share';
-    const TN_PRICE = 'System Test Word Share Price';
-    const TN_EARNING = 'System Test Word Earnings';
-    const TN_PE = 'System Test Word PE Ratio';
-    const TN_IN_K = 'System Test Scaling Word e.g. thousands';
-    const TN_BIL = 'System Test Scaling Word e.g. billions';
-    const TN_TOTAL = 'System Test Word Total';
-    const TN_INCREASE = 'System Test Word Increase';
-    const TN_THIS = 'System Test Word This';
-    const TN_PRIOR = 'System Test Word Prior';
-    const TN_TIME_JUMP = 'System Test Word Time Jump e.g. yearly';
-    const TN_LATEST = 'System Test Word Latest';
-    const TN_SCALING_PCT = 'System Test Word Scaling Percent';
-    const TN_SCALING_MEASURE = 'System Test Word Scaling Measure';
-    const TN_CALC = 'System Test Word Calc';
-    const TN_LAYER = 'System Test Word Layer';
+    const TEST_ADD = 'System Test Word';
+    const TEST_ADD_TO = 'System Test Word To';
+    const TEST_ADD_VIA_FUNC = 'System Test Word added via sql function';
+    const TEST_ADD_VIA_SQL = 'System Test Word added via sql insert';
+    const TEST_ADD_GROUP_PRIME_FUNC = 'System Test Word for prime group add via sql function';
+    const TEST_ADD_GROUP_PRIME_SQL = 'System Test Word for prime group add via sql insert';
+    const TEST_ADD_GROUP_MOST_FUNC = 'System Test Word for main group add via sql function';
+    const TEST_ADD_GROUP_MOST_SQL = 'System Test Word for main group add via sql insert';
+    const TEST_ADD_GROUP_BIG_FUNC = 'System Test Word for big group add via sql function';
+    const TEST_ADD_GROUP_BIG_SQL = 'System Test Word for big group add via sql insert';
+    const TEST_RENAMED = 'System Test Word Renamed';
+    const TEST_RENAMED_GROUP_PRIME_FUNC = 'System Test Word for prime group RENAMED via sql function';
+    const TEST_RENAMED_GROUP_PRIME_SQL = 'System Test Word for prime group RENAMED via sql insert';
+    const TEST_RENAMED_GROUP_MOST_FUNC = 'System Test Word for main group RENAMED via sql function';
+    const TEST_RENAMED_GROUP_MOST_SQL = 'System Test Word for main group RENAMED via sql insert';
+    const TEST_RENAMED_GROUP_BIG_FUNC = 'System Test Word for big group RENAMED via sql function';
+    const TEST_RENAMED_GROUP_BIG_SQL = 'System Test Word for big group RENAMED via sql insert';
+    const TEST_PARENT = 'System Test Word Parent';
+    const TEST_FIN_REPORT = 'System Test Word with many relations e.g. Financial Report';
+    const TEST_CASH_FLOW = 'System Test Word Parent without Inheritance e.g. Cash Flow Statement';
+    const TEST_TAX_REPORT = 'System Test Word Child without Inheritance e.g. Income Taxes';
+    const TEST_ASSETS = 'System Test Word containing multi levels e.g. Assets';
+    const TEST_ASSETS_CURRENT = 'System Test Word multi levels e.g. Current Assets';
+    const TEST_SECTOR = 'System Test Word with differentiator e.g. Sector';
+    const TEST_ENERGY = 'System Test Word usage as differentiator e.g. Energy';
+    const TEST_WIND_ENERGY = 'System Test Word usage as differentiator e.g. Wind Energy';
+    const TEST_CASH = 'System Test Word multi levels e.g. Cash';
+    const TEST_2021 = 'System Test Time Word e.g. 2021';
+    const TEST_2022 = 'System Test Another Time Word e.g. 2022';
+    const TEST_CHF = 'System Test Measure Word e.g. CHF';
+    const TEST_SHARE = 'System Test Word Share';
+    const TEST_PRICE = 'System Test Word Share Price';
+    const TEST_EARNING = 'System Test Word Earnings';
+    const TEST_PE = 'System Test Word PE Ratio';
+    const TEST_IN_K = 'System Test Scaling Word e.g. thousands';
+    const TEST_BIL = 'System Test Scaling Word e.g. billions';
+    const TEST_TOTAL = 'System Test Word Total';
+    const TEST_INCREASE = 'System Test Word Increase';
+    const TEST_THIS = 'System Test Word This';
+    const TEST_PRIOR = 'System Test Word Prior';
+    const TEST_TIME_JUMP = 'System Test Word Time Jump e.g. yearly';
+    const TEST_LATEST = 'System Test Word Latest';
+    const TEST_SCALING_PCT = 'System Test Word Scaling Percent';
+    const TEST_SCALING_MEASURE = 'System Test Word Scaling Measure';
+    const TEST_CALC = 'System Test Word Calc';
+    const TEST_LAYER = 'System Test Word Layer';
 
-    const TN_ADD_API = 'System Test Word API';
-    const TD_ADD_API = 'System Test Word API Description';
-    const TN_UPD_API = 'System Test Word API Renamed';
-    const TD_UPD_API = 'System Test Word API Description Renamed';
+    const TEST_ADD_API = 'System Test Word API';
+    const TEST_ADD_API_COM = 'System Test Word API Description';
+    const TEST_UPD_API = 'System Test Word API Renamed';
+    const TEST_UPD_API_COM = 'System Test Word API Description Renamed';
 
 
     // list of predefined word names used for system testing that are expected to be never renamed
@@ -317,61 +317,61 @@ class words
         self::INHABITANT,
         self::INHABITANTS,
         self::YEAR_CAP,
-        self::TN_2015,
-        self::TN_2016,
-        self::TN_2017,
-        self::TN_2018,
-        self::TN_2019,
-        self::TN_2020,
-        self::TN_PCT,
-        self::TN_COMPANY,
-        self::TN_ADD,
-        self::TN_ADD_VIA_FUNC,
-        self::TN_ADD_VIA_SQL,
-        self::TN_ADD_GROUP_MOST_FUNC,
-        self::TN_ADD_GROUP_MOST_SQL,
-        self::TN_ADD_GROUP_PRIME_FUNC,
-        self::TN_ADD_GROUP_PRIME_SQL,
-        self::TN_ADD_GROUP_BIG_FUNC,
-        self::TN_ADD_GROUP_BIG_SQL,
-        self::TN_RENAMED,
-        self::TN_RENAMED_GROUP_MOST_FUNC,
-        self::TN_RENAMED_GROUP_MOST_SQL,
-        self::TN_RENAMED_GROUP_PRIME_FUNC,
-        self::TN_RENAMED_GROUP_PRIME_SQL,
-        self::TN_RENAMED_GROUP_BIG_FUNC,
-        self::TN_RENAMED_GROUP_BIG_SQL,
-        self::TN_PARENT,
-        self::TN_FIN_REPORT,
-        self::TWN_CASH_FLOW,
-        self::TN_TAX_REPORT,
-        self::TN_ASSETS,
-        self::TN_ASSETS_CURRENT,
-        self::TN_SECTOR,
-        self::TN_ENERGY,
-        self::TN_WIND_ENERGY,
-        self::TN_CASH,
-        self::TN_2021,
-        self::TN_2022,
-        self::TWN_CHF,
-        self::TN_SHARE,
-        self::TN_PRICE,
-        self::TN_EARNING,
-        self::TN_PE,
-        self::TN_IN_K,
-        self::TN_BIL,
-        self::TN_TOTAL,
-        self::TN_INCREASE,
-        self::TN_THIS,
-        self::TN_PRIOR,
-        self::TN_TIME_JUMP,
-        self::TN_LATEST,
-        self::TN_SCALING_PCT,
-        self::TN_SCALING_MEASURE,
-        self::TN_CALC,
-        self::TN_LAYER,
-        self::TN_ADD_API,
-        self::TN_UPD_API
+        self::YEAR_2015,
+        self::YEAR_2016,
+        self::YEAR_2017,
+        self::YEAR_2018,
+        self::YEAR_2019,
+        self::YEAR_2020,
+        self::PCT,
+        self::COMPANY,
+        self::TEST_ADD,
+        self::TEST_ADD_VIA_FUNC,
+        self::TEST_ADD_VIA_SQL,
+        self::TEST_ADD_GROUP_MOST_FUNC,
+        self::TEST_ADD_GROUP_MOST_SQL,
+        self::TEST_ADD_GROUP_PRIME_FUNC,
+        self::TEST_ADD_GROUP_PRIME_SQL,
+        self::TEST_ADD_GROUP_BIG_FUNC,
+        self::TEST_ADD_GROUP_BIG_SQL,
+        self::TEST_RENAMED,
+        self::TEST_RENAMED_GROUP_MOST_FUNC,
+        self::TEST_RENAMED_GROUP_MOST_SQL,
+        self::TEST_RENAMED_GROUP_PRIME_FUNC,
+        self::TEST_RENAMED_GROUP_PRIME_SQL,
+        self::TEST_RENAMED_GROUP_BIG_FUNC,
+        self::TEST_RENAMED_GROUP_BIG_SQL,
+        self::TEST_PARENT,
+        self::TEST_FIN_REPORT,
+        self::TEST_CASH_FLOW,
+        self::TEST_TAX_REPORT,
+        self::TEST_ASSETS,
+        self::TEST_ASSETS_CURRENT,
+        self::TEST_SECTOR,
+        self::TEST_ENERGY,
+        self::TEST_WIND_ENERGY,
+        self::TEST_CASH,
+        self::TEST_2021,
+        self::TEST_2022,
+        self::TEST_CHF,
+        self::TEST_SHARE,
+        self::TEST_PRICE,
+        self::TEST_EARNING,
+        self::TEST_PE,
+        self::TEST_IN_K,
+        self::TEST_BIL,
+        self::TEST_TOTAL,
+        self::TEST_INCREASE,
+        self::TEST_THIS,
+        self::TEST_PRIOR,
+        self::TEST_TIME_JUMP,
+        self::TEST_LATEST,
+        self::TEST_SCALING_PCT,
+        self::TEST_SCALING_MEASURE,
+        self::TEST_CALC,
+        self::TEST_LAYER,
+        self::TEST_ADD_API,
+        self::TEST_UPD_API
     );
 
     // array of word names that used for db read testing and that should not be renamed
@@ -382,94 +382,94 @@ class words
     // list of words that are used for system testing that should be removed are the system test has been completed
     // and that are never expected to be used by a user
     const TEST_WORDS = array(
-        self::TN_ADD,
-        self::TN_ADD_VIA_FUNC,
-        self::TN_ADD_VIA_SQL,
-        self::TN_ADD_GROUP_PRIME_FUNC,
-        self::TN_ADD_GROUP_PRIME_SQL,
-        self::TN_ADD_GROUP_MOST_FUNC,
-        self::TN_ADD_GROUP_MOST_SQL,
-        self::TN_ADD_GROUP_BIG_FUNC,
-        self::TN_ADD_GROUP_BIG_SQL,
-        self::TN_RENAMED,
-        self::TN_PARENT,
-        self::TN_FIN_REPORT,
-        self::TWN_CASH_FLOW,
-        self::TN_TAX_REPORT,
-        self::TN_ASSETS,
-        self::TN_ASSETS_CURRENT,
-        self::TN_SECTOR,
-        self::TN_ENERGY,
-        self::TN_WIND_ENERGY,
-        self::TN_CASH,
-        self::TN_2021,
-        self::TN_2022,
-        self::TWN_CHF,
-        self::TN_SHARE,
-        self::TN_PRICE,
-        self::TN_EARNING,
-        self::TN_PE,
-        self::TN_IN_K,
-        self::TN_BIL,
-        self::TN_TOTAL,
-        self::TN_INCREASE,
-        self::TN_THIS,
-        self::TN_PRIOR,
-        self::TN_TIME_JUMP,
-        self::TN_LATEST,
-        self::TN_SCALING_PCT,
-        self::TN_SCALING_MEASURE,
-        self::TN_CALC,
-        self::TN_LAYER,
-        self::TN_ADD_API,
-        self::TN_UPD_API
+        self::TEST_ADD,
+        self::TEST_ADD_VIA_FUNC,
+        self::TEST_ADD_VIA_SQL,
+        self::TEST_ADD_GROUP_PRIME_FUNC,
+        self::TEST_ADD_GROUP_PRIME_SQL,
+        self::TEST_ADD_GROUP_MOST_FUNC,
+        self::TEST_ADD_GROUP_MOST_SQL,
+        self::TEST_ADD_GROUP_BIG_FUNC,
+        self::TEST_ADD_GROUP_BIG_SQL,
+        self::TEST_RENAMED,
+        self::TEST_PARENT,
+        self::TEST_FIN_REPORT,
+        self::TEST_CASH_FLOW,
+        self::TEST_TAX_REPORT,
+        self::TEST_ASSETS,
+        self::TEST_ASSETS_CURRENT,
+        self::TEST_SECTOR,
+        self::TEST_ENERGY,
+        self::TEST_WIND_ENERGY,
+        self::TEST_CASH,
+        self::TEST_2021,
+        self::TEST_2022,
+        self::TEST_CHF,
+        self::TEST_SHARE,
+        self::TEST_PRICE,
+        self::TEST_EARNING,
+        self::TEST_PE,
+        self::TEST_IN_K,
+        self::TEST_BIL,
+        self::TEST_TOTAL,
+        self::TEST_INCREASE,
+        self::TEST_THIS,
+        self::TEST_PRIOR,
+        self::TEST_TIME_JUMP,
+        self::TEST_LATEST,
+        self::TEST_SCALING_PCT,
+        self::TEST_SCALING_MEASURE,
+        self::TEST_CALC,
+        self::TEST_LAYER,
+        self::TEST_ADD_API,
+        self::TEST_UPD_API
     );
     // list of words that are used for system testing and that should be created before the system test starts
     const TEST_WORDS_CREATE = array(
-        self::TN_PARENT,
-        self::TN_FIN_REPORT,
-        self::TWN_CASH_FLOW,
-        self::TN_TAX_REPORT,
-        self::TN_ASSETS,
-        self::TN_ASSETS_CURRENT,
-        self::TN_SECTOR,
-        self::TN_ENERGY,
-        self::TN_WIND_ENERGY,
-        self::TN_CASH,
-        self::TN_2021,
-        self::TN_2022,
-        self::TWN_CHF,
-        self::TN_SHARE,
-        self::TN_PRICE,
-        self::TN_EARNING,
-        self::TN_PE,
-        self::TN_IN_K,
-        self::TN_BIL,
-        self::TN_TOTAL,
-        self::TN_INCREASE,
-        self::TN_THIS,
-        self::TN_PRIOR,
-        self::TN_TIME_JUMP,
-        self::TN_LATEST,
-        self::TN_SCALING_PCT,
-        self::TN_SCALING_MEASURE,
-        self::TN_CALC,
-        self::TN_LAYER,
-        self::TN_ADD_API,
-        self::TN_UPD_API
+        self::TEST_PARENT,
+        self::TEST_FIN_REPORT,
+        self::TEST_CASH_FLOW,
+        self::TEST_TAX_REPORT,
+        self::TEST_ASSETS,
+        self::TEST_ASSETS_CURRENT,
+        self::TEST_SECTOR,
+        self::TEST_ENERGY,
+        self::TEST_WIND_ENERGY,
+        self::TEST_CASH,
+        self::TEST_2021,
+        self::TEST_2022,
+        self::TEST_CHF,
+        self::TEST_SHARE,
+        self::TEST_PRICE,
+        self::TEST_EARNING,
+        self::TEST_PE,
+        self::TEST_IN_K,
+        self::TEST_BIL,
+        self::TEST_TOTAL,
+        self::TEST_INCREASE,
+        self::TEST_THIS,
+        self::TEST_PRIOR,
+        self::TEST_TIME_JUMP,
+        self::TEST_LATEST,
+        self::TEST_SCALING_PCT,
+        self::TEST_SCALING_MEASURE,
+        self::TEST_CALC,
+        self::TEST_LAYER,
+        self::TEST_ADD_API,
+        self::TEST_UPD_API
     );
-    const TEST_WORDS_MEASURE = array(self::TWN_CHF);
+    const TEST_WORDS_MEASURE = array(self::TEST_CHF);
     const TEST_WORDS_SCALING_HIDDEN = array(self::ONE);
-    const TEST_WORDS_SCALING = array(self::TN_IN_K, self::MIO, self::MIO_SHORT, self::TN_BIL);
-    const TEST_WORDS_PERCENT = array(self::TN_PCT);
+    const TEST_WORDS_SCALING = array(self::TEST_IN_K, self::MIO, self::MIO_SHORT, self::TEST_BIL);
+    const TEST_WORDS_PERCENT = array(self::PCT);
     // the time words must be in correct order because the following is set during creation
     const TEST_WORDS_TIME_YEAR = array(
-        self::TN_2015,
-        self::TN_2016,
-        self::TN_2017,
-        self::TN_2018,
-        self::TN_2021,
-        self::TN_2022
+        self::YEAR_2015,
+        self::YEAR_2016,
+        self::YEAR_2017,
+        self::YEAR_2018,
+        self::TEST_2021,
+        self::TEST_2022
     );
 
 }

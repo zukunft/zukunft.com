@@ -335,7 +335,7 @@ class triple extends sandbox_typed
             }
         }
 
-        log_debug($wrd_lst->name());
+        log_debug($wrd_lst->name_tip());
         return $wrd_lst;
     }
 

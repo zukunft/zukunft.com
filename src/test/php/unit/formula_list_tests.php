@@ -228,7 +228,7 @@ class formula_list_tests
     {
         // prepare
         $wrd = new word($t->usr1);
-        $wrd->set(1,words::TN_ADD);
+        $wrd->set(1,words::TEST_ADD);
         $phr = $wrd->phrase();
 
         // check the Postgres query syntax

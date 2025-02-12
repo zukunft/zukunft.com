@@ -66,7 +66,7 @@ class triple_tests
         $t->assert_sql_insert($sc, $trp_excl, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader('triple sql write update');
-        $trp_renamed = $trp->cloned_named(words::TN_RENAMED);
+        $trp_renamed = $trp->cloned_named(words::TEST_RENAMED);
         $t->assert_sql_update($sc, $trp_renamed, $trp);
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::USER]);
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::LOG]);

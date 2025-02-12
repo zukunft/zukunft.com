@@ -51,8 +51,8 @@ class ref_write_tests
         $t->assert_write_link($t->ref_filled_add());
 
         // create the test ref
-        $wrd = $t->test_word(words::TN_ADD);
-        $t->test_ref(words::TN_ADD, ref::TEST_REF_NAME, ref_type::WIKIDATA);
+        $wrd = $t->test_word(words::TEST_ADD);
+        $t->test_ref(words::TEST_ADD, ref::TEST_REF_NAME, ref_type::WIKIDATA);
 
         // load by phrase and type
         global $ref_typ_cac;
@@ -62,14 +62,14 @@ class ref_write_tests
         $ref->load_by_link_ids($wrd->phrase()->id(), $ref->predicate_id());
         $result = $ref->external_key;
         $target = ref::TEST_REF_NAME;
-        $t->display('ref->load "' . words::TN_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
+        $t->display('ref->load "' . words::TEST_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
         if ($ref->id() > 0) {
             // load by id and test the loading of the objects
             $ref2 = new ref($usr);
             $ref2->load_by_id($ref->id());
             $result = $ref2->phrase()->name();
-            $target = words::TN_ADD;
+            $target = words::TEST_ADD;
             $t->display('ref->load_object word', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
             $result = $ref2->predicate_name();
             $target = ref_type::WIKIDATA;
@@ -77,7 +77,7 @@ class ref_write_tests
         }
 
         // cleanup of ref specific tests
-        $t->write_named_cleanup($wrd, words::TN_ADD);
+        $t->write_named_cleanup($wrd, words::TEST_ADD);
     }
 
 }

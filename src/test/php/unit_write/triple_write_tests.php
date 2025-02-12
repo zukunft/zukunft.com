@@ -63,8 +63,8 @@ class triple_write_tests
 
         $t->subheader('prepare triple write tests');
         $vrb_is_id = $t->assert_verb_id(verbs::IS, verbs::IS_ID, 'load the verb used for testing');
-        $t->test_word(words::TN_ADD_VIA_SQL);
-        $t->test_word(words::TN_ADD_VIA_FUNC);
+        $t->test_word(words::TEST_ADD_VIA_SQL);
+        $t->test_word(words::TEST_ADD_VIA_FUNC);
 
         $t->subheader('triple prepared write');
         $test_name = 'add triple ' . triples::SYSTEM_TEST_ADD_VIA_SQL . ' via sql insert';
@@ -77,11 +77,11 @@ class triple_write_tests
 
 
         // create the related objects for link objects
-        $wrd_from = $t->test_word(words::TN_RENAMED);
-        $wrd_to = $t->test_word(words::TN_PARENT);
+        $wrd_from = $t->test_word(words::TEST_RENAMED);
+        $wrd_to = $t->test_word(words::TEST_PARENT);
 
         // remove any remaining db entries from previous tests
-        $trp = $t->test_triple(words::TN_RENAMED, verbs::IS, words::TN_PARENT);
+        $trp = $t->test_triple(words::TEST_RENAMED, verbs::IS, words::TEST_PARENT);
         $trp_del = new triple($t->usr1);
         $trp_del->load_by_id($trp->id());
         $trp_del->del();
@@ -89,31 +89,31 @@ class triple_write_tests
         $trp_del->load_by_id($trp->id());
         $trp_del->del();
 
-        $trp = $t->test_triple(words::TN_RENAMED, verbs::IS, words::TN_PARENT);
+        $trp = $t->test_triple(words::TEST_RENAMED, verbs::IS, words::TEST_PARENT);
         $trp->set_user($t->usr1);
         $trp->include();
         $trp->save();
 
         $t->subheader("... and also testing the user log link class (classes/user_log_link.php)");
-        $test_name = 'check the correct logging of adding a triple  "' . words::TN_RENAMED . '" ' . verbs::IS . ' "' . words::TN_PARENT . '" based on the id of the added test word, verb and the parent test word';
+        $test_name = 'check the correct logging of adding a triple  "' . words::TEST_RENAMED . '" ' . verbs::IS . ' "' . words::TEST_PARENT . '" based on the id of the added test word, verb and the parent test word';
         $log = new change_link($t->usr1);
         $log->set_table(change_tables::TRIPLE);
         $log->new_from_id = $wrd_from->id();
         $log->new_link_id = $vrb_is_id;
         $log->new_to_id = $wrd_to->id();
         $result = $log->dsp_last(true);
-        $target = user::SYSTEM_TEST_NAME . ' linked ' . words::TN_RENAMED . ' to ' . words::TN_PARENT;
+        $target = user::SYSTEM_TEST_NAME . ' linked ' . words::TEST_RENAMED . ' to ' . words::TEST_PARENT;
         $t->assert($test_name, $result, $target);
 
         $test_name = '... check if the link is shown correctly';
         $trp = new triple($t->usr1);
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
         $result = $trp->name_generated();
-        $target = words::TN_RENAMED . ' (' . words::TN_PARENT . ')';
+        $target = words::TEST_RENAMED . ' (' . words::TEST_PARENT . ')';
         $t->assert($test_name, $result, $target);
         $result = $trp->name();
         // $target = triples::TN_ADD;
-        $target = words::TN_RENAMED . ' (' . words::TN_PARENT . ')';
+        $target = words::TEST_RENAMED . ' (' . words::TEST_PARENT . ')';
         $t->assert($test_name, $result, $target);
         $test_name = ' ... check if the link is shown correctly also for the second user "' . $t->usr2->name . '"';
         $trp->set_user($t->usr2);
@@ -122,7 +122,7 @@ class triple_write_tests
         $lnk2 = new triple($t->usr2);
         $lnk2->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
         $result = $lnk2->name();
-        $target = words::TN_RENAMED . ' (' . words::TN_PARENT . ')';
+        $target = words::TEST_RENAMED . ' (' . words::TEST_PARENT . ')';
         $t->assert($test_name, $result, $target);
 
         $t->subheader(" ... check if the value update has been triggered");
@@ -142,7 +142,7 @@ class triple_write_tests
         $log->old_link_id = $vrb_is_id;
         $log->old_to_id = $wrd_to->id();
         $result = $log->dsp_last(true);
-        $target = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked ' . words::TN_RENAMED . ' from ' . words::TN_PARENT . '';
+        $target = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked ' . words::TEST_RENAMED . ' from ' . words::TEST_PARENT . '';
         $t->assert($test_name, $result, $target);
 
 
@@ -161,7 +161,7 @@ class triple_write_tests
         $trp = new triple($t->usr1);
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
         $result = $trp->name_generated();
-        $target = words::TN_RENAMED . ' (' . words::TN_PARENT . ')';
+        $target = words::TEST_RENAMED . ' (' . words::TEST_PARENT . ')';
         $t->display('triple->load of "' . $wrd_from->name() . '" ' . verbs::IS . ' "' . $wrd_to->name() . '" is still used for user "' . $t->usr1->name . '"', $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
         // ... check if the values for the first user are still the same
@@ -181,8 +181,8 @@ class triple_write_tests
         $log->old_link_id = $vrb_is_id;
         $log->old_to_id = $wrd_to->id();
         $result = $log->dsp_last(true);
-        $target = user::SYSTEM_TEST_NAME . ' unlinked ' . words::TN_RENAMED . ' from ' . words::TN_PARENT;
-        $target = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked ' . words::TN_RENAMED . ' from ' . words::TN_PARENT;
+        $target = user::SYSTEM_TEST_NAME . ' unlinked ' . words::TEST_RENAMED . ' from ' . words::TEST_PARENT;
+        $target = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked ' . words::TEST_RENAMED . ' from ' . words::TEST_PARENT;
         $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verbs::IS . ' "' . $wrd_to->name() . '" and user "' . $t->usr1->name . '"', $target, $result);
 
         // check if the formula is not used any more for both users
@@ -193,7 +193,7 @@ class triple_write_tests
         $t->display('triple->load of "' . $wrd_from->name() . '" ' . verbs::IS . ' "' . $wrd_to->name() . '" for user "' . $t->usr1->name . '" not used any more', $target, $result);
 
         // check if the name of a triple can be changed
-        $trp = $t->test_triple(words::TN_RENAMED, verbs::IS, words::TN_PARENT);
+        $trp = $t->test_triple(words::TEST_RENAMED, verbs::IS, words::TEST_PARENT);
         $trp->set_name(triples::SYSTEM_TEST_ADD);
         $result = $trp->save()->get_last_message();
         $t->assert('triple->save name to ' . triples::SYSTEM_TEST_ADD, $result);
@@ -210,7 +210,7 @@ class triple_write_tests
         $log->old_link_id = $vrb_is_id;
         $log->old_to_id = $wrd_to->id();
         $result = $log->dsp_last(true);
-        $target = user::SYSTEM_TEST_NAME . ' unlinked ' . words::TN_RENAMED . ' from ' . words::TN_PARENT;
+        $target = user::SYSTEM_TEST_NAME . ' unlinked ' . words::TEST_RENAMED . ' from ' . words::TEST_PARENT;
         $target = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test Word Renamed from System Test Word Parent';
         $t->display('triple->del logged for "' . $wrd_from->name() . '" ' . verbs::IS . ' "' . $wrd_to->name() . '" and user "' . $t->usr1->name . '"', $target, $result);
 
@@ -302,18 +302,18 @@ class triple_write_tests
         // check if the standard samples for triples still exist and if not, create the samples
         $t->test_triple(words::ZH, verbs::IS, words::CANTON, triples::CANTON_ZURICH, triples::CANTON_ZURICH);
         $t->test_triple(words::ZH, verbs::IS, words::CITY, triples::CITY_ZH, triples::CITY_ZH);
-        $t->test_triple(words::ZH, verbs::IS, words::TN_COMPANY, triples::COMPANY_ZURICH, triples::COMPANY_ZURICH);
+        $t->test_triple(words::ZH, verbs::IS, words::COMPANY, triples::COMPANY_ZURICH, triples::COMPANY_ZURICH);
         $t->test_triple(triples::CANTON_ZURICH, verbs::PART_NAME, words::CH);
         $t->test_triple(triples::CITY_ZH, verbs::PART_NAME, triples::CANTON_ZURICH);
         $t->test_triple(triples::COMPANY_ZURICH, verbs::PART_NAME, triples::CITY_ZH, triples::SYSTEM_TEST_EXCLUDED, triples::SYSTEM_TEST_EXCLUDED);
 
-        $t->test_triple(words::TN_ABB, verbs::IS, words::TN_COMPANY, triples::COMPANY_ABB);
+        $t->test_triple(words::ABB, verbs::IS, words::COMPANY, triples::COMPANY_ABB);
         // TODO check why it is possible to create a triple with the same name as a word
         //$t->test_triple(words::TN_VESTAS, verbs::IS_A, TEST_WORD, words::TN_VESTAS, words::TN_VESTAS);
-        $t->test_triple(words::TN_VESTAS, verbs::IS, words::TN_COMPANY, triples::COMPANY_VESTAS, triples::COMPANY_VESTAS);
-        $t->test_triple(words::TN_2014, verbs::FOLLOW, words::TN_2013, triples::YEAR_2013_FOLLOW);
+        $t->test_triple(words::VESTAS, verbs::IS, words::COMPANY, triples::COMPANY_VESTAS, triples::COMPANY_VESTAS);
+        $t->test_triple(words::YEAR_2014, verbs::FOLLOW, words::YEAR_2013, triples::YEAR_2013_FOLLOW);
         // TODO check direction
-        $t->test_triple(words::TN_TAX, verbs::PART_NAME, words::TN_CASH_FLOW, triples::TAXES_OF_CF);
+        $t->test_triple(words::TAX, verbs::PART_NAME, words::CASH_FLOW, triples::TAXES_OF_CF);
 
         $t->header('Check if all base phrases are correct');
         $t->test_phrase(triples::COMPANY_ZURICH);

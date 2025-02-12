@@ -62,7 +62,7 @@ function run_word_display_test(all_tests $t): void
     $wrd_ZH = new word($usr);
     $wrd_ZH->load_by_name(words::ZH);
     $direction = foaf_direction::UP;
-    $target = words::TN_COMPANY;
+    $target = words::COMPANY;
     // get the link types related to the word
     $link_types = $wrd_ZH->link_types($direction);
     $link_types_dsp = new verb_list_dsp($link_types->api_json());
@@ -84,11 +84,11 @@ function run_word_display_test(all_tests $t): void
 
     // ... and the graph display for 2019
     $wrd_2020 = new word($usr);
-    $wrd_2020->load_by_name(words::TN_2020);
+    $wrd_2020->load_by_name(words::YEAR_2020);
     $direction = foaf_direction::DOWN;
     $wrd_2021 = new word($usr);
-    $wrd_2021->load_by_name(words::TN_2021);
-    $lnk_20_to_21 = $t->load_triple(words::TN_2021, verbs::FOLLOW, words::TN_2020);
+    $wrd_2021->load_by_name(words::TEST_2021);
+    $lnk_20_to_21 = $t->load_triple(words::TEST_2021, verbs::FOLLOW, words::YEAR_2020);
     $target_part_is_followed = verbs::FOLLOWER_OF;
     $link_types = $wrd_2020->link_types($direction);
     $wrd_2020_dsp = new word_dsp($wrd_2020->api_json());
@@ -108,10 +108,10 @@ function run_word_display_test(all_tests $t): void
 
     // ... and the other side
     $direction = foaf_direction::UP;
-    $wrd_2019 = $t->load_word(words::TN_2019);
+    $wrd_2019 = $t->load_word(words::YEAR_2019);
     $wrd_year = $t->load_word(words::YEAR_CAP);
-    $lnk_20_is_year = $t->load_triple(words::TN_2020, verbs::IS, words::YEAR_CAP);
-    $lnk_19_to_20 = $t->load_triple(words::TN_2020, verbs::FOLLOW, words::TN_2019);
+    $lnk_20_is_year = $t->load_triple(words::YEAR_2020, verbs::IS, words::YEAR_CAP);
+    $lnk_19_to_20 = $t->load_triple(words::YEAR_2020, verbs::FOLLOW, words::YEAR_2019);
     $link_types = $wrd_2020->link_types($direction);
     $wrd_2020_dsp = new word_dsp($wrd_2020->api_json());
     $link_types_dsp = new verb_list_dsp($link_types->api_json());
@@ -135,7 +135,7 @@ function run_word_display_test(all_tests $t): void
     $target = zut_dsp_list_wrd_val($wrd_ZH->id(), $wrd_year->id(), $usr->id());
     $target = substr($target,0,208);
     */
-    $target = words::TN_2020;
+    $target = words::YEAR_2020;
     $target = words::ZH;
     // TODO add a sample
     //$result = $wrd_ZH->dsp_val_list($wrd_year, $wrd_year->is_mainly(), 0);
@@ -164,7 +164,7 @@ function run_word_display_test(all_tests $t): void
 
     // for testing the selector display a company selector and select ABB
     // TODO fix second run
-    $phr_corp = $t->load_phrase(words::TN_COMPANY);
+    $phr_corp = $t->load_phrase(words::COMPANY);
     $phr_ZH_INS = $t->load_phrase(triples::COMPANY_ZURICH);
     /* TODO base it on the api
     $sel = new html_selector;

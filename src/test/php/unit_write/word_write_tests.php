@@ -75,35 +75,35 @@ class word_write_tests
         $t->header('word db write tests');
 
         $t->subheader('word prepared write');
-        $test_name = 'add word ' . words::TN_ADD_VIA_SQL . ' via sql insert';
+        $test_name = 'add word ' . words::TEST_ADD_VIA_SQL . ' via sql insert';
         $t->assert_write_via_func_or_sql($test_name, $t->word_add_by_sql(), false);
-        $test_name = 'add word ' . words::TN_ADD_VIA_FUNC . ' via sql function';
+        $test_name = 'add word ' . words::TEST_ADD_VIA_FUNC . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t->word_add_by_func(), true);
 
-        $t->subheader('word write sandbox tests for ' . words::TN_ADD);
-        $t->assert_write_named($t->word_filled_add(), words::TN_ADD);
+        $t->subheader('word write sandbox tests for ' . words::TEST_ADD);
+        $t->assert_write_named($t->word_filled_add(), words::TEST_ADD);
 
-        $test_name = 'test saving word type ' . phrase_type_shared::TIME . ' by adding add time word ' . words::TN_2021;
-        $wrd_time = $t->test_word(words::TN_2021, phrase_type_shared::TIME);
+        $test_name = 'test saving word type ' . phrase_type_shared::TIME . ' by adding add time word ' . words::TEST_2021;
+        $wrd_time = $t->test_word(words::TEST_2021, phrase_type_shared::TIME);
         $result = $wrd_time->is_type(phrase_type_shared::TIME);
         $t->assert($test_name, $result, true);
 
         // is time
         $result = $wrd_time->is_time();
-        $t->assert('word->is_time for ' . words::TN_2021, $result, true);
+        $t->assert('word->is_time for ' . words::TEST_2021, $result, true);
 
         // is not measure
         $result = $wrd_time->is_measure();
-        $t->assert('word->is_measure for ' . words::TN_2021, $result, false);
+        $t->assert('word->is_measure for ' . words::TEST_2021, $result, false);
 
         // is measure
-        $wrd_measure = $t->test_word(words::TWN_CHF, phrase_type_shared::MEASURE);
+        $wrd_measure = $t->test_word(words::TEST_CHF, phrase_type_shared::MEASURE);
         $result = $wrd_measure->is_measure();
-        $t->assert('word->is_measure for ' . words::TWN_CHF, $result, true);
+        $t->assert('word->is_measure for ' . words::TEST_CHF, $result, true);
 
         // is not scaling
         $result = $wrd_measure->is_scaling();
-        $t->assert('word->is_scaling for ' . words::TWN_CHF, $result, false);
+        $t->assert('word->is_scaling for ' . words::TEST_CHF, $result, false);
 
         // is scaling
         $wrd_scaling = $t->test_word(words::MIO, phrase_type_shared::SCALING);
@@ -115,28 +115,28 @@ class word_write_tests
         $t->assert('word->is_percent for ' . words::MIO, $result, false);
 
         // is percent
-        $wrd_pct = $t->test_word(words::TN_PCT, phrase_type_shared::PERCENT);
+        $wrd_pct = $t->test_word(words::PCT, phrase_type_shared::PERCENT);
         $result = $wrd_pct->is_percent();
-        $t->assert('word->is_percent for ' . words::TN_PCT, $result, true);
+        $t->assert('word->is_percent for ' . words::PCT, $result, true);
 
         // next word
-        $wrd_time_next = $t->test_word(words::TN_2022, phrase_type_shared::TIME);
-        $t->test_triple(words::TN_2022, verbs::FOLLOW, words::TN_2021);
+        $wrd_time_next = $t->test_word(words::TEST_2022, phrase_type_shared::TIME);
+        $t->test_triple(words::TEST_2022, verbs::FOLLOW, words::TEST_2021);
         $target = $wrd_time_next->name();
         $wrd_next = $wrd_time->next();
         $result = $wrd_next->name();
-        $t->assert('word->next for ' . words::TN_2021, $result, $target);
+        $t->assert('word->next for ' . words::TEST_2021, $result, $target);
 
         $target = $wrd_time->name();
         $wrd_prior = $wrd_time_next->prior();
         $result = $wrd_prior->name();
-        $t->assert('word->prior for ' . words::TN_2022, $result, $target);
+        $t->assert('word->prior for ' . words::TEST_2022, $result, $target);
 
         // load the main test words
         $wrd_read = $t->load_word(words::MATH);
 
         // create a parent test word
-        $wrd_parent = $t->test_word(words::TN_PARENT);
+        $wrd_parent = $t->test_word(words::TEST_PARENT);
         $wrd_parent->add_child($wrd_read);
 
         // word children, so get all children of a parent
@@ -148,7 +148,7 @@ class word_write_tests
         } else {
             $result = '';
         }
-        $t->assert('word->children for "' . words::TN_PARENT . '"', $result, $target,
+        $t->assert('word->children for "' . words::TEST_PARENT . '"', $result, $target,
             $t::TIMEOUT_LIMIT_DB, 'out of ' . $phr_lst->dsp_id());
 
         // ... word children excluding the start word, so the list of children should not include the parent
@@ -159,7 +159,7 @@ class word_write_tests
         } else {
             $result = '';
         }
-        $t->assert('word->children for "' . words::TN_PARENT . '" excluding the start word', $result, $target,
+        $t->assert('word->children for "' . words::TEST_PARENT . '" excluding the start word', $result, $target,
             $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // TODO move read only tests like this to the db read or unit tests
@@ -173,7 +173,7 @@ class word_write_tests
         } else {
             $result = '';
         }
-        $t->display('word->are for "' . words::TN_PARENT . '"', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->display('word->are for "' . words::TEST_PARENT . '"', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // ... word are including the start word
         // e.g. to get also formulas related to Cantons all formulas related to "Zurich (Canton)" and the word "Canton" itself must be selected
@@ -183,7 +183,7 @@ class word_write_tests
         } else {
             $result = '';
         }
-        $t->display('word->are for "' . words::TN_PARENT . '" including the start word', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->display('word->are for "' . words::TEST_PARENT . '" including the start word', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         // word parents
         $phr_lst = $wrd_read->parents();
@@ -245,30 +245,30 @@ class word_write_tests
 
         // create the test words and relations for a parent child relation without inheritance
         // e.g. ...
-        $wrd_cf = $t->test_word(words::TWN_CASH_FLOW);
-        $wrd_tax = $t->test_word(words::TN_TAX_REPORT);
-        $t->test_triple(words::TN_TAX_REPORT, verbs::PART_NAME, words::TWN_CASH_FLOW);
+        $wrd_cf = $t->test_word(words::TEST_CASH_FLOW);
+        $wrd_tax = $t->test_word(words::TEST_TAX_REPORT);
+        $t->test_triple(words::TEST_TAX_REPORT, verbs::PART_NAME, words::TEST_CASH_FLOW);
 
         // create the test words and relations many mixed relations
         // e.g. a financial report
-        $t->test_word(words::TN_FIN_REPORT);
-        $t->test_triple(words::TWN_CASH_FLOW, verbs::IS, words::TN_FIN_REPORT);
+        $t->test_word(words::TEST_FIN_REPORT);
+        $t->test_triple(words::TEST_CASH_FLOW, verbs::IS, words::TEST_FIN_REPORT);
 
         // create the test words and relations for multi level contains
         // e.g. assets contain current assets which contains cash
-        $t->test_word(words::TN_ASSETS);
-        $t->test_word(words::TN_ASSETS_CURRENT);
-        $t->test_word(words::TN_CASH);
-        $t->test_triple(words::TN_CASH, verbs::PART_NAME, words::TN_ASSETS_CURRENT);
-        $t->test_triple(words::TN_ASSETS_CURRENT, verbs::PART_NAME, words::TN_ASSETS);
+        $t->test_word(words::TEST_ASSETS);
+        $t->test_word(words::TEST_ASSETS_CURRENT);
+        $t->test_word(words::TEST_CASH);
+        $t->test_triple(words::TEST_CASH, verbs::PART_NAME, words::TEST_ASSETS_CURRENT);
+        $t->test_triple(words::TEST_ASSETS_CURRENT, verbs::PART_NAME, words::TEST_ASSETS);
 
         // create the test words and relations for differentiators
         // e.g. energy can be a sector
-        $t->test_word(words::TN_SECTOR);
-        $t->test_word(words::TN_ENERGY);
-        $t->test_word(words::TN_WIND_ENERGY);
-        $t->test_triple(words::TN_SECTOR, verbs::CAN_CONTAIN, words::TN_ENERGY);
-        $t->test_triple(words::TN_ENERGY, verbs::CAN_CONTAIN, words::TN_WIND_ENERGY);
+        $t->test_word(words::TEST_SECTOR);
+        $t->test_word(words::TEST_ENERGY);
+        $t->test_word(words::TEST_WIND_ENERGY);
+        $t->test_triple(words::TEST_SECTOR, verbs::CAN_CONTAIN, words::TEST_ENERGY);
+        $t->test_triple(words::TEST_ENERGY, verbs::CAN_CONTAIN, words::TEST_WIND_ENERGY);
 
         // word is part
         $target = $wrd_cf->name();
@@ -278,7 +278,7 @@ class word_write_tests
         } else {
             $result = '';
         }
-        $t->display('word->is_part for "' . words::TN_TAX_REPORT . '"', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
+        $t->display('word->is_part for "' . words::TEST_TAX_REPORT . '"', $target, $result, $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
         $test_name = 'check if saving a word with an existing name (' . words::MATH . ') creates a warning message for the user';
         $wrd_new = new word($t->usr1);
@@ -289,20 +289,20 @@ class word_write_tests
 
         // test the creation of a new word
         $wrd_add = new word($t->usr1);
-        $wrd_add->set_name(words::TN_ADD);
+        $wrd_add->set_name(words::TEST_ADD);
         $result = $wrd_add->save()->get_last_message();
         $target = '';
-        $t->assert('word->save for "' . words::TN_ADD . '"', $result, $target, $t::TIMEOUT_LIMIT_DB);
+        $t->assert('word->save for "' . words::TEST_ADD . '"', $result, $target, $t::TIMEOUT_LIMIT_DB);
         $wrd_add = new word($t->usr1);
-        $wrd_add->set_name(words::TN_ADD);
+        $wrd_add->set_name(words::TEST_ADD);
         $result = $wrd_add->save()->get_last_message();
-        $target = 'A word with the name "'.words::TN_ADD.'" already exists. Please use another word name.';
-        $t->display('word->save reject for "' . words::TN_ADD . '"', $target, $result, $t::TIMEOUT_LIMIT_DB);
+        $target = 'A word with the name "'.words::TEST_ADD.'" already exists. Please use another word name.';
+        $t->display('word->save reject for "' . words::TEST_ADD . '"', $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // check that the word name cannot be used for a verb, triple or formula anymore
         $vrb = new verb();
         $vrb->set_user($t->usr1);
-        $vrb->set_name(words::TN_ADD);
+        $vrb->set_name(words::TEST_ADD);
         $result = $vrb->save()->get_last_message();
         $target = '<style class="text-danger">A word with the name "System Test Word" already exists. '
             . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.</style>';
@@ -311,7 +311,7 @@ class word_write_tests
         // ... triple
         $trp = new triple($t->usr1);
         $trp->load_by_name(triples::PI_NAME);
-        $trp->set_name(words::TN_ADD);
+        $trp->set_name(words::TEST_ADD);
         $result = $trp->save()->get_last_message();
         $target = '<style class="text-danger">A word with the name "System Test Word" already exists. '
             . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.</style>';
@@ -320,7 +320,7 @@ class word_write_tests
         // ... or formula anymore
         $frm = new formula($t->usr1);
         $frm->load_by_name(formulas::SCALE_TO_SEC);
-        $frm->set_name(words::TN_ADD);
+        $frm->set_name(words::TEST_ADD);
         $result = $frm->save()->get_last_message();
         $target = '<style class="text-danger">A word with the name "System Test Word" already exists. '
             . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.</style>';
@@ -337,54 +337,54 @@ class word_write_tests
             $log->row_id = $wrd_add->id();
             $result = $log->dsp_last(true);
         }
-        $target = user::SYSTEM_TEST_NAME . ' added "' . words::TN_ADD . '"';
-        $t->display('word->save logged for "' . words::TN_ADD . '"', $target, $result);
+        $target = user::SYSTEM_TEST_NAME . ' added "' . words::TEST_ADD . '"';
+        $t->display('word->save logged for "' . words::TEST_ADD . '"', $target, $result);
 
         // ... test if the new word has been created
-        $wrd_added = $t->load_word(words::TN_ADD);
-        $wrd_added->load_by_name(words::TN_ADD);
+        $wrd_added = $t->load_word(words::TEST_ADD);
+        $wrd_added->load_by_name(words::TEST_ADD);
         if ($wrd_added->id() > 0) {
             $result = $wrd_added->name();
         }
-        $target = words::TN_ADD;
-        $t->display('word->load of added word "' . words::TN_ADD . '"', $target, $result);
+        $target = words::TEST_ADD;
+        $t->display('word->load of added word "' . words::TEST_ADD . '"', $target, $result);
 
         // check if the word can be renamed
-        $wrd_added->set_name(words::TN_RENAMED);
+        $wrd_added->set_name(words::TEST_RENAMED);
         $result = $wrd_added->save()->get_last_message();
         $target = '';
-        $t->display('word->save rename "' . words::TN_ADD . '" to "' . words::TN_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB);
+        $t->display('word->save rename "' . words::TEST_ADD . '" to "' . words::TEST_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // check if the word renaming was successful
         $wrd_renamed = new word($t->usr1);
-        if ($wrd_renamed->load_by_name(words::TN_RENAMED)) {
+        if ($wrd_renamed->load_by_name(words::TEST_RENAMED)) {
             if ($wrd_renamed->id() > 0) {
                 $result = $wrd_renamed->name();
             }
         }
-        $target = words::TN_RENAMED;
-        $t->display('word->load renamed word "' . words::TN_RENAMED . '"', $target, $result);
+        $target = words::TEST_RENAMED;
+        $t->display('word->load renamed word "' . words::TEST_RENAMED . '"', $target, $result);
 
         // check if the word parameters can be added
-        $wrd_renamed->plural = words::TN_RENAMED . 's';
-        $wrd_renamed->description = words::TN_RENAMED . ' description';
+        $wrd_renamed->plural = words::TEST_RENAMED . 's';
+        $wrd_renamed->description = words::TEST_RENAMED . ' description';
         $wrd_renamed->type_id = $phr_typ_cac->id(phrase_type_shared::OTHER);
         $result = $wrd_renamed->save()->get_last_message();
         $target = '';
-        $t->display('word->save all word fields beside the name for "' . words::TN_RENAMED . '"',
+        $t->display('word->save all word fields beside the name for "' . words::TEST_RENAMED . '"',
             $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the word parameters have been added
-        $wrd_reloaded = $t->load_word(words::TN_RENAMED);
+        $wrd_reloaded = $t->load_word(words::TEST_RENAMED);
         $result = $wrd_reloaded->plural;
-        $target = words::TN_RENAMED . 's';
-        $t->display('word->load plural for "' . words::TN_RENAMED . '"', $target, $result);
+        $target = words::TEST_RENAMED . 's';
+        $t->display('word->load plural for "' . words::TEST_RENAMED . '"', $target, $result);
         $result = $wrd_reloaded->description;
-        $target = words::TN_RENAMED . ' description';
-        $t->display('word->load description for "' . words::TN_RENAMED . '"', $target, $result);
+        $target = words::TEST_RENAMED . ' description';
+        $t->display('word->load description for "' . words::TEST_RENAMED . '"', $target, $result);
         $result = $wrd_reloaded->type_id;
         $target = $phr_typ_cac->id(phrase_type_shared::OTHER);
-        $t->display('word->load type_id for "' . words::TN_RENAMED . '"', $target, $result);
+        $t->display('word->load type_id for "' . words::TEST_RENAMED . '"', $target, $result);
 
         // check if the word parameter adding have been logged
         $log = new change($t->usr1);
@@ -392,77 +392,77 @@ class word_write_tests
         $log->set_field(change_fields::FLD_WORD_PLURAL);
         $log->row_id = $wrd_reloaded->id();
         $result = $log->dsp_last(true);
-        $target = user::SYSTEM_TEST_NAME . ' added "' . words::TN_RENAMED . 's"';
-        $t->display('word->load plural for "' . words::TN_RENAMED . '" logged', $target, $result);
+        $target = user::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . 's"';
+        $t->display('word->load plural for "' . words::TEST_RENAMED . '" logged', $target, $result);
         $log->set_field(sandbox_named::FLD_DESCRIPTION);
         $result = $log->dsp_last(true);
-        $target = user::SYSTEM_TEST_NAME . ' added "' . words::TN_RENAMED . ' description"';
-        $t->display('word->load description for "' . words::TN_RENAMED . '" logged', $target, $result);
-        $t->display('word->load ref_2 for "' . words::TN_RENAMED . '" logged', $target, $result);
+        $target = user::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . ' description"';
+        $t->display('word->load description for "' . words::TEST_RENAMED . '" logged', $target, $result);
+        $t->display('word->load ref_2 for "' . words::TEST_RENAMED . '" logged', $target, $result);
         $log->set_field(change_fields::FLD_PHRASE_TYPE);
         $result = $log->dsp_last(true);
         $target = user::SYSTEM_TEST_NAME . ' added "differentiator filler"';
-        $t->display('word->load type_id for "' . words::TN_RENAMED . '" logged', $target, $result);
+        $t->display('word->load type_id for "' . words::TEST_RENAMED . '" logged', $target, $result);
 
         // check if a user specific word is created if another user changes the word
         $wrd_usr2 = new word($t->usr2);
-        $wrd_usr2->load_by_name(words::TN_RENAMED);
-        $wrd_usr2->plural = words::TN_RENAMED . 's2';
-        $wrd_usr2->description = words::TN_RENAMED . ' description2';
+        $wrd_usr2->load_by_name(words::TEST_RENAMED);
+        $wrd_usr2->plural = words::TEST_RENAMED . 's2';
+        $wrd_usr2->description = words::TEST_RENAMED . ' description2';
         $wrd_usr2->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         $result = $wrd_usr2->save()->get_last_message();
         $target = '';
-        $t->display('word->save all word fields for user 2 beside the name for "' . words::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('word->save all word fields for user 2 beside the name for "' . words::TEST_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific word changes have been saved
         $wrd_usr2_reloaded = new word($t->usr2);
-        $wrd_usr2_reloaded->load_by_name(words::TN_RENAMED);
+        $wrd_usr2_reloaded->load_by_name(words::TEST_RENAMED);
         $result = $wrd_usr2_reloaded->plural;
-        $target = words::TN_RENAMED . 's2';
-        $t->display('word->load plural for "' . words::TN_RENAMED . '"', $target, $result);
+        $target = words::TEST_RENAMED . 's2';
+        $t->display('word->load plural for "' . words::TEST_RENAMED . '"', $target, $result);
         $result = $wrd_usr2_reloaded->description;
-        $target = words::TN_RENAMED . ' description2';
-        $t->display('word->load description for "' . words::TN_RENAMED . '"', $target, $result);
+        $target = words::TEST_RENAMED . ' description2';
+        $t->display('word->load description for "' . words::TEST_RENAMED . '"', $target, $result);
         $result = $wrd_usr2_reloaded->type_id;
         $target = $phr_typ_cac->id(phrase_type_shared::TIME);
-        $t->display('word->load type_id for "' . words::TN_RENAMED . '"', $target, $result);
+        $t->display('word->load type_id for "' . words::TEST_RENAMED . '"', $target, $result);
 
         // check the word for the original user remains unchanged
-        $wrd_reloaded = $t->load_word(words::TN_RENAMED);
+        $wrd_reloaded = $t->load_word(words::TEST_RENAMED);
         $result = $wrd_reloaded->plural;
-        $target = words::TN_RENAMED . 's';
-        $t->display('word->load plural for "' . words::TN_RENAMED . '" unchanged for user 1', $target, $result);
+        $target = words::TEST_RENAMED . 's';
+        $t->display('word->load plural for "' . words::TEST_RENAMED . '" unchanged for user 1', $target, $result);
         $result = $wrd_reloaded->description;
-        $target = words::TN_RENAMED . ' description';
-        $t->display('word->load description for "' . words::TN_RENAMED . '" unchanged for user 1', $target, $result);
+        $target = words::TEST_RENAMED . ' description';
+        $t->display('word->load description for "' . words::TEST_RENAMED . '" unchanged for user 1', $target, $result);
         $result = $wrd_reloaded->type_id;
         $target = $phr_typ_cac->id(phrase_type_shared::OTHER);
-        $t->display('word->load type_id for "' . words::TN_RENAMED . '" unchanged for user 1', $target, $result);
+        $t->display('word->load type_id for "' . words::TEST_RENAMED . '" unchanged for user 1', $target, $result);
 
         // TODO check that the changed word name cannot be used for a verb, triple or formula anymore
 
         // check if undo all specific changes removes the user word
         $wrd_usr2 = new word($t->usr2);
-        $wrd_usr2->load_by_name(words::TN_RENAMED);
-        $wrd_usr2->plural = words::TN_RENAMED . 's';
-        $wrd_usr2->description = words::TN_RENAMED . ' description';
+        $wrd_usr2->load_by_name(words::TEST_RENAMED);
+        $wrd_usr2->plural = words::TEST_RENAMED . 's';
+        $wrd_usr2->description = words::TEST_RENAMED . ' description';
         $wrd_usr2->type_id = $phr_typ_cac->id(phrase_type_shared::OTHER);
         $result = $wrd_usr2->save()->get_last_message();
         $target = '';
-        $t->display('word->save undo the user word fields beside the name for "' . words::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('word->save undo the user word fields beside the name for "' . words::TEST_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific word changes have been saved
         $wrd_usr2_reloaded = new word($t->usr2);
-        $wrd_usr2_reloaded->load_by_name(words::TN_RENAMED);
+        $wrd_usr2_reloaded->load_by_name(words::TEST_RENAMED);
         $result = $wrd_usr2_reloaded->plural;
-        $target = words::TN_RENAMED . 's';
-        $t->display('word->load plural for "' . words::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
+        $target = words::TEST_RENAMED . 's';
+        $t->display('word->load plural for "' . words::TEST_RENAMED . '" unchanged now also for user 2', $target, $result);
         $result = $wrd_usr2_reloaded->description;
-        $target = words::TN_RENAMED . ' description';
-        $t->display('word->load description for "' . words::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
+        $target = words::TEST_RENAMED . ' description';
+        $t->display('word->load description for "' . words::TEST_RENAMED . '" unchanged now also for user 2', $target, $result);
         $result = $wrd_usr2_reloaded->type_id;
         $target = $phr_typ_cac->id(phrase_type_shared::OTHER);
-        $t->display('word->load type_id for "' . words::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
+        $t->display('word->load type_id for "' . words::TEST_RENAMED . '" unchanged now also for user 2', $target, $result);
 
         // display
         $back = 1;
@@ -472,17 +472,17 @@ class word_write_tests
         $t->display('word->display "' . words::MATH . '"', $target, $result);
 
         // check if user 2 can exclude a word without influencing user 1
-        $wrd_usr1 = $t->load_word(words::TN_RENAMED, $t->usr1);
-        $wrd_usr2 = $t->load_word(words::TN_RENAMED, $t->usr2);
+        $wrd_usr1 = $t->load_word(words::TEST_RENAMED, $t->usr1);
+        $wrd_usr2 = $t->load_word(words::TEST_RENAMED, $t->usr2);
         $wrd_usr2->del();
-        $wrd_usr2_reloaded = $t->load_word(words::TN_RENAMED, $t->usr2);
+        $wrd_usr2_reloaded = $t->load_word(words::TEST_RENAMED, $t->usr2);
         $target = '';
         $result = $wrd_usr2_reloaded->name_dsp();
-        $t->display('user 2 has deleted word "' . words::TN_RENAMED . '"', $target, $result);
-        $wrd_usr1_reloaded = $t->load_word(words::TN_RENAMED, $t->usr1);
+        $t->display('user 2 has deleted word "' . words::TEST_RENAMED . '"', $target, $result);
+        $wrd_usr1_reloaded = $t->load_word(words::TEST_RENAMED, $t->usr1);
         $target = $wrd_usr1->name_dsp();
         $result = $wrd_usr1_reloaded->name_dsp();
-        $t->display('but the word "' . words::TN_RENAMED . '" is still the same for user 1', $target, $result);
+        $t->display('but the word "' . words::TEST_RENAMED . '" is still the same for user 1', $target, $result);
 
         // TODO test the creation of a new scaling word e.g. dozen for 12
         //      and adding a related formula and calculating values based on the added formula

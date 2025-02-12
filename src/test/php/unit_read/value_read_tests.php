@@ -73,7 +73,7 @@ class value_read_tests
         $test_name = 'load a value by phrase group';
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->load_by_names(
-            array(words::CH, words::INHABITANTS, words::MIO, words::TN_2020)
+            array(words::CH, words::INHABITANTS, words::MIO, words::YEAR_2020)
         );
         $val = new value($t->usr1);
         $val->load_by_grp($phr_lst->get_grp_id());

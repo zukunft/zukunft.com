@@ -81,7 +81,7 @@ class word_list_tests
 
         // load by word names
         $wrd_lst = new word_list($usr);
-        $wrd_names = array(words::MATH, words::TN_ADD);
+        $wrd_names = array(words::MATH, words::TEST_ADD);
         $this->assert_sql_by_names($t, $db_con, $wrd_lst, $wrd_names);
 
         // load by type

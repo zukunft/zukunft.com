@@ -320,8 +320,8 @@ class base_ui_tests
             'not permitted',
             ', frontend error_update.php contains at least', $is_connected);
         $t->dsp_web_test(
-            'http/find.php?pattern=' . words::TN_ABB,
-            words::TN_ABB,
+            'http/find.php?pattern=' . words::ABB,
+            words::ABB,
             ', frontend find.php contains at least', $is_connected);
 
 

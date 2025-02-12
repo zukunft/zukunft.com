@@ -61,10 +61,10 @@ class formula_link_write_tests
 
         $t->subheader('prepare formula link specific write tests');
         $frm = $t->test_formula(formulas::SYSTEM_TEXT_ADD, formulas::INCREASE_EXP);
-        $wrd = $t->test_word(words::TN_ADD);
+        $wrd = $t->test_word(words::TEST_ADD);
 
 
-        $t->test_formula_link(formulas::SYSTEM_TEXT_ADD, words::TN_ADD);
+        $t->test_formula_link(formulas::SYSTEM_TEXT_ADD, words::TEST_ADD);
 
         // link the test formula to another word
         $test_name = 'link phrase "' . $wrd->name() . '" to a formula "' . $frm->name() . '" using the formula function link_phr';
@@ -73,13 +73,13 @@ class formula_link_write_tests
 
         // ... check the correct logging
         $phr = new phrase($t->usr1);
-        $phr->load_by_name(words::TN_ADD);
+        $phr->load_by_name(words::TEST_ADD);
         $log = new change_link($t->usr1);
         $log->set_table(change_tables::FORMULA_LINK);
         $log->new_from_id = $frm->id();
         $log->new_to_id = $phr->id();
         $result = $log->dsp_last(true);
-        $target = user::SYSTEM_TEST_NAME . ' linked System Test Formula to ' . words::TN_ADD;
+        $target = user::SYSTEM_TEST_NAME . ' linked System Test Formula to ' . words::TEST_ADD;
         $t->display('formula_link->link_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result);
 
         // ... check if the link can be loaded by formula and phrase id and base on the id the correct formula and phrase objects are loaded
@@ -136,7 +136,7 @@ class formula_link_write_tests
         $frm = new formula($t->usr2);
         $frm->load_by_name(formulas::SYSTEM_TEXT_ADD);
         $phr = new phrase($t->usr2);
-        $phr->load_by_name(words::TN_ADD);
+        $phr->load_by_name(words::TEST_ADD);
         $result = $frm->unlink_phr($phr);
         $target = '';
         $t->display('formula_link->unlink_phr "' . $phr->name() . '" from "' . $frm->name() . '" by user "' . $t->usr2->name . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -148,7 +148,7 @@ class formula_link_write_tests
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last(true);
         // TODO fix it
-        $target = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test Formula Renamed from ' . words::TN_ADD . '';
+        $target = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test Formula Renamed from ' . words::TEST_ADD . '';
         $target = user::SYSTEM_TEST_PARTNER_NAME . ' ';
         $t->display('formula_link->unlink_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
 
@@ -185,7 +185,7 @@ class formula_link_write_tests
         $log->old_from_id = $frm->id();
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last(true);
-        $target = user::SYSTEM_TEST_NAME . ' unlinked System Test Formula from ' . words::TN_ADD;
+        $target = user::SYSTEM_TEST_NAME . ' unlinked System Test Formula from ' . words::TEST_ADD;
         $t->display('formula_link->unlink_phr logged of "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result);
 
         // check if the formula is not used any more for both users
@@ -224,7 +224,7 @@ class formula_link_write_tests
         $frm = new formula($t->usr1);
         $frm->load_by_name(formulas::SYSTEM_TEXT_ADD);
         $wrd = new word($t->usr1);
-        $wrd->load_by_name(words::TN_ADD);
+        $wrd->load_by_name(words::TEST_ADD);
         $lnk = new formula_link($t->usr1);
         $lnk->load_by_link($frm, $wrd->phrase());
         $lnk->del();
@@ -268,13 +268,13 @@ class formula_link_write_tests
     {
         $t->header('Check if all base formulas link correctly');
 
-        $t->test_formula_link(formulas::SYSTEM_TEXT_RATIO, words::TN_SHARE);
-        $t->test_formula_link(formulas::SYSTEM_TEXT_SECTOR, words::TN_SHARE);
+        $t->test_formula_link(formulas::SYSTEM_TEXT_RATIO, words::TEST_SHARE);
+        $t->test_formula_link(formulas::SYSTEM_TEXT_SECTOR, words::TEST_SHARE);
         $t->test_formula_link(formulas::SYSTEM_TEXT_ADD, words::YEAR_CAP);
-        $t->test_formula_link(formulas::SYSTEM_TEXT_SCALE_K, words::TN_IN_K);
+        $t->test_formula_link(formulas::SYSTEM_TEXT_SCALE_K, words::TEST_IN_K);
         $t->test_formula_link(formulas::SYSTEM_TEXT_SCALE_TO_K, words::ONE);
         $t->test_formula_link(formulas::SYSTEM_TEXT_SCALE_MIO, words::MIO);
-        $t->test_formula_link(formulas::SYSTEM_TEXT_SCALE_BIL, words::TN_BIL);
+        $t->test_formula_link(formulas::SYSTEM_TEXT_SCALE_BIL, words::TEST_BIL);
         $t->test_formula_link(formulas::INCREASE, words::YEAR_CAP);
 
     }

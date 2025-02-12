@@ -86,7 +86,7 @@ class value_write_tests
             words::ZH,
             words::INHABITANTS,
             words::MIO,
-            words::TN_2020
+            words::YEAR_2020
         ));
         //$t->assert('Check if loading the latest value works',
         //    $val->number(), values::TV_CANTON_ZH_INHABITANTS_2020_IN_MIO);
@@ -96,7 +96,7 @@ class value_write_tests
             words::CH,
             words::INHABITANTS,
             words::MIO,
-            words::TN_2019
+            words::YEAR_2019
         ),
             values::CH_INHABITANTS_2019_IN_MIO);
 
@@ -110,7 +110,7 @@ class value_write_tests
             $t->assert(', value->load for value id "' . $ch_inhabitants->id() . '"', $result, $target);
 
             // test load by phrase list first to get the value id
-            $phr_lst = $t->load_phrase_list(array(words::CH, words::INHABITANTS, words::MIO, words::TN_2020));
+            $phr_lst = $t->load_phrase_list(array(words::CH, words::INHABITANTS, words::MIO, words::YEAR_2020));
             $val_by_phr_lst = new value($t->usr1);
             $val_by_phr_lst->load_by_grp($phr_lst->get_grp_id());
             $result = $val_by_phr_lst->number();
@@ -138,7 +138,7 @@ class value_write_tests
             words::ZH,
             words::INHABITANTS,
             words::MIO,
-            words::TN_2020))->get_grp();
+            words::YEAR_2020))->get_grp();
         $chk_val = new value($t->usr1);
         if ($chk_phr_grp != null) {
             $chk_val->load_by_grp($chk_phr_grp);
@@ -191,7 +191,7 @@ class value_write_tests
             words::ZH,
             words::INHABITANTS,
             words::MIO,
-            words::TN_2020));
+            words::YEAR_2020));
         //$phr_lst->ex_time();
         $grp = $phr_lst->get_grp();
         if (!$grp->is_id_set()) {
@@ -220,8 +220,8 @@ class value_write_tests
             words::ZH,
             words::CH,
             words::INHABITANTS,
-            words::TN_PCT,
-            words::TN_2020));
+            words::PCT,
+            words::YEAR_2020));
         $api_msg = $pct_val->api_json([api_type::INCL_PHRASES]);
         $val_dsp = new value_dsp($api_msg);
         $result = $val_dsp->display(0);
@@ -229,7 +229,7 @@ class value_write_tests
         $t->display(', value->val_formatted for ' . $pct_val->dsp_id(), $target, $result);
 
         // test the scaling of a value
-        $phr_lst = $t->load_phrase_list(array(words::CH, words::INHABITANTS, words::MIO, words::TN_2020));
+        $phr_lst = $t->load_phrase_list(array(words::CH, words::INHABITANTS, words::MIO, words::YEAR_2020));
         $dest_phr_lst = new phrase_list($t->usr1);
         $dest_phr_lst->load_by_names(array(words::INHABITANTS, words::ONE));
         $mio_val = new value($t->usr1);
@@ -239,7 +239,7 @@ class value_write_tests
         $t->display(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $target, $result);
 
         // test the figure object creation
-        $phr_lst = $t->load_phrase_list(array(words::CANTON, words::ZH, words::INHABITANTS, words::MIO, words::TN_2020));
+        $phr_lst = $t->load_phrase_list(array(words::CANTON, words::ZH, words::INHABITANTS, words::MIO, words::YEAR_2020));
         $mio_val = new value($t->usr1);
         $mio_val->load_by_grp($phr_lst->get_grp_id());
         $mio_val_dsp = new value_dsp();
@@ -283,7 +283,7 @@ class value_write_tests
         // test adding a value in the database
         // as it is call from value_add.php with all phrases in an id list including the time phrase,
         // so the time phrase must be excluded
-        $phr_grp = $t->load_phrase_group(array(words::TN_RENAMED, words::INHABITANTS, words::MIO, words::TN_2020));
+        $phr_grp = $t->load_phrase_group(array(words::TEST_RENAMED, words::INHABITANTS, words::MIO, words::YEAR_2020));
         $add_val = new value($t->usr1);
         $add_val->set_grp($phr_grp);
         $add_val->set_number(values::SAMPLE_BIG);
@@ -322,7 +322,7 @@ class value_write_tests
         $test_val_lst[] = $added_val->id();
 
         // test if a value with the same phrases, but different time can be added
-        $phr_grp2 = $t->load_phrase_group(array(words::TN_RENAMED, words::INHABITANTS, words::MIO, words::TN_2019));
+        $phr_grp2 = $t->load_phrase_group(array(words::TEST_RENAMED, words::INHABITANTS, words::MIO, words::YEAR_2019));
         $add_val2 = new value($t->usr1);
         $add_val2->set_grp($phr_grp2);
         $add_val2->set_number(values::SAMPLE_BIGGER);
@@ -392,7 +392,7 @@ class value_write_tests
         $added_val->load_by_id($added_val_id);
         $result = $added_val->number();
         $target = '987654321';
-        $t->display(', value->load the value previous updated for "' . words::TN_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->display(', value->load the value previous updated for "' . words::TEST_RENAMED . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user specific value is created if another user changes the value
         $val_usr2 = new value($t->usr2);
@@ -512,7 +512,7 @@ class value_write_tests
             words::ZH,
             words::INHABITANTS,
             words::MIO,
-            words::TN_2020
+            words::YEAR_2020
         ),
             values::CANTON_ZH_INHABITANTS_2020_IN_MIO);
 
@@ -530,7 +530,7 @@ class value_write_tests
         $t->test_value(array(
             triples::CITY_ZH,
             words::INHABITANTS,
-            words::TN_2019
+            words::YEAR_2019
         ),
             values::CITY_ZH_INHABITANTS_2019);
 
@@ -547,7 +547,7 @@ class value_write_tests
             words::CH,
             words::INHABITANTS,
             words::MIO,
-            words::TN_2020
+            words::YEAR_2020
         ),
             values::CH_INHABITANTS_2020_IN_MIO);
 
@@ -556,7 +556,7 @@ class value_write_tests
             words::CH,
             words::INHABITANTS,
             words::MIO,
-            words::TN_2019
+            words::YEAR_2019
         ),
             values::CH_INHABITANTS_2019_IN_MIO);
 
@@ -566,8 +566,8 @@ class value_write_tests
             words::ZH,
             words::CH,
             words::INHABITANTS,
-            words::TN_PCT,
-            words::TN_2020
+            words::PCT,
+            words::YEAR_2020
         ),
             values::SAMPLE_PCT);
 
@@ -575,22 +575,22 @@ class value_write_tests
         $t->test_value(array(
             words::CH,
             words::INHABITANTS,
-            words::TN_INCREASE,
-            words::TN_PCT,
-            words::TN_2020
+            words::TEST_INCREASE,
+            words::PCT,
+            words::YEAR_2020
         ),
             values::INCREASE);
 
         // add some simple number for formula testing
         $t->test_value(array(
-            words::TN_SHARE,
-            words::TWN_CHF
+            words::TEST_SHARE,
+            words::TEST_CHF
         ),
             values::SHARE_PRICE);
 
         $t->test_value(array(
-            words::TN_EARNING,
-            words::TWN_CHF
+            words::TEST_EARNING,
+            words::TEST_CHF
         ),
             values::EARNINGS_PER_SHARE);
 
