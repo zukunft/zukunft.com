@@ -41,7 +41,7 @@ use cfg\user\user;
 use cfg\view\view;
 use html\html_base;
 use html\value\value as value_dsp;
-use html\view\view as view_dsp;
+use html\view\view_navbar as view_dsp;
 use shared\api;
 use shared\const\views as view_shared;
 

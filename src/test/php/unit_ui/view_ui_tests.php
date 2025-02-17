@@ -33,7 +33,7 @@
 namespace unit_ui;
 
 use html\html_base;
-use html\view\view as view_dsp;
+use html\view\view_navbar as view_dsp;
 use shared\const\views;
 use test\test_cleanup;
 
@@ -56,7 +56,7 @@ class view_ui_tests
         $test_page .= $html->text_h2('select');
         $from_rows = $msk->type_selector(views::VIEW_EDIT) . '<br>';
         //$from_rows .= $msk->component_selector(views::VIEW_EDIT, '', 1) . '<br>';
-        $test_page .= $html->form(views::WORD_EDIT, $from_rows);
+        $test_page .= $html->form(views::VIEW_EDIT, $from_rows);
         $t->html_test($test_page, 'view', 'view', $t);
     }
 

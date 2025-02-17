@@ -40,11 +40,13 @@ include_once WEB_SYSTEM_PATH . 'sys_log_list.php';
 include_once WEB_USER_PATH . 'user.php';
 include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_VIEW_PATH . 'view.php';
+include_once WEB_VIEW_PATH . 'view_navbar.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_SYSTEM_PATH . 'sys_log_list.php';
 include_once WEB_LOG_PATH . 'user_log_display.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_VIEW_PATH . 'view.php';
+include_once WEB_VIEW_PATH . 'view_navbar.php';
 
 use html\html_base;
 use html\log\user_log_display;
@@ -52,7 +54,7 @@ use html\system\sys_log_list as sys_log_list_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\user\user;
 use html\verb\verb;
-use html\view\view as view_dsp;
+use html\view\view_navbar as view_dsp;
 use html\word\triple;
 
 class user_dsp_old extends user
@@ -205,7 +207,7 @@ class user_dsp_old extends user
                 if ($id != 0) {
                     $trp_usr->load_by_id($id);
                 } else {
-                    $from_id = $sbx_row[triple::FLD_FROM];
+                    $from_id = $sbx_row[triple_db::FLD_FROM];
                     $vrb_id = $sbx_row[verb::FLD_ID];
                     $to_id = $sbx_row[triple::FLD_TO];
                     $trp_usr->load_by_link_id($from_id, $vrb_id, $to_id);

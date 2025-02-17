@@ -44,6 +44,7 @@ include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_USER_PATH . 'user.php';
 include_once WEB_VALUE_PATH . 'value.php';
 include_once WEB_VIEW_PATH . 'view.php';
+include_once WEB_VIEW_PATH . 'view_navbar.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_ENUM_PATH . 'change_fields.php';

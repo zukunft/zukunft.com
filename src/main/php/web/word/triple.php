@@ -65,8 +65,6 @@ include_once SHARED_PATH . 'json_fields.php';
 
 use html\html_names;
 use html\phrase\phrase_list;
-use html\rest_ctrl;
-use html\button;
 use html\html_base;
 use html\html_selector;
 use html\phrase\phrase_list as phrase_list_dsp;

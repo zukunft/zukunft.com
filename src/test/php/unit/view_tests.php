@@ -36,7 +36,7 @@ use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\view\view;
-use html\view\view as view_dsp;
+use html\view\view_navbar as view_dsp;
 use shared\library;
 use shared\const\views;
 use test\test_cleanup;

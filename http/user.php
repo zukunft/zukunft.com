@@ -41,16 +41,14 @@ include_once SHARED_ENUM_PATH . 'user_profiles.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
-use cfg\db\sql_db;
 use cfg\formula\formula;
 use cfg\formula\formula_link;
 use cfg\user\user;
-use cfg\user_profile;
 use cfg\view\view;
 use cfg\word\triple;
 use cfg\word\word;
 use html\html_base;
-use html\view\view as view_dsp;
+use html\view\view_navbar as view_dsp;
 use shared\api;
 use shared\const\views as view_shared;
 use shared\enum\user_profiles;

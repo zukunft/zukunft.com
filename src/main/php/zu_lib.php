@@ -684,7 +684,7 @@ use cfg\word\triple;
 use cfg\word\word;
 use html\component\component;
 use html\html_base;
-use html\view\view as view_dsp;
+use html\view\view_navbar as view_dsp;
 use shared\library;
 use shared\types\protection_type;
 use shared\types\share_type;
