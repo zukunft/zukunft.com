@@ -172,7 +172,7 @@ class expression_tests
         // element_special_following
         $phr_lst = $exp->element_special_following($trm_lst);
         $result = $phr_lst->dsp_name();
-        $target = '"' . words::PRIOR_NAME . '","' . words::THIS_NAME . '"';
+        $target = '"' . words::THIS_NAME . '","' . words::PRIOR_NAME . '"';
         $t->assert('element_special_following for "' . $exp->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // TODO element_special_following_frm

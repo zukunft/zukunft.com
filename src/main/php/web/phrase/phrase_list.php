@@ -104,7 +104,7 @@ class phrase_list extends sandbox_list_named
         $api = new api_dsp();
         $data = array();
         $data[api::URL_VAR_PHRASE] = $phr->id();
-        $data[api::URL_VAR_DIRECTION] = $direction;
+        $data[api::URL_VAR_DIRECTION] = $direction->value;
         $data[api::URL_VAR_LEVELS] = 1;
         $json_body = $api->api_get(self::class, $data);
         $this->set_from_json_array($json_body);
@@ -215,6 +215,7 @@ class phrase_list extends sandbox_list_named
     function name_link(): string
     {
         $result = '';
+        $this->sort_by_name();
         foreach ($this->lst() as $phr) {
             if ($result != '' and $phr->name_link() != '') {
                 $result .= ', ';

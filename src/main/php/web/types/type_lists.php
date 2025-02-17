@@ -100,14 +100,14 @@ class type_lists
     /**
      * set the vars of this frontend object bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json(string $json_api_msg): void
+    function set_from_json(string $json_api_msg): user_message
     {
         $ctrl = new api();
         $json_array = json_decode($json_api_msg, true);
         $type_lists_json = $ctrl->check_api_msg($json_array, json_fields::BODY);
-        $this->set_from_json_array($type_lists_json);
+        return $this->set_from_json_array($type_lists_json);
     }
 
     /**

@@ -99,16 +99,6 @@ class user extends db_object
     }
 
     /**
-     * set the vars of this object bases on the api json string
-     * @param string $json_api_msg an api json message as a string
-     * @return user_message
-     */
-    function set_from_json(string $json_api_msg): user_message
-    {
-        return $this->set_from_json_array(json_decode($json_api_msg, true));
-    }
-
-    /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match

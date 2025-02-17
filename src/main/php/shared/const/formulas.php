@@ -75,7 +75,7 @@ class formulas
     const INCREASE_ALTERNATIVE_EXP = '"' . words::PERCENT . '" = 1 - ( "' . words::THIS_NAME . '" / "' . words::PRIOR_NAME . '" )';
     const INCREASE_DB = '{w' . words::PCT_ID . '}=({w' . words::THIS_ID . '}-{w' . words::PRIOR_ID . '})/{w' . words::PRIOR_ID . '}';
     const LITRE_TO_M3 = 'scale litre to m3';
-    const BIGGEST_CITY = 'population in the city of Zurich in percent of Switzerland';
+    const BIGGEST_CITY = 'population in the city of Zurich in percent of '  . words::CH . '';
     const SCALE_MIO = 'scale millions to one';
     const SCALE_MIO_EXP = '"one" = "millions" * 1000000';
     const SCALE_MIO_DB = '{w' . words::ONE_ID . '} = {w' . words::MIO_ID . '} * 1000000';

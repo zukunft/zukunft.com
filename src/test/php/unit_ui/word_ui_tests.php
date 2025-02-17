@@ -73,9 +73,9 @@ class word_ui_tests
         $test_page .= 'unlink in columns: ' . $html->tbl($wrd_pi->dsp_unlink($wrd->id())) . '<br>';
         $test_page .= $html->text_h2('view header');
         $test_page .= $wrd->header() . '<br>';
-        $test_page .= $html->text_h2('parents');
+        $test_page .= $html->text_h2('parents of ' . $wrd_zh->name());
         $test_page .= $wrd_zh->parents()->name_link() . '<br>';
-        $test_page .= $html->text_h2('children');
+        $test_page .= $html->text_h2('children of ' . $wrd_city->name());
         $test_page .= $wrd_city->children()->name_link() . '<br>';
         $t->html_test($test_page, 'word html components', 'word', $t);
 

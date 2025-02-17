@@ -86,12 +86,13 @@ class sandbox_list_named extends sandbox_list
     /**
      * set the vars of these list display objects bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json(string $json_api_msg): void
+    function set_from_json(string $json_api_msg): user_message
     {
-        $this->set_from_json_array(json_decode($json_api_msg, true));
+        $usr_msg = $this->set_from_json_array(json_decode($json_api_msg, true));
         $this->set_lst_dirty();
+        return $usr_msg;
     }
 
     /**
@@ -196,6 +197,21 @@ class sandbox_list_named extends sandbox_list
             }
         }
         return $usr_msg;
+    }
+
+    /**
+     * sort this list by name
+     * @return void
+     */
+    function sort_by_name(): void
+    {
+        $result = [];
+        $pos_lst = $this->names();
+        natcasesort($pos_lst);
+        foreach ($pos_lst as $key => $value) {
+            $result[] = $this->lst()[$key];
+        }
+        $this->set_lst($result);
     }
 
 

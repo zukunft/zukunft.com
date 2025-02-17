@@ -152,7 +152,7 @@ class group_write_tests
 
         // test names
         $result = implode(",", $zh_city_grp->names());
-        $target = triples::CITY_ZH . ',' . words::INHABITANTS;
+        $target = words::INHABITANTS . ',' . triples::CITY_ZH;
         $t->display('phrase_group->names', $target, $result);
 
         // test if the phrase group links are correctly recreated when a group is updated

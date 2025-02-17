@@ -71,9 +71,19 @@ class group_list_write_tests
         $grp_lst->add($canton_grp);
         $grp_lst->add($city_grp);
         $result = $grp_lst->name();
-        $target = words::CH . ',' . words::INHABITANTS . ',' . words::MIO .
-            ' and ' . words::CANTON . ',' . words::ZH . ',' . words::INHABITANTS . ',' . words::MIO .
-            ' and ' . words::CITY . ',' . words::ZH . ',' . words::INHABITANTS . ',' . words::MIO;
+        $target = words::INHABITANTS . ','
+            . words::MIO . ','
+            . words::CH
+            . ' and '
+            . words::CANTON . ','
+            . words::INHABITANTS . ','
+            . words::MIO . ','
+            . words::ZH
+            . ' and '
+            . words::CITY . ','
+            . words::INHABITANTS . ','
+            . words::MIO . ','
+            . words::ZH;
         $t->display('phrase_group_list->add of ' . $country_grp->dsp_id() . ', ' . $country_grp->dsp_id() . ', ' . $city_grp->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
 

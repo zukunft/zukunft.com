@@ -137,7 +137,7 @@ class formula_write_tests
         } else {
             $result = $phr_lst->name();
         }
-        $target = '"' . words::YEAR_2019 . '","' . words::CH . '","' . words::INHABITANTS . '"';
+        $target = '"' . words::YEAR_2019 . '","' . words::INHABITANTS . '","' . words::CH . '"';
         $t->display('formula->special_phr_lst for "' . $frm->name() . '"', $target, $result);
 
         $phr_lst = $frm->assign_phr_lst_direct();

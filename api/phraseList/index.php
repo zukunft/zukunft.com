@@ -37,6 +37,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
@@ -51,6 +52,7 @@ use cfg\user\user;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase_list;
 use shared\api;
+use shared\enum\foaf_direction;
 
 // open database
 $db_con = prg_start("api/phraseList", "", false);
@@ -58,6 +60,8 @@ $db_con = prg_start("api/phraseList", "", false);
 // get the parameters
 $phr_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
 $phr_id = $_GET[api::URL_VAR_PHRASE] ?? '';
+$direction_text = $_GET[api::URL_VAR_DIRECTION] ?? '';
+$levels = $_GET[api::URL_VAR_LEVELS] ?? '';
 $pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
 $msg = '';
@@ -76,7 +80,12 @@ if ($usr->id() > 0) {
     } elseif ($phr_id != '') {
         $phr = new phrase($usr);
         $phr->set_id($phr_id);
-        $lst->load_by_phr($phr);
+        try {
+            $dir = foaf_direction::from($direction_text);
+        } catch (ValueError $error) {
+            $msg .= $error->getMessage();
+        }
+        $lst->load_by_phr($phr, null, $dir);
     } else {
         $lst->load_like($pattern);
     }

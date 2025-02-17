@@ -69,54 +69,9 @@ use shared\library;
 class value extends sandbox_value
 {
 
-
-    /**
-     * create the HTML code to show the value name and the formatted value to the user
-     *
-     * @param phrase_list_dsp|null $phr_lst_exclude usually the context phrases that does not need to be repeated
-     * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
-     */
-    function name_and_value(phrase_list_dsp|null $phr_lst_exclude = null): string
-    {
-        return $this->name_linked($phr_lst_exclude) . $this->display_value_linked('');
-    }
-
-    /**
-     * create the HTML code to show the value name to the user
-     *
-     * @param phrase_list_dsp|null $phr_lst_exclude usually the context phrases that does not need to be repeated
-     * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
-     */
-    function name_linked(phrase_list_dsp|null $phr_lst_exclude = null): string
-    {
-        return $this->grp()->name_link_list($phr_lst_exclude);
-    }
-
-    /**
-     * @return string the formatted value with a link to change this value
-     */
-    function ref_edit(string $back = ''): string
-    {
-        $html = new html_base();
-        $url = $html->url(api_dsp::VALUE_EDIT, $this->id(), $back);
-        $txt = $this->val_formatted();
-        return $html->ref($url, $txt);
-    }
-
-
     /*
      * set and get
      */
-
-    /**
-     * set the vars of this object bases on the api json string
-     * @param string $json_api_msg an api json message as a string
-     * @return \html\user\user_message ok or a warning e.g. if the server version does not match
-     */
-    function set_from_json(string $json_api_msg): \html\user\user_message
-    {
-        return $this->set_from_json_array(json_decode($json_api_msg, true));
-    }
 
     /**
      * @param phrase_group $grp
@@ -174,7 +129,7 @@ class value extends sandbox_value
 
 
     /*
-     * interface
+     * api
      */
 
     /**
@@ -206,8 +161,41 @@ class value extends sandbox_value
 
 
     /*
-     * display
+     * base
      */
+
+    /**
+     * create the HTML code to show the value name and the formatted value to the user
+     *
+     * @param phrase_list_dsp|null $phr_lst_exclude usually the context phrases that does not need to be repeated
+     * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
+     */
+    function name_and_value(phrase_list_dsp|null $phr_lst_exclude = null): string
+    {
+        return $this->name_linked($phr_lst_exclude) . $this->display_value_linked('');
+    }
+
+    /**
+     * create the HTML code to show the value name to the user
+     *
+     * @param phrase_list_dsp|null $phr_lst_exclude usually the context phrases that does not need to be repeated
+     * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
+     */
+    function name_linked(phrase_list_dsp|null $phr_lst_exclude = null): string
+    {
+        return $this->grp()->name_link_list($phr_lst_exclude);
+    }
+
+    /**
+     * @return string the formatted value with a link to change this value
+     */
+    function ref_edit(string $back = ''): string
+    {
+        $html = new html_base();
+        $url = $html->url(api_dsp::VALUE_EDIT, $this->id(), $back);
+        $txt = $this->val_formatted();
+        return $html->ref($url, $txt);
+    }
 
     function display(string $back = ''): string
     {

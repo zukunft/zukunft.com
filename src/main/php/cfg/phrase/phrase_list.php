@@ -1854,6 +1854,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * sort the phrase object list by name
+     * TODO use the sort function of the named list
      * @return array list with the phrases (not a phrase list object!) sorted by name
      */
     function name_sort(): array
@@ -2186,8 +2187,6 @@ class phrase_list extends sandbox_list_named
                 $name_lst[] = $phr->name();
             }
         }
-        // TODO allow to fix the order
-        asort($name_lst);
         return $name_lst;
     }
 
@@ -2221,7 +2220,11 @@ class phrase_list extends sandbox_list_named
      * @param foaf_direction $direction to select either the parents, children or all related words ana triples
      * @return bool true if at least one triple found
      */
-    function load_by_phr(phrase $phr, ?verb $vrb = null, foaf_direction $direction = foaf_direction::BOTH): bool
+    function load_by_phr(
+        phrase $phr,
+        ?verb $vrb = null,
+        foaf_direction $direction = foaf_direction::BOTH
+    ): bool
     {
         $this->reset();
 

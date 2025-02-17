@@ -73,23 +73,22 @@ include_once SHARED_PATH . 'library.php';
 
 
 // TODO remove model classes
-use html\button as button_dsp;
-use html\component\component as component_dsp;
-use html\component\component_list as component_list_dsp;
+use html\button;
+use html\component\component;
+use html\component\component_list;
 use html\display_list;
 use html\helper\config;
-use html\helper\data_object as data_object_dsp;
+use html\helper\data_object;
 use html\html_base;
 use html\log\user_log_display;
 use html\rest_ctrl as api_dsp;
-use html\sandbox\db_object as db_object_dsp;
+use html\sandbox\db_object;
 use html\sandbox\sandbox_typed;
 use html\system\back_trace;
 use html\system\messages;
 use html\user\user_message;
-use html\view\view_list as view_list_dsp;
-use html\word\triple as triple_dsp;
-use html\word\word as word_dsp;
+use html\word\triple;
+use html\word\word;
 use shared\api;
 use shared\const\views;
 use shared\json_fields;
@@ -108,11 +107,11 @@ class view extends sandbox_typed
 
     // used for system views
     private ?string $code_id;
-    protected component_list_dsp $cmp_lst;
+    protected component_list $cmp_lst;
 
     // objects that should be displayed (only one is supposed to be not null)
     // the word, triple or formula object that should be shown to the user
-    protected ?db_object_dsp $dbo;
+    protected ?db_object $dbo;
 
 
     /*
@@ -122,7 +121,7 @@ class view extends sandbox_typed
     function __construct(?string $api_json = null)
     {
         $this->code_id = null;
-        $this->cmp_lst = new component_list_dsp();
+        $this->cmp_lst = new component_list();
         $this->dbo = null;
         parent::__construct($api_json);
     }
@@ -132,7 +131,7 @@ class view extends sandbox_typed
      * set and get
      */
 
-    function component_list(): component_list_dsp
+    function component_list(): component_list
     {
         return $this->cmp_lst;
     }
@@ -163,13 +162,13 @@ class view extends sandbox_typed
             $this->code_id = null;
         }
         // set the components
-        $cmp_lst = new component_list_dsp();
+        $cmp_lst = new component_list();
         if (array_key_exists(json_fields::COMPONENTS, $json_array)) {
             $cmp_lst->set_from_json_array($json_array[json_fields::COMPONENTS]);
         }
         // set the objects (e.g. word)
         if (array_key_exists(api::API_WORD, $json_array)) {
-            $this->dbo = new word_dsp();
+            $this->dbo = new word();
             $dbo_json = $json_array[api::API_WORD];
             $id = 0;
             if (array_key_exists(json_fields::ID, $json_array)) {
@@ -180,7 +179,7 @@ class view extends sandbox_typed
             }
         }
         if (array_key_exists(api::API_TRIPLE, $json_array)) {
-            $this->dbo = new triple_dsp();
+            $this->dbo = new triple();
             $dbo_json = $json_array[api::API_TRIPLE];
             $id = 0;
             if (array_key_exists(json_fields::ID, $json_array)) {
@@ -192,6 +191,18 @@ class view extends sandbox_typed
         }
         $this->cmp_lst = $cmp_lst;
         return $usr_msg;
+    }
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars = parent::api_array();
+        $vars[json_fields::CODE_ID] = $this->code_id;
+        $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_array();
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 
@@ -228,7 +239,7 @@ class view extends sandbox_typed
         return parent::name_link($back, $style, $msk_id);
     }
 
-    function title(db_object_dsp $dbo): string
+    function title(db_object $dbo): string
     {
         return $this->name() . ' ' . $dbo->name();
     }
@@ -281,27 +292,31 @@ class view extends sandbox_typed
      */
 
     /**
+     * create the HTML code to select a view type
+     * @param string $form the name of the html form
+     * @return string the html code to select the phrase type
+     */
+    function type_selector(string $form): string
+    {
+        global $html_view_types;
+        $used_type_id = $this->type_id();
+        if ($used_type_id == null) {
+            $used_type_id = $html_view_types->default_id();
+        }
+        return $html_view_types->selector($form, $used_type_id);
+    }
+
+    /**
      * @param string $form_name
      * @param string $pattern
      * @param int $id
      * @return string
      */
-    private function component_selector(string $form_name, string $pattern, int $id): string
+    function component_selector(string $form_name, string $pattern, int $id): string
     {
-        $cmp_lst = new component_list_dsp;
+        $cmp_lst = new component_list;
         $cmp_lst->load_like($pattern);
         return $cmp_lst->selector($form_name, $id, 'add_component', 'please define a component', '');
-    }
-
-    /**
-     * @param string $form_name
-     * @param int $id the id of the type that should be preselected
-     * @return string
-     */
-    private function component_type_selector(string $form_name, int $id): string
-    {
-        global $html_component_types;
-        return $html_component_types->selector($form_name, $id);
     }
 
 
@@ -311,18 +326,18 @@ class view extends sandbox_typed
 
     /**
      * create the html code to view a sandbox object
-     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
-     * @param data_object_dsp|null $cfg the context used to create the view
+     * @param db_object $dbo the word, triple or formula object that should be shown to the user
+     * @param data_object|null $cfg the context used to create the view
      * @param string $back the history of the user actions to allow rollbacks
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code for a view: this is the main function of this lib
      * TODO use backtrace or use a global backtrace var
      */
     function show(
-        db_object_dsp    $dbo,
-        ?data_object_dsp $cfg = null,
-        string           $back = '',
-        bool             $test_mode = false
+        db_object    $dbo,
+        ?data_object $cfg = null,
+        string       $back = '',
+        bool         $test_mode = false
     ): string
     {
         $result = '';
@@ -355,19 +370,19 @@ class view extends sandbox_typed
     /**
      * create the html code for all components of this view
      *
-     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
-     * @param data_object_dsp|null $cfg the context used to create the view
+     * @param db_object $dbo the word, triple or formula object that should be shown to the user
+     * @param data_object|null $cfg the context used to create the view
      * @param string $form_name the name of the view which is also used for the html form name
      * @param string $back the backtrace for undo actions
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code of all view components
      */
     private function dsp_entries(
-        db_object_dsp    $dbo,
-        ?data_object_dsp $cfg = null,
-        string           $form_name = '',
-        string           $back = '',
-        bool             $test_mode = false
+        db_object    $dbo,
+        ?data_object $cfg = null,
+        string       $form_name = '',
+        string       $back = '',
+        bool         $test_mode = false
     ): string
     {
         $this->log_debug($this->dsp_id());
@@ -547,16 +562,16 @@ class view extends sandbox_typed
         $result .= '<td class="right_ref">';
         if ($this->is_system() and !$usr->is_admin()) {
             $url = $html->url(api_dsp::SEARCH);
-            $result .= (new button_dsp($url, $back))->find(messages::SEARCH_MAIN) . ' - ';
+            $result .= (new button($url, $back))->find(messages::SEARCH_MAIN) . ' - ';
             $result .= $this->name . ' ';
         } else {
             $url = '/http/find.php?word=' . $back;
-            $result .= (new button_dsp($url, $back))->find(messages::SEARCH_MAIN) . ' - ';
+            $result .= (new button($url, $back))->find(messages::SEARCH_MAIN) . ' - ';
             $result .= $this->dsp_view_name($back);
             $url = $html->url(api::DSP_VIEW_EDIT, $this->id());
-            $result .= (new button_dsp($url, $back))->edit(messages::VIEW_EDIT, $this->name) . ' ';
+            $result .= (new button($url, $back))->edit(messages::VIEW_EDIT, $this->name) . ' ';
             $url = $html->url(api::DSP_VIEW_ADD);
-            $result .= (new button_dsp($url, $back))->add(messages::VIEW_ADD);
+            $result .= (new button($url, $back))->add(messages::VIEW_ADD);
         }
         $result .= ' - ';
         $result .= $this->dsp_user($back);
@@ -650,18 +665,6 @@ class view extends sandbox_typed
      * interface
      */
 
-    /**
-     * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
-     */
-    function api_array(): array
-    {
-        $vars = parent::api_array();
-        $vars[json_fields::CODE_ID] = $this->code_id;
-        $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_array();
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
-    }
-
 
     /*
      * to review / deprecate
@@ -672,12 +675,12 @@ class view extends sandbox_typed
         $result = '';
         switch ($this->code_id) {
             case api::DSP_COMPONENT_ADD:
-                $cmp = new component_dsp();
+                $cmp = new component();
                 $cmp->set_id(0);
                 $result = $cmp->form_edit_new('', '', '', '', '');
                 break;
             case api::DSP_COMPONENT_EDIT:
-                $cmp = new component_dsp();
+                $cmp = new component();
                 $cmp->set_id(components::WORD_ID);
                 $cmp->set_name(components::WORD_NAME);
                 $result = $cmp->form_edit_new('', '', '', '', '');
@@ -880,8 +883,8 @@ class view extends sandbox_typed
             // check if the add button has been pressed and ask the user what to add
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
-                $url = $html->url(api::DSP_VIEW_ADD, $this->id(), $back, '', word_dsp::class . '=' . $wrd->id() . '&add_entry=-1&');
-                $result .= (new button_dsp($url, $back))->add(messages::COMPONENT_ADD);
+                $url = $html->url(api::DSP_VIEW_ADD, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1&');
+                $result .= (new button($url, $back))->add(messages::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $this->component_selector($script, '', $id_selected);
 
@@ -893,8 +896,8 @@ class view extends sandbox_typed
                 $result .= $this->component_selector($script, '', $this->type_id());
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
             } else {
-                $url = $html->url(api::DSP_COMPONENT_LINK, $this->id(), $back, '', word_dsp::class . '=' . $wrd->id() . '&add_entry=1');
-                $result .= (new button_dsp($url, $back))->add(messages::COMPONENT_ADD);
+                $url = $html->url(api::DSP_COMPONENT_LINK, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');
+                $result .= (new button($url, $back))->add(messages::COMPONENT_ADD);
             }
         }
         if (html_base::UI_USE_BOOTSTRAP) {
@@ -961,7 +964,7 @@ class view extends sandbox_typed
         global $usr;
         $result = '';
 
-        $dsp_lst = new view_list_dsp();
+        $dsp_lst = new view_list();
 
         $call = '/http/view.php?words=' . $wrd_id;
         $field = 'new_id';

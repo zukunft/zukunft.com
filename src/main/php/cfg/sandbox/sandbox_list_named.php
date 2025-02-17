@@ -315,6 +315,21 @@ class sandbox_list_named extends sandbox_list
         return $result;
     }
 
+    /**
+     * sort this list by name
+     * @return void
+     */
+    function sort_by_name(): void
+    {
+        $result = [];
+        $pos_lst = $this->names();
+        natcasesort($pos_lst);
+        foreach ($pos_lst as $key => $value) {
+            $result[] = $this->lst()[$key];
+        }
+        $this->set_lst($result);
+    }
+
 
     /*
      * save

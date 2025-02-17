@@ -92,7 +92,11 @@ class element_group_write_tests
 
             // test debug id first
             $result = $elm_grp->dsp_id();
-            $target = '"' . words::THIS_NAME . '" (' . $frm_this->id() . ') and "Switzerland","inhabitants","million"';
+            $target = '"'
+                . words::THIS_NAME . '" (' . $frm_this->id() . ') and "'
+                . words::INHABITANTS . '","'
+                . words::MIO . '","'
+                . words::CH . '"';
             $t->display('element_group->dsp_id', $target, $result);
 
             // test symbol for text replacement in the formula expression text
@@ -137,7 +141,7 @@ class element_group_write_tests
                 }
             } else {
                 $result = 'figure list is empty';
-                $target = 'this (3) and "System Test Word Parent e.g. Switzerland","System Test Word Unit e.g. inhabitant"';
+                $target = 'this (3) and "System Test Word Parent e.g. '  . words::CH . '","System Test Word Unit e.g. inhabitant"';
                 $t->display('element_group->figures', $target, $result);
             }
 
@@ -151,7 +155,7 @@ class element_group_write_tests
             //$target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
             $fig_lst = $elm_grp->figures();
             $fig_id = $fig_lst->get_first_id();
-            $target = ' 8.505251 {f18}Switzerland,inhabitants,million  (' . $fig_id . ')';
+            $target = ' 8.505251 {f18}'  . words::INHABITANTS . ','  . words::CH . ','  . words::MIO . '  (' . $fig_id . ')';
             $t->assert('figure_list->dsp_id', $result, $target);
 
             $result = $fig_lst->display();
@@ -160,7 +164,12 @@ class element_group_write_tests
 
         } else {
             $result = 'formula element group list is empty';
-            $target = 'this (3) and "ABB","Sales","CHF","million","' . words::YEAR_2015 . '"@';
+            $target = 'this (3) and "'
+                . words::ABB . '","'
+                . words::SALES . '","'
+                . words::CHF . '","'
+                . words::MIO . '","'
+                . words::YEAR_2015 . '"@';
             $t->display('element_group->dsp_names', $target, $result);
         }
 

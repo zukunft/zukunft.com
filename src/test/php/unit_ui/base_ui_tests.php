@@ -170,7 +170,7 @@ class base_ui_tests
         $val_ch->set_number(values::CH_INHABITANTS_2019_IN_MIO);
         $val_ch_dsp = new value_dsp($val_ch->api_json([api_type::INCL_PHRASES]));
         $val_ch_html = $val_ch_dsp->name_and_value();
-        $t->assert_text_contains('', $val_ch_html, round(values::CH_INHABITANTS_2019_IN_MIO,2));
+        $t->assert_text_contains('', $val_ch_html, round(values::CH_INHABITANTS_2019_IN_MIO, 2));
 
         // create the formula result for the inhabitants of the city of zurich
         $res_city = new result($t->usr1);
@@ -187,7 +187,7 @@ class base_ui_tests
         $res_canton->set_number(values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO);
         $res_canton_dsp = new value_dsp($res_canton->api_json([api_type::INCL_PHRASES]));
         $res_canton_html = $res_canton_dsp->display_value_linked('');
-        $res_canton_number = round((values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO) * 100,2) . '%';
+        $res_canton_number = round((values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO) * 100, 2) . '%';
         $t->assert_text_contains('', $res_canton_html, $res_canton_number);
 
         // create the formula result list and the table to display the results
@@ -207,6 +207,22 @@ class base_ui_tests
         $cmp->set(1, components::TEST_ADD_NAME, comp_type_shared::TEXT);
         $cmp_dsp = new component_dsp($cmp->api_json());
         $t->html_test($cmp_dsp->html(), '', 'component_text', $t);
+
+
+        $t->header('List tests');
+
+        $test_name = 'sort a named list by the name';
+        $lst = $t->phrase_list_zh_mio();
+        $names_unsorted = $lst->names();
+        $lst->sort_by_name();
+        $names = $lst->names();
+        $names_sorted = $names;
+        natcasesort($names_sorted);
+        $t->assert($test_name, implode(',', $names), implode(',', $names_sorted));
+        $test_name = 'unsorted named list';
+        $t->assert_not($test_name, implode(',', $names), implode(',', $names_unsorted));
+
+
 
 
         // TODO review

@@ -317,7 +317,8 @@ class triple_list extends sandbox_list_named
         sql_creator    $sc,
         phrase         $phr,
         ?verb          $vrb = null,
-        foaf_direction $direction = foaf_direction::BOTH): sql_par
+        foaf_direction $direction = foaf_direction::BOTH
+    ): sql_par
     {
         $qp = $this->load_sql($sc);
         if ($phr->id() <> 0) {

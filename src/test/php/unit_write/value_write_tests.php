@@ -169,7 +169,11 @@ class value_write_tests
 
             // ... and check the words loaded
             $result = $chk_val->name();
-            $target = '2020,Canton,Zurich,inhabitants,million';
+            $target = words::YEAR_2020 . ','
+                . words::CANTON . ','
+                . words::INHABITANTS . ','
+                . words::MIO . ','
+                . words::ZH;
             $t->display(', value->load words', $target, $result);
 
             // ... and check the word reloading by group
