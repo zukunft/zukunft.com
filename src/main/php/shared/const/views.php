@@ -66,20 +66,26 @@ class views
     const TRIPLE_EDIT_ID = 4;
     const TRIPLE_DEL = 'triple_del';
     const TRIPLE_DEL_ID = 4;
-    const VALUE_ADD = 'value_add';
-    const VALUE_EDIT = 'value_edit';
-    const VALUE_DEL = 'value_del';
-    const FORMULA_ADD = 'formula_add';
-    const FORMULA_EDIT = 'formula_edit';
-    const FORMULA_DEL = 'formula_del';
-    const FORMULA_EXPLAIN = 'formula_explain';
-    const FORMULA_TEST = 'formula_test';
     const SOURCE_ADD = 'source_add';
     const SOURCE_ADD_ID = 11;
     const SOURCE_EDIT = 'source_edit';
     const SOURCE_EDIT_ID = 12;
     const SOURCE_DEL = 'source_del';
     const SOURCE_DEL_ID = 13;
+    const VALUE_ADD = 'value_add';
+    const VALUE_EDIT = 'value_edit';
+    const VALUE_DEL = 'value_del';
+    const GROUP_ADD = 'group_add';
+    const GROUP_ADD_ID = 20;
+    const GROUP_EDIT = 'group_edit';
+    const GROUP_EDIT_ID = 21;
+    const GROUP_DEL = 'group_del';
+    const GROUP_DEL_ID = 22;
+    const FORMULA_ADD = 'formula_add';
+    const FORMULA_EDIT = 'formula_edit';
+    const FORMULA_DEL = 'formula_del';
+    const FORMULA_EXPLAIN = 'formula_explain';
+    const FORMULA_TEST = 'formula_test';
     const VERBS = 'verbs';
     const USER = 'user';
     const USER_EDIT = 'user_edit';
@@ -88,14 +94,14 @@ class views
     const IMPORT = 'import';
     // views to edit views
     const VIEW_ADD = 'view_add';
-    const VIEW_ADD_ID = 25;
+    const VIEW_ADD_ID = 28;
     const VIEW_EDIT = 'view_edit';
-    const VIEW_EDIT_ID = 26;
+    const VIEW_EDIT_ID = 29;
     const VIEW_DEL = 'view_del';
-    const VIEW_DEL_ID = 27;
+    const VIEW_DEL_ID = 30;
     const COMPONENT_ADD = 'component_add';
     const COMPONENT_EDIT = 'component_edit';
-    const COMPONENT_EDIT_ID = 29;
+    const COMPONENT_EDIT_ID = 32;
     const COMPONENT_DEL = 'component_del';
     const COMPONENT_LINK = 'component_link';
     const COMPONENT_UNLINK = 'component_unlink';
@@ -111,18 +117,18 @@ class views
     // default views
     // TODO easy add missing default views e.g. for formula
     const WORD = 'word';
-    const WORD_ID = 41;
+    const WORD_ID = 44;
     const VERB = 'verb';
-    const VERB_ID = 42;
+    const VERB_ID = 45;
     const TRIPLE = 'triple';
-    const TRIPLE_ID = 43;
+    const TRIPLE_ID = 46;
     const SOURCE = 'source';
-    const SOURCE_ID = 44;
+    const SOURCE_ID = 47;
     const VALUE_DISPLAY = 'value';
     const FORMULA = 'source';
-    const FORMULA_ID = 47;
+    const FORMULA_ID = 48;
     const LANGUAGE = 'language';
-    const LANGUAGE_ID = 29;
+    const LANGUAGE_ID = 49;
 
     // functional views
     const WORD_FIND = 'word_find';

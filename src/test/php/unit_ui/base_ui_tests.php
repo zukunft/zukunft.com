@@ -136,7 +136,7 @@ class base_ui_tests
         // create a test set of phrase groups
         $t->phrase_list_zh_mio();
         $grp_city = new group($t->usr1);
-        $grp_city->set_phrase_list($t->phrase_list_zh_city());
+        $grp_city->set_phrase_list($t->phrase_list_zh_city_2019());
         $grp_canton = new group($t->usr1);
         $grp_canton->set_phrase_list($t->phrase_list_canton_mio());
         $grp_ch = new group($t->usr1);

@@ -1212,7 +1212,7 @@ class result extends sandbox_value
         if (!is_null($this->number())) {
             $num_text = $this->val_formatted();
             if ($this->owner_id > 0) {
-                $result .= '<span class="user_specific">' . $num_text . '</span>' . "\n";
+                $result .= '<span class="' . styles::STYLE_USER . '">' . $num_text . '</span>' . "\n";
             } else {
                 $result .= $num_text . "\n";
             }
@@ -1230,7 +1230,7 @@ class result extends sandbox_value
             $num_text = $this->val_formatted();
             $link_format = '';
             if ($this->owner_id > 0) {
-                $link_format = ' class="user_specific"';
+                $link_format = ' class="' . styles::STYLE_USER . '"';
             }
             // TODO review
             $wrd_ids = $this->phr_ids();

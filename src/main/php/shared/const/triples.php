@@ -67,6 +67,7 @@ class triples
     const CITY_ZH = 'Zurich (City)';
     const CITY_ZH_ID = 38;
     const CITY_ZH_NAME = 'City of Zurich';
+    const CITY_ZH_COM = 'the city of Zurich';
     const CITY_BE = 'Bern (City)';
     const CITY_BE_ID = 39;
     const CITY_GE = 'Geneva (City)';

@@ -90,12 +90,6 @@ class rest_ctrl
     const PAR_VIEW_NEW_ID = 'new_id'; // if the user has changed the view for this word, save it
     const PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
 
-    // styles used
-    const STYLE_GREY = 'grey';
-    const STYLE_GLYPH = 'glyphicon glyphicon-pencil';
-    const STYLE_USER = 'user_specific';
-    const STYLE_RIGHT = 'right_ref';
-
     // classes used
     const CLASS_FORM_ROW = 'form-row';
 

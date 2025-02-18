@@ -8200,6 +8200,33 @@
       {
         "id": 20,
         "protection": 3,
+        "name": "Add a group name",
+        "description": "Add a new group name",
+        "type_id": 7,
+        "code_id": "group_add",
+        "components": []
+      },
+      {
+        "id": 21,
+        "protection": 3,
+        "name": "Change group",
+        "description": "Change a group name",
+        "type_id": 7,
+        "code_id": "group_edit",
+        "components": []
+      },
+      {
+        "id": 22,
+        "protection": 3,
+        "name": "Delete group",
+        "description": "Exclude or delete a group name",
+        "type_id": 7,
+        "code_id": "group_del",
+        "components": []
+      },
+      {
+        "id": 23,
+        "protection": 3,
         "name": "Add new formula",
         "description": "Create a new formula with all parameters e.g. the type",
         "type_id": 7,
@@ -8207,7 +8234,7 @@
         "components": []
       },
       {
-        "id": 21,
+        "id": 24,
         "protection": 3,
         "name": "Change formula",
         "description": "Change a formula, the name or the type",
@@ -8216,7 +8243,7 @@
         "components": []
       },
       {
-        "id": 22,
+        "id": 25,
         "protection": 3,
         "name": "Delete formula",
         "description": "To confirm the exclusion or deleting of a formula",
@@ -8225,7 +8252,7 @@
         "components": []
       },
       {
-        "id": 23,
+        "id": 26,
         "protection": 3,
         "name": "Change result",
         "description": "Overwrite a result",
@@ -8234,7 +8261,7 @@
         "components": []
       },
       {
-        "id": 24,
+        "id": 27,
         "protection": 3,
         "name": "Delete result",
         "description": "Exclude or delete a result",
@@ -8243,7 +8270,7 @@
         "components": []
       },
       {
-        "id": 25,
+        "id": 28,
         "protection": 3,
         "name": "Add view",
         "description": "Create a new view and set the type",
@@ -8252,7 +8279,7 @@
         "components": []
       },
       {
-        "id": 26,
+        "id": 29,
         "protection": 3,
         "name": "Change view",
         "description": "Rename a view",
@@ -8261,7 +8288,7 @@
         "components": []
       },
       {
-        "id": 27,
+        "id": 30,
         "protection": 3,
         "name": "Delete view",
         "description": "Exclude or delete a view",
@@ -8270,7 +8297,7 @@
         "components": []
       },
       {
-        "id": 28,
+        "id": 31,
         "protection": 3,
         "name": "Add new view component",
         "description": "Create a new view and set the type",
@@ -8355,7 +8382,7 @@
         ]
       },
       {
-        "id": 29,
+        "id": 32,
         "protection": 3,
         "name": "Change view component",
         "description": "Adjust a view component",
@@ -8364,7 +8391,7 @@
         "components": []
       },
       {
-        "id": 30,
+        "id": 33,
         "protection": 3,
         "name": "Delete view component",
         "description": "Exclude or delete a view component",
@@ -8373,7 +8400,7 @@
         "components": []
       },
       {
-        "id": 31,
+        "id": 34,
         "name": "Search",
         "description": "The search page for all words and formulas",
         "type_id": null,
@@ -8381,7 +8408,7 @@
         "components": []
       },
       {
-        "id": 32,
+        "id": 35,
         "name": "Explain Formula Result",
         "description": "Explain the formula result",
         "type_id": null,
@@ -8389,7 +8416,7 @@
         "components": []
       },
       {
-        "id": 33,
+        "id": 36,
         "name": "Formula test",
         "description": "To debug the formula",
         "type_id": null,
@@ -8397,7 +8424,7 @@
         "components": []
       },
       {
-        "id": 34,
+        "id": 37,
         "name": "Verb List",
         "description": "List all available ways how to link two words",
         "type_id": null,
@@ -8405,7 +8432,7 @@
         "components": []
       },
       {
-        "id": 35,
+        "id": 38,
         "name": "User Settings",
         "description": "to change the user settings",
         "type_id": null,
@@ -8413,7 +8440,7 @@
         "components": []
       },
       {
-        "id": 36,
+        "id": 39,
         "name": "Error Log",
         "description": "simple confirm page for a new error that has been logged in the database",
         "type_id": null,
@@ -8421,7 +8448,7 @@
         "components": []
       },
       {
-        "id": 37,
+        "id": 40,
         "name": "System Error List",
         "description": "List the system errors and allow the user to change the status",
         "type_id": null,
@@ -8429,7 +8456,7 @@
         "components": []
       },
       {
-        "id": 38,
+        "id": 41,
         "name": "Import",
         "description": "Select a file to import data",
         "type_id": null,
@@ -8437,7 +8464,7 @@
         "components": []
       },
       {
-        "id": 41,
+        "id": 44,
         "name": "Word",
         "description": "the default view for words",
         "type_id": null,
@@ -8464,7 +8491,7 @@
         ]
       },
       {
-        "id": 42,
+        "id": 45,
         "name": "Verb",
         "description": "the default view for verbs",
         "type_id": null,
@@ -8491,7 +8518,7 @@
         ]
       },
       {
-        "id": 43,
+        "id": 46,
         "name": "Triple",
         "description": "the default view for triples",
         "type_id": null,
@@ -8516,7 +8543,7 @@
         ]
       },
       {
-        "id": 44,
+        "id": 47,
         "name": "Source",
         "description": "the default view for sources",
         "type_id": null,
@@ -8541,7 +8568,7 @@
         ]
       },
       {
-        "id": 45,
+        "id": 48,
         "name": "Reference",
         "description": "the default view for references",
         "type_id": null,
@@ -8566,7 +8593,7 @@
         ]
       },
       {
-        "id": 46,
+        "id": 49,
         "name": "Language",
         "description": "the default view for languages",
         "type_id": null,
@@ -8591,7 +8618,7 @@
         ]
       },
       {
-        "id": 47,
+        "id": 50,
         "name": "Display Number",
         "description": "the default view for values",
         "type_id": null,
@@ -8607,7 +8634,7 @@
         ]
       },
       {
-        "id": 49,
+        "id": 52,
         "name": "Result",
         "description": "the default view for results",
         "type_id": null,
@@ -8623,7 +8650,7 @@
         ]
       },
       {
-        "id": 50,
+        "id": 53,
         "name": "Ranking",
         "description": "the default view for all phrases where a better could be selected",
         "type_id": null,

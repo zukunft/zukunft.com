@@ -38,12 +38,18 @@ include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_HELPER_PATH . 'IdObject.php';
+include_once SHARED_HELPER_PATH . 'TextIdObject.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 
 use html\phrase\phrase;
 use html\phrase\term;
 use html\user\user_message;
 use html\word\triple;
 use html\word\word;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
 
 class sandbox_list_named extends sandbox_list
 {
@@ -224,9 +230,9 @@ class sandbox_list_named extends sandbox_list
      * should be cast by the child function get_by_name
      *
      * @param string $name the unique name of the object that should be returned
-     * @return term|phrase|triple|word|null the found user sandbox object or null if no name is found
+     * @return IdObject|TextIdObject|CombineObject|term|phrase|triple|word|null the found user sandbox object or null if no name is found
      */
-    function get_by_name(string $name): term|phrase|triple|word|null
+    function get_by_name(string $name): IdObject|TextIdObject|CombineObject|term|phrase|triple|word|null
     {
         $key_lst = $this->name_pos_lst();
         $pos = null;
@@ -254,7 +260,7 @@ class sandbox_list_named extends sandbox_list
         $result = array();
         if ($this->lst_name_dirty) {
             foreach ($this->lst() as $key => $obj) {
-                if (!in_array($obj->name(), $result)) {
+                if (!in_array($obj->name(), array_keys($result))) {
                     $result[$obj->name()] = $key;
                 }
             }
@@ -265,6 +271,5 @@ class sandbox_list_named extends sandbox_list
         }
         return $result;
     }
-
 
 }

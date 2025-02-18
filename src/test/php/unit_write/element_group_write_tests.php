@@ -135,7 +135,7 @@ class element_group_write_tests
                     $t->display('figure->display', $target, $result);
 
                     $result = $fig_dsp->display_linked();
-                    //$target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a>';
+                    //$target = '<a href="/http/value_edit.php?id=438&back=1" class="' . styles::STYLE_USER . '">35\'481</a>';
                     $target = '<a href="/http/result_edit.php?id=' . $fig->id() . '" title="8.51">8.51</a>';
                     $t->display('figure->display_linked', $target, $result);
                 }
@@ -150,7 +150,7 @@ class element_group_write_tests
 
             // TODO fix it
             $result = htmlspecialchars($fig_lst->dsp_id());
-            //$target = htmlspecialchars("<style class=\"user_specific\">35'481</style> (438)");
+            //$target = htmlspecialchars("<style class=\"' . styles::STYLE_USER . '\">35'481</style> (438)");
             $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
             //$target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
             $fig_lst = $elm_grp->figures();

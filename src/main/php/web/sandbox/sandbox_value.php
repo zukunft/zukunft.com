@@ -36,20 +36,20 @@ namespace html\sandbox;
 
 include_once WEB_SANDBOX_PATH . 'sandbox.php';
 include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_PHRASE_PATH . 'phrase_group.php';
+include_once WEB_GROUP_PATH . 'group.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\phrase\phrase_group as phrase_group_dsp;
+use html\group\group;
+use html\phrase\phrase_list;
 use html\user\user_message;
 use shared\json_fields;
 
 class sandbox_value extends sandbox
 {
 
-    private phrase_group_dsp $grp; // the phrase group with the list of words and triples (not the source words and triples)
+    private group $grp; // the phrase group with the list of words and triples (not the source words and triples)
     private ?float $number; // the number calculated by the system
 
     // true if the user has done no personal overwrites which is the default case
@@ -66,7 +66,7 @@ class sandbox_value extends sandbox
      */
     function __construct(?string $api_json = null)
     {
-        $this->set_grp(new phrase_group_dsp());
+        $this->set_grp(new group());
         parent::__construct($api_json);
     }
 
@@ -75,7 +75,7 @@ class sandbox_value extends sandbox
      * set and get
      */
 
-    function set_grp(phrase_group_dsp $grp): void
+    function set_grp(group $grp): void
     {
         $this->grp = $grp;
     }
@@ -90,7 +90,7 @@ class sandbox_value extends sandbox
         $this->is_std = $is_std;
     }
 
-    function grp(): phrase_group_dsp
+    function grp(): group
     {
         return $this->grp;
     }
@@ -109,9 +109,9 @@ class sandbox_value extends sandbox
     }
 
     /**
-     * @returns phrase_list_dsp the list of phrases as an object
+     * @returns phrase_list the list of phrases as an object
      */
-    function phr_lst(): phrase_list_dsp
+    function phr_lst(): phrase_list
     {
         return $this->grp()->phr_lst();
     }
@@ -141,7 +141,7 @@ class sandbox_value extends sandbox
         } else {
             $this->set_is_std();
         }
-        $this->set_grp(new phrase_group_dsp());
+        $this->set_grp(new group());
         if (array_key_exists(json_fields::PHRASES, $json_array)) {
             $this->grp()->set_from_json_array($json_array[json_fields::PHRASES]);
         } else {

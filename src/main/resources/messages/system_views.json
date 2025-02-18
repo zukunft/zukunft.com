@@ -1095,6 +1095,27 @@
       "protection": "admin_protection"
     },
     {
+      "name": "Add a group name",
+      "description": "Add a new group name",
+      "code_id": "group_add",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Change group",
+      "description": "Change a group name",
+      "code_id": "group_edit",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Delete group",
+      "description": "Exclude or delete a group name",
+      "code_id": "group_del",
+      "type": "system",
+      "protection": "admin_protection"
+    },
+    {
       "name": "Add new formula",
       "description": "Create a new formula with all parameters e.g. the type",
       "code_id": "formula_add",

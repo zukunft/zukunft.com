@@ -67,7 +67,7 @@ class value_list_tests
         $t->subheader('info value list unit tests');
         $test_name = 'test the grp_ids function';
         $val_ids = $t->value_list()->grp_ids()->dsp_id();
-        $t->assert($test_name, $val_ids, 'Pi (math) / inhabitants in the city of Zurich (2019)');
+        $t->assert($test_name, $val_ids, 'Pi (math) / Zurich City inhabitants (2019)');
 
         $t->subheader('modify value list unit tests');
         $time_val_lst = $t->value_list()->filter_by_time($t->phrase_list());

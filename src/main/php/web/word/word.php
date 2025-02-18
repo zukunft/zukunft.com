@@ -54,6 +54,7 @@ include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
+include_once WEB_HTML_PATH . 'styles.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 //include_once WEB_FORMULA_PATH . 'formula.php';
 //include_once WEB_HELPER_PATH . 'config.php';
@@ -89,6 +90,7 @@ use html\phrase\phrase_list;
 use html\phrase\term;
 use html\rest_ctrl;
 use html\sandbox\sandbox_typed;
+use html\styles;
 use html\system\back_trace;
 use html\system\messages;
 use html\user\user_message;
@@ -592,7 +594,7 @@ class word extends sandbox_typed
                 }
             }
             $url = $html->url(rest_ctrl::WORD . rest_ctrl::UPDATE, $this->id(), $this->id());
-            $title .= $html->ref($url, $html->span($this->name(), rest_ctrl::STYLE_GLYPH), 'Rename word');
+            $title .= $html->ref($url, $html->span($this->name(), styles::STYLE_GLYPH), 'Rename word');
             $result .= $html->dsp_text_h1($title);
         }
 

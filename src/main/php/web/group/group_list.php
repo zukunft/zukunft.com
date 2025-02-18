@@ -32,15 +32,130 @@
 
 namespace html\group;
 
+include_once WEB_GROUP_PATH . 'group.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_SANDBOX_PATH . 'sandbox_list.php';
+include_once WEB_USER_PATH . 'user.php';
 include_once SHARED_PATH . 'library.php';
 
+use html\phrase\phrase;
+use html\phrase\phrase_list;
 use html\sandbox\sandbox_list;
+use html\user\user;
+use shared\library;
 
 class group_list extends sandbox_list
 {
 
+    public array $lst;                  // the list of the phrase group objects
+    public user $usr;                   // the person for whom the word group list has been created
+    public ?array $time_lst = null;     // the list of the time phrase (the add function)
     public ?array $grp_ids = null;      // the list of the phrase group ids
 
+    // search fields
+    public ?phrase $phr; //
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * add a phrase group if it is not yet part of the list
+     */
+    function add(group $grp): void
+    {
+        log_debug($grp->id());
+        $do_add = false;
+        if ($grp->id() > 0) {
+            if ($this->grp_ids == null) {
+                $do_add = true;
+            } else {
+                if (!in_array($grp->id(), $this->grp_ids)) {
+                    $do_add = true;
+                }
+            }
+        }
+        if ($do_add) {
+            $this->lst[] = $grp;
+            $this->grp_ids[] = $grp->id();
+            $this->time_lst[] = null;
+            log_debug($grp->dsp_id() . ' added to list ' . $this->dsp_id());
+        } else {
+            log_debug($grp->dsp_id() . ' skipped, because is already in list ' . $this->dsp_id());
+        }
+    }
+
+
+    /*
+     * get functions
+     */
+
+    /**
+     * return all phrases that are part of each phrase group of the list
+     */
+    function common_phrases(): ?phrase_list
+    {
+        log_debug();
+        $lib = new library();
+        $result = new phrase_list();
+        $pos = 0;
+        foreach ($this->lst as $grp) {
+            if ($pos == 0) {
+                if ($grp->lst() != null) {
+                    $result->set_lst($grp->lst());
+                }
+            } else {
+                if ($grp->lst() != null) {
+                    //$result = $result->concat_unique($grp->phr_lst);
+                    $result->common($grp->lst());
+                }
+            }
+            log_debug($result->dsp_name());
+            $pos++;
+        }
+        log_debug($lib->dsp_count($result->lst()));
+        return $result;
+    }
+
+    /*
+     * display
+     */
+
+    /**
+     * @return string with to identify the phrase group list
+     */
+    function dsp_id(): string
+    {
+        global $debug;
+        $lib = new library();
+        $result = '';
+        // check the object setup
+        if (count($this->lst) <> count($this->time_lst)) {
+            $result .= 'The number of groups (' . $lib->dsp_count($this->lst) . ') are not equal the number of times (' . $lib->dsp_count($this->time_lst) . ') of this phrase group list';
+        } else {
+
+            $pos = 0;
+            foreach ($this->lst as $phr_lst) {
+                if ($debug > $pos) {
+                    if ($result <> '') {
+                        $result .= ' / ';
+                    }
+                    $result .= $phr_lst->name();
+                    $phr_time = $this->time_lst[$pos];
+                    if (!is_null($phr_time)) {
+                        $result .= '@' . $phr_time->name();
+                    }
+                    $pos++;
+                }
+            }
+            if (count($this->lst) > $pos) {
+                $result .= ' ... total ' . $lib->dsp_count($this->lst);
+            }
+
+        }
+        return $result;
+    }
 
 }

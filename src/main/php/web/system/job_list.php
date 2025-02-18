@@ -34,12 +34,14 @@ namespace html\system;
 
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'styles.php';
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_SYSTEM_PATH . 'job.php';
 include_once WEB_USER_PATH . 'user_message.php';
 
 use html\html_base;
 use html\sandbox\list_dsp;
+use html\styles;
 use html\system\job as job_dsp;
 use html\user\user_message;
 
@@ -118,7 +120,7 @@ class job_list extends list_dsp
             $lnk = $wrd->dsp_obj()->display_linked($back);
             $cols .= $html->td($lnk);
         }
-        return $html->tbl($html->tr($cols), html_base::STYLE_BORDERLESS);
+        return $html->tbl($html->tr($cols), styles::STYLE_BORDERLESS);
     }
 
 

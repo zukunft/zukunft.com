@@ -673,6 +673,7 @@ class create_test_objects extends test_base
         $wrd = new word($this->usr1);
         $wrd->set(words::YEAR_2020_ID, words::YEAR_2020);
         $wrd->set_type(phrase_type_shared::TIME);
+        $wrd->set_description(words::YEAR_2020_COM);
         return $wrd;
     }
 
@@ -1086,6 +1087,7 @@ class create_test_objects extends test_base
         $trp->set_from($this->word_zh()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->word_city()->phrase());
+        $trp->set_description(triples::CITY_ZH_COM);
         return $trp;
     }
 
@@ -1513,15 +1515,33 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return phrase_list the phrases relevant for testing the max number of prime phrases
+     * @return phrase_list use today's inhabitants of the coty of zurich for group tests
      */
     function phrase_list_zh_city(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->word_zh()->phrase());
-        $lst->add($this->word_city()->phrase());
+        $lst->add($this->zh_city()->phrase());
         $lst->add($this->word_inhabitant()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list the phrases relevant for testing the max number of prime phrases
+     */
+    function phrase_list_zh_city_2019(): phrase_list
+    {
+        $lst = $this->phrase_list_zh_city();
         $lst->add($this->word_2019()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list the phrases relevant for having a second entry in the phrase group list
+     */
+    function phrase_list_zh_city_2020(): phrase_list
+    {
+        $lst = $this->phrase_list_zh_city();
+        $lst->add($this->word_2020()->phrase());
         return $lst;
     }
 
@@ -1530,7 +1550,7 @@ class create_test_objects extends test_base
      */
     function phrase_list_zh_city_pct(): phrase_list
     {
-        $lst = $this->phrase_list_zh_city();
+        $lst = $this->phrase_list_zh_city_2019();
         $lst->add($this->word_percent()->phrase());
         return $lst;
     }
@@ -1769,12 +1789,30 @@ class create_test_objects extends test_base
         return $grp;
     }
 
+    /**
+     * @return group with one prime phrases
+     */
     function group_zh(): group
+    {
+        $lst = $this->phrase_list_zh_city();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = groups::ZH_CITY_INHABITANTS;
+        $grp->description = groups::ZH_CITY_INHABITANTS_COM;
+        return $grp;
+    }
+
+    function group_zh_2019(): group
     {
         $lst = $this->phrase_list_zh_2019();
         $grp = $lst->get_grp_id(false);
         $grp->name = groups::TN_ZH_2019;
         return $grp;
+    }
+
+    function group_zh_2020(): group
+    {
+        $lst = $this->phrase_list_zh_city_2020();
+        return $lst->get_grp_id(false);
     }
 
     function group_canton(): group
@@ -1800,7 +1838,7 @@ class create_test_objects extends test_base
     {
         $lst = new group_list($this->usr1);
         $lst->add($this->group());
-        $lst->add($this->group_zh());
+        $lst->add($this->group_zh_2019());
         $lst->add($this->group_prime_3());
         $lst->add($this->group_prime_max());
         $lst->add($this->group_main_max());
@@ -1982,7 +2020,7 @@ class create_test_objects extends test_base
 
     function value_zh(): value
     {
-        $grp = $this->group_zh();
+        $grp = $this->group_zh_2019();
         return new value($this->usr1, values::CITY_ZH_INHABITANTS_2019, $grp);
     }
 

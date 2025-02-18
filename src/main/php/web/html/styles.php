@@ -2,9 +2,9 @@
 
 /*
 
-    test/unit/html/phrase_group.php - testing of the phrase_group display functions
-    -------------------------------
-  
+    web/html/styles.php - style constants used for html frontend
+    -------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -30,26 +30,16 @@
 
 */
 
-namespace unit_ui;
+namespace html;
 
-use html\html_base;
-use html\phrase\phrase_group as phrase_group_dsp;
-use test\test_cleanup;
-
-class phrase_group_ui_tests
+class styles
 {
-    function run(test_cleanup $t): void
-    {
-        $html = new html_base();
 
-        $t->subheader('Phrase group tests');
-
-        $api_msg = $t->group()->api_json();
-        $grp = new phrase_group_dsp($api_msg);
-        $test_page = $html->text_h2('Phrase group display test');
-        $test_page .= 'phrase group with tooltip: ' . $grp->name_tip() . '<br>';
-        $test_page .= 'phrase group with link: ' . $grp->name_link_list() . '<br>';
-        $t->html_test($test_page, 'phrase_group', 'phrase_group', $t);
-    }
+    // styles used
+    const STYLE_GREY = 'grey';
+    const STYLE_GLYPH = 'glyphicon glyphicon-pencil';
+    const STYLE_USER = 'user_specific';
+    const STYLE_RIGHT = 'right_ref';
+    const STYLE_BORDERLESS = 'borderless';
 
 }

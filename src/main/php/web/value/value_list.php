@@ -38,7 +38,8 @@ include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_PHRASE_PATH . 'phrase_group_list.php';
+include_once WEB_HTML_PATH . 'styles.php';
+include_once WEB_GROUP_PATH . 'group_list.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_VALUE_PATH . 'value.php';
@@ -50,10 +51,11 @@ include_once SHARED_PATH . 'library.php';
 
 use html\button;
 use html\html_base;
-use html\phrase\phrase_group_list;
+use html\group\group_list;
 use html\phrase\phrase_list;
 use html\rest_ctrl;
 use html\sandbox\list_dsp;
+use html\styles;
 use html\user\user_message;
 use html\word\word;
 use html\word\word_list;
@@ -198,11 +200,11 @@ class value_list extends list_dsp
     /**
      * return a list of phrase groups for all values of this list
      */
-    function phrase_groups(): phrase_group_list
+    function phrase_groups(): group_list
     {
         log_debug();
         $lib = new library();
-        $grp_lst = new phrase_group_list();
+        $grp_lst = new group_list();
         foreach ($this->lst() as $val) {
             $grp = $val->grp();
             if ($grp != null) {
@@ -346,7 +348,7 @@ class value_list extends list_dsp
             $result .= '  <tr>' . "\n";
             $result .= '    <th></th>' . "\n";
             foreach ($time_lst->lst() as $time_word) {
-                $result .= $time_word->dsp_obj()->dsp_th($back, rest_ctrl::STYLE_RIGHT);
+                $result .= $time_word->dsp_obj()->dsp_th($back, styles::STYLE_RIGHT);
             }
             $result .= '  </tr>' . "\n";
 
@@ -396,7 +398,7 @@ class value_list extends list_dsp
 
                         $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                         if ($tbl_value->number() == "") {
-                            $result .= '      <td class="right_ref">' . "\n";
+                            $result .= '      <td class="' . styles::STYLE_RIGHT . '">' . "\n";
 
                             // to review
                             $add_phr_lst = clone $common_lst;
@@ -498,7 +500,7 @@ class value_list extends list_dsp
 
                                 $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                                 if ($tbl_value->number() == "") {
-                                    $result .= '      <td class="right_ref">' . "\n";
+                                    $result .= '      <td class="' . styles::STYLE_RIGHT . '">' . "\n";
 
                                     // to review
                                     $add_phr_lst = $common_lst;
@@ -538,7 +540,7 @@ class value_list extends list_dsp
                     // add a new part value for the sub_word
                     if (!empty($differentiator_phrases)) {
                         $result .= '  <tr>' . "\n";
-                        $result .= '      <td class="right_ref">' . "\n";
+                        $result .= '      <td class="' . styles::STYLE_RIGHT . '">' . "\n";
 
                         // to review
                         $add_phr_ids = $common_lst->id_lst();
@@ -583,7 +585,7 @@ class value_list extends list_dsp
             // this extra adds value button is needed for the case that all values are filled and due to that there is no other plus sign on the table
             if (isset($val_main)) {
                 foreach ($time_lst->lst() as $time_wrd) {
-                    $result .= '      <td class="right_ref">' . "\n";
+                    $result .= '      <td class="' . styles::STYLE_RIGHT . '">' . "\n";
                     $result .= $val_main->btn_add($back);
                     $result .= '      </td>' . "\n";
                 }

@@ -40,17 +40,21 @@
 namespace html\sandbox;
 
 include_once WEB_HTML_PATH . 'html_base.php';
+//include_once WEB_GROUP_PATH . 'group.php';
 include_once WEB_SANDBOX_PATH . 'sandbox.php';
 include_once WEB_SANDBOX_PATH . 'db_object.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 
+use html\group\group;
 use html\html_base;
 use shared\api;
 use html\rest_ctrl as api_dsp;
 use html\user\user_message;
+use shared\const\views;
 use shared\json_fields;
 
 class sandbox_named extends sandbox
@@ -116,7 +120,9 @@ class sandbox_named extends sandbox
             $this->set_name($json_array[json_fields::NAME]);
         } else {
             $this->set_name('');
-            log_err('Mandatory field name missing in API JSON ' . json_encode($json_array));
+            if ($this::class != group::class) {
+                log_err('Mandatory field name missing in API JSON ' . json_encode($json_array));
+            }
         }
         if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
             $this->set_description($json_array[json_fields::DESCRIPTION]);
@@ -203,7 +209,7 @@ class sandbox_named extends sandbox
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
-    function name_link(?string $back = '', string $style = '', int $msk_id = 0): string
+    function name_link(?string $back = '', string $style = '', int $msk_id = views::GROUP_EDIT_ID): string
     {
         $html = new html_base();
         $url = $html->url_new($msk_id, $this->id(), '', $back);

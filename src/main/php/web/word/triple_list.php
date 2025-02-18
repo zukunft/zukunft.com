@@ -33,6 +33,7 @@ namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'styles.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_USER_PATH . 'user_message.php';
@@ -45,6 +46,7 @@ include_once SHARED_TYPES_PATH . 'verbs.php';
 use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\sandbox\list_dsp;
+use html\styles;
 use html\user\user_message;
 use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;
@@ -136,7 +138,7 @@ class triple_list extends list_dsp
             $add_url = $add_trp->btn_add($back);
             $cols .= $html->td($add_url);
         }
-        return $html->tbl($html->tr($cols), html_base::STYLE_BORDERLESS);
+        return $html->tbl($html->tr($cols), styles::STYLE_BORDERLESS);
     }
 
     /**

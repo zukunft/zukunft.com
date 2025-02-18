@@ -46,7 +46,7 @@ include_once TEST_UNIT_UI_PATH . 'triple_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'triple_list_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'phrase_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'phrase_list_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'phrase_group_ui_tests.php';
+include_once TEST_UNIT_UI_PATH . 'group_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'term_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'term_list_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'value_ui_tests.php';
@@ -93,7 +93,7 @@ class all_ui_tests extends all_unit_tests
         (new triple_list_ui_tests)->run($t);
         (new phrase_ui_tests)->run($t);
         (new phrase_list_ui_tests)->run($t);
-        (new phrase_group_ui_tests)->run($t);
+        (new group_ui_tests)->run($t);
         (new term_ui_tests)->run($t);
         (new term_list_ui_tests)->run($t);
         (new value_ui_tests)->run($t);

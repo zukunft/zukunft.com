@@ -41,6 +41,9 @@ class groups
     const TN_READ = 'Pi (math)';
     const TN_RENAMED = 'Pi';
 
+    const ZH_CITY_INHABITANTS = words::ZH . ' ' . words::CITY . ' ' . words::INHABITANTS;
+    const ZH_CITY_INHABITANTS_COM = words::INHABITANTS . ' in the ' . words::CITY . ' of ' . words::ZH;
+
     // persevered group names for database write tests
     const TN_ADD_PRIME_FUNC = 'System Test Group prime added via sql function';
     const TN_ADD_PRIME_SQL = 'System Test Group prime added via sql insert';
@@ -49,7 +52,7 @@ class groups
     const TN_ADD_BIG_FUNC = 'System Test Group big added via sql function';
     const TN_ADD_BIG_SQL = 'System Test Group big added via sql insert';
 
-    const TN_ZH_2019 = words::INHABITANT . 's in the city of ' . words::ZH . ' (' . words::YEAR_2019 . ')';
+    const TN_ZH_2019 = self::ZH_CITY_INHABITANTS . ' (' . words::YEAR_2019 . ')';
     const TN_CH_INCREASE_2020 = words::TEST_INCREASE . ' in ' . words::CH . '\'s ' . words::INHABITANT . 's from ' . words::YEAR_2019 . ' to ' . words::YEAR_2020 . ' in ' . words::PCT;
     const TN_ZH_2019_IN_MIO = self::TN_ZH_2019 . ' in ' . words::MIO;
     const TN_CH_2019 = words::INHABITANT . ' of ' . words::CH . ' in Mio (' . words::YEAR_2019 . ')';

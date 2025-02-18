@@ -37,12 +37,14 @@ include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_USER_PATH . 'user.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
+include_once WEB_HTML_PATH . 'styles.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'library.php';
 
 use html\html_base;
 use html\rest_ctrl;
 use html\sandbox\list_dsp;
+use html\styles;
 use html\system\back_trace;
 use html\user\user;
 use html\user\user_message;
@@ -149,7 +151,7 @@ class change_log_list extends list_dsp
         foreach ($this->lst() as $chg) {
             $html_text .= $html->td($chg->tr($back, $condensed, $with_users));
         }
-        return $html->tbl($html->tr($html_text), html_base::STYLE_BORDERLESS);
+        return $html->tbl($html->tr($html_text), styles::STYLE_BORDERLESS);
     }
 
     /**

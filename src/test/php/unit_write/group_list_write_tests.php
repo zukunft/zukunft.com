@@ -46,7 +46,7 @@ class group_list_write_tests
 
         global $usr;
 
-        $t->header('Test the phrase group list class (src/main/php/model/phrase/phrase_group_list.php)');
+        $t->header('Test the phrase group list class (src/main/php/model/phrase/group_list.php)');
 
         // define some phrase groups for testing
 

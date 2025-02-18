@@ -520,7 +520,7 @@ class group extends sandbox_multi
         } else {
             $vars = parent::api_json_array($typ_lst, $usr);
             $vars[json_fields::ID] = $this->id();
-            if ($this->name() != null) {
+            if ($this->name != null or !$typ_lst->include_phrases()) {
                 $vars[json_fields::NAME] = $this->name();
             }
             if ($this->description() != null) {

@@ -2,8 +2,8 @@
 
 /*
 
-    web/phrase_group_dsp.php - the extension of the phrase group api object to create the HTML code to display a word or triple
-    ------------------------
+    web/group/group.php - the extension of the phrase group api object to create the HTML code to display a word or triple
+    -------------------
 
     mainly links to the word and triple display functions
 
@@ -40,7 +40,7 @@
 
 */
 
-namespace html\phrase;
+namespace html\group;
 
 include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
@@ -50,29 +50,31 @@ include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use html\sandbox\sandbox_named as sandbox_named_dsp;
+use html\phrase\phrase as phrase;
+use html\phrase\phrase_list as phrase_list;
+use html\sandbox\sandbox_named as sandbox_named;
 use html\user\user_message;
-use html\word\word as word_dsp;
-use html\word\triple as triple_dsp;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
+use html\word\triple as triple;
+use html\word\word as word;
 use shared\json_fields;
 
-class phrase_group extends sandbox_named_dsp
+class group extends sandbox_named
 {
 
     /*
      * object vars
      */
 
-    // list of word_min and triple_min objects
+    // list of word and triple objects
     private array $lst;
 
     // memory vs speed optimize vars
-    private array $id_lst;
+    private array $name_pos_lst;
     private bool $lst_dirty;
-    private string $name_linked;
-    private bool $name_dirty;
+    private string $name_tip;
+    private bool $name_tip_dirty;
+    private string $name_link;
+    private bool $name_link_dirty;
 
 
     /*
@@ -85,10 +87,17 @@ class phrase_group extends sandbox_named_dsp
      */
     function __construct(?string $api_json = null)
     {
-        $this->name = '';
+        $this->reset();
+        parent::__construct($api_json);
+    }
+
+    function reset(): void
+    {
+        $this->name_tip = '';
+        $this->name_link = '';
         $this->lst = [];
         $this->set_dirty();
-        parent::__construct($api_json);
+        $this->set_dirty();
     }
 
 
@@ -102,21 +111,21 @@ class phrase_group extends sandbox_named_dsp
         $this->set_dirty();
     }
 
-    function reset_lst(): void
-    {
-        $this->lst = array();
-        $this->set_dirty();
-    }
-
     function set_dirty(): void
     {
         $this->lst_dirty = true;
-        $this->name_dirty = true;
+        $this->name_tip_dirty = true;
+        $this->name_link_dirty = true;
     }
 
-    function unset_name_dirty(): void
+    function unset_name_tip_dirty(): void
     {
-        $this->name_dirty = false;
+        $this->name_tip_dirty = false;
+    }
+
+    function unset_name_link_dirty(): void
+    {
+        $this->name_link_dirty = false;
     }
 
     /**
@@ -125,11 +134,6 @@ class phrase_group extends sandbox_named_dsp
     function lst(): array
     {
         return $this->lst;
-    }
-
-    function name_dirty(): bool
-    {
-        return $this->name_dirty;
     }
 
     function set_lst_dsp(array $lst): void
@@ -144,28 +148,29 @@ class phrase_group extends sandbox_named_dsp
     /**
      * @returns array with all unique phrase ids og this list
      */
-    private function id_lst(): array
+    private function name_pos_lst(): array
     {
         $result = array();
         if ($this->lst_dirty) {
-            foreach ($this->lst as $phr) {
-                if (!in_array($phr->id, $result)) {
-                    $result[] = $phr->id();
+            foreach ($this->lst as $key => $phr) {
+                if (!in_array($phr->name(), array_keys($result))) {
+                    $result[$phr->name()] = $key;
                 }
             }
+            $this->name_pos_lst = $result;
             $this->lst_dirty = false;
         } else {
-            $result = $this->id_lst;
+            $result = $this->name_pos_lst;
         }
         return $result;
     }
 
     /**
-     * @returns phrase_list_dsp the list of phrases as an object
+     * @returns phrase_list the list of phrases as an object
      */
-    function phr_lst(): phrase_list_dsp
+    function phr_lst(): phrase_list
     {
-        $result = new phrase_list_dsp();
+        $result = new phrase_list();
         $result->set_lst($this->lst());
         return $result;
     }
@@ -206,14 +211,14 @@ class phrase_group extends sandbox_named_dsp
      */
     private function set_phrase_from_json_array(array $phr_json): void
     {
-        $wrd_or_trp = new word_dsp();
+        $wrd_or_trp = new word();
         if (array_key_exists(json_fields::OBJECT_CLASS, $phr_json)) {
             if ($phr_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
-                $wrd_or_trp = new triple_dsp();
+                $wrd_or_trp = new triple();
             }
         }
         $wrd_or_trp->set_from_json_array($phr_json);
-        $phr = new phrase_dsp();
+        $phr = new phrase();
         $phr->set_obj($wrd_or_trp);
         $this->lst[] = $phr;
     }
@@ -242,10 +247,10 @@ class phrase_group extends sandbox_named_dsp
      * add a phrase to the list
      * @returns bool true if the phrase has been added
      */
-    function add(phrase_dsp $phr): bool
+    function add(phrase $phr): bool
     {
         $result = false;
-        if (!in_array($phr->id(), $this->id_lst())) {
+        if (!in_array($phr->id(), $this->name_pos_lst())) {
             $this->lst[] = $phr;
             $this->set_dirty();
             $result = true;
@@ -281,30 +286,34 @@ class phrase_group extends sandbox_named_dsp
      */
 
     /**
-     * @param phrase_list_dsp|null $phr_lst_header list of phrases already shown in the header
-     * @return string
+     * the name of the phrase group with the tooltip 
+     * or the names of the phrases with the tooltip
+     * @param phrase_list|null $phr_lst_exclude list of phrases already shown in the header and should be excluded
+     * @param string $sep the separator between the phrase names
+     * @return string the html code to show the group name
      */
-    function name_tip(phrase_list_dsp $phr_lst_header = null): string
+    function name_tip(phrase_list $phr_lst_exclude = null, string $sep = ', '): string
     {
         $result = '';
-        if ($this->name_dirty() or $phr_lst_header != null) {
+        if ($this->name_tip_dirty or $phr_lst_exclude != null) {
             if ($this->name() <> '') {
-                $result .= $this->name();
+                $result .= parent::name_tip();
             } else {
                 $lst_to_show = $this->phr_lst();
-                if ($phr_lst_header != null) {
-                    if (!$phr_lst_header->is_empty()) {
-                        $lst_to_show->remove($phr_lst_header);
+                if ($phr_lst_exclude != null) {
+                    if (!$phr_lst_exclude->is_empty()) {
+                        $lst_to_show->remove($phr_lst_exclude);
                     }
                 }
                 foreach ($lst_to_show->lst() as $phr) {
                     if ($result <> '') {
-                        $result .= ', ';
+                        $result .= $sep;
                     }
                     $result .= $phr->name_tip();
                 }
             }
-            $this->unset_name_dirty();
+            $this->name_tip = $result;
+            $this->name_tip_dirty = false;
         } else {
             $result = $this->name();
         }
@@ -312,15 +321,15 @@ class phrase_group extends sandbox_named_dsp
     }
 
     /**
-     * @param phrase_list_dsp|null $phr_lst_header list of phrases already shown in the header and don't need to be include in the result
+     * @param phrase_list|null $phr_lst_header list of phrases already shown in the header and don't need to be include in the result
      * @return string
      */
-    function name_link_list(phrase_list_dsp $phr_lst_header = null): string
+    function name_link_list(phrase_list $phr_lst_header = null): string
     {
         $result = '';
-        if ($this->name_dirty() or $phr_lst_header != null) {
+        if ($this->name_link_dirty or $phr_lst_header != null) {
             if ($this->name() <> '') {
-                $result .= $this->name();
+                $result .= $this->name_link();
             } else {
                 $lst_to_show = $this->phr_lst();
                 if ($phr_lst_header != null) {
@@ -335,7 +344,8 @@ class phrase_group extends sandbox_named_dsp
                     $result .= $phr->name_link();
                 }
             }
-            $this->unset_name_dirty();
+            $this->name_link = $result;
+            $this->name_link_dirty = false;
         } else {
             $result = $this->name();
         }

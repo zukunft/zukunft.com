@@ -67,8 +67,8 @@
     triple_list.php
     phrase.php
     phrase_list.php
-    phrase_group.php
-    phrase_group_list.php
+    group.php
+    group_list.php
     verb.php
     verb_list.php
     term.php

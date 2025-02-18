@@ -37,7 +37,7 @@ include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once SHARED_PATH . 'api.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_PHRASE_PATH . 'phrase_group.php';
+include_once WEB_GROUP_PATH . 'group.php';
 include_once WEB_RESULT_PATH . 'result.php';
 include_once WEB_SANDBOX_PATH . 'combine_named.php';
 include_once WEB_VALUE_PATH . 'value.php';
@@ -45,12 +45,12 @@ include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
+use html\group\group;
+use html\html_base;
 use html\phrase\phrase_list;
 use html\rest_ctrl as api_dsp;
-use html\sandbox\combine_named as combine_named_dsp;
-use html\html_base;
-use html\phrase\phrase_group as phrase_group_dsp;
 use html\result\result;
+use html\sandbox\combine_named as combine_named_dsp;
 use html\user\user_message;
 use html\value\value;
 use shared\json_fields;
@@ -119,7 +119,7 @@ class figure extends combine_named_dsp
         }
     }
 
-    function grp(): phrase_group_dsp
+    function grp(): group
     {
         return $this->obj()->grp();
     }

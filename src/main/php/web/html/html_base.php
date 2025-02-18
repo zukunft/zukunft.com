@@ -36,6 +36,7 @@ namespace html;
 
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
+include_once WEB_HTML_PATH . 'styles.php';
 
 use shared\api;
 use shared\types\view_styles;
@@ -77,7 +78,6 @@ class html_base
 
     const SIZE_FULL = 'full';
     const SIZE_HALF = 'half';
-    const STYLE_BORDERLESS = 'borderless';
 
     const WIDTH_FULL = '800px';
     const WIDTH_HALF = '400px';
@@ -521,7 +521,7 @@ class html_base
     {
         return match ($tbl_style) {
             self::SIZE_HALF => $this->tbl_start_half() . $tbl_rows . $this->tbl_end(),
-            self::STYLE_BORDERLESS => $this->tbl_start_hist() . $tbl_rows . $this->tbl_end(),
+            styles::STYLE_BORDERLESS => $this->tbl_start_hist() . $tbl_rows . $this->tbl_end(),
             default => $this->tbl_start() . $tbl_rows . $this->tbl_end(),
         };
     }

@@ -214,6 +214,7 @@ class words
     const YEAR_2019_ID = 142;
     const YEAR_2020 = '2020';
     const YEAR_2020_ID = 209;
+    const YEAR_2020_COM = 'the year 2020';
     const PCT = 'percent';
     const PCT_ID = 172;
     // _PRE are the predefined words

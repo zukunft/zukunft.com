@@ -227,7 +227,7 @@ class view_navbar extends view
         $html = new html_base();
 
         $result = $this->html_navbar_start();
-        $result .= '<td class="right_ref">';
+        $result .= '<td class="' . styles::STYLE_RIGHT . '">';
         if ($this->is_system() and !$usr->is_admin()) {
             $url = $html->url(api_dsp::SEARCH);
             $result .= (new button($url, $back))->find(messages::SEARCH_MAIN) . ' - ';
@@ -322,7 +322,7 @@ class view_navbar extends view
     {
 
         $result = $this->html_navbar_start();
-        $result .= '<td class="right_ref">';
+        $result .= '<td class="' . styles::STYLE_RIGHT . '">';
         $result .= $this->dsp_user($back);
         $result .= $this->dsp_logout();
         $result .= '</td>';

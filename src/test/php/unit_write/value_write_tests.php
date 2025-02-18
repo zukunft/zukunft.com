@@ -228,7 +228,7 @@ class value_write_tests
             words::YEAR_2020));
         $api_msg = $pct_val->api_json([api_type::INCL_PHRASES]);
         $val_dsp = new value_dsp($api_msg);
-        $result = $val_dsp->display(0);
+        $result = $val_dsp->value(0);
         $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2) . '%';
         $t->display(', value->val_formatted for ' . $pct_val->dsp_id(), $target, $result);
 
@@ -261,14 +261,14 @@ class value_write_tests
 
         // test the HTML code creation including the hyperlink
         $result = $mio_val_dsp->display_value_linked('1');
-        //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
+        //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
         $target = '<a href="/http/value_edit.php?id=' . $mio_val_dsp->id() . '&back=1"  >1.55</a>';
         $t->assert(', value->display_linked', $result, $target);
 
         // change the number to force using the thousand separator
         $mio_val_dsp->set_number(values::SAMPLE_INT);
         $result = $mio_val_dsp->display_value_linked('1');
-        //$target = '<a class="user_specific" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
+        //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
         $target = '<a href="/http/value_edit.php?id=' . $mio_val_dsp->id() . '&back=1"  >123\'456</a>';
         $t->assert(', value->display_linked', $result, $target);
 

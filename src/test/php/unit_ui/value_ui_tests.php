@@ -48,7 +48,7 @@ class value_ui_tests
         $val = new value($t->value()->api_json([api_type::INCL_PHRASES]));
         $test_page = $html->text_h2('value display test');
         $test_page .= 'with name and link: ' . $val->name_and_value() . '<br>';
-        $test_page .= 'with tooltip: ' . $val->display() . '<br>';
+        $test_page .= 'with tooltip: ' . $val->value() . '<br>';
         $test_page .= 'with link: ' . $val->display_linked() . '<br>';
         $t->html_test($test_page, 'value', 'value', $t);
 

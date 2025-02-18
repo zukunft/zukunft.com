@@ -33,6 +33,7 @@ namespace html\word;
 
 include_once WEB_SANDBOX_PATH . 'list_named.php';
 include_once WEB_HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'styles.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_PHRASE_PATH . 'term_list.php';
@@ -46,6 +47,7 @@ use html\phrase\phrase;
 use html\phrase\phrase_list;
 use html\phrase\term_list;
 use html\sandbox\list_named;
+use html\styles;
 use html\user\user_message;
 use html\value\value_list;
 use html\html_base;
@@ -131,7 +133,7 @@ class word_list extends list_named
             $lnk = $wrd->name_link($back);
             $cols .= $html->td($lnk);
         }
-        return $html->tbl($html->tr($cols), html_base::STYLE_BORDERLESS);
+        return $html->tbl($html->tr($cols), styles::STYLE_BORDERLESS);
     }
 
 

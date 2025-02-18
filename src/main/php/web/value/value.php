@@ -39,12 +39,13 @@ include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
 include_once DB_PATH . 'sql_db.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
+include_once WEB_HTML_PATH . 'styles.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_FIGURE_PATH . 'figure.php';
 include_once WEB_HELPER_PATH . 'config.php';
 include_once WEB_LOG_PATH . 'user_log_display.php';
-include_once WEB_PHRASE_PATH . 'phrase_group.php';
+include_once WEB_GROUP_PATH . 'group.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_REF_PATH . 'source.php';
 include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
@@ -52,18 +53,19 @@ include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use html\helper\config as config_html;
-use html\figure\figure as figure_dsp;
+use html\group\group;
+use html\figure\figure;
+use html\helper\config;
 use html\html_base;
 use html\log\user_log_display;
 use html\phrase\phrase;
-use html\phrase\phrase_group;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\ref\source as source_dsp;
+use html\phrase\phrase_list;
+use html\ref\source;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\sandbox_value;
+use html\styles;
 use html\user\user_message;
-use html\word\word as word_dsp;
+use html\word\word;
 use shared\json_fields;
 use shared\library;
 
@@ -75,10 +77,10 @@ class value extends sandbox_value
      */
 
     /**
-     * @param phrase_group $grp
+     * @param group $grp
      * @return float
      */
-    function get(phrase_group $grp): float
+    function get(group $grp): float
     {
         /*
          * $result = null;
@@ -151,11 +153,11 @@ class value extends sandbox_value
      */
 
     /**
-     * @returns figure_dsp the figure display object base on this value object
+     * @returns figure the figure display object base on this value object
      */
-    function figure(): figure_dsp
+    function figure(): figure
     {
-        $fig = new figure_dsp();
+        $fig = new figure();
         $fig->set_obj($this);
         return $fig;
     }
@@ -166,12 +168,38 @@ class value extends sandbox_value
      */
 
     /**
-     * create the HTML code to show the value name and the formatted value to the user
+     * create the html code to show only the value in default format to the user
+     * @return string the html code to show only the value
+     */
+    function value(): string
+    {
+        $html = new html_base();
+        if (!$this->is_std()) {
+            return $html->span($this->val_formatted(), styles::STYLE_USER);
+        } else {
+            return $this->val_formatted();
+        }
+    }
+
+    /**
+     * create the HTML code to show to the user
+     * the value with the name and the formatted value
+     * with a tooltip
      *
-     * @param phrase_list_dsp|null $phr_lst_exclude usually the context phrases that does not need to be repeated
      * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
      */
-    function name_and_value(phrase_list_dsp|null $phr_lst_exclude = null): string
+    function name_tip(): string
+    {
+        return $this->grp()->name_tip() . ' ' . $this->value();
+    }
+
+    /**
+     * create the HTML code to show the value name and the formatted value to the user
+     *
+     * @param phrase_list|null $phr_lst_exclude usually the context phrases that does not need to be repeated
+     * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
+     */
+    function name_and_value(phrase_list|null $phr_lst_exclude = null): string
     {
         return $this->name_linked($phr_lst_exclude) . $this->display_value_linked('');
     }
@@ -179,12 +207,17 @@ class value extends sandbox_value
     /**
      * create the HTML code to show the value name to the user
      *
-     * @param phrase_list_dsp|null $phr_lst_exclude usually the context phrases that does not need to be repeated
+     * @param phrase_list|null $phr_lst_exclude usually the context phrases that does not need to be repeated
      * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
      */
-    function name_linked(phrase_list_dsp|null $phr_lst_exclude = null): string
+    function name_linked(phrase_list|null $phr_lst_exclude = null): string
     {
         return $this->grp()->name_link_list($phr_lst_exclude);
+    }
+
+    function display_linked(string $back = ''): string
+    {
+        return $this->ref_edit($back);
     }
 
     /**
@@ -198,32 +231,18 @@ class value extends sandbox_value
         return $html->ref($url, $txt);
     }
 
-    function display(string $back = ''): string
-    {
-        if (!$this->is_std()) {
-            return '<span class="user_specific">' . $this->val_formatted() . '</span>';
-        } else {
-            return $this->val_formatted();
-        }
-    }
-
-    function display_linked(string $back = ''): string
-    {
-        return $this->ref_edit($back);
-    }
-
     /**
      * @return string the html code to display a value
      * this is the opposite of the convert function
      */
     function display_value(): string
     {
+        $html = new html_base();
         $result = '';
         if (!is_null($this->number())) {
             $num_text = $this->val_formatted();
             if (!$this->is_std()) {
-                $result = '<span class="user_specific">' . $num_text . '</span>';
-                //$result = $num_text;
+                return $html->span($num_text, styles::STYLE_USER);
             } else {
                 $result = $num_text;
             }
@@ -242,7 +261,7 @@ class value extends sandbox_value
             $num_text = $this->val_formatted();
             $link_format = '';
             if (!$this->is_std()) {
-                $link_format = ' class="user_specific"';
+                $link_format = ' class="' . styles::STYLE_USER . '"';
             }
             // to review
             $result .= '<a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '" ' . $link_format . ' >' . $num_text . '</a>';
@@ -339,7 +358,7 @@ class value extends sandbox_value
     {
         $result = '';
 
-        $cfg = new config_html();
+        $cfg = new config();
 
         if (!is_null($this->number())) {
             // load the list of phrases if needed
@@ -373,7 +392,7 @@ class value extends sandbox_value
         log_debug('value->dsp_tbl_std ');
         $result = '';
         $result .= '    <td>' . "\n";
-        $result .= '      <div class="right_ref"><a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '">' . $this->val_formatted() . '</a></div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '"><a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '">' . $this->val_formatted() . '</a></div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -384,7 +403,7 @@ class value extends sandbox_value
         log_debug('value->dsp_tbl_usr');
         $result = '';
         $result .= '    <td>' . "\n";
-        $result .= '      <div class="right_ref"><a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '" class="user_specific">' . $this->val_formatted() . '</a></div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '"><a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '" class="' . styles::STYLE_USER . '">' . $this->val_formatted() . '</a></div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -511,10 +530,10 @@ class value extends sandbox_value
                 }
                 // prepare a new value display
                 $row_value = $db_row["numeric_value"];
-                $word_names = $wrd->name_linked(rest_ctrl::STYLE_GREY);
+                $word_names = $wrd->name_linked(styles::STYLE_GREY);
                 $group_id = $new_group_id;
             } else {
-                $word_names .= ", " . $wrd->name_linked(rest_ctrl::STYLE_GREY);
+                $word_names .= ", " . $wrd->name_linked(styles::STYLE_GREY);
             }
         }
         // display the last row if there has been at least one word
@@ -606,7 +625,7 @@ class value extends sandbox_value
                 foreach (array_keys($this->ids()) as $pos) {
                     if ($phr->id == $this->ids()[$pos]) {
                         $phr->is_wrd_id = $type_ids[$pos];
-                        $is_wrd = new word_dsp();
+                        $is_wrd = new word();
                         $is_wrd->set_id($phr->is_wrd_id);
                         $phr->is_wrd = $is_wrd;
                         $phr->dsp_pos = $pos;
@@ -805,7 +824,7 @@ class value extends sandbox_value
         log_debug('load source');
         $src = $this->load_source();
         if (isset($src)) {
-            $scr_dsp = new source_dsp($src->api_json());
+            $scr_dsp = new source($src->api_json());
             $result .= $scr_dsp->dsp_select($script, $back);
             $result .= '<br><br>';
         }
@@ -841,7 +860,7 @@ class value extends sandbox_value
                 $samples = $this->dsp_samples($main_wrd->id, $this->ids(), 10, $back);
                 log_debug("value->dsp_edit samples.");
                 if (trim($samples) <> "") {
-                    $result .= $html->dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_obj()->name_linked(rest_ctrl::STYLE_GREY) . '" values as an indication', 'change_hist');
+                    $result .= $html->dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_obj()->name_linked(styles::STYLE_GREY) . '" values as an indication', 'change_hist');
                     $result .= $samples;
                 }
                 */

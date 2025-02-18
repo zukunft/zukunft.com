@@ -53,6 +53,7 @@ namespace test;
 
 include_once SERVICE_PATH . 'config.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once WEB_HTML_PATH . 'styles.php';
 include_once DB_PATH . 'sql_type.php';
 include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_TYPES_PATH . 'api_type.php';
@@ -115,6 +116,7 @@ use html\ref\source as source_dsp;
 use html\rest_ctrl;
 use html\result\result as result_dsp;
 use html\sandbox\db_object as db_object_dsp;
+use html\styles;
 use html\value\value as value_dsp;
 use html\verb\verb as verb_dsp;
 use html\view\view_navbar as view_dsp;
@@ -3401,7 +3403,7 @@ class test_base
     function test_remove_color(string $result): string
     {
         $result = str_replace('<p style="color:red">', '', $result);
-        $result = str_replace('<p class="user_specific">', '', $result);
+        $result = str_replace('<p class="' . styles::STYLE_USER . '">', '', $result);
         return str_replace('</p>', '', $result);
     }
 
