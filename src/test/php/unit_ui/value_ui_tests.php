@@ -33,7 +33,7 @@
 namespace unit_ui;
 
 use html\html_base;
-use html\value\value as value_dsp;
+use html\value\value;
 use shared\types\api_type;
 use test\test_cleanup;
 
@@ -43,10 +43,11 @@ class value_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('value tests');
+        $t->subheader('value html ui tests');
 
-        $val = new value_dsp($t->value()->api_json([api_type::INCL_PHRASES]));
+        $val = new value($t->value()->api_json([api_type::INCL_PHRASES]));
         $test_page = $html->text_h2('value display test');
+        $test_page .= 'with name and link: ' . $val->name_and_value() . '<br>';
         $test_page .= 'with tooltip: ' . $val->display() . '<br>';
         $test_page .= 'with link: ' . $val->display_linked() . '<br>';
         $t->html_test($test_page, 'value', 'value', $t);

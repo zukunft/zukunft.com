@@ -5,7 +5,8 @@
     web/value/value.php - create the html code to show a value to the user
     -------------------
 
-    to creat the HTML code to display a formula
+    to create the HTML code to show a value to the user
+    and allow changing the value
 
 
     This file is part of zukunft.com - calc with words
