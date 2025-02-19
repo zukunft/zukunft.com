@@ -31,7 +31,7 @@
 
 // standard zukunft header for callable php files to allow debugging and lib loading
 use html\html_base;
-use html\view\view_navbar as view_dsp;
+use html\view\view as view_dsp;
 use cfg\user\user;
 use cfg\word\word;
 use shared\api;

@@ -42,7 +42,7 @@ use cfg\user\user;
 use cfg\view\view;
 use cfg\word\word_list;
 use html\html_base;
-use html\view\view_navbar as view_dsp;
+use html\view\view as view_dsp;
 use html\word\word_list as word_list_dsp;
 use shared\api;
 use shared\const\views as view_shared;

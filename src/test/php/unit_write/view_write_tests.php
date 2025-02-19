@@ -40,7 +40,7 @@ use cfg\user\user;
 use cfg\view\view;
 use cfg\view\view_type;
 use cfg\word\word;
-use html\view\view_navbar as view_dsp;
+use html\view\view as view_dsp;
 use shared\const\views;
 use shared\const\words;
 use shared\enum\change_tables;

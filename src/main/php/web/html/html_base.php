@@ -349,19 +349,15 @@ class html_base
                      string       $id_ext = ''
     ): string
     {
+        $result = rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
+        $result .= api::URL_VAR_MASK . '=' . $view;
         if (is_string($id)) {
-            $result = rest_ctrl::PATH_FIXED . $id . rest_ctrl::EXT . '?';
-        } else {
-            $result = rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
-            $result .= api::URL_VAR_MASK . '=' . $view;
-            if (is_string($id)) {
-                $result .= '&id=' . $id;
-            } elseif ($id <> 0) {
-                $result .= '&id=' . $id;
-            }
-            if ($id_ext != '') {
-                $result .= '&' . $id_ext;
-            }
+            $result .= '&id=' . $id;
+        } elseif ($id <> 0) {
+            $result .= '&id=' . $id;
+        }
+        if ($id_ext != '') {
+            $result .= '&' . $id_ext;
         }
         if ($back != '') {
             $result .= '&back=' . $back;

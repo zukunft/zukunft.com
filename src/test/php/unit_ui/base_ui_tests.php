@@ -153,7 +153,7 @@ class base_ui_tests
         $val_city->set_grp($grp_city);
         $val_city->set_number(values::CITY_ZH_INHABITANTS_2019);
         $val_city_dsp = new value_dsp($val_city->api_json([api_type::INCL_PHRASES]));
-        $val_city_html = $val_city_dsp->name_and_value();
+        $val_city_html = $val_city_dsp->name_link();
         $t->assert_text_contains('', $val_city_html, words::CITY);
 
         // create the value for the inhabitants of the city of zurich
@@ -161,7 +161,7 @@ class base_ui_tests
         $val_canton->set_grp($grp_canton);
         $val_canton->set_number(values::CANTON_ZH_INHABITANTS_2020_IN_MIO);
         $val_canton_dsp = new value_dsp($val_canton->api_json([api_type::INCL_PHRASES]));
-        $val_canton_html = $val_canton_dsp->name_and_value();
+        $val_canton_html = $val_canton_dsp->name_link();
         $t->assert_text_contains('', $val_canton_html, words::CANTON);
 
         // create the value for the inhabitants of Switzerland
@@ -169,7 +169,7 @@ class base_ui_tests
         $val_ch->set_grp($grp_ch);
         $val_ch->set_number(values::CH_INHABITANTS_2019_IN_MIO);
         $val_ch_dsp = new value_dsp($val_ch->api_json([api_type::INCL_PHRASES]));
-        $val_ch_html = $val_ch_dsp->name_and_value();
+        $val_ch_html = $val_ch_dsp->name_link();
         $t->assert_text_contains('', $val_ch_html, round(values::CH_INHABITANTS_2019_IN_MIO, 2));
 
         // create the formula result for the inhabitants of the city of zurich
@@ -178,7 +178,7 @@ class base_ui_tests
         $ch_val_scaled = values::CH_INHABITANTS_2019_IN_MIO * 1000000;
         $res_city->set_number(values::CITY_ZH_INHABITANTS_2019 / $ch_val_scaled);
         $res_city_dsp = new value_dsp($res_city->api_json([api_type::INCL_PHRASES]));
-        $res_city_html = $res_city_dsp->name_and_value();
+        $res_city_html = $res_city_dsp->name_link();
         $t->assert_text_contains('', $res_city_html, words::CITY);
 
         // create the formula result for the inhabitants of the canton of zurich
@@ -186,7 +186,7 @@ class base_ui_tests
         $res_canton->set_grp($grp_canton_pct);
         $res_canton->set_number(values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO);
         $res_canton_dsp = new value_dsp($res_canton->api_json([api_type::INCL_PHRASES]));
-        $res_canton_html = $res_canton_dsp->display_value_linked('');
+        $res_canton_html = $res_canton_dsp->value_edit('');
         $res_canton_number = round((values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO) * 100, 2) . '%';
         $t->assert_text_contains('', $res_canton_html, $res_canton_number);
 

@@ -153,11 +153,11 @@ class db_object extends TextIdObject
 
     /**
      * load the user sandbox object e.g. word by id via api
-     * @param int $id
+     * @param int|string $id the database id of the object that should be loaded
      * @param array $data additional data that should be included in the get request
      * @return bool
      */
-    function load_by_id(int $id, array $data = []): bool
+    function load_by_id(int|string $id, array $data = []): bool
     {
         $result = false;
 

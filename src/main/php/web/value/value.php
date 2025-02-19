@@ -169,16 +169,43 @@ class value extends sandbox_value
 
     /**
      * create the html code to show only the value in default format to the user
+     * this is the opposite of the convert function
      * @return string the html code to show only the value
      */
     function value(): string
     {
         $html = new html_base();
+        $result = $this->val_formatted();
         if (!$this->is_std()) {
-            return $html->span($this->val_formatted(), styles::STYLE_USER);
-        } else {
-            return $this->val_formatted();
+            $result = $html->span($result, styles::STYLE_USER);
         }
+        return $result;
+    }
+
+    /**
+     * create the html code to show only the value formatted based on the user settings
+     * with a link to see more related information of the value
+     * @return string the formatted value with a link for more details
+     */
+    function value_link(string $back = ''): string
+    {
+        $html = new html_base();
+        $url = $html->url_new(api_dsp::VALUE, $this->id(), '', $back);
+        $txt = $this->value();
+        return $html->ref($url, $txt);
+    }
+
+    /**
+     * create the html code to show only the value formatted based on the user settings
+     * with a link to change the value itself or the value parameters
+     * @return string the formatted value with a link to change this value
+     */
+    function value_edit(string $back = ''): string
+    {
+        $html = new html_base();
+        $url = $html->url_new(api_dsp::VALUE_EDIT, $this->id(), '', $back);
+        $txt = $this->value();
+        return $html->ref($url, $txt);
     }
 
     /**
@@ -186,88 +213,27 @@ class value extends sandbox_value
      * the value with the name and the formatted value
      * with a tooltip
      *
+     * @param phrase_list|null $phr_lst_exclude usually the context phrases that does not need to be repeated
+     * @param string $sep the separator string between the name and the value
      * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
      */
-    function name_tip(): string
+    function name_tip(phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
     {
-        return $this->grp()->name_tip() . ' ' . $this->value();
+        return $this->grp()->name_tip($phr_lst_exclude) . $sep . $this->value();
     }
 
     /**
      * create the HTML code to show the value name and the formatted value to the user
      *
      * @param phrase_list|null $phr_lst_exclude usually the context phrases that does not need to be repeated
+     * @param string $sep the separator string between the name and the value
      * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
      */
-    function name_and_value(phrase_list|null $phr_lst_exclude = null): string
+    function name_link(phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
     {
-        return $this->name_linked($phr_lst_exclude) . $this->display_value_linked('');
+        return $this->grp()->name_link_list($phr_lst_exclude) . $sep . $this->value_edit('');
     }
 
-    /**
-     * create the HTML code to show the value name to the user
-     *
-     * @param phrase_list|null $phr_lst_exclude usually the context phrases that does not need to be repeated
-     * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
-     */
-    function name_linked(phrase_list|null $phr_lst_exclude = null): string
-    {
-        return $this->grp()->name_link_list($phr_lst_exclude);
-    }
-
-    function display_linked(string $back = ''): string
-    {
-        return $this->ref_edit($back);
-    }
-
-    /**
-     * @return string the formatted value with a link to change this value
-     */
-    function ref_edit(string $back = ''): string
-    {
-        $html = new html_base();
-        $url = $html->url(api_dsp::VALUE_EDIT, $this->id(), $back);
-        $txt = $this->val_formatted();
-        return $html->ref($url, $txt);
-    }
-
-    /**
-     * @return string the html code to display a value
-     * this is the opposite of the convert function
-     */
-    function display_value(): string
-    {
-        $html = new html_base();
-        $result = '';
-        if (!is_null($this->number())) {
-            $num_text = $this->val_formatted();
-            if (!$this->is_std()) {
-                return $html->span($num_text, styles::STYLE_USER);
-            } else {
-                $result = $num_text;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * @return string html code to show the value with the possibility to click for the result explanation
-     */
-    function display_value_linked($back): string
-    {
-        $result = '';
-
-        if (!is_null($this->number())) {
-            $num_text = $this->val_formatted();
-            $link_format = '';
-            if (!$this->is_std()) {
-                $link_format = ' class="' . styles::STYLE_USER . '"';
-            }
-            // to review
-            $result .= '<a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '" ' . $link_format . ' >' . $num_text . '</a>';
-        }
-        return $result;
-    }
 
     /*
      * backend requests

@@ -48,7 +48,7 @@ use cfg\view\view;
 use cfg\word\triple;
 use cfg\word\word;
 use html\html_base;
-use html\view\view_navbar as view_dsp;
+use html\view\view as view_dsp;
 use shared\api;
 use shared\const\views as view_shared;
 use shared\enum\user_profiles;

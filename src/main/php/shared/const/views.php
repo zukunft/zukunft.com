@@ -73,8 +73,11 @@ class views
     const SOURCE_DEL = 'source_del';
     const SOURCE_DEL_ID = 13;
     const VALUE_ADD = 'value_add';
+    const VALUE_ADD_ID = 17;
     const VALUE_EDIT = 'value_edit';
+    const VALUE_EDIT_ID = 18;
     const VALUE_DEL = 'value_del';
+    const VALUE_DEL_ID = 19;
     const GROUP_ADD = 'group_add';
     const GROUP_ADD_ID = 20;
     const GROUP_EDIT = 'group_edit';
@@ -226,11 +229,18 @@ class views
         self::WORD_DEL_ID
     ];
 
-    // system masks that have a word as the main object
+    // system masks that have a source as the main object
     const SOURCE_MASKS_IDS = [
         self::SOURCE_ADD_ID,
         self::SOURCE_EDIT_ID,
         self::SOURCE_DEL_ID
+    ];
+
+    // system masks that have a source as the main object
+    const VALUE_MASKS_IDS = [
+        self::VALUE_ADD_ID,
+        self::VALUE_EDIT_ID,
+        self::VALUE_DEL_ID
     ];
 
     // system masks that have a word as the main object

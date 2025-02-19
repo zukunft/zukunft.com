@@ -38,7 +38,7 @@ include_once WEB_SANDBOX_PATH . 'sandbox.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_VIEW_PATH . 'view.php';
-include_once WEB_VIEW_PATH . 'view_navbar.php';
+include_once WEB_VIEW_PATH . 'view.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
@@ -51,7 +51,7 @@ use html\sandbox\list_dsp;
 use html\sandbox\sandbox;
 use html\user\user_message;
 use html\verb\verb;
-use html\view\view_navbar as view_dsp;
+use html\view\view as view_dsp;
 use html\word\triple;
 use html\word\word;
 use shared\api;
@@ -118,7 +118,7 @@ class view_list extends list_dsp
 
         $data = array(api::URL_VAR_CMP_ID => $id);
         $rest = new rest_ctrl();
-        $json_body = $rest->api_get(view::class, $data);
+        $json_body = $rest->api_get(view_base::class, $data);
         $this->set_from_json_array($json_body);
         if (!$this->is_empty()) {
             $result = true;

@@ -207,10 +207,9 @@ class value_tests
         // TODO add class field to api message
         $t->assert_api_to_dsp($val, new value_dsp());
 
+        // TODO move to ui tests
         $val_dsp = new value_dsp($val->api_json([api_type::INCL_PHRASES]));
-        $t->assert('value name with link', $val_dsp->name_linked(),
-            '<a href="/http/view.php?m=' . views::TRIPLE_ID . '&id=2" title="ratio of the circumference of a circle to its diameter">Pi (math)</a>');
-        $t->assert('value edit link', $val_dsp->ref_edit(), '<a href="/http/value_edit.php?id=32770" title="3.14">3.14</a>');
+        $t->assert('value edit link', $val_dsp->value_edit(), '<a href="/http/view.php?m=value_edit&id=32770" title="3.14">3.14</a>');
 
         $t->subheader('Convert and API unit tests');
 

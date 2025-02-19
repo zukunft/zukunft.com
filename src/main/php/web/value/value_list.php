@@ -168,8 +168,8 @@ class value_list extends list_dsp
                 $header .= $html->th('value');
                 $header_rows = $html->tr($header);
             }
-            $row = $html->td($val->name_linked($common_phrases));
-            $row .= $html->td($val->value_linked($back));
+            $row = $html->td($val->grp()->name_link_list($common_phrases));
+            $row .= $html->td($val->value_edit($back));
             $rows .= $html->tr($row);
             // TODO add button to delete a value or add a similar value
             //$btn_del = $val->btn_del();

@@ -119,7 +119,7 @@ use html\sandbox\db_object as db_object_dsp;
 use html\styles;
 use html\value\value as value_dsp;
 use html\verb\verb as verb_dsp;
-use html\view\view_navbar as view_dsp;
+use html\view\view as view_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use shared\api;

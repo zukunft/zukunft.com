@@ -49,22 +49,25 @@ include_once MODEL_SYSTEM_PATH . 'system_time_list.php';
 include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
+include_once WEB_VALUE_PATH . 'value.php';
 include_once WEB_VIEW_PATH . 'view.php';
-include_once WEB_VIEW_PATH . 'view_navbar.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_CONST_PATH . 'views.php';
 
 use cfg\ref\source;
 use cfg\user\user;
+use cfg\value\value;
 use cfg\word\word;
 use html\frontend;
 use html\html_base;
 use html\ref\source as source_dsp;
 use html\rest_ctrl;
 use html\types\type_lists as type_lists_dsp;
-use html\view\view_navbar as view_dsp;
+use html\value\value as value_dsp;
+use html\view\view as view_dsp;
 use html\word\word as word_dsp;
 use shared\api;
 use shared\const\views as view_shared;
@@ -73,13 +76,17 @@ use shared\const\views as view_shared;
 $db_con = prg_start("view", '', false);
 
 // get the parameters
-$view_id = $_GET[api::URL_VAR_MASK] ?? 0; // the database id of the view to display
+$view = $_GET[api::URL_VAR_MASK] ?? 0; // the database id of the view to display
 $id = $_GET[api::URL_VAR_ID] ?? 0; // the database id of the prime object to display
 $confirm = $_GET[api::URL_VAR_CONFIRM] ?? 0; // the database id of the prime object to display
 
 $new_view_id = $_GET[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
 $view_words = $_GET[api::URL_VAR_WORDS] ?? '';
 $back = $_GET[api::URL_VAR_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
+
+// TODO remove these test vars
+$view = 'value_edit';
+$id = '....0C+....0e+....14+....16+....1A+......+......+......+......+......+......+......+......+......+......+......+';
 
 // init the view
 global $sys_msk_cac;
@@ -102,8 +109,15 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // use default view if nothing is set
-    if ($view_id == 0 and $id == 0) {
-        $view_id = view_shared::START_ID;
+    if (($view == 0 or $view == '' or $view == null or $view == 'null') and $id == 0) {
+        $view = view_shared::START_ID;
+    }
+
+    // get the view id if the view code id is used
+    if (is_numeric($view)) {
+        $view_id = $view;
+    } else {
+        $view_id = $sys_msk_cac->id($view);
     }
 
     // select the main object to display
@@ -113,6 +127,9 @@ if ($usr->id() > 0) {
     } elseif (in_array($view_id, view_shared::SOURCE_MASKS_IDS)) {
         $dbo_dsp = new source_dsp();
         $dbo = new source($usr);
+    } elseif (in_array($view_id, view_shared::VALUE_MASKS_IDS)) {
+        $dbo_dsp = new value_dsp();
+        $dbo = new value($usr);
     } else {
         $dbo_dsp = new word_dsp();
         $dbo = new word($usr);

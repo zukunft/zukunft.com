@@ -2,21 +2,13 @@
 
 /*
 
-    web/view/view.php - the display extension of the api view object
-    -----------------
+    web/view/view_navbar.php - add the navigation bar to the view object to finish the frontend view object
+    ------------------------
 
-    to create the HTML code to display a view
+    add the function to create a navigation bar to the html frontend view object
 
     The main sections of this object are
     - object vars:       the variables of this word object
-    - construct and map: including the mapping of the db row to this word object
-    - set and get:       to capsule the vars from unexpected changes
-    - api:               set the object vars based on the api json message and create a json for the backend
-    - load:              get an api json from the backend and
-    - base:              html code for the single object vars
-    - buttons:           html code for the buttons e.g. to add, edit, del, link or unlink
-    - select:            html code to select parameter like the type
-    - execute:           create the html code for an object view
 
 
     This file is part of zukunft.com - calc with words
@@ -45,374 +37,168 @@
 
 namespace html\view;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once WEB_VIEW_PATH . 'view_exe.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_HTML_PATH . 'display_list.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_COMPONENT_PATH . 'component.php';
-include_once WEB_COMPONENT_PATH . 'component_list.php';
 include_once WEB_HELPER_PATH . 'config.php';
-include_once WEB_HELPER_PATH . 'data_object.php';
+include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_LOG_PATH . 'user_log_display.php';
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_SYSTEM_PATH . 'messages.php';
+include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_VIEW_PATH . 'view_list.php';
+include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once SHARED_CONST_PATH . 'components.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_TYPES_PATH . 'position_types.php';
+include_once SHARED_PATH . 'api.php';
+include_once SHARED_PATH . 'library.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_TYPES_PATH . 'view_type.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
-
 
 use html\button;
-use html\component\component_list;
 use html\display_list;
 use html\helper\config;
-use html\helper\data_object;
 use html\html_base;
 use html\log\user_log_display;
-use html\sandbox\db_object;
-use html\sandbox\sandbox_typed;
+use html\rest_ctrl as api_dsp;
 use html\system\back_trace;
 use html\system\messages;
-use html\user\user_message;
-use html\word\triple;
 use html\word\word;
 use shared\api;
-use shared\const\views;
-use shared\json_fields;
-use shared\types\position_types;
+use shared\library;
 use shared\types\view_styles;
 use shared\types\view_type;
 
-class view extends sandbox_typed
+class view extends view_exe
 {
 
-    /*
-     * object vars
-     */
-
-    // used for system views
-    private ?string $code_id;
-    protected component_list $cmp_lst;
-
-    // objects that should be displayed (only one is supposed to be not null)
-    // the word, triple or formula object that should be shown to the user
-    protected ?db_object $dbo;
-
-
-    /*
-     * construct and map
-     */
-
-    function __construct(?string $api_json = null)
-    {
-        $this->code_id = null;
-        $this->cmp_lst = new component_list();
-        $this->dbo = null;
-        parent::__construct($api_json);
-    }
-
-
-    /*
-     * set and get
-     */
-
-    function component_list(): component_list
-    {
-        return $this->cmp_lst;
-    }
-
-    function code_id(): ?string
-    {
-        return $this->code_id;
-    }
-
-
-    /*
-     * api
-     */
-
     /**
-     * set the vars this view bases on the api json array
-     * public because it is reused e.g. by the phrase group display object
-     * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * show the navigation bar, which allow the user to search, to login or change the settings
+     * without javascript this is the top right corner
+     * with    javascript this is a bar on the top
      */
-    function set_from_json_array(array $json_array): user_message
-    {
-        // the root view object
-        $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(json_fields::CODE_ID, $json_array)) {
-            $this->code_id = $json_array[json_fields::CODE_ID];
-        } else {
-            $this->code_id = null;
-        }
-        // set the components
-        $cmp_lst = new component_list();
-        if (array_key_exists(json_fields::COMPONENTS, $json_array)) {
-            $cmp_lst->set_from_json_array($json_array[json_fields::COMPONENTS]);
-        }
-        // set the objects (e.g. word)
-        if (array_key_exists(api::API_WORD, $json_array)) {
-            $this->dbo = new word();
-            $dbo_json = $json_array[api::API_WORD];
-            $id = 0;
-            if (array_key_exists(json_fields::ID, $json_array)) {
-                $id = $dbo_json[json_fields::ID];
-            }
-            if ($id != 0) {
-                $this->dbo->set_from_json_array($dbo_json);
-            }
-        }
-        if (array_key_exists(api::API_TRIPLE, $json_array)) {
-            $this->dbo = new triple();
-            $dbo_json = $json_array[api::API_TRIPLE];
-            $id = 0;
-            if (array_key_exists(json_fields::ID, $json_array)) {
-                $id = $dbo_json[json_fields::ID];
-            }
-            if ($id != 0) {
-                $this->dbo->set_from_json_array($dbo_json);
-            }
-        }
-        $this->cmp_lst = $cmp_lst;
-        return $usr_msg;
-    }
-
-    /**
-     * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
-     */
-    function api_array(): array
-    {
-        $vars = parent::api_array();
-        $vars[json_fields::CODE_ID] = $this->code_id;
-        $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_array();
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
-    }
-
-
-    /*
-     * load
-     */
-
-    /**
-     * load the view via api
-     * @param int $id
-     * @return bool
-     */
-    function load_by_id_with(int $id): bool
-    {
-        $data = [];
-        $data[api::URL_VAR_CHILDREN] = 1;
-        return parent::load_by_id($id, $data);
-    }
-
-
-    /*
-     * base
-     */
-
-    /**
-     * create the html code to show the component name with the link to change the component parameters
-     * @param string|null $back the back trace url for the undo functionality
-     * @param string $style the CSS style that should be used
-     * @param int $msk_id database id of the view that should be shown
-     * @returns string the html code
-     */
-    function name_link(?string $back = '', string $style = '', int $msk_id = views::VIEW_EDIT_ID): string
-    {
-        return parent::name_link($back, $style, $msk_id);
-    }
-
-    function title(db_object $dbo): string
-    {
-        return $this->name() . ' ' . $dbo->name();
-    }
-
-
-    /*
-     * buttons
-     */
-
-    /**
-     * @return string the html code for a bottom
-     * to create a new view for the current user
-     */
-    function btn_add(string $back = ''): string
-    {
-        return parent::btn_add_sbx(
-            views::VIEW_ADD_ID,
-            messages::VIEW_ADD,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to change a view e.g. the name or the type
-     */
-    function btn_edit(string $back = ''): string
-    {
-        return parent::btn_edit_sbx(
-            views::VIEW_EDIT_ID,
-            messages::VIEW_EDIT,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to exclude the view for the current user
-     * or if no one uses the view delete the complete view
-     */
-    function btn_del(string $back = ''): string
-    {
-        return parent::btn_del_sbx(
-            views::VERB_DEL_ID,
-            messages::VALUE_DEL,
-            $back);
-    }
-
-
-    /*
-     * select
-     */
-
-    /**
-     * create the HTML code to select a view type
-     * @param string $form the name of the html form
-     * @return string the html code to select the phrase type
-     */
-    function type_selector(string $form): string
-    {
-        global $html_view_types;
-        $used_type_id = $this->type_id();
-        if ($used_type_id == null) {
-            $used_type_id = $html_view_types->default_id();
-        }
-        return $html_view_types->selector($form, $used_type_id);
-    }
-
-    /**
-     * @param string $form_name
-     * @param string $pattern
-     * @param int $id
-     * @return string
-     */
-    function component_selector(string $form_name, string $pattern, int $id): string
-    {
-        $cmp_lst = new component_list;
-        $cmp_lst->load_like($pattern);
-        return $cmp_lst->selector($form_name, $id, 'add_component', 'please define a component', '');
-    }
-
-
-    /*
-     * execute
-     */
-
-    /**
-     * create the html code to view a sandbox object
-     * @param db_object $dbo the word, triple or formula object that should be shown to the user
-     * @param data_object|null $cfg the context used to create the view
-     * @param string $back the history of the user actions to allow rollbacks
-     * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
-     * @return string the html code for a view: this is the main function of this lib
-     * TODO use backtrace or use a global backtrace var
-     */
-    function show(
-        db_object    $dbo,
-        ?data_object $cfg = null,
-        string       $back = '',
-        bool         $test_mode = false
-    ): string
+    function dsp_navbar(string $back = ''): string
     {
         $result = '';
 
-        $this->log_debug($dbo->dsp_id() . ' with the view ' . $this->dsp_id());
-
-        // check and correct the parameters
-        if ($this->code_id() != '') {
-            $form_name = $this->code_id();
-        } else {
-            $form_name = $this->name();
-        }
-        if ($back == '') {
-            $back = $dbo->id();
-        }
-
+        // check the all minimal input parameters are set
         if ($this->id() <= 0) {
-            $this->log_err("The view id must be loaded to display it.");
+            $this->log_err("The display ID (" . $this->id() . ") must be set to display a view.", "view_dsp->dsp_navbar");
         } else {
-            // display always the view name in the top right corner and allow the user to edit the view
-            $result .= $this->dsp_type_open();
-            $result .= $this->dsp_navbar($back);
-            $result .= $this->dsp_entries($dbo, $cfg, $form_name, $back, $test_mode);
-            $result .= $this->dsp_type_close();
+            if (html_base::UI_USE_BOOTSTRAP) {
+                $result = $this->dsp_navbar_bs(TRUE, $back);
+            } else {
+                $result = $this->dsp_navbar_html($back);
+            }
         }
 
         return $result;
     }
 
     /**
-     * create the html code for all components of this view
-     *
-     * @param db_object $dbo the word, triple or formula object that should be shown to the user
-     * @param data_object|null $cfg the context used to create the view
-     * @param string $form_name the name of the view which is also used for the html form name
-     * @param string $back the backtrace for undo actions
-     * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
-     * @return string the html code of all view components
+     * same as dsp_navbar_html, but using bootstrap
+     * JavaScript functions using bootstrap
      */
-    private function dsp_entries(
-        db_object    $dbo,
-        ?data_object $cfg = null,
-        string       $form_name = '',
-        string       $back = '',
-        bool         $test_mode = false
-    ): string
+    private function dsp_navbar_bs(bool $show_view, string $back): string
     {
-        $this->log_debug($this->dsp_id());
+        $lib = new library();
+        $html = new html_base();
+        $result = '<nav class="navbar bg-light fixed-top">';
+        $result .= $html->logo();
+        $result .= '  <form action="/http/find.php" class="form-inline my-2 my-lg-0">';
+        $result .= '<label for="pattern"></label>';
+        $result .= $this->input_search_pattern();
+        $result .= '    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>';
+        $result .= '  </form>';
+        $result .= '  <div class="' . view_styles::COL_SM_2 . '">';
+        $result .= '    <ul class="nav navbar-nav">';
+        $result .= '      <li class="active">';
+        $result .= $this->dsp_user($back);
+        $result .= '      </li>';
+        $result .= '      <li class="active">';
+        $result .= $this->dsp_logout();
+        $result .= '      </li>';
+        if ($show_view) {
+            $result .= '      <li class="active">';
+            $result .= $this->dsp_view_name($back);
+            $class = $lib->class_to_name(view::class);
+            //$url_edit = $html->url($class . api_dsp::UPDATE, $this->id(), $back, '', word::class . '=' . $back);
+            $url_edit = $html->url($class . api_dsp::UPDATE, $this->id(), '', '');
+            // TODO fix for frontend based version
+            //echo 'button init';
+            $result .= $this->btn_edit();
+            //echo 'button_dsp init' . $url_edit;
+            //$btn = new button_dsp($url_edit, '');
+            // TODO fix for frontend based version
+            //$result .= $btn->edit(messages::VIEW_EDIT);
+            //$url_add = $html->url($class . api_dsp::CREATE, 0, $back, '', word::class . '=' . $back);
+            $url_add = $html->url($class . api_dsp::CREATE, 0, '', '');
+            // TODO fix for frontend based version
+            //$result .= (new button_dsp($url_add))->add(messages::VIEW_ADD);
+            $result .= $this->btn_add();
+            $result .= '      </li>';
+        }
+        $result .= '    </ul>';
+        $result .= '  </div>';
+        /*
+        $result .= '  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">';
+        $result .= '    <span class="navbar-toggler-icon"></span>';
+        $result .= '  </button>';
+        $result .= '  <div class="collapse navbar-collapse" id="navbarSupportedContent">';
+        $result .= '    <ul class="navbar-nav mr-auto">';
+        // $result .= '      <li><a href="/http/find.php?word='.$back).'"><span class="glyphicon glyphicon-search"></span></a></li>';
+        $result .= '      <li class="nav-item dropdown">';
+        $result .= '        <a class="nav-link dropdown-toggle" ';
+        $result .= '          href="/http/view_select.php?id='.$this->id.'&word='.$back.'&back='.$back.'"';
+        $result .= '          id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+        $result .= '          '.$this->name.'';
+        $result .= '        </a>';
+        $result .= '        <div class="dropdown-menu" aria-labelledby="navbarDropdown">';
+        $result .= '          <a class="dropdown-item" href="/http/view_edit.php?id='.$this->id.'&word='.$back.'&back='.$back.'">Edit</a>';
+        $result .= '          <a class="dropdown-item" href="#">New</a>';
+        $result .= '        </div>';
+        $result .= '      </li>';
+        $result .= '    </ul>';
+        $result .= '  </div>';
+        */
+        $result .= '</nav>';
+        // to avoid that the first data line is below the navbar
+        $result .= '<br>';
+        $result .= '<br>';
+        $result .= '<br>';
+        $result .= '<br>';
+        $result .= '<br>';
+        return $result;
+    }
+
+    /**
+     * same as dsp_navbar, but without the view change used for the view editors
+     */
+    function dsp_navbar_no_view(string $back = ''): string
+    {
         $result = '';
-        if ($this->cmp_lst->is_empty()) {
-            $this->log_debug('no components for ' . $this->dsp_id());
+
+        // check the all minimal input parameters are set
+        if ($this->user() == null) {
+            $this->log_err("The user id must be set to display a view.", "view_dsp->dsp_navbar");
         } else {
-            $row = '';
-            $button_only = true;
-            foreach ($this->cmp_lst->lst() as $cmp) {
-                // add previous collected components to the final result
-                if ($row != '') {
-                    if ($cmp->pos_type_code_id() == position_types::BELOW) {
-                        if ($button_only) {
-                            $result .= $row;
-                        } else {
-                            // TODO easy move code to HTML class
-                            $result .= '<div class="row ';
-                            $result .= view_styles::COL_SM_12;
-                            $result .= '">' . $row . ' </div>';
-                        }
-                        $row = '';
-                        $button_only = true;
-                    }
-                }
-                if (!$cmp->is_button_or_hidden()) {
-                    $button_only = false;
-                }
-                $row .= $cmp->dsp_entries($dbo, $form_name, $this->id(), $cfg, $back, $test_mode);
-            }
-            if ($row != '') {
-                $result .= $row;
+            if (html_base::UI_USE_BOOTSTRAP) {
+                $result .= $this->dsp_navbar_bs(FALSE, $back);
+            } else {
+                $result .= $this->dsp_navbar_html_no_view($back);
             }
         }
+        return $result;
+    }
 
+    /**
+     * the basic zukunft top elements that should be show always
+     */
+    function dsp_navbar_simple(): string
+    {
+        if (html_base::UI_USE_BOOTSTRAP) {
+            $result = $this->dsp_navbar_bs(FALSE, 0);
+        } else {
+            $result = $this->html_navbar_start();
+            $result .= $this->html_navbar_end();
+        }
         return $result;
     }
 
@@ -421,39 +207,99 @@ class view extends sandbox_typed
      * internal execute
      */
 
+    private function input_search_pattern(): string
+    {
+        $html = new html_base();
+        return $html->input(
+            'pattern', '',
+            html_base::INPUT_SEARCH,
+            view_styles::BS_SM_2,
+            'word or formula');
+    }
+
     /**
-     * return the beginning html code for the view_type;
-     * the view type defines something like the basic setup of a view
-     * e.g. the catch view does not have the header, whereas all other views have
+     * show the standard top right corner, where the user can log in or change the settings
+     * @param string $back the id of the word from which the page has been called (TODO to be replace with the back trace object)
+     * @returns string the HTML code to display the navigation bar on top of the page
      */
-    private function dsp_type_open(): string
+    private function dsp_navbar_html(string $back = ''): string
     {
-        $result = '';
-        // move to database !!
-        // but avoid security leaks
-        // maybe use a view component for that
-        if ($this->type_id() == 1) {
-            $result .= '<h1>';
+        global $usr;
+        $html = new html_base();
+
+        $result = $this->html_navbar_start();
+        $result .= '<td class="' . styles::STYLE_RIGHT . '">';
+        if ($this->is_system() and !$usr->is_admin()) {
+            $url = $html->url(api_dsp::SEARCH);
+            $result .= (new button($url, $back))->find(messages::SEARCH_MAIN) . ' - ';
+            $result .= $this->name . ' ';
+        } else {
+            $url = '/http/find.php?word=' . $back;
+            $result .= (new button($url, $back))->find(messages::SEARCH_MAIN) . ' - ';
+            $result .= $this->dsp_view_name($back);
+            $url = $html->url(api::DSP_VIEW_EDIT, $this->id());
+            $result .= (new button($url, $back))->edit(messages::VIEW_EDIT, $this->name) . ' ';
+            $url = $html->url(api::DSP_VIEW_ADD);
+            $result .= (new button($url, $back))->add(messages::VIEW_ADD);
         }
+        $result .= ' - ';
+        $result .= $this->dsp_user($back);
+        $result .= ' ';
+        $result .= $this->dsp_logout();
+        $result .= '</td>';
+        $result .= $this->html_navbar_end();
+
         return $result;
     }
 
-    private function dsp_type_close(): string
+    private function html_navbar_start(): string
     {
-        $result = '';
-        // move to a view component function
-        // for the word array build an object
-        if ($this->type_id() == 1) {
-            $result = $result . '<br><br>';
-            //$result = $result . '<a href="/http/view.php?words='.implode (",", $word_array).'&type=3">Really?</a>';
-            $result = $result . '</h1>';
-        }
+        $html = new html_base();
+        $result = $html->dsp_tbl_start();
+        $result .= '<tr><td>';
+        $result .= '  <tr>';
+        $result .= '    <td>';
+        $result .= $html->logo();
+        $result .= '    </td>';
         return $result;
     }
 
-    protected function dsp_user(): string
+    /**
+     * the zukunft logo that should be show always
+     */
+    private function html_navbar_end(): string
+    {
+        $html = new html_base();
+        $result = '  </tr>';
+        $result .= $html->dsp_tbl_end();
+        return $result;
+    }
+
+    /**
+     * TODO fill
+     * @return string
+     */
+    private function dsp_logout(): string
     {
         return '';
+    }
+
+    /**
+     * TODO fill
+     * @return string
+     */
+    private function dsp_view_name($back): string
+    {
+        return '';
+    }
+
+    /**
+     * TODO fill
+     * @return string
+     */
+    private function is_system(): bool
+    {
+        return false;
     }
 
     /**
@@ -469,6 +315,22 @@ class view extends sandbox_typed
     /*
      * to review / deprecate
      */
+
+    /**
+     * same as dsp_navbar, but without the view change used for the view editors
+     */
+    function dsp_navbar_html_no_view(string $back = ''): string
+    {
+
+        $result = $this->html_navbar_start();
+        $result .= '<td class="' . styles::STYLE_RIGHT . '">';
+        $result .= $this->dsp_user($back);
+        $result .= $this->dsp_logout();
+        $result .= '</td>';
+        $result .= $this->html_navbar_end();
+
+        return $result;
+    }
 
 
     /*
@@ -493,11 +355,9 @@ class view extends sandbox_typed
 
         // the header to add or change a view
         if ($this->id() <= 0) {
-            $this->log_debug('create a view');
             $script = "view_add";
             $result .= $html->dsp_text_h2('Create a new view (for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
         } else {
-            $this->log_debug($this->dsp_id() . ' for user ' . $usr->name() . ' (called from ' . $back . ')');
             $script = "view_edit";
             $result .= $html->dsp_text_h2('Edit view "' . $this->name . '" (used for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>)');
         }
@@ -555,8 +415,6 @@ class view extends sandbox_typed
                 '', '',
                 'Changes', $hist_html,
                 'Component changes', $link_html);
-
-            $this->log_debug('done');
         }
 
         $result .= '</div>';   // of row
@@ -591,18 +449,15 @@ class view extends sandbox_typed
         }
 
         // show the view elements and allow the user to change them
-        $this->log_debug('load');
         if (!$this->load_components()) {
             $this->log_err('Loading of view components for ' . $this->dsp_id() . ' failed');
         } else {
-            $this->log_debug('loaded');
             $dsp_list = new display_list;
             $dsp_list->lst = $this->cmp_lst->lst();
             $dsp_list->script_name = "view_edit.php";
             $dsp_list->class_edit = view::class;
             $dsp_list->script_parameter = $this->id() . "&back=" . $back . "&word=" . $wrd->id();
             $result .= $dsp_list->display($back);
-            $this->log_debug('displayed');
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '<tr><td>';
             }
@@ -657,10 +512,10 @@ class view extends sandbox_typed
      */
     function dsp_hist_links($page, $size, $call, $back): string
     {
-        $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
+        global $usr;
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display();
+        $log_dsp = new user_log_display($usr);
         $log_dsp->id = $this->id();
         $log_dsp->type = view::class;
         $log_dsp->page = $page;
@@ -669,7 +524,6 @@ class view extends sandbox_typed
         $log_dsp->back = $back;
         $result .= $log_dsp->dsp_hist_links();
 
-        $this->log_debug("done");
         return $result;
     }
 
@@ -685,8 +539,7 @@ class view extends sandbox_typed
      */
     function selector_page($wrd_id, $back): string
     {
-        $this->log_debug($this->id() . ',' . $wrd_id);
-
+        global $usr;
         $result = '';
 
         $dsp_lst = new view_list();
@@ -695,7 +548,7 @@ class view extends sandbox_typed
         $field = 'new_id';
 
         foreach ($dsp_lst as $dsp) {
-            $view_id = $dsp->id();
+            $view_id = $dsp->id();;
             $view_name = $dsp->name();
             if ($view_id == $this->id()) {
                 $result .= '<b><a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a></b> ';
@@ -709,28 +562,12 @@ class view extends sandbox_typed
             $result .= '<br>';
         }
 
-        $this->log_debug('done');
         return $result;
     }
 
     function log_err(string $msg): void
     {
         echo $msg;
-    }
-
-    function log_debug(string $msg): void
-    {
-        echo '';
-    }
-
-
-    /*
-     * overwrite
-     */
-
-    function dsp_navbar(string $back = ''): string
-    {
-        return 'Error: dsp_navbar is expected to be overwritten by the child object';
     }
 
 }

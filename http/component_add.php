@@ -44,7 +44,7 @@ use cfg\view\view;
 use cfg\word\word;
 use html\component\component as component_dsp;
 use html\html_base;
-use html\view\view_navbar as view_dsp;
+use html\view\view as view_dsp;
 use shared\api;
 use shared\json_fields;
 use shared\const\views as view_shared;

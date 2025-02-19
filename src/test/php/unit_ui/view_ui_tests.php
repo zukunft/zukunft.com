@@ -33,7 +33,7 @@
 namespace unit_ui;
 
 use html\html_base;
-use html\view\view_navbar as view_dsp;
+use html\view\view as view_dsp;
 use shared\const\views;
 use test\test_cleanup;
 

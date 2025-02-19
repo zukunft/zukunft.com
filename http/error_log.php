@@ -42,7 +42,6 @@ include_once PHP_PATH . 'zu_lib.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_VIEW_PATH . 'view.php';
-include_once WEB_VIEW_PATH . 'view_navbar.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'word.php';
@@ -52,7 +51,7 @@ use cfg\system\sys_log;
 use cfg\user\user;
 use cfg\view\view;
 use html\system\sys_log as sys_log_dsp;
-use html\view\view_navbar as view_dsp;
+use html\view\view as view_dsp;
 use shared\api;
 
 $db_con = prg_start("error_log");
