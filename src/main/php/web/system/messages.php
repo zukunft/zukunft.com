@@ -48,6 +48,7 @@ class messages
     const TRIPLE_EDIT = 'triple_edit';
     const TRIPLE_DEL = 'triple_del';
     const VALUE_ADD = 'value_add';
+    const VALUE_ADD_SIMILAR = 'value_add_similar';
     const VALUE_EDIT = 'value_edit';
     const VALUE_DEL = 'value_del';
     const FORMULA_ADD = 'formula_add';
@@ -95,8 +96,8 @@ class messages
     // other text to be shown to users
 
     // language elements to create a text
-    CONST FOR = 'for'; // e.g. to indicate which phrases a value is assigned to
-    CONST OF = 'of';   // e.g. to indicate which word would be deleted
+    CONST FOR = ' for '; // e.g. to indicate which phrases a value is assigned to
+    CONST OF = ' of ';   // e.g. to indicate which word would be deleted
 
     /**
      * @param string $message_id the id const of the message that should be shown
@@ -116,6 +117,7 @@ class messages
             self::VERB_EDIT => 'change verb',
             self::VERB_DEL => 'delete verb',
             self::VALUE_ADD => 'add new value',
+            self::VALUE_ADD_SIMILAR => 'add new value similar to ',
             self::VALUE_EDIT => 'change value',
             self::VALUE_DEL => 'delete value',
             self::FORMULA_ADD => 'add new formula',

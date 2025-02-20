@@ -193,6 +193,10 @@ class component extends sandbox_typed
             component_type::USAGE_WORD => $this->usage_word($dbo, $form_name),
             component_type::SYSTEM_CHANGE_LOG => $this->system_change_log($dbo, $form_name),
 
+            // verb only -
+            component_type::VERB_NAME => $this->verb_name($dbo),
+            component_type::TRIPLE_LIST => $this->triple_list($dbo),
+
             // base
             component_type::PHRASE => $this->name_tip(),
             component_type::PHRASE_NAME => $this->phrase_name($dbo),
@@ -343,6 +347,24 @@ class component extends sandbox_typed
     function num_list(): string
     {
         return $this->name();
+    }
+
+    /**
+     * TODO move to a component exe part class
+     * @return string a dummy text
+     */
+    function verb_name(?db_object_dsp $dbo = null): string
+    {
+        return $dbo->name();
+    }
+
+    /**
+     * TODO move to a component exe part class
+     * @return string a dummy text
+     */
+    function triple_list(?db_object_dsp $dbo = null): string
+    {
+        return $dbo->name();
     }
 
     /**

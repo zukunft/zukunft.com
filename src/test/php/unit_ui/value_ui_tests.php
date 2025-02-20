@@ -52,7 +52,11 @@ class value_ui_tests
         $test_page .= 'with tooltip: ' . $val->value() . '<br>';
         $test_page .= 'with detail link: ' . $val->value_link() . '<br>';
         $test_page .= 'with edit link: ' . $val->value_edit() . '<br>';
-        $t->html_test($test_page, 'value', 'value', $t);
+        $test_page .= $html->text_h2('buttons');
+        $test_page .= 'add button: ' . $val->btn_add() . '<br>';
+        $test_page .= 'edit button: ' . $val->btn_edit() . '<br>';
+        $test_page .= 'del button: ' . $val->btn_del() . '<br>';
+        $t->html_test($test_page, 'value html components', 'value', $t);
 
 
         // TODO review

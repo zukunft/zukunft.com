@@ -122,7 +122,7 @@ SELECT component_insert_log_0111551111111111 (
                'simply show the word or triple name'::text,
                53::smallint,
                'text'::text,
-               2::smallint,
+               3::smallint,
                779::smallint,
                'col-md-4'::text,
                1::smallint,

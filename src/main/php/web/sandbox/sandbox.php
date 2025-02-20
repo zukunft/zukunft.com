@@ -156,12 +156,13 @@ class sandbox extends db_object_dsp
      * @param int|string $msk_id the code id or database id of the view used to add the object
      * @param string $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
      * @param string $back the backtrace for the return page after adding the object and for undo actions
+     * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
      * @return string the html code for a bottom
      */
-    function btn_add_sbx(int|string $msk_id, string $msg_code_id, string $back = ''): string
+    function btn_add_sbx(int|string $msk_id, string $msg_code_id, string $back = '', string $explain = ''): string
     {
         $btn = $this->btn_sbx($msk_id, $back);
-        return $btn->add($msg_code_id);
+        return $btn->add($msg_code_id, $explain);
     }
 
     /**
@@ -170,12 +171,13 @@ class sandbox extends db_object_dsp
      * @param int|string $msk_id the code id or database id of the view used to add the object
      * @param string $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
      * @param string $back the backtrace for the return page after adding the object and for undo actions
+     * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
      * @return string the html code for a bottom
      */
-    function btn_edit_sbx(int|string $msk_id, string $msg_code_id, string $back = ''): string
+    function btn_edit_sbx(int|string $msk_id, string $msg_code_id, string $back = '', string $explain = ''): string
     {
         $btn = $this->btn_sbx($msk_id, $back);
-        return $btn->edit($msg_code_id);
+        return $btn->edit($msg_code_id, $explain);
     }
 
     /**
@@ -185,12 +187,13 @@ class sandbox extends db_object_dsp
      * @param int|string $msk_id the code id or database id of the view used to add the object
      * @param string $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
      * @param string $back the backtrace for the return page after adding the object and for undo actions
+     * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
      * @return string the html code for a bottom
      */
-    function btn_del_sbx(int|string $msk_id, string $msg_code_id, string $back = ''): string
+    function btn_del_sbx(int|string $msk_id, string $msg_code_id, string $back = '', string $explain = ''): string
     {
         $btn = $this->btn_sbx($msk_id, $back);
-        return $btn->del($msg_code_id);
+        return $btn->del($msg_code_id, $explain);
     }
 
     /**

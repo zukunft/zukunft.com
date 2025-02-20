@@ -232,8 +232,10 @@ class formula extends sandbox_typed
      */
     function btn_add(string $back = ''): string
     {
-        $url = $this->obj_url(views::FORMULA_ADD);
-        return (new button($url, $back))->add(messages::FORMULA_ADD, $this->name);
+        return parent::btn_add_sbx(
+            views::VALUE_ADD,
+            views::FORMULA_ADD,
+            $back);
     }
 
     /**
@@ -243,8 +245,10 @@ class formula extends sandbox_typed
      */
     function btn_edit(string $back = ''): string
     {
-        $url = $this->obj_url(views::FORMULA_EDIT);
-        return (new button($url, $back))->edit(messages::FORMULA_EDIT, messages::FOR . $this->name);
+        return parent::btn_edit_sbx(
+            views::FORMULA_EDIT,
+            messages::FORMULA_EDIT,
+            $back, messages::FOR . $this->name);
     }
 
     /**
@@ -254,8 +258,10 @@ class formula extends sandbox_typed
      */
     function btn_del(string $back = ''): string
     {
-        $url = $this->obj_url(views::FORMULA_DEL);
-        return (new button($url, $back))->del(messages::FORMULA_DEL, messages::OF . $this->name);
+        return parent::btn_del_sbx(
+            views::FORMULA_DEL,
+            messages::FORMULA_DEL,
+            $back, messages::OF . $this->name);
     }
 
 

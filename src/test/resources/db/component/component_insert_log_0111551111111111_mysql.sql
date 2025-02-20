@@ -118,7 +118,7 @@ SELECT component_insert_log_0111551111111111 (
                'simply show the word or triple name',
                53,
                'text',
-               2,
+               3,
                779,
                'col-md-4',
                1,

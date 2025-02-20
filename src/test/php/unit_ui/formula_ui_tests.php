@@ -40,20 +40,24 @@ class formula_ui_tests
 {
     function run(test_cleanup $t): void
     {
-        global $usr;
         $html = new html_base();
 
-        $t->subheader('formula tests');
+        $t->subheader('formula html ui tests');
 
         $frm = new formula_dsp($t->formula()->api_json());
         $test_page = $html->text_h2('formula display test');
         $test_page .= 'with tooltip: ' . $frm->name_tip() . '<br>';
         $test_page .= 'with link: ' . $frm->name_link() . '<br>';
+        $test_page .= $html->text_h2('buttons');
+        $test_page .= 'add button: ' . $frm->btn_add() . '<br>';
+        $test_page .= 'edit button: ' . $frm->btn_edit() . '<br>';
+        $test_page .= 'del button: ' . $frm->btn_del() . '<br>';
         $t->html_test($test_page, 'formula', 'formula', $t);
 
         // TODO review
 
         /*
+        global $usr;
         $t->header('Test the formula frontend scripts (e.g. /formula_add.php)');
 
         // load the main test word

@@ -49,7 +49,9 @@ include_once WEB_GROUP_PATH . 'group.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_REF_PATH . 'source.php';
 include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
+include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -64,8 +66,10 @@ use html\ref\source;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\sandbox_value;
 use html\styles;
+use html\system\messages;
 use html\user\user_message;
 use html\word\word;
+use shared\const\views;
 use shared\json_fields;
 use shared\library;
 
@@ -234,6 +238,97 @@ class value extends sandbox_value
         return $this->grp()->name_link_list($phr_lst_exclude) . $sep . $this->value_edit('');
     }
 
+    /**
+     * depending on the word list format the numeric value
+     * format the value for on screen display
+     * similar to the corresponding function in the "result" class
+     * @returns string the HTML code to display this value
+     */
+    function val_formatted(): string
+    {
+        $result = '';
+
+        $cfg = new config();
+
+        if (!is_null($this->number())) {
+            // load the list of phrases if needed
+            if (!$this->grp()->phr_lst()->is_empty()) {
+                if ($this->grp()->phr_lst()->has_percent()) {
+                    $result = round($this->number() * 100, $cfg->percent_decimals()) . "%";
+                } else {
+                    if ($this->number() >= 1000 or $this->number() <= -1000) {
+                        $result .= number_format($this->number(), 0, $cfg->dec_point(), $cfg->thousand_sep());
+                    } else {
+                        $result = round($this->number(), 2);
+                    }
+                }
+            } else {
+                // use default settings
+                $result = round($this->number(), 2);
+            }
+        }
+        return $result;
+    }
+
+
+    /*
+     * buttons
+     */
+
+    /**
+     * offer the user to add a new value similar to this value
+     *
+     * possible future parameters:
+     * $fixed_words - words that the user is not suggested to change this time
+     * $select_word - suggested words which the user can change
+     * $type_word   - word to preselect the suggested words e.g. "Country" to list all their countries first for the suggested word
+     *
+     * @param string $back the id of the word from which the page has been called (TODO to be replace with the back trace object)
+     * @returns string the HTML code for a button to add a value related to this value
+     */
+    function btn_add(string $back = ''): string
+    {
+        $msg_code_id = messages::VALUE_ADD;
+        $explain = '';
+
+        if ($this->grp()->phr_lst()->is_empty()) {
+            if (!empty($this->grp()->phr_lst()->lst())) {
+                $explain = htmlentities($this->grp()->phr_lst()->dsp_name());
+                $msg_code_id = messages::VALUE_ADD_SIMILAR;
+            }
+        }
+
+        return parent::btn_add_sbx(
+            views::VALUE_ADD,
+            $msg_code_id,
+            $back, $explain);
+    }
+
+    /**
+     * @return string the html code for a bottom
+     * to change a value e.g. the name or the type
+     */
+    function btn_edit(string $back = ''): string
+    {
+        return parent::btn_edit_sbx(
+            views::VALUE_EDIT,
+            messages::VALUE_EDIT,
+            $back);
+    }
+
+    /**
+     * @return string the html code for a bottom
+     * to exclude the value for the current user
+     * or if no one uses the value delete the complete value
+     */
+    function btn_del(string $back = ''): string
+    {
+        return parent::btn_del_sbx(
+            views::VALUE_DEL,
+            messages::VALUE_DEL,
+            $back);
+    }
+
 
     /*
      * backend requests
@@ -282,69 +377,9 @@ class value extends sandbox_value
         return $this->grp()->is_id_set();
     }
 
-    /**
-     * offer the user to add a new value similar to this value
-     *
-     * possible future parameters:
-     * $fixed_words - words that the user is not suggested to change this time
-     * $select_word - suggested words which the user can change
-     * $type_word   - word to preselect the suggested words e.g. "Country" to list all their countries first for the suggested word
-     *
-     * @param string $back the id of the word from which the page has been called (TODO to be replace with the back trace object)
-     * @returns string the HTML code for a button to add a value related to this value
+    /*
+     * to review
      */
-    function btn_add(string $back): string
-    {
-        $result = '';
-
-        $val_btn_title = '';
-        $url_phr = '';
-        if ($this->grp()->phr_lst()->is_empty()) {
-            if (!empty($this->grp()->phr_lst()->lst())) {
-                $val_btn_title = "add new value similar to " . htmlentities($this->grp()->phr_lst()->dsp_name());
-            } else {
-                $val_btn_title = "add new value";
-            }
-            $url_phr = $this->grp()->phr_lst()->id_url_long();
-        }
-
-        $val_btn_call = '/http/value_add.php?back=' . $back . $url_phr;
-        $result .= \html\btn_add($val_btn_title, $val_btn_call);
-
-        return $result;
-    }
-
-    /**
-     * depending on the word list format the numeric value
-     * format the value for on screen display
-     * similar to the corresponding function in the "result" class
-     * @returns string the HTML code to display this value
-     */
-    function val_formatted(): string
-    {
-        $result = '';
-
-        $cfg = new config();
-
-        if (!is_null($this->number())) {
-            // load the list of phrases if needed
-            if (!$this->grp()->phr_lst()->is_empty()) {
-                if ($this->grp()->phr_lst()->has_percent()) {
-                    $result = round($this->number() * 100, $cfg->percent_decimals()) . "%";
-                } else {
-                    if ($this->number() >= 1000 or $this->number() <= -1000) {
-                        $result .= number_format($this->number(), 0, $cfg->dec_point(), $cfg->thousand_sep());
-                    } else {
-                        $result = round($this->number(), 2);
-                    }
-                }
-            } else {
-                // use default settings
-                $result = round($this->number(), 2);
-            }
-        }
-        return $result;
-    }
 
     // the same as \html\btn_del_value, but with another icon
     function btn_undo_add_value($back): string
@@ -356,8 +391,7 @@ class value extends sandbox_value
     function dsp_tbl_std($back): string
     {
         log_debug('value->dsp_tbl_std ');
-        $result = '';
-        $result .= '    <td>' . "\n";
+        $result = '    <td>' . "\n";
         $result .= '      <div class="' . styles::STYLE_RIGHT . '"><a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '">' . $this->val_formatted() . '</a></div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;

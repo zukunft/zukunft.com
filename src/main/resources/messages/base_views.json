@@ -22,6 +22,11 @@
       "type": "verb_name"
     },
     {
+      "name": "related triples",
+      "description": "triples where this verb is used",
+      "type": "triples_related"
+    },
+    {
       "name": "Term",
       "description": "simply show the name of a word, triple, verb or formula",
       "type": "term_name"
@@ -84,7 +89,7 @@
         },
         {
           "position": "2",
-          "name": "related words"
+          "name": "related triples"
         }
       ]
     },

@@ -114,6 +114,8 @@ class all_ui_tests extends all_unit_tests
         (new change_log_ui_tests)->run($t);
         (new sys_log_ui_tests)->run($t);
         (new job_ui_tests)->run($t);
+
+        // TODO compare with run_ui_test in all_unit_read_tests
         (new system_views_ui_tests)->run($t);
 
         $t->subheader('check about page e.g. to check the library');
