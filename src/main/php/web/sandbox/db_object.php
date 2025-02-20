@@ -297,6 +297,50 @@ class db_object extends TextIdObject
 
     /**
      * @param string $form_name the name of the html form
+     * @return string the html code to select the phrase type
+     */
+    public function ref_type_selector(string $form_name): string
+    {
+        $msg = 'source type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * @param string $form_name the name of the html form
+     * @return string the html code to select the phrase type
+     */
+    public function formula_type_selector(string $form_name): string
+    {
+        $msg = 'source type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * @param string $form_name the name of the html form
+     * @return string the html code to select the phrase type
+     */
+    public function view_type_selector(string $form_name): string
+    {
+        $msg = 'source type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * @param string $form_name the name of the html form
+     * @return string the html code to select the phrase type
+     */
+    public function component_type_selector(string $form_name): string
+    {
+        $msg = 'source type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * @param string $form_name the name of the html form
      * @return string the html code to select the share type
      */
     public function share_type_selector(string $form_name): string

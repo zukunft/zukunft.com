@@ -103,6 +103,10 @@ class component_exe extends component
             component_type::FORM_VERB_SELECTOR => $form->form_verb($dbo, $form_name),
             component_type::FORM_PHRASE_TYPE => $form->form_phrase_type($dbo, $form_name),
             component_type::FORM_SOURCE_TYPE => $form->form_source_type($dbo, $form_name),
+            component_type::FORM_REF_TYPE => $form->form_ref_type($dbo, $form_name),
+            component_type::FORM_FORMULA_TYPE => $form->form_formula_type($dbo, $form_name),
+            component_type::FORM_VIEW_TYPE => $form->form_view_type($dbo, $form_name),
+            component_type::FORM_COMPONENT_TYPE => $form->form_component_type($dbo, $form_name),
             component_type::FORM_SHARE_TYPE => $form->form_share_type($dbo, $form_name),
             component_type::FORM_PROTECTION_TYPE => $form->form_protection_type($dbo, $form_name),
             component_type::FORM_CANCEL => $form->form_cancel($msk_id, $dbo->id()),
@@ -114,6 +118,10 @@ class component_exe extends component
             component_type::ROW_START => $form->row_start(),
             component_type::ROW_RIGHT => $form->row_right(),
             component_type::ROW_END => $form->row_end(),
+
+            // ref only -
+
+            // formula only -
 
             // view only -
             component_type::USAGE_WORD => $this->usage_word($dbo, $form_name),

@@ -32,9 +32,11 @@
 
 namespace html\types;
 
+include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_ENUM_PATH . 'source_types.php';
 
 use shared\enum\source_types;
+use shared\types\view_styles;
 
 class source_type_list extends type_list
 {
@@ -48,7 +50,7 @@ class source_type_list extends type_list
         string $form = '',
         int $selected = 0,
         string $name = self::NAME,
-        string $bs_class = '',
+        string $bs_class = view_styles::COL_SM_4,
         string $label = ''
     ): string
     {

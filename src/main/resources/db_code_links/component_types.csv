@@ -46,3 +46,7 @@ component_type_id, type_name, description, code_id
 45, 'ranking parameters', 'the parameters used to calculate a ranking', 'ranking_parameters'
 46, 'ranking list', 'list sorted by the calculated ranking', 'ranking_list'
 47, 'related triples', 'display the triples where a verb is used', 'triples_related'
+48, 'system form select reference type', 'selector for the reference type', 'system_form_select_ref_type'
+49, 'system form select formula type', 'selector for the formula type', 'system_form_select_formula_type'
+50, 'system form select view type', 'selector for the view type', 'system_form_select_view_type'
+51, 'system form select component type', 'selector for the component type', 'system_form_select_component_type'

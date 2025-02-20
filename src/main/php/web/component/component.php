@@ -198,6 +198,27 @@ class component extends sandbox_typed
         return parent::name_link($back, $style, $msk_id);
     }
 
+
+    /*
+     * select
+     */
+
+    /**
+     * create the HTML code to select a component type
+     * @param string $form_name the name of the html form
+     * @return string the html code to select the phrase type
+     */
+    function component_type_selector(string $form_name): string
+    {
+        global $html_component_types;
+        $used_type_id = $this->type_id();
+        if ($used_type_id == null) {
+            $used_type_id = $html_component_types->default_id();
+        }
+        return $html_component_types->selector($form_name, $used_type_id);
+    }
+
+
     /*
      * info
      */

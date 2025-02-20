@@ -2,8 +2,8 @@
 
 /*
 
-    model/formula/phrase_type.php - the formula type object with the ENUM values for hardcoded formulas
-    -----------------------------
+    model/formula/formula_type.php - the formula type object with the ENUM values for hardcoded formulas
+    ------------------------------
 
     This file is part of zukunft.com - calc with words
 

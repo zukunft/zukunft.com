@@ -40,6 +40,7 @@ include_once WEB_TYPES_PATH . 'protection.php';
 include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_TYPES_PATH . 'type_object.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -48,6 +49,7 @@ use html\html_selector;
 use html\types\type_object as type_object_dsp;
 use shared\json_fields;
 use shared\library;
+use shared\types\view_styles;
 
 class type_list
 {
@@ -250,8 +252,8 @@ class type_list
         string $name = '',
         string $form = '',
         int    $selected = 0,
-        string $col_class = '',
-        string $label = ''
+        string $col_class = view_styles::COL_SM_4,
+        string $label = 'type: '
     ): string
     {
         $sel = new html_selector();

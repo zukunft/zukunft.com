@@ -279,6 +279,16 @@ class formula extends sandbox_typed
         return $html_formula_types->selector($form_name);
     }
 
+    public function formula_type_selector(string $form_name): string
+    {
+        global $html_formula_types;
+        $used_formula_type_id = $this->type_id();
+        if ($used_formula_type_id == null) {
+            $used_formula_type_id = $html_formula_types->default_id();
+        }
+        return $html_formula_types->selector($form_name, $used_formula_type_id);
+    }
+
 
     /*
      * to review

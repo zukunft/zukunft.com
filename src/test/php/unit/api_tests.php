@@ -55,10 +55,10 @@ use cfg\component\component;
 use cfg\component\component_list;
 use cfg\formula\formula;
 use cfg\formula\formula_list;
+use cfg\group\group;
 use cfg\helper\type_lists;
 use cfg\language\language;
 use cfg\language\language_form;
-use cfg\log\change_log_list;
 use cfg\phrase\phrase_list;
 use cfg\phrase\phrase_type;
 use cfg\phrase\term_list;
@@ -223,13 +223,18 @@ class api_tests
         $t->assert_view(views::SOURCE_DEL, $t->usr1, new source($t->usr1), 1);
         // TODO add:
         // REF
+        $t->assert_view(views::REF_ADD, $t->usr1, new ref($t->usr1));
         // VALUE
         // GROUP
+        //$t->assert_view(views::GROUP_ADD, $t->usr1, new group($t->usr1));
         // FORMULA
+        $t->assert_view(views::FORMULA_ADD, $t->usr1, new formula($t->usr1));
         // FORMULA TEST
         // RESULT
         // VIEW
+        $t->assert_view(views::VIEW_ADD, $t->usr1, new view($t->usr1));
         // COMPONENT
+        $t->assert_view(views::COMPONENT_ADD, $t->usr1, new component($t->usr1));
         // USER
         // LANGUAGE
         // SYS LOG

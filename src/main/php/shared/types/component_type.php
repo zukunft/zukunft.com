@@ -78,6 +78,14 @@ class component_type
     const FORM_PHRASE_TYPE_ID = 25;
     const FORM_SOURCE_TYPE = "system_form_select_source_type";
     const FORM_SOURCE_TYPE_ID = 39;
+    const FORM_REF_TYPE = "system_form_select_ref_type";
+    const FORM_REF_TYPE_ID = 48;
+    const FORM_FORMULA_TYPE = "system_form_select_formula_type";
+    const FORM_FORMULA_TYPE_ID = 49;
+    const FORM_VIEW_TYPE = "system_form_select_view_type";
+    const FORM_VIEW_TYPE_ID = 50;
+    const FORM_COMPONENT_TYPE = "system_form_select_component_type";
+    const FORM_COMPONENT_TYPE_ID = 51;
     const FORM_SHARE_TYPE = "system_form_select_share";
     const FORM_SHARE_TYPE_ID = 26;
     const FORM_PROTECTION_TYPE = "system_form_select_protection";
@@ -246,6 +254,10 @@ class component_type
         [self::ROW_END, self::ROW_END_ID],
         [self::CALC_SHEET, self::CALC_SHEET_ID],
         [self::FORM_SOURCE_TYPE, self::FORM_SOURCE_TYPE_ID],
+        [self::FORM_REF_TYPE, self::FORM_REF_TYPE_ID],
+        [self::FORM_FORMULA_TYPE, self::FORM_FORMULA_TYPE_ID],
+        [self::FORM_VIEW_TYPE, self::FORM_VIEW_TYPE_ID],
+        [self::FORM_COMPONENT_TYPE, self::FORM_COMPONENT_TYPE_ID],
         [self::VIEW_SELECT, self::VIEW_SELECT_ID],
         [self::FORM_VIEW_SELECT, self::FORM_VIEW_SELECT_ID],
         [self::TRIPLE_LIST, self::TRIPLE_LIST_ID],

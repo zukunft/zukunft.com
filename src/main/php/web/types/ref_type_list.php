@@ -32,6 +32,10 @@
 
 namespace html\types;
 
+include_once SHARED_CONST_PATH . 'refs.php';
+
+use shared\const\refs;
+
 class ref_type_list extends type_list
 {
 
@@ -44,6 +48,16 @@ class ref_type_list extends type_list
     {
         global $html_ref_types;
         return parent::type_selector($html_ref_types->lst_key(), $name, $form, $selected);
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function default_id(): int
+    {
+        return parent::id(refs::WIKIDATA_TYPE);
     }
 
 }

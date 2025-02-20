@@ -203,6 +203,50 @@ class system_form extends component
     }
 
     /**
+     * create the html code for the form element to select the reference type
+     * @param db_object_dsp $dbo the frontend reference object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @return string the html code to select the reference type
+     */
+    function form_ref_type(db_object_dsp $dbo, string $form_name): string
+    {
+        return $dbo->ref_type_selector($form_name);
+    }
+
+    /**
+     * create the html code for the form element to select the formula type
+     * @param db_object_dsp $dbo the frontend formula object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @return string the html code to select the formula type
+     */
+    function form_formula_type(db_object_dsp $dbo, string $form_name): string
+    {
+        return $dbo->formula_type_selector($form_name);
+    }
+
+    /**
+     * create the html code for the form element to select the view type
+     * @param db_object_dsp $dbo the frontend view object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @return string the html code to select the view type
+     */
+    function form_view_type(db_object_dsp $dbo, string $form_name): string
+    {
+        return $dbo->view_type_selector($form_name);
+    }
+
+    /**
+     * create the html code for the form element to select the component type
+     * @param db_object_dsp $dbo the frontend component object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @return string the html code to select the component type
+     */
+    function form_component_type(db_object_dsp $dbo, string $form_name): string
+    {
+        return $dbo->component_type_selector($form_name);
+    }
+
+    /**
      * create the html code for the form element to select the share type
      * @param db_object_dsp $dbo the frontend object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name

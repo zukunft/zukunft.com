@@ -143,6 +143,27 @@
       "ui_msg_code_id": "form_title_value_del"
     },
     {
+      "name": "system form title group add",
+      "description": "show the language specific title for the system form to add a new group",
+      "type": "system_form_title",
+      "code_id": "form_title_group_add",
+      "ui_msg_code_id": "form_title_group_add"
+    },
+    {
+      "name": "system form title group edit",
+      "description": "show the language specific title for the system form to change a group",
+      "type": "system_form_title",
+      "code_id": "form_title_group_edit",
+      "ui_msg_code_id": "form_title_group_edit"
+    },
+    {
+      "name": "system form title group del",
+      "description": "show the language specific title for the system form to delete or exclude a group",
+      "type": "system_form_title",
+      "code_id": "form_title_group_del",
+      "ui_msg_code_id": "form_title_group_del"
+    },
+    {
       "name": "system form title formula add",
       "description": "show the language specific title for the system form to add a new formula",
       "type": "system_form_title",
@@ -284,14 +305,42 @@
       "description": "selector for the phrase type",
       "type": "system_form_select_phrase_type",
       "code_id": "form_field_phrase_type",
-      "ui_msg_code_id": "form_select_phrase"
+      "ui_msg_code_id": "form_select_phrase_type"
     },
     {
       "name": "system form select source type",
       "description": "selector for the source type",
       "type": "system_form_select_source_type",
       "code_id": "form_field_source_type",
-      "ui_msg_code_id": "form_select_source"
+      "ui_msg_code_id": "form_select_source_type"
+    },
+    {
+      "name": "system form select reference type",
+      "description": "selector for the reference type",
+      "type": "system_form_select_ref_type",
+      "code_id": "form_field_ref_type",
+      "ui_msg_code_id": "form_select_ref_type"
+    },
+    {
+      "name": "system form select formula type",
+      "description": "selector for the formula type",
+      "type": "system_form_select_formula_type",
+      "code_id": "form_field_formula_type",
+      "ui_msg_code_id": "form_select_formula_type"
+    },
+    {
+      "name": "system form select view type",
+      "description": "selector for the view type",
+      "type": "system_form_select_view_type",
+      "code_id": "form_field_view_type",
+      "ui_msg_code_id": "form_select_view_type"
+    },
+    {
+      "name": "system form select component type",
+      "description": "selector for the component type",
+      "type": "system_form_select_component_type",
+      "code_id": "form_field_component_type",
+      "ui_msg_code_id": "form_select_component_type"
     },
     {
       "name": "system form select share type",
@@ -1057,7 +1106,45 @@
       "description": "Create a new data link to external systems",
       "code_id": "ref_add",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title reference add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "system form field description"
+        },
+        {
+          "position": "6",
+          "name": "system form select reference type"
+        },
+        {
+          "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button save"
+        },
+        {
+          "position": "9",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Change reference",
@@ -1099,7 +1186,41 @@
       "description": "Add a new group name",
       "code_id": "group_add",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title group add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "system form field description"
+        },
+        {
+          "position": "6",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "7",
+          "name": "system form button save"
+        },
+        {
+          "position": "8",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Change group",
@@ -1120,7 +1241,45 @@
       "description": "Create a new formula with all parameters e.g. the type",
       "code_id": "formula_add",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title formula add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "system form field description"
+        },
+        {
+          "position": "6",
+          "name": "system form select formula type"
+        },
+        {
+          "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button save"
+        },
+        {
+          "position": "9",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Change formula",
@@ -1155,7 +1314,45 @@
       "description": "Create a new view and set the type",
       "code_id": "view_add",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title view add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "system form field description"
+        },
+        {
+          "position": "6",
+          "name": "system form select view type"
+        },
+        {
+          "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button save"
+        },
+        {
+          "position": "9",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Change view",
@@ -1200,11 +1397,19 @@
         },
         {
           "position": "6",
-          "name": "system form button cancel"
+          "name": "system form select component type"
         },
         {
           "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
           "name": "system form button save"
+        },
+        {
+          "position": "9",
+          "name": "system form end"
         }
       ]
     },

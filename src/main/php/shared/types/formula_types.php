@@ -2,9 +2,8 @@
 
 /*
 
-    web/types/component_type_list.php - the preloaded data component types used for the html frontend
-    -------------------------------
-
+    cfg/view/formula_types.php - db based ENUM of the formula types
+    --------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -30,36 +29,16 @@
   
 */
 
-namespace html\types;
+namespace shared\types;
 
-include_once WEB_TYPES_PATH . 'type_list.php';
-include_once SHARED_TYPES_PATH . 'component_type.php';
-
-use shared\types\component_type;
-
-
-class component_type_list extends type_list
+class formula_types
 {
 
-    const NAME = 'component type';
-
-    /**
-     * @returns string the html code to select a type from this list
-     */
-    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
-    {
-        global $html_component_types;
-        return parent::type_selector($html_component_types->lst_key(), $name, $form, $selected);
-    }
-
-
-    /*
-     * set and get
-     */
-
-    function default_id(): int
-    {
-        return parent::id(component_type::SHOW_NAME);
-    }
+    // list of the formula types that have a coded functionality
+    const CALC = "default";    // a normal calculation formula
+    const NEXT = "time_next";  // time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"
+    const THIS = "time_this";  // selects the assumed time term
+    const PREV = "time_prior"; // time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"
+    const REV = "reversible";  // used to define a const value that is not supposed to be changed like pi
 
 }

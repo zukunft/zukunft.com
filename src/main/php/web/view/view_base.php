@@ -63,7 +63,6 @@ include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-
 use html\component\component_list;
 use html\sandbox\db_object;
 use html\sandbox\sandbox_typed;
@@ -281,6 +280,11 @@ class view_base extends sandbox_typed
             $used_type_id = $html_view_types->default_id();
         }
         return $html_view_types->selector($form, $used_type_id);
+    }
+
+    public function view_type_selector(string $form_name): string
+    {
+        return $this->type_selector($form_name);
     }
 
     /**

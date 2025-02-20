@@ -252,4 +252,19 @@ class ref extends db_object_dsp
         return $this->type_name() . ' ' . $this->external_key;
     }
 
+
+    /*
+     * select
+     */
+
+    public function ref_type_selector(string $form_name): string
+    {
+        global $html_ref_types;
+        $used_ref_type_id = $this->predicate_id();
+        if ($used_ref_type_id == null) {
+            $used_ref_type_id = $html_ref_types->default_id();
+        }
+        return $html_ref_types->selector($form_name, $used_ref_type_id);
+    }
+
 }
