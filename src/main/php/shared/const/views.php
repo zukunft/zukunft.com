@@ -72,6 +72,12 @@ class views
     const SOURCE_EDIT_ID = 12;
     const SOURCE_DEL = 'source_del';
     const SOURCE_DEL_ID = 13;
+    const REF_ADD = 'ref_add';
+    const REF_ADD_ID = 14;
+    const REF_EDIT = 'ref_edit';
+    const REF_EDIT_ID = 15;
+    const REF_DEL = 'ref_del';
+    const REF_DEL_ID = 16;
     const VALUE_ADD = 'value_add';
     const VALUE_ADD_ID = 17;
     const VALUE_EDIT = 'value_edit';
@@ -85,10 +91,19 @@ class views
     const GROUP_DEL = 'group_del';
     const GROUP_DEL_ID = 22;
     const FORMULA_ADD = 'formula_add';
+    const FORMULA_ADD_ID = 23;
     const FORMULA_EDIT = 'formula_edit';
+    const FORMULA_EDIT_ID = 24;
     const FORMULA_DEL = 'formula_del';
+    const FORMULA_DEL_ID = 25;
     const FORMULA_EXPLAIN = 'formula_explain';
     const FORMULA_TEST = 'formula_test';
+    const RESULT_ADD = 'result_add';
+    const RESULT_ADD_ID = 26;
+    const RESULT_EDIT = 'result_edit';
+    const RESULT_EDIT_ID = 26;
+    const RESULT_DEL = 'result_del';
+    const RESULT_DEL_ID = 27;
     const VERBS = 'verbs';
     const USER = 'user';
     const USER_EDIT = 'user_edit';
@@ -103,9 +118,11 @@ class views
     const VIEW_DEL = 'view_del';
     const VIEW_DEL_ID = 30;
     const COMPONENT_ADD = 'component_add';
+    const COMPONENT_ADD_ID = 31;
     const COMPONENT_EDIT = 'component_edit';
     const COMPONENT_EDIT_ID = 32;
     const COMPONENT_DEL = 'component_del';
+    const COMPONENT_DEL_ID = 33;
     const COMPONENT_LINK = 'component_link';
     const COMPONENT_UNLINK = 'component_unlink';
 
@@ -229,6 +246,20 @@ class views
         self::WORD_DEL_ID
     ];
 
+    // system masks that have a verb as the main object
+    const VERB_MASKS_IDS = [
+        self::VERB_ADD_ID,
+        self::VERB_EDIT_ID,
+        self::VERB_DEL_ID
+    ];
+
+    // system masks that have a triple as the main object
+    const TRIPLE_MASKS_IDS = [
+        self::TRIPLE_ADD_ID,
+        self::TRIPLE_EDIT_ID,
+        self::TRIPLE_DEL_ID
+    ];
+
     // system masks that have a source as the main object
     const SOURCE_MASKS_IDS = [
         self::SOURCE_ADD_ID,
@@ -236,14 +267,49 @@ class views
         self::SOURCE_DEL_ID
     ];
 
-    // system masks that have a source as the main object
+    // system masks that have a reference as the main object
+    const REF_MASKS_IDS = [
+        self::REF_ADD_ID,
+        self::REF_EDIT_ID,
+        self::REF_DEL_ID
+    ];
+
+    // system masks that have a value as the main object
     const VALUE_MASKS_IDS = [
         self::VALUE_ADD_ID,
         self::VALUE_EDIT_ID,
         self::VALUE_DEL_ID
     ];
 
-    // system masks that have a word as the main object
+    // system masks that have a formula as the main object
+    const FORMULA_MASKS_IDS = [
+        self::FORMULA_ADD_ID,
+        self::FORMULA_EDIT_ID,
+        self::FORMULA_DEL_ID
+    ];
+
+    // system masks that have a result as the main object
+    const RESULT_MASKS_IDS = [
+        self::RESULT_ADD_ID,
+        self::RESULT_EDIT_ID,
+        self::RESULT_DEL_ID
+    ];
+
+    // system masks that have a view as the main object
+    const VIEW_MASKS_IDS = [
+        self::VIEW_ADD_ID,
+        self::VIEW_EDIT_ID,
+        self::VIEW_DEL_ID
+    ];
+
+    // system masks that have a component as the main object
+    const COMPONENT_MASKS_IDS = [
+        self::COMPONENT_ADD_ID,
+        self::COMPONENT_EDIT_ID,
+        self::COMPONENT_DEL_ID
+    ];
+
+    // system masks that change or delete a sandbox object
     const EDIT_DEL_MASKS_IDS = [
         self::WORD_EDIT_ID,
         self::WORD_DEL_ID,

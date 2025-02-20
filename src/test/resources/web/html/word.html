@@ -11,11 +11,13 @@
         title="Mathematics is an area of knowledge that includes the topics of numbers and formulas"
         data-toggle="tooltip">Mathematics</span><br>with link:<a href="/http/view.php?m=44&id=1"
                                                                  title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">Mathematics</a><br>
-    <h4>buttons</h4>add button:<a href="/http/view.php?m=2&id=1" title="add new word"><i class="far fa-plus-square"></i></a><br>edit
-    button:<a href="/http/view.php?m=3&id=1" title="rename word"><i class="far fa-edit"></i></a><br>del button:<a
-            href="/http/view.php?m=4&id=1" title="delete word"><i class="far fa-times-circle"></i></a><br>unlink button:<a
-            href="/http/link_del.php?id=1&back=1" title="Unlink word"><i class="far fa-times-circle"></i></a><br><h4>
-        select</h4>
+    <h4>buttons</h4>add button:<a href="/http/view.php?m=word_add&id=1" title="add new word"><i
+            class="far fa-plus-square"></i></a><br>edit button:<a href="/http/view.php?m=word_edit&id=1"
+                                                                  title="rename word"><i
+            class="far fa-edit"></i></a><br>del button:<a href="/http/view.php?m=word_del&id=1" title="delete word"><i
+            class="far fa-times-circle"></i></a><br>unlink button:<a href="/http/link_del.php?id=1&back=1"
+                                                                     title="Unlink word"><i
+            class="far fa-times-circle"></i></a><br><h4>select</h4>
     <form action="/http/view.php" id="word_edit">
         <div class="form-group col-md-4"><label for="phrase type">type:</label><select class="form-control"
                                                                                        name="phrase type"
@@ -90,7 +92,8 @@
             <td><a href="/http/view.php?m=44&id=1"
                    title="Mathematics is an area of knowledge that includes the topics of numbers and formulas">Mathematics</a>
             </td>
-            <td><a href="/http/view.php?m=4&id=1" title="delete word"><i class="far fa-times-circle"></i></a></td>
+            <td><a href="/http/view.php?m=word_del&id=1" title="delete word"><i class="far fa-times-circle"></i></a>
+            </td>
         </tr>
     </table>
     <br>unlink in columns:

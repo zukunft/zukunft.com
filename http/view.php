@@ -57,17 +57,30 @@ include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_CONST_PATH . 'views.php';
 
+use cfg\component\component;
+use cfg\formula\formula;
+use cfg\ref\ref;
 use cfg\ref\source;
+use cfg\result\result;
 use cfg\user\user;
 use cfg\value\value;
+use cfg\verb\verb;
+use cfg\view\view;
+use cfg\word\triple;
 use cfg\word\word;
 use html\frontend;
 use html\html_base;
-use html\ref\source as source_dsp;
 use html\rest_ctrl;
 use html\types\type_lists as type_lists_dsp;
+use html\component\component as component_dsp;
+use html\formula\formula as formula_dsp;
+use html\result\result as result_dsp;
+use html\ref\ref as ref_dsp;
+use html\ref\source as source_dsp;
 use html\value\value as value_dsp;
+use html\verb\verb as verb_dsp;
 use html\view\view as view_dsp;
+use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use shared\api;
 use shared\const\views as view_shared;
@@ -83,10 +96,6 @@ $confirm = $_GET[api::URL_VAR_CONFIRM] ?? 0; // the database id of the prime obj
 $new_view_id = $_GET[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
 $view_words = $_GET[api::URL_VAR_WORDS] ?? '';
 $back = $_GET[api::URL_VAR_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
-
-// TODO remove these test vars
-$view = 'value_edit';
-$id = '....0C+....0e+....14+....16+....1A+......+......+......+......+......+......+......+......+......+......+......+';
 
 // init the view
 global $sys_msk_cac;
@@ -124,12 +133,33 @@ if ($usr->id() > 0) {
     if (in_array($view_id, view_shared::WORD_MASKS_IDS)) {
         $dbo_dsp = new word_dsp();
         $dbo = new word($usr);
+    } elseif (in_array($view_id, view_shared::VERB_MASKS_IDS)) {
+        $dbo_dsp = new verb_dsp();
+        $dbo = new verb();
+    } elseif (in_array($view_id, view_shared::TRIPLE_MASKS_IDS)) {
+        $dbo_dsp = new triple_dsp();
+        $dbo = new triple($usr);
     } elseif (in_array($view_id, view_shared::SOURCE_MASKS_IDS)) {
         $dbo_dsp = new source_dsp();
         $dbo = new source($usr);
+    } elseif (in_array($view_id, view_shared::REF_MASKS_IDS)) {
+        $dbo_dsp = new ref_dsp();
+        $dbo = new ref($usr);
     } elseif (in_array($view_id, view_shared::VALUE_MASKS_IDS)) {
         $dbo_dsp = new value_dsp();
         $dbo = new value($usr);
+    } elseif (in_array($view_id, view_shared::FORMULA_MASKS_IDS)) {
+        $dbo_dsp = new formula_dsp();
+        $dbo = new formula($usr);
+    } elseif (in_array($view_id, view_shared::RESULT_MASKS_IDS)) {
+        $dbo_dsp = new result_dsp();
+        $dbo = new result($usr);
+    } elseif (in_array($view_id, view_shared::VIEW_MASKS_IDS)) {
+        $dbo_dsp = new view_dsp();
+        $dbo = new view($usr);
+    } elseif (in_array($view_id, view_shared::COMPONENT_MASKS_IDS)) {
+        $dbo_dsp = new component_dsp();
+        $dbo = new component($usr);
     } else {
         $dbo_dsp = new word_dsp();
         $dbo = new word($usr);

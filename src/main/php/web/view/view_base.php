@@ -233,7 +233,7 @@ class view_base extends sandbox_typed
     function btn_add(string $back = ''): string
     {
         return parent::btn_add_sbx(
-            views::VIEW_ADD_ID,
+            views::VIEW_ADD,
             messages::VIEW_ADD,
             $back);
     }
@@ -245,7 +245,7 @@ class view_base extends sandbox_typed
     function btn_edit(string $back = ''): string
     {
         return parent::btn_edit_sbx(
-            views::VIEW_EDIT_ID,
+            views::VIEW_EDIT,
             messages::VIEW_EDIT,
             $back);
     }
@@ -258,7 +258,7 @@ class view_base extends sandbox_typed
     function btn_del(string $back = ''): string
     {
         return parent::btn_del_sbx(
-            views::VERB_DEL_ID,
+            views::VERB_DEL,
             messages::VALUE_DEL,
             $back);
     }

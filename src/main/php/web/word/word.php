@@ -315,7 +315,7 @@ class word extends sandbox_typed
     function btn_add(string $back = ''): string
     {
         return parent::btn_add_sbx(
-            views::WORD_ADD_ID,
+            views::WORD_ADD,
             messages::WORD_ADD,
             $back);
     }
@@ -327,7 +327,7 @@ class word extends sandbox_typed
     function btn_edit(string $back = ''): string
     {
         return parent::btn_edit_sbx(
-            views::WORD_EDIT_ID,
+            views::WORD_EDIT,
             messages::WORD_EDIT,
             $back);
     }
@@ -340,7 +340,7 @@ class word extends sandbox_typed
     function btn_del(string $back = ''): string
     {
         return parent::btn_del_sbx(
-            views::WORD_DEL_ID,
+            views::WORD_DEL,
             messages::WORD_DEL,
             $back);
     }

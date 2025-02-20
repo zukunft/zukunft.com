@@ -151,37 +151,56 @@ class sandbox extends db_object_dsp
      */
 
     /**
+     * create the html code to add a sandbox object for the current user
+     *
+     * @param int|string $msk_id the code id or database id of the view used to add the object
+     * @param string $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
+     * @param string $back the backtrace for the return page after adding the object and for undo actions
      * @return string the html code for a bottom
-     * to create a new sandbox object for the current user
      */
-    function btn_add_sbx(int $msk_id, string $msg_code_id, string $back = ''): string
+    function btn_add_sbx(int|string $msk_id, string $msg_code_id, string $back = ''): string
     {
         $btn = $this->btn_sbx($msk_id, $back);
         return $btn->add($msg_code_id);
     }
 
     /**
+     * html code to change a sandbox object e.g. the name or the type
+     *
+     * @param int|string $msk_id the code id or database id of the view used to add the object
+     * @param string $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
+     * @param string $back the backtrace for the return page after adding the object and for undo actions
      * @return string the html code for a bottom
-     * to change a sandbox object e.g. the name or the type
      */
-    function btn_edit_sbx(int $msk_id, string $msg_code_id, string $back = ''): string
+    function btn_edit_sbx(int|string $msk_id, string $msg_code_id, string $back = ''): string
     {
         $btn = $this->btn_sbx($msk_id, $back);
-        return $btn->edit(messages::WORD_EDIT);
+        return $btn->edit($msg_code_id);
     }
 
     /**
-     * @return string the html code for a bottom
-     * to exclude the sandbox object for the current user
+     * html code to exclude the sandbox object for the current user
      * or if no one uses the word delete the complete word
+     *
+     * @param int|string $msk_id the code id or database id of the view used to add the object
+     * @param string $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
+     * @param string $back the backtrace for the return page after adding the object and for undo actions
+     * @return string the html code for a bottom
      */
-    function btn_del_sbx(int $msk_id, string $msg_code_id, string $back = ''): string
+    function btn_del_sbx(int|string $msk_id, string $msg_code_id, string $back = ''): string
     {
         $btn = $this->btn_sbx($msk_id, $back);
-        return $btn->del(messages::WORD_DEL);
+        return $btn->del($msg_code_id);
     }
 
-    private function btn_sbx(int $msk_id, string $back = ''): button
+    /**
+     * create the html code for a button
+     *
+     * @param int|string $msk_id the code id or database id of the view used to add the object
+     * @param string $back the backtrace for the return page after adding the object and for undo actions
+     * @return button the filled bottom object
+     */
+    private function btn_sbx(int|string $msk_id, string $back = ''): button
     {
         $html = new html_base();
         $url = $html->url_new($msk_id, $this->id(), '', $back);

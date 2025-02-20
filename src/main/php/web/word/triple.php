@@ -365,7 +365,7 @@ class triple extends sandbox_typed
     function btn_add(string $back = ''): string
     {
         return parent::btn_add_sbx(
-            views::TRIPLE_ADD_ID,
+            views::TRIPLE_ADD,
             messages::TRIPLE_ADD,
             $back);
     }
@@ -377,7 +377,7 @@ class triple extends sandbox_typed
     function btn_edit(string $back = ''): string
     {
         return parent::btn_edit_sbx(
-            views::TRIPLE_EDIT_ID,
+            views::TRIPLE_EDIT,
             messages::TRIPLE_EDIT,
             $back);
     }
@@ -390,7 +390,7 @@ class triple extends sandbox_typed
     function btn_del(string $back = ''): string
     {
         return parent::btn_del_sbx(
-            views::TRIPLE_DEL_ID,
+            views::TRIPLE_DEL,
             messages::TRIPLE_DEL,
             $back);
     }
