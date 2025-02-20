@@ -34,6 +34,7 @@ namespace unit_ui;
 
 include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once SHARED_CONST_PATH . 'views.php';
+include_once WEB_COMPONENT_PATH . 'component_exe.php';
 include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_RESULT_PATH . 'result_list.php';
@@ -49,7 +50,7 @@ use cfg\verb\verb;
 use cfg\verb\verb_list;
 use html\verb\verb_list as verb_list_dsp;
 use html\button;
-use html\component\component as component_dsp;
+use html\component\component_exe as component_dsp;
 use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\result\result as result_dsp;

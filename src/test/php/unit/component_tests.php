@@ -38,7 +38,7 @@ use cfg\component\component;
 use cfg\component\component_type;
 use cfg\db\sql_creator;
 use cfg\db\sql_type;
-use html\component\component as component_dsp;
+use html\component\component_exe as component_dsp;
 use shared\const\components;
 use shared\const\views;
 use test\test_cleanup;

@@ -107,7 +107,7 @@ use cfg\word\triple_list;
 use cfg\word\word;
 use cfg\word\word_list;
 use Exception;
-use html\component\component as component_dsp;
+use html\component\component_exe as component_dsp;
 use html\formula\formula as formula_dsp;
 use html\helper\data_object as data_object_dsp;
 use html\html_base;

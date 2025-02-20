@@ -32,7 +32,7 @@
 
 namespace unit_ui;
 
-use html\component\component as component_dsp;
+use html\component\component_exe as component_dsp;
 use html\html_base;
 use shared\const\components;
 use test\test_cleanup;

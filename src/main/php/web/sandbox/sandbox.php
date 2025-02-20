@@ -238,7 +238,7 @@ class sandbox extends db_object_dsp
      * @param string $form_name the name of the html form
      * @return string the html code to select the share type
      */
-    protected function share_type_selector(string $form_name): string
+    public function share_type_selector(string $form_name): string
     {
         global $usr;
         global $html_share_types;
@@ -257,7 +257,7 @@ class sandbox extends db_object_dsp
      * @param string $form_name the name of the html form
      * @return string the html code to select the share type
      */
-    protected function protection_type_selector(string $form_name): string
+    public function protection_type_selector(string $form_name): string
     {
         global $usr;
         global $html_protection_types;

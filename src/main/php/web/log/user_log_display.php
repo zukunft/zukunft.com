@@ -37,7 +37,7 @@ include_once DB_PATH . 'sql_db.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_COMPONENT_PATH . 'component.php';
+include_once WEB_COMPONENT_PATH . 'component_exe.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
@@ -49,7 +49,7 @@ include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_ENUM_PATH . 'change_fields.php';
 include_once SHARED_PATH . 'library.php';
 
-use html\component\component;
+use html\component\component_exe as component;
 use html\formula\formula;
 use html\rest_ctrl;
 use html\button;

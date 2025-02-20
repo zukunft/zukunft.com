@@ -42,7 +42,7 @@ use cfg\view\view;
 use cfg\word\word;
 use html\html_base;
 use html\view\view as view_dsp;
-use html\component\component as component_dsp;
+use html\component\component_exe as component_dsp;
 use shared\api;
 use shared\json_fields;
 

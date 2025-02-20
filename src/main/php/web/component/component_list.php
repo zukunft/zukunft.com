@@ -32,11 +32,11 @@
 namespace html\component;
 
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_COMPONENT_PATH . 'component.php';
+include_once WEB_COMPONENT_PATH . 'component_exe.php';
 include_once WEB_USER_PATH . 'user_message.php';
 
 use html\sandbox\list_dsp;
-use html\component\component;
+use html\component\component_exe as component;
 use html\user\user_message;
 
 class component_list extends list_dsp

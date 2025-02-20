@@ -277,7 +277,7 @@ class db_object extends TextIdObject
      * @param string $form the name of the html form
      * @return string the html code to select the phrase type
      */
-    protected function phrase_type_selector(string $form): string
+    public function phrase_type_selector(string $form): string
     {
         $msg = 'phrase type selector not defined for ' . $this::class;
         log_err($msg);
@@ -288,7 +288,7 @@ class db_object extends TextIdObject
      * @param string $form_name the name of the html form
      * @return string the html code to select the phrase type
      */
-    protected function source_type_selector(string $form_name): string
+    public function source_type_selector(string $form_name): string
     {
         $msg = 'source type selector not defined for ' . $this::class;
         log_err($msg);
@@ -299,7 +299,7 @@ class db_object extends TextIdObject
      * @param string $form_name the name of the html form
      * @return string the html code to select the share type
      */
-    protected function share_type_selector(string $form_name): string
+    public function share_type_selector(string $form_name): string
     {
         $msg = 'share type selector not defined for ' . $this::class;
         log_err($msg);
@@ -310,7 +310,7 @@ class db_object extends TextIdObject
      * @param string $form_name the name of the html form
      * @return string the html code to select the protection type
      */
-    protected function protection_type_selector(string $form_name): string
+    public function protection_type_selector(string $form_name): string
     {
         $msg = 'protection type selector not defined for ' . $this::class;
         log_err($msg);
@@ -327,7 +327,7 @@ class db_object extends TextIdObject
      * @param phrase_dsp|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
      * @return string with the HTML code to show the phrase selector
      */
-    protected function phrase_selector_old(
+    public function phrase_selector_old(
         string      $name,
         string      $form,
         string      $label = '',
@@ -348,7 +348,7 @@ class db_object extends TextIdObject
      * @param view_list $msk_lst with the suggested views
      * @return string the html code to select a view
      */
-    protected function view_selector(string $form, view_list $msk_lst): string
+    public function view_selector(string $form, view_list $msk_lst): string
     {
         $msg = 'view selector not defined for ' . $this::class;
         log_err($msg);
@@ -359,7 +359,7 @@ class db_object extends TextIdObject
      * @param string $form the name of the html form
      * @return string the html code to select a phrase
      */
-    protected function verb_selector(string $form): string
+    public function verb_selector(string $form): string
     {
         $msg = 'verb selector not defined for ' . $this::class;
         log_err($msg);

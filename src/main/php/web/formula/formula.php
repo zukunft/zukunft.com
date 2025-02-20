@@ -508,7 +508,7 @@ class formula extends sandbox_typed
      * @param phrase|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
      * @return string with the HTML code to show the phrase selector
      */
-    protected function phrase_selector_old(
+    public function phrase_selector_old(
         string      $name,
         string      $form,
         string      $label = '',

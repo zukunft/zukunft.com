@@ -406,7 +406,7 @@ class triple extends sandbox_typed
      * @param string $form the name of the html form
      * @return string the html code to select the phrase type
      */
-    function phrase_type_selector(string $form): string
+    public function phrase_type_selector(string $form): string
     {
         global $html_phrase_types;
         $used_phrase_id = $this->type_id();
@@ -486,7 +486,7 @@ class triple extends sandbox_typed
      * @param phrase_dsp|null $phr the context to select the phrases, which is until now just the phrase
      * @return string the html code to select a phrase
      */
-    protected function phrase_selector_old(
+    public function phrase_selector_old(
         string      $name,
         string      $form,
         string      $label = '',
@@ -505,7 +505,7 @@ class triple extends sandbox_typed
      * @param string $form the name of the html form
      * @return string the html code to select a phrase
      */
-    function verb_selector(string $form): string
+    public function verb_selector(string $form): string
     {
         global $html_verbs;
         if ($this->verb != null) {

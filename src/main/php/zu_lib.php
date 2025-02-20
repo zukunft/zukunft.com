@@ -682,7 +682,7 @@ use cfg\view\view_link_type;
 use cfg\view\view_type;
 use cfg\word\triple;
 use cfg\word\word;
-use html\component\component;
+use html\component\component_exe as component;
 use html\html_base;
 use html\view\view as view_dsp;
 use shared\library;

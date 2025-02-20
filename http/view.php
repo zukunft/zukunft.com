@@ -71,8 +71,8 @@ use cfg\word\word;
 use html\frontend;
 use html\html_base;
 use html\rest_ctrl;
-use html\types\type_lists as type_lists_dsp;
-use html\component\component as component_dsp;
+use html\types\type_lists;
+use html\component\component_exe as component_dsp;
 use html\formula\formula as formula_dsp;
 use html\result\result as result_dsp;
 use html\ref\ref as ref_dsp;
@@ -112,8 +112,8 @@ if ($usr->id() > 0) {
     // TODO move to the frontend __construct
     // get the fixed frontend config
     $main = new frontend('view');
-    $api_msg = $main->api_get(type_lists_dsp::class);
-    $frontend_cache = new type_lists_dsp($api_msg);
+    $api_msg = $main->api_get(type_lists::class);
+    $frontend_cache = new type_lists($api_msg);
 
     $usr->load_usr_data();
 
