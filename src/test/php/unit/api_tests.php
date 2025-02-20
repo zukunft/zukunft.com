@@ -221,9 +221,9 @@ class api_tests
         $t->assert_view(views::SOURCE_ADD, $t->usr1, new source($t->usr1));
         $t->assert_view(views::SOURCE_EDIT, $t->usr1, new source($t->usr1), 1);
         $t->assert_view(views::SOURCE_DEL, $t->usr1, new source($t->usr1), 1);
-        // TODO add
-        //REF
-        //VALUE
+        // TODO add:
+        // REF
+        // VALUE
         // GROUP
         // FORMULA
         // FORMULA TEST

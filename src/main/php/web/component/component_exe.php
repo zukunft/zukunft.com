@@ -38,33 +38,17 @@
 namespace html\component;
 
 include_once WEB_COMPONENT_PATH . 'component.php';
-include_once DB_PATH . 'sql_db.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'sheet.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_HELPER_PATH . 'data_object.php';
 include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_SYSTEM_PATH . 'messages.php';
-include_once WEB_TYPES_PATH . 'view_style_list.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_CONST_PATH . 'words.php';
+include_once WEB_HTML_PATH . 'sheet.php';
+include_once WEB_FORM_PATH . 'system_form.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'library.php';
 
 use html\helper\data_object as data_object_dsp;
-use html\html_base;
-use html\phrase\phrase as phrase_dsp;
 use html\sandbox\db_object as db_object_dsp;
 use html\sheet;
-use html\system\messages;
-use shared\api;
-use shared\library;
-use shared\const\views;
-use shared\const\words;
+use html\component\form\system_form;
 use shared\types\component_type;
-use shared\types\view_styles;
 
 class component_exe extends component
 {
@@ -100,6 +84,8 @@ class component_exe extends component
 
         $result = '';
 
+        $form = new system_form();
+
         // list of all possible view components
         $result .= match ($this->type_code_id()) {
             // start page
@@ -107,27 +93,27 @@ class component_exe extends component
             component_type::CALC_SHEET => $this->calc_sheet(),
 
             // system form - usage only allowed for internal system forms
-            component_type::FORM_TITLE => $this->form_tile($form_name),
-            component_type::FORM_BACK => $this->form_back($msk_id, $dbo->id(), $back),
-            component_type::FORM_CONFIRM => $this->form_confirm($dbo, $back),
-            component_type::SHOW_NAME => $this->show_name($dbo, $back),
-            component_type::FORM_NAME => $this->form_name($dbo, $back),
-            component_type::FORM_DESCRIPTION => $this->form_description($dbo, $back),
-            component_type::FORM_PHRASE => $this->form_phrase($dbo, $test_mode),
-            component_type::FORM_VERB_SELECTOR => $this->form_verb($dbo, $form_name),
-            component_type::FORM_PHRASE_TYPE => $this->form_phrase_type($dbo, $form_name),
-            component_type::FORM_SOURCE_TYPE => $this->form_source_type($dbo, $form_name),
-            component_type::FORM_SHARE_TYPE => $this->form_share_type($dbo, $form_name),
-            component_type::FORM_PROTECTION_TYPE => $this->form_protection_type($dbo, $form_name),
-            component_type::FORM_CANCEL => $this->form_cancel($msk_id, $dbo->id()),
-            component_type::FORM_SAVE => $this->form_save($dbo, $back),
-            component_type::FORM_DEL => $this->form_del($dbo, $back),
-            component_type::FORM_END => $this->form_end(),
+            component_type::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
+            component_type::FORM_BACK => $form->form_back($msk_id, $dbo->id(), $back),
+            component_type::FORM_CONFIRM => $form->form_confirm(),
+            component_type::SHOW_NAME => $form->show_name($dbo),
+            component_type::FORM_NAME => $form->form_name($dbo, $this->style_text()),
+            component_type::FORM_DESCRIPTION => $form->form_description($dbo),
+            component_type::FORM_PHRASE => $form->form_phrase($dbo, $test_mode, $this->name),
+            component_type::FORM_VERB_SELECTOR => $form->form_verb($dbo, $form_name),
+            component_type::FORM_PHRASE_TYPE => $form->form_phrase_type($dbo, $form_name),
+            component_type::FORM_SOURCE_TYPE => $form->form_source_type($dbo, $form_name),
+            component_type::FORM_SHARE_TYPE => $form->form_share_type($dbo, $form_name),
+            component_type::FORM_PROTECTION_TYPE => $form->form_protection_type($dbo, $form_name),
+            component_type::FORM_CANCEL => $form->form_cancel($msk_id, $dbo->id()),
+            component_type::FORM_SAVE => $form->form_save(),
+            component_type::FORM_DEL => $form->form_del(),
+            component_type::FORM_END => $form->form_end(),
 
             // hidden - only used for formatting without functional behaviour
-            component_type::ROW_START => $this->row_start(),
-            component_type::ROW_RIGHT => $this->row_right(),
-            component_type::ROW_END => $this->row_end(),
+            component_type::ROW_START => $form->row_start(),
+            component_type::ROW_RIGHT => $form->row_right(),
+            component_type::ROW_END => $form->row_end(),
 
             // view only -
             component_type::USAGE_WORD => $this->usage_word($dbo, $form_name),
@@ -380,261 +366,12 @@ class component_exe extends component
     }
 
     /**
-     * start an HTML form, show the title and set and set the unique form name
-     * @param string $form_name the name of the view which is also used for the html form name
-     * @return string the html code to start a new form and display the tile
-     */
-    function form_tile(string $form_name): string
-    {
-        $html = new html_base();
-        $ui_msg = new messages();
-        $result = '';
-        if ($this->ui_msg_code_id != null) {
-            $result .= $html->text_h2($ui_msg->txt($this->ui_msg_code_id));
-        }
-        $result .= $html->form_start($form_name);
-        return $result;
-    }
-
-    /**
-     * create the HTML code to select this and the previous views
-     *
-     * @param int $msk_id the database id of the view that should be shown
-     * @param int|null $id the database id of the object that should be shown in the view
-     * @param string $back the history of the views and actions for the back und undo function
-     * @return string the html code to include the back trace into the form result
-     */
-    function form_back(int $msk_id, ?int $id, string $back): string
-    {
-        $result = '';
-        $html = new html_base();
-        $result .= $html->input(api::URL_VAR_MASK, $msk_id, html_base::INPUT_HIDDEN);
-        $result .= $html->input(api::URL_VAR_ID, $id, html_base::INPUT_HIDDEN);
-        $result .= $html->input(api::URL_VAR_BACK, $back, html_base::INPUT_HIDDEN);
-        return $result;
-    }
-
-    /**
-     * @return string the html code to check if the form changes has already confirmed by the user
-     */
-    function form_confirm(): string
-    {
-        $html = new html_base();
-        return $html->input('confirm', '1', html_base::INPUT_HIDDEN);
-    }
-
-    /**
-     * @param db_object_dsp $dbo the object
-     * @return string the html code to show the object name to the user
-     */
-    function show_name(db_object_dsp $dbo): string
-    {
-        return $dbo->name();
-    }
-
-    /**
-     * @param db_object_dsp $dbo the object
-     * @return string the html code to request the object name from the user
-     */
-    function form_name(db_object_dsp $dbo): string
-    {
-        $html = new html_base();
-        return $html->form_field(
-            api::URL_VAR_NAME,
-            $dbo->name(),
-            html_base::INPUT_TEXT,
-            '', $this->style_text()
-        );
-    }
-
-    /**
-     * @return string the html code to request the description from the user
-     */
-    function form_description(db_object_dsp $dbo): string
-    {
-        $html = new html_base();
-        return $html->form_field(
-            api::URL_VAR_DESCRIPTION,
-            $dbo->description(),
-            html_base::INPUT_TEXT,
-            '',
-            view_styles::COL_SM_12
-        );
-    }
-
-    /**
-     * TODO replace _add with a parameter value
-     * TODO move form_field_triple_phrase_to to a const
-     * TODO remove fixed pattern
-     * @return string the html code to request the description from the user
-     */
-    function form_phrase(db_object_dsp $dbo, bool $test_mode = false): string
-    {
-        $lib = new library();
-        $form_name = $lib->class_to_name($dbo::class) . '_add';
-        // TODO use a pattern base on user entry
-        $pattern = '';
-        if ($test_mode) {
-            $pattern = words::MATH;
-        }
-        // TODO activate Prio 3
-        //if ($this->code_id == 'form_field_triple_phrase_from') {
-        if ($this->name == 'system form triple phrase from') {
-            return $dbo->phrase_selector_old('from', $form_name, 'from:', '', $dbo->id(), $pattern);
-        } else {
-            return $dbo->phrase_selector_old('to', $form_name, 'to:', '', $dbo->id(), $pattern);
-        }
-    }
-
-    /**
-     * create the html code for the form element to select the phrase type
-     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
-     * @param string $form_name the name of the view which is also used for the html form name
-     * @return string the html code to select the verb
-     */
-    function form_verb(db_object_dsp $dbo, string $form_name): string
-    {
-        return $dbo->verb_selector($form_name);
-    }
-
-    /**
-     * create the html code for the form element to select the phrase type
-     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
-     * @param string $form_name the name of the view which is also used for the html form name
-     * @return string the html code to select the phrase type
-     */
-    function form_phrase_type(db_object_dsp $dbo, string $form_name): string
-    {
-        return $dbo->phrase_type_selector($form_name);
-    }
-
-    /**
-     * create the html code for the form element to select the source type
-     * @param db_object_dsp $dbo the frontend source object with the type used until now
-     * @param string $form_name the name of the view which is also used for the html form name
-     * @return string the html code to select the source type
-     */
-    function form_source_type(db_object_dsp $dbo, string $form_name): string
-    {
-        return $dbo->source_type_selector($form_name);
-    }
-
-    /**
-     * create the html code for the form element to select the share type
-     * @param db_object_dsp $dbo the frontend object with the type used until now
-     * @param string $form_name the name of the view which is also used for the html form name
-     * @return string the html code to select the share type
-     */
-    function form_share_type(db_object_dsp $dbo, string $form_name): string
-    {
-        return $dbo->share_type_selector($form_name);
-    }
-
-    /**
-     * create the html code for the form element to select the protection type
-     * @param db_object_dsp $dbo the frontend object with the type used until now
-     * @param string $form_name the name of the view which is also used for the html form name
-     * @return string the html code to select the protection type
-     */
-    function form_protection_type(db_object_dsp $dbo, string $form_name): string
-    {
-        return $dbo->protection_type_selector($form_name);
-    }
-
-    /**
-     * @return string the html code for a form cancel button
-     */
-    function form_cancel(int $msk_id, ?int $id): string
-    {
-        $html = new html_base();
-        $views = new views();
-        $msk_ci = $views->id_to_code_id($msk_id);
-        $base_ci = $views->system_to_base($msk_ci);
-        $base_id = $views->code_id_to_id($base_ci);
-        $result = '';
-        $url = api::HOST_SAME . api::MAIN_SCRIPT
-            . api::URL_PAR . api::URL_VAR_MASK . api::URL_EQ . $base_id;
-        if ($id != 0) {
-            $url .= api::URL_ADD . api::URL_VAR_ID . api::URL_EQ . $id;
-        }
-        $result .= $html->ref($url, 'Cancel', '', html_base::BS_BTN . ' ' . html_base::BS_BTN_CANCEL);
-        return $result;
-    }
-
-    /**
-     * @return string the html code for a form save button
-     */
-    function form_save(): string
-    {
-        $html = new html_base();
-        return $html->button('Save');
-    }
-
-    /**
-     * @return string the html code for a form save button
-     */
-    function form_del(): string
-    {
-        $html = new html_base();
-        return $html->button('Delete', html_base::BS_BTN_DEL);
-    }
-
-    /**
-     * @return string that simply closes the form
-     */
-    function form_end(): string
-    {
-        $html = new html_base();
-        return $html->form_end();
-    }
-
-    /**
-     * @return string combine the next elements to one row
-     */
-    function row_start(): string
-    {
-        $html = new html_base();
-        return $html->row_start();
-    }
-
-    /**
-     * @return string combine the next elements to one row and align to the right
-     */
-    function row_right(): string
-    {
-        $html = new html_base();
-        return $html->row_right();
-    }
-
-    /**
-     * @return string just to indicate that a row ends
-     */
-    function row_end(): string
-    {
-        $html = new html_base();
-        return $html->row_end();
-    }
-
-    /**
      * @return string just to indicate that a row ends
      */
     function calc_sheet(): string
     {
         $sheet = new sheet();
         return $sheet->calc_sheet();
-    }
-
-    /**
-     * @return string the name of a phrase and give the user the possibility to change the phrase name
-     */
-    function word_name(phrase_dsp $phr): string
-    {
-        global $cmp_typ_cac;
-        if ($cmp_typ_cac->code_id($this->type_id()) == component_type::PHRASE_NAME) {
-            return $phr->name();
-        } else {
-            return '';
-        }
     }
 
 }

@@ -523,6 +523,19 @@ class component extends sandbox_typed
     }
 
     /**
+     * @return string the name of a phrase and give the user the possibility to change the phrase name
+     */
+    function word_name(phrase_dsp $phr): string
+    {
+        global $cmp_typ_cac;
+        if ($cmp_typ_cac->code_id($this->type_id()) == component_type::PHRASE_NAME) {
+            return $phr->name();
+        } else {
+            return '';
+        }
+    }
+
+    /**
      * @param string $script the name of the html form
      * @param string $col_class the formatting code to adjust the formatting
      * @return string with the HTML code to show the component word_row selector

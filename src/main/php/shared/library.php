@@ -1051,6 +1051,7 @@ class library
             'html\view' => 'WEB_VIEW_PATH',
             'html\component' => 'WEB_COMPONENT_PATH',
             'html\component\sheet' => 'WEB_SHEET_PATH',
+            'html\component\form' => 'WEB_FORM_PATH',
             'shared' => 'SHARED_PATH',
             'shared\calc' => 'SHARED_CALC_PATH',
             'shared\const' => 'SHARED_CONST_PATH',
