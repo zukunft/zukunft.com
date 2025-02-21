@@ -1257,26 +1257,45 @@
         },
         {
           "position": "4",
-          "name": "system form field name"
+          "name": "system form field name",
+          "style": "col-md-8"
         },
         {
           "position": "5",
-          "name": "system form field description"
+          "name": "system form select formula type",
+          "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system form select formula type"
+          "name": "system form field description"
         },
         {
           "position": "7",
-          "name": "system form button cancel"
+          "name": "system form select share type"
         },
         {
           "position": "8",
-          "name": "system form button save"
+          "name": "system form select protection type",
+          "position_type": "side"
         },
         {
           "position": "9",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "10",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "11",
+          "name": "system form button save"
+        },
+        {
+          "position": "12",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "13",
           "name": "system form end"
         }
       ]
@@ -1330,26 +1349,45 @@
         },
         {
           "position": "4",
-          "name": "system form field name"
+          "name": "system form field name",
+          "style": "col-md-8"
         },
         {
           "position": "5",
-          "name": "system form field description"
+          "name": "system form select view type",
+          "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system form select view type"
+          "name": "system form field description"
         },
         {
           "position": "7",
-          "name": "system form button cancel"
+          "name": "system form select share type"
         },
         {
           "position": "8",
-          "name": "system form button save"
+          "name": "system form select protection type",
+          "position_type": "side"
         },
         {
           "position": "9",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "10",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "11",
+          "name": "system form button save"
+        },
+        {
+          "position": "12",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "13",
           "name": "system form end"
         }
       ]
@@ -1389,26 +1427,45 @@
         },
         {
           "position": "4",
-          "name": "system form field name"
+          "name": "system form field name",
+          "style": "col-md-8"
         },
         {
           "position": "5",
-          "name": "system form field description"
+          "name": "system form select component type",
+          "position_type": "side"
         },
         {
           "position": "6",
-          "name": "system form select component type"
+          "name": "system form field description"
         },
         {
           "position": "7",
-          "name": "system form button cancel"
+          "name": "system form select share type"
         },
         {
           "position": "8",
-          "name": "system form button save"
+          "name": "system form select protection type",
+          "position_type": "side"
         },
         {
           "position": "9",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "10",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "11",
+          "name": "system form button save"
+        },
+        {
+          "position": "12",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "13",
           "name": "system form end"
         }
       ]

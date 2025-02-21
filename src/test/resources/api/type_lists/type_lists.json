@@ -8483,59 +8483,100 @@
             "code_id": "form_field_name",
             "ui_msg_code_id": "form_field_name",
             "position": 4,
-            "position_type": 1
+            "position_type": 1,
+            "style": 2
           },
           {
             "link_id": 155,
-            "id": 40,
-            "name": "system form field description",
-            "description": "the description field in a form",
-            "type_id": 22,
-            "code_id": "form_field_description",
-            "ui_msg_code_id": "form_field_description",
-            "position": 5,
-            "position_type": 1
-          },
-          {
-            "link_id": 156,
             "id": 47,
             "name": "system form select formula type",
             "description": "selector for the formula type",
             "type_id": 49,
             "code_id": "form_field_formula_type",
             "ui_msg_code_id": "form_select_formula_type",
+            "position": 5,
+            "position_type": 2
+          },
+          {
+            "link_id": 156,
+            "id": 40,
+            "name": "system form field description",
+            "description": "the description field in a form",
+            "type_id": 22,
+            "code_id": "form_field_description",
+            "ui_msg_code_id": "form_field_description",
             "position": 6,
             "position_type": 1
           },
           {
             "link_id": 157,
+            "id": 50,
+            "name": "system form select share type",
+            "description": "selector for the share type",
+            "type_id": 26,
+            "code_id": "form_field_share_type",
+            "ui_msg_code_id": "form_select_share",
+            "position": 7,
+            "position_type": 1
+          },
+          {
+            "link_id": 158,
+            "id": 51,
+            "name": "system form select protection type",
+            "description": "selector for the protection type",
+            "type_id": 27,
+            "code_id": "form_field_protection_type",
+            "ui_msg_code_id": "form_select_protection",
+            "position": 8,
+            "position_type": 2
+          },
+          {
+            "link_id": 159,
+            "id": 57,
+            "name": "system formatter row right",
+            "type_id": 33,
+            "code_id": "row_right",
+            "position": 9,
+            "position_type": 1
+          },
+          {
+            "link_id": 160,
             "id": 52,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
             "code_id": "form_cancel_button",
             "ui_msg_code_id": "form_button_cancel",
-            "position": 7,
+            "position": 10,
             "position_type": 1
           },
           {
-            "link_id": 158,
+            "link_id": 161,
             "id": 53,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
             "code_id": "form_button_save",
             "ui_msg_code_id": "form_button_save",
-            "position": 8,
+            "position": 11,
             "position_type": 1
           },
           {
-            "link_id": 159,
+            "link_id": 162,
+            "id": 58,
+            "name": "system formatter row end",
+            "type_id": 34,
+            "code_id": "row_end",
+            "position": 12,
+            "position_type": 1
+          },
+          {
+            "link_id": 163,
             "id": 55,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
-            "position": 9,
+            "position": 13,
             "position_type": 1
           }
         ]
@@ -8585,7 +8626,7 @@
         "code_id": "view_add",
         "components": [
           {
-            "link_id": 160,
+            "link_id": 164,
             "id": 30,
             "name": "system form title view add",
             "description": "show the language specific title for the system form to add a new view",
@@ -8596,7 +8637,7 @@
             "position_type": 1
           },
           {
-            "link_id": 161,
+            "link_id": 165,
             "id": 36,
             "name": "system form hidden back stack",
             "description": "field that contains the stack for the undo actions",
@@ -8606,7 +8647,7 @@
             "position_type": 1
           },
           {
-            "link_id": 162,
+            "link_id": 166,
             "id": 37,
             "name": "system form hidden confirm status",
             "description": "switch on that the form saving needs an extra confirm by the user",
@@ -8616,7 +8657,7 @@
             "position_type": 1
           },
           {
-            "link_id": 163,
+            "link_id": 167,
             "id": 39,
             "name": "system form field name",
             "description": "the name field in a form",
@@ -8624,59 +8665,100 @@
             "code_id": "form_field_name",
             "ui_msg_code_id": "form_field_name",
             "position": 4,
-            "position_type": 1
+            "position_type": 1,
+            "style": 2
           },
           {
-            "link_id": 164,
-            "id": 40,
-            "name": "system form field description",
-            "description": "the description field in a form",
-            "type_id": 22,
-            "code_id": "form_field_description",
-            "ui_msg_code_id": "form_field_description",
-            "position": 5,
-            "position_type": 1
-          },
-          {
-            "link_id": 165,
+            "link_id": 168,
             "id": 48,
             "name": "system form select view type",
             "description": "selector for the view type",
             "type_id": 50,
             "code_id": "form_field_view_type",
             "ui_msg_code_id": "form_select_view_type",
+            "position": 5,
+            "position_type": 2
+          },
+          {
+            "link_id": 169,
+            "id": 40,
+            "name": "system form field description",
+            "description": "the description field in a form",
+            "type_id": 22,
+            "code_id": "form_field_description",
+            "ui_msg_code_id": "form_field_description",
             "position": 6,
             "position_type": 1
           },
           {
-            "link_id": 166,
+            "link_id": 170,
+            "id": 50,
+            "name": "system form select share type",
+            "description": "selector for the share type",
+            "type_id": 26,
+            "code_id": "form_field_share_type",
+            "ui_msg_code_id": "form_select_share",
+            "position": 7,
+            "position_type": 1
+          },
+          {
+            "link_id": 171,
+            "id": 51,
+            "name": "system form select protection type",
+            "description": "selector for the protection type",
+            "type_id": 27,
+            "code_id": "form_field_protection_type",
+            "ui_msg_code_id": "form_select_protection",
+            "position": 8,
+            "position_type": 2
+          },
+          {
+            "link_id": 172,
+            "id": 57,
+            "name": "system formatter row right",
+            "type_id": 33,
+            "code_id": "row_right",
+            "position": 9,
+            "position_type": 1
+          },
+          {
+            "link_id": 173,
             "id": 52,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
             "code_id": "form_cancel_button",
             "ui_msg_code_id": "form_button_cancel",
-            "position": 7,
+            "position": 10,
             "position_type": 1
           },
           {
-            "link_id": 167,
+            "link_id": 174,
             "id": 53,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
             "code_id": "form_button_save",
             "ui_msg_code_id": "form_button_save",
-            "position": 8,
+            "position": 11,
             "position_type": 1
           },
           {
-            "link_id": 168,
+            "link_id": 175,
+            "id": 58,
+            "name": "system formatter row end",
+            "type_id": 34,
+            "code_id": "row_end",
+            "position": 12,
+            "position_type": 1
+          },
+          {
+            "link_id": 176,
             "id": 55,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
-            "position": 9,
+            "position": 13,
             "position_type": 1
           }
         ]
@@ -8708,7 +8790,7 @@
         "code_id": "component_add",
         "components": [
           {
-            "link_id": 169,
+            "link_id": 177,
             "id": 33,
             "name": "system form title component add",
             "description": "show the language specific title for the system form to add a new component",
@@ -8719,7 +8801,7 @@
             "position_type": 1
           },
           {
-            "link_id": 170,
+            "link_id": 178,
             "id": 36,
             "name": "system form hidden back stack",
             "description": "field that contains the stack for the undo actions",
@@ -8729,7 +8811,7 @@
             "position_type": 1
           },
           {
-            "link_id": 171,
+            "link_id": 179,
             "id": 37,
             "name": "system form hidden confirm status",
             "description": "switch on that the form saving needs an extra confirm by the user",
@@ -8739,7 +8821,7 @@
             "position_type": 1
           },
           {
-            "link_id": 172,
+            "link_id": 180,
             "id": 39,
             "name": "system form field name",
             "description": "the name field in a form",
@@ -8747,59 +8829,100 @@
             "code_id": "form_field_name",
             "ui_msg_code_id": "form_field_name",
             "position": 4,
-            "position_type": 1
+            "position_type": 1,
+            "style": 2
           },
           {
-            "link_id": 173,
-            "id": 40,
-            "name": "system form field description",
-            "description": "the description field in a form",
-            "type_id": 22,
-            "code_id": "form_field_description",
-            "ui_msg_code_id": "form_field_description",
-            "position": 5,
-            "position_type": 1
-          },
-          {
-            "link_id": 174,
+            "link_id": 181,
             "id": 49,
             "name": "system form select component type",
             "description": "selector for the component type",
             "type_id": 51,
             "code_id": "form_field_component_type",
             "ui_msg_code_id": "form_select_component_type",
+            "position": 5,
+            "position_type": 2
+          },
+          {
+            "link_id": 182,
+            "id": 40,
+            "name": "system form field description",
+            "description": "the description field in a form",
+            "type_id": 22,
+            "code_id": "form_field_description",
+            "ui_msg_code_id": "form_field_description",
             "position": 6,
             "position_type": 1
           },
           {
-            "link_id": 175,
+            "link_id": 183,
+            "id": 50,
+            "name": "system form select share type",
+            "description": "selector for the share type",
+            "type_id": 26,
+            "code_id": "form_field_share_type",
+            "ui_msg_code_id": "form_select_share",
+            "position": 7,
+            "position_type": 1
+          },
+          {
+            "link_id": 184,
+            "id": 51,
+            "name": "system form select protection type",
+            "description": "selector for the protection type",
+            "type_id": 27,
+            "code_id": "form_field_protection_type",
+            "ui_msg_code_id": "form_select_protection",
+            "position": 8,
+            "position_type": 2
+          },
+          {
+            "link_id": 185,
+            "id": 57,
+            "name": "system formatter row right",
+            "type_id": 33,
+            "code_id": "row_right",
+            "position": 9,
+            "position_type": 1
+          },
+          {
+            "link_id": 186,
             "id": 52,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
             "code_id": "form_cancel_button",
             "ui_msg_code_id": "form_button_cancel",
-            "position": 7,
+            "position": 10,
             "position_type": 1
           },
           {
-            "link_id": 176,
+            "link_id": 187,
             "id": 53,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
             "code_id": "form_button_save",
             "ui_msg_code_id": "form_button_save",
-            "position": 8,
+            "position": 11,
             "position_type": 1
           },
           {
-            "link_id": 177,
+            "link_id": 188,
+            "id": 58,
+            "name": "system formatter row end",
+            "type_id": 34,
+            "code_id": "row_end",
+            "position": 12,
+            "position_type": 1
+          },
+          {
+            "link_id": 189,
             "id": 55,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
-            "position": 9,
+            "position": 13,
             "position_type": 1
           }
         ]
@@ -8894,7 +9017,7 @@
         "code_id": "word",
         "components": [
           {
-            "link_id": 185,
+            "link_id": 197,
             "id": 1,
             "name": "Word",
             "description": "simply show the word or triple name",
@@ -8903,7 +9026,7 @@
             "position_type": 1
           },
           {
-            "link_id": 186,
+            "link_id": 198,
             "id": 76,
             "name": "related values",
             "description": "show the most relevant and related values",
@@ -8921,7 +9044,7 @@
         "code_id": "verb",
         "components": [
           {
-            "link_id": 187,
+            "link_id": 199,
             "id": 71,
             "name": "Verb",
             "description": "simply show the verb name",
@@ -8930,7 +9053,7 @@
             "position_type": 1
           },
           {
-            "link_id": 188,
+            "link_id": 200,
             "id": 72,
             "name": "related triples",
             "description": "triples where this verb is used",
@@ -8948,14 +9071,14 @@
         "code_id": "triple",
         "components": [
           {
-            "link_id": 189,
+            "link_id": 201,
             "id": 80,
             "name": "Triple",
             "position": 1,
             "position_type": 1
           },
           {
-            "link_id": 190,
+            "link_id": 202,
             "id": 76,
             "name": "related values",
             "description": "show the most relevant and related values",
@@ -8973,14 +9096,14 @@
         "code_id": "source",
         "components": [
           {
-            "link_id": 191,
+            "link_id": 203,
             "id": 81,
             "name": "Source",
             "position": 1,
             "position_type": 1
           },
           {
-            "link_id": 192,
+            "link_id": 204,
             "id": 76,
             "name": "related values",
             "description": "show the most relevant and related values",
@@ -8998,14 +9121,14 @@
         "code_id": "ref",
         "components": [
           {
-            "link_id": 193,
+            "link_id": 205,
             "id": 82,
             "name": "Reference",
             "position": 1,
             "position_type": 1
           },
           {
-            "link_id": 194,
+            "link_id": 206,
             "id": 76,
             "name": "related values",
             "description": "show the most relevant and related values",
@@ -9023,14 +9146,14 @@
         "code_id": "language",
         "components": [
           {
-            "link_id": 195,
+            "link_id": 207,
             "id": 83,
             "name": "Language",
             "position": 1,
             "position_type": 1
           },
           {
-            "link_id": 196,
+            "link_id": 208,
             "id": 76,
             "name": "related values",
             "description": "show the most relevant and related values",
@@ -9048,7 +9171,7 @@
         "code_id": "value",
         "components": [
           {
-            "link_id": 197,
+            "link_id": 209,
             "id": 84,
             "name": "Value",
             "position": 1,
@@ -9064,7 +9187,7 @@
         "code_id": "result",
         "components": [
           {
-            "link_id": 201,
+            "link_id": 213,
             "id": 87,
             "name": "Result",
             "position": 1,
@@ -9080,7 +9203,7 @@
         "code_id": "ranking",
         "components": [
           {
-            "link_id": 202,
+            "link_id": 214,
             "id": 77,
             "name": "phrase",
             "description": "simply show the name of a word or triple",
@@ -9089,7 +9212,7 @@
             "position_type": 1
           },
           {
-            "link_id": 203,
+            "link_id": 215,
             "id": 78,
             "name": "ranking parameters",
             "description": "the parameters used to calculate a ranking",
@@ -9098,7 +9221,7 @@
             "position_type": 1
           },
           {
-            "link_id": 204,
+            "link_id": 216,
             "id": 79,
             "name": "ranking list",
             "description": "list sorted by the calculated ranking",

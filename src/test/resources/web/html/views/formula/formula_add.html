@@ -30,16 +30,8 @@
                                                                                   name="back" id="back" value="0"><input
             class="form-control" type="hidden" name="confirm" id="confirm" value="1">
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="name">name</label><input class="form-control" type="text"
+            <div class="form-group col-md-8"><label for="name">name</label><input class="form-control" type="text"
                                                                                   name="name" id="name"></div>
-        </div>
-        <div class="row col-md-12">
-            <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
-                                                                                                 type="text"
-                                                                                                 name="description"
-                                                                                                 id="description"></div>
-        </div>
-        <div class="row col-md-12">
             <div class="form-group col-md-4"><label for="formula type">type:</label><select class="form-control"
                                                                                             name="formula type"
                                                                                             form="formula_add"
@@ -52,8 +44,34 @@
                 <option value="6">scaling</option>
             </select></div>
         </div>
-        <a href="/http/view.php?m=0" title="Cancel" class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
-        <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
+        <div class="row col-md-12">
+            <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
+                                                                                                 type="text"
+                                                                                                 name="description"
+                                                                                                 id="description"></div>
+        </div>
+        <div class="row col-md-12">
+            <div class="form-group col-md-4"><label for="share">share:</label><select class="form-control" name="share"
+                                                                                      form="formula_add" id="share">
+                <option value="1" selected>public</option>
+                <option value="2">personal</option>
+                <option value="3">group</option>
+                <option value="4">private</option>
+            </select></div>
+            <div class="form-group col-md-4"><label for="protection">protection:</label><select class="form-control"
+                                                                                                name="protection"
+                                                                                                form="formula_add"
+                                                                                                id="protection">
+                <option value="1" selected>no protection</option>
+                <option value="2">user</option>
+                <option value="3">admin</option>
+                <option value="4">no change</option>
+            </select></div>
+        </div>
+        <div class="row col-md-12 justify-content-end"><a href="/http/view.php?m=0" title="Cancel"
+                                                          class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
+            <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
+        </div>
     </form>
 </div>
 <footer>

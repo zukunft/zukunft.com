@@ -89,9 +89,9 @@ class messages
     const FORM_VIEW_ADD_TITLE = 'form_title_view_add';
     const FORM_VIEW_EDIT_TITLE = 'form_title_view_edit';
     const FORM_VIEW_DEL_TITLE = 'form_title_view_del';
-    const FORM_COMPONENT_ADD_TITLE = 'form_component_add_title';
-    const FORM_COMPONENT_EDIT_TITLE = 'form_component_view_edit';
-    const FORM_COMPONENT_DEL_TITLE = 'form_component_view_del';
+    const FORM_COMPONENT_ADD_TITLE = 'form_title_component_add';
+    const FORM_COMPONENT_EDIT_TITLE = 'form_title_component_edit';
+    const FORM_COMPONENT_DEL_TITLE = 'form_title_component_del';
     const FORM_FIELD_NAME = 'form_field_name';
     const FORM_FIELD_DESCRIPTION = 'form_field_description';
     const FORM_SELECT_SHARE = 'form_select_share';
