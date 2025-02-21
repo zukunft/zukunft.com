@@ -86,6 +86,10 @@ class component_type
     const FORM_VIEW_TYPE_ID = 50;
     const FORM_COMPONENT_TYPE = "system_form_select_component_type";
     const FORM_COMPONENT_TYPE_ID = 51;
+    const FORM_FORMULA_EXPRESSION = "system_form_field_formula_expression";
+    const FORM_FORMULA_EXPRESSION_ID = 52;
+    const FORM_FORMULA_ALL_FIELDS = "system_form_field_formula_all_vars";
+    const FORM_FORMULA_ALL_FIELDS_ID = 53;
     const FORM_SHARE_TYPE = "system_form_select_share";
     const FORM_SHARE_TYPE_ID = 26;
     const FORM_PROTECTION_TYPE = "system_form_select_protection";
@@ -258,6 +262,8 @@ class component_type
         [self::FORM_FORMULA_TYPE, self::FORM_FORMULA_TYPE_ID],
         [self::FORM_VIEW_TYPE, self::FORM_VIEW_TYPE_ID],
         [self::FORM_COMPONENT_TYPE, self::FORM_COMPONENT_TYPE_ID],
+        [self::FORM_FORMULA_EXPRESSION, self::FORM_FORMULA_EXPRESSION_ID],
+        [self::FORM_FORMULA_ALL_FIELDS, self::FORM_FORMULA_ALL_FIELDS_ID],
         [self::VIEW_SELECT, self::VIEW_SELECT_ID],
         [self::FORM_VIEW_SELECT, self::FORM_VIEW_SELECT_ID],
         [self::TRIPLE_LIST, self::TRIPLE_LIST_ID],

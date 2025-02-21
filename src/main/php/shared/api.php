@@ -123,6 +123,8 @@ class api
     const URL_VAR_BACK = 'back';
 
     // to be sorted
+    const URL_VAR_NEED_ALL = 'need_all_val';
+    const URL_VAR_USER_EXPRESSION = 'formula_text';
     const URL_VAR_LINK_VIEW = 'link_view';
     const URL_VAR_UNLINK_VIEW = 'unlink_view';
     const URL_VAR_TYPE = 'type';

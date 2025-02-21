@@ -924,19 +924,19 @@ class result_list extends sandbox_value_list
         foreach ($used_word_ids AS $phr_id) {
           $special_frm_phr_ids = array();
 
-          if (zuf_has_verb($frm_row['formula_text'], $this->user()->id)) {
+          if (zuf_has_verb($frm_row[api::URL_VAR_USER_EXPRESSION], $this->user()->id)) {
             // special case
-            zu_debug('res_lst->frm_upd_lst_usr -> formula has verb ('.$frm_row['formula_text'].')');
+            zu_debug('res_lst->frm_upd_lst_usr -> formula has verb ('.$frm_row[api::URL_VAR_USER_EXPRESSION].')');
           } else {
 
             // include all results of the underlying formulas
-            $all_frm_ids = zuf_frm_ids ($frm_row['formula_text'], $this->user()->id());
+            $all_frm_ids = zuf_frm_ids ($frm_row[api::URL_VAR_USER_EXPRESSION], $this->user()->id());
 
             // get fixed / special formulas
             $frm_ids = array();
             foreach ($all_frm_ids as $chk_frm_id) {
               if (zuf_is_special ($chk_frm_id, $this->user()->id)) {
-                $special_frm_phr_ids = $frm_upd_lst_frm_special ($chk_frm_id, $frm_row['formula_text'], $this->user()->id, $phr_id);
+                $special_frm_phr_ids = $frm_upd_lst_frm_special ($chk_frm_id, $frm_row[api::URL_VAR_USER_EXPRESSION], $this->user()->id, $phr_id);
 
                 //get all values related to the words
               } else {
@@ -952,7 +952,7 @@ class result_list extends sandbox_value_list
             // and based on this value get the unique word list
             // e.g. if the formula text contains the word "Sales" all values that are related to Sales should be taken into account
             //      $frm_phr_ids is the list of words for the value selection, so in this case it would contain "Sales"
-            $frm_phr_ids = zuf_phr_ids ($frm_row['formula_text'], $this->user()->id());
+            $frm_phr_ids = zuf_phr_ids ($frm_row[api::URL_VAR_USER_EXPRESSION], $this->user()->id());
             zu_debug('res_lst->frm_upd_lst_usr -> frm_phr_ids1 ('.implode(",",$frm_phr_ids).')');
 
             // add word words for the special formulas

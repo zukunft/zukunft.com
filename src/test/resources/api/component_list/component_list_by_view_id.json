@@ -62,13 +62,13 @@
     "ui_msg_code_id": "form_select_protection"
   },
   {
-    "id": 57,
+    "id": 59,
     "name": "system formatter row right",
     "type_id": 33,
     "code_id": "row_right"
   },
   {
-    "id": 52,
+    "id": 54,
     "name": "system form button cancel",
     "description": "button to cancel the form action and go back to the previous view",
     "type_id": 28,
@@ -76,7 +76,7 @@
     "ui_msg_code_id": "form_button_cancel"
   },
   {
-    "id": 53,
+    "id": 55,
     "name": "system form button save",
     "description": "button to save the form field into the database",
     "type_id": 29,
@@ -84,13 +84,13 @@
     "ui_msg_code_id": "form_button_save"
   },
   {
-    "id": 58,
+    "id": 60,
     "name": "system formatter row end",
     "type_id": 34,
     "code_id": "row_end"
   },
   {
-    "id": 55,
+    "id": 57,
     "name": "system form end",
     "type_id": 31,
     "code_id": "form_end"

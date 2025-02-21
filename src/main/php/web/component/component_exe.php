@@ -105,6 +105,8 @@ class component_exe extends component
             component_type::FORM_SOURCE_TYPE => $form->form_source_type($dbo, $form_name),
             component_type::FORM_REF_TYPE => $form->form_ref_type($dbo, $form_name),
             component_type::FORM_FORMULA_TYPE => $form->form_formula_type($dbo, $form_name),
+            component_type::FORM_FORMULA_EXPRESSION => $form->form_formula_expression($dbo, $form_name),
+            component_type::FORM_FORMULA_ALL_FIELDS => $form->form_formula_all_fields($dbo, $form_name),
             component_type::FORM_VIEW_TYPE => $form->form_view_type($dbo, $form_name),
             component_type::FORM_COMPONENT_TYPE => $form->form_component_type($dbo, $form_name),
             component_type::FORM_SHARE_TYPE => $form->form_share_type($dbo, $form_name),

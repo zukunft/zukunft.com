@@ -1187,7 +1187,9 @@ class html_base
         return $result;
     }
 
-// add the field to a form
+    /**
+     * add the field to a form
+     */
     function dsp_form_fld_checkbox($field, $is_checked, $label): string
     {
         $result = '';

@@ -255,6 +255,22 @@ class db_object extends TextIdObject
         return new term_dsp();
     }
 
+    /**
+     * @returns string the formula expression in the user readable format and including user formatting
+     */
+    function user_expression(): string
+    {
+        return '';
+    }
+
+    /**
+     * @returns bool true e.g. if all term of the formula expression needs to be set for calculation the result
+     */
+    function need_all(): bool
+    {
+        return false;
+    }
+
 
     /*
      * load

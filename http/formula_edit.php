@@ -78,8 +78,8 @@ if ($usr->id() > 0) {
     if (isset($_GET['formula_name'])) {
         $frm->set_name($_GET['formula_name']);
     } // the new formula name
-    if (isset($_GET['formula_text'])) {
-        $frm->usr_text = $_GET['formula_text'];
+    if (isset($_GET[api::URL_VAR_USER_EXPRESSION])) {
+        $frm->usr_text = $_GET[api::URL_VAR_USER_EXPRESSION];
     } // the new formula text in the user format
     if (isset($_GET[api::URL_VAR_DESCRIPTION])) {
         $frm->description = $_GET[api::URL_VAR_DESCRIPTION];
@@ -87,14 +87,14 @@ if ($usr->id() > 0) {
     if (isset($_GET['type'])) {
         $frm->type_id = $_GET['type'];
     }
-    if ($_GET['need_all_val'] == 'on') {
+    if ($_GET[api::URL_VAR_NEED_ALL] == 'on') {
         $frm->need_all_val = true;
     } else {
         if ($_GET['confirm'] == 1) {
             $frm->need_all_val = false;
         }
     }
-    //if (isset($_GET['need_all_val']))  { if ($_GET['need_all_val'] == 'on') { $frm->need_all_val = true; } else { $frm->need_all_val = false; } }
+    //if (isset($_GET[api::URL_VAR_NEED_ALL]))  { if ($_GET[api::URL_VAR_NEED_ALL] == 'on') { $frm->need_all_val = true; } else { $frm->need_all_val = false; } }
 
     if ($frm->id() <= 0) {
         $result .= log_err("No formula found to change because the id is missing.", "/http/formula_edit.php");

@@ -50,3 +50,5 @@ component_type_id, type_name, description, code_id
 49, 'system form select formula type', 'selector for the formula type', 'system_form_select_formula_type'
 50, 'system form select view type', 'selector for the view type', 'system_form_select_view_type'
 51, 'system form select component type', 'selector for the component type', 'system_form_select_component_type'
+52, 'system form field formula text', 'the form field the formula expression', 'system_form_field_formula_expression'
+53, 'form field name', 'the form flag to set the formula to need all variables for a valid result', 'system_form_field_formula_all_vars'

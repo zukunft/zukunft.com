@@ -269,6 +269,37 @@ class system_form extends component
     }
 
     /**
+     * create the html code for the form element to enter the formula expression
+     * @param db_object_dsp $dbo the frontend formula object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @return string the html code to select the formula type
+     */
+    function form_formula_expression(db_object_dsp $dbo, string $form_name): string
+    {
+        $html = new html_base();
+        return $html->dsp_form_fld(
+            api::URL_VAR_NEED_ALL,
+            $dbo->user_expression(),
+            "Expression:",
+            view_styles::COL_SM_12);
+    }
+
+    /**
+     * create the html code for the form flag to set that the formula needs all fields to be set
+     * @param db_object_dsp $dbo the frontend formula object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @return string the html code to select the formula type
+     */
+    function form_formula_all_fields(db_object_dsp $dbo, string $form_name): string
+    {
+        $html = new html_base();
+        return $html->dsp_form_fld_checkbox(
+            api::URL_VAR_NEED_ALL,
+            $dbo->need_all(),
+            "calculate only if all values used in the formula exist");
+    }
+
+    /**
      * @return string the html code for a form cancel button
      */
     function form_cancel(int $msk_id, ?int $id): string

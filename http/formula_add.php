@@ -77,8 +77,8 @@ if ($usr->id() > 0) {
     if (isset($_GET['formula_name'])) {
         $frm->set_name($_GET['formula_name']);
     } // the new formula name
-    if (isset($_GET['formula_text'])) {
-        $frm->set_user_text($_GET['formula_text']);
+    if (isset($_GET[api::URL_VAR_USER_EXPRESSION])) {
+        $frm->set_user_text($_GET[api::URL_VAR_USER_EXPRESSION]);
     } // the new formula text in the user format
     if (isset($_GET[api::URL_VAR_DESCRIPTION])) {
         $frm->description = $_GET[api::URL_VAR_DESCRIPTION];
@@ -86,7 +86,7 @@ if ($usr->id() > 0) {
     if (isset($_GET['type'])) {
         $frm->type_id = $_GET['type'];
     }
-    if ($_GET['need_all_val'] == 'on') {
+    if ($_GET[api::URL_VAR_NEED_ALL] == 'on') {
         $frm->need_all_val = true;
     } else {
         $frm->need_all_val = false;

@@ -72,6 +72,7 @@ include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
+use cfg\db\sql_db;
 use html\phrase\phrase;
 use html\phrase\phrase_list;
 use html\phrase\term_list;
@@ -86,6 +87,7 @@ use html\sandbox\sandbox_typed;
 use html\system\back_trace;
 use html\system\messages;
 use html\user\user_message;
+use shared\api;
 use shared\const\views;
 use shared\json_fields;
 use shared\types\view_styles;
@@ -291,6 +293,27 @@ class formula extends sandbox_typed
 
 
     /*
+     * overwrites
+     */
+
+    /**
+     * @returns string the formula expression in the user readable format and including user formatting
+     */
+    function user_expression(): string
+    {
+        return str_replace('"', '&quot;', $this->usr_text);
+    }
+
+    /**
+     * @returns bool true e.g. if all term of the formula expression needs to be set for calculation the result
+     */
+    function need_all(): bool
+    {
+        return $this->need_all_val;
+    }
+
+
+    /*
      * to review
      */
 
@@ -397,9 +420,9 @@ class formula extends sandbox_typed
         // predefined formulas like "this" or "next" should only be changed by an admin
         // TODO check if formula user or login user should be used
         if (!$this->is_special() or $usr->is_admin()) {
-            $result .= $html->dsp_form_fld("formula_text", $resolved_text, "Expression:", view_styles::COL_SM_12);
+            $result .= $html->dsp_form_fld(api::URL_VAR_USER_EXPRESSION, $resolved_text, "Expression:", view_styles::COL_SM_12);
         }
-        $result .= $html->dsp_form_fld_checkbox("need_all_val", $this->need_all_val, "calculate only if all values used in the formula exist");
+        $result .= $html->dsp_form_fld_checkbox(api::URL_VAR_NEED_ALL, $this->need_all_val, "calculate only if all values used in the formula exist");
         $result .= '<br><br>';
         $result .= $html->dsp_form_end('', $back);
 

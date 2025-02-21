@@ -357,6 +357,20 @@
       "ui_msg_code_id": "form_select_protection"
     },
     {
+      "name": "system form field formula text",
+      "description": "the formula expression",
+      "type": "system_form_field_formula_expression",
+      "code_id": "form_field_formula_expression",
+      "ui_msg_code_id": "form_field_formula_expression"
+    },
+    {
+      "name": "system form field flag need all vars",
+      "description": "the formula needs all variables to be set for a valid result",
+      "type": "system_form_field_formula_all_vars",
+      "code_id": "form_field_formula_all_vars",
+      "ui_msg_code_id": "form_field_formula_all_vars"
+    },
+    {
       "name": "system form button cancel",
       "description": "button to cancel the form action and go back to the previous view",
       "type": "system_button_cancel",
@@ -1271,31 +1285,39 @@
         },
         {
           "position": "7",
-          "name": "system form select share type"
+          "name": "system form field formula text"
         },
         {
           "position": "8",
+          "name": "system form field flag need all vars"
+        },
+        {
+          "position": "9",
+          "name": "system form select share type"
+        },
+        {
+          "position": "10",
           "name": "system form select protection type",
           "position_type": "side"
         },
         {
-          "position": "9",
+          "position": "11",
           "name": "system formatter row right"
         },
         {
-          "position": "10",
+          "position": "12",
           "name": "system form button cancel"
         },
         {
-          "position": "11",
+          "position": "13",
           "name": "system form button save"
         },
         {
-          "position": "12",
+          "position": "14",
           "name": "system formatter row end"
         },
         {
-          "position": "13",
+          "position": "15",
           "name": "system form end"
         }
       ]
