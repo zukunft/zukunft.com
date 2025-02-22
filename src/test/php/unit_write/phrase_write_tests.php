@@ -102,31 +102,6 @@ class phrase_write_tests
             triples::COMPANY_ZURICH . '">' . triples::COMPANY_ZURICH . '</a></td></tr> ');
         $t->assert('phrase->dsp_tbl triple for ' . $zh_company_id, $result, $target);
 
-        // test the phrase selector
-        $form_name = 'test_phrase_selector';
-        $pos = 1;
-        $back = $company_id;
-        $phr = new phrase($usr);
-        $phr->load_by_id($zh_company_id);
-        $result = $phr->dsp_selector(Null, $form_name, $pos, '', $back);
-        $target = triples::COMPANY_ZURICH;
-        $t->dsp_contains(', phrase->dsp_selector ' . $result . ' with ' .
-            triples::COMPANY_ZURICH . ' selected contains ' .
-            triples::COMPANY_ZURICH, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
-
-        // test the phrase selector for the word company
-        $wrd = new word($usr);
-        $wrd->load_by_name(words::COMPANY, word::class);
-        $trp_ins = new triple($usr);
-        $trp_ins->load_by_name(triples::COMPANY_ZURICH, triple::class);
-        $phr = $wrd->phrase();
-        $phr_dsp = new phrase_dsp($phr->api_json());
-        $result = $phr->dsp_selector($phr_dsp, $form_name, $pos, '', $back);
-        $target = $trp_ins->name();
-        $t->dsp_contains(', phrase->dsp_selector of type ' . words::COMPANY . ' is : ' .
-            $result . ' which contains ' . triples::COMPANY_ZURICH,
-            $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
-
         // test getting the parent for phrase Vestas
         $phr = $t->load_phrase(words::VESTAS);
         $is_phr = $phr->is_mainly();

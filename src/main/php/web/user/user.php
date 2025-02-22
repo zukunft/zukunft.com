@@ -98,6 +98,11 @@ class user extends db_object
         return $this->profile_id;
     }
 
+    function name(): string
+    {
+        return $this->name;
+    }
+
     /**
      * set the vars of this object bases on the api json array
      * @param array $json_array an api json message

@@ -36,6 +36,7 @@ include_once WEB_SYSTEM_PATH . 'back_trace.php';
 
 use html\html_base;
 use html\log\change_log_list;
+use html\log\change_log_named;
 use html\system\back_trace;
 use shared\types\api_type;
 use shared\types\api_type_list;
@@ -57,12 +58,18 @@ class change_log_ui_tests
         $back = new back_trace();
         $api_typ_lst = new api_type_list([api_type::TEST_MODE]);
 
-        $test_page .= 'simple list of changes of a word<br>';
+        $test_page .= '<br>changes as a text<br>';
+        $chg = $t->change_log_named();
+        $chg_dsp = new change_log_named($chg->api_json());
+        $test_page .= $chg_dsp->dsp() .  '<br>';
+
+
+        $test_page .= '<br>simple list of changes of a word<br>';
         $log_lst = $t->change_log_list_named();
         $log_dsp = new change_log_list($log_lst->api_json($api_typ_lst));
         $test_page .= $log_dsp->tbl($back);
 
-        $test_page .= 'condensed list of changes of a word<br>';
+        $test_page .= '<br>condensed list of changes of a word<br>';
         $log_lst = $t->change_log_list_named();
         $log_dsp = new change_log_list($log_lst->api_json($api_typ_lst));
         $test_page .= $log_dsp->tbl($back, true, true);

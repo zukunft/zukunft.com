@@ -56,6 +56,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once WEB_HTML_PATH . 'styles.php';
 include_once DB_PATH . 'sql_type.php';
 include_once SHARED_ENUM_PATH . 'user_profiles.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
@@ -123,6 +124,7 @@ use html\view\view as view_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use shared\api;
+use shared\enum\messages;
 use shared\enum\user_profiles;
 use shared\library;
 use shared\const\words;
@@ -2176,7 +2178,7 @@ class test_base
                 $log_msg = $sbx->log_last_field_msg($this->usr1, $sbx->name_field());
                 $result = $this->assert_text_contains($test_name . ' log add', $log_msg, $name);
                 if ($result) {
-                    $result = $this->assert_text_contains($test_name . ' log add', $log_msg, change::MSG_ADD);
+                    $result = $this->assert_text_contains($test_name . ' log add', $log_msg, messages::LOG_ADD);
                 }
             }
         }
@@ -2196,7 +2198,7 @@ class test_base
             $log_msg = $sbx->log_last_msg($this->usr1);
             $result = $this->assert_text_contains($test_name . ' log update', $log_msg, $name);
             if ($result) {
-                $result = $this->assert_text_contains($test_name . ' log update', $log_msg, change::MSG_UPDATE);
+                $result = $this->assert_text_contains($test_name . ' log update', $log_msg, messages::LOG_UPDATE);
             }
         }
 
@@ -2210,7 +2212,7 @@ class test_base
             $log_msg = $sbx->log_last_msg($this->usr1);
             $result = $this->assert_text_contains($test_name . ' log delete', $log_msg, $name);
             if ($result) {
-                $result = $this->assert_text_contains($test_name . ' log delete', $log_msg, change::MSG_DEL);
+                $result = $this->assert_text_contains($test_name . ' log delete', $log_msg, messages::LOG_DEL);
             }
         }
 
@@ -2249,7 +2251,7 @@ class test_base
 
         // check the log
         if ($id != 0) {
-            $result = $this->write_named_log($sbx, $sbx->name_field(), $name, change::MSG_ADD);
+            $result = $this->write_named_log($sbx, $sbx->name_field(), $name, messages::LOG_ADD);
         } else {
             $result = false;
         }
@@ -2287,7 +2289,7 @@ class test_base
 
         // check the log
         if ($id != 0) {
-            $result = $this->write_named_log($sbx, $sbx->name_field(), $new_name, change::MSG_UPDATE, $name);
+            $result = $this->write_named_log($sbx, $sbx->name_field(), $new_name, messages::LOG_UPDATE, $name);
         } else {
             $result = false;
         }
@@ -2520,9 +2522,9 @@ class test_base
         // check the log
         if ($id != 0) {
             if ($lnk::class == triple::class) {
-                $result = $this->write_named_link_log($lnk, change::MSG_LINK);
+                $result = $this->write_named_link_log($lnk, messages::LOG_LINK);
             } else {
-                $result = $this->write_link_log($lnk, change::MSG_LINK);
+                $result = $this->write_link_log($lnk, messages::LOG_LINK);
             }
         } else {
             $result = false;
@@ -2824,7 +2826,7 @@ class test_base
         $log->row_id = $sbx->id();
         $result = $log->dsp_last(true);
         $target = $sbx->user()->name() . ' ' . $action . ' "';
-        if ($action == change::MSG_UPDATE) {
+        if ($action == messages::LOG_UPDATE) {
             $target .= $old_name . '" to "' . $name . '"';
         } else {
             $target .= $name . '"';
@@ -2919,7 +2921,7 @@ class test_base
         $sbx->description = $description;
         $result = $sbx->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
-            return $this->write_named_log($sbx, sandbox_named::FLD_DESCRIPTION, $description, change::MSG_ADD);
+            return $this->write_named_log($sbx, sandbox_named::FLD_DESCRIPTION, $description, messages::LOG_ADD);
         } else {
             return false;
         }
@@ -2938,7 +2940,7 @@ class test_base
         $result = $sbx->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_named_log($sbx,
-                sandbox_named::FLD_DESCRIPTION, $new_description, change::MSG_UPDATE, $old_description);
+                sandbox_named::FLD_DESCRIPTION, $new_description, messages::LOG_UPDATE, $old_description);
         } else {
             return false;
         }
@@ -2972,7 +2974,7 @@ class test_base
         $result = $lnk->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_link_log_field($lnk,
-                formula_link::FLD_ORDER, $new_order_nbr, change::MSG_UPDATE, $old_order_nbr);
+                formula_link::FLD_ORDER, $new_order_nbr, messages::LOG_UPDATE, $old_order_nbr);
         } else {
             return false;
         }
@@ -3006,7 +3008,7 @@ class test_base
         $result = $lnk->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_link_log_field($lnk,
-                sandbox_named::FLD_DESCRIPTION, $new_description, change::MSG_UPDATE, $old_description);
+                sandbox_named::FLD_DESCRIPTION, $new_description, messages::LOG_UPDATE, $old_description);
         } else {
             return false;
         }
@@ -3043,7 +3045,7 @@ class test_base
         $log->row_id = $sbx->id();
         $result = $log->dsp_last(true);
         $target = $sbx->user()->name() . ' ' . $action . ' "';
-        if ($action == change::MSG_UPDATE) {
+        if ($action == messages::LOG_UPDATE) {
             $target .= $old_name . '" to "' . $name . '"';
         } else {
             $target .= $name . '"';
@@ -3065,7 +3067,7 @@ class test_base
         $msg = $sbx->del();
         $result = $msg->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
-            return $this->write_named_log($sbx, $sbx->name_field(), $name, change::MSG_DEL);
+            return $this->write_named_log($sbx, $sbx->name_field(), $name, messages::LOG_DEL);
         } else {
             return false;
         }

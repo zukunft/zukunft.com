@@ -43,6 +43,7 @@ include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_ENUM_PATH . 'change_fields.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use html\formula\formula;
@@ -56,6 +57,7 @@ use html\user\user_message;
 use shared\enum\change_actions;
 use shared\enum\change_fields;
 use shared\enum\change_tables;
+use shared\enum\messages as msg_shared;
 use shared\json_fields;
 
 class change_log_named extends change_log
@@ -128,22 +130,22 @@ class change_log_named extends change_log
         if ($this->table_name() == change_tables::VALUE) {
             $txt_fld .= $this->action_name() . ' value';
             // because changing the words creates a new value there is no need to display the words here
-        /*
-            if ($db_row['row_id'] > 0) {
-              $val = New value;
-              $val->id = $db_row['row_id'];
-              $val->usr = $this;
-              $val->load();
-              $val->load_phrases();
-              $txt_fld .= '<td>';
-              if (isset($val->wrd_lst)) {
-                $txt_fld .= implode(",",$val->wrd_lst->names_linked());
-              }
-              $txt_fld .= '</td>';
-            } else {
-              $txt_fld .= '<td>'.$db_row['type'].' value</td>';
-            }
-        */
+            /*
+                if ($db_row['row_id'] > 0) {
+                  $val = New value;
+                  $val->id = $db_row['row_id'];
+                  $val->usr = $this;
+                  $val->load();
+                  $val->load_phrases();
+                  $txt_fld .= '<td>';
+                  if (isset($val->wrd_lst)) {
+                    $txt_fld .= implode(",",$val->wrd_lst->names_linked());
+                  }
+                  $txt_fld .= '</td>';
+                } else {
+                  $txt_fld .= '<td>'.$db_row['type'].' value</td>';
+                }
+            */
         } elseif (!$user_changes) {
             $txt_fld .= $this->field_description();
             // probably not needed to display the action, because this can be seen by the change itself
@@ -217,18 +219,10 @@ class change_log_named extends change_log
             }
         }
         // display the undo button
-        if ($condensed) {
-            if ($undo_call <> '') {
-                $html_text .= ' ' . $undo_btn;
-            } else {
-                $html_text .= '';
-            }
+        if ($undo_call <> '') {
+            $html_text .= $html->td($undo_btn);
         } else {
-            if ($undo_call <> '') {
-                $html_text .= $html->td($undo_btn);
-            } else {
-                $html_text .= $html->td();
-            }
+            $html_text .= $html->td();
         }
 
         return $html->tr($html_text);
@@ -292,6 +286,35 @@ class change_log_named extends change_log
 
         $table = $cng_tbl_cac->get($this->table_id);
         return $table->name;
+    }
+
+    /**
+     * @return string the current change as a human-readable text
+     *                optional without time for automatic testing
+     */
+    public function dsp(bool $ex_time = false): string
+    {
+        $result = '';
+        $usr_cfg = new config();
+
+        if (!$ex_time) {
+            $result .= date_format($this->change_time, $usr_cfg->date_time_format()) . ' ';
+        }
+        if ($this->usr != null) {
+            if ($this->usr->name() <> '') {
+                $result .= $this->usr->name() . ' ';
+            }
+        }
+        if ($this->old_value <> '') {
+            if ($this->new_value <> '') {
+                $result .= msg_shared::LOG_UPDATE . ' "' . $this->old_value . '" ' . msg_shared::LOG_TO . '"' . $this->new_value . '"';
+            } else {
+                $result .= msg_shared::LOG_DEL . ' "' . $this->old_value . '"';;
+            }
+        } else {
+            $result .= msg_shared::LOG_ADD . ' "' . $this->new_value . '"';;
+        }
+        return $result;
     }
 
 }

@@ -2836,44 +2836,6 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * display a form to create a triple
-     */
-    function dsp_add(string $back = ''): string
-    {
-        log_debug();
-
-        $html = new html_base();
-        $result = ''; // reset the html code var
-
-        // at least to create the dummy objects to display the selectors
-        $this->load_objects();
-
-        // for creating a new triple the first word / triple is fixed
-        $form_name = 'link_add';
-        //$result .= 'Create a combined word (semantic triple):<br>';
-        $result .= '<br>Define a new relation for <br><br>';
-        $result .= '<b>' . $this->from()->name() . '</b> ';
-        $result .= $html->dsp_form_start($form_name);
-        $result .= $html->input("back", $back);
-        $result .= $html->input("confirm", '1');
-        $result .= $html->input("from", $this->from_id());
-        $result .= '<div class="form-row">';
-        if ($this->has_verb()) {
-            $result .= $this->verb()->dsp_selector('both', $form_name, view_styles::COL_SM_6, $back);
-        }
-        if ($this->to() != null) {
-            $type_phr = new phrase($this->user());
-            $type_phr->load_by_id(0);
-            $result .= $this->to()->dsp_selector($type_phr->dsp_obj(), $form_name, 0, view_styles::COL_SM_6, $back);
-        }
-        $result .= '</div>';
-        $result .= '<br>';
-        $result .= $html->dsp_form_end('', $back);
-
-        return $result;
-    }
-
-    /**
      * display a form to adjust the link between too words or triples
      */
     function dsp_del(string $back = ''): string

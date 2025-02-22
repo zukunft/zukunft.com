@@ -77,6 +77,35 @@ class phrase_list_ui_tests
         $test_page .= $lst->selector('', 0, 'phrase list test selector', 'please select') . '<br>';
 
         $t->html_test($test_page, 'phrase_list', 'phrase_list', $t);
+
+        /*
+         * TODO add a phrase selector if the phrase list is short and add an test
+        // test the phrase selector
+        $form_name = 'test_phrase_selector';
+        $pos = 1;
+        $back = $company_id;
+        $phr = new phrase($usr);
+        $phr->load_by_id($zh_company_id);
+        $result = $phr->dsp_selector(Null, $form_name, $pos, '', $back);
+        $target = triples::COMPANY_ZURICH;
+        $t->dsp_contains(', phrase->dsp_selector ' . $result . ' with ' .
+            triples::COMPANY_ZURICH . ' selected contains ' .
+            triples::COMPANY_ZURICH, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+
+        // test the phrase selector for the word company
+        $wrd = new word($usr);
+        $wrd->load_by_name(words::COMPANY, word::class);
+        $trp_ins = new triple($usr);
+        $trp_ins->load_by_name(triples::COMPANY_ZURICH, triple::class);
+        $phr = $wrd->phrase();
+        $phr_dsp = new phrase_dsp($phr->api_json());
+        $result = $phr->dsp_selector($phr_dsp, $form_name, $pos, '', $back);
+        $target = $trp_ins->name();
+        $t->dsp_contains(', phrase->dsp_selector of type ' . words::COMPANY . ' is : ' .
+            $result . ' which contains ' . triples::COMPANY_ZURICH,
+            $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
+        */
+
     }
 
 }

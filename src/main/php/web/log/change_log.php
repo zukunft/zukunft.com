@@ -52,6 +52,7 @@ class change_log extends sandbox
      * object vars
      */
 
+    // public because they should never be changed by the user
     public ?user $usr = null;  // the user who has done the change
     public ?int $action_id = null;   // database id for the change type (add, change or del)
     public ?int $table_id = null;    // database id of the table used to get the name from the preloaded hash

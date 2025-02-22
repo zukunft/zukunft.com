@@ -2,7 +2,7 @@
 
 /*
 
-    shared/enum/messages.php - enum of the backend user message ids and the text in the default language
+    shared/enum/messages.php - enum of the user message ids and the text in the default language
     ------------------------
 
 
@@ -43,6 +43,13 @@ enum messages: string
     case OF_DEFAULT = 'of_default';
     case FAILED = 'failed';
 
+    // for the change log
+    const LOG_ADD = 'added';
+    const LOG_UPDATE = 'changed';
+    const LOG_DEL = 'deleted';
+    const LOG_LINK = 'linked';
+    const LOG_TO = 'to';
+
     /**
      * @return string with the text for the user in the default language
      */
@@ -55,6 +62,11 @@ enum messages: string
             self::RELOAD => 'reloading',
             self::OF_DEFAULT => 'of default',
             self::FAILED => 'failed',
+            self::LOG_ADD => 'added',
+            self::LOG_UPDATE => 'changed',
+            self::LOG_DEL => 'deleted',
+            self::LOG_LINK => 'linked',
+            self::LOG_TO => ' to ',
             default => 'message id missing',
         };
     }

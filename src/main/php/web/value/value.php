@@ -698,7 +698,7 @@ class value extends sandbox_value
                         $phrase_url = '/http/word_edit.php?id=' . $phr->id . '&back=' . $back;
                     } else {
                         $lnk_id = $phr->id * -1;
-                        $phrase_url = '/http/link_edit.php?id=' . $lnk_id . '&back=' . $back;
+                        $phrase_url = '/http/view.php?m=' . views::TRIPLE_EDIT . '&id=' . $lnk_id . '&back=' . $back;
                     }
 
                     // show the phrase selector

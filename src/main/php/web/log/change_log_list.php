@@ -149,9 +149,9 @@ class change_log_list extends list_dsp
         $html = new html_base();
         $html_text = $this->th($condensed, $with_users);
         foreach ($this->lst() as $chg) {
-            $html_text .= $html->td($chg->tr($back, $condensed, $with_users));
+            $html_text .= $chg->tr($back, $condensed, $with_users);
         }
-        return $html->tbl($html->tr($html_text), styles::STYLE_BORDERLESS);
+        return $html->tbl($html_text, styles::STYLE_BORDERLESS);
     }
 
     /**
@@ -168,9 +168,9 @@ class change_log_list extends list_dsp
                 $head_text .= $html->th('user');
             }
             $head_text .= $html->th_row(array('field','from','to'));
-            $head_text .= $html->th('');  // extra column for the undo icon
         }
-        return $head_text;
+        $head_text .= $html->th('');  // extra column for the undo icon
+        return $html->tr($head_text);
     }
 
 }

@@ -67,6 +67,7 @@ include_once WEB_LOG_PATH . 'change_log_named.php';
 //include_once WEB_HELPER_PATH . 'config.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_ENUM_PATH . 'change_fields.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
@@ -94,21 +95,12 @@ use DateTimeInterface;
 use Exception;
 use shared\enum\change_fields;
 use shared\enum\change_tables;
+use shared\enum\messages;
 use shared\json_fields;
 use shared\types\api_type_list;
 
 class change extends change_log
 {
-
-    /*
-     * messages
-     */
-
-    // TODO replace by a language specific message id
-    const MSG_ADD = 'added';
-    const MSG_UPDATE = 'changed';
-    const MSG_DEL = 'deleted';
-    const MSG_LINK = 'linked';
 
     /*
      * db const
@@ -714,12 +706,12 @@ class change extends change_log
             }
             if ($this->old_value <> '') {
                 if ($this->new_value <> '') {
-                    $result .= self::MSG_UPDATE . ' "' . $this->old_value . '" to "' . $this->new_value . '"';
+                    $result .= messages::LOG_UPDATE . ' "' . $this->old_value . '" to "' . $this->new_value . '"';
                 } else {
-                    $result .= self::MSG_DEL . ' "' . $this->old_value . '"';;
+                    $result .= messages::LOG_DEL . ' "' . $this->old_value . '"';;
                 }
             } else {
-                $result .= self::MSG_ADD . ' "' . $this->new_value . '"';;
+                $result .= messages::LOG_ADD . ' "' . $this->new_value . '"';;
             }
         }
         return $result;

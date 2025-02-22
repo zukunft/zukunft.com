@@ -120,8 +120,6 @@ use cfg\word\word;
 use cfg\word\word_db;
 use cfg\word\word_list;
 use cfg\word\triple;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
@@ -1203,43 +1201,8 @@ class phrase extends combine_named
      * display functions
      */
 
-    // create a selector that contains the words and triples
-    // if one form contains more than one selector, $pos is used for identification
-    // $type is a word to preselect the list to only those phrases matching this type
-    function dsp_selector(?phrase_dsp $type, $form_name, $pos, string $class, $back): string
-    {
-        // TODO include pattern in the call
-        $phr_lst = new phrase_list_dsp();
-        if ($type != null) {
-            $phr_lst->load_related($type, foaf_direction::DOWN);
-        } else {
-            $pattern = '';
-            $phr_lst->load_like($pattern);
-        }
 
-
-        if ($pos > 0) {
-            $field_name = "phrase" . $pos;
-        } else {
-            $field_name = "phrase";
-        }
-        $label = "";
-        if ($form_name != "value_add" and $form_name != "value_edit") {
-            if ($pos == 1) {
-                $label = "From:";
-            } elseif ($pos == 2) {
-                $label = "To:";
-            } else {
-                $label = "Word:";
-            }
-        }
-        // TODO activate Prio 3
-        // $sel->bs_class = $class;
-        // $sel->dummy_text = '... please select';
-        return $phr_lst->selector($form_name, $this->id(), $field_name, $label, '');
-    }
-
-// returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
+    // returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
     function is_mainly()
     {
         $result = null;
@@ -1488,39 +1451,6 @@ class phrase extends combine_named
         return $wrd_dsp;
     }
 
-    /**
-     * TODO dismiss
-     * @return word_dsp
-     */
-    protected
-    function get_triple_dsp(): triple_dsp
-    {
-        $lnk_dsp = new triple_dsp();
-        if (get_class($this->obj) == triple_dsp::class) {
-            $lnk_dsp = $this->obj;
-        } elseif (get_class($this->obj) == triple::class) {
-            $lnk_dsp = $this->obj()->dsp_obj();
-        }
-        return $lnk_dsp;
-    }
-
-    /**
-     * get the related display object
-     * so either the word display object
-     * or the triple display object
-     */
-    function get_dsp_obj(): ?phrase_dsp
-    {
-        if ($this->is_word()) {
-            $wrd = $this->get_word_dsp();
-            return $wrd->phrase();
-        } elseif ($this->is_triple()) {
-            $trp = $this->get_triple_dsp();
-            return $trp->phrase();
-        } else {
-            return null;
-        }
-    }
 
     /*
      * display functions
@@ -1558,14 +1488,6 @@ class phrase extends combine_named
             }
         }
         return $phr_lst;
-    }
-
-    function dsp_graph(foaf_direction $direction, ?verb_list $link_types = null, string $back = ''): string
-    {
-        $phr_lst = $this->phrases($direction, $link_types);
-        $phr_lst_dsp = new phrase_list_dsp($phr_lst->api_json());
-        $phr_dsp = new phrase_dsp($this->api_json());
-        return $phr_lst_dsp->dsp_graph($phr_dsp, $back);
     }
 
     /**
@@ -1611,21 +1533,6 @@ class phrase extends combine_named
     {
         $wrd = $this->main_word();
         return $wrd->btn_add($back);
-    }
-
-    /**
-     * TODO base this on the api message
-     * @return phrase_dsp the phrase object with the display interface functions
-     */
-    function dsp_obj(): phrase_dsp
-    {
-        if ($this->obj()::class == word::class) {
-            $wrd_dsp = new word_dsp($this->obj()->api_json());
-            $dsp_obj = $wrd_dsp->phrase();
-        } else {
-            $dsp_obj = $this->obj()->dsp_obj()->phrase();
-        }
-        return $dsp_obj;
     }
 
 }
