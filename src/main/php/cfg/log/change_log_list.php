@@ -554,6 +554,7 @@ class change_log_list extends base_list
     /**
      * load this list of changes
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @param user $usr the user who wants to see the changes e.g. to check the permission
      * @return bool true if at least one change found
      */
     private function load(sql_par $qp, user $usr): bool
@@ -611,7 +612,7 @@ class change_log_list extends base_list
         if (!$this->is_empty()) {
             $lst = $this->lst();
             $first = $lst[array_key_first($lst)];
-            $msg = $first->dsp_last();
+            $msg = $first->dsp();
         }
         return $msg;
     }

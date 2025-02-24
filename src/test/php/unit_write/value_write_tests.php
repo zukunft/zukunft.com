@@ -36,6 +36,8 @@ include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_ENUM_PATH . 'change_fields.php';
 
+use cfg\db\sql;
+use cfg\db\sql_type;
 use cfg\log\change;
 use cfg\log\change_values_big;
 use cfg\log\change_values_norm;
@@ -305,11 +307,7 @@ class value_write_tests
             } elseif ($add_val->is_big()) {
                 $val_class = change_values_big::class;
             }
-            $log = new change($t->usr1);
-            $log->set_class($val_class);
-            $log->set_field(change_fields::FLD_NUMERIC_VALUE);
-            $log->row_id = $add_val->id();
-            $result = $log->dsp_last(true);
+            $result = $t->log_last_by_field($add_val, change_fields::FLD_NUMERIC_VALUE, $add_val->id(), true);
         }
         $target = user::SYSTEM_TEST_NAME . ' added 123456789';
         // TODO activate
@@ -348,11 +346,7 @@ class value_write_tests
 
         // ... check if the value adding has been logged
         if ($add_val->is_id_set()) {
-            $log = new change($t->usr1);
-            $log->set_table(change_tables::VALUE);
-            $log->set_field(change_fields::FLD_NUMERIC_VALUE);
-            $log->row_id = $add_val2->id();
-            $result = $log->dsp_last(true);
+            $result = $t->log_last_by_field($add_val2, change_fields::FLD_NUMERIC_VALUE, $add_val2->id(), true);
         }
         $target = user::SYSTEM_TEST_NAME . ' added 234567890';
         // TODO activate
@@ -377,11 +371,7 @@ class value_write_tests
 
         // ... check if the value change has been logged
         if ($added_val->is_id_set()) {
-            $log = new change($t->usr1);
-            $log->set_table(change_tables::VALUE);
-            $log->set_field(change_fields::FLD_NUMERIC_VALUE);
-            $log->row_id = $added_val->id();
-            $result = $log->dsp_last(true);
+            $result = $t->log_last_by_field($added_val, change_fields::FLD_NUMERIC_VALUE, $added_val->id(), true);
         }
         // TODO fix it
         $target = user::SYSTEM_TEST_NAME . ' changed 123456789 to 987654321';
@@ -410,17 +400,10 @@ class value_write_tests
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_id($added_val_id);
         if ($val_usr2->is_id_set()) {
-            $log = new change($t->usr2);
-            $log->set_table(change_tables::VALUE_USR);
-            $log->set_field(change_fields::FLD_NUMERIC_VALUE);
-            $log->row_id = $val_usr2->id();
-            $result = $log->dsp_last(true);
+            $result = $t->log_last_by_field($val_usr2, change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(),
+                true, true);
         }
-        $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed 987654321 to 23456';
-        // TODO fix it
-        if ($result != $target) {
-            $target = '';
-        }
+        $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed "987654321" to "23456"';
         $t->display(', value->save logged for user "' . $t->usr2->name . '"', $target, $result);
 
         // ... check if the value has really been updated
@@ -449,17 +432,10 @@ class value_write_tests
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_grp($phr_grp);
         if ($val_usr2->is_id_set()) {
-            $log = new change($t->usr2);
-            $log->set_table(change_tables::VALUE_USR);
-            $log->set_field(change_fields::FLD_NUMERIC_VALUE);
-            $log->row_id = $val_usr2->id();
-            $result = $log->dsp_last(true);
+            $result = $t->log_last_by_field($val_usr2,  change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(),
+                true, true);
         }
-        $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed 23456 to 987654321';
-        // TODO fix it
-        if ($result != $target) {
-            $target = '';
-        }
+        $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed "23456" to "987654321"';
         $t->display(', value->save logged for user "' . $t->usr2->name . '"', $target, $result);
 
         // ... check if the value has really been changed back

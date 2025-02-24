@@ -112,6 +112,7 @@ use html\component\component_exe as component_dsp;
 use html\formula\formula as formula_dsp;
 use html\helper\data_object as data_object_dsp;
 use html\html_base;
+use html\log\change_log_named as change_dsp;
 use html\ref\ref as ref_dsp;
 use html\ref\source as source_dsp;
 use html\rest_ctrl;
@@ -2818,13 +2819,8 @@ class test_base
         ?string                          $old_name = ''
     ): bool
     {
-        $log = new change($sbx->user());
         $lib = new library();
-        $tbl_name = $lib->class_to_table($sbx::class);
-        $log->set_table($tbl_name);
-        $log->set_field($fld);
-        $log->row_id = $sbx->id();
-        $result = $log->dsp_last(true);
+        $result = $this->log_last_by_field($sbx, $fld, $sbx->id(), true);
         $target = $sbx->user()->name() . ' ' . $action . ' "';
         if ($action == messages::LOG_UPDATE) {
             $target .= $old_name . '" to "' . $name . '"';
@@ -3037,13 +3033,8 @@ class test_base
         ?string      $old_name = ''
     ): bool
     {
-        $log = new change($sbx->user());
         $lib = new library();
-        $tbl_name = $lib->class_to_table($sbx::class);
-        $log->set_table($tbl_name);
-        $log->set_field($fld);
-        $log->row_id = $sbx->id();
-        $result = $log->dsp_last(true);
+        $result = $this->log_last_by_field($sbx, $fld, $sbx->id(), true);
         $target = $sbx->user()->name() . ' ' . $action . ' "';
         if ($action == messages::LOG_UPDATE) {
             $target .= $old_name . '" to "' . $name . '"';
@@ -3559,16 +3550,44 @@ class test_base
     }
 
     /**
+     * short text description of the last change of the given user
      * @param user|null $usr the user for whom the log entries should be selected
      * @return string the last log entry that the given user has done on a named object
      */
-    function log_last_named(?user $usr = null): string
+    function log_last_by_user(?user $usr = null): string
     {
         if ($usr == null) {
             $usr = $this->usr1;
         }
         $log = new change($this->usr1);
-        return $log->dsp_last_user(true, $usr);
+        $log->load_by_user($this->usr1);
+        $log_dsp = new change_dsp($log->api_json());
+        return $log_dsp->dsp(true);
+    }
+
+    /**
+     * short text description of the
+     * last change of the given named sandbox object and further
+     * selected by the field and value if given
+     * @param sandbox|sandbox_multi $sbx the sandbox object that should be used to filter the changes
+     * @param string $fld the name if the field that should be used to filter the changes
+     * @param int|string|null $id the field value if the given field name
+     * @param bool $ex_time true if the change time should not be included in the text
+     * @param bool $usr_only true if only user specific changes should be shown
+     * @return string the last log entry that the given user has done on a named object
+     */
+    function log_last_by_field(
+        sandbox|sandbox_multi $sbx,
+        string                $fld = '',
+        int|string|null       $id = null,
+        bool                  $ex_time = false,
+        bool                  $usr_only = false
+    ): string
+    {
+        $log = $sbx->log_object();
+        $log->load_by_field_row($sbx::class, $fld, $id, $usr_only);
+        $log_dsp = new change_dsp($log->api_json());
+        return $log_dsp->dsp($ex_time);
     }
 
 

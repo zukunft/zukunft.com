@@ -80,6 +80,7 @@ class config extends value_list
     {
         return self::DEFAULT_DATE_TIME_FORMAT;
     }
+
     /**
      * request the user specific frontend configuration from the backend
      * @return user_message if it fails the reason why

@@ -46,6 +46,8 @@ include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once SHARED_ENUM_PATH . 'change_fields.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -61,6 +63,8 @@ use cfg\helper\type_object;
 use cfg\user\user;
 use DateTime;
 use shared\enum\change_fields;
+use shared\json_fields;
+use shared\types\api_type_list;
 
 class change_value extends change_log
 {
@@ -73,6 +77,7 @@ class change_value extends change_log
     const TBL_COMMENT = 'to log all numeric value changes done by any user on all kind of values (table, prime, big and standard';
     const FLD_FIELD_ID = 'change_field_id';
     const FLD_GROUP_ID = 'group_id';
+    const FLD_ROW_ID = self::FLD_GROUP_ID;
 
     // all database field names
     const FLD_NAMES = array(
@@ -111,6 +116,53 @@ class change_value extends change_log
 
 
     /*
+     * construct and map
+     */
+
+    /**
+     * map the database fields to one change log entry to this log object
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param string $id_fld the name of the id field as set in the child class
+     * @return bool true if a change log entry is found
+     */
+    function row_mapper(?array $db_row, string $id_fld = '', ?user $usr = null): bool
+    {
+        global $cng_fld_cac;
+        $result = parent::row_mapper($db_row, self::FLD_ID);
+        if ($result) {
+            $this->action_id = $db_row[self::FLD_ACTION];
+            $this->field_id = $db_row[self::FLD_FIELD_ID];
+            if (array_key_exists(self::FLD_ROW_ID, $db_row)) {
+                $this->row_id = $db_row[self::FLD_ROW_ID];
+            } elseif (array_key_exists(group::FLD_ID, $db_row)) {
+                $this->row_id = $db_row[group::FLD_ID];
+            }
+            $this->set_time_str($db_row[self::FLD_TIME]);
+            $this->old_value = $db_row[change::FLD_OLD_VALUE];
+            $this->new_value = $db_row[change::FLD_NEW_VALUE];
+
+            $fld_tbl = $cng_fld_cac->get($this->field_id);
+            $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
+            // TODO check if not the complete user should be loaded
+            $usr_set = false;
+            if ($usr != null) {
+                if ($db_row[user::FLD_ID] == $usr->id()) {
+                    $this->set_user($usr);
+                    $usr_set = true;
+                }
+            }
+            if (!$usr_set) {
+                $row_usr = new user();
+                $row_usr->set_id($db_row[user::FLD_ID]);
+                $row_usr->name = $db_row[user::FLD_NAME];
+                $this->set_user($row_usr);
+            }
+        }
+        return $result;
+    }
+
+    /*
      * load
      */
 
@@ -139,6 +191,29 @@ class change_value extends change_log
         $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC);
 
         return $qp;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the json api message
+     *
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars[json_fields::OLD_VALUE] = $this->old_value;
+        $vars[json_fields::NEW_VALUE] = $this->new_value;
+        $vars[json_fields::STD_VALUE] = $this->std_value;
+
+        return $vars;
     }
 
 

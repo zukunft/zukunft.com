@@ -2115,6 +2115,15 @@ class library
             $result .= sql_db::TABLE_EXTENSION;
         }
         // TODO remove these exception
+        if ($result == 'values_primes') {
+            $result = 'values_prime';
+        }
+        if ($result == 'values_bigs') {
+            $result = 'values_big';
+        }
+        if ($result == 'values_norms') {
+            $result = 'values_norm';
+        }
         if ($result == 'value_times') {
             $result = 'values_time';
         }

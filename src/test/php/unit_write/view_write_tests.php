@@ -124,11 +124,7 @@ class view_write_tests
         $t->display('view->load the added "' . $msk->name() . '"', $target, $result);
 
         // check if the view adding has been logged
-        $log = new change($t->usr1);
-        $log->set_table(change_tables::VIEW);
-        $log->set_field(view::FLD_NAME);
-        $log->row_id = $msk->id();
-        $result = $log->dsp_last(true);
+        $result = $t->log_last_by_field($msk, view::FLD_NAME, $msk->id(), true);
         $target = user::SYSTEM_TEST_NAME . ' added "System Test View"';
         $t->display('view->save adding logged for "' . views::TEST_ADD_NAME . '"', $target, $result);
 
@@ -160,11 +156,7 @@ class view_write_tests
         $t->display('view->load renamed view "' . views::TEST_RENAMED_NAME . '"', $target, $result);
 
         // check if the view renaming has been logged
-        $log = new change($t->usr1);
-        $log->set_table(change_tables::VIEW);
-        $log->set_field(view::FLD_NAME);
-        $log->row_id = $dsp_renamed->id();
-        $result = $log->dsp_last(true);
+        $result = $t->log_last_by_field($dsp_renamed, view::FLD_NAME, $dsp_renamed->id(), true);
         $target = user::SYSTEM_TEST_NAME . ' changed "System Test View" to "System Test View Renamed"';
         $t->display('view->save rename logged for "' . views::TEST_RENAMED_NAME . '"', $target, $result);
 
@@ -186,19 +178,14 @@ class view_write_tests
         $t->display('view->load type_id for "' . views::TEST_RENAMED_NAME . '"', $target, $result);
 
         // check if the view parameter adding have been logged
-        $log = new change($t->usr1);
-        $log->set_table(change_tables::VIEW);
-        $log->set_field(sandbox_named::FLD_DESCRIPTION);
-        $log->row_id = $dsp_reloaded->id();
-        $result = $log->dsp_last(true);
+        $result = $t->log_last_by_field($dsp_reloaded, sandbox_named::FLD_DESCRIPTION, $dsp_reloaded->id(), true);
         $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed "Just added for testing the user sandbox" to "Just changed for testing the user sandbox"';
         // TODO fix it
         if ($result != $target) {
             $target = user::SYSTEM_TEST_NAME . ' added "Just added for testing the user sandbox"';
         }
         $t->display('view->load comment for "' . views::TEST_RENAMED_NAME . '" logged', $target, $result);
-        $log->set_field(view::FLD_TYPE);
-        $result = $log->dsp_last(true);
+        $result = $t->log_last_by_field($dsp_reloaded, view::FLD_TYPE, $dsp_reloaded->id(), true);
         $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed "word default" to "entry view"';
         // TODO fix it
         if ($result != $target) {

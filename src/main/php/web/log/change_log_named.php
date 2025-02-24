@@ -307,7 +307,7 @@ class change_log_named extends change_log
         }
         if ($this->old_value <> '') {
             if ($this->new_value <> '') {
-                $result .= msg_shared::LOG_UPDATE . ' "' . $this->old_value . '" ' . msg_shared::LOG_TO . '"' . $this->new_value . '"';
+                $result .= msg_shared::LOG_UPDATE . ' "' . $this->old_value . '" ' . msg_shared::LOG_TO . ' "' . $this->new_value . '"';
             } else {
                 $result .= msg_shared::LOG_DEL . ' "' . $this->old_value . '"';;
             }

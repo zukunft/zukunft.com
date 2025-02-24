@@ -120,7 +120,6 @@ use cfg\word\word;
 use cfg\word\word_db;
 use cfg\word\word_list;
 use cfg\word\triple;
-use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
 use shared\json_fields;

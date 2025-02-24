@@ -331,11 +331,7 @@ class word_write_tests
 
         // ... check if the word creation has been logged
         if ($wrd_add->id() > 0) {
-            $log = new change($t->usr1);
-            $log->set_class(word::class);
-            $log->set_field(change_fields::FLD_WORD_NAME);
-            $log->row_id = $wrd_add->id();
-            $result = $log->dsp_last(true);
+            $result = $t->log_last_by_field($wrd_add, change_fields::FLD_WORD_NAME, $wrd_add->id(), true);
         }
         $target = user::SYSTEM_TEST_NAME . ' added "' . words::TEST_ADD . '"';
         $t->display('word->save logged for "' . words::TEST_ADD . '"', $target, $result);
@@ -387,20 +383,14 @@ class word_write_tests
         $t->display('word->load type_id for "' . words::TEST_RENAMED . '"', $target, $result);
 
         // check if the word parameter adding have been logged
-        $log = new change($t->usr1);
-        $log->set_table(change_tables::WORD);
-        $log->set_field(change_fields::FLD_WORD_PLURAL);
-        $log->row_id = $wrd_reloaded->id();
-        $result = $log->dsp_last(true);
+        $result = $t->log_last_by_field($wrd_reloaded, change_fields::FLD_WORD_PLURAL, $wrd_reloaded->id(), true);
         $target = user::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . 's"';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '" logged', $target, $result);
-        $log->set_field(sandbox_named::FLD_DESCRIPTION);
-        $result = $log->dsp_last(true);
+        $result = $t->log_last_by_field($wrd_reloaded, sandbox_named::FLD_DESCRIPTION, $wrd_reloaded->id(), true);
         $target = user::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . ' description"';
         $t->display('word->load description for "' . words::TEST_RENAMED . '" logged', $target, $result);
         $t->display('word->load ref_2 for "' . words::TEST_RENAMED . '" logged', $target, $result);
-        $log->set_field(change_fields::FLD_PHRASE_TYPE);
-        $result = $log->dsp_last(true);
+        $result = $t->log_last_by_field($wrd_reloaded, change_fields::FLD_PHRASE_TYPE, $wrd_reloaded->id(), true);
         $target = user::SYSTEM_TEST_NAME . ' added "differentiator filler"';
         $t->display('word->load type_id for "' . words::TEST_RENAMED . '" logged', $target, $result);
 

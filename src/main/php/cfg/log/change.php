@@ -89,7 +89,6 @@ use cfg\value\value;
 use cfg\view\view;
 use cfg\word\word;
 use html\helper\config;
-use html\log\change_log_named as change_log_named_dsp;
 use DateTime;
 use DateTimeInterface;
 use Exception;
@@ -111,7 +110,6 @@ class change extends change_log
     // *_SQL_TYP is the sql data type used for the field
     const FLD_FIELD_ID = 'change_field_id';
     const FLD_FIELD_ID_SQL_TYP = sql_field_type::INT_SMALL;
-    const FLD_ROW_ID = 'row_id';
     const FLD_OLD_VALUE = 'old_value';
     const FLD_OLD_VALUE_SQL_TYP = sql_field_type::TEXT;
     const FLD_OLD_ID_COM = 'old value id';
@@ -125,6 +123,9 @@ class change extends change_log
     const FLD_NEW_ID = 'new_id';
     const FLD_NEW_ID_SQL_TYP = sql_field_type::INT;
     const FLD_OLD_EXT = '_old';
+
+    // TODO move to config
+    const DEFAULT_DATE_TIME_FORMAT = 'd-m-Y H:i';
 
     // all database field names
     const FLD_NAMES = array(
@@ -171,6 +172,7 @@ class change extends change_log
      *
      * @param array|null $db_row with the data directly from the database
      * @param string $id_fld the name of the id field as set in the child class
+     * @param user|null $usr the user who wants to see the changes e.g. to check the permission
      * @return bool true if a change log entry is found
      */
     function row_mapper(?array $db_row, string $id_fld = '', ?user $usr = null): bool
@@ -223,6 +225,26 @@ class change extends change_log
      */
 
     /**
+     * load the last change of given user
+     * @return bool true is a change is found
+     */
+    function load_by_user(?user $usr = null): bool
+    {
+
+        global $db_con;
+
+        $result = false;
+        $qp = $this->load_sql_by_user($db_con->sql_creator(), $usr);
+        $db_row = $db_con->get1($qp);
+        if ($db_row != null) {
+            $this->row_mapper($db_row);
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
      * create the common part of an SQL statement to retrieve the parameters of the change log
      * TODO use class name instead of TBL_CHANGE
      *
@@ -267,32 +289,6 @@ class change extends change_log
         $sc->add_where(user::FLD_ID, $usr->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
-        return $qp;
-    }
-
-    /**
-     * create the SQL statement to retrieve the parameters of the change log by field and row id
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param int|null $field_id the database id of the database field (and table) of the changes that the user wants to see
-     * @param int|null $row_id the database id of the database row of the changes that the user wants to see
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_field_row(sql_creator $sc, ?int $field_id = null, ?int $row_id = null): sql_par
-    {
-        $qp = $this->load_sql($sc, 'field_row', self::class);
-        if ($field_id != null) {
-            $sc->add_where(change::FLD_FIELD_ID, $field_id);
-        }
-        if ($field_id != null) {
-            $sc->add_where(change::FLD_ROW_ID, $row_id);
-        }
-        // TODO check!
-        //$fields[] = user::FLD_ID;
-        $sc->set_page();
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
         return $qp;
     }
 
@@ -510,9 +506,9 @@ class change extends change_log
      * @return sql_par_field_list list of the database field names
      */
     function db_field_values_types(
-        sql_creator $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst,
-        sql_par_type $val_typ = sql_par_type::TEXT
+        sql_par_type  $val_typ = sql_par_type::TEXT
     ): sql_par_field_list
     {
         $fvt_lst = parent::db_field_values_types($sc, $sc_par_lst, $val_typ);
@@ -599,6 +595,44 @@ class change extends change_log
 
 
     /*
+     * format
+     */
+
+    /**
+     * @return string the current change as a human-readable text
+     *                optional without time for automatic testing
+     */
+    function dsp(): string
+    {
+        $result = date_format($this->time(), $this->date_time_format()) . ' ';
+        if ($this->user() != null) {
+            if ($this->user()->name() <> '') {
+                $result .= $this->user()->name() . ' ';
+            }
+        }
+        if ($this->old_value <> '') {
+            if ($this->new_value <> '') {
+                $result .= messages::LOG_UPDATE . ' "' . $this->old_value . '" to "' . $this->new_value . '"';
+            } else {
+                $result .= messages::LOG_DEL . ' "' . $this->old_value . '"';;
+            }
+        } else {
+            $result .= messages::LOG_ADD . ' "' . $this->new_value . '"';;
+        }
+        return $result;
+    }
+
+    /**
+     * TODO move to the backend config class
+     * @return string with the date format as requested by the user
+     */
+    function date_time_format(): string
+    {
+        return self::DEFAULT_DATE_TIME_FORMAT;
+    }
+
+
+    /*
      * debug
      */
 
@@ -620,100 +654,6 @@ class change extends change_log
         }
         $result .= ' in row ' . $this->row_id;
         $result .= ' at ' . $this->change_time->format(DateTimeInterface::ATOM);
-        return $result;
-    }
-
-
-    /*
-     * TODO deprecate
-     */
-
-    function dsp_obj(): change_log_named_dsp
-    {
-        $dsp_obj = new change_log_named_dsp();
-        $this->fill_obj($dsp_obj);
-        return $dsp_obj;
-
-    }
-
-
-    /*
-      * display
-      */
-
-    // TODO to be move to frontend
-
-    /**
-     * @return string the last change of given user
-     *                optional without time for automatic testing
-     */
-    function dsp_last_user(bool $ex_time = false, ?user $usr = null): string
-    {
-
-        global $db_con;
-
-        $db_type = $db_con->get_class();
-        $qp = $this->load_sql_by_user($db_con->sql_creator(), $usr);
-        $db_row = $db_con->get1($qp);
-
-        $this->row_mapper($db_row);
-        $result = $this->dsp($db_row, $ex_time);
-
-        // restore the type before saving the log
-        $db_con->set_class($db_type);
-        return $result;
-    }
-
-    /**
-     * display the last change related to one object (word, formula, value, verb, ...)
-     * mainly used for testing
-     * TODO if changes on table values are requested include also the table "user_values"
-     */
-    function dsp_last(bool $ex_time = false): string
-    {
-
-        global $db_con;
-
-        $db_type = $db_con->get_class();
-        $qp = $this->load_sql_by_field_row($db_con->sql_creator(), $this->field_id, $this->row_id);
-        $db_row = $db_con->get1($qp);
-
-        $this->row_mapper($db_row);
-        $result = $this->dsp($db_row, $ex_time);
-
-        // restore the type before saving the log
-        $db_con->set_class($db_type);
-        return $result;
-    }
-
-    /**
-     * @return string the current change as a human-readable text
-     *                optional without time for automatic testing
-     */
-    private function dsp(array $db_row, bool $ex_time = false): string
-    {
-        $result = '';
-        $usr_cfg = new config();
-
-        if ($db_row) {
-            if (!$ex_time) {
-                $result .= date_format($this->time(), $usr_cfg->date_time_format()) . ' ';
-            }
-            if ($this->user() != null) {
-                if ($this->user()->name() <> '') {
-                    $result .= $this->user()->name() . ' ';
-                }
-            }
-            if ($this->old_value <> '') {
-                if ($this->new_value <> '') {
-                    $result .= messages::LOG_UPDATE . ' "' . $this->old_value . '" to "' . $this->new_value . '"';
-                } else {
-                    $result .= messages::LOG_DEL . ' "' . $this->old_value . '"';;
-                }
-            } else {
-                $result .= messages::LOG_ADD . ' "' . $this->new_value . '"';;
-            }
-        }
         return $result;
     }
 

@@ -111,11 +111,7 @@ class component_write_tests
         $t->display('component->load the added "' . $cmp_added->name() . '"', $target, $result);
 
         // check if the component adding has been logged
-        $log = new change($t->usr1);
-        $log->set_class(component::class);
-        $log->set_field(component::FLD_NAME);
-        $log->row_id = $cmp->id();
-        $result = $log->dsp_last(true);
+        $result = $t->log_last_by_field($cmp, component::FLD_NAME, $cmp->id(), true);
         $target = user::SYSTEM_TEST_NAME . ' added "System Test View Component"';
         $t->display('component->save adding logged for "' . components::TEST_ADD_NAME . '"', $target, $result);
 
@@ -149,11 +145,7 @@ class component_write_tests
         $t->display('component->load renamed component "' . components::TEST_RENAMED_NAME . '"', $target, $result);
 
         // check if the component renaming has been logged
-        $log = new change($t->usr1);
-        $log->set_table(change_tables::VIEW_COMPONENT);
-        $log->set_field(component::FLD_NAME);
-        $log->row_id = $cmp_renamed->id();
-        $result = $log->dsp_last(true);
+        $result = $t->log_last_by_field($cmp_renamed, component::FLD_NAME, $cmp_renamed->id(), true);
         $target = user::SYSTEM_TEST_NAME . ' changed "System Test View Component" to "System Test View Component Renamed"';
         $t->display('component->save rename logged for "' . components::TEST_RENAMED_NAME . '"', $target, $result);
 
@@ -177,19 +169,16 @@ class component_write_tests
         $t->display('component->load type_id for "' . components::TEST_RENAMED_NAME . '"', $target, $result);
 
         // check if the component parameter adding have been logged
-        $log = new change($t->usr1);
-        $log->set_table(change_tables::VIEW_COMPONENT);
-        $log->set_field(sandbox_named::FLD_DESCRIPTION);
-        $log->row_id = $cmp_reloaded->id();
-        $result = $log->dsp_last(true);
+        // TODO for testing always use the latest table name
+        // TODO create an additional test based on change_tables and change_fields to receive data for an deprecated table or field
+        $result = $t->log_last_by_field($cmp_reloaded, sandbox_named::FLD_DESCRIPTION, $cmp_reloaded->id(), true);
         // TODO fix it
         $target = user::SYSTEM_TEST_NAME . ' added "Just added for testing the user sandbox"';
         if ($result != $target) {
             $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed "Just added for testing the user sandbox" to "Just changed for testing the user sandbox"';
         }
         $t->display('component->load comment for "' . components::TEST_RENAMED_NAME . '" logged', $target, $result);
-        $log->set_field(change_fields::FLD_COMPONENT_TYPE);
-        $result = $log->dsp_last(true);
+        $result = $t->log_last_by_field($cmp_reloaded, change_fields::FLD_COMPONENT_TYPE, $cmp_reloaded->id(), true);
         // TODO fix it
         $target = user::SYSTEM_TEST_NAME . ' added "word name"';
         if ($result != $target) {

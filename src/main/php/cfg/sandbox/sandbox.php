@@ -38,6 +38,7 @@
     - sql write fields:  field list for writing to the database
     - sql create:        to create the database table, index and foreign keys
     - sql write switch:  select the best db write method
+    - sql helper:        support function for the sql creation
     - internal check:    for testing during development
     - settings:          internal information about this or the child objects e.g. is_named_obj()
 
@@ -1652,6 +1653,14 @@ class sandbox extends db_object_seq_id_user
     {
         log_err('The dummy parent method reserved_names has been called, which should never happen');
         return new user_message();
+    }
+
+    /**
+     * @return change_log the object that is used to log the user changes
+     */
+    function log_object(): change_log
+    {
+        return new change($this->user());
     }
 
 
@@ -3803,6 +3812,7 @@ class sandbox extends db_object_seq_id_user
         return new sql_par_field_list();
     }
 
+    // TODO deprecate
     function sql_key_fields_id_old(sql_par_field_list $fvt_lst): sql_par_field_list
     {
         return new sql_par_field_list();
@@ -3822,6 +3832,19 @@ class sandbox extends db_object_seq_id_user
     ): sql_par_field_list
     {
         return new sql_par_field_list();
+    }
+
+
+    /*
+     * sql helper
+     */
+
+    /**
+     * @return string the extension for the sql table name
+     */
+    function sql_extension(): string
+    {
+        return '';
     }
 
 

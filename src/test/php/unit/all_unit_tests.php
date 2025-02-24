@@ -119,6 +119,7 @@ use unit\import_tests as import_tests;
 use unit_read\component_read_tests;
 use unit_read\formula_read_tests;
 use unit_read\source_read_tests;
+use unit_read\value_read_tests;
 use unit_read\view_read_tests;
 use unit_read\word_read_tests;
 use unit_ui\all_ui_tests;
@@ -203,16 +204,18 @@ class all_unit_tests extends test_cleanup
              * db read testing - run
              */
 
+
+
             // run the selected db write
-            (new api_tests())->run($this);
-            (new word_read_tests())->run($this);
+            //(new api_tests())->run($this);
+            //(new word_read_tests())->run($this);
             //(new triple_read_tests())->run($this);
-            (new source_read_tests())->run($this);
-            (new formula_read_tests())->run($this);
-            (new view_read_tests())->run($this);
-            (new component_read_tests())->run($this);
-            (new graph_tests())->run($this);
-            // (new value_read_tests())->run($this);
+            //(new source_read_tests())->run($this);
+            //(new formula_read_tests())->run($this);
+            //(new view_read_tests())->run($this);
+            //(new component_read_tests())->run($this);
+            //(new graph_tests())->run($this);
+            (new value_read_tests())->run($this);
 
 
             /*

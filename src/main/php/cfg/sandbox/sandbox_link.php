@@ -66,7 +66,8 @@ include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 //include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
-//include_once MODEL_LOG_PATH . 'change_link.php';
+include_once MODEL_LOG_PATH . 'change_link.php';
+include_once MODEL_LOG_PATH . 'change.php';
 //include_once MODEL_REF_PATH . 'ref.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -608,6 +609,15 @@ class sandbox_link extends sandbox
         $log->add();
 
         return $log;
+    }
+
+    /**
+     * TODO for normal fields use the change log, but for link changes use the link log
+     * @return change|change_link the object that is used to log the user changes
+     */
+    function log_object(): change|change_link
+    {
+        return new change($this->user());
     }
 
 

@@ -46,7 +46,10 @@ include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_GROUP_PATH . 'group.php';
+include_once MODEL_LOG_PATH . 'change_value_time.php';
+include_once MODEL_LOG_PATH . 'change_values_time_prime.php';
+include_once MODEL_LOG_PATH . 'change_values_time_norm.php';
+include_once MODEL_LOG_PATH . 'change_values_time_big.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -54,6 +57,10 @@ include_once SHARED_PATH . 'json_fields.php';
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\group\group;
+use cfg\log\change_value_time;
+use cfg\log\change_values_time_prime;
+use cfg\log\change_values_time_norm;
+use cfg\log\change_values_time_big;
 use cfg\user\user;
 use DateTime;
 use shared\json_fields;
@@ -184,6 +191,25 @@ class value_time extends value_base
         $vars[json_fields::TIME_VALUE] = $this->value();
 
         return $vars;
+    }
+
+
+    /*
+     * log
+     */
+
+    /**
+     * @return change_value_time the object that is used to log the user changes
+     */
+    function log_object(): change_value_time
+    {
+        if ($this->is_prime()) {
+            return new change_values_time_prime($this->user());
+        } elseif ($this->is_big()) {
+            return new change_values_time_big($this->user());
+        } else {
+            return new change_values_time_norm($this->user());
+        }
     }
 
 

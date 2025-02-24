@@ -39,7 +39,6 @@ include_once DB_PATH . 'sql_par.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
 
-use cfg\system\base_list;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\user\user_message;

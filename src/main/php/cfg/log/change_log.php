@@ -97,7 +97,7 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_VIEW_PATH . 'view_term_link.php';
 //include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'word_db.php';
+//include_once MODEL_WORD_PATH . 'word_db.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
@@ -274,11 +274,15 @@ class change_log extends db_object_seq_id_user
      * @param string $class the class name
      * @return bool true if the table/class is part of the log table
      */
-    function set_class(string $class): bool
+    function set_class(string $class, bool $usr_only = false): bool
     {
         $lib = new library();
         $name = $lib->class_to_table($class);
-        return $this->set_table($name);
+        if ($usr_only) {
+            return $this->set_table(sql_db::TBL_USER_PREFIX . $name);
+        } else {
+            return $this->set_table($name);
+        }
     }
 
     /**
@@ -360,7 +364,7 @@ class change_log extends db_object_seq_id_user
                 }
             }
         } else {
-            log_err('Table not yet set whe trying to set the field ' . $field_name);
+            log_err('Table not yet set when trying to set the field ' . $field_name);
         }
         return $db_changed;
     }
@@ -666,6 +670,66 @@ class change_log extends db_object_seq_id_user
 
 
     /*
+     * load
+     */
+
+    /**
+     * load the last change of given user
+     * @return bool true is a change is found
+     */
+    function load_by_field_row(
+        string          $class,
+        string          $fld = '',
+        int|string|null $id = null,
+        bool            $usr_only = false
+    ): bool
+    {
+        global $db_con;
+
+        $result = false;
+
+        $db_con->set_class($class, $usr_only);
+        $this->set_class($class, $usr_only);
+        $this->set_field($fld);
+        $qp = $this->load_sql_by_field_row($db_con->sql_creator(), $this->field_id, $id);
+        $db_row = $db_con->get1($qp);
+
+        if ($db_row != null) {
+            $this->row_mapper($db_row);
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
+     * create the SQL statement to retrieve the parameters of the change log by field and row id
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param int|null $field_id the database id of the database field (and table) of the changes that the user wants to see
+     * @param int|null $row_id the database id of the database row of the changes that the user wants to see
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_field_row(sql_creator $sc, ?int $field_id = null, ?int $row_id = null): sql_par
+    {
+        $qp = $this->load_sql($sc, 'field_row');
+        if ($field_id != null) {
+            $sc->add_where(change::FLD_FIELD_ID, $field_id);
+        }
+        if ($row_id != null) {
+            $sc->add_where($this::FLD_ROW_ID, $row_id);
+        }
+        // TODO check!
+        //$fields[] = user::FLD_ID;
+        $sc->set_page();
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+
+    /*
      * modify
      */
 
@@ -881,9 +945,9 @@ class change_log extends db_object_seq_id_user
      * @return sql_par_field_list list of the database field names
      */
     function db_field_values_types(
-        sql_creator $sc,
+        sql_creator   $sc,
         sql_type_list $sc_par_lst,
-        sql_par_type $val_typ = sql_par_type::FLOAT
+        sql_par_type  $val_typ = sql_par_type::FLOAT
     ): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();

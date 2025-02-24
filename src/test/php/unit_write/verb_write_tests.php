@@ -64,7 +64,7 @@ class verb_write_tests
         $t->assert('verb->add', $result);
 
         // ... test if adding the verb is part of the change log
-        $result = $t->log_last_named();
+        $result = $t->log_last_by_user();
         $t->assert('verb->add log', $result, 'zukunft.com system test added "System Test Verb"');
 
         // test verb not yet used can be deleted
@@ -75,7 +75,7 @@ class verb_write_tests
         $t->assert('verb->del ', $result);
 
         // ... test if deleting the verb is part of the change log
-        $result = $t->log_last_named();
+        $result = $t->log_last_by_user();
         $t->assert('verb->add log', $result, 'zukunft.com system test deleted "System Test Verb"');
 
         // TODO add more tests e.g. that a verb name cannot be used for a word any more

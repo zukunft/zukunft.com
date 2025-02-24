@@ -34,13 +34,18 @@ namespace unit_read;
 
 include_once SHARED_CONST_PATH . 'triples.php';
 
+use cfg\db\sql;
+use cfg\db\sql_type;
 use cfg\group\group_id;
+use cfg\log\change_values_norm;
 use cfg\phrase\phrase_list;
+use cfg\user\user;
 use cfg\value\value;
 use shared\const\groups;
 use shared\const\triples;
 use shared\const\values;
 use shared\const\words;
+use shared\enum\change_fields;
 use shared\types\phrase_type;
 use test\test_cleanup;
 

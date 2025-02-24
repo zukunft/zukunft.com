@@ -53,6 +53,8 @@ use cfg\log\change_log;
 use cfg\log\change_log_list;
 use cfg\log\change_table;
 use cfg\log\change_table_field;
+use cfg\log\change_value;
+use cfg\log\change_values_prime;
 use cfg\sandbox\sandbox_value;
 use cfg\user\user;
 use cfg\value\value;
@@ -216,7 +218,12 @@ class change_log_tests
         // sql to load a log entry by field and row id
         // TODO check that user specific changes are included in the list of changes
         $log = new change($usr);
-        $this->assert_sql_named_by_field_row($t, $db_con, $log);
+        $this->assert_sql_by_field_row($t, $db_con, $log);
+
+        // sql to load a log entry by field and row id
+        // TODO check that user specific changes are included in the list of changes
+        // TODO add tests for all value types
+        $this->assert_sql_by_field_row($t, $db_con, new change_values_prime($usr));
 
         // sql to load a log entry by field and row id
         $log = new change_link($usr);
@@ -243,9 +250,9 @@ class change_log_tests
      *
      * @param test_cleanup $t the test environment
      * @param sql_db $db_con does not need to be connected to a real database
-     * @param change $log the user sandbox object e.g. a word
+     * @param change|change_value $log the user sandbox object e.g. a word
      */
-    private function assert_sql_named_by_field_row(test_cleanup $t, sql_db $db_con, change $log): void
+    private function assert_sql_by_field_row(test_cleanup $t, sql_db $db_con, change|change_value $log): void
     {
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
