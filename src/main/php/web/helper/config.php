@@ -37,6 +37,7 @@ namespace html\helper;
 include_once WEB_VALUE_PATH . 'value_list.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_HELPER_PATH . 'Config.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_USER_PATH . 'user_message.php';
@@ -47,30 +48,25 @@ use html\user\user_message;
 use html\value\value_list;
 use shared\api;
 use shared\const\words;
+use shared\helper\Config as shared_config;
 
 class config extends value_list
 {
 
-    // fallback config values e.g. if the backend connection is lost
-    const ROW_LIMIT = 20;
-    const DEFAULT_DEC_POINT = ".";
-    const DEFAULT_PERCENT_DECIMALS = 2;
-    const DEFAULT_THOUSAND_SEP = "'";
-    const DEFAULT_DATE_TIME_FORMAT = 'd-m-Y H:i';
-
+    // TODO add the user setting as default
     function percent_decimals(): int
     {
-        return self::DEFAULT_PERCENT_DECIMALS;
+        return shared_config::DEFAULT_PERCENT_DECIMALS;
     }
 
     function dec_point(): string
     {
-        return self::DEFAULT_DEC_POINT;
+        return shared_config::DEFAULT_DEC_POINT;
     }
 
     function thousand_sep(): string
     {
-        return self::DEFAULT_THOUSAND_SEP;
+        return shared_config::DEFAULT_THOUSAND_SEP;
     }
 
     /**
@@ -78,7 +74,7 @@ class config extends value_list
      */
     function date_time_format(): string
     {
-        return self::DEFAULT_DATE_TIME_FORMAT;
+        return shared_config::DEFAULT_DATE_TIME_FORMAT;
     }
 
     /**
@@ -110,13 +106,13 @@ class config extends value_list
         $val = null;
         switch ($names) {
             case [words::PERCENT, words::DECIMAL]:
-                $val = self::DEFAULT_PERCENT_DECIMALS;
+                $val = shared_config::DEFAULT_PERCENT_DECIMALS;
                 break;
             case [words::ROW, words::LIMIT]:
-                $val = self::ROW_LIMIT;
+                $val = shared_shared_config::ROW_LIMIT;
                 break;
             case [words::DECIMAL, words::POINT]:
-                $val = self::DEFAULT_DEC_POINT;
+                $val = shared_config::DEFAULT_DEC_POINT;
         }
         return $val;
     }

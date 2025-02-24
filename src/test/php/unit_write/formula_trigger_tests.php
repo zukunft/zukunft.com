@@ -34,9 +34,11 @@ namespace unit_write;
 
 use cfg\phrase\phrase_list;
 use cfg\value\value;
+use html\result\result;
 use shared\const\formulas;
 use shared\const\values;
 use shared\const\words;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class formula_trigger_tests
@@ -107,7 +109,8 @@ class formula_trigger_tests
         if ($res_lst != null) {
             if (count($res_lst) > 0) {
                 $res = $res_lst[0];
-                $result = trim($res->display(0));
+                $res_dsp = new result($res->api_json([api_type::INCL_PHRASES]));
+                $result = trim($res_dsp->val_formatted());
             } else {
                 $result = '';
             }
@@ -118,7 +121,7 @@ class formula_trigger_tests
         if ($result == values::SALES_INCREASE_2017_FORM) {
             $target = values::SALES_INCREASE_2017_FORM;
         } else {
-            $target = "0.79 %";
+            $target = "0.79%";
         }
         $t->display('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $target, $result, $t::TIMEOUT_LIMIT_LONG);
 

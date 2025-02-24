@@ -44,10 +44,12 @@ use cfg\component\component_link;
 use cfg\formula\formula;
 use cfg\formula\formula_link;
 use cfg\user\user;
+use cfg\value\value;
 use cfg\view\view;
 use cfg\word\triple;
 use cfg\word\word;
 use html\html_base;
+use html\user\user as user_dsp;
 use html\view\view as view_dsp;
 use shared\api;
 use shared\const\views as view_shared;
@@ -76,8 +78,7 @@ $undo_src = $_GET['undo_source'];
 // load the session user parameters
 $usr = new user;
 $result .= $usr->get();
-$dsp_usr = $usr->dsp_obj();
-$dsp_usr_old = $usr->dsp_user();
+$dsp_usr = new user_dsp($usr->api_json());
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
@@ -169,7 +170,7 @@ if ($usr->id() > 0) {
     }
 
     // display the user sandbox if there is something in
-    $sandbox = $dsp_usr_old->dsp_sandbox($back);
+    $sandbox = $dsp_usr->dsp_sandbox($back);
     if (trim($sandbox) <> "") {
         $result .= $html->dsp_text_h2("Your changes, which are not standard");
         $result .= $sandbox;
@@ -177,7 +178,7 @@ if ($usr->id() > 0) {
     }
 
     // display the user changes 
-    $changes = $dsp_usr_old->dsp_changes(0, 0, 1, $back);
+    $changes = $dsp_usr->dsp_changes(0, 0, 1, $back);
     if (trim($changes) <> "") {
         $result .= $html->dsp_text_h2("Your latest changes");
         $result .= $changes;
@@ -185,7 +186,7 @@ if ($usr->id() > 0) {
     }
 
     // display the program issues that the user has found if there are some
-    $errors = $dsp_usr_old->dsp_errors("", 0, 1, $back);
+    $errors = $dsp_usr->dsp_errors("", 0, 1, $back);
     if (trim($errors) <> "") {
         $result .= $html->dsp_text_h2("Program issues that you found, that have not yet been solved.");
         $result .= $errors;
@@ -194,7 +195,7 @@ if ($usr->id() > 0) {
 
     // display all program issues if the user is an admin
     if ($usr->profile_id == $usr_pro_cac->id(user_profiles::ADMIN)) {
-        $errors_all = $dsp_usr_old->dsp_errors("other", 0, 1, $back);
+        $errors_all = $dsp_usr->dsp_errors("other", 0, 1, $back);
         if (trim($errors_all) <> "") {
             $result .= $html->dsp_text_h2("Program issues that other user have found, that have not yet been solved.");
             $result .= $errors_all;

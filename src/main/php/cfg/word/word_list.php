@@ -1239,7 +1239,7 @@ class word_list extends sandbox_list_named
         $lib = new library();
         $phr_lst = new phrase_list($this->user());
         foreach ($this->lst() as $phr) {
-            if (get_class($phr) == word::class or get_class($phr) == word_dsp::class) {
+            if (get_class($phr) == word::class) {
                 $phr_lst->add($phr->phrase());
             } elseif (get_class($phr) == phrase::class) {
                 $phr_lst->add($phr);
@@ -1566,7 +1566,7 @@ class word_list extends sandbox_list_named
 
         if ($phr != null) {
             log_debug('time used "' . $phr->name() . '" (' . $phr->id() . ')');
-            if (get_class($phr) == word::class or get_class($phr) == word_dsp::class) {
+            if (get_class($phr) == word::class) {
                 $result = $phr->phrase();
             } else {
                 $result = $phr;

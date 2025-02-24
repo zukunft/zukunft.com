@@ -299,13 +299,13 @@ class view_exe extends view_base
             $comp_html = $this->linked_components($add_cmp, $wrd, $script, $back);
 
             // collect the history
-            $changes = $this->dsp_hist(0, config::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist(0, shared_config::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, config::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist_links(0, shared_config::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {

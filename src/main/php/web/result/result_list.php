@@ -42,7 +42,9 @@ include_once WEB_GROUP_PATH . 'group_list.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_SANDBOX_PATH . 'sandbox_list.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once SHARED_PATH . 'api.php';
+include_once SHARED_PATH . 'library.php';
 
 use html\rest_ctrl as api_dsp;
 use html\html_base;
@@ -50,8 +52,10 @@ use html\formula\formula;
 use html\group\group_list;
 use html\phrase\phrase_list;
 use html\sandbox\list_value;
+use html\system\back_trace;
 use html\user\user_message;
 use shared\api;
+use shared\library;
 
 class result_list extends list_value
 {
@@ -218,6 +222,66 @@ class result_list extends list_value
         }
 
         return $html->tbl($header_rows . $rows, $html::SIZE_HALF);
+    }
+
+    /**
+     * create the html code to show the formula results to the user
+     * TODO move to result_list_min_display
+     */
+    function display_old(string $back = ''): string
+    {
+        $lib = new library();
+        $html = new html_base();
+
+        log_debug("res_lst->display (" . $lib->dsp_count($this->lst()) . ")");
+        $result = ''; // reset the html code var
+
+        // prepare to show where the user uses different word than a normal viewer
+        //$row_nbr = 0;
+        $result .= $html->dsp_tbl_start_half();
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $res) {
+                //$row_nbr++;
+                $result .= '<tr>';
+                /*if ($row_nbr == 1) {
+                  $result .= '<th>words</th>';
+                  $result .= '<th>value</th>';
+                } */
+                $res->load_phrases(); // load any missing objects if needed
+                $phr_lst = clone $res->grp->phr_lst;
+                if (isset($res->time_phr)) {
+                    log_debug("add time " . $res->time_phr->name() . ".");
+                    $phr_lst->add($res->time_phr);
+                }
+                $phr_lst_dsp = new phrase_list($phr_lst->api_json());
+                $result .= '</tr><tr>';
+                $result .= '<td>' . $phr_lst_dsp->name_link() . '</td>';
+                $result .= '<td>' . $res->display_linked($back) . '</td>';
+                $result .= '</tr>';
+            }
+        }
+        $result .= $html->dsp_tbl_end();
+
+        log_debug("done");
+        return $result;
+    }
+
+    /**
+     * create the pure html (5) code for all formula links related to this value list
+     * @param back_trace|null $back list of past url calls of the session user
+     * @return string the html code part with the formula links
+     */
+    function frm_links_html(?back_trace $back = null): string
+    {
+        $result = '';
+        $formula_links = '';
+        foreach ($this->lst() as $res) {
+            $formula_links .= ' <a href="/http/formula_edit.php?id=' . $res->frm->id . '&back=' . $back->url_encode() . '">' . $res->number . '</a> ';
+        }
+        if ($formula_links <> '') {
+            $result .= ' (or ' . $formula_links . ')';
+        }
+        return $result;
     }
 
 }

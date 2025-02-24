@@ -117,7 +117,6 @@ include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
-include_once WEB_VALUE_PATH . 'value.php';
 include_once SHARED_CONST_PATH . 'chars.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
@@ -170,7 +169,6 @@ use cfg\result\result_list;
 use cfg\sandbox\sandbox_value;
 use cfg\user\user;
 use cfg\user\user_message;
-use html\value\value as value_dsp;
 use shared\library;
 use shared\types\phrase_type as phrase_type_shared;
 use DateTime;
@@ -2167,21 +2165,6 @@ class value_base extends sandbox_value
             }
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
-    }
-
-
-    /*
-     * TODO deprecate
-     */
-
-    /**
-     * just to shorten the code
-     * @return value_dsp the value frontend object
-     */
-    function dsp_obj(): value_dsp
-    {
-        $api_json = $this->api_json();
-        return new value_dsp($api_json);
     }
 
 }

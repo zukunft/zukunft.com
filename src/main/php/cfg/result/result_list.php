@@ -57,11 +57,6 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_db.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -90,11 +85,6 @@ use cfg\user\user_message;
 use cfg\value\value_base;
 use cfg\word\word;
 use cfg\word\word_db;
-use html\html_base;
-use html\formula\formula as formula_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\system\back_trace;
-use html\word\word as word_dsp;
 use shared\library;
 use Exception;
 
@@ -532,8 +522,7 @@ class result_list extends sandbox_value_list
         $qp = new sql_par(self::class);
         $sql_by = '';
         if ($obj->id() > 0) {
-            if (get_class($obj) == formula::class
-                or get_class($obj) == formula_dsp::class) {
+            if (get_class($obj) == formula::class) {
                 $sql_by .= formula::FLD_ID;
             } elseif (get_class($obj) == group::class) {
                 if ($by_source) {
@@ -541,7 +530,7 @@ class result_list extends sandbox_value_list
                 } else {
                     $sql_by .= group::FLD_ID;
                 }
-            } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
+            } elseif (get_class($obj) == word::class) {
                 $sql_by .= word_db::FLD_ID;
             } elseif (get_class($obj) == triple::class) {
                 $sql_by .= triple::FLD_ID;
@@ -573,7 +562,7 @@ class result_list extends sandbox_value_list
                         $link_fields[] = group::FLD_ID;
                     }
                     $qp->sql = $db_con->select_by_field_list($link_fields);
-                } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
+                } elseif (get_class($obj) == word::class) {
                     // TODO check if the results are still correct if the user has excluded the word
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
                     // $db_con->set_join_fields(                        array(result::FLD_GRP),                        sql_db::TBL_GROUP_LINK,                        result::FLD_GRP,                        result::FLD_GRP);
@@ -729,47 +718,6 @@ class result_list extends sandbox_value_list
         return $result;
     }
 
-    /**
-     * create the html code to show the formula results to the user
-     * TODO move to result_list_min_display
-     */
-    function display(string $back = ''): string
-    {
-        $lib = new library();
-        $html = new html_base();
-
-        log_debug("res_lst->display (" . $lib->dsp_count($this->lst()) . ")");
-        $result = ''; // reset the html code var
-
-        // prepare to show where the user uses different word than a normal viewer
-        //$row_nbr = 0;
-        $result .= $html->dsp_tbl_start_half();
-        if (!$this->is_empty()) {
-            foreach ($this->lst() as $res) {
-                //$row_nbr++;
-                $result .= '<tr>';
-                /*if ($row_nbr == 1) {
-                  $result .= '<th>words</th>';
-                  $result .= '<th>value</th>';
-                } */
-                $res->load_phrases(); // load any missing objects if needed
-                $phr_lst = clone $res->grp->phr_lst;
-                if (isset($res->time_phr)) {
-                    log_debug("add time " . $res->time_phr->name() . ".");
-                    $phr_lst->add($res->time_phr);
-                }
-                $phr_lst_dsp = new phrase_list_dsp($phr_lst->api_json());
-                $result .= '</tr><tr>';
-                $result .= '<td>' . $phr_lst_dsp->name_link() . '</td>';
-                $result .= '<td>' . $res->display_linked($back) . '</td>';
-                $result .= '</tr>';
-            }
-        }
-        $result .= $html->dsp_tbl_end();
-
-        log_debug("done");
-        return $result;
-    }
 
     /*
      * create functions - build new results
@@ -1147,24 +1095,6 @@ class result_list extends sandbox_value_list
     {
         $phr_lst = $val->phr_lst();
         return $this->load_by_phr_lst($phr_lst);
-    }
-
-    /**
-     * create the pure html (5) code for all formula links related to this value list
-     * @param back_trace|null $back list of past url calls of the session user
-     * @return string the html code part with the formula links
-     */
-    function frm_links_html(?back_trace $back = null): string
-    {
-        $result = '';
-        $formula_links = '';
-        foreach ($this->lst() as $res) {
-            $formula_links .= ' <a href="/http/formula_edit.php?id=' . $res->frm->id . '&back=' . $back->url_encode() . '">' . $res->number . '</a> ';
-        }
-        if ($formula_links <> '') {
-            $result .= ' (or ' . $formula_links . ')';
-        }
-        return $result;
     }
 
     /**

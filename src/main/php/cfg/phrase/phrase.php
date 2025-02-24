@@ -88,10 +88,6 @@ include_once MODEL_WORD_PATH . 'word_db.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_WORD_PATH . 'triple.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
@@ -120,7 +116,6 @@ use cfg\word\word;
 use cfg\word\word_db;
 use cfg\word\word_list;
 use cfg\word\triple;
-use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
 use shared\json_fields;
 use shared\library;
@@ -947,7 +942,7 @@ class phrase extends combine_named
     {
         $result = false;
         if ($this->obj() !== null) {
-            if ($this->obj()::class == word::class or $this->obj()::class == word_dsp::class) {
+            if ($this->obj()::class == word::class) {
                 $result = true;
             }
         } else {
@@ -1429,27 +1424,6 @@ class phrase extends combine_named
             return 'phrase with null object';
         }
     }
-
-    /*
-     * display cast
-     */
-
-    /**
-     * TODO dismiss or base on the api message
-     * @return word_dsp
-     */
-    protected
-    function get_word_dsp(): word_dsp
-    {
-        $wrd_dsp = new word($this->user());
-        if (get_class($this->obj) == word_dsp::class) {
-            $wrd_dsp = $this->obj;
-        } elseif (get_class($this->obj) == word::class) {
-            $wrd_dsp = new word_dsp($this->obj()->api_json());
-        }
-        return $wrd_dsp;
-    }
-
 
     /*
      * display functions

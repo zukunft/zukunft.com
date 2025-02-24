@@ -88,7 +88,6 @@ use cfg\user\user;
 use cfg\value\value;
 use cfg\view\view;
 use cfg\word\word;
-use html\helper\config;
 use DateTime;
 use DateTimeInterface;
 use Exception;

@@ -85,14 +85,12 @@ include_once MODEL_USER_PATH . 'user_type.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 //include_once MODEL_WORD_PATH . 'word.php';
-//include_once WEB_USER_PATH . 'user.php';
-//include_once WEB_HELPER_PATH . 'config.php';
+include_once SHARED_HELPER_PATH . 'Config.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
-use html\helper\config;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -110,9 +108,9 @@ use cfg\verb\verb_list;
 use cfg\view\view;
 use cfg\view\view_sys_list;
 use cfg\word\word;
-use html\user\user as user_dsp;
 use shared\enum\change_actions;
 use shared\enum\user_profiles;
+use shared\helper\Config as shared_config;
 use shared\json_fields;
 use Exception;
 use shared\types\api_type_list;
@@ -384,8 +382,8 @@ class user extends db_object_seq_id
         $this->last_name = null;
         $this->code_id = null;
         $this->dec_point = null;
-        $this->thousand_sep = config::DEFAULT_THOUSAND_SEP;
-        $this->percent_decimals = config::DEFAULT_PERCENT_DECIMALS;
+        $this->thousand_sep = shared_config::DEFAULT_THOUSAND_SEP;
+        $this->percent_decimals = shared_config::DEFAULT_PERCENT_DECIMALS;
         $this->profile_id = null;
         $this->source_id = null;
 
@@ -1149,15 +1147,6 @@ class user extends db_object_seq_id
         $this->set_id(0);
         $this->code_id = 'all';
         $this->name = 'standard user view for all users';
-    }
-
-    //
-    // create the display user object based on the object (not needed any more if always the display user object is used)
-    function dsp_user(): user_dsp
-    {
-        $usr = new user;
-        $usr->load_by_id($this->id());
-        return new user_dsp($usr->api_json());
     }
 
     // create the HTML code to display the username with the HTML link

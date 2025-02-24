@@ -47,6 +47,7 @@ include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_HELPER_PATH . 'Config.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'library.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
@@ -54,7 +55,6 @@ include_once SHARED_TYPES_PATH . 'view_type.php';
 
 use html\button;
 use html\display_list;
-use html\helper\config;
 use html\html_base;
 use html\log\user_log_display;
 use html\rest_ctrl as api_dsp;
@@ -65,6 +65,7 @@ use shared\api;
 use shared\library;
 use shared\types\view_styles;
 use shared\types\view_type;
+use shared\helper\Config as shared_config;
 
 class view extends view_exe
 {
@@ -397,13 +398,13 @@ class view extends view_exe
             $comp_html = $this->linked_components($add_cmp, $wrd, $script, $back);
 
             // collect the history
-            $changes = $this->dsp_hist(0, config::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist(0, shared_config::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, config::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist_links(0, shared_config::ROW_LIMIT, '', $back);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {
