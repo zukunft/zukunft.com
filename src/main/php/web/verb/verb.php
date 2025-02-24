@@ -48,6 +48,7 @@ include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_PATH . 'json_fields.php';
 
+use html\html_base;
 use html\phrase\term;
 use html\sandbox\sandbox_named;
 use html\user\user_message;
@@ -154,6 +155,68 @@ class verb extends sandbox_named
     function name_link(?string $back = '', string $style = '', int $msk_id = views::VERB_ID): string
     {
         return parent::name_link($back, $style, $msk_id);
+    }
+
+
+    /*
+     * deprecate
+     */
+
+    // show the html form to add or edit a new verb
+    function dsp_edit(string $back = ''): string
+    {
+        $html = new html_base();
+        log_debug('verb->dsp_edit ' . $this->dsp_id());
+        $result = '';
+
+        if ($this->id() <= 0) {
+            $script = "verb_add";
+            $result .= $html->dsp_text_h2('Add verb (word link type)');
+        } else {
+            $script = "verb_edit";
+            $result .= $html->dsp_text_h2('Change verb (word link type)');
+        }
+        $result .= $html->dsp_form_start($script);
+        $result .= $html->dsp_tbl_start_half();
+        $result .= '  <tr>';
+        $result .= '    <td>';
+        $result .= '      verb name:';
+        $result .= '    </td>';
+        $result .= '    <td>';
+        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="name" value="' . $this->name . '">';
+        $result .= '    </td>';
+        $result .= '  </tr>';
+        $result .= '  <tr>';
+        $result .= '    <td>';
+        $result .= '      verb plural:';
+        $result .= '    </td>';
+        $result .= '    <td>';
+        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="plural" value="' . $this->plural . '">';
+        $result .= '    </td>';
+        $result .= '  </tr>';
+        $result .= '  <tr>';
+        $result .= '    <td>';
+        $result .= '      reverse:';
+        $result .= '    </td>';
+        $result .= '    <td>';
+        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="reverse" value="' . $this->reverse . '">';
+        $result .= '    </td>';
+        $result .= '  </tr>';
+        $result .= '  <tr>';
+        $result .= '    <td>';
+        $result .= '      plural_reverse:';
+        $result .= '    </td>';
+        $result .= '    <td>';
+        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="plural_reverse" value="' . $this->rev_plural . '">';
+        $result .= '    </td>';
+        $result .= '  </tr>';
+        $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="back" value="' . $back . '">';
+        $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="confirm" value="1">';
+        $result .= $html->dsp_tbl_end();
+        $result .= $html->dsp_form_end('', $back);
+
+        log_debug('verb->dsp_edit ... done');
+        return $result;
     }
 
 }

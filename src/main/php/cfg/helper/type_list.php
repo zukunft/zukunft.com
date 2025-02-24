@@ -89,7 +89,6 @@ include_once MODEL_VIEW_PATH . 'view_link_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once WEB_USER_PATH . 'user_type_list.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
@@ -153,7 +152,6 @@ use cfg\view\view_link_type_list;
 use cfg\view\view_type;
 use cfg\view\view_type_list;
 use controller\api_message;
-use html\user\user_type_list as type_list_dsp;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -840,19 +838,6 @@ class type_list
             }
         }
         return $names . ' (' . $ids . ')';
-    }
-
-
-    /*
-     * TODO deprecate
-     */
-
-    /**
-     * @return type_list_dsp the word frontend api object
-     */
-    function dsp_obj(): object
-    {
-        return new type_list_dsp($this->lst);
     }
 
 }

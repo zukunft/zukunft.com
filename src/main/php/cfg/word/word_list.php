@@ -72,8 +72,6 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
 include_once MODEL_VERB_PATH . 'verb.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_WORD_PATH . 'word_list.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
@@ -99,8 +97,6 @@ use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_list;
 use cfg\verb\verb;
-use html\word\word as word_dsp;
-use html\word\word_list as word_list_dsp;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\enum\foaf_direction;
 use shared\library;
@@ -1600,24 +1596,6 @@ class word_list extends sandbox_list_named
         // create blocks of update function calls
 
         return $usr_msg;
-    }
-
-
-    /*
-     * TODO deprecate
-     */
-
-    /**
-     * @return word_list_dsp the word list object with the display interface functions
-     */
-    function dsp_obj(): word_list_dsp
-    {
-        $dsp_obj = new word_list_dsp();
-        foreach ($this->lst() as $wrd) {
-            $wrd_dsp = new word_dsp($wrd->api_json());
-            $dsp_obj->add($wrd_dsp);
-        }
-        return $dsp_obj;
     }
 
 }

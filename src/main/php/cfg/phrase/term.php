@@ -62,7 +62,6 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_db.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once WEB_HTML_PATH . 'html_base.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
@@ -84,7 +83,6 @@ use cfg\user\user;
 use cfg\word\word;
 use cfg\word\triple;
 use cfg\word\word_db;
-use html\html_base;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use shared\types\phrase_type as phrase_type_shared;
@@ -1008,14 +1006,13 @@ class term extends combine_named
     function id_used_msg(db_object_seq_id $obj_to_add): string
     {
         $lib = new library();
-        $html = new html_base();
         $result = "";
 
         if ($this->id() != 0) {
             $class = $lib->class_to_name($this->type());
-            $result = $html->dsp_err(
+            $result =
                 'A ' . $class . ' with the name "' . $this->name() . '" already exists. '
-                . 'Please use another ' . $lib->class_to_name($obj_to_add::class) . ' name.');
+                . 'Please use another ' . $lib->class_to_name($obj_to_add::class) . ' name.';
         }
 
         return $result;

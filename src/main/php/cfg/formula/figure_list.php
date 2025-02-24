@@ -39,7 +39,6 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
-include_once WEB_FIGURE_PATH . 'figure.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -50,7 +49,6 @@ use cfg\result\result;
 use cfg\sandbox\sandbox_list;
 use cfg\user\user_message;
 use cfg\value\value;
-use html\figure\figure as figure_dsp;
 use shared\library;
 
 class figure_list extends sandbox_list
@@ -224,26 +222,6 @@ class figure_list extends sandbox_list
                 }
             }
         }
-        return $result;
-    }
-
-    /**
-     * TODO to be moved to the frontend object
-     * return the html code to display a value
-     * this is the opposite of the convert function
-     * this function is called from dsp_id, so no other call is allowed
-     */
-    function display($back = ''): string
-    {
-        $result = '';
-
-        foreach ($this->lst() as $fig) {
-            $fig_dsp = new figure_dsp();
-            $api_json = $fig->api_json();
-            $fig_dsp->set_from_json($api_json);
-            $result .= $fig_dsp->display() . ' ';
-        }
-
         return $result;
     }
 

@@ -36,11 +36,13 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_CONST_PATH . 'views.php';
+include_once WEB_VERB_PATH . 'verb.php';
 
 use cfg\user\user;
 use cfg\verb\verb;
 use cfg\view\view;
 use html\html_base;
+use html\verb\verb as verb_dsp;
 use html\view\view as view_dsp;
 use shared\api;
 use shared\const\views as view_shared;
@@ -117,7 +119,8 @@ if ($usr->id() > 0) {
             $result .= $html->dsp_err($msg);
 
             // show the verb and its relations, so that the user can change it
-            $result .= $vrb->dsp_edit($back);
+            $vrb_dsp = new verb_dsp($vrb->api_json());
+            $result .= $vrb_dsp->dsp_edit($back);
         }
     }
 }

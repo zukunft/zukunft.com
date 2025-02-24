@@ -43,7 +43,6 @@ include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
-include_once WEB_HTML_PATH . 'html_base.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
@@ -80,7 +79,6 @@ use cfg\system\message_translator;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\word;
-use html\html_base;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
 use shared\enum\messages as msg_enum;
@@ -604,62 +602,6 @@ class verb extends type_object
         return $result;
     }
 
-    // show the html form to add or edit a new verb
-    function dsp_edit(string $back = ''): string
-    {
-        $html = new html_base();
-        log_debug('verb->dsp_edit ' . $this->dsp_id());
-        $result = '';
-
-        if ($this->id() <= 0) {
-            $script = "verb_add";
-            $result .= $html->dsp_text_h2('Add verb (word link type)');
-        } else {
-            $script = "verb_edit";
-            $result .= $html->dsp_text_h2('Change verb (word link type)');
-        }
-        $result .= $html->dsp_form_start($script);
-        $result .= $html->dsp_tbl_start_half();
-        $result .= '  <tr>';
-        $result .= '    <td>';
-        $result .= '      verb name:';
-        $result .= '    </td>';
-        $result .= '    <td>';
-        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="name" value="' . $this->name . '">';
-        $result .= '    </td>';
-        $result .= '  </tr>';
-        $result .= '  <tr>';
-        $result .= '    <td>';
-        $result .= '      verb plural:';
-        $result .= '    </td>';
-        $result .= '    <td>';
-        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="plural" value="' . $this->plural . '">';
-        $result .= '    </td>';
-        $result .= '  </tr>';
-        $result .= '  <tr>';
-        $result .= '    <td>';
-        $result .= '      reverse:';
-        $result .= '    </td>';
-        $result .= '    <td>';
-        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="reverse" value="' . $this->reverse . '">';
-        $result .= '    </td>';
-        $result .= '  </tr>';
-        $result .= '  <tr>';
-        $result .= '    <td>';
-        $result .= '      plural_reverse:';
-        $result .= '    </td>';
-        $result .= '    <td>';
-        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="plural_reverse" value="' . $this->rev_plural . '">';
-        $result .= '    </td>';
-        $result .= '  </tr>';
-        $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="back" value="' . $back . '">';
-        $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="confirm" value="1">';
-        $result .= $html->dsp_tbl_end();
-        $result .= $html->dsp_form_end('', $back);
-
-        log_debug('verb->dsp_edit ... done');
-        return $result;
-    }
 
     /*
      * convert functions

@@ -50,6 +50,12 @@ enum messages: string
     const LOG_LINK = 'linked';
     const LOG_TO = 'to';
 
+    // IP filter
+    const IP_BLOCK_PRE_ADDR = 'ip_block_pre_addr';
+    const IP_BLOCK_POST_ADDR = 'ip_block_post_addr';
+    const IP_BLOCK_SOLUTION = 'ip_block_solution';
+
+
     /**
      * @return string with the text for the user in the default language
      */

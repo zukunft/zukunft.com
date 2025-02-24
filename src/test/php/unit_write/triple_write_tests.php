@@ -227,16 +227,16 @@ class triple_write_tests
         $vrb->set_user($t->usr1);
         $vrb->set_name(triples::SYSTEM_TEST_ADD_AUTO);
         $result = $vrb->save()->get_last_message();
-        $target = '<style class="text-danger">A triple with the name "System Test Triple" already exists. '
-            . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.</style>';
+        $target = 'A triple with the name "System Test Triple" already exists. '
+            . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.';
         $t->assert('verb cannot have a standard triple name', $result, $target);
 
         // ... and no formula either
         $frm = new formula($t->usr1);
         $frm->set_name(triples::SYSTEM_TEST_ADD_AUTO);
         $result = $frm->save()->get_last_message();
-        $target = '<style class="text-danger">A triple with the name "System Test Triple" already exists. '
-            . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.</style>';
+        $target = 'A triple with the name "System Test Triple" already exists. '
+            . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.';
         $t->assert('word cannot have a standard triple name', $result, $target);
 
         $test_name = 'triple clean up tests';

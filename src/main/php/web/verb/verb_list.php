@@ -108,4 +108,24 @@ class verb_list extends type_list
     }
 
 
+    /**
+     * display a list of elements: replaced b html->list
+     */
+    function dsp_list(string $item_type = 'link_type'): string
+    {
+        $result = "";
+
+        $item_lst = $this->lst();
+        $item_type = 'link_type';
+        $edit_script = $item_type . "_edit.php";
+        $add_script = $item_type . "_add.php";
+        foreach ($item_lst as $item) {
+            $result .= '<a href="/http/' . $edit_script . '?id=' . $item->id . '">' . $item->name . '</a><br> ';
+        }
+        $result .= \html\btn_add('Add ' . $item_type, $add_script);
+        $result .= '<br>';
+
+        return $result;
+    }
+
 }

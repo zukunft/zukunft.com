@@ -304,8 +304,8 @@ class word_write_tests
         $vrb->set_user($t->usr1);
         $vrb->set_name(words::TEST_ADD);
         $result = $vrb->save()->get_last_message();
-        $target = '<style class="text-danger">A word with the name "System Test Word" already exists. '
-            . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.</style>';
+        $target = 'A word with the name "System Test Word" already exists. '
+            . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.';
         $t->assert('verb cannot have an already used word name', $result, $target);
 
         // ... triple
@@ -313,8 +313,8 @@ class word_write_tests
         $trp->load_by_name(triples::PI_NAME);
         $trp->set_name(words::TEST_ADD);
         $result = $trp->save()->get_last_message();
-        $target = '<style class="text-danger">A word with the name "System Test Word" already exists. '
-            . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.</style>';
+        $target = 'A word with the name "System Test Word" already exists. '
+            . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.';
         $t->assert('triple cannot by renamed to an already used word name', $result, $target);
 
         // ... or formula anymore
@@ -322,8 +322,8 @@ class word_write_tests
         $frm->load_by_name(formulas::SCALE_TO_SEC);
         $frm->set_name(words::TEST_ADD);
         $result = $frm->save()->get_last_message();
-        $target = '<style class="text-danger">A word with the name "System Test Word" already exists. '
-            . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.</style>';
+        $target = 'A word with the name "System Test Word" already exists. '
+            . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.';
         $t->assert('formula cannot by renamed to an already used word name', $result, $target);
 
 

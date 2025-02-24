@@ -82,7 +82,6 @@ include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once MODEL_PHRASE_PATH . 'trm_ids.php';
 include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
@@ -106,7 +105,6 @@ use cfg\word\word;
 use cfg\word\word_list;
 use cfg\word\triple;
 use cfg\word\triple_list;
-use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
@@ -1778,7 +1776,7 @@ class phrase_list extends sandbox_list_named
         $measure_type = $phr_typ_cac->id(phrase_type_shared::MEASURE);
         // loop over the phrase ids and add only the time ids to the result array
         foreach ($this->lst() as $phr) {
-            if (get_class($phr) <> phrase::class and get_class($phr) <> word::class and get_class($phr) <> word_dsp::class) {
+            if (get_class($phr) <> phrase::class and get_class($phr) <> word::class) {
                 log_warning('The phrase list contains ' . $this->dsp_id() . ' of type ' . get_class($phr) . ', which is not supposed to be in the list.', 'phrase_list->measure_lst');
                 log_debug('phrase_list->measure_lst contains object ' . get_class($phr) . ', which is not a phrase');
             } else {
@@ -2376,7 +2374,7 @@ class phrase_list extends sandbox_list_named
                         log_warning('Phrase ' . $phr->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                     }
                     // TODO check if old can ge removed: if ($phr->id() > 0) {
-                    if (get_class($phr->obj()) == word::class or get_class($phr->obj()) == word_dsp::class) {
+                    if (get_class($phr->obj()) == word::class) {
                         $wrd_lst->add($phr->obj());
                     } elseif (get_class($phr->obj()) == triple::class) {
                         // use the recursive triple function to include the foaf words

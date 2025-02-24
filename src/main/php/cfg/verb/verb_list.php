@@ -36,7 +36,6 @@ include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
-include_once WEB_HTML_PATH . 'html_base.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
@@ -46,7 +45,6 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_db;
 use cfg\db\sql_par;
@@ -58,9 +56,7 @@ use cfg\system\system_time_type;
 use cfg\user\user;
 use cfg\word\triple;
 use cfg\word\word;
-use html\html_base;
 use shared\enum\foaf_direction;
-use shared\library;
 use shared\types\verbs;
 
 class verb_list extends type_list
@@ -462,30 +458,6 @@ class verb_list extends type_list
 
         }
         return $result;
-    }
-
-
-    /*
-      display functions
-      -----------------
-    */
-
-    /**
-     * @return string list of the verb ids as a sql compatible text
-     */
-    function ids_txt(): string
-    {
-        $lib = new library();
-        return $lib->sql_array($this->ids());
-    }
-
-    /**
-     * @return string html code to display all verbs and allow an admin to change it
-     */
-    function dsp_list(): string
-    {
-        $html = new html_base();
-        return $html->dsp_list($this->lst(), "link_type");
     }
 
 }

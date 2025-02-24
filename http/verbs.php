@@ -36,10 +36,12 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
+include_once WEB_VERB_PATH . 'verb_list.php';
 include_once SHARED_CONST_PATH . 'views.php';
 
 use cfg\user\user;
 use cfg\verb\verb_list;
+use html\verb\verb_list as verb_list_dsp;
 use cfg\view\view;
 use html\view\view as view_dsp;
 use shared\api;
@@ -74,7 +76,8 @@ if ($usr->id() > 0) {
     $result .= $html->dsp_text_h2("Word link types");
     $vrb_lst = new verb_list($usr);
     $vrb_lst->load($db_con);
-    $result .= $vrb_lst->dsp_list();
+    $vrb_lst_dsp = new verb_list_dsp($vrb_lst->api_json());
+    $result .= $vrb_lst_dsp->dsp_list();
     //$result .= zul_dsp_list ($usr->id());
 }
 

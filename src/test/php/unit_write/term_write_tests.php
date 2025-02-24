@@ -37,6 +37,7 @@ include_once SHARED_CONST_PATH . 'triples.php';
 
 use cfg\phrase\term;
 use cfg\word\word;
+use html\html_base;
 use shared\library;
 use shared\const\formulas;
 use shared\const\triples;
@@ -52,6 +53,7 @@ class term_write_tests
 
         global $usr;
         $lib = new library();
+        $html = new html_base();
 
         $t->header('term database write tests');
 
@@ -63,7 +65,7 @@ class term_write_tests
         $term->load_by_obj_name(words::ZH);
         $target = 'A word with the name "' . words::ZH . '" already exists. '
             . 'Please use another ' . $lib->class_to_name(word::class) . ' name.';
-        $result = $term->id_used_msg($wrd_zh);
+        $result = $html->dsp_err($term->id_used_msg($wrd_zh));
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
         // ... check also for a triple
@@ -71,7 +73,7 @@ class term_write_tests
         $term->load_by_obj_name(triples::CITY_ZH);
         $target = '<style class="text-danger">A triple with the name "' . triples::CITY_ZH . '" already exists. '
             . 'Please use another ' . $lib->class_to_name(word::class) . ' name.</style>';
-        $result = $term->id_used_msg($wrd_zh);
+        $result = $html->dsp_err($term->id_used_msg($wrd_zh));
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
         // ... check also for a verb
@@ -79,7 +81,7 @@ class term_write_tests
         $term->load_by_obj_name(verbs::IS);
         $target = '<style class="text-danger">A word with the name "" already exists. '
             . 'Please use another ' . $lib->class_to_name(word::class) . ' name.</style>';
-        $result = $term->id_used_msg($wrd_zh);
+        $result = $html->dsp_err($term->id_used_msg($wrd_zh));
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
         // ... check also for a formula
@@ -88,7 +90,7 @@ class term_write_tests
         // each formula name has also a word
         $target = 'A formula with the name "' . formulas::INCREASE . '" already exists. '
             . 'Please use another ' . $lib->class_to_name(word::class) . ' name.';
-        $result = $term->id_used_msg($wrd_zh);
+        $result = $html->dsp_err($term->id_used_msg($wrd_zh));
         $t->dsp_contains(', term->load for id ' . $wrd_zh->id(), $target, $result);
 
     }

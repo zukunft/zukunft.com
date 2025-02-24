@@ -933,22 +933,6 @@ class html_base
         return $result;
     }
 
-// display a list of elements: replaced b html->list
-    function dsp_list($item_lst, $item_type): string
-    {
-        $result = "";
-
-        $edit_script = $item_type . "_edit.php";
-        $add_script = $item_type . "_add.php";
-        foreach ($item_lst as $item) {
-            $result .= '<a href="/http/' . $edit_script . '?id=' . $item->id . '">' . $item->name . '</a><br> ';
-        }
-        $result .= \html\btn_add('Add ' . $item_type, $add_script);
-        $result .= '<br>';
-
-        return $result;
-    }
-
 // display a box with the history and the links
     function dsp_link_hist_box($comp_name, $comp_html,
                                $nbrs_name, $nbrs_html,

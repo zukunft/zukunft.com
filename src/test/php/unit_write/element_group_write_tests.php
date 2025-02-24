@@ -42,6 +42,7 @@ namespace unit_write;
 use cfg\phrase\phrase_list;
 use html\element\element_group;
 use html\figure\figure as figure_dsp;
+use html\figure\figure_list;
 use shared\library;
 use shared\const\formulas;
 use shared\const\words;
@@ -158,7 +159,8 @@ class element_group_write_tests
             $target = ' 8.505251 {f18}'  . words::INHABITANTS . ','  . words::CH . ','  . words::MIO . '  (' . $fig_id . ')';
             $t->assert('figure_list->dsp_id', $result, $target);
 
-            $result = $fig_lst->display();
+            $fig_lst_dsp = new figure_list($fig_lst->api_json());
+            $result = $fig_lst_dsp->display();
             $target = "8.51 ";
             $t->display('figure_list->display', $target, $result);
 

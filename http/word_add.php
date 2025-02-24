@@ -138,7 +138,7 @@ if ($usr->id() > 0) {
                   $wrd->type_id = cl(SQL_WORD_TYPE_FORMULA_LINK);
                 } else {
                 */
-                $msg .= $trm->id_used_msg($this);
+                $msg .= $html->dsp_err($trm->id_used_msg($this));
                 log_debug();
                 //}
             }

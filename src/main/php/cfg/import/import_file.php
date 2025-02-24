@@ -32,12 +32,10 @@ include_once MODEL_HELPER_PATH . 'config_numbers.php';
 include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
-include_once WEB_HTML_PATH . 'html_base.php';
 
 use cfg\helper\config_numbers;
 use cfg\user\user;
 use cfg\user\user_message;
-use html\html_base;
 
 class import_file
 {
@@ -203,9 +201,8 @@ class import_file
             $usr, true
         );
 
-        $html = new html_base();
         foreach (BASE_CONFIG_FILES as $filename) {
-            $html->echo('load ' . $filename);
+            $this->echo('load ' . $filename);
             $result .= $this->json_file(PATH_BASE_CONFIG_MESSAGE_FILES . $filename, $usr);
         }
 
@@ -228,15 +225,24 @@ class import_file
             $usr, true
         );
 
-        $html = new html_base();
         foreach (TEST_IMPORT_FILE_LIST as $filename) {
-            $html->echo('load ' . $filename);
+            $this->echo('load ' . $filename);
             $result .= $this->json_file(PATH_TEST_IMPORT_FILES . $filename, $usr);
         }
 
         log_debug('import test ... done');
 
         return $result;
+    }
+
+    /**
+     * display a message immediately to the user
+     * @param string $txt the text that should be should to the user
+     */
+    function echo(string $txt): void
+    {
+        echo $txt;
+        echo "\n";
     }
 
 }

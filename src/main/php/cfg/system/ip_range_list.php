@@ -37,12 +37,14 @@ include_once MODEL_SYSTEM_PATH . 'ip_range.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once MODEL_USER_PATH . 'user_message.php';
-include_once WEB_SYSTEM_PATH . 'messages.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_HELPER_PATH . 'Translator.php';
 
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\user\user_message;
-use html\system\messages;
+use shared\enum\messages as shared_msg;
+use shared\helper\Translator;
 
 class ip_range_list extends base_list
 {
@@ -125,12 +127,12 @@ class ip_range_list extends base_list
         $result = new user_message;
         foreach ($this->lst() as $range) {
             if ($range->includes($ip_addr)) {
-                $ui_msg = new messages();
-                $msg = $ui_msg->txt(messages::IP_BLOCK_PRE_ADDR)
+                $ui_msg = new Translator();
+                $msg = $ui_msg->txt(shared_msg::IP_BLOCK_PRE_ADDR)
                     . $ip_addr
-                    . $ui_msg->txt(messages::IP_BLOCK_POST_ADDR)
+                    . $ui_msg->txt(shared_msg::IP_BLOCK_POST_ADDR)
                     . $range->reason
-                    . $ui_msg->txt(messages::IP_BLOCK_SOLUTION);
+                    . $ui_msg->txt(shared_msg::IP_BLOCK_SOLUTION);
                 $result->add_message($msg);
             }
         }
