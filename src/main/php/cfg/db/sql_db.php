@@ -75,6 +75,8 @@ include_once MODEL_SYSTEM_PATH . 'job.php';
 include_once MODEL_SYSTEM_PATH . 'job_time.php';
 include_once MODEL_SYSTEM_PATH . 'job_type.php';
 include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
 include_once MODEL_LANGUAGE_PATH . 'language.php';
 include_once MODEL_LANGUAGE_PATH . 'language_form.php';
 include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
@@ -146,6 +148,7 @@ include_once MODEL_VALUE_PATH . 'value_ts_data.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_VIEW_PATH . 'view_list.php';
 include_once MODEL_VIEW_PATH . 'view_link_type.php';
 include_once MODEL_VIEW_PATH . 'view_link_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';
@@ -241,6 +244,7 @@ use cfg\system\sys_log;
 use cfg\system\sys_log_function;
 use cfg\system\sys_log_level;
 use cfg\system\sys_log_status;
+use cfg\system\sys_log_status_list;
 use cfg\system\sys_log_type;
 use cfg\system\system_time;
 use cfg\system\system_time_type;
@@ -249,6 +253,7 @@ use cfg\value\value;
 use cfg\value\value_geo;
 use cfg\value\value_text;
 use cfg\value\value_time;
+use cfg\view\view_list;
 use cfg\word\triple;
 use cfg\helper\type_lists;
 use cfg\user\user;
@@ -1121,6 +1126,12 @@ class sql_db
 
     function run_preloaded_truncate(): void
     {
+
+        // log cache
+        global $cng_act_cac;
+        global $cng_tbl_cac;
+        global $cng_fld_cac;
+
         // TODO use system user cache
         global $system_users;
         // TODO use user profile cache
@@ -1146,9 +1157,6 @@ class sql_db
         global $sys_msk_cac;
         global $sys_log_sta_cac;
         global $job_typ_cac;
-        global $cng_act_cac;
-        global $cng_tbl_cac;
-        global $cng_fld_cac;
 
         // TODO activate or remove
         //$system_users =[];
@@ -1171,6 +1179,7 @@ class sql_db
         $lan_cac = new language_list();
         $lan_for_cac = new language_form_list();
         $job_typ_cac = new job_type_list();
+        $sys_log_sta_cac = new sys_log_status_list();
         $cng_act_cac = new change_action_list();
         $cng_tbl_cac = new change_table_list();
         $cng_fld_cac = new change_field_list();

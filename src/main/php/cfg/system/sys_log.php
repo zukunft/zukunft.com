@@ -143,6 +143,7 @@ class sys_log extends db_object_seq_id
     public ?int $usr_id = null;         // the user id who was logged in when the error happened
     public string $usr_name = '';       // the username who was logged in when the error happened
     public ?int $solver_id = null;      // the admin id who has solved the problem
+    // TODO deprecate
     public ?string $solver_name = '';    // the admin id who has solved the problem
     public ?DateTime $log_time = null;  // timestamp when the issue appeared
     public ?int $type_id = null;        // type of the error
@@ -153,7 +154,6 @@ class sys_log extends db_object_seq_id
     public ?int $status_id = null;      // the status of the error
 
     public ?string $function_name = '';  //
-    public string $status_name = '';    //
 
 
     /*
@@ -184,7 +184,6 @@ class sys_log extends db_object_seq_id
             $this->log_description = $db_row[self::FLD_DESCRIPTION];
             $this->log_trace = $db_row[self::FLD_TRACE];
             $this->status_id = $db_row[sys_log_status::FLD_ID];
-            $this->status_name = $db_row[type_object::FLD_NAME];
         }
         return $result;
     }
@@ -211,6 +210,21 @@ class sys_log extends db_object_seq_id
     function user(): ?user
     {
         return $this->usr;
+    }
+
+
+    /*
+     * preloaded
+     */
+
+    /**
+     * get the name of the system log entry status
+     * @return string the name of the status
+     */
+    function status_name(): string
+    {
+        global $sys_log_sta_cac;
+        return $sys_log_sta_cac->name($this->status_id);
     }
 
 
@@ -368,7 +382,7 @@ class sys_log extends db_object_seq_id
         $vars[json_fields::PRG_PART] = $this->function_name;
         //$vars[json_fields::ID] = $this->solver_name;
         $vars[json_fields::OWNER] = '';
-        $vars[json_fields::STATUS] = $this->status_name;
+        $vars[json_fields::STATUS] = $this->status_id;
 
         return $vars;
     }
@@ -399,12 +413,14 @@ class sys_log extends db_object_seq_id
     private function save_field_status(sql_db $db_con, sys_log $db_rec): bool
     {
         log_debug();
+        global $sys_log_sta_cac;
+
         $result = false;
         if ($db_rec->status_id <> $this->status_id) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->status_name;
+            $log->old_value = $sys_log_sta_cac->name($db_rec->status_id);
             $log->old_id = $db_rec->status_id;
-            $log->new_value = $this->status_name;
+            $log->new_value = $this->status_name();
             $log->new_id = $this->status_id;
             $log->row_id = $this->id();
             $log->set_field(sys_log_status::FLD_ID);

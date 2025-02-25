@@ -32,6 +32,8 @@
 
 namespace shared\types;
 
+include_once SHARED_TYPES_PATH . 'api_type.php';
+
 use cfg\db\sql_type;
 
 class api_type_list

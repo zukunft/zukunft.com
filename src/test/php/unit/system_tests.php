@@ -424,7 +424,7 @@ class system_tests
         $log2->log_trace = sys_log_tests::T2_LOG_TRACE;
         $log2->function_name = sys_log_tests::T2_FUNC_NAME;
         $log2->solver_name = sys_log_tests::TV_SOLVE_ID;
-        $log2->status_name = $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
+        $log2->status_id = $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
 
         $log_lst = new sys_log_list();
         $log_lst->add($log);

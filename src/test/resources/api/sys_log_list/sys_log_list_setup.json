@@ -6,14 +6,31 @@
   "version": "0.0.3",
   "body": [
     {
+      "id": 3,
+      "user": "zukunft.com system test",
+      "text": "'test import'",
+      "description": "'import of the some test json files'",
+      "trace": "'import_test_files'",
+      "prg_part": "import_test_files",
+      "status": 1
+    },
+    {
+      "id": 2,
+      "user": "zukunft.com system test",
+      "text": "'base setup'",
+      "description": "'import of the base setup'",
+      "trace": "'import_base_config'",
+      "prg_part": "import_base_config",
+      "status": 1
+    },
+    {
       "id": 1,
       "user": "zukunft.com system test",
       "text": "'base setup'",
       "description": "'import of the base setup'",
       "trace": "'import_base_config'",
       "prg_part": "import_base_config",
-      "owner": "",
-      "status": "new"
+      "status": 1
     }
   ]
 }

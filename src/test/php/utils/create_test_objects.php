@@ -3444,14 +3444,14 @@ class create_test_objects extends test_base
         $sys->log_trace = sys_log_tests::TV_LOG_TRACE;
         $sys->function_name = sys_log_tests::TV_FUNC_NAME;
         $sys->solver_name = sys_log_tests::TV_SOLVE_ID;
-        $sys->status_name = $sys_log_sta_cac->id(sys_log_statuus::OPEN);
+        $sys->status_id = $sys_log_sta_cac->id(sys_log_statuus::OPEN);
         return $sys;
     }
 
     /**
      * @return sys_log a closed system error log entry
      */
-    function sys_log2(): sys_log
+    function sys_log_closed(): sys_log
     {
         global $sys_log_sta_cac;
         $sys = new sys_log();
@@ -3462,7 +3462,7 @@ class create_test_objects extends test_base
         $sys->log_trace = sys_log_tests::T2_LOG_TRACE;
         $sys->function_name = sys_log_tests::T2_FUNC_NAME;
         $sys->solver_name = sys_log_tests::TV_SOLVE_ID;
-        $sys->status_name = $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
+        $sys->status_id = $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
         return $sys;
     }
 
@@ -3500,7 +3500,7 @@ class create_test_objects extends test_base
     {
         $sys_lst = new sys_log_list();
         $sys_lst->add($this->sys_log());
-        $sys_lst->add($this->sys_log2());
+        $sys_lst->add($this->sys_log_closed());
         return $sys_lst;
     }
 
