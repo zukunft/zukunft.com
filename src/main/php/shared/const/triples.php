@@ -62,6 +62,9 @@ class triples
     const SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Triple added via sql function';
     const SYSTEM_TEST_ADD_VIA_SQL = 'System Test Triple added via prepared sql insert';
 
+    // triple used in the default start view
+    const GLOBAL_PROBLEM = 'global problem';
+
     const TN_CUBIC_METER = 'm3';
 
     const CITY_ZH = 'Zurich (City)';

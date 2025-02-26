@@ -94,6 +94,7 @@ class phrase extends combine_named
         return $usr_msg;
     }
 
+
     /*
      * api
      */
@@ -139,7 +140,6 @@ class phrase extends combine_named
     {
         return $this->api_mapper(json_decode($json_api_msg, true));
     }
-
 
 
     /*

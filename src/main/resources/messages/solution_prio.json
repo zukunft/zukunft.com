@@ -8,15 +8,21 @@
   "words": [
     {
       "name": "problem",
-      "comment": "here more a personal issue (wikipedia does not really match)",
+      "comment": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
       "refs": [
         {
-          "name": "List_of_global_issues",
+          "name": "Problem_solving",
           "type": "wikipedia"
-        },
+        }
+      ]
+    },
+    {
+      "name": "global",
+      "comment": "here more a something that effects all people on earth (wikipedia does not really match)",
+      "refs": [
         {
-          "name": "Q65117122",
-          "type": "wikidata"
+          "name": "Globalization",
+          "type": "wikipedia"
         }
       ]
     },
@@ -286,6 +292,23 @@
   ],
   "triples": [
     {
+      "name": "global problem",
+      "from": "problem",
+      "verb": "can be",
+      "to": "global",
+      "comment": "here more a personal issue (wikipedia does not really match)",
+      "refs": [
+        {
+          "name": "List_of_global_issues",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q65117122",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
       "from": "warmer",
       "verb": "is a",
       "to": "warm"
@@ -382,6 +405,31 @@
       "from": "b",
       "verb": "is symbol for",
       "to": "billion"
+    },
+    {
+      "from": "climate warming",
+      "verb": "is a",
+      "to": "global problem"
+    },
+    {
+      "from": "populism",
+      "verb": "is a",
+      "to": "global problem"
+    },
+    {
+      "from": "health",
+      "verb": "can be",
+      "to": "global problem"
+    },
+    {
+      "from": "poverty",
+      "verb": "is a",
+      "to": "global problem"
+    },
+    {
+      "from": "education",
+      "verb": "can be",
+      "to": "global problem"
     }
   ],
   "values": [

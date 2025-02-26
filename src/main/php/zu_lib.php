@@ -14,15 +14,16 @@ use html\phrase\phrase_group as phrase_group_dsp;
     4. commit
 
     but first this needs to be fixed:
-    TODO cleanup frontend class and add unit tests
-    TODO use the config object in the frontend
+    TODO review the start view functionality
     TODO create the missing system views
+
+    TODO use the config object in the frontend
+
+    TODO add missing unit tests to frontend classes and check teh test coverage
     TODO move the remaining html function from the backend to the frontend
 
     TODO make sure that unit tests does not start any api call
     TODO move all user configuration settings to the config yaml
-    TODO check the no frontend class is used in the backend
-    TODO check the no backend class is used in the frontend
     TODO test the single html frontend function like $wrd->btn_edit() with the html_tests e.g. word_html_tests
     TODO create an test the html frontend masks using run_ui_test in unit/api_tests
     TODO remove all other frontend tests

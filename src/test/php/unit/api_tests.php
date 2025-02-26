@@ -229,12 +229,18 @@ class api_tests
         //$t->assert_view(views::GROUP_ADD, $t->usr1, new group($t->usr1));
         // FORMULA
         $t->assert_view(views::FORMULA_ADD, $t->usr1, new formula($t->usr1));
+        $t->assert_view(views::FORMULA_EDIT, $t->usr1, new formula($t->usr1), 1);
+        $t->assert_view(views::FORMULA_DEL, $t->usr1, new formula($t->usr1), 1);
         // FORMULA TEST
         // RESULT
         // VIEW
         $t->assert_view(views::VIEW_ADD, $t->usr1, new view($t->usr1));
+        $t->assert_view(views::VIEW_EDIT, $t->usr1, new view($t->usr1), 1);
+        $t->assert_view(views::VIEW_DEL, $t->usr1, new view($t->usr1), 1);
         // COMPONENT
         $t->assert_view(views::COMPONENT_ADD, $t->usr1, new component($t->usr1));
+        $t->assert_view(views::COMPONENT_EDIT, $t->usr1, new component($t->usr1), 1);
+        $t->assert_view(views::COMPONENT_DEL, $t->usr1, new component($t->usr1), 1);
         // USER
         // LANGUAGE
         // SYS LOG

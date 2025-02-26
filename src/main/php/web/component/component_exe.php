@@ -39,15 +39,22 @@ namespace html\component;
 
 include_once WEB_COMPONENT_PATH . 'component.php';
 include_once WEB_HELPER_PATH . 'data_object.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_SANDBOX_PATH . 'db_object.php';
+include_once WEB_HTML_PATH . 'list_sort.php';
 include_once WEB_HTML_PATH . 'sheet.php';
 include_once WEB_FORM_PATH . 'system_form.php';
+include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
 
+use html\helper\data_object;
 use html\helper\data_object as data_object_dsp;
+use html\list_sort;
+use html\phrase\phrase;
 use html\sandbox\db_object as db_object_dsp;
 use html\sheet;
 use html\component\form\system_form;
+use shared\const\triples;
 use shared\types\component_type;
 
 class component_exe extends component
@@ -90,7 +97,9 @@ class component_exe extends component
         $result .= match ($this->type_code_id()) {
             // start page
             component_type::TEXT => $this->text(),
-            component_type::CALC_SHEET => $this->calc_sheet(),
+            // TODO Prio 2 use the spreadsheet for the start view
+            //component_type::CALC_SHEET => $this->calc_sheet(),
+            component_type::CALC_SHEET => $this->start_list(),
 
             // system form - usage only allowed for internal system forms
             component_type::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
@@ -376,12 +385,36 @@ class component_exe extends component
     }
 
     /**
-     * @return string just to indicate that a row ends
+     * @return string the html code of a calculation spreadsheet
      */
     function calc_sheet(): string
     {
         $sheet = new sheet();
         return $sheet->calc_sheet();
+    }
+
+    /**
+     * @return string the html code of a sortable list
+     */
+    function list_sort(
+        phrase $phr,
+        data_object $dbo = null
+    ): string
+    {
+        $sheet = new list_sort();
+        return $sheet->list_sort($phr, $dbo);
+    }
+
+    /**
+     * @return string the html code for the start view as a sortable list
+     */
+    function start_list(
+        data_object $dbo = null
+    ): string
+    {
+        $phr = new phrase();
+        $phr->load_by_name(triples::GLOBAL_PROBLEM);
+        return $this->list_sort($phr, $dbo);
     }
 
 }

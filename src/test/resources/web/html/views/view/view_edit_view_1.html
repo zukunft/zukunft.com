@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>test (zukunft.com)</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/lib_external/bootstrap-5.3.3-dist/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css"/>
+    <link rel="stylesheet" href="/lib_external/fontawesome/css/all.css">
+</head>
+<body>
+<div class="container">
+    <nav class="navbar bg-light fixed-top"><a class="navbar-brand" href="/http/view.php" title="zukunft.com"><img
+            src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
+        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="pattern"></label><input
+                class="form-control mr-sm-2" type="search" name="pattern" id="pattern" placeholder="word or formula">
+            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>
+        </form>
+        <div class="col-md-2">
+            <ul class="nav navbar-nav">
+                <li class="active"></li>
+                <li class="active"></li>
+                <li class="active"><a href="/http/view.php?m=view_edit&id=29" title="adjust the view"><i
+                        class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=29" title="create a new view"><i
+                        class="far fa-plus-square"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+    <br><br><br><br><br><h4>Change view</h4>
+    <form action="/http/view.php" id="view_edit"><input class="form-control" type="hidden" name="m" id="m"
+                                                        value="29"><input class="form-control" type="hidden" name="id"
+                                                                          id="id" value="1"><input class="form-control"
+                                                                                                   type="hidden"
+                                                                                                   name="back" id="back"
+                                                                                                   value="1"><input
+            class="form-control" type="hidden" name="confirm" id="confirm" value="1">
+        <div class="row col-md-12">
+            <div class="form-group col-md-8"><label for="name">name</label><input class="form-control" type="text"
+                                                                                  name="name" id="name"
+                                                                                  value="Start view"></div>
+            <div class="form-group col-md-4"><label for="view type">type:</label><select class="form-control"
+                                                                                         name="view type"
+                                                                                         form="view_edit"
+                                                                                         id="view type">
+                <option value="1">standard</option>
+                <option value="2" selected>entry view</option>
+                <option value="3">edit</option>
+                <option value="4">presentation</option>
+                <option value="5">word default</option>
+                <option value="6">details</option>
+                <option value="7">system</option>
+            </select></div>
+        </div>
+        <div class="row col-md-12">
+            <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
+                                                                                                 type="text"
+                                                                                                 name="description"
+                                                                                                 id="description"
+                                                                                                 value="A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.">
+            </div>
+        </div>
+        <div class="row col-md-12">
+            <div class="form-group col-md-4"><label for="share">share:</label><select class="form-control" name="share"
+                                                                                      form="view_edit" id="share">
+                <option value="1" selected>public</option>
+                <option value="2">personal</option>
+                <option value="3">group</option>
+                <option value="4">private</option>
+            </select></div>
+            <div class="form-group col-md-4"><label for="protection">protection:</label><select class="form-control"
+                                                                                                name="protection"
+                                                                                                form="view_edit"
+                                                                                                id="protection">
+                <option value="1">no protection</option>
+                <option value="2">user</option>
+                <option value="3" selected>admin</option>
+                <option value="4">no change</option>
+            </select></div>
+        </div>
+        <div class="row col-md-12 justify-content-end"><a href="/http/view.php?m=0&id=1" title="Cancel"
+                                                          class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
+            <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
+        </div>
+    </form>
+</div>
+<footer>
+    <div class="text-center"><small><a href="/http/about.php" title="About">About</a> &middot;<a
+            href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; All structured data is
+        available under the<a href="//creativecommons.org/publicdomain/zero/1.0/"
+                              title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a> License
+        and the<a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under the<a
+                href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> License</small></div>
+</footer>
+</body>
+</html>

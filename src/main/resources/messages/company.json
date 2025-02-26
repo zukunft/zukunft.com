@@ -186,7 +186,7 @@
       "assigned_word": "Share"
     },
     {
-      "name": "scalte pence to Pound",
+      "name": "scale pence to Pound",
       "expression": "\"Pound\" = \"pence\" * 100",
       "assigned_word": "pence"
     }
