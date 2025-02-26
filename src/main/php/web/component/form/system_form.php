@@ -146,6 +146,25 @@ class system_form extends component
     }
 
     /**
+     * @param db_object_dsp $dbo the object
+     * @return string the html code to request the object plural from the user
+     */
+    function form_plural(db_object_dsp $dbo, string $style_text): string
+    {
+        $html = new html_base();
+        $plural = $dbo->plural();
+        if ($plural == null) {
+            $plural = '';
+        }
+        return $html->form_field(
+            api::URL_VAR_PLURAL,
+            $plural,
+            html_base::INPUT_TEXT,
+            '', $style_text
+        );
+    }
+
+    /**
      * TODO replace _add with a parameter value
      * TODO move form_field_triple_phrase_to to a const
      * TODO remove fixed pattern

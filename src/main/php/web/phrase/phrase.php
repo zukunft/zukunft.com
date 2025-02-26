@@ -356,6 +356,17 @@ class phrase extends combine_named
     }
 
     /**
+     * add or select a word of triple and create an "is a" triple linked to this phrase
+     * html code for a button to add a new phrase similar to this phrase
+     * @return string the html to add the word or triple
+     **/
+    function button_add_triple($back): string
+    {
+        $wrd = new word();
+        return $wrd->btn_add($back);
+    }
+
+    /**
      * to enable the recursive function in work_link
      * TODO add a list of triple already split to detect endless loops
      */

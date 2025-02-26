@@ -2918,7 +2918,7 @@ class create_test_objects extends test_base
     function component_word_add_name(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(4, components::FORM_NAME_NAME, comp_type_shared::FORM_NAME);
+        $cmp->set(components::FORM_NAME_ID, components::FORM_NAME_NAME, comp_type_shared::FORM_NAME);
         $cmp->description = components::FORM_NAME_COM;
         $cmp->code_id = components::FORM_NAME;
         return $cmp;
@@ -2930,6 +2930,15 @@ class create_test_objects extends test_base
         $cmp->set(5, components::FORM_DESCRIPTION_NAME, comp_type_shared::FORM_DESCRIPTION);
         $cmp->description = components::FORM_DESCRIPTION_COM;
         $cmp->code_id = components::FORM_DESCRIPTION;
+        return $cmp;
+    }
+
+    function component_word_add_plural(): component
+    {
+        $cmp = new component($this->usr1);
+        $cmp->set(components::FORM_PLURAL_ID, components::FORM_PLURAL_NAME, comp_type_shared::FORM_PLURAL);
+        $cmp->description = components::FORM_PLURAL_COM;
+        $cmp->code_id = components::FORM_PLURAL;
         return $cmp;
     }
 
@@ -3056,6 +3065,8 @@ class create_test_objects extends test_base
         $lst->add($pos, $msk, $this->component_word_add_name(), $pos);
         $pos++;
         $lst->add($pos, $msk, $this->component_word_add_description(), $pos);
+        $pos++;
+        $lst->add($pos, $msk, $this->component_word_add_plural(), $pos);
         $pos++;
         $lst->add($pos, $msk, $this->component_word_add_phrase_type(), $pos);
         $pos++;

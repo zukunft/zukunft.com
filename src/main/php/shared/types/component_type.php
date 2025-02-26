@@ -70,6 +70,8 @@ class component_type
     const FORM_NAME_ID = 21;
     const FORM_DESCRIPTION = "system_form_field_description";
     const FORM_DESCRIPTION_ID = 22;
+    const FORM_PLURAL = "system_form_field_plural";
+    const FORM_PLURAL_ID = 54;
     const FORM_PHRASE = "system_form_select_phrase";
     const FORM_PHRASE_ID = 23;
     const FORM_VERB_SELECTOR = "system_form_select_verb";
@@ -194,6 +196,7 @@ class component_type
         self::SHOW_NAME,
         self::FORM_NAME,
         self::FORM_DESCRIPTION,
+        self::FORM_PLURAL,
         self::FORM_PHRASE,
         self::FORM_VERB_SELECTOR,
         self::FORM_PHRASE_TYPE,
@@ -243,6 +246,7 @@ class component_type
         [self::FORM_CONFIRM, self::FORM_CONFIRM_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::FORM_NAME, self::FORM_NAME_ID],
+        [self::FORM_PLURAL, self::FORM_PLURAL_ID],
         [self::FORM_DESCRIPTION, self::FORM_DESCRIPTION_ID],
         [self::FORM_PHRASE, self::FORM_PHRASE_ID],
         [self::FORM_VERB_SELECTOR, self::FORM_VERB_SELECTOR_ID],

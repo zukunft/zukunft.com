@@ -53,6 +53,7 @@ use html\types\user_profile;
 use html\types\verbs;
 use html\types\view_style_list;
 use html\types\view_type_list;
+use shared\api;
 use shared\const\views;
 use test\test_cleanup;
 
@@ -89,7 +90,7 @@ class type_lists_ui_tests
         $test_page .= $html_verbs->selector($form_name) . '<br>';
 
         global $html_phrase_types;
-        $test_page .= $html->label(phrase_types::NAME, phrase_types::NAME);
+        $test_page .= $html->label(phrase_types::NAME, api::URL_VAR_PHRASE_TYPE);
         $test_page .= $html_phrase_types->selector($form_name) . '<br>';
 
         global $html_formula_types;

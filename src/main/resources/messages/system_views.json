@@ -447,6 +447,13 @@
       "description": "show the change log of this word",
       "type": "change_log",
       "code_id": "change_log_word"
+    },
+    {
+      "name": "system form field plural",
+      "description": "the plural language form field in a form (to be move to languages forms)",
+      "type": "system_form_field_plural",
+      "code_id": "form_field_plural",
+      "ui_msg_code_id": "form_field_plural"
     }
   ],
   "views": [
@@ -502,31 +509,36 @@
         },
         {
           "position": "7",
-          "name": "system form select share type"
+          "name": "system form field plural"
         },
         {
           "position": "8",
-          "name": "system form select protection type",
+          "name": "system form select share type",
           "position_type": "side"
         },
         {
           "position": "9",
-          "name": "system formatter row right"
+          "name": "system form select protection type",
+          "position_type": "side"
         },
         {
           "position": "10",
-          "name": "system form button cancel"
+          "name": "system formatter row right"
         },
         {
           "position": "11",
-          "name": "system form button save"
+          "name": "system form button cancel"
         },
         {
           "position": "12",
-          "name": "system formatter row end"
+          "name": "system form button save"
         },
         {
           "position": "13",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "14",
           "name": "system form end"
         }
       ]
@@ -566,7 +578,7 @@
         },
         {
           "position": "7",
-          "name": "system select default view word"
+          "name": "system form field plural"
         },
         {
           "position": "8",
@@ -580,37 +592,41 @@
         },
         {
           "position": "10",
-          "name": "link list word"
+          "name": "system select default view word"
         },
         {
           "position": "11",
+          "name": "link list word"
+        },
+        {
+          "position": "12",
           "name": "value list word",
           "position_type": "side"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "ref list word",
           "position_type": "side"
         },
         {
-          "position": "13",
+          "position": "14",
           "name": "system form button cancel"
         },
         {
-          "position": "14",
+          "position": "15",
           "name": "system form button save"
         },
         {
-          "position": "15",
+          "position": "16",
           "name": "system form end"
         },
         {
-          "position": "16",
+          "position": "17",
           "name": "usage word",
           "position_type": "side"
         },
         {
-          "position": "17",
+          "position": "18",
           "name": "change log word",
           "position_type": "side"
         }

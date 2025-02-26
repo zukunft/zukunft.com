@@ -152,9 +152,21 @@ class list_sort
       <td class="text-right">9.4</td>
       <td>spending</td>
       <td class="text-right">14.3</td>
-    </tr>
-  </tbody>
-</table>';
+    </tr>';
+        $result .= '<tr>';
+        $result .= '<th scope="row"></th>';
+        $result .= '<td>';
+        // temp code
+        $result .= $phr->button_add_triple($phr->id());
+        $result .= '</td>';
+        $result .= '<td class="text-right"></td>';
+        $result .= '<td>';
+        // temp code
+        $result .= $phr->button_add_triple($phr->id());
+        $result .= '<td class="text-right"></td>';
+        $result .= '</tr>';
+        $result .= '</tbody>';
+        $result .= '</table>';
         return $result;
     }
 

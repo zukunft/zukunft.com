@@ -249,6 +249,11 @@ class db_object extends TextIdObject
         return 'description not overwritten by ' . $this::class;
     }
 
+    function plural(): ?string
+    {
+        return 'plural not overwritten by ' . $this::class;
+    }
+
     function phrase(): phrase_dsp
     {
         return new phrase_dsp();

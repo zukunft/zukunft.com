@@ -46,6 +46,14 @@
     "ui_msg_code_id": "form_field_description"
   },
   {
+    "id": 67,
+    "name": "system form field plural",
+    "description": "the plural language form field in a form (to be move to languages forms)",
+    "type_id": 54,
+    "code_id": "form_field_plural",
+    "ui_msg_code_id": "form_field_plural"
+  },
+  {
     "id": 50,
     "name": "system form select share type",
     "description": "selector for the share type",

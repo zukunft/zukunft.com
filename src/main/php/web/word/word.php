@@ -135,13 +135,11 @@ class word extends sandbox_typed
     {
         $usr_msg = parent::url_mapper($url_array);
         if ($usr_msg->is_ok()) {
-            /* TODO activate
             if (array_key_exists(api::URL_VAR_PLURAL, $url_array)) {
                 $this->set_plural($url_array[api::URL_VAR_PLURAL]);
             } else {
                 $this->set_plural(null);
             }
-            */
             if (array_key_exists(api::URL_VAR_VIEW, $url_array)) {
                 if ($url_array[api::URL_VAR_VIEW] != null) {
                     $this->set_view_id($url_array[api::URL_VAR_VIEW]);

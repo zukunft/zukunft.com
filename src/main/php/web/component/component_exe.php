@@ -107,6 +107,7 @@ class component_exe extends component
             component_type::FORM_CONFIRM => $form->form_confirm(),
             component_type::SHOW_NAME => $form->show_name($dbo),
             component_type::FORM_NAME => $form->form_name($dbo, $this->style_text()),
+            component_type::FORM_PLURAL => $form->form_plural($dbo, $this->style_text()),
             component_type::FORM_DESCRIPTION => $form->form_description($dbo),
             component_type::FORM_PHRASE => $form->form_phrase($dbo, $test_mode, $this->name),
             component_type::FORM_VERB_SELECTOR => $form->form_verb($dbo, $form_name),

@@ -94,6 +94,7 @@ class messages
     const FORM_COMPONENT_DEL_TITLE = 'form_title_component_del';
     const FORM_FIELD_NAME = 'form_field_name';
     const FORM_FIELD_DESCRIPTION = 'form_field_description';
+    const FORM_FIELD_PLURAL = 'form_field_plural';
     const FORM_SELECT_SHARE = 'form_select_share';
     const FORM_SELECT_PROTECTION = 'form_select_protection';
     const FORM_BUTTON_CANCEL = 'form_button_cancel';
@@ -174,6 +175,13 @@ class messages
             self::FORM_COMPONENT_ADD_TITLE => 'Add a view element',
             self::FORM_COMPONENT_EDIT_TITLE => 'Change element',
             self::FORM_COMPONENT_DEL_TITLE => 'Delete element',
+            self::FORM_FIELD_NAME => 'Name',
+            self::FORM_FIELD_DESCRIPTION => 'Description',
+            self::FORM_FIELD_PLURAL => 'Plural',
+            self::FORM_SELECT_SHARE => 'Share',
+            self::FORM_SELECT_PROTECTION => 'Protection',
+            self::FORM_BUTTON_CANCEL => 'Cancel',
+            self::FORM_BUTTON_SAVE => 'Save',
             self::FORM_WORD_FLD_NAME => 'Word name',
             self::UNDO => 'undo',
             self::UNDO_ADD => 'delete added',

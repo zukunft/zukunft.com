@@ -52,3 +52,4 @@ component_type_id, type_name, description, code_id
 51, 'system form select component type', 'selector for the component type', 'system_form_select_component_type'
 52, 'system form field formula text', 'the form field the formula expression', 'system_form_field_formula_expression'
 53, 'form field name', 'the form flag to set the formula to need all variables for a valid result', 'system_form_field_formula_all_vars'
+54, 'form field plural', 'fixed form field the language form plural', 'system_form_field_plural'
